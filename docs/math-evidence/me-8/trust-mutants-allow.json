@@ -1,0 +1,44 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Calc.Consistent",
+   "operator": "body-true",
+   "reason": "no check can read it: Consistent is a proposition over every κ : String → Rat, which is not decidable; each mutant breaks the proofs of consistent_of_witness (Consistency.lean:122) and inconsistent_of_refutation (:143), which the tool reports and cuts, as me-9b's IsIdentity and NotIdentity"
+  },
+  {
+   "definition": "VE.Calc.Consistent",
+   "operator": "body-false",
+   "reason": "no check can read it: Consistent is a proposition over every κ : String → Rat, which is not decidable; each mutant breaks the proofs of consistent_of_witness (Consistency.lean:122) and inconsistent_of_refutation (:143), which the tool reports and cuts, as me-9b's IsIdentity and NotIdentity"
+  },
+  {
+   "definition": "VE.Calc.Consistent",
+   "operator": "and-or",
+   "reason": "no check can read it: Consistent is a proposition over every κ : String → Rat, which is not decidable; each mutant breaks the proofs of consistent_of_witness (Consistency.lean:122) and inconsistent_of_refutation (:143), which the tool reports and cuts, as me-9b's IsIdentity and NotIdentity"
+  },
+  {
+   "definition": "VE.Calc.Consistent",
+   "operator": "list-empty",
+   "reason": "no check can read it: Consistent is a proposition over every κ : String → Rat, which is not decidable; each mutant breaks the proofs of consistent_of_witness (Consistency.lean:122) and inconsistent_of_refutation (:143), which the tool reports and cuts, as me-9b's IsIdentity and NotIdentity (inputs -> [] does not elaborate: UNKNOWN)"
+  },
+  {
+   "definition": "VE.Calc.Consistent",
+   "operator": "list-first",
+   "reason": "no check can read it: Consistent is a proposition over every κ : String → Rat, which is not decidable; each mutant breaks the proofs of consistent_of_witness (Consistency.lean:122) and inconsistent_of_refutation (:143), which the tool reports and cuts, as me-9b's IsIdentity and NotIdentity"
+  },
+  {
+   "definition": "VE.Calc.Consistent",
+   "operator": "list-drop-last",
+   "reason": "no check can read it: Consistent is a proposition over every κ : String → Rat, which is not decidable; each mutant breaks the proofs of consistent_of_witness (Consistency.lean:122) and inconsistent_of_refutation (:143), which the tool reports and cuts, as me-9b's IsIdentity and NotIdentity"
+  },
+  {
+   "definition": "VE.Calc.Consistent",
+   "operator": "list-last",
+   "reason": "no check can read it: Consistent is a proposition over every κ : String → Rat, which is not decidable; each mutant breaks the proofs of consistent_of_witness (Consistency.lean:122) and inconsistent_of_refutation (:143), which the tool reports and cuts, as me-9b's IsIdentity and NotIdentity"
+  },
+  {
+   "definition": "VE.Calc.Consistent",
+   "operator": "list-drop-first",
+   "reason": "no check can read it: Consistent is a proposition over every κ : String → Rat, which is not decidable; each mutant breaks the proofs of consistent_of_witness (Consistency.lean:122) and inconsistent_of_refutation (:143), which the tool reports and cuts, as me-9b's IsIdentity and NotIdentity"
+  }
+ ]
+}

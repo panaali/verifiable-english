@@ -19,6 +19,9 @@ def C1 : List Decl := [⟨"a", .stated (2 / 5)⟩, ⟨"b", .stated (3 / 10)⟩, 
 def k1 : Claim := .rounds .tiesUp (.add a (.val "b")) ⟨9, 1⟩
 def k2 : Claim := lt (.add a (.val "b")) (.lit (66 / 100))
 def inA : List (String × Printed) := [("a", ⟨4, 1⟩)]
+-- a's box under ties up is 7/20 ≤ a < 9/20: in it at 7/20 and 2/5, not at 9/20 or 1/2.
+#guard decide (InBox .tiesUp inA fun _ => 7 / 20) && decide (InBox .tiesUp inA fun _ => 2 / 5)
+#guard !decide (InBox .tiesUp inA fun _ => 9 / 20) && !decide (InBox .tiesUp inA fun _ => 1 / 2)
 -- The lowering keeps the input and inlines b's exact value; the printed point 2/5 is no witness of k2.
 #guard (k2.inline C1 ["a"]).toOption == some (lt (.add a (.lit (3 / 10))) (.lit (66 / 100)))
 #guard enclose .tiesUp inA (.add a (.lit (3 / 10))) = some (13 / 20, 3 / 4)
