@@ -78,7 +78,7 @@ New Lean text beyond the plan and the decisions: `lineFault`, the parser's refus
 
 ## actions_version
 
-37 -> 41: the hook refuses a changed hashed file at an unchanged version, and three later commits of this branch changed one. The DELTA row cites reviews/dri-decisions-20261102-jt-3p.md item 3. The 12 pins of `lean/VE/Senses/RunExamples.lean` have no generator; I recomputed them with Lean's `#eval` on a temporary copy at each raise. Each time: 12 moved, and with the version set back each hashes to its old pin; 20 unchanged; 0 other. The goldens were re-recorded by their own tools (17 ask fixtures; `conformance/english-lean/s3-fixture-comparison.json`, whose only other diff is Lark's expected-token order in two messages, as jt-3p reported). sn-b6b and en-s6b re-pin or raise the same values, so whichever merges second recomputes them.
+37 -> 42: the hook refuses a changed hashed file at an unchanged version, and four later commits of this branch changed one (the last, 41 -> 42, is the review fix F1 to `Run.lean`; the Senses pins reach no definition it changed, since `VE.Senses.Run.readCase` is the senses route's own). The DELTA row cites reviews/dri-decisions-20261102-jt-3p.md item 3. The 12 pins of `lean/VE/Senses/RunExamples.lean` have no generator; I recomputed them with Lean's `#eval` on a temporary copy at each raise. Each time: 12 moved, and with the version set back each hashes to its old pin; 20 unchanged; 0 other. The goldens were re-recorded by their own tools (17 ask fixtures; `conformance/english-lean/s3-fixture-comparison.json`, whose only other diff is Lark's expected-token order in two messages, as jt-3p reported). sn-b6b and en-s6b re-pin or raise the same values, so whichever merges second recomputes them.
 
 ## Size
 
