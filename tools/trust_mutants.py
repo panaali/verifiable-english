@@ -1968,6 +1968,7 @@ def sweep(argv: list[str] | None = None) -> int:
     DEADLINE.reset(min(at) if at else None)
     STEPS.reset()
     found, tree, fatal = plan(root, base, classes)
+    found = [m for m in found if m.id in 'M036 M039 M041 M046 M143 M164 M308 M329'.split()]  # adv0642 targeted inventory (tm-inventory.py; never committed)
     for t in outside:
         try:
             tree.imported |= {x for x in imports(t.read_text()) if x in tree.files}
