@@ -1,7 +1,6 @@
 """Rights 3.5: a right unit's meaning id binds its normal form, every soft field at its default omitted.
 
-Lean's `document` mode owns the id (`VE.Service.Document.rightsNormalForm`); Python's `rights_meaning_id` relays the
-same normal form for the request binding and its own paths, and the differential below holds them equal."""
+Lean's document and identity modes use one normalizer; Python relays the identity."""
 from __future__ import annotations
 
 import json
@@ -13,7 +12,7 @@ import pytest
 
 from tests.test_norms import obligation, permission
 from tests.test_rights import right, rights_document_file, rights_env
-from ve import document as D, readings
+from ve import document as D
 from ve.document import load as D_load
 from ve.errors import CheckerUnavailable, VEError
 from ve.readings import rights_meaning_id
@@ -53,6 +52,11 @@ def _soft_raw_env():
 
 def _env():
     return RightsEnvironment(_raw_env())
+
+
+def test_rights_meaning_id_binds_environment():
+    content = right()
+    assert rights_meaning_id(_env(), content) != rights_meaning_id(RightsEnvironment(_soft_raw_env()), content)
 
 
 def _with(content, slot, **soft):
@@ -107,14 +111,65 @@ def test_rights_meaning_id_omits_soft_defaults(tmp_path, where, field):
 def test_the_normal_form_leaves_other_content_and_shapes_unchanged():
     bar = {"bar": {"name": "b30", "reading": "rule", "decided_by": "unstated", "mode": "strict"}}
     odd = {"right": {"name": "life", "lines": "not a list"}}
-    assert readings.rights_normal_form(bar) == bar and readings.rights_normal_form(odd) == odd
+    env = _env()
+    from ve.softnorms import soft_digest
+    def raw_id(content):
+        return soft_digest(f"ve-meaning-{env.identity_version}\n",
+                           {"environment_id": env.environment_id, "ast": content})
+    assert rights_meaning_id(env, bar) == raw_id(bar)
+    assert rights_meaning_id(env, odd) == raw_id(odd)
     # `hard: 0` is not the default `false`, as Lean's `Json` reads it.
-    assert readings.rights_normal_form(_with(right(), "norm", hard=0)) == _with(right(), "norm", hard=0)
+    other_type = _with(right(), "norm", hard=0)
+    assert rights_meaning_id(env, other_type) == raw_id(other_type)
     # A `null` that is no soft field, and a soft field's name outside a line's norm objects, are kept.
     kept = _with(right(), "norm", guard=None)
     kept["right"]["lines"][0]["mode"] = "strict"
     kept["right"]["mode"] = None
-    assert readings.rights_normal_form(kept) == kept
+    assert rights_meaning_id(env, kept) == raw_id(kept)
+
+
+def test_rights_identity_is_relayed_from_lean(monkeypatch):
+    from ve.backends import relay
+    env = _env()
+    answer = "f" * 64
+    cases = []
+    def fake_decide(mode, sent):
+        cases.extend(sent)
+        assert mode == "identity"
+        return [{"identity_id": answer}]
+    monkeypatch.setattr(relay, "decide", fake_decide)
+    content = _with(right(), "norm", mode="strict")
+    assert rights_meaning_id(env, content) == answer
+    assert cases[0]["kind"] == "rights-meaning" and json.loads(cases[0]["content_json"]) == content
+
+
+def test_rights_identity_row_is_typed_and_bound():
+    from ve.backends.service_schema import Invalid, check_row
+    case = {"id": "rights-meaning", "kind": "rights-meaning"}
+    row = {"id": "rights-meaning", "status": "ok", "kind": "rights-meaning", "identity_id": "a" * 64}
+    check_row("identity", row, case, 0)
+    for change in ({"id": "other"}, {"kind": "meaning"}, {"identity_id": True},
+                   {"identity_id": ""}, {"identity_id": None}):
+        with pytest.raises(Invalid):
+            check_row("identity", {**row, **change}, case, 0)
+    for missing in row:
+        with pytest.raises(Invalid):
+            check_row("identity", {k: v for k, v in row.items() if k != missing}, case, 0)
+
+
+def test_reading_set_binds_defaulted_right_through_the_lean_identity():
+    from ve.readings import validate_reading_sets
+    env = _env()
+    content = _with(right(), "norm", mode="strict", hard=False)
+    reading = {"id": "choice", "kind": "right", "content": content,
+               "meaning_id": rights_meaning_id(env, content),
+               "admission": {"who": "author", "why": "stated", "distinguishing_models": {}}}
+    item = {"id": "choices", "unit": "u", "version": 1, "status": "authored",
+            "signature": "author", "readings": [reading]}
+    validate_reading_sets(env, [item], {"u"})
+    reading["meaning_id"] = "0" * 64
+    with pytest.raises(VEError, match="reading meaning id does not match content"):
+        validate_reading_sets(env, [item], {"u"})
 
 
 def _documents():
@@ -263,6 +318,8 @@ def test_every_stored_rights_content_is_already_its_normal_form():
     """Rights 3.5 changes no stored id: every recorded rights content is its own normal form."""
     stored = list(_stored())
     assert stored
+    from ve.softnorms import soft_digest
+    env = _env()
     for _name, content in stored:
-        assert readings.rights_normal_form(content) == content
-
+        assert rights_meaning_id(env, content) == soft_digest(
+            f"ve-meaning-{env.identity_version}\n", {"environment_id": env.environment_id, "ast": content})
