@@ -125,9 +125,9 @@ def assumption(text, label):
 
 def follows(case, row):
     """DE1 or DE1′ (Lean's `form`), one sentence per kept assumption, then DE12 when Lean's basis is `unsettled`.
-    Basis `strict` shows no default sentence here (DE5 needs Lean's `decidersOf`, not on the wire: df-1bbb)."""
+    Basis `strict` renders DE5 from Lean's `decidersOf`."""
     if row["basis"] == "strict":
-        return []
+        return [strict_sentence(row["deciders"])] if row["deciders"] else []
     text = _Text(case)
     head = {"short": "Unless an exception applies", "long": "Under the assumptions listed below"}[row["form"]]
     out = [f"{head}, the conclusion follows: {text.conclusion()}."]
@@ -135,6 +135,17 @@ def follows(case, row):
     if row["basis"] == "unsettled":
         out.append("Whether it also holds without these assumptions was not checked.")
     return out
+
+
+def strict_sentence(deciders):
+    """DE5 and DE5·u, by Lean's ordered, distinct decider names."""
+    named = [who for who in deciders if who != UNSET]
+    if not named:
+        return "This holds whatever is decided where the text names no decider."
+    who = (_who(named[0]) if len(named) == 1 else
+           ", ".join(_who(party) for party in named[:-1]) + " and " + _who(named[-1]))
+    suffix = ", and whatever is decided where the text names no decider" if UNSET in deciders else ""
+    return f"This holds whatever {who} {'decides' if len(named) == 1 else 'decide'}{suffix}."
 
 
 def fails(case, row):
