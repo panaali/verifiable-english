@@ -1,8 +1,25 @@
-# sc-5rc build report
+# sc-5rc build and review-fix report
 
-**DRI signature needed for DELTA rows 2 and 3.** The prescribed `msg.sh dri sc-5rc` request failed because the sandbox cannot write `/home/seyran/code/manage-agents/inbox/dri`; these rows remain unsigned.
-Status: document answers and rendering built; four `Pinned.JsonWF` proofs moved to sc-5rd because sc-1af's route check is not on main.
-Code HEAD: `815a2e5f9` (plus the collection-trailer commit `15e00a8c0`). Open: DRI ruling and the sc-5rd dependency. No full gate run; the chain runs it on committed HEAD.
+**STOP: DRI signatures for DELTA rows 2 and 3 and the external F2 R16 ties-pass registration are still required.** The sandbox cannot write `/home/seyran/code/manage-agents/FOLLOW-UPS.md` or its DRI inbox.
+Status: F1's cited composed readings are encoded, bound, checked and rendered. F2's tracker entry is prepared below; its probe remains blocked on the external write. The four `Pinned.JsonWF` proofs remain assigned to sc-5rd pending sc-1af.
+Checks: the F1 probe and 10 targeted regressions pass; the Lean build and audit pass. The selected run is pending. No full gate was run, per this fix task.
+
+## Review fixes (2026-10-29)
+
+F1: `composedReadingRow` decodes the norm member and relays `cites` from the governed reading. The response shape permits the optional citation member, its encoder theorem covers both branches, and Python binds the whole citation value to the authored reading. One `norm_rule_input` projection supplies norm-only content to the lower checkers while the reading keeps citations for display. `test_f1_composed_reading_preserves_authored_cites` covers frame, reguard and carve-out with empty and populated citations in answer, load, check and render; `test_f1_composed_cites_are_bound_to_authored_reading` rejects dropped, added, changed and retyped citations. The original F1 probe now passes. A seeded Python bug that passed citations to the lower checker failed all six citation-view cases; a seeded Lean bug that dropped citations failed the `composedReadingRow` guard. Both were restored.
+
+F2: the required global registration is not present and the original probe still fails. It cannot be a repository regression test: the tracker is outside the checkout and hermetic tests cannot depend on that mutable external file. The exact entry to add to `/home/seyran/code/manage-agents/FOLLOW-UPS.md` is:
+
+```text
+## sc-5rc (2026-10-29)
+- R16 ties pass: tie the +36 D[V] lines in lean/VE/Service/Document.lean and +21 G[V] lines in lean/ResponseShape/Schemas/Document.lean to the existing render, wire and encoder theorems; retain tests that can fail for each new trusted definition. Owner: scope ties pass.
+```
+
+The current trust measurement is K +0, S +0, V +57 against `314b23a42c21`; its existing signed allowances total +50, leaving +7 to record after the F2 entry meets R16's condition. This report does not claim that the missing registration is signed.
+
+## Initial build record
+
+The original `sc-5rc` build ended at `c7016b755`; its initial report follows. Its test and trust counts describe that commit, before the review fixes above. DELTA rows 2 and 3 still require the DRI's decision.
 
 ## Scope and plan rows
 
