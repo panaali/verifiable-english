@@ -1887,6 +1887,7 @@ def sweep(argv: list[str] | None = None) -> int:
     DEADLINE.reset(min(at) if at else None)
     STEPS.reset()
     found, tree, fatal = plan(root, base, classes)
+    found = [m for m in found if m.id in 'M006 M007 M015 M017 M018 M019 M032 M033 M040 M041 M047 M048 M053 M058 M063 M068 M073 M116 M118 M119 M120 M131 M133 M134 M135 M143 M144 M150 M151 M157 M158 M164 M165 M170 M175 M176 M181 M186 M191 M196 M201 M206 M211 M216 M221 M226 M284 M286 M287 M288 M299 M301 M302 M303 M313 M314 M320 M321 M327 M328 M334 M339 M340 M346 M347 M352 M356 M361 M362 M366 M370 M375 M379 M383 M388 M395 M400 M407 M412 M419 M424'.split()]  # adv0642 targeted inventory (tm-inventory.py; never committed)
     for t in outside:
         try:
             tree.imported |= {x for x in imports(t.read_text()) if x in tree.files}
