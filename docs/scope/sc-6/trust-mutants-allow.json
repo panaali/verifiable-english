@@ -1,0 +1,9 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Scope.Pinned.rightNames",
+   "operator": "list-empty",
+   "reason": "ill-formed: the cut replaces the receiver of `us.filterMap fun u => ...` by [], leaving `[] fun u => ...`, which Lean refuses (Function expected at) with a message the tool does not class as a refusal; rightNames' well-formed mutants are KILLED by ReachExamples.lean's guards (docs/scope/sc-6/mutants.json, dropLast)"
+  }
+ ]
+}
