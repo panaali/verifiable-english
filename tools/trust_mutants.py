@@ -63,6 +63,16 @@ every other case is UNKNOWN (review F11/F12, the DRI's note 2026-10-19c). The mu
   and a mutant that moves a line after its declaration (a longer replacement no blank line there can take: F9);
 - NOT RUN past --max-mutants (every definition and operator gets its k-th mutant before any gets its k+1-th).
 
+A mutant's probe (eff-tm-probe-scope) elaborates the check file as the whole-file probe does, but walks only the
+checks `settle` reads and drops the text after the last of them (`probe`'s `only`, `kept`); the controls' probes
+walk every check of the whole file. Each entry it reads is the whole file's, so every verdict is the same but in two
+cases, where the whole file's probe has no entry for the check and the scoped one has its own: then UNKNOWN becomes
+KILLED, on that entry, checked against a control that finished (the verdict the whole file gives when its probe
+finishes). F1: the whole file's probe would not finish within --build-timeout or the deadline (seen twice on jt-2c
+73e809748). F2: Lean crashes or loses its output in a walk the scoped probe skips, or in the text it drops. A
+check of the set that has no whole entry (`complete`: a cut that changed a parse, a scoped run that timed out or
+crashed: F3, F4) is read from the whole file's probe instead.
+
 SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> (<class>) <operator>: <before> -> <after>`
 (`kind`: the class, ", trusted" added when R16 counts it), unless --allow FILE lists the definition and operator
 with a reason ({"allow": [{"definition": "VE.X.f", "operator": "lt-le", "reason": "one line"}]}); a `ctor-drop`
@@ -98,14 +108,23 @@ for a change, any other change, a file it cannot read) it is a full run, and one
   the record (`record`) with `shard: {k, n, owned}` added; each mutant another part owns is listed in plan order
   with status and raw_status `OTHER SHARD`, a status only a part's record holds (counted under its own key);
 - --merge OUT.json PART.json... reads only the parts (no checkout, no Lean; every other option is ignored) and
-  writes the record one run with their options writes, but for "seconds" (the parts' longest), "jobs" (their sum)
-  and `shards: [{k, n, jobs, seconds}]`, by k; it prints that run's lines and exits with its code. It refuses (exit
-  2) parts that are no part as this tool writes one (`unread`: a field or row not of its type, a status not one
-  it writes, counts that are not its rows'), disagree on N, base, head, options, inputs, the plan or --rescore's
-  file, head, mode, changed or full_run, miss or repeat a k, own a mutant twice, never, or with no verdict, or
-  hold anything but the plan's row and its status (`idle`) for a mutant they do not run, OTHER SHARD or NOT RUN;
+  writes the record one run with their options writes, but for "seconds" (the parts' longest), "jobs" and "steps"
+  (their sums) and `shards: [{k, n, jobs, seconds, steps}]`, by k; it prints that run's lines and exits with its
+  code. It refuses (exit 2) parts that are no part as this tool writes one (`unread`: a field or row not of its
+  type, a status not one it writes, counts that are not its rows'), disagree on N, base, head, options, inputs,
+  the plan or --rescore's file, head, mode, changed or full_run, miss or repeat a k, own a mutant twice, never, or
+  with no verdict, or hold anything but the plan's row and its status (`idle`) for a mutant they do not run, OTHER
+  SHARD or NOT RUN;
 - --plan prints `{"base", "definitions", "mutants", "to_run", "not_run"}` ("owned" too with --shard) as one JSON
   line and builds nothing: what sizes N.
+
+Every --json records where the time went (`steps`, eff-tm-control; a run fact, like "seconds", that no verdict
+reads): `wall`, the seconds of each phase of the run in turn (`WALL`: the plan, the scratch copies, the control
+build, the probe's install, the checks' probes without a mutant, the mutants, the reads); `lake`, the seconds Lake
+ran in each step summed over the jobs (`LAKE`: those control phases, then in the mutants' builds the mutated
+module's stage, the check modules' stage and the outside --test files, the stage controls, and the mutants' probes),
+and `runs`, how many Lake runs each took. One line prints them. --merge writes each part's in its `shards` entry
+and their sums as the record's.
 """
 from __future__ import annotations
 
@@ -126,6 +145,7 @@ import signal
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from types import UnionType
 from typing import get_args, get_origin, get_type_hints
@@ -449,8 +469,14 @@ def classify(kind: str, span: str) -> str:
 #   targets of each constant it reaches). Since the tool cuts only a proof that fails (`run`), that is a proof the
 #   mutant broke: a `Decidable` instance or `@[csimp]` lemma resting on it computes through the mutated definition
 #   where the statement does not (hunt H4, N1, N2, P1-P9, Q1-Q3, Q5);
-# - `<k> hyps`: its goal has a hypothesis (a section `variable` included: hunt H1, N8).
+# - `<k> hyps`: its goal has a hypothesis (a section `variable` included: hunt H1, N8);
+# - `<k> done`: the walk's last line. An entry without it is absent (`complete`): a walk Lean stopped midway (a
+#   stack overflow, memory) can leave `hash` and some `const` lines but no `sorry` (eff-tm-probe-scope review 1).
 # A check Lean cannot elaborate in the probe has `sorryAx` in its term, so it says `sorry` (hunt Q12).
+# With `TM_TRUST_ONLY` (the check names, space-separated: `probe`'s `only`) the walk of every other check returns as
+# its first statement; its elaborator still runs. The walk only reads the environment and prints: it adds no
+# constant, extension entry, option, `IO.Ref` or info-tree node (`test_the_walk_reads_and_prints_only`), so a
+# skipped walk changes nothing a later command reads.
 # It is a module of its own (`install`), imported on the copy's first line, so the copy keeps the file's lines for
 # what a check reads of its source (hunt Q6).
 READS = """import Lean
@@ -461,6 +487,8 @@ def tmTrustCore (env : Environment) (c : Name) : Bool :=
 
 open Lean Meta in
 def tmTrustWalk (k : Name) (roots : List Expr) : MetaM Unit := do
+  if let some only ← IO.getEnv "TM_TRUST_ONLY" then
+    if !((only.splitOn " ").contains k.toString) then return
   let env ← getEnv
   let say (s : String) : IO Unit := do IO.println s!"{(← IO.getEnv "TM_TRUST_NONCE").getD ""} {k} {s}"
   let mutated := ((← IO.getEnv "TM_TRUST_MUTATED").getD "").toName
@@ -514,6 +542,7 @@ def tmTrustWalk (k : Name) (roots : List Expr) : MetaM Unit := do
     let value := (info.value? (allowOpaque := true)).getD (mkConst ``True)
     if !(info matches .thmInfo _) && !(← inside c) then say s!"const {c} {mixHash info.type.hash value.hash}"
     todo := todo ++ info.type.getUsedConstants.toList ++ value.getUsedConstants.toList
+  say "done"
 
 open Lean Elab Tactic Meta in
 elab "tm_trust_probe " k:ident : tactic => do
@@ -571,8 +600,18 @@ def install(lake, lean: Path) -> bool:
         source.unlink()
 
 
-def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: bool = False
-          ) -> dict[tuple[int, int], dict]:
+def kept(lines: list[str], roles: list[tuple], last: int) -> list[str]:
+    """The lines of a scoped probe (`probe`'s `only`) whose checks end at line `last`: up to the line before the
+    first command of `roles` that starts after it, every line when none does. Commands 1..k elaborate as in the whole
+    file (Lean elaborates a file's commands in order), so each check of the set gets the same entry. A cut that
+    changes a parse (a docstring, attribute, `set_option … in` or `#guard_msgs in` left at the end, a `mutual` left
+    open) is fail-closed: after the set an error the probe ignores; in it the check is absent, so `run`'s `reading`
+    probes the whole file (F3)."""
+    return lines[:min(after) - 1] if (after := [s for s, *_ in roles if s > last]) else lines
+
+
+def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: bool = False,
+          only: set[tuple[int, int]] | None = None) -> dict[tuple[int, int], dict]:
     """(first, last line) -> {"flags": what `READS` prints for the check (`hash <h>`, `sorry`, `axiom`, `io`, `hyps`),
     "consts": {constant: hash} of what it reads outside the mutated definition} for each check of `text` (a file of
     one build, its `roles`), elaborated as the build elaborates it: written (`named`, with `import TmTrustProbe` on
@@ -580,11 +619,20 @@ def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: b
     and run by `lake("lean", path)` with that module's options (a package's or library's `leanOptions` decide which
     instance Lean picks: hunt R5, S8); an `outside` --test file, which the tool only reads, is written to `path`
     beside it and run by `lake env lean`, as `run` checks one. Only lines that start with this call's nonce are read
-    (a check's own `#eval` can print anything: hunt S7). A check Lean could not read is absent (no kill)."""
+    (a check's own `#eval` can print anything: hunt S7). A check Lean could not read is absent (no kill).
+    `only` (eff-tm-probe-scope): the spans of the checks whose entries are read, of every check when None. The same
+    text is elaborated, every check rewritten (`named`), but only those are walked (`TM_TRUST_ONLY`, `READS`) and the
+    text after the last of them is dropped (`kept`); the other checks are absent."""
     text, spans = named(text, roles)
     lines = text.split("\n")
     first = next((n for n, line in enumerate(code_only(text).split("\n")) if line.startswith("import ")), 0)
     lines[first] = "import TmTrustProbe " + lines[first]
+    if only is not None:
+        names = sorted(n for n, span in spans.items() if span in only)
+        env = {**env, "TM_TRUST_ONLY": " ".join(names)}
+        if not names:  # the whole file's probe has no entry for them either
+            return {}
+        lines = kept(lines, roles, max(spans[n][1] for n in names))
     nonce = secrets.token_hex(12)
     before = path.read_text() if path.is_file() else None
     path.write_text("\n".join(lines))
@@ -604,6 +652,62 @@ def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: b
             else:
                 entry["flags"].add(rest)
     return out
+
+
+def complete(entry: dict | None) -> bool:
+    """Whether `probe`'s entry for a check is there and whole: its walk printed `done` (`READS`)."""
+    return entry is not None and "done" in entry["flags"]
+
+
+class Probes:
+    """A mutant's `probe` entries by (file, span): each file probed once, for the checks `settle` handed over
+    (`scope`), and read only for those (eff-tm-probe-scope F5: any other check is absent from the probe, a kill
+    lost). `probing(file, only)`: `probe`'s entries of the file (`only` as `probe`'s) and the spans `named` can
+    probe. A check of the set it can probe with no whole entry (`complete`: the run timed out or crashed, a cut that
+    changed a parse: F3, F4) is read from the whole file's probe."""
+
+    def __init__(self, probing):
+        self.probing = probing
+        self.given: dict[str, set[tuple[int, int]]] = {}  # file -> the spans of the checks `settle` reads
+        self.probed: dict[str, dict] = {}  # file -> its entries
+
+    def scope(self, keys: set[tuple]) -> None:
+        """The keys `settle` reads next."""
+        for f, span in keys:
+            if span not in self.given.setdefault(f, set()):
+                self.given[f].add(span)
+                self.probed.pop(f, None)  # a file probed for fewer checks is probed again
+
+    def __call__(self, key: tuple) -> dict | None:
+        f, span = key
+        if span not in self.given.get(f, ()):
+            raise LookupError(f"{f}:{span}: a check `settle` did not hand over")
+        if f not in self.probed:
+            got, probeable = self.probing(f, self.given[f])
+            if any(not complete(got.get(s)) for s in self.given[f] & probeable):
+                got = self.probing(f, None)[0]
+            self.probed[f] = got
+        return self.probed[f].get(span)
+
+
+def refusal(entry: dict | None, control: dict | None) -> str | None:
+    """Why the check whose `probe` entries in the mutant's build and in the control's are these cannot refute the
+    mutated definition, or None. An entry that is not whole (`complete`) is absent."""
+    if not complete(entry) or not complete(control):
+        return "Lean could not elaborate it in the probe"
+    if "hyps" in entry["flags"]:
+        return "its goal has a hypothesis"
+    if "sorry" in entry["flags"]:
+        return "it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it)"
+    if "axiom" in entry["flags"]:
+        return "it computes through an axiom of this tree, which the mutant can make false"
+    if "io" in entry["flags"]:
+        return "it runs IO (an `initialize`d value, `unsafeIO`), which can read the mutated source"
+    if not control["flags"] >= {x for x in entry["flags"] if x.startswith("hash ")}:
+        return "Lean elaborates it otherwise than without the mutant"
+    if drift := next((c for c, h in entry["consts"].items() if control["consts"].get(c) != h), None):
+        return f"{drift}, which it reads, is not what it is without the mutant"
+    return None
 
 
 def beside(lean: Path, f: str) -> Path:
@@ -790,7 +894,7 @@ def decided(text: str, first: int, last: int) -> str:
 
 
 def settle(errors: list[tuple[str, int, str]], read, checkout, roles: dict[str, list], rebuild, reads,
-           where=lambda f: f"lean/{f}") -> tuple[str, str]:
+           where=lambda f: f"lean/{f}", scope=lambda keys: None) -> tuple[str, str]:
     """KILLED or UNKNOWN for the errors (file, line, message) a build left after the cuts and its control (review
     F11): KILLED only when every one is KILL (`judge`), or RFL and `decide` then refutes its check's statement, and
     every such check can refute the mutated definition (`reads`: (file, (first, last line)) -> None, else why not:
@@ -800,7 +904,8 @@ def settle(errors: list[tuple[str, int, str]], read, checkout, roles: dict[str, 
     located; a rewritten check that gives no error there, or an error that is no refutation, refutes nothing, and any
     other error must still be KILL. `read`, `checkout`: a file's built and checkout text; `roles`: file -> (first,
     last line, role, ...). `decide` only: `native_decide` evaluates compiled code, which an `rfl` check never reads
-    (an `implemented_by` can differ from the definition: hunt H7)."""
+    (an `implemented_by` can differ from the definition: hunt H7). `scope` gets every key `reads` may be asked
+    for, once, before the first (`run`'s `reading` probes only those checks and refuses any other key)."""
     def verdicts(found: list[tuple[str, int, str]], now: dict[str, tuple[str, str]]) -> list[tuple]:
         """`judge` on each error; `now`: file -> its built and checkout text with the rewrites, if any."""
         rows = []
@@ -817,6 +922,7 @@ def settle(errors: list[tuple[str, int, str]], read, checkout, roles: dict[str, 
     rows = verdicts(errors, {})
     if bad := next((x for x in rows if x[3] == NONE), None):
         return "UNKNOWN", f"{where(bad[0][0])}:{bad[1]}: {brief(bad[2])}"
+    scope({x[0] for x in rows})
     if bad := next(((x, why) for x in rows if (why := reads(x[0]))), None):
         return "UNKNOWN", f"{where(bad[0][0][0])}:{bad[0][1]}: {brief(bad[0][2])} ({bad[1]})"
     confirmed = ""
@@ -921,6 +1027,78 @@ def cut_proof(path: Path, first: int, last: int) -> bool:
     return bool(found)
 
 
+# `main`'s phases, in turn
+WALL = ("plan", "scratch", "control_build", "probe_install", "control_probes", "mutants", "cleanup", "reads")
+LAKE = ("control_build", "probe_install", "control_probes", "mutant_builds", "mutant_checks", "outside_checks",
+        "stage_controls", "mutant_probes", "other")  # the steps a Lake run counts under (`Steps.step`)
+
+
+class Steps:
+    """Where a run's time goes (`--json`'s `steps`): `wall` seconds by phase, and Lake's seconds and runs by step,
+    summed over the jobs: `Scratch.lake` counts each run under its thread's current `step` ("other" outside one)."""
+
+    def __init__(self):
+        self.lock, self.local = threading.Lock(), threading.local()
+        self.reset()
+
+    def reset(self) -> None:
+        self.wall, self.lake, self.runs = dict.fromkeys(WALL, 0.0), dict.fromkeys(LAKE, 0.0), dict.fromkeys(LAKE, 0)
+
+    def step(self, name: str):
+        """A context in which this thread's Lake runs count under `name`."""
+        steps = self
+
+        class Step:
+            def __enter__(self):
+                self.before, steps.local.name = getattr(steps.local, "name", None), name
+
+            def __exit__(self, *_):
+                steps.local.name = self.before
+        return Step()
+
+    def ran(self, seconds: float) -> None:
+        name = getattr(self.local, "name", None) or "other"
+        with self.lock:
+            self.lake[name] += seconds
+            self.runs[name] += 1
+
+    def phase(self, name: str, since: float) -> float:
+        """Adds the seconds since `since` to the phase `name`; now."""
+        now = time.monotonic()
+        self.wall[name] += now - since
+        return now
+
+    def record(self) -> dict:
+        return {"wall": {k: round(v, 1) for k, v in self.wall.items()},
+                "lake": {k: round(v, 1) for k, v in self.lake.items()}, "runs": dict(self.runs)}
+
+
+STEPS = Steps()
+
+
+def steps_line(steps: dict) -> str:
+    """The printed line of a `steps` record: each phase and step that took any time."""
+    def each(d: dict, runs: dict | None = None) -> str:
+        return ", ".join(f"{k} {v:g} s" + (f" ({runs[k]})" if runs else "") for k, v in d.items()
+                         if v or runs and runs[k])
+    return f"trust_mutants: steps: wall {each(steps['wall'])}; lake {each(steps['lake'], steps['runs'])}"
+
+
+def summed(each: list[dict]) -> dict:
+    """The `steps` of the parts `each` added up, key by key."""
+    return {"wall": {k: round(sum(s["wall"][k] for s in each), 1) for k in WALL},
+            "lake": {k: round(sum(s["lake"][k] for s in each), 1) for k in LAKE},
+            "runs": {k: sum(s["runs"][k] for s in each) for k in LAKE}}
+
+
+def timed(d) -> bool:
+    """Whether d is a `steps` record as `Steps.record` writes it: `WALL` and `LAKE` seconds (non-negative numbers)
+    and `LAKE` runs (non-negative ints)."""
+    return type(d) is dict and set(d) == {"wall", "lake", "runs"} and all(
+        type(d[p]) is dict and list(d[p]) == list(keys) and all(type(v) in types and v >= 0 for v in d[p].values())
+        for p, keys, types in (("wall", WALL, (int, float)), ("lake", LAKE, (int, float)), ("runs", LAKE, (int,))))
+
+
 class Scratch:
     """A private copy of lean/, sources and build, that mutants are built in; the checkout is only read."""
 
@@ -945,7 +1123,8 @@ class Scratch:
 
     def lake(self, env: dict, *args: str, timeout: float | None = None) -> tuple[int, str]:
         """Lake's exit code and output; past `timeout` seconds the whole process group is killed and the code is
-        `TIMED_OUT` (a mutant can make Lean run forever: hunt T5w, T7)."""
+        `TIMED_OUT` (a mutant can make Lean run forever: hunt T5w, T7). Its seconds count in `STEPS`."""
+        started = time.monotonic()
         child = subprocess.Popen([lake_outputs.lean_executable(env, "lake"), *args], cwd=self.lean, env=env,
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, start_new_session=True)
         try:
@@ -954,6 +1133,8 @@ class Scratch:
             os.killpg(child.pid, signal.SIGKILL)
             child.communicate()
             return TIMED_OUT, f"lake {args[0]} did not finish in {timeout:g} s (--build-timeout)"
+        finally:
+            STEPS.ran(time.monotonic() - started)
         return child.returncode, out + err
 
 
@@ -981,39 +1162,24 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             rebuilt.append(all(build(stage)[0] == 0 for stage in (built[:1], built[1:]) if stage))
         return rebuilt[0]
 
-    probed: dict[str, dict] = {}  # file -> `probe` of its checks in this mutant's build
+    def probing(f: str, only: set[tuple[int, int]] | None) -> tuple[dict, set[tuple[int, int]]]:
+        outside_file = next((t for t in outside if str(t) == f), None)
+        if outside_file is not None:
+            built_mutant()
+        elif not current["mutant"]:  # the probe reads the mutant's build
+            build(current["stage"])
+            current["mutant"] = True
+        text, mine = (outside_file.read_text(), file_roles(outside_file)) if outside_file else (
+            read(f), tree.roles.get(f, ()))
+        with STEPS.step("mutant_probes"):
+            return probe(lake, {**env, "TM_TRUST_MUTATED": m.definition,
+                                "TM_TRUST_LINES": f"{m.lines[0]} {m.lines[1]}"}, text, mine,
+                         beside(scratch.lean, f), outside_file is not None, only), set(named(text, mine)[1].values())
+    probes = Probes(probing)  # the checks of this mutant's build
 
     def reading(key: tuple) -> str | None:
         """Why the check at `key` cannot refute the mutated definition (`probe`), or None."""
-        f, span = key
-        if f not in probed:
-            outside_file = next((t for t in outside if str(t) == f), None)
-            if outside_file is not None:
-                built_mutant()
-            elif not current["mutant"]:  # the probe reads the mutant's build
-                build(current["stage"])
-                current["mutant"] = True
-            text, mine = (outside_file.read_text(), file_roles(outside_file)) if outside_file else (
-                read(f), tree.roles.get(f, ()))
-            probed[f] = probe(lake, {**env, "TM_TRUST_MUTATED": m.definition,
-                                             "TM_TRUST_LINES": f"{m.lines[0]} {m.lines[1]}"}, text, mine,
-                              beside(scratch.lean, f), outside_file is not None)
-        entry, control = probed[f].get(span), hashes.get(key)
-        if entry is None or control is None:
-            return "Lean could not elaborate it in the probe"
-        if "hyps" in entry["flags"]:
-            return "its goal has a hypothesis"
-        if "sorry" in entry["flags"]:
-            return "it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it)"
-        if "axiom" in entry["flags"]:
-            return "it computes through an axiom of this tree, which the mutant can make false"
-        if "io" in entry["flags"]:
-            return "it runs IO (an `initialize`d value, `unsafeIO`), which can read the mutated source"
-        if not control["flags"] >= {x for x in entry["flags"] if x.startswith("hash ")}:
-            return "Lean elaborates it otherwise than without the mutant"
-        if drift := next((c for c, h in entry["consts"].items() if control["consts"].get(c) != h), None):
-            return f"{drift}, which it reads, is not what it is without the mutant"
-        return None
+        return refusal(probes(key), hashes.get(key))
     built = targets(tree, m, tests, deep)
     texts: dict[str, str] = {}  # file -> the checkout's text, written back at the end
     cuts: dict[str, list[tuple[int, int]]] = {}  # file -> the spans cut in it
@@ -1027,9 +1193,10 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
 
     columns: dict[tuple[str, int, str], int] = {}  # each error's column, which `in_tactic` reads
 
-    def build(stage: list[str]) -> tuple[int, list[tuple[str, int, str]]]:
+    def build(stage: list[str], step: str | None = None) -> tuple[int, list[tuple[str, int, str]]]:
         for attempt in range(3):  # again: Lake can fail with no located error under load
-            code, output = lake(env, "build", *(f"+{x}" for x in stage))
+            with STEPS.step(step or ("mutant_builds" if stage == built[:1] else "mutant_checks")):
+                code, output = lake(env, "build", *(f"+{x}" for x in stage))
             if code == TIMED_OUT:
                 return code, [("", 0, output)]
             found = located(output)
@@ -1103,7 +1270,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 key = (tuple(stage), state())
                 if (control := controls.get(key)) is None:  # the same build without the mutant
                     write(m.file, False)
-                    control = build(stage)[1]
+                    control = build(stage, "stage_controls")[1]
                     write(m.file, True)
                     current["mutant"] = False  # the stage's build is the control's until it is built again
                     if control[:1] and not control[0][0]:  # no located error: not kept for others
@@ -1119,10 +1286,11 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 # error or a line that is not the checkout's is the tool's own edit (review F9), and a message that
                 # states no refutation refutes nothing (F10, F11), so each decides UNKNOWN.
                 return settle(found, read, lambda f: texts[f] if f in texts else read(f), tree.roles,
-                              lambda now: rebuild(stage, now), reading)
+                              lambda now: rebuild(stage, now), reading, scope=probes.scope)
             else:
                 return "UNKNOWN", "the proof cuts did not settle"
-        failing = {t: out for t in outside if (out := lake(env, "env", "lean", str(t)))[0]}
+        with STEPS.step("outside_checks"):
+            failing = {t: out for t in outside if (out := lake(env, "env", "lean", str(t)))[0]}
         if late := next((t for t in failing if failing[t][0] == TIMED_OUT), None):
             return "UNKNOWN", f"{late}: {failing[late][1]}"
         if not failing:  # review sc-1ae F1: the proofs it broke, each cut, which an --allow reason cites
@@ -1131,8 +1299,9 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
         key = ("outside", tuple(built), state())
         if key not in controls:
             write(m.file, False)
-            ok = all(build(stage)[0] == 0 for stage in (built[:1], built[1:]) if stage)
-            controls[key] = [t for t in outside if not ok or lake(env, "env", "lean", str(t))[0]]
+            ok = all(build(stage, "stage_controls")[0] == 0 for stage in (built[:1], built[1:]) if stage)
+            with STEPS.step("stage_controls"):
+                controls[key] = [t for t in outside if not ok or lake(env, "env", "lean", str(t))[0]]
             write(m.file, True)
         if not (new := [t for t in failing if t not in controls[key]]):
             return "UNKNOWN", f"{next(iter(failing))} fails without the mutant too"
@@ -1141,7 +1310,8 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             copy = scratch.lean.parent / "outside" / t.name
             copy.parent.mkdir(exist_ok=True)
             copy.write_text(now[str(t)])
-            code, output = lake(env, "env", "lean", str(copy))
+            with STEPS.step("outside_checks"):
+                code, output = lake(env, "env", "lean", str(copy))
             found = [(str(t) if f == str(copy) else f, n, message) for f, n, _, message in located(output, LEAN_ERROR)]
             return None if not built_mutant() or code and not found else found
 
@@ -1152,7 +1322,8 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 return "UNKNOWN", f"{t} fails with no located error: {failing[t][1][-200:]}"
             text = t.read_text()
             status, detail = settle(found, lambda f: text if f == str(t) else "", lambda f: text if f == str(t) else "",
-                                    {str(t): file_roles(t)}, lambda now, t=t: again(t, now), reading, str)
+                                    {str(t): file_roles(t)}, lambda now, t=t: again(t, now), reading, str,
+                                    probes.scope)
             if status != "KILLED":
                 return status, detail
             first = first or detail
@@ -1409,11 +1580,12 @@ def exit_code(counts: dict[str, int]) -> int:
 
 def record(found: list[Mutant], base: str, head: str, jobs: int, max_mutants: int, deep: bool, tests: list[str],
            seconds: int, classes: list[str], digests: dict, rescore: dict | None, shard: dict | None = None,
-           shards: list[dict] | None = None) -> dict:
-    """The --json record, of a run, a part (`shard`) or a merge of the parts (`shards`)."""
+           shards: list[dict] | None = None, steps: dict | None = None) -> dict:
+    """The --json record, of a run, a part (`shard`) or a merge of the parts (`shards`); `steps`, where its time
+    went (`Steps`)."""
     counts, by_class = tally(found, shard is not None)
     return {"base": base, "head": head, "jobs": jobs, "max_mutants": max_mutants, "deep": deep, "tests": tests,
-            "seconds": seconds, "counts": counts, "classes": classes, "class_counts": by_class, "inputs": digests,
+            "seconds": seconds, **({"steps": steps} if steps else {}), "counts": counts, "classes": classes, "class_counts": by_class, "inputs": digests,
             **({"rescore": rescore} if rescore else {}),
             "definitions": [f"lean/{f}: {d}" for f, d in sorted({(m.file, m.definition) for m in found})],
             **({"shard": shard} if shard is not None else {}), **({"shards": shards} if shards else {}),
@@ -1490,11 +1662,13 @@ def unread(d) -> str | None:
             "rescore" not in d or fits(d["rescore"], RESCORE, ("full_run",)) and d["rescore"]["mode"] in (
                 "full", "identical", "checks"))):
         return "a field is missing or not of its type"
+    if "steps" in d and not timed(d["steps"]):
+        return "its steps are not a record of seconds by step"
     if why := unwritten(d.get("mutants")):
         return why
     found = [row_mutant(r) for r in d["mutants"]]
     again = record(found, d["base"], d["head"], d["jobs"], d["max_mutants"], d["deep"], d["tests"], d["seconds"],
-                   d["classes"], d["inputs"], d.get("rescore"), shard=d["shard"])
+                   d["classes"], d["inputs"], d.get("rescore"), shard=d["shard"], steps=d.get("steps"))
     if bad := sorted(k for k in again.keys() | d.keys() if canon(again.get(k)) != canon(d.get(k))):
         return f"its {', '.join(bad)} are not what its rows give"
     return None
@@ -1580,16 +1754,20 @@ def merge(out: Path, paths: list[Path]) -> int:
         found = [row_mutant(rows.get(r["id"], (r,))[0]) for r in first["mutants"]]
         rescore = first.get("rescore") and {**first["rescore"], **{x: sum(d["rescore"][x] for d, _ in parts)
                                                                    for x in ("reused", "rerun")}}
-        shards = [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"]} for d, _ in parts]
+        shards = [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"],
+                   **({"steps": d["steps"]} if "steps" in d else {})} for d, _ in parts]
+        steps = summed([d["steps"] for d, _ in parts]) if all("steps" in d for d, _ in parts) else None
         data = record(found, first["base"], first["head"], sum(s["jobs"] for s in shards), first["max_mutants"],
                       first["deep"], first["tests"], max(s["seconds"] for s in shards), first["classes"],
-                      first["inputs"], rescore, shards=shards)
+                      first["inputs"], rescore, shards=shards, steps=steps)
     except (KeyError, TypeError, AttributeError, ValueError) as error:
         return refuse(f"a part cannot be read ({type(error).__name__}: {error})")
     for m in found:
         if m.status in ("SURVIVOR", "UNKNOWN", "NOT RUN"):
             print(line(m))
     counts = summary(found, False, data["seconds"], rescore)
+    if steps:
+        print(steps_line(steps))
     out.write_text(evidence(data))
     return exit_code(counts)
 
@@ -1647,6 +1825,7 @@ def main(argv: list[str] | None = None) -> int:
     if bad := [t for t in [*outside, *(root / "lean" / t for t in tests)] if t.suffix != ".lean" or not t.is_file()]:
         return print(f"--test: not a Lean file: {bad}", file=sys.stderr) or 2
     started = time.monotonic()
+    STEPS.reset()
     found, tree, fatal = plan(root, base, classes)
     for t in outside:
         try:
@@ -1708,29 +1887,39 @@ def main(argv: list[str] | None = None) -> int:
         pool: queue.Queue = queue.Queue()
         controls: dict = {}  # the builds without a mutant, by stage and cuts: shared by every scratch
         hashes: dict = {}  # `probe`'s hash of each check without a mutant
+        since = STEPS.phase("plan", started)
         if todo:  # the control build, and each check's elaboration, only for the mutants that run
             first = Scratch(root / "lean", Path(scratch_dir))
-            code, output = first.lake(env, "build", *sorted({f"+{x}" for m in todo for x in targets(tree, m, tests,
-                                                                                                args.deep)}))
-            failing = [t for t in outside if first.lake(env, "env", "lean", str(t))[0]]
+            since = STEPS.phase("scratch", since)
+            with STEPS.step("control_build"):
+                code, output = first.lake(env, "build", *sorted({f"+{x}" for m in todo for x in targets(
+                    tree, m, tests, args.deep)}))
+                failing = [t for t in outside if first.lake(env, "env", "lean", str(t))[0]]
+            since = STEPS.phase("control_build", since)
             if code or failing:
                 return print(f"the checks fail without a mutant:\n{output[-3000:]}{failing}", file=sys.stderr) or 2
             files = {f: (first.lean / f, tree.roles[f]) for f in sorted({tree.files[x] for m in todo for x in targets(
                 tree, m, tests, args.deep)}) if any(r == "check" for _, _, r, _ in tree.roles.get(f, ()))}
             files.update({str(t): (t, file_roles(t)) for t in outside})
-            if not install(lambda *a: first.lake(env, *a), first.lean):
-                return print("the Lean probe (READS) does not compile", file=sys.stderr) or 2
+            with STEPS.step("probe_install"):
+                if not install(lambda *a: first.lake(env, *a), first.lean):
+                    return print("the Lean probe (READS) does not compile", file=sys.stderr) or 2
+            since = STEPS.phase("probe_install", since)
 
             def control(item: tuple[int, tuple[str, tuple[Path, list]]]) -> dict:
                 i, (key, (path, roles)) = item
-                got = probe(first.lake, env, path.read_text(), roles, beside(first.lean, key), Path(key).is_absolute())
+                with STEPS.step("control_probes"):
+                    got = probe(first.lake, env, path.read_text(), roles, beside(first.lean, key),
+                                Path(key).is_absolute())
                 return {(key, span): said for span, said in got.items()}
             with ThreadPoolExecutor(max_workers=jobs) as executor:  # each check's elaboration without a mutant
                 hashes.update({k: v for part in executor.map(control, enumerate(files.items())) for k, v in
                                part.items()})
+            since = STEPS.phase("control_probes", since)
             pool.put(first)
             for _ in range(min(jobs, len(todo)) - 1):
                 pool.put(Scratch(root / "lean", Path(scratch_dir), first))
+            since = STEPS.phase("scratch", since)
 
         def one(m: Mutant) -> None:
             scratch = pool.get()
@@ -1743,6 +1932,8 @@ def main(argv: list[str] | None = None) -> int:
 
         with ThreadPoolExecutor(max_workers=jobs) as executor:
             list(executor.map(one, todo))
+        since = STEPS.phase("mutants", since)
+    since = STEPS.phase("cleanup", since)  # the scratch copies removed
     for m in not_run:
         print(line(m))
     seconds = round(time.monotonic() - started)
@@ -1753,10 +1944,13 @@ def main(argv: list[str] | None = None) -> int:
     if args.json:
         for m in found:  # what each KILLED and INVALID verdict reads, for a later --rescore
             reads.verdict(m)
+        STEPS.phase("reads", since)
+    print(steps_line(steps := STEPS.record()), flush=True)
+    if args.json:
         args.json.write_text(evidence(record(
             found, digests["base"], git(root, "rev-parse", "HEAD").stdout.strip(), jobs, args.max_mutants, args.deep,
             args.test, seconds, list(classes), digests, rescore,
-            shard={"k": shard[0], "n": shard[1], "owned": [m.id for m in mine]} if shard else None)))
+            shard={"k": shard[0], "n": shard[1], "owned": [m.id for m in mine]} if shard else None, steps=steps)))
     return exit_code(counts)
 
 
