@@ -695,7 +695,8 @@ class Probes:
     (`scope`), and read only for those (eff-tm-probe-scope F5: any other check is absent from the probe, a kill
     lost). `probing(file, only)`: `probe`'s entries of the file (`only` as `probe`'s) and the spans `named` can
     probe. A check of the set it can probe with no whole entry (`complete`: the run timed out or crashed, a cut that
-    changed a parse: F3, F4) is read from the whole file's probe."""
+    changed a parse: F3, F4) is read from the whole file's probe. `given` also supplies the lazy control cache's
+    scope at `run.reading`, so both sides ask for the same candidate checks."""
 
     def __init__(self, probing):
         self.probing = probing
