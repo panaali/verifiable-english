@@ -711,10 +711,18 @@ def identityCase (j : Json) : Except String Json := do
       VE.Route.Wire.meaningId e.profiles environmentId (← j.getObjVal? "ast")
     else if kind == "rights-meaning" then do
       let environment ← j.getObjVal? "environment"
-      let e ← VE.Rights.Wire.decodeRightsEnvironment environment
-      let environmentId ← environmentIdOf e.profiles environment
+      let profiles ← VE.Route.Gate.profilesOf environment
+      unless profiles.contains VE.Rights.Wire.rightsProfile do
+        throw "UnsupportedProfile: rights@0 is required"
+      if profiles.contains "readings@1" then
+        let _ ← VE.Readings.Wire.decodeEnvironment environment
+      else
+        let frame ← if profiles.contains "norm-defaults@0" then
+          VE.NormDefaults.Wire.placeholderJson environment else pure environment
+        let _ ← VE.Rights.Wire.decodeRightsEnvironment frame
+      let environmentId ← environmentIdOf profiles environment
       let content ← Json.parse (← VE.Bridge.stringField j "content_json")
-      VE.Rights.Wire.rightsMeaningId e.profiles environmentId content
+      VE.Rights.Wire.rightsMeaningId profiles environmentId content
     else if kind == "model" then do
       let row ← modelCase j
       VE.Bridge.stringField row "model_id"

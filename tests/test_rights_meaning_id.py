@@ -59,6 +59,13 @@ def test_rights_meaning_id_binds_environment():
     assert rights_meaning_id(_env(), content) != rights_meaning_id(RightsEnvironment(_soft_raw_env()), content)
 
 
+def test_rights_meaning_id_accepts_readings_rights_environment():
+    from tests.test_readings_s1_lean import env_rights
+    env = D._environment(env_rights())
+    content = right()
+    assert rights_meaning_id(env, content) == rights_meaning_id(env, _with(content, "norm", mode="strict"))
+
+
 def _with(content, slot, **soft):
     content = deepcopy(content)
     body = next(iter(content.values()))
