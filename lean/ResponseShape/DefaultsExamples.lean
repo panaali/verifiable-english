@@ -77,6 +77,13 @@ def long : Json := βFact [exAt "urgent"] [exAt "urgent"]
   [drop a "basis", set a "reason" (.str "x"), set a "basis" (.str "default"), drop u "reason",
     set u "form" (.str "short"), set u "basis" (.str "needs"), set u "assumptions" (toJson ([] : List String))].all
     fun b => !accepts cert b
+-- DE5's list is present and typed on FOLLOWS and elaboration, absent on UNKNOWN.
+#guard let e := run (req αEnv γR "defaults-elaborate"); let a := run cert; let u := run certNone;
+  accepts (req αEnv γR "defaults-elaborate") e && accepts cert a && accepts certNone u &&
+  [drop e "deciders", set e "deciders" (.num 7), set e "deciders" (toJson [7])].all
+    (!accepts (req αEnv γR "defaults-elaborate") ·) &&
+  [drop a "deciders", set a "deciders" (.num 7), set a "deciders" (toJson [7])].all (!accepts cert ·) &&
+  !accepts certNone (set u "deciders" (toJson ["assistant"]))
 -- refused: DOES-NOT-FOLLOW without its situation or its forced list, a forced entry's condition retyped, `forced`
 -- with UNKNOWN
 #guard holds dβ fun L => let a := run (βTwo L);
