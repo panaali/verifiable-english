@@ -139,3 +139,42 @@ def test_identity_fixtures_are_unchanged_after_english_roundtrip():
         assert meaning_id(env, copied) == case['expected_identity']['meaning_id']
         assert env.environment_id == case['expected_identity']['environment_id']
         assert render(copied, env, 've_strict') == render(document, env, 've_strict')
+
+
+def test_cli_english_all_five_commands_and_strict_compatibility(tmp_path):
+    from test_cli import cli
+    from ve.model import FiniteModel
+    from ve.identity import meaning_id, source_id
+    env_path, source_path = tmp_path / 'env.json', tmp_path / 'english.txt'
+    env_path.write_text(json.dumps(vocabulary()))
+    f = Forall('item', Implies(Unary('active', Var(0)), Unary('reviewed', Var(0))))
+    document = Document((f,))
+    source_path.write_text(render(document, ENV, 've_english').lower())
+    # Preserve proper-name case in general; this fixture contains none.
+    for command in ('check', 'parse'):
+        result = cli(command, '--env', env_path, '--surface', 'english', source_path)
+        assert result.returncode == 0, result.stdout
+        record = json.loads(result.stdout)
+        assert record['meaning_id'] == meaning_id(ENV, document)
+        assert record['source_id'] == source_id(source_path.read_bytes(), ENV)
+        assert record['paraphrase']['changed']
+        assert record['paraphrase']['input_text'] == source_path.read_text()
+        assert record['display_text'] == render(document, ENV, 've_english')
+    result = cli('render', '--env', env_path, '--surface', 'english', source_path)
+    assert result.returncode == 0 and result.stdout == render(document, ENV, 've_english')
+    assert json.loads(result.stderr)['paraphrase']['changed']
+    model_path = tmp_path / 'model.json'
+    model_path.write_text(json.dumps({'complete': True, 'domains': {'item': ['s'], 'agent': ['p']},
+                                     'constants': {'api': 's', 'alice': 'p'},
+                                     'relations': {'active': [], 'reviewed': [], 'exempt': [], 'owns': [], 'links': [], 'ready': []}}))
+    result = cli('evaluate', '--env', env_path, '--surface', 'english', '--model', model_path, source_path)
+    assert result.returncode == 0, result.stdout
+    assert json.loads(result.stdout)['evaluation']['status'] == 'Satisfied'
+    result = cli('countermodel', '--env', env_path, '--surface', 'english', '--conclusion', source_path)
+    assert result.returncode == 0, result.stdout
+    assert str(source_path) in json.loads(result.stdout)['paraphrases']
+    strict_path = tmp_path / 'strict.ve'
+    strict_path.write_text(render(document, ENV, 've_strict'))
+    assert cli('render', '--env', env_path, strict_path).stdout == render(document, ENV, 've_english')
+    assert cli('render', '--env', env_path, '--surface', 'strict', strict_path).stdout == strict_path.read_text()
+    assert cli('render', '--env', env_path, '--view', 've_strict', strict_path).stdout == strict_path.read_text()

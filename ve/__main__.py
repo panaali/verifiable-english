@@ -57,6 +57,8 @@ def main(argv=None):
     for command in ("parse", "format", "render", "evaluate", "check", "import-fol", "countermodel"):
         sub = commands.add_parser(command)
         sub.add_argument("--env", required=True, help="environment JSON file")
+        sub.add_argument("--surface", choices=("strict", "english"),
+                         help="input language; omitted means strict input and English display")
         if command == "countermodel":
             sub.add_argument("--premises", help="VE document; omit for no premises")
             sub.add_argument("--conclusion", required=True, help="exactly one VE statement")
@@ -70,8 +72,8 @@ def main(argv=None):
         else:
             sub.add_argument("source", help="VE source or, for import-fol, FOL JSON; '-' reads stdin")
         if command in ("render", "import-fol"):
-            sub.add_argument("--view", choices=("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent",
-                                                 "canonical", "natural"), default="ve_strict")
+            sub.add_argument("--view", choices=("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent", "ve_english",
+                                                 "canonical", "natural"), default=None)
             sub.add_argument("--with-legend", action="store_true", help="include the shared vocabulary legend")
             sub.add_argument("--legend-style", choices=LEGEND_STYLES, default="json",
                              help="vocabulary legend format (used with --with-legend)")
@@ -100,14 +102,29 @@ def main(argv=None):
             else:
                 print(export_grammar(env, wrapper=args.wrapper, **options), end="")
             return 0
+        surface = args.surface or "strict"
+        display_view = "ve_strict" if args.surface == "strict" else "ve_english"
+        if hasattr(args, "view") and args.view is None:
+            args.view = "ve_strict" if args.command == "import-fol" else display_view
+        paraphrases = {}
+
+        def read_document(path):
+            source = _read(path, MAX_SOURCE_BYTES)
+            if surface == "english":
+                from .english import parse_english_with_metadata
+                parsed = parse_english_with_metadata(env, source)
+                paraphrases[path] = parsed.paraphrase()
+                return parsed.document
+            return parse(env, source)
+
         if args.command == "countermodel":
-            premises = parse(env, _read(args.premises, MAX_SOURCE_BYTES)).formulas if args.premises else ()
-            conclusion = parse(env, _read(args.conclusion, MAX_SOURCE_BYTES))
+            premises = read_document(args.premises).formulas if args.premises else ()
+            conclusion = read_document(args.conclusion)
             if len(conclusion.formulas) != 1:
                 raise VEError("A claimed entailment requires exactly one conclusion statement")
             nonvacuous = None
             if args.nonvacuous_for:
-                document = parse(env, _read(args.nonvacuous_for, MAX_SOURCE_BYTES))
+                document = read_document(args.nonvacuous_for)
                 if len(document.formulas) != 1:
                     raise VEError("--nonvacuous-for requires exactly one statement")
                 nonvacuous = document.formulas[0]
@@ -116,7 +133,11 @@ def main(argv=None):
                                        nonempty_domains=args.nonempty_domains, nonvacuous_for=nonvacuous,
                                        semantic_nonvacuity=args.semantic_nonvacuity,
                                        max_models=args.max_models, max_evaluations=args.max_evaluations)
-            _emit(result.to_dict())
+            record = result.to_dict()
+            record["conclusion_text"] = render(conclusion, env, display_view)
+            if paraphrases:
+                record["paraphrases"] = paraphrases
+            _emit(record)
             return 0 if result.status == "Found" else (3 if result.status == "NotFound" else 4)
         if args.command == "import-fol":
             document = document_from_named_fol(env, loads_json(_read(args.source)))
@@ -135,12 +156,21 @@ def main(argv=None):
                          if getattr(args, "candidate_ast", None) else None)
             record = check(env, source, model, candidate_ast=candidate,
                            max_evaluations=getattr(args, "max_evaluations", 1_000_000),
-                           trace=not getattr(args, "no_trace", False))
+                           trace=not getattr(args, "no_trace", False), surface=surface)
+            from .ast import document_from_data
+            record["display_text"] = render(document_from_data(env, record["ast"]), env, display_view)
             _emit(record)
             if model is None:
                 return 0
             return {"Satisfied": 0, "Violated": 1, "ResourceLimit": 4}[record["evaluation"]["status"]]
-        document = parse(env, source)
+        if surface == "english":
+            from .english import parse_english_with_metadata
+            parsed = parse_english_with_metadata(env, source)
+            document = parsed.document
+            if parsed.paraphrase()["changed"]:
+                print(json.dumps({"paraphrase": parsed.paraphrase()}, ensure_ascii=False, indent=2), file=sys.stderr)
+        else:
+            document = parse(env, source)
         if args.command == "render":
             if args.view == "natural" and not args.with_legend:
                 _emit(natural_document(env, document, naming=args.naming).to_dict())
