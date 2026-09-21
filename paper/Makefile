@@ -26,7 +26,7 @@ html: assemble
 	python3 verify.py --html
 
 pdf: assemble
-	$(PANDOC) --pdf-engine=tectonic -o build/paper.pdf
+	$(PANDOC) --lua-filter=keep-tables.lua --pdf-engine=tectonic -o build/paper.pdf
 	python3 verify.py --pdf
 
 check: html

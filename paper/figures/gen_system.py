@@ -33,6 +33,9 @@ def main():
         if suffix=='pdf':meta.update(CreationDate=None,ModDate=None)
         elif suffix=='svg':meta.update(Date=None)
         fig.savefig(ROOT/f'figures/system.{suffix}',dpi=180,metadata=meta)
+        if suffix == 'svg':
+            path = ROOT / 'figures/system.svg'
+            path.write_text('\n'.join(line.rstrip() for line in path.read_text().splitlines()) + '\n')
     plt.close(fig)
     print('System diagram generated from committed interface data.')
 if __name__=='__main__':main()

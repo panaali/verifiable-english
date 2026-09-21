@@ -20,4 +20,7 @@ header-includes:
   - \AtBeginEnvironment{longtable}{\footnotesize}
   - \AtBeginEnvironment{verbatim}{\footnotesize}
   - \setlength{\emergencystretch}{3em}
+  - \widowpenalty=10000
+  - \clubpenalty=10000
+  - \displaywidowpenalty=10000
 ---

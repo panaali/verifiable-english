@@ -49,7 +49,7 @@ def worked_example():
             math = re.sub(r'\\mathrm\{x\}(\d+)', r'x_{\1}', math)
             parts.append('$$\n' + math.strip() + '\n$$\n')
         else:
-            wrapped = textwrap.fill(strings[view].strip(), width=76,
+            wrapped = textwrap.fill(strings[view].strip(), width=80,
                                     break_long_words=False, break_on_hyphens=False)
             parts.append('```text\n' + wrapped + '\n```\n')
     parts.append('<!-- src: paper/sources/worked-example.env.json; '
