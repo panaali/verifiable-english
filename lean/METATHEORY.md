@@ -84,6 +84,24 @@ Names below have prefix `VE.Bridge.`.
 | `lookup_name` | If finite-table lookup succeeds for a key, some pair with that exact key belongs to the table. |
 | `vocabulary_namesValid` | For every finite vocabulary, if its executable declaration-name check returns true, its induced environment satisfies `Surface.NamesValid`. |
 
+## New theorem inventory: accepted text and uniqueness
+
+Names in this table have prefix `VE.Surface.`.
+
+| Theorem | Exact statement in plain words |
+|---|---|
+| `accepted_normalize` | For every environment and text parsed successfully to a formula list, normalization returns exactly `some` of that list's printed String. This is a definitional characterization, not evidence of grammar correspondence. |
+| `accepted_reparse` | Under `NamesValid`, any successfully parsed list can be printed and reparsed to exactly the same list. |
+| `print_injective` | Under `NamesValid`, any two `Document E` values with equal printed Strings are equal documents, including every term index, constructor and statement position. |
+| `canonical_unique` | Under `NamesValid`, if two well-formed documents both print to a given String, they are equal. This is uniqueness for the canonical rendering relation. |
+| `accepted_normalize_eq_iff` | Under `NamesValid`, for any two texts successfully parsed to lists `a` and `b`, their normalization results are equal if and only if `a = b`. |
+| `normalize_print` | Under `NamesValid`, normalizing any well-formed document's printed String returns that exact String. |
+
+The injectivity result is the requested P1-style corollary of P4. It does **not**
+prove the verification contract's stronger P1 about *all derivations* of an
+independently specified grammar. Acceptance typing and canonical reparse are
+progress toward P2/P3; the equation for `normalize` alone is definitional.
+
 ## Remaining obligations
 
 No independent `ParseSpec` or general grammar soundness/completeness/uniqueness
