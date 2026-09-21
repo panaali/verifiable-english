@@ -43,29 +43,47 @@ non-English interfaces too. VE's surface must therefore be compared with
 structured logic using the same checker and evidence. Model judges test a model
 oversight hypothesis; they cannot establish human readability.
 
+The evidence supports the checked components more than the English surface.
+Strict English showed no benefit for the capable primary judge; a useful
+reduction is excluded without explanation and remains inconclusive with it.
+Fluent rendering for a weaker judge is an exploratory hypothesis. Hosted small
+models already read the symbolic task near-perfectly in development calibration.
+In contrast, the checked-countermodel intervention cut false approval for 14B
+and rescued honest acceptance for 7B. Real policy text also exposes a separate
+bottleneck: much of its meaning and justification lies outside current VE.
+<!-- src: paper/sources/e1-results.md; paper/sources/e1-prereg-frozen.md;
+paper/sources/e4-score-summary.json; paper/sources/debate-coverage.md;
+paper/sources/amendment-coverage.md. -->
+
 The contributions available for inspection are:
 
-- A relational language specification, canonical serialization, and Python,
-  Lean, and Rust cores with distinct documented boundaries; an opt-in closure
-  extension is implemented in Python, Rust, and the Lean reference
-  (`docs/spec/`, `ve/`, `lean/`, `rust/`).
-- Five deterministic views and a common vocabulary legend, with inverse-parser
-  tests that recover indexed syntax on development cases
-  (`docs/rendering-views.md`, `tests/test_fluent.py`).
-- Finite evaluation, countermodel validation, data-only tableau certificates,
-  claim graphs, and a three-valued semantic comparison API
-  (`docs/implementation.md`, `docs/oracle.md`).
-- Lean theorems for named reference operations, alongside explicit unproved
-  boundaries and differential conformance evidence (`lean/METATHEORY.md`,
-  `lean/CLOSURE.md`, `conformance/`).
-- A cross-family model-rater coverage audit with preserved disagreements,
-  checked syntax witnesses, and a profile-extension ledger
-  (`paper/sources/e0-second-rater.md`, `docs/spec/v0.1-coverage.md`).
-- Prompt-sensitive development calibration, frozen E1 and E4 designs, E5
-  materials and pilots, and a process record of defects and operational failures.
-  **[RESULT-CONTRIBUTIONS: insert scored E1 and E4 findings within their
-  per-judge and mechanism-demonstration limits.]**
+- A relational language, five deterministic presentations, finite evaluation,
+  countermodel validation, data-only certificates, and assumption-preserving
+  claim graphs, with Python, Lean, and Rust boundaries documented separately.
+  Lean establishes named reference properties, including an opt-in sound
+  closure certificate checker; it does not establish production refinement.
+- A frozen sign-off experiment with a negative primary conclusion: VE strict
+  has no demonstrated benefit over symbolic FOL for Qwen2.5-32B-Instruct-AWQ.
+  P1 is inconclusive; P2 refutes a 0.05 reduction without establishing harm.
+  The combined claim is inconclusive and not supported. Fluent rendering for
+  14B remains an exploratory hypothesis for replication.
+- A countermodel-display mechanism demonstration: checked feedback cuts 14B
+  false approval and recovers 7B honest acceptance. Fabricated countermodels
+  fail replay by construction. These results concern machine checking and
+  its display, with per-judge limits, not an English-specific advantage.
+- A model-rater coverage audit with preserved disagreements and a qualitative
+  policy use case showing low coverage without extensions: five of nine
+  debate claims fall outside formalization, and three of four amendment
+  clauses are OPAQUE. One Sonnet agent produced the new use case without
+  cross-review; this is not a representative coverage estimate.
+- A process record of caught defects, failed calibration, and runner-estimated
+  compute costs. E5 remains materials and pilots only; E2 was not run.
+  Human evaluation, multi-family scored replication, external-baseline
+  comparisons, long-context and compaction settings, and training remain open.
 
-<!-- src: docs/rendering-views.md (five); docs/spec/closure-implementation.md;
-paper/sources/manifest.json pins the implementation base and branch documents.
-E1 v5 and E4 revision 2 are frozen; E5 remains a deferred draft. -->
+<!-- src: docs/rendering-views.md; docs/spec/closure-implementation.md;
+lean/METATHEORY.md; lean/CLOSURE.md; paper/sources/e1-results.md;
+paper/sources/e4-score-summary.json; paper/sources/e4-prereg-frozen.md;
+paper/sources/e0-second-rater.md; paper/sources/debate-coverage.md;
+paper/sources/amendment-coverage.md; paper/sources/process-log-results.md;
+paper/sources/manifest.json pins the implementation base and branch documents. -->

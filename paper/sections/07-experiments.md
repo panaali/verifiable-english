@@ -1,12 +1,13 @@
-# Experiments: frozen designs and development evidence
+# Experiments: scored results and development evidence
 
 E1 v5 and E4 revision 2 were frozen on 2026-09-21 before scored judging.
-At this manuscript cutoff, E1 scoring had started and E4 was queued behind it;
-scored outcomes remain RESULT placeholders. E5 has materials and pilots only:
+Both scored runs are complete; the results below preserve their frozen
+per-judge decision rules. E5 has materials and pilots only:
 its scored run was not executed. E2 was not run. Development observations below
 explain design choices and do not substitute for held-out effects.
 <!-- src: paper/sources/e1-prereg-frozen.md; paper/sources/e4-prereg-frozen.md;
-paper/sources/e5-materials-pilots.md; paper/sources/process-log-v1.md. -->
+paper/sources/e5-materials-pilots.md; paper/sources/process-log-v1.md;
+paper/sources/e1-results.md; paper/sources/e4-score-summary.json. -->
 
 ## Shared estimands and safeguards
 
@@ -138,7 +139,10 @@ settings differ. Other-family ladder rungs did not qualify: Llama 8B rejected
 nearly everything, Gemma 9B approved nearly everything, and Phi had substantial
 response failures. Full historical counts remain in the committed source records.
 Only Qwen2.5-32B-Instruct-AWQ is primary; 14B-Instruct-AWQ is exploratory,
-and 7B is not scored in E1. Hosted scoring is optional, not assumed completed.
+and 7B is not scored in E1. The optional hosted scored references were not run. On these development
+sign-off items, hosted small models read FOL near-perfectly (0.97 accuracy for
+both hosted references); model readability is not the bottleneck here. This
+is a task-specific calibration observation, not a general claim about all FOL.
 <!-- src: paper/sources/local-ladder.md; paper/sources/colab-ladder.json;
 paper/sources/e1-judges.json; paper/sources/process-log-v1.md. -->
 
@@ -177,154 +181,190 @@ confirmed by this design; additional vocabulary copies do not add clusters.
 These are planning approximations, not measured scored precision.
 <!-- src: paper/sources/e1-prereg-frozen.md, Primary contrast through Sample size. -->
 
-### E1 scored table shells
+### E1 scored outcomes
 
-**[RESULT-E1: fill from experiments/E1/RESULTS.md after complete scoring.]**
-Every RESULT cell below is unobserved. Assigned denominators are fixed design
-counts, not completed-call counts. FA includes failures as approvals; HA treats
-failures as rejections. N/A would denote an unrun optional reference, never zero.
-S, K, V, N, F abbreviate FOL symbols, FOL keywords, VE strict, VE natural, VE fluent;
-A denotes asserted-faithful explanation, 0 denotes none.
+The strict English surface showed no benefit for the capable primary judge.
+For Qwen2.5-32B-Instruct-AWQ, P1 is inconclusive and P2 refutes a useful
+0.05 reduction, without establishing harm. **The combined per-judge claim is
+inconclusive and NOT supported.** It is not refuted as a whole: that rule
+requires both co-primaries to be refuted or one to be harmful. Both HA
+constraints hold. This is not evidence of equivalence for every effect size.
 
-Qwen2.5-32B AWQ (primary); each cell has 594 bad and 280 good assigned.
+All 17,480 sign-off trials were scored, with no failed calls, unparseable
+verdicts, truncations, or tool use, and no trial exclusions. Each cell has
+594 bad and 280 good candidates. Rates below are pooled; inferential differences
+are unweighted template means, so their signs can differ from pooled differences.
+S, K, V, N, F denote FOL symbols, FOL keywords, VE strict, VE natural, VE fluent;
+A denotes asserted-faithful explanation and 0 denotes none.
 
-| Cell | Bad approved / 594; FA | Good approved / 280; HA | Failures / 874 | Truncated / 874 |
+Qwen2.5-32B AWQ (primary).
+
+| Cell | FA (approved / bad) | HA (approved / good) | Failures | Truncated |
 |---|---|---|---|---|
-| S, 0 | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| K, 0 | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| V, 0 | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| N, 0 | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| F, 0 | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| S, A | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| K, A | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| V, A | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| N, A | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| F, A | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
+| S, 0 | 0.296 (176/594) | 0.914 (256/280) | 0 | 0 |
+| K, 0 | 0.281 (167/594) | 0.900 (252/280) | 0 | 0 |
+| V, 0 | 0.293 (174/594) | 0.918 (257/280) | 0 | 0 |
+| N, 0 | 0.283 (168/594) | 0.875 (245/280) | 0 | 0 |
+| F, 0 | 0.242 (144/594) | 0.929 (260/280) | 0 | 0 |
+| S, A | 0.152 (90/594) | 0.793 (222/280) | 0 | 0 |
+| K, A | 0.153 (91/594) | 0.789 (221/280) | 0 | 0 |
+| V, A | 0.187 (111/594) | 0.832 (233/280) | 0 | 0 |
+| N, A | 0.187 (111/594) | 0.754 (211/280) | 0 | 0 |
+| F, A | 0.158 (94/594) | 0.807 (226/280) | 0 | 0 |
 
-Qwen2.5-14B AWQ (secondary-permissive; exploratory); each cell has 594 bad and 280 good assigned.
+Qwen2.5-14B AWQ (secondary-permissive; exploratory).
 
-| Cell | Bad approved / 594; FA | Good approved / 280; HA | Failures / 874 | Truncated / 874 |
+| Cell | FA (approved / bad) | HA (approved / good) | Failures | Truncated |
 |---|---|---|---|---|
-| S, 0 | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| K, 0 | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| V, 0 | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| N, 0 | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| F, 0 | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| S, A | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| K, A | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| V, A | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| N, A | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
-| F, A | RESULT / 594; RESULT | RESULT / 280; RESULT | RESULT / 874 | RESULT / 874 |
+| S, 0 | 0.621 (369/594) | 0.904 (253/280) | 0 | 0 |
+| K, 0 | 0.620 (368/594) | 0.925 (259/280) | 0 | 0 |
+| V, 0 | 0.508 (302/594) | 0.907 (254/280) | 0 | 0 |
+| N, 0 | 0.572 (340/594) | 0.911 (255/280) | 0 | 0 |
+| F, 0 | 0.473 (281/594) | 0.932 (261/280) | 0 | 0 |
+| S, A | 0.475 (282/594) | 0.732 (205/280) | 0 | 0 |
+| K, A | 0.470 (279/594) | 0.771 (216/280) | 0 | 0 |
+| V, A | 0.423 (251/594) | 0.696 (195/280) | 0 | 0 |
+| N, A | 0.478 (284/594) | 0.761 (213/280) | 0 | 0 |
+| F, A | 0.318 (189/594) | 0.861 (241/280) | 0 | 0 |
 
-Co-primary estimates and HA constraints (32B only; differences are V minus S).
-The decision column applies the preregistered rules above, not significance alone.
+Co-primary decisions and HA constraints; V minus S, 32B only.
 
-| Contrast | Endpoint | Mean difference | 97.5% cluster-t interval | Preregistered decision |
+| Contrast | Endpoint | Difference | 97.5% interval | Decision |
 |---|---|---|---|---|
-| P1: A | FA | RESULT | [RESULT, RESULT] | RESULT |
-| P1: A | HA | RESULT | [RESULT, RESULT] | RESULT constraint; VE HA in cell table |
-| P2: 0 | FA | RESULT | [RESULT, RESULT] | RESULT |
-| P2: 0 | HA | RESULT | [RESULT, RESULT] | RESULT constraint; VE HA in cell table |
+| P1 A | FA | +0.027 | [-0.065, +0.120] | inconclusive |
+| P1 A | HA | +0.038 | [-0.019, +0.095] | constraint holds |
+| P2 0 | FA | +0.003 | [-0.043, +0.049] | refuted (a useful reduction is excluded) |
+| P2 0 | HA | +0.003 | [-0.049, +0.056] | constraint holds |
 
-**Per-judge combined decision: RESULT.** Any supported statement must identify
-its explanation condition unless both co-primaries support benefit.
+The P2 template mean is +0.003 even though the pooled difference is -0.003;
+copying a subtraction of the pooled rates into the primary estimate would
+change the estimand. The scored baseline FA of 0.296 lies just below the
+0.30 development gate edge; the preregistered primary role is retained.
+Hosted reference judges were not run.
 
-Bootstrap sensitivity analyses for 32B (pooled differences; 95% intervals).
+Bootstrap sensitivities for the primary judge use pooled differences and
+95% intervals; they do not replace the 97.5% primary analysis.
 
-| Contrast / endpoint | Pooled difference | Template bootstrap | Base-item bootstrap |
-|---|---|---|---|
-| P1 / FA | RESULT | [RESULT, RESULT] | [RESULT, RESULT] |
-| P1 / HA | RESULT | [RESULT, RESULT] | [RESULT, RESULT] |
-| P2 / FA | RESULT | [RESULT, RESULT] | [RESULT, RESULT] |
-| P2 / HA | RESULT | [RESULT, RESULT] | [RESULT, RESULT] |
-
-All secondary contrasts below are exploratory, with unadjusted 95% cluster-t
-intervals, and cannot support or refute the main claim. Each endpoint cell will
-hold the mean paired difference and its interval. The complete result record
-also retains pooled-rate template-bootstrap sensitivities.
-
-Qwen 14B: exploratory contrasts.
-
-| Contrast (first minus second) | FA difference [95% CI] | HA difference [95% CI] |
+| Contrast / endpoint | Pooled difference [template bootstrap] | Base-item bootstrap |
 |---|---|---|
-| V - S, A (P1) | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| V - S, 0 (P2) | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| K - S, 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| K - S, A | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| N - S, 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| N - S, A | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| F - S, 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| F - S, A | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| V - K, A | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| S: A - 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| K: A - 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| V: A - 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| N: A - 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| F: A - 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
+| P1 / FA | +0.035 [-0.042, +0.102] | [-0.002, +0.071] |
+| P1 / HA | +0.039 [+0.000, +0.086] | [+0.011, +0.071] |
+| P2 / FA | -0.003 [-0.041, +0.032] | [-0.031, +0.023] |
+| P2 / HA | +0.004 [-0.038, +0.040] | [-0.022, +0.032] |
 
-Qwen 32B: exploratory contrasts.
+### Exploratory contrasts: hypotheses for replication
 
-| Contrast (first minus second) | FA difference [95% CI] | HA difference [95% CI] |
+All contrasts in this subsection use unadjusted 95% cluster-t intervals.
+They generate replication hypotheses, not established findings of renderer
+benefit. In particular, the weaker 14B judge's VE strict P2 contrast is
+-0.106 [-0.202, -0.010]; fluent rendering is about 0.14 lower than symbols
+with and without explanation. The corresponding 32B fluent intervals include
+zero. Keyword substitution alone is about zero for both judges.
+
+Qwen 14B: exploratory contrasts (first minus second).
+
+| Contrast | FA difference [95% CI] | HA difference [95% CI] |
 |---|---|---|
-| K - S, 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| K - S, A | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| N - S, 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| N - S, A | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| F - S, 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| F - S, A | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| V - K, A | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| S: A - 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| K: A - 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| V: A - 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| N: A - 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
-| F: A - 0 | RESULT [RESULT, RESULT] | RESULT [RESULT, RESULT] |
+| V - S, A | -0.045 [-0.114, +0.023] | -0.035 [-0.120, +0.050] |
+| V - S, 0 | -0.106 [-0.202, -0.010] | +0.003 [-0.073, +0.080] |
+| V, A - K, A | -0.047 [-0.094, -0.001] | -0.073 [-0.120, -0.026] |
+| N, A - S, A | +0.011 [-0.046, +0.069] | +0.028 [-0.057, +0.113] |
+| F, A - S, A | -0.147 [-0.216, -0.078] | +0.125 [+0.031, +0.219] |
+| K, A - S, A | +0.002 [-0.056, +0.060] | +0.038 [-0.031, +0.107] |
+| K, 0 - S, 0 | +0.002 [-0.031, +0.036] | +0.021 [-0.022, +0.064] |
+| N, 0 - S, 0 | -0.042 [-0.137, +0.053] | +0.007 [-0.045, +0.058] |
+| F, 0 - S, 0 | -0.141 [-0.200, -0.083] | +0.028 [-0.023, +0.079] |
+| S, A - S, 0 | -0.148 [-0.227, -0.069] | -0.167 [-0.290, -0.044] |
+| K, A - K, 0 | -0.149 [-0.232, -0.065] | -0.149 [-0.246, -0.053] |
+| V, A - V, 0 | -0.088 [-0.134, -0.042] | -0.205 [-0.322, -0.087] |
+| N, A - N, 0 | -0.095 [-0.143, -0.047] | -0.146 [-0.245, -0.046] |
+| F, A - F, 0 | -0.154 [-0.213, -0.094] | -0.069 [-0.146, +0.007] |
 
-Descriptive reporting also includes attack family, oracle direction, and removal
-of the 41 empty-sort-only attacks. Each breakdown retains judge and cell, bad
-assigned/approved counts, FA and failures. Hosted references, if actually run,
-receive separate cell tables and no primary decision. View length and fluent
-contraction covariates are recorded below; they are not causal adjustments.
+Qwen 32B: exploratory contrasts (first minus second).
 
-| View | Statement characters | Model tokens (14B / 32B) | Fluent relative-clause guard share |
-|---|---|---|---|
-| S | RESULT | RESULT / RESULT | N/A |
-| K | RESULT | RESULT / RESULT | N/A |
-| V | RESULT | RESULT / RESULT | N/A |
-| N | RESULT | RESULT / RESULT | N/A |
-| F | RESULT | RESULT / RESULT | RESULT |
+| Contrast | FA difference [95% CI] | HA difference [95% CI] |
+|---|---|---|
+| V, A - K, A | +0.036 [-0.028, +0.101] | +0.042 [-0.010, +0.093] |
+| N, A - S, A | +0.031 [-0.046, +0.107] | -0.038 [-0.096, +0.020] |
+| F, A - S, A | +0.001 [-0.095, +0.096] | +0.014 [-0.055, +0.083] |
+| K, A - S, A | -0.009 [-0.068, +0.050] | -0.003 [-0.057, +0.050] |
+| K, 0 - S, 0 | -0.014 [-0.037, +0.009] | -0.014 [-0.044, +0.017] |
+| N, 0 - S, 0 | -0.007 [-0.049, +0.035] | -0.038 [-0.071, -0.005] |
+| F, 0 - S, 0 | -0.044 [-0.114, +0.027] | +0.014 [-0.010, +0.037] |
+| S, A - S, 0 | -0.126 [-0.219, -0.033] | -0.118 [-0.195, -0.041] |
+| K, A - K, 0 | -0.121 [-0.191, -0.050] | -0.108 [-0.195, -0.021] |
+| V, A - V, 0 | -0.101 [-0.154, -0.048] | -0.083 [-0.163, -0.004] |
+| N, A - N, 0 | -0.088 [-0.140, -0.036] | -0.118 [-0.198, -0.038] |
+| F, A - F, 0 | -0.082 [-0.132, -0.031] | -0.118 [-0.187, -0.049] |
 
-<!-- src: paper/sources/e1-prereg-frozen.md; expected scored source: experiments/E1/RESULTS.md. -->
+The asserted-faithful explanation lowers FA in every view and also lowers
+HA in every view for both judges. For 32B symbolic FOL, HA falls from 0.914
+to 0.793 while the FA contrast is -0.126 [-0.219, -0.033]. These judges become
+more suspicious; the condition does not demonstrate successful persuasion.
+A second requirement reference and a shifted approval threshold are possible
+explanations, not identified mechanisms.
+
+Descriptive attack-family and oracle-direction tables remain in the frozen
+result snapshot; they have no intervals or decisions. For example, 32B's
+weaker attacks have FA 0.128 (S,A) and 0.214 (V,A), while incomparable attacks
+have 0.124 and 0.096. This heterogeneity does not rescue the primary claim.
+Removing the 41 empty-sort-only attacks leaves 553 bad candidates, with the
+following pooled FA rates (descriptive, not a replacement primary analysis).
+
+| Judge | S,A | V,A | S,0 | V,0 |
+|---|---|---|---|---|
+| 14B | 0.438 | 0.387 | 0.595 | 0.474 |
+| 32B | 0.152 | 0.166 | 0.255 | 0.257 |
+
+View-length covariates are descriptive. The token counts in the source use
+word/single-symbol matches, **not model tokenizer tokens**; model-token counts
+are not supplied. Fluent relative-clause guards occur in 467/874 (53%)
+candidates; 236/874 (27%) retain an uncontracted conditional or conjunction.
+
+| view | mean chars | median chars | mean tokens | median tokens |
+|---|---|---|---|---|
+| fol_symbols | 92.1 | 91 | 39.6 | 38 |
+| fol_keywords | 111.4 | 110 | 39.6 | 38 |
+| ve_strict | 123.4 | 122 | 37.2 | 37 |
+| ve_natural | 142.7 | 139 | 42.3 | 40 |
+| ve_fluent | 120.4 | 116 | 27.8 | 26 |
+
+<!-- src: paper/sources/e1-results.md, experiments/E1/RESULTS.md at cb2b7ff;
+paper/sources/e1-prereg-frozen.md, experiments/E1/PREREG.md at 555b3ae.
+All cell rates, contrasts, bootstrap sensitivities and covariates copied from
+those tables; inferential and pooled estimands deliberately kept distinct. -->
 
 ### E1b: comprehension control (exploratory)
 
-Without a requirement, each judge predicts whether each candidate is true in
-two finite models, labeled by the VE evaluator (balanced truth patterns; chance
-.50). The same runner handles E1b; failures and tool use score zero of two.
-Per judge and view, report the mean of the 12 template accuracies and a 95%
-cluster-t interval, alongside raw correct counts and failures. The design assigns
-874 calls and 1,748 truth judgments per row. Compact-prompt dev template means
-for symbols/strict were .666/.669 for 14B and .808/.830 for 32B. These are dev
-comprehension observations, not scored view effects.
+Without a requirement, each judge predicts candidate truth in two finite
+models labeled by the VE evaluator; chance is 0.50. Each judge completed
+4,370 calls (874 per view), with 1,748 truth judgments assigned per view.
+The table gives mean template accuracy and 95% cluster-t intervals, not pooled
+accuracy or pairwise view-effect intervals.
 
-**[RESULT-E1B: fill scored comprehension counts, template means and intervals.]**
+| Judge | View | Template accuracy [95% CI] |
+|---|---|---|
+| 14B | S | 0.678 [0.631, 0.724] |
+| 14B | K | 0.659 [0.624, 0.694] |
+| 14B | V | 0.675 [0.636, 0.713] |
+| 14B | N | 0.691 [0.661, 0.721] |
+| 14B | F | 0.717 [0.680, 0.754] |
+| 32B | S | 0.830 [0.785, 0.875] |
+| 32B | K | 0.827 [0.778, 0.875] |
+| 32B | V | 0.842 [0.807, 0.878] |
+| 32B | N | 0.859 [0.824, 0.894] |
+| 32B | F | 0.878 [0.838, 0.918] |
 
-| Judge | View | Correct / 1,748 | Template accuracy [95% CI] | Failed / truncated calls (each / 874) |
-|---|---|---|---|---|
-| 32B | S | RESULT / 1,748 | RESULT [RESULT, RESULT] | RESULT / RESULT |
-| 32B | K | RESULT / 1,748 | RESULT [RESULT, RESULT] | RESULT / RESULT |
-| 32B | V | RESULT / 1,748 | RESULT [RESULT, RESULT] | RESULT / RESULT |
-| 32B | N | RESULT / 1,748 | RESULT [RESULT, RESULT] | RESULT / RESULT |
-| 32B | F | RESULT / 1,748 | RESULT [RESULT, RESULT] | RESULT / RESULT |
-| 14B | S | RESULT / 1,748 | RESULT [RESULT, RESULT] | RESULT / RESULT |
-| 14B | K | RESULT / 1,748 | RESULT [RESULT, RESULT] | RESULT / RESULT |
-| 14B | V | RESULT / 1,748 | RESULT [RESULT, RESULT] | RESULT / RESULT |
-| 14B | N | RESULT / 1,748 | RESULT [RESULT, RESULT] | RESULT / RESULT |
-| 14B | F | RESULT / 1,748 | RESULT [RESULT, RESULT] | RESULT / RESULT |
-
-Lower FA without better comprehension in the same view must be described as
-"benefit not established as better understanding; compatible with a threshold
-shift." Neither that pattern nor a failed HA constraint identifies a mechanism.
-<!-- src: paper/sources/e1-prereg-frozen.md; paper/sources/e1-dev-qwen-e3.md. -->
+The 14B judge has 11 invalid verdicts in total and no truncations; 32B has
+13 invalid verdicts, including 11 truncations. Neither judge has failed calls
+or tool use. Invalid responses score zero. The committed report does not give
+raw correct counts or failures by view; they cannot be reconstructed from
+rounded template means. Strict and symbolic comprehension are close; fluent
+point estimates are higher, but these are exploratory hypotheses. A lower FA
+rate alone does not establish better understanding and can reflect a threshold
+shift.
+<!-- src: paper/sources/e1-results.md, E1b and Exclusions, failures, provenance;
+paper/sources/e1-prereg-frozen.md. -->
 
 ## E4: checked countermodels (frozen mechanism demonstration)
 
@@ -342,11 +382,12 @@ There are 16 dev inferences (eight invalid, eight valid; four templates) and
 vocabularies). A valid label requires a replayed entailment certificate; an
 invalid label requires a checked finite countermodel. Forward UNKNOWN aborts
 construction. Each judge receives 360 scored calls across three cells: 720 total
-for Qwen2.5-7B-Instruct and Qwen2.5-14B-Instruct-AWQ. They decode greedily with
-seed 0 and no retries. Context is 8,192 tokens including an 800-token response
-cap, increased equally from 400 before scoring because dev responses truncated.
-The increased cap itself was not calibrated. Exact token preflight must pass;
-inputs are never shortened to fit.
+for Qwen2.5-7B-Instruct and Qwen2.5-14B-Instruct-AWQ. The frozen design specifies
+greedy decoding with seed 0 and no retries, an 8,192-token context, and an
+800-token response cap, increased equally from 400 because dev responses
+truncated. The increased cap itself was not calibrated. Exact token preflight
+must pass; inputs are never shortened to fit. Recorded runtime settings and
+the unresolved cap discrepancy are reported with the scored results below.
 
 Neither judge passed the original gate (prose FA 20--60%, HA at least 70%,
 parseability at least 90%). They were retained explicitly for a pilot-sized
@@ -378,29 +419,76 @@ cross-family efficacy follows from these pilots.
 <!-- src: paper/sources/e4-prereg-frozen.md; paper/sources/e4-dev-summary.json;
 paper/sources/process-log-v1.md. -->
 
-**[RESULT-E4: fill from the E4 scored score-summary.json and paired template
-analysis; retain complete assignments and report actual runtime settings.]**
+### E4 scored outcomes
 
-| Judge | Scored cell | Invalid approved / 60; FA | Valid approved / 60; HA | Failures / 120 | Truncated / 120 |
-|---|---|---|---|---|---|
-| 7B | Prose | RESULT / 60; RESULT | RESULT / 60; RESULT | RESULT / 120 | RESULT / 120 |
-| 7B | Checked | RESULT / 60; RESULT | RESULT / 60; RESULT | RESULT / 120 | RESULT / 120 |
-| 7B | Dishonest | RESULT / 60; RESULT | RESULT / 60; RESULT | RESULT / 120 | RESULT / 120 |
-| 14B | Prose | RESULT / 60; RESULT | RESULT / 60; RESULT | RESULT / 120 | RESULT / 120 |
-| 14B | Checked | RESULT / 60; RESULT | RESULT / 60; RESULT | RESULT / 120 | RESULT / 120 |
-| 14B | Dishonest | RESULT / 60; RESULT | RESULT / 60; RESULT | RESULT / 120 | RESULT / 120 |
+All 720 assigned calls have outputs. No cell has missing responses, backend
+failures, or reported truncations. The 14B dishonest and prose cells have
+4/120 and 18/120 parse failures respectively, scored worst case; all other
+cells have zero failures.
 
-E4 paired contrasts and valid acceptance under dishonest objections; descriptive
-95% template-t intervals. Each endpoint has 60 assigned items, 12 clusters.
-
-| Judge | Endpoint | Estimate | 95% interval | Frozen interpretation / constraint |
+| Judge | Cell | False approval | Honest acceptance | Failures |
 |---|---|---|---|---|
-| 7B | Checked - prose FA | RESULT | [RESULT, RESULT] | RESULT |
-| 7B | Checked - prose HA | RESULT | [RESULT, RESULT] | RESULT noninferiority |
-| 7B | Dishonest-critic HA | RESULT | [RESULT, RESULT] | RESULT versus .80 target |
-| 14B | Checked - prose FA | RESULT | [RESULT, RESULT] | RESULT |
-| 14B | Checked - prose HA | RESULT | [RESULT, RESULT] | RESULT noninferiority |
-| 14B | Dishonest-critic HA | RESULT | [RESULT, RESULT] | RESULT versus .80 target |
+| 14B | Checked | 0/60 | 53/60 | 0/120 |
+| 14B | Dishonest | 9/60 | 49/60 | 4/120 |
+| 14B | Prose | 16/60 | 44/60 | 18/120 |
+| 7B | Checked | 0/60 | 52/60 | 0/120 |
+| 7B | Dishonest | 9/60 | 31/60 | 0/120 |
+| 7B | Prose | 0/60 | 4/60 | 0/120 |
+
+Paired contrasts are checked minus prose, equal-weight template means with
+95% cluster-t intervals (12 templates, 11 degrees of freedom).
+
+| Judge | Endpoint | Difference | 95% interval |
+|---|---|---|---|
+| 14B | FA | -0.267 | [-0.392, -0.142] |
+| 14B | HA | +0.150 | [+0.027, +0.273] |
+| 7B | FA | +0.000 | [+0.000, +0.000] |
+| 7B | HA | +0.800 | [+0.564, +1.036] |
+
+For 14B, the primary FA contrast -0.267 [-0.392, -0.142] **supports protection
+under the preregistered rule**: its upper bound is below zero, and the HA
+contrast +0.150 [+0.027, +0.273] has lower bound at least -0.05. The rule does
+not require the FA upper bound to be below -0.22; that number is a planning
+reference, not the efficacy threshold. The result does not establish a reduction
+of at least 22 points. Parse failures contribute to the operational effect:
+11 of the prose arm's 16 bad-item approvals are failed verdicts. The effect
+therefore includes more reliable verdict production, not just semantic correction.
+
+For 7B, the FA contrast is 0.00 [0.00, 0.00]. It excludes the 22-point
+planning reduction but cannot identify protection at the prose-arm floor:
+the judge rejects nearly everything, including 56/60 valid inferences. The
+secondary HA contrast is +0.80 [0.56, 1.04], rescuing acceptance from 4/60
+to 52/60. The unbounded cluster-t interval is reported as specified, including
+its endpoint above one. This is an acceptance recovery, not a demonstrated
+FA reduction.
+
+Unchecked dishonest objections yield HA 49/60 for 14B and 31/60 for 7B.
+The .80 target is met by the 14B point estimate and missed by 7B. For
+uncertainty, their dishonest-minus-prose HA contrasts are +0.083
+[-0.074, +0.241] and +0.450 [+0.178, +0.722]; the supplied summary does not
+provide absolute-HA intervals, so the .80 target is not established with
+an interval. In the checked arm, a fabricated countermodel to a valid inference
+fails replay by construction and a positive certificate is displayed. That
+mechanical rejection defeats the critic's unchecked claim as evidence; it
+does not guarantee that a judge accepts every honest inference.
+
+These are per-judge, unadjusted, descriptive results from a mechanism
+demonstration whose judges failed the original gate. The intervention combines
+checking, checker feedback, and positive certificates; it does not isolate
+an English-surface effect or establish family-general efficacy.
+
+The scored manifests identify an A100-SXM4-80GB, vLLM 0.29.0, seed 0,
+temperature 0, and 8,192-token context. Model revisions are pinned in the
+snapshot. The generic runner arguments record `max_new_tokens: 300`, whereas
+the frozen design specifies an 800-token cap. The summary does not resolve
+whether per-prompt overrides applied; actual cap compliance is unverified.
+No truncations were recorded. This provenance discrepancy is retained rather
+than silently treating design settings as measured runtime settings.
+<!-- src: paper/sources/e4-score-summary.json (metrics, contrasts, provenance);
+paper/sources/e4-score-table.md; paper/sources/e4-prereg-frozen.md at cbc6a80.
+Intervals rounded from the JSON to three decimals (7B HA prose to two).
+The 11 failed bad-item prose trials are the primary contrast's failed_trials;
+the checked arm has zero failures. -->
 
 ## E5: materials and pilots only; scored run not executed
 

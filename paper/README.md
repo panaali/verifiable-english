@@ -1,17 +1,11 @@
-# VE manuscript handoff: v1
+# VE manuscript handoff: scored results
 
-This manuscript is on `paper/v1`, revised by GPT-6 Astra after merging the
-current integration work. `sources/manifest.json` pins the implementation base
-and every imported source. The original Claude scaffold and GPT draft history
-remain in Git. A subsequent Claude-side manuscript claim audit is still pending.
-This revision was serial: no experiment calls, training, test suites, pushes,
-or integration merges were performed by the drafting author.
-
-E1 v5 and E4 revision 2 are frozen before scored judging. The supplied run log
-ends with E1 scoring started and E4 queued; no scored outcomes are imported here.
-E5 provides materials and pilots only, with scoring explicitly not executed.
-E2 was not run after context preflight failed. The abstract and contributions
-retain outcome placeholders rather than infer efficacy from development data.
+This manuscript is on `paper/v1`, drafted by GPT-6 Astra. Scored E1/E1b and E4
+results now replace the abstract, contribution, experiment, and cost placeholders.
+The headline is a negative E1 primary conclusion and limited E4 checking benefits,
+with exploratory renderer contrasts kept separate. A qualitative policy use case
+and prospective replication/external-baseline comparisons are included.
+A subsequent Claude-side manuscript claim audit is pending.
 
 ## Build and inspect
 
@@ -23,81 +17,50 @@ make placeholders
 pdfinfo build/paper.pdf
 ```
 
-The Makefile enforces serial targets and sets workspace-local XDG, Tectonic,
-and Matplotlib caches, plus `/private/tmp/ve-uv-cache`. It uses Pandoc, Tectonic,
-Poppler, and Matplotlib 3.11.2 through `uv`. It regenerates tables from committed
-records, not live model calls. First-time dependency downloads may need network.
-The PDF has **25 pages**; the current rendered word count and marker inventory
-are in `build/draft-status.json`. HTML and PDF verification checks source hashes,
-citation provenance, section/marker inventories, embedded assets, and PDF text.
-The final PDF pages were rasterized for layout review, including dense tables.
-No implementation test suite was run. Generated tables report recorded outcomes,
-not fresh conformance or benchmark runs.
+The build succeeds for HTML and PDF, with **27 pages** and 13,284 rendered words.
+Only the existing offline artifact generation and build verification were run;
+no test suites, model calls, training, experiment reruns, or pushes were performed.
+The Makefile uses workspace-local XDG, Tectonic, and Matplotlib caches and
+`/private/tmp/ve-uv-cache`. Ignored outputs are `build/paper.html`,
+`build/paper.pdf`, `build/paper.md`, and `build/draft-status.json`. Tectonic may
+warn about temporary absolute image paths; the PDF includes build metadata and
+is not claimed byte-reproducible. Rendered pages were inspected for layout.
 
-Ignored build outputs are `build/paper.html`, `build/paper.pdf`, `build/paper.md`,
-and `build/draft-status.json`. Tables use `keep-tables.lua` to stay on one page;
-recheck layout when replacing RESULT cells with longer values. Tectonic may warn
-about Pandoc's absolute temporary image paths; the manuscript uses relative paths.
-The PDF includes build-time metadata and is not claimed byte-reproducible.
+## Frozen evidence
 
-## Changed content and numerical provenance
+`sources/manifest.json` pins every copied source and its SHA-256. E1 results
+come from `cb2b7ff`, its preregistration from `555b3ae`, and E4's preregistration
+from `cbc6a80`. The supplied external E4 score JSON/table and selected runner
+log entries were first committed as snapshots before manuscript authoring.
+Use-case snapshots pin `usecases/main`; one Sonnet agent produced that pair,
+without cross-review. Source comments locate each quantitative block.
+The build never reads moving branches or makes model calls.
 
-- `sections/00`, `01`, `03`, `04`, `05`, `07`, `09`, `10`, `11`: abstract,
-  contributions, compact legend, closure replay and Rust boundaries, experiments,
-  limitations, process/cost disclosure, and future work.
-- `sources/`: frozen E1 preregistration and judges, both Qwen DEV reports, frozen
-  E4 preregistration and selected dev metrics, deferred E5 materials/pilots,
-  fourth Lean review, post-v0 run log, operational outage entry, and approximate
-  compute accounting supplied in the user handoff. Historical draft snapshots
-  remain for provenance but no longer control the manuscript's current claims.
-- `figures/gen_implementation_tables.py`, `generated/conformance-table.md`:
-  include Rust closure comparison and distinguish base search counts from
-  combined base/closure certificate totals.
-- `verify.py`: explicit eight-marker inventory; `sources/manifest.json`:
-  pinned revisions and hashes; source/handoff READMEs: current status.
+E1's 32B P1 is inconclusive; P2 refutes a 0.05 reduction without establishing
+harm; the combined claim is inconclusive and not supported. E4's 14B result
+satisfies its negative-upper-bound and HA-noninferiority rule; -0.22 is only
+a planning reference. The 7B prose floor does not establish protection, while
+its secondary HA contrast shows acceptance recovery. The snapshots preserve
+historical interpretations even when the manuscript qualifies them, including
+the use-case report's overstatement of bounded NotFound as entailment proof.
 
-All quantitative blocks name committed sources in HTML comments, preserved in
-`build/paper.md`. External pilot and orchestration records are supplied
-observations, not independent replications. Access-configuration details are
-omitted from the new log excerpt. Builds never read moving branches.
+## Remaining placeholders and evidence gaps
 
-## Remaining placeholders and result handoff
+Only `RESULT-T-GATE` and `RESULT-T-TRAINING` remain; training was not run.
+E5 has materials and pilots only. E2 was not run after context preflight failed.
+Humans, other families in scored comparisons, external baselines, long-context
+and compaction settings, and training remain untested.
 
-| Marker | Missing evidence |
-|---|---|
-| `RESULT-ABSTRACT` | Audited scored E1/E4 outcomes and uncertainty. |
-| `RESULT-CONTRIBUTIONS` | Scored findings within the per-judge and mechanism limits. |
-| `RESULT-E1` | Cell counts, failures, truncations, two co-primary decisions, HA constraints, bootstrap sensitivities, exploratory contrasts and descriptive covariates. |
-| `RESULT-E1B` | Correct counts, template accuracy, 95% intervals and failures by judge/view. |
-| `RESULT-E4` | Cell counts, paired 95% intervals, HA constraint, dishonest-critic acceptance and descriptive interpretation. |
-| `RESULT-COST` | Completed scored wall time, units, actual tokens and any metered hosted cost. |
-| `RESULT-T-GATE` | Training competence, selection probe, pilot and throughput; not run. |
-| `RESULT-T-TRAINING` | Main training, cross-scoring, transfer and rollout audits; not run. |
+The supplied records do not give E1b raw correct counts or per-view failures,
+E1 actual model-token usage, or absolute dishonest-arm E4 HA intervals. The
+paper reports available template means, total failures, token proxies, and
+paired contrasts without inventing missing values. Exact E1 runtime revisions
+are not supplied by RESULTS.md. E4's generic manifest says a 300-token cap,
+while its frozen design says 800; per-prompt overrides cannot be established
+from the summary. This discrepancy is disclosed.
 
-Bare RESULT cells in Section 7 belong to the surrounding named marker. Fixed
-assignment denominators are design counts, not completed calls. Populate E1 and
-E1b from `experiments/E1/RESULTS.md` after complete import; populate E4 from its
-scored `score-summary.json` and paired template analysis. Preserve 97.5% intervals
-for 32B co-primary effects/constraints, 95% exploratory intervals, and the exact
-condition-specific decision rule. Never promote 14B or optional hosted rows to
-primary after observing scored results. Add actual backend revisions, deviations,
-attack-family/direction breakdowns, and the empty-sort sensitivity from the
-completed record. Update source snapshots/hashes, rebuild, and inspect layout.
-
-E1 freeze, E5 freeze/results, and E2 result placeholders were retired because
-their status is now known. E5 and E2 require new work before they can have scored
-results; they are not outstanding outputs of the current run.
-
-## Claim boundaries
-
-Lean now has 200 audited named theorems, including helpers. Extended certificate
-acceptance implies entailment over all admissible structures; the v0 theorem
-is unchanged and the new v0 corollary uses conservativity. No completeness,
-general induction, verified Python/JSON, extended graph theorem, or general
-extended surface round trip is claimed. Rust includes closure with 3,000/3,000
-recorded fuzz agreement, but has no refinement proof or certificate replay.
-E1 has one primary judge from one family, with prompt-sensitive gate placement;
-its final explanation helped on dev. E4 failed its original gate and is only a
-mechanism demonstration. E0 rater disagreements and proposed corrections remain
-separate from ground truth. There are no human-participant results. Cross-family
-review caught concrete defects but does not quantify remaining errors.
+The runner's about-12 L4 estimate is in the earlier committed handoff, not the
+new result log. E1's about-7.1 units is traceable. The supplied under-2 E4 units
+is absent from the cited log; recorded load/generation times instead imply
+about 2.44 units at the stated rate, excluding overhead. The paper flags this
+unresolved estimate and gives no combined bill or dollar conversion.

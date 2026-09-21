@@ -73,20 +73,35 @@ must still inspect the statements and measurement contracts.
 
 ## Compute and cost
 
-The supplied accounting reports about 12 Colab compute units used on L4 before
-the scored run. The scored runtime is an A100-80GB at 7.5 units/hour; the older
-A100-40GB rate of 5.4 does not apply. The orchestrator estimated 2--2.5 hours
-(about 15--19 units), but this was a budget forecast, not a completed measurement.
-E1 assigns 13,110 prompts per judge (8,740 sign-off and 4,370 E1b), or 26,220
-for its two Qwen judges. E4 adds 720 calls. Retries, setup, idling, and optional
-hosted references must be accounted separately from assigned scored calls.
+Colab accounting is approximate. The table distinguishes runner estimates
+from recorded runtime fields and from a metered bill, which is unavailable.
 
-**[RESULT-COST: insert completed scored wall time, units, actual token usage,
-and any metered hosted cost; do not replace the final bill with the forecast.]**
+| Work | Accelerator | Colab compute units | Provenance / scope |
+|---|---|---|---|
+| Development before scored runs | L4 | About 12 | Previously committed runner handoff; includes earlier development. |
+| E1 scored, including E1b | A100-80GB | About 7.1 | Runner estimate at 7.5 units/hour; 3,411 s recorded wall time. |
+| E4 scored | A100-80GB | Not reported in the cited log | The supplied under-2 estimate could not be traced; see below. |
 
-Local MLX pilots and hosted generation/review used separate resources without a
-complete dollar ledger in the supplied records. Quota limits shaped both the
-single-family scored roster and the decision not to execute E5. Colab units are
-reported as units, not converted to dollars using an assumed purchase price.
-<!-- src: paper/sources/v1-handoff.md; paper/sources/process-log-v1.md;
-paper/sources/e1-prereg-frozen.md; paper/sources/e4-prereg-frozen.md. -->
+The E1 result report separately lists about 6.1 units for that day's earlier
+L4 development jobs; this narrower accounting is not substituted for the
+about-12 pre-scoring handoff total. E1 completed 26,220 prompts across sign-off
+and E1b; E4 completed 720. E4 manifests record load/generation times of
+76.9/959.11 s for 14B and 103.9/32.31 s for 7B. Summing those recorded phases
+and applying 7.5 units/hour gives about 2.44 units, a derived runtime proxy
+that excludes other overhead and is not a bill. It does not substantiate the
+supplied under-2 estimate, so no combined cost total is asserted.
+
+E4 manifests report 101,823 input tokens per judge and output counts of
+116,832 (14B) and 2,520 (7B); these are runner fields, not an independently
+audited token ledger. E1's committed report supplies text-token proxies but
+no actual tokenizer usage. Local MLX pilots, hosted generation, and review
+used separate resources without a complete dollar ledger. Quota limits shaped
+the single-family scored roster and the decision not to execute E5. Units are
+not converted to dollars using an assumed purchase price.
+<!-- src: paper/sources/v1-handoff.md (about 12 units);
+paper/sources/e1-results.md (3,411 s, about 7.1 units, narrower 6.1-unit dev
+estimate, assigned/completed prompts); paper/sources/process-log-results.md
+(runner estimate of 57 min and about 7.1 units);
+paper/sources/e4-score-summary.json, provenance manifests (phase times and
+tokens). Derived E4 proxy: (76.9+959.11+103.9+32.31)/3600*7.5 = 2.442125.
+The under-2 figure in the drafting request is not present in the cited log. -->
