@@ -177,7 +177,7 @@ def test_cli_english_all_five_commands_and_strict_compatibility(tmp_path):
     assert str(source_path) in json.loads(result.stdout)['paraphrases']
     strict_path = tmp_path / 'strict.ve'
     strict_path.write_text(render(document, ENV, 've_strict'))
-    assert cli('render', '--env', env_path, strict_path).stdout == render(document, ENV, 've_english')
+    assert cli('render', '--env', env_path, strict_path).stdout == strict_path.read_text()
     assert cli('render', '--env', env_path, '--surface', 'strict', strict_path).stdout == strict_path.read_text()
     assert cli('render', '--env', env_path, '--view', 've_strict', strict_path).stdout == strict_path.read_text()
 
@@ -342,10 +342,10 @@ def test_suggestions_are_deterministic_linted_and_require_explicit_acceptance(tm
     env_path, overlay_path, source = tmp_path / 'env.json', tmp_path / 'words.json', tmp_path / 'source.ve'
     env_path.write_text(json.dumps(data)); overlay_path.write_text(json.dumps(overlay))
     source.write_text(render(doc, env, 've_strict'))
-    args = ('render', '--env', env_path, '--english-vocabulary', overlay_path, source)
+    args = ('render', '--env', env_path, '--view', 've_english', '--english-vocabulary', overlay_path, source)
     assert cli(*args).returncode == 2
     assert cli(*args, '--accept-suggested-vocabulary').stdout == text
-    assert cli('render', '--env', env_path, source, '--accept-suggested-vocabulary').stdout == text
+    assert cli('render', '--env', env_path, '--view', 've_english', source, '--accept-suggested-vocabulary').stdout == text
     assert json.loads(cli('suggest-vocabulary', '--env', env_path).stdout) == overlay
 
 
@@ -385,3 +385,138 @@ def test_object_relative_guards_preserve_argument_positions_and_mixed_coordinati
     assert 'that that person owns and that person owns' in text
     assert not list(parser.parse(text[0].lower() + text[1:]).find_data('_ambig'))
     with pytest.raises(VEError): parse_english(env, 'Every service alice owns.')
+
+
+@pytest.mark.parametrize('name,template', [
+    ('us_citizen', '{0} is inappropriately harmful'),
+    ('deprives', '{0} was appointed by {1}'),
+    ('denies_equal_protection', '{0} promised {1}'),
+])
+def test_idioms_cannot_mislabel_unrelated_predicates(name, template):
+    from ve.english_vocabulary import display_environment
+    path = Path('usecases/us-constitution-14th-s1/environment.json')
+    env = Environment.from_json(path.read_bytes())
+    overlay = {'format': 've.english-vocabulary@1', 'environment_id': env.environment_id,
+               'sorts': {}, 'predicates': {name: {'verbalisation': template, 'suggested': False}}}
+    display, _, _ = display_environment(env, overlay, False)
+    issues = EnglishVocabulary(display).issues
+    assert any(i.code == 'IDIOM_UNRELATED' and name in i.path for i in issues)
+    with pytest.raises(VEError, match='template linter'):
+        EnglishVocabulary(env, vocabulary=overlay)
+
+
+@pytest.mark.parametrize('case', ['constant', 'predicate', 'head', 'converse'])
+def test_idioms_still_check_collisions_and_argument_direction(case):
+    data = vocabulary()
+    predicates = data['vocabulary']['predicates']
+    predicates['promised'] = {'arguments': ['agent', 'item'], 'description': 'Promised.',
+                              'verbalisation': '{0} promised {1}'}
+    if case == 'constant':
+        data['vocabulary']['constants']['promised'] = {'sort': 'agent', 'description': 'Name.'}
+        # Constants and predicates must have distinct identifiers.
+        predicates['pledge'] = predicates.pop('promised')
+        target = 'pledge'
+    elif case in ('predicate', 'head'):
+        predicates['pledge'] = {'arguments': ['agent', 'item'], 'description': 'Promised.'}
+        predicates['pledge']['verbalisation'] = '{0} promised {1}'
+        target = 'pledge'
+        if case == 'head':
+            predicates['promises'] = predicates.pop('promised')
+            predicates['promises']['verbalisation'] = '{0} promised carefully {1}'
+    else:
+        predicates['appoints'] = {'arguments': ['agent', 'item'], 'description': 'Appointed by.',
+                                  'verbalisation': '{0} was appointed by {1}'}
+        target = 'appoints'
+    words = EnglishVocabulary(Environment(data))
+    assert words.predicates[target] != predicates[target]['verbalisation']
+    assert any(i.path == f'/vocabulary/predicates/{target}/verbalisation' for i in words.issues)
+
+
+def test_review_status_requires_exact_independently_pinned_digest(tmp_path):
+    from ve.english import english_legend
+    from ve.english_vocabulary import overlay_provenance
+    from ve import check, meaning_id
+    from test_cli import cli
+    path = Path('usecases/us-constitution-14th-s1/environment.json')
+    env = Environment.from_json(path.read_bytes())
+    overlay = json.loads(path.with_name('environment.english.json').read_text())
+    assert overlay_provenance(overlay)['review_status'] == 'reviewed'
+    # A harmless metadata change invalidates the review of the entire digest.
+    del overlay['predicates']['us_citizen']['negative_verbalisation']
+    provenance = overlay_provenance(overlay)
+    assert provenance['review_status'] == 'unreviewed'
+    assert all(not e['suggested'] for e in overlay['predicates'].values())
+    legend = json.loads(english_legend(env, vocabulary=overlay))
+    assert legend['review_status'] == 'unreviewed'
+    assert all(e['review_status'] == 'unreviewed' for e in legend['predicates'].values())
+    assert 'unreviewed' in english_legend(env, 'compact', vocabulary=overlay)
+    doc = Document((Forall('person', Unary('us_citizen', Var(0))),))
+    from ve.english import UnreviewedVocabularyWarning
+    with pytest.warns(UnreviewedVocabularyWarning, match='unreviewed'):
+        text = render(doc, env, 've_english', vocabulary=overlay)
+    result = check(env, text, surface='english', vocabulary=overlay)
+    for key, value in provenance.items():
+        assert result[key] == result['paraphrase'][key] == value
+    assert result['meaning_id'] == meaning_id(env, doc)
+    words_path = tmp_path / 'words.json'; words_path.write_text(json.dumps(overlay))
+    source = tmp_path / 'source.ve'; source.write_text(render(doc, env, 've_strict'))
+    checked = cli('check', '--env', path, '--english-vocabulary', words_path, source)
+    assert checked.returncode == 0
+    record = json.loads(checked.stdout)
+    assert record['display_text'] == text
+    for key, value in provenance.items(): assert record[key] == value
+    rendered = cli('render', '--env', path, '--view', 've_english', '--english-vocabulary', words_path, source)
+    assert rendered.stdout == text and json.loads(rendered.stderr.splitlines()[0]) == provenance
+
+
+def test_document_grammar_and_roundtrip_reset_statement_scope():
+    formulas = (Forall('item', Unary('active', Var(0))),
+                Exists('agent', Exists('agent', Eq(Var(0), Var(1)))),
+                Forall('item', Exists('item', Exists('item', Binary('links', Var(2), Var(0))))))
+    doc = Document(formulas)
+    text = render(doc, ENV, 've_english')
+    assert parse_english(ENV, text) == doc
+    syntax = ''.join((t := render(Document((f,)), ENV, 've_english'))[0].lower() + t[1:] for f in formulas)
+    parser = Lark(english_lark_grammar(ENV), parser='earley', lexer='dynamic_complete', ambiguity='explicit')
+    assert not list(parser.parse(syntax).find_data('_ambig'))
+    with pytest.raises(VEError): parse_english(ENV, 'Every service is deployed.\nThat service is deployed.\n')
+
+
+@pytest.mark.parametrize('record', [None, '{}', '[{"overlay_digest": "fake"}]', 'malformed'])
+def test_absent_or_invalid_pinned_review_fails_closed(monkeypatch, tmp_path, record):
+    from ve import english_vocabulary
+    path = Path('usecases/us-constitution-14th-s1/environment.english.json')
+    overlay = json.loads(path.read_text())
+    monkeypatch.setattr(english_vocabulary, 'files', lambda package: tmp_path)
+    if record is not None: (tmp_path / 'reviewed-overlays.json').write_text(record)
+    assert english_vocabulary.overlay_provenance(overlay)['review_status'] == 'unreviewed'
+
+
+def test_conformance_report_includes_deep_random_and_document_samples():
+    report = json.loads(Path('conformance/english-surface-report.json').read_text())
+    assert len(report['vocabularies']) == 15
+    assert report['random_earley_texts'] >= 3750
+    assert report['multi_statement_documents'] >= 750
+    for row in report['vocabularies']:
+        assert row['random_earley_texts'] >= 250
+        assert set(row['random_earley_actual_depths']) == {'6', '7', '8', '9'}
+        assert sum(row['random_earley_actual_depths'].values()) == row['random_earley_texts']
+        assert row['random_earley_seed'] != row['seed']
+        assert row['multi_statement_documents'] >= 50
+        assert row['ambiguous_texts'] == 0
+
+
+def test_lint_clean_semantic_lie_is_still_unreviewed():
+    from ve import check
+    from ve.english import UnreviewedVocabularyWarning
+    path = Path('usecases/us-constitution-14th-s1/environment.json')
+    env = Environment.from_json(path.read_bytes())
+    overlay = {'format': 've.english-vocabulary@1', 'environment_id': env.environment_id,
+               'sorts': {}, 'predicates': {'us_citizen': {'verbalisation': '{0} is fully harmful', 'suggested': False}}}
+    words = EnglishVocabulary(env, vocabulary=overlay)
+    assert not words.issues and words.review_status == 'unreviewed'
+    with pytest.warns(UnreviewedVocabularyWarning):
+        record = check(env, 'Every person is fully harmful.\n', surface='english', vocabulary=overlay)
+    assert record['review_status'] == record['paraphrase']['review_status'] == 'unreviewed'
+    assert record['overlay_digest'] == words.overlay_digest
+    assert record['ast'] == [['forall', 'person', ['unary', 'us_citizen', ['var', 0]]]]

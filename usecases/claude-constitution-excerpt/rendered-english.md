@@ -37,7 +37,7 @@ For every overseer that is an appropriately sanctioned human check, claude does 
 
 ```text
 English vocabulary: ve.english-legend@1; environment: 98dbed69e9ed29c573756d4658b1fae39223466f3cb525f994648b7a5d4622cb
-Display overlay digest: 8411f393465a93ed63fdb8de8ee1d78ce32efb7265660ae6458a986ab3062088
+Display overlay digest: 8411f393465a93ed63fdb8de8ee1d78ce32efb7265660ae6458a986ab3062088; review status: reviewed
 A unique sort uses that noun. Two simultaneous entities of a sort use first and second throughout the statement. Beyond two, all entities of that sort use numbered letters. Scope is lexical and restarts per statement.
 Constants use their identifier names; reserved or compound names are quoted.
 Starting from the first endpoint, the second is reachable. A step body binds source first and destination second; outer references stay fixed.

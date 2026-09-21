@@ -159,7 +159,7 @@ def lint_report():
                        'missing_templates': sorted(set(env.predicates) - set(declared)),
                        'accepted_before': sum(t == old.predicates[n] for n, t in declared.items()),
                        'accepted_after': sum(t == new.predicates[n] for n, t in declared.items()),
-                       'reviewed_templates': len(overlay['predicates']), 'overlay_digest': reviewed.overlay_digest,
+                       'reviewed_templates': len(overlay['predicates']), **reviewed.provenance,
                        'reviewed_lint': [i.to_dict() for i in reviewed.issues],
                        'still_rejected': [{'predicate': n, 'template': t,
                                            'codes': [i.code for i in new.issues if i.path == f'/vocabulary/predicates/{n}/verbalisation']}
@@ -167,7 +167,17 @@ def lint_report():
     return result
 
 
-def audit(per_vocabulary=5000, earley_per_vocabulary=500):
+def formula_depth(formula):
+    if isinstance(formula, (ast.Not, ast.Forall, ast.Exists)):
+        return 1 + formula_depth(formula.body)
+    if isinstance(formula, (ast.And, ast.Or, ast.Implies)):
+        return 1 + max(formula_depth(formula.left), formula_depth(formula.right))
+    if isinstance(formula, ast.Reach) and isinstance(formula.edge, ast.Body):
+        return 1 + formula_depth(formula.edge.formula)
+    return 1
+
+
+def audit(per_vocabulary=5000, earley_per_vocabulary=500, random_earley_per_vocabulary=250):
     rows = []
     for offset, (name, env, options) in enumerate(configurations()):
         rng = random.Random(SEED + offset)
@@ -205,10 +215,47 @@ def audit(per_vocabulary=5000, earley_per_vocabulary=500):
             constructors[type(formula).__name__] += 1
             digest.update(text.encode())
             checked += 1
+        # A separate stream, selected independently of the directed-heavy prefix.
+        random_seed = SEED + 100_000 + offset
+        random_rng = random.Random(random_seed)
+        random_seen, random_texts, random_formulas = set(), [], []
+        random_depths = Counter()
+        random_draws = 0
+        while len(random_texts) < random_earley_per_vocabulary:
+            formula = random_formula(random_rng, env, random_rng.randrange(6, 10))
+            random_draws += 1
+            depth = formula_depth(formula)
+            if not 6 <= depth <= 9 or formula in random_seen:
+                continue
+            text = render(ast.Document((formula,)), env, 've_english', **options)
+            if text in texts:
+                continue
+            random_seen.add(formula)
+            assert parse_english(env, text, **options) == ast.Document((formula,))
+            tree = earley.parse(text[0].lower() + text[1:])
+            assert not list(tree.find_data('_ambig')), (name, text, tree.pretty())
+            random_texts.append(text)
+            random_formulas.append(formula)
+            random_depths[depth] += 1
+        document_digest = hashlib.sha256()
+        documents = 0
+        for start in range(0, len(random_formulas) - 1, 5):
+            document = ast.Document(tuple(random_formulas[start:start + 5]))
+            text = render(document, env, 've_english', **options)
+            assert parse_english(env, text, **options) == document
+            syntax_text = ''.join(t[0].lower() + t[1:] for t in random_texts[start:start + 5])
+            tree = earley.parse(syntax_text)
+            assert not list(tree.find_data('_ambig')), (name, text, tree.pretty())
+            document_digest.update(text.encode())
+            documents += 1
         row = {'vocabulary': name, 'environment_id': env.environment_id, 'seed': SEED + offset,
-               'overlay_digest': words.overlay_digest, 'directed_asts': targeted_count,
+               **words.provenance, 'directed_asts': targeted_count,
                'draws_including_duplicates': draws, 'unique_asts_roundtripped': checked,
                'unique_texts': len(texts), 'earley_texts': earley_count, 'ambiguous_texts': 0,
+               'random_earley_texts': len(random_texts), 'random_earley_seed': random_seed,
+               'random_earley_draws': random_draws, 'random_earley_actual_depths': dict(sorted(random_depths.items())),
+               'random_earley_corpus_sha256': hashlib.sha256(''.join(random_texts).encode()).hexdigest(),
+               'multi_statement_documents': documents, 'document_corpus_sha256': document_digest.hexdigest(),
                'top_level_constructors': dict(sorted(constructors.items())),
                'corpus_sha256': digest.hexdigest(), 'grammar_sha256': hashlib.sha256(grammar.encode()).hexdigest()}
         rows.append(row)
@@ -216,6 +263,8 @@ def audit(per_vocabulary=5000, earley_per_vocabulary=500):
     return {'method': 'unique directed and seeded random well-typed ASTs; separate Earley dynamic_complete all-derivations syntax envelope',
             'roundtrips': sum(r['unique_asts_roundtripped'] for r in rows),
             'earley_texts': sum(r['earley_texts'] for r in rows), 'ambiguous_texts': 0,
+            'random_earley_texts': sum(r['random_earley_texts'] for r in rows),
+            'multi_statement_documents': sum(r['multi_statement_documents'] for r in rows),
             'identity_fixtures': len(json.loads((ROOT / 'conformance/identity.json').read_text())),
             'vocabularies': rows, 'linter': lint_report()}
 
@@ -224,10 +273,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--per-vocabulary', type=int, default=5000)
     parser.add_argument('--earley-per-vocabulary', type=int, default=500)
+    parser.add_argument('--random-earley-per-vocabulary', type=int, default=250)
     parser.add_argument('--output', type=Path, default=ROOT / 'conformance/english-surface-report.json')
     args = parser.parse_args()
     if not 0 <= args.earley_per_vocabulary <= args.per_vocabulary:
         parser.error('Earley count must be between zero and the round-trip count')
-    result = audit(args.per_vocabulary, args.earley_per_vocabulary)
+    if args.random_earley_per_vocabulary < 0:
+        parser.error('Random Earley count must be nonnegative')
+    result = audit(args.per_vocabulary, args.earley_per_vocabulary, args.random_earley_per_vocabulary)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
-    print(f"PASS: {result['roundtrips']} unique AST round trips; {result['earley_texts']} unique texts, no multiple derivations")
+    print(f"PASS: {result['roundtrips']} unique AST round trips; {result['earley_texts']} prefix + {result['random_earley_texts']} random texts + {result['multi_statement_documents']} multi-statement documents, no multiple derivations")

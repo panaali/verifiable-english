@@ -63,7 +63,7 @@ def main(argv=None):
         sub.add_argument("--accept-suggested-vocabulary", action="store_true",
                          help="explicitly accept unreviewed suggested wording")
         sub.add_argument("--surface", choices=("strict", "english"),
-                         help="input language; omitted means strict input and English display")
+                         help="input language; render defaults to the canonical strict view")
         if command == "countermodel":
             sub.add_argument("--premises", help="VE document; omit for no premises")
             sub.add_argument("--conclusion", required=True, help="exactly one VE statement")
@@ -111,17 +111,24 @@ def main(argv=None):
             else:
                 print(export_grammar(env, wrapper=args.wrapper, **options), end="")
             return 0
-        from .english import EnglishVocabulary
         from . import suggest_vocabulary
-        vocabulary = loads_json(_read(args.english_vocabulary)) if args.english_vocabulary else None
-        if vocabulary is None and args.accept_suggested_vocabulary:
-            vocabulary = suggest_vocabulary(env)
-        english_options = dict(vocabulary=vocabulary, accept_suggested_vocabulary=args.accept_suggested_vocabulary)
-        EnglishVocabulary(env, **english_options)  # Validate even when the selected output is strict.
+        from .english_vocabulary import overlay_provenance
         surface = args.surface or "strict"
         display_view = "ve_strict" if args.surface == "strict" else "ve_english"
         if hasattr(args, "view") and args.view is None:
-            args.view = "ve_strict" if args.command == "import-fol" else display_view
+            args.view = "ve_english" if args.command == "render" and args.surface == "english" else "ve_strict"
+
+        def load_english_options():
+            vocabulary = loads_json(_read(args.english_vocabulary)) if args.english_vocabulary else None
+            if vocabulary is None and args.accept_suggested_vocabulary:
+                vocabulary = suggest_vocabulary(env)
+            return (dict(vocabulary=vocabulary, accept_suggested_vocabulary=args.accept_suggested_vocabulary),
+                    overlay_provenance(vocabulary))
+
+        defer_display_options = surface == "strict" and args.command in ("check", "evaluate", "parse", "countermodel")
+        english_options, provenance = ({}, {}) if defer_display_options else load_english_options()
+        if (surface == "english" or getattr(args, "view", None) == "ve_english") and provenance.get("overlay_digest"):
+            print(json.dumps(provenance), file=sys.stderr)
         paraphrases = {}
 
         def read_document(path):
@@ -150,9 +157,16 @@ def main(argv=None):
                                        semantic_nonvacuity=args.semantic_nonvacuity,
                                        max_models=args.max_models, max_evaluations=args.max_evaluations)
             record = result.to_dict()
-            record["conclusion_text"] = render(conclusion, env, display_view, **english_options)
+            try:
+                if defer_display_options:
+                    english_options, provenance = load_english_options()
+                record["conclusion_text"] = render(conclusion, env, display_view, **english_options)
+                record.update(provenance)
+            except Exception as exc:
+                record["display_omitted"] = type(exc).__name__
             if paraphrases:
                 record["paraphrases"] = paraphrases
+                record.update(provenance)
             _emit(record)
             return 0 if result.status == "Found" else (3 if result.status == "NotFound" else 4)
         if args.command == "import-fol":
@@ -174,7 +188,15 @@ def main(argv=None):
                            max_evaluations=getattr(args, "max_evaluations", 1_000_000),
                            trace=not getattr(args, "no_trace", False), surface=surface, **english_options)
             from .ast import document_from_data
-            record["display_text"] = render(document_from_data(env, record["ast"]), env, display_view, **english_options)
+            # Display is outside the trusted verdict path, including vocabulary
+            # validation and unexpected renderer failures.
+            try:
+                if defer_display_options:
+                    english_options, provenance = load_english_options()
+                display = render(document_from_data(env, record["ast"]), env, display_view, **english_options)
+                record.update(display_text=display, **provenance)
+            except Exception as exc:
+                record["display_omitted"] = type(exc).__name__
             _emit(record)
             if model is None:
                 return 0
