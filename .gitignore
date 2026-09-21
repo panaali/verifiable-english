@@ -9,3 +9,4 @@ dist/
 .llm_cache/
 data/*
 !data/README.md
+experiments/*/items/*.nollm*
