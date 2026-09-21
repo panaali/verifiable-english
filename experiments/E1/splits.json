@@ -1,0 +1,22 @@
+{
+ "seed": 0,
+ "dev_fraction": 0.0,
+ "groups": {
+  "E1-dev-t03-accounts": "dev",
+  "E1-dev-t03-documents": "dev",
+  "E1-dev-t03-pallets": "dev",
+  "E1-dev-t03-robots": "dev",
+  "E1-dev-t04-accounts": "dev",
+  "E1-dev-t04-documents": "dev",
+  "E1-dev-t04-pallets": "dev",
+  "E1-dev-t04-robots": "dev",
+  "E1-dev-t13-accounts": "dev",
+  "E1-dev-t13-documents": "dev",
+  "E1-dev-t13-pallets": "dev",
+  "E1-dev-t13-robots": "dev",
+  "E1-dev-t14-accounts": "dev",
+  "E1-dev-t14-documents": "dev",
+  "E1-dev-t14-pallets": "dev",
+  "E1-dev-t14-robots": "dev"
+ }
+}
