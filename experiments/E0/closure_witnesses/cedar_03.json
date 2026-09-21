@@ -1,0 +1,651 @@
+{
+  "id": "cedar-examples/cedar-example-use-cases/sales_orgs/static/policies.cedar#5",
+  "dataset": "cedar",
+  "source": "@id(\"market-template-view\") permit ( principal, action in Action::\"MarketTemplateViewActions\", resource ) when { principal in resource.viewerMarkets };",
+  "provenance": {
+    "git_revision": "46be9e1bafc85e37456cbf56e9dc92b6c8178666",
+    "path": "experiments/E0/survey_samples/cedar.jsonl",
+    "text_sha256": "7f1cb980201405ca10c48d70407deff1aab1ef7f538aac80a039a89747b518e0"
+  },
+  "environment": {
+    "language": "ve.core@0.1",
+    "profiles": [
+      "closure@0",
+      "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.1-closure-2026-09-21",
+    "vocabulary": {
+      "sorts": {
+        "entity": {
+          "description": "A Cedar entity UID, including action and referenced unloaded UIDs."
+        },
+        "request": {
+          "description": "A request record; its principal, action and resource fields are single-valued and present."
+        },
+        "collection": {
+          "description": "A reified present entity-set attribute, including present empty sets."
+        }
+      },
+      "predicates": {
+        "parent": {
+          "arguments": [
+            "entity",
+            "entity"
+          ],
+          "description": "Primitive immediate hierarchy edge, child to parent. Never a precomputed ancestor relation."
+        },
+        "request_principal": {
+          "arguments": [
+            "request",
+            "entity"
+          ],
+          "description": "The principal entity UID in this request."
+        },
+        "request_action": {
+          "arguments": [
+            "request",
+            "entity"
+          ],
+          "description": "The action entity UID in this request."
+        },
+        "request_resource": {
+          "arguments": [
+            "request",
+            "entity"
+          ],
+          "description": "The resource entity UID in this request."
+        },
+        "permit_contribution": {
+          "arguments": [
+            "request"
+          ],
+          "description": "Proposed match extension of THIS permit policy, fully defined by the formula; not the final authorization decision."
+        },
+        "viewer_markets": {
+          "arguments": [
+            "entity",
+            "collection"
+          ],
+          "description": "Present viewerMarkets attribute points to its set value; absent has no row."
+        },
+        "set_member": {
+          "arguments": [
+            "collection",
+            "entity"
+          ],
+          "description": "An ordinary element of the reified set, without hierarchy expansion."
+        },
+        "type_user": {
+          "arguments": [
+            "entity"
+          ],
+          "description": "Cedar entity type tag User; tags do not precompute policy truth or reachability."
+        },
+        "type_action": {
+          "arguments": [
+            "entity"
+          ],
+          "description": "Cedar entity type tag Action; tags do not precompute policy truth or reachability."
+        },
+        "type_template": {
+          "arguments": [
+            "entity"
+          ],
+          "description": "Cedar entity type tag Template; tags do not precompute policy truth or reachability."
+        },
+        "type_market": {
+          "arguments": [
+            "entity"
+          ],
+          "description": "Cedar entity type tag Market; tags do not precompute policy truth or reachability."
+        }
+      },
+      "constants": {
+        "action_group": {
+          "sort": "entity",
+          "description": "Action::\"MarketTemplateViewActions\""
+        }
+      }
+    }
+  },
+  "ast": [
+    [
+      "forall",
+      "request",
+      [
+        "and",
+        [
+          "implies",
+          [
+            "unary",
+            "permit_contribution",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "entity",
+            [
+              "exists",
+              "entity",
+              [
+                "exists",
+                "entity",
+                [
+                  "and",
+                  [
+                    "binary",
+                    "request_principal",
+                    [
+                      "var",
+                      3
+                    ],
+                    [
+                      "var",
+                      2
+                    ]
+                  ],
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "request_action",
+                      [
+                        "var",
+                        3
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ],
+                    [
+                      "and",
+                      [
+                        "binary",
+                        "request_resource",
+                        [
+                          "var",
+                          3
+                        ],
+                        [
+                          "var",
+                          0
+                        ]
+                      ],
+                      [
+                        "and",
+                        [
+                          "reach",
+                          "star",
+                          [
+                            "named",
+                            "parent"
+                          ],
+                          [
+                            "var",
+                            1
+                          ],
+                          [
+                            "const",
+                            "action_group"
+                          ]
+                        ],
+                        [
+                          "exists",
+                          "collection",
+                          [
+                            "exists",
+                            "entity",
+                            [
+                              "and",
+                              [
+                                "binary",
+                                "viewer_markets",
+                                [
+                                  "var",
+                                  2
+                                ],
+                                [
+                                  "var",
+                                  1
+                                ]
+                              ],
+                              [
+                                "and",
+                                [
+                                  "binary",
+                                  "set_member",
+                                  [
+                                    "var",
+                                    1
+                                  ],
+                                  [
+                                    "var",
+                                    0
+                                  ]
+                                ],
+                                [
+                                  "reach",
+                                  "star",
+                                  [
+                                    "named",
+                                    "parent"
+                                  ],
+                                  [
+                                    "var",
+                                    4
+                                  ],
+                                  [
+                                    "var",
+                                    0
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "implies",
+          [
+            "exists",
+            "entity",
+            [
+              "exists",
+              "entity",
+              [
+                "exists",
+                "entity",
+                [
+                  "and",
+                  [
+                    "binary",
+                    "request_principal",
+                    [
+                      "var",
+                      3
+                    ],
+                    [
+                      "var",
+                      2
+                    ]
+                  ],
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "request_action",
+                      [
+                        "var",
+                        3
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ],
+                    [
+                      "and",
+                      [
+                        "binary",
+                        "request_resource",
+                        [
+                          "var",
+                          3
+                        ],
+                        [
+                          "var",
+                          0
+                        ]
+                      ],
+                      [
+                        "and",
+                        [
+                          "reach",
+                          "star",
+                          [
+                            "named",
+                            "parent"
+                          ],
+                          [
+                            "var",
+                            1
+                          ],
+                          [
+                            "const",
+                            "action_group"
+                          ]
+                        ],
+                        [
+                          "exists",
+                          "collection",
+                          [
+                            "exists",
+                            "entity",
+                            [
+                              "and",
+                              [
+                                "binary",
+                                "viewer_markets",
+                                [
+                                  "var",
+                                  2
+                                ],
+                                [
+                                  "var",
+                                  1
+                                ]
+                              ],
+                              [
+                                "and",
+                                [
+                                  "binary",
+                                  "set_member",
+                                  [
+                                    "var",
+                                    1
+                                  ],
+                                  [
+                                    "var",
+                                    0
+                                  ]
+                                ],
+                                [
+                                  "reach",
+                                  "star",
+                                  [
+                                    "named",
+                                    "parent"
+                                  ],
+                                  [
+                                    "var",
+                                    4
+                                  ],
+                                  [
+                                    "var",
+                                    0
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            "unary",
+            "permit_contribution",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ]
+  ],
+  "strict": "for every request x0, ((if (x0 is permit_contribution), then (there exists entity x1, (there exists entity x2, (there exists entity x3, ((x0 request_principal x1) and ((x0 request_action x2) and ((x0 request_resource x3) and ((rtc[parent](x2, @action_group)) and (there exists collection x4, (there exists entity x5, ((x3 viewer_markets x4) and ((x4 set_member x5) and (rtc[parent](x1, x5)))))))))))))) and (if (there exists entity x6, (there exists entity x7, (there exists entity x8, ((x0 request_principal x6) and ((x0 request_action x7) and ((x0 request_resource x8) and ((rtc[parent](x7, @action_group)) and (there exists collection x9, (there exists entity x10, ((x8 viewer_markets x9) and ((x9 set_member x10) and (rtc[parent](x6, x10))))))))))))), then (x0 is permit_contribution))).\n",
+  "adapter": {
+    "kind": "cedar-request-projection@0",
+    "effect": "permit",
+    "translation_unit": "Exact sampled single policy match, represented as a definition of its per-request permit contribution.",
+    "request_fields": [
+      "request_principal",
+      "request_action",
+      "request_resource"
+    ],
+    "entity_attributes": [],
+    "set_attributes": [
+      "viewer_markets"
+    ],
+    "uid_map": {
+      "view_actions": "Action::\"MarketTemplateViewActions\"",
+      "market_group": "Market::\"synthetic_market\"",
+      "user": "User::\"user\"",
+      "action": "Action::\"action\"",
+      "resource": "Template::\"resource\"",
+      "action_middle": "Action::\"action_middle\"",
+      "principal_middle": "Market::\"principal_middle\""
+    },
+    "type_tags": [
+      "type_action",
+      "type_market",
+      "type_template",
+      "type_user"
+    ],
+    "conditions": [
+      "All request fields are total functions. UIDs include referenced but unloaded entities, so equality and zero-step membership still work.",
+      "parent contains primitive child-to-parent edges. The witness adapter checks acyclicity, matching Cedar hierarchy inputs.",
+      "Present entity-valued fields are partial functions. Present set attributes have explicit collection objects; no field row is absence.",
+      "All chosen conditions use positive attribute access, so absent fields give no permit contribution, as do Cedar evaluation errors here.",
+      "Template slots, where present, are supplied constants. The formula remains parameterized by their denotations.",
+      "No other policy, forbid override, full authorization decision or schema-inferred hierarchy is asserted."
+    ]
+  },
+  "contrast": "Both models propose the same permit contribution. Removing the last edge of a required two-step hierarchy path falsifies its defining equivalence; request fields and other conditions remain fixed.",
+  "true_model": {
+    "complete": true,
+    "domains": {
+      "entity": [
+        "action",
+        "action_middle",
+        "market_group",
+        "principal_middle",
+        "resource",
+        "user",
+        "view_actions"
+      ],
+      "request": [
+        "request0"
+      ],
+      "collection": [
+        "markets"
+      ]
+    },
+    "constants": {
+      "action_group": "view_actions"
+    },
+    "relations": {
+      "parent": [
+        [
+          "action",
+          "action_middle"
+        ],
+        [
+          "action_middle",
+          "view_actions"
+        ],
+        [
+          "principal_middle",
+          "market_group"
+        ],
+        [
+          "user",
+          "principal_middle"
+        ]
+      ],
+      "request_principal": [
+        [
+          "request0",
+          "user"
+        ]
+      ],
+      "request_action": [
+        [
+          "request0",
+          "action"
+        ]
+      ],
+      "request_resource": [
+        [
+          "request0",
+          "resource"
+        ]
+      ],
+      "permit_contribution": [
+        [
+          "request0"
+        ]
+      ],
+      "viewer_markets": [
+        [
+          "resource",
+          "markets"
+        ]
+      ],
+      "set_member": [
+        [
+          "markets",
+          "market_group"
+        ]
+      ],
+      "type_user": [
+        [
+          "user"
+        ]
+      ],
+      "type_action": [
+        [
+          "action"
+        ],
+        [
+          "action_middle"
+        ],
+        [
+          "view_actions"
+        ]
+      ],
+      "type_template": [
+        [
+          "resource"
+        ]
+      ],
+      "type_market": [
+        [
+          "market_group"
+        ],
+        [
+          "principal_middle"
+        ]
+      ]
+    }
+  },
+  "false_model": {
+    "complete": true,
+    "domains": {
+      "entity": [
+        "action",
+        "action_middle",
+        "market_group",
+        "principal_middle",
+        "resource",
+        "user",
+        "view_actions"
+      ],
+      "request": [
+        "request0"
+      ],
+      "collection": [
+        "markets"
+      ]
+    },
+    "constants": {
+      "action_group": "view_actions"
+    },
+    "relations": {
+      "parent": [
+        [
+          "action",
+          "action_middle"
+        ],
+        [
+          "action_middle",
+          "view_actions"
+        ],
+        [
+          "user",
+          "principal_middle"
+        ]
+      ],
+      "request_principal": [
+        [
+          "request0",
+          "user"
+        ]
+      ],
+      "request_action": [
+        [
+          "request0",
+          "action"
+        ]
+      ],
+      "request_resource": [
+        [
+          "request0",
+          "resource"
+        ]
+      ],
+      "permit_contribution": [
+        [
+          "request0"
+        ]
+      ],
+      "viewer_markets": [
+        [
+          "resource",
+          "markets"
+        ]
+      ],
+      "set_member": [
+        [
+          "markets",
+          "market_group"
+        ]
+      ],
+      "type_user": [
+        [
+          "user"
+        ]
+      ],
+      "type_action": [
+        [
+          "action"
+        ],
+        [
+          "action_middle"
+        ],
+        [
+          "view_actions"
+        ]
+      ],
+      "type_template": [
+        [
+          "resource"
+        ]
+      ],
+      "type_market": [
+        [
+          "market_group"
+        ],
+        [
+          "principal_middle"
+        ]
+      ]
+    }
+  }
+}

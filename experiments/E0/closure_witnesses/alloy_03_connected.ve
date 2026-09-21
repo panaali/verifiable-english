@@ -1,0 +1,1 @@
+for every gsa x0, (for every gsa x1, (rtc[gsa x2, x3 | ((x2 parent x3) or (x3 parent x2))](x1, x0))).
