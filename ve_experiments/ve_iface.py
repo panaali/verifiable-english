@@ -7,10 +7,11 @@ The harness needs three operations:
     find_countermodel(premises, conclusion, ...)  a finite model of the premises that falsifies the conclusion, or None
 
 ASTs and models use the wire formats of docs/spec/v0-language.md (tagged JSON arrays; model with
-`domains`, `constants`, `relations`). `get_backend()` returns the real package once `ve` exposes
-these functions, else `StubBackend`, a small untrusted reference implementation good enough to
-develop and test the harness. The stub does NOT type-check, and its countermodel search is brute
-force over tiny domains. Do not report experiment results computed with the stub.
+`domains`, `constants`, `relations`). `get_backend(environment)` returns `VeBackend`, an adapter
+over the real `ve` package bound to one environment. It never falls back silently: if `ve` is not
+importable it raises, unless the caller passes `allow_stub=True`. `StubBackend` is a small
+untrusted reference implementation (no type checking, brute-force search) kept for harness tests
+and for cross-checking the adapter; `runner.run` refuses a scored run when the backend is a stub.
 """
 
 from __future__ import annotations
@@ -188,19 +189,67 @@ def _powerset(items: list) -> list[tuple]:
     return [c for r in range(len(items) + 1) for c in itertools.combinations(items, r)]
 
 
-def get_backend() -> VEBackend:
-    """The real `ve` package if it exposes the interface, else the stub."""
+class BackendUnavailable(RuntimeError):
+    pass
+
+
+class VeBackend:
+    """Adapter over the real `ve` package, bound to one environment (wire dict)."""
+
+    name = "ve"
+
+    def __init__(self, environment: dict):
+        import ve
+
+        self._ve = ve
+        self.environment = environment
+        self.env = ve.Environment.from_dict(environment)
+
+    def _formula(self, ast: Ast):
+        return self._ve.formula_from_data(self.env, ast)
+
+    def render(self, ast: Ast, view: str = "strict") -> str:
+        formula = self._formula(ast)
+        if view == "strict":
+            return self._ve.print_formula(self.env, formula) + "."
+        if view == "natural":
+            return self._ve.natural_formula(self.env, formula).text
+        if hasattr(self._ve, "render"):  # codex/views: render(ast, env, view) for fol_symbols / fol_keywords
+            return self._ve.render(formula, self.env, view)
+        raise ValueError(f"the installed ve package has no view {view!r}")
+
+    def evaluate(self, ast: Ast, model: Model) -> bool:
+        result = self._ve.evaluate(self.env, self._formula(ast), self._ve.FiniteModel.from_dict(self.env, model))
+        if result.value is None:
+            raise RuntimeError(f"evaluation did not finish: {result.status}")
+        return result.value
+
+    def find_countermodel(self, premises: list[Ast], conclusion: Ast, vocabulary: dict | None = None,
+                          max_domain: int = 2, max_models: int = 10_000) -> Model | None:  # fmt: skip
+        result = self._ve.find_countermodel(self.env, [self._formula(p) for p in premises], self._formula(conclusion),
+                                            max_domain_size=max_domain, max_models=max_models)  # fmt: skip
+        return None if result.model is None else result.model.to_dict()
+
+    def find_distinguishing_model(self, a: Ast, b: Ast, max_domain: int = 2, max_models: int = 10_000) -> Model | None:
+        """A model on which a and b disagree: a countermodel to `a iff b`."""
+        iff = ["and", ["implies", a, b], ["implies", b, a]]
+        return self.find_countermodel([], iff, max_domain=max_domain, max_models=max_models)
+
+
+def backend_name() -> str:
     try:
-        import ve  # type: ignore[import-not-found]
+        import ve  # noqa: F401
     except ImportError:
+        return "stub"
+    return "ve"
+
+
+def get_backend(environment: dict | None = None, allow_stub: bool = False) -> VEBackend:
+    """The real adapter. The stub is returned only on explicit request and only when `ve` is missing."""
+    if backend_name() == "ve":
+        if environment is None:
+            raise ValueError("the ve backend is bound to an environment; pass the environment wire dict")
+        return VeBackend(environment)
+    if allow_stub:
         return StubBackend()
-    if all(hasattr(ve, fn) for fn in ("render", "evaluate", "find_countermodel")):
-
-        class _Real:
-            name = "ve"
-            render = staticmethod(ve.render)
-            evaluate = staticmethod(ve.evaluate)
-            find_countermodel = staticmethod(ve.find_countermodel)
-
-        return _Real()
-    return StubBackend()
+    raise BackendUnavailable("the `ve` package is not importable and allow_stub is False")

@@ -4,7 +4,7 @@ import time
 
 import pytest
 
-from ve_experiments.llm import BackendError, LLMClient, RawReply, Request, VerdictParseError, parse_verdict, summarize_log
+from ve_experiments.llm import CODEX_FLAGS, parse_codex_events, BackendError, LLMClient, RawReply, Request, VerdictParseError, parse_verdict, summarize_log
 
 
 class FakeBackend:
@@ -145,3 +145,40 @@ def test_live_smoke():
     from ve_experiments.smoke import DEFAULT_MODELS, main
 
     assert main(list(DEFAULT_MODELS)) == 0
+
+
+def test_codex_command_execution_is_detected():
+    # Reviewer's reproduction: a command_execution event followed by a verdict must not pass silently.
+    out = "\n".join([
+        '{"type":"item.started","item":{"id":"i1","type":"command_execution","command":"cat /repo/items.jsonl","status":"in_progress"}}',
+        '{"type":"item.completed","item":{"id":"i1","type":"command_execution","command":"cat /repo/items.jsonl","exit_code":0}}',
+        '{"type":"item.completed","item":{"id":"i2","type":"agent_message","text":"{\\"verdict\\": \\"reject\\"}"}}',
+        '{"type":"turn.completed","usage":{"input_tokens":10,"output_tokens":2}}',
+    ])  # fmt: skip
+    reply = parse_codex_events(out)
+    assert reply.text == '{"verdict": "reject"}' and reply.tool_events == ("codex:command_execution:cat /repo/items.jsonl",)
+    clean = parse_codex_events('{"type":"item.completed","item":{"type":"reasoning","text":"hm"}}\n{"type":"item.completed","item":{"type":"agent_message","text":"ok"}}')
+    assert clean.tool_events == ()
+
+
+def test_codex_is_launched_without_tools_or_user_config():
+    flags = " ".join(CODEX_FLAGS)
+    for needed in ("--disable shell_tool", "--ignore-user-config", "--ignore-rules", "--ephemeral", "--json", 'web_search="disabled"'):
+        assert needed in flags
+
+
+def test_tool_events_survive_the_cache(tmp_path):
+    def be(model, system, prompt, timeout_s, cwd):
+        return RawReply("x", tool_events=("codex:command_execution:ls",))
+
+    c = LLMClient(cache_dir=tmp_path / "c", backend=be)
+    assert c.call("m", "p").used_tools and c.call("m", "p").used_tools and c.call("m", "p").from_cache
+
+
+def test_identity_separates_cache_entries(tmp_path):
+    be = FakeBackend()
+    c = client(tmp_path, be)
+    c.call("m", "p", identity="t1")
+    c.call("m", "p", identity="t2")
+    c.call("m", "p", identity="t1")
+    assert be.calls == 2
