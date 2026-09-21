@@ -39,6 +39,8 @@ Each experiment names the VE-specific claim, the baseline that could beat it, an
 | E5 | Harm check: a "proof checked" label raises false approval of grounding errors | Valid deductions with good or bad grounding, with and without the label, and with a fuller "outstanding obligations" display | no label |
 | E6 | Debate rounds beyond one critique add value | Same tasks as E3/E4 with 0, 1, and 3 rounds, charging tokens | single critique |
 
+| E7 (stretch) | Statement sign-off on real AI-produced theorems | Theorem statements from public AI-generated Lean developments (for example `openai/ten-proofs`), each paired with its informal claim; half are weakened so that a proof would still plausibly exist. Judge decides whether the formal statement matches the informal claim. These statements are outside v0, so this measures the sign-off problem and the untrusted-explainer risk, not the v0 renderer | raw Lean; Lean + untrusted explanation; Lean + honest explanation |
+
 The most VE-specific angle is in E1: in an oversight setting the explainer is the agent being overseen, so an LLM
 explanation can lie, while a deterministic rendering cannot. If VE does not beat "FOL + untrusted explanation", the
 English surface has little reason to exist. If it does not beat raw FOL for model judges, say so.
@@ -66,6 +68,10 @@ Rules for every experiment:
   unresolved, assumption-preserving composition.
 - Renderers: strict canonical VE, a more natural read-only view (ACE-style), and FOL → VE import so existing formal
   datasets can be rendered.
+- **Lean track (raised in priority at 01:10).** Both model families have produced large Lean-verified results
+  autonomously (see `~/code/manage-agents/model-capability-brief.md`, addendum). So a Lean 4 reference semantics with
+  proofs of evaluator soundness, printer/parser round trip on the AST, and assumption-preserving composition is in
+  scope, led by Worker X. The Python package must agree with it on the conformance cases.
 - CLI and a Python API the experiment harness can call. Python is the default for speed; Lean for whatever part
   of the metatheory is cheap to prove. Implementation is expected to take hours, not the whole budget.
 
@@ -82,5 +88,6 @@ Rules for every experiment:
 
 ## Status log
 
+- 01:10 Read the user's links on recent AI mathematics. Added the Lean track and stretch experiment E7.
 - 00:30 Plan v1 written. Worktrees created: `~/code/ve-claude` (`claude/main`), `~/code/ve-codex` (`codex/main`),
   `~/code/ve-integration` (`ve-integration`).
