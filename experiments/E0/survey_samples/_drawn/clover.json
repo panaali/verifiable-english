@@ -1,0 +1,126 @@
+{
+ "population": 62,
+ "seed": 20260921,
+ "sample": [
+  {
+   "id": "CloverBench/textbook_algo/triple",
+   "text": "method Triple (x:int) returns (r:int)\n  ensures r==3*x\n{\n  r:= x*3;\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/convert_map_key",
+   "text": "method convert_map_key(inputs: map<nat, bool>, f: nat->nat) returns(r:map<nat, bool>)\n  requires forall n1: nat, n2: nat :: n1 != n2 ==> f(n1) != f(n2)\n  ensures forall k :: k in inputs <==> f(k) in r\n  ensures forall k :: k in inputs ==> r[f(k)] == inputs[k]\n{\n  r:= map k | k in inputs :: f(k) := inputs[k];\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/array_append",
+   "text": "method append(a:array<int>, b:int) returns (c:array<int>)\n  ensures  a[..] + [b] == c[..]\n{\n  c := new int[a.Length+1];\n  var i:= 0;\n  while (i < a.Length)\n    invariant 0 <= i <= a.Length\n    invariant forall ii::0<=ii<i ==> c[ii]==a[ii]\n  {\n    c[i] := a[i];\n    i:=i+1;\n  }\n  c[a.Length]:=b;\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/cal_sum",
+   "text": "method Sum(N:int) returns (s:int)\n  requires N >= 0\n  ensures s == N * (N + 1) / 2\n{\n  var n := 0;\n  s := 0;\n  while n != N\n    invariant 0 <= n <= N\n    invariant s == n * (n + 1) / 2\n  {\n    n := n + 1;\n    s := s + n;\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/array_copy",
+   "text": "method iter_copy<T(0)>(s: array<T>) returns (t: array<T>)\n  ensures s.Length==t.Length\n  ensures forall i::0<=i<s.Length ==> s[i]==t[i]\n{\n  t := new T[s.Length];\n  var i:= 0;\n  while (i < s.Length)\n    invariant 0 <= i <= s.Length\n    invariant forall x :: 0 <= x < i ==> s[x] == t[x]\n  {\n    t[i] := s[i];\n    i:=i+1;\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/swap_in_array",
+   "text": "method swap(arr: array<int>, i: int, j: int)\n  requires 0 <= i < arr.Length && 0 <= j < arr.Length\n  modifies arr\n  ensures arr[i] == old(arr[j]) && arr[j] == old(arr[i])\n  ensures forall k :: 0 <= k < arr.Length && k != i && k != j ==> arr[k] == old(arr[k])\n{\n  var tmp := arr[i];\n  arr[i] := arr[j];\n  arr[j] := tmp;\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/two_sum",
+   "text": "method twoSum(nums: array<int>, target: int) returns (i: int, j: int)\n  requires nums.Length > 1\n  requires exists i,j::0 <= i < j < nums.Length &&  nums[i] + nums[j] == target\n  ensures 0 <= i < j < nums.Length && nums[i] + nums[j] == target\n  ensures forall ii,jj:: (0 <= ii < i && ii < jj < nums.Length)  ==> nums[ii] + nums[jj] != target\n  ensures forall jj:: i < jj < j ==> nums[i] + nums[jj] != target\n{\n  var n := nums.Length;\n  i := 0;\n  j := 1;\n  while i < n - 1\n    invariant 0 <= i < j <= n\n    invariant forall ii, jj :: 0 <= ii < i && ii < jj < n ==> nums[ii] + nums[jj] != target\n  {\n    j := i + 1;\n    while j < n\n      invariant 0 <= i < j <= n\n      invariant forall jj :: i < jj < j ==> nums[i] + nums[jj] != target\n    {\n      if nums[i] + nums[j] == target {\n        return;\n      }\n      j := j + 1;\n    }\n\n    i := i + 1;\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/selectionsort",
+   "text": "method SelectionSort(a: array<int>)\n  modifies a\n  ensures forall i,j :: 0 <= i < j < a.Length ==> a[i] <= a[j]\n  ensures multiset(a[..]) == old(multiset(a[..]))\n{\n  var n:= 0;\n  while n != a.Length\n    invariant 0 <= n <= a.Length\n    invariant forall i, j :: 0 <= i < n <= j < a.Length ==> a[i] <= a[j]\n    invariant forall i,j :: 0 <= i < j < n ==> a[i] <= a[j]\n    invariant multiset(a[..]) == old(multiset(a[..]))\n  {\n    var mindex, m := n, n+1;\n    while m != a.Length\n      invariant n <= mindex < m <= a.Length\n      invariant forall i :: n <= i < m ==> a[mindex] <= a[i]\n    {\n      if a[m] < a[mindex] {\n        mindex := m;\n      }\n      m := m+1;\n    }\n    a[n], a[mindex] := a[mindex], a[n];\n    n := n+1;\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/bubble_sort",
+   "text": "method BubbleSort(a: array<int>)\n  modifies a\n  ensures forall i,j::0<= i < j < a.Length ==> a[i] <= a[j]\n  ensures multiset(a[..])==multiset(old(a[..]))\n{\n  var i := a.Length - 1;\n  while (i > 0)\n    invariant i < 0 ==> a.Length == 0\n    invariant -1 <= i < a.Length\n    invariant forall ii,jj::i <= ii< jj <a.Length ==> a[ii] <= a[jj]\n    invariant forall k,k'::0<=k<=i<k'<a.Length==>a[k]<=a[k']\n    invariant multiset(a[..])==multiset(old(a[..]))\n  {\n    var j := 0;\n    while (j < i)\n      invariant 0 < i < a.Length && 0 <= j <= i\n      invariant forall ii,jj::i<= ii <= jj <a.Length ==> a[ii] <= a[jj]\n      invariant forall k, k'::0<=k<=i<k'<a.Length==>a[k]<=a[k']\n      invariant forall k :: 0 <= k <= j ==> a[k] <= a[j]\n      invariant multiset(a[..])==multiset(old(a[..]))\n    {\n      if (a[j] > a[j + 1])\n      {\n        a[j], a[j + 1] := a[j + 1], a[j];\n      }\n      j := j + 1;\n    }\n    i := i - 1;\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/integer_square_root",
+   "text": "method SquareRoot(N:nat) returns (r:nat)\n  ensures r*r <= N < (r+1)*(r+1)\n{\n  r:=0;\n  while (r+1)*(r+1)<=N\n    invariant r*r<=N\n  {\n    r:=r+1;\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/has_close_elements",
+   "text": "method has_close_elements(numbers: seq<real>, threshold: real) returns (res: bool)\n  requires threshold >= 0.0\n  ensures res ==> exists i: int, j: int :: 0 <= i < |numbers| && 0 <= j < |numbers| && i != j && (if numbers[i] - numbers[j] < 0.0 then numbers[j] - numbers[i] else numbers[i] - numbers[j]) < threshold\n  ensures !res ==> (forall i: int, j: int :: 1 <= i < |numbers| && 0 <= j < i ==>  (if numbers[i] - numbers[j] < 0.0 then numbers[j] - numbers[i] else numbers[i] - numbers[j]) >= threshold)\n\n\n{\n\n  res := false;\n  var idx: int := 0;\n  while idx < |numbers| && !res\n    invariant 0 <= idx <= |numbers|\n    invariant !res\n    invariant forall i: int, j: int :: 0 <= i < idx && 0 <= j < i ==> (if numbers[i] - numbers[j] < 0.0 then numbers[j] - numbers[i] else numbers[i] - numbers[j]) >= threshold\n  {\n    var idx2: int := 0;\n    while idx2 < idx && !res\n      invariant 0 <= idx <= |numbers|\n      invariant 0 <= idx2 <= idx\n      invariant !res\n      invariant forall j: int :: 0 <= j < idx2 ==> (if numbers[idx] - numbers[j] < 0.0 then numbers[j] - numbers[idx] else numbers[idx] - numbers[j]) >= threshold\n    {\n\n      var distance :=  (if numbers[idx2] - numbers[idx] < 0.0 then numbers[idx] - numbers[idx2] else numbers[idx2] - numbers[idx]);\n      if distance < threshold  {\n        res := true;\n        return;\n      }\n\n      idx2 := idx2 + 1;\n    }\n    idx := idx + 1;\n  }\n}\n\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/triple4",
+   "text": "method Triple (x:int) returns (r:int)\n  ensures r==3*x\n{\n  var y:= x*2;\n  r := y+x;\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/seq_to_array",
+   "text": "  method ToArray<T>(xs: seq<T>) returns (a: array<T>)\n  ensures fresh(a)\n  ensures a.Length == |xs|\n  ensures forall i :: 0 <= i < |xs| ==> a[i] == xs[i]\n{\n  a := new T[|xs|](i requires 0 <= i < |xs| => xs[i]);\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/find",
+   "text": "method Find(a: array<int>, key: int) returns (index: int)\n  ensures -1<=index<a.Length\n  ensures index!=-1 ==> a[index]==key && (forall i :: 0 <= i < index ==> a[i] != key)\n  ensures index == -1 ==> (forall i::0 <= i < a.Length ==> a[i] != key)\n{\n  index := 0;\n  while index < a.Length\n    invariant 0<=index<=a.Length\n    invariant (forall i::0 <= i < index==>a[i] != key)\n  {\n    if a[index] == key { return; }\n    index := index + 1;\n  }\n  if index >= a.Length  {\n    index := -1;\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/even_list",
+   "text": "method FindEvenNumbers (arr: array<int>) returns (evenNumbers: array<int>)\n  ensures forall x {:trigger (x%2) }:: x in arr[..] &&  (x%2==0)==> x in evenNumbers[..]\n  ensures forall x :: x !in arr[..] ==> x !in evenNumbers[..]\n  ensures forall k :: 0 <= k < evenNumbers.Length ==> evenNumbers[k] % 2 == 0\n  ensures forall k, l :: 0 <= k < l < evenNumbers.Length ==>\n                           exists n, m :: 0 <= n < m < arr.Length && evenNumbers[k] == arr[n] && evenNumbers[l] == arr[m]\n\n{\n  var evenList: seq<int> := [];\n  ghost var indices: seq<int> := [];\n\n  for i := 0 to arr.Length\n    invariant 0 <= i <= arr.Length\n    invariant 0 <= |evenList| <= i\n    invariant forall x  {:trigger (x%2) }:: (x in arr[..i] && (x%2==0) )==> x in evenList[..]\n    invariant forall k :: 0 <= k < |evenList| ==> evenList[k] % 2 == 0\n    invariant forall x :: x !in arr[..i] ==> x !in evenList\n    invariant |evenList| == |indices|\n    invariant forall k :: 0 <= k < |indices| ==> indices[k] < i\n    invariant forall k, l :: 0 <= k < l < |indices| ==> indices[k] < indices[l]\n    invariant forall k :: 0 <= k < |evenList| ==> 0 <= indices[k] < i <= arr.Length && arr[indices[k]] == evenList[k]\n  {\n    if arr[i]%2==0\n    {\n      evenList := evenList + [arr[i]];\n      indices := indices + [i];\n    }\n  }\n\n  evenNumbers := new int[|evenList|](i requires 0 <= i < |evenList| => evenList[i]);\n  assert evenList == evenNumbers[..];\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/triple3",
+   "text": "method Triple (x:int) returns (r:int)\n  ensures r==3*x\n{\n  if x==0 {\n    r:=0;\n  }\n  else{\n    var y:=2*x;\n    r:= x+y;\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/swap_bitvector",
+   "text": "method SwapBitvectors(X: bv8, Y: bv8) returns(x: bv8, y: bv8)\n  ensures x==Y\n  ensures y==X\n{\n  x, y := X, Y;\n\n  x := x ^ y;\n  y := x ^ y;\n  x := x ^ y;\n\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/double_array_elements",
+   "text": "method double_array_elements(s: array<int>)\n  modifies s\n  ensures forall i :: 0 <= i < s.Length ==> s[i] == 2 * old(s[i])\n{\n  var i:= 0;\n  while (i < s.Length)\n    invariant 0 <= i <= s.Length\n    invariant forall x :: i <= x < s.Length ==> s[x] == old(s[x])\n    invariant forall x :: 0 <= x < i ==> s[x] == 2 * old(s[x])\n\n  {\n    s[i] :=  2 * s[i];\n    i := i + 1;\n  }\n}"
+  },
+  {
+   "id": "CloverBench/textbook_algo/swap",
+   "text": "method Swap(X: int, Y: int) returns(x: int, y: int)\n  ensures x==Y\n  ensures y==X\n{\n  x, y := X, Y;\n\n  var tmp := x;\n  x := y;\n  y := tmp;\n\n  assert x == Y && y == X;\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/is_even",
+   "text": "method ComputeIsEven(x:int) returns (is_even:bool)\n  ensures (x % 2 == 0)==is_even\n{\n  is_even:=false;\n  if x%2==0{\n    is_even:=true;\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/multi_return",
+   "text": "method MultipleReturns(x: int, y: int) returns (more: int, less: int)\n  ensures more == x+y\n  ensures less == x-y\n{\n  more := x + y;\n  less := x - y;\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/swap_arith",
+   "text": "method SwapArithmetic(X: int, Y: int) returns(x: int, y: int)\n  ensures x==Y\n  ensures y==X\n\n{\n  x, y := X, Y;\n\n  x := y - x;\n  y := y - x;\n  x := y + x;\n\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/all_digits",
+   "text": "  method allDigits(s: string) returns (result: bool)\n  ensures  result <==> (forall i :: 0 <= i < |s| ==> s[i] in \"0123456789\")\n{\n  result:=true ;\n  for i := 0 to |s|\n    invariant result <==> (forall ii :: 0 <= ii < i ==> s[ii] in \"0123456789\")\n  {\n    if ! (s[i] in \"0123456789\"){\n      return false;\n    }\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/modify_2d_array",
+   "text": "method modify_array_element(arr: array<array<nat>>, index1: nat, index2: nat, val: nat)\n  requires index1 < arr.Length\n  requires index2 < arr[index1].Length\n  requires forall i: nat, j:nat :: i < arr.Length && j < arr.Length && i != j ==> arr[i] != arr[j]\n  modifies arr[index1]\n  ensures forall i: nat :: 0 <= i < arr.Length ==> arr[i] == old(arr[i])\n  ensures forall i: nat, j: nat :: 0 <= i < arr.Length && 0 <= j < arr[i].Length && (i != index1 || j != index2) ==> arr[i][j] == old(arr[i][j])\n  ensures  arr[index1][index2] == val\n{\n  arr[index1][index2] := val;\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/max_array",
+   "text": "method maxArray(a: array<int>) returns (m: int)\n  requires a.Length >= 1\n  ensures forall k :: 0 <= k < a.Length ==> m >= a[k]\n  ensures exists k :: 0 <= k < a.Length && m == a[k]\n{\n  m := a[0];\n  var index := 1;\n  while (index < a.Length)\n    invariant 0 <= index <= a.Length\n    invariant forall k :: 0 <= k < index ==> m >= a[k]\n    invariant exists k :: 0 <= k < index && m == a[k]\n    decreases a.Length - index\n  {\n    m := if m>a[index] then  m else a[index];\n    index := index + 1;\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/remove_front",
+   "text": "method remove_front(a:array<int>) returns (c:array<int>)\n  requires a.Length>0\n  ensures  a[1..] == c[..]\n{\n  c := new int[a.Length-1];\n  var i:= 1;\n  while (i < a.Length)\n    invariant 1 <= i <= a.Length\n    invariant forall ii::1<=ii<i ==> c[ii-1]==a[ii]\n  {\n    c[i-1] := a[i];\n    i:=i+1;\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/linear_search1",
+   "text": "method LinearSearch(a: array<int>, e: int) returns (n:int)\n  ensures 0<=n<=a.Length\n  ensures n==a.Length || a[n]==e\n  ensures forall i::0<=i < n ==> e!=a[i]\n{\n  n :=0;\n  while n!=a.Length\n    invariant 0<=n<=a.Length\n    invariant forall i::0<=i<n ==> e!=a[i]\n  {\n    if e==a[n]{\n      return;\n    }\n    n:=n+1;\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/rotate",
+   "text": "method rotate(a: array<int>, offset:int) returns (b: array<int> )\n  requires 0<=offset\n  ensures b.Length==a.Length\n  ensures forall  i::0<=i<a.Length ==>  b[i]==a[(i+offset)%a.Length]\n{\n  b:= new int[a.Length];\n  var i:=0;\n  while i<a.Length\n    invariant 0<=i<=a.Length\n    invariant forall j ::0<=j<i ==> b[j]==a[(j+offset)%a.Length]\n  {\n    b[i]:=a[(i+offset)%a.Length];\n    i:=i+1;\n  }\n}"
+  },
+  {
+   "id": "CloverBench/textbook_algo/linear_search3",
+   "text": "method LinearSearch3<T>(a: array<T>, P: T -> bool) returns (n: int)\n  requires exists i :: 0 <= i < a.Length && P(a[i])\n  ensures 0 <= n < a.Length && P(a[n])\n  ensures forall k :: 0 <= k < n ==> !P(a[k])\n{\n  n := 0;\n  while true\n    invariant 0 <= n < a.Length\n    invariant exists i :: n <= i < a.Length && P(a[i])\n    invariant  forall k :: 0 <= k < n ==> !P(a[k])\n    decreases a.Length - n\n  {\n    if P(a[n]) {\n      return;\n    }\n    n := n + 1;\n  }\n}\n"
+  },
+  {
+   "id": "CloverBench/textbook_algo/online_max",
+   "text": "method onlineMax(a: array<int>, x: int) returns (ghost m:int, p:int)\n  requires 1<=x<a.Length\n  requires a.Length!=0\n  ensures x<=p<a.Length\n  ensures forall i::0<=i<x==> a[i]<=m\n  ensures exists i::0<=i<x && a[i]==m\n  ensures x<=p<a.Length-1 ==> (forall i::0<=i<p ==> a[i]<a[p])\n  ensures (forall i::x<=i<a.Length && a[i]<=m) ==> p==a.Length-1\n{\n  p:= 0;\n  var best := a[0];\n  var i:=1;\n  while i<x\n    invariant 0<=i<=x\n    invariant forall j::0<=j<i==> a[j]<=best\n    invariant exists j::0<=j<i && a[j]==best\n  {\n    if a[i]>best{\n      best:=a[i];\n    }\n    i:=i+1;\n  }\n  m:=best;\n  i:=x;\n  while i<a.Length\n    invariant x<=i<=a.Length\n    invariant forall j::x<=j<i ==> a[j]<=m\n  {\n    if a[i]>best{\n      p:=i;\n      return;\n    }\n    i:=i+1;\n  }\n  p:=a.Length-1;\n\n}\n\n"
+  }
+ ]
+}

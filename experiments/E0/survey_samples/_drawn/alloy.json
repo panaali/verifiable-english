@@ -1,0 +1,156 @@
+{
+ "population": 750,
+ "seed": 20260921,
+ "sample": [
+  {
+   "id": "alloy-models/algorithms/ring-orientation/stable-orient-ring.als@1924",
+   "kind": "assert",
+   "text": "assert Closure {\n   \n   all t: Tick - ord/last |\n      RingAtTick[t] => RingAtTick[ord/next[t]]\n}"
+  },
+  {
+   "id": "alloy-models/algorithms/distributed-hashtable/chord.als@5807",
+   "kind": "pred",
+   "text": "pred FindSuccessor[s: State] {\n        all n: s.active | let nd = (s.data)[n] | all i: Id {\n                nd.find_successor[i] = ((s.data)[nd.find_predecessor[i]]).next\n        }}"
+  },
+  {
+   "id": "alloy-models/algorithms/multicasting/iolus.als@5360",
+   "kind": "pred",
+   "text": "pred LoopFree {\n  no t, t\" : Tick {\n    t!=t\"\n    all k : KDS | k.members[t] = k.members[t\"] \n    all m : Member | m.receivedMessages[t] = m.receivedMessages[t\"]\n    all m : DataMessage | m.retransmitTime = t =>\n      (some m\" : DataMessage {\n        m\".retransmitTime = t\"\n        m.sender = m\".sender\n        m.sentTime = m\".sentTime\n        m.gsaID = m\".gsaID\n        m.key = m\".key })\n    }}"
+  },
+  {
+   "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@81",
+   "kind": "pred",
+   "text": "pred less_than [from, i,j: Id] {\n  let next\" = Id<:next - (Id->from) | j in i.^next\"  \n  }"
+  },
+  {
+   "id": "alloy-models/algorithms/distributed-hashtable/chord.als@80",
+   "kind": "pred",
+   "text": "pred less_than [from, i,j: Id] {\n        let next\" = Id<:next - (Id->from) | j in i.^next\"  \n        }"
+  },
+  {
+   "id": "alloy-models/utilities/types/sequence.als@1510",
+   "kind": "pred",
+   "text": "pred add [s: Seq, e: elem, added: Seq] {\n  added.startsWith[s]\n  added.seqElems[s.afterLastIdx] = e\n  #added.inds = #s.inds.add[1]\n}"
+  },
+  {
+   "id": "alloy-models/algorithms/mapping/view-backing.als@3121",
+   "kind": "pred",
+   "text": "pred IteratorRef.hasNext [s: State] {\n  some s.obj[this].left\n  }"
+  },
+  {
+   "id": "alloy-models/puzzles/farmer-chicken-fox/farmer.als@327",
+   "kind": "pred",
+   "text": "pred crossRiver [from, from\", to, to\": set Object] {\n   \n   (from\" = from - Farmer - from\".eats and\n    to\" = to + Farmer) or\n    \n    (one x : from - Farmer | {\n       from\" = from - Farmer - x - from\".eats\n       to\" = to + Farmer + x })\n}"
+  },
+  {
+   "id": "alloy-models/models/transport/railway.als@241",
+   "kind": "fact",
+   "text": "fact {all x: TrainState |\n  x.occupied = {s: Seg | some t: Train | t.(x.on) = s}\n  }"
+  },
+  {
+   "id": "alloy-models/algorithms/multicasting/iolus.als@5190",
+   "kind": "assert",
+   "text": "assert Connected {\n  all g, g\" : GSA | g in g\".*(parent + ~parent) }"
+  },
+  {
+   "id": "alloy-models/utilities/types/sequence.als@1980",
+   "kind": "pred",
+   "text": "pred copy [source, dest: Seq, destStart: SeqIdx] {\n  all sourceIdx : source.inds | some destIdx: SeqIdx {\n    ord/gte[destIdx, destStart]\n    dest.at[destIdx] = source.at[sourceIdx]\n    #ord/prevs[sourceIdx] = #(ord/prevs[destIdx] - ord/prevs[destStart])\n  }\n}"
+  },
+  {
+   "id": "alloy-models/models/java/javatypes_soundness.als@282",
+   "kind": "fact",
+   "text": "fact {\n  graph/dag[xtends]\n  }"
+  },
+  {
+   "id": "alloy-models/models/java/javatypes_soundness.als@2426",
+   "kind": "assert",
+   "text": "assert TypeSoundness {\n  all s, s\": State, stmt: Setter |\n    {RuntimeTypesOK[s]\n    ExecuteSetter [s, s\", stmt]\n    TypeChecksSetter[stmt]\n    } => RuntimeTypesOK[s\"]\n  }"
+  },
+  {
+   "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@4943",
+   "kind": "pred",
+   "text": "pred ShowMe1Node  {\n  #Node = 1\n  all s : State | NextCorrect[s]\n  State.active = Node\n}"
+  },
+  {
+   "id": "alloy-models/models/typography/paragraph-numbering.als@1226",
+   "kind": "fact",
+   "text": "fact {State = NumberedState}"
+  },
+  {
+   "id": "alloy-models/models/firewire/firewire.als@3033",
+   "kind": "pred",
+   "text": "pred PeekQueue [s: State, x: Link, m: Msg] {\n  m = s.queue[x].slot\n  }"
+  },
+  {
+   "id": "alloy-models/utilities/types/relation.als@268",
+   "kind": "pred",
+   "text": "pred function [r: univ->univ, s: set univ] {\n  all x: s | one x.r\n}"
+  },
+  {
+   "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@4840",
+   "kind": "fact",
+   "text": "fact { all s : State {\n    ClosestPrecedingFinger[s]\n    FindPredecessor[s]\n    FindSuccessor[s]\n  }}"
+  },
+  {
+   "id": "alloy-models/puzzles/prisoner-room-visit/prisoner.als@740",
+   "kind": "pred",
+   "text": "pred TineSwichedSetToZero{all p:OtherPrisoner{ p->0 in first.timesSwitched}}"
+  },
+  {
+   "id": "alloy-models/software-abstractions-book/chapter4/lights.als@338",
+   "kind": "pred",
+   "text": "pred mostlyRed [s: LightState, j: Junction] {\n\tlone j.lights - redLights[s]\n\t}"
+  },
+  {
+   "id": "alloy-models/algorithms/multicasting/iolus.als@6731",
+   "kind": "assert",
+   "text": "assert InsiderCanRead {\n  all msg : Message, m : Member |\n    some t : Tick - ord/last | all t\" : ord/nexts[t] |\n      (IsMember[msg.sender, msg.sentTime] &&\n       IsMember[m, msg.sentTime]) => CanReceive[m, t\", msg]\n}"
+  },
+  {
+   "id": "alloy-models/algorithms/distributed-hashtable/chord.als@3722",
+   "kind": "assert",
+   "text": "assert SameCPF2 {\n        all s: State | ((s.active = Node && FingersCorrect[s] && ClosestPrecedingFinger\" [s])\n         => ClosestPrecedingFinger [s]) }"
+  },
+  {
+   "id": "alloy-models/software-abstractions-book/chapter4/filesystem.als@270",
+   "kind": "assert",
+   "text": "assert RootTop {\n\tno o: Object | Root in o.contents\n\t}"
+  },
+  {
+   "id": "alloy-models/software-abstractions-book/chapter6/ringElection2.als@975",
+   "kind": "pred",
+   "text": "pred progress  {\n\tall t: Time - TO/last |\n\t\tlet t\" = TO/next [t] |\n\t\t\tsome Process.toSend.t => some p: Process | not skip [t, t\", p]\n\t}"
+  },
+  {
+   "id": "alloy-models/software-abstractions-book/chapter2/addressBook1h.als@241",
+   "kind": "pred",
+   "text": "pred del [b, b\": Book, n: Name] {\n\tb\".addr = b.addr - n->Addr\n}"
+  },
+  {
+   "id": "alloy-models/algorithms/multicasting/iolus.als@6527",
+   "kind": "assert",
+   "text": "assert OutsiderCantSend {\n  no msg : Message, m : Member, t : Tick {\n    !IsMember[msg.sender, msg.sentTime]\n    IsMember[m, t]\n    msg !in m.receivedMessages[ord/prev[t]]\n    CanReceive[m, t, msg]\n  }\n}"
+  },
+  {
+   "id": "alloy-models/software-abstractions-book/chapter6/ringElection1.als@975",
+   "kind": "assert",
+   "text": "assert AtLeastOneElected { some t: Time | some elected.t }"
+  },
+  {
+   "id": "alloy-models/simple-models/games/life.als@1294",
+   "kind": "pred",
+   "text": "pred Show {}"
+  },
+  {
+   "id": "alloy-models/models/firewire/firewire.als@2903",
+   "kind": "pred",
+   "text": "pred ReadQueue [s, s\": State, x: Link] {\n\n  no s\".queue[x].(slot + overflow)\n  all x\": Link - x | s\".queue[x\"] = s.queue[x\"]\n  }"
+  },
+  {
+   "id": "alloy-models/software-abstractions-book/appendixA/distribution.als@30",
+   "kind": "assert",
+   "text": "assert union {\n\tall s: set univ, p, q: univ->univ | s.(p+q) = s.p + s.q\n}"
+  }
+ ]
+}
