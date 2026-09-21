@@ -32,15 +32,42 @@ def _description(value):
     return value
 
 
+def _verbalisation(value):
+    if type(value) is not str or not value:
+        raise VEError("Verbalisations must be nonempty strings")
+    if len(value) > 256:
+        raise ResourceLimit("Verbalisation exceeds 256 characters")
+    return value
+
+
+def _entry_fields(entry, required, *, path, negative=False):
+    # Optional display metadata is identity-bound, but never executable syntax.
+    fields = set(required)
+    if type(entry) is dict and "verbalisation" in entry:
+        fields.add("verbalisation")
+    if negative and type(entry) is dict and "negative_verbalisation" in entry:
+        fields.add("negative_verbalisation")
+    require_fields(entry, fields, path=path)
+
+
+@dataclass(frozen=True, slots=True)
+class SortVerbalisation:
+    singular: str
+    plural: str
+
+
 @dataclass(frozen=True, slots=True)
 class SortDecl:
     description: str
+    verbalisation: SortVerbalisation | None = None
 
 
 @dataclass(frozen=True, slots=True)
 class PredicateDecl:
     arguments: tuple[str, ...]
     description: str
+    verbalisation: str | None = None
+    negative_verbalisation: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,17 +108,29 @@ class Environment:
                 names.add(name)
         sorts, predicates, constants = {}, {}, {}
         for name, entry in vocab["sorts"].items():
-            require_fields(entry, {"description"}, path=f"/vocabulary/sorts/{name}")
-            sorts[name] = SortDecl(_description(entry["description"]))
+            path = f"/vocabulary/sorts/{name}"
+            _entry_fields(entry, {"description"}, path=path)
+            verbalisation = None
+            if "verbalisation" in entry:
+                raw = entry["verbalisation"]
+                require_fields(raw, {"singular", "plural"}, path=path + "/verbalisation")
+                verbalisation = SortVerbalisation(_verbalisation(raw["singular"]),
+                                                  _verbalisation(raw["plural"]))
+            sorts[name] = SortDecl(_description(entry["description"]), verbalisation)
         for name, entry in vocab["predicates"].items():
-            require_fields(entry, {"arguments", "description"}, path=f"/vocabulary/predicates/{name}")
+            _entry_fields(entry, {"arguments", "description"}, path=f"/vocabulary/predicates/{name}",
+                          negative=True)
             args = entry["arguments"]
             if type(args) is not list or len(args) not in (1, 2):
                 raise VEError("Predicate arguments must be an array of one or two sort identifiers")
             for sort in args:
                 if type(sort) is not str or sort not in sorts:
                     raise UnknownSymbol(f"Undeclared predicate argument sort: {sort!r}")
-            predicates[name] = PredicateDecl(tuple(args), _description(entry["description"]))
+            verbalisation = _verbalisation(entry["verbalisation"]) if "verbalisation" in entry else None
+            negative = (_verbalisation(entry["negative_verbalisation"])
+                        if "negative_verbalisation" in entry else None)
+            predicates[name] = PredicateDecl(tuple(args), _description(entry["description"]),
+                                             verbalisation, negative)
         for name, entry in vocab["constants"].items():
             require_fields(entry, {"sort", "description"}, path=f"/vocabulary/constants/{name}")
             sort = entry["sort"]
@@ -112,10 +151,24 @@ class Environment:
         return cls(loads_json(data))
 
     def to_dict(self):
+        def sort_entry(declaration):
+            entry = {"description": declaration.description}
+            if declaration.verbalisation is not None:
+                entry["verbalisation"] = {"singular": declaration.verbalisation.singular,
+                                           "plural": declaration.verbalisation.plural}
+            return entry
+
+        def predicate_entry(declaration):
+            entry = {"arguments": list(declaration.arguments), "description": declaration.description}
+            if declaration.verbalisation is not None:
+                entry["verbalisation"] = declaration.verbalisation
+            if declaration.negative_verbalisation is not None:
+                entry["negative_verbalisation"] = declaration.negative_verbalisation
+            return entry
+
         return {"language": self.language, "profile": self.profile, "spec_revision": self.spec_revision,
-                "vocabulary": {"sorts": {k: {"description": v.description} for k, v in self.sorts.items()},
-                               "predicates": {k: {"arguments": list(v.arguments), "description": v.description}
-                                              for k, v in self.predicates.items()},
+                "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
+                               "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
                                "constants": {k: {"sort": v.sort, "description": v.description}
                                              for k, v in self.constants.items()}}}
 

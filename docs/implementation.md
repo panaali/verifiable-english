@@ -4,7 +4,7 @@ The implementation supports exactly `ve.core@0`, `relational-fol@0`, and
 `ve-v0-draft-2026-09-20`. It implements the draft semantics; it does not establish
 the pending theorems in [the verification contract](spec/verification-contract.md).
 `uv.lock` pins the test/build dependencies. There are no third-party runtime
-dependencies. Use Python 3.14 and `uv sync`; run `uv run python -m pytest`.
+dependencies. Use Python 3.12 or later and `uv sync`; run `uv run python -m pytest`.
 
 ## Python API
 
@@ -80,9 +80,21 @@ Diagnostic result records use ordinary JSON, including `null` for an unavailable
 Boolean or absent search witness. They are not semantic input packages or new
 certificate encodings; the argument-layer wire contract remains a separate task.
 
-## FOL rendering
+## Five views and FOL interchange
 
-`render_fol(env, value, view="canonical" | "natural")` accepts a `Document`, an
+`render(ast, env, view)` returns a deterministic string for a closed formula or
+`Document`. The views are `fol_symbols`, `fol_keywords`, `ve_strict`,
+`ve_natural`, and `ve_fluent`. The first four share one traversal and full formula
+parenthesisation. Fluent uses reversible contractions and sort-derived names
+that remain disjoint across sorts and statements. All five share the hardened
+vocabulary policy, identical legend, output limits, lexical case, punctuation,
+and length-measurement API. Exact negative-template validation, name allocation,
+and inverse grammars are documented in [rendering views](rendering-views.md).
+`print_document` preserves the existing strict canonical serialization.
+
+`render_fol(env, value, view=...)` accepts these five names and returns text.
+The legacy `canonical` default returns strict text; `natural` returns a
+`NaturalView` record. This adapter accepts a `Document`, an
 indexed document array, or the following explicit named-FOL object. This is an
 AST API, not an arbitrary FOL string parser. Adapters must handle dataset syntax
 and declare all sorts, constants, and predicates themselves; unsupported items
@@ -108,7 +120,11 @@ Named formulas use the same tags as indexed formulas in an `op` field:
 `top`/`bottom`; `unary` with `predicate, term`; `binary` with `predicate, left,
 right`; `eq` with `left, right`; `not` with `body`; binary connectives with
 `left, right`; quantifiers with `sort, variable, body`. Terms have exactly one
-`var` or `const` field. Unknown fields and missing operands fail.
+`var` or `const` field. Unknown fields and missing operands fail. Imported
+variable declarations and references must obey the strict ASCII identifier and
+length rules, avoid reserved/schema names, and obey scope without shadowing.
+`document_to_named_fol(env, document)` exports this same object shape with
+canonical preorder binder names; importing that export recovers the exact AST.
 
 The natural view is a conservative ACE-style experimental display, **not an ACE
 parser or an independently verified ACE translation**. It returns text, renderer
@@ -130,14 +146,90 @@ sort, and local ID rather than ambiguous untyped names. Evaluation short-circuit
 an unvisited branch is not evidence about that branch. Work exhaustion is never
 reported as a false claim. A separate `max_trace_nodes` budget defaults to 10,000;
 exhausting it also returns `ResourceLimit`, even when formula-work budget remains.
+Use `evaluate(..., trace=False)` or `check(..., trace=False)` to omit explanatory
+trees (`explanation: null`) and use the full 1,000,000-node evaluation envelope.
+`max_evaluations` is exposed by `evaluate`, `check`, `check_countermodel`,
+`find_countermodel`, and `find_distinguishing_model`; work exhaustion is never a
+logical negative. Countermodel checks and search use no-trace evaluation.
+Search uses private validated evaluation paths after validating each generated
+model once; public witness checks still independently validate submitted models.
 
 `find_countermodel` enumerates finite domains, constant denotations (including
-aliases), and relation subsets within explicit size/model/work bounds. It is a
+aliases), and relation subsets within explicit size/model/work bounds. Only
+predicates occurring in the premises/conclusion or `a`/`b`, plus
+`nonvacuous_for`, have their relations enumerated. Every other declared predicate
+is fixed to the empty relation in the complete returned model. This reduction
+is sound for finding distinguishing/countermodels: changing an unused predicate
+cannot affect any checked formula's truth or guard satisfaction. Bounded
+`NotFound` exhausts representatives modulo unused relations, not every complete
+interpretation of the vocabulary. Domain vectors are streamed by total entity
+count then lexical size vector. Within each vector, used relation interpretations
+are streamed by total tuple count across all relations then sorted predicate
+names and generated domain order; each is paired with all constant denotations.
+Sparse small witnesses come first without materializing the exponential set of interpretations. It is a
 small exponential search tool intended for mechanism examples, not a scalable
 general-purpose solver. `Found` supplies a witness; `NotFound` means only that
 the bounded enumeration finished; `ResourceLimit` means the search stopped
 early. None supplies positive entailment evidence. The language has invalid
 inferences with no finite countermodels at all.
+
+`min_domain_size=0` preserves the default empty-sort semantics;
+`nonempty_domains=True` raises the minimum to at least 1 for **all** sorts.
+Constants continue to require an inhabitant of their sorts. These are search
+filters, not extra logical axioms. Use `find_distinguishing_model(env, a, b, ...)`
+with the same options to obtain a `CountermodelResult` whose `Found` model makes
+the two closed formulas differ. Evaluate both formulas to determine direction.
+`NotFound` covers only the requested finite bounds and filters.
+
+`nonvacuous_for=formula` further requires nonempty domains at all of that
+formula's quantifiers and at least one true antecedent for each syntactic
+implication occurrence, over all bindings of its enclosing quantifiers. It
+inspects both branches regardless of evaluation short-circuiting; it does not
+require the formula itself to be true. Different occurrences of a shared AST
+node are checked independently. The inspection and antecedent evaluations share
+the request's work budget. The condition is conservative: an impossible
+antecedent disqualifies a candidate; there is no silent logical-feasibility
+exemption. Such a request may return `NotFound` even when ordinary distinguishing
+models exist. This legacy default is syntactic: `not dep(s) or rev(s)` is not an
+`Implies` node, so its empty antecedent relation is not detected in this mode.
+
+Set `semantic_nonvacuity=True` together with `nonvacuous_for=formula` to also
+check clause guards semantically in each candidate model. Precisely:
+
+- Retain every legacy quantifier-domain and implication-antecedent check.
+- For each maximal tree of `Or` nodes beneath at least one enclosing `Forall`,
+  flatten its disjuncts in order. Each disjunct of the form `Not(G)` contributes
+  `G` to the guard. Non-negated disjuncts do not contribute. For example,
+  `not dep(s) or rev(s)` has guard `dep(s)`; `not A or not B or C` has joint
+  guard `A and B`, independent of left/right association or disjunct order.
+- If there is at least one such negated disjunct, require **one assignment** of
+  the occurrence's enclosing universal/existential binders on which **all** its
+  guard bodies evaluate true simultaneously. Each occurrence is independent;
+  individual guard satisfaction on different assignments is insufficient.
+- Inspect all branches, even under negation or a short-circuiting connective.
+  This conservative occurrence check does not require the whole formula, its
+  consequent, or its enclosing conditions to be true. Witnesses may differ
+  between occurrences; this is not a per-outer-assignment witness requirement.
+
+Guard recognition is structural; guard **satisfaction** uses the evaluator and
+shares the search work budget, including inspection. There is no arbitrary CNF
+normalization, English interpretation, or invariance under every logically
+equivalent rewrite. A disjunction with no negated disjunct, or with no enclosing
+universal, adds no clause guard. An impossible joint guard rejects the model.
+The result records `semantic_nonvacuity` and `nonvacuous_for_meaning_id` so that
+filtered `NotFound` is not mistaken for unconstrained exhaustion.
+
+```python
+from ve import find_distinguishing_model
+
+witness = find_distinguishing_model(
+    env, faithful, candidate, min_domain_size=1, max_domain_size=2,
+    nonvacuous_for=faithful, semantic_nonvacuity=True, max_evaluations=1_000_000,
+)
+if witness.status == "Found":
+    assert evaluate(env, faithful, witness.model, trace=False).value != evaluate(
+        env, candidate, witness.model, trace=False).value
+```
 
 `check_countermodel` is the independent trusted witness-checking entry point.
 It checks every premise and the exact conclusion and binds the result to the
@@ -330,15 +422,22 @@ cannot conceal malformed input. The examples in the README are executable.
 optionally takes `--model` and `--candidate-ast`; `evaluate` requires a model.
 Records explicitly retain `assurance: experimental`, `intent: unconfirmed`, and
 `proof: not_checked`. Exit 0 means successful output or a found countermodel;
-exit 1 means finite violation or bounded countermodel absence; exit 2 means
-invalid input or resource exhaustion. Read the distinct JSON status fields.
+exit 1 means `Violated`; exit 2 means `InvalidInput`; exit 3 means
+bounded/filtered `NotFound`; exit 4 means `ResourceLimit` (both returned budget
+outcomes and raised resource exceptions). JSON statuses preserve these distinctions.
+`evaluate`, `check`, and `countermodel` accept `--max-evaluations`.
+`evaluate` and `check` accept `--no-trace`. Search always omits traces and accepts
+`--min-domain-size`, `--nonempty-domains`, and `--nonvacuous-for FILE` (one strict
+VE statement), plus `--semantic-nonvacuity` to enable the clause-guard check
+(requires `--nonvacuous-for`). `render` and `import-fol` accept all five named
+views as plain text; legacy `--view natural` emits the identity-bound JSON view record.
 
 The v0 envelope bounds source bytes, JSON package size, AST depth/nodes,
 vocabulary size, model entities/tuples, explanatory trace size, and formula-node evaluations. JSON
 nesting additionally has a 256-level decoding guard. Search is separately
 bounded; search also stops if a candidate domain vector requires more than
-100,000 possible relation atoms. Host cancellation remains a process interruption,
-not a logical finding.
+100,000 possible **used-predicate** relation atoms. Host cancellation remains
+a process interruption, not a logical finding.
 
 ## Trust and tests
 
@@ -364,13 +463,26 @@ separately written finite denotation for generated formulas. This is a developme
 suite, not the independently frozen 240-case corpus proposed in the roadmap,
 and it is not evidence for any oversight or readability benefit.
 
-Core validation on September 21, 2026: `uv run --frozen python -m pytest -q` passed
+Original core validation on September 21, 2026: `uv run --frozen python -m pytest -q` passed
 90 tests; `uv build` produced both source and wheel distributions; importing the
 built wheel in isolated Python and checking the worked inventory succeeded.
 In the restricted worker environment these `uv` commands used
 `UV_CACHE_DIR=/private/tmp/ve-uv-cache`. The ordinary `uv` cache is outside that
 worker's writable paths; direct `.venv/bin/python -m pytest` also passed.
 
+The rendering/search follow-up adds seeded cross-view injectivity and binder
+checks, adversarial distinguishing pairs, verbalisation collision/fallback
+checks, FOL-name rejection/export round trips, constrained model search,
+trace-free evaluation and request-budget tests. Reproduce in the views worktree
+with `UV_CACHE_DIR=/private/tmp/ve-uv-cache-views uv run --frozen python -m pytest -q`.
+
+Views follow-up validation on September 21, 2026: the command above passed
+158 tests. `UV_CACHE_DIR=/private/tmp/ve-uv-cache-views uv build --out-dir
+/private/tmp/ve-views-dist` built the source and wheel distributions. An isolated
+Python import from that wheel passed four-view rendering, no-trace inventory
+checking, distinguishing-model search, and named-FOL export/import smoke checks.
+The no-trace suite includes successful evaluation at exactly 1,000,000 nodes;
+non-vacuity inspection itself is also charged to the search request budget.
 The argument extension adds replay/forgery, empty-sort, aliasing/equality,
 many-sort, dependent-witness, assumption-composition, stale-commitment,
 inconsistent-premise, injected-checker-conflict, E5 display, and executable

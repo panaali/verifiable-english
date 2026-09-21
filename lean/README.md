@@ -104,6 +104,10 @@ escapes, null, fractions/exponents, out-of-range integers, invalid names,
 unsupported versions, missing fields, duplicate inventory entries, wrong arity,
 dangling/wrong-sort entities and ill-typed/free AST indices. It implements
 formula depth/node, vocabulary, domain, tuple, and overall input-byte limits.
+It accepts Python's optional sort and predicate `verbalisation` metadata and
+predicate `negative_verbalisation`, checking their field shapes and string
+bounds. These are inert display data; lexical linting and negative-template
+selection belong to the Python renderer and are outside the Lean proofs.
 It does not implement Python's evaluation-work or trace budgets, source-size
 budget, diagnostics, explanations, JCS hashes or assurance records. Its 16 MiB
 input cap applies to the entire batch envelope. It is a conformance tool, not
