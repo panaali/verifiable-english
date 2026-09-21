@@ -55,6 +55,43 @@ Rules for every experiment:
   (a distinguishing finite model exists) and must not be trivially detectable by string comparison.
 - Sample sizes are chosen from a pilot's variance, within the call budget. Report inconclusive results as inconclusive.
 
+## Plan v2 decisions (frozen 01:35 after both critiques; supersedes the v1 table where they differ)
+
+Both critiques (`design/critique-claude.md`, `design/critique-codex.md`) agree on the main points. Decisions:
+
+1. **E1 is the primary experiment.** Same underlying item in every cell, attacks generated once and blind to the cell.
+   - Views: FOL with symbols; FOL with ASCII keywords (nuisance control: "words, not symbols"); VE strict; VE natural.
+     All four are deterministic renderings of the same AST.
+   - Crossed factor: no explanation, or an explanation written by the attacker. An honest-explanation cell is
+     exploratory only.
+   - Primary contrast: false approval, VE strict vs FOL-symbols, in the attacker-explanation cells. Secondary:
+     VE vs keyword-FOL (is it English, or just not symbols?), and VE vs FOL with no explanation.
+   - **Gate:** E1 is scored only if the dev split shows a capability gap (weak judges' unaided accuracy below the
+     strong models') and raw-FOL false approval between 30% and 60%. Otherwise recalibrate attacks first.
+   - Attacks: a mechanical family (quantifier swap, dropped conjunct, argument reversal, weakened exception,
+     vacuous domain) plus model-written attacks from both families. Each attack is validated by a distinguishing
+     finite model and must not be detectable by string comparison with the requirement.
+   - **E1b comprehension control:** with no requirement shown, the judge predicts whether the text holds in two small
+     finite models; the evaluator scores it. This separates understanding a view from approval bias.
+   - Main scored set is synthetic (contamination-free) with fresh vocabulary; FOLIO-derived items are a secondary set.
+     Split by semantic template and vocabulary family. Bootstrap over template clusters. Report every judge separately.
+2. **E5 is the harm check** and absorbs E3's merged-vocabulary attack. Grounding errors are defined by explicit records
+   and scope mismatches, never by a model's verdict. Cells: no label, "proof checked" label, label + outstanding
+   obligations display, the latter also with the predicate-use panel.
+3. **E0 is a coverage audit with a spread**, not one number: Cedar, Gatekeeper, FOLIO, ProofWriter, and the boundary
+   sets (Alloy, FRET, Clover). Freeze the sampling frame and inclusion rules before conversion. Survey labels need a
+   second rater from the other model family.
+4. **E2 and E4 shrink and must be able to fail.** E2: sizes 4, 32, 256; half the items carry an error the checker
+   cannot see (false leaf, wrong specification). Add a structured-FOL arm with the identical checker output, so that
+   any VE effect is separated from the checker's effect. E4: include dishonest critics with asserted but unchecked
+   countermodels. These are reported as mechanism demonstrations unless the matched baseline differs.
+5. **E6 is cut. E3 survives only inside E5. E7 stays a stretch goal.**
+6. Every PREREG names one primary contrast, one refutation condition, an honest-acceptance constraint, and a smallest
+   useful effect. An interval that spans the smallest useful effect is reported as inconclusive. Unparseable verdicts
+   count as the worst case for their cell.
+7. Known asymmetry to report: Codex-family judges receive about 13.6k tokens of CLI context per call, Claude-family
+   about 500. Judges are therefore never pooled across families in a primary result.
+
 ## Implementation scope
 
 - Language core: many-sorted function-free FOL with equality, per `docs/spec/v0-language.md`. Strict parser,
@@ -87,6 +124,7 @@ Rules for every experiment:
 
 ## Status log
 
+- 01:35 Both design critiques merged. Plan v2 frozen (section above). Worker C harness done, awaiting cross-review.
 - 01:10 Read the user's links on recent AI mathematics. Added the Lean track and stretch experiment E7.
 - 00:30 Plan v1 written. Worktrees created: `~/code/ve-claude` (`claude/main`), `~/code/ve-codex` (`codex/main`),
   `~/code/ve-integration` (`ve-integration`).
