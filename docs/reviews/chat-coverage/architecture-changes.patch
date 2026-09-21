@@ -1,0 +1,313 @@
+--- a/docs/sources/verifiable_english_brainstorming_and_architecture_complete.md
++++ b/docs/sources/verifiable_english_brainstorming_and_architecture_complete.md
+@@ -3,6 +3,8 @@
+ **Working names:** Verifiable English (VE), Canonical English Verified (CEV), “CE++” as an internal shorthand  
+ **Status:** Brainstorming synthesis / project direction  
+ **Date:** September 2026
++
++**Source basis:** This memo consolidates [the brainstorming chat](<Chat-Formalize English In Lean.md>). External project, availability, licensing, and model-capability claims are discussion-time research notes and should be rechecked before implementation decisions. The [line-cited coverage review](../reviews/chat-coverage/README.md) records the September 20, 2026 audit and its changes.
+ 
+ ---
+ 
+@@ -47,6 +49,17 @@
+ > “The system always recovers exactly what a human intended from arbitrary unrestricted English.”
+ 
+ That second problem is fundamentally underdetermined whenever the speaker did not express enough information.
++
++## Use-case catalog
++
++| Use case | Design detail and demonstration |
++|---|---|
++| Human↔agent and agent↔agent communication | §§6–8; Appendix K.9; §22, Demo 1 |
++| Software and system requirements | §§5.5, 13.4; §22, Demo 2 |
++| Mathematical statements and proofs | §14; Appendix M; §22, Demo 3 |
++| Scientific papers, authored directly or formalized retrospectively | §15; Appendix H; §22, Demo 4 |
++| Constitutional text and versioned legal doctrine | §16; Appendix AD.19; §22, Demo 5 |
++| AI constitutions and agent policy | §17; Appendices N and AD.20; §22, Demo 6 |
+ 
+ ---
+ 
+@@ -137,7 +150,7 @@
+ 
+ # 4. What “canonical” means
+ 
+-Here, **canonical** means that equivalent or permitted formulations are mapped to a stable, standardized semantic representation.
++Here, **canonical** means that formulations identified by the language’s declared normalization rules map to a stable, standardized semantic representation. Logical equivalence or ordinary-English paraphrase alone does not require two texts to share an AST; see Appendix T.
+ 
+ For example:
+ 
+@@ -239,6 +252,8 @@
+ ## 5.4 PENG Light + Event Calculus
+ 
+ PENG Light explored controlled English as a high-level interface to Event Calculus.
++
++The discussion also identified PENG's **bidirectional grammar**: controlled English can map through DRS into logic, and formal representations can be rendered back into English. This is a parser/printer precedent as well as an event-modeling precedent. The cited research lead is [Working for two: a bidirectional grammar for a controlled natural language](https://researchers.mq.edu.au/en/publications/working-for-two-a-bidirectional-grammar-for-a-controlled-natural-/).
+ 
+ Sources:
+ 
+@@ -521,6 +536,8 @@
+     semantics_VE(embed(s)) = semantics_ACE(s)
+ ```
+ 
++The ACE compatibility theorem requires a **versioned formal model of the supported ACE semantics**, including its background assumptions. Agreement with APE regression examples provides empirical compatibility evidence; it does not establish the theorem for every sentence in that fragment.
++
+ The important difference from testing is that a proof applies to **all values covered by the theorem**, not only thousands of examples.
+ 
+ Regression tests are still useful; they are not the final correctness argument.
+@@ -665,7 +682,7 @@
+ 
+ **Recommended use**
+ 
+-Keep the verified core simple enough that we may later compile it through RustCompCert or a similar verified pipeline.
++Keep the verified core simple enough that we may later compile it through RustCompCert or a similar verified pipeline. The discussion reported an unverified Rust source parser before Rustlight; a source-to-assembly guarantee must account for that boundary explicitly (Appendix AD.15).
+ 
+ The UI, networking, indexing, LLM integration, parallel processing, and other noncritical services can continue using ordinary Rust.
+ 
+@@ -721,6 +738,8 @@
+ ```
+ 
+ Once the ambiguity boundary has been crossed, the remainder can be lossless and verified.
++
++A well-formed but unintended AST can still pass the checker. Acceptance establishes conformance to VE semantics; matching the author's intent still depends on context, back-translation, and clarification or selection.
+ 
+ ---
+ 
+@@ -1042,6 +1061,8 @@
+ application to facts
+ ```
+ 
++A phrase such as “unreasonable searches and seizures” can remain an **open standard** in the text layer. A doctrinal interpretation adds rules and assumptions with their own provenance; it must not silently replace that standard with one invented precise definition.
++
+ ## Versioning
+ 
+ The constitutional text may remain unchanged while controlling precedent changes.
+@@ -1060,6 +1081,8 @@
+ This lets the system answer questions such as:
+ 
+ > What was the controlling interpretation of this provision at a particular date?
++
++It should also support a dependency query: **if a precedent is narrowed or overruled, which derived rules and applications lose that support or need reassessment?** Preserve the prior doctrine snapshot and identify any alternative support; a changed dependency should not automatically erase every derived conclusion.
+ 
+ The system should preserve provenance:
+ 
+@@ -1071,6 +1094,9 @@
+ - scope
+ - later modification
+ - overruling/narrowing/distinguishing relationships
++- interpretive method and rationale, such as text, original meaning, precedent, historical practice, structure, or pragmatic reasoning
++
++These method annotations make competing interpretations inspectable without treating one method as the constitutional text itself.
+ 
+ The goal is **not** to pretend legal interpretation is mechanically objective.
+ 
+@@ -1113,7 +1139,7 @@
+ Action A undermines autonomy when conditions C1...Cn hold.
+ ```
+ 
+-This is much more precise than encoding everything as flat Boolean rules.
++This is much more precise than encoding everything as flat Boolean rules. The normative layer uses the deontic and defeasible modules in §§13.6–13.7; mathematics and processes use their own semantic modules, with Lean formalizing the metatheory (Appendix S).
+ 
+ A formal agent constitution could support:
+ 
+@@ -1297,6 +1323,8 @@
+ ### Assessment
+ 
+ **Recommended overall path.**
++
++**Decision history:** The early technical proposal was to implement a useful ACE fragment in Lean, prove its English↔AST round trip and semantics, then add native temporal sentences. The later discussion explicitly revised the collaboration preference toward CE because its broad English surface, lexical/entity grounding, and agent-communication workflow better matched the long-term goal. The roadmap therefore checks CE source access and architectural fit first while retaining the ACE-informed core and compatibility milestone. If CE cannot be reused, a CE-compatible successor remains the fallback; this does not revive APE as the primary codebase.
+ 
+ ---
+ 
+@@ -1435,6 +1463,8 @@
+ - simple ownership patterns
+ 
+ This makes Aeneas verification easier.
++
++Before fixing the core's coding standard, build a representative parser/checker prototype against pinned Aeneas and RustCompCert versions. Record which AST representations, collections, ownership patterns, and control-flow constructs each accepts, and where source parsing lies outside either proof. The proposed common subset in Appendix E is a feasibility hypothesis until this experiment succeeds; do not assume generic `Vec`, `Option`, `Result`, or `Box` APIs work unchanged in both toolchains.
+ 
+ ---
+ 
+@@ -2167,7 +2197,7 @@
+ 
+ ### Role for VE
+ 
+-Possible semantic target/reference for system behavior and temporal assertions.
++Possible semantic target/reference for system behavior and temporal assertions. The discussion distinguished **TLC**, which explores reachable states of finite models for counterexamples, from **TLAPS**, which supports theorem proofs.
+ 
+ Reference: https://lamport.azurewebsites.net/tla/tla.html
+ 
+@@ -2269,7 +2299,7 @@
+ 
+ ### Limitation
+ 
+-GF by itself does not supply all the formal semantics and proof guarantees we want.
++GF by itself does not supply all the formal semantics and proof guarantees we want. In the discussion's assessment, ACE-in-GF tested tree round trips but did **not** implement the ACE→DRS semantic mapping. A syntax-tree round trip therefore cannot by itself establish preservation of ACE meaning.
+ 
+ ### Role for VE
+ 
+@@ -2642,7 +2672,9 @@
+ 
+ Its supported subset focuses on a tractable, formally specified portion of Rust rather than the entire modern Rust language.
+ 
+-The important point for VE is that the intersection between these two subsets is already large enough for a parser/checker kernel.
++The September 2026 discussion described Rustlight as supporting structs/enums, `Box`/RAII, references and lifetimes, safe and unsafe modules, verified borrow checking, and compilation through CompCert to assembly. It listed concurrency, polymorphism, traits, and closures as excluded. This is a **reported tool snapshot**, not proof that any particular VE implementation is supported. Rustlight's reported unsafe support does not extend Aeneas's safe-Rust scope. Recheck both pinned tool versions before choosing core constructs.
++
++The working hypothesis is that the intersection between these two subsets is large enough for a parser/checker kernel. Establish that with the representative prototype in Phase 5 before relying on a shared implementation.
+ 
+ ---
+ 
+@@ -2671,7 +2703,7 @@
+ explicit error handling
+ ```
+ 
+-This is sufficient for the core jobs we need:
++These constructs appear sufficient at the algorithm-design level for the core jobs below; availability in both toolchains still needs validation:
+ 
+ ```text
+ tokens
+@@ -2869,6 +2901,8 @@
+ > **Proof verification is different from statement interpretation.**
+ 
+ A wrong formalization can still be perfectly well-typed, mathematically coherent, and provable.
++
++A fully formal checker for `ordinary English ≡ Lean proposition` would itself need a precise formal interpretation of the English. Producing that interpretation is the autoformalization problem; proof checking alone cannot supply it. A controlled language with already specified semantics can support an equivalence theorem, but arbitrary English has no such given formal reference.
+ 
+ This is one of the strongest reasons VE needs a **canonical semantic layer**, rather than being merely an LLM that translates arbitrary English into Lean.
+ 
+@@ -2958,6 +2992,10 @@
+ canonical VE representation
+ ```
+ 
++The candidate space can be large: changing quantifier order, domains, assumptions, parentheses, or strict inequalities can yield different well-formed and even provable statements. Type checking rejects malformed candidates, and optional proof attempts can provide evidence about mathematical claims; neither ranks fidelity to the source. Failure to find a proof is not itself a disproof or evidence of mistranslation.
++
++Compare candidates against surrounding definitions and examples, show their canonical back-translations, and ask for clarification where the source does not decide. An LLM's semantic ranking remains a proposal rather than a formal certificate of intended meaning.
++
+ This combines strengths of probabilistic and formal systems:
+ 
+ ### LLMs are good at
+@@ -3778,6 +3816,8 @@
+ 
+ Input with unresolved ambiguity is not silently promoted to canonical meaning.
+ 
++For every accepted pronoun or anaphoric reference, the versioned discourse rules must select exactly one accessible antecedent. If they do not, request clarification or reject the input. This is an explicit reference-resolution proof obligation, beyond unique syntactic parsing; it does not establish that the selected antecedent matches an unexpressed human intention.
++
+ ### G7. Version stability
+ 
+ The meaning of a valid document is determined by:
+@@ -3797,6 +3837,10 @@
+ - automatic resolution of normative disagreement
+ - elimination of all vagueness
+ - one universal logic for every domain
++- a proof that every VE sentence sounds natural to English speakers
++- a completeness theorem covering every meaning expressible in unrestricted English
++
++The last two aspirations lack a complete formal reference specification in this proposal. A specified grammar can be checked; perceived naturalness should be evaluated with speakers, and expressiveness measured against declared domains and corpora. Those evaluations must not be presented as proofs about all English.
+ 
+ ---
+ 
+@@ -4549,6 +4593,8 @@
+ 
+ FOL should be one important semantic fragment.
+ 
++The discussion also noted that a unique ACE DRS can leave **background axioms** underspecified, especially for plurals and modality. A unique representation is not a complete axiomatization of every represented concept. VE must declare the semantic assumptions and modules required for such constructs.
++
+ ---
+ 
+ ## AD.4 APE implementation facts worth preserving
+@@ -4638,6 +4684,8 @@
+ - English may leave structural interpretation implicit.
+ - Lojban makes much of the structure syntactically explicit.
+ - ACE goes further by defining a controlled mapping into a formal semantic representation.
++
++This comparison concerns specified logical structure. “Good doctor” still needs a chosen predicate meaning in both Lojban and ACE; formal quantifiers alone do not settle lexical vagueness or context. This preserves the correction made in the discussion, rather than suggesting ACE automatically defines every content word.
+ 
+ That is why ACE became the more relevant ancestor for VE.
+ 
+@@ -4724,6 +4772,8 @@
+ - canonical text plus a machine-walkable semantic structure
+ - tight generation loops in which an LLM keeps proposing until the deterministic checker accepts
+ 
++The discussion also identified **CGEL/CGELBank** for grammatical structure, **Stanza** for best-effort part-of-speech analysis, and **Markdown/markdownlint** for document structure and checking. These are component leads that can be evaluated separately if NOAH source remains unavailable. Their actual integration, licensing, and suitability require source inspection; the unavailable repository was not audited.
++
+ The site describes two equivalent serialization ideas:
+ 
+ ```text
+@@ -4746,7 +4796,9 @@
+ 
+ ## AD.10 CE source-code availability is a project risk, not a conceptual rejection
+ 
+-During the discussion, the repository linked from the Canonical English site could not be accessed at the expected GitHub location.
++During the discussion, the repository linked from the Canonical English site could not be accessed at the expected GitHub location. The reported locator was `MichaelCurrie/canonical-english`, including a link to `FORMAT.md`, and it returned 404 at that time. The site was described as claiming **MIT-0** licensing and a layout containing `canon/`, `src/`, and `docs/`.
++
++These are historical investigation leads, not confirmed current availability, license terms, or inspected source layout. Verify them against the repository obtained before planning a fork.
+ 
+ That should be treated as a practical due-diligence item:
+ 
+@@ -4922,6 +4974,8 @@
+ 
+ The key caution is that it is a research-stage restricted compiler, not a drop-in verified replacement for the entire Rust ecosystem.
+ 
++The discussion reported a further trust boundary: the **Rust source parser was unverified**, with the verified compiler chain starting at the Rustlight representation. This is distinct from VE's own English parser. A complete argument from the checked Rust source to assembly must connect that source to the compiler's actual input. Candidate approaches were a small verified restricted parser, separate parser verification, or direct generation of a Rustlight AST. Direct AST generation still requires establishing its correspondence to the core whose behavior was proved; it does not automatically close the gap. Re-evaluate this boundary against the selected toolchain version.
++
+ Reference: https://arxiv.org/abs/2602.07455
+ 
+ ---
+@@ -4961,7 +5015,7 @@
+ 
+ ## AD.17 Recent formal-math results support the project's timing
+ 
+-Recent work provides concrete evidence that frontier AI systems can now generate or formalize very large Lean developments.
++**Discussion-time snapshot: September 2026.** The chat cited the following reports as evidence that frontier AI systems could generate or formalize large Lean developments. These examples are preserved as research leads from that discussion; this source-coverage audit did not independently re-verify the reports. Recheck them before using them to set delivery estimates, as required by Appendix L.3.
+ 
+ Two examples discussed were:
+ 
+@@ -5194,26 +5248,33 @@
+ | Recommended concrete roadmap | §§20–21 |
+ | Recommended current architecture | §§8, 25–27 |
+ 
+-This checklist should be updated whenever major new design decisions are added.
++Additional details recovered by the line-cited coverage review:
++
++| Discussion detail | Covered in |
++|---|---|
++| Formal equivalence-oracle circularity and candidate-search limits | Appendix F.1, F.3 |
++| ACE lexical/background-axiom caveats and formal compatibility prerequisite | §9; Appendix AD.3, AD.6 |
++| Pronoun-resolution proof obligation; limits of naturalness/completeness claims | Appendix O |
++| PENG bidirectional grammar; ACE-in-GF semantic boundary; TLC/TLAPS | §5.4; Appendix A.6, A.10 |
++| ACE-first technical milestone and later CE collaboration preference | §19, Path 6 |
++| CE component, repository, license, and source-layout leads | Appendix AD.9–AD.10 |
++| Rustlight feature snapshot, common-subset validation, source-parser trust boundary | §11; §20, Phase 5; Appendix E.1–E.2, AD.15 |
++| Open constitutional standards, interpretive methods, and precedent-change queries | §16 |
++
++See the [coverage review](../reviews/chat-coverage/README.md) for exact chat lines, original memo lines, updated memo lines, and the disposition of each reviewer finding. This checklist should be updated whenever major new design decisions are added.
+ 
+ ---
+ 
+ # Appendix AF — Final Completeness Note
+ 
+-After the final audit, the memo now captures all **substantive project ideas, technologies, use cases, trade-offs, and implementation decisions** discussed in the brainstorming.
+-
+-Not every conversational repetition is reproduced verbatim; instead, repeated questions have been consolidated into the relevant design sections.
+-
+-The separate prompt archive remains useful as the complete chronological record of the original questions.
+-
+-The relationship between the two artifacts is:
+-
+-```text
+-formal_language_user_prompts.md
+-    = chronological conversation-input record
+-
+-verifiable_english_brainstorming_and_architecture_complete.md
+-    = consolidated research/design record
+-```
++On September 20, 2026, six reviewers examined non-overlapping portions of the full 3,286-line chat against the 5,219-line pre-edit memo. The integrating review checked their findings against both files, applied the supported additions and corrections, and recorded optional suggestions that were already covered or did not warrant duplication. The [review record](../reviews/chat-coverage/README.md) preserves coverage ownership and exact source, baseline, and updated line references.
++
++Repeated exchanges and redundant examples are consolidated. Coverage of a discussion claim does not establish that an external project claim is current or correct; the historical research notes remain subject to verification before implementation.
++
++The source artifacts are:
++
++- [Chat-Formalize English In Lean.md](<Chat-Formalize English In Lean.md>): full chronological conversation, including answers and research links.
++- [Prompts-formal_language_user_prompts.md](Prompts-formal_language_user_prompts.md): separate chronological archive of the user's prompts.
++- `verifiable_english_brainstorming_and_architecture_complete.md`: consolidated research and design record.
+ 
+ If a future decision materially changes the project, both the decision and its rationale should be added to this memo rather than relying on chat history alone.
