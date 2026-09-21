@@ -15,7 +15,7 @@ statements below, rather than that count, define the assurance claim.
 | `Tableau.checkCertificate_sound` | Boolean acceptance entails the exact supplied conclusion from the exact ordered premises over every admissible common-carrier structure in the chosen universe, including empty sorts and infinite structures. No assumed certificate-soundness premise remains. |
 | `Closure.Tableau.checkCertificate_sound` | Acceptance by the extended checker implies extended entailment over all admissible structures, including infinite carriers and empty sorts. |
 | `Closure.Tableau.checkCertificate_sound_v0` | Corollary for embedded v0 formulas via conservativity; the original v0 theorem and four original tableau files are unchanged. |
-| `Graph.check_sound`; `check_entails` | Successful Lean tableau-backed checking of a topologically ordered named graph establishes acyclicity, unique names, exact claim provenance, and root entailment from its reported assumptions. |
+| `Graph.check_sound`; `check_entails` | For the Lean reference graph checker: successful Lean tableau-backed checking of a topologically ordered named graph establishes acyclicity, unique names, exact claim provenance, and root entailment from its reported assumptions. |
 | `Bridge.decodeModel_valid`; `CountermodelQuery.refutes_sound` | Successful model decoding supplies admissibility; an accepted typed finite countermodel refutes the exact universe-zero consequence relation. |
 
 <!-- src: lean/METATHEORY.md; lean/VE/TableauChecker.lean;
@@ -91,8 +91,8 @@ agreements with Python, also agreeing on identities. Safe Rust restrictions
 do not prove logical correctness. Rust still supplies neither certificate replay
 nor claim-graph composition.
 <!-- src: rust/closure-fuzz-summary.json; docs/rust.md. -->
-The honest performance summary is about thirty times faster on the larger
-measured finite-evaluation kernels, with the specific measurements below.
+The honest performance summary is roughly 20-30x on the evaluation kernel,
+about thirtyfold on the two largest measured workloads shown below.
 <!-- src: docs/rust.md; rust/benchmark-results.json; docs/spec/closure-implementation.md. -->
 
 <!-- INCLUDE generated/rust-table.md -->

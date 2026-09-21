@@ -46,8 +46,9 @@ oversight hypothesis; they cannot establish human readability.
 The evidence supports the checked components more than the English surface.
 Strict English showed no benefit for the capable primary judge; a useful
 reduction is excluded without explanation and remains inconclusive with it.
-Fluent rendering for a weaker judge is an exploratory hypothesis. Hosted small
-models already read the symbolic task near-perfectly in development calibration.
+Fluent rendering for a weaker judge is an exploratory hypothesis. The two hosted reference judges (one measured only under the earlier JSON
+legend) were at ceiling on these development items, so these items do not
+saturate capable readers.
 In contrast, the checked-countermodel intervention cut false approval for 14B
 and rescued honest acceptance for 7B. Real policy text also exposes a separate
 bottleneck: much of its meaning and justification lies outside current VE.

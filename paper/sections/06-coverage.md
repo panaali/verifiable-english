@@ -47,7 +47,7 @@ and parent intervention limit independence.
 ## Per-dataset coverage and disagreement
 
 The tables preserve the frozen labels. Each fit cell gives the count, percentage,
-and nominal Wilson interval. The first survey sometimes used a narrower item
+and nominal 95% Wilson interval. The first survey sometimes used a narrower item
 unit, so differences reflect rubric application as well as rater disagreement.
 In particular, its Gatekeeper core-rule counts do not all cover opaque exemptions.
 

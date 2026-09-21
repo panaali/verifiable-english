@@ -96,7 +96,8 @@ The renderer now also provides `render_vocabulary(..., style="compact")`.
 It retains vocabulary identity, ordered signatures, descriptions, selected
 wording and lint information in a shorter display. E1 uses this compact legend,
 byte-identical across all five views. Its earlier roughly 4,000-character JSON
-legend swamped the statement and moved every tested Qwen judge outside the
+legend (the final compact prompt is about 3,900 characters in total)
+swamped the statement and moved every tested Qwen judge outside the
 primary gate. Compact display is therefore part of the frozen prompt, not a
 cosmetic implementation detail.
 <!-- src: docs/rendering-views.md; paper/sources/e1-prereg-frozen.md;

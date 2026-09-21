@@ -147,3 +147,29 @@ CLOSURE.md, README.md; docs/rust.md, docs/oracle.md, docs/prover-fair-report.md,
 docs/prover-fair/{before,after}.json, docs/spec/v0.1-coverage.md;
 conformance/*.json; experiments/E0/SURVEY.md, closure_witnesses/report.json;
 paper/sources/* ; paper/generated/* ; paper/reference-audit.json. -->
+
+## Resolution
+
+Resolved by GPT-6 Astra on 2026-09-21. All manuscript changes are in
+`f32be8b`; item 5 follows the user's explicit provenance correction rather
+than the audit's proposed self-report wording. `make html pdf` passed with
+`XDG_CACHE_HOME="$PWD/.cache" TECTONIC_CACHE_DIR="$PWD/.cache/tectonic"`
+from `paper/`; no test suites were run.
+
+| Item | Resolution | Fix commit |
+|---|---|---|
+| 1 | Replaced serialization with printer/parser round-trip. | `f32be8b` |
+| 2 | Scoped low coverage to this policy text. | `f32be8b` |
+| 3 | Disclosed pilot size, Qwen2.5 judges, and both calibration-gate failures. | `f32be8b` |
+| 4 | Used the hosted-reference wording and JSON-legend caveat in all three locations. | `f32be8b` |
+| 5 | Labelled about 12 units as the orchestrator's estimate from runner uptime times 1.7 units/hour, neither a Colab bill nor a user report. | `f32be8b` |
+| 6 | Added the 14B checked-arm floor caveat. | `f32be8b` |
+| 7 | Explained the unbounded cluster-t endpoint in the abstract. | `f32be8b` |
+| 8 | Stated the 20-30x range and the two largest workloads' thirtyfold result. | `f32be8b` |
+| 9 | Scoped the duplication-signature audit to enumerated features. | `f32be8b` |
+| 10 | Recorded the completed Claude-side audit and its location. | `f32be8b` |
+| 11 | Specified nominal 95% Wilson intervals. | `f32be8b` |
+| 12 | Specified that style features were revised twice. | `f32be8b` |
+| 13 | Prefixed the graph result with its Lean reference checker scope. | `f32be8b` |
+| 14 | Added the final compact prompt's total character count. | `f32be8b` |
+| 15 | Retained the Gatekeeper opaque-exemption sentence as requested; no change required. | No fix needed; retained in `f32be8b`. |
