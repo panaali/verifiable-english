@@ -1,0 +1,20 @@
+{
+  "complete": true,
+  "domains": {
+    "number": [
+      "e0"
+    ]
+  },
+  "constants": {},
+  "relations": {
+    "associate": [],
+    "divides": [],
+    "lt": [],
+    "prime": [
+      [
+        "e0"
+      ]
+    ],
+    "unit": []
+  }
+}

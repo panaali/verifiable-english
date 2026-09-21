@@ -1,0 +1,98 @@
+{
+  "id": "T3",
+  "title": "Irreflexive and transitive implies asymmetric",
+  "expect": "prove",
+  "environment": "environment.json",
+  "premise_labels": [
+    "irreflexivity",
+    "transitivity"
+  ],
+  "conclusion_ve": "for every point x0, (for every point x1, (if (x0 lt x1), then (not (x1 lt x0)))).",
+  "conclusion_fluent": "for every point P and every point P2, if P precedes P2 then P2 does not precede P",
+  "prove_seconds": 0.004,
+  "prove_status": "Found",
+  "max_steps": 200000,
+  "prove_steps": 14,
+  "prove_detail": "",
+  "certificate_bytes": 928,
+  "python_valid": true,
+  "python_status": "Valid",
+  "python_detail": "",
+  "necessity": [
+    {
+      "dropped": "irreflexivity",
+      "status": "Found",
+      "domain_size": 1,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.001,
+      "file": "T3-without-irreflexivity.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [],
+          "least": [],
+          "lists": [],
+          "lt": [
+            [
+              "e0",
+              "e0"
+            ]
+          ],
+          "mentions": [],
+          "minimal": [],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    },
+    {
+      "dropped": "transitivity",
+      "status": "Found",
+      "domain_size": 2,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.003,
+      "file": "T3-without-transitivity.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0",
+            "e1"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [],
+          "least": [],
+          "lists": [],
+          "lt": [
+            [
+              "e0",
+              "e1"
+            ],
+            [
+              "e1",
+              "e0"
+            ]
+          ],
+          "mentions": [],
+          "minimal": [],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    }
+  ],
+  "lean_valid": true,
+  "lean_note": ""
+}

@@ -1,0 +1,21 @@
+{
+  "id": "T1",
+  "title": "Diagonal lemma (Russell / barber / relational Cantor)",
+  "expect": "prove",
+  "environment": "environment.json",
+  "premise_labels": [],
+  "conclusion_ve": "not (there exists point x0, (for every point x1, ((if (x0 lists x1), then (not (x1 lists x1))) and (if (not (x1 lists x1)), then (x0 lists x1))))).",
+  "conclusion_fluent": "it is false that (there is a point P such that for every point P2, both (if P lists P2 then P2 does not list P2) and (if P2 does not list P2 then P lists P2))",
+  "prove_seconds": 0.003,
+  "prove_status": "Found",
+  "max_steps": 200000,
+  "prove_steps": 13,
+  "prove_detail": "",
+  "certificate_bytes": 678,
+  "python_valid": true,
+  "python_status": "Valid",
+  "python_detail": "",
+  "necessity": [],
+  "lean_valid": true,
+  "lean_note": ""
+}

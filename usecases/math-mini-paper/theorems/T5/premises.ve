@@ -1,0 +1,2 @@
+for every point x0, ((if (x0 is greatest), then (for every point x1, (x1 le x0))) and (if (for every point x2, (x2 le x0)), then (x0 is greatest))).
+for every point x0, (for every point x1, (if ((x0 le x1) and (x1 le x0)), then (x0 equals x1))).

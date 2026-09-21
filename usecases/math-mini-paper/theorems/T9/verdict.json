@@ -1,0 +1,97 @@
+{
+  "id": "T9",
+  "title": "Closure induction: r included in transitive s implies tc[r] included in s",
+  "expect": "fail",
+  "environment": "environment-closure.json",
+  "premise_labels": [
+    "edge inclusion r <= s",
+    "transitivity of s"
+  ],
+  "conclusion_ve": "for every point x0, (for every point x1, (if (tc[r](x0, x1)), then (x0 s x1))).",
+  "conclusion_fluent": "for every point P and every point P2, if (P2 is reachable from P by one or more r steps) then P spans P2",
+  "prove_seconds": 3.872,
+  "prove_status": "ResourceLimit",
+  "max_steps": 200000,
+  "prove_steps": 200000,
+  "prove_detail": "tableau step or certificate nesting budget exhausted",
+  "certificate_bytes": 0,
+  "python_valid": false,
+  "python_status": "ResourceLimit",
+  "python_detail": "tableau step or certificate nesting budget exhausted",
+  "refutation_status": "ResourceLimit",
+  "refutation_domain_size": null,
+  "refutation_seconds": 8.479,
+  "refutation_detail": "evaluation budget exhausted",
+  "necessity": [
+    {
+      "dropped": "edge inclusion r <= s",
+      "status": "Found",
+      "domain_size": 1,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.0,
+      "file": "T9-without-edge-inclusion-r-<=-s.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "r": [
+            [
+              "e0",
+              "e0"
+            ]
+          ],
+          "s": []
+        }
+      },
+      "recheck_valid": true
+    },
+    {
+      "dropped": "transitivity of s",
+      "status": "Found",
+      "domain_size": 2,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.019,
+      "file": "T9-without-transitivity-of-s.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0",
+            "e1"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "r": [
+            [
+              "e0",
+              "e1"
+            ],
+            [
+              "e1",
+              "e0"
+            ]
+          ],
+          "s": [
+            [
+              "e0",
+              "e1"
+            ],
+            [
+              "e1",
+              "e0"
+            ]
+          ]
+        }
+      },
+      "recheck_valid": true
+    }
+  ],
+  "lean_valid": null,
+  "lean_note": "no certificate to check"
+}
