@@ -25,12 +25,17 @@ that the author of the statement (the party being overseen) also supplies an exp
 - Explanations: one per candidate, written by an attacker model with one prompt that is the same for good and bad
   candidates. A candidate whose explanation could not be generated is excluded from all cells before judging; the
   count is reported.
-- Cells: view in {fol_symbols, fol_keywords, ve_strict, ve_natural} x explanation in {none, attacker}; crossed, so
-  every judge sees every candidate in every cell. One sample per trial. One prompt template; cells differ only in the
-  rendered statement and in the presence of the explanation block. The vocabulary legend is shown in every cell.
-- Renderers: the four views must come from the `ve` package's shared traversal (branch `codex/views`). The dev gate
-  below must be re-run with those renderers before scoring, because the dev numbers cited here used temporary FOL
-  renderers in `ve_experiments/e1/views.py`.
+- Cells: view in {fol_symbols, fol_keywords, ve_strict, ve_natural, ve_fluent} x explanation in {none, attacker};
+  crossed, so every judge sees every candidate in every cell. One sample per trial. One prompt template; cells differ
+  only in the rendered statement and in the presence of the explanation block.
+- Renderers: all five views come from `ve.printer.render` (one shared traversal, per-statement binder naming).
+  The legend from `ve.printer.render_vocabulary` is byte-identical across views and is shown in every cell; the code
+  raises if it is not identical.
+- Oracle: once `validate_attack(env, faithful, attacked)` from `codex/oracle` is merged, every scored bad candidate
+  must pass it; candidates with verdict UNKNOWN are excluded before judging and counted in the report. Until then
+  the distinguishing model confirmed by the `ve` evaluator is the validation.
+- Covariates reported with the results: per-view characters and tokens on the scored items, and the share of items
+  whose ve_fluent rendering uses a relative-clause guard (`ve_experiments/e1/covariates.py`).
 
 ## Judge set
 
@@ -66,7 +71,8 @@ semantic templates (`cluster="template"`), seed 0. A group-level bootstrap (96 b
 sensitivity analysis only.
 
 Secondary contrasts, same method, labelled secondary: ve_strict vs fol_keywords (attacker cells); ve_strict vs
-fol_symbols (no-explanation cells); ve_natural vs ve_strict; attacker vs none within fol_symbols and within ve_strict;
+fol_symbols (no-explanation cells); ve_natural vs ve_strict; ve_fluent vs ve_strict and ve_fluent vs fol_symbols
+(attacker cells); attacker vs none within fol_symbols and within ve_strict;
 breakdowns by attack family and by direction (weaker, stronger, incomparable) are descriptive.
 
 ## Smallest useful effect
@@ -113,7 +119,7 @@ the expected 95% half-width 0.04 to 0.09. So the design can resolve an effect of
 luna) and can exclude a 0.05 benefit only when the true effect is near zero or positive; for a true effect between
 -0.10 and 0 the result will probably be inconclusive. The estimate rests on 4 templates and is rough. Adding
 vocabularies would not add clusters, so no larger sample is available without new templates.
-Cost: about 940 candidates x 8 cells = 7,500 calls per judge, plus 3,800 for E1b; about 2.5 hours per hosted
+Cost: about 940 candidates x 10 cells = 9,400 calls per judge, plus 4,700 for E1b; about 3 hours per hosted
 no-reasoning judge at 6 concurrent calls, with the two provider CLIs running in parallel.
 
 ## Known limitations fixed in advance
