@@ -33,6 +33,34 @@ private def env : Environment where
 #guard Surface.parse env "for every person p, (p is deployed).\n" == none
 #guard Surface.parse env "for every service s, (there exists person p, (p equals s)).\n" == none
 
+-- Unbudgeted reference identifiers do not inherit the wire's 64-byte cap.
+#guard Surface.identifier (String.mk (List.replicate 80 'a'))
+#guard Surface.readIdent (List.replicate 80 'a' ++ ['.']) ==
+  some (String.mk (List.replicate 80 'a'), ['.'])
+#guard !Surface.declarationName "x123"
+#guard !Surface.declarationName "equals"
+#guard !Surface.declarationName "Bad"
+#guard !Surface.declarationName "bad-name"
+#guard Surface.declarationName "trueish"
+
+private def fullEnv : Environment where
+  sorts := ["thing"]
+  predicates := fun p => if p == "p1" then some ["thing"]
+    else if p == "r_2" then some ["thing", "thing"] else none
+  constants := fun c => if c == "c_0" then some "thing" else none
+
+private def fullDoc : List Formula := [
+  .all "thing" (.implies (.unary "p1" (.var 0))
+    (.ex "thing" (.and (.binary "r_2" (.var 1) (.var 0))
+      (.not (.eq (.var 0) (.const "c_0")))))),
+  .or (.ex "thing" (.eq (.var 0) (.const "c_0"))) (.all "thing" .bottom)]
+
+#guard Surface.parse fullEnv (Surface.print fullDoc) == some fullDoc
+#guard (Surface.normalize fullEnv (Surface.print fullDoc)).bind (Surface.normalize fullEnv) ==
+  some (Surface.print fullDoc)
+#guard (Surface.printAux [] 10 (.all "thing" (.unary "p1" (.var 0)))).1 ==
+  "for every thing x10, (x10 is p1)".toList
+
 private def emptyModel : FiniteModel String where
   domains := fun _ => []
   constants := fun _ => none

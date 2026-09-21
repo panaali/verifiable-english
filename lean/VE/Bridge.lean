@@ -22,19 +22,12 @@ def stringField (j : Json) (name : String) : Except String String := do
 def strings (j : Json) : Except String (List String) := do
   (← j.getArr?).toList.mapM Json.getStr?
 
+/-- Runtime identifiers additionally obey the 64-byte wire budget. -/
 def identifier (s : String) : Bool :=
-  match s.toList with
-  | [] => false
-  | c :: cs => s.utf8ByteSize ≤ 64 && c ≥ 'a' && c ≤ 'z' &&
-      cs.all (fun x => (x ≥ 'a' && x ≤ 'z') || (x ≥ '0' && x ≤ '9') || x == '_')
+  s.utf8ByteSize ≤ 64 && Surface.identifier s
 
-def reserved : List String := ["true", "false", "is", "equals", "not", "and", "or",
-  "if", "then", "for", "every", "there", "exists", "believes", "must", "eventually"]
-
-def generatedName (s : String) : Bool :=
-  match s.toList with
-  | 'x' :: cs => !cs.isEmpty && cs.all (fun c => c ≥ '0' && c ≤ '9')
-  | _ => false
+abbrev reserved := Surface.reserved
+abbrev generatedName := Surface.generatedName
 
 def lookup {α : Type} (xs : List (String × α)) (k : String) : Option α :=
   (xs.find? (fun x => x.1 == k)).map Prod.snd
@@ -46,6 +39,12 @@ structure Vocabulary where
 
 def Vocabulary.environment (v : Vocabulary) : Environment :=
   ⟨v.sorts, lookup v.predicates, lookup v.constants⟩
+
+/-- Decidable lexical conditions on the complete finite declaration inventory. -/
+def Vocabulary.namesValid (v : Vocabulary) : Bool :=
+  v.sorts.all Surface.declarationName &&
+  v.predicates.all (fun p => Surface.declarationName p.1) &&
+  v.constants.all (fun c => Surface.declarationName c.1)
 
 private def description (j : Json) : Except String Unit := do
   if (← stringField j "description").isEmpty then throw "empty description"
@@ -85,7 +84,9 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
     let s ← stringField entry "sort"
     unless sortNames.contains s do throw s!"unknown constant sort: {c}"
     pure (c, s)
-  pure ⟨sortNames, ps, cs⟩
+  let result : Vocabulary := ⟨sortNames, ps, cs⟩
+  unless result.namesValid do throw "invalid declaration names"
+  pure result
 
 private def localIds (j : Json) : Except String (List String) := do
   let xs ← strings j
