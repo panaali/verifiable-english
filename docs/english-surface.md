@@ -15,6 +15,55 @@ strict source does. The parser returns the same checked De Bruijn AST. Nothing i
 this surface upgrades an experimental acceptance record into a proof or confirms
 that the author intended the parsed meaning.
 
+## Writing a sentence with a new word
+
+Closed English errors name the unknown phrase, give its character span (zero-based,
+end-exclusive; line/column are one-based), and suggest declared wordings. To preview
+the lead's sentence without editing environment files, copy this one-liner from the
+repository root:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-propose uv run python -m ve propose --env usecases/birthright-citizenship-debate/environment.json --english-vocabulary usecases/birthright-citizenship-debate/environment.english.json 'Every person who is born in the United States and is subject to US jurisdiction is a UK citizen.'
+```
+
+The preview shows `uk_citizen(person)`, its source span, machine-proposed
+description, nearest symbols, and English/strict paraphrases. It exits with an
+error because `us_citizen` is a near-duplicate. After inspecting it, acknowledge
+that symbol, write candidates, and explicitly adopt:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-propose uv run python -m ve propose --env usecases/birthright-citizenship-debate/environment.json --english-vocabulary usecases/birthright-citizenship-debate/environment.english.json --acknowledge us_citizen --output /private/tmp/uk-citizen-proposal 'Every person who is born in the United States and is subject to US jurisdiction is a UK citizen.'
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-propose uv run python -m ve adopt /private/tmp/uk-citizen-proposal/proposal.json --output /private/tmp/uk-citizen-adopted
+printf '%s\n' 'Every person who is born in the United States and is subject to US jurisdiction is a UK citizen.' | UV_CACHE_DIR=/private/tmp/ve-uv-cache-propose uv run python -m ve parse --env /private/tmp/uk-citizen-adopted/environment.json --english-vocabulary /private/tmp/uk-citizen-adopted/environment.english.json --accept-suggested-vocabulary --surface english -
+```
+
+Output directories must be new. `propose` also accepts `-` for stdin; without
+`--output` it only previews. Edit distance at most two or a shared final content
+token requires `--acknowledge SYMBOL` for each flagged symbol. No morphology is
+used for this comparison. Adoption revalidates the preview and prints the new
+`environment_id`; it does **not** review the wording. All adopted overlay entries
+have `suggested: true`; the overlay and records remain **unreviewed**.
+
+Only unary `is a/an …`, `is …`, and `is not …` slots with an in-scope binder can
+introduce predicates. The binder's declared noun supplies the sort. Phrases stop
+at the [version 1 boundary tokens](../design/open-vocabulary-english.md#after-review-2026-09-21-both-reviewers-said-build-with-changes),
+including `and`, `or`, relative pronouns, and sentence punctuation. Existing
+template limits still apply; passive `by` phrases, declared references or their
+near typos, and known binary frames cannot be absorbed as new unary words.
+
+**Not inferred:** sorts, constants (including capitalized names), binary relations,
+plurals, passives/converses, verb morphology, synonyms, or new clause forms.
+Constant-subject sentences cannot introduce predicates. These restrictions
+prevent typos and ambiguous English from silently becoming unrelated symbols.
+A permitted prepositional nominal is one atomic unary phrase, not a relation.
+
+Candidate files use proposal envelopes rejected by the ordinary environment
+loader, including proof, countermodel, and certificate workflows. Only adoption
+writes loadable files. It changes the environment identity and invalidates the
+old overlay's pinned review; identity algorithms and trusted checking stay
+unchanged. This checkout has no `check --prove` option. Unambiguity is audited
+only for the finite vocabulary after adoption, not for the proposal step.
+
 ## Reading and writing
 
 ```sh
