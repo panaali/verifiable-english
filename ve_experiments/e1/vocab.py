@@ -7,7 +7,9 @@ A *binding* fills the abstract roles used by the templates:
     binary  R : (B, A);  T : (A, A)
 
 Each predicate has an identifier (used in every formal view), a positive and a negative English
-phrase (used only in the requirement prose), and a description (shown in the vocabulary list).
+phrase (used in the requirement prose and, as verbalisation templates in the environment, by the
+`ve_natural` and `ve_fluent` views), and a description. Templates are active voice and positive; no
+predicate is the converse or passive of another.
 Predicates inside one binding are chosen to be logically independent in ordinary usage, so that a
 judge cannot settle an item from world knowledge.
 """
@@ -41,30 +43,22 @@ class Binding:
     R: Pred
     T: Pred
 
-    def verbalisation(self) -> dict:
-        """Verbalisation templates for an ACE-style natural view ({0}, {1} are argument slots). They
-        live beside the environment because the v0 environment schema rejects unknown fields."""
-        preds = {getattr(self, r).id: _verbalise(getattr(self, r), 1) for r in "PQXYS"}
-        preds[self.R.id] = _verbalise(self.R, 2)
-        preds[self.T.id] = _verbalise(self.T, 2)
-        sorts = {s[0]: {"singular": s[0], "plural": s[0] + "s"} for s in (self.A, self.B)}
-        return {"sorts": sorts, "predicates": preds}
-
     def environment(self) -> dict:
         a, b = self.A[0], self.B[0]
         preds = {}
         for role in "PQXY":
             p = getattr(self, role)
-            preds[p.id] = {"arguments": [a], "description": p.desc}
-        preds[self.S.id] = {"arguments": [b], "description": self.S.desc}
-        preds[self.R.id] = {"arguments": [b, a], "description": self.R.desc}
-        preds[self.T.id] = {"arguments": [a, a], "description": self.T.desc}
+            preds[p.id] = {"arguments": [a], "description": p.desc, **_verbalise(p, 1)}
+        preds[self.S.id] = {"arguments": [b], "description": self.S.desc, **_verbalise(self.S, 1)}
+        preds[self.R.id] = {"arguments": [b, a], "description": self.R.desc, **_verbalise(self.R, 2)}
+        preds[self.T.id] = {"arguments": [a, a], "description": self.T.desc, **_verbalise(self.T, 2)}
         return {
             "language": "ve.core@0",
             "profile": "relational-fol@0",
             "spec_revision": SPEC_REVISION,
             "vocabulary": {
-                "sorts": {a: {"description": self.A[1]}, b: {"description": self.B[1]}},
+                "sorts": {s[0]: {"description": s[1], "verbalisation": {"singular": s[0], "plural": s[0] + "s"}}
+                          for s in (self.A, self.B)},
                 "predicates": preds,
                 "constants": {},
             },
@@ -72,9 +66,8 @@ class Binding:
 
 
 def _verbalise(p: Pred, arity: int) -> dict:
-    if arity == 1:
-        return {"positive": "{0} " + p.pos, "negative": "{0} " + p.neg}
-    return {"positive": "{0} " + p.pos + " {1}", "negative": "{0} " + p.neg + " {1}"}
+    tail = "" if arity == 1 else " {1}"
+    return {"verbalisation": "{0} " + p.pos + tail, "negative_verbalisation": "{0} " + p.neg + tail}
 
 
 def _u(id: str, adj: str, desc: str) -> Pred:
@@ -130,7 +123,7 @@ BINDINGS: list[Binding] = [
         _u("labelled", "labelled", "The sample is recorded as labelled."),
         _u("trained", "trained", "The technician is recorded as safety-trained."),
         _v("handles", "handles", "handle", "The technician (first) is recorded as handling the sample (second)."),
-        _v("stored_with", "is stored with", "get stored with", "The first sample is recorded as stored in the same container as the second sample.")),
+        _v("contaminates", "contaminates", "contaminate", "The first sample is recorded as contaminating the second sample.")),
     Binding("lab", "instruments",
         ("instrument", "An instrument in the equipment register."), ("inspector", "An inspector in the equipment register."),
         _u("pressurized", "pressurized", "The instrument is recorded as pressurized."),
@@ -166,7 +159,7 @@ BINDINGS: list[Binding] = [
         _u("pediatric", "pediatric", "The participant is recorded as pediatric."),
         _u("blinded", "blinded", "The clinician is recorded as blinded to treatment arm."),
         _v("examines", "examines", "examine", "The clinician (first) is recorded as examining the participant (second)."),
-        _v("matched_with", "is matched with", "get matched with", "The first participant is recorded as the matched control of the second participant.")),
+        _v("mentors", "mentors", "mentor", "The first participant is recorded as the peer mentor of the second participant.")),
     Binding("clinical", "doses",
         ("dose", "A dose in the dispensing record."), ("pharmacist", "A pharmacist in the dispensing record."),
         _u("scheduled", "scheduled", "The dose is recorded as scheduled."),

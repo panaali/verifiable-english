@@ -122,7 +122,6 @@ def base_items(split: str) -> list[dict]:
                 check(env, f)
                 out.append({"group": f"E1-{split}-{tid[:3]}-{v.name}", "template": tid, "family": v.family,
                             "binding": v.name, "split": split, "requirement": t.prose(v), "environment": env,
-                            "verbalisation": v.verbalisation(),
                             "faithful": f})  # fmt: skip
     return out
 
@@ -187,7 +186,7 @@ def model_candidates(bases: list[dict], client: LLMClient, rejected: list, recip
     for base in bases:
         env = base["environment"]
         prompt = ATTACK_PROMPT.format(vocabulary=vocabulary_text(env), requirement=base["requirement"],
-                                      faithful=render(env, base["faithful"], "ve_strict"), grammar=GRAMMAR,
+                                      faithful=render(env, base["faithful"], "ve_strict") + ".", grammar=GRAMMAR,
                                       n=n_attacks, hints=hints)  # fmt: skip
         for attacker in ATTACKERS:
             reqs.append(Request(attacker, prompt, tag=f"E1/attack/{base['group']}"))
@@ -224,7 +223,7 @@ def add_explanations(cands: list[dict], client: LLMClient) -> None:
         author = c["kind"].split(":", 1)[1] if c["kind"].startswith("model:") else ATTACKERS[_h(c["id"], "author") % 2]
         c["explanation_author"] = author
         prompt = EXPLAIN_PROMPT.format(vocabulary=vocabulary_text(c["environment"]), requirement=c["requirement"],
-                                       statement=render(c["environment"], c["ast"], "ve_strict"))  # fmt: skip
+                                       statement=render(c["environment"], c["ast"], "ve_strict") + ".")  # fmt: skip
         reqs.append(Request(author, prompt, tag=f"E1/explain/{c['id']}"))
     for c, res in zip(cands, client.map(reqs, _progress("explanations"))):
         try:
@@ -272,7 +271,7 @@ def build(split: str, use_llm: bool = True, client: LLMClient | None = None, rec
     cands = []
     for b in bases:
         for i, c in enumerate(per_group[b["group"]]):
-            shared = {k: b[k] for k in ("group", "template", "family", "binding", "split", "requirement", "environment", "verbalisation")}
+            shared = {k: b[k] for k in ("group", "template", "family", "binding", "split", "requirement", "environment")}
             cands.append({"id": f"{b['group']}-c{i:02d}", **shared, **c})
     for c in cands:
         add_e1b_models(c)

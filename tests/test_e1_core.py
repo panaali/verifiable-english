@@ -4,7 +4,7 @@ import pytest
 
 from ve_experiments.e1 import attacks as A
 from ve_experiments.e1.templates import BY_ID, DEV_TEMPLATES, SCORED_TEMPLATES, TEMPLATES, to_wire
-from ve_experiments.e1.views import VIEWS, check, render
+from ve_experiments.e1.views import VIEWS, check, legend, render
 from ve_experiments.e1.vocab import BINDINGS, DEV_FAMILIES, SCORED_FAMILIES
 
 CASES = [(t, v) for t in TEMPLATES for v in BINDINGS]
@@ -14,11 +14,8 @@ CASES = [(t, v) for t in TEMPLATES for v in BINDINGS]
 def test_every_template_type_checks_and_renders_in_all_views(t, v):
     env, f = v.environment(), to_wire(t.formula(v))
     texts = {view: render(env, f, view) for view in VIEWS}
-    assert len(set(texts.values())) == 4
-    sym, kw = texts["fol_symbols"], texts["fol_keywords"]
-    for a, b in (("∀", "forall "), ("∃", "exists "), ("¬", "not "), ("∧", "and"), ("∨", "or"), ("→", "implies")):
-        sym = sym.replace(a, b)
-    assert sym == kw  # the two FOL views differ only in the connective tokens
+    assert len(VIEWS) == 5 and len(set(texts.values())) >= 4
+    assert legend(env)  # raises if the legend differs between views
     assert t.prose(v) and "{" not in t.prose(v)
 
 
