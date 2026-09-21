@@ -1,0 +1,10 @@
+{
+  "seed": 20260922,
+  "cases": 5000,
+  "formulas": 5000,
+  "agreements": 5000,
+  "true": 2900,
+  "false": 2100,
+  "empty_domain_cases": 781,
+  "jsonl_sha256": "bfd9310df582c829731d54cf2461344167d71cff361165d23f2d634bd9179e25"
+}

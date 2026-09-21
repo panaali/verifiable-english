@@ -69,7 +69,7 @@ def _evidence(evidence_id: str, claim: Claim, content: str, passage: str, scope:
         claim_id=claim.claim_id,
         snapshot_id=_snapshot_id(content),
         passage=passage,
-        reviewer="fixture-author",
+        reviewer="u1",
         target_scope=scope,
         judgment=judgment,
         kind="empirical",
@@ -79,9 +79,9 @@ def _evidence(evidence_id: str, claim: Claim, content: str, passage: str, scope:
 def separated_vocabulary_example() -> ArgumentGraph:
     """The invalid substitution, with the protocol's one-service countermodel."""
     env = _environment(merged=False)
-    ops = Claim.create(env, "operations_review", DEPLOYED_TO_OPS)
-    policy = Claim.create(env, "security_policy", SECURITY_TO_APPROVED)
-    root = Claim.create(env, "approval", DEPLOYED_TO_APPROVED)
+    ops = Claim.create(env, "c1", DEPLOYED_TO_OPS)
+    policy = Claim.create(env, "c2", SECURITY_TO_APPROVED)
+    root = Claim.create(env, "c3", DEPLOYED_TO_APPROVED)
     model = FiniteModel.from_dict(env, {
         "complete": True,
         "domains": {"service": ["api"]},
@@ -93,28 +93,29 @@ def separated_vocabulary_example() -> ArgumentGraph:
             "security_reviewed": [],
         },
     })
-    edge = Deduction("substituted_review", (ops.name, policy.name), root.name,
+    edge = Deduction("e1", (ops.name, policy.name), root.name,
                      countermodels=(model,))
-    return ArgumentGraph(env, (ops, policy, root), (edge,), root.name)
+    return ArgumentGraph(env, (ops, policy, root), (edge,), root.name,
+                         target_scope="security-policy approval review")
 
 
 def explicit_bridge_example() -> ArgumentGraph:
     """The repaired split-vocabulary inference; the bridge stays a visible leaf."""
     env = _environment(merged=False)
-    ops = Claim.create(env, "operations_review", DEPLOYED_TO_OPS)
-    policy = Claim.create(env, "security_policy", SECURITY_TO_APPROVED)
-    bridge = Claim.create(env, "review_bridge", OPS_TO_SECURITY,
-                          evidence_ids=("bridge-assessment",))
-    root = Claim.create(env, "approval", DEPLOYED_TO_APPROVED)
+    ops = Claim.create(env, "c1", DEPLOYED_TO_OPS)
+    policy = Claim.create(env, "c2", SECURITY_TO_APPROVED)
+    bridge = Claim.create(env, "c4", OPS_TO_SECURITY,
+                          evidence_ids=("r1",))
+    root = Claim.create(env, "c3", DEPLOYED_TO_APPROVED)
     bridge_record = "No external record establishes that operations review satisfies security review."
     evidence = _evidence(
-        "bridge-assessment", bridge, bridge_record, bridge_record,
+        "r1", bridge, bridge_record, bridge_record,
         "relationship between operations and security review",
         judgment="unassessed",
     )
-    edge = Deduction("explicit_bridge", (ops.name, bridge.name, policy.name), root.name)
+    edge = Deduction("e1", (ops.name, bridge.name, policy.name), root.name)
     return ArgumentGraph(env, (ops, policy, bridge, root), (edge,), root.name,
-                         evidence=(evidence,))
+                         evidence=(evidence,), target_scope="security-policy approval review")
 
 
 def merged_vocabulary_example() -> ArgumentGraph:
@@ -122,19 +123,20 @@ def merged_vocabulary_example() -> ArgumentGraph:
     env = _environment(merged=True)
     operations_record = "Operations register: api passed deployment readiness review."
     security_record = "Security policy: a reviewed service is eligible for approval."
-    first = Claim.create(env, "operations_review", DEPLOYED_TO_REVIEWED,
-                         evidence_ids=("operations-records",))
-    second = Claim.create(env, "security_policy", REVIEWED_TO_APPROVED,
-                          evidence_ids=("security-policy",))
-    root = Claim.create(env, "approval", DEPLOYED_TO_APPROVED)
+    first = Claim.create(env, "c1", DEPLOYED_TO_REVIEWED,
+                         evidence_ids=("r1",))
+    second = Claim.create(env, "c2", REVIEWED_TO_APPROVED,
+                          evidence_ids=("r2",))
+    root = Claim.create(env, "c3", DEPLOYED_TO_APPROVED)
     evidence = (
-        _evidence("operations-records", first, operations_record, operations_record,
+        _evidence("r1", first, operations_record, operations_record,
                   "operations deployment-readiness review records"),
-        _evidence("security-policy", second, security_record, security_record,
+        _evidence("r2", second, security_record, security_record,
                   "security-policy approval review"),
     )
-    edge = Deduction("merged_review", (first.name, second.name), root.name)
-    return ArgumentGraph(env, (first, second, root), (edge,), root.name, evidence=evidence)
+    edge = Deduction("e1", (first.name, second.name), root.name)
+    return ArgumentGraph(env, (first, second, root), (edge,), root.name, evidence=evidence,
+                         target_scope="security-policy approval review")
 
 
 def infinite_only_example() -> ArgumentGraph:
@@ -159,25 +161,26 @@ def infinite_only_example() -> ArgumentGraph:
         },
     })
     sources = (
-        ("inhabited", "there exists item a, (true).\n"),
-        ("irreflexive", "for every item a, (not (a precedes a)).\n"),
-        ("transitive", "for every item a, (for every item b, (for every item c, "
+        ("c1", "there exists item a, (true).\n"),
+        ("c2", "for every item a, (not (a precedes a)).\n"),
+        ("c3", "for every item a, (for every item b, (for every item c, "
          "(if ((a precedes b) and (b precedes c)), then (a precedes c)))).\n"),
-        ("successor", "for every item a, (there exists item b, (a precedes b)).\n"),
+        ("c4", "for every item a, (there exists item b, (a precedes b)).\n"),
     )
     premises = tuple(Claim.create(env, name, source) for name, source in sources)
-    conclusion = Claim.create(env, "contradiction", "false.\n")
-    edge = Deduction("finite_search_is_incomplete", tuple(c.name for c in premises),
+    conclusion = Claim.create(env, "c5", "false.\n")
+    edge = Deduction("e1", tuple(c.name for c in premises),
                      conclusion.name)
-    return ArgumentGraph(env, premises + (conclusion,), (edge,), conclusion.name)
+    return ArgumentGraph(env, premises + (conclusion,), (edge,), conclusion.name,
+                         target_scope="ordered collection")
 
 
 def worked_examples() -> dict[str, ArgumentGraph]:
     """Return fresh graphs for every worked case in the debate protocol."""
     return {
-        "separated": separated_vocabulary_example(),
-        "bridged": explicit_bridge_example(),
-        "merged": merged_vocabulary_example(),
+        "g1": separated_vocabulary_example(),
+        "g2": explicit_bridge_example(),
+        "g3": merged_vocabulary_example(),
     }
 
 

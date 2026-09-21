@@ -227,7 +227,33 @@ These are hand-specified expected outcomes for the future conformance suite. The
 
 ## Rejection and resource behavior
 
-Required diagnostic classes are `SyntaxError`, `UnknownSymbol`, `DuplicateDeclaration`, `UnboundVariable`, `ShadowedVariable`, `TypeMismatch`, `InvalidModel`, `UnsupportedProfile`, and `ResourceLimit`. Retain source spans separately from semantic nodes.
+Required diagnostic classes are `InvalidInput`, `SyntaxError`, `UnknownSymbol`, `DuplicateDeclaration`, `UnboundVariable`, `ShadowedVariable`, `TypeMismatch`, `InvalidModel`, `UnsupportedProfile`, and `ResourceLimit`. Retain source spans separately from semantic nodes.
+
+At the restricted JSON boundary, pin these classes (fixtures in
+`conformance/wire.json`):
+
+| Input | Diagnostic |
+|---|---|
+| Incomplete literals/numbers `nul`, `1.`, `1e`, `1e+` | `SyntaxError` |
+| Complete unsupported values `null`, `1.0`, `1e0` | `InvalidInput` |
+| Recognized but forbidden nonstandard numeric tokens `NaN`, `Infinity`, `-Infinity` | `InvalidInput` |
+| Syntactically complete escapes containing lone UTF-16 surrogates, in values or keys | `InvalidInput` |
+| Invalid UTF-8 bytes, malformed escapes, unescaped controls, trailing syntax | `SyntaxError` |
+| Duplicate decoded object keys | `DuplicateDeclaration` |
+
+This classification does not admit nonstandard numbers or lone surrogates.
+Paired surrogate escapes decode normally. A literal surrogate in an in-process
+Python string fails UTF-8 encoding with `SyntaxError`; an ASCII JSON escape such
+as `"\ud800"` reaches the Unicode-value check and gives `InvalidInput`.
+
+For schema identifiers, count Unicode characters before the ASCII-pattern
+check: more than 64 characters gives `ResourceLimit`, otherwise an invalid
+pattern gives `InvalidInput` (`"é" * 40` is the latter). For model local IDs,
+check the ASCII pattern first (`"A" * 65` gives `InvalidModel`), then the
+64-byte length limit (`"a" * 65` gives `ResourceLimit`). All accepted identifiers
+are ASCII, so accepted lengths agree in bytes and characters. Decode all AST
+tags, arities and variable-index representations before checking symbol names
+and typing; `["unary", 5, ["var"]]` therefore gives `SyntaxError`.
 
 The proposed runtime envelope is at most 64 KiB of VE text, 64 formula nesting levels, 10,000 AST nodes, 32 sorts, 256 predicate symbols, 1,000 entities per sort, and 100,000 relation tuples total. Runtime identifiers (including model local IDs) are limited to 64 ASCII bytes; apply these limits and bounded integer checks before allocation. Input packages are capped at 16 MiB. These are initial engineering limits, not mathematical expressiveness claims; the unbudgeted reference definitions are separate from these runtime caps.
 
