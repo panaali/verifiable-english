@@ -89,10 +89,44 @@ class _Parser:
                 return ast.Var(index)
         self.error(f"unbound variable {name!r}", pos, UnboundVariable)
 
+    def closure_binder(self, sort):
+        from .environment import RESERVED
+        name, pos = self.identifier("closure binder")
+        if name in RESERVED or name in self.env.sorts or name in self.env.predicates or name in self.env.constants:
+            self.error(f"invalid binder name {name!r}", pos)
+        if any(active == name for active, _ in self.binders):
+            self.error(f"binder {name!r} shadows an active binder", pos, ShadowedVariable)
+        self.binders.append((name, sort))
+        return name
+
     def formula(self, depth: int = 1):
         if depth > MAX_DEPTH:
             self.error(f"formula exceeds nesting limit {MAX_DEPTH}", cls=ResourceLimit)
         start = self.i
+        if self.s.startswith(("tc[", "rtc["), self.i):
+            kind = "star" if self.s.startswith("rtc[", self.i) else "plus"
+            self.i += 4 if kind == "star" else 3
+            symbol, pos = self.identifier("closure relation or sort")
+            if self.s.startswith("]", self.i):
+                edge = ast.Named(symbol)
+            else:
+                if symbol not in self.env.sorts:
+                    self.error(f"unknown sort {symbol!r}", pos, UnknownSymbol)
+                self.literal(" ")
+                self.closure_binder(symbol)
+                self.literal(", ")
+                self.closure_binder(symbol)
+                self.literal(" | (")
+                body = self.formula(depth + 1)
+                self.literal(")")
+                del self.binders[-2:]
+                edge = ast.Body(symbol, body)
+            self.literal("](")
+            left = self.term()
+            self.literal(", ")
+            right = self.term()
+            self.literal(")")
+            return self.node(start, ast.Reach(kind, edge, left, right))
         if self.s.startswith("true", self.i) and not _IDENT_CONT.match(self.s, self.i + 4):
             self.i += 4
             return self.node(start, ast.Top())

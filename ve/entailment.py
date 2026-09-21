@@ -11,7 +11,7 @@ from functools import lru_cache
 from typing import Any, Sequence
 
 from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall, Implies,
-                  Not, Or, Top, Unary, Var, check_document)
+                  Not, Or, Top, Unary, Var, Reach, Named, check_document)
 from .errors import ResourceLimit, VEError
 from .identity import meaning_id
 from .limits import MAX_NODES, MAX_TABLEAU_DEPTH
@@ -19,6 +19,7 @@ from .wire import canonical_json
 
 
 ENTAILMENT_CHECKER_VERSION = "ve-tableau-checker@2"
+CLOSURE_CHECKER_VERSION = "ve-tableau-closure-checker@0"
 
 
 @dataclass(frozen=True, slots=True)
@@ -97,6 +98,7 @@ def _initial_branch(env: Any, premises: tuple[Any, ...], conclusion: Any) -> _Br
 
 def _kind(item: _Signed) -> str:
     f, pos = item.formula, item.positive
+    if type(f) is Reach: return "closure"
     if type(f) is Not: return "not"
     if type(f) is And: return "alpha" if pos else "beta"
     if type(f) is Or: return "beta" if pos else "alpha"
@@ -149,6 +151,10 @@ def _closed(branch: _Branch) -> bool:
             left = find(_term_token(f.left, item.bindings))
             right = find(_term_token(f.right, item.bindings))
             if not item.positive and left == right: return True
+        elif type(f) is Reach:
+            from .closure import congruence_key
+            atom = congruence_key(f, item.bindings, find)
+            (positive if item.positive else negative).add(atom)
         elif type(f) is Unary:
             atom = (f.predicate, find(_term_token(f.term, item.bindings)))
             (positive if item.positive else negative).add(atom)
@@ -168,6 +174,12 @@ def _derive(branch: _Branch, at: int, parameter: str | None) -> list[list[_Signe
     if kind == "literal": raise _InvalidTrace("literal cannot be expanded")
     if kind != "gamma" and at in branch.expanded:
         raise _InvalidTrace("tableau formula expanded twice")
+    if kind == "closure":
+        if parameter is not None:
+            raise _InvalidTrace("closure unfolding has no supplied parameter")
+        from .closure import unfold
+        sort = branch.parameters[_term_token(f.left, bindings)]
+        return [[_Signed(unfold(f, sort), pos, bindings)]]
     if kind == "not":
         if parameter is not None: raise _InvalidTrace("unexpected parameter")
         return [[_Signed(f.body, not pos, bindings)]]
@@ -227,6 +239,10 @@ def _instance_key(item: _Signed) -> tuple:
         if kind is Unary: return ("Unary", f.predicate, term(f.term))
         if kind is Binary: return ("Binary", f.predicate, term(f.left), term(f.right))
         if kind is Eq: return ("Eq", term(f.left), term(f.right))
+        if kind is Reach:
+            edge = (("Named", f.edge.relation) if type(f.edge) is Named else
+                    ("Body", f.edge.sort, walk(f.edge.formula, bound + 2)))
+            return ("Reach", f.kind, edge, term(f.left), term(f.right))
         if kind is Not: return ("Not", walk(f.body, bound))
         if kind in (Forall, Exists): return (kind.__name__, f.sort, walk(f.body, bound + 1))
         return (kind.__name__, walk(f.left, bound), walk(f.right, bound))
@@ -264,6 +280,11 @@ def _connection_key(item: _Signed, opposite: bool = False) -> tuple:
         if kind is Unary: return ("unary", positive, f.predicate, term(f.term))
         if kind is Binary: return ("binary", positive, f.predicate, term(f.left), term(f.right))
         if kind is Eq: return ("eq", positive, frozenset((term(f.left), term(f.right))))
+        if kind is Reach:
+            # Edge truth is independent of the sign of the enclosing Reach.
+            edge = (("named", f.edge.relation) if type(f.edge) is Named else
+                    ("body", f.edge.sort, walk(f.edge.formula, True, bound + 2)))
+            return ("reach", positive, f.kind, edge, term(f.left), term(f.right))
         if kind is Not: return walk(f.body, not positive, bound)
         if kind in (Forall, Exists):
             quantifier = "forall" if positive == (kind is Forall) else "exists"
@@ -375,7 +396,7 @@ class _Searcher:
                 if child is None: break
                 children.append(child)
             else:
-                node: dict[str, Any] = {"rule": "expand", "at": at, "children": children}
+                node: dict[str, Any] = {"rule": _rule(branch.formulas[at]), "at": at, "children": children}
                 if parameter is not None: node["parameter"] = parameter
                 return node
             if self.depth_cutoffs == frontier:
@@ -394,8 +415,14 @@ class _Searcher:
         raise _Budget
 
 
+def _rule(item):
+    if type(item.formula) is Reach:
+        return "closure-" + item.formula.kind + "@0"
+    return "expand"
+
+
 def _binding(env: Any, premises: tuple[Any, ...], conclusion: Any) -> dict[str, Any]:
-    return {"checker_version": ENTAILMENT_CHECKER_VERSION,
+    return {"checker_version": CLOSURE_CHECKER_VERSION if env.closure else ENTAILMENT_CHECKER_VERSION,
             "environment_id": env.environment_id,
             "premise_meaning_ids": [meaning_id(env, x) for x in premises],
             "conclusion_meaning_id": meaning_id(env, conclusion)}
@@ -439,10 +466,12 @@ class _Replayer:
                 raise _InvalidTrace("open or malformed close node")
             return
         allowed = {"rule", "at", "children", "parameter"}
-        if rule != "expand" or not set(node) <= allowed or not {"rule", "at", "children"} <= set(node):
+        if rule not in ("expand", "closure-plus@0", "closure-star@0") or not set(node) <= allowed or not {"rule", "at", "children"} <= set(node):
             raise _InvalidTrace("malformed expansion node")
         parameter = node.get("parameter")
         alternatives = _derive(branch, node["at"], parameter)
+        if rule != _rule(branch.formulas[node["at"]]):
+            raise _InvalidTrace("wrong versioned rule for target formula")
         children = node["children"]
         if type(children) is not list or len(children) != len(alternatives):
             raise _InvalidTrace("wrong tableau branch count")

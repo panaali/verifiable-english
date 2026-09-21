@@ -1,0 +1,577 @@
+{
+  "id": "cedar-examples/oopsla2024-benchmarks/benches/gdrive-templates/cedar/policies.cedar#0",
+  "dataset": "cedar",
+  "source": "@id(\"template\") permit ( principal in ?principal, action == Action::\"read\", resource in ?resource );",
+  "provenance": {
+    "git_revision": "46be9e1bafc85e37456cbf56e9dc92b6c8178666",
+    "path": "experiments/E0/survey_samples/cedar.jsonl",
+    "text_sha256": "596282eb22b885a0c1b4866ee60284af164aff1b8743b960e155a8c60e27aa3b"
+  },
+  "environment": {
+    "language": "ve.core@0.1",
+    "profiles": [
+      "closure@0",
+      "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.1-closure-2026-09-21",
+    "vocabulary": {
+      "sorts": {
+        "entity": {
+          "description": "A Cedar entity UID, including action and referenced unloaded UIDs."
+        },
+        "request": {
+          "description": "A request record; its principal, action and resource fields are single-valued and present."
+        }
+      },
+      "predicates": {
+        "parent": {
+          "arguments": [
+            "entity",
+            "entity"
+          ],
+          "description": "Primitive immediate hierarchy edge, child to parent. Never a precomputed ancestor relation."
+        },
+        "request_principal": {
+          "arguments": [
+            "request",
+            "entity"
+          ],
+          "description": "The principal entity UID in this request."
+        },
+        "request_action": {
+          "arguments": [
+            "request",
+            "entity"
+          ],
+          "description": "The action entity UID in this request."
+        },
+        "request_resource": {
+          "arguments": [
+            "request",
+            "entity"
+          ],
+          "description": "The resource entity UID in this request."
+        },
+        "permit_contribution": {
+          "arguments": [
+            "request"
+          ],
+          "description": "Proposed match extension of THIS permit policy, fully defined by the formula; not the final authorization decision."
+        },
+        "type_user": {
+          "arguments": [
+            "entity"
+          ],
+          "description": "Cedar entity type tag User; tags do not precompute policy truth or reachability."
+        },
+        "type_action": {
+          "arguments": [
+            "entity"
+          ],
+          "description": "Cedar entity type tag Action; tags do not precompute policy truth or reachability."
+        },
+        "type_document": {
+          "arguments": [
+            "entity"
+          ],
+          "description": "Cedar entity type tag Document; tags do not precompute policy truth or reachability."
+        },
+        "type_usergroup": {
+          "arguments": [
+            "entity"
+          ],
+          "description": "Cedar entity type tag UserGroup; tags do not precompute policy truth or reachability."
+        },
+        "type_folder": {
+          "arguments": [
+            "entity"
+          ],
+          "description": "Cedar entity type tag Folder; tags do not precompute policy truth or reachability."
+        }
+      },
+      "constants": {
+        "principal_slot": {
+          "sort": "entity",
+          "description": "Bound ?principal slot (arbitrary entity UID)."
+        },
+        "resource_slot": {
+          "sort": "entity",
+          "description": "Bound ?resource slot (arbitrary entity UID)."
+        },
+        "action_target": {
+          "sort": "entity",
+          "description": "Action::\"read\""
+        }
+      }
+    }
+  },
+  "ast": [
+    [
+      "forall",
+      "request",
+      [
+        "and",
+        [
+          "implies",
+          [
+            "unary",
+            "permit_contribution",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "entity",
+            [
+              "exists",
+              "entity",
+              [
+                "exists",
+                "entity",
+                [
+                  "and",
+                  [
+                    "binary",
+                    "request_principal",
+                    [
+                      "var",
+                      3
+                    ],
+                    [
+                      "var",
+                      2
+                    ]
+                  ],
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "request_action",
+                      [
+                        "var",
+                        3
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ],
+                    [
+                      "and",
+                      [
+                        "binary",
+                        "request_resource",
+                        [
+                          "var",
+                          3
+                        ],
+                        [
+                          "var",
+                          0
+                        ]
+                      ],
+                      [
+                        "and",
+                        [
+                          "reach",
+                          "star",
+                          [
+                            "named",
+                            "parent"
+                          ],
+                          [
+                            "var",
+                            2
+                          ],
+                          [
+                            "const",
+                            "principal_slot"
+                          ]
+                        ],
+                        [
+                          "and",
+                          [
+                            "eq",
+                            [
+                              "var",
+                              1
+                            ],
+                            [
+                              "const",
+                              "action_target"
+                            ]
+                          ],
+                          [
+                            "reach",
+                            "star",
+                            [
+                              "named",
+                              "parent"
+                            ],
+                            [
+                              "var",
+                              0
+                            ],
+                            [
+                              "const",
+                              "resource_slot"
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "implies",
+          [
+            "exists",
+            "entity",
+            [
+              "exists",
+              "entity",
+              [
+                "exists",
+                "entity",
+                [
+                  "and",
+                  [
+                    "binary",
+                    "request_principal",
+                    [
+                      "var",
+                      3
+                    ],
+                    [
+                      "var",
+                      2
+                    ]
+                  ],
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "request_action",
+                      [
+                        "var",
+                        3
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ],
+                    [
+                      "and",
+                      [
+                        "binary",
+                        "request_resource",
+                        [
+                          "var",
+                          3
+                        ],
+                        [
+                          "var",
+                          0
+                        ]
+                      ],
+                      [
+                        "and",
+                        [
+                          "reach",
+                          "star",
+                          [
+                            "named",
+                            "parent"
+                          ],
+                          [
+                            "var",
+                            2
+                          ],
+                          [
+                            "const",
+                            "principal_slot"
+                          ]
+                        ],
+                        [
+                          "and",
+                          [
+                            "eq",
+                            [
+                              "var",
+                              1
+                            ],
+                            [
+                              "const",
+                              "action_target"
+                            ]
+                          ],
+                          [
+                            "reach",
+                            "star",
+                            [
+                              "named",
+                              "parent"
+                            ],
+                            [
+                              "var",
+                              0
+                            ],
+                            [
+                              "const",
+                              "resource_slot"
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            "unary",
+            "permit_contribution",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ]
+  ],
+  "strict": "for every request x0, ((if (x0 is permit_contribution), then (there exists entity x1, (there exists entity x2, (there exists entity x3, ((x0 request_principal x1) and ((x0 request_action x2) and ((x0 request_resource x3) and ((rtc[parent](x1, @principal_slot)) and ((x2 equals @action_target) and (rtc[parent](x3, @resource_slot))))))))))) and (if (there exists entity x4, (there exists entity x5, (there exists entity x6, ((x0 request_principal x4) and ((x0 request_action x5) and ((x0 request_resource x6) and ((rtc[parent](x4, @principal_slot)) and ((x5 equals @action_target) and (rtc[parent](x6, @resource_slot)))))))))), then (x0 is permit_contribution))).\n",
+  "adapter": {
+    "kind": "cedar-request-projection@0",
+    "effect": "permit",
+    "translation_unit": "Exact sampled single policy match, represented as a definition of its per-request permit contribution.",
+    "request_fields": [
+      "request_principal",
+      "request_action",
+      "request_resource"
+    ],
+    "entity_attributes": [],
+    "set_attributes": [],
+    "uid_map": {
+      "principal_group": "UserGroup::\"principal_group\"",
+      "resource_group": "Folder::\"resource_group\"",
+      "action": "Action::\"read\"",
+      "user": "User::\"user\"",
+      "resource": "Document::\"resource\"",
+      "principal_middle": "UserGroup::\"principal_middle\"",
+      "resource_middle": "Folder::\"resource_middle\""
+    },
+    "type_tags": [
+      "type_action",
+      "type_document",
+      "type_folder",
+      "type_user",
+      "type_usergroup"
+    ],
+    "conditions": [
+      "All request fields are total functions. UIDs include referenced but unloaded entities, so equality and zero-step membership still work.",
+      "parent contains primitive child-to-parent edges. The witness adapter checks acyclicity, matching Cedar hierarchy inputs.",
+      "Present entity-valued fields are partial functions. Present set attributes have explicit collection objects; no field row is absence.",
+      "All chosen conditions use positive attribute access, so absent fields give no permit contribution, as do Cedar evaluation errors here.",
+      "Template slots, where present, are supplied constants. The formula remains parameterized by their denotations.",
+      "No other policy, forbid override, full authorization decision or schema-inferred hierarchy is asserted."
+    ]
+  },
+  "contrast": "Both models propose the same permit contribution. Removing the last edge of a required two-step hierarchy path falsifies its defining equivalence; request fields and other conditions remain fixed.",
+  "true_model": {
+    "complete": true,
+    "domains": {
+      "entity": [
+        "action",
+        "principal_group",
+        "principal_middle",
+        "resource",
+        "resource_group",
+        "resource_middle",
+        "user"
+      ],
+      "request": [
+        "request0"
+      ]
+    },
+    "constants": {
+      "principal_slot": "principal_group",
+      "resource_slot": "resource_group",
+      "action_target": "action"
+    },
+    "relations": {
+      "parent": [
+        [
+          "principal_middle",
+          "principal_group"
+        ],
+        [
+          "resource",
+          "resource_middle"
+        ],
+        [
+          "resource_middle",
+          "resource_group"
+        ],
+        [
+          "user",
+          "principal_middle"
+        ]
+      ],
+      "request_principal": [
+        [
+          "request0",
+          "user"
+        ]
+      ],
+      "request_action": [
+        [
+          "request0",
+          "action"
+        ]
+      ],
+      "request_resource": [
+        [
+          "request0",
+          "resource"
+        ]
+      ],
+      "permit_contribution": [
+        [
+          "request0"
+        ]
+      ],
+      "type_user": [
+        [
+          "user"
+        ]
+      ],
+      "type_action": [
+        [
+          "action"
+        ]
+      ],
+      "type_document": [
+        [
+          "resource"
+        ]
+      ],
+      "type_usergroup": [
+        [
+          "principal_group"
+        ],
+        [
+          "principal_middle"
+        ]
+      ],
+      "type_folder": [
+        [
+          "resource_group"
+        ],
+        [
+          "resource_middle"
+        ]
+      ]
+    }
+  },
+  "false_model": {
+    "complete": true,
+    "domains": {
+      "entity": [
+        "action",
+        "principal_group",
+        "principal_middle",
+        "resource",
+        "resource_group",
+        "resource_middle",
+        "user"
+      ],
+      "request": [
+        "request0"
+      ]
+    },
+    "constants": {
+      "principal_slot": "principal_group",
+      "resource_slot": "resource_group",
+      "action_target": "action"
+    },
+    "relations": {
+      "parent": [
+        [
+          "principal_middle",
+          "principal_group"
+        ],
+        [
+          "resource",
+          "resource_middle"
+        ],
+        [
+          "user",
+          "principal_middle"
+        ]
+      ],
+      "request_principal": [
+        [
+          "request0",
+          "user"
+        ]
+      ],
+      "request_action": [
+        [
+          "request0",
+          "action"
+        ]
+      ],
+      "request_resource": [
+        [
+          "request0",
+          "resource"
+        ]
+      ],
+      "permit_contribution": [
+        [
+          "request0"
+        ]
+      ],
+      "type_user": [
+        [
+          "user"
+        ]
+      ],
+      "type_action": [
+        [
+          "action"
+        ]
+      ],
+      "type_document": [
+        [
+          "resource"
+        ]
+      ],
+      "type_usergroup": [
+        [
+          "principal_group"
+        ],
+        [
+          "principal_middle"
+        ]
+      ],
+      "type_folder": [
+        [
+          "resource_group"
+        ],
+        [
+          "resource_middle"
+        ]
+      ]
+    }
+  }
+}

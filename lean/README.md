@@ -276,10 +276,12 @@ The certificate conformance run accepts **732/732** Python-produced certificates
 and rejects **150/150** forgeries, including missing/wrong-sort/future parameters,
 empty-sort inhabitation, illegal delta witnesses, stale identities and malformed
 branches. The two positive worked examples pass; the separated example has no
-proof and a forged close is rejected. All 803 search attempts and their outcomes
+proof and a forged close is rejected. All 811 search attempts and their outcomes
 are retained in [the report](../conformance/certificates-report.json); 320 bounded
 random valid queries all produce certificates, and another 320 broader valid
-queries include three Python search resource failures. These are seeded schema
+queries also all produce certificates. Eight existential weakening regressions
+prove; 160 unconditioned queries give 82 certificates, 76 `NotFound` and two
+resource-limit outcomes. These are seeded schema
 and random-query tests, not an independently sampled workload or a completeness
 claim. No produced certificate in this corpus was rejected by Lean.
 
@@ -299,3 +301,13 @@ Tableau milestone validation (September 21, 2026): `lake build` passes;
 `.venv/bin/python -m pytest -q` passes **528 tests**, with **2 skips** for the
 uninstalled optional `llguidance` and `xgrammar` backends. Dependencies were
 synced with `UV_CACHE_DIR=/private/tmp/ve-uv-cache uv sync --frozen` before the full run.
+
+## Opt-in closure profile
+
+`VE.Closure` adds finite-path plus/star semantics, Named/Body edges, proved
+finite evaluation and typing, Reach-free conservativity, and least-fixed-point
+characterizations. Both edge forms have executable strict syntax; the new
+round-trip theorem covers Named atoms. The JSON bridge dispatches the v0.1
+closure envelope separately, and certificate replay explicitly rejects that
+profile. Exact statements and remaining proof obligations are in
+[`CLOSURE.md`](CLOSURE.md).

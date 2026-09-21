@@ -1,0 +1,375 @@
+{
+  "status": "PASS",
+  "profile": "closure@0",
+  "cedar_items": 10,
+  "alloy_items": 5,
+  "models": 30,
+  "python_lean_agree": 30,
+  "items": [
+    {
+      "id": "cedar-examples/cedar-example-use-cases/sales_orgs/templated/policies.cedar#3",
+      "file": "cedar_01.json",
+      "meaning_id": "1a8cfb8c4ee9532f584471d600e65ea8005353e7b5df59fc42ea367d981ac09b",
+      "source_id": "049943d79e014236da6e9221a6fa49c9d24da905be26365a09cea05ebc4c4c15",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "7a994f34567c5bfa817cce1f9a276dd9879d64b5dedef0ca27276f6bd4ccc329",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "854cda96218de5ee9d18a6165cdc446c2056b1cc21ae65b349a3ecd56f1c33bc",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "cedar-examples/cedar-example-use-cases/github_example/policies.cedar#5",
+      "file": "cedar_02.json",
+      "meaning_id": "03fb7c6c35fe84a618d365739b400d2126b8955a3a57b8bcdc5949786b5b016d",
+      "source_id": "8833ec56ab71f7cefeb4c48a13fa76a652de051b4d001f0900997bf3e8d103c3",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "512a6faae34e87c0581f62a17e58ee59247ea119e16dfd1ba535fc3998d11673",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "c94005ee98e69d1141dfabb4d68262443d623aeb59bce51caf92f8b8eba6d52d",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "cedar-examples/cedar-example-use-cases/sales_orgs/static/policies.cedar#5",
+      "file": "cedar_03.json",
+      "meaning_id": "318f3ac3e93cd96a1d9955cff8ccf4f60abb99de406bf51e8e6de0d2220e4a2d",
+      "source_id": "02ad419d65c2b63f4c7747022c083c03b153dfd836c01c250f0ea98b5c6686db",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "4a6220f7a79ac26f038cccd2df57acb10d2cccd3ac7d0bc0ffbe8f2a95c09206",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "22572545e958ebe18ac79a25644ad28e5fc4c5127cfc66ce057b7c0bdf87bdc5",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "cedar-examples/oopsla2024-benchmarks/benches/github-templates/cedar/policies.cedar#0",
+      "file": "cedar_04.json",
+      "meaning_id": "942ba1bca8dc61b41d3875c27c2d04f5ff896ab6d189c16968a78da6e2031e67",
+      "source_id": "a2fa43ec3de37f8c25233f0170a512e31807ea2700dff2b078d64e6f45ecedb6",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "2f4ddd4d95887ff386eb4eb305d82ffbe686bd0f9d19994d40556733e166e6f4",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "faa56a17c91b2f96b3a4588afb0fa90f14a49756aca48610a827a4eeaaa5aad6",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "cedar-examples/cedar-policy-language-in-action/PhotoApp/photoapp.cedar#4",
+      "file": "cedar_05.json",
+      "meaning_id": "f7490b779a2f12dd3e8277ff7af051a256612bd467cde0f3d6c752df90f10507",
+      "source_id": "02719859a7d49e351e152d394f9fdaf39e55317c289bc96188e3f928609e1f8a",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "c2b2147e1b317a71f11ea540c877d450383f6f17179e21dfa8d350bfe7822b25",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "ab6b6b008da0fe9bf5a278eea60dfe20f3524d4952facd164d0457137f41cdd1",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "cedar-examples/oopsla2024-benchmarks/benches/gdrive-templates/cedar/policies.cedar#0",
+      "file": "cedar_06.json",
+      "meaning_id": "4356eabcbcfcfbf1632bf508d825d828593853c505e86f4332fdffec44d35f1b",
+      "source_id": "668c91264503d448d514295a4088a0cca994a6e85ae787739893aa8cd2c64ad9",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "9405183c78afb29f35eb350fe965ccff0e83ef32dab4e672ef6ccdf04d9c4151",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "006e5e6c458a496fc3df69f74425ba8d1e9676d51925136c7293fcd31cf26ba8",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "cedar-integration-tests/tests/example_use_cases/policies_3c.cedar#0",
+      "file": "cedar_07.json",
+      "meaning_id": "76c0086cb782e69c2ac2d43b50d6ae0ea3089c904a6b5350a97a0d3dbb048931",
+      "source_id": "4bb94de0c4537af8e61e8db62c6a1ddbc86fb2640090168a89fb47aabdd5ebd6",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "01b7f5c7983f5e7de7e261f97712e1842092a08f978a920b43c1194072b4e121",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "bbfe41338beea85149b3c770d09787bbc3c963e4e13e384a933c92eec6886c5d",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "cedar-integration-tests/tests/example_use_cases/policies_2a.cedar#0",
+      "file": "cedar_08.json",
+      "meaning_id": "b956528875d1eb7fbdb49bdd626adc66ad3144a0330d1e10051f420d5f4b4d3b",
+      "source_id": "b272ba0ed502bebfc41147606bf1875128f6b403f09df52b226b03e16c2164c4",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "e8a54871c392005099fa7d27255e674d1a8a0c0a36b8cb18987a62145691d9a9",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "cd960b808cd61a2700f08ade28a2a0c8026dfed8e087e62253b6e10d11aefd8c",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "cedar-examples/cedar-java-partial-evaluation/app/src/main/resources/policies.cedar#0",
+      "file": "cedar_09.json",
+      "meaning_id": "89fdd40e44efccbd99f0310d45444d6ac54bb949108c11893dfcda3c86bb4798",
+      "source_id": "4911c300af83885050d27794b3b93cd05bf39b8db0fd4de49187c75c8a6fc8a3",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "9a09885d0674e77576b9e77538524b397979ac4ee09e34325990568d5fe9aa22",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "dae1adaa7ca1c92562eb09e07e9864ef68d214f8e67d008427927d36331004e1",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "cedar-integration-tests/tests/example_use_cases/policies_3a.cedar#0",
+      "file": "cedar_10.json",
+      "meaning_id": "5debd98b781e2ca9dc83cb592e5944ef30e07b15f5a8784aaa7f2ce4f4381e23",
+      "source_id": "11075a4080f78039dc017d77e42ca242adfb0370b6520e8f30e7ec9891deed0c",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "f29742cf22c74aa994e53d0ed8479e0c647fcddf1c00634f24ea0bb50b38a4e7",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "6bb93fa0c680535f46465b676bfe59370bdb38833114436a3b41752a44a58510",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@81",
+      "file": "alloy_01_chord2.json",
+      "meaning_id": "07ea44fe3795d31c990a9e77a040ae01a324b8890e181676cad2672ad8ef1cfb",
+      "source_id": "ffc6d1ee890d75fb3b6fe074dfb5fd331df5df1232776523006149d9080005bd",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "5201f2d743c8c570eb1167065062f2ac75a53dfba7db914f1b497151598e8a8a",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "98967c27f92bb99f381288b896a11fd65b720644f0dd6a418f3e3c616cd26942",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "alloy-models/algorithms/distributed-hashtable/chord.als@80",
+      "file": "alloy_02_chord.json",
+      "meaning_id": "07ea44fe3795d31c990a9e77a040ae01a324b8890e181676cad2672ad8ef1cfb",
+      "source_id": "ffc6d1ee890d75fb3b6fe074dfb5fd331df5df1232776523006149d9080005bd",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "5201f2d743c8c570eb1167065062f2ac75a53dfba7db914f1b497151598e8a8a",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "98967c27f92bb99f381288b896a11fd65b720644f0dd6a418f3e3c616cd26942",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "alloy-models/algorithms/multicasting/iolus.als@5190",
+      "file": "alloy_03_connected.json",
+      "meaning_id": "d33456837b590f82843f0f4a1a6a908d9129dadb1d50ace9d6b7745901921490",
+      "source_id": "2402744347be688a81fd5ec7513c05177e5486b9a9bf2ed0d14808eecde16b10",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "d8396b449d726c66247d36af2d856e3a3117dd500fa6605d434bc9237e8761aa",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "c32a3f9a274dc865a155bc90e7b6c606c72d161afcc8b98c7e307df121342e0e",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "alloy-models/models/java/javatypes_soundness.als@282",
+      "file": "alloy_04_dag.json",
+      "meaning_id": "1ed795d48201f8949af99616ca7a0ea50a9726ddd59dfa33de91464f0de73463",
+      "source_id": "1ef20320ef114f241333bb7758fec1f81efa37f7d158396742f5e677e88af2ab",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "88066c402dc7d947a00ef6de6ae99213dedec07bb5b6ba3e27cf0169af7c51ab",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "d6978687fd17b15aabe957e19c53ccb061945733f956319bd3b3ac86f16bd27f",
+          "lean": false
+        }
+      ]
+    },
+    {
+      "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@4943",
+      "file": "alloy_05_one_node.json",
+      "meaning_id": "1e656e7eed8ec6e91db0049b917733c1fec329ea252d3706ff1d4026ff48038d",
+      "source_id": "2ef6a9b49fdcacbb3b25727bb9b9bbd7ba5eed5a7dc009394e095665c410d185",
+      "model_results": [
+        {
+          "model": "true_model",
+          "expected": true,
+          "python": true,
+          "independent_graph_check": true,
+          "model_id": "fd58488650ce912f5fe527d916469fe0e40cf31b5be1b09a57d14d62011790f4",
+          "lean": true
+        },
+        {
+          "model": "false_model",
+          "expected": false,
+          "python": false,
+          "independent_graph_check": false,
+          "model_id": "240d2e13ed1c8465f2374530a551c6c3858f5120c7e66585b212adb6fd4210fe",
+          "lean": false
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Finite tests do not prove source-to-VE translation equivalence.",
+    "Adapter validation checks the recorded relevant relational signatures; it is not full Cedar schema or Alloy module validation.",
+    "The independent graph checks are handwritten projections of the sampled claims, not runs of Cedar or Alloy engines."
+  ]
+}

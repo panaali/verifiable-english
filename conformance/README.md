@@ -143,7 +143,7 @@ From the root:
 ```sh
 export CARGO_HOME="$PWD/.cargo-home"
 export CARGO_TARGET_DIR="$PWD/rust/target"
-cargo test -j 2 --locked --manifest-path rust/Cargo.toml -- --test-threads=1
+cargo test -j 1 --locked --manifest-path rust/Cargo.toml -- --test-threads=1
 python conformance/generate.py
 UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run --frozen python -m pytest tests/test_rust_conformance.py -q
 ```
@@ -203,13 +203,13 @@ There is no model field and no expected-result field influences replay.
 
 `certificates.py` regenerates all queries and Python certificates before invoking
 the Lean executable in bounded batches. The seed is 20260923. The committed
-`certificates-report.json` records all 803 search attempts: 721 produce accepted
-certificates, 75 produce `NotFound`, and 7 produce `ResourceLimit`. This includes
-320/320 bounded-schema random valid queries; 317/320 broader random valid
-queries (three search resource failures); 82/160 unconditioned random queries;
-and the bridged/merged positive worked examples. The separated example is
+`certificates-report.json` records all 811 search attempts: 732 produce accepted
+certificates, 77 produce `NotFound`, and 2 produce `ResourceLimit`. This includes
+320/320 bounded-schema random valid queries; 320/320 broader random valid
+queries; 82/160 unconditioned random queries; eight existential weakening
+regressions; and the bridged/merged positive worked examples. The separated example is
 `NotFound`, and its forged close is rejected. Every produced certificate is
-replayed: **721/721 accepted**, with no format gaps, unsupported rules or bugs
+replayed: **732/732 accepted**, with no format gaps, unsupported rules or bugs
 observed in that comparison. All **150/150 forgeries** are rejected.
 The detailed report counts both signs of every propositional/quantifier rule.
 
@@ -234,3 +234,37 @@ ones and empty sorts; the JSON target is `Entails.{0}`. The proof covers replay
 on decoded ASTs, not JSON/wire/hash correspondence, IO, compiler/runtime, or
 Python refinement. Python search and its replay filter are untrusted for the
 Lean result. The default Python API continues to use Python replay.
+
+## Opt-in closure@0 fixtures
+
+`closure.json` contains 46 v0.1 environments/models and 866 formulas. It is kept
+separate so v0 consumers, including Rust, retain the original fixture envelopes.
+`closure.py` deterministically regenerates it. Cases cover empty sorts, all
+two-vertex graphs, positive cycles, isolated star reflexivity, direction,
+Body parameters and nested closure. Python/Lean evaluation and canonical source
+agree on every case; tests additionally exercise all five view inverses and
+100 seeded extended formulas. See `docs/spec/closure-implementation.md` and
+`lean/CLOSURE.md` for proof and runtime boundaries.
+
+Rust supports only `relational-fol@0`. The named pytest case
+`test_rust_closure_evaluation` explicitly skips `closure.json`, with that reason
+shown by `pytest -ra`; closure E0 witnesses are checked by Python/Lean, not Rust.
+All seven v0 files in the table above still run against Rust, including its
+5,000-case v0 fuzz stream. The full-suite command does not exclude the Rust module.
+
+## Frozen v0 replay regression
+
+`v0-replay-baseline.json` records the entire certificate corpus generated and
+replayed by integration commit `6798e034c4aa7082dafacbb7b130879cd4eec4f6`, before
+any closure changes: 732 accepted certificates and all 150 rejected forgeries.
+It includes each original query/trace and full replay result (validity, status,
+step count and diagnostic), as well as every corpus search outcome. No failed
+search is converted into a certificate or removed from the generation report.
+
+Regenerate with `UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run python
+conformance/replay_baseline.py`. The generator extracts the pinned commit into a
+temporary directory and runs both its corpus generator and its replay checker
+there; it never imports the current checker to produce expected verdicts.
+`tests/test_replay_conservativity.py` replays all 882 frozen cases using the
+current checker and requires identical complete results. This test needs no git
+checkout or regenerated proofs at test time.
