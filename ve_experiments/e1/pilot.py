@@ -45,7 +45,8 @@ def to_items(cands: list[dict]) -> list[Item]:
 
 def experiment(cands: list[dict], views, explanations, judges) -> Experiment:
     usable = [c for c in cands if c.get("explanation")]  # generation failures are excluded before judging, and counted
-    return Experiment("E1", to_items(usable), conditions(views, explanations), list(judges), root=ROOT)
+    return Experiment("E1", to_items(usable), conditions(views, explanations), list(judges), root=ROOT,
+                      split_file=E1 / "splits.json")
 
 
 def run_gate(client: LLMClient, items_name: str) -> Path:

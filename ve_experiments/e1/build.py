@@ -25,7 +25,9 @@ from pathlib import Path
 from ve import formula_to_data
 from ve.parser import parse
 
+from ..ve_iface import VeBackend
 from ..llm import LLMClient, Request, VerdictParseError, parse_final_json
+from ..runner import Item, assign_splits
 from . import attacks as A
 from .templates import BY_ID, DEV_TEMPLATES, SCORED_TEMPLATES, to_wire
 from .views import check, render, vocabulary_text, _env
@@ -33,6 +35,7 @@ from .vocab import BINDINGS, DEV_FAMILIES, SCORED_FAMILIES
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "experiments" / "E1" / "items"
+SPLIT_FILE = ROOT / "experiments" / "E1" / "splits.json"
 ATTACKERS = ("claude-fable-5-1", "gpt-6-astra")
 MAX_REWRITES = 2
 MODEL_ATTACKS_PER_ATTACKER = 2
@@ -122,6 +125,10 @@ def validate_attack(base: dict, g: list, seed: str) -> tuple[dict | None, str]:
     cmp = A.compare(f, g, env["vocabulary"], seed)
     if cmp["model"] is None:
         return None, "no distinguishing model found (possibly equivalent)"
+    # The fast stub evaluator proposes; the real `ve` evaluator decides.
+    real = VeBackend(env)
+    if real.evaluate(f, cmp["model"]) == real.evaluate(g, cmp["model"]):
+        return None, "ve evaluator does not confirm the distinguishing model"
     return cmp, "ok"
 
 
@@ -216,6 +223,7 @@ def add_e1b_models(c: dict) -> None:
     TT, TF, FT, FF so that constant answers score 50% per model."""
     rng = random.Random(_h(c["id"], "e1b"))
     voc = c["environment"]["vocabulary"]
+    real = VeBackend(c["environment"])
     models, truths = [], []
     for k in range(2):
         want = rng.random() < 0.5
@@ -225,7 +233,7 @@ def add_e1b_models(c: dict) -> None:
             if A.evaluate(c["ast"], m) == want and m not in models:
                 break
         models.append(m)
-        truths.append(A.evaluate(c["ast"], m))
+        truths.append(real.evaluate(c["ast"], m))  # ground truth from the real evaluator
     c["e1b_models"], c["e1b_truth"] = models, truths
 
 
@@ -255,6 +263,8 @@ def build(split: str, use_llm: bool = True, client: LLMClient | None = None) -> 
     if use_llm:
         add_explanations(cands, client)
     OUT.mkdir(parents=True, exist_ok=True)
+    if use_llm:  # record the split of every group; a recorded group can never move (runner.assign_splits)
+        assign_splits([Item(c["id"], c["label"], {}, group=c["group"], split=c["split"]) for c in cands], 0.0, 0, SPLIT_FILE)
     suffix = "" if use_llm else ".nollm"
     with open(OUT / f"{split}{suffix}.jsonl", "w", encoding="utf-8") as fh:
         for c in cands:
