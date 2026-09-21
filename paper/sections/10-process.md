@@ -7,8 +7,8 @@ requested review. The protocol required cross-family review before integration
 merges. The log records review requests, rejected merges, revisions, and
 integration failures. This is a production record, not a controlled comparison
 of development methods. This drafting pass used GPT-6 Astra after the Claude
-scaffold author exhausted quota; a subsequent Claude-side manuscript audit is
-pending.
+scaffold author exhausted quota; a Claude-side manuscript audit was performed and its findings are
+recorded in `paper/AUDIT.md`.
 <!-- src: PROTOCOL.md; paper/sources/process-log-excerpts.md;
 paper/sources/manifest.json; user drafting handoff recorded in paper/README.md. -->
 
@@ -23,7 +23,7 @@ reruns by the paper author.
 | Converse template in the natural view | A relation such as `owns(person, service)` accepted wording like `{0} is owned by {1}`. The apparent direction could change only in the natural display. Revised lexical checks and a common identity-bearing legend narrowed this attack surface. Arbitrary semantic lies remain possible. |
 | Unfair universal-rule scheduling | Early gamma choices repeatedly used some instances and starved useful witnesses. Semantically equivalent formulas became UNKNOWN. Fair bounded rounds and connection priorities changed search, while replay rules remained fixed. |
 | Certificate-version mismatch after merges | Python's oracle introduced compound-formula closure before the Lean adapter supported that certificate version. Separately reviewed branches failed integration. The fix proved the existing rule in Lean, aligned decoding depth, repaired fixture naming, and added regressions. |
-| Structural shortcut in E5 | An uncited dossier unmatched by any cited dossier revealed the label despite lexical balancing. Revision changed copy construction and added a complete duplication-signature audit; fresh model calibration remains necessary. |
+| Structural shortcut in E5 | An uncited dossier unmatched by any cited dossier revealed the label despite lexical balancing. Revision changed copy construction and added a duplication-signature audit over the enumerated features; fresh model calibration remains necessary. |
 
 <!-- src: paper/sources/process-log-excerpts.md, entries 01:03, 01:24, 02:11,
 02:48, 03:10, 03:50; paper/sources/review-views.md; docs/rendering-views.md;
@@ -73,18 +73,19 @@ must still inspect the statements and measurement contracts.
 
 ## Compute and cost
 
-Colab accounting is approximate. The table distinguishes runner estimates
-from recorded runtime fields and from a metered bill, which is unavailable.
+Colab accounting is approximate. The table distinguishes orchestrator and runner
+estimates from recorded runtime fields and from a metered bill, which is
+unavailable.
 
 | Work | Accelerator | Colab compute units | Provenance / scope |
 |---|---|---|---|
-| Development before scored runs | L4 | About 12 | Previously committed runner handoff; includes earlier development. |
+| Development before scored runs | L4 | About 12 | Orchestrator estimate from runner uptime times the nominal L4 rate (1.7 units/hour); includes earlier development; neither a Colab bill nor a user report. |
 | E1 scored, including E1b | A100-80GB | About 7.1 | Runner estimate at 7.5 units/hour; 3,411 s recorded wall time. |
 | E4 scored | A100-80GB | Not reported in the cited log | The supplied under-2 estimate could not be traced; see below. |
 
 The E1 result report separately lists about 6.1 units for that day's earlier
 L4 development jobs; this narrower accounting is not substituted for the
-about-12 pre-scoring handoff total. E1 completed 26,220 prompts across sign-off
+about-12 pre-scoring orchestrator estimate. E1 completed 26,220 prompts across sign-off
 and E1b; E4 completed 720. E4 manifests record load/generation times of
 76.9/959.11 s for 14B and 103.9/32.31 s for 7B. Summing those recorded phases
 and applying 7.5 units/hour gives about 2.44 units, a derived runtime proxy
@@ -98,7 +99,9 @@ no actual tokenizer usage. Local MLX pilots, hosted generation, and review
 used separate resources without a complete dollar ledger. Quota limits shaped
 the single-family scored roster and the decision not to execute E5. Units are
 not converted to dollars using an assumed purchase price.
-<!-- src: paper/sources/v1-handoff.md (about 12 units);
+<!-- src: paper/sources/v1-handoff.md (about 12 units; provenance corrected by the
+user in the audit-resolution handoff: orchestrator estimate from runner uptime
+times the nominal L4 rate of 1.7 units/hour, not a user report or Colab bill);
 paper/sources/e1-results.md (3,411 s, about 7.1 units, narrower 6.1-unit dev
 estimate, assigned/completed prompts); paper/sources/process-log-results.md
 (runner estimate of 57 min and about 7.1 units);
