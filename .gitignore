@@ -12,3 +12,5 @@ data/*
 experiments/*/items/*.nollm*
 .cargo-home/
 rust/target/
+.cache/
+paper/.cache/

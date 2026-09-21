@@ -1,5 +1,5 @@
 #![forbid(unsafe_code)]
-//! Experimental VE v0 core. Checked values have private fields; raw indexed
+//! Experimental VE v0 and closure@0 core. Checked values have private fields; raw indexed
 //! syntax becomes a claim only through `Document::check` or `parse`.
 mod ast;
 mod environment;
@@ -9,7 +9,7 @@ mod search;
 mod surface;
 mod wire;
 
-pub use ast::{Document, Formula, Term};
+pub use ast::{Document, Edge, Formula, ReachKind, Term};
 pub use environment::Environment;
 #[cfg(feature = "bench-internals")]
 #[doc(hidden)]

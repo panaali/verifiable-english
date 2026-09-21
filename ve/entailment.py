@@ -6,7 +6,7 @@ tableau with :func:`check_entailment_certificate`.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, Sequence
 
@@ -61,10 +61,11 @@ class _Branch:
     expanded: set[int]
     instantiated: set[tuple[int, str]]
     next_witness: int = 0
+    signatures: dict[str, tuple[str, ...]] = field(default_factory=dict)
 
     def copy(self) -> "_Branch":
         return _Branch(list(self.formulas), dict(self.parameters), set(self.expanded),
-                       set(self.instantiated), self.next_witness)
+                       set(self.instantiated), self.next_witness, self.signatures)
 
 
 class _Budget(Exception):
@@ -93,7 +94,8 @@ def _initial_branch(env: Any, premises: tuple[Any, ...], conclusion: Any) -> _Br
     parameters = {f"c:{name}": decl.sort for name, decl in env.constants.items()}
     signed = [_Signed(formula, True) for formula in premises]
     signed.append(_Signed(conclusion, False))
-    return _Branch(signed, parameters, set(), set())
+    return _Branch(signed, parameters, set(), set(), signatures={
+        name: tuple(decl.arguments) for name, decl in env.predicates.items()})
 
 
 def _kind(item: _Signed) -> str:
@@ -317,8 +319,9 @@ def _ground_connections(key: tuple) -> frozenset[tuple]:
 
 
 class _Searcher:
-    def __init__(self, maximum: int):
+    def __init__(self, maximum: int, closure: bool = False):
         self.maximum, self.steps = maximum, 0
+        self.closure = closure
         self.instance_limit = 1
         self.cutoff = False
         self.depth_cutoffs = 0
@@ -383,20 +386,36 @@ class _Searcher:
                 # relevant universal cannot starve an older one.
                 priority = (0 if connects else 1 if kind in ("not", "alpha") else
                             2 if kind == "delta" else 3 if kind == "gamma" else 4)
-                choices.append(((priority, counts.get(at, 0), at, -hits, order), at, token, additions))
+                choices.append(((priority, counts.get(at, 0), at, -hits, order), _rule(item), at, token, additions))
+        if self.closure:
+            from .closure import extra_candidates
+            for rule, at, token, addition in extra_candidates(branch):
+                if all(self.instance_key(x) in keys for x in addition):
+                    continue
+                # Goal-directed derived consequences avoid eagerly generating
+                # infinitely many new existential witnesses from unfolded paths.
+                connects = any(self.connection_key(x) in complements for x in addition)
+                if connects or rule in ("closure-compose@0", "closure-edge@0"):
+                    priority = -1 if connects else 3
+                    choices.append(((priority, 0, at, 0, 0), rule, at, token, [addition]))
         if not choices: return None
         choices.sort(key=lambda choice: choice[0])
         # A depth frontier is a failed ordering, not a global budget abort.
         # Try other available expansions while retaining the global step cap.
-        for _, at, parameter, alternatives in choices:
+        for _, rule, at, parameter, alternatives in choices:
             frontier = self.depth_cutoffs
             children = []
             for addition in alternatives:
-                child = self.search(_apply(branch, at, parameter, addition), depth + 1)
+                if rule in ("expand", "closure-plus@0", "closure-star@0"):
+                    next_branch = _apply(branch, at, parameter, addition)
+                else:
+                    next_branch = branch.copy()
+                    next_branch.formulas.extend(addition)
+                child = self.search(next_branch, depth + 1)
                 if child is None: break
                 children.append(child)
             else:
-                node: dict[str, Any] = {"rule": _rule(branch.formulas[at]), "at": at, "children": children}
+                node: dict[str, Any] = {"rule": rule, "at": at, "children": children}
                 if parameter is not None: node["parameter"] = parameter
                 return node
             if self.depth_cutoffs == frontier:
@@ -434,14 +453,15 @@ def prove_entailment(env: Any, premises: Sequence[Any], conclusion: Any, *,
     premises = _validate_inputs(env, premises, conclusion)
     if type(max_steps) is not int or isinstance(max_steps, bool) or max_steps < 0:
         raise ValueError("max_steps must be a nonnegative integer")
-    searcher = _Searcher(max_steps)
+    searcher = _Searcher(max_steps, env.closure)
     try:
         trace = searcher.prove(_initial_branch(env, premises, conclusion))
     except (_Budget, RecursionError):
         return EntailmentResult("ResourceLimit", None, searcher.steps, "tableau step or certificate nesting budget exhausted")
     if trace is None:
         return EntailmentResult("NotFound", None, searcher.steps,
-                                "saturated open branch; no entailment certificate found")
+                                ("no certificate found by the implemented closure rules; failure is inconclusive"
+                                 if env.closure else "saturated open branch; no entailment certificate found"))
     certificate = {**_binding(env, premises, conclusion), "trace": trace}
     # Treat search output like hostile input: replay before advertising success.
     checked = check_entailment_certificate(env, premises, conclusion, certificate,
@@ -453,7 +473,8 @@ def prove_entailment(env: Any, premises: Sequence[Any], conclusion: Any, *,
 
 
 class _Replayer:
-    def __init__(self, maximum: int): self.maximum, self.steps = maximum, 0
+    def __init__(self, maximum: int, closure: bool = False):
+        self.maximum, self.steps, self.closure = maximum, 0, closure
 
     def replay(self, branch: _Branch, node: Any, depth: int = 0) -> None:
         if depth > MAX_TABLEAU_DEPTH: raise _Budget
@@ -464,6 +485,18 @@ class _Replayer:
         if rule == "close":
             if set(node) != {"rule"} or not _closed(branch):
                 raise _InvalidTrace("open or malformed close node")
+            return
+        from .closure import EXTRA_RULES, derive_extra
+        if self.closure and rule in EXTRA_RULES:
+            if not set(node) <= {"rule", "at", "children", "parameter"} or not {"rule", "at", "children"} <= set(node):
+                raise _InvalidTrace("malformed closure consequence")
+            additions = derive_extra(branch, rule, node["at"], node.get("parameter"))
+            children = node["children"]
+            if type(children) is not list or len(children) != 1:
+                raise _InvalidTrace("closure consequence requires one child")
+            child = branch.copy()
+            child.formulas.extend(additions)
+            self.replay(child, children[0], depth + 1)
             return
         allowed = {"rule", "at", "children", "parameter"}
         if rule not in ("expand", "closure-plus@0", "closure-star@0") or not set(node) <= allowed or not {"rule", "at", "children"} <= set(node):
@@ -495,7 +528,7 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
         expected = _binding(env, premises, conclusion)
         if any(certificate.get(key) != value for key, value in expected.items()):
             raise _InvalidTrace("certificate is stale or bound to different inputs")
-        replayer = _Replayer(max_steps)
+        replayer = _Replayer(max_steps, env.closure)
         replayer.replay(_initial_branch(env, premises, conclusion), certificate["trace"])
         return EntailmentCertificateCheck(True, "Valid", replayer.steps)
     except _Budget:

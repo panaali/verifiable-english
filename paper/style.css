@@ -1,0 +1,18 @@
+:root { color-scheme: light; }
+body { font-family: Georgia, "Times New Roman", serif; color: #18212b; background: #fff; max-width: 960px; margin: 3rem auto; padding: 0 2rem; line-height: 1.5; }
+header { border-bottom: 1px solid #bdc8d2; padding-bottom: 1.2rem; margin-bottom: 2rem; }
+h1, h2, h3 { font-family: system-ui, sans-serif; line-height: 1.25; margin-top: 2rem; }
+header h1 { font-size: 2rem; }
+h1 { font-size: 1.6rem; } h2 { font-size: 1.2rem; }
+a { color: #175a7b; text-underline-offset: .15em; }
+table { border-collapse: collapse; width: 100%; margin: 1.4rem 0; font-size: .91rem; }
+th, td { text-align: left; vertical-align: top; padding: .55rem .6rem; border-bottom: 1px solid #dbe0e5; }
+th { border-top: 2px solid #596d7b; border-bottom: 2px solid #596d7b; background: #edf2f5; }
+tr:nth-child(even) { background: #f8fafb; }
+code { font-size: .88em; overflow-wrap: anywhere; }
+pre { padding: .8rem; background: #f3f5f7; white-space: pre-wrap; overflow-wrap: anywhere; }
+figure { margin: 2rem 0; } figure img { display: block; max-width: 100%; height: auto; margin: auto; }
+figcaption { font-size: .9rem; line-height: 1.4; margin-top: .7rem; }
+math[display="block"] { overflow-x: auto; padding: .6rem 0; }
+p:has(> strong:only-child) { background: #fff3da; border-left: 3px solid #a26217; padding: .7rem 1rem; }
+@media print { body { max-width: none; margin: 0; font-size: 10pt; } a { color: inherit; } h1, h2, h3 { break-after: avoid; } table, figure { break-inside: avoid; } }
