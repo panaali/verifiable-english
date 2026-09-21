@@ -4,11 +4,11 @@ An English-like language for human-inspectable, machine-checkable claims in AI o
 
 **Stage:** first draft; implementation and proofs are pending.
 
-VE aims to support AI alignment and scalable oversight, especially debate: people should be able to inspect what an agent claims, while a checker verifies that deductions use those exact meanings and explicit assumptions.
+VE aims to support AI alignment and scalable oversight. Its core is **human sign-off on precise claims, plus checked composition of those claims**: people inspect what an agent claims, and a checker verifies that deductions use those exact meanings and explicit assumptions. If an agent must prove that its work meets a specification, the supervisor reviews the specification and the remaining premises, not the work, so review cost need not grow with the agent's capability. This is a design argument, not a result.
 
-The first research target is **meaning changes during debate**: reinterpreting a requirement, changing quantifier scope, or using the same term differently in separate argument branches. The prototype combines a typed claim language, canonical English rendering, and checked argument composition. Finite examples and counterexamples help people inspect the claims.
+Debate is the first protocol intended to use this core. Sign-off fixes the question, checked deductions confine the debate to the remaining premises, and finite countermodels give a critic objections the judge can verify. VE does not check premise evidence or vocabulary descriptions, where the hard part of debate remains. The prototype combines a typed claim language, canonical English rendering, and checked argument composition.
 
-The central question is whether VE reduces successful deception at a fixed review budget, beyond debate with cross-examination, shared definitions, and structured formal claims using the same checker. Formal verification establishes consequences of the stated assumptions; human intent, empirical evidence, and the usefulness of the oversight protocol still need evaluation.
+The central question is whether people can reliably detect incorrect specifications and mismatched evidence in a VE presentation, beyond a structured formal interface using the same checker. Formal verification establishes consequences of the stated assumptions; human intent, empirical evidence, and the usefulness of the oversight protocol still need evaluation.
 
 The current recommendation is a small study of **human review of requirements and evidence**, before building the full verified implementation. Test formal commitments, readable presentation, and debate separately. A useful review interface may survive even if a new language or multi-round debate adds no benefit.
 

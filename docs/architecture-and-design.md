@@ -46,6 +46,31 @@ A future prover-estimator debate integration could attach uncertainty estimates 
 
 The scaling outcome to establish is sustained oversight accuracy as argument complexity and the agent–judge capability gap increase, at affordable total cost. The checker covers the submitted argument, and human judgment remains necessary for intent, factual evidence, omitted requirements, and value judgments. The [roadmap](roadmap.md#testing-the-expected-benefits) defines measurements for these possible benefits.
 
+### Why the benefit could scale
+
+This is a design argument, not a result. Oversight becomes harder because reviewing an agent's work costs more as the agent becomes more capable. If the agent must supply a checked proof that its work meets a specification, the supervisor reviews the specification and the remaining premises, not the work. The cost of that review depends on the size and subtlety of the specification, not on the length of the proof or the capability of the agent that produced it. The step that remains is the supervisor understanding the statement they approve. Lean's [proof-validation guidance](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) names misleading presentation of the theorem statement as a trust assumption it does not remove. VE addresses that step.
+
+Three conditions limit the argument. It covers only claims that can be stated formally, and much of what supervisors care about cannot be. Specifications can themselves become large and subtle. An approved specification that is wrong in a way nobody noticed is worse than no formal check, because the proof label adds confidence; see [known weaknesses](#known-weaknesses-of-the-current-design), item 2. How much of AI work is formally specifiable, and whether people catch specification errors in a VE rendering, are the two quantities that decide the value. The inspection study measures the second.
+
+### How the benefits apply to debate
+
+The same mechanisms serve a debate protocol:
+
+| Mechanism | Role in a debate |
+|---|---|
+| Supervisor sign-off on a precise root claim | Debaters and judge agree on the question before arguing. A debate over an ambiguous question can be won by reinterpreting it. Debate protocols assume this step and do not supply it. |
+| Checked deductions with retained assumptions | The formally checkable steps are settled by the checker, so the debate is confined to the remaining premises. The judge's budget goes to fewer, better-identified points. |
+| Finite countermodels | A critic's objection that an inference is invalid comes with a scenario the judge can verify without trusting the critic. If one critique supplies most of debate's benefit, as [Elasky et al.](https://arxiv.org/html/2605.27483v1) suggest for some verifiable tasks, a checkable countermodel is a strong form of that critique. |
+| Checker-determined findings | A debater cannot earn reward for a persuasive but invalid deduction. This matters for training only if the training study in the roadmap confirms it. |
+
+VE therefore reduces how much must be debated. It does not improve the part of debate that is hard: once the formal steps are checked, the remaining dispute concerns premise evidence and vocabulary descriptions, where VE checks nothing and where the merged-vocabulary attack operates. The obfuscated-arguments problem and debate incentives are untouched.
+
+### Which component supplies each benefit
+
+Settled deductions, checkable countermodels and checker-determined findings come from the formal commitments and the checker. They would be available with any exact formal claim language and do not depend on English. The English surface matters at sign-off and at review of remaining premises, and only when a human does that review.
+
+This suggests stating VE's core claim as **human sign-off on precise claims, plus checked composition of those claims**, with debate as the first protocol that uses it. Under that statement the project does not depend on outperforming cross-examination against the meaning-change attack, which the cited safety case says cross-examination already avoids. It depends on whether people can reliably sign off on claims, which the [recommended first study](research-review.md#recommended-first-study) tests. The [critical review](research-review.md#candidate-applications-beyond-debate) lists applications of the same core outside debate.
+
 ## Known weaknesses of the current design
 
 These are the strongest objections to the v0 design found in review. Each one could defeat the research claim, and none is yet answered. They are ordered by how much they threaten the project.
