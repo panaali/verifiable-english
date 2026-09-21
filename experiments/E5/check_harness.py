@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import gzip
 from pathlib import Path
 import subprocess
 import sys
@@ -42,11 +43,11 @@ def main():
     results = []
     for experiment in ("E5", "E2", "E4"):
         if experiment == "E5":
-            rows = e5.build_items("dev") + e5.build_items("scored")
+            rows = [json.loads(line) for s in ("dev", "scored") for line in gzip.decompress((e5.HERE / f"{s}.jsonl.gz").read_bytes()).decode().splitlines()]
             conditions = e5.harness_conditions()
             exp_id, split_file = "E5", e5.HERE / "split.json"
         else:
-            rows = e2e4.build_items("dev", experiment) + e2e4.build_items("scored", experiment)
+            rows = e2e4.load_frozen("dev", experiment) + e2e4.load_frozen("scored", experiment)
             cells = e2e4.E2_CELLS if experiment == "E2" else e2e4.E4_CELLS
             conditions = [runner.Condition(c, lambda p, c=c: e2e4.render_cell(p, c)) for c in cells]
             exp_id, split_file = f"E2E4/{experiment}", root / "experiments/E2E4/splits.json"
@@ -60,11 +61,14 @@ def main():
             runner.require_committed(split_file, root)
         for split in ("dev", "scored"):
             trials = runner.plan_trials(exp, split)
-            prompts = runner.build_prompts(exp, trials)
-            assert len(prompts) == len(trials)
-            assert all('{"verdict":"approve"}' in p and '{"verdict":"reject"}' in p for p in prompts)
+            prompt_count = 0
+            for offset in range(0, len(trials), 64):
+                prompts = runner.build_prompts(exp, trials[offset:offset+64])
+                assert len(prompts) == len(trials[offset:offset+64])
+                assert all('{"verdict":"approve"}' in p and '{"verdict":"reject"}' in p for p in prompts)
+                prompt_count += len(prompts)
             results.append({"experiment": experiment, "split": split,
-                            "items": sum(r["split"] == split for r in rows), "prompts": len(prompts)})
+                            "items": sum(r["split"] == split for r in rows), "prompts": prompt_count})
     print(json.dumps({"branch": args.branch,
         "commit": subprocess.check_output(["git", "rev-parse", args.branch], text=True).strip(),
         "committed_preregs_checked": args.committed, "model_calls": 0, "results": results}, indent=2))

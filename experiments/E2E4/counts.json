@@ -1,0 +1,5692 @@
+{
+  "E2": {
+    "items": 432,
+    "counts": [
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_deep",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_guarded",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_nested",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_repeated",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "conjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "disjunct_extension",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "mixed_clauses",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "nested_or",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "outer_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_conjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "parallel_disjuncts",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 4,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 32,
+        "workload": "growing",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "fixed",
+        "error": "wrong_specification",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "false_leaf",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 256,
+        "workload": "growing",
+        "error": "invalid_step",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 4,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 32,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "fixed",
+        "error": "honest",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "two_conjunctions",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 256,
+        "workload": "growing",
+        "error": "honest",
+        "n": 1
+      }
+    ]
+  },
+  "E4": {
+    "items": 136,
+    "counts": [
+      {
+        "split": "dev",
+        "template": "dev_existential",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_existential",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_existential",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_existential",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_instantiation",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_instantiation",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_instantiation",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_instantiation",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_relation",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_relation",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_relation",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_relation",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_transport",
+        "vocabulary": "dev_aster",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_transport",
+        "vocabulary": "dev_aster",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_transport",
+        "vocabulary": "dev_brindle",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "dev",
+        "template": "dev_transport",
+        "vocabulary": "dev_brindle",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "existential_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "existential_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "existential_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "existential_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "existential_disjunction",
+        "vocabulary": "score_elm",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "existential_disjunction",
+        "vocabulary": "score_elm",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "existential_disjunction",
+        "vocabulary": "score_flint",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "existential_disjunction",
+        "vocabulary": "score_flint",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "existential_disjunction",
+        "vocabulary": "score_garnet",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "existential_disjunction",
+        "vocabulary": "score_garnet",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "guarded_transport",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "guarded_transport",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "guarded_transport",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "guarded_transport",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "guarded_transport",
+        "vocabulary": "score_elm",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "guarded_transport",
+        "vocabulary": "score_elm",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "guarded_transport",
+        "vocabulary": "score_flint",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "guarded_transport",
+        "vocabulary": "score_flint",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "guarded_transport",
+        "vocabulary": "score_garnet",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "guarded_transport",
+        "vocabulary": "score_garnet",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "negative_instantiation",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "negative_instantiation",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "negative_instantiation",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "negative_instantiation",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "negative_instantiation",
+        "vocabulary": "score_elm",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "negative_instantiation",
+        "vocabulary": "score_elm",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "negative_instantiation",
+        "vocabulary": "score_flint",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "negative_instantiation",
+        "vocabulary": "score_flint",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "negative_instantiation",
+        "vocabulary": "score_garnet",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "negative_instantiation",
+        "vocabulary": "score_garnet",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_negation",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_negation",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_negation",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_negation",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_negation",
+        "vocabulary": "score_elm",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_negation",
+        "vocabulary": "score_elm",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_negation",
+        "vocabulary": "score_flint",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_negation",
+        "vocabulary": "score_flint",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_negation",
+        "vocabulary": "score_garnet",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_negation",
+        "vocabulary": "score_garnet",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_order",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_order",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_order",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_order",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_order",
+        "vocabulary": "score_elm",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_order",
+        "vocabulary": "score_elm",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_order",
+        "vocabulary": "score_flint",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_order",
+        "vocabulary": "score_flint",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_order",
+        "vocabulary": "score_garnet",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "quantifier_order",
+        "vocabulary": "score_garnet",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_inclusion",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_inclusion",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_inclusion",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_inclusion",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_inclusion",
+        "vocabulary": "score_elm",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_inclusion",
+        "vocabulary": "score_elm",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_inclusion",
+        "vocabulary": "score_flint",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_inclusion",
+        "vocabulary": "score_flint",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_inclusion",
+        "vocabulary": "score_garnet",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_inclusion",
+        "vocabulary": "score_garnet",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_range",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_range",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_range",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_range",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_range",
+        "vocabulary": "score_elm",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_range",
+        "vocabulary": "score_elm",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_range",
+        "vocabulary": "score_flint",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_range",
+        "vocabulary": "score_flint",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_range",
+        "vocabulary": "score_garnet",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_range",
+        "vocabulary": "score_garnet",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_subject",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_subject",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_subject",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_subject",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_subject",
+        "vocabulary": "score_elm",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_subject",
+        "vocabulary": "score_elm",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_subject",
+        "vocabulary": "score_flint",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_subject",
+        "vocabulary": "score_flint",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_subject",
+        "vocabulary": "score_garnet",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "relation_subject",
+        "vocabulary": "score_garnet",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "transitive_path",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "transitive_path",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "transitive_path",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "transitive_path",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "transitive_path",
+        "vocabulary": "score_elm",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "transitive_path",
+        "vocabulary": "score_elm",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "transitive_path",
+        "vocabulary": "score_flint",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "transitive_path",
+        "vocabulary": "score_flint",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "transitive_path",
+        "vocabulary": "score_garnet",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "transitive_path",
+        "vocabulary": "score_garnet",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "universal_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "universal_disjunction",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "universal_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "universal_disjunction",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "universal_disjunction",
+        "vocabulary": "score_elm",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "universal_disjunction",
+        "vocabulary": "score_elm",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "universal_disjunction",
+        "vocabulary": "score_flint",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "universal_disjunction",
+        "vocabulary": "score_flint",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "universal_disjunction",
+        "vocabulary": "score_garnet",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "universal_disjunction",
+        "vocabulary": "score_garnet",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_direction",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_direction",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_direction",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_direction",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_direction",
+        "vocabulary": "score_elm",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_direction",
+        "vocabulary": "score_elm",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_direction",
+        "vocabulary": "score_flint",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_direction",
+        "vocabulary": "score_flint",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_direction",
+        "vocabulary": "score_garnet",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_direction",
+        "vocabulary": "score_garnet",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_sharing",
+        "vocabulary": "score_cobalt",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_sharing",
+        "vocabulary": "score_cobalt",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_sharing",
+        "vocabulary": "score_dovetail",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_sharing",
+        "vocabulary": "score_dovetail",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_sharing",
+        "vocabulary": "score_elm",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_sharing",
+        "vocabulary": "score_elm",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_sharing",
+        "vocabulary": "score_flint",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_sharing",
+        "vocabulary": "score_flint",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_sharing",
+        "vocabulary": "score_garnet",
+        "label": "bad",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      },
+      {
+        "split": "scored",
+        "template": "witness_sharing",
+        "vocabulary": "score_garnet",
+        "label": "good",
+        "size": 0,
+        "workload": "na",
+        "error": "na",
+        "n": 1
+      }
+    ]
+  }
+}
