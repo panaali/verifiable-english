@@ -62,7 +62,7 @@ def parse_explicit(env, text, view, scope=()):
         m = re.fullmatch(r"([a-z][a-z0-9_]*)(⁺|\*)\(" + token + ", " + token + r"\)", text)
         if m:
             return ast.Reach("plus" if m[2] == "⁺" else "star", ast.Named(m[1]), term(m[3]), term(m[4]))
-        m = re.fullmatch(r"\((TC|RTC) (x\d+):([a-z][a-z0-9_]*),(x\d+):([a-z][a-z0-9_]*)\.\((.*)\)\)\(" + token + "," + token + r"\)", text)
+        m = re.fullmatch(r"\((TC|RTC) (x\d+):([a-z][a-z0-9_]*),(x\d+):([a-z][a-z0-9_]*)\.\((.*)\)\)\(" + token + ", " + token + r"\)", text)
         if m:
             assert m[3] == m[5]
             body = parse_explicit(env, m[6], view, (m[4], m[2], *scope))
