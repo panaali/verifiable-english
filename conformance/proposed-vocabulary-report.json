@@ -1,0 +1,51 @@
+{
+  "ambiguous_texts": 0,
+  "earley_texts": 500,
+  "identity_fixtures": 706,
+  "linter": [],
+  "method": "unique directed and seeded random well-typed ASTs; separate Earley dynamic_complete all-derivations syntax envelope",
+  "multi_statement_documents": 50,
+  "random_earley_texts": 250,
+  "roundtrips": 5000,
+  "vocabularies": [
+    {
+      "ambiguous_texts": 0,
+      "corpus_sha256": "a737963c9397f1cfaed5485e8ad95f73b4748b31e2e1d7e5993675944a4e2a4d",
+      "directed_asts": 177,
+      "document_corpus_sha256": "7d91e70aa9fbe180236bb9ee32504c32d39c3cb83e72f39f30ca44dae4fb0504",
+      "draws_including_duplicates": 10625,
+      "earley_texts": 500,
+      "environment_id": "3cb0a9bbaeaf431c806732df792d5da08979a4df03e67761ab7db2c0567becca",
+      "grammar_sha256": "1e23c4e0be6798a7c452964f76fd468f4e394de28a12c6baad58c82f3b4640f5",
+      "multi_statement_documents": 50,
+      "overlay_digest": "ed961187596c1d43a6e1830253585a27019eae9a6bc09eacd5d84ad427e61969",
+      "random_earley_actual_depths": {
+        "6": 29,
+        "7": 91,
+        "8": 77,
+        "9": 53
+      },
+      "random_earley_corpus_sha256": "7d91e70aa9fbe180236bb9ee32504c32d39c3cb83e72f39f30ca44dae4fb0504",
+      "random_earley_draws": 1173,
+      "random_earley_seed": 2026192107,
+      "random_earley_texts": 250,
+      "review_status": "unreviewed",
+      "seed": 2026092107,
+      "top_level_constructors": {
+        "And": 1028,
+        "Bottom": 1,
+        "Eq": 1,
+        "Exists": 617,
+        "Forall": 788,
+        "Implies": 996,
+        "Not": 567,
+        "Or": 994,
+        "Top": 1,
+        "Unary": 7
+      },
+      "unique_asts_roundtripped": 5000,
+      "unique_texts": 5000,
+      "vocabulary": "adopted-unary"
+    }
+  ]
+}

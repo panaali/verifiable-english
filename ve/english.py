@@ -14,6 +14,7 @@ import warnings
 from . import ast
 from .errors import ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES
+from .english_phrases import nearest, phrase_end, unary_phrase
 from .printer import (_NaturalVocabulary, _LOGICAL_WORDS,
                       _fluent_variable_letters, _template_head, _AUXILIARIES, VocabularyLint)
 from .english_vocabulary import IDIOMS, negative_template, display_environment, overlay_provenance
@@ -159,6 +160,18 @@ class EnglishVocabulary:
                 if len(decl.arguments) == 1 or name in {'owns', 'audits', 'undermines', 'performs', 'follows', 'benefits', 'outranks', 'exceeds'}:
                     self.predicates[name] = old.predicates[name]
                     continue
+            # Explicitly accepted finite unary phrases from the proposal workflow.
+            # The ordinary environment linter and historical views stay unchanged.
+            entry = self.overlay['predicates'].get(name, {})
+            if (entry.get('suggested') and len(decl.arguments) == 1 and template
+                    and unary_phrase(template) is not None):
+                phrase = unary_phrase(template)
+                collision = any(re.search(r'\b' + re.escape(n) + r'\b', phrase, re.I)
+                                for n in env.constants)
+                duplicate = any(n != name and d.verbalisation == template
+                                for n, d in env.predicates.items())
+                if not collision and not duplicate:
+                    accepted = True
             if accepted and template not in IDIOMS[len(decl.arguments)] and set(re.findall(r'[a-z]+', template)) & _EXTRA_RESERVED:
                 accepted = False
                 issues.add(VocabularyLint(path, 'ENGLISH_STRUCTURE_WORD'))
@@ -498,7 +511,7 @@ class EnglishParser:
                 if negative: node = ast.Not(node)
             choices.append((end, node))
         if not choices:
-            self.error('Expected a clause using a declared predicate and an in-scope noun reference or constant name.')
+            return self.unknown_atom(scope, relative, object_allowed)
         # The lexicon is prefix-free at clause boundaries. Retain an explicit
         # ambiguity guard rather than silently selecting a competing template.
         longest = max(end for end, _ in choices)
@@ -508,6 +521,26 @@ class EnglishParser:
         self.i = longest
         self.farthest = max(self.farthest, longest)
         return nodes.pop()
+
+    def unknown_atom(self, scope, relative=False, object_allowed=False):
+        start = self.i
+        # Remove a recognized subject from the diagnostic, but never invent one.
+        if not relative:
+            for ref in sorted(self.term_options(scope), key=len, reverse=True):
+                match = re.compile(_literal_pattern(ref) + r'\s+').match(self.source, start)
+                if match:
+                    start = match.end()
+                    break
+        head = re.compile(r'is\s+(?:not\s+)?(?:a\s+|an\s+)?').match(self.source, start)
+        content = head.end() if head else start
+        end = phrase_end(self.source, content)
+        end = min(len(self.source), max(end, content, start + 1))
+        phrase = self.source[start:end]
+        matches = nearest(phrase, self.words)[:3]
+        suggestions = '; '.join(repr(row['wording']) for row in matches)
+        raise SyntaxError(f'Unknown English phrase {phrase!r}. Nearest declared wordings: {suggestions}.',
+                          span=Span(start, end, self.source.count('\n', 0, start) + 1,
+                                    start - self.source.rfind('\n', 0, start)))
 
     def term(self, scope):
         for text, value in sorted(self.term_options(scope).items(), key=lambda item: -len(item[0])):
