@@ -70,6 +70,31 @@ Counts are items out of 210 whose faithful formalization needs the construct.
 Do rank 1 and 2 only with semantics in Lean first (extend `denote` and `eval`, keep `eval_iff_denote`), then Python, Rust,
 views, grammar and attacks. Each extension is a new profile, not a change to `relational-fol@0`.
 
+## Evidence from the first four use cases (12:32; branch `usecases/main`, one Sonnet agent each, not cross-reviewed)
+
+| Document | Units | DIRECT | REIFIED | OPAQUE | NO |
+|---|---:|---:|---:|---:|---:|
+| 14th Amendment, section 1 | 4 clauses | 0 | 1 | 3 | 0 |
+| Birthright-citizenship debate | 9 claims | shared deductive core formalised; about 5 of 9 claims outside VE (empirical, moral, authority, precedent) | | | |
+| Claude's constitution, "core values" excerpt | 23 rows | 0 | 6 | 5 | 12 |
+| Reuters article, Fed rate decision | 26 rows | 1 | 11 | 3 | 11 |
+
+Ranked constructs for the next language versions, combining these with the E0 audit:
+1. **Obligation, prohibition and permission, with exceptions and defeasible priorities** ("must never", "unless", "generally",
+   "prioritise X over Y when they conflict"): dominant in the constitution texts (about 10 of 21 sentences; all three
+   "No State shall" clauses). `must` is already reserved in v0.
+2. **Numbers and arithmetic** (`order@0`: Lean stage done; Python pending): 7 of 26 news rows; 45 of 210 E0 items.
+3. **Definitions** linking a named property to its defining formula (5 of 21 constitution sentences), and **functions /
+   definite descriptions** ("the State wherein they reside"), and **relations of arity above two** (which two properties
+   conflict: building the conflict rule with `tc[outranks]` over pairs produced a real unsatisfiability).
+4. **Attribution and quotation** ("X said that"): 3 of 26 news rows but central to journalism and debate.
+5. **Propositional attitudes** ("we believe", "we want"): 7 of 21 constitution sentences.
+Not fixable by syntax: open-textured legal terms, empirical predictions, moral premises, weighing of authorities.
+What worked better than expected: news ground facts (mostly REIFIED or DIRECT); `closure@0` derived "safety outranks
+everything" from three base edges; the debate's hinge was isolated to one predicate's extension.
+Practical defect: the hardened template linter rejects many natural verbalisation templates, so the fluent view fell back
+to mechanical phrasing: the linter needs a precision pass on real vocabularies.
+
 ## Ideas log
 
 - 02:50 From Canonical English (site read; repo study in progress, results go to `design/related-systems.md`):
