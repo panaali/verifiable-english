@@ -159,21 +159,42 @@ def main() -> None:
                 continue
             print(run(experiment(*RUNS[name]), client, "dev", out_dir=out))
     else:
-        lines = ["# E1 difficulty tuning (dev only)", "", "fol_symbols view, no explanation unless the cell says otherwise. "
-                 "Intervals: 95% bootstrap over the 16 dev base items.", "",
-                 "| cell | model | accuracy | false approval | honest acceptance | failures |", "|---|---|---|---|---|---|"]  # fmt: skip
-        for d in sorted((E1 / "runs").glob("tuning-*")):
-            rows = load_trials(d)
-            for c in sorted({r["condition"] for r in rows}):
-                for j in sorted({r["judge"] for r in rows}, key=lambda j: (j not in WEAK, j)):
-                    mine = [r for r in rows if r["judge"] == j and r["condition"] == c]
-                    right = sum((r["approved"] is True and r["label"] == "good") or (r["approved"] is False and r["label"] == "bad") for r in mine)
-                    fa, ha = bootstrap_rate(rows, "false_approval", c, j, 2000), bootstrap_rate(rows, "honest_acceptance", c, j, 2000)
-                    f = lambda r: f"{r.value:.2f} [{r.ci_low:.2f}, {r.ci_high:.2f}] ({r.numerator}/{r.denominator})"  # noqa: E731
-                    lines.append(f"| {c} | {j} | {right / len(mine):.2f} | {f(fa)} | {f(ha)} | {sum(r['approved'] is None for r in mine)} |")
-        text = "\n".join(lines) + "\n"
+        text = report()
         (E1 / "TUNING.md").write_text(text, encoding="utf-8")
         print(text)
+
+
+def report() -> str:
+    lines = ["# E1 difficulty tuning (dev split only)", "",
+             "Every row is one judge in one cell on the dev candidates (recipe v1: 48 good, 109 bad; recipe v2: 48 good, "
+             "175 bad). `single` = one requirement and statement; `doc4` = a four-requirement specification with at most "
+             "one unfaithful statement. `reason` = up to 150 words of reasoning; `direct` = verdict only. A judge suffix "
+             "`@thinking=0` or `@effort=none` means hidden reasoning is switched off. False approval (FA) is split by "
+             "attack source. Intervals: 95% bootstrap over the 16 dev base items. Failures count as the worst case.", "",
+             "| items | cell | judge | accuracy | FA all | FA mechanical | FA fable-written | FA astra-written | honest acceptance | failures |",
+             "|---|---|---|---|---|---|---|---|---|---|"]  # fmt: skip
+    sources = (("mech", lambda k: k.startswith("mech")), ("fable", lambda k: "fable" in k), ("astra", lambda k: "astra" in k))
+    dirs = [E1 / "runs" / "pilot-gate-dev", *sorted((E1 / "runs").glob("tuning-*"))]
+    for d in dirs:
+        if not (d / "trials.jsonl").exists():
+            continue
+        items = "dev-v2" if d.name.endswith("-dev-v2") else "dev"
+        kinds = {c["id"]: c["kind"] for c in load_candidates(name=items)}
+        rows = load_trials(d)
+        for c in sorted({r["condition"] for r in rows}):
+            for j in sorted({r["judge"] for r in rows}, key=lambda j: (j.split("@")[0] not in WEAK, j)):
+                mine = [r for r in rows if r["judge"] == j and r["condition"] == c]
+                right = sum((r["approved"] is True and r["label"] == "good") or (r["approved"] is False and r["label"] == "bad") for r in mine)
+                fa, ha = bootstrap_rate(rows, "false_approval", c, j, 2000), bootstrap_rate(rows, "honest_acceptance", c, j, 2000)
+                per = []
+                for _, sel in sources:
+                    q = rate([r for r in mine if r["label"] == "bad" and sel(kinds[r["item_id"].removesuffix("-doc")])], "false_approval", c, j)
+                    per.append(f"{q.value:.2f} ({q.numerator}/{q.denominator})")
+                name = c if "/" in c else "single/reason|" + c
+                lines.append(f"| {items} | {name} | {j} | {right / len(mine):.2f} | {fa.value:.2f} [{fa.ci_low:.2f}, {fa.ci_high:.2f}] "
+                             f"({fa.numerator}/{fa.denominator}) | {' | '.join(per)} | {ha.value:.2f} ({ha.numerator}/{ha.denominator}) | "
+                             f"{sum(r['approved'] is None for r in mine)} |")  # fmt: skip
+    return "\n".join(lines) + "\n"
 
 
 if __name__ == "__main__":
