@@ -142,3 +142,15 @@ to mechanical phrasing: the linter needs a precision pass on real vocabularies.
 - 02:05 The untrusted-explainer contrast (E1) may generalise: any place where an overseen agent controls the
   presentation of a formal object (proof summaries, diff descriptions, test reports) is a place for a deterministic
   renderer. If E1 is positive, a follow-up could test "deterministic summaries of checked artifacts" outside logic.
+
+## Evidence from the math mini-paper use case (2026-09-21, `usecases/math-mini-paper/`)
+
+15 of 19 entailments certified, by the Python replay checker and by the Lean executable alike; 25 of 25 hypotheses shown
+necessary by countermodel; one false conjecture refuted and its correction certified. What blocked the rest, in the
+order the use case ranks them: lemma citation with conservative definitions (a four-variable congruence times out
+although its two halves prove in 50 ms, and VE cannot cite them); predicate arity above 2; an induction rule for
+closure (`tc[r]` is the least such relation: monotonicity stays ResourceLimit); function symbols (unary first);
+relation parameters for schematic theorems. Euclid's theorem is writable but meaningless because `prime` is
+uninterpreted and `times` is ternary. This supports the working position above: keep VE small, make it the readable,
+checked STATEMENT layer over Lean, and do only lemma citation, closure induction and arity 3-4 in VE itself. All frozen
+under PLAN-V3 until a pilot or the grant.
