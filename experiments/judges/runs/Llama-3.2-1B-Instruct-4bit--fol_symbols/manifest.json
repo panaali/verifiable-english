@@ -1,0 +1,22 @@
+{
+  "experiment": "E1",
+  "split": "dev",
+  "started": "2026-09-21T01:55:12-0700",
+  "ve_backend": "ve",
+  "finished": "2026-09-21T01:57:38-0700",
+  "n_trials": 157,
+  "n_items": 157,
+  "conditions": [
+    "fol_symbols|none"
+  ],
+  "judges": [
+    "open:mlx-community/Llama-3.2-1B-Instruct-4bit"
+  ],
+  "assignment": "crossed",
+  "samples": 1,
+  "seed": 0,
+  "n_failed_calls": 0,
+  "n_tool_use_trials": 0,
+  "git_head": "da0bee35859fa700c42cd1dcf426326aad655442",
+  "git_dirty": false
+}

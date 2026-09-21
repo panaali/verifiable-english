@@ -1,0 +1,22 @@
+{
+  "experiment": "E1",
+  "split": "dev",
+  "started": "2026-09-21T02:08:25-0700",
+  "ve_backend": "ve",
+  "finished": "2026-09-21T02:13:25-0700",
+  "n_trials": 157,
+  "n_items": 157,
+  "conditions": [
+    "fol_symbols|none"
+  ],
+  "judges": [
+    "open:mlx-community/gemma-2-2b-it-4bit@verdict=forced"
+  ],
+  "assignment": "crossed",
+  "samples": 1,
+  "seed": 0,
+  "n_failed_calls": 0,
+  "n_tool_use_trials": 0,
+  "git_head": "da0bee35859fa700c42cd1dcf426326aad655442",
+  "git_dirty": true
+}

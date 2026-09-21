@@ -36,6 +36,7 @@ class MLXEngine:
         self.name = None
         self.model = None
         self.tok = None
+        self.no_batch = False  # set when batched generation failed for the loaded model
 
     def load(self, name: str) -> None:
         if name == self.name:
@@ -49,6 +50,7 @@ class MLXEngine:
         gc.collect()
         mx.clear_cache()
         self.model, self.tok = load(name)
+        self.no_batch = False
         self.name = name
 
     def _chat(self, system: str, prompt: str) -> str:
@@ -66,7 +68,7 @@ class MLXEngine:
 
     def generate(self, reqs: list[dict]) -> list[dict]:
         import mlx.core as mx
-        from mlx_lm.generate import batch_generate
+        from mlx_lm.generate import batch_generate, generate
         from mlx_lm.sample_utils import make_sampler
 
         chats = [self._chat(r["system"], r["prompt"]) for r in reqs]
@@ -78,8 +80,14 @@ class MLXEngine:
             if temp > 0:
                 assert len(reqs) == 1
                 mx.random.seed(int(reqs[0]["seed"]))
-            out = batch_generate(self.model, self.tok, ids, max_tokens=int(reqs[0]["max_new"]), sampler=make_sampler(temp=temp))
-            texts = list(out.texts)
+            max_new, sampler = int(reqs[0]["max_new"]), make_sampler(temp=temp)
+            try:
+                if len(ids) == 1 or self.no_batch:
+                    raise NotImplementedError
+                texts = list(batch_generate(self.model, self.tok, ids, max_tokens=max_new, sampler=sampler).texts)
+            except Exception:  # some architectures (Gemma 2: sliding window) cannot be batched by mlx-lm: go one by one
+                self.no_batch = self.no_batch or len(ids) > 1
+                texts = [generate(self.model, self.tok, i, max_tokens=max_new, sampler=sampler) for i in ids]
         replies = []
         for r, chat, text in zip(reqs, chats, texts):
             extra = {}
