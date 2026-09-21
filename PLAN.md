@@ -151,6 +151,15 @@ Question: does a VE-checked reward make semantic deception less profitable to le
 
 ## Status log
 
+- 02:39 **Judge ladder, E1 dev, raw FOL, no explanation (dev pilot, not a result).** Open-weight 4-bit judges run locally:
+  Qwen2.5-0.5B, Llama-3.2-1B, Qwen2.5-1.5B, gemma-2-2b: false approval 0.98-1.00 (approve everything; forcing a verdict
+  removes parse failures and changes nothing). Qwen2.5-3B: 0.91. **Qwen2.5-7B: false approval 0.52 (57/109), honest
+  acceptance 0.79 (38/48): inside the 30-60% gate.** Hosted haiku 0.01, luna 0.05. So the usable weak-judge band starts
+  around 7B; rungs 7B-32B are being measured on a Colab L4 with vLLM. The scored E1/E5 runs will name their judges from
+  that ladder in PREREG; hosted judges stay as the strong end. Codex reports a Lean-verified tableau certificate
+  checker (full calculus; 721/721 real certificates accepted, 150/150 forgeries rejected); statement review running.
+  Phase V started: `closure@0`, Lean first (`codex/closure`).
+
 - 02:09 **E0 second rater (GPT-6 Astra, blind to item labels) disagrees sharply with the first rater on policy sets.**
   Strict fit (no reification): FOLIO 73%, ProofWriter 87%, Alloy 13%, Clover 10%, Gatekeeper 3%, Cedar 0%, FRET 0%.
   Lenient fit (with a stated mechanical reification): FOLIO 83%, ProofWriter 87%, Alloy 60%, Clover 47%, Cedar 43%,
