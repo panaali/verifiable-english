@@ -152,3 +152,48 @@ def test_lean_same_extended_files(lean_shared_executable,name):
         if not expected_error:
             assert r['canonical'] == c.get('expected_parser',{}).get('canonical',c['source']), c['id']
             if name in ('evaluation','identity'): assert r['values'] == c['expected'],c['id']
+
+
+def test_rust_source_binding_and_cli_outcomes(rust_executable,tmp_path):
+    case = fixture('evaluation')[0]
+    mismatched = {**case,'source':'true.\n'}
+    rejected = invoke(rust_executable,mismatched,errors=True)[0]
+    assert rejected['error']['code'] == 'TypeMismatch'
+    assert rejected['error']['message'] == 'source/AST mismatch'
+    env = tmp_path/'environment.json'; env.write_text(json.dumps(case['environment']))
+    model = tmp_path/'model.json'; model.write_text(json.dumps(case['model']))
+    source = tmp_path/'source.ve'
+    for text,code,status in [('true.\n',0,'Satisfied'),('false.\n',1,'Violated'),('true.\r\n',2,'error')]:
+        source.write_bytes(text.encode())
+        run = subprocess.run([str(rust_executable),'evaluate','--env',str(env),'--model',str(model),
+                              '--source',str(source)],text=True,capture_output=True,timeout=10)
+        assert run.returncode == code
+        assert json.loads(run.stdout or run.stderr)['status'] == status
+    premises = tmp_path/'premises.ve'; premises.write_text('')
+    conclusion = tmp_path/'conclusion.ve'; conclusion.write_text('false.\n')
+    command = [str(rust_executable),'countermodel','--env',str(env),'--premises',str(premises),
+               '--conclusion',str(conclusion)]
+    run = subprocess.run(command,text=True,capture_output=True,timeout=10)
+    assert run.returncode == 0, run.stderr
+    found = json.loads(run.stdout); assert found['status'] == 'Found'
+    model.write_text(json.dumps(found['model']))
+    run = subprocess.run([str(rust_executable),'check-countermodel',*command[2:],'--model',str(model)],
+                         text=True,capture_output=True,timeout=10)
+    assert run.returncode == 0, run.stderr
+    assert json.loads(run.stdout)['valid']
+    run = subprocess.run([*command,'--max-models','0'],text=True,capture_output=True,timeout=10)
+    assert run.returncode == 2
+    assert json.loads(run.stdout)['status'] == 'ResourceLimit'
+
+
+def test_rust_printer_resource_limit(rust_executable):
+    case = fixture('evaluation')[0]
+    case.pop('source')
+    # 9,000 AST nodes is valid, but printing these statements exceeds 64 KiB.
+    case['ast'] = [['implies',['top'],['top']]] * 3000
+    env = Environment.from_dict(case['environment'])
+    doc = document_from_data(env,case['ast'])
+    with pytest.raises(VEError) as exc: print_document(env,doc)
+    assert exc.value.code == 'ResourceLimit'
+    result = invoke(rust_executable,case,errors=True)[0]
+    assert result['error']['code'] == 'ResourceLimit'

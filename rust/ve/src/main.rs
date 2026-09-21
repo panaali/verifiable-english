@@ -86,7 +86,7 @@ fn case(v: &Value) -> Result<Value> {
             return Err(Error::new("TypeMismatch", "source/AST mismatch"));
         }
     }
-    let mut out = json!({"id":v.get("id").cloned().unwrap_or(json!("")),"status":"ok","canonical":print_document(&doc),"ast":doc.to_value(),"environment_id":env.environment_id(),"meaning_id":doc.meaning_id()?,"formula_meaning_ids":(0..doc.formulas().len()).map(|i| doc.formula_meaning_id(i)).collect::<Result<Vec<_>>>()?});
+    let mut out = json!({"id":v.get("id").cloned().unwrap_or(json!("")),"status":"ok","canonical":print_document(&doc)?,"ast":doc.to_value(),"environment_id":env.environment_id(),"meaning_id":doc.meaning_id()?,"formula_meaning_ids":(0..doc.formulas().len()).map(|i| doc.formula_meaning_id(i)).collect::<Result<Vec<_>>>()?});
     out["canonical_environment"] =
         json!(String::from_utf8(canonical_json(&env.to_value())?).unwrap());
     out["canonical_ast"] = json!(String::from_utf8(canonical_json(&doc.to_value())?).unwrap());
@@ -223,13 +223,13 @@ fn run(args: &[String]) -> Result<i32> {
             let env = Environment::from_json(&read(&option(args, "--env")?)?)?;
             let doc = parse(&env, &read(&option(args, "--source")?)?)?;
             if command == "format" {
-                print!("{}", print_document(&doc));
+                print!("{}", print_document(&doc)?);
                 return Ok(0);
             }
             if command == "parse" {
                 println!(
                     "{}",
-                    json!({"ast":doc.to_value(),"canonical":print_document(&doc),"environment_id":env.environment_id(),"meaning_id":doc.meaning_id()?,"assurance":"experimental","intent":"unconfirmed","proof":"not_checked"})
+                    json!({"ast":doc.to_value(),"canonical":print_document(&doc)?,"environment_id":env.environment_id(),"meaning_id":doc.meaning_id()?,"assurance":"experimental","intent":"unconfirmed","proof":"not_checked"})
                 );
                 return Ok(0);
             }
