@@ -207,7 +207,7 @@ With 12 templates: standard error about 0.027 (P1) and 0.037 (P2); 97.5% cluster
 (P2) or more, and is reached with 80% probability only if the true reduction is about 0.145 (P1) or 0.18 (P2);
 the interval excludes zero with 80% probability for a true reduction of about 0.09 (P1) or 0.13 (P2); "refuted" needs
 an observed difference of about +0.02 (P1) or +0.05 (P2) or higher; a true effect between -0.12 and 0 will probably
-be inconclusive. A A
+be inconclusive. A
 reduction of exactly 0.05 cannot be confirmed by this design. The SD rests on 4 templates and is rough. More
 vocabularies would not add clusters.
 Cost: 874 x 10 + 874 x 5 = 13,110 prompts per judge. Two open-weight judges (14B first, 32B last): about 5.4 hours
