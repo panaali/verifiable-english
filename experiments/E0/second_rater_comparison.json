@@ -1,0 +1,451 @@
+{
+  "folio": {
+    "first_counts": {
+      "DIRECT": 26,
+      "REIFIED": 2,
+      "OPAQUE": 2
+    },
+    "second_counts": {
+      "DIRECT": 22,
+      "REIFIED": 3,
+      "OPAQUE": 4,
+      "NO": 1
+    },
+    "four_way": {
+      "n": 30,
+      "matching": 24,
+      "observed": 0.8,
+      "expected": 0.6511111111111111,
+      "kappa": 0.4267515923566881,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "DIRECT": {
+          "DIRECT": 22,
+          "REIFIED": 2,
+          "OPAQUE": 2,
+          "NO": 0
+        },
+        "REIFIED": {
+          "DIRECT": 0,
+          "REIFIED": 1,
+          "OPAQUE": 1,
+          "NO": 0
+        },
+        "OPAQUE": {
+          "DIRECT": 0,
+          "REIFIED": 0,
+          "OPAQUE": 1,
+          "NO": 1
+        },
+        "NO": {
+          "DIRECT": 0,
+          "REIFIED": 0,
+          "OPAQUE": 0,
+          "NO": 0
+        }
+      }
+    },
+    "collapsed": {
+      "n": 30,
+      "matching": 27,
+      "observed": 0.9,
+      "expected": 0.7888888888888889,
+      "kappa": 0.5263157894736844,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "FIT": {
+          "FIT": 25,
+          "NO_FIT": 3
+        },
+        "NO_FIT": {
+          "FIT": 0,
+          "NO_FIT": 2
+        }
+      }
+    }
+  },
+  "proofwriter": {
+    "first_counts": {
+      "DIRECT": 30
+    },
+    "second_counts": {
+      "DIRECT": 26,
+      "OPAQUE": 4
+    },
+    "four_way": {
+      "n": 30,
+      "matching": 26,
+      "observed": 0.8666666666666667,
+      "expected": 0.8666666666666667,
+      "kappa": 0.0,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "DIRECT": {
+          "DIRECT": 26,
+          "REIFIED": 0,
+          "OPAQUE": 4,
+          "NO": 0
+        },
+        "REIFIED": {
+          "DIRECT": 0,
+          "REIFIED": 0,
+          "OPAQUE": 0,
+          "NO": 0
+        },
+        "OPAQUE": {
+          "DIRECT": 0,
+          "REIFIED": 0,
+          "OPAQUE": 0,
+          "NO": 0
+        },
+        "NO": {
+          "DIRECT": 0,
+          "REIFIED": 0,
+          "OPAQUE": 0,
+          "NO": 0
+        }
+      }
+    },
+    "collapsed": {
+      "n": 30,
+      "matching": 26,
+      "observed": 0.8666666666666667,
+      "expected": 0.8666666666666667,
+      "kappa": 0.0,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "FIT": {
+          "FIT": 26,
+          "NO_FIT": 4
+        },
+        "NO_FIT": {
+          "FIT": 0,
+          "NO_FIT": 0
+        }
+      }
+    }
+  },
+  "cedar": {
+    "first_counts": {
+      "REIFIED": 14,
+      "DIRECT": 15,
+      "OPAQUE": 1
+    },
+    "second_counts": {
+      "REIFIED": 13,
+      "OPAQUE": 17
+    },
+    "four_way": {
+      "n": 30,
+      "matching": 4,
+      "observed": 0.13333333333333333,
+      "expected": 0.22111111111111112,
+      "kappa": -0.11269614835948646,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "DIRECT": {
+          "DIRECT": 0,
+          "REIFIED": 8,
+          "OPAQUE": 7,
+          "NO": 0
+        },
+        "REIFIED": {
+          "DIRECT": 0,
+          "REIFIED": 4,
+          "OPAQUE": 10,
+          "NO": 0
+        },
+        "OPAQUE": {
+          "DIRECT": 0,
+          "REIFIED": 1,
+          "OPAQUE": 0,
+          "NO": 0
+        },
+        "NO": {
+          "DIRECT": 0,
+          "REIFIED": 0,
+          "OPAQUE": 0,
+          "NO": 0
+        }
+      }
+    },
+    "collapsed": {
+      "n": 30,
+      "matching": 12,
+      "observed": 0.4,
+      "expected": 0.43777777777777777,
+      "kappa": -0.06719367588932801,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "FIT": {
+          "FIT": 12,
+          "NO_FIT": 17
+        },
+        "NO_FIT": {
+          "FIT": 1,
+          "NO_FIT": 0
+        }
+      }
+    }
+  },
+  "gatekeeper": {
+    "first_counts": {
+      "OPAQUE": 16,
+      "DIRECT": 10,
+      "REIFIED": 4
+    },
+    "second_counts": {
+      "OPAQUE": 24,
+      "REIFIED": 5,
+      "DIRECT": 1
+    },
+    "four_way": {
+      "n": 30,
+      "matching": 18,
+      "observed": 0.6,
+      "expected": 0.46,
+      "kappa": 0.2592592592592592,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "DIRECT": {
+          "DIRECT": 1,
+          "REIFIED": 4,
+          "OPAQUE": 5,
+          "NO": 0
+        },
+        "REIFIED": {
+          "DIRECT": 0,
+          "REIFIED": 1,
+          "OPAQUE": 3,
+          "NO": 0
+        },
+        "OPAQUE": {
+          "DIRECT": 0,
+          "REIFIED": 0,
+          "OPAQUE": 16,
+          "NO": 0
+        },
+        "NO": {
+          "DIRECT": 0,
+          "REIFIED": 0,
+          "OPAQUE": 0,
+          "NO": 0
+        }
+      }
+    },
+    "collapsed": {
+      "n": 30,
+      "matching": 22,
+      "observed": 0.7333333333333333,
+      "expected": 0.52,
+      "kappa": 0.4444444444444443,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "FIT": {
+          "FIT": 6,
+          "NO_FIT": 8
+        },
+        "NO_FIT": {
+          "FIT": 0,
+          "NO_FIT": 16
+        }
+      }
+    }
+  },
+  "alloy": {
+    "first_counts": {
+      "OPAQUE": 11,
+      "REIFIED": 14,
+      "NO": 2,
+      "DIRECT": 3
+    },
+    "second_counts": {
+      "NO": 9,
+      "REIFIED": 14,
+      "OPAQUE": 3,
+      "DIRECT": 4
+    },
+    "four_way": {
+      "n": 30,
+      "matching": 20,
+      "observed": 0.6666666666666666,
+      "expected": 0.2877777777777778,
+      "kappa": 0.53198127925117,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "DIRECT": {
+          "DIRECT": 3,
+          "REIFIED": 0,
+          "OPAQUE": 0,
+          "NO": 0
+        },
+        "REIFIED": {
+          "DIRECT": 1,
+          "REIFIED": 13,
+          "OPAQUE": 0,
+          "NO": 0
+        },
+        "OPAQUE": {
+          "DIRECT": 0,
+          "REIFIED": 0,
+          "OPAQUE": 3,
+          "NO": 8
+        },
+        "NO": {
+          "DIRECT": 0,
+          "REIFIED": 1,
+          "OPAQUE": 0,
+          "NO": 1
+        }
+      }
+    },
+    "collapsed": {
+      "n": 30,
+      "matching": 29,
+      "observed": 0.9666666666666667,
+      "expected": 0.5133333333333333,
+      "kappa": 0.9315068493150686,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "FIT": {
+          "FIT": 17,
+          "NO_FIT": 0
+        },
+        "NO_FIT": {
+          "FIT": 1,
+          "NO_FIT": 12
+        }
+      }
+    }
+  },
+  "fret": {
+    "first_counts": {
+      "REIFIED": 8,
+      "OPAQUE": 18,
+      "NO": 4
+    },
+    "second_counts": {
+      "REIFIED": 12,
+      "OPAQUE": 12,
+      "NO": 6
+    },
+    "four_way": {
+      "n": 30,
+      "matching": 22,
+      "observed": 0.7333333333333333,
+      "expected": 0.37333333333333335,
+      "kappa": 0.5744680851063828,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "DIRECT": {
+          "DIRECT": 0,
+          "REIFIED": 0,
+          "OPAQUE": 0,
+          "NO": 0
+        },
+        "REIFIED": {
+          "DIRECT": 0,
+          "REIFIED": 8,
+          "OPAQUE": 0,
+          "NO": 0
+        },
+        "OPAQUE": {
+          "DIRECT": 0,
+          "REIFIED": 4,
+          "OPAQUE": 11,
+          "NO": 3
+        },
+        "NO": {
+          "DIRECT": 0,
+          "REIFIED": 0,
+          "OPAQUE": 1,
+          "NO": 3
+        }
+      }
+    },
+    "collapsed": {
+      "n": 30,
+      "matching": 26,
+      "observed": 0.8666666666666667,
+      "expected": 0.5466666666666666,
+      "kappa": 0.7058823529411765,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "FIT": {
+          "FIT": 8,
+          "NO_FIT": 0
+        },
+        "NO_FIT": {
+          "FIT": 4,
+          "NO_FIT": 18
+        }
+      }
+    }
+  },
+  "clover": {
+    "first_counts": {
+      "NO": 10,
+      "OPAQUE": 16,
+      "DIRECT": 3,
+      "REIFIED": 1
+    },
+    "second_counts": {
+      "NO": 7,
+      "REIFIED": 11,
+      "OPAQUE": 9,
+      "DIRECT": 3
+    },
+    "four_way": {
+      "n": 30,
+      "matching": 19,
+      "observed": 0.6333333333333333,
+      "expected": 0.26,
+      "kappa": 0.5045045045045045,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "DIRECT": {
+          "DIRECT": 3,
+          "REIFIED": 0,
+          "OPAQUE": 0,
+          "NO": 0
+        },
+        "REIFIED": {
+          "DIRECT": 0,
+          "REIFIED": 1,
+          "OPAQUE": 0,
+          "NO": 0
+        },
+        "OPAQUE": {
+          "DIRECT": 0,
+          "REIFIED": 8,
+          "OPAQUE": 8,
+          "NO": 0
+        },
+        "NO": {
+          "DIRECT": 0,
+          "REIFIED": 2,
+          "OPAQUE": 1,
+          "NO": 7
+        }
+      }
+    },
+    "collapsed": {
+      "n": 30,
+      "matching": 20,
+      "observed": 0.6666666666666666,
+      "expected": 0.5244444444444445,
+      "kappa": 0.29906542056074753,
+      "kappa_note": null,
+      "confusion_matrix_first_rows_second_columns": {
+        "FIT": {
+          "FIT": 4,
+          "NO_FIT": 0
+        },
+        "NO_FIT": {
+          "FIT": 10,
+          "NO_FIT": 16
+        }
+      }
+    }
+  }
+}

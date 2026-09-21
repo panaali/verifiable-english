@@ -1,0 +1,1 @@
+{"dataset":"alloy","id":"alloy-models/algorithms/distributed-hashtable/chord.als@3722","exclude":["general_cardinality"],"reason":"The referenced #active = 1 check is fixed cardinality, already expressible using equality; the frozen rationale says so. Only the actual closure dependency belongs in the extension roadmap."}

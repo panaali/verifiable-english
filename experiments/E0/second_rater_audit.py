@@ -202,6 +202,22 @@ def verify_seal(checker_dir=None):
     return rows
 
 
+def verify_adjudication_witnesses(checker_dir):
+    path = ROOT / 'second_rater_adjudication_witnesses.jsonl'
+    if not path.exists():
+        return 0
+    sys.path.insert(0, str(Path(checker_dir).resolve()))
+    import ve
+    witnesses = read_jsonl(path)
+    decisions = read_jsonl(ROOT / 'second_rater_adjudications.jsonl')
+    expected = {(r['dataset'], r['id']) for r in decisions if 'alternative_witness' in r}
+    assert len(witnesses) == len(expected)
+    assert {(r['dataset'], r['id']) for r in witnesses} == expected
+    for row in witnesses:
+        assert ve.check(ve.Environment(row['environment']), row['formalization']) == row['parse_result']
+    return len(witnesses)
+
+
 def comparison():
     rows = verify_seal()
     results, disagreements = {}, []
@@ -251,11 +267,15 @@ def rates_table(rows):
 def roadmap(rows, mapping):
     counts = defaultdict(Counter)
     members = defaultdict(list)
+    overrides = {(r['dataset'], r['id']): set(r['exclude'])
+                 for r in read_jsonl(ROOT / 'second_rater_construct_overrides.jsonl')}
     for r in rows:
         if r['label'] not in ('NO', 'OPAQUE'):
             continue
         families = set()
         for tag in r['construct_needed']:
+            if tag in overrides.get((r['dataset'], r['id']), set()):
+                continue
             assert tag in mapping, f'Unmapped construct: {tag}'
             families.update(mapping[tag])
         assert families, f"Excluded item has no genuine blocker mapped: {r['dataset']} {r['id']}"
@@ -285,7 +305,9 @@ def report():
         decision = decisions.get((row['dataset'], row['id']))
         if decision:
             assert decision['label'] in LABELS and decision['reason'].strip()
-        proposed.append({**row, 'label': decision['label'] if decision else row['label']})
+        proposed.append({**row, 'label': decision['label'] if decision else row['label'],
+                         'construct_needed': decision.get('construct_needed', row['construct_needed'])
+                         if decision else row['construct_needed']})
     for row in disagreements:
         decision = decisions[row['dataset'], row['id']]
         row.update(proposed_adjudicated_label=decision['label'], adjudication_reason=decision['reason'])
@@ -321,8 +343,10 @@ def report():
         fmt = lambda v: 'undefined (pₑ = 1)' if v is None else f'{v:.4f}'
         lines.append(f"| {DISPLAY[d]} | {a['matching']}/30 ({100*a['observed']:.1f}%) | {fmt(a['kappa'])} | "
                      f"{b['matching']}/30 ({100*b['observed']:.1f}%) | {fmt(b['kappa'])} |")
-    lines += ['', 'Kappa is undefined when both marginal distributions put all items '
-              'in the same category; perfect observed agreement is still reported.', '',
+    lines += ['', 'ProofWriter has κ = 0 because the first rater used DIRECT for every '
+              'item, so empirical chance agreement equals observed agreement. Kappa is '
+              'undefined when both marginal distributions put all items in the same '
+              'category; perfect observed agreement would still be reported.', '',
               '## Proposed adjudication', '',
               'These are Worker X proposals after seeing both rationales, not an independent '
               'third rating or accepted consensus. Frozen second-rater labels are unchanged. '
@@ -330,7 +354,9 @@ def report():
               proposed_rates, '', '## What v0 would need next', '',
               'Counts use frozen NO and OPAQUE items. An item counts once per construct family '
               'and can contribute to multiple families; column sums are not sample sizes. '
-              'The tag-to-family mapping and item memberships are committed for inspection.', '',
+              'The tag-to-family mapping, explicit per-item exclusions of already-supported '
+              'constructs, and item memberships are committed for inspection. Lexical '
+              'disambiguation is an authoring/grounding need, not a new logical connective.', '',
               roadmap_table, '', 'After proposed adjudication:', '', proposed_roadmap_table, '',
               '## Every disagreement', '']
     for d in DATASETS:
@@ -368,7 +394,9 @@ def main():
         freeze(args.checker_dir)
     elif args.command == 'verify':
         rows = verify_seal(args.checker_dir)
-        print(f'Verified freeze, source hashes, sample IDs and all recorded witnesses: {len(rows)} items.')
+        alternatives = verify_adjudication_witnesses(args.checker_dir)
+        print(f'Verified freeze, source hashes, sample IDs and all recorded witnesses: {len(rows)} items; '
+              f'{alternatives} post-unblinding alternative witnesses.')
     elif args.command == 'compare':
         rows, results, disagreements = comparison()
         print(json.dumps({'n': len(rows), 'agreement': results, 'disagreements': len(disagreements)}, indent=2))

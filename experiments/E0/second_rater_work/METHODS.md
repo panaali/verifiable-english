@@ -86,6 +86,35 @@ not only random disagreement under an identical operational rubric. The original
 labels are preserved so this limitation stays visible rather than being repaired
 before calculating agreement.
 
+### Findings during adjudication
+
+The blind freeze is commit `266401b`. Agreement is calculated from that frozen
+record, before any proposed corrections. Reviewing the two rationales exposed
+three semantic errors in the second rater's Cedar witnesses: `github_example`
+policies `#3`, `#4`, and `#5` use `principal in` a `UserGroup` entity referenced by
+`readers`, `triagers`, or `writers`. The source schema confirms those fields are
+group entities. The frozen witnesses incorrectly treated them as ordinary
+user-set membership. All three parse, but are not faithful; their proposed labels
+are OPAQUE and their actual missing construct is hierarchy closure. The schema
+path, hash and finding are saved with those adjudication records.
+
+Thus **114 frozen claimed-fit witnesses pass syntax/type checking, but three
+were found semantically defective after unblinding; proposed adjudicated fit is
+111/210 across this deliberately heterogeneous sample**. That count is an
+inventory, not a pooled coverage estimate. The dataset-specific results below
+remain the relevant measurements.
+
+Six proposed DIRECT labels also use simpler encodings than the frozen ones:
+five fixed-action Cedar policies can be specialized to binary contribution
+relations, and Gatekeeper host-namespaces already uses only primitive unary
+tests. Their six accepted alternatives are recorded separately in
+`second_rater_adjudication_witnesses.jsonl`. Fixed-action specialization makes
+the effect false for all other actions and retains field-presence checks. If an
+audit requires one uniform ternary/request representation even for a fixed
+action, keep these five Cedar labels REIFIED; their fit/no-fit outcome does not
+change. This strict-label convention is distinct from the three actual semantic
+corrections above.
+
 ### Statistical limits and reproduction
 
 Wilson intervals use z = 1.959963984540054 and n = 30 for each dataset, without
@@ -104,6 +133,7 @@ git archive 12538d8d418b3eeec59e58d74c3886786e5139da ve pyproject.toml | tar -x 
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-grammar python3 experiments/E0/second_rater_audit.py selftest
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-grammar python3 experiments/E0/second_rater_audit.py verify
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-grammar python3 experiments/E0/second_rater_spotchecks.py
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-grammar python3 experiments/E0/second_rater_work/adjudication_witnesses.py
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-grammar python3 experiments/E0/second_rater_audit.py report
 ```
 
