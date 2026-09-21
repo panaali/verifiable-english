@@ -42,11 +42,18 @@ Exact headline theorem statements in plain words:
   atom, a lexically valid environment, canonical outer binder scope and matching
   sort context, parsing its printed form with any positive fuel and any suffix
   returns that same atom and untouched suffix.
+- `Surface.parse_print_named`: for a lexically valid environment and any closed,
+  well-typed Named closure atom, public parsing of its printed singleton document
+  returns precisely that singleton document, including period/newline framing.
+- `Surface.print_injective_named`: in a lexically valid environment, any two
+  closed well-typed Named closure atoms whose printed documents are equal are
+  the same AST.
 
 Both Named and Body strict syntax are executable, including nested bodies and
 fixed outer parameters. The **new round-trip proof is currently for Named atoms**;
-full extended-document round trip, Body round trip, and extended printer
-injectivity are not proved. The old full v0 round-trip theorems still build.
+full extended-document round trip, Body round trip, and general extended printer
+injectivity are not proved. Named singleton documents and Named-atom printer
+injectivity are covered. The old full v0 round-trip theorems still build.
 
 The reference uses finite materialized edge lists and deduplication at each
 Warshall pivot. Its correctness is proved; an O(n^3) matrix implementation and

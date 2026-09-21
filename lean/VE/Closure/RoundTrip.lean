@@ -25,4 +25,47 @@ theorem parseRaw_print_named (E : Environment) (hv : NamesValid E)
   cases k <;>
     simp [printAux, kindText, List.append_assoc, parseRaw, parseReach, hi, hpt, hpu, consume]
 
+
+theorem parseStatements_nonempty (E : Environment) (fuel : Nat) (input : List Char)
+    (h : input ≠ []) :
+    parseStatements E (fuel + 1) input = (do
+      let (a, rest) ← parseRaw E (input.length + 1) [] input
+      let rest ← consume ['.', '\n'] rest
+      let tail ← parseStatements E fuel rest
+      some (a :: tail)) := by
+  cases input with
+  | nil => contradiction
+  | cons c cs => rfl
+
+/-- Public document P4 for one closed well-typed Named closure statement. -/
+theorem parse_print_named (E : Environment) (hv : NamesValid E)
+    (k : Kind) (p : String) (t u : Term)
+    (hw : (Formula.reachNamed k p t u).WellFormed E []) :
+    parse E (print [.reachNamed k p t u]) = some [.reachNamed k p t u] := by
+  let a := Formula.reachNamed k p t u
+  have hn : statementChars a ≠ [] := by simp [statementChars]
+  have hp := parseRaw_print_named E hv [] [] 0 ⟨by simp, by simp⟩ rfl k p t u hw
+    (statementChars a).length ['.', '\n']
+  have hc : a.check E [] = true := (check_iff_wellFormed E [] a).mpr hw
+  unfold parse print
+  simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil]
+  change (do
+    let fs ← parseStatements E ((statementChars a).length + 1) (statementChars a)
+    if !fs.isEmpty && fs.all (fun f => f.check E []) then some fs else none) = some [a]
+  rw [parseStatements_nonempty E _ _ hn]
+  change parseRaw E ((statementChars a).length + 1) [] (statementChars a) = some (a, ['.', '\n']) at hp
+  rw [hp]
+  simp [consume, statementChars, List.length_append, parseStatements, hc]
+
+/-- Two closed typed Named atoms with identical printed documents are identical. -/
+theorem print_injective_named (E : Environment) (hv : NamesValid E)
+    (k l : Kind) (p q : String) (t u v w : Term)
+    (ha : (Formula.reachNamed k p t u).WellFormed E [])
+    (hb : (Formula.reachNamed l q v w).WellFormed E [])
+    (h : print [.reachNamed k p t u] = print [.reachNamed l q v w]) :
+    Formula.reachNamed k p t u = Formula.reachNamed l q v w := by
+  have hparse := congrArg (parse E) h
+  rw [parse_print_named E hv k p t u ha, parse_print_named E hv l q v w hb] at hparse
+  exact List.cons.inj (Option.some.inj hparse) |>.1
+
 end VE.Closure.Surface
