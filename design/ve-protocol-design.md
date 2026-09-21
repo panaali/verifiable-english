@@ -192,6 +192,16 @@ checker_record, budget_after, prev_hash}`, replayable end-to-end from the enviro
 
 ### (a) Obfuscated arguments — the lead case
 
+> **Correction (2026-09-21, after a full reading of the primary sources; overrides the text below).** In Barnes and
+> Christiano's obfuscated arguments the premises are already explicit and the steps are valid (their RSA example and
+> their closing formal-logic example): one explicit sub-claim is false and NEITHER debater can tractably find which.
+> Explicit premises and checked deductions therefore contribute nothing on the canonical cases, and a certified
+> conjunction over N leaves has the worst stability parameter (rho = N). See `positioning-vs-debate-theory.md` section 4.
+> What VE does target is a different, named problem: smuggled premises, equivocation and a term defined differently in
+> different sub-claims (safety-case sketch D5.5, "gerrymandering"), which prover-estimator debate does not handle and
+> cross-examination does; cross-examination is the baseline to beat. This section is not "the lead case"; F0 is the
+> "long-argument flaw localisation" study of PLAN-V3, not an obfuscated-arguments benchmark.
+
 **Mechanism.** In Barnes and Christiano's failure, a long decomposition's every step looks locally plausible and the
 flaw hides among N steps; neither debater can locate it efficiently. Under this protocol the checker **replays every
 deductive step**, at cost linear in certificate size and *zero judge attention*. A flaw in a deduction cannot hide:
@@ -253,6 +263,16 @@ charged its full dollar cost, including VE authoring and certificate production*
 cost-matched comparisons (top up the prose arms' critic tokens until dollars are equal).
 
 ### F0 (lead) — Obfuscated arguments
+
+> **Correction (2026-09-21, after a full reading of the primary sources; overrides the text below).** In Barnes and
+> Christiano's obfuscated arguments the premises are already explicit and the steps are valid (their RSA example and
+> their closing formal-logic example): one explicit sub-claim is false and NEITHER debater can tractably find which.
+> Explicit premises and checked deductions therefore contribute nothing on the canonical cases, and a certified
+> conjunction over N leaves has the worst stability parameter (rho = N). See `positioning-vs-debate-theory.md` section 4.
+> What VE does target is a different, named problem: smuggled premises, equivocation and a term defined differently in
+> different sub-claims (safety-case sketch D5.5, "gerrymandering"), which prover-estimator debate does not handle and
+> cross-examination does; cross-examination is the baseline to beat. This section is not "the lead case"; F0 is the
+> "long-argument flaw localisation" study of PLAN-V3, not an obfuscated-arguments benchmark.
 
 **Generation.** A seeded generator builds a certified VE claim graph of N ∈ {50, 500, 5000} deduction steps by forward
 chaining from a leaf set over a synthetic vocabulary (contamination-free), each edge certified by the prover, so the
