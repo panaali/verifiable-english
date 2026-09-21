@@ -1,0 +1,11 @@
+{
+  "status": "PLACEHOLDER_REQUIRES_DEV_PILOT_VARIANCE",
+  "ready_to_freeze": false,
+  "clusters": 24,
+  "dev_clusters": null,
+  "dev_template_sd": null,
+  "standard_error": null,
+  "half_width_95": null,
+  "approximate_mde_80": null,
+  "required_action": "Run experiments.E5.calibrate_power on complete paired dev trials for the selected judge/difficulty/style before freezing; never reuse the reviewer's assumed SD."
+}
