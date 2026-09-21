@@ -22,6 +22,19 @@ The first target is **meaning changes during decomposition and rebuttal**: a deb
 
 These sources support the choice of failure modes and baselines. They do not demonstrate that VE improves oversight. The contribution to establish is reliable human inspection plus mechanically preserved meaning, compared with an equally capable structured formal interface.
 
+## Expected benefits for debate and scalable oversight
+
+If VE succeeds, a limited supervisor should be able to evaluate more complex AI work accurately within the same review budget. The proposed language and checker would contribute in four ways:
+
+1. **Keep local arguments connected to the original question.** People inspect and correct the initial specification; checked deductions then preserve the confirmed meanings and explicit assumptions across submitted branches. In the [operations/security review example](spec/debate-protocol.md#worked-example), the two meanings of “reviewed” cannot be silently substituted in a certified deduction. Cross-examination already addresses this failure mode; VE tests whether mechanical enforcement makes that defense more reliable and less dependent on successful questioning and the judge's memory.
+2. **Concentrate human attention on interpretation and evidence.** A checker verifies the formal deductions while the supervisor assesses the requirement and remaining premises. This could reduce the additional review effort required by longer arguments. The benefit depends on the difficulty of those premises and the cost of formalization and proof production; fewer premises alone does not establish easier oversight.
+3. **Make challenges precise and conclusions reusable.** A critic can identify an exact disputed premise, unsupported inference, or countermodel. Agents investigating separate subclaims can combine certified results under the same environment while retaining their assumptions. This could reduce repeated review and errors during handoffs. Reuse must preserve artifact bindings and must not transfer confirmation or factual evidence to changed claims.
+4. **Improve the feedback used to train agents.** If semantic tricks earn approval less often, training could reward them less often and favor inspectable specifications and justifications. This is a downstream hypothesis requiring training experiments; better judgments in a prompted debate do not establish more honest trained agents. Rewards must still account for faithful intent and useful answers, rather than certificate counts.
+
+A future prover-estimator debate integration could attach uncertainty estimates to precisely identified claims and use certificates for supported formal deductions. The [PED paper](https://arxiv.org/html/2506.13609#S8) already proposes combining formal proofs with uncertain debate; VE's potential contribution is making the shared claims human-inspectable and preserving their connections. Such an integration needs its own protocol and evaluation.
+
+The scaling outcome to establish is sustained oversight accuracy as argument complexity and the agent–judge capability gap increase, at affordable total cost. The checker covers the submitted argument, and human judgment remains necessary for intent, factual evidence, omitted requirements, and value judgments. The [roadmap](roadmap.md#testing-the-expected-benefits) defines measurements for these possible benefits.
+
 ## First useful workflow
 
 A supervisor evaluates whether an agent's submitted result meets an agreed requirement. A proposer defends the result and a critic challenges its specification, evidence, or deductions.
