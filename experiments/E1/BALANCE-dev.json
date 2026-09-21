@@ -3,33 +3,33 @@
  "hedging_markers_dropped_as_requirement_words": [
   "may"
  ],
- "n_good": 48,
- "n_bad": 110,
+ "n_good": 45,
+ "n_bad": 104,
  "authors": [
   "gpt-6-astra"
  ],
  "length": {
-  "smd": -0.37080748954964304,
-  "diff": -0.6260391967506774,
-  "sd": 1.6883132471542606,
-  "mean_good": 57.041666666666664,
-  "mean_bad": 56.41818181818182,
+  "smd": 0.0008698340946177454,
+  "diff": 0.001245853583274345,
+  "sd": 1.4322887444666605,
+  "mean_good": 58.0,
+  "mean_bad": 58.01923076923077,
   "strata": 4,
   "strata_skipped": 0
  },
  "hedging": {
-  "smd": -0.27662118261329205,
-  "diff": -0.021624472573839662,
-  "sd": 0.07817359599705714,
-  "mean_good": 0.020833333333333332,
+  "smd": 0.0,
+  "diff": 0.0,
+  "sd": 0.0,
+  "mean_good": 0.0,
   "mean_bad": 0.0,
   "strata": 4,
   "strata_skipped": 0
  },
- "loto_style_auc": 0.5965909090909091,
+ "loto_style_auc": 0.4980769230769231,
  "pass": {
-  "B1_length": false,
-  "B2_hedging": false,
+  "B1_length": true,
+  "B2_hedging": true,
   "B3_style_classifier": true
  }
 }

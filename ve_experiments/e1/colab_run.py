@@ -15,7 +15,7 @@ import json
 import sys
 from pathlib import Path
 
-from ..colab import ColabJobRunner, export_job, experiment_requests, import_outputs, is_batch_judge, model_id
+from ..colab import ColabJobRunner, exported_keys, export_job, uncached, experiment_requests, import_outputs, is_batch_judge, model_id
 from ..llm import LLMClient
 from ..runner import run
 from .balance import check as check_balance
@@ -54,6 +54,8 @@ def main() -> None:
         exp, exp_b = experiments(split)  # experiment_requests raises for "scored" unless the PREREG is frozen
         specs = [{"id": model_id(j["judge"]), **j.get("vllm_spec", {})} for j in batch_judges()]  # order = run order
         reqs = experiment_requests(exp, split, client) + experiment_requests(exp_b, split, client)
+        if "--only-uncached" in sys.argv:  # dev reruns: cells whose prompts did not change are replayed from the cache
+            reqs = uncached(client, reqs)
         print(export_job(job_dir, job_id, reqs, specs, MAX_NEW_TOKENS))
     elif what == "submit":
         print(ColabJobRunner().submit(job_dir))
@@ -67,6 +69,8 @@ def main() -> None:
     elif what == "score":
         exp, exp_b = experiments(split)
         reqs = experiment_requests(exp, split, client) + experiment_requests(exp_b, split, client)
+        keys = exported_keys(job_dir)
+        reqs = [kr for kr in reqs if kr.key in keys]
         print(json.dumps(import_outputs(client, reqs, results_dir), indent=1))
         print(run(exp, client, split, out_dir=E1 / "runs" / job_id))
         print(run(exp_b, client, split, out_dir=E1 / "runs" / f"{job_id}-e1b"))

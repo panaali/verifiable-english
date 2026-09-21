@@ -84,6 +84,22 @@ def experiment_requests(exp: Experiment, split: str, client: LLMClient) -> list[
     ]  # fmt: skip
 
 
+def uncached(client: LLMClient, requests: Sequence[KeyedRequest]) -> list[KeyedRequest]:
+    """Requests whose key is missing from the cache for at least one judge (then the key is exported for every
+    judge, so that one prompts file still serves them all). Lets a rerun submit only the cells that changed."""
+    def hit(kr: KeyedRequest) -> bool:
+        r = kr.request
+        system = client.default_system if r.system is None else r.system
+        return client._cache_read(cache_key(r.model, system, r.prompt, r.seed, r.identity)) is not None
+
+    need = {kr.key for kr in requests if not hit(kr)}
+    return [kr for kr in requests if kr.key in need]
+
+
+def exported_keys(job_dir: Path) -> set[str]:
+    return {json.loads(x)["key"] for x in (Path(job_dir) / "prompts.jsonl").read_text(encoding="utf-8").splitlines()}
+
+
 def export_job(job_dir: Path, job_id: str, requests: Sequence[KeyedRequest], model_specs: Sequence[dict],
                max_new_tokens: int, model_timeout_min: int = 420, max_minutes: int = 780) -> dict:
     """Write prompts.jsonl, models.json and job.json. Every judge that shares a key must share the exact text."""
