@@ -22,6 +22,16 @@ Standing limits: no model training (no GPU yet), no pushing or publishing withou
 
 ## Ideas log
 
+- 02:50 From Canonical English (site read; repo study in progress, results go to `design/related-systems.md`):
+  (a) **Sense-bound vocabulary.** CE binds every content word to a WordNet sense URI. VE's worst weakness is a vague
+  predicate grounded differently in each branch. Requiring each predicate to carry a sense binding, and flagging a
+  predicate whose cited evidence uses different senses, is a cheap defence to test as an extra cell in E5.
+  (b) **Linter as gatekeeper.** CE puts its checker in the generation loop (rejection sampling, or grammar-constrained
+  decoding on open-weight models). VE's parser can do the same: model proposes VE, parser rejects, model repairs. This
+  gives E0 an honest autoformalization cost, and works with constrained decoding on Colab models.
+  (c) **Document format.** CE's Markdown + JSON-LD frontmatter is a good carrier for a VE environment plus claims.
+  (d) CE has no truth-conditional semantics, entailment or countermodels; that is where VE goes further.
+
 - 02:05 The untrusted-explainer contrast (E1) may generalise: any place where an overseen agent controls the
   presentation of a formal object (proof summaries, diff descriptions, test reports) is a place for a deterministic
   renderer. If E1 is positive, a follow-up could test "deterministic summaries of checked artifacts" outside logic.
