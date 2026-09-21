@@ -18,6 +18,28 @@ Human studies are deferred. The goal is a model-only demonstration that VE beats
 
 S1 is the most promising: models degrade with context length and compaction loses information, while a canonical, hashed, checkable claim does not. Design rules: preregister; same information in every arm; charge every arm its full token cost, including VE authoring and checking; report where VE loses.
 
+## Phase F: frontier-scale experiments (user priority, 13:53)
+
+Real-world use requires a benefit for frontier-scale models. Both critical reviews agree that the English surface stops
+mattering above roughly 32B on short items, so frontier-scale value must be shown where frontier models fail.
+
+| ID | Setting | Design | Honest limit to test |
+|---|---|---|---|
+| **F0 (lead)** | **Obfuscated arguments** (Barnes and Christiano; Irving's debate line): a long decomposition where every step looks plausible and a flaw exists that neither debater can locate efficiently | Arguments of 50 to 5,000 steps with one locally plausible flaw. Frontier judge with a debate-style budget (inspects a few steps). Arms: prose debate where a frontier critic must locate the flaw; VE claim graph + checker (every deduction replayed; invalid step returned with a counterexample) | Half the flaws are in a deduction (VE should win by construction: report as such), half in a leaf premise or in the formalisation (VE only narrows the search to K stated premises and makes dropped assumptions visible). Include a forged-checker-line control |
+| F1 | Requirement retention under long context and compaction | see Phase S1 | VE authoring cost charged to the VE arm |
+| F2 | Size of reviewed work | folded into F0 | |
+| F3 | Equal-strength adversary | folded into F0 (frontier attacker writes the obfuscated argument) | |
+Funding: Gemini through Vertex AI ($273 trial credit, verified working), OpenRouter ($20), subscriptions for spot checks.
+
+## Language task: make VE read and write like regular English (13:53, user request)
+
+The strict parenthesised form is the canonical internal form (one text, one AST; Lean round-trip proof). Users should see
+and write the fluent form. Tasks: (1) fluent becomes the default display everywhere; (2) a deterministic parser for fluent
+INPUT with paraphrase-back, and the Lean round-trip/injectivity proof extended to the fluent surface (this also answers the
+reviewers' point that the helpful view has no proved property); (3) replace the parenthesised fallback for deep nesting with
+enumerated sub-clauses in the style of legal drafting ("all of the following hold: (a) ...; (b) ..."); (4) a precision pass
+on the template linter, which currently rejects many natural templates (seen in all four use cases).
+
 ## Phase 2 candidates (after the first paper draft)
 
 | Idea | Why it matters | Depends on | Added |
