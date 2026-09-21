@@ -169,3 +169,51 @@ including reference and preferred-witness validation. The Phase T target of
 **under 2% UNKNOWN is not met** by this run. Raising a domain cap alone is not a
 completeness fix: model and evaluation budgets and the enumeration order also
 limit what is reached.
+
+## Fair search and empty-sort-only refinements
+
+The prover schedules gamma expansions by increasing instantiation count, then
+formula age and parameter age, with complementary ground instances prioritized.
+It starts at one instance per universal and increases that bound geometrically.
+Search-only NNF, trivial-connective, and associative/commutative keys rank
+connections; signed negations and alpha rules still use ordinary certificate
+steps. Comparison gives model search a turn after an initial 128-step proof
+pass, then spends any remaining proof budget on unresolved directions. Search skips a gamma body already present on the branch and delays a delta
+whose body is already satisfied by an existing parameter of the correct sort.
+This comparison ignores unused outer bindings. It does not identify distinct
+parameters or turn a dependent witness into a uniform witness. Delta expansion,
+when selected, still creates a fresh checker-generated witness.
+
+A certificate-depth frontier returns to earlier search choices; it no longer
+immediately aborts the entire search. The aggregate step budget covers retries
+and all instantiation rounds. Search remains incomplete under finite budgets.
+The signed-instance keys are scheduling hints only: the original formulas,
+indices, eigenparameters, closure tests, certificate schema, and trusted replay
+rules are unchanged (`ve-tableau-checker@2`). No additional Lean rule is required.
+
+`compare` retains its original three-valued status and strict-strength `relation`.
+It now also returns `relation_detail: "differs_only_on_empty_sorts"` when:
+
+1. At least one independently checked distinguishing model has an empty sort.
+2. Both implications have replayed certificates with additional nonemptiness
+   premises, one `Exists(sort, Top())` for each sort listed in `nonempty_sorts`.
+
+In Python these additional certificates are in `nonempty_certificates`. In JSON,
+`nonempty_equivalence` holds `sorts` and `certificates`. To replay the forward
+certificate, pass `(a, *(Exists(sort, Top()) for sort in sorts))` as premises and
+`b` as conclusion; reverse `a` and `b` for the reverse certificate. The sorts are
+all environment sorts in sorted order; this is a sufficient condition and does
+not identify a minimal set of relevant sorts. Failed conditional proof search
+leaves the detail null. A bounded absence of inhabited countermodels never
+justifies this detail. `forall p` versus `exists p`, for example, has a nonempty
+mixed countermodel and is not classified as an empty-sort-only difference.
+
+Attack validation retains such checked differences and their original logical
+classification, exposes the detail for experiment policy, and avoids searching
+for an inhabited witness once its impossibility is certified. It does not choose
+an experiment's empty-sort policy. UNKNOWN rows have `accepted: null`; rejected
+rows have `false`. Strict-strength helpers can return `False` from a checked
+refutation even when the other implication remains unresolved.
+
+The serial benchmark and exhaustive finite-semantics audit are documented in
+[the prover fairness report](prover-fair-report.md).
