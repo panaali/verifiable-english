@@ -10,7 +10,11 @@ Workers propose changes to it in their reports.
 2. Experiments, with baselines, that support or refute each claimed benefit of VE for scalable oversight.
 3. A paper that reports what was found, including negative results.
 
-Out of scope: RL or any model training (future work), human-participant studies (none available), pushing to GitHub.
+Out of scope: human-participant studies (none available), pushing to GitHub.
+
+**Training is now in scope (user, 03:00).** The user has Google Colab compute (about 200 units; roughly T4 1.2, L4 1.7,
+A100-40GB 5.4, A100-80GB 7.5, G4 96GB 8.7, H100 18 units/hour; check the live rate under Runtime > View resources).
+Phase T below. Minimise browser use: one setup cell that turns the notebook into a job runner, then files in and out.
 
 ## Constraint that shapes the science
 
@@ -121,6 +125,21 @@ Both critiques (`design/critique-claude.md`, `design/critique-codex.md`) agree o
 | P3 Experiments | 3–9 | pilots, preregistrations, scored runs, analysis |
 | P4 Paper | 8–11.5 | `paper/` draft, figures, cross-review, revision |
 | P5 Close | 11.5–12 | final merge, reproducibility check, summary for the user |
+
+## Phase T: training study on Colab (dispatch when the checker API and the E1 item generator are merged)
+
+Question: does a VE-checked reward make semantic deception less profitable to learn than a judge-only reward?
+
+- Task: given a requirement in prose, the policy writes a formalization (and, in the judge-only arm, an explanation).
+  A hidden "tempting" objective makes weakened formalizations easier to satisfy, as in specification gaming.
+- Arms: (A) reward = a frozen weak judge's approval of prose/explanation; (B) reward = the same judge's approval of the
+  deterministic VE rendering plus the checker's verdicts (distinguishing-model tests against held-out scenarios);
+  (C) checker only. Same policy, data, steps and compute in every arm.
+- Everything must run inside Colab: small open-weight policy (about 1.5B-3B, LoRA, GRPO or rejection-sampling
+  fine-tuning if RL is too slow), frozen small open-weight judge, and the pure-Python `ve` package as the checker.
+- Outcome: rate of approved-but-wrong formalizations on held-out items, measured by the checker, per arm, with seeds.
+  Refutation: arm B is no better than arm A at equal honest acceptance.
+- Budget: decide the GPU from a 10-minute throughput probe; G4 or A100-40GB are the likely choices; stop at 150 units.
 
 ## Status log
 
