@@ -269,3 +269,28 @@ there; it never imports the current checker to produce expected verdicts.
 `tests/test_replay_conservativity.py` replays all 882 frozen cases using the
 current checker and requires identical complete results. This test needs no git
 checkout or regenerated proofs at test time.
+
+## Closure certificate replay
+
+`certificates.py` also runs `closure_certificates.py`: **63/63** closure Python
+certificates are accepted by Lean and **442/442** closure forgeries are rejected.
+Combined with the unchanged v0 cohorts, the report has **795/795** accepted and
+**592/592** rejected certificates, with no dropped mismatches. The two retained
+reviewer failures are monotonicity under a universal inclusion and symmetric
+reversal, both `ResourceLimit` at 400 steps. Transitivity, both Named/Body
+directions and first/last-edge existence prove in two search steps each.
+
+The closure cohort covers both signs and edge variants, nested captures, equality
+on constants and outer bindings, empty sorts, every plus/star composition,
+multiple path/edge composition, and version/schema/sort/sign/direction attacks.
+These are constructive development regressions, not a completeness claim or an
+unbiased workload sample. Run serially with the same command as the v0 corpus:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run python conformance/certificates.py --report conformance/certificates-report.json
+```
+
+The exact original four v0 tableau source files and theorem are preserved.
+The default argument checker labels Python replay separately; callers can use
+`check_argument(graph, lean_executable=path)` to obtain an actual Lean acceptance
+label for every supporting deduction certificate.

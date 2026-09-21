@@ -395,7 +395,7 @@ class _Traversal:
             body = self.formula(value.edge.formula, (dst, src, *scope))
             sort = value.edge.sort
             if self.view == "fol_symbols":
-                return f"({op.upper()} {src}:{sort},{dst}:{sort}.({body}))({left},{right})"
+                return f"({op.upper()} {src}:{sort},{dst}:{sort}.({body}))({left}, {right})"
             if self.view == "ve_natural":
                 noun = self.natural.sorts[sort]
                 return f"{right} is reachable from {left} by {count} steps satisfying [{noun} {src}, {dst} | ({body})]"
