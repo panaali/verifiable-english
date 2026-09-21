@@ -1,0 +1,22 @@
+{
+ "seed": 5204,
+ "policy": "held out by vocabulary family; each E2 group also fixes one derivation size",
+ "groups": {
+  "E2/aster/4": "dev",
+  "E2/aster/32": "dev",
+  "E2/aster/256": "dev",
+  "E2/brindle/4": "scored",
+  "E2/brindle/32": "scored",
+  "E2/brindle/256": "scored",
+  "E2/cobalt/4": "dev",
+  "E2/cobalt/32": "dev",
+  "E2/cobalt/256": "dev",
+  "E2/dovetail/4": "scored",
+  "E2/dovetail/32": "scored",
+  "E2/dovetail/256": "scored",
+  "E4/aster": "dev",
+  "E4/brindle": "scored",
+  "E4/cobalt": "dev",
+  "E4/dovetail": "scored"
+ }
+}
