@@ -116,3 +116,24 @@ def test_replay_budget_is_explicit():
     certificate = certify(env, [p], p)
     checked = check_entailment_certificate(env, [p], p, certificate, max_steps=0)
     assert not checked.valid and checked.status == "ResourceLimit"
+
+
+def test_deep_tableau_roundtrips_within_json_envelope():
+    from ve.argument_fixtures import merged_vocabulary_example
+    from ve.ast import Top, Bottom, Not
+    from ve.limits import MAX_TABLEAU_DEPTH
+    from ve.wire import canonical_json, loads_json
+
+    env = merged_vocabulary_example().env
+    # Shallow independent ASTs require a long linear tableau before the final
+    # negated tautology closes. This used to exceed the JSON nesting limit.
+    premises = (Not(Bottom()),) * 120 + (Not(Top()),)
+    result = prove_entailment(env, premises, Bottom())
+    assert result.status == 'Found' and result.steps > 100
+    replay = loads_json(canonical_json(result.certificate))
+    assert check_entailment_certificate(env, premises, Bottom(), replay).valid
+    # Oversized traces must stop during search rather than emit unreplayable data.
+    too_deep = (Not(Bottom()),) * (MAX_TABLEAU_DEPTH + 5) + (Not(Top()),)
+    result = prove_entailment(env, too_deep, Bottom())
+    assert result.status == 'ResourceLimit' and result.certificate is None
+    assert 'nesting' in result.detail
