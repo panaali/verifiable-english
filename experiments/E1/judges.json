@@ -1,0 +1,24 @@
+{
+ "note": "Judge set of E1. Roles follow PREREG.md gates G1-G3, measured on the dev split in cell fol_symbols|none (dev_gate; strong-model mean accuracy 0.995). Committed before scoring; each judge is analysed separately.",
+ "budget": "reason (at most 150 words); vllm judges: max_new_tokens 400, temperature 0, system prompt = ve_experiments.llm.DEFAULT_SYSTEM",
+ "judges": [
+  {"judge": "vllm:Qwen/Qwen2.5-7B-Instruct", "role": "primary", "budget": "reason", "load": "single",
+   "vllm_spec": {"max_model_len": 4096},
+   "dev_gate": {"source": "manage-agents/colab/results/e1-dev-ladder/ladder_table.md", "accuracy": [87, 157], "false_approval": [62, 109], "honest_acceptance": [40, 48], "G1": true, "G2": true, "G3": true}},
+  {"judge": "vllm:Qwen/Qwen2.5-14B-Instruct-AWQ", "role": "primary", "budget": "reason", "load": "single",
+   "vllm_spec": {"max_model_len": 4096},
+   "dev_gate": {"source": "manage-agents/colab/results/e1-dev-ladder/ladder_table.md", "accuracy": [114, 157], "false_approval": [42, 109], "honest_acceptance": [47, 48], "G1": true, "G2": true, "G3": true}},
+  {"judge": "vllm:Qwen/Qwen2.5-32B-Instruct-AWQ", "role": "near_floor", "budget": "reason", "load": "single",
+   "vllm_spec": {"max_model_len": 3072, "gpu_memory_utilization": 0.95, "enforce_eager": true, "max_num_seqs": 16},
+   "dev_gate": {"source": "manage-agents/colab/results/e1-dev-ladder/ladder_table.md", "accuracy": [138, 157], "false_approval": [15, 109], "honest_acceptance": [44, 48], "G1": true, "G2": false, "G3": true}},
+  {"judge": "claude-haiku-4-5-20251001", "role": "strong_end", "budget": "reason", "load": "single",
+   "dev_gate": {"source": "experiments/E1/PILOT-dev.md", "accuracy": [156, 157], "false_approval": [1, 109], "honest_acceptance": [48, 48], "G1": false, "G2": false, "G3": true}},
+  {"judge": "gpt-5.6-luna", "role": "strong_end", "budget": "reason", "load": "single",
+   "dev_gate": {"source": "experiments/E1/PILOT-dev.md", "accuracy": [151, 157], "false_approval": [5, 109], "honest_acceptance": [47, 48], "G1": false, "G2": false, "G3": true}}
+ ],
+ "not_scored": [
+  {"model": "meta-llama/Llama-3.1-8B-Instruct", "reason": "fails G3: honest acceptance 11/48 (rejects almost everything); false approval 4/109"},
+  {"model": "google/gemma-2-9b-it (fp8)", "reason": "fails G2: false approval 105/109 (approves almost everything)"},
+  {"model": "stelterlab/phi-4-AWQ", "reason": "26/157 unparseable replies (25 truncated); worst-case false approval 83/109 fails G2"}
+ ]
+}

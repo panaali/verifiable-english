@@ -13,6 +13,7 @@ from ..runner import Condition
 from .views import VIEWS, legend, model_text, render
 
 EXPLANATIONS = ("none", "attacker")
+MAX_NEW_TOKENS = 400  # reply budget for judges whose backend takes a token limit: room for 150 words and the JSON verdict
 
 SEMANTICS = (
     "Reading rules: each variable ranges over the entities of its stated sort; a sort may have no entities "
