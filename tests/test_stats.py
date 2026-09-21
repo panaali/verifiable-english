@@ -1,6 +1,6 @@
 import random
 
-from ve_experiments.stats import bootstrap_rate, paired_contrast, rate, sign_test_p, summarize, to_markdown
+from ve_experiments.stats import bootstrap_rate, paired_contrast, rate, summarize, to_markdown
 
 
 def rows_from(p_approve, n_groups=120, judges=("j1", "j2"), seed=0, fail_every=0):
@@ -46,7 +46,7 @@ def test_rates_and_denominators():
 def test_bootstrap_detects_a_real_difference_and_not_a_null():
     rows = rows_from(P)
     c = paired_contrast(rows, "false_approval", "ve", "fol", n_boot=2000)
-    assert c.diff < -0.2 and c.ci_high < 0 and c.n_groups == 120 and c.sign_test_p < 0.001
+    assert c.diff < -0.2 and c.ci_high < 0 and c.n_clusters == 120
     null = paired_contrast(rows, "honest_acceptance", "ve", "fol", n_boot=2000)
     assert null.ci_low < 0 < null.ci_high
 
@@ -69,7 +69,8 @@ def test_bootstrap_coverage_is_roughly_nominal():
 
 def test_per_judge_breakdown_and_markdown():
     rows = rows_from(P, fail_every=17)
-    s = summarize(rows, contrasts=[("ve", "fol")], n_boot=300)
+    assert {r["judge"] for r in summarize(rows, n_boot=50)["rates"]} == {"j1", "j2"}  # no pooled row by default
+    s = summarize(rows, contrasts=[("ve", "fol")], n_boot=300, pooled=True)
     judges = {r["judge"] for r in s["rates"]}
     assert judges == {"*", "j1", "j2"}
     assert len(s["rates"]) == 2 * 3 * 2 and len(s["contrasts"]) == 2 * 3
@@ -81,7 +82,14 @@ def test_per_judge_breakdown_and_markdown():
     assert "false_approval" in md and "ve - fol" in md
 
 
-def test_sign_test():
-    assert sign_test_p(0, 0) is None
-    assert sign_test_p(5, 5) == 1.0
-    assert abs(sign_test_p(0, 10) - 2 / 1024) < 1e-12
+def test_variants_of_one_template_are_one_cluster_and_give_no_p_value():
+    # Reviewer's reproduction: ten discordant variants of ONE template must not look like strong evidence.
+    rows = []
+    for k in range(10):
+        for cond, approved in (("fol", True), ("ve", False)):
+            rows.append({"item_id": f"v{k}", "group": f"v{k}", "template": "t1", "label": "bad", "condition": cond,
+                         "judge": "j", "seed": 0, "approved": approved})  # fmt: skip
+    c = paired_contrast(rows, "false_approval", "ve", "fol", "j", n_boot=200, cluster="template")
+    assert c.n_clusters == 1 and not hasattr(c, "sign_test_p")
+    assert (c.discordant_a_only, c.discordant_b_only) == (0, 10)
+    assert c.ci_low == c.ci_high == c.diff == -1.0  # one cluster: the bootstrap cannot express uncertainty, and n_clusters says so

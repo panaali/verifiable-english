@@ -2,7 +2,7 @@ import pytest
 
 from ve.ast import Binary, Document, Exists, Forall, Implies, Unary, Var
 from ve.environment import Environment, LANGUAGE, PROFILE, SPEC_REVISION
-from ve.errors import ShadowedVariable, SyntaxError, UnboundVariable, UnknownSymbol
+from ve.errors import ResourceLimit, ShadowedVariable, SyntaxError, UnboundVariable, UnknownSymbol, VEError
 from ve.fol import document_from_indexed_json, document_from_named_fol, render_fol
 from ve.parser import canonicalize, is_canonical, parse, parse_with_metadata
 from ve.printer import NATURAL_RENDERER_VERSION, natural_document, print_document
@@ -106,3 +106,21 @@ def test_raw_fol_is_type_checked(env):
         document_from_indexed_json(env, [["unary", "deployed", ["const", "missing"]]])
     with pytest.raises(Exception):
         document_from_indexed_json(env, [["binary", "owns", ["var", 0], ["var", 1]]])
+
+
+def test_named_import_rejects_invalid_unicode_even_in_discarded_names(env):
+    with pytest.raises(VEError):
+        document_from_named_fol(env, {"formulas": [{"op": "exists", "sort": "person",
+                                                   "variable": "\ud800", "body": {"op": "top"}}]})
+
+
+def test_canonical_output_respects_source_byte_envelope(env):
+    statement = parse(env, "@api is deployed.\n").formulas[0]
+    with pytest.raises(ResourceLimit):
+        print_document(env, Document((statement,) * 5000))
+
+
+def test_non_ascii_byte_diagnostic_preserves_line_and_column(env):
+    with pytest.raises(SyntaxError) as caught:
+        parse(env, b"true.\n\xff.\n")
+    assert (caught.value.span.line, caught.value.span.column) == (2, 1)

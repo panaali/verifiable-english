@@ -67,7 +67,7 @@ class _Parser:
         self.nodes += 1
         if self.nodes > MAX_NODES:
             self.error(f"document exceeds {MAX_NODES} AST nodes", start, ResourceLimit)
-        # Preorder is useful to diagnostics even though nodes complete postorder.
+        # Metadata follows node-completion order; semantic nodes carry no spans.
         self.spans.append(self.span(start))
         self.names.append(name)
         return value
@@ -183,7 +183,8 @@ def parse_with_metadata(env: Any, source: str | bytes) -> ParseResult:
             source = source.decode("ascii")
         except UnicodeDecodeError as exc:
             raise SyntaxError("VE semantic syntax must be ASCII",
-                              span=Span(exc.start, exc.end, 1, exc.start + 1)) from exc
+                              span=Span(exc.start, exc.end, source.count(b"\n", 0, exc.start) + 1,
+                                        exc.start - source.rfind(b"\n", 0, exc.start))) from exc
     elif not isinstance(source, str):
         raise TypeError("source must be str or bytes")
     else:

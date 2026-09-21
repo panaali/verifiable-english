@@ -16,7 +16,8 @@ model judges are stateless, so there is no carry-over). With a tight budget, "ro
 (group, judge) exactly one condition, balanced by a seeded Latin rotation; contrasts are then
 between groups and need more items.
 
-Scoring the `scored` split requires a committed, unmodified experiments/<id>/PREREG.md.
+Scoring the `scored` split requires a committed experiments/<id>/PREREG.md whose bytes equal HEAD,
+the real `ve` backend, and (if used) a committed split file. Run directories are never reused.
 """
 
 from __future__ import annotations
@@ -32,10 +33,20 @@ from pathlib import Path
 from typing import Any
 
 from .llm import LLMClient, Request, VerdictParseError, parse_verdict
+from .ve_iface import backend_name
 
 LABELS = ("good", "bad")
 SPLITS = ("dev", "scored")
-PREREG_REQUIRED_HEADINGS = ("primary metric", "primary contrast", "refutation condition", "sample size")
+# Plan v2 item 6. Each entry is a tuple of acceptable spellings; one must occur in a markdown heading
+# that is followed by a non-empty body.
+PREREG_REQUIRED_SECTIONS = (
+    ("primary contrast",),
+    ("refutation condition",),
+    ("honest-acceptance constraint", "honest acceptance constraint"),
+    ("smallest useful effect",),
+    ("capability gate", "calibration gate", "capability and calibration gate"),
+    ("sample size",),
+)
 
 
 class PreregistrationError(RuntimeError):
@@ -79,6 +90,10 @@ class Trial:
     condition: str
     judge: str
     seed: int
+    sample: int = 0
+
+    def identity(self, experiment_id: str) -> str:
+        return f"{experiment_id}|{self.split}|{self.item_id}|{self.condition}|{self.judge}|{self.sample}"
 
 
 @dataclass
@@ -92,6 +107,7 @@ class Experiment:
     seed: int = 0
     allowed_verdicts: tuple[str, str] = ("approve", "reject")  # (approve word, reject word)
     system: str | None = None
+    split_file: Path | None = None  # if set, a scored run requires it to be committed and unmodified
     root: Path = field(default_factory=lambda: Path(__file__).resolve().parent.parent)
 
     @property
@@ -102,13 +118,33 @@ class Experiment:
 # --------------------------------------------------------------------------- splits
 
 
-def assign_splits(items: Sequence[Item], dev_fraction: float, seed: int) -> list[Item]:
-    """Deterministic split by group. Sorting groups by a seeded hash makes the split independent of
-    item order and stable when items are added."""
-    groups = sorted({it.group for it in items}, key=lambda g: hashlib.sha256(f"{seed}:{g}".encode()).hexdigest())
-    n_dev = round(len(groups) * dev_fraction)
-    dev = set(groups[:n_dev])
-    return [_with_split(it, "dev" if it.group in dev else "scored") for it in items]
+def _hash_split(group: str, dev_fraction: float, seed: int) -> str:
+    """Each group is assigned on its own (hash below a threshold), so adding or removing other
+    groups can never move it. The dev share is therefore approximate, not exact."""
+    x = int(hashlib.sha256(f"{seed}:{group}".encode()).hexdigest()[:12], 16) / 16**12
+    return "dev" if x < dev_fraction else "scored"
+
+
+def assign_splits(items: Sequence[Item], dev_fraction: float, seed: int, split_file: Path | None = None) -> list[Item]:
+    """Split by group and persist the assignment.
+
+    With `split_file` (commit it), a group that already has an assignment keeps it for ever; new
+    groups are appended; an item that arrives with a different explicit split is refused. Items may
+    carry an explicit `split` (for designs that split by template or vocabulary family).
+    """
+    recorded: dict[str, str] = {}
+    if split_file is not None and Path(split_file).exists():
+        recorded = json.loads(Path(split_file).read_text(encoding="utf-8"))["groups"]
+    assigned = dict(recorded)
+    for it in items:
+        want = it.split or assigned.get(it.group) or _hash_split(it.group, dev_fraction, seed)
+        if assigned.setdefault(it.group, want) != want:
+            raise DesignError(f"group {it.group} is recorded as {assigned[it.group]!r} and cannot move to {want!r}")
+    if split_file is not None and assigned != recorded:
+        Path(split_file).parent.mkdir(parents=True, exist_ok=True)
+        body = {"seed": seed, "dev_fraction": dev_fraction, "groups": dict(sorted(assigned.items()))}
+        Path(split_file).write_text(json.dumps(body, indent=1) + "\n", encoding="utf-8")
+    return [_with_split(it, assigned[it.group]) for it in items]
 
 
 def _with_split(item: Item, split: str) -> Item:
@@ -154,7 +190,7 @@ def plan_trials(exp: Experiment, split: str) -> list[Trial]:
         ]
     for it, cond, judge in cells:
         for s in range(exp.samples):
-            trials.append(Trial(it.id, it.group, it.label, it.split, cond, judge, exp.seed * 1000 + s))
+            trials.append(Trial(it.id, it.group, it.label, it.split, cond, judge, exp.seed * 1000 + s, s))
     return trials
 
 
@@ -165,27 +201,44 @@ def _git(root: Path, *args: str) -> subprocess.CompletedProcess:
     return subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True)
 
 
-def require_prereg(exp_dir: Path, root: Path) -> dict[str, str]:
-    """Refuse to score unless experiments/<id>/PREREG.md is committed and unmodified.
-
-    Returns the commit and blob hash, which the run manifest records, so that a reader can verify
-    the preregistration predates the scored run.
-    """
-    path = exp_dir / "PREREG.md"
+def require_committed(path: Path, root: Path) -> dict[str, str]:
+    """The file's working bytes must equal the blob committed at HEAD. Comparing bytes (not
+    `git status`) means `git update-index --assume-unchanged` or skip-worktree cannot hide an edit."""
+    path = Path(path)
     if not path.is_file():
         raise PreregistrationError(f"{path} does not exist; write and commit it before scoring")
-    rel = str(path.resolve().relative_to(root.resolve()))
-    if _git(root, "ls-files", "--error-unmatch", rel).returncode != 0:
-        raise PreregistrationError(f"{rel} is not tracked by git; commit it before scoring")
-    if _git(root, "status", "--porcelain", "--", rel).stdout.strip():
-        raise PreregistrationError(f"{rel} has uncommitted changes; commit them before scoring")
-    text = path.read_text(encoding="utf-8").lower()
-    missing = [h for h in PREREG_REQUIRED_HEADINGS if h not in text]
-    if missing:
-        raise PreregistrationError(f"{rel} lacks required sections: {missing}")
+    rel = path.resolve().relative_to(root.resolve()).as_posix()
+    blob = subprocess.run(["git", "-C", str(root), "show", f"HEAD:{rel}"], capture_output=True)
+    if blob.returncode != 0:
+        raise PreregistrationError(f"{rel} is not committed at HEAD; commit it before scoring")
+    if blob.stdout != path.read_bytes():
+        raise PreregistrationError(f"{rel} differs from the committed version; commit it before scoring")
     commit = _git(root, "log", "-1", "--format=%H %cI", "--", rel).stdout.strip()
-    blob = _git(root, "rev-parse", f"HEAD:{rel}").stdout.strip()
-    return {"prereg_commit": commit, "prereg_blob": blob}
+    return {"path": rel, "commit": commit, "blob": _git(root, "rev-parse", f"HEAD:{rel}").stdout.strip()}
+
+
+def missing_prereg_sections(text: str) -> list[str]:
+    sections: list[tuple[str, str]] = []
+    for line in text.splitlines():
+        if line.lstrip().startswith("#"):
+            sections.append((line.lstrip("# ").strip().lower(), ""))
+        elif sections:
+            sections[-1] = (sections[-1][0], sections[-1][1] + line.strip())
+    missing = []
+    for spellings in PREREG_REQUIRED_SECTIONS:
+        if not any(any(sp in head for sp in spellings) and body for head, body in sections):
+            missing.append(spellings[0])
+    return missing
+
+
+def require_prereg(exp_dir: Path, root: Path) -> dict[str, str]:
+    """Refuse to score unless experiments/<id>/PREREG.md is committed, byte-identical to HEAD, and has
+    a non-empty section for every Plan v2 field. The manifest records commit and blob."""
+    info = require_committed(exp_dir / "PREREG.md", root)
+    missing = missing_prereg_sections((exp_dir / "PREREG.md").read_text(encoding="utf-8"))
+    if missing:
+        raise PreregistrationError(f"{info['path']} lacks required non-empty sections: {missing}")
+    return {"prereg_commit": info["commit"], "prereg_blob": info["blob"]}
 
 
 # --------------------------------------------------------------------------- running
@@ -213,27 +266,36 @@ def run(exp: Experiment, client: LLMClient, split: str, out_dir: Path | None = N
         if limit is not None:
             raise PreregistrationError("a scored run cannot be truncated with `limit`")
         manifest.update(require_prereg(exp.dir, exp.root))
+        if exp.split_file is not None:
+            manifest["split_file"] = require_committed(exp.split_file, exp.root)
+        if backend_name() != "ve":
+            raise PreregistrationError("scored runs require the real `ve` package, not the stub backend")
+    manifest["ve_backend"] = backend_name()
     trials = plan_trials(exp, split)
     if limit is not None:
         trials = trials[:limit]
     prompts = build_prompts(exp, trials)
     approve, reject = exp.allowed_verdicts
     requests = [
-        Request(model=t.judge, prompt=p, seed=t.seed, system=exp.system, tag=f"{exp.id}/{split}/{t.item_id}/{t.condition}")
+        Request(model=t.judge, prompt=p, seed=t.seed, system=exp.system, tag=f"{exp.id}/{split}/{t.item_id}/{t.condition}",
+                identity=t.identity(exp.id))
         for t, p in zip(trials, prompts)
     ]
+    run_dir = allocate_run_dir(out_dir, exp.dir / "runs", split)  # before any call, so a clash costs nothing
     results = client.map(requests)
-
-    run_dir = out_dir or exp.dir / "runs" / f"{split}-{time.strftime('%Y%m%d-%H%M%S')}"
-    run_dir.mkdir(parents=True, exist_ok=True)
-    with open(run_dir / "trials.jsonl", "w", encoding="utf-8") as fh:
+    with open(run_dir / "trials.jsonl", "x", encoding="utf-8") as fh:
         for t, p, r in zip(trials, prompts, results):
             row = asdict(t)
             row.update(
                 prompt_sha=hashlib.sha256(p.encode()).hexdigest()[:16], llm_key=r.key, ok=r.ok, error=r.error,
                 latency_s=r.latency_s, input_tokens=r.input_tokens, output_tokens=r.output_tokens,
-                from_cache=r.from_cache, reply=r.text,
+                from_cache=r.from_cache, reply=r.text, tool_events=list(r.tool_events),
             )  # fmt: skip
+            if r.tool_events:
+                # The judge ran a command or tool: it may have read ground truth. Invalid, scored worst case.
+                row.update(verdict=None, approved=None, parse_error="invalid: judge used tools")
+                fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+                continue
             try:
                 verdict = parse_verdict(r.text, allowed=exp.allowed_verdicts)
                 row.update(verdict=verdict.value, approved=verdict.value == approve, parse_error=None)
@@ -250,11 +312,33 @@ def run(exp: Experiment, client: LLMClient, split: str, out_dir: Path | None = N
         samples=exp.samples,
         seed=exp.seed,
         n_failed_calls=sum(not r.ok for r in results),
+        n_tool_use_trials=sum(bool(r.tool_events) for r in results),
         git_head=_git(exp.root, "rev-parse", "HEAD").stdout.strip(),
         git_dirty=bool(_git(exp.root, "status", "--porcelain", "--untracked-files=no").stdout.strip()),
     )
-    (run_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    with open(run_dir / "manifest.json", "x", encoding="utf-8") as fh:
+        fh.write(json.dumps(manifest, indent=2) + "\n")
     return run_dir
+
+
+def allocate_run_dir(out_dir: Path | None, runs: Path, split: str) -> Path:
+    """Create a fresh run directory atomically. Never reuses or overwrites an existing one."""
+    if out_dir is not None:
+        try:
+            Path(out_dir).mkdir(parents=True, exist_ok=False)
+        except FileExistsError as exc:
+            raise DesignError(f"run directory {out_dir} already exists; results are never overwritten") from exc
+        return Path(out_dir)
+    runs.mkdir(parents=True, exist_ok=True)
+    stamp = time.strftime("%Y%m%d-%H%M%S")
+    for n in range(1, 10_000):
+        candidate = runs / f"{split}-{stamp}-{n:03d}"
+        try:
+            candidate.mkdir(exist_ok=False)
+            return candidate
+        except FileExistsError:
+            continue
+    raise DesignError("could not allocate a run directory")
 
 
 def load_trials(run_dir: Path) -> list[dict]:

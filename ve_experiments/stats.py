@@ -11,10 +11,16 @@ see how much of a number comes from this rule.
     false approval    = approved bad  / assigned bad
     honest acceptance = approved good / assigned good
 
-The bootstrap resamples `group`s (base items) with replacement, keeping all of a group's trials
-together across conditions, judges, and samples. This is what makes the contrast paired, and it
-treats the item, not the model call, as the unit of replication. Judges are a fixed factor: with
-two to four judges there is nothing to resample, so conclusions hold for these judges only.
+The bootstrap resamples CLUSTERS with replacement, keeping all of a cluster's trials together
+across conditions and samples. `cluster` names the row field that identifies the independent unit:
+"group" (base item) by default; experiments whose items are variants of a few semantic templates
+must pass the template field, since variants of one template are not independent. This is what
+makes the contrast paired. Judges are a fixed factor and are never pooled in a primary result:
+`summarize` reports each judge separately, and a pooled row only on request, labelled exploratory.
+
+No p-value is reported. An earlier exact sign test over trial cells treated dependent variants as
+independent (ten variants of one template gave p = 0.002 with one cluster); the cluster bootstrap
+interval is the only inferential statement. Discordant counts are given as descriptive numbers.
 """
 
 from __future__ import annotations
@@ -23,7 +29,6 @@ import random
 from collections import defaultdict
 from collections.abc import Iterable, Sequence
 from dataclasses import asdict, dataclass
-from math import comb
 
 METRICS = {"false_approval": "bad", "honest_acceptance": "good"}
 
@@ -56,11 +61,10 @@ class Contrast:
     diff: float | None  # rate(a) - rate(b)
     ci_low: float | None
     ci_high: float | None
-    n_groups: int
+    n_clusters: int
     n_boot: int
-    discordant_a_only: int  # paired cells approved under a and not under b
+    discordant_a_only: int  # paired cells approved under a and not under b (descriptive only)
     discordant_b_only: int
-    sign_test_p: float | None  # exact two-sided McNemar/sign test on discordant cells
 
 
 def _select(rows: Iterable[dict], metric: str, condition: str | None = None, judge: str | None = None) -> list[dict]:
@@ -82,12 +86,12 @@ def rate(rows: Sequence[dict], metric: str, condition: str, judge: str = "*") ->
     return Rate(metric, condition, judge, num / n if n else None, num, n, fails / n if n else None)
 
 
-def _group_counts(rows: Sequence[dict]) -> dict[str, tuple[int, int]]:
-    """group -> (approved, total) under the worst-case rule."""
+def _group_counts(rows: Sequence[dict], cluster: str = "group") -> dict[str, tuple[int, int]]:
+    """cluster -> (approved, total) under the worst-case rule."""
     acc: dict[str, list[int]] = defaultdict(lambda: [0, 0])
     for r in rows:
-        acc[r["group"]][0] += worst_case_approved(r)
-        acc[r["group"]][1] += 1
+        acc[r[cluster]][0] += worst_case_approved(r)
+        acc[r[cluster]][1] += 1
     return {g: (a, n) for g, (a, n) in acc.items()}
 
 
@@ -110,10 +114,11 @@ def _percentile(sorted_vals: Sequence[float], q: float) -> float:
 
 
 def bootstrap_rate(
-    rows: Sequence[dict], metric: str, condition: str, judge: str = "*", n_boot: int = 10_000, seed: int = 0, alpha: float = 0.05
-) -> Rate:
+    rows: Sequence[dict], metric: str, condition: str, judge: str = "*", n_boot: int = 10_000, seed: int = 0,
+    alpha: float = 0.05, cluster: str = "group",
+) -> Rate:  # fmt: skip
     base = rate(rows, metric, condition, judge)
-    counts = _group_counts(_select(rows, metric, condition, judge))
+    counts = _group_counts(_select(rows, metric, condition, judge), cluster)
     groups = sorted(counts)
     if not groups:
         return base
@@ -123,18 +128,19 @@ def bootstrap_rate(
 
 
 def paired_contrast(
-    rows: Sequence[dict], metric: str, a: str, b: str, judge: str = "*", n_boot: int = 10_000, seed: int = 0, alpha: float = 0.05
-) -> Contrast:
+    rows: Sequence[dict], metric: str, a: str, b: str, judge: str = "*", n_boot: int = 10_000, seed: int = 0,
+    alpha: float = 0.05, cluster: str = "group",
+) -> Contrast:  # fmt: skip
     """rate(a) - rate(b) with a percentile bootstrap over groups.
 
     Only groups that have trials in BOTH conditions enter the contrast, so that a and b are compared
     on the same items. With crossed assignment that is every group.
     """
-    ca = _group_counts(_select(rows, metric, a, judge))
-    cb = _group_counts(_select(rows, metric, b, judge))
+    ca = _group_counts(_select(rows, metric, a, judge), cluster)
+    cb = _group_counts(_select(rows, metric, b, judge), cluster)
     groups = sorted(set(ca) & set(cb))
     if not groups:
-        return Contrast(metric, a, b, judge, None, None, None, 0, n_boot, 0, 0, None)
+        return Contrast(metric, a, b, judge, None, None, None, 0, n_boot, 0, 0)
     diff = _ratio(groups, ca) - _ratio(groups, cb)  # type: ignore[operator]
     rng = random.Random(f"{seed}:{metric}:{a}:{b}:{judge}")
     diffs = []
@@ -143,7 +149,7 @@ def paired_contrast(
         diffs.append(_ratio(sample, ca) - _ratio(sample, cb))  # type: ignore[operator]
     diffs.sort()
 
-    # exact sign test on paired cells (same item, judge, seed)
+    # descriptive discordant counts on paired cells (same item, judge, seed)
     def cells(cond: str) -> dict[tuple, bool]:
         return {(r["item_id"], r["judge"], r.get("seed", 0)): worst_case_approved(r) for r in _select(rows, metric, cond, judge)}
 
@@ -153,33 +159,25 @@ def paired_contrast(
     b_only = sum(xb[k] and not xa[k] for k in shared)
     return Contrast(
         metric, a, b, judge, diff, _percentile(diffs, alpha / 2), _percentile(diffs, 1 - alpha / 2),
-        len(groups), n_boot, a_only, b_only, sign_test_p(a_only, b_only),
+        len(groups), n_boot, a_only, b_only,
     )  # fmt: skip
 
 
-def sign_test_p(k1: int, k2: int) -> float | None:
-    """Two-sided exact binomial test that discordant pairs split 50/50. Treats cells as independent,
-    which is optimistic when one group contributes many cells; the bootstrap CI is primary."""
-    n = k1 + k2
-    if n == 0:
-        return None
-    tail = sum(comb(n, i) for i in range(0, min(k1, k2) + 1)) / 2**n
-    return min(1.0, 2 * tail)
-
-
 def summarize(
-    rows: Sequence[dict], contrasts: Sequence[tuple[str, str]] = (), n_boot: int = 10_000, seed: int = 0
-) -> dict:
-    """All rates and the requested contrasts, pooled ("*") and per judge."""
+    rows: Sequence[dict], contrasts: Sequence[tuple[str, str]] = (), n_boot: int = 10_000, seed: int = 0,
+    cluster: str = "group", pooled: bool = False,
+) -> dict:  # fmt: skip
+    """All rates and the requested contrasts per judge. `pooled=True` adds a "*" row across judges,
+    which is exploratory: judges differ in family and in CLI context and are not exchangeable."""
     conditions = sorted({r["condition"] for r in rows})
-    judges = ["*", *sorted({r["judge"] for r in rows})]
+    judges = [*(["*"] if pooled else []), *sorted({r["judge"] for r in rows})]
     out: dict = {"n_rows": len(rows), "rates": [], "contrasts": []}
     for metric in METRICS:
         for j in judges:
             for c in conditions:
-                out["rates"].append(asdict(bootstrap_rate(rows, metric, c, j, n_boot, seed)))
+                out["rates"].append(asdict(bootstrap_rate(rows, metric, c, j, n_boot, seed, cluster=cluster)))
             for a, b in contrasts:
-                out["contrasts"].append(asdict(paired_contrast(rows, metric, a, b, j, n_boot, seed)))
+                out["contrasts"].append(asdict(paired_contrast(rows, metric, a, b, j, n_boot, seed, cluster=cluster)))
     return out
 
 
@@ -194,11 +192,11 @@ def to_markdown(summary: dict) -> str:
             f"[{f(r['ci_low'])}, {f(r['ci_high'])}] | {r['numerator']}/{r['denominator']} | {f(r['failure_rate'])} |"
         )
     if summary["contrasts"]:
-        lines += ["", "| metric | judge | a - b | diff | 95% CI | groups | a-only/b-only | sign p |", "|---|---|---|---|---|---|---|---|"]
+        lines += ["", "| metric | judge | a - b | diff | 95% CI | clusters | a-only/b-only |", "|---|---|---|---|---|---|---|"]
         for c in summary["contrasts"]:
             lines.append(
                 f"| {c['metric']} | {c['judge']} | {c['a']} - {c['b']} | {f(c['diff'])} | "
-                f"[{f(c['ci_low'])}, {f(c['ci_high'])}] | {c['n_groups']} | "
-                f"{c['discordant_a_only']}/{c['discordant_b_only']} | {f(c['sign_test_p'])} |"
+                f"[{f(c['ci_low'])}, {f(c['ci_high'])}] | {c['n_clusters']} | "
+                f"{c['discordant_a_only']}/{c['discordant_b_only']} |"
             )
     return "\n".join(lines) + "\n"

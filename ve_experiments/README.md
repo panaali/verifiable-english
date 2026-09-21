@@ -10,33 +10,46 @@
 
 ## Rules the code enforces
 
-- A scored run refuses to start unless `experiments/<id>/PREREG.md` exists, is tracked, has no uncommitted
-  changes, and names a primary metric, a primary contrast, a refutation condition and a sample size. The manifest
-  records the preregistration commit and blob. Scored runs cannot be truncated with `limit`.
-- A group (base item with its faithful and weakened variants) is never in both splits.
+- A scored run refuses to start unless `experiments/<id>/PREREG.md` is committed and its working bytes equal the
+  HEAD blob (so `assume-unchanged` cannot hide an edit), and it has a non-empty section for each Plan v2 field:
+  primary contrast, refutation condition, honest-acceptance constraint, smallest useful effect, capability or
+  calibration gate, sample size. The manifest records commit and blob. Scored runs cannot be truncated with `limit`,
+  require the real `ve` backend (never the stub), and require the split file, if one is used, to be committed.
+- Splits are per group and persistent: each group is hashed on its own, so adding items cannot move another group;
+  with a `split_file` a recorded group can never move, and an attempt to move it is an error.
+- Every trial has a stable identity (experiment, split, item, cell, judge, sample) that is part of the cache key
+  and is never shown to the model. Two trials that share a prompt are two model calls; a rerun replays both.
+- Judges have no tools. If a reply nevertheless contains a command, tool or search event, the trial is kept, marked
+  invalid, and scored as the worst case.
 - A prompt builder receives only the payload, without keys that start with `_`, and never the label or the id.
   A prompt that contains the item id is rejected.
 - Failed calls and unparseable verdicts stay in the data with `approved = null`. `stats.py` scores them as the worst
-  case for their label (approved if bad, rejected if good) and reports the failure rate beside every metric.
+  case for their label and reports the failure rate beside every metric.
 - Verdict parsing is strict: the reply must end with a JSON object whose `verdict` is exactly one of the allowed
   strings. No keyword search and no case folding.
+- Run directories are created atomically before any call and are never reused; files are opened with `x`.
+- `stats.py` reports each judge separately (a pooled row only on request, exploratory), bootstraps over the cluster
+  field the experiment names (semantic template for E1), and reports no p-value.
 
 ## Model calls
 
-`claude -p --model <id> --output-format json --tools "" --strict-mcp-config --system-prompt <s>` with the prompt on
-stdin, and `codex exec -m <id> -s read-only --skip-git-repo-check --json --ephemeral -` with system text and prompt
-on stdin. Both run from an empty temporary directory, so no judge can read this repository. With these flags a
-trivial Claude call carries about 500 input tokens instead of about 30,000. `codex exec` has no equivalent flag and
-carries about 13,600 input tokens of its own context per call; judges from the two families therefore do not see
-identical surrounding context, which is a limitation to state in the paper.
+Claude: `claude -p --model <id> --output-format json --tools "" --strict-mcp-config --system-prompt <s>`, prompt on
+stdin. Codex: `codex exec -m <id> -s read-only --skip-git-repo-check --json --ephemeral --ignore-user-config
+--ignore-rules --disable shell_tool --disable apps --disable browser_use --disable computer_use --disable plugins
+-c web_search="disabled" -`, system text and prompt on stdin. Both run from an empty temporary directory.
 
-The CLIs accept no sampling seed. `seed` only separates cache entries: a new seed is a new independent sample, and
-a repeated seed replays the stored reply.
+`-s read-only` alone is not isolation: with the default flags gpt-5.6-luna, asked to list `/Users/.../code`, ran
+`ls` and printed the listing, so a judge could have read ground truth. With the flags above the same request is
+answered "CANNOT", and Claude with `--tools ""` answers the same. Both were checked live on 2026-09-21.
 
-Measured on 2026-09-21: 24 short calls (12 per model) at concurrency 6 took 23.4 s, about 1 s per call effective;
-mean latency 4.3 s (Haiku 4.5) and 5.7 s (gpt-5.6-luna); no failures.
+Context asymmetry: a trivial call carries about 500 input tokens for Claude and about 6,600 for Codex with these
+flags (13,600 before). Judges from the two families therefore do not see identical surrounding context.
 
-The concurrency limit is per `LLMClient` (per process). Two experiment processes at once double the load.
+The CLIs accept no sampling seed. `seed` and the trial identity only separate cache entries.
+
+Concurrency is limited per provider CLI (6 for `claude`, 6 for `codex`) and per process. Measured on 2026-09-21:
+about 4 s (Haiku 4.5) and 6 s (gpt-5.6-luna) for a one-line reply; E1 judge prompts with 150 words of reasoning take
+10-30 s.
 
 ## Minimal use
 
