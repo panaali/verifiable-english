@@ -26,6 +26,13 @@ def strings (j : Json) : Except String (List String) := do
 def identifier (s : String) : Bool :=
   s.utf8ByteSize ≤ 64 && Surface.identifier s
 
+/-- Runtime-only cap on identifier runs in source. The unbudgeted reference
+parser remains independent of this wire-resource restriction. -/
+def sourceIdentifierBudget (text : String) : Bool :=
+  (text.toList.foldl (fun (state : Nat × Bool) c =>
+    if Surface.identChar c then (state.1 + 1, state.2 && state.1 < 64)
+    else (0, state.2)) (0, true)).2
+
 abbrev reserved := Surface.reserved
 abbrev generatedName := Surface.generatedName
 
@@ -182,6 +189,7 @@ def runCase (j : Json) : Except String Json := do
     throw "internal printer/parser disagreement"
   if let .ok source := j.getObjVal? "source" then
     let text ← source.getStr?
+    unless sourceIdentifierBudget text do throw "ResourceLimit: source identifier exceeds 64 bytes"
     unless Surface.parse v.environment text == some d.formulas do
       throw "source/AST mismatch"
   let values := d.formulas.map (fun a => a.eval m [])

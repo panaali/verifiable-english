@@ -1,4 +1,5 @@
 import VE.Surface
+import VE.Bridge
 import VE.Finite
 
 /-! Executable regressions. These commands are tests, not additional metatheory. -/
@@ -37,6 +38,10 @@ private def env : Environment where
 #guard Surface.identifier (String.mk (List.replicate 80 'a'))
 #guard Surface.readIdent (List.replicate 80 'a' ++ ['.']) ==
   some (String.mk (List.replicate 80 'a'), ['.'])
+#guard Bridge.sourceIdentifierBudget (String.mk (List.replicate 64 'a'))
+#guard !Bridge.sourceIdentifierBudget (String.mk (List.replicate 65 'a'))
+#guard Bridge.sourceIdentifierBudget (String.mk (List.replicate 64 'a' ++ [' '] ++ List.replicate 64 'b'))
+#guard !Bridge.sourceIdentifierBudget ("@" ++ String.mk (List.replicate 65 'a'))
 #guard !Surface.declarationName "x123"
 #guard !Surface.declarationName "equals"
 #guard !Surface.declarationName "Bad"
