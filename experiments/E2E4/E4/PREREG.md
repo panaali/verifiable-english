@@ -57,6 +57,9 @@ families; scored **60 invalid + 60 valid** from **12 templates × five fresh
 vocabularies**. Templates and vocabularies are disjoint across splits. All three
 arms cross all assigned items. Full scoring is 120 × 3 = 360 calls per judge per
 sample. Repetitions do not create more independent structural templates.
+The effective independent sample size is **about 12 templates, not 60 items**
+per label: the five renamed versions of each template are near-replicates.
+Additional item-level trials do not repair this structural sample-size limit.
 
 Held-out templates cover quantifier order, shared versus separate existential
 witnesses, relation subject/range, witness direction, transitive paths, negative
@@ -92,6 +95,11 @@ vocabulary instances within structural templates. Use equal-weight paired
 `experiments.cluster_stats.cluster_t`, K=12 and df=11, rather than a percentile
 bootstrap. Report dependence on approximately normal template means and the
 limited structural population; do not treat 60 renamed examples as 60 independent
-templates. Report each judge, valid/invalid denominators, gate outcomes and dishonest-
+templates. `python -m experiments.E2E4.analyze_e4 TRIALS.jsonl --judge JUDGE
+--split scored --samples N` implements these primary and honest-acceptance paired
+contrasts, checks complete assignments, retains recorded failures, and reports
+60 items but K=12 clusters and df=11 for each endpoint. It never clusters by the
+template/vocabulary `group` field. Report each judge, valid/invalid denominators,
+gate outcomes and dishonest-
 critic outcomes separately. Do not pool judges with different contexts/backends.
 No new model results are included in the material-validation report.

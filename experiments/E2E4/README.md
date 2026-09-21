@@ -40,3 +40,11 @@ Use template-cluster t intervals from `experiments.cluster_stats`, averaging
 renamings within templates. Eight/twelve scored templates still limit population
 precision. Neither E2 nor E4 freezes a useful-size effect without a dev-based power
 amendment. An unrun revised pilot must not be described as meeting its rate gate.
+
+For E4, the effective independent sample size is about 12 templates, not 60
+items per label: the five vocabulary renamings are near-replicates. Analyze
+recorded primary and honest-acceptance contrasts with
+`uv run python -m experiments.E2E4.analyze_e4 PATH/trials.jsonl --judge JUDGE --split scored --samples 1`.
+It checks complete paired assignments, keeps failed calls in their denominators,
+and reports 60 items but 12 template clusters (df=11). Gate outcomes and the
+unchecked dishonest-critic arm still require separate reporting.
