@@ -93,3 +93,39 @@ def test_variants_of_one_template_are_one_cluster_and_give_no_p_value():
     assert c.n_clusters == 1 and not hasattr(c, "sign_test_p")
     assert (c.discordant_a_only, c.discordant_b_only) == (0, 10)
     assert c.ci_low == c.ci_high == c.diff == -1.0  # one cluster: the bootstrap cannot express uncertainty, and n_clusters says so
+
+
+def _rows(cells):
+    out = []
+    for (item, template, cond), approved in cells.items():
+        out.append({"item_id": item, "group": item, "template": template, "label": "bad", "condition": cond,
+                    "judge": "j", "approved": approved, "sample": 0})  # fmt: skip
+    return out
+
+
+def test_cluster_t_uses_per_template_differences():
+    import pytest as _pytest
+
+    from ve_experiments.stats import cluster_t_contrast
+
+    cells = {}
+    for t, (fa_a, fa_b) in {"t1": (1, 3), "t2": (2, 4), "t3": (0, 4)}.items():
+        for i in range(4):
+            cells[(f"{t}-{i}", t, "a")] = i < fa_a
+            cells[(f"{t}-{i}", t, "b")] = i < fa_b
+    c = cluster_t_contrast(_rows(cells), "false_approval", "a", "b", "j")
+    assert c.n_clusters == 3 and c.per_cluster == {"t1": -0.5, "t2": -0.5, "t3": -1.0}
+    assert c.diff == _pytest.approx(-2 / 3)
+    half = 4.303 * c.sd / 3**0.5
+    assert c.ci_low == _pytest.approx(c.diff - half) and c.ci_high == _pytest.approx(c.diff + half)
+
+
+def test_incomplete_pairing_is_rejected():
+    import pytest as _pytest
+
+    from ve_experiments.stats import PairingError, cluster_t_contrast, paired_contrast
+
+    cells = {("x1", "t1", "a"): True, ("x1", "t1", "b"): False, ("x2", "t2", "a"): True, ("x3", "t2", "b"): True}
+    for fn in (cluster_t_contrast, lambda *a: paired_contrast(*a, n_boot=10, cluster="template")):
+        with _pytest.raises(PairingError):
+            fn(_rows(cells), "false_approval", "a", "b", "j")

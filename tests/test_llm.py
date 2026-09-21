@@ -193,3 +193,43 @@ def test_model_settings_suffix():
     assert default_backend_for("claude-haiku-4-5-20251001@thinking=0").__name__ == "claude_backend"
     with pytest.raises(ValueError):
         split_model("m@temperature=0")
+
+
+def test_tool_use_in_a_failed_attempt_invalidates_the_successful_retry(tmp_path):
+    from ve_experiments.llm import BackendError, parse_codex_events
+
+    failed = "\n".join([
+        json.dumps({"type": "item.completed", "item": {"type": "command_execution", "command": "cat labels.jsonl"}}),
+        json.dumps({"type": "turn.failed", "error": {"message": "stream closed"}}),
+    ])  # fmt: skip
+    with pytest.raises(BackendError) as info:
+        parse_codex_events(failed)
+    assert info.value.tool_events and "cat labels.jsonl" in info.value.tool_events[0]
+    calls = []
+
+    def backend(model, system, prompt, timeout_s, cwd):
+        calls.append(1)
+        if len(calls) == 1:
+            return parse_codex_events(failed)
+        return RawReply('{"verdict": "approve"}')
+
+    res = LLMClient(cache_dir=tmp_path, backend=backend, backoff_s=0).call("gpt-x", "p")
+    assert res.ok and res.attempts == 2 and res.used_tools and "attempt1:" in res.tool_events[0]
+    again = LLMClient(cache_dir=tmp_path, backend=backend).call("gpt-x", "p")
+    assert again.from_cache and again.used_tools
+
+
+def test_claude_is_launched_without_ambient_context(monkeypatch, tmp_path):
+    import ve_experiments.llm as llm
+
+    seen = {}
+
+    def fake_run(cmd, stdin, timeout_s, cwd, env=None, events_from=None):
+        seen["cmd"] = list(cmd)
+        return json.dumps({"result": "ok", "usage": {}})
+
+    monkeypatch.setattr(llm, "_run", fake_run)
+    llm.claude_backend("claude-x", "sys", "p", 5, tmp_path)
+    cmd = seen["cmd"]
+    assert "--safe-mode" in cmd and "--disable-slash-commands" in cmd and "--strict-mcp-config" in cmd
+    assert cmd[cmd.index("--setting-sources") + 1] == "" and cmd[cmd.index("--tools") + 1] == ""

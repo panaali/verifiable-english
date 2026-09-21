@@ -136,6 +136,8 @@ def paired_contrast(
     Only groups that have trials in BOTH conditions enter the contrast, so that a and b are compared
     on the same items. With crossed assignment that is every group.
     """
+    if judge != "*":
+        _require_paired(rows, metric, a, b, judge)
     ca = _group_counts(_select(rows, metric, a, judge), cluster)
     cb = _group_counts(_select(rows, metric, b, judge), cluster)
     groups = sorted(set(ca) & set(cb))
@@ -161,6 +163,55 @@ def paired_contrast(
         metric, a, b, judge, diff, _percentile(diffs, alpha / 2), _percentile(diffs, 1 - alpha / 2),
         len(groups), n_boot, a_only, b_only,
     )  # fmt: skip
+
+
+class PairingError(ValueError):
+    pass
+
+
+def _require_paired(rows: Sequence[dict], metric: str, a: str, b: str, judge: str) -> None:
+    """A paired contrast is only defined when both cells hold exactly the same (item, sample) trials."""
+    ka = sorted((r["item_id"], r.get("sample", 0)) for r in _select(rows, metric, a, judge))
+    kb = sorted((r["item_id"], r.get("sample", 0)) for r in _select(rows, metric, b, judge))
+    if ka != kb or len(set(ka)) != len(ka):
+        raise PairingError(f"{judge}: cells {a!r} and {b!r} do not contain the same trials "
+                           f"({len(ka)} vs {len(kb)}, {len(set(ka) ^ set(kb))} unmatched)")  # fmt: skip
+
+
+T975 = {1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571, 6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228,
+        11: 2.201, 12: 2.179, 13: 2.160, 14: 2.145, 15: 2.131, 16: 2.120, 17: 2.110, 18: 2.101, 19: 2.093, 20: 2.086,
+        21: 2.080, 22: 2.074, 23: 2.069, 24: 2.064, 25: 2.060, 26: 2.056, 27: 2.052, 28: 2.048, 29: 2.045, 30: 2.042}  # fmt: skip
+
+
+@dataclass(frozen=True)
+class ClusterT:
+    metric: str
+    a: str
+    b: str
+    judge: str
+    diff: float  # unweighted mean over clusters of (rate in a - rate in b) within the cluster
+    ci_low: float
+    ci_high: float
+    sd: float  # between-cluster standard deviation of the per-cluster differences
+    n_clusters: int
+    per_cluster: dict
+
+
+def cluster_t_contrast(rows: Sequence[dict], metric: str, a: str, b: str, judge: str, cluster: str = "template") -> ClusterT:
+    """The per-cluster differences d_c = rate_a(c) - rate_b(c) are the data; the estimate is their mean, the 95%
+    interval is mean +/- t(0.975, G-1) * sd / sqrt(G). Clusters weigh equally whatever their number of items.
+    Requires complete pairing and at least two clusters (at most 31)."""
+    _require_paired(rows, metric, a, b, judge)
+    ca = _group_counts(_select(rows, metric, a, judge), cluster)
+    cb = _group_counts(_select(rows, metric, b, judge), cluster)
+    d = {c: ca[c][0] / ca[c][1] - cb[c][0] / cb[c][1] for c in sorted(ca)}
+    g = len(d)
+    if g < 2 or g - 1 not in T975:
+        raise ValueError(f"cluster-t needs between 2 and 31 clusters, got {g}")
+    mean = sum(d.values()) / g
+    sd = (sum((x - mean) ** 2 for x in d.values()) / (g - 1)) ** 0.5
+    half = T975[g - 1] * sd / g**0.5
+    return ClusterT(metric, a, b, judge, mean, mean - half, mean + half, sd, g, d)
 
 
 def summarize(

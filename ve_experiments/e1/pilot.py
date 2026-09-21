@@ -17,7 +17,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from ..llm import LLMClient, Request, VerdictParseError, parse_verdict
-from ..runner import Experiment, Item, load_trials, run
+from ..runner import Condition, Experiment, Item, load_trials, run
 from ..stats import bootstrap_rate, paired_contrast, rate
 from .prompts import E1B_ANSWERS, cell_name, conditions, e1b_prompt
 from .views import VIEWS
@@ -46,7 +46,23 @@ def to_items(cands: list[dict]) -> list[Item]:
 def experiment(cands: list[dict], views, explanations, judges) -> Experiment:
     usable = [c for c in cands if c.get("explanation")]  # generation failures are excluded before judging, and counted
     return Experiment("E1", to_items(usable), conditions(views, explanations), list(judges), root=ROOT,
-                      split_file=E1 / "splits.json")
+                      split_file=E1 / "splits.json", row_fields=("template",))
+
+
+def score_e1b(item: Item, verdict: str | None) -> dict:
+    truth = "".join("T" if t else "F" for t in item.payload["_e1b_truth"])
+    correct = 0 if verdict is None else sum(a == t for a, t in zip(verdict, truth))  # failures and tool use: 0 of 2
+    return {"truth": truth, "answer": verdict, "correct_of_2": correct}
+
+
+def e1b_experiment(cands: list[dict], judges, views=VIEWS) -> Experiment:
+    """E1b through the hardened runner: one call per trial identity (identical prompts never collapse), tool use
+    invalidates, failures stay in the rows with 0 of 2, run directories are never overwritten, and the scored
+    split needs the frozen PREREG of E1."""
+    usable = [c for c in cands if c.get("explanation")]  # the same candidates as E1
+    conds = [Condition(v, (lambda v: lambda p: e1b_prompt(p, v))(v)) for v in views]
+    return Experiment("E1b", to_items(usable), conds, list(judges), root=ROOT, dir_name="E1", split_file=E1 / "splits.json",
+                      allowed_verdicts=E1B_ANSWERS, row_fields=("template",), score=score_e1b)  # fmt: skip
 
 
 def run_gate(client: LLMClient, items_name: str) -> Path:
@@ -60,26 +76,8 @@ def run_cells(client: LLMClient, items_name: str) -> Path:
 
 
 def run_e1b(client: LLMClient, items_name: str, judges=WEAK) -> Path:
-    cands = [c for c in load_candidates(name=items_name) if c["split"] == "dev"]
-    reqs, meta = [], []
-    for c in cands:
-        for view in VIEWS:
-            for j in judges:
-                reqs.append(Request(j, e1b_prompt(c, view), tag=f"E1b/dev/{c['id']}/{view}"))
-                meta.append((c, view, j))
-    out = E1 / "runs" / f"pilot-e1b-{items_name}"
-    out.mkdir(parents=True, exist_ok=True)
-    with open(out / "trials.jsonl", "w", encoding="utf-8") as fh:
-        for (c, view, j), res in zip(meta, client.map(reqs)):
-            truth = "".join("T" if t else "F" for t in c["e1b_truth"])
-            try:
-                answer = parse_verdict(res.text, allowed=E1B_ANSWERS).value
-            except VerdictParseError:
-                answer = None
-            correct = 0 if answer is None else sum(a == t for a, t in zip(answer, truth))  # failures score 0 of 2
-            fh.write(json.dumps({"item_id": c["id"], "group": c["group"], "view": view, "judge": j, "truth": truth,
-                                 "answer": answer, "correct_of_2": correct, "ok": res.ok, "reply": res.text}) + "\n")  # fmt: skip
-    return out
+    exp = e1b_experiment(load_candidates(name=items_name), judges)
+    return run(exp, client, "dev")  # a fresh run directory every time; nothing is overwritten
 
 
 # --------------------------------------------------------------------------- report
@@ -165,7 +163,7 @@ def report(items_name: str) -> str:
         for j in sorted({r["judge"] for r in rows}):
             cells = []
             for v in VIEWS:
-                sub = [r for r in rows if r["judge"] == j and r["view"] == v]
+                sub = [r for r in rows if r["judge"] == j and r.get("view", r.get("condition")) == v]
                 cells.append(f"{sum(r['correct_of_2'] for r in sub) / (2 * len(sub)):.3f} (n={2 * len(sub)})")
             lines.append(f"| {j} | " + " | ".join(cells) + " |")
     return "\n".join(lines) + "\n"
