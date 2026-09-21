@@ -1,3 +1,4 @@
+import VE.TableauChecks
 import VE.TableauChecker
 import VE.TableauClosure
 import VE.Tableau
@@ -126,3 +127,8 @@ import VE.ModelProofs
 #print axioms VE.Tableau.checkChildren_member
 #print axioms VE.Tableau.replay_sound
 #print axioms VE.Tableau.checkCertificate_sound
+
+#print axioms VE.Graph.check_sound_of_certificateSound
+#print axioms VE.Graph.check_entails_of_certificateSound
+#print axioms VE.Graph.check_unfolds_of_certificateSound
+#print axioms VE.Graph.tableau_certificateSound

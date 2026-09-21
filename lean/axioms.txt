@@ -68,9 +68,9 @@
 'VE.Graph.resolve_sound' depends on axioms: [propext, Quot.sound]
 'VE.Graph.checkNode_sound' depends on axioms: [propext, Quot.sound]
 'VE.Graph.checkNodes_sound' depends on axioms: [propext, Quot.sound]
-'VE.Graph.check_sound' depends on axioms: [propext, Quot.sound]
-'VE.Graph.check_entails' depends on axioms: [propext, Quot.sound]
-'VE.Graph.check_unfolds' depends on axioms: [propext, Quot.sound]
+'VE.Graph.check_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Graph.check_entails' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Graph.check_unfolds' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.GraphChecks.testCertificate_sound' does not depend on any axioms
 'VE.Bridge.lookup_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Bridge.tupleCheck_iff' depends on axioms: [propext]
@@ -103,4 +103,8 @@
 'VE.Tableau.checkChildren_member' depends on axioms: [propext, Quot.sound]
 'VE.Tableau.replay_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Tableau.checkCertificate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
-PASS: 23 source files; 105 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+'VE.Graph.check_sound_of_certificateSound' depends on axioms: [propext, Quot.sound]
+'VE.Graph.check_entails_of_certificateSound' depends on axioms: [propext, Quot.sound]
+'VE.Graph.check_unfolds_of_certificateSound' depends on axioms: [propext, Quot.sound]
+'VE.Graph.tableau_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]
+PASS: 24 source files; 109 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
