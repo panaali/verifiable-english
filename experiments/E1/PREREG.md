@@ -1,4 +1,4 @@
-Status: DRAFT v5 for cross-review (2026-09-21). To freeze: replace this line by `Status: FROZEN` and commit; the runner refuses the scored split otherwise.
+Status: FROZEN 2026-09-21 (v5 with the six cross-review edits; the commit that introduces this line is the freeze record)
 
 # E1 preregistration
 
