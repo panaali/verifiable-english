@@ -2,6 +2,7 @@ import VE.Consequence
 import VE.SurfaceProofs
 import VE.EnvironmentProofs
 import VE.ParserContracts
+import VE.GraphChecks
 
 #print axioms VE.term_defined
 #print axioms VE.typed_empty
@@ -73,3 +74,16 @@ import VE.ParserContracts
 #print axioms VE.Surface.canonical_unique
 #print axioms VE.Surface.accepted_normalize_eq_iff
 #print axioms VE.Surface.normalize_print
+
+#print axioms VE.Graph.acyclicCheck_dependency
+#print axioms VE.Graph.path_rank
+#print axioms VE.Graph.acyclicCheck_sound
+#print axioms VE.Graph.lookup_sound
+#print axioms VE.Graph.resolve_sound
+#print axioms VE.Graph.checkNode_sound
+#print axioms VE.Graph.checkNodes_sound
+#print axioms VE.Graph.check_sound
+#print axioms VE.Graph.check_entails
+#print axioms VE.Graph.check_unfolds
+
+#print axioms VE.GraphChecks.testCertificate_sound
