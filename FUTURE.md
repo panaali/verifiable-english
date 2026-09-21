@@ -6,6 +6,18 @@ per hour, write it into `PLAN.md` as a new phase, and continue. The project does
 
 Standing limits: no model training (no GPU yet), no pushing or publishing without the user, no human-participant claims.
 
+## Phase S: beat external state of the art in pure model/agent settings (user priority, 11:54; cost-limited, not time-limited)
+
+Human studies are deferred. The goal is a model-only demonstration that VE beats existing methods, on shared items, at matched cost.
+
+| ID | Setting | VE arm | External baselines | Metric |
+|---|---|---|---|---|
+| S1 | **Requirement retention under long context and compaction.** An agent receives requirements early, then works through 50k / 200k / 800k tokens of distractor work, or through N forced compactions, and must then enforce or restate the requirements | requirements stored as VE claims + identity hashes, re-rendered and re-checked (parser, evaluator, equivalence oracle) after every compaction | prose notes; LLM-written summaries (the default compaction); a key-value memory tool; structured JSON requirements without a checker | semantic drift measured by the equivalence oracle against the original (EQUIVALENT / weaker / stronger / incomparable), and downstream enforcement accuracy on distinguishing scenarios |
+| S2 | Sign-off and critique on the E1/E4 items | VE rendering + checker + countermodels | prose debate with cross-examination; single critique; self-consistency voting; a FormalJudge-style pipeline (LLM writes a Dafny/Z3 spec, solver checks) | false approval and honest acceptance at matched token and dollar cost |
+| S3 | Multi-agent hand-off | claims passed between agents as VE with certificates | prose hand-off; JSON hand-off | meaning preserved across k hops (oracle), assumptions dropped |
+
+S1 is the most promising: models degrade with context length and compaction loses information, while a canonical, hashed, checkable claim does not. Design rules: preregister; same information in every arm; charge every arm its full token cost, including VE authoring and checking; report where VE loses.
+
 ## Phase 2 candidates (after the first paper draft)
 
 | Idea | Why it matters | Depends on | Added |
