@@ -119,7 +119,7 @@ def artifacts():
     doc_path = ROOT / 'docs/english-surface.md'
     marker = '<!-- BEGIN GENERATED ENGLISH EVIDENCE -->'
     doc_path.write_text(doc_path.read_text().split(marker)[0] + marker + '\n' + generated)
-    for path in sorted((ROOT / 'usecases').glob('*/environment.json')):
+    for path in sorted(p.with_name('environment.json') for p in (ROOT / 'usecases').glob('*/claims.ve')):
         env = Environment.from_json(path.read_bytes())
         source = path.with_name('claims.ve')
         document = parse(env, source.read_bytes())
