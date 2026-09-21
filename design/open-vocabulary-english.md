@@ -58,3 +58,32 @@ content phrases in fixed slots become symbols, and the environment is INFERRED f
 ## Build size
 
 One Codex task (high), then cross-family review, then merge. No API spend.
+
+## After review (2026-09-21): both reviewers said BUILD WITH CHANGES
+
+Reviews: `~/code/manage-agents/reviews/openvocab-review-astra.md`, `openvocab-review-fable.md`. Common ground, adopted:
+
+- The slot grammar above is NOT unambiguous ("likes New York", "born in the United States", "a member of Acme",
+  "research and development manager", "does not own", "is owned by", "believes that state ..."). Capitalisation must
+  never carry meaning. Inferring binary predicates, constants, sorts, plurals, passives and morphology is CUT.
+- An `introduced` list is not a safeguard: in open mode every typo parses, and a pipeline will not read the list.
+- The plan was wrong about the code: `--env` is required; there is no `ve env` command; no `some`/`no` forms;
+  descriptions are mandatory and hashed; extending an environment changes `environment_id` and so unbinds the
+  overlay's pinned review; the ambiguity audit relies on a finite lexicon.
+
+Version 1 (the only thing approved to build):
+1. Closed-mode errors name the unknown phrase with its span and suggest the nearest declared wordings.
+2. `ve propose --env E [--english-vocabulary O] TEXT`: uses today's grammar; the ONLY new thing it may infer is a
+   unary predicate from `<ref> is a|an <phrase>` / `<ref> is <phrase>` / `<ref> is not ...`, where a phrase is a maximal
+   run of tokens containing no boundary token (is, does, not, and, or, if, then, that, who, which, comma, period,
+   both, either, every, some, for); anything else is rejected as today. The argument sort comes from the binder noun
+   of the reference. Output: a PREVIEW with each proposed symbol, its source span, its signature, the nearest existing
+   symbols (edit distance and shared stem), a generated description that says it is machine-proposed, and the
+   deterministic paraphrase; plus candidate environment and overlay files written to an output directory, overlay
+   entries `suggested: true`, status unreviewed.
+3. A near-duplicate of an existing symbol (small edit distance or same stem) is a hard error unless acknowledged with
+   an explicit flag naming the symbol.
+4. Proposed environments cannot feed `check --prove`, `countermodel` or certificates until adopted: adoption is an
+   explicit command that writes the files and prints the new `environment_id`; nothing is adopted implicitly.
+5. The all-derivations audit is extended only to the finite lexicon obtained AFTER adoption (the open step is a
+   proposal generator, not a parser whose unambiguity we claim).
