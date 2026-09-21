@@ -62,8 +62,8 @@ def main():
     for key in ['cedar','gatekeeper']:
         c=m['proposed_adjudicated_counts'][key]
         rows.append([key.title(),cell(c['DIRECT'],n),cell(c['DIRECT']+c['REIFIED'],n)])
-    rows.extend([['All frozen claimed-fit witnesses','114 parse/type checks','3 Cedar translations later found defective'],['Proposed corrected fit inventory','111/210','Not a pooled population estimate']])
-    write('e0-corrections-table.md','Proposed adjudication only; unchanged datasets retain the frozen counts.\n\n'+table(['Dataset / inventory','Strict fit / checks','Lenient fit / qualification'],rows)+'\n'+SRC)
+    inventory=[['Frozen claimed-fit witnesses',114,'Parse/type checks'],['Defective Cedar translations',3,'Removed from proposed fit inventory'],['Proposed corrected fit inventory','111/210','Not a pooled population estimate']]
+    write('e0-corrections-table.md','Proposed adjudication only; unchanged datasets retain the frozen counts.\n\n'+table(['Dataset','Strict fit','Lenient fit'],rows)+'\n'+table(['Witness inventory','Count','Qualification'],inventory)+'\n'+SRC)
     rows=[]
     for e in m['roadmap_independent']:
         rows.append([e['construct'],e['total'],', '.join(f'{name} {e["per_dataset"][key]}' for key,name in DATASETS if e['per_dataset'][key])])

@@ -55,6 +55,9 @@ def main():
         if suffix=='pdf':meta.update(CreationDate=None,ModDate=None)
         elif suffix=='svg':meta.update(Date=None)
         fig.savefig(ROOT/f'figures/judge-ladder.{suffix}',dpi=180,metadata=meta)
+        if suffix == 'svg':
+            path = ROOT / 'figures/judge-ladder.svg'
+            path.write_text('\n'.join(line.rstrip() for line in path.read_text().splitlines()) + '\n')
     plt.close(fig)
     write('judge-ladder-data.json',json.dumps({'local':local,'colab':colab,'hosted':hosted},indent=2))
     print('Judge tables and plot: DEV-PILOT counts parsed from frozen sources.')
