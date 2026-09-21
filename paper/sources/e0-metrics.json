@@ -1,0 +1,2309 @@
+{
+  "second_counts": {
+    "folio": {
+      "DIRECT": 22,
+      "REIFIED": 3,
+      "OPAQUE": 4,
+      "NO": 1
+    },
+    "proofwriter": {
+      "DIRECT": 26,
+      "REIFIED": 0,
+      "OPAQUE": 4,
+      "NO": 0
+    },
+    "cedar": {
+      "DIRECT": 0,
+      "REIFIED": 13,
+      "OPAQUE": 17,
+      "NO": 0
+    },
+    "gatekeeper": {
+      "DIRECT": 1,
+      "REIFIED": 5,
+      "OPAQUE": 24,
+      "NO": 0
+    },
+    "alloy": {
+      "DIRECT": 4,
+      "REIFIED": 14,
+      "OPAQUE": 3,
+      "NO": 9
+    },
+    "fret": {
+      "DIRECT": 0,
+      "REIFIED": 12,
+      "OPAQUE": 12,
+      "NO": 6
+    },
+    "clover": {
+      "DIRECT": 3,
+      "REIFIED": 11,
+      "OPAQUE": 9,
+      "NO": 7
+    }
+  },
+  "proposed_adjudicated_counts": {
+    "folio": {
+      "DIRECT": 22,
+      "REIFIED": 3,
+      "OPAQUE": 4,
+      "NO": 1
+    },
+    "proofwriter": {
+      "DIRECT": 26,
+      "REIFIED": 0,
+      "OPAQUE": 4,
+      "NO": 0
+    },
+    "cedar": {
+      "DIRECT": 5,
+      "REIFIED": 5,
+      "OPAQUE": 20,
+      "NO": 0
+    },
+    "gatekeeper": {
+      "DIRECT": 2,
+      "REIFIED": 4,
+      "OPAQUE": 24,
+      "NO": 0
+    },
+    "alloy": {
+      "DIRECT": 4,
+      "REIFIED": 14,
+      "OPAQUE": 3,
+      "NO": 9
+    },
+    "fret": {
+      "DIRECT": 0,
+      "REIFIED": 12,
+      "OPAQUE": 12,
+      "NO": 6
+    },
+    "clover": {
+      "DIRECT": 3,
+      "REIFIED": 11,
+      "OPAQUE": 9,
+      "NO": 7
+    }
+  },
+  "agreement": {
+    "folio": {
+      "first_counts": {
+        "DIRECT": 26,
+        "REIFIED": 2,
+        "OPAQUE": 2
+      },
+      "second_counts": {
+        "DIRECT": 22,
+        "REIFIED": 3,
+        "OPAQUE": 4,
+        "NO": 1
+      },
+      "four_way": {
+        "n": 30,
+        "matching": 24,
+        "observed": 0.8,
+        "expected": 0.6511111111111111,
+        "kappa": 0.4267515923566881,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "DIRECT": {
+            "DIRECT": 22,
+            "REIFIED": 2,
+            "OPAQUE": 2,
+            "NO": 0
+          },
+          "REIFIED": {
+            "DIRECT": 0,
+            "REIFIED": 1,
+            "OPAQUE": 1,
+            "NO": 0
+          },
+          "OPAQUE": {
+            "DIRECT": 0,
+            "REIFIED": 0,
+            "OPAQUE": 1,
+            "NO": 1
+          },
+          "NO": {
+            "DIRECT": 0,
+            "REIFIED": 0,
+            "OPAQUE": 0,
+            "NO": 0
+          }
+        }
+      },
+      "collapsed": {
+        "n": 30,
+        "matching": 27,
+        "observed": 0.9,
+        "expected": 0.7888888888888889,
+        "kappa": 0.5263157894736844,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "FIT": {
+            "FIT": 25,
+            "NO_FIT": 3
+          },
+          "NO_FIT": {
+            "FIT": 0,
+            "NO_FIT": 2
+          }
+        }
+      }
+    },
+    "proofwriter": {
+      "first_counts": {
+        "DIRECT": 30
+      },
+      "second_counts": {
+        "DIRECT": 26,
+        "OPAQUE": 4
+      },
+      "four_way": {
+        "n": 30,
+        "matching": 26,
+        "observed": 0.8666666666666667,
+        "expected": 0.8666666666666667,
+        "kappa": 0.0,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "DIRECT": {
+            "DIRECT": 26,
+            "REIFIED": 0,
+            "OPAQUE": 4,
+            "NO": 0
+          },
+          "REIFIED": {
+            "DIRECT": 0,
+            "REIFIED": 0,
+            "OPAQUE": 0,
+            "NO": 0
+          },
+          "OPAQUE": {
+            "DIRECT": 0,
+            "REIFIED": 0,
+            "OPAQUE": 0,
+            "NO": 0
+          },
+          "NO": {
+            "DIRECT": 0,
+            "REIFIED": 0,
+            "OPAQUE": 0,
+            "NO": 0
+          }
+        }
+      },
+      "collapsed": {
+        "n": 30,
+        "matching": 26,
+        "observed": 0.8666666666666667,
+        "expected": 0.8666666666666667,
+        "kappa": 0.0,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "FIT": {
+            "FIT": 26,
+            "NO_FIT": 4
+          },
+          "NO_FIT": {
+            "FIT": 0,
+            "NO_FIT": 0
+          }
+        }
+      }
+    },
+    "cedar": {
+      "first_counts": {
+        "REIFIED": 14,
+        "DIRECT": 15,
+        "OPAQUE": 1
+      },
+      "second_counts": {
+        "REIFIED": 13,
+        "OPAQUE": 17
+      },
+      "four_way": {
+        "n": 30,
+        "matching": 4,
+        "observed": 0.13333333333333333,
+        "expected": 0.22111111111111112,
+        "kappa": -0.11269614835948646,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "DIRECT": {
+            "DIRECT": 0,
+            "REIFIED": 8,
+            "OPAQUE": 7,
+            "NO": 0
+          },
+          "REIFIED": {
+            "DIRECT": 0,
+            "REIFIED": 4,
+            "OPAQUE": 10,
+            "NO": 0
+          },
+          "OPAQUE": {
+            "DIRECT": 0,
+            "REIFIED": 1,
+            "OPAQUE": 0,
+            "NO": 0
+          },
+          "NO": {
+            "DIRECT": 0,
+            "REIFIED": 0,
+            "OPAQUE": 0,
+            "NO": 0
+          }
+        }
+      },
+      "collapsed": {
+        "n": 30,
+        "matching": 12,
+        "observed": 0.4,
+        "expected": 0.43777777777777777,
+        "kappa": -0.06719367588932801,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "FIT": {
+            "FIT": 12,
+            "NO_FIT": 17
+          },
+          "NO_FIT": {
+            "FIT": 1,
+            "NO_FIT": 0
+          }
+        }
+      }
+    },
+    "gatekeeper": {
+      "first_counts": {
+        "OPAQUE": 16,
+        "DIRECT": 10,
+        "REIFIED": 4
+      },
+      "second_counts": {
+        "OPAQUE": 24,
+        "REIFIED": 5,
+        "DIRECT": 1
+      },
+      "four_way": {
+        "n": 30,
+        "matching": 18,
+        "observed": 0.6,
+        "expected": 0.46,
+        "kappa": 0.2592592592592592,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "DIRECT": {
+            "DIRECT": 1,
+            "REIFIED": 4,
+            "OPAQUE": 5,
+            "NO": 0
+          },
+          "REIFIED": {
+            "DIRECT": 0,
+            "REIFIED": 1,
+            "OPAQUE": 3,
+            "NO": 0
+          },
+          "OPAQUE": {
+            "DIRECT": 0,
+            "REIFIED": 0,
+            "OPAQUE": 16,
+            "NO": 0
+          },
+          "NO": {
+            "DIRECT": 0,
+            "REIFIED": 0,
+            "OPAQUE": 0,
+            "NO": 0
+          }
+        }
+      },
+      "collapsed": {
+        "n": 30,
+        "matching": 22,
+        "observed": 0.7333333333333333,
+        "expected": 0.52,
+        "kappa": 0.4444444444444443,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "FIT": {
+            "FIT": 6,
+            "NO_FIT": 8
+          },
+          "NO_FIT": {
+            "FIT": 0,
+            "NO_FIT": 16
+          }
+        }
+      }
+    },
+    "alloy": {
+      "first_counts": {
+        "OPAQUE": 11,
+        "REIFIED": 14,
+        "NO": 2,
+        "DIRECT": 3
+      },
+      "second_counts": {
+        "NO": 9,
+        "REIFIED": 14,
+        "OPAQUE": 3,
+        "DIRECT": 4
+      },
+      "four_way": {
+        "n": 30,
+        "matching": 20,
+        "observed": 0.6666666666666666,
+        "expected": 0.2877777777777778,
+        "kappa": 0.53198127925117,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "DIRECT": {
+            "DIRECT": 3,
+            "REIFIED": 0,
+            "OPAQUE": 0,
+            "NO": 0
+          },
+          "REIFIED": {
+            "DIRECT": 1,
+            "REIFIED": 13,
+            "OPAQUE": 0,
+            "NO": 0
+          },
+          "OPAQUE": {
+            "DIRECT": 0,
+            "REIFIED": 0,
+            "OPAQUE": 3,
+            "NO": 8
+          },
+          "NO": {
+            "DIRECT": 0,
+            "REIFIED": 1,
+            "OPAQUE": 0,
+            "NO": 1
+          }
+        }
+      },
+      "collapsed": {
+        "n": 30,
+        "matching": 29,
+        "observed": 0.9666666666666667,
+        "expected": 0.5133333333333333,
+        "kappa": 0.9315068493150686,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "FIT": {
+            "FIT": 17,
+            "NO_FIT": 0
+          },
+          "NO_FIT": {
+            "FIT": 1,
+            "NO_FIT": 12
+          }
+        }
+      }
+    },
+    "fret": {
+      "first_counts": {
+        "REIFIED": 8,
+        "OPAQUE": 18,
+        "NO": 4
+      },
+      "second_counts": {
+        "REIFIED": 12,
+        "OPAQUE": 12,
+        "NO": 6
+      },
+      "four_way": {
+        "n": 30,
+        "matching": 22,
+        "observed": 0.7333333333333333,
+        "expected": 0.37333333333333335,
+        "kappa": 0.5744680851063828,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "DIRECT": {
+            "DIRECT": 0,
+            "REIFIED": 0,
+            "OPAQUE": 0,
+            "NO": 0
+          },
+          "REIFIED": {
+            "DIRECT": 0,
+            "REIFIED": 8,
+            "OPAQUE": 0,
+            "NO": 0
+          },
+          "OPAQUE": {
+            "DIRECT": 0,
+            "REIFIED": 4,
+            "OPAQUE": 11,
+            "NO": 3
+          },
+          "NO": {
+            "DIRECT": 0,
+            "REIFIED": 0,
+            "OPAQUE": 1,
+            "NO": 3
+          }
+        }
+      },
+      "collapsed": {
+        "n": 30,
+        "matching": 26,
+        "observed": 0.8666666666666667,
+        "expected": 0.5466666666666666,
+        "kappa": 0.7058823529411765,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "FIT": {
+            "FIT": 8,
+            "NO_FIT": 0
+          },
+          "NO_FIT": {
+            "FIT": 4,
+            "NO_FIT": 18
+          }
+        }
+      }
+    },
+    "clover": {
+      "first_counts": {
+        "NO": 10,
+        "OPAQUE": 16,
+        "DIRECT": 3,
+        "REIFIED": 1
+      },
+      "second_counts": {
+        "NO": 7,
+        "REIFIED": 11,
+        "OPAQUE": 9,
+        "DIRECT": 3
+      },
+      "four_way": {
+        "n": 30,
+        "matching": 19,
+        "observed": 0.6333333333333333,
+        "expected": 0.26,
+        "kappa": 0.5045045045045045,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "DIRECT": {
+            "DIRECT": 3,
+            "REIFIED": 0,
+            "OPAQUE": 0,
+            "NO": 0
+          },
+          "REIFIED": {
+            "DIRECT": 0,
+            "REIFIED": 1,
+            "OPAQUE": 0,
+            "NO": 0
+          },
+          "OPAQUE": {
+            "DIRECT": 0,
+            "REIFIED": 8,
+            "OPAQUE": 8,
+            "NO": 0
+          },
+          "NO": {
+            "DIRECT": 0,
+            "REIFIED": 2,
+            "OPAQUE": 1,
+            "NO": 7
+          }
+        }
+      },
+      "collapsed": {
+        "n": 30,
+        "matching": 20,
+        "observed": 0.6666666666666666,
+        "expected": 0.5244444444444445,
+        "kappa": 0.29906542056074753,
+        "kappa_note": null,
+        "confusion_matrix_first_rows_second_columns": {
+          "FIT": {
+            "FIT": 4,
+            "NO_FIT": 0
+          },
+          "NO_FIT": {
+            "FIT": 10,
+            "NO_FIT": 16
+          }
+        }
+      }
+    }
+  },
+  "second_rates": {
+    "folio": {
+      "strict": {
+        "k": 22,
+        "n": 30,
+        "rate": 0.7333333333333333,
+        "ci_low": 0.555520383048111,
+        "ci_high": 0.8581733668040368
+      },
+      "lenient": {
+        "k": 25,
+        "n": 30,
+        "rate": 0.8333333333333334,
+        "ci_low": 0.6643564949358398,
+        "ci_high": 0.9266345762815145
+      },
+      "opaque_dependent": {
+        "k": 4,
+        "n": 30,
+        "rate": 0.13333333333333333,
+        "ci_low": 0.053096554840547455,
+        "ci_high": 0.296813266820363
+      }
+    },
+    "proofwriter": {
+      "strict": {
+        "k": 26,
+        "n": 30,
+        "rate": 0.8666666666666667,
+        "ci_low": 0.703186733179637,
+        "ci_high": 0.9469034451594526
+      },
+      "lenient": {
+        "k": 26,
+        "n": 30,
+        "rate": 0.8666666666666667,
+        "ci_low": 0.703186733179637,
+        "ci_high": 0.9469034451594526
+      },
+      "opaque_dependent": {
+        "k": 4,
+        "n": 30,
+        "rate": 0.13333333333333333,
+        "ci_low": 0.053096554840547455,
+        "ci_high": 0.296813266820363
+      }
+    },
+    "cedar": {
+      "strict": {
+        "k": 0,
+        "n": 30,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.11351339317396876
+      },
+      "lenient": {
+        "k": 13,
+        "n": 30,
+        "rate": 0.43333333333333335,
+        "ci_low": 0.2737748557646652,
+        "ci_high": 0.6080269299918639
+      },
+      "opaque_dependent": {
+        "k": 17,
+        "n": 30,
+        "rate": 0.5666666666666667,
+        "ci_low": 0.3919730700081361,
+        "ci_high": 0.7262251442353347
+      }
+    },
+    "gatekeeper": {
+      "strict": {
+        "k": 1,
+        "n": 30,
+        "rate": 0.03333333333333333,
+        "ci_low": 0.005908590381612455,
+        "ci_high": 0.16670390991409173
+      },
+      "lenient": {
+        "k": 6,
+        "n": 30,
+        "rate": 0.2,
+        "ci_low": 0.0950510717728987,
+        "ci_high": 0.3730569641314825
+      },
+      "opaque_dependent": {
+        "k": 24,
+        "n": 30,
+        "rate": 0.8,
+        "ci_low": 0.6269430358685175,
+        "ci_high": 0.9049489282271013
+      }
+    },
+    "alloy": {
+      "strict": {
+        "k": 4,
+        "n": 30,
+        "rate": 0.13333333333333333,
+        "ci_low": 0.053096554840547455,
+        "ci_high": 0.296813266820363
+      },
+      "lenient": {
+        "k": 18,
+        "n": 30,
+        "rate": 0.6,
+        "ci_low": 0.42320360253322475,
+        "ci_high": 0.7540937188319815
+      },
+      "opaque_dependent": {
+        "k": 3,
+        "n": 30,
+        "rate": 0.1,
+        "ci_low": 0.03459988874733419,
+        "ci_high": 0.25621082579184085
+      }
+    },
+    "fret": {
+      "strict": {
+        "k": 0,
+        "n": 30,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.11351339317396876
+      },
+      "lenient": {
+        "k": 12,
+        "n": 30,
+        "rate": 0.4,
+        "ci_low": 0.24590628116801852,
+        "ci_high": 0.5767963974667752
+      },
+      "opaque_dependent": {
+        "k": 12,
+        "n": 30,
+        "rate": 0.4,
+        "ci_low": 0.24590628116801852,
+        "ci_high": 0.5767963974667752
+      }
+    },
+    "clover": {
+      "strict": {
+        "k": 3,
+        "n": 30,
+        "rate": 0.1,
+        "ci_low": 0.03459988874733419,
+        "ci_high": 0.25621082579184085
+      },
+      "lenient": {
+        "k": 14,
+        "n": 30,
+        "rate": 0.4666666666666667,
+        "ci_low": 0.30232388907699753,
+        "ci_high": 0.638577003801267
+      },
+      "opaque_dependent": {
+        "k": 9,
+        "n": 30,
+        "rate": 0.3,
+        "ci_low": 0.16664748268243793,
+        "ci_high": 0.47875787458714947
+      }
+    }
+  },
+  "proposed_adjudicated_rates": {
+    "folio": {
+      "strict": {
+        "k": 22,
+        "n": 30,
+        "rate": 0.7333333333333333,
+        "ci_low": 0.555520383048111,
+        "ci_high": 0.8581733668040368
+      },
+      "lenient": {
+        "k": 25,
+        "n": 30,
+        "rate": 0.8333333333333334,
+        "ci_low": 0.6643564949358398,
+        "ci_high": 0.9266345762815145
+      },
+      "opaque_dependent": {
+        "k": 4,
+        "n": 30,
+        "rate": 0.13333333333333333,
+        "ci_low": 0.053096554840547455,
+        "ci_high": 0.296813266820363
+      }
+    },
+    "proofwriter": {
+      "strict": {
+        "k": 26,
+        "n": 30,
+        "rate": 0.8666666666666667,
+        "ci_low": 0.703186733179637,
+        "ci_high": 0.9469034451594526
+      },
+      "lenient": {
+        "k": 26,
+        "n": 30,
+        "rate": 0.8666666666666667,
+        "ci_low": 0.703186733179637,
+        "ci_high": 0.9469034451594526
+      },
+      "opaque_dependent": {
+        "k": 4,
+        "n": 30,
+        "rate": 0.13333333333333333,
+        "ci_low": 0.053096554840547455,
+        "ci_high": 0.296813266820363
+      }
+    },
+    "cedar": {
+      "strict": {
+        "k": 5,
+        "n": 30,
+        "rate": 0.16666666666666666,
+        "ci_low": 0.0733654237184855,
+        "ci_high": 0.3356435050641603
+      },
+      "lenient": {
+        "k": 10,
+        "n": 30,
+        "rate": 0.3333333333333333,
+        "ci_low": 0.19230498083676134,
+        "ci_high": 0.5121994835545616
+      },
+      "opaque_dependent": {
+        "k": 20,
+        "n": 30,
+        "rate": 0.6666666666666666,
+        "ci_low": 0.4878005164454384,
+        "ci_high": 0.8076950191632386
+      }
+    },
+    "gatekeeper": {
+      "strict": {
+        "k": 2,
+        "n": 30,
+        "rate": 0.06666666666666667,
+        "ci_low": 0.018477023791270378,
+        "ci_high": 0.2132345836261692
+      },
+      "lenient": {
+        "k": 6,
+        "n": 30,
+        "rate": 0.2,
+        "ci_low": 0.0950510717728987,
+        "ci_high": 0.3730569641314825
+      },
+      "opaque_dependent": {
+        "k": 24,
+        "n": 30,
+        "rate": 0.8,
+        "ci_low": 0.6269430358685175,
+        "ci_high": 0.9049489282271013
+      }
+    },
+    "alloy": {
+      "strict": {
+        "k": 4,
+        "n": 30,
+        "rate": 0.13333333333333333,
+        "ci_low": 0.053096554840547455,
+        "ci_high": 0.296813266820363
+      },
+      "lenient": {
+        "k": 18,
+        "n": 30,
+        "rate": 0.6,
+        "ci_low": 0.42320360253322475,
+        "ci_high": 0.7540937188319815
+      },
+      "opaque_dependent": {
+        "k": 3,
+        "n": 30,
+        "rate": 0.1,
+        "ci_low": 0.03459988874733419,
+        "ci_high": 0.25621082579184085
+      }
+    },
+    "fret": {
+      "strict": {
+        "k": 0,
+        "n": 30,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.11351339317396876
+      },
+      "lenient": {
+        "k": 12,
+        "n": 30,
+        "rate": 0.4,
+        "ci_low": 0.24590628116801852,
+        "ci_high": 0.5767963974667752
+      },
+      "opaque_dependent": {
+        "k": 12,
+        "n": 30,
+        "rate": 0.4,
+        "ci_low": 0.24590628116801852,
+        "ci_high": 0.5767963974667752
+      }
+    },
+    "clover": {
+      "strict": {
+        "k": 3,
+        "n": 30,
+        "rate": 0.1,
+        "ci_low": 0.03459988874733419,
+        "ci_high": 0.25621082579184085
+      },
+      "lenient": {
+        "k": 14,
+        "n": 30,
+        "rate": 0.4666666666666667,
+        "ci_low": 0.30232388907699753,
+        "ci_high": 0.638577003801267
+      },
+      "opaque_dependent": {
+        "k": 9,
+        "n": 30,
+        "rate": 0.3,
+        "ci_low": 0.16664748268243793,
+        "ci_high": 0.47875787458714947
+      }
+    }
+  },
+  "roadmap_independent": [
+    {
+      "construct": "Numeric arithmetic and value comparisons",
+      "per_dataset": {
+        "folio": 1,
+        "proofwriter": 0,
+        "cedar": 0,
+        "gatekeeper": 8,
+        "alloy": 2,
+        "fret": 18,
+        "clover": 16
+      },
+      "total": 45,
+      "items": [
+        {
+          "dataset": "folio",
+          "id": "s161:p1",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/ephemeralstoragelimit/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/users/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/replicalimits/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/poddisruptionbudget/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/horizontalpodautoscaler/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/host-network-ports/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/containerresourceratios/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/fsgroup/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/utilities/types/sequence.als@1510",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/utilities/types/sequence.als@1980",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:AP-004a:c829ea75",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:EUL-001d:c829ea6d",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:SWIM-002:c829ea60",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:REG-005:c829ea73",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:NN-004:c829ea51",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:NN-003B:c829ea64",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:AP-003D:c829ea50",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:REG-007:c829ea78",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:NLG-001:c829ea59",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:AP-003C:c829eaa1",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:TSM-004:c829ea54",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LPC_full_reqts_and_vars.json:LPC:LPC_KIAS_0:79ba7c42",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LPC_full_reqts_and_vars.json:LPC:LPC_WB_STAY_ON_until:79b96ad0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:TUI-003v3:0b8c7620",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LPC_full_reqts_and_vars.json:LPC:LPC_WIND_SPEED_DERIV_assumption:79ba7c41",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LPC_full_reqts_and_vars.json:LPC:LPC_FCS_STAY_ON:79ba5531",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LPC_full_reqts_and_vars.json:LPC:LPC_STB_STAY_ON_until:79b8a781",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:EUL-001A:c829ea5c",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/triple",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/cal_sum",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/two_sum",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/selectionsort",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/bubble_sort",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/integer_square_root",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/has_close_elements",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/triple4",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/even_list",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/triple3",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/double_array_elements",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/is_even",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/multi_return",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/max_array",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/rotate",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/online_max",
+          "label": "OPAQUE"
+        }
+      ]
+    },
+    {
+      "construct": "Transitive closure and reachability",
+      "per_dataset": {
+        "folio": 1,
+        "proofwriter": 0,
+        "cedar": 17,
+        "gatekeeper": 0,
+        "alloy": 9,
+        "fret": 0,
+        "clover": 0
+      },
+      "total": 27,
+      "items": [
+        {
+          "dataset": "folio",
+          "id": "e573:c",
+          "label": "NO"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-example-use-cases/sales_orgs/templated/policies.cedar#3",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-example-use-cases/sales_orgs/static/policies.cedar#5",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/oopsla2024-benchmarks/benches/github-templates/cedar/policies.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-policy-language-in-action/PhotoApp/photoapp.cedar#4",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-policy-language-in-action/GitApp/gitapp.cedar#4",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-policy-language-in-action/GitApp/gitapp.cedar#3",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/oopsla2024-benchmarks/benches/gdrive-templates/cedar/policies.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/oopsla2024-benchmarks/benches/github-templates/cedar/policies.cedar#6",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-integration-tests/tests/example_use_cases/policies_3c.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-example-use-cases/hotel_chains/static/policies.cedar#2",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-integration-tests/tests/example_use_cases/policies_2a.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-example-use-cases/document_cloud/policies.cedar#11",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/oopsla2024-benchmarks/benches/github/cedar/policies.cedar#3",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-java-partial-evaluation/app/src/main/resources/policies.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-integration-tests/tests/example_use_cases/policies_3a.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-policy-language-in-action/GitApp/gitapp.cedar#2",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/oopsla2024-benchmarks/benches/gdrive/cedar/policies.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/ring-orientation/stable-orient-ring.als@1924",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@81",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/distributed-hashtable/chord.als@80",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/multicasting/iolus.als@5190",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/models/java/javatypes_soundness.als@282",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/models/java/javatypes_soundness.als@2426",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@4943",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@4840",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/distributed-hashtable/chord.als@3722",
+          "label": "NO"
+        }
+      ]
+    },
+    {
+      "construct": "String operations, regex and parsing",
+      "per_dataset": {
+        "folio": 0,
+        "proofwriter": 0,
+        "cedar": 0,
+        "gatekeeper": 20,
+        "alloy": 0,
+        "fret": 0,
+        "clover": 0
+      },
+      "total": 20,
+      "items": [
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/ephemeralstoragelimit/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/disallowedrepos/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/users/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/containerresources/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/requiredlabels/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/selinux/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/seccompv2/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/privileged-containers/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/httpsonly/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/host-process/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/allowedreposv2/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/uniqueingresshost/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/host-network-ports/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/block-wildcard-ingress/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/uniqueserviceselector/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/proc-mount/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/disallowedtags/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/containerresourceratios/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/disallowinteractive/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/allow-privilege-escalation/src.rego",
+          "label": "OPAQUE"
+        }
+      ]
+    },
+    {
+      "construct": "Frequency and defeasible/default quantification",
+      "per_dataset": {
+        "folio": 1,
+        "proofwriter": 4,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 0,
+        "fret": 0,
+        "clover": 0
+      },
+      "total": 5,
+      "items": [
+        {
+          "dataset": "folio",
+          "id": "s367:p0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-60#row11574",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-211#row10260",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-2#row12794",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-92#row10996",
+          "label": "OPAQUE"
+        }
+      ]
+    },
+    {
+      "construct": "General counting and multiplicities",
+      "per_dataset": {
+        "folio": 0,
+        "proofwriter": 0,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 2,
+        "fret": 0,
+        "clover": 2
+      },
+      "total": 4,
+      "items": [
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/utilities/types/sequence.als@1510",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/utilities/types/sequence.als@1980",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/selectionsort",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/bubble_sort",
+          "label": "OPAQUE"
+        }
+      ]
+    },
+    {
+      "construct": "Metric time and duration",
+      "per_dataset": {
+        "folio": 0,
+        "proofwriter": 0,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 0,
+        "fret": 3,
+        "clover": 0
+      },
+      "total": 3,
+      "items": [
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:REG-005:c829ea73",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:NN-004:c829ea51",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:NN-003B:c829ea64",
+          "label": "NO"
+        }
+      ]
+    },
+    {
+      "construct": "Modal and propositional-attitude semantics",
+      "per_dataset": {
+        "folio": 2,
+        "proofwriter": 1,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 0,
+        "fret": 0,
+        "clover": 0
+      },
+      "total": 3,
+      "items": [
+        {
+          "dataset": "folio",
+          "id": "e1126:c",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "folio",
+          "id": "s217:p2",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-211#row10260",
+          "label": "OPAQUE"
+        }
+      ]
+    },
+    {
+      "construct": "Lexical sense disambiguation",
+      "per_dataset": {
+        "folio": 0,
+        "proofwriter": 2,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 0,
+        "fret": 0,
+        "clover": 0
+      },
+      "total": 2,
+      "items": [
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-2#row12794",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-92#row10996",
+          "label": "OPAQUE"
+        }
+      ]
+    },
+    {
+      "construct": "Transcendental numeric functions",
+      "per_dataset": {
+        "folio": 0,
+        "proofwriter": 0,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 0,
+        "fret": 2,
+        "clover": 0
+      },
+      "total": 2,
+      "items": [
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:EUL-001d:c829ea6d",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:EUL-001A:c829ea5c",
+          "label": "NO"
+        }
+      ]
+    },
+    {
+      "construct": "Higher-order quantification",
+      "per_dataset": {
+        "folio": 0,
+        "proofwriter": 0,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 1,
+        "fret": 0,
+        "clover": 0
+      },
+      "total": 1,
+      "items": [
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/software-abstractions-book/appendixA/distribution.als@30",
+          "label": "NO"
+        }
+      ]
+    }
+  ],
+  "roadmap_proposed_adjudicated": [
+    {
+      "construct": "Numeric arithmetic and value comparisons",
+      "per_dataset": {
+        "folio": 1,
+        "proofwriter": 0,
+        "cedar": 0,
+        "gatekeeper": 8,
+        "alloy": 2,
+        "fret": 18,
+        "clover": 16
+      },
+      "total": 45,
+      "items": [
+        {
+          "dataset": "folio",
+          "id": "s161:p1",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/ephemeralstoragelimit/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/users/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/replicalimits/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/poddisruptionbudget/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/horizontalpodautoscaler/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/host-network-ports/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/containerresourceratios/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/fsgroup/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/utilities/types/sequence.als@1510",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/utilities/types/sequence.als@1980",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:AP-004a:c829ea75",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:EUL-001d:c829ea6d",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:SWIM-002:c829ea60",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:REG-005:c829ea73",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:NN-004:c829ea51",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:NN-003B:c829ea64",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:AP-003D:c829ea50",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:REG-007:c829ea78",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:NLG-001:c829ea59",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:AP-003C:c829eaa1",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:TSM-004:c829ea54",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LPC_full_reqts_and_vars.json:LPC:LPC_KIAS_0:79ba7c42",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LPC_full_reqts_and_vars.json:LPC:LPC_WB_STAY_ON_until:79b96ad0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:TUI-003v3:0b8c7620",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LPC_full_reqts_and_vars.json:LPC:LPC_WIND_SPEED_DERIV_assumption:79ba7c41",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LPC_full_reqts_and_vars.json:LPC:LPC_FCS_STAY_ON:79ba5531",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LPC_full_reqts_and_vars.json:LPC:LPC_STB_STAY_ON_until:79b8a781",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:EUL-001A:c829ea5c",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/triple",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/cal_sum",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/two_sum",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/selectionsort",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/bubble_sort",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/integer_square_root",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/has_close_elements",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/triple4",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/even_list",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/triple3",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/double_array_elements",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/is_even",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/multi_return",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/max_array",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/rotate",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/online_max",
+          "label": "OPAQUE"
+        }
+      ]
+    },
+    {
+      "construct": "Transitive closure and reachability",
+      "per_dataset": {
+        "folio": 1,
+        "proofwriter": 0,
+        "cedar": 20,
+        "gatekeeper": 0,
+        "alloy": 9,
+        "fret": 0,
+        "clover": 0
+      },
+      "total": 30,
+      "items": [
+        {
+          "dataset": "folio",
+          "id": "e573:c",
+          "label": "NO"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-example-use-cases/sales_orgs/templated/policies.cedar#3",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-example-use-cases/github_example/policies.cedar#5",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-example-use-cases/sales_orgs/static/policies.cedar#5",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/oopsla2024-benchmarks/benches/github-templates/cedar/policies.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-policy-language-in-action/PhotoApp/photoapp.cedar#4",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-policy-language-in-action/GitApp/gitapp.cedar#4",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-policy-language-in-action/GitApp/gitapp.cedar#3",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-example-use-cases/github_example/policies.cedar#4",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/oopsla2024-benchmarks/benches/gdrive-templates/cedar/policies.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-example-use-cases/github_example/policies.cedar#3",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/oopsla2024-benchmarks/benches/github-templates/cedar/policies.cedar#6",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-integration-tests/tests/example_use_cases/policies_3c.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-example-use-cases/hotel_chains/static/policies.cedar#2",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-integration-tests/tests/example_use_cases/policies_2a.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-example-use-cases/document_cloud/policies.cedar#11",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/oopsla2024-benchmarks/benches/github/cedar/policies.cedar#3",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-java-partial-evaluation/app/src/main/resources/policies.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-integration-tests/tests/example_use_cases/policies_3a.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/cedar-policy-language-in-action/GitApp/gitapp.cedar#2",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "cedar",
+          "id": "cedar-examples/oopsla2024-benchmarks/benches/gdrive/cedar/policies.cedar#0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/ring-orientation/stable-orient-ring.als@1924",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@81",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/distributed-hashtable/chord.als@80",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/multicasting/iolus.als@5190",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/models/java/javatypes_soundness.als@282",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/models/java/javatypes_soundness.als@2426",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@4943",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@4840",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/algorithms/distributed-hashtable/chord.als@3722",
+          "label": "NO"
+        }
+      ]
+    },
+    {
+      "construct": "String operations, regex and parsing",
+      "per_dataset": {
+        "folio": 0,
+        "proofwriter": 0,
+        "cedar": 0,
+        "gatekeeper": 20,
+        "alloy": 0,
+        "fret": 0,
+        "clover": 0
+      },
+      "total": 20,
+      "items": [
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/ephemeralstoragelimit/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/disallowedrepos/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/users/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/containerresources/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/requiredlabels/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/selinux/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/seccompv2/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/privileged-containers/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/httpsonly/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/host-process/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/allowedreposv2/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/uniqueingresshost/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/host-network-ports/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/block-wildcard-ingress/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/uniqueserviceselector/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/proc-mount/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/disallowedtags/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/containerresourceratios/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/general/disallowinteractive/src.rego",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "gatekeeper",
+          "id": "gatekeeper-library/src/pod-security-policy/allow-privilege-escalation/src.rego",
+          "label": "OPAQUE"
+        }
+      ]
+    },
+    {
+      "construct": "Frequency and defeasible/default quantification",
+      "per_dataset": {
+        "folio": 1,
+        "proofwriter": 4,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 0,
+        "fret": 0,
+        "clover": 0
+      },
+      "total": 5,
+      "items": [
+        {
+          "dataset": "folio",
+          "id": "s367:p0",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-60#row11574",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-211#row10260",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-2#row12794",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-92#row10996",
+          "label": "OPAQUE"
+        }
+      ]
+    },
+    {
+      "construct": "General counting and multiplicities",
+      "per_dataset": {
+        "folio": 0,
+        "proofwriter": 0,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 2,
+        "fret": 0,
+        "clover": 2
+      },
+      "total": 4,
+      "items": [
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/utilities/types/sequence.als@1510",
+          "label": "NO"
+        },
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/utilities/types/sequence.als@1980",
+          "label": "NO"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/selectionsort",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "clover",
+          "id": "CloverBench/textbook_algo/bubble_sort",
+          "label": "OPAQUE"
+        }
+      ]
+    },
+    {
+      "construct": "Metric time and duration",
+      "per_dataset": {
+        "folio": 0,
+        "proofwriter": 0,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 0,
+        "fret": 3,
+        "clover": 0
+      },
+      "total": 3,
+      "items": [
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:REG-005:c829ea73",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:NN-004:c829ea51",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:NN-003B:c829ea64",
+          "label": "NO"
+        }
+      ]
+    },
+    {
+      "construct": "Modal and propositional-attitude semantics",
+      "per_dataset": {
+        "folio": 2,
+        "proofwriter": 1,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 0,
+        "fret": 0,
+        "clover": 0
+      },
+      "total": 3,
+      "items": [
+        {
+          "dataset": "folio",
+          "id": "e1126:c",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "folio",
+          "id": "s217:p2",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-211#row10260",
+          "label": "OPAQUE"
+        }
+      ]
+    },
+    {
+      "construct": "Lexical sense disambiguation",
+      "per_dataset": {
+        "folio": 0,
+        "proofwriter": 2,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 0,
+        "fret": 0,
+        "clover": 0
+      },
+      "total": 2,
+      "items": [
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-2#row12794",
+          "label": "OPAQUE"
+        },
+        {
+          "dataset": "proofwriter",
+          "id": "AttNonegNatLang-OWA-92#row10996",
+          "label": "OPAQUE"
+        }
+      ]
+    },
+    {
+      "construct": "Transcendental numeric functions",
+      "per_dataset": {
+        "folio": 0,
+        "proofwriter": 0,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 0,
+        "fret": 2,
+        "clover": 0
+      },
+      "total": 2,
+      "items": [
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:EUL-001d:c829ea6d",
+          "label": "NO"
+        },
+        {
+          "dataset": "fret",
+          "id": "LM_requirements.json:LM_requirements:EUL-001A:c829ea5c",
+          "label": "NO"
+        }
+      ]
+    },
+    {
+      "construct": "Higher-order quantification",
+      "per_dataset": {
+        "folio": 0,
+        "proofwriter": 0,
+        "cedar": 0,
+        "gatekeeper": 0,
+        "alloy": 1,
+        "fret": 0,
+        "clover": 0
+      },
+      "total": 1,
+      "items": [
+        {
+          "dataset": "alloy",
+          "id": "alloy-models/software-abstractions-book/appendixA/distribution.als@30",
+          "label": "NO"
+        }
+      ]
+    }
+  ],
+  "denominator_per_dataset": 30,
+  "wilson_confidence": 0.95,
+  "disagreements": 77
+}

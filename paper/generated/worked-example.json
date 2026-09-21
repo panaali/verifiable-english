@@ -1,0 +1,137 @@
+{
+  "environment": {
+    "language": "ve.core@0",
+    "profile": "relational-fol@0",
+    "spec_revision": "ve-v0-draft-2026-09-20",
+    "vocabulary": {
+      "sorts": {
+        "person": {
+          "description": "A recorded person."
+        },
+        "service": {
+          "description": "A service recorded in the inventory."
+        }
+      },
+      "predicates": {
+        "deployed": {
+          "arguments": [
+            "service"
+          ],
+          "description": "Recorded as deployed.",
+          "verbalisation": "{0} is deployed"
+        },
+        "owns": {
+          "arguments": [
+            "person",
+            "service"
+          ],
+          "description": "Recorded ownership; person first, service second.",
+          "verbalisation": "{0} owns {1}",
+          "negative_verbalisation": "{0} does not own {1}"
+        }
+      },
+      "constants": {}
+    }
+  },
+  "ast": [
+    [
+      "forall",
+      "service",
+      [
+        "implies",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ],
+        [
+          "exists",
+          "person",
+          [
+            "binary",
+            "owns",
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        ]
+      ]
+    ]
+  ],
+  "views": {
+    "fol_symbols": "\u2200 x0:service, ((deployed(x0)) \u2192 (\u2203 x1:person, (owns(x1, x0)))).\n",
+    "fol_keywords": "forall x0:service, ((deployed(x0)) implies (exists x1:person, (owns(x1, x0)))).\n",
+    "ve_strict": "for every service x0, (if (x0 is deployed), then (there exists person x1, (x1 owns x0))).\n",
+    "ve_natural": "for every service x0: (if (x0 is deployed), then (there is a person x1 such that (x1 owns x0))).\n",
+    "ve_fluent": "for every service S that is deployed, there is a person P such that P owns S.\n"
+  },
+  "legend": {
+    "constants": [],
+    "environment_id": "c99cd1f92c6a3934314e2d8c7264221baa483eb13436e9d6cfc9a6f1f5738893",
+    "fluent_variables": {
+      "letters_by_sort": {
+        "person": "P",
+        "service": "S"
+      },
+      "rule": "Distinct sort letters exclude A/I/O and declared identifiers (case-insensitive). Choose the noun initial, then its unused consonants, then BCDEFGHJKLMNPQRSTUVWXYZ; on exhaustion use alphabetic codes BB, BC, ... . Within the naming scope, each sort's named binders use suffixes 1, 2, ... in preorder; omit 1. Constants have @; lexical words are lowercase."
+    },
+    "format": "ve.vocabulary-legend@3",
+    "lint": [],
+    "naming": "per_statement",
+    "naming_rule": "Allocate binders in preorder. Restart names in each statement.",
+    "predicates": [
+      {
+        "arguments": [
+          "service"
+        ],
+        "description": "Recorded as deployed.",
+        "identifier": "deployed",
+        "negative_verbalisation": null,
+        "rendered_negative_template": null,
+        "rendered_template": "{0} is deployed",
+        "verbalisation": "{0} is deployed"
+      },
+      {
+        "arguments": [
+          "person",
+          "service"
+        ],
+        "description": "Recorded ownership; person first, service second.",
+        "identifier": "owns",
+        "negative_verbalisation": "{0} does not own {1}",
+        "rendered_negative_template": "{0} does not own {1}",
+        "rendered_template": "{0} owns {1}",
+        "verbalisation": "{0} owns {1}"
+      }
+    ],
+    "sorts": [
+      {
+        "description": "A recorded person.",
+        "identifier": "person",
+        "rendered_noun": "person",
+        "verbalisation": null
+      },
+      {
+        "description": "A service recorded in the inventory.",
+        "identifier": "service",
+        "rendered_noun": "service",
+        "verbalisation": null
+      }
+    ]
+  },
+  "cells": {
+    "fol_symbols": "{\n  \"constants\": [],\n  \"environment_id\": \"c99cd1f92c6a3934314e2d8c7264221baa483eb13436e9d6cfc9a6f1f5738893\",\n  \"fluent_variables\": {\n    \"letters_by_sort\": {\n      \"person\": \"P\",\n      \"service\": \"S\"\n    },\n    \"rule\": \"Distinct sort letters exclude A/I/O and declared identifiers (case-insensitive). Choose the noun initial, then its unused consonants, then BCDEFGHJKLMNPQRSTUVWXYZ; on exhaustion use alphabetic codes BB, BC, ... . Within the naming scope, each sort's named binders use suffixes 1, 2, ... in preorder; omit 1. Constants have @; lexical words are lowercase.\"\n  },\n  \"format\": \"ve.vocabulary-legend@3\",\n  \"lint\": [],\n  \"naming\": \"per_statement\",\n  \"naming_rule\": \"Allocate binders in preorder. Restart names in each statement.\",\n  \"predicates\": [\n    {\n      \"arguments\": [\n        \"service\"\n      ],\n      \"description\": \"Recorded as deployed.\",\n      \"identifier\": \"deployed\",\n      \"negative_verbalisation\": null,\n      \"rendered_negative_template\": null,\n      \"rendered_template\": \"{0} is deployed\",\n      \"verbalisation\": \"{0} is deployed\"\n    },\n    {\n      \"arguments\": [\n        \"person\",\n        \"service\"\n      ],\n      \"description\": \"Recorded ownership; person first, service second.\",\n      \"identifier\": \"owns\",\n      \"negative_verbalisation\": \"{0} does not own {1}\",\n      \"rendered_negative_template\": \"{0} does not own {1}\",\n      \"rendered_template\": \"{0} owns {1}\",\n      \"verbalisation\": \"{0} owns {1}\"\n    }\n  ],\n  \"sorts\": [\n    {\n      \"description\": \"A recorded person.\",\n      \"identifier\": \"person\",\n      \"rendered_noun\": \"person\",\n      \"verbalisation\": null\n    },\n    {\n      \"description\": \"A service recorded in the inventory.\",\n      \"identifier\": \"service\",\n      \"rendered_noun\": \"service\",\n      \"verbalisation\": null\n    }\n  ]\n}\n\u2200 x0:service, ((deployed(x0)) \u2192 (\u2203 x1:person, (owns(x1, x0)))).\n",
+    "fol_keywords": "{\n  \"constants\": [],\n  \"environment_id\": \"c99cd1f92c6a3934314e2d8c7264221baa483eb13436e9d6cfc9a6f1f5738893\",\n  \"fluent_variables\": {\n    \"letters_by_sort\": {\n      \"person\": \"P\",\n      \"service\": \"S\"\n    },\n    \"rule\": \"Distinct sort letters exclude A/I/O and declared identifiers (case-insensitive). Choose the noun initial, then its unused consonants, then BCDEFGHJKLMNPQRSTUVWXYZ; on exhaustion use alphabetic codes BB, BC, ... . Within the naming scope, each sort's named binders use suffixes 1, 2, ... in preorder; omit 1. Constants have @; lexical words are lowercase.\"\n  },\n  \"format\": \"ve.vocabulary-legend@3\",\n  \"lint\": [],\n  \"naming\": \"per_statement\",\n  \"naming_rule\": \"Allocate binders in preorder. Restart names in each statement.\",\n  \"predicates\": [\n    {\n      \"arguments\": [\n        \"service\"\n      ],\n      \"description\": \"Recorded as deployed.\",\n      \"identifier\": \"deployed\",\n      \"negative_verbalisation\": null,\n      \"rendered_negative_template\": null,\n      \"rendered_template\": \"{0} is deployed\",\n      \"verbalisation\": \"{0} is deployed\"\n    },\n    {\n      \"arguments\": [\n        \"person\",\n        \"service\"\n      ],\n      \"description\": \"Recorded ownership; person first, service second.\",\n      \"identifier\": \"owns\",\n      \"negative_verbalisation\": \"{0} does not own {1}\",\n      \"rendered_negative_template\": \"{0} does not own {1}\",\n      \"rendered_template\": \"{0} owns {1}\",\n      \"verbalisation\": \"{0} owns {1}\"\n    }\n  ],\n  \"sorts\": [\n    {\n      \"description\": \"A recorded person.\",\n      \"identifier\": \"person\",\n      \"rendered_noun\": \"person\",\n      \"verbalisation\": null\n    },\n    {\n      \"description\": \"A service recorded in the inventory.\",\n      \"identifier\": \"service\",\n      \"rendered_noun\": \"service\",\n      \"verbalisation\": null\n    }\n  ]\n}\nforall x0:service, ((deployed(x0)) implies (exists x1:person, (owns(x1, x0)))).\n",
+    "ve_strict": "{\n  \"constants\": [],\n  \"environment_id\": \"c99cd1f92c6a3934314e2d8c7264221baa483eb13436e9d6cfc9a6f1f5738893\",\n  \"fluent_variables\": {\n    \"letters_by_sort\": {\n      \"person\": \"P\",\n      \"service\": \"S\"\n    },\n    \"rule\": \"Distinct sort letters exclude A/I/O and declared identifiers (case-insensitive). Choose the noun initial, then its unused consonants, then BCDEFGHJKLMNPQRSTUVWXYZ; on exhaustion use alphabetic codes BB, BC, ... . Within the naming scope, each sort's named binders use suffixes 1, 2, ... in preorder; omit 1. Constants have @; lexical words are lowercase.\"\n  },\n  \"format\": \"ve.vocabulary-legend@3\",\n  \"lint\": [],\n  \"naming\": \"per_statement\",\n  \"naming_rule\": \"Allocate binders in preorder. Restart names in each statement.\",\n  \"predicates\": [\n    {\n      \"arguments\": [\n        \"service\"\n      ],\n      \"description\": \"Recorded as deployed.\",\n      \"identifier\": \"deployed\",\n      \"negative_verbalisation\": null,\n      \"rendered_negative_template\": null,\n      \"rendered_template\": \"{0} is deployed\",\n      \"verbalisation\": \"{0} is deployed\"\n    },\n    {\n      \"arguments\": [\n        \"person\",\n        \"service\"\n      ],\n      \"description\": \"Recorded ownership; person first, service second.\",\n      \"identifier\": \"owns\",\n      \"negative_verbalisation\": \"{0} does not own {1}\",\n      \"rendered_negative_template\": \"{0} does not own {1}\",\n      \"rendered_template\": \"{0} owns {1}\",\n      \"verbalisation\": \"{0} owns {1}\"\n    }\n  ],\n  \"sorts\": [\n    {\n      \"description\": \"A recorded person.\",\n      \"identifier\": \"person\",\n      \"rendered_noun\": \"person\",\n      \"verbalisation\": null\n    },\n    {\n      \"description\": \"A service recorded in the inventory.\",\n      \"identifier\": \"service\",\n      \"rendered_noun\": \"service\",\n      \"verbalisation\": null\n    }\n  ]\n}\nfor every service x0, (if (x0 is deployed), then (there exists person x1, (x1 owns x0))).\n",
+    "ve_natural": "{\n  \"constants\": [],\n  \"environment_id\": \"c99cd1f92c6a3934314e2d8c7264221baa483eb13436e9d6cfc9a6f1f5738893\",\n  \"fluent_variables\": {\n    \"letters_by_sort\": {\n      \"person\": \"P\",\n      \"service\": \"S\"\n    },\n    \"rule\": \"Distinct sort letters exclude A/I/O and declared identifiers (case-insensitive). Choose the noun initial, then its unused consonants, then BCDEFGHJKLMNPQRSTUVWXYZ; on exhaustion use alphabetic codes BB, BC, ... . Within the naming scope, each sort's named binders use suffixes 1, 2, ... in preorder; omit 1. Constants have @; lexical words are lowercase.\"\n  },\n  \"format\": \"ve.vocabulary-legend@3\",\n  \"lint\": [],\n  \"naming\": \"per_statement\",\n  \"naming_rule\": \"Allocate binders in preorder. Restart names in each statement.\",\n  \"predicates\": [\n    {\n      \"arguments\": [\n        \"service\"\n      ],\n      \"description\": \"Recorded as deployed.\",\n      \"identifier\": \"deployed\",\n      \"negative_verbalisation\": null,\n      \"rendered_negative_template\": null,\n      \"rendered_template\": \"{0} is deployed\",\n      \"verbalisation\": \"{0} is deployed\"\n    },\n    {\n      \"arguments\": [\n        \"person\",\n        \"service\"\n      ],\n      \"description\": \"Recorded ownership; person first, service second.\",\n      \"identifier\": \"owns\",\n      \"negative_verbalisation\": \"{0} does not own {1}\",\n      \"rendered_negative_template\": \"{0} does not own {1}\",\n      \"rendered_template\": \"{0} owns {1}\",\n      \"verbalisation\": \"{0} owns {1}\"\n    }\n  ],\n  \"sorts\": [\n    {\n      \"description\": \"A recorded person.\",\n      \"identifier\": \"person\",\n      \"rendered_noun\": \"person\",\n      \"verbalisation\": null\n    },\n    {\n      \"description\": \"A service recorded in the inventory.\",\n      \"identifier\": \"service\",\n      \"rendered_noun\": \"service\",\n      \"verbalisation\": null\n    }\n  ]\n}\nfor every service x0: (if (x0 is deployed), then (there is a person x1 such that (x1 owns x0))).\n",
+    "ve_fluent": "{\n  \"constants\": [],\n  \"environment_id\": \"c99cd1f92c6a3934314e2d8c7264221baa483eb13436e9d6cfc9a6f1f5738893\",\n  \"fluent_variables\": {\n    \"letters_by_sort\": {\n      \"person\": \"P\",\n      \"service\": \"S\"\n    },\n    \"rule\": \"Distinct sort letters exclude A/I/O and declared identifiers (case-insensitive). Choose the noun initial, then its unused consonants, then BCDEFGHJKLMNPQRSTUVWXYZ; on exhaustion use alphabetic codes BB, BC, ... . Within the naming scope, each sort's named binders use suffixes 1, 2, ... in preorder; omit 1. Constants have @; lexical words are lowercase.\"\n  },\n  \"format\": \"ve.vocabulary-legend@3\",\n  \"lint\": [],\n  \"naming\": \"per_statement\",\n  \"naming_rule\": \"Allocate binders in preorder. Restart names in each statement.\",\n  \"predicates\": [\n    {\n      \"arguments\": [\n        \"service\"\n      ],\n      \"description\": \"Recorded as deployed.\",\n      \"identifier\": \"deployed\",\n      \"negative_verbalisation\": null,\n      \"rendered_negative_template\": null,\n      \"rendered_template\": \"{0} is deployed\",\n      \"verbalisation\": \"{0} is deployed\"\n    },\n    {\n      \"arguments\": [\n        \"person\",\n        \"service\"\n      ],\n      \"description\": \"Recorded ownership; person first, service second.\",\n      \"identifier\": \"owns\",\n      \"negative_verbalisation\": \"{0} does not own {1}\",\n      \"rendered_negative_template\": \"{0} does not own {1}\",\n      \"rendered_template\": \"{0} owns {1}\",\n      \"verbalisation\": \"{0} owns {1}\"\n    }\n  ],\n  \"sorts\": [\n    {\n      \"description\": \"A recorded person.\",\n      \"identifier\": \"person\",\n      \"rendered_noun\": \"person\",\n      \"verbalisation\": null\n    },\n    {\n      \"description\": \"A service recorded in the inventory.\",\n      \"identifier\": \"service\",\n      \"rendered_noun\": \"service\",\n      \"verbalisation\": null\n    }\n  ]\n}\nfor every service S that is deployed, there is a person P such that P owns S.\n"
+  }
+}

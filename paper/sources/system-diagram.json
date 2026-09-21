@@ -1,0 +1,110 @@
+{
+  "source": [
+    "docs/architecture-and-design.md: Components and trust boundaries",
+    "docs/implementation.md: Entailment evidence and trust boundary"
+  ],
+  "note": "Authored schematic of documented interfaces; not a proof of end-to-end verification.",
+  "nodes": [
+    {
+      "id": "proposal",
+      "x": 1.6,
+      "y": 6.6,
+      "text": "Author / agent\nUntrusted text + environment",
+      "kind": "untrusted"
+    },
+    {
+      "id": "ast",
+      "x": 1.6,
+      "y": 5.1,
+      "text": "Parse, type, bind\nClosed AST + identities",
+      "kind": "checked"
+    },
+    {
+      "id": "view",
+      "x": 5.8,
+      "y": 5.1,
+      "text": "Deterministic view\n+ shared vocabulary legend",
+      "kind": "checked"
+    },
+    {
+      "id": "sign",
+      "x": 5.8,
+      "y": 6.6,
+      "text": "Supervisor\nClaim + vocabulary sign-off",
+      "kind": "judgment"
+    },
+    {
+      "id": "graph",
+      "x": 1.6,
+      "y": 3.6,
+      "text": "Claim graph\nExact premises and conclusion",
+      "kind": "checked"
+    },
+    {
+      "id": "search",
+      "x": 5.8,
+      "y": 3.6,
+      "text": "Untrusted search\nCertificates / finite models",
+      "kind": "untrusted"
+    },
+    {
+      "id": "replay",
+      "x": 1.6,
+      "y": 2.1,
+      "text": "Replay / witness evaluation\nPython; optional Lean per edge",
+      "kind": "checked"
+    },
+    {
+      "id": "result",
+      "x": 1.6,
+      "y": 0.6,
+      "text": "Conditional findings\nAssumptions + unresolved claims",
+      "kind": "checked"
+    },
+    {
+      "id": "evidence",
+      "x": 5.8,
+      "y": 0.6,
+      "text": "Supervisor\nIntent, evidence, final decision",
+      "kind": "judgment"
+    }
+  ],
+  "arrows": [
+    [
+      "proposal",
+      "ast"
+    ],
+    [
+      "ast",
+      "view"
+    ],
+    [
+      "view",
+      "sign"
+    ],
+    [
+      "ast",
+      "graph"
+    ],
+    [
+      "graph",
+      "replay"
+    ],
+    [
+      "graph",
+      "search"
+    ],
+    [
+      "search",
+      "replay"
+    ],
+    [
+      "replay",
+      "result"
+    ],
+    [
+      "result",
+      "evidence"
+    ]
+  ]
+}
