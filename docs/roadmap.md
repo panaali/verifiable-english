@@ -60,6 +60,19 @@ Measure false confirmations, successful corrections, false rejections, review ti
 
 Use the pilot to set task difficulty, review budgets, and a power analysis for a larger comparison. Do not treat zero observed errors in a small pilot as a safety guarantee, or select only tasks where VE looked promising. If structured forms perform as well with less effort, retain the checker and reconsider the English surface.
 
+## Testing the expected benefits
+
+The [expected benefits](architecture-and-design.md#expected-benefits-for-debate-and-scalable-oversight) require evidence beyond successful proof checking. Use these measurements to explain any change in the primary approval and cost outcomes:
+
+| Expected benefit | Measurement |
+|---|---|
+| Preserved meaning across branches | False approvals of changed claims as branch separation increases, with equally clarified targets and a cross-examination baseline |
+| Human effort focused on interpretation and evidence | Review time spent on definitions, evidence, and deductions; vary formal argument size while controlling the number and difficulty of empirical premises |
+| Precise challenges and reliable reuse | Accuracy and time to locate and repair flaws; errors, lost assumptions, and repeated review when a checked subargument is reused in another argument under the same environment |
+| More useful training feedback | Initially compare rewards for honest and deceptive submissions; a subsequent training study must test whether this changes behavior on held-out tasks |
+
+Collect review events with the same instrumentation in every condition and account for any measurement overhead. Reuse comparisons must give baselines access to the same prior work. Report results as argument complexity and the measured agent–judge capability gap increase, including formalization and certificate costs. An advantage at one small task size does not establish a scaling advantage. Training and PED-integration studies are conditional follow-ups, not requirements for the first language comparison.
+
 ## Adversarial evaluation
 
 Use a proposer trying to obtain approval for a noncompliant result and a critic trying to expose the problem. Start with controlled attacks to check the mechanism, then allow adaptive attacks on development tasks. Keep held-out semantic patterns and vocabulary families unavailable during attack tuning.

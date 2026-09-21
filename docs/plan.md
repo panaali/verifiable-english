@@ -62,6 +62,7 @@ Start with tasks 1 and 2. Develop proofs and conformance checks alongside the im
      - [ ] Include adaptive attacks, honest submissions, false empirical premises, misleading definitions, inconsistent assumptions, and cases that should remain unresolved.
      - [ ] Vary graph size, depth, branch separation, and the measured capability gap between proposer and judge.
      - [ ] Record all costs, unsupported cases, timeouts, failures, and supervisor decisions.
+     - [ ] Instrument the [benefit measurements](roadmap.md#testing-the-expected-benefits): review effort by activity, challenge/repair accuracy, and safe reuse of subarguments, with matched access to prior work.
    - [ ] Fix the primary metric, meaningful effect size, legitimate-acceptance constraint, budgets, and analysis before held-out evaluation.
    - [ ] Run paired comparisons and report uncertainty accounting for repeated tasks and judges.
    - [ ] Distinguish gains from formal checking from gains attributable to the English surface; measure error repair separately from preservation after confirmation.
@@ -96,5 +97,6 @@ Start with tasks 1 and 2. Develop proofs and conformance checks alongside the im
    - [ ] Evaluate Rust/Aeneas only for a measured runtime or deployment need, including P8 and proof-maintenance cost.
    - [ ] Add arithmetic, formatting adapters, or richer relations only when task coverage requires them, with explicit semantics and validation.
    - [ ] Study VE combined with ColMAD or prover-estimator debate if the matched language comparison warrants it.
+   - [ ] If approval and reward results justify it, test whether training with VE reduces successful semantic deception and preserves useful answers on held-out tasks.
    - [ ] Specify preservation contracts before adding mathematical, probabilistic, temporal, normative, or other semantic profiles.
    - [ ] Treat public proof-service deployment, stronger compiler assurance, and alignment-training/incentive guarantees as separate projects with their own requirements.
