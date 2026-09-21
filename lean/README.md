@@ -297,3 +297,13 @@ Tableau milestone validation (September 21, 2026): `lake build` passes;
 `.venv/bin/python -m pytest -q` passes **528 tests**, with **2 skips** for the
 uninstalled optional `llguidance` and `xgrammar` backends. Dependencies were
 synced with `UV_CACHE_DIR=/private/tmp/ve-uv-cache uv sync --frozen` before the full run.
+
+## Opt-in closure profile
+
+`VE.Closure` adds finite-path plus/star semantics, Named/Body edges, proved
+finite evaluation and typing, Reach-free conservativity, and least-fixed-point
+characterizations. Both edge forms have executable strict syntax; the new
+round-trip theorem covers Named atoms. The JSON bridge dispatches the v0.1
+closure envelope separately, and certificate replay explicitly rejects that
+profile. Exact statements and remaining proof obligations are in
+[`CLOSURE.md`](CLOSURE.md).

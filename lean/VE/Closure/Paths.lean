@@ -172,19 +172,20 @@ def vertices {α : Type u} (es : List (α × α)) : List α :=
 
 theorem warshall_iff_path {α : Type u} [DecidableEq α]
     (es : List (α × α)) (a b : α) :
-    (a, b) ∈ warshall (vertices es) es ↔ Path (fun x y => (x, y) ∈ es) a b := by
+    (a, b) ∈ warshall (dedup (vertices es)) es ↔ Path (fun x y => (x, y) ∈ es) a b := by
   constructor
   · exact warshall_sound _ _ _ (fun _ _ h => .edge h) _ _
   · intro h
     induction h with
     | edge h => exact warshall_extends _ _ h
     | @cons a b c h _ ih =>
-      have hb : b ∈ vertices es := List.mem_flatMap.mpr ⟨(a, b), h, by simp⟩
+      have hb : b ∈ dedup (vertices es) :=
+        (mem_dedup b _).mpr (List.mem_flatMap.mpr ⟨(a, b), h, by simp⟩)
       exact warshall_closed _ _ hb _ _ (warshall_extends _ _ h) ih
 
 def reachEval {α : Type u} [DecidableEq α] (k : Kind) (es : List (α × α))
     (a b : α) : Bool :=
-  (decide (k = .star) && decide (a = b)) || decide ((a, b) ∈ warshall (vertices es) es)
+  (decide (k = .star) && decide (a = b)) || decide ((a, b) ∈ warshall (dedup (vertices es)) es)
 
 theorem reachEval_iff {α : Type u} [DecidableEq α] (k : Kind)
     (es : List (α × α)) (a b : α) :

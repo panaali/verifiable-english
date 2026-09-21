@@ -136,4 +136,7 @@
 'VE.Closure.warshall_preserves_closed' depends on axioms: [propext, Quot.sound]
 'VE.Closure.warshall_sound' depends on axioms: [propext, Quot.sound]
 'VE.Tableau.compoundClosed_sound' depends on axioms: [propext, Quot.sound]
-PASS: 33 source files; 138 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+'VE.Closure.Surface.parseStatements_nonempty' does not depend on any axioms
+'VE.Closure.Surface.parse_print_named' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Closure.Surface.print_injective_named' depends on axioms: [propext, Classical.choice, Quot.sound]
+PASS: 33 source files; 141 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
