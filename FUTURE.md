@@ -43,6 +43,21 @@ example, and proposes syntax plus semantics. The subagent sends blocking gaps to
 orchestrator triages them into language-extension tasks for Worker X (semantics, renderer rules, grammar, Lean), and
 the subagent retries after the merge. The aggregated gaps table becomes the evidence-based roadmap for VE v1.
 
+## Phase V: VE v0.1 language extensions, ranked by measured need (E0 second rater, 02:09)
+
+Source: `experiments/E0/SECOND_RATER.md` on branch `codex/e0-rater` (210 items, 114 checked witnesses, blind to item labels).
+Counts are items out of 210 whose faithful formalization needs the construct.
+
+| Rank | Construct | Items | Where | What it takes |
+|---|---|---:|---|---|
+| 1 | Numeric comparison and arithmetic | 45 | FRET 18, Clover 16, Gatekeeper 8 | an ordered numeric sort with `<`, `<=`, `+`; finite evaluation is easy, entailment needs a decision procedure or an SMT oracle with checked certificates |
+| 2 | Transitive closure / reachability | 27 | Cedar 17 (entity hierarchy `in`), Alloy 9 | a closure operator on binary relations; trivial in finite models, not first-order, so the prover needs induction-free sound rules and will be incomplete |
+| 3 | String operations, regex, parsing | 20 | Gatekeeper 20 | opaque today; an honest treatment is an external, specified adapter whose output is a checked relation |
+| 4 | Defaults, frequency, counting, metric time, modality | 5 or fewer each | FOLIO, ProofWriter, Alloy, FRET | later profiles |
+
+Do rank 1 and 2 only with semantics in Lean first (extend `denote` and `eval`, keep `eval_iff_denote`), then Python, Rust,
+views, grammar and attacks. Each extension is a new profile, not a change to `relational-fol@0`.
+
 ## Ideas log
 
 - 02:50 From Canonical English (site read; repo study in progress, results go to `design/related-systems.md`):
