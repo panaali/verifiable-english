@@ -113,3 +113,57 @@ These checks do not prove general source-to-VE equivalence, execute the original
 Cedar or Alloy engines, or revise E0's frozen coverage score.
 <!-- src: experiments/E0/closure_witnesses/README.md;
 experiments/E0/closure_witnesses/report.json; docs/spec/v0.1-coverage.md. -->
+
+## Qualitative use case: a policy dispute and its legal text
+
+One Sonnet agent analyzed a birthright-citizenship debate and Section 1 of the
+Fourteenth Amendment. This exercise is not cross-reviewed or a scored
+experiment. The source pages were read through a summarizing fetch tool;
+quotations are best-effort and were not independently verified against raw
+page text. We report the committed formalization's structure, not a legal
+adjudication or a validation of its source interpretation.
+
+The formalized deductive dispute reduces to the extension of one predicate,
+`subject_to_jurisdiction`. Both sides' reconstructed arguments are deductively
+valid from their own conflicting bridging premises. The recorded countermodel
+runs make the distinction concrete:
+
+| Run | Submitted inference | Recorded result and interpretation |
+|---|---|---|
+| 1 | Birth plus jurisdiction under the shared citizenship rule | NotFound; the displayed inference is modus ponens. |
+| 2 | Birth without the jurisdiction premise | Found; a finite countermodel witnesses the missing premise. |
+| 3 | A rule about domiciled parents applied to undocumented parents | Found; the extension needs an additional bridge. |
+| 4 | Add the keep-it side's jurisdiction bridge | NotFound; the conclusion follows from that stated bridge. |
+| 5 | Add the end-it side's contrary bridge | NotFound; the contrary conclusion follows from that stated bridge. |
+
+The search used nonempty domains with maximum size 3. Bounded `NotFound`
+alone is not an entailment certificate: validity for runs 1, 4, and 5 follows
+from their displayed rules and premises by elementary deduction, not from
+exhausting that finite search. The snapshot's stronger language about proving
+entailment from `NotFound` is not adopted here. The two Found cases do provide
+finite witnesses to non-entailment. None of these checks decides which bridging
+premise faithfully represents the legal source or should be accepted.
+
+The claim inventory marks 5 of 9 claims NO and 4 DIRECT as formal premises.
+Empirical and predictive assertions, moral premises, authority weighting, and
+the warrant for extending precedent remain outside the check. This count is a
+qualitative judgment about this reconstruction, not a population estimate.
+The predicate dispute summarizes its deductive core, not every substantive
+issue in the debate.
+
+The amendment's four clauses receive 0 DIRECT, 1 REIFIED, and 3 OPAQUE labels.
+Deontic force and open-textured legal terms are the main gaps: an extensional
+prohibition does not distinguish forbidden conduct from conduct that simply
+never occurs, and naming a predicate does not define the applicable legal
+standard. The reified residence relation also omits a uniqueness assumption
+identified by the author. Thus even a parsable statement may lose source
+meaning. Coverage of this real policy text is low without extensions, and
+extensions alone cannot verify empirical evidence or settle normative and
+interpretive judgments.
+<!-- src: paper/sources/debate-claim-graph.md;
+paper/sources/debate-countermodel-RESULTS.md (runs 1--5);
+paper/sources/debate-coverage.md; paper/sources/debate-GAPS.md;
+paper/sources/debate-source.md; paper/sources/amendment-coverage.md;
+paper/sources/amendment-GAPS.md; paper/sources/amendment-source.md.
+Snapshots from usecases/main; single Sonnet authorship and absence of
+cross-review disclosed in the drafting handoff. No fresh countermodel runs. -->

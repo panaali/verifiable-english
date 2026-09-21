@@ -4,7 +4,8 @@
 
 The theorem statements below concern the named Lean reference definitions.
 They do not transfer automatically to Python, Rust, or a user-facing display.
-We report semantic scope rather than a count of helper lemmas.
+The current audit covers 200 named theorems, including helper lemmas; the
+statements below, rather than that count, define the assurance claim.
 
 | Reference result | Plain-language statement and scope |
 |---|---|
@@ -12,6 +13,8 @@ We report semantic scope rather than a count of helper lemmas.
 | `Surface.parse_print`; `normalize_idempotent` | For every closed typed base-profile document under the declaration-name conditions, the actual reference printer and parser round-trip; normalization is idempotent. |
 | `Surface.print_injective` | Equal canonical strings imply equal indexed documents under those same name conditions. This is not independent grammar unambiguity. |
 | `Tableau.checkCertificate_sound` | Boolean acceptance entails the exact supplied conclusion from the exact ordered premises over every admissible common-carrier structure in the chosen universe, including empty sorts and infinite structures. No assumed certificate-soundness premise remains. |
+| `Closure.Tableau.checkCertificate_sound` | Acceptance by the extended checker implies extended entailment over all admissible structures, including infinite carriers and empty sorts. |
+| `Closure.Tableau.checkCertificate_sound_v0` | Corollary for embedded v0 formulas via conservativity; the original v0 theorem and four original tableau files are unchanged. |
 | `Graph.check_sound`; `check_entails` | Successful Lean tableau-backed checking of a topologically ordered named graph establishes acyclicity, unique names, exact claim provenance, and root entailment from its reported assumptions. |
 | `Bridge.decodeModel_valid`; `CountermodelQuery.refutes_sound` | Successful model decoding supplies admissibility; an accepted typed finite countermodel refutes the exact universe-zero consequence relation. |
 
@@ -29,8 +32,21 @@ For closure, Lean proves finite-path and least-fixed-point characterizations,
 finite evaluator correctness, typing, reach-free conservativity, and conditional
 countermodel soundness. The new surface proofs cover Named closure atoms,
 including singleton-document round trip and injectivity. They do not cover
-arbitrary extended documents or Body round trips. Closure substitution and
-tableau branch-preservation proofs remain open at the pinned implementation base.
+arbitrary extended documents or Body round trips. Extended substitution,
+congruence, and branch-preservation proofs now support certificate soundness.
+Lean-proved rules, mirrored in Python replay, cover edge inclusion, mixed
+plus/star path composition, first/last-edge existence, and Named-to-Body
+conversion. The v0 guarantee is unchanged; the new v0 corollary follows from
+conservativity rather than re-deriving the original theorem. There is no
+completeness or general induction theorem, and no extended claim-graph theorem.
+Quantified-inclusion monotonicity and symmetric-relation reversal remain outside
+the implemented rules. `NotFound` never means non-entailment.
+
+The fourth statement review reports 3,500 random query pairs, 2,622 certified,
+no countermodels, all 2,634 submitted Python certificates accepted by Lean, and
+65 correctly handled traps. These are different audit populations, not a single
+acceptance-rate denominator or a proof of Python correctness.
+<!-- src: paper/sources/review-lean.md, fourth review; docs/closure-cert-report.md. -->
 <!-- src: lean/CLOSURE.md; docs/spec/closure-implementation.md. -->
 
 ## Trust base
@@ -69,9 +85,12 @@ be read as an error rate on independently sampled adversarial certificates.
 <!-- src: conformance/certificates-report.json; conformance/certificates.py;
 paper/sources/review-lean.md. -->
 
-Rust is a separately implemented and differentially tested base-profile core.
-Safe Rust restrictions do not prove logical correctness. This checkout does not
-supply Rust closure support, certificate replay, or claim-graph composition.
+Rust is a separately implemented and differentially tested core for both the
+base and closure profiles. Its closure stream records 3,000/3,000 formula/model
+agreements with Python, also agreeing on identities. Safe Rust restrictions
+do not prove logical correctness. Rust still supplies neither certificate replay
+nor claim-graph composition.
+<!-- src: rust/closure-fuzz-summary.json; docs/rust.md. -->
 The honest performance summary is about thirty times faster on the larger
 measured finite-evaluation kernels, with the specific measurements below.
 <!-- src: docs/rust.md; rust/benchmark-results.json; docs/spec/closure-implementation.md. -->
@@ -84,4 +103,8 @@ forces relation visits. Public API ratios additionally reflect Python's repeated
 validation and hashing, so they are not kernel speedups. The run was serial on a
 shared, loaded machine; the recorded samples are workload-specific observations,
 not isolated estimates of general throughput or programming-language advantage.
+Separate closure workloads on a 12-vertex cycle record kernel ratios of 5.38
+for Named edges and 15.01 for Body edges, with five samples per workload; these
+do not inherit the base evaluator's approximately thirtyfold characterization.
+<!-- src: rust/closure-benchmark-results.json; docs/rust.md. -->
 <!-- src: rust/benchmark.py; rust/benchmark-results.json; docs/rust.md. -->

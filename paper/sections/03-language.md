@@ -89,8 +89,18 @@ this formula but can falsify the alternative with an existential owner outside
 the universal. The renderer makes the dependency visible; it does not guarantee
 that a reader notices it. The shared legend records each raw identifier,
 description, ordered signature, selected wording and fallback, renderer naming
-policy, and lint diagnostics. The compact legend below describes this example;
+policy, and lint diagnostics. The table below summarizes this example;
 the complete API legend is saved with its generated strings.
+
+The renderer now also provides `render_vocabulary(..., style="compact")`.
+It retains vocabulary identity, ordered signatures, descriptions, selected
+wording and lint information in a shorter display. E1 uses this compact legend,
+byte-identical across all five views. Its earlier roughly 4,000-character JSON
+legend swamped the statement and moved every tested Qwen judge outside the
+primary gate. Compact display is therefore part of the frozen prompt, not a
+cosmetic implementation detail.
+<!-- src: docs/rendering-views.md; paper/sources/e1-prereg-frozen.md;
+paper/sources/process-log-v1.md. -->
 
 <!-- INCLUDE generated/worked-legend.md -->
 
@@ -100,8 +110,8 @@ words, passive/converse patterns, lexical collisions, and unchecked negative
 phrases. Rejected templates fall back to explicit atoms. These checks are
 heuristics. A collision-free antonym or misleading sort noun can still pass.
 The legend exposes raw identity and argument order in every cell; it cannot
-ensure truthful vocabulary or attentive review. E1 must freeze and review that
-vocabulary before attacks. Vocabulary-authored attacks need their own evaluation.
+ensure truthful vocabulary or attentive review. E1 freezes that
+vocabulary before scored judging. Vocabulary-authored attacks need their own evaluation.
 <!-- src: docs/rendering-views.md; paper/sources/review-views.md. -->
 
 ## The closure profile and exclusions
