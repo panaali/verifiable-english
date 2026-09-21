@@ -21,6 +21,13 @@ an archive. `counts.json`, `split.json`, `power.json`, `leak-report.json`, and
 `../material-validation.json` are small, inspectable audit artifacts. Reproducing
 checker-build identities requires the same core source and Python build.
 
+`power.json` is explicitly uncalibrated. After a complete current dev pilot, run
+`uv run python -m experiments.E5.calibrate_power PATH/trials.jsonl --judge JUDGE --difficulty medium --style neutral --samples 1`.
+This uses the observed SD of paired template means; it refuses scored trials,
+incomplete assignments and stale prompt hashes. The aggregate review pilot counts
+cannot supply that variance. Review the capability gate and commit the freeze
+amendment before scoring; the generated estimate alone does not freeze the design.
+
 `build_items("dev" | "scored", difficulty="easy" | "medium" | "hard")` constructs
 one level; omitting difficulty constructs all three. `make_pair` additionally
 accepts `records_per_leaf=1..4`, `distractors=0..8`, `flaw_spread=True|False`,
@@ -44,6 +51,13 @@ support remains outside the logical checker. `python -m experiments.validate_mat
 proves every frozen label from those records and certificates, records hashes,
 and reports flaw/control positions. It also validates E2/E4's frozen artifacts.
 
+Spread-task distractors copy the final dossiers after profile-name mutations.
+Half the hard unsupported-leaf pairs instead swap corresponding links between
+two cited authorization chains. All chain depths can fail, while global chain
+shapes and reference counts stay matched. IDs are shuffled within each pair.
+Hard is a construction setting, not an empirically established difficulty rank;
+select the lowest level meeting the preregistered dev gate.
+
 GOOD/BAD grounding is balanced. Invalid-edge controls have BAD approval labels
 regardless of grounding. Half of merged-vocabulary BAD items carry forged tags;
 GOOD tags are honest. Analyze controls, stale evidence and forged/honest tags
@@ -52,6 +66,12 @@ separately, and cluster on the structural template, not the vocabulary or item.
 The leak audit trains dev-only logistic probes on char 1–5 / 6–12 and word 1–3
 n-grams, plus numeric record counts/positions/dates/lengths, for all five cells.
 It reports held-out and difficulty-specific accuracy and exact pair balance.
+It also runs the uncited-unmatched-dossier shortcut and the empirical optimum
+over any function of the full dossier-equality signature (IDs, positions, cited
+status, ordered/unordered profiles and name-erased near-duplicates). That bound
+is restricted to these features and this finite inventory. It is .50 when every
+balanced pair has the same signature. Regression tests reproduce the old leak
+and check the probe detects it despite different record phrasing.
 Both styles share the same body; only their label-constant first line is omitted
 in this offline feature audit. These are limited probes, not a proof that no
 semantic shortcut exists. No model capability gate was run in this task.
