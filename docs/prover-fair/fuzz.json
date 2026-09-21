@@ -1,0 +1,28 @@
+{
+  "pairs": 7000,
+  "unique_pairs": 5429,
+  "seed": 20260922,
+  "max_domain_size_per_sort": 3,
+  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-26.3.1-arm64-arm-64bit-Mach-O",
+  "implementation_sha256": {
+    "ve.entailment": "552a4db591cb025d746e9a295c5c2c83c693032b9c7e4e75c6caca1c098637f9",
+    "ve.equivalence": "6fad10c5f4fb6864e158436599384816c98084bb7314a58016501c7fc87d5d4a",
+    "ve.attacks": "c2be0bae0da77d2b900b8f3e61d38f5f7b560f1e13efec5596338224c405d146"
+  },
+  "input_sha256": "c1eaad13f4b0ecf8c819a5715e70f1f374393441347188ccddf31b1332e1f223",
+  "seconds": 62.012221458979184,
+  "counts": {
+    "EQUIVALENT": 3484,
+    "single_sort": 2334,
+    "empty_only": 252,
+    "model_interpretations_checked": 854970215,
+    "certificates_replayed": 9519,
+    "two_sorts": 2333,
+    "constants": 2333,
+    "DIFFERENT": 3516,
+    "models_rechecked": 4481,
+    "conditional_certificates_replayed": 504
+  },
+  "certified_counterexamples": []
+}

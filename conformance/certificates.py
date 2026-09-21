@@ -24,6 +24,7 @@ from ve.argument_fixtures import worked_examples
 from ve.entailment import (check_entailment_certificate, prove_entailment,
                            _apply, _derive, _initial_branch, _kind, _binding)
 from ve.environment import Environment
+from ve.search import check_countermodel
 
 SEED = 20260923
 
@@ -69,6 +70,43 @@ def propositional_formula(rng, depth=2):
     op = rng.choice((Not, And, Or, Implies))
     a = propositional_formula(rng, depth-1)
     return op(a) if op is Not else op(a, propositional_formula(rng, depth-1))
+
+
+def completeness_regression(constants=1, quantifier_duals=True):
+    """Reviewer's existential weakening, with De Morgan applied twice.
+
+    Unused declared constants must not bury the useful witness pair under
+    unrelated ground instances. Include quantifier-dual and connective-only forms.
+    """
+    env = Environment.from_dict({
+        "language": "ve.core@0", "profile": "relational-fol@0",
+        "spec_revision": "ve-v0-draft-2026-09-20",
+        "vocabulary": {
+            "sorts": {"item": {"description": "Item"}},
+            "predicates": {"r": {"arguments": ["item", "item"], "description": "R"}},
+            "constants": {f"a{i}": {"sort": "item", "description": "Unused"}
+                          for i in range(constants)},
+        },
+    })
+    yy, xx, xy = (Binary("r", Var(i), Var(j)) for i, j in ((0, 0), (1, 1), (1, 0)))
+    left = Not(Or(Not(yy), xx))
+    premise = Exists("item", Exists("item", And(left, xy)))
+    weaker = Exists("item", Exists("item", Or(left, xy)))
+
+    def de_morgan(f):
+        if type(f) in (And, Or):
+            dual = Or if type(f) is And else And
+            return Not(dual(Not(de_morgan(f.left)), Not(de_morgan(f.right))))
+        if type(f) is Not:
+            return Not(de_morgan(f.body))
+        if type(f) in (Forall, Exists):
+            if quantifier_duals:
+                dual = Exists if type(f) is Forall else Forall
+                return Not(dual(f.sort, Not(de_morgan(f.body))))
+            return type(f)(f.sort, de_morgan(f.body))
+        return f
+
+    return env, [premise], de_morgan(de_morgan(weaker))
 
 
 def constructive(rng, index, simple=False):
@@ -153,6 +191,7 @@ def positive_cases():
             assert replay_python(case), name
             cases.append(case)
             trace_coverage(env, ps, c, result.certificate["trace"], coverage)
+        return result
     for i in range(320):
         add(f"broadconstructive_{i:03d}", *constructive(rng, i), False)
     for i in range(320):
@@ -163,12 +202,26 @@ def positive_cases():
         ps = [formula(rng, 3, constants=constants) for _ in range(rng.randrange(3))]
         c = formula(rng, 3, constants=constants)
         add(f"unconditioned_{i:03d}", env, ps, c, False)
+    worked = {}
     for name, graph in worked_examples().items():
         claims = {c.name: c.ast for c in graph.claims}
         edge = graph.deductions[0]
-        add(f"worked_{name}", graph.env, [claims[n] for n in edge.premises],
-            claims[edge.conclusion], name not in ("separated", "g1"))
+        ps, c = [claims[n] for n in edge.premises], claims[edge.conclusion]
+        # Neutral fixture IDs do not encode validity. Retain and independently
+        # check the separated-vocabulary counterexample instead of requiring a proof.
+        for model in edge.countermodels:
+            assert check_countermodel(graph.env, ps, c, model).valid
+        result = add(f"worked_{name}", graph.env, ps, c, not edge.countermodels)
+        if edge.countermodels:
+            assert result.status == "NotFound", (name, result.to_dict())
+        worked[name] = ("countermodel checked; search NotFound; forged close rejected"
+                        if edge.countermodels else "accepted")
+    for constants in (0, 1, 2, 4):
+        for duals in (False, True):
+            add(f"reviewer_{constants}_{int(duals)}",
+                *completeness_regression(constants, duals), True)
     return cases, {"search_outcomes": dict(sorted(outcomes.items())),
+                   "worked_examples": worked,
                    "trace_rule_counts": dict(sorted(coverage.items()))}
 
 
@@ -211,8 +264,10 @@ def forged_cases():
         forged["trace"]["parameter"] = token
         cases.append(envelope("forged_gamma_"+token, env, ps, goal, forged))
     env = environment(False)
-    ps, goal = [Exists("item", Unary("p", Var(0)))], Exists("item", Unary("p", Var(0)))
+    ps = [Exists("item", Unary("p", Var(0)))]
+    goal = Exists("item", Or(Unary("p", Var(0)), Bottom()))
     certificate = prove_entailment(env, ps, goal).certificate
+    assert certificate["trace"]["rule"] == "expand" and certificate["trace"]["at"] == 0
     forged = copy.deepcopy(certificate)
     forged["trace"]["parameter"] = "w:0"
     cases.append(envelope("forged_delta_supplied_witness", env, ps, goal, forged))
@@ -222,7 +277,7 @@ def forged_cases():
         {"rule": "expand", "at": 1, "parameter": "w:0", "children": [{"rule": "close"}]}]}
     cases.append(envelope("forged_empty_sort_inhabitation", env, ps, goal,
                           {**_binding(env, tuple(ps), goal), "trace": trace}))
-    graph = worked_examples()["g1"]
+    graph = next(g for g in worked_examples().values() if g.deductions[0].countermodels)
     claims = {c.name: c.ast for c in graph.claims}
     edge = graph.deductions[0]
     ps, goal = [claims[n] for n in edge.premises], claims[edge.conclusion]
@@ -257,12 +312,10 @@ def run(executable):
             if r != {"id": c["id"], "status": "ok", "valid": True}]
     false_accepts = [c["id"] for c, r in zip(forged, rejected, strict=True) if r["valid"]]
     report.update(seed=SEED, constructive_random_queries=320, broad_constructive_random_queries=320,
-                  unconditioned_random_queries=160,
+                  unconditioned_random_queries=160, completeness_regression_queries=8,
                   python_accepted=len(positive), lean_accepted=len(positive)-len(gaps),
                   forged=len(forged), lean_rejected_forged=len(forged)-len(false_accepts),
-                  python_accepted_lean_rejected=gaps, forged_lean_accepted=false_accepts,
-                  worked_examples={"g2": "accepted", "g3": "accepted",
-                                   "g1": "search NotFound; forged close rejected"})
+                  python_accepted_lean_rejected=gaps, forged_lean_accepted=false_accepts)
     assert not gaps, gaps
     assert not false_accepts, false_accepts
     return report

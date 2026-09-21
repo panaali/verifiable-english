@@ -1,0 +1,259 @@
+{
+  "seed": 20260921,
+  "seconds_per_pair": 2,
+  "variants": 10,
+  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "platform": "macOS-26.3.1-arm64-arm-64bit-Mach-O",
+  "implementation_sha256": {
+    "ve.entailment": "552a4db591cb025d746e9a295c5c2c83c693032b9c7e4e75c6caca1c098637f9",
+    "ve.equivalence": "6fad10c5f4fb6864e158436599384816c98084bb7314a58016501c7fc87d5d4a",
+    "ve.attacks": "c2be0bae0da77d2b900b8f3e61d38f5f7b560f1e13efec5596338224c405d146"
+  },
+  "baseline_root": null,
+  "overall": {
+    "pairs": 602,
+    "unknown": 2,
+    "unknown_percent": 0.33222591362126247,
+    "median_ms": 9.82718750310596,
+    "p95_ms": 110.42112499126233,
+    "certificate_count": 1218,
+    "certificate_median_bytes": 708.0,
+    "certificate_p95_bytes": 1075,
+    "timeouts": 2
+  },
+  "by_depth": {
+    "1": {
+      "pairs": 100,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 9.621645993320271,
+      "p95_ms": 50.02466699806973,
+      "certificate_count": 195,
+      "certificate_median_bytes": 520,
+      "certificate_p95_bytes": 652,
+      "timeouts": 0
+    },
+    "2": {
+      "pairs": 142,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 11.396895512007177,
+      "p95_ms": 83.5958749812562,
+      "certificate_count": 296,
+      "certificate_median_bytes": 690.0,
+      "certificate_p95_bytes": 1004,
+      "timeouts": 0
+    },
+    "3": {
+      "pairs": 120,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 7.405375014059246,
+      "p95_ms": 57.867374998750165,
+      "certificate_count": 246,
+      "certificate_median_bytes": 730.0,
+      "certificate_p95_bytes": 984,
+      "timeouts": 0
+    },
+    "4": {
+      "pairs": 120,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 8.768458501435816,
+      "p95_ms": 151.97450001141988,
+      "certificate_count": 241,
+      "certificate_median_bytes": 802,
+      "certificate_p95_bytes": 1072,
+      "timeouts": 0
+    },
+    "5": {
+      "pairs": 120,
+      "unknown": 2,
+      "unknown_percent": 1.6666666666666667,
+      "median_ms": 15.41193800221663,
+      "p95_ms": 251.95104200975038,
+      "certificate_count": 240,
+      "certificate_median_bytes": 898.0,
+      "certificate_p95_bytes": 1261,
+      "timeouts": 2
+    }
+  },
+  "depth_ge_3": {
+    "pairs": 360,
+    "unknown": 2,
+    "unknown_percent": 0.5555555555555556,
+    "median_ms": 9.064812984433956,
+    "p95_ms": 144.86812500399537,
+    "certificate_count": 727,
+    "certificate_median_bytes": 802,
+    "certificate_p95_bytes": 1171,
+    "timeouts": 2
+  },
+  "by_family": {
+    "association": {
+      "pairs": 50,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 12.912895501358435,
+      "p95_ms": 43.64625000744127,
+      "certificate_count": 100,
+      "certificate_median_bytes": 802.0,
+      "certificate_p95_bytes": 993,
+      "timeouts": 0
+    },
+    "commutation": {
+      "pairs": 50,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 8.816228990326636,
+      "p95_ms": 43.44358301023021,
+      "certificate_count": 100,
+      "certificate_median_bytes": 708.0,
+      "certificate_p95_bytes": 898,
+      "timeouts": 0
+    },
+    "contraposition": {
+      "pairs": 50,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 10.642396009643562,
+      "p95_ms": 66.37954199686646,
+      "certificate_count": 100,
+      "certificate_median_bytes": 785.0,
+      "certificate_p95_bytes": 976,
+      "timeouts": 0
+    },
+    "de_morgan": {
+      "pairs": 50,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 11.39591600804124,
+      "p95_ms": 50.02466699806973,
+      "certificate_count": 100,
+      "certificate_median_bytes": 823.5,
+      "certificate_p95_bytes": 1015,
+      "timeouts": 0
+    },
+    "double_negation": {
+      "pairs": 50,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 8.145562504068948,
+      "p95_ms": 84.44054098799825,
+      "certificate_count": 100,
+      "certificate_median_bytes": 691.0,
+      "certificate_p95_bytes": 881,
+      "timeouts": 0
+    },
+    "near_misses": {
+      "pairs": 50,
+      "unknown": 1,
+      "unknown_percent": 2.0,
+      "median_ms": 30.914896007743664,
+      "p95_ms": 1429.2290000012144,
+      "certificate_count": 45,
+      "certificate_median_bytes": 960,
+      "certificate_p95_bytes": 1571,
+      "timeouts": 1
+    },
+    "one_point": {
+      "pairs": 50,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 7.952687505166978,
+      "p95_ms": 51.454708009259775,
+      "certificate_count": 100,
+      "certificate_median_bytes": 642.5,
+      "certificate_p95_bytes": 1188,
+      "timeouts": 0
+    },
+    "prenex_empty_trap": {
+      "pairs": 50,
+      "unknown": 1,
+      "unknown_percent": 2.0,
+      "median_ms": 14.709625000250526,
+      "p95_ms": 198.5013330122456,
+      "certificate_count": 125,
+      "certificate_median_bytes": 719,
+      "certificate_p95_bytes": 1675,
+      "timeouts": 1
+    },
+    "quantifier_duals": {
+      "pairs": 50,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 8.812520492938347,
+      "p95_ms": 34.3362910207361,
+      "certificate_count": 100,
+      "certificate_median_bytes": 691.0,
+      "certificate_p95_bytes": 881,
+      "timeouts": 0
+    },
+    "review_minimal_1": {
+      "pairs": 1,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 6.870459008496255,
+      "p95_ms": 6.870459008496255,
+      "certificate_count": 2,
+      "certificate_median_bytes": 597.0,
+      "certificate_p95_bytes": 597,
+      "timeouts": 0
+    },
+    "review_minimal_2": {
+      "pairs": 1,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 6.6337920143269,
+      "p95_ms": 6.6337920143269,
+      "certificate_count": 2,
+      "certificate_median_bytes": 597.0,
+      "certificate_p95_bytes": 597,
+      "timeouts": 0
+    },
+    "same_quantifier_distribution": {
+      "pairs": 10,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 7.6550209923880175,
+      "p95_ms": 21.045750007033348,
+      "certificate_count": 20,
+      "certificate_median_bytes": 614.0,
+      "certificate_p95_bytes": 690,
+      "timeouts": 0
+    },
+    "same_quantifier_swap": {
+      "pairs": 40,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 8.303417009301484,
+      "p95_ms": 32.36395900603384,
+      "certificate_count": 80,
+      "certificate_median_bytes": 850.5,
+      "certificate_p95_bytes": 1088,
+      "timeouts": 0
+    },
+    "unprenexing": {
+      "pairs": 50,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 13.892312505049631,
+      "p95_ms": 97.56824999931268,
+      "certificate_count": 122,
+      "certificate_median_bytes": 784.0,
+      "certificate_p95_bytes": 1485,
+      "timeouts": 0
+    },
+    "vacuous_quantifiers": {
+      "pairs": 50,
+      "unknown": 0,
+      "unknown_percent": 0.0,
+      "median_ms": 5.791583505924791,
+      "p95_ms": 34.40470798523165,
+      "certificate_count": 122,
+      "certificate_median_bytes": 400.0,
+      "certificate_p95_bytes": 644,
+      "timeouts": 0
+    }
+  }
+}

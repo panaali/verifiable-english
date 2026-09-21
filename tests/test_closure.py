@@ -257,17 +257,49 @@ def test_lean_all_closure_cases_and_countermodels():
             assert result['canonical']==case['source']
 
 
-def test_lean_profile_gate_rejects_python_closure_certificate():
+@pytest.mark.parametrize('with_reach', [False, True])
+@pytest.mark.parametrize('version', [CLOSURE_CHECKER_VERSION, 've-tableau-checker@1', 've-tableau-checker@2'])
+def test_lean_profile_gate_rejects_python_closure_certificate(with_reach, version):
     env, _, _ = load()
-    f=Reach('star',Named('edge'),Const('start'),Const('start'))
+    f=Reach('star',Named('edge'),Const('start'),Const('start')) if with_reach else Top()
     proof=prove_entailment(env,(),f,max_steps=100)
     assert proof.status=='Found'
+    certificate = {**proof.certificate, 'checker_version': version}
     request={'id':'closure_certificate_gate','environment':env.to_dict(),'premises':[],
-             'conclusion':formula_to_data(env,f),'certificate':proof.certificate}
+             'conclusion':formula_to_data(env,f),'certificate':certificate}
     proc=subprocess.run([str(lean_bin()),'check-certificate'],input=json.dumps(request),text=True,capture_output=True,timeout=30)
     assert proc.returncode==1
     response=json.loads(proc.stdout)[0]
     assert response['valid'] is False and 'profile gate' in response['error']
+
+
+@pytest.mark.parametrize('kind', ['plus', 'star'])
+@pytest.mark.parametrize('positive', [False, True])
+@pytest.mark.parametrize('body', [False, True])
+def test_closure_unfolding_replay_both_signs_and_rule_binding(kind, positive, body):
+    from ve.entailment import _binding
+    env, _, _ = load()
+    edge = Body('node', Binary('edge', Var(1), Var(0))) if body else Named('edge')
+    reach = Reach(kind, edge, Const('start'), Const('end'))
+    expanded = unfold(reach, 'node')
+    premises, goal = ((reach,), expanded) if positive else ((expanded,), reach)
+    at = 0 if positive else 1
+    certificate = {**_binding(env, premises, goal), 'trace': {
+        'rule': f'closure-{kind}@0', 'at': at, 'children': [{'rule': 'close'}]}}
+    assert check_entailment_certificate(env, premises, goal, certificate).valid
+    for rule in ('expand', 'closure-star@0' if kind == 'plus' else 'closure-plus@0', 'induction'):
+        forged = copy.deepcopy(certificate)
+        forged['trace']['rule'] = rule
+        assert not check_entailment_certificate(env, premises, goal, forged).valid
+    forged = copy.deepcopy(certificate)
+    forged['trace']['parameter'] = 'c:start'
+    assert not check_entailment_certificate(env, premises, goal, forged).valid
+    # A closure rule may not target the Reach-free, already valid v0 query.
+    from conformance.certificates import environment
+    old = environment(False)
+    forged = {**_binding(old, (Not(Bottom()),), Top()), 'trace': {
+        'rule': f'closure-{kind}@0', 'at': 0, 'children': [{'rule': 'close'}]}}
+    assert not check_entailment_certificate(old, (Not(Bottom()),), Top(), forged).valid
 
 
 def test_closure_equality_congruence_captured_parameters_and_edge_identity():
