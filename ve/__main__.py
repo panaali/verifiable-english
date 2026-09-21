@@ -45,6 +45,8 @@ def main(argv=None):
             sub.add_argument("--min-domain-size", type=int, default=0)
             sub.add_argument("--nonempty-domains", action="store_true")
             sub.add_argument("--nonvacuous-for", help="VE formula whose quantifiers and implications must be non-vacuous")
+            sub.add_argument("--semantic-nonvacuity", action="store_true",
+                             help="also require jointly satisfiable clause guards under universals; requires --nonvacuous-for")
             sub.add_argument("--max-models", type=int, default=10_000)
         else:
             sub.add_argument("source", help="VE source or, for import-fol, FOL JSON; '-' reads stdin")
@@ -75,9 +77,10 @@ def main(argv=None):
             result = find_countermodel(env, premises, conclusion.formulas[0], max_domain_size=args.max_domain_size,
                                        min_domain_size=args.min_domain_size,
                                        nonempty_domains=args.nonempty_domains, nonvacuous_for=nonvacuous,
+                                       semantic_nonvacuity=args.semantic_nonvacuity,
                                        max_models=args.max_models, max_evaluations=args.max_evaluations)
             _emit(result.to_dict())
-            return 0 if result.status == "Found" else (3 if result.status == "NotFound" else 2)
+            return 0 if result.status == "Found" else (3 if result.status == "NotFound" else 4)
         if args.command == "import-fol":
             document = document_from_named_fol(env, loads_json(_read(args.source)))
             if args.view == "natural":
@@ -97,7 +100,7 @@ def main(argv=None):
             _emit(record)
             if model is None:
                 return 0
-            return {"Satisfied": 0, "Violated": 1, "ResourceLimit": 2}[record["evaluation"]["status"]]
+            return {"Satisfied": 0, "Violated": 1, "ResourceLimit": 4}[record["evaluation"]["status"]]
         document = parse(env, source)
         if args.command == "render":
             if args.view == "natural":
@@ -110,7 +113,7 @@ def main(argv=None):
         return 0
     except VEError as exc:
         _emit({"status": "ResourceLimit" if exc.code == "ResourceLimit" else "InvalidInput", "error": exc.to_dict()})
-        return 2
+        return 4 if exc.code == "ResourceLimit" else 2
     except (OSError, ValueError) as exc:
         _emit({"status": "InvalidInput", "error": {"code": "InvalidInput", "message": str(exc)}})
         return 2
