@@ -1,0 +1,42 @@
+{
+  "broad_constructive_random_queries": 320,
+  "constructive_random_queries": 320,
+  "forged": 150,
+  "forged_lean_accepted": [],
+  "lean_accepted": 721,
+  "lean_rejected_forged": 150,
+  "python_accepted": 721,
+  "python_accepted_lean_rejected": [],
+  "search_outcomes": {
+    "broadconstructive:Found": 317,
+    "broadconstructive:ResourceLimit": 3,
+    "constructive:Found": 320,
+    "unconditioned:Found": 82,
+    "unconditioned:NotFound": 74,
+    "unconditioned:ResourceLimit": 4,
+    "worked:Found": 2,
+    "worked:NotFound": 1
+  },
+  "seed": 20260923,
+  "trace_rule_counts": {
+    "alpha:And:True": 437,
+    "alpha:Implies:False": 551,
+    "alpha:Or:False": 504,
+    "beta:And:False": 367,
+    "beta:Implies:True": 407,
+    "beta:Or:True": 299,
+    "close": 1794,
+    "delta:Exists:True": 423,
+    "delta:Forall:False": 159,
+    "gamma:Exists:False": 550,
+    "gamma:Forall:True": 392,
+    "not:Not:False": 420,
+    "not:Not:True": 480
+  },
+  "unconditioned_random_queries": 160,
+  "worked_examples": {
+    "bridged": "accepted",
+    "merged": "accepted",
+    "separated": "search NotFound; forged close rejected"
+  }
+}

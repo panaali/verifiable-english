@@ -109,7 +109,7 @@ Successful model decoding is now proved to imply semantic admissibility.
 This does not establish JSON/wire-spec correspondence, Python refinement, IO,
 compiler or native-runtime correctness. The reference evaluator has no
 work-budget outcome; the bridge is for bounded conformance inputs, not hostile
-workloads or certificate replay. Both committed files are below the bridge's
+workloads. A separate certificate replay mode is described below. Both committed files are below the bridge's
 16 MiB batch cap.
 
 ## Rust and extended shared fixtures
@@ -180,3 +180,57 @@ the approximately 5.5 MiB replay stream stays in the ignored build directory.
 
 See [`../docs/rust.md`](../docs/rust.md) for API scope, operational differences,
 trust and the benchmark command/results.
+
+## Data-only certificate replay
+
+`ve_conformance check-certificate [file|-]` reads one query or a batch of queries:
+
+| Key | Value |
+|---|---|
+| `id` | Case label. |
+| `environment` | Exact VE environment including descriptions/display metadata. |
+| `premises` | Ordered formula AST array; duplicates and zero premises are allowed. |
+| `conclusion` | One formula AST, not a document. |
+| `certificate` | Unchanged `ve.entailment` certificate, including all five fields and its trace. |
+
+The adapter validates typed inputs, exact certificate fields and node schemas,
+recomputes environment/premise/conclusion SHA-256 bindings, and calls the proved
+Lean checker. An ordinary result is `{id, status: "ok", valid: boolean}`.
+Malformed or stale data gives `{id, status: "error", valid: false, error}` and
+exit 1; malformed restricted JSON gives exit 2. **Only `valid: true` is an
+acceptance**, since a well-formed rejected trace returns exit 0 with false.
+There is no model field and no expected-result field influences replay.
+
+`certificates.py` regenerates all queries and Python certificates before invoking
+the Lean executable in bounded batches. The seed is 20260923. The committed
+`certificates-report.json` records all 803 search attempts: 721 produce accepted
+certificates, 75 produce `NotFound`, and 7 produce `ResourceLimit`. This includes
+320/320 bounded-schema random valid queries; 317/320 broader random valid
+queries (three search resource failures); 82/160 unconditioned random queries;
+and the bridged/merged positive worked examples. The separated example is
+`NotFound`, and its forged close is rejected. Every produced certificate is
+replayed: **721/721 accepted**, with no format gaps, unsupported rules or bugs
+observed in that comparison. All **150/150 forgeries** are rejected.
+The detailed report counts both signs of every propositional/quantifier rule.
+
+These are seeded development cohorts, not an independently frozen corpus or an
+unbiased estimate of real-workload acceptance. Forgeries include fresh/future
+and wrong-sort gamma tokens, supplied delta witnesses, an empty-sort existence
+fallacy, wrong indices/branch counts, stale ordered identities and malformed
+schemas. Separate tests cover duplicate JSON keys, null, fractional/negative
+indices and premise order/multiplicity. Identity tests include Unicode and
+control-character descriptions and SHA-256 inputs spanning several blocks.
+
+Reproduce from the repository root:
+
+```sh
+(cd lean && lake build)
+.venv/bin/python conformance/certificates.py --report conformance/certificates-report.json
+.venv/bin/python -m pytest -q tests/test_lean_certificates.py
+```
+
+The checker theorem ranges over all admissible structures, including infinite
+ones and empty sorts; the JSON target is `Entails.{0}`. The proof covers replay
+on decoded ASTs, not JSON/wire/hash correspondence, IO, compiler/runtime, or
+Python refinement. Python search and its replay filter are untrusted for the
+Lean result. The default Python API continues to use Python replay.
