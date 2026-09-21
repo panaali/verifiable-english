@@ -9,7 +9,7 @@ from ve import ast
 from ve.fluent import _FluentVocabulary
 
 
-TERM = r"(?:[A-Z][0-9]*|@[a-z][a-z0-9_]*)"
+TERM = r"(?:[B-HJ-NP-Z]+[0-9]*|@[a-z][a-z0-9_]*)"
 BOUNDARY = r"(?=$|\)|,| and | or | then )"
 
 
@@ -56,7 +56,7 @@ class Inverse:
 
     def binder(self, kind):
         sort = self.noun()
-        match = re.match(r" ([A-Z][0-9]*)(?= |,)", self.text[self.pos:])
+        match = re.match(r" ([B-HJ-NP-Z]+[0-9]*)(?= |,)", self.text[self.pos:])
         name = None
         if match:
             name = match[1]

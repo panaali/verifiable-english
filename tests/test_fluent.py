@@ -163,7 +163,7 @@ def test_names_vacuity_collisions_sibling_scopes_and_shadowing():
     data["vocabulary"]["sorts"]["agent"]["verbalisation"]["singular"] = "specialist"
     env = Environment(data)
     f = Forall("item", Exists("agent", Binary("owns", Var(0), Var(1))))
-    assert render(f, env, "ve_fluent") == "for every service S2, there is a specialist S such that S owns S2"
+    assert render(f, env, "ve_fluent") == "for every service R, there is a specialist S such that S owns R"
     assert parse_fluent(env, render(f, env, "ve_fluent")) == f
 
 
@@ -307,12 +307,12 @@ def test_every_whitelisted_negative_inflection(finite, base):
     (None, "NEGATIVE_WITHOUT_POSITIVE"),
     ("{0} is not reviewed", "NEGATIVE_WITHOUT_POSITIVE"),
     ("{0} is reviewed already", "NEGATIVE_WITHOUT_POSITIVE"),
-    ("{0} admires {1}", "NEGATIVE_NOT_NEGATION"),
+    ("{0} foos {1}", "NEGATIVE_NOT_NEGATION"),
 ])
 def test_negative_requires_accepted_positive_and_whitelisted_inflection(positive, code):
     from ve import lint_vocabulary
     data = negative_vocabulary()
-    predicate = "owns" if positive == "{0} admires {1}" else "reviewed"
+    predicate = "owns" if positive == "{0} foos {1}" else "reviewed"
     entry = data["vocabulary"]["predicates"][predicate]
     if positive is None:
         entry.pop("verbalisation")
@@ -347,58 +347,62 @@ def test_negative_metadata_type_and_length_checked(bad):
         Environment(data)
 
 
-def test_variable_sequences_disjoint_across_sorts_scopes_statements_and_legend():
+@pytest.mark.parametrize("naming", ["per_statement", "per_document"])
+def test_variable_letters_disjoint_across_sorts_scopes_statements_and_legend(naming):
     from ve import render_vocabulary
     data = vocabulary()
     data["vocabulary"]["sorts"]["agent"]["verbalisation"]["singular"] = "specialist"
     data["vocabulary"]["sorts"]["system"] = {"description": "Third S sort"}
     data["vocabulary"]["constants"]["s"] = {"sort": "item", "description": "Lowercase S"}
     data["vocabulary"]["constants"]["s2"] = {"sort": "item", "description": "Lowercase S2"}
-    # Rejected upper-case lexical tokens cannot become variable references.
     data["vocabulary"]["predicates"]["active"]["verbalisation"] = "{0} is S2"
     env = Environment(data)
     f = Forall("item", Exists("agent", Binary("owns", Var(0), Var(1))))
     g = Forall("system", Eq(Var(0), Var(0)))
     h = Forall("item", And(Eq(Var(0), Const("s")), Unary("active", Const("s2"))))
     document = Document((f, f, g, h))
-    text = render(document, env, "ve_fluent")
-    assert text.splitlines()[:3] == [
-        "for every service S2, there is a specialist S such that S owns S2.",
-        "for every service S5, there is a specialist S4 such that S4 owns S5.",
-        "for every system S3, S3 is the same system as S3.",
-    ]
+    text = render(document, env, "ve_fluent", naming)
+    first = "for every service R, there is a specialist P such that P owns R."
+    second = (first if naming == "per_statement" else
+              "for every service R2, there is a specialist P2 such that P2 owns R2.")
+    assert text.splitlines()[:3] == [first, second,
+        "for every system Y, Y is the same system as Y."]
     assert "@s" in text and "@s2" in text and "@s2 is active" in text
-    names = []
-    sequences = json.loads(render_vocabulary(env))["fluent_variables"]["sequences_by_sort"]
+    from collections import Counter
+    counts = Counter()
+    letters = json.loads(render_vocabulary(env, naming=naming))["fluent_variables"]["letters_by_sort"]
+    assert letters == {"agent": "P", "item": "R", "system": "Y"}
     for formula, line in zip(document.formulas, text.splitlines(), strict=True):
+        if naming == "per_statement":
+            counts.clear()
         inverse = Inverse(env, line[:-1])
         assert inverse.parse() == formula
         for _, sort, name in inverse.binders:
-            names.append(name)
-            sequence = sequences[sort]
-            suffix = int(name[1:] or "1")
-            assert name[0] == sequence["letter"]
-            assert (suffix - sequence["first_suffix"]) % sequence["stride"] == 0
-    assert len(set(names)) == len(names)
+            counts[sort] += 1
+            assert name == letters[sort] + (str(counts[sort]) if counts[sort] > 1 else "")
     for category in data["vocabulary"]:
         data["vocabulary"][category] = dict(reversed(list(data["vocabulary"][category].items())))
     reordered = Environment(data)
-    assert render(document, reordered, "ve_fluent") == text
-    assert render_vocabulary(reordered) == render_vocabulary(env)
-    assert render(f, env, "ve_fluent") == text.splitlines()[0][:-1]
+    assert render(document, reordered, "ve_fluent", naming) == text
+    assert render_vocabulary(reordered, naming=naming) == render_vocabulary(env, naming=naming)
+    assert render(f, env, "ve_fluent", naming) == first[:-1]
 
 
-def test_all_sort_initial_collisions_have_disjoint_names():
+@pytest.mark.parametrize("naming", ["per_statement", "per_document"])
+def test_all_sort_initial_collisions_have_disjoint_names(naming):
     from ve import render_vocabulary
     data = vocabulary()
     data["vocabulary"] = {"sorts": {f"sort{i}": {"description": "Sort"} for i in range(32)},
                           "predicates": {}, "constants": {}}
     env = Environment(data)
     statements = tuple(Forall(sort, Eq(Var(0), Var(0))) for sort in sorted(env.sorts)) * 2
-    text = render(Document(statements), env, "ve_fluent")
-    names = re.findall(r"for every sort\d+ (S\d*)", text)
-    assert names == ["S" if i == 1 else f"S{i}" for i in range(1, 65)]
-    assert len(json.loads(render_vocabulary(env))["fluent_variables"]["sequences_by_sort"]) == 32
+    text = render(Document(statements), env, "ve_fluent", naming)
+    names = re.findall(r"for every sort\d+ ([A-Z]+[0-9]*)", text)
+    letters = json.loads(render_vocabulary(env, naming=naming))["fluent_variables"]["letters_by_sort"]
+    assert len(set(letters.values())) == 32
+    assert names[:32] == list(letters.values())
+    assert names[32:] == [name + ("2" if naming == "per_document" else "") for name in names[:32]]
+    assert all(not set(name).intersection("AIO") for name in names)
     assert [parse_fluent(env, line[:-1]) for line in text.splitlines()] == list(statements)
 
 
