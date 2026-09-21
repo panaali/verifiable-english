@@ -1,0 +1,121 @@
+{
+  "attack_unknown_rate": 0.0375,
+  "attack_validation": {
+    "REJECTED": 139,
+    "UNKNOWN": 15,
+    "VALID": 246
+  },
+  "budgets": {
+    "max_domain_size": 2,
+    "max_evaluations": 100000,
+    "max_models": 1000,
+    "max_proof_steps": 1000
+  },
+  "by_template": {
+    "all_pairs": {
+      "count": 33,
+      "unknown": 0
+    },
+    "category_coverage": {
+      "count": 36,
+      "unknown": 8
+    },
+    "coverage": {
+      "count": 38,
+      "unknown": 0
+    },
+    "exclusive": {
+      "count": 41,
+      "unknown": 0
+    },
+    "existence": {
+      "count": 38,
+      "unknown": 0
+    },
+    "pair_requirement": {
+      "count": 42,
+      "unknown": 0
+    },
+    "related_witness": {
+      "count": 40,
+      "unknown": 0
+    },
+    "requirement": {
+      "count": 42,
+      "unknown": 0
+    },
+    "self_relation": {
+      "count": 44,
+      "unknown": 0
+    },
+    "unique_property": {
+      "count": 46,
+      "unknown": 0
+    }
+  },
+  "count": 400,
+  "denominator": "All draws, including equivalent/fake attacks and invalid or UNKNOWN references",
+  "difference_rate_bounds": [
+    0.6325,
+    0.6525
+  ],
+  "distribution": "Independent uniform draws over 10 template families and 6 mutation families; vocabulary order and relation orientation randomized",
+  "elapsed_seconds": 50.168,
+  "environment": {
+    "language": "ve.core@0",
+    "profile": "relational-fol@0",
+    "spec_revision": "ve-v0-draft-2026-09-20",
+    "vocabulary": {
+      "constants": {},
+      "predicates": {
+        "p": {
+          "arguments": [
+            "item"
+          ],
+          "description": "Item has property P."
+        },
+        "q": {
+          "arguments": [
+            "item"
+          ],
+          "description": "Item has property Q."
+        },
+        "r": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "First item is related to second."
+        }
+      },
+      "sorts": {
+        "item": {
+          "description": "An item in the task."
+        }
+      }
+    }
+  },
+  "equivalence_rate_bounds": [
+    0.3475,
+    0.3675
+  ],
+  "labels": {
+    "DIFFERENT": 253,
+    "EQUIVALENT": 139,
+    "UNKNOWN": 8
+  },
+  "limitations": [
+    "Synthetic template distribution; no claim of task representativeness",
+    "Finite search and tableau remain bounded, even within FO2",
+    "Non-vacuity means inhabited sorts and implication guard coverage",
+    "No sampled case is removed from the denominator"
+  ],
+  "reference_validation": {
+    "UNKNOWN": 36,
+    "VALID": 364
+  },
+  "schema": "ve-oracle-template-audit@1",
+  "seconds_per_pair_including_validation": 0.125419,
+  "seed": 20260921,
+  "unknown_rate": 0.02
+}

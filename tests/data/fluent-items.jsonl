@@ -1,0 +1,6 @@
+{"claim": "for every service x0, (if (x0 is deployed), then (x0 is reviewed)).\n", "environment_id": "1af6c78acc687a56f323b388cd64b79ed02978e53518642169108501556862b8", "id": "fluent-1"}
+{"claim": "for every service x0, (if (x0 is deployed), then (there exists person x1, (x1 owns x0))).\n", "environment_id": "1af6c78acc687a56f323b388cd64b79ed02978e53518642169108501556862b8", "id": "fluent-2"}
+{"claim": "there exists person x0, (for every service x1, (if (x1 is deployed), then (x0 owns x1))).\n", "environment_id": "1af6c78acc687a56f323b388cd64b79ed02978e53518642169108501556862b8", "id": "fluent-3"}
+{"claim": "not (there exists service x0, ((x0 is deployed) and (not (x0 is reviewed)))).\n", "environment_id": "1af6c78acc687a56f323b388cd64b79ed02978e53518642169108501556862b8", "id": "fluent-4"}
+{"claim": "for every service x0, (if ((x0 is deployed) and (not (x0 equals @legacy))), then (not (@alice owns x0))).\n", "environment_id": "1af6c78acc687a56f323b388cd64b79ed02978e53518642169108501556862b8", "id": "fluent-5"}
+{"claim": "for every service x0, (for every person x1, (for every person x2, (if ((x1 owns x0) and (x2 owns x0)), then (x1 equals x2)))).\n", "environment_id": "1af6c78acc687a56f323b388cd64b79ed02978e53518642169108501556862b8", "id": "fluent-6"}

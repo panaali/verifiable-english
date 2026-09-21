@@ -2,12 +2,13 @@ import json
 
 import pytest
 
-from ve.ast import Binary, Bottom, Const, Eq, Exists, Forall, Implies, Not, Top, Unary, Var
+from ve.ast import Binary, Bottom, Const, Eq, Exists, Forall, Implies, Not, Or, Top, Unary, Var
 from ve.environment import Environment
 from ve.errors import InvalidModel, ResourceLimit, VEError
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
-from ve.search import _subsets, check_countermodel, find_countermodel
+from ve.search import (_nonvacuous, _subsets, check_countermodel, find_countermodel,
+                       find_distinguishing_model)
 
 
 @pytest.fixture
@@ -94,6 +95,26 @@ def test_trace_budget_is_a_resource_limit(env):
     assert result.status == "ResourceLimit" and result.value is None
 
 
+def test_no_trace_uses_evaluation_budget_and_omits_explanation(env):
+    result = evaluate(env, Forall("item", Unary("marked", Var(0))), model(env),
+                      max_evaluations=100, max_trace_nodes=1, trace=False)
+    assert result.status == "Violated"
+    assert result.explanation is None
+    assert result.to_dict()["explanation"] is None
+
+
+def test_no_trace_reaches_full_million_evaluation_envelope():
+    empty_env = Environment.from_dict({"language":"ve.core@0","profile":"relational-fol@0",
+        "spec_revision":"ve-v0-draft-2026-09-20","vocabulary":{"sorts":{"item":{"description":"Item."}},
+        "predicates":{},"constants":{}}})
+    finite = FiniteModel.from_dict(empty_env, {"complete":True,
+        "domains":{"item":[f"e{i}" for i in range(1000)]},"constants":{},"relations":{}})
+    formula = Forall("item", Forall("item", Top()))
+    result = evaluate(empty_env, formula, finite, max_evaluations=1_000_000,
+                      max_trace_nodes=1, trace=False)
+    assert (result.status, result.evaluations, result.explanation) == ("ResourceLimit", 1_000_000, None)
+
+
 def test_model_runtime_limits_have_resource_classification(env):
     with pytest.raises(ResourceLimit):
         model(env, domain=tuple(f"e{i}" for i in range(1001)), origin="e0")
@@ -110,6 +131,91 @@ def test_search_finds_empty_domain_countermodel_and_checks_it():
     assert result.model.domains["item"] == ()
     checked = check_countermodel(empty_env, [Forall("item", Top())], Exists("item", Top()), result.model)
     assert checked.valid and checked.premise_values == (True,) and checked.conclusion_value is False
+
+
+def test_search_can_exclude_empty_domains():
+    empty_env = Environment.from_dict({"language":"ve.core@0","profile":"relational-fol@0",
+        "spec_revision":"ve-v0-draft-2026-09-20","vocabulary":{"sorts":{"item":{"description":"Item."}},
+        "predicates":{},"constants":{}}})
+    conclusion = Exists("item", Top())
+    result = find_countermodel(empty_env, (), conclusion, max_domain_size=1,
+                               min_domain_size=1, nonempty_domains=True)
+    assert result.status == "NotFound"
+    assert result.min_domain_size == 1 and result.nonempty_domains is True
+
+
+def test_nonvacuous_filter_requires_a_real_implication_trigger(env):
+    implication = Forall("item", Implies(Unary("marked", Var(0)), Bottom()))
+    unfiltered = find_countermodel(env, (), Bottom(), max_domain_size=1, max_models=10)
+    filtered = find_countermodel(env, (), Bottom(), max_domain_size=1, max_models=10,
+                                 nonempty_domains=True, nonvacuous_for=implication)
+    assert unfiltered.status == filtered.status == "Found"
+    assert filtered.model.relations["marked"] == frozenset({("e0",)})
+
+
+def test_impossible_antecedent_is_conservatively_rejected(env):
+    formula = Implies(Bottom(), Top())
+    result = find_countermodel(env, (), Bottom(), max_domain_size=1, max_models=100,
+                               nonvacuous_for=formula)
+    assert result.status == "NotFound"
+
+
+def test_nonvacuity_traversal_itself_is_budgeted(env):
+    formula = Top()
+    for _ in range(12):
+        formula = Forall("item", formula)
+    result = find_countermodel(env, (), Bottom(), min_domain_size=1, max_domain_size=1,
+                               max_models=1, max_evaluations=5,
+                               nonvacuous_for=formula)
+    assert result.status == "ResourceLimit" and result.evaluations == 5
+
+
+def test_nonvacuity_inspects_short_circuited_branches(env):
+    formula = Or(Top(), Implies(Unary("marked", Const("origin")), Top()))
+    finite = model(env, marked=())
+    suitable, _, exhausted = _nonvacuous(env, formula, finite, 100)
+    assert not suitable and not exhausted
+
+
+def test_nonvacuity_treats_shared_dag_nodes_as_separate_occurrences(env):
+    shared = Implies(Unary("marked", Const("origin")), Top())
+    finite = model(env, marked=("a",))
+    once = _nonvacuous(env, shared, finite, 100)
+    twice = _nonvacuous(env, Or(shared, shared), finite, 100)
+    assert once[0] and twice[0]
+    assert twice[1] > 2 * once[1]
+
+
+def test_search_validates_and_hashes_formulas_once(monkeypatch, env):
+    import ve.search as search
+    checks = hashes = 0
+    original_check = search.check_formula
+    original_meaning = search.meaning_id
+    def counted_check(*args):
+        nonlocal checks
+        checks += 1
+        return original_check(*args)
+    def counted_meaning(*args):
+        nonlocal hashes
+        hashes += 1
+        return original_meaning(*args)
+    monkeypatch.setattr(search, "check_formula", counted_check)
+    monkeypatch.setattr(search, "meaning_id", counted_meaning)
+    monkeypatch.setattr(search, "_validate_model",
+                        lambda *_: (_ for _ in ()).throw(AssertionError("search revalidated a generated model")))
+    result = search.find_countermodel(env, (Top(),), Top(), max_domain_size=1, max_models=20)
+    assert result.status in {"NotFound", "ResourceLimit"}
+    assert checks == 2 and hashes == 0
+
+
+def test_find_distinguishing_model_finds_either_direction(env):
+    result = find_distinguishing_model(env, Unary("marked", Const("origin")),
+                                      Not(Unary("marked", Const("origin"))),
+                                      max_domain_size=1)
+    assert result.status == "Found"
+    left = evaluate(env, Unary("marked", Const("origin")), result.model, trace=False).value
+    right = evaluate(env, Not(Unary("marked", Const("origin"))), result.model, trace=False).value
+    assert left != right
 
 
 def test_relation_subset_enumerator_is_exhaustive():
