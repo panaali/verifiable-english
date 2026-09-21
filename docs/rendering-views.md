@@ -1,19 +1,20 @@
-# Deterministic rendering views, version 2
+# Deterministic rendering views, version 3
 
-`ve.render(ast, env, view)` returns text for a closed formula or a `Document`.
+`ve.render(ast, env, view, naming="per_statement")` returns text for a closed formula or a `Document`.
 `view` is `fol_symbols`, `fol_keywords`, `ve_strict`, `ve_natural`, or `ve_fluent`. A single
 formula has no final punctuation. Documents append a period and LF to every
 statement. All views preserve lexical case without sentence capitalization.
 `natural_formula(...).text` follows the same unpunctuated formula policy.
 Every view has the same 65,536-byte UTF-8 output limit; formula checks reserve
-two bytes for the period and LF of a possible one-statement document.
+two bytes for the period and LF of a possible one-statement document. The
+legend is additional cell context and is not charged against this claim-text limit.
 `print_formula` and `print_document` retain the exact strict canonical bytes.
 `natural_formula` and `natural_document` additionally return environment and
-meaning IDs with renderer `ve.ace-explicit`, version `2`. Version 2 changes
-natural case/punctuation and template acceptance; regenerate prior natural views.
+meaning IDs with renderer `ve.ace-explicit`, version `3`. Version 3 tightens
+lexical acceptance and unifies naming scope; regenerate prior view artifacts.
 
 The first four surfaces use **one recursive traversal** in `ve/printer.py`. It assigns
-`x0`, `x1`, ... to binders in preorder, resets at each statement, resolves every
+`x0`, `x1`, ... to binders in preorder, follows the selected naming scope, resolves every
 variable through the same nearest-first scope stack, and visits operands in AST
 order. Every immediate **formula operand**, including an atomic operand, is
 parenthesized. No surface changes this grouping policy or elides a binder,
@@ -22,8 +23,12 @@ has additional lexical argument-list delimiters; these do not group formulas.
 The natural surface retains the common grouping, even where fluent prose could
 omit parentheses. The fifth surface uses `ve/fluent.py`, follows the same binder
 and operand preorder, and contracts only structures with an explicit inverse
-(see below). None of these views reorders or simplifies the AST. The four explicit views retain the reviewed version-2 policy. Fluent version 2
-adopts that policy and adds checked negative templates and stable sort letters.
+(see below). None of these views reorders or simplifies the AST. All five views default to `per_statement`: counters restart in every statement.
+Select `per_document` to continue numbering across statements in **every** view.
+Each render call starts a fresh scope. Choose one policy for all experimental
+cells; `render_cell` records it in the identical legend. Formula-only calls have
+one statement under either policy. Canonical serialization remains per-statement.
+Fluent version 3 uses distinct sort letters and mechanically checked negatives.
 
 | Constructor | FOL symbols | FOL keywords | VE strict | VE natural |
 |---|---|---|---|---|
@@ -119,8 +124,18 @@ all any every some each no none not never neither nor and or both either if then
 unless except without only exists forall implies true false equal equals there
 such that case condition for at least most exactly does do must may can cannot
 should shall will would whenever when iff otherwise always sometimes one two
-three four five six seven eight nine ten a an the lacks
+three four five six seven eight nine ten a an the lacks nothing nobody everything
+everybody just solely many several another but plus few might
 ```
+
+Positive and negative templates are limited to **80 characters and 8
+whitespace-separated words**, counting placeholders as words. Metadata may still
+store longer strings up to the environment's 256-character bound; these render
+with fallback. A template cannot mention **any declared sort identifier or
+singular/plural noun**, as a complete word sequence, anywhere in the phrase.
+This includes its own argument sorts and unused/rejected sort declarations:
+arguments already carry their sorts. Substring matches inside other words do
+not count. Multiword nouns are matched as complete consecutive word sequences.
 
 Each argument placeholder occurs exactly once, in declared order. There are no
 format conversions, attributes, escapes, punctuation, parentheses, embedded
@@ -159,6 +174,8 @@ Multiple diagnostics may identify the same rejected entry. Stable codes are:
 
 | Code | Rejection |
 |---|---|
+| `TEMPLATE_LENGTH` | More than 80 characters or 8 whitespace-separated words |
+| `SORT_NOUN` | Template mentions a declared sort identifier or singular/plural noun |
 | `TEMPLATE_SHAPE` | Missing, misplaced, or unsupported placeholder/copula structure |
 | `PHRASE_SYNTAX` | Unsupported characters, placeholders in a phrase, spacing, or case |
 | `LOGICAL_WORD` | Reserved quantifier, connective, negation, or other display word |
@@ -172,7 +189,7 @@ Multiple diagnostics may identify the same rejected entry. Stable codes are:
 | `DUPLICATE_TEMPLATE` | More than one predicate declares the same template |
 | `SORT_COLLISION` | Noun equals another sort's identifier or noun |
 | `NEGATIVE_WITHOUT_POSITIVE` | Negative metadata lacks an accepted declared positive template |
-| `NEGATIVE_NOT_NEGATION` | Negative metadata differs from the mechanically derived exact negation, or its binary verb is not whitelisted |
+| `NEGATIVE_NOT_NEGATION` | Negative metadata differs from the mechanically derived exact negation, or its binary verb has no supported inflection |
 
 Predicate entries may also carry an optional `negative_verbalisation` string,
 with the same type, 256-character limit, immutability, and identity binding as
@@ -181,9 +198,18 @@ with the same type, 256-character limit, immutability, and identity binding as
 
 - Unary: `{0} is HEAD` becomes `{0} is not HEAD`, copying `HEAD` unchanged.
 - Binary: replace only the first verb with `does not BASE`, preserving the rest
-  of the phrase and both placeholders exactly. The complete whitelist is
-  `audits/audit`, `depends/depend`, `has/have`, `likes/like`, `links/link`,
-  `owns/own`, `reviews/review`, and `trusts/trust`.
+  of the phrase and both placeholders exactly. Regular consonant + `ies` becomes
+  `y` (`carries/carry`); `ches`, `shes`, `sses`, `xes`, `zzes` lose `es`
+  (`watches/watch`, `passes/pass`); otherwise a final `s` is removed, except
+  unsupported `ss`, `us`, `is`, `ous`, `oes` endings. Explicit irregular/spelling
+  exceptions take precedence: `has/have`, `does/do`, `goes/go`, `says/say`,
+  `dies/die`, `lies/lie`, `ties/tie`, `unties/untie`, `vies/vie`, `quizzes/quiz`,
+  `gases/gas`, `biases/bias`, `buses/bus`, `focuses/focus`, `echoes/echo`,
+  `vetoes/veto`, `aches/ache`, `caches/cache`, `niches/niche`, `axes/axe`,
+  `shoes/shoe`, `toes/toe`, `tiptoes/tiptoe`. The positive-template restrictions
+  still apply first (e.g. reserved `does` cannot introduce a positive template).
+  This spelling convention is not a dictionary or a general English inflector;
+  unsupported or mismatched declared negatives keep explicit fallback.
 
 For example, `{0} is reviewed` permits only `{0} is not reviewed`, and
 `{0} owns {1}` permits only `{0} does not own {1}`. An attacker-supplied
@@ -201,7 +227,11 @@ These checks are a **heuristic, not a proof** of English meaning or injectivity.
 Templates and sort nouns are **trusted vocabulary data**, as are descriptions.
 An arbitrary alias, for example `service` → `owner` or `person` → `asset`, can
 remain accepted if it collides with no declaration. The linter cannot establish
-its truthfulness. Experiments must not treat an empty lint report as validation
+its truthfulness. Converses/antonyms without a preposition, such as `precedes`
+for `follows` or `disowns` for `owns`, **cannot be caught lexically**. The identical
+legend exposing raw predicate identity and argument order is the defence;
+it does not guarantee that a judge notices a semantic lie.
+Experiments must not treat an empty lint report as validation
 of vocabulary meaning.
 
 For the example above, the natural document is:
@@ -236,7 +266,7 @@ metadata change still changes the environment identity and requires regenerating
 all cells consistently. The natural grammar is read-only; only `ve_strict` is
 accepted by the VE source parser.
 
-## Fifth view: `ve_fluent` (renderer `ve.fluent`, version `2`)
+## Fifth view: `ve_fluent` (renderer `ve.fluent`, version `3`)
 
 `render(formula, env, "ve_fluent")` and
 `render_fol(env, document, view="ve_fluent")` provide a deterministic read-only
@@ -253,21 +283,22 @@ declared vocabulary assertions, not mechanically verified descriptions of the wo
 
 The changes from the four explicit surfaces are:
 
-- Names use the initial capital letter of the selected sort noun. With distinct
-  initials, repeated named binders receive `S`, `S2`, `S3` or `P`, `P2`, `P3`.
-  Sorts sharing an initial are sorted by their **formal identifiers** and receive
-  disjoint suffix progressions: for `agent → specialist` and `item → service`,
-  `agent` uses `S`, `S3`, `S5`, ... and `item` uses `S2`, `S4`, `S6`, ... .
-  With N such sorts, sort position k receives suffix k + occurrence × N;
-  suffix 1 is omitted. Allocation follows binder preorder across sibling scopes
-  and **the entire document**, with a fresh counter for each render call, not
-  each statement. A letter/suffix always identifies the same sort in the same
-  environment even across separate render calls; document binders never reuse
-  a name. Dictionary insertion order and first-use order cannot change this
-  mapping. `render_vocabulary` states each sort's letter, first suffix, and stride.
-  Constants always have `@` and lowercase identifiers. Selected lexical words
-  are lowercase; metadata containing `S`, `S2`, etc. is rejected. Thus constants,
-  templates, and other binders cannot capture a variable name.
+- Sorts are processed by formal identifier in sorted order. Prefer the initial
+  capital of the selected noun, then its next unused consonant in reading order,
+  then the fixed list `BCDEFGHJKLMNPQRSTUVWXYZ`. Never use `A`, `I`, `O`, or a
+  letter matching **any** declared identifier, case-insensitively. A declared
+  identifier such as `s2` also reserves `S` to prevent a later suffixed collision.
+  Each sort has a distinct letter: `specialist` and `service` become `S` and `R`,
+  rather than sharing odd/even suffixes. With more sorts/reservations than usable
+  single letters, continue with alphabetic codes `BB`, `BC`, ... in the same
+  fixed alphabet order. This keeps all 32 permitted sorts renderable without
+  encoding sort identity in numeric suffixes. The legend lists every assignment
+  in `fluent_variables.letters_by_sort`.
+  Within the selected naming scope, each sort's named binders count up in preorder:
+  `S`, `S2`, `S3`, ... . Default `per_statement` resets in each statement;
+  `per_document` continues across the document. Dictionary order and first-use
+  order do not change the sort-to-letter map. Constants retain `@`; lexical words
+  remain lowercase and cannot capture names.
   **The binder declaration counts as the first mention:** its name appears
   exactly when its body refers to it; unnamed binders do not consume a suffix.
   An unused existential reads `there is a person such that true`; a used one
@@ -313,8 +344,8 @@ switch binder naming systems in the middle of a scope.
 
 The grammar below describes the emitted lexical case: reserved words and
 lexical phrases are lowercase, while bound names have capital initials.
-Document framing is `sentence, ".", LF`, repeated with document-wide binder
-allocation. Lexical expansions come from the fixed environment, selected using
+Document framing is `sentence, ".", LF`, repeated with the selected naming
+scope (per-statement by default). Lexical expansions come from the fixed environment, selected using
 the collision and exact-negation policy above.
 
 ```ebnf
@@ -335,7 +366,8 @@ guard = relative, [ " and ", relative ] | "such that ", unit ;
 relative = "that ", atomic_tail ;
 declaration = noun, [ " ", variable ] ;
 term = variable | "@", identifier ;
-variable = uppercase_ASCII_letter, [ positive_integer_suffix ] ;
+variable = allowed_uppercase_letter, { allowed_uppercase_letter },
+           [ positive_integer_suffix ] ;
 article = "a" | "an" ;
 ```
 
@@ -344,7 +376,8 @@ positive template or strict fallback, `negative_atom` is an accepted negative
 template expansion, and `atomic_tail` is a selected atom without its subject or
 the tail of a typed (in)equality. Predicate relative clauses require an accepted
 declared positive template and, for negated predicates, an accepted negative.
-`identifier` is the environment's ASCII identifier syntax. Suffixes start at 2;
+`identifier` is the environment's ASCII identifier syntax. Allowed uppercase letters
+exclude A/I/O; codes are the distinct assignments in the legend. Suffixes start at 2;
 the article is `an` before a noun beginning with `a/e/i/o/u`, otherwise `a`.
 An omitted binder name is allowed only if the body has no reference to it. A
 guard must meet the syntactic/typing conditions above. These side conditions
@@ -407,14 +440,18 @@ UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run python tests/test_fluent.py
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run pytest -q tests/test_fluent.py tests/test_views.py
 ```
 
-**Every experimental cell must show `render_vocabulary(env, view)` alongside its
-claim text.** This API returns byte-identical deterministic JSON text for all
-five views. The `ve.vocabulary-legend@2` format includes the environment ID, all sort/predicate/constant
+**Every experimental cell must use `ve.printer.render_cell(ast_or_document, env,
+view, naming="per_statement")`, which always returns legend + rendering.** This API returns byte-identical deterministic JSON text for all
+five views. The `ve.vocabulary-legend@3` format includes the environment ID, all sort/predicate/constant
 identifiers and descriptions, predicate argument sorts **in declared order**,
 raw positive/negative metadata, selected templates/nouns (including fallback),
-the fluent variable-to-sort sequences, and lint diagnostics. Metadata is JSON-quoted data, not instructions
+the naming scope and fluent letter-to-sort map, and lint diagnostics. Metadata is JSON-quoted data, not instructions
 to the judge. Vocabulary ordering is independent of dictionary insertion order.
-The legend is separate from `render`; callers are responsible for displaying it.
+The low-level `render` still returns only claim text. `render_cell` cannot omit
+the legend. CLI: `python -m ve render --env ENV.json --view ve_fluent --with-legend
+--naming per_statement CLAIM.ve`. The same options work with `import-fol`.
+The legacy `natural` alias emits its JSON wrapper without `--with-legend`; with
+that flag it emits the same complete plain-text cell as `ve_natural`.
 
 For E1, freeze and independently review the vocabulary before generating attacked
 claims. Where the attacker authors vocabulary (E5), **the identical legend is
@@ -425,22 +462,55 @@ carries all raw identity information, or that the legend guarantees a judge
 will notice every mismatch.
 
 ```python
-from ve import lint_vocabulary, render, render_vocabulary, measure_view_lengths
+from ve import lint_vocabulary
+from ve.printer import render_cell, measure_view_lengths, measure_jsonl_lengths
+from ve.fluent import contraction_stats
 
 issues = [issue.to_dict() for issue in lint_vocabulary(env)]
-cell_text = render_vocabulary(env, view) + render(document, env, view)
+cell_text = render_cell(document, env, view, naming="per_statement")
 length_rows = measure_view_lengths(items, env, include_vocabulary=True)
+file_rows = measure_jsonl_lengths("items.jsonl", env, field="ast")
+guard_counts = contraction_stats(items, env)
 ```
 
-`measure_view_lengths(items, env, include_vocabulary=False)` returns one row per
+`measure_view_lengths(items, env, include_vocabulary=False, naming="per_statement")` returns one row per
 item per view, in input order then `VIEWS` order. Rows contain `item_index`, `view`,
 `characters`, `tokenish`, and `includes_vocabulary`. Characters count Unicode
 code points (including punctuation/newlines), not UTF-8 bytes. Token-ish length
 counts matches of Unicode regex `\w+|[^\w\s]`: word runs or individual
 non-whitespace symbols. With `include_vocabulary=True` it measures exactly
-`render_vocabulary(env, view) + render(item, env, view)`. Report these lengths as
+`render_cell(item, env, view, naming)`. Report these lengths as
 covariates, and separately record counts from the actual model tokenizer when
 available; this heuristic does not predict BPE charges for `∀` or `∧`.
+
+`measure_jsonl_lengths(path, env, field="ast", source_format="ast",
+include_vocabulary=True, naming="per_statement")` measures a real JSONL file.
+Each line must be an object with the selected top-level field. Unrelated
+metadata may contain JSON null and finite numbers; duplicate keys and nonfinite
+numbers are rejected. AST fields accept
+one tagged formula array or a document array of tagged formulas; `source_format="ve"`
+accepts strict VE source including statement punctuation. Optional `id` becomes
+`item_id`; a present `environment_id` must match. Rows retain `item_index` and
+1-based `line`. Invalid/blank lines fail the operation, never disappear from the
+denominator. The supplied environment must apply to the whole file. The helper
+counts the actual rendered text and defaults to including the legend.
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run python -m ve view-lengths \
+  --env ENV.json --field claim --source-format ve --naming per_statement items.jsonl
+```
+
+`contraction_stats(items, env, naming="per_statement")` in `ve.fluent` reports
+`relative_guards`, `structural_guards`, and the subset `structural_both_guards`
+(`such that (both ...)`), plus shares with all emitted universal guards as the
+denominator. A two-relative-literal guard counts once. Uncontracted universal
+groups are separate; existential `such that` does not count as a guard.
+Negation counts visit every `Not` occurrence once: `whitelisted_negations`
+(validated declared predicate negatives), `equality_negations` (typed inequality),
+and `fallback_negations` (`it is false that`). Their shares use all `Not` nodes;
+`whitelisted_predicate_negations_share` instead uses only predicate-atom
+negations. Empty denominators produce `0.0`. The sample and exact denominators
+are recorded in [the polish report](views-polish-report.md).
 
 Full formula bracketing is shared by the four explicit views. Fluent contracts
 only the reversible structures documented above. These checks do not establish
@@ -450,5 +520,14 @@ Review regressions and their precise limits are recorded in
 
 Six reproducible examples in all five views, including checked negative atoms,
 are recorded with the complete shared legend in [fluent examples](fluent-examples.md).
-Regenerate with `UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run --frozen python
-examples/fluent_views.py`.
+Regenerate the outputs with `examples/fluent_views.py`. Its historical banner
+is outside this task's edit scope; correct that one sentence when regenerating:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run --frozen python examples/fluent_views.py | \
+  sed 's/are unique across statements\./restart in each statement under the default naming policy./' \
+  > docs/fluent-examples.md
+```
+
+`test_committed_item_file_lengths_and_example_documentation` checks the current
+renderings, legend, and corrected banner against this committed document.
