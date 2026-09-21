@@ -60,18 +60,39 @@ Warshall pivot. Its correctness is proved; an O(n^3) matrix implementation and
 complexity bound are not. Body relations are evaluated for all domain pairs
 per outer valuation. The reference bridge has no evaluation work-budget theorem.
 
-The Lean certificate checker contains no Reach unfolding rules. Its JSON adapter explicitly
-rejects every v0.1 environment with a profile-gate message. The path unfolding
-lemma alone is not a soundness extension of tableau replay: substitution,
-branch-preservation and closure certificate theorems remain outstanding.
-The integration merge retains its single v0 version-2 exact complementary-formula
-close proof, `VE.Tableau.complementary_sound`: identical formulas with identical
-parameter bindings and opposite signs cannot both hold. This is equivalent in
-generality to the removed `compoundClosed_sound` proof. All four `Tableau*.lean`
-files match integration: version 1 retains literal-only closes; version 2 also
-allows complementary compounds. Both retain the 124-expansion limit and the exact
-`checkCertificate_sound` statement. Closure environments are rejected even when
-their formulas contain no Reach or their certificates claim a v0 checker version.
+The extended checker is in `TableauExtended*.lean`, with semantic helper proofs
+in `Closure/Substitution.lean`, `Closure/Congruence.lean` and
+`Closure/PathRules.lean`. Its headline theorem is:
+
+```lean
+VE.Closure.Tableau.checkCertificate_sound
+  (E : Environment) (premises : List VE.Closure.Formula)
+  (conclusion : VE.Closure.Formula) (c : VE.Closure.Tableau.Certificate)
+  (hc : VE.Closure.Tableau.checkCertificate E premises conclusion c = true) :
+  VE.Closure.Entails.{u} E premises conclusion
+```
+
+It proves acceptance implies entailment over all admissible structures, including
+empty sorts and infinite carriers. Substitution lifts through one quantifier
+binder and both Body binders; congruence lifts through the same scopes. Plus/star
+unfolding is an equivalence under either sign. Composition uses exact matching
+edges, bindings and middle terms; a plus component forces a plus result. First
+and last edges are consequences of positive finite paths only. Named conversion
+uses the declared homogeneous signature, not an observed finite extension.
+
+The proof `checkCertificate_sound_v0` specializes this extended result to
+`VE.Entails` on embedded v0 formulas by `conservativity`. The four original files
+`Tableau.lean`, `TableauClosure.lean`, `TableauChecker.lean`, `TableauChecks.lean`
+and the original `VE.Tableau.checkCertificate_sound` statement remain unchanged.
+The adapter preserves v0 version-1/version-2 handling; closure envelopes require
+`ve-tableau-closure-checker@0`, even for Reach-free queries. Both checkers reject
+when fuel is exhausted; the wire depth limit remains 124 expansions.
+
+The implementation has no general induction or cyclic rule. Monotonicity under
+a universal inclusion and symmetric-relation reversal are not implemented.
+The reviewer regression results and certificate/forgery counts are retained in
+`conformance/certificates-report.json`. The extended claim-graph theorem has not
+been proved; argument UI Lean labels identify actual deduction-certificate replay.
 
 JSON correspondence, IO/compiler/runtime correctness and Python refinement
 remain outside the proofs, as in v0. No project axioms or proof placeholders
