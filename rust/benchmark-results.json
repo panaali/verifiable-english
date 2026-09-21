@@ -1,0 +1,387 @@
+{
+  "platform": "macOS-26.3.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)",
+  "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05) (Homebrew)",
+  "processor": "Unavailable: sysctl: sysctl fmt -1 1024 1: Operation not permitted",
+  "memory_bytes": "Unavailable: sysctl: sysctl fmt -1 1024 1: Operation not permitted",
+  "repeats": 5,
+  "gc_enabled": true,
+  "command": "python rust/benchmark.py --repeats 5 --output rust/benchmark-results.json",
+  "method": "Reproducible checked-API benchmark; no process startup or input decoding timed.\n\nPython's API revalidates models, recomputes hashes, and builds explanations.\nRust's immutable checked types avoid revalidation and its evaluator has no trace.\nAlso time Python's internal evaluator (still builds explanations), and report\nsearch with matched enumeration separately from unused-predicate pruning.\n",
+  "results": [
+    {
+      "id": "eval_n2",
+      "kind": "evaluation",
+      "size": 2,
+      "iterations_per_sample": 500,
+      "python_seconds_per_call": [
+        0.0001463610820355825,
+        0.00013738008198561146,
+        0.00013648441602708773,
+        0.00014277966599911452,
+        0.0001452806660090573
+      ],
+      "rust_seconds_per_call": [
+        1.6841600000000002e-07,
+        1.5799999999999999e-07,
+        1.59584e-07,
+        1.6741600000000002e-07,
+        1.65e-07
+      ],
+      "python_median_ms": 0.1427796659991145,
+      "rust_median_ms": 0.000165,
+      "api_speedup": 865.3313090855426,
+      "python_observations": {
+        "value": true,
+        "evaluations": 15
+      },
+      "rust_observations": {
+        "evaluations": 15,
+        "value": true
+      },
+      "python_evaluator_seconds_per_call": [
+        1.6485833970364184e-05,
+        1.605299999937415e-05,
+        1.6157500038389118e-05,
+        1.6864416014868767e-05,
+        1.653150003403425e-05
+      ],
+      "python_evaluator_median_ms": 0.016485833970364183,
+      "evaluator_speedup": 99.91414527493444
+    },
+    {
+      "id": "eval_n4",
+      "kind": "evaluation",
+      "size": 4,
+      "iterations_per_sample": 500,
+      "python_seconds_per_call": [
+        0.0002701786659890786,
+        0.00027031991799594834,
+        0.0002721071660052985,
+        0.0002803608339745551,
+        0.00029132716596359386
+      ],
+      "rust_seconds_per_call": [
+        1.166168e-06,
+        1.1235e-06,
+        1.138e-06,
+        1.182334e-06,
+        1.1315839999999999e-06
+      ],
+      "python_median_ms": 0.2721071660052985,
+      "rust_median_ms": 0.001138,
+      "api_speedup": 239.10998770237126,
+      "python_observations": {
+        "value": true,
+        "evaluations": 85
+      },
+      "rust_observations": {
+        "evaluations": 85,
+        "value": true
+      },
+      "python_evaluator_seconds_per_call": [
+        9.411050000926479e-05,
+        9.44574159802869e-05,
+        9.506775002228097e-05,
+        9.601674997247755e-05,
+        9.492008195957169e-05
+      ],
+      "python_evaluator_median_ms": 0.09492008195957169,
+      "evaluator_speedup": 83.40956235463243
+    },
+    {
+      "id": "eval_n8",
+      "kind": "evaluation",
+      "size": 8,
+      "iterations_per_sample": 170,
+      "python_seconds_per_call": [
+        0.0010584401999093483,
+        0.0010501164234215943,
+        0.0010604348057634471,
+        0.0011048156882786904,
+        0.0010810624999815926
+      ],
+      "rust_seconds_per_call": [
+        9.65514705882353e-06,
+        9.275e-06,
+        9.254170588235293e-06,
+        9.330635294117647e-06,
+        9.318629411764707e-06
+      ],
+      "python_median_ms": 1.0604348057634472,
+      "rust_median_ms": 0.009318629411764706,
+      "api_speedup": 113.797293454406,
+      "python_observations": {
+        "value": true,
+        "evaluations": 585
+      },
+      "rust_observations": {
+        "evaluations": 585,
+        "value": true
+      },
+      "python_evaluator_seconds_per_call": [
+        0.0006625196059330312,
+        0.0006646816177047132,
+        0.0006528436235385016,
+        0.0006823897058733136,
+        0.0006736681413124589
+      ],
+      "python_evaluator_median_ms": 0.6646816177047132,
+      "evaluator_speedup": 71.32825958993038
+    },
+    {
+      "id": "eval_n16",
+      "kind": "evaluation",
+      "size": 16,
+      "iterations_per_sample": 22,
+      "python_seconds_per_call": [
+        0.006894448863352987,
+        0.007413134500066834,
+        0.0074558390452611175,
+        0.007482249998826195,
+        0.007437488636986183
+      ],
+      "rust_seconds_per_call": [
+        0.00010782386363636364,
+        8.854922727272727e-05,
+        8.744504545454546e-05,
+        9.116854545454545e-05,
+        9.075381818181818e-05
+      ],
+      "python_median_ms": 7.437488636986183,
+      "rust_median_ms": 0.09075381818181819,
+      "api_speedup": 81.95234961999897,
+      "python_observations": {
+        "value": true,
+        "evaluations": 4369
+      },
+      "rust_observations": {
+        "evaluations": 4369,
+        "value": true
+      },
+      "python_evaluator_seconds_per_call": [
+        0.0058085378629832785,
+        0.005862344727078876,
+        0.0059406363632826305,
+        0.006105020818226462,
+        0.005947710226543925
+      ],
+      "python_evaluator_median_ms": 5.94063636328263,
+      "evaluator_speedup": 65.45880363271361
+    },
+    {
+      "id": "eval_n24",
+      "kind": "evaluation",
+      "size": 24,
+      "iterations_per_sample": 6,
+      "python_seconds_per_call": [
+        0.023454465335817076,
+        0.022749062496586703,
+        0.024378645830438472,
+        0.02397216666819683,
+        0.023886395831747603
+      ],
+      "rust_seconds_per_call": [
+        0.00048170833333333334,
+        0.0003366388333333333,
+        0.0003360971666666667,
+        0.0003615348333333333,
+        0.0003520278333333333
+      ],
+      "python_median_ms": 23.886395831747603,
+      "rust_median_ms": 0.3520278333333333,
+      "api_speedup": 67.85371374066806,
+      "python_observations": {
+        "value": true,
+        "evaluations": 14425
+      },
+      "rust_observations": {
+        "evaluations": 14425,
+        "value": true
+      },
+      "python_evaluator_seconds_per_call": [
+        0.020244548499855835,
+        0.020497243167483248,
+        0.02138815983198583,
+        0.021149520835024305,
+        0.02322230566642247
+      ],
+      "python_evaluator_median_ms": 21.149520835024305,
+      "evaluator_speedup": 60.079115434596716
+    },
+    {
+      "id": "eval_n32",
+      "kind": "evaluation",
+      "size": 32,
+      "iterations_per_sample": 3,
+      "python_seconds_per_call": [
+        0.054102041671285406,
+        0.056894999996681385,
+        0.05865313899509298,
+        0.05709474999457598,
+        0.0591460000044511
+      ],
+      "rust_seconds_per_call": [
+        0.0011472916666666667,
+        0.0008485553333333332,
+        0.000855514,
+        0.0009052776666666667,
+        0.0008502916666666667
+      ],
+      "python_median_ms": 57.09474999457598,
+      "rust_median_ms": 0.855514,
+      "api_speedup": 66.73736489943586,
+      "python_observations": {
+        "value": true,
+        "evaluations": 33825
+      },
+      "rust_observations": {
+        "evaluations": 33825,
+        "value": true
+      },
+      "python_evaluator_seconds_per_call": [
+        0.04874431932694279,
+        0.04945612499917237,
+        0.05849172199183764,
+        0.057125513994833454,
+        0.052780111000174657
+      ],
+      "python_evaluator_median_ms": 52.78011100017466,
+      "evaluator_speedup": 61.694035398806626
+    },
+    {
+      "id": "search_binary_n1",
+      "kind": "search",
+      "size": 1,
+      "iterations_per_sample": 6,
+      "python_seconds_per_call": [
+        0.0009037153358804062,
+        0.0009132708364631981,
+        0.0009519721643300727,
+        0.0009597848305323472,
+        0.0009912778332363814
+      ],
+      "rust_seconds_per_call": [
+        2.3069333333333336e-05,
+        1.5986166666666666e-05,
+        1.7229166666666668e-05,
+        1.9763833333333332e-05,
+        1.7222333333333333e-05
+      ],
+      "python_median_ms": 0.9519721643300727,
+      "rust_median_ms": 0.017229166666666667,
+      "api_speedup": 55.25352344358342,
+      "python_observations": {
+        "status": "NotFound",
+        "models_checked": 3,
+        "evaluations": 11
+      },
+      "rust_observations": {
+        "evaluations": 11,
+        "models_checked": 3,
+        "status": "NotFound"
+      }
+    },
+    {
+      "id": "search_binary_n2",
+      "kind": "search",
+      "size": 2,
+      "iterations_per_sample": 3,
+      "python_seconds_per_call": [
+        0.006329721994309996,
+        0.006605221996627127,
+        0.006808819336583838,
+        0.0067882360017392784,
+        0.00651984700622658
+      ],
+      "rust_seconds_per_call": [
+        0.00014068066666666668,
+        0.00010370833333333332,
+        0.00010259700000000001,
+        0.000113139,
+        0.00010511133333333334
+      ],
+      "python_median_ms": 6.605221996627127,
+      "rust_median_ms": 0.10511133333333333,
+      "api_speedup": 62.84024554878757,
+      "python_observations": {
+        "status": "NotFound",
+        "models_checked": 19,
+        "evaluations": 251
+      },
+      "rust_observations": {
+        "evaluations": 251,
+        "models_checked": 19,
+        "status": "NotFound"
+      }
+    },
+    {
+      "id": "search_binary_n3",
+      "kind": "search",
+      "size": 3,
+      "iterations_per_sample": 1,
+      "python_seconds_per_call": [
+        0.20841716701397672,
+        0.20318070898065343,
+        0.20581858299556188,
+        0.2069242080033291,
+        0.2079779579944443
+      ],
+      "rust_seconds_per_call": [
+        0.004956417,
+        0.003604917,
+        0.00356075,
+        0.003829167,
+        0.003675541
+      ],
+      "python_median_ms": 206.9242080033291,
+      "rust_median_ms": 3.675541,
+      "api_speedup": 56.29761931735467,
+      "python_observations": {
+        "status": "NotFound",
+        "models_checked": 531,
+        "evaluations": 16123
+      },
+      "rust_observations": {
+        "evaluations": 16123,
+        "models_checked": 531,
+        "status": "NotFound"
+      }
+    },
+    {
+      "id": "search_unused_binary_n3",
+      "kind": "pruned_search",
+      "size": 3,
+      "iterations_per_sample": 1,
+      "python_seconds_per_call": [
+        1.654113166994648,
+        1.6432213749794755,
+        1.691940875025466,
+        1.7051608750189189,
+        1.6973654579778668
+      ],
+      "rust_seconds_per_call": [
+        0.000102083,
+        7.8666e-05,
+        7.5041e-05,
+        8.2042e-05,
+        7.7958e-05
+      ],
+      "python_median_ms": 1691.940875025466,
+      "rust_median_ms": 0.078666,
+      "api_speedup": 21507.9052579954,
+      "python_observations": {
+        "status": "NotFound",
+        "models_checked": 4165,
+        "evaluations": 41425
+      },
+      "rust_observations": {
+        "evaluations": 117,
+        "models_checked": 15,
+        "status": "NotFound"
+      }
+    }
+  ]
+}
