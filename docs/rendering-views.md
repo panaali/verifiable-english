@@ -441,17 +441,71 @@ UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run pytest -q tests/test_fluent.
 ```
 
 **Every experimental cell must use `ve.printer.render_cell(ast_or_document, env,
-view, naming="per_statement")`, which always returns legend + rendering.** This API returns byte-identical deterministic JSON text for all
-five views. The `ve.vocabulary-legend@3` format includes the environment ID, all sort/predicate/constant
+view, naming="per_statement", style="json")`, which always returns legend + rendering.**
+The legend is byte-identical across all five views for a fixed style and naming
+policy. `style="json"` is the unchanged default; `style="compact"` emits deterministic
+plain text with one line per entry. Both styles use the same
+`ve.vocabulary-legend@3` data, including the environment ID, all sort/predicate/constant
 identifiers and descriptions, predicate argument sorts **in declared order**,
 raw positive/negative metadata, selected templates/nouns (including fallback),
-the naming scope and fluent letter-to-sort map, and lint diagnostics. Metadata is JSON-quoted data, not instructions
+the naming scope and fluent letter-to-sort map and allocation rule, lint diagnostics,
+and closure notes when applicable. Metadata is quoted data, not instructions
 to the judge. Vocabulary ordering is independent of dictionary insertion order.
 The low-level `render` still returns only claim text. `render_cell` cannot omit
 the legend. CLI: `python -m ve render --env ENV.json --view ve_fluent --with-legend
---naming per_statement CLAIM.ve`. The same options work with `import-fol`.
+--legend-style compact --naming per_statement CLAIM.ve`. The same options work with
+`import-fol`. `--legend-style compact|json` selects the legend format; it does not
+add a legend without `--with-legend`.
 The legacy `natural` alias emits its JSON wrapper without `--with-legend`; with
 that flag it emits the same complete plain-text cell as `ve_natural`.
+
+`render_vocabulary(env, view="ve_strict", naming="per_statement", style="compact")`
+returns just the compact legend. For example, entry lines can look like:
+
+```text
+Sorts:
+  person (noun: "person"/"people") — "A recorded person."
+  service (noun: "service"; declared: none) — "A recorded service."
+Constants:
+  @legacy : service — "The named legacy service."
+Predicates:
+  deployed(service) — "{0} is deployed" — "Recorded as deployed."
+  owns(person, service) — "{0} owns {1}" — "Recorded ownership."; negative: "{0} does not own {1}"
+  reviewed(service) — "{0} is reviewed" (strict fallback; declared: none) — "Recorded as reviewed."
+Fluent variable letters: person = P, service = S
+```
+
+The first noun/template is always the selected rendering. A noun pair gives the
+declared singular/plural, with the singular selected. Identical declared and
+selected values appear once. `declared: none` records missing metadata; a differing
+declaration is shown separately, including rejected positive/negative templates
+and sort nouns. An omitted negative field means both negative values are absent;
+`negative: none (declared: "...")` retains a rejected negative declaration.
+Lint diagnostics remain authoritative when a rejected declaration happens to
+have the same spelling as its strict fallback. Empty sections say `none`.
+The complete legend also includes its format/environment ID, fluent variable rule,
+naming policy and rule, lint diagnostics, and any closure context.
+
+Compact metadata uses JSON string escaping for quotes, backslashes and C0 controls,
+plus escapes for C1 controls, Unicode format controls (including bidi controls),
+and Unicode line/paragraph separators. These escapes preserve the original values
+while preventing an attacker-authored description or rejected template from
+forging extra legend lines. Ordinary Unicode text remains readable. This is a
+display safeguard; it does not establish the truth of a description.
+
+Example legend lengths, in Unicode characters including the final newline, with
+`naming="per_statement"`:
+
+| Environment | JSON | Compact |
+|---|---:|---:|
+| `examples/environment.json` | 2,071 | 1,206 |
+| `examples/fluent/environment.json` | 2,355 | 1,208 |
+
+Reproduce the lengths and check information parity:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-views uv run pytest -q -s tests/test_legend.py -k example_legend_lengths
+```
 
 For E1, freeze and independently review the vocabulary before generating attacked
 claims. Where the attacker authors vocabulary (E5), **the identical legend is
@@ -467,24 +521,25 @@ from ve.printer import render_cell, measure_view_lengths, measure_jsonl_lengths
 from ve.fluent import contraction_stats
 
 issues = [issue.to_dict() for issue in lint_vocabulary(env)]
-cell_text = render_cell(document, env, view, naming="per_statement")
-length_rows = measure_view_lengths(items, env, include_vocabulary=True)
-file_rows = measure_jsonl_lengths("items.jsonl", env, field="ast")
+cell_text = render_cell(document, env, view, naming="per_statement", style="compact")
+length_rows = measure_view_lengths(items, env, include_vocabulary=True, style="compact")
+file_rows = measure_jsonl_lengths("items.jsonl", env, field="ast", style="compact")
 guard_counts = contraction_stats(items, env)
 ```
 
-`measure_view_lengths(items, env, include_vocabulary=False, naming="per_statement")` returns one row per
+`measure_view_lengths(items, env, include_vocabulary=False, naming="per_statement", style="json")` returns one row per
 item per view, in input order then `VIEWS` order. Rows contain `item_index`, `view`,
 `characters`, `tokenish`, and `includes_vocabulary`. Characters count Unicode
 code points (including punctuation/newlines), not UTF-8 bytes. Token-ish length
 counts matches of Unicode regex `\w+|[^\w\s]`: word runs or individual
 non-whitespace symbols. With `include_vocabulary=True` it measures exactly
-`render_cell(item, env, view, naming)`. Report these lengths as
+`render_cell(item, env, view, naming, style=style)`. Use the cell's legend style
+when measuring it; measurement also defaults to JSON. Report these lengths as
 covariates, and separately record counts from the actual model tokenizer when
 available; this heuristic does not predict BPE charges for `∀` or `∧`.
 
 `measure_jsonl_lengths(path, env, field="ast", source_format="ast",
-include_vocabulary=True, naming="per_statement")` measures a real JSONL file.
+include_vocabulary=True, naming="per_statement", style="json")` measures a real JSONL file.
 Each line must be an object with the selected top-level field. Unrelated
 metadata may contain JSON null and finite numbers; duplicate keys and nonfinite
 numbers are rejected. AST fields accept
@@ -497,7 +552,8 @@ counts the actual rendered text and defaults to including the legend.
 
 ```sh
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run python -m ve view-lengths \
-  --env ENV.json --field claim --source-format ve --naming per_statement items.jsonl
+  --env ENV.json --field claim --source-format ve --naming per_statement \
+  --legend-style compact items.jsonl
 ```
 
 `contraction_stats(items, env, naming="per_statement")` in `ve.fluent` reports
