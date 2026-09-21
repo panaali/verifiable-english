@@ -19,6 +19,7 @@ allows it, so that a judge never sees this repository (which contains ground tru
 
 from __future__ import annotations
 
+import functools
 import hashlib
 import json
 import os
@@ -202,6 +203,10 @@ def codex_backend(model: str, system: str, prompt: str, timeout_s: float, cwd: P
 
 
 def default_backend_for(model: str) -> Backend:
+    if model.startswith("open:"):  # local open-weight judges, see open_backend.py
+        from .open_backend import open_backend
+
+        return open_backend
     if model.startswith("claude"):
         return claude_backend
     if model.startswith(("gpt", "o1", "o3", "o4", "codex")):
@@ -284,9 +289,10 @@ class LLMClient:
 
     def _sem_for(self, model: str) -> threading.BoundedSemaphore:
         """One limit per provider CLI (`claude*` vs everything else), since their rate limits are separate."""
-        family = "claude" if model.startswith("claude") else "codex"
+        family = "open" if model.startswith("open:") else "claude" if model.startswith("claude") else "codex"
+        limit = int(os.environ.get("VE_OPEN_BATCH", "8")) if family == "open" else self.max_concurrency
         with self._meta_lock:
-            return self._sems.setdefault(family, threading.BoundedSemaphore(self.max_concurrency))
+            return self._sems.setdefault(family, threading.BoundedSemaphore(limit))
 
     def _lock_for(self, key: str) -> threading.Lock:
         with self._meta_lock:
@@ -300,6 +306,8 @@ class LLMClient:
 
     def _call_uncached(self, model: str, system: str, prompt: str, seed: int, key: str, identity: str = "") -> LLMResult:
         backend = self.backend or default_backend_for(model)
+        if getattr(backend, "takes_seed", False):  # local backends sample with a real seed
+            backend = functools.partial(backend, seed=seed)
         error = "no attempt made"
         start = time.monotonic()
         for attempt in range(1, self.retries + 1):
