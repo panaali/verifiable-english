@@ -53,10 +53,15 @@ Warshall pivot. Its correctness is proved; an O(n^3) matrix implementation and
 complexity bound are not. Body relations are evaluated for all domain pairs
 per outer valuation. The reference bridge has no evaluation work-budget theorem.
 
-The v0 Lean certificate checker is unchanged. Its JSON adapter explicitly
+The Lean certificate checker contains no closure rules. Its JSON adapter explicitly
 rejects every v0.1 environment with a profile-gate message. The path unfolding
 lemma alone is not a soundness extension of tableau replay: substitution,
 branch-preservation and closure certificate theorems remain outstanding.
+The integration merge also required the v0 version-2 exact complementary-formula
+close rule. `VE.Tableau.compoundClosed_sound` proves that two identical formulas
+with identical parameter bindings and opposite signs cannot both hold. Both v0
+version tags are accepted by this proved replay; closure version tags are rejected.
+
 JSON correspondence, IO/compiler/runtime correctness and Python refinement
 remain outside the proofs, as in v0. No project axioms or proof placeholders
 are introduced; audit.py covers every new named theorem.

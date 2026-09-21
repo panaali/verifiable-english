@@ -259,7 +259,7 @@ Its total SHA-256/canonical-JSON code is tested against Python identities and
 standard digest vectors, but neither cryptographic correctness nor JSON
 correspondence is formally proved.
 
-The committed [report](../conformance/certificates-report.json) records **721/721
+The committed [report](../conformance/certificates-report.json) records **724/724
 Python-produced certificates accepted (100%) and 150/150 forgeries rejected**.
 There are no Python-accepted/Lean-rejected cases to classify in this corpus.
 Two seeded cohorts each contain 320 randomly instantiated valid inference

@@ -3,13 +3,12 @@
   "constructive_random_queries": 320,
   "forged": 150,
   "forged_lean_accepted": [],
-  "lean_accepted": 721,
+  "lean_accepted": 724,
   "lean_rejected_forged": 150,
-  "python_accepted": 721,
+  "python_accepted": 724,
   "python_accepted_lean_rejected": [],
   "search_outcomes": {
-    "broadconstructive:Found": 317,
-    "broadconstructive:ResourceLimit": 3,
+    "broadconstructive:Found": 320,
     "constructive:Found": 320,
     "unconditioned:Found": 82,
     "unconditioned:NotFound": 74,
@@ -19,24 +18,24 @@
   },
   "seed": 20260923,
   "trace_rule_counts": {
-    "alpha:And:True": 437,
-    "alpha:Implies:False": 551,
-    "alpha:Or:False": 504,
-    "beta:And:False": 367,
-    "beta:Implies:True": 407,
-    "beta:Or:True": 299,
-    "close": 1794,
-    "delta:Exists:True": 423,
-    "delta:Forall:False": 159,
-    "gamma:Exists:False": 550,
-    "gamma:Forall:True": 392,
-    "not:Not:False": 420,
-    "not:Not:True": 480
+    "alpha:And:True": 74,
+    "alpha:Implies:False": 106,
+    "alpha:Or:False": 77,
+    "beta:And:False": 21,
+    "beta:Implies:True": 155,
+    "beta:Or:True": 68,
+    "close": 968,
+    "delta:Exists:True": 389,
+    "delta:Forall:False": 108,
+    "gamma:Exists:False": 446,
+    "gamma:Forall:True": 348,
+    "not:Not:False": 152,
+    "not:Not:True": 212
   },
   "unconditioned_random_queries": 160,
   "worked_examples": {
-    "bridged": "accepted",
-    "merged": "accepted",
-    "separated": "search NotFound; forged close rejected"
+    "g1": "search NotFound; forged close rejected",
+    "g2": "accepted",
+    "g3": "accepted"
   }
 }

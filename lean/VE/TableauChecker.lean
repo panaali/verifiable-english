@@ -164,7 +164,7 @@ def initial (premises : List Formula) (conclusion : Formula) : Branch :=
 additional gate. All constructors and all equality rules are supported. -/
 def checkCertificate (E : Environment) (premises : List Formula) (conclusion : Formula)
     (c : Certificate) : Bool :=
-  c.checker_version == "ve-tableau-checker@1" &&
+  (c.checker_version == "ve-tableau-checker@1" || c.checker_version == "ve-tableau-checker@2") &&
     premises.all (fun f => f.check E []) && conclusion.check E [] &&
     replay E 500 (initial premises conclusion) c.trace
 

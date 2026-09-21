@@ -270,7 +270,7 @@ still uses its own checker and is not automatically upgraded to the Lean path.
 There is no graph wire/refinement theorem, completeness theorem, production
 resource-bound proof, or verification of empirical evidence.
 
-The certificate conformance run accepts **721/721** Python-produced certificates
+The certificate conformance run accepts **724/724** Python-produced certificates
 and rejects **150/150** forgeries, including missing/wrong-sort/future parameters,
 empty-sort inhabitation, illegal delta witnesses, stale identities and malformed
 branches. The two positive worked examples pass; the separated example has no
