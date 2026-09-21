@@ -1,12 +1,17 @@
 # Verifiable English
 
-An English-like language with precise, machine-checkable semantics for humans and AI agents.
+An English-like language for human-inspectable, machine-checkable claims in AI oversight.
 
 **Stage:** first draft; implementation and proofs are pending.
 
-The first prototype targets human–agent requirements exchange: agree on typed constraints, submit a finite result, and check whether that result satisfies them.
+VE aims to support AI alignment and scalable oversight, especially debate: people should be able to inspect what an agent claims, while a checker verifies that deductions use those exact meanings and explicit assumptions.
+
+The first research target is **meaning changes during debate**: reinterpreting a requirement, changing quantifier scope, or using the same term differently in separate argument branches. The prototype combines a typed claim language, canonical English rendering, and checked argument composition. Finite examples and counterexamples help people inspect the claims.
+
+The central question is whether VE reduces successful deception at a fixed review budget, beyond debate with cross-examination, shared definitions, and structured formal claims using the same checker. Formal verification establishes consequences of the stated assumptions; human intent, empirical evidence, and the usefulness of the oversight protocol still need evaluation.
 
 - [Architecture, rationale, and alternatives](docs/architecture-and-design.md)
 - [v0 language specification](docs/spec/v0-language.md)
+- [Debate claims and argument checking](docs/spec/debate-protocol.md)
 - [Verification contracts and status labels](docs/spec/verification-contract.md)
 - [Roadmap and acceptance criteria](docs/roadmap.md)

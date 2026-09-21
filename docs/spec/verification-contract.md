@@ -2,11 +2,11 @@
 
 **Status:** Proposed obligations, September 20, 2026. Every theorem below is pending. This document specifies what evidence an implementation must produce; the prose and pseudocode are not that evidence.
 
-The [language specification](v0-language.md) defines syntax, ASTs, environments, and finite models. The [roadmap](../roadmap.md) determines when a claim may be advertised.
+The [language specification](v0-language.md) defines syntax, ASTs, environments, and relational structures. The [debate protocol](debate-protocol.md) defines claims, dependencies, and certificates. The [roadmap](../roadmap.md) determines when a claim may be advertised.
 
 ## Objects and independent specification
 
-Let `E` be a validated environment, `s` the exact source bytes, `A` a closed typed AST, and `M` a validated finite model. Let `ParseSpec(E,s,A)` be the grammar-and-binding relation defined independently of the production parser. Let `Denote(E,A,M)` be the mathematical interpretation from the language specification.
+Let `E` be a validated environment, `s` the exact source bytes, `A` a closed typed AST, `S` an admissible relational structure, and `M` a validated finite model embedded as `asStructure(M)`. Let `ParseSpec(E,s,A)` be the grammar-and-binding relation defined independently of the production parser. Let `Denote(E,A,S)` be the mathematical interpretation from the language specification; use `Denote(E,A,M)` for its finite specialization.
 
 The production parser must implement that relation. Defining `ParseSpec` to mean “whatever the production parser returns” would make a correspondence theorem uninformative. The same separation applies to denotation versus the evaluator. Reference code can accompany the definitions, but reviews must inspect the specification itself.
 
@@ -26,14 +26,19 @@ These statements are schematic, with validity premises shown explicitly or suppl
 | P4 | `parseRef(E,print_E(A)) = Ok(A)` | Printing a valid closed AST and parsing it recovers that AST |
 | P5 | `normalize_E(normalize_E(s)) = normalize_E(s)` for accepted `s` | Normalization is idempotent; it performs only the specified binder renaming and printing |
 | P6 | `evalRef(E,A,M) = true ↔ Denote(E,A,M)` | The finite evaluator agrees with denotation, including false and vacuous cases |
-| P7 | `translate(E,A,M) ↔ Denote(E,A,M)` | A generated Lean proposition expresses the intended formal conclusion rather than an unrelated theorem |
-| P8 | successful production parsing/evaluation refines the reference behavior on the same inputs | Any optimized or Rust implementation preserves the contracts and operational distinctions |
+| P7 | `translate(E,A,S) ↔ Denote(E,A,S)` | The generated Lean proposition preserves meaning in every admissible structure, including the finite specialization |
+| P8 | successful production parsing/evaluation/graph validation refines the reference behavior on the same inputs | Any optimized or Rust implementation preserves the contracts and operational distinctions |
+| P9 | `edgeType(E,Δ,C) ↔ Entails(E,Δ,C)` | The expected certificate proposition expresses the exact submitted premises and conclusion across all admissible structures |
+| P10 | certified acyclic composition yields `Entails(E,L,root)` | Composition preserves claim identities and retains every undischarged leaf assumption |
+| P11 | `countermodelCheck(E,Δ,C,M) = true → ¬Entails(E,Δ,C)` | A validated finite witness genuinely disproves the stated inference |
 
 `normalize_E(s)` is defined as `print_E(A)` after successful reference parsing; it is an error on rejected text. P3 is for the total reference definition. Runtime completeness is required only within the declared size/work budget; outside it the result must be an explicit resource error. Each reference function needs a termination argument. Success must not depend on proof search terminating.
 
 P4 alone does not establish P2 or P7. Parser and printer implementations could share a mistake. A unique AST also does not establish that its vocabulary matches a person's intention. These are different obligations.
 
-## End-to-end acceptance contract
+P9–P11 concern the explicit argument semantics. They rely on Lean's permitted proof-checking path for supplied proof terms; they are not proofs of Lean's own kernel or of debate equilibria. A proof of P10 is not evidence that every graph presented by an agent has valid edge certificates.
+
+## Finite-evaluation acceptance contract
 
 For valid `E`, exact bytes `s`, validated `M`, and sufficient resources, the required combined property is:
 
@@ -53,9 +58,21 @@ If an untrusted frontend provides `A_candidate`, require equality with the speci
 
 Identity checks bind records to exact inputs, using the encodings in the language specification. Mathematical claims concern the actual values. Cryptographic digests index those values under a collision-resistance assumption; they do not replace parsing, type checking, or meaning correspondence.
 
-For a proof certificate, derive the expected proposition from the accepted `E`, `A`, and `M` in the trusted checker environment. Verify the proof against that proposition. Do not accept a theorem name, a successful build, or a producer-selected statement as equivalent evidence. A proof of `True` attached to a violated requirement is a rejection case.
+For a model-specific proof certificate, derive the expected proposition from the accepted `E`, `A`, and `M` in the trusted checker environment. Verify the proof against that proposition. Do not accept a theorem name, a successful build, or a producer-selected statement as equivalent evidence. A proof of `True` attached to a violated requirement is a rejection case.
 
-v0 may evaluate a result without producing a fresh kernel-checked proof of that result. P1–P7 are development-time metatheory obligations; per-result certificates are a separate capability and cost. An optional future certificate-producing solver could leave its search procedure untrusted, but the certificate checker would still need soundness and input correspondence. No solver or certificate protocol is selected now.
+Finite evaluation may run without a fresh kernel-checked proof of that result. Deduction certification requires a proof for the particular edge. Development-time theorems about the checker and per-argument certificates are distinct evidence and costs.
+
+## Argument checking contract
+
+For an argument under `E`, parse each claim's exact source and resolve every dependency to its committed AST. Construct `edgeType(E,Δ,C)` from those objects; accept a positive certificate only after checking its proof against that exact proposition in the pinned environment. A proof using an additional assumption cannot certify an edge that omits it. A proof in one environment cannot certify an edge in another by matching display names.
+
+The graph validator rejects cycles, missing claims, conflicting aliases, and stale evidence. For a complete positive derivation, construct the root implication from its checked edges. P10 requires the resulting theorem to retain all undischarged leaves `L`. Display the exact root and `L`; do not present the conditional theorem as an unconditional approval. For an incomplete graph, preserve unresolved obligations rather than silently promoting them to approved assumptions.
+
+A countermodel check validates `M`, evaluates each premise as true and the conclusion as false, and binds the result to `E`, `Δ`, `C`, and `M`. P11 connects these finite computations to failure of general entailment. A model satisfying `C`, or a failed search for countermodels, supplies no positive entailment evidence.
+
+Changes to the root, environment, dependencies, leaf assumptions, or certificate invalidate the affected argument record. Human confirmation and evidence judgments apply only to the objects actually reviewed. Exact dependency checking establishes formal correspondence; it does not establish that an unchanged predicate description is an adequate model of reality.
+
+The main research property is that accepted argument composition cannot silently change a committed formal meaning. This requires P1–P7 and P9–P11, correct artifact decoding, and faithful display, with P8 for any differing production implementation. Whether humans can recognize an initially wrong or misleading commitment is measured experimentally, not asserted by these theorems.
 
 ## Status and evidence contract
 
@@ -65,13 +82,14 @@ These fields are independent, not a single progress ladder:
 |---|---|---|
 | `language: accepted` — “Accepted VE” | Successful specified parsing and type checking, environment identity, exact source and AST | Truth, agreement with ordinary-English intent, or a completed implementation proof |
 | `canonical: true` — “Canonical text” | Exact source bytes equal `print_E(A)` | A logical equivalence class for all paraphrases |
-| `intent: confirmed` — “Interpretation confirmed by …” | Identified reviewer confirms this canonical rendering, environment, definitions, and declared finite-model scope | Mathematical proof or independent accuracy of the model |
+| `intent: confirmed` — “Interpretation confirmed by …” | Identified reviewer confirms this canonical rendering, environment, descriptions, and target scope | Proof of intent recovery, truth, or completeness of the requirements |
 | `evaluation: satisfied/violated` — “Satisfied/violated in inventory …” | Successful evaluation on the identified valid model; checker build and assurance level recorded | Truth about a live system or universal validity across models |
+| `inference: findings[]` — “Follows under premises …” / “Negation follows …” / “Counterexample to inference …”; empty means “Unresolved” | Every established `follows`, `refuted`, or `gap` finding, with the certificate or countermodel required by the debate protocol | A `gap` does not make the conclusion false; a conditional proof does not approve its premises; contradictory findings must remain visible |
 | `proof: checked` — “Proof checked under listed assumptions” | Exact expected proposition, audited proof dependencies, successful permitted proof-checking path | Unstated assumptions, empirical correctness, or a verified executable binary |
 
-Missing evidence yields `unconfirmed`, `not_evaluated`, or `not_checked`. Operational errors carry their own error codes. A violated formula may still have a checked proof of its negation; record the conclusion explicitly. A human-confirmed statement may still be false in a particular inventory.
+Missing evidence yields `unconfirmed`, `not_evaluated`, `unresolved`, or `not_checked` as appropriate. Operational errors carry their own error codes. A violated formula may still have a checked proof of its negation; record the conclusion explicitly. A human-confirmed statement may still be false. Evidence assessment and the supervisor's final approval remain separate from every checker status.
 
-Show implementation assurance separately: `experimental`, `reference-theorems-checked`, or `production-refinement-checked`, with links to the specific proof/build evidence. Before P1–P7 are proved, an implementation may report experimental results but cannot advertise the full formal contract. A completed source-level refinement proof does not upgrade compiler correctness.
+Show implementation assurance separately: `experimental`, `reference-theorems-checked`, or `production-refinement-checked`, with links to the specific proof/build evidence and covered operations. The finite evaluator requires P1–P7; the argument layer additionally requires P9–P11. Before those obligations are met, results are experimental and cannot advertise the full formal contract. A completed source-level refinement proof does not upgrade compiler correctness.
 
 Changing the source or environment invalidates all attached acceptance/confirmation evidence. A model change invalidates evaluations and model-specific proofs. Unchanged meaning under binder renaming may preserve a meaning-level confirmation only through an explicit, recorded correspondence check; never copy statuses merely because the screen text looks similar.
 
@@ -81,12 +99,13 @@ Lean distinguishes a well-formed proposition from a proof of it, and kernel chec
 
 For the v0 release gate, permit only the declared standard logical dependencies `propext`, `Classical.choice`, and `Quot.sound` if used; prefer smaller dependencies where practical. Reject `sorryAx`, extra user axioms, and native-evaluation axioms in claims labeled kernel-checked. Record the transitive dependency list, exact proposition and definitions, Lean version, and package revisions. Domain assumptions belong in the displayed theorem premises rather than hidden global axioms. The allowlist is a project policy, not an assertion that Lean enforces it automatically. [Lean axiom documentation](https://lean-lang.org/doc/reference/latest/Axioms/).
 
-v0 accepts data packages, not arbitrary submitted Lean programs, plugins, or imports. Project-generated proof artifacts must be checked in the pinned environment, with independent replay of stored declarations where supported. If a later service accepts unreviewed external proof-generating code, its design must additionally protect the environment and compare the resulting statement to a trusted challenge; a successful build alone is insufficient. [Lean proof-validation guidance](https://lean-lang.org/doc/reference/latest/ValidatingProofs/).
+The VE checking interface accepts claim data and proof artifacts, not executable plugins or arbitrary imports. The local prototype's proof worker must be isolated from that interface. Replay its produced declarations in a pinned environment, forbid redefinition of the semantic core, audit transitive dependencies, and compare the proof's type to the trusted expected proposition. Artifact decoding, replay, worker isolation, and display require an explicit implementation contract before agent-produced certificates are accepted. A successful build alone is insufficient. [Lean proof-validation guidance](https://lean-lang.org/doc/reference/latest/ValidatingProofs/).
 
 | Path | Trust remaining after its proposed checks |
 |---|---|
 | Semantic theorems | Correct formal definitions and theorem statements; Lean logic, audited dependencies, selected checker implementation |
 | Lean reference executable | Above, plus environment/model JSON decoding and validation unless separately proved, runtime/IO boundary, and compiler behavior; kernel proofs do not verify the binary |
+| Argument checking | Above, plus claim/graph/certificate decoding, expected-type binding, replay implementation, assumption display, and isolation from untrusted proof generation |
 | Rust before P8 | Rust implementation, parser/model decoder, build chain, and runtime are additionally trusted; tests are empirical evidence |
 | Rust after an Aeneas-based P8 | Extraction and its supported-semantics assumptions, bridge to VE reference types, ordinary Rust compiler/runtime, unmodeled interfaces |
 | Future verified compilation | Separate source-parser and model-correspondence obligations, compiler theorem scope, linking/runtime assumptions, and machine environment |
@@ -97,12 +116,14 @@ Canonical status rendering and identity display are interface responsibilities. 
 
 ## Extensions and preservation
 
-A future profile `P` must declare which existing `E`, `A`, and `M` it embeds. Its compatibility contract must include a statement of the form:
+A future profile `P` must declare which existing environments, claims, structures, and finite models it embeds. Its compatibility contract must include denotation preservation for general structures, with the finite embedding as a specialization:
 
 ```text
-DenoteCore(E,A,M) ↔ DenoteP(embedEnv(E),embedAST(A),embedModel(M))
+DenoteCore(E,A,S) ↔ DenoteP(embedEnv(E),embedAST(A),embedStructure(S))
 ```
+
+Reusing deduction certificates additionally requires preservation of logical consequence over the target profile's admissible structures; agreement only on selected example models is insufficient. Any new restriction on structures or domain axiom must be explicit in the profile and its premises.
 
 New syntax must also preserve the interpretation of previously accepted core documents under their original version. State how partial or absent embeddings fail. A vocabulary addition cannot change an old identifier's meaning. No implication from belief to truth, obligation to fact, or closed-world absence to open-world falsity may appear without an explicit rule and its premises.
 
-Pairwise module tests are not a general composition proof. Freeze a concrete supported profile, its assumptions, and its operator interactions, and prove the fragment actually advertised. v0 avoids this unresolved obligation by admitting one profile only.
+Pairwise module tests are not a general composition proof. Specify a concrete supported profile, its assumptions, and its operator interactions, and prove the fragment actually advertised. v0 uses one relational profile for both judgments; its finite-model embedding must preserve denotation. Generalizing the argument language does not automatically extend the finite evaluator or preserve an oversight protocol's incentive guarantees.
