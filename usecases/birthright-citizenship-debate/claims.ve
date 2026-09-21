@@ -1,0 +1,2 @@
+for every person x0, (if ((x0 is born_in_us) and (x0 is subject_to_jurisdiction)), then (x0 is us_citizen)).
+for every person x0, (if (x0 is has_noncitizen_domiciled_parent), then (x0 is subject_to_jurisdiction)).

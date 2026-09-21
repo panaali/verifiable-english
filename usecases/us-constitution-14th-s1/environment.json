@@ -1,0 +1,89 @@
+{
+  "language": "ve.core@0",
+  "profile": "relational-fol@0",
+  "spec_revision": "ve-v0-draft-2026-09-20",
+  "vocabulary": {
+    "sorts": {
+      "person": {
+        "description": "A natural person who may be born, naturalized, resident, or subject to jurisdiction.",
+        "verbalisation": {"singular": "person", "plural": "people"}
+      },
+      "state": {
+        "description": "A U.S. State, i.e. a state-level jurisdiction capable of making or enforcing law.",
+        "verbalisation": {"singular": "state", "plural": "states"}
+      },
+      "law": {
+        "description": "A law that a State may make or enforce.",
+        "verbalisation": {"singular": "law", "plural": "laws"}
+      }
+    },
+    "predicates": {
+      "born_in_us": {
+        "arguments": ["person"],
+        "description": "Recorded as born in the United States.",
+        "verbalisation": "{0} was born in the United States"
+      },
+      "naturalized_in_us": {
+        "arguments": ["person"],
+        "description": "Recorded as naturalized in the United States.",
+        "verbalisation": "{0} was naturalized in the United States"
+      },
+      "subject_to_us_jurisdiction": {
+        "arguments": ["person"],
+        "description": "Recorded as subject to the jurisdiction of the United States.",
+        "verbalisation": "{0} is subject to the jurisdiction of the United States"
+      },
+      "us_citizen": {
+        "arguments": ["person"],
+        "description": "Recorded as a citizen of the United States.",
+        "verbalisation": "{0} is a citizen of the United States"
+      },
+      "resides_in": {
+        "arguments": ["person", "state"],
+        "description": "Recorded as residing in the state.",
+        "verbalisation": "{0} resides in {1}"
+      },
+      "citizen_of_state": {
+        "arguments": ["person", "state"],
+        "description": "Recorded as a citizen of the state.",
+        "verbalisation": "{0} is a citizen of {1}"
+      },
+      "makes_law": {
+        "arguments": ["state", "law"],
+        "description": "Recorded as making (enacting) the law.",
+        "verbalisation": "{0} makes {1}"
+      },
+      "enforces_law": {
+        "arguments": ["state", "law"],
+        "description": "Recorded as enforcing the law.",
+        "verbalisation": "{0} enforces {1}"
+      },
+      "abridges_priv_or_imm": {
+        "arguments": ["law", "person"],
+        "description": "Recorded as a law that abridges the privileges or immunities of the person as a citizen of the United States. This predicate bundles the entire contested substantive content of 'privileges or immunities' opaquely; see GAPS.md.",
+        "verbalisation": "{0} abridges the privileges or immunities of {1}"
+      },
+      "deprives": {
+        "arguments": ["state", "person"],
+        "description": "Recorded as the state depriving the person of life, liberty, or property.",
+        "verbalisation": "{0} deprives {1} of life, liberty, or property"
+      },
+      "affords_due_process": {
+        "arguments": ["state", "person"],
+        "description": "Recorded as the state affording due process of law to the person for a deprivation. This predicate bundles the entire contested substantive content of 'due process' opaquely; see GAPS.md.",
+        "verbalisation": "{0} affords due process of law to {1}"
+      },
+      "within_jurisdiction_of": {
+        "arguments": ["person", "state"],
+        "description": "Recorded as the person being within the jurisdiction of the state.",
+        "verbalisation": "{0} is within the jurisdiction of {1}"
+      },
+      "denies_equal_protection": {
+        "arguments": ["state", "person"],
+        "description": "Recorded as the state denying the person the equal protection of the laws. This predicate bundles the entire contested substantive content of 'equal protection' opaquely; see GAPS.md.",
+        "verbalisation": "{0} denies the equal protection of the laws to {1}"
+      }
+    },
+    "constants": {}
+  }
+}

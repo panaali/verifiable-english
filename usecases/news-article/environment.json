@@ -1,0 +1,116 @@
+{
+  "language": "ve.core@0",
+  "profile": "relational-fol@0",
+  "spec_revision": "ve-v0-draft-2026-09-20",
+  "vocabulary": {
+    "sorts": {
+      "institution": {"description": "A named institution in the article (the Federal Reserve / FOMC / 'the central bank', merged into one entity)."},
+      "person": {"description": "A named person in the article."},
+      "decision": {"description": "The Wednesday, September 16, 2026 rate decision, reified as an event-like entity."},
+      "rate_range": {"description": "A named federal funds target rate range, treated as an opaque tag, not a pair of numbers."},
+      "moment": {"description": "A date, meeting, or clock time referred to in the article, treated as an opaque tag, not a computable timestamp."},
+      "year": {"description": "A calendar year referred to as a target or projection horizon."},
+      "goal": {"description": "A named policy goal or promise the article attributes to someone."},
+      "text": {"description": "A statement, quoted remark, or pledge, reified as an opaque entity standing for its (unmodelled) propositional content."},
+      "cause": {"description": "A named cause-of-inflation label that a Fed statement may or may not attribute inflation to."},
+      "event": {"description": "A scheduled event other than the rate decision itself."},
+      "figure": {"description": "A specific reported economic statistic (e.g. one quarter's PCE inflation estimate), treated as an opaque tag, not a number."}
+    },
+    "predicates": {
+      "unanimous": {
+        "arguments": ["decision"],
+        "description": "Recorded as approved without a dissenting vote, per the reported vote."
+      },
+      "raised_on": {
+        "arguments": ["institution", "moment"],
+        "description": "Recorded as the institution having raised its policy rate on this date."
+      },
+      "voted_for": {
+        "arguments": ["person", "decision"],
+        "description": "Recorded as the person having voted for (joined) this decision."
+      },
+      "raised_to": {
+        "arguments": ["institution", "rate_range"],
+        "description": "Recorded as the institution having raised its policy rate to this named target range."
+      },
+      "promised": {
+        "arguments": ["person", "goal"],
+        "description": "OPAQUE marker predicate. Recorded as the person having promised this goal. The commissive force of 'promised' and the propositional content of the goal are not modelled; see GAPS.md."
+      },
+      "submitted_projection": {
+        "arguments": ["person", "moment"],
+        "description": "Recorded as the person having submitted an individual rate projection ('dot') for this meeting."
+      },
+      "is_first_under": {
+        "arguments": ["decision", "person"],
+        "description": "OPAQUE marker predicate. Recorded as this decision being the first policy shift during this person's tenure. Hides the ordinal comparison against an unenumerated sequence of other decisions; see GAPS.md."
+      },
+      "appointed_by": {
+        "arguments": ["person", "person"],
+        "description": "Recorded as the first person having been selected/appointed by the second."
+      },
+      "took_office_in": {
+        "arguments": ["person", "moment"],
+        "description": "Recorded as the person having taken office during this (imprecisely named) period."
+      },
+      "projected_for": {
+        "arguments": ["rate_range", "year"],
+        "description": "Recorded as this rate range being the one projected to hold at the end of this year."
+      },
+      "stated": {
+        "arguments": ["institution", "text"],
+        "description": "OPAQUE marker predicate. Recorded as the institution having issued this statement. The quoted content of the statement is opaque; see GAPS.md."
+      },
+      "attributes_to": {
+        "arguments": ["text", "cause"],
+        "description": "Recorded as the statement attributing (elevated) inflation to this named cause."
+      },
+      "scheduled_for": {
+        "arguments": ["event", "moment"],
+        "description": "Recorded as the event being scheduled for this named clock time."
+      },
+      "exceeds": {
+        "arguments": ["figure", "figure"],
+        "description": "Recorded as the first reported figure being numerically greater than the second, as a ground fact asserted per named pair. This is NOT arithmetic: it carries no information about any figure not named in this vocabulary, and no magnitude; see GAPS.md."
+      },
+      "projected_year": {
+        "arguments": ["goal", "year"],
+        "description": "Recorded as this goal (e.g. reaching the 2% inflation target) being projected to occur in this year."
+      },
+      "pledged": {
+        "arguments": ["person", "text"],
+        "description": "OPAQUE marker predicate. Recorded as the person having pledged this statement. The commissive force of 'pledged' and the quoted content are not modelled; see GAPS.md."
+      }
+    },
+    "constants": {
+      "fed": {"sort": "institution", "description": "The Federal Reserve / FOMC / 'the central bank', as referred to in the article."},
+      "warsh": {"sort": "person", "description": "Kevin Warsh, the Fed chair."},
+      "trump": {"sort": "person", "description": "Donald Trump, the U.S. president."},
+      "rate_decision": {"sort": "decision", "description": "The Wednesday, September 16, 2026 decision to raise the target rate."},
+      "r375_400": {"sort": "rate_range", "description": "The 3.75%-4.00% target range the Fed moved to on September 16, 2026."},
+      "r400_425": {"sort": "rate_range", "description": "The 4.00%-4.25% target range projected for year-end 2026 and 2027."},
+      "sept16": {"sort": "moment", "description": "Wednesday, September 16, 2026, the day of the rate decision."},
+      "late_may_2026": {"sort": "moment", "description": "The imprecisely named period ('late May') when Warsh took office."},
+      "sept_meeting": {"sort": "moment", "description": "The September 2026 FOMC meeting, at which Warsh again did not submit a projection."},
+      "t1430edt": {"sort": "moment", "description": "2:30 p.m. EDT, the scheduled start of Warsh's press conference."},
+      "t1830gmt": {"sort": "moment", "description": "18:30 GMT, the article's own restatement of the same press-conference start time."},
+      "y2026": {"sort": "year", "description": "Calendar year 2026 ('the end of this year')."},
+      "y2027": {"sort": "year", "description": "Calendar year 2027."},
+      "y2029": {"sort": "year", "description": "Calendar year 2029, the newly projected year for reaching the 2% inflation target."},
+      "lower_prices_goal": {"sort": "goal", "description": "Trump's promised goal of lowering prices."},
+      "two_percent_target": {"sort": "goal", "description": "The Fed's 2% inflation target."},
+      "prev_statement": {"sort": "text", "description": "The FOMC's previous policy statement, which attributed elevated inflation partly to 'supply shocks'."},
+      "new_statement": {"sort": "text", "description": "The FOMC's September 16, 2026 policy statement, which dropped the 'supply shocks' reference."},
+      "statement_timelier": {"sort": "text", "description": "The quoted remark: 'Today's policy action will support a timelier return to the Committee's 2% goal.'"},
+      "pledge_lower_inflation": {"sort": "text", "description": "Warsh's quoted pledge to lower inflation 'clearly and at sufficient speed'."},
+      "supply_shocks": {"sort": "cause", "description": "The 'supply shocks' label for a driver of elevated inflation."},
+      "press_conference": {"sort": "event", "description": "Warsh's press conference following the rate decision."},
+      "pce_sep": {"sort": "figure", "description": "The September 2026 projection of PCE inflation (reported as 3.7%)."},
+      "pce_jun": {"sort": "figure", "description": "The June 2026 projection of PCE inflation (reported as 3.6%)."},
+      "growth_sep": {"sort": "figure", "description": "The September 2026 projection of economic growth (reported as 2.3%)."},
+      "growth_jun": {"sort": "figure", "description": "The June 2026 projection of economic growth (reported as 2.2%)."},
+      "unemployment_sep": {"sort": "figure", "description": "The September 2026 projection of year-end unemployment (reported as 4.1%)."},
+      "unemployment_jun": {"sort": "figure", "description": "The June 2026 projection of year-end unemployment (reported as 4.3%)."}
+    }
+  }
+}
