@@ -80,7 +80,7 @@ def conformance():
         'wire': 'Python / Rust restricted JSON',
         'validation': 'Python / Rust diagnostics; Lean rejection',
         'search': 'Python / Rust bounded search / witnesses',
-        'closure': 'Python / Lean evaluation and canonical text; no Rust',
+        'closure': 'Python / Lean / Rust evaluation and canonical text; Rust identities',
     }
     for name, scope in scopes.items():
         data = read(f'conformance/{name}.json')
@@ -100,12 +100,14 @@ def replay_table():
     outcomes = {status: sum(v for k, v in r['search_outcomes'].items()
                            if k.endswith(':' + status))
                 for status in ('Found', 'NotFound', 'ResourceLimit')}
-    assert outcomes['Found'] == r['python_accepted'] == r['lean_accepted']
+    assert outcomes['Found'] + r['closure_python_accepted'] == r['python_accepted'] == r['lean_accepted']
+    assert r['closure_python_accepted'] == r['closure_lean_accepted']
     rows = [
         ['Recorded Python/Rust fuzz agreements', f"{f['agreements']:,}/{f['cases']:,}"],
-        ['Certificate searches (all attempts)', sum(outcomes.values())],
-        ['Search Found / NotFound / ResourceLimit', ' / '.join(str(v) for v in outcomes.values())],
-        ['Produced certificates accepted by Lean', f"{r['lean_accepted']}/{r['python_accepted']}"],
+        ['Base certificate searches (all attempts)', sum(outcomes.values())],
+        ['Base search Found / NotFound / ResourceLimit', ' / '.join(str(v) for v in outcomes.values())],
+        ['Closure certificates accepted by Lean', f"{r['closure_lean_accepted']}/{r['closure_python_accepted']}"],
+        ['Produced certificates accepted by Lean (base + closure)', f"{r['lean_accepted']}/{r['python_accepted']}"],
         ['Forged certificates rejected by Lean', f"{r['lean_rejected_forged']}/{r['forged']}"],
     ]
     return (table(['Development check', 'Recorded count'], rows) + '\n'

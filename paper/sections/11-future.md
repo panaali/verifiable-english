@@ -1,8 +1,10 @@
 # Future work
 
-The next empirical step is to complete calibration and freeze the scored
-experiments, then report benefits, harms, and inconclusive outcomes under the
-same rules. A human study must separately test specification sign-off,
+The next empirical step is to complete the frozen E1 and E4 scored analyses
+and report benefits, harms, and inconclusive outcomes under their fixed rules.
+Additional judge families require a replication or extension, not a change to
+the frozen roster. E2 needs smaller derivations or longer-context judges; E5
+needs an affordable, calibrated judge before a scored freeze. A human study must separately test specification sign-off,
 model-satisfaction prediction, and evidence review. The prepared materials can
 support such a study, but model results cannot substitute for participants.
 <!-- src: FUTURE.md, human study package; docs/research-review.md. -->
@@ -27,8 +29,8 @@ Further comparisons should include ACE import, existing controlled-language
 surfaces, structured editors, and adaptive attackers that observe the judge's
 view and earlier verdicts. Sense-bound vocabularies and predicate-use panels are
 interventions to test, not solutions to grounding. Formal work should address
-independent grammar correspondence, closure replay soundness, production
-refinement, and decoding/display boundaries. Training remains a separate study
+independent grammar correspondence, broader closure rules and extended graph
+soundness, production refinement, and decoding/display boundaries. Training remains a separate study
 whose reward gains must be evaluated against semantic outcomes outside the
 reward. These tasks test whether the proposed interface earns its complexity.
 <!-- src: FUTURE.md; design/phase-t.md; lean/METATHEORY.md; lean/CLOSURE.md. -->

@@ -43,10 +43,14 @@ recognizes opposite-signed compound formulas with identical parameter bindings.
 Search priorities and normal-form hints do not become trusted inference rules.
 
 The Python API replays certificates in Python. An optional Lean executable
-accepts base-profile queries and invokes the proved checker on decoded ASTs.
-Successful process exit alone is insufficient; its response must accept the
-certificate. Closure-profile replay in this checkout uses Python expansions and
-is explicitly rejected by the Lean certificate adapter.
+accepts base and closure-profile queries and invokes the corresponding proved
+checker on decoded ASTs. Successful process exit alone is insufficient; its
+response must accept the certificate. Closure envelopes require their own
+checker version, including for reach-free queries. The Python graph path still
+uses Python replay by default; a Lean label identifies actual per-edge replay.
+The new closure rules include edge inclusion, path composition, first/last-edge
+existence, and Named-to-Body conversion. Composition yields star only when both
+inputs are star; otherwise the composed path has positive length.
 <!-- src: docs/implementation.md, Entailment evidence and trust boundary;
 docs/integration-fix-report.md; docs/spec/closure-implementation.md. -->
 
