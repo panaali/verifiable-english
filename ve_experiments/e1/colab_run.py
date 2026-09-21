@@ -53,6 +53,8 @@ def main() -> None:
     if what == "export":
         exp, exp_b = experiments(split)  # experiment_requests raises for "scored" unless the PREREG is frozen
         specs = [{"id": model_id(j["judge"]), **j.get("vllm_spec", {})} for j in batch_judges()]  # order = run order
+        if "--a100" in sys.argv:  # engine arguments that only exist to fit the L4 (judges.json, "budget" note)
+            specs = [{k: v for k, v in sp.items() if k not in ("enforce_eager", "max_num_seqs", "gpu_memory_utilization")} for sp in specs]
         reqs = experiment_requests(exp, split, client) + experiment_requests(exp_b, split, client)
         if "--only-uncached" in sys.argv:  # dev reruns: cells whose prompts did not change are replayed from the cache
             reqs = uncached(client, reqs)
