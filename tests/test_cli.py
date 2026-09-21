@@ -95,15 +95,20 @@ def test_cli_named_fol_natural_view_and_canonical_output(tmp_path):
     assert view["renderer"] and view["version"]
 
 
-def test_cli_four_e1_view_names_emit_plain_text(tmp_path):
+def test_cli_five_e1_view_names_emit_plain_text(tmp_path):
     path = tmp_path / "fol.json"
     path.write_text(json.dumps({"formulas": [{"op": "exists", "sort": "person",
                                              "variable": "someone", "body": {"op": "top"}}]}))
     outputs = {view: cli("import-fol", "--env", ENV, "--view", view, path)
-               for view in ("fol_symbols", "fol_keywords", "ve_strict", "ve_natural")}
+               for view in ("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent")}
     assert all(result.returncode == 0 for result in outputs.values())
     assert all(not result.stdout.lstrip().startswith("{") for result in outputs.values())
-    assert len({result.stdout for result in outputs.values()}) == 4
+    assert len({result.stdout for result in outputs.values()}) == 5
+    assert outputs["ve_fluent"].stdout == "there is a person such that true.\n"
+    env = Environment.from_json(ENV.read_bytes())
+    from ve import render
+    assert cli("render", "--env", ENV, "--view", "ve_fluent", SOURCE).stdout == render(
+        parse(env, SOURCE.read_bytes()), env, "ve_fluent")
 
 
 def test_acceptance_rejects_individually_valid_substituted_ast():

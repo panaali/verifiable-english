@@ -32,5 +32,5 @@ def test_export_cli_invalid_bounds_and_budget():
     for flag, value, code in [("--max-binder-depth", -1, "InvalidInput"),
                               ("--max-rules", 1, "ResourceLimit")]:
         result = cli("grammar", "--env", ENV, flag, value)
-        assert result.returncode == 2
+        assert result.returncode == (4 if code == "ResourceLimit" else 2)
         assert json.loads(result.stdout)["error"]["code"] == code
