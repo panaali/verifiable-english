@@ -1,0 +1,17 @@
+{
+  "complete": true,
+  "domains": {
+    "person": ["kim", "wong"]
+  },
+  "constants": {
+    "child": "kim"
+  },
+  "relations": {
+    "born_in_us": [["kim"]],
+    "us_citizen": [["kim"]],
+    "subject_to_jurisdiction": [["kim"]],
+    "has_noncitizen_domiciled_parent": [["wong"]],
+    "has_noncitizen_undocumented_parent": [],
+    "has_noncitizen_temporary_parent": []
+  }
+}
