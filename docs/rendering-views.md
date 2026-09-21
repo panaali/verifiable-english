@@ -1,5 +1,13 @@
 # Deterministic rendering views, version 3
 
+The writable `ve_english` surface is specified separately in
+[English surface, version 1](english-surface.md). It preserves the canonical AST
+and all five historical renderings described here, while adding noun references,
+drafting lists, a deterministic input parser, and English-specific lexical linting.
+The CLI now defaults to English display; `--surface strict` retains strict input
+and display, and `--view` still selects every historical view explicitly. The
+five-view experimental comparison cohort below is frozen for reproducibility.
+
 `ve.render(ast, env, view, naming="per_statement")` returns text for a closed formula or a `Document`.
 `view` is `fol_symbols`, `fol_keywords`, `ve_strict`, `ve_natural`, or `ve_fluent`. A single
 formula has no final punctuation. Documents append a period and LF to every

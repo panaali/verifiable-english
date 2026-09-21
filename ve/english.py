@@ -14,15 +14,15 @@ from . import ast
 from .errors import ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES
 from .printer import (_NaturalVocabulary, _LOGICAL_WORDS, _negative_template,
-                      _fluent_variable_letters, VocabularyLint)
+                      _fluent_variable_letters, _template_head, _AUXILIARIES, VocabularyLint)
 
 # These are lexical noun/adjective complements, not extra semantic operators.
 # They are deliberately finite: a linter cannot establish arbitrary English meaning.
 _COMPLEMENTS = (
     r"is (?:subject to the jurisdiction of|a citizen of) the United States",
     r"was (?:born|naturalized) in the United States",
-    r"is (?:fully|newly|currently|publicly) [a-z]+",
-    r"is [a-z]+ (?:in|under) (?:good standing|review)",
+    r"is (?:fully|newly|currently|publicly) (?P<adjective>[a-z]+)",
+    r"is (?P<adjective>[a-z]+) (?:in good standing|under review)",
 )
 _ACTIVE = (
     r"affords due process of law to",
@@ -30,7 +30,7 @@ _ACTIVE = (
     r"(?:reports|contributes|responds) to",
     r"(?:communicates|collaborates) with",
 )
-_EXTRA_RESERVED = frozenset("this it holds impossible classified recorded relation property entity sort named first second following hold who where step steps source destination from reachable using starting ending definition end".split())
+_EXTRA_RESERVED = frozenset("this it holds impossible classified recorded relation entity sort named first second following hold who where step steps source destination from reachable using starting ending definition end".split())
 _RESERVED = _LOGICAL_WORDS | _EXTRA_RESERVED
 
 
@@ -60,7 +60,7 @@ class EnglishVocabulary:
             template = decl.verbalisation
             path = f"/vocabulary/predicates/{name}/verbalisation"
             codes = {i.code for i in issues if i.path == path}
-            accepted = template is not None and old.predicates[name] == template
+            accepted = template is not None and not codes
             if template and not accepted:
                 phrase = template.removeprefix('{0} ')
                 unary = len(decl.arguments) == 1
@@ -75,16 +75,29 @@ class EnglishVocabulary:
                                       'SYMBOL_COLLISION', 'BINARY_CONVERSE'}
                 collision = any(re.search(r'\b' + re.escape(other) + r'\b', phrase)
                                 for other in (*env.predicates, *env.constants) if other != name)
+                # Auxiliary/article heads from rejected templates are not lexical heads.
+                collision |= any(head and head not in {'is', 'was', 'a', 'an'} and re.search(r'\b' + re.escape(head) + r'\b', phrase)
+                                 for other, decl2 in env.predicates.items() if other != name
+                                 for head in [_template_head(decl2.verbalisation or '', len(decl2.arguments))])
                 heads = [p.verbalisation.split()[2] for p in env.predicates.values()
                          if p.verbalisation and p.verbalisation.startswith('{0} is ')
                          and len(p.verbalisation.split()) > 2]
                 negated = any(word in {'un' + h, 'non' + h} for h in (*env.predicates, *heads)
                               for word in phrase.split())
+                matches = [m for pattern in patterns if (m := re.fullmatch(pattern, phrase))]
+                lexical_adjectives = [m.groupdict().get('adjective') for m in matches]
+                noun_words = set(env.sorts)
+                for sort_decl in env.sorts.values():
+                    if sort_decl.verbalisation:
+                        noun_words.update(sort_decl.verbalisation.singular.split())
+                        noun_words.update(sort_decl.verbalisation.plural.split())
+                safe_adjectives = all(a is None or a not in (_RESERVED | _AUXILIARIES | noun_words)
+                                      for a in lexical_adjectives)
                 accepted = bool(shaped and eligible and not collision and not negated
                                 and len(template) <= 80
-                                and any(re.fullmatch(p, phrase) for p in patterns))
+                                and matches and safe_adjectives)
             if template is None and re.fullmatch('[a-z]+', name) and name not in _RESERVED:
-                if len(decl.arguments) == 1 or (name.endswith('s') and name not in {'is', 'has', 'belongs'}):
+                if len(decl.arguments) == 1 or name in {'owns', 'audits', 'undermines', 'performs', 'follows', 'benefits', 'outranks', 'exceeds'}:
                     self.predicates[name] = old.predicates[name]
                     continue
             if accepted and set(re.findall(r'[a-z]+', template)) & _EXTRA_RESERVED:
@@ -102,6 +115,8 @@ class EnglishVocabulary:
                 # Old negative length limits continue to apply.
                 if len(negative) <= 80 and len(negative.split()) <= 8:
                     self.negatives[name] = negative
+                    negative_path = path.replace("/verbalisation", "/negative_verbalisation")
+                    issues = {i for i in issues if i.path != negative_path}
         self.issues = tuple(sorted(issues, key=lambda i: (i.path, i.code)))
         self.letters = _fluent_variable_letters(self.sorts, env)
         self.constants = {name: (name if re.fullmatch('[a-z]+', name)
@@ -327,9 +342,9 @@ class EnglishParser:
             candidates.extend([(noun, (sort, 'that ' + noun)),
                                ('first ' + noun, (sort, 'the first ' + noun)),
                                ('second ' + noun, (sort, 'the second ' + noun))])
-            # Names are bound in lexical scope; numbering is checked by paraphrase.
+            # Names are bound in lexical scope; the paraphrase shows canonical numbering.
             prefix = noun + ' named '
-            match = re.compile(_literal_pattern(prefix) + r'([A-Z]+[0-9]+)').match(self.source, self.i)
+            match = re.compile(_literal_pattern(prefix) + '(' + re.escape(self.words.letters[sort]) + r'[1-9][0-9]*)').match(self.source, self.i)
             if match:
                 candidates.append((match.group(), (sort, match[1])))
         for text, binding in sorted(candidates, key=lambda item: -len(item[0])):
@@ -581,8 +596,9 @@ def english_lark_grammar(env):
         'reach: "starting from" term "," term "is reachable by" count "or more" relation "steps" -> named_reach\n'
         '     | "starting from" term "," term "is reachable by" count "or more steps, where a step from" article declaration "to" article declaration "satisfies the following:" "(a)" formula -> body_reach',
         'count: "one" | "zero"',
-        'noun: ' + ' | '.join(lit(n) for n in words.sorts.values()),
-        'LABEL: /(?:' + '|'.join(re.escape(l) for l in words.letters.values()) + ')[1-9][0-9]*/',
+        'noun: ' + (' | '.join(lit(n) for n in words.sorts.values()) or 'IMPOSSIBLE'),
+        ('LABEL: /(?:' + '|'.join(re.escape(l) for l in words.letters.values()) + ')[1-9][0-9]*/'
+         if words.letters else 'LABEL: /[^\\s\\S]/'),
     ]
     constants = [lit(v) for v in words.constants.values()]
     # An impossible terminal keeps grammars valid for empty vocabularies.

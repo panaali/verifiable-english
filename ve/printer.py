@@ -15,6 +15,8 @@ from .errors import ResourceLimit
 from .limits import MAX_SOURCE_BYTES
 
 VIEWS = ("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent")
+# VIEWS is the frozen five-view experimental comparison cohort.
+RENDERING_VIEWS = (*VIEWS, "ve_english")
 NATURAL_RENDERER = "ve.ace-explicit"
 NATURAL_RENDERER_VERSION = "3"
 NAMING_POLICIES = ("per_statement", "per_document")
@@ -291,18 +293,23 @@ class _NaturalVocabulary:
         return text
 
 
-def lint_vocabulary(env: Any) -> tuple[VocabularyLint, ...]:
+def lint_vocabulary(env: Any, *, surface: str = "strict") -> tuple[VocabularyLint, ...]:
     """Report rejected display metadata in stable path/code order.
 
     Missing metadata is supported strict fallback, not a lint failure. Even an
     empty report is not evidence that English phrases match their declarations.
     """
+    if surface == "english":
+        from .english import lint_english_vocabulary
+        return lint_english_vocabulary(env)
+    if surface != "strict":
+        raise ValueError("surface must be strict or english")
     return _NaturalVocabulary(env).issues
 
 
 def _check_view(view: str) -> None:
-    if view not in (*VIEWS, "ve_english"):
-        raise ValueError(f"view must be one of {VIEWS}")
+    if view not in RENDERING_VIEWS:
+        raise ValueError(f"view must be one of {RENDERING_VIEWS}")
 
 
 def _check_naming(naming: str) -> None:
