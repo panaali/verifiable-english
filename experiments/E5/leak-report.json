@@ -1,0 +1,20 @@
+{
+  "training_split": "dev",
+  "evaluation_split": "scored",
+  "threshold": 0.6,
+  "scope": "valid-deduction primary stratum; overall approval label",
+  "splits": {
+    "dev": {
+      "n": 64,
+      "bow_logistic_accuracy": 0.5,
+      "any_unigram_classifier_upper_bound": 0.5,
+      "length_keyword_classifier_upper_bound": 0.5
+    },
+    "scored": {
+      "n": 128,
+      "bow_logistic_accuracy": 0.5,
+      "any_unigram_classifier_upper_bound": 0.5,
+      "length_keyword_classifier_upper_bound": 0.5
+    }
+  }
+}
