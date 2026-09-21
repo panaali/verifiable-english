@@ -123,6 +123,7 @@ import VE.ModelProofs
 #print axioms VE.Tableau.matches_sound
 #print axioms VE.Tableau.closes_sound
 #print axioms VE.Tableau.closed_sound
+#print axioms VE.Tableau.complementary_sound
 
 #print axioms VE.Tableau.next_sound
 #print axioms VE.Tableau.checkChildren_member

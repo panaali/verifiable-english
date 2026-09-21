@@ -167,3 +167,25 @@ def test_instantiation_bound_deepens_when_two_ground_instances_are_needed():
     # A single branch needs BOTH instances to trigger modus ponens.
     certify(env, [p, Implies(And(Unary('kind', Const('ada')),
                                Unary('kind', Const('bea'))), Bottom())], Bottom())
+
+
+@pytest.mark.parametrize("constants", [0, 1, 2, 4])
+@pytest.mark.parametrize("quantifier_duals", [False, True])
+def test_twice_de_morgan_existential_weakening_with_unused_constants(constants, quantifier_duals):
+    from conformance.certificates import completeness_regression
+    env, premises, conclusion = completeness_regression(constants, quantifier_duals)
+    # Before the hint fix: 10,000-step exhaustion with one constant + quantifier
+    # duals, or two constants even for the connective-only transformation.
+    result = prove_entailment(env, premises, conclusion, max_steps=1000)
+    assert result.status == "Found", result.to_dict()
+    assert check_entailment_certificate(env, premises, conclusion, result.certificate).valid
+
+
+def test_search_refuses_a_proof_beyond_the_certificate_depth(monkeypatch):
+    import ve.entailment as tableau
+    monkeypatch.setattr(tableau, "MAX_TABLEAU_DEPTH", 2)
+    env = environment()
+    p, q = Unary("kind", Const("ada")), Unary("kind", Const("bea"))
+    premises = [p, Implies(p, q), Implies(q, Not(Not(Bottom())))]
+    result = prove_entailment(env, premises, Bottom(), max_steps=1000)
+    assert result.status == "ResourceLimit" and result.certificate is None

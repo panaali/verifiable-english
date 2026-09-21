@@ -235,19 +235,31 @@ Names below have prefix `VE.Tableau.` except the last row.
 | `equivalent_sound` | Accepted token reachability under satisfied positive equalities implies equal optional denotations. |
 | `matches_sound` | Accepted unary/binary atom matching under those equalities implies equivalent atom truth. |
 | `closes_sound`, `closed_sound` | No satisfied admissible branch under a sorted assignment and known bindings can pass literal closure. |
+| `complementary_sound` | Exact opposite-signed formulas with identical parameter bindings cannot both hold; this is Python's existing version-2 closure rule. |
 | `next_sound` | Any accepted expansion of a scoped satisfiable branch has a satisfiable child, under a possibly extended sorted assignment. |
 | `checkChildren_member` | Successful child replay supplies a successful trace for every generated branch; none can be omitted. |
 | `replay_sound` | For every fuel, successful replay contradicts branch satisfaction in every admissible structure under every sorted assignment. |
 | `checkCertificate_sound` | **P9:** For every `E`, ordered premise list, conclusion and certificate, `checkCertificate E premises conclusion c = true` implies `Entails.{u} E premises conclusion`, for every universe `u`. No certificate-validity soundness hypothesis occurs. |
 | `VE.CertificateWire.Query.accepts_sound` | For every decoded typed query with `accepts = true`, its exact ordered premises entail its exact conclusion at universe 0. |
 
-All recursive checking is structural or fuel recursive. Public replay has 500
-levels of fuel; exhaustion returns false. It is not proof search and is not
+All recursive checking is structural or fuel recursive. Public replay and trace
+decoding have 125 levels of fuel: at most 124 expansions followed by a close,
+matching Python's `MAX_TABLEAU_DEPTH`. Exhaustion rejects. It is not proof search and is not
 claimed complete. Equality reachability uses one expansion round per positive
 equality edge; its soundness is proved, but equivalence with Python union-find
 and general acceptance completeness are not proved. The wire boundary retains
 the 16 MiB batch and 256-level JSON caps, 64-level formula cap and 10,000-node
-aggregate AST cap. These differ from a complete production work-budget policy.
+aggregate AST cap. Each expansion consumes two JSON levels; eight levels are
+reserved for enclosing packages. The outer batch is split without recursive
+decoding, so a too-deep case returns its own `ResourceLimit` error and other
+cases still run. If JSON depth prevents decoding the case ID, its zero-based
+`case_index` identifies the error. Malformed JSON and the aggregate byte cap
+still reject the input. These differ from a complete production work-budget policy.
+
+Version 1 retains the original literal/equality closure rules. Version 2 also
+accepts exact complementary formulas with identical bindings, using
+`complementary_sound`; this ports the existing Python rule introduced by the
+oracle branch. No search normalization or ground-connection hint is a replay rule.
 
 `ve_conformance check-certificate [file|-]` decodes the environment, typed
 premises/conclusion and certificate, recomputes the Python domain-separated
@@ -259,16 +271,17 @@ Its total SHA-256/canonical-JSON code is tested against Python identities and
 standard digest vectors, but neither cryptographic correctness nor JSON
 correspondence is formally proved.
 
-The committed [report](../conformance/certificates-report.json) records **721/721
+The committed [report](../conformance/certificates-report.json) records **732/732
 Python-produced certificates accepted (100%) and 150/150 forgeries rejected**.
 There are no Python-accepted/Lean-rejected cases to classify in this corpus.
 Two seeded cohorts each contain 320 randomly instantiated valid inference
-schemas: the unrestricted cohort yields 317 certificates and 3 `ResourceLimit`
-outcomes; the bounded cohort yields all 320. Among 160 unconditioned random
-queries, 82 yield certificates, 74 yield `NotFound`, and 4 hit `ResourceLimit`.
+schemas: both cohorts yield all 320 certificates. Among 160 unconditioned random
+queries, 82 yield certificates, 76 yield `NotFound`, and 2 hit `ResourceLimit`.
 The bridge-repair and merged-vocabulary worked examples yield accepted proofs;
 the separated-vocabulary example yields `NotFound` and its forged close is
-rejected. Every produced certificate is checked, and all search outcomes remain
+rejected. Eight twice-De-Morgan existential weakening regressions also yield
+accepted certificates, including unused constants and quantifier duals.
+Every produced certificate is checked, and all search outcomes remain
 in the denominator. This is development conformance evidence, not a workload
 acceptance estimate or completeness proof. Reproduce with:
 
