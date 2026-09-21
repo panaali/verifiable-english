@@ -276,3 +276,20 @@ def test_scored_run_refuses_the_stub_backend(repo, monkeypatch):
     monkeypatch.setattr(R, "backend_name", lambda: "stub")
     with pytest.raises(PreregistrationError, match="stub"):
         run(exp, LLMClient(cache_dir=repo / ".c", backend=backend), "scored")
+
+
+def test_truncated_or_failed_replies_are_never_parsed(repo):
+    from ve_experiments.llm import RawReply as RR
+
+    def cut(model, system, prompt, timeout_s, cwd):
+        # a reply that was cut at the token limit but happens to end in a valid verdict
+        return RR('...{"verdict": "reject"}', finish_reason="length")
+
+    exp = make_exp(repo)
+    exp.score = lambda item, verdict: {"said": verdict}
+    rows = load_trials(run(exp, LLMClient(cache_dir=repo / ".c", backend=cut), "dev"))
+    assert rows and all(r["truncated"] and r["verdict"] is None and r["approved"] is None and r["said"] is None for r in rows)
+    assert all("truncated" in r["parse_error"] for r in rows)
+    from ve_experiments.stats import rate
+
+    assert rate(rows, "false_approval", "ve", "judge-a").value == 1.0  # worst case, although the text says reject
