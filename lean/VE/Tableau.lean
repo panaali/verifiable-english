@@ -9,7 +9,7 @@ universe u
 inductive Token where
   | constant (name : String)
   | witness (index : Nat)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def Token.parse (text : String) : Option Token :=
   if text.startsWith "c:" then some (.constant (text.drop 2))

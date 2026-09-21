@@ -1,3 +1,5 @@
+import VE.TableauChecker
+import VE.TableauClosure
 import VE.Tableau
 import VE.Consequence
 import VE.SurfaceProofs
@@ -106,3 +108,21 @@ import VE.ModelProofs
 #print axioms VE.Tableau.two_holds
 #print axioms VE.Tableau.gamma_holds
 #print axioms VE.Tableau.delta_witness
+
+#print axioms VE.Tableau.bindings_get
+#print axioms VE.Tableau.termToken_denote
+#print axioms VE.Tableau.ground_denote
+#print axioms VE.Tableau.literals_hold
+#print axioms VE.Tableau.mem_dedup
+#print axioms VE.Tableau.equalities_sound
+#print axioms VE.Tableau.grow_sound
+#print axioms VE.Tableau.reachable_sound
+#print axioms VE.Tableau.equivalent_sound
+#print axioms VE.Tableau.matches_sound
+#print axioms VE.Tableau.closes_sound
+#print axioms VE.Tableau.closed_sound
+
+#print axioms VE.Tableau.next_sound
+#print axioms VE.Tableau.checkChildren_member
+#print axioms VE.Tableau.replay_sound
+#print axioms VE.Tableau.checkCertificate_sound
