@@ -1,0 +1,115 @@
+{
+  "language": "ve.core@0.1",
+  "profiles": ["closure@0", "relational-fol@0"],
+  "spec_revision": "ve-v0.1-closure-2026-09-21",
+  "vocabulary": {
+    "sorts": {
+      "claude_model": {
+        "description": "A Claude model, as referred to by the constitution excerpt (e.g. 'all current Claude models', 'Claude')."
+      },
+      "mechanism": {
+        "description": "A human mechanism for overseeing the dispositions and actions of AI, as referred to by the 'broadly safe' value and the oversight discussion."
+      },
+      "guideline": {
+        "description": "One of Anthropic's specific guidelines that a Claude model might or might not be acting in accordance with."
+      },
+      "principal": {
+        "description": "An operator or user that a Claude model interacts with (the excerpt's 'operators and users' merged into one sort)."
+      },
+      "action": {
+        "description": "An action a Claude model might perform."
+      },
+      "overseer": {
+        "description": "A human or organization who might instruct, check, or be owed obedience by a Claude model, including Anthropic itself and appropriately sanctioned individuals."
+      },
+      "property": {
+        "description": "One of the four core value-properties named in the excerpt's priority ordering: broadly safe, broadly ethical, compliant with Anthropic's guidelines, genuinely helpful."
+      },
+      "situation": {
+        "description": "A case or interaction in which two or more of the four core value-properties might come into apparent conflict."
+      }
+    },
+    "predicates": {
+      "current_claude_model": {
+        "arguments": ["claude_model"],
+        "description": "Recorded as one of 'all current Claude models' the excerpt's core-values paragraph addresses."
+      },
+      "ought_have_core_values": {
+        "arguments": ["claude_model"],
+        "description": "OPAQUE marker predicate. Recorded as a model of which the excerpt says 'we believe [it] should be' broadly safe, broadly ethical, compliant, and genuinely helpful. This predicate names, but does not analyse, the deontic force of 'should be' and the fact that it introduces four further properties (see GAPS.md #1 and coverage.md row 1)."
+      },
+      "appropriate": {
+        "arguments": ["mechanism"],
+        "description": "Recorded as an 'appropriate' human mechanism for overseeing the dispositions and actions of AI, in the sense used by the 'broadly safe' value."
+      },
+      "undermines": {
+        "arguments": ["claude_model", "mechanism"],
+        "description": "Recorded as the model undermining (acting so as to defeat or subvert) this oversight mechanism."
+      },
+      "honest": {
+        "arguments": ["claude_model"],
+        "description": "Recorded as honest, one conjunct of the excerpt's 'broadly ethical' value ('having good personal values, being honest, and avoiding...'). 'Having good personal values' itself has no witness anywhere in this vocabulary; see GAPS.md #2."
+      },
+      "inappropriately_harmful": {
+        "arguments": ["action"],
+        "description": "OPAQUE marker predicate. Recorded as an action the excerpt would call 'inappropriately dangerous or harmful'. The judgement of what counts as 'inappropriate' is hidden inside this predicate; see GAPS.md #2."
+      },
+      "performs": {
+        "arguments": ["claude_model", "action"],
+        "description": "Recorded as the model performing this action."
+      },
+      "relevant": {
+        "arguments": ["guideline"],
+        "description": "Recorded as 'relevant' to the model's present situation, in the sense used by 'compliant with Anthropic's guidelines: ... where they're relevant'."
+      },
+      "follows": {
+        "arguments": ["claude_model", "guideline"],
+        "description": "Recorded as the model acting in accordance with this guideline."
+      },
+      "interacts": {
+        "arguments": ["claude_model", "principal"],
+        "description": "Recorded as the model interacting with this operator or user."
+      },
+      "benefits": {
+        "arguments": ["claude_model", "principal"],
+        "description": "Recorded as the model benefiting this operator or user, in the sense used by 'genuinely helpful'. The intensifier 'genuinely' (sincere vs. superficial benefit) has no separate witness; see GAPS.md #2."
+      },
+      "outranks": {
+        "arguments": ["property", "property"],
+        "description": "Recorded as the first property immediately outranking (being listed directly above) the second property in the excerpt's stated priority order: broadly safe, broadly ethical, compliant with guidelines, genuinely helpful. Base edges only; use tc[outranks]/rtc[outranks] for the full order."
+      },
+      "contends_for": {
+        "arguments": ["situation", "property"],
+        "description": "Recorded as this property being one of the (at most two, in every model used here) properties tagged as apparently conflicting in this situation. A reification workaround for the fact that v0 has no ternary relation to say directly which two properties are the ones apparently conflicting in a given situation; see GAPS.md #1."
+      },
+      "violates_hard_constraint": {
+        "arguments": ["situation"],
+        "description": "Recorded as a situation in which the model would be violating one of Anthropic's hard constraints, in the sense of the excerpt's exception clause 'assuming Claude is not violating any hard constraints'. What a hard constraint is, and what counts as violating one, is not modelled; this is a bare flag."
+      },
+      "ought_follow": {
+        "arguments": ["situation", "property"],
+        "description": "OPAQUE marker predicate. Recorded as the property the excerpt says Claude 'should generally' follow in this situation. Hides both the deontic force of 'should' and the defeasibility of 'generally'; see GAPS.md #1."
+      },
+      "undermines_check": {
+        "arguments": ["claude_model", "overseer"],
+        "description": "Recorded as the model undermining this overseer's role as an appropriately sanctioned human check on AI systems, in the sense used by the corrigibility sentence."
+      },
+      "sanctioned_check": {
+        "arguments": ["overseer"],
+        "description": "Recorded as an 'appropriately sanctioned' human acting as a check on AI systems, in the sense used by the corrigibility sentence."
+      },
+      "bound_to_obey": {
+        "arguments": ["claude_model", "overseer"],
+        "description": "OPAQUE marker predicate. Recorded as the model being bound to unconditional ('blind') obedience toward this overseer. Hides the deontic modality of 'must obey' and the manner qualifier 'blind'; see GAPS.md #1."
+      }
+    },
+    "constants": {
+      "claude": {"sort": "claude_model", "description": "The Claude model this excerpt's claims are about."},
+      "safety": {"sort": "property", "description": "The 'broadly safe' core value."},
+      "ethics": {"sort": "property", "description": "The 'broadly ethical' core value."},
+      "guidelines": {"sort": "property", "description": "The 'compliant with Anthropic's guidelines' core value."},
+      "helpfulness": {"sort": "property", "description": "The 'genuinely helpful' core value."},
+      "anthropic": {"sort": "overseer", "description": "Anthropic, named explicitly in 'not... blind obedience, including towards Anthropic'."}
+    }
+  }
+}
