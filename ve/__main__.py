@@ -35,6 +35,16 @@ def _emit(value):
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="python -m ve", description="Experimental VE v0 language checking")
     commands = parser.add_subparsers(dest="command", required=True)
+    grammar = commands.add_parser("grammar", help="export an environment-specific decoding grammar")
+    grammar.add_argument("--env", required=True, help="environment JSON file")
+    grammar.add_argument("--dialect", choices=("lark", "gbnf", "ebnf"), default="lark")
+    grammar.add_argument("--mode", choices=("full", "syntax"), default="full")
+    grammar.add_argument("--max-binder-depth", type=int, default=3)
+    grammar.add_argument("--max-binders", type=int)
+    grammar.add_argument("--max-rules", type=int, default=20_000)
+    output = grammar.add_mutually_exclusive_group()
+    output.add_argument("--wrapper", action="store_true", help="constrain the whole VE/explanation JSON object")
+    output.add_argument("--spec", action="store_true", help="emit the structured-output adapter spec as JSON")
     for command in ("parse", "format", "render", "evaluate", "check", "import-fol", "countermodel"):
         sub = commands.add_parser(command)
         sub.add_argument("--env", required=True, help="environment JSON file")
@@ -63,6 +73,15 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         env = Environment.from_json(_read(args.env))
+        if args.command == "grammar":
+            from .grammar import export_grammar, structured_output_spec
+            options = dict(dialect=args.dialect, mode=args.mode, max_binder_depth=args.max_binder_depth,
+                           max_binders=args.max_binders, max_rules=args.max_rules)
+            if args.spec:
+                _emit(structured_output_spec(env, **options))
+            else:
+                print(export_grammar(env, wrapper=args.wrapper, **options), end="")
+            return 0
         if args.command == "countermodel":
             premises = parse(env, _read(args.premises, MAX_SOURCE_BYTES)).formulas if args.premises else ()
             conclusion = parse(env, _read(args.conclusion, MAX_SOURCE_BYTES))
