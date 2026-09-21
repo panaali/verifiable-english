@@ -9,12 +9,6 @@ structure Environment where
   predicates : String → Option (List String)
   constants : String → Option String
 
-def Environment.Valid (E : Environment) : Prop :=
-  E.sorts.Nodup ∧
-  (∀ p ss, E.predicates p = some ss →
-    (ss.length = 1 ∨ ss.length = 2) ∧ ∀ s ∈ ss, s ∈ E.sorts) ∧
-  (∀ c s, E.constants c = some s → s ∈ E.sorts)
-
 inductive Term where
   | var (index : Nat)
   | const (name : String)

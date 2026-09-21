@@ -3,6 +3,7 @@ import VE.SurfaceProofs
 import VE.EnvironmentProofs
 import VE.ParserContracts
 import VE.GraphChecks
+import VE.ModelProofs
 
 #print axioms VE.term_defined
 #print axioms VE.typed_empty
@@ -87,3 +88,10 @@ import VE.GraphChecks
 #print axioms VE.Graph.check_unfolds
 
 #print axioms VE.GraphChecks.testCertificate_sound
+
+#print axioms VE.Bridge.lookup_mem
+#print axioms VE.Bridge.tupleCheck_iff
+#print axioms VE.Bridge.modelData_valid
+#print axioms VE.Bridge.decodeModel_valid
+#print axioms VE.Bridge.decoded_countermodel_sound
+#print axioms VE.Bridge.CountermodelQuery.refutes_sound

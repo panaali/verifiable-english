@@ -10,9 +10,11 @@ The previous theorem inventory remains in [README.md](README.md).
 `Surface.NamesValid E` requires every declared sort, predicate and constant name
 to match `[a-z][a-z0-9_]*`, not be in the exact v0 reserved list, and not match
 `x[0-9]+`. No cardinality, identifier-length, formula-size or binder-count bound
-is imposed on the theorem. Semantic `Environment.Valid` and cross-category
+is imposed on the theorem. Signature arity/sort validity and cross-category
 name distinctness are not needed by the round trip; the wire validator still
-checks them. These lexical conditions exclude malformed identifiers and prevent
+checks them. The unused `Environment.Valid` predicate was removed; individual
+theorems state precisely their typing, lexical or model-admissibility premises.
+These lexical conditions exclude malformed identifiers and prevent
 both keyword ambiguity and collisions with generated binders.
 
 The per-name condition is the decidable Boolean `Surface.declarationName`.
@@ -161,18 +163,53 @@ decoder, certificate decoding, hash/identity checks, or faithful assumption disp
 There is no theorem refining a Python graph validator to this Lean checker.
 In this base checkout there is no Python argument graph/replay module to connect.
 
+For JSON-backed claims the expected proposition is `Bridge.JsonEntails`, exactly
+`Entails.{0}`. Instantiate the universe-polymorphic graph certificate contract at
+universe 0 as well. The JSON countermodel theorem below refutes this precise
+target; it supplies no P9 expected-type binding or certificate replay code.
+
 The checker terminates structurally over the finite node list and each ordered
 premise list, given a terminating certificate decision procedure. It does not
 prove graph completeness, proof-search completeness or production resource
 bounds. Repeated shared leaves can make explicit output large; there is no
 claim of polynomial output size, deduplication, or a verified runtime budget.
 
+## Model-output admissibility and executable P11
+
+Names below have prefix `VE.Bridge.`. These are six audited declarations:
+two headline results (`decodeModel_valid`, `CountermodelQuery.refutes_sound`)
+and four supporting lemmas/corollaries. The complete project inventory is nine
+headline results plus 71 supporting declarations; see [README.md](README.md).
+
+| Theorem | Exact statement in plain words |
+|---|---|
+| `lookup_mem` | A successful finite-table lookup returns a key/value pair present in the table, even if keys repeat. |
+| `tupleCheck_iff` | For any finite model and signature/tuple lists, the recursive Boolean tuple check equals the semantic `TupleTyped` predicate. |
+| `modelData_valid` | For every finite table and vocabulary, success of the final Boolean admissibility gate implies its embedded model is admissible for that vocabulary's environment. All declared constants and all stored true relation tuples are covered. No earlier wire-check success is assumed. |
+| `decodeModel_valid` | For every vocabulary, JSON value and finite model, `decodeModel v j = .ok M` implies `M.Valid v.environment`. The final semantic gate is mandatory. |
+| `decoded_countermodel_sound` | For every successfully decoded model, raw premise list and raw conclusion, a true Boolean countermodel check refutes `Entails.{0}` for the same environment/formulas. This extends to raw formulas under their explicitly defined total semantics; it does not prove typing. |
+| `CountermodelQuery.refutes_sound` | For every successfully decoded model and `CountermodelQuery` whose executable `refutes` check returns true, all premises and the conclusion are closed and well typed, and `Bridge.JsonEntails` (exactly `Entails.{0}`) is false. |
+
+The executable `decodeCountermodel` constructs `CountermodelQuery` only after
+checking closure and typing, including every premise even when an earlier
+premise would evaluate false. It permits zero premises. `runCase` exposes the
+same `CountermodelQuery.refutes`/`countermodelCheck` functions in its opt-in
+countermodel response. The theorem is about the decoded model and typed query,
+not JSON serialization, IO, or generated machine code. Python is compared on
+the committed corpus; that empirical comparison is not a refinement proof.
+
+The independent disjoint-carrier interpretation is an **unproved external
+assumption for typed formulas**, with its intended construction explained in
+[README.md](README.md#typing-universes-and-the-carrier-interpretation-assumption).
+It introduces no Lean assumption and is not used by these proofs.
+
 ## Remaining obligations
 
 No independent `ParseSpec` or general grammar soundness/completeness/uniqueness
 (P1/P2/P3) is proved by this milestone. P4/P5 do not prove that parser and printer
-avoid shared grammar errors. The lexical validator theorem is not a refinement
-of all JSON decoding or model validation. Python parsing/evaluation refinement,
+avoid shared grammar errors. The lexical validator theorem and model-output
+admissibility theorem do not prove JSON decoding matches the wire spec.
+Python parsing/evaluation refinement,
 P7 proposition generation, P9 exact certificate expected-type binding, compiler,
 runtime, IO, cryptographic identities and human interpretation remain outside
 these theorems. The assurance label remains `experimental`.
