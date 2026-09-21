@@ -152,6 +152,8 @@ Closed-world evaluation applies only within the complete submitted model. An emp
 
 `print_E` emits the exact surface grammar, naming binders `x0`, `x1`, … in preorder, resetting the counter at each statement. Names are globally fresh within a statement. Statement order and all logical constructors remain unchanged. Every well-typed closed AST has one proposed rendering; bound source names do not form part of semantic identity.
 
+Generated names make identity independent of the author's choices, but `x0` and `x1` are harder to read than `s` and `p`, and reviewers see the canonical text. Whether to show reviewers the author's binder names, which a debater could choose to mislead, or names derived from the sort, such as `service1`, is open and should be settled in the inspection pilot. Identity would be computed from the indexed AST in either case.
+
 `parse_E` accepts the strict grammar with any permitted binder names. `canonical_E(s)` additionally requires `print_E(parse_E(s)) = s`. Both ordinary binder names and canonical binder names may denote accepted VE; only the latter are canonical bytes. Do not silently modify the submitted source or claim its bytes were already canonical.
 
 The only normalization in v0 is binder naming and fixed serialization. It does not reorder conjunctions, expand vocabulary definitions, identify synonyms, or solve logical equivalence. Its idempotence follows from the parser/printer contract once proved, not from a semantic-equivalence oracle.

@@ -2,7 +2,19 @@
 
 The repository currently contains the design and specifications. Implementation, proofs, and experiments remain to be done. This checklist tracks that work; the [roadmap](roadmap.md) defines the research questions and acceptance criteria.
 
-Start with tasks 1 and 2. Develop proofs and conformance checks alongside the implementation. Run the human pilot once the experimental end-to-end path works; completing every theorem is not a prerequisite for learning whether people can use VE.
+Start with task 0. Its three checks are cheap and any of them can change or end the project, so do not begin tasks 1 and 2 until their results are in. Develop proofs and conformance checks alongside the implementation. Run the human pilot once the experimental end-to-end path works; completing every theorem is not a prerequisite for learning whether people can use VE.
+
+0. **Test the assumptions most likely to be false — Pre-A to Pre-C**
+   - [ ] Write the stop-or-redesign threshold for each check before running it.
+   - [ ] Coverage survey: hand-formalize a random sample of candidate benchmark tasks in v0.
+     - [ ] Record the share that fits, the extension each excluded task would need, and any task that fits only by hiding the difficult check in an opaque predicate.
+   - [ ] Baseline attack rate: run meaning-change attacks against natural-language debate with cross-examination and a shared glossary.
+     - [ ] Use model judges first, then a few human judges; vary the separation between the conflicting uses.
+   - [ ] Disposable inspection pilot: hand-prepare the same claims as prose, structured formal claims, v0 VE, and a more natural ACE-style rendering.
+     - [ ] Include wrong-but-valid specifications and the [merged-vocabulary attack](spec/debate-protocol.md#the-same-attack-when-the-vocabulary-is-merged).
+     - [ ] Use an unverified script as the checker; record whether a “proof checked” label changes how often people find flaws in descriptions and leaves.
+   - [ ] Decide which judge VE is for: a human, a weaker model, or both.
+   - [ ] **Completion:** each check has a recorded result against its threshold, and the fragment, surface and target have been kept, changed or dropped accordingly. See the [known weaknesses](architecture-and-design.md#known-weaknesses-of-the-current-design).
 
 1. **Define the first experiment and freeze the prototype contracts — G0**
    - [ ] Establish a small, independently reviewed set of oversight tasks.
