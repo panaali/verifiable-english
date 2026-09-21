@@ -1,8 +1,8 @@
 ---
-title: "Verifiable English: Statement Review for Machine-Checked Claims"
+title: "Does controlled English help model judges sign off formal specifications? A mostly negative result, and what machine checking adds"
 author:
-  - "Claude and GPT AI workers (process disclosure in Section 10)"
-date: "2026-09-21. Scored E1/E4 results; training remains unrun."
+  - "Claude and GPT AI workers"
+date: "2026-09-21. Negative-result and methods note."
 documentclass: article
 classoption:
   - 10pt

@@ -1,90 +1,52 @@
 # Introduction
 
-Scalable oversight asks how a limited supervisor can assess a more capable
-agent's work. Formal verification can remove the need to inspect each step of a
-proof. It leaves a separate responsibility: deciding whether the statement and
-its assumptions say what the supervisor intended. We call this the
-*statement-reading gap*: proofs are checked by machines; statements are signed
-off by supervisors.
+A checked proof can establish a consequence of a specification while leaving
+open whether that specification states what its author intended. Controlled
+English is an appealing interface for this remaining review task: it may make
+scope, quantifier dependencies, and omitted conditions easier to see. This
+paper asks a narrower empirical question: does a deterministic English display
+help a model judge distinguish faithful from unfaithful translations when the
+requirement, vocabulary, and logical candidate are otherwise held fixed?
 
-Recent vendor reports of AI-produced mathematics make this distinction concrete.
-[Anthropic's Fermat formalization report](https://www.anthropic.com/research/formalizing-fermats-last-theorem)
-describes Lean checking and a separate comparison with Mathlib's theorem
-statement. [OpenAI's mathematics report](https://openai.com/index/ten-advances-in-mathematics/)
-describes AI-generated arguments subsequently formalized as Lean certificates.
-We checked these announcements, not their proof repositories or mathematical
-novelty. They motivate the problem and are not evidence about VE. Lean's own
-[proof-validation guidance](https://lean-lang.org/doc/reference/latest/ValidatingProofs/)
-separates proof validity from statement interpretation and retains misleading
-presentation as a trust assumption.
-<!-- src: paper/sources/capability-brief.md, motivating reports;
-docs/architecture-and-design.md, statement-reading argument; paper/references.md. -->
+Our answer is mostly negative for the more capable scored judge. In E1,
+Qwen2.5-32B-Instruct-AWQ gained no demonstrated benefit from strict VE over
+symbols. A weaker Qwen2.5-14B judge did benefit in some conditions, most clearly
+from fluent rendering. This capability-by-surface pattern matters more than a
+single pooled result: a display that assists a weak reader on these items need
+not assist a capable reviewer. The hosted development judges were near ceiling,
+so the current task does not probe where those models need oversight support.
 
-An agent can submit a provable but inadequate requirement. It can omit a
-condition, change a quantifier dependency, or attach persuasive prose to a
-weakened formula. A correct proof then certifies the wrong target. A different
-failure arises when one formal predicate is supported with evidence using
-incompatible meanings. Logical composition remains valid, but the premises have
-not been established under a common interpretation. Neither failure is repaired
-by a longer proof.
+The experimental scope is exact-translation discrimination on short,
+author-written, near-formal requirements. The reference AST and the intended
+reading are stipulated together. The experiment therefore assumes away the
+harder intended-versus-stated problem, and does not vary specification size.
+Its false-approval endpoint counts acceptance of any non-equivalent candidate,
+including stronger and incomparable formulas. Our post hoc weakening-only
+analysis isolates cases that admit behavior forbidden by the reference.
 
-VE proposes *sign-off on precise claims plus checked composition of those
-claims*. A supervisor inspects an environment and an exact claim. Deterministic
-views expose its operators, binders, and vocabulary. Deduction certificates are
-checked against those same claims. Composition retains the premises on which the
-root depends. A critic may submit a finite countermodel rather than an
-unsupported assertion that an inference is invalid.
+A second experiment, E4, supplies a checker finding alongside a critic's finite
+interpretation. This is a useful integration check of whether model decisions
+respond to checker feedback. It is also a deliberately limited result: the
+finding says whether the inference follows, so the judge is given the answer.
+A deterministic rule could read that field directly. We call the outcome
+**uptake of checker feedback**, not improved logical comprehension or a benefit
+of English. Post hoc lenient parsing separates semantic verdicts from response
+protocol failures, which otherwise inflate the 14B contrast.
 
-The scaling argument is conditional. If the specification and remaining premises
-stay manageable while proofs grow, supervision can focus on them. This does not
-bound the difficulty of reading specifications, validating evidence, constructing
-proofs, or checking large submissions. The formal machinery is available to
-non-English interfaces too. VE's surface must therefore be compared with
-structured logic using the same checker and evidence. Model judges test a model
-oversight hypothesis; they cannot establish human readability.
+The accompanying Verifiable English (VE) artifact combines a small relational
+language, deterministic displays, finite countermodels, replayable certificates,
+and claim graphs that retain assumptions. Its Lean development is assurance
+engineering for named reference components. It does not certify the source
+interpretation, the production Python/Rust system, or the displayed prose.
+The paper's contribution is a negative rendering result with reproducible
+methods and an inspectable artifact, rather than a new general oversight
+principle. E0 and four qualitative use cases further show how much source
+meaning remains outside the implemented fragment.
 
-The evidence supports the checked components more than the English surface.
-Strict English showed no benefit for the capable primary judge; a useful
-reduction is excluded without explanation and remains inconclusive with it.
-Fluent rendering for a weaker judge is an exploratory hypothesis. The two hosted reference judges (one measured only under the earlier JSON
-legend) were at ceiling on these development items, so these items do not
-saturate capable readers.
-In contrast, the checked-countermodel intervention cut false approval for 14B
-and rescued honest acceptance for 7B. Real policy text also exposes a separate
-bottleneck: much of its meaning and justification lies outside current VE.
-<!-- src: paper/sources/e1-results.md; paper/sources/e1-prereg-frozen.md;
-paper/sources/e4-score-summary.json; paper/sources/debate-coverage.md;
-paper/sources/amendment-coverage.md. -->
-
-The contributions available for inspection are:
-
-- A relational language, five deterministic presentations, finite evaluation,
-  countermodel validation, data-only certificates, and assumption-preserving
-  claim graphs, with Python, Lean, and Rust boundaries documented separately.
-  Lean establishes named reference properties, including an opt-in sound
-  closure certificate checker; it does not establish production refinement.
-- A frozen sign-off experiment with a negative primary conclusion: VE strict
-  has no demonstrated benefit over symbolic FOL for Qwen2.5-32B-Instruct-AWQ.
-  P1 is inconclusive; P2 refutes a 0.05 reduction without establishing harm.
-  The combined claim is inconclusive and not supported. Fluent rendering for
-  14B remains an exploratory hypothesis for replication.
-- A countermodel-display mechanism demonstration: checked feedback cuts 14B
-  false approval and recovers 7B honest acceptance. Fabricated countermodels
-  fail replay by construction. These results concern machine checking and
-  its display, with per-judge limits, not an English-specific advantage.
-- A model-rater coverage audit with preserved disagreements and a qualitative
-  policy use case showing low coverage without extensions: five of nine
-  debate claims fall outside formalization, and three of four amendment
-  clauses are OPAQUE. One Sonnet agent produced the new use case without
-  cross-review; this is not a representative coverage estimate.
-- A process record of caught defects, failed calibration, and runner-estimated
-  compute costs. E5 remains materials and pilots only; E2 was not run.
-  Human evaluation, multi-family scored replication, external-baseline
-  comparisons, long-context and compaction settings, and training remain open.
-
-<!-- src: docs/rendering-views.md; docs/spec/closure-implementation.md;
-lean/METATHEORY.md; lean/CLOSURE.md; paper/sources/e1-results.md;
-paper/sources/e4-score-summary.json; paper/sources/e4-prereg-frozen.md;
-paper/sources/e0-second-rater.md; paper/sources/debate-coverage.md;
-paper/sources/amendment-coverage.md; paper/sources/process-log-results.md;
-paper/sources/manifest.json pins the implementation base and branch documents. -->
+We distinguish three evidential categories throughout: unchanged preregistered
+per-judge decisions, development observations that informed the design, and
+POST HOC analyses requested after independent critical reviews. All reanalysis
+scripts are committed under `paper/analysis/`, with generated tables, input
+hashes, and plots under `paper/generated/`. They use existing trial files only;
+this revision made no model calls and used no network. Plans for additional
+experiments remain plans.

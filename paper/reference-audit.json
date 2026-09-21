@@ -194,5 +194,14 @@
       "docs/spec/verification-contract.md"
     ],
     "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "NASA FRET project",
+    "url": "https://github.com/NASA-SW-VnV/fret",
+    "repository_sources": [
+      "docs/research-review.md",
+      "docs/architecture-and-design.md"
+    ],
+    "status": "Existing repository citation; not freshly fetched (offline revision)."
   }
 ]

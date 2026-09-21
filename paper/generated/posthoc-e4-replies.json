@@ -1,0 +1,172 @@
+[
+  {
+    "key": "e4-ddcfcf05ec7f9d0def|prose_critique|harness",
+    "label": "bad",
+    "prompt_final_question": "Return exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}.",
+    "task_opening": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.",
+    "reply": "{\"verdict\":\"reject\"}",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a careful reviewer. Follow the instructions in the user message exactly."
+      },
+      {
+        "role": "user",
+        "content": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.\nPremises: for every object x0, (if (x0 is nehalugi), then (there exists object x1, (x0 sigasupo x1))). @a is nehalugi.\nConclusion: there exists object x0, (x0 sigasupo @a).\nCritic: Consider the following complete hypothetical interpretation. The object domain contains exactly e0, e1. The name a denotes e0. The extension of nehalugi consists exactly of (e0). The extension of sigasupo consists exactly of (e0, e1). All tuples not listed are false. The critic claims every premise holds and the conclusion fails in this interpretation.\nThe dossier refers throughout to the displayed finite interpretation. Read the object names and relations in their declared argument order. The listed assumptions and submitted conclusion are the statements under consideration. The\nReturn exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}."
+      }
+    ]
+  },
+  {
+    "key": "e4-4cf8a6795b65cf1a9d|prose_critique|harness",
+    "label": "bad",
+    "prompt_final_question": "Return exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}.",
+    "task_opening": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.",
+    "reply": "{\"verdict\":\"reject\"}",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a careful reviewer. Follow the instructions in the user message exactly."
+      },
+      {
+        "role": "user",
+        "content": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.\nPremises: for every object x0, ((x0 is nehalugi) or (x0 is diliseni)).\nConclusion: (for every object x0, (x0 is nehalugi)) or (for every object x1, (x1 is diliseni)).\nCritic: Consider the following complete hypothetical interpretation. The object domain contains exactly e0, e1. The extension of diliseni consists exactly of (e0). The extension of nehalugi consists exactly of (e1). All tuples not listed are false. The critic claims every premise holds and the conclusion fails in this interpretation.\nThe dossier refers throughout to the displayed finite interpretation. Read the object names and relations in their declared argument order. The listed assumptions and submitted conclusion are the statements under consideration. The dossier\nReturn exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}."
+      }
+    ]
+  },
+  {
+    "key": "e4-0ab4b708421b546b89|prose_critique|harness",
+    "label": "bad",
+    "prompt_final_question": "Return exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}.",
+    "task_opening": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.",
+    "reply": "{\"verdict\":\"reject\"}",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a careful reviewer. Follow the instructions in the user message exactly."
+      },
+      {
+        "role": "user",
+        "content": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.\nPremises: there exists object x0, (x0 is nehalugi). there exists object x0, (x0 is diliseni).\nConclusion: there exists object x0, ((x0 is nehalugi) and (x0 is diliseni)).\nCritic: Consider the following complete hypothetical interpretation. The object domain contains exactly e0, e1. The extension of diliseni consists exactly of (e0). The extension of nehalugi consists exactly of (e1). All tuples not listed are false. The critic claims every premise holds and the conclusion fails in this interpretation.\nThe dossier refers throughout to the displayed finite interpretation. Read the object names and relations in their declared argument order. The listed assumptions and submitted conclusion are the statements under consideration. The dossier refers\nReturn exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}."
+      }
+    ]
+  },
+  {
+    "key": "e4-470fba5df90b746666|prose_critique|harness",
+    "label": "bad",
+    "prompt_final_question": "Return exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}.",
+    "task_opening": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.",
+    "reply": "{\"verdict\":\"reject\"}",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a careful reviewer. Follow the instructions in the user message exactly."
+      },
+      {
+        "role": "user",
+        "content": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.\nPremises: for every object x0, (for every object x1, (if (x0 sigasupo x1), then (x1 is diliseni))). there exists object x0, (there exists object x1, (x0 sigasupo x1)).\nConclusion: for every object x0, (x0 is diliseni).\nCritic: Consider the following complete hypothetical interpretation. The object domain contains exactly e0, e1. The extension of diliseni consists exactly of (e0). The extension of sigasupo consists exactly of (e0, e0). All tuples not listed are false. The critic claims every premise holds and the conclusion fails in this interpretation.\nThe dossier refers throughout to the displayed finite interpretation. Read the object names and relations in their declared argument order. The listed assumptions and submitted conclusion are the statements under consideration. The dossier refers\nReturn exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}."
+      }
+    ]
+  },
+  {
+    "key": "e4-15f3f24b8b62278123|prose_critique|harness",
+    "label": "bad",
+    "prompt_final_question": "Return exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}.",
+    "task_opening": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.",
+    "reply": "{\"verdict\":\"reject\"}",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a careful reviewer. Follow the instructions in the user message exactly."
+      },
+      {
+        "role": "user",
+        "content": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.\nPremises: there exists object x0, ((x0 is lipagafe) or (x0 is gitanure)).\nConclusion: (there exists object x0, (x0 is lipagafe)) and (there exists object x1, (x1 is gitanure)).\nCritic: Consider the following complete hypothetical interpretation. The object domain contains exactly e0. The extension of gitanure consists exactly of (e0). The extension of lipagafe is empty. All tuples not listed are false. The critic claims every premise holds and the conclusion fails in this interpretation.\nThe dossier refers throughout to the displayed finite interpretation. Read the object names and relations in their declared argument order. The listed assumptions and submitted conclusion are the statements under consideration.\nReturn exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}."
+      }
+    ]
+  },
+  {
+    "key": "e4-d4b1ac93fc12e8df57|prose_critique|harness",
+    "label": "bad",
+    "prompt_final_question": "Return exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}.",
+    "task_opening": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.",
+    "reply": "{\"verdict\":\"reject\"}",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a careful reviewer. Follow the instructions in the user message exactly."
+      },
+      {
+        "role": "user",
+        "content": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.\nPremises: for every object x0, ((x0 is lipagafe) or (x0 is gitanure)).\nConclusion: (for every object x0, (x0 is lipagafe)) or (for every object x1, (x1 is gitanure)).\nCritic: Consider the following complete hypothetical interpretation. The object domain contains exactly e0, e1. The extension of gitanure consists exactly of (e0). The extension of lipagafe consists exactly of (e1). All tuples not listed are false. The critic claims every premise holds and the conclusion fails in this interpretation.\nThe dossier refers throughout to the displayed finite interpretation. Read the object names and relations in their declared argument order. The listed assumptions and submitted conclusion are the statements under consideration. The dossier\nReturn exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}."
+      }
+    ]
+  },
+  {
+    "key": "e4-0d0a1fbb8f6eaa2fc3|prose_critique|harness",
+    "label": "bad",
+    "prompt_final_question": "Return exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}.",
+    "task_opening": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.",
+    "reply": "{\"verdict\":\"reject\"}",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a careful reviewer. Follow the instructions in the user message exactly."
+      },
+      {
+        "role": "user",
+        "content": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.\nPremises: there exists object x0, (for every object x1, (x0 nureroda x1)).\nConclusion: for every object x0, (there exists object x1, (x0 nureroda x1)).\nCritic: Consider the following complete hypothetical interpretation. The object domain contains exactly e0, e1. The extension of nureroda consists exactly of (e0, e0); (e0, e1). All tuples not listed are false. The critic claims every premise holds and the conclusion fails in this interpretation.\nThe dossier refers throughout to the displayed finite interpretation. Read the object names and relations in their declared argument order. The listed assumptions and submitted conclusion are the statements under consideration. The dossier refers throughout to the\nReturn exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}."
+      }
+    ]
+  },
+  {
+    "key": "e4-c3f65b59f38c2314e1|prose_critique|harness",
+    "label": "good",
+    "prompt_final_question": "Return exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}.",
+    "task_opening": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.",
+    "reply": "{\"verdict\":\"reject\"}",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a careful reviewer. Follow the instructions in the user message exactly."
+      },
+      {
+        "role": "user",
+        "content": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.\nPremises: for every object x0, (for every object x1, (if (x0 jirafefe x1), then (x0 is ficilaba))). @a jirafefe @b.\nConclusion: @a is ficilaba.\nCritic: Consider the following complete hypothetical interpretation. The object domain contains exactly e0, e1. The name a denotes e0. The name b denotes e1. The extension of ficilaba consists exactly of (e0). The extension of jirafefe consists exactly of (e0, e1). All tuples not listed are false. The critic claims every premise holds and the conclusion fails in this interpretation.\nThe dossier refers throughout to the displayed finite interpretation. Read the object names and relations in their declared argument order. The listed assumptions and submitted conclusion are the statements under consideration.\nReturn exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}."
+      }
+    ]
+  },
+  {
+    "key": "e4-3a7ff41412456f3090|prose_critique|harness",
+    "label": "bad",
+    "prompt_final_question": "Return exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}.",
+    "task_opening": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.",
+    "reply": "{\"verdict\":\"reject\"}",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a careful reviewer. Follow the instructions in the user message exactly."
+      },
+      {
+        "role": "user",
+        "content": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.\nPremises: there exists object x0, ((x0 is vimefiro) or (x0 is mavareba)).\nConclusion: (there exists object x0, (x0 is vimefiro)) and (there exists object x1, (x1 is mavareba)).\nCritic: Consider the following complete hypothetical interpretation. The object domain contains exactly e0. The extension of mavareba consists exactly of (e0). The extension of vimefiro is empty. All tuples not listed are false. The critic claims every premise holds and the conclusion fails in this interpretation.\nThe dossier refers throughout to the displayed finite interpretation. Read the object names and relations in their declared argument order. The listed assumptions and submitted conclusion are the statements under consideration.\nReturn exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}."
+      }
+    ]
+  },
+  {
+    "key": "e4-74056c3eba1c3af007|prose_critique|harness",
+    "label": "good",
+    "prompt_final_question": "Return exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}.",
+    "task_opening": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.",
+    "reply": "{\"verdict\":\"reject\"}",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a careful reviewer. Follow the instructions in the user message exactly."
+      },
+      {
+        "role": "user",
+        "content": "Decide whether the inference is valid. The premises are assumptions for this logical task. Sorts may be empty unless the premises or named constants require inhabitants.\nPremises: for every object x0, (for every object x1, (if (x0 getineco x1), then (x0 kulevivu x1))). for every object x0, (for every object x1, (if (x0 kulevivu x1), then (x0 gijicore x1))).\nConclusion: for every object x0, (for every object x1, (if (x0 getineco x1), then (x0 gijicore x1))).\nCritic: Consider the following complete hypothetical interpretation. The object domain contains exactly e0. The extension of getineco is empty. The extension of gijicore consists exactly of (e0, e0). The extension of kulevivu is empty. All tuples not listed are false. The critic claims every premise holds and the conclusion fails in this interpretation.\nThe dossier refers throughout to the displayed finite interpretation. Read the object names and relations in their declared argument order. The listed assumptions and submitted conclusion are the statements under consideration.\nReturn exactly one JSON object: {\"verdict\":\"approve\"} or {\"verdict\":\"reject\"}."
+      }
+    ]
+  }
+]
