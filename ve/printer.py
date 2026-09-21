@@ -15,6 +15,8 @@ from .errors import ResourceLimit
 from .limits import MAX_SOURCE_BYTES
 
 VIEWS = ("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent")
+# VIEWS is the frozen five-view experimental comparison cohort.
+RENDERING_VIEWS = (*VIEWS, "ve_english")
 NATURAL_RENDERER = "ve.ace-explicit"
 NATURAL_RENDERER_VERSION = "3"
 NAMING_POLICIES = ("per_statement", "per_document")
@@ -291,18 +293,23 @@ class _NaturalVocabulary:
         return text
 
 
-def lint_vocabulary(env: Any) -> tuple[VocabularyLint, ...]:
+def lint_vocabulary(env: Any, *, surface: str = "strict") -> tuple[VocabularyLint, ...]:
     """Report rejected display metadata in stable path/code order.
 
     Missing metadata is supported strict fallback, not a lint failure. Even an
     empty report is not evidence that English phrases match their declarations.
     """
+    if surface == "english":
+        from .english import lint_english_vocabulary
+        return lint_english_vocabulary(env)
+    if surface != "strict":
+        raise ValueError("surface must be strict or english")
     return _NaturalVocabulary(env).issues
 
 
 def _check_view(view: str) -> None:
-    if view not in VIEWS:
-        raise ValueError(f"view must be one of {VIEWS}")
+    if view not in RENDERING_VIEWS:
+        raise ValueError(f"view must be one of {RENDERING_VIEWS}")
 
 
 def _check_naming(naming: str) -> None:
@@ -379,7 +386,7 @@ def _compact_vocabulary(legend: dict[str, Any]) -> str:
 
 
 def render_vocabulary(env: Any, view: str = "ve_strict", naming: str = "per_statement",
-                      style: str = "json") -> str:
+                      style: str = "json", *, vocabulary=None, accept_suggested_vocabulary=False) -> str:
     """Return the identical, deterministic identity/argument-order legend in every view.
 
     JSON is the unchanged default; compact uses one line per entry. Both styles
@@ -389,6 +396,9 @@ def render_vocabulary(env: Any, view: str = "ve_strict", naming: str = "per_stat
     _check_view(view)
     _check_naming(naming)
     _check_legend_style(style)
+    if view == "ve_english":
+        from .english import english_legend
+        return english_legend(env, style, vocabulary=vocabulary, accept_suggested_vocabulary=accept_suggested_vocabulary)
     selected = _NaturalVocabulary(env)
     legend = {
         "format": "ve.vocabulary-legend@3", "environment_id": env.environment_id,
@@ -502,7 +512,7 @@ class _Traversal:
 
 
 def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
-           naming: str = "per_statement") -> str:
+           naming: str = "per_statement", *, vocabulary=None, accept_suggested_vocabulary=False) -> str:
     """Render a checked AST with shared binder and operand preorder.
 
     A formula has no final punctuation; documents have a period and LF for each
@@ -512,6 +522,9 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
     """
     _check_view(view)
     _check_naming(naming)
+    if view == "ve_english":
+        from .english import render_english
+        return render_english(value, env, vocabulary=vocabulary, accept_suggested_vocabulary=accept_suggested_vocabulary)
     if view == "ve_fluent":
         from .fluent import FluentTraversal
         traversal = FluentTraversal(env)
@@ -543,9 +556,9 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
 
 
 def render_cell(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
-                naming: str = "per_statement", style: str = "json") -> str:
+                naming: str = "per_statement", style: str = "json", **options) -> str:
     """Render an experimental cell, ALWAYS including the identical view legend."""
-    return render_vocabulary(env, view, naming, style) + render(value, env, view, naming)
+    return render_vocabulary(env, view, naming, style, **options) + render(value, env, view, naming, **options)
 
 
 def measure_view_lengths(items: Iterable[ast.Document | ast.Formula], env: Any, *,

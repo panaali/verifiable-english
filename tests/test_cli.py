@@ -213,3 +213,56 @@ def test_cli_semantic_nonvacuity_clause_guard(tmp_path):
     assert record['model']['relations']['deployed'] and record['model']['relations']['reviewed']
     invalid = cli('countermodel', '--env', ENV, '--conclusion', bottom, '--semantic-nonvacuity')
     assert invalid.returncode == 2
+
+
+def test_check_display_overflow_never_changes_acceptance(tmp_path):
+    path = ROOT / 'usecases/us-constitution-14th-s1/environment.json'
+    source = tmp_path / 'large.ve'
+    source.write_text('for every person x0, (if (x0 is subject_to_us_jurisdiction), then (x0 is us_citizen)).\n' * 753)
+    assert len(source.read_bytes()) == 65511
+    result = cli('check', '--env', path, source)
+    assert result.returncode == 0
+    record = json.loads(result.stdout)
+    assert record['language'] == 'accepted'
+    assert record['display_omitted'] == 'ResourceLimit'
+    assert 'display_text' not in record
+    expected = check(Environment.from_json(path.read_bytes()), source.read_bytes())
+    assert {k: record[k] for k in expected} == expected
+
+
+@pytest.mark.parametrize('status,exit_code', [('Satisfied', 0), ('Violated', 1), ('ResourceLimit', 4)])
+def test_unexpected_display_failure_preserves_verdict(monkeypatch, capsys, tmp_path, status, exit_code):
+    import ve.__main__ as main
+    def broken(*args, **kwargs): raise RuntimeError('display failed')
+    monkeypatch.setattr(main, 'render', broken)
+    model = json.loads(MODEL.read_text())
+    if status == 'Violated': model['relations']['reviewed'] = []
+    path = tmp_path / 'model.json'; path.write_text(json.dumps(model))
+    args = ['check', '--env', str(ENV), '--model', str(path), str(SOURCE)]
+    if status == 'ResourceLimit': args += ['--max-evaluations', '0']
+    assert main.main(args) == exit_code
+    record = json.loads(capsys.readouterr().out)
+    assert record['evaluation']['status'] == status
+    assert record['display_omitted'] == 'RuntimeError' and 'display_text' not in record
+
+
+def test_render_default_is_canonical_strict_and_english_is_explicit(tmp_path):
+    from ve import render
+    env = Environment.from_json(ENV.read_bytes())
+    doc = parse(env, SOURCE.read_bytes())
+    strict, english = render(doc, env, 've_strict'), render(doc, env, 've_english')
+    assert cli('render', '--env', ENV, SOURCE).stdout == strict
+    assert cli('render', '--env', ENV, '--view', 've_english', SOURCE).stdout == english
+    source = tmp_path / 'english.txt'; source.write_text(english)
+    assert cli('render', '--env', ENV, '--surface', 'english', source).stdout == english
+    assert cli('render', '--env', ENV, '--surface', 'english', '--view', 've_strict', source).stdout == strict
+
+
+@pytest.mark.parametrize('overlay', ['{', '{}'])
+def test_invalid_display_overlay_cannot_reject_strict_check(tmp_path, overlay):
+    path = tmp_path / 'invalid-words.json'; path.write_text(overlay)
+    result = cli('check', '--env', ENV, '--english-vocabulary', path, SOURCE)
+    assert result.returncode == 0
+    record = json.loads(result.stdout)
+    assert record['language'] == 'accepted' and 'display_omitted' in record
+    assert 'display_text' not in record
