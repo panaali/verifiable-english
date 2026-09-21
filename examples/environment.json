@@ -1,0 +1,17 @@
+{
+  "language": "ve.core@0",
+  "profile": "relational-fol@0",
+  "spec_revision": "ve-v0-draft-2026-09-20",
+  "vocabulary": {
+    "sorts": {
+      "person": {"description": "A person recorded in the inventory."},
+      "service": {"description": "A service recorded in the inventory."}
+    },
+    "predicates": {
+      "deployed": {"arguments": ["service"], "description": "Recorded as deployed in this inventory."},
+      "owns": {"arguments": ["person", "service"], "description": "The person is recorded as an owner of the service."},
+      "reviewed": {"arguments": ["service"], "description": "Recorded as reviewed in this inventory."}
+    },
+    "constants": {}
+  }
+}

@@ -2,7 +2,20 @@
 
 An English-like language for human-inspectable, machine-checkable claims in AI oversight.
 
-**Stage:** first draft; implementation and proofs are pending.
+**Stage:** experimental Python v0 core implemented and tested; formal proofs and oversight experiments are pending.
+
+Run `uv sync`, then `uv run python -m pytest`. The package requires Python 3.14.
+For a worked inventory, run:
+
+```sh
+uv run python -m ve evaluate --env examples/environment.json --model examples/model.json examples/requirements.ve
+uv run python -m ve render --env examples/environment.json --view natural examples/requirements.ve
+uv run python -m ve countermodel --env examples/environment.json --premises examples/premise.ve --conclusion examples/conclusion.ve
+```
+
+See [the implementation/API guide](docs/implementation.md) for encodings, FOL import,
+resource outcomes, and the explicit trust boundary. A successful finite evaluation
+does not certify entailment, intent, or empirical grounding.
 
 VE aims to support AI alignment and scalable oversight. Its core is **human sign-off on precise claims, plus checked composition of those claims**: people inspect what an agent claims, and a checker verifies that deductions use those exact meanings and explicit assumptions. If an agent must prove that its work meets a specification, the supervisor reviews the specification and the remaining premises, not the work, so review cost need not grow with the agent's capability. This is a design argument, not a result.
 

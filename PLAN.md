@@ -10,7 +10,11 @@ Workers propose changes to it in their reports.
 2. Experiments, with baselines, that support or refute each claimed benefit of VE for scalable oversight.
 3. A paper that reports what was found, including negative results.
 
-Out of scope: RL or any model training (future work), human-participant studies (none available), pushing to GitHub.
+Out of scope: human-participant studies (none available), pushing to GitHub.
+
+**Training is now in scope (user, 03:00).** The user has Google Colab compute (about 200 units; roughly T4 1.2, L4 1.7,
+A100-40GB 5.4, A100-80GB 7.5, G4 96GB 8.7, H100 18 units/hour; check the live rate under Runtime > View resources).
+Phase T below. Minimise browser use: one setup cell that turns the notebook into a job runner, then files in and out.
 
 ## Constraint that shapes the science
 
@@ -121,6 +125,29 @@ Both critiques (`design/critique-claude.md`, `design/critique-codex.md`) agree o
 | P3 Experiments | 3–9 | pilots, preregistrations, scored runs, analysis |
 | P4 Paper | 8–11.5 | `paper/` draft, figures, cross-review, revision |
 | P5 Close | 11.5–12 | final merge, reproducibility check, summary for the user |
+
+## Phase T: training study on Colab (dispatch when the checker API and the E1 item generator are merged)
+
+Question: does a VE-checked reward make semantic deception less profitable to learn than a judge-only reward?
+
+- Task: given a requirement in prose, the policy writes a formalization (and, in the judge-only arm, an explanation).
+  A hidden "tempting" objective makes weakened formalizations easier to satisfy, as in specification gaming.
+- Arms, revised after the literature review (`design/phase-t-literature.md`): the first version's B-vs-A contrast was
+  close to true by construction, because B contained the ground-truth-linked checker. Prior work already shows that
+  weak-judge rewards teach deception (Wen et al. 2024; Mahmoud et al. 2026) and that better-structured rewards reduce
+  hacking (Kenton et al. 2026). The narrow new question is the training analogue of E1:
+  **A** = frozen weak judge reads the policy's own prose/explanation; **B'** = the same judge reads only the
+  deterministic VE rendering, no checker in the reward. **Primary contrast: B' vs A.** Ceilings: **B** = rendering +
+  checker, **C** = checker + hidden specification-strength check. Control: **R** = random reward.
+- Gate before any RL spend: show deception is inducible (best-of-n probe, n = 1..32, per reward on the base policy;
+  audit base-policy false positives). At least 5 seeds per arm on the primary contrast; cut arms before seeds.
+- The outcome is never the reward: held-out distinguishing models, renamed vocabulary, reference-AST comparison, a
+  cross-family judge panel, and 100 hand-audited rollouts per arm. Preregister an equivalence margin; a null is likely.
+- Everything must run inside Colab: small open-weight policy (about 1.5B-3B, LoRA, GRPO or rejection-sampling
+  fine-tuning if RL is too slow), frozen small open-weight judge, and the pure-Python `ve` package as the checker.
+- Outcome: rate of approved-but-wrong formalizations on held-out items, measured by the checker, per arm, with seeds.
+  Refutation: arm B is no better than arm A at equal honest acceptance.
+- Budget: decide the GPU from a 10-minute throughput probe; G4 or A100-40GB are the likely choices; stop at 150 units.
 
 ## Status log
 
