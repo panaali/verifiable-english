@@ -1,4 +1,5 @@
 import VE.Bridge
+import VE.Closure.Bridge
 import VE.CertificateWire
 
 open Lean
@@ -21,6 +22,8 @@ def main (args : List String) : IO UInt32 := do
     let cases := match j with
       | .arr xs => xs
       | _ => #[j]
-    let results := cases.map (if certificates then VE.CertificateWire.runCaseReported else VE.Bridge.runCaseReported)
+    let results := cases.map (if certificates then VE.CertificateWire.runCaseReported else fun j =>
+      if (j.getObjValD "environment").getObjValD "language" == .str "ve.core@0.1"
+      then VE.Closure.Bridge.runCaseReported j else VE.Bridge.runCaseReported j)
     (← IO.getStdout).putStrLn (Json.arr results).compress
     return if results.any (fun r => r.getObjValD "status" == .str "error") then 1 else 0
