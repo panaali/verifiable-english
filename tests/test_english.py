@@ -211,7 +211,7 @@ def test_committed_english_artifacts_are_reproducible_and_every_usecase_roundtri
     from ve.english import english_legend
     marker = '<!-- BEGIN GENERATED ENGLISH EVIDENCE -->'
     assert Path('docs/english-surface.md').read_text().split(marker)[1] == '\n' + generated_documentation()
-    for path in Path('usecases').glob('*/environment.json'):
+    for path in (p.with_name('environment.json') for p in Path('usecases').glob('*/claims.ve')):
         env = Environment.from_json(path.read_bytes())
         document = parse(env, path.with_name('claims.ve').read_bytes())
         overlay = json.loads(path.with_name('environment.english.json').read_text())
@@ -287,7 +287,7 @@ def test_reviewed_overlays_preserve_all_historical_views_and_identities():
     from ve import meaning_id
     from ve.english import english_legend
     from ve.printer import VIEWS, render_vocabulary
-    for path in Path('usecases').glob('*/environment.json'):
+    for path in (p.with_name('environment.json') for p in Path('usecases').glob('*/claims.ve')):
         raw = path.read_bytes()
         env = Environment.from_json(raw)
         original = env.to_dict()
