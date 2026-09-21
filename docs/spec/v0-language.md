@@ -20,7 +20,7 @@ No remote lookup, implicit import, subtyping, overloaded symbol, inferred sort, 
 
 This fragment supports the first experiments on requirement reinterpretation and inconsistent meanings across argument branches. Task selection must establish which requirements and deductions it can express without turning difficult checks into opaque agent-supplied predicates. Arithmetic and claims about textual formatting need specified extensions or input adapters; a predicate named `uses_decimals` does not implement either check. The [architecture](../architecture-and-design.md#language-choices) explains the tradeoffs.
 
-The environment wire shape is shown below using the worked example's vocabulary. All displayed fields are required, including empty maps; unknown fields are rejected. Sort entries contain only `description`; predicate entries contain `arguments` (an ordered array of one or two declared sorts) and `description`; constant entries contain `sort` and `description`. Descriptions are nonempty Unicode strings. The specification revision must identify an immutable revision supported by the checker; a matching language name alone is insufficient. This draft identifier is illustrative, not an implemented release.
+The environment wire shape is shown below using the worked example's vocabulary. All displayed fields are required, including empty maps; unknown fields are rejected. Sort entries require `description`; predicate entries require `arguments` (an ordered array of one or two declared sorts) and `description`; constant entries contain `sort` and `description`. Sorts and predicates may additionally carry identity-bound `verbalisation` metadata for the read-only natural view: a sort uses an object with `singular` and `plural` strings, and a predicate uses a positional template string and may also declare `negative_verbalisation`, which is selected only if it exactly matches a mechanical negation of an accepted positive template. Rejected display templates remain identity-bound data and use explicit rendering fallback. Each metadata string is nonempty and at most 256 characters. The exact display grammar and conservative strict fallback are specified in [rendering views](../rendering-views.md); metadata changes no logical denotation. Omitting it preserves the original wire shape and identity. Descriptions are nonempty Unicode strings. The specification revision must identify an immutable revision supported by the checker; a matching language name alone is insufficient. This draft identifier is illustrative, not an implemented release.
 
 ```json
 {
@@ -165,7 +165,7 @@ Closed-world evaluation applies only within the complete submitted model. An emp
 
 The indexed AST makes semantic identity independent of the author's binder names. Canonical printing uses `x0` and `x1`, which may be harder to read than `s` and `p`. Whether to show reviewers the author's binder names, which a debater could choose to mislead, or names derived from the sort, such as `service1`, is open and should be settled in the inspection pilot. Identity would be computed from the indexed AST in either case.
 
-A more natural read-only view may be tested alongside canonical text without expanding this input grammar. Until its rendering rules and correspondence are specified, it is experimental explanatory material. Confirmation records must identify the actual displayed view and renderer version as well as the underlying claim; the strict rendering remains available. A view must not omit conditions or silently collapse different quantifier scopes.
+A more natural read-only view may be tested alongside canonical text without expanding this input grammar. The Python implementation's four surfaces and natural-view grammar are specified in [rendering views](../rendering-views.md); formal correspondence remains unproved, so the view is experimental explanatory material. Confirmation records must identify the actual displayed view and renderer version as well as the underlying claim; the strict rendering remains available. A view must not omit conditions or silently collapse different quantifier scopes.
 
 `parse_E` accepts the strict grammar with any permitted binder names. `canonical_E(s)` additionally requires `print_E(parse_E(s)) = s`. Both ordinary binder names and canonical binder names may denote accepted VE; only the latter are canonical bytes. Do not silently modify the submitted source or claim its bytes were already canonical.
 
@@ -227,7 +227,33 @@ These are hand-specified expected outcomes for the future conformance suite. The
 
 ## Rejection and resource behavior
 
-Required diagnostic classes are `SyntaxError`, `UnknownSymbol`, `DuplicateDeclaration`, `UnboundVariable`, `ShadowedVariable`, `TypeMismatch`, `InvalidModel`, `UnsupportedProfile`, and `ResourceLimit`. Retain source spans separately from semantic nodes.
+Required diagnostic classes are `InvalidInput`, `SyntaxError`, `UnknownSymbol`, `DuplicateDeclaration`, `UnboundVariable`, `ShadowedVariable`, `TypeMismatch`, `InvalidModel`, `UnsupportedProfile`, and `ResourceLimit`. Retain source spans separately from semantic nodes.
+
+At the restricted JSON boundary, pin these classes (fixtures in
+`conformance/wire.json`):
+
+| Input | Diagnostic |
+|---|---|
+| Incomplete literals/numbers `nul`, `1.`, `1e`, `1e+` | `SyntaxError` |
+| Complete unsupported values `null`, `1.0`, `1e0` | `InvalidInput` |
+| Recognized but forbidden nonstandard numeric tokens `NaN`, `Infinity`, `-Infinity` | `InvalidInput` |
+| Syntactically complete escapes containing lone UTF-16 surrogates, in values or keys | `InvalidInput` |
+| Invalid UTF-8 bytes, malformed escapes, unescaped controls, trailing syntax | `SyntaxError` |
+| Duplicate decoded object keys | `DuplicateDeclaration` |
+
+This classification does not admit nonstandard numbers or lone surrogates.
+Paired surrogate escapes decode normally. A literal surrogate in an in-process
+Python string fails UTF-8 encoding with `SyntaxError`; an ASCII JSON escape such
+as `"\ud800"` reaches the Unicode-value check and gives `InvalidInput`.
+
+For schema identifiers, count Unicode characters before the ASCII-pattern
+check: more than 64 characters gives `ResourceLimit`, otherwise an invalid
+pattern gives `InvalidInput` (`"é" * 40` is the latter). For model local IDs,
+check the ASCII pattern first (`"A" * 65` gives `InvalidModel`), then the
+64-byte length limit (`"a" * 65` gives `ResourceLimit`). All accepted identifiers
+are ASCII, so accepted lengths agree in bytes and characters. Decode all AST
+tags, arities and variable-index representations before checking symbol names
+and typing; `["unary", 5, ["var"]]` therefore gives `SyntaxError`.
 
 The proposed runtime envelope is at most 64 KiB of VE text, 64 formula nesting levels, 10,000 AST nodes, 32 sorts, 256 predicate symbols, 1,000 entities per sort, and 100,000 relation tuples total. Runtime identifiers (including model local IDs) are limited to 64 ASCII bytes; apply these limits and bounded integer checks before allocation. Input packages are capped at 16 MiB. These are initial engineering limits, not mathematical expressiveness claims; the unbudgeted reference definitions are separate from these runtime caps.
 

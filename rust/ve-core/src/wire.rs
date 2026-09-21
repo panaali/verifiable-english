@@ -1,4 +1,5 @@
 use crate::{Error, MAX_INDEX, MAX_PACKAGE_BYTES, Result, error};
+use serde::de::{Deserializer, Visitor};
 use serde_json::{Map, Value};
 use sha2::{Digest, Sha256};
 
@@ -15,7 +16,29 @@ pub fn loads_json(bytes: &[u8]) -> Result<Value> {
     if parser.pos != bytes.len() {
         return error("SyntaxError", "trailing JSON input");
     }
+    fn reject_null(value: &Value) -> Result<()> {
+        match value {
+            Value::Null => error("InvalidInput", "null is not in v0"),
+            Value::Array(a) => a.iter().try_for_each(reject_null),
+            Value::Object(o) => o.values().try_for_each(reject_null),
+            _ => Ok(()),
+        }
+    }
+    reject_null(&value)?;
     Ok(value)
+}
+// Deserialize escapes as bytes so JSON syntax and the v0 Unicode restriction
+// are separate checks. serde_json documents this path as preserving lone
+// surrogates in WTF-8; from_utf8 then rejects them as InvalidInput.
+struct StringBytes;
+impl<'de> Visitor<'de> for StringBytes {
+    type Value = Vec<u8>;
+    fn expecting(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("a JSON string")
+    }
+    fn visit_bytes<E: serde::de::Error>(self, bytes: &[u8]) -> std::result::Result<Vec<u8>, E> {
+        Ok(bytes.to_vec())
+    }
 }
 struct Decoder<'a> {
     bytes: &'a [u8],
@@ -58,8 +81,13 @@ impl Decoder<'_> {
                 }
                 self.pos += 1;
             } else if byte == b'"' {
-                return serde_json::from_slice(&self.bytes[start..self.pos])
-                    .map_err(|e| Error::new("SyntaxError", e.to_string()));
+                let bytes = serde_json::Deserializer::from_slice(&self.bytes[start..self.pos])
+                    .deserialize_bytes(StringBytes)
+                    .map_err(|e| Error::new("SyntaxError", e.to_string()))?;
+                return String::from_utf8(bytes)
+                    .map_err(|_| Error::new("InvalidInput", "lone UTF-16 surrogate"));
+            } else if byte < 0x20 {
+                return error("SyntaxError", "unescaped control character in JSON string");
             }
         }
         error("SyntaxError", "unterminated JSON string")
@@ -124,6 +152,15 @@ impl Decoder<'_> {
                 self.pos += 5;
                 Ok(Value::Bool(false))
             }
+            Some(b'N') if self.bytes[self.pos..].starts_with(b"NaN") => {
+                error("InvalidInput", "NaN is not in v0")
+            }
+            Some(b'I') if self.bytes[self.pos..].starts_with(b"Infinity") => {
+                error("InvalidInput", "Infinity is not in v0")
+            }
+            Some(b'-') if self.bytes[self.pos..].starts_with(b"-Infinity") => {
+                error("InvalidInput", "-Infinity is not in v0")
+            }
             Some(b'-' | b'0'..=b'9') => {
                 let start = self.pos;
                 let negative = self.take(b'-');
@@ -135,7 +172,30 @@ impl Decoder<'_> {
                         self.pos += 1;
                     }
                 }
-                if matches!(self.bytes.get(self.pos), Some(b'.' | b'e' | b'E')) {
+                // Match only complete fraction/exponent suffixes. Incomplete
+                // suffixes remain trailing syntax (Python's JSON decoder order).
+                let integer_end = self.pos;
+                if self.bytes.get(self.pos) == Some(&b'.')
+                    && matches!(self.bytes.get(self.pos + 1), Some(b'0'..=b'9'))
+                {
+                    self.pos += 2;
+                    while matches!(self.bytes.get(self.pos), Some(b'0'..=b'9')) {
+                        self.pos += 1;
+                    }
+                }
+                if matches!(self.bytes.get(self.pos), Some(b'e' | b'E')) {
+                    let mut end = self.pos + 1;
+                    if matches!(self.bytes.get(end), Some(b'+' | b'-')) {
+                        end += 1;
+                    }
+                    if matches!(self.bytes.get(end), Some(b'0'..=b'9')) {
+                        self.pos = end + 1;
+                        while matches!(self.bytes.get(self.pos), Some(b'0'..=b'9')) {
+                            self.pos += 1;
+                        }
+                    }
+                }
+                if self.pos != integer_end {
                     return error("InvalidInput", "floating point numbers are not in v0");
                 }
                 if self.pos - start > 16 {
@@ -152,7 +212,10 @@ impl Decoder<'_> {
                 }
                 Ok(Value::from(n))
             }
-            Some(b'n') => error("InvalidInput", "null is not in v0"),
+            Some(b'n') if self.bytes[self.pos..].starts_with(b"null") => {
+                self.pos += 4;
+                Ok(Value::Null)
+            }
             _ => error("SyntaxError", format!("invalid JSON at byte {}", self.pos)),
         }
     }

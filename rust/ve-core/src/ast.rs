@@ -227,6 +227,12 @@ struct AstDecoder {
     nodes: usize,
 }
 impl AstDecoder {
+    fn symbol(v: &Value) -> String {
+        // Python decodes the entire raw AST before checking symbol types/names.
+        // The empty name cannot be declared, so a non-string remains rejected
+        // by Checker at its original position after structural decoding succeeds.
+        v.as_str().unwrap_or("").into()
+    }
     fn node<'a>(&mut self, v: &'a Value, depth: usize, term: bool) -> Result<&'a [Value]> {
         self.nodes += 1;
         if self.nodes > MAX_NODES || depth > MAX_DEPTH + usize::from(term) {
@@ -250,9 +256,7 @@ impl AstDecoder {
                         "index must be a bounded nonnegative integer",
                     )
                 }),
-            "const" if a.len() == 2 => Ok(Term::Const(
-                crate::environment::string(&a[1], "UnknownSymbol")?.into(),
-            )),
+            "const" if a.len() == 2 => Ok(Term::Const(Self::symbol(&a[1]))),
             _ => error("SyntaxError", "invalid term tag or arity"),
         }
     }
@@ -272,12 +276,9 @@ impl AstDecoder {
         Ok(match tag {
             "top" => Formula::Top,
             "bottom" => Formula::Bottom,
-            "unary" => Formula::Unary(
-                crate::environment::string(&a[1], "UnknownSymbol")?.into(),
-                self.term(&a[2], depth + 1)?,
-            ),
+            "unary" => Formula::Unary(Self::symbol(&a[1]), self.term(&a[2], depth + 1)?),
             "binary" => Formula::Binary(
-                crate::environment::string(&a[1], "UnknownSymbol")?.into(),
+                Self::symbol(&a[1]),
                 self.term(&a[2], depth + 1)?,
                 self.term(&a[3], depth + 1)?,
             ),
@@ -293,7 +294,7 @@ impl AstDecoder {
                 }
             }
             "forall" | "exists" => {
-                let sort = crate::environment::string(&a[1], "UnknownSymbol")?.into();
+                let sort = Self::symbol(&a[1]);
                 let body = Box::new(self.formula(&a[2], depth + 1)?);
                 if tag == "forall" {
                     Formula::Forall(sort, body)

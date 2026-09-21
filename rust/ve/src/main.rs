@@ -173,7 +173,21 @@ fn run(args: &[String]) -> Result<i32> {
                 failed |= out["status"] == "error";
                 writeln!(stdout, "{out}").map_err(|e| Error::new("InvalidInput", e.to_string()))?;
                 if count > MAX_PACKAGE_BYTES {
-                    break;
+                    // Drop only the rest of this record, using the reader's
+                    // fixed-size buffer rather than allocating the whole line.
+                    if line.last() != Some(&b'\n') {
+                        loop {
+                            let buffer = input
+                                .fill_buf()
+                                .map_err(|e| Error::new("InvalidInput", e.to_string()))?;
+                            let end = buffer.iter().position(|b| *b == b'\n');
+                            let consumed = end.map_or(buffer.len(), |i| i + 1);
+                            input.consume(consumed);
+                            if consumed == 0 || end.is_some() {
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             stdout
@@ -185,11 +199,7 @@ fn run(args: &[String]) -> Result<i32> {
             let env = loads_json(&read(&option(args, "--env")?)?)?;
             let environment = Environment::from_value(&env)?;
             let premises_bytes = read(&option(args, "--premises")?)?;
-            let premises = if premises_bytes.is_empty() {
-                json!([])
-            } else {
-                parse(&environment, &premises_bytes)?.to_value()
-            };
+            let premises = parse(&environment, &premises_bytes)?.to_value();
             let conclusion = parse(&environment, &read(&option(args, "--conclusion")?)?)?;
             if conclusion.formulas().len() != 1 {
                 return Err(Error::new(

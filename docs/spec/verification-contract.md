@@ -2,6 +2,11 @@
 
 **Status:** Proposed obligations, September 20, 2026. Every theorem below is pending. This document specifies what evidence an implementation must produce; the prose and pseudocode are not that evidence.
 
+The experimental Python argument layer uses a
+[documented tableau replay checker](../implementation.md#entailment-evidence-and-trust-boundary)
+instead of the proposed Lean certificate path. Its tests do not discharge these
+obligations, and its records remain `assurance: experimental`.
+
 The [language specification](v0-language.md) defines syntax, ASTs, environments, and relational structures. The [debate protocol](debate-protocol.md) defines claims, dependencies, and certificates. The [roadmap](../roadmap.md) determines when a claim may be advertised.
 
 ## Objects and independent specification

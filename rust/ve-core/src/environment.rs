@@ -24,7 +24,9 @@ pub(crate) const RESERVED: &[&str] = &[
     "eventually",
 ];
 pub(crate) fn identifier(s: &str, code: &str) -> Result<()> {
-    if s.len() > 64 {
+    // Schema names follow Python's character-count check before ASCII syntax.
+    // Model local IDs check syntax first, then the length of the ASCII ID.
+    if code != "InvalidModel" && s.chars().count() > 64 {
         return error("ResourceLimit", "identifier exceeds 64 bytes");
     }
     if !s.as_bytes().first().is_some_and(u8::is_ascii_lowercase)
@@ -33,6 +35,9 @@ pub(crate) fn identifier(s: &str, code: &str) -> Result<()> {
             .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'_')
     {
         return error(code, format!("invalid ASCII identifier {s:?}"));
+    }
+    if s.len() > 64 {
+        return error("ResourceLimit", "identifier exceeds 64 bytes");
     }
     Ok(())
 }

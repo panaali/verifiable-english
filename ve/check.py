@@ -10,7 +10,7 @@ from .parser import parse
 from .printer import print_document
 
 
-def check(env, source, model=None, *, candidate_ast=None, max_evaluations=1_000_000):
+def check(env, source, model=None, *, candidate_ast=None, max_evaluations=1_000_000, trace=True):
     document = parse(env, source)
     if candidate_ast is not None:
         candidate = (check_document(env, candidate_ast) if type(candidate_ast) is Document
@@ -25,7 +25,7 @@ def check(env, source, model=None, *, candidate_ast=None, max_evaluations=1_000_
               "canonical": canonical.encode("ascii") == raw,
               "intent": "unconfirmed", "proof": "not_checked", "evaluation": "not_evaluated"}
     if model is not None:
-        evaluation = evaluate(env, document, model, max_evaluations=max_evaluations)
+        evaluation = evaluate(env, document, model, max_evaluations=max_evaluations, trace=trace)
         result["model_id"] = model.model_id
         result["evaluation"] = evaluation.to_dict()
     return result

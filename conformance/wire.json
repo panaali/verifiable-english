@@ -55,83 +55,176 @@
     "expected": "0"
   },
   {
-    "id": "wire_invalid_0",
+    "id": "wire_duplicate",
     "raw": "{\"a\":1,\"a\":2}",
-    "reject": true
+    "reject": true,
+    "expected_error": "DuplicateDeclaration"
   },
   {
-    "id": "wire_invalid_1",
+    "id": "wire_escaped_duplicate",
     "raw": "{\"a\":1,\"\\u0061\":2}",
-    "reject": true
+    "reject": true,
+    "expected_error": "DuplicateDeclaration"
   },
   {
-    "id": "wire_invalid_2",
+    "id": "wire_nested_duplicate",
     "raw": "{\"a\":{\"b\":1,\"b\":2}}",
-    "reject": true
+    "reject": true,
+    "expected_error": "DuplicateDeclaration"
   },
   {
-    "id": "wire_invalid_3",
+    "id": "wire_null",
     "raw": "null",
-    "reject": true
+    "reject": true,
+    "expected_error": "InvalidInput"
   },
   {
-    "id": "wire_invalid_4",
+    "id": "wire_fraction",
     "raw": "1.0",
-    "reject": true
+    "reject": true,
+    "expected_error": "InvalidInput"
   },
   {
-    "id": "wire_invalid_5",
+    "id": "wire_exponent",
     "raw": "1e0",
-    "reject": true
+    "reject": true,
+    "expected_error": "InvalidInput"
   },
   {
-    "id": "wire_invalid_6",
+    "id": "wire_negative",
     "raw": "-1",
-    "reject": true
+    "reject": true,
+    "expected_error": "InvalidInput"
   },
   {
-    "id": "wire_invalid_7",
+    "id": "wire_integer_range",
     "raw": "9007199254740992",
-    "reject": true
+    "reject": true,
+    "expected_error": "InvalidInput"
   },
   {
-    "id": "wire_invalid_8",
+    "id": "wire_high_surrogate",
     "raw": "\"\\ud800\"",
-    "reject": true
+    "reject": true,
+    "expected_error": "InvalidInput"
   },
   {
-    "id": "wire_invalid_9",
+    "id": "wire_low_surrogate",
     "raw": "\"\\udfff\"",
-    "reject": true
+    "reject": true,
+    "expected_error": "InvalidInput"
   },
   {
-    "id": "wire_invalid_10",
+    "id": "wire_surrogate_key",
+    "raw": "{\"\\ud800\":0}",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_surrogate_then_scalar",
+    "raw": "\"\\ud800\\u0041\"",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_surrogate_then_escape",
+    "raw": "\"\\ud800\\n\"",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_trailing_comma",
     "raw": "[true,]",
-    "reject": true
+    "reject": true,
+    "expected_error": "SyntaxError"
   },
   {
-    "id": "wire_invalid_11",
+    "id": "wire_leading_zero",
     "raw": "01",
-    "reject": true
+    "reject": true,
+    "expected_error": "SyntaxError"
   },
   {
-    "id": "wire_invalid_12",
+    "id": "wire_nan",
     "raw": "NaN",
-    "reject": true
+    "reject": true,
+    "expected_error": "InvalidInput"
   },
   {
-    "id": "wire_invalid_13",
+    "id": "wire_infinity",
+    "raw": "Infinity",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_negative_infinity",
+    "raw": "-Infinity",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_incomplete_null",
+    "raw": "nul",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_incomplete_fraction",
+    "raw": "1.",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_incomplete_exponent",
+    "raw": "1e",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_incomplete_signed_exponent",
+    "raw": "1e+",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_incomplete_array",
     "raw": "[",
-    "reject": true
+    "reject": true,
+    "expected_error": "SyntaxError"
   },
   {
-    "id": "wire_invalid_14",
+    "id": "wire_trailing_value",
     "raw": "true false",
-    "reject": true
+    "reject": true,
+    "expected_error": "SyntaxError"
   },
   {
-    "id": "wire_invalid_15",
+    "id": "wire_null_trailing",
+    "raw": "null false",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_bad_hex_escape",
+    "raw": "\"\\ud80x\"",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_unescaped_control",
+    "raw": "\"a\nb\"",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_depth",
     "raw": "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[true]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]",
-    "reject": true
+    "reject": true,
+    "expected_error": "ResourceLimit"
+  },
+  {
+    "id": "wire_surrogate_pair",
+    "raw": "\"\\ud83d\\ude00\"",
+    "expected": "\"😀\""
   }
 ]

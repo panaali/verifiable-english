@@ -24,7 +24,51 @@ fn shared_evaluation_corpus() {
             count += 1;
         }
     }
-    assert_eq!(count, 776);
+    assert_eq!(count, 4912);
+}
+
+#[test]
+fn shared_countermodel_corpus() {
+    let cases = loads_json(include_bytes!("../../../conformance/countermodels.json")).unwrap();
+    assert_eq!(cases.as_array().unwrap().len(), 708);
+    for case in cases.as_array().unwrap() {
+        let env = Environment::from_value(&case["environment"]).unwrap();
+        let model = FiniteModel::from_value(&env, &case["model"]).unwrap();
+        let mut ast = case["premises"].as_array().unwrap().clone();
+        ast.push(case["conclusion"].clone());
+        let doc = Document::from_value(&env, &json!(ast)).unwrap();
+        let (conclusion, premises) = doc.formulas().split_last().unwrap();
+        let problem =
+            CountermodelProblem::new(&env, premises.to_vec(), conclusion.clone()).unwrap();
+        let result = problem.check_countermodel(&model, MAX_EVALUATIONS).unwrap();
+        assert_eq!(
+            json!(result.valid),
+            case["expected_refutes"],
+            "{}",
+            case["id"]
+        );
+    }
+}
+
+#[test]
+fn shared_wire_diagnostic_classes() {
+    let cases = loads_json(include_bytes!("../../../conformance/wire.json")).unwrap();
+    for case in cases.as_array().unwrap() {
+        let result = loads_json(case["raw"].as_str().unwrap().as_bytes());
+        if let Some(code) = case.get("expected_error") {
+            assert_eq!(
+                result.unwrap_err().code,
+                code.as_str().unwrap(),
+                "{}",
+                case["id"]
+            );
+        } else {
+            assert_eq!(
+                canonical_json(&result.unwrap()).unwrap(),
+                case["expected"].as_str().unwrap().as_bytes()
+            );
+        }
+    }
 }
 
 #[test]
