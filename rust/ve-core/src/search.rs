@@ -36,11 +36,7 @@ impl CountermodelProblem {
         maximum: u64,
     ) -> Result<(&'static str, Vec<bool>, Option<bool>, u64)> {
         compatible(&self.document, model, maximum)?;
-        let mut ev = Evaluator {
-            model,
-            maximum,
-            work: 0,
-        };
+        let mut ev = Evaluator::new(model, maximum);
         let mut values = Vec::new();
         let (conclusion, premises) = self
             .document
@@ -48,6 +44,8 @@ impl CountermodelProblem {
             .split_last()
             .expect("nonempty checked AST");
         for f in premises {
+            // Python witness checking starts a fresh closure cache per premise.
+            ev.clear_closures();
             match ev.formula(f, &mut Vec::new()) {
                 Ok(v) => {
                     values.push(v);
@@ -58,6 +56,7 @@ impl CountermodelProblem {
                 Err(_) => return Ok(("ResourceLimit", values, None, ev.work)),
             }
         }
+        ev.clear_closures();
         match ev.formula(conclusion, &mut Vec::new()) {
             Ok(v) => Ok((
                 if v { "NotCountermodel" } else { "Valid" },

@@ -112,28 +112,59 @@ def test_cli_five_e1_view_names_emit_plain_text(tmp_path):
 
 
 @pytest.mark.parametrize("naming", ["per_statement", "per_document"])
-def test_cli_cell_legend_and_naming_across_all_views(tmp_path, naming):
+@pytest.mark.parametrize("style", [None, "json", "compact"])
+def test_cli_cell_legend_and_naming_across_all_views(tmp_path, naming, style):
     from ve.printer import VIEWS, render_cell
     env = Environment.from_json(ENV.read_bytes())
     source = tmp_path / "two.ve"
     source.write_text("for every service s, (s equals s).\n" * 2)
     document = parse(env, source.read_bytes())
+    options = [] if style is None else ["--legend-style", style]
     for view in (*VIEWS, "canonical", "natural"):
         result = cli("render", "--env", ENV, "--view", view, "--with-legend",
-                     "--naming", naming, source)
+                     "--naming", naming, *options, source)
         actual_view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(view, view)
         assert result.returncode == 0, result.stdout
-        assert result.stdout == render_cell(document, env, actual_view, naming)
+        assert result.stdout == render_cell(document, env, actual_view, naming, style=style or "json")
 
 
-def test_cli_jsonl_view_lengths_and_invalid_records(tmp_path):
+def test_cli_import_fol_compact_legend_and_claim_only_aliases(tmp_path):
+    from ve.printer import VIEWS, render, render_cell
+    env = Environment.from_json(ENV.read_bytes())
+    path = tmp_path / "fol.json"
+    path.write_text(json.dumps({"formulas": [{"op": "top"}]}))
+    for view in (*VIEWS, "canonical", "natural"):
+        actual_view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(view, view)
+        result = cli("import-fol", "--env", ENV, "--view", view, "--with-legend",
+                     "--legend-style", "compact", path)
+        assert result.returncode == 0, result.stdout
+        assert result.stdout == render_cell(Document((Top(),)), env, actual_view, style="compact")
+        for command, source in (("import-fol", path), ("render", SOURCE)):
+            result = cli(command, "--env", ENV, "--view", view, "--legend-style", "compact", source)
+            assert result.returncode == 0, result.stdout
+            document = Document((Top(),)) if command == "import-fol" else parse(env, SOURCE.read_bytes())
+            text = json.loads(result.stdout)["text"] if view == "natural" else result.stdout
+            assert text == render(document, env, actual_view)
+
+
+@pytest.mark.parametrize("command", ["render", "import-fol", "view-lengths"])
+def test_cli_rejects_unknown_legend_style(command):
+    result = cli(command, "--env", ENV, "--legend-style", "unknown", SOURCE)
+    assert result.returncode == 2
+    assert "invalid choice" in result.stderr
+
+
+@pytest.mark.parametrize("style", [None, "json", "compact"])
+def test_cli_jsonl_view_lengths_and_invalid_records(tmp_path, style):
     from ve.printer import measure_jsonl_lengths
     env = Environment.from_json(ENV.read_bytes())
     path = tmp_path / "items.jsonl"
     path.write_text('{"id":"real-item-1","claim":"true.\\n"}\n')
-    result = cli("view-lengths", "--env", ENV, "--field", "claim", "--source-format", "ve", path)
+    options = [] if style is None else ["--legend-style", style]
+    result = cli("view-lengths", "--env", ENV, "--field", "claim", "--source-format", "ve", *options, path)
     assert result.returncode == 0, result.stdout
-    assert json.loads(result.stdout) == measure_jsonl_lengths(path, env, field="claim", source_format="ve")
+    assert json.loads(result.stdout) == measure_jsonl_lengths(path, env, field="claim", source_format="ve",
+                                                            style=style or "json")
     path.write_text('{}\n')
     result = cli("view-lengths", "--env", ENV, path)
     assert result.returncode == 2 and json.loads(result.stdout)["status"] == "InvalidInput"

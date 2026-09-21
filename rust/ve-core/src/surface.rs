@@ -1,6 +1,6 @@
 use crate::{
-    Document, Environment, Error, Formula, MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES, Result, Span,
-    Term, environment::RESERVED, error,
+    Document, Edge, Environment, Error, Formula, MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES, ReachKind,
+    Result, Span, Term, environment::RESERVED, error,
 };
 
 #[derive(Clone, Debug)]
@@ -117,13 +117,54 @@ impl Parser<'_> {
                 .get(self.pos + s.len())
                 .is_some_and(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || *b == b'_')
     }
+    fn closure_binder(&mut self) -> Result<()> {
+        let (name, p) = self.ident()?;
+        if RESERVED.contains(&name.as_str()) || self.env.schema_name(&name) {
+            return Err(self.err("SyntaxError", "invalid binder name", p));
+        }
+        if self.binders.contains(&name) {
+            return Err(self.err("ShadowedVariable", "binder shadows active binder", p));
+        }
+        self.binders.push(name);
+        Ok(())
+    }
     fn formula(&mut self, depth: usize) -> Result<Formula> {
         let start = self.pos;
         if depth > MAX_DEPTH {
             return Err(self.err("ResourceLimit", "formula depth limit", start));
         }
         let f;
-        if self.keyword("true") {
+        if self.at("tc[") || self.at("rtc[") {
+            let kind = if self.eat("rtc[") {
+                ReachKind::Star
+            } else {
+                self.literal("tc[")?;
+                ReachKind::Plus
+            };
+            let (symbol, pos) = self.ident()?;
+            let edge = if self.at("]") {
+                Edge::Named(symbol)
+            } else {
+                if !self.env.sorts.contains(&symbol) {
+                    return Err(self.err("UnknownSymbol", "unknown closure sort", pos));
+                }
+                self.literal(" ")?;
+                self.closure_binder()?;
+                self.literal(", ")?;
+                self.closure_binder()?;
+                self.literal(" | (")?;
+                let body = self.formula(depth + 1)?;
+                self.literal(")")?;
+                self.binders.truncate(self.binders.len() - 2);
+                Edge::Body(symbol, Box::new(body))
+            };
+            self.literal("](")?;
+            let left = self.term()?;
+            self.literal(", ")?;
+            let right = self.term()?;
+            self.literal(")")?;
+            f = Formula::Reach(kind, edge, left, right);
+        } else if self.keyword("true") {
             self.pos += 4;
             f = Formula::Top;
         } else if self.keyword("false") {
@@ -278,6 +319,28 @@ pub fn print_document(doc: &Document) -> Result<String> {
             Formula::Bottom => "false".into(),
             Formula::Unary(p, t) => format!("{} is {p}", term(t, names)),
             Formula::Binary(p, t, u) => format!("{} {p} {}", term(t, names), term(u, names)),
+            Formula::Reach(kind, edge, t, u) => {
+                let left = term(t, names);
+                let right = term(u, names);
+                let op = if matches!(kind, ReachKind::Plus) {
+                    "tc"
+                } else {
+                    "rtc"
+                };
+                let edge = match edge {
+                    Edge::Named(p) => p.clone(),
+                    Edge::Body(s, f) => {
+                        let source = format!("x{}", *counter);
+                        let destination = format!("x{}", *counter + 1);
+                        *counter += 2;
+                        names.extend([source.clone(), destination.clone()]);
+                        let body = formula(f, names, counter);
+                        names.truncate(names.len() - 2);
+                        format!("{s} {source}, {destination} | ({body})")
+                    }
+                };
+                format!("{op}[{edge}]({left}, {right})")
+            }
             Formula::Eq(t, u) => format!("{} equals {}", term(t, names), term(u, names)),
             Formula::Not(a) => format!("not ({})", formula(a, names, counter)),
             Formula::And(a, b) => format!(

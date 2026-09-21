@@ -10,6 +10,7 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+import subprocess
 from typing import Any
 
 from .ast import (Reach, Named, Body, Formula, Not, Unary, Binary, formula_from_data, formula_to_data)
@@ -326,6 +327,9 @@ class ArgumentResult:
     checker_build: str = ""
     contradictory_premises: tuple[str, ...] = ()
     warnings: tuple[dict, ...] = ()
+    profiles: tuple[str, ...] = ()
+    lean_checked: bool = False
+    lean_detail: str = "Lean replay not requested"
 
     def to_dict(self):
         data = {"version": ARGUMENT_VERSION, "assurance": "experimental", "status": self.status,
@@ -333,7 +337,10 @@ class ArgumentResult:
                 "findings": {k: list(v) for k, v in self.findings.items()},
                 "remaining_assumptions": list(self.remaining_assumptions),
                 "unresolved_obligations": list(self.unresolved_obligations), "composed": self.composed,
-                "proof": "checked" if self.composed else "not_checked", "intent": "unconfirmed",
+                "proof": "Python replay checked" if self.composed else "not_checked", "intent": "unconfirmed",
+                "profiles": list(self.profiles), "lean_checked": self.lean_checked,
+                "lean_status": "Lean-checked: " + ("yes" if self.lean_checked else "no"),
+                "lean_detail": self.lean_detail,
                 "approval": "unassessed", "edges": list(self.edges), "errors": list(self.errors),
                 "composition": self.composition, "checker_build": self.checker_build,
                 "contradictory_premises": list(self.contradictory_premises),
@@ -431,13 +438,45 @@ def _check_edge(graph, edge, claims, *, search, max_proof_steps, max_domain_size
             "artifacts": artifacts, "errors": errors, "search_attempts": attempts}
 
 
+def _lean_deductions(graph, claims, records, reachable, executable):
+    """Optional independent replay; never infer a Lean result from Python success."""
+    if executable is None:
+        return False, "Lean replay not requested"
+    cases = []
+    for record in records:
+        if record['conclusion'] not in reachable:
+            continue
+        candidates = [a for a in record['artifacts'] if a['kind'] == 'follows'
+                      and a.get('check', {}).get('valid') and 'certificate' in a]
+        if not candidates:
+            return False, "A supporting deduction has no certificate"
+        cases.append({'id': record['edge_id'], 'environment': graph.env.to_dict(),
+                      'premises': [formula_to_data(graph.env, claims[n].ast) for n in record['premises']],
+                      'conclusion': formula_to_data(graph.env, claims[record['conclusion']].ast),
+                      'certificate': candidates[0]['certificate']['proof']})
+    if not cases:
+        return False, "No deduction certificates to replay"
+    try:
+        proc = subprocess.run([str(executable), 'check-certificate'], input=canonical_json(cases),
+                              capture_output=True, timeout=60)
+        rows = loads_json(proc.stdout)
+        expected = [{'id': c['id'], 'status': 'ok', 'valid': True} for c in cases]
+        if proc.returncode == 0 and rows == expected:
+            return True, f"{len(cases)} supporting deduction certificates accepted by Lean"
+        return False, "Lean did not accept every supporting deduction certificate"
+    except (OSError, subprocess.TimeoutExpired, VEError, ValueError):
+        return False, "Lean replay unavailable or failed"
+
+
 def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_size=1,
-                   max_models=1_000, max_evaluations=100_000):
+                   max_models=1_000, max_evaluations=100_000, lean_executable=None):
     """Validate and check a submitted DAG; never discharge factual assumptions.
 
     ``search=False`` performs certificate/witness replay only. Search bounds are
     per edge/direction. Search failure is operational information, never a gap.
     Invalid submissions return diagnostics; invalid constructor inputs may raise.
+    ``lean_executable`` optionally replays the supporting deduction certificates;
+    the result labels actual Lean acceptance separately from Python replay.
     Host cancellation propagates and is never converted into a logical finding.
     """
     try:
@@ -495,9 +534,11 @@ def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_siz
                 "supporting_edge_ids": [r["edge_id"] for r in records if r["conclusion"] in reachable],
                 "assumptions": [claims[n].to_dict(graph.env) for n in leaves]}
             composition["record_id"] = digest("ve-composition-v1\n", composition)
+        lean_checked, lean_detail = (_lean_deductions(graph, claims, records, reachable, lean_executable)
+                                     if composed else (False, "Root deductions are not established"))
         return ArgumentResult(status, graph.graph_id, graph.env.environment_id, graph.root,
                               findings, leaves, unresolved, composed, records, errors, composition, checker_build,
-                              contradictory, warnings)
+                              contradictory, warnings, tuple(graph.env.profiles), lean_checked, lean_detail)
     except (VEError, RecursionError) as exc:
         if isinstance(exc, RecursionError):
             exc = ResourceLimit("Argument exceeds runtime recursion budget")
@@ -530,7 +571,10 @@ def outstanding_obligations(graph, result):
             "outstanding": assessment != "accepted" or not scopes_match,
             "logical_assumption": True})
     return {"graph_id": result.graph_id, "assurance": "experimental", "status": result.status,
-        "proof": "checked under listed assumptions" if result.composed else "not checked for the root",
+        "proof": "Python replay checked under listed assumptions" if result.composed else "not checked for the root",
+        "profiles": list(result.profiles), "lean_checked": result.lean_checked,
+        "lean_status": "Lean-checked: " + ("yes" if result.lean_checked else "no"),
+        "lean_detail": result.lean_detail,
         "root": claims[graph.root].to_dict(graph.env), "target_scope": graph.target_scope,
         "interpretation": {"status": "unconfirmed", "outstanding": True,
                            "environment_id": graph.env.environment_id},

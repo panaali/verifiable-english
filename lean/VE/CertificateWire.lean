@@ -1,5 +1,7 @@
 import VE.Bridge
 import VE.TableauChecker
+import VE.TableauExtendedChecker
+import VE.Closure.Bridge
 
 /-! The data-only wire adapter. Serialization and hash identity correspondence
 are tested boundary code, not additional premises of tableau soundness. -/
@@ -122,6 +124,31 @@ def decodeCertificate (j : Json) : Except String Tableau.Certificate := do
     ← Bridge.strings (← j.getObjVal? "premise_meaning_ids"),
     ← Bridge.stringField j "conclusion_meaning_id", ← decodeTrace 125 (← j.getObjVal? "trace")⟩
 
+def decodeClosureTrace : Nat → Json → Except String Closure.Tableau.Trace
+  | 0, _ => throw "ResourceLimit: certificate expansion depth exceeds 124"
+  | fuel + 1, j => do
+    let rule ← Bridge.stringField j "rule"
+    if rule == "close" then
+      Bridge.exactFields j ["rule"]
+      pure .close
+    else if rule == "expand" || rule == "closure-plus@0" || rule == "closure-star@0" ||
+        Closure.Tableau.extraRule rule then
+      let names := (← Bridge.fields j).map Prod.fst
+      let optional := names.contains "parameter"
+      Bridge.exactFields j (["rule", "at", "children"] ++ if optional then ["parameter"] else [])
+      let index ← (← j.getObjVal? "at").getNat?
+      let parameter ← if optional then do pure (some (← Bridge.stringField j "parameter")) else pure none
+      let children ← (← (← j.getObjVal? "children").getArr?).toList.mapM (decodeClosureTrace fuel)
+      pure (.expand rule index parameter children)
+    else throw "unknown tableau rule"
+
+def decodeClosureCertificate (j : Json) : Except String Closure.Tableau.Certificate := do
+  Bridge.exactFields j ["checker_version", "environment_id", "premise_meaning_ids",
+    "conclusion_meaning_id", "trace"]
+  pure ⟨← Bridge.stringField j "checker_version", ← Bridge.stringField j "environment_id",
+    ← Bridge.strings (← j.getObjVal? "premise_meaning_ids"),
+    ← Bridge.stringField j "conclusion_meaning_id", ← decodeClosureTrace 125 (← j.getObjVal? "trace")⟩
+
 def meaningId (environmentId : String) (ast : Json) : Except String String :=
   digest "ve-meaning-v0\n" (Json.mkObj [("environment_id", .str environmentId), ("ast", ast)])
 
@@ -149,11 +176,44 @@ def decodeQuery (environment : Json) (v : Bridge.Vocabulary) (j : Json) : Except
     throw "certificate is stale or bound to different inputs"
   pure ⟨formulas, certificate⟩
 
+structure ClosureQuery (E : Environment) where
+  premises : List Closure.Formula
+  conclusion : Closure.Formula
+  certificate : Closure.Tableau.Certificate
+
+def ClosureQuery.accepts {E : Environment} (q : ClosureQuery E) : Bool :=
+  Closure.Tableau.checkCertificate E q.premises q.conclusion q.certificate
+
+theorem ClosureQuery.accepts_sound {E : Environment} (q : ClosureQuery E)
+    (h : q.accepts = true) : Closure.Entails.{0} E q.premises q.conclusion :=
+  Closure.Tableau.checkCertificate_sound E q.premises q.conclusion q.certificate h
+
+def runClosureCase (j : Json) : Except String Json := do
+  let id ← Bridge.stringField j "id"
+  let environment ← j.getObjVal? "environment"
+  let v ← Closure.Bridge.decodeEnvironment environment
+  let ps ← Closure.Bridge.decodeFormulas v.environment (← j.getObjVal? "premises")
+  let c ← Closure.Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
+  unless c.check v.environment [] do throw "ill-typed or unbound conclusion"
+  if ((c :: ps).map Closure.Bridge.formulaNodes).foldl (· + ·) 0 > 10000 then
+    throw "ResourceLimit: AST node count"
+  let certificate ← decodeClosureCertificate (← j.getObjVal? "certificate")
+  let environmentId ← digest "ve-environment-v0.1\n" environment
+  let mid := fun ast => digest "ve-meaning-v0.1\n"
+    (Json.mkObj [("environment_id", .str environmentId), ("ast", ast)])
+  let premises ← (← (← j.getObjVal? "premises").getArr?).toList.mapM mid
+  let conclusion ← mid (← j.getObjVal? "conclusion")
+  unless certificate.environment_id == environmentId && certificate.premise_meaning_ids == premises &&
+      certificate.conclusion_meaning_id == conclusion do
+    throw "certificate is stale or bound to different inputs"
+  let q : ClosureQuery v.environment := ⟨ps,c,certificate⟩
+  pure (Json.mkObj [("id", .str id), ("status", .str "ok"), ("valid", .bool q.accepts)])
+
 def runCase (j : Json) : Except String Json := do
   let id ← Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
   if environment.getObjValD "language" == .str "ve.core@0.1" then
-    throw "profile gate: closure@0 certificates are unsupported by the proved v0 checker"
+    return ← runClosureCase j
   let v ← Bridge.decodeEnvironment environment
   let q ← decodeQuery environment v j
   pure (Json.mkObj [("id", .str id), ("status", .str "ok"), ("valid", .bool q.accepts)])

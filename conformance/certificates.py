@@ -170,6 +170,13 @@ def trace_coverage(env, ps, c, trace, counts):
         if node["rule"] == "close":
             counts["close"] += 1
             return
+        from ve.closure import EXTRA_RULES, derive_extra
+        if node['rule'] in EXTRA_RULES:
+            counts[node['rule']] += 1
+            child = branch.copy()
+            child.formulas.extend(derive_extra(branch, node['rule'], node['at'], node.get('parameter')))
+            visit(child, node['children'][0])
+            return
         i, parameter = node["at"], node.get("parameter")
         item = branch.formulas[i]
         counts[f"{_kind(item)}:{type(item.formula).__name__}:{item.positive}"] += 1
@@ -306,6 +313,16 @@ def invoke(executable, cases):
 def run(executable):
     positive, report = positive_cases()
     forged = forged_cases()
+    from conformance.closure_certificates import positive_cases as closure_positive, forged_cases as closure_forged
+    closure, closure_outcomes = closure_positive()
+    closure_attacks = closure_forged(closure)
+    closure_coverage = Counter()
+    for case in closure:
+        env = Environment(case['environment'])
+        fs = document_from_data(env, case['premises'] + [case['conclusion']]).formulas
+        trace_coverage(env, fs[:-1], fs[-1], case['certificate']['trace'], closure_coverage)
+    positive.extend(closure)
+    forged.extend(closure_attacks)
     accepted = invoke(executable, positive)
     rejected = invoke(executable, forged)
     gaps = [{"id": c["id"], "result": r} for c, r in zip(positive, accepted, strict=True)
@@ -316,6 +333,12 @@ def run(executable):
                   python_accepted=len(positive), lean_accepted=len(positive)-len(gaps),
                   forged=len(forged), lean_rejected_forged=len(forged)-len(false_accepts),
                   python_accepted_lean_rejected=gaps, forged_lean_accepted=false_accepts)
+    closure_gaps = [g for g in gaps if g['id'].startswith('closure_')]
+    closure_false_accepts = [name for name in false_accepts if name.startswith('closure_')]
+    report.update(closure_python_accepted=len(closure), closure_lean_accepted=len(closure)-len(closure_gaps),
+                  closure_forged=len(closure_attacks), closure_lean_rejected_forged=len(closure_attacks)-len(closure_false_accepts),
+                  closure_reviewer_outcomes=closure_outcomes,
+                  closure_trace_rule_counts=dict(sorted(closure_coverage.items())))
     assert not gaps, gaps
     assert not false_accepts, false_accepts
     return report
