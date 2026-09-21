@@ -125,16 +125,45 @@ def test_deep_tableau_roundtrips_within_json_envelope():
     from ve.wire import canonical_json, loads_json
 
     env = merged_vocabulary_example().env
-    # Shallow independent ASTs require a long linear tableau before the final
-    # negated tautology closes. This used to exceed the JSON nesting limit.
+    # The final negated tautology used to be buried behind irrelevant steps.
+    # Closure-driven search may now produce a much shorter replayable trace.
     premises = (Not(Bottom()),) * (MAX_TABLEAU_DEPTH - 1) + (Not(Top()),)
     result = prove_entailment(env, premises, Bottom())
-    assert result.status == 'Found' and result.steps > 100
+    assert result.status == 'Found'
     package = {'deductions': [{'certificates': [{'proof': result.certificate}]}]}
     replay = loads_json(canonical_json(package))['deductions'][0]['certificates'][0]['proof']
     assert check_entailment_certificate(env, premises, Bottom(), replay).valid
-    # Oversized traces must stop during search rather than emit unreplayable data.
+    # Search now backtracks past a depth frontier and finds a shorter ordering.
     too_deep = (Not(Bottom()),) * (MAX_TABLEAU_DEPTH + 5) + (Not(Top()),)
     result = prove_entailment(env, too_deep, Bottom())
-    assert result.status == 'ResourceLimit' and result.certificate is None
-    assert 'nesting' in result.detail
+    assert result.status == 'Found'
+    assert check_entailment_certificate(env, too_deep, Bottom(), result.certificate).valid
+
+
+def test_depth_frontier_backtracks_to_a_different_expansion(monkeypatch):
+    import ve.entailment as tableau
+    env = environment()
+    p = Unary('kind', Const('ada'))
+    distraction = Top()
+    for _ in range(12):
+        distraction = Not(distraction)
+    # The distraction has first expansion priority, but the other premise
+    # closes in three steps. A depth frontier must not abort that alternative.
+    monkeypatch.setattr(tableau, 'MAX_TABLEAU_DEPTH', 4)
+    q = Unary('kind', Const('bea'))
+    premises = [distraction, Or(p, p), Eq(Const('ada'), Const('bea'))]
+    certificate = certify(env, premises, q)
+    assert check_entailment_certificate(env, premises, q, certificate).valid
+    searcher = tableau._Searcher(1000)
+    assert searcher.prove(tableau._initial_branch(env, tuple(premises), q)) is not None
+    assert searcher.depth_cutoffs > 0
+
+
+def test_instantiation_bound_deepens_when_two_ground_instances_are_needed():
+    env = environment()
+    p = Forall('person', Unary('kind', Var(0)))
+    conclusion = And(Unary('kind', Const('ada')), Unary('kind', Const('bea')))
+    certify(env, [p], conclusion)
+    # A single branch needs BOTH instances to trigger modus ponens.
+    certify(env, [p, Implies(And(Unary('kind', Const('ada')),
+                               Unary('kind', Const('bea'))), Bottom())], Bottom())
