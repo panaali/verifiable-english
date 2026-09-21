@@ -1,3 +1,9 @@
+import VE.Closure.Bridge
+import VE.CertificateWire
+import VE.TableauChecks
+import VE.TableauChecker
+import VE.TableauClosure
+import VE.Tableau
 import VE.Consequence
 import VE.SurfaceProofs
 import VE.EnvironmentProofs
@@ -95,3 +101,72 @@ import VE.ModelProofs
 #print axioms VE.Bridge.decodeModel_valid
 #print axioms VE.Bridge.decoded_countermodel_sound
 #print axioms VE.Bridge.CountermodelQuery.refutes_sound
+
+#print axioms VE.Tableau.token_defined
+#print axioms VE.Tableau.bindings_extend
+#print axioms VE.Tableau.holds_extend
+#print axioms VE.Tableau.typed_extend
+#print axioms VE.Tableau.add_holds
+#print axioms VE.Tableau.one_holds
+#print axioms VE.Tableau.two_holds
+#print axioms VE.Tableau.gamma_holds
+#print axioms VE.Tableau.delta_witness
+
+#print axioms VE.Tableau.bindings_get
+#print axioms VE.Tableau.termToken_denote
+#print axioms VE.Tableau.ground_denote
+#print axioms VE.Tableau.literals_hold
+#print axioms VE.Tableau.mem_dedup
+#print axioms VE.Tableau.equalities_sound
+#print axioms VE.Tableau.grow_sound
+#print axioms VE.Tableau.reachable_sound
+#print axioms VE.Tableau.equivalent_sound
+#print axioms VE.Tableau.matches_sound
+#print axioms VE.Tableau.closes_sound
+#print axioms VE.Tableau.closed_sound
+#print axioms VE.Tableau.complementary_sound
+
+#print axioms VE.Tableau.next_sound
+#print axioms VE.Tableau.checkChildren_member
+#print axioms VE.Tableau.replay_sound
+#print axioms VE.Tableau.checkCertificate_sound
+
+#print axioms VE.Graph.check_sound_of_certificateSound
+#print axioms VE.Graph.check_entails_of_certificateSound
+#print axioms VE.Graph.check_unfolds_of_certificateSound
+#print axioms VE.Graph.tableau_certificateSound
+
+#print axioms VE.CertificateWire.Query.accepts_sound
+
+#print axioms VE.Closure.Path.least
+#print axioms VE.Closure.Path.trans
+#print axioms VE.Closure.Path.unfold
+#print axioms VE.Closure.Surface.parseRaw_print_named
+#print axioms VE.Closure.check_iff_wellFormed
+#print axioms VE.Closure.conservativity
+#print axioms VE.Closure.conservativity_without_reach
+#print axioms VE.Closure.countermodelCheck_iff
+#print axioms VE.Closure.countermodel_sound
+#print axioms VE.Closure.embed_of_erase
+#print axioms VE.Closure.erase_embed
+#print axioms VE.Closure.eval_false_iff_not_denote
+#print axioms VE.Closure.eval_iff_denote
+#print axioms VE.Closure.mem_bodyEdges
+#print axioms VE.Closure.mem_dedup
+#print axioms VE.Closure.mem_namedEdges
+#print axioms VE.Closure.mem_pivot
+#print axioms VE.Closure.pivot_closed
+#print axioms VE.Closure.pivot_preserves_closed
+#print axioms VE.Closure.reachEval_iff
+#print axioms VE.Closure.reachable_congr
+#print axioms VE.Closure.star_least
+#print axioms VE.Closure.warshall_closed
+#print axioms VE.Closure.warshall_extends
+#print axioms VE.Closure.warshall_iff_path
+#print axioms VE.Closure.warshall_preserves_closed
+#print axioms VE.Closure.warshall_sound
+
+
+#print axioms VE.Closure.Surface.parseStatements_nonempty
+#print axioms VE.Closure.Surface.parse_print_named
+#print axioms VE.Closure.Surface.print_injective_named

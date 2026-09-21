@@ -70,13 +70,28 @@ def document_from_named_fol(env: Any, value: Mapping[str, Any]) -> ast.Document:
             "binary":{"op","predicate","left","right"}, "eq":{"op","left","right"},
             "not":{"op","body"}, "and":{"op","left","right"}, "or":{"op","left","right"},
             "implies":{"op","left","right"}, "forall":{"op","sort","variable","body"},
-            "exists":{"op","sort","variable","body"}}
+            "exists":{"op","sort","variable","body"},
+            "reach":{"op","kind","edge","left","right"}}
         if op not in expected or set(raw) != expected[op]: _fail(f"invalid fields for operation {op!r}", path)
         if op == "top": return ast.Top()
         if op == "bottom": return ast.Bottom()
         if op == "unary": return ast.Unary(raw["predicate"], term(raw["term"],scope,path+"/term"))
         if op == "binary": return ast.Binary(raw["predicate"],term(raw["left"],scope,path+"/left"),term(raw["right"],scope,path+"/right"))
         if op == "eq": return ast.Eq(term(raw["left"],scope,path+"/left"),term(raw["right"],scope,path+"/right"))
+        if op == "reach":
+            edge = raw["edge"]
+            if not isinstance(edge, Mapping): _fail("invalid reach edge", path + "/edge")
+            if set(edge) == {"named"}:
+                edge = ast.Named(edge["named"])
+            elif set(edge) == {"sort", "source", "destination", "body"}:
+                src = _variable_name(env, edge["source"], path + "/edge/source")
+                dst = _variable_name(env, edge["destination"], path + "/edge/destination")
+                if src == dst or src in scope or dst in scope:
+                    raise ShadowedVariable("closure locals shadow a binder", path=path + "/edge")
+                edge = ast.Body(edge["sort"], formula(edge["body"], [*scope, src, dst], path + "/edge/body", depth + 1))
+            else: _fail("invalid reach edge fields", path + "/edge")
+            return ast.Reach(raw["kind"], edge, term(raw["left"], scope, path + "/left"),
+                             term(raw["right"], scope, path + "/right"))
         if op == "not": return ast.Not(formula(raw["body"],scope,path+"/body",depth+1))
         if op in ("and","or","implies"):
             cls={"and":ast.And,"or":ast.Or,"implies":ast.Implies}[op]
@@ -115,6 +130,16 @@ def document_to_named_fol(env: Any, document: ast.Document) -> dict[str, list[di
         if kind is ast.Eq:
             return {"op": "eq", "left": term(value.left, scope),
                     "right": term(value.right, scope)}
+        if kind is ast.Reach:
+            if type(value.edge) is ast.Named:
+                edge = {"named": value.edge.relation}
+            else:
+                src, dst = f"x{counter[0]}", f"x{counter[0] + 1}"
+                counter[0] += 2
+                edge = {"sort": value.edge.sort, "source": src, "destination": dst,
+                        "body": export_formula(value.edge.formula, [dst, src, *scope], counter)}
+            return {"op": "reach", "kind": value.kind, "edge": edge,
+                    "left": term(value.left, scope), "right": term(value.right, scope)}
         if kind is ast.Not:
             return {"op": "not", "body": export_formula(value.body, scope, counter)}
         if kind in (ast.And, ast.Or, ast.Implies):

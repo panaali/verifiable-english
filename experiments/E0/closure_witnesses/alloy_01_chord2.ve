@@ -1,0 +1,1 @@
+tc[identifier x0, x1 | ((x0 next_id x1) and (not (x1 equals @origin)))](@left_id, @right_id).

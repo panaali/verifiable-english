@@ -197,7 +197,7 @@ class _NaturalVocabulary:
             words = _TOKENS.findall(phrase)
             if not _WORDS.fullmatch(phrase):
                 report(path, "PHRASE_SYNTAX")
-            if _LOGICAL_WORDS.intersection(words):
+            if (_LOGICAL_WORDS | (frozenset("reachable reachability steps satisfying zero more from".split()) if env.closure else frozenset())).intersection(words):
                 report(path, "LOGICAL_WORD")
             if any(_VARIABLE.fullmatch(word) for word in words):
                 report(path, "VARIABLE_TOKEN")
@@ -346,12 +346,22 @@ def render_vocabulary(env: Any, view: str = "ve_strict", naming: str = "per_stat
                       for name, c in sorted(env.constants.items())],
         "lint": [issue.to_dict() for issue in selected.issues],
     }
+    if env.closure:
+        legend["closure"] = {
+            "profile": "closure@0", "kinds": {"tc": "one or more steps", "rtc": "zero or more steps"},
+            "direction": "u is reachable from t means a directed path from source t to destination u.",
+            "body": "[s a, b | (body)] defines a step from a to b; outer parameters stay fixed. Both locals are always named.",
+            "relations": [name for name, p in sorted(env.predicates.items())
+                          if len(p.arguments) == 2 and p.arguments[0] == p.arguments[1]],
+            "cycles": "Positive closure can contain (a,a) on a cycle; zero steps require star.",
+        }
     return json.dumps(legend, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
 
 
 class _Traversal:
     def __init__(self, env, view):
         self.next_name = 0
+        self.view = view
         self.surface = _SURFACES[view]
         self.natural = _NaturalVocabulary(env) if view == "ve_natural" else None
 
@@ -369,6 +379,27 @@ class _Traversal:
     def formula(self, value, scope):
         kind = type(value)
         fields = {}
+        if kind is ast.Reach:
+            left, right = self.term(value.left, scope), self.term(value.right, scope)
+            op = "tc" if value.kind == "plus" else "rtc"
+            count = "one or more" if value.kind == "plus" else "zero or more"
+            if type(value.edge) is ast.Named:
+                relation = value.edge.relation
+                if self.view == "fol_symbols":
+                    return f"{relation}{'⁺' if value.kind == 'plus' else '*'}({left}, {right})"
+                if self.view == "ve_natural":
+                    return f"{right} is reachable from {left} by {count} {relation} steps"
+                return f"{op}[{relation}]({left}, {right})"
+            src, dst = f"x{self.next_name}", f"x{self.next_name + 1}"
+            self.next_name += 2
+            body = self.formula(value.edge.formula, (dst, src, *scope))
+            sort = value.edge.sort
+            if self.view == "fol_symbols":
+                return f"({op.upper()} {src}:{sort},{dst}:{sort}.({body}))({left},{right})"
+            if self.view == "ve_natural":
+                noun = self.natural.sorts[sort]
+                return f"{right} is reachable from {left} by {count} steps satisfying [{noun} {src}, {dst} | ({body})]"
+            return f"{op}[{sort} {src}, {dst} | ({body})]({left}, {right})"
         if kind in (ast.Unary, ast.Binary, ast.Eq):
             terms = (value.term,) if kind is ast.Unary else (value.left, value.right)
             rendered = tuple(self.term(term, scope) for term in terms)

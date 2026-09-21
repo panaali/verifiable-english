@@ -33,7 +33,7 @@ class AttackValidation:
 
     @property
     def accepted(self):
-        return self.status == "VALID"
+        return None if self.status == UNKNOWN else self.status == "VALID"
 
     def to_dict(self):
         return {"status": self.status, "accepted": self.accepted, "reason": self.reason,
@@ -41,12 +41,12 @@ class AttackValidation:
                 "witnesses": list(self.witnesses), "warnings": list(self.warnings)}
 
 
-def _preferred_witness(env, faithful, attacked, direction, original, budgets):
+def _preferred_witness(env, faithful, attacked, direction, original, budgets, *, empty_only=False):
     a, b = ((faithful, attacked) if direction == "a_not_implies_b" else (attacked, faithful))
     selected = original
     quality = witness_quality(env, selected, faithful, attacked, budgets=budgets)
     attempts = []
-    if quality["non_vacuous"] is not True:
+    if not empty_only and quality["non_vacuous"] is not True:
         # First seek full guard coverage, then at least inhabited sorts. Neither
         # failed bounded search changes the logical finding or proves impossibility.
         for label in ("non_vacuous", "non_empty"):
@@ -96,9 +96,12 @@ def validate_attack(env, faithful, attacked, budgets=None) -> AttackValidation:
         return AttackValidation("REJECTED", "fake_attack: certified logical equivalence", result)
     if result.status != DIFFERENT:
         return AttackValidation(UNKNOWN, "No checked semantic difference", result)
-    witnesses = tuple(_preferred_witness(env, faithful, attacked, direction, model, budgets)
+    witnesses = tuple(_preferred_witness(env, faithful, attacked, direction, model, budgets,
+                                         empty_only=result.relation_detail is not None)
                       for direction, model in result.models.items())
-    warnings = tuple(f"{w['direction']}: non-empty, guard-covered witness not established within budgets"
+    warnings = tuple((f"{w['direction']}: differs_only_on_empty_sorts; inhabited equivalence certified"
+                      if result.relation_detail else
+                      f"{w['direction']}: non-empty, guard-covered witness not established within budgets")
                      for w in witnesses if w["quality"]["non_vacuous"] is not True)
     classification = {"weaker": "weakening", "stronger": "strengthening",
                       "incomparable": "incomparable"}.get(result.relation)
