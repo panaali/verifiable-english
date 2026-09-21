@@ -21,3 +21,6 @@ from .argument import (Claim, Deduction, Evidence, ArgumentGraph, ArgumentResult
                        predicate_use_panel)
 
 __version__ = "0.1.0"
+from .equivalence import (Budgets, ComparisonResult, DirectionResult, ReferenceValidation,
+                          EQUIVALENT, DIFFERENT, UNKNOWN, compare, is_weaker, is_stronger,
+                          in_two_variable_fragment, validate_reference)
