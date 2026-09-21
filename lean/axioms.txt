@@ -72,4 +72,10 @@
 'VE.Graph.check_entails' depends on axioms: [propext, Quot.sound]
 'VE.Graph.check_unfolds' depends on axioms: [propext, Quot.sound]
 'VE.GraphChecks.testCertificate_sound' does not depend on any axioms
-PASS: 74 named theorems; only the declared standard axiom allowlist.
+'VE.Bridge.lookup_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Bridge.tupleCheck_iff' depends on axioms: [propext]
+'VE.Bridge.modelData_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Bridge.decodeModel_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Bridge.decoded_countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Bridge.CountermodelQuery.refutes_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+PASS: 20 source files; 80 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
