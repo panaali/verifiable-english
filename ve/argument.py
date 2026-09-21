@@ -324,6 +324,8 @@ class ArgumentResult:
     errors: tuple[dict, ...] = ()
     composition: dict = field(default_factory=dict)
     checker_build: str = ""
+    contradictory_premises: tuple[str, ...] = ()
+    warnings: tuple[dict, ...] = ()
 
     def to_dict(self):
         data = {"version": ARGUMENT_VERSION, "assurance": "experimental", "status": self.status,
@@ -333,7 +335,9 @@ class ArgumentResult:
                 "unresolved_obligations": list(self.unresolved_obligations), "composed": self.composed,
                 "proof": "checked" if self.composed else "not_checked", "intent": "unconfirmed",
                 "approval": "unassessed", "edges": list(self.edges), "errors": list(self.errors),
-                "composition": self.composition, "checker_build": self.checker_build}
+                "composition": self.composition, "checker_build": self.checker_build,
+                "contradictory_premises": list(self.contradictory_premises),
+                "warnings": list(self.warnings)}
         data["record_id"] = hashlib.sha256(b"ve-argument-diagnostic-record-v1\n" + json.dumps(
             data, sort_keys=True, ensure_ascii=True, separators=(",", ":")).encode("ascii")).hexdigest()
         return data
@@ -459,12 +463,22 @@ def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_siz
         leaves = tuple(c.name for c in graph.claims if c.name in reachable and c.name not in by_conclusion)
         unresolved = tuple(c.name for c in graph.claims if c.name in reachable and c.name in by_conclusion
                            and "follows" not in findings[by_conclusion[c.name].name])
-        errors = tuple({"edge": r["name"], **e} for r in records for e in r["errors"])
+        # A rejected extra artifact or failed search cannot erase checked evidence.
+        errors = tuple({"edge": r["name"], **e} for r in records if not r["findings"]
+                       for e in r["errors"])
+        warnings = tuple({"edge": r["name"], **e} for r in records if r["findings"]
+                         for e in r["errors"])
+        warnings += tuple({"edge": r["name"], "code": "ResourceLimit",
+                           "message": f"{a['kind']} search exhausted its budget"}
+                          for r in records for a in r["search_attempts"]
+                          if a["status"] == "ResourceLimit")
+        contradictory = tuple(r["name"] for r in records if r["contradictory_premises"])
         conflict = any(r["checker_conflict"] for r in records)
-        search_exhausted = any(r["conclusion"] in unresolved and
+        search_exhausted = any(r["conclusion"] in unresolved and not r["findings"] and
                               any(a["status"] == "ResourceLimit" for a in r["search_attempts"])
                               for r in records)
         status = ("CheckerConflict" if conflict else
+                  "ContradictoryPremises" if contradictory else
                   "ResourceLimit" if errors and all(e["code"] == "ResourceLimit" for e in errors) else
                   "InvalidInput" if errors else
                   "ResourceLimit" if unresolved and search_exhausted else
@@ -482,7 +496,8 @@ def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_siz
                 "assumptions": [claims[n].to_dict(graph.env) for n in leaves]}
             composition["record_id"] = digest("ve-composition-v1\n", composition)
         return ArgumentResult(status, graph.graph_id, graph.env.environment_id, graph.root,
-                              findings, leaves, unresolved, composed, records, errors, composition, checker_build)
+                              findings, leaves, unresolved, composed, records, errors, composition, checker_build,
+                              contradictory, warnings)
     except (VEError, RecursionError) as exc:
         if isinstance(exc, RecursionError):
             exc = ResourceLimit("Argument exceeds runtime recursion budget")
@@ -520,6 +535,8 @@ def outstanding_obligations(graph, result):
         "interpretation": {"status": "unconfirmed", "outstanding": True,
                            "environment_id": graph.env.environment_id},
         "assumptions": assumptions, "unresolved_deductions": list(result.unresolved_obligations),
+        "contradictory_premises": list(result.contradictory_premises),
+        "warnings": list(result.warnings),
         "approval": "unassessed", "evidence_assurance": "reported metadata; not authenticated or verified"}
 
 

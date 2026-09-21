@@ -10,3 +10,8 @@ MAX_TUPLES = 100_000
 MAX_IDENTIFIER_BYTES = 64
 MAX_EVALUATIONS = 1_000_000
 MAX_INDEX = 2**53 - 1
+
+MAX_JSON_DEPTH = 256
+# Each tableau expansion nests a children array and a node object. Reserve
+# eight levels for the certificate and its argument-package envelope.
+MAX_TABLEAU_DEPTH = (MAX_JSON_DEPTH - 8) // 2
