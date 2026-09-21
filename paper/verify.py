@@ -24,11 +24,11 @@ def main():
     assert body.isascii()
     urls = set(re.findall(r'\]\((https?://[^)]+)\)', body))
     assert urls <= allowed, urls - allowed
-    assert len(re.findall(r'^# (?!Abstract|References)', body, re.M)) == 11
+    assert len(re.findall(r'^# (?!Abstract|References)', body, re.M)) == 14
     status = json.loads((ROOT / 'build/draft-status.json').read_text())
-    assert set(status['result_placeholders']) == {
-        'RESULT-T-GATE', 'RESULT-T-TRAINING',
-    }, status['result_placeholders']
+    assert status['result_placeholders'] == [], status['result_placeholders']
+    assert '[citation needed: verified FOL provers]' in body
+    assert 'POST HOC' in body and 'Planned round 2' in body
     if '--html' in sys.argv:
         html = (ROOT / 'build/paper.html').read_text()
         assert '<html' in html and '<math' in html and 'data:image/svg+xml' in html
@@ -39,6 +39,20 @@ def main():
         assert p.read_bytes().startswith(b'%PDF-')
         result = subprocess.run(['pdftotext', str(p), '-'], check=True, capture_output=True, text=True)
         assert all(marker in result.stdout for marker in status['result_placeholders'])
+        layout = subprocess.run(['pdftotext', '-layout', str(p), '-'], check=True,
+                                capture_output=True, text=True).stdout
+        pages = [page for page in layout.split('\f') if page.strip()]
+        reference_start = next(i for i, page in enumerate(pages)
+                               if re.search(r'^References\s*$', page, re.M))
+        appendix_start = next(i for i, page in enumerate(pages)
+                              if re.search(r'^A\s+Additional analyses and reproducibility', page, re.M))
+        assert 9 <= reference_start <= 10, reference_start
+        status['pages'] = {'main_text': reference_start,
+                           'references': appendix_start-reference_start,
+                           'appendices': len(pages)-appendix_start,
+                           'total': len(pages)}
+    subprocess.run([sys.executable, str(ROOT / 'analysis/check_numbers.py')], check=True)
+
     plain = subprocess.run(['pandoc', str(ROOT / 'build/paper.md'), '-t', 'plain'],
                            check=True, capture_output=True, text=True).stdout
     status['rendered_word_count'] = len(plain.split())
