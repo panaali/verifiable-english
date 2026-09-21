@@ -72,4 +72,3 @@ def test_every_certificate_has_no_small_finite_countermodel(premises, conclusion
     for domain, relation in small_models():
         assert not (all(denote(p, domain, relation) for p in premises)
                     and not denote(conclusion, domain, relation))
-
