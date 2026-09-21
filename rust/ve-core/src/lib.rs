@@ -5,6 +5,7 @@ mod ast;
 mod environment;
 mod eval;
 mod model;
+mod search;
 mod surface;
 mod wire;
 
@@ -12,9 +13,12 @@ pub use ast::{Document, Formula, Term};
 pub use environment::Environment;
 pub use eval::{Evaluation, evaluate, evaluate_formula};
 pub use model::FiniteModel;
+pub use search::{
+    CountermodelCheck, CountermodelProblem, SearchBounds, SearchResult, find_countermodel,
+};
+use serde::Serialize;
 pub use surface::{ParseResult, SourceNode, parse, parse_with_metadata, print_document};
 pub use wire::{canonical_json, digest, loads_json};
-use serde::Serialize;
 
 pub const MAX_PACKAGE_BYTES: usize = 16 * 1024 * 1024;
 pub const MAX_SOURCE_BYTES: usize = 64 * 1024;
@@ -40,7 +44,11 @@ pub struct Error {
 }
 impl Error {
     pub fn new(code: &str, message: impl Into<String>) -> Self {
-        Self { code: code.into(), message: message.into(), span: None }
+        Self {
+            code: code.into(),
+            message: message.into(),
+            span: None,
+        }
     }
 }
 impl std::fmt::Display for Error {

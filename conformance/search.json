@@ -1,0 +1,1806 @@
+[
+  {
+    "id": "search_0_0",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "top"
+    ],
+    "max_domain_size": 0,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 1,
+      "evaluations": 1,
+      "max_domain_size": 0,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": false
+  },
+  {
+    "id": "search_0_1",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "top"
+    ],
+    "max_domain_size": 1,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 3,
+      "evaluations": 3,
+      "max_domain_size": 1,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": false
+  },
+  {
+    "id": "search_0_2",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "top"
+    ],
+    "max_domain_size": 2,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 7,
+      "evaluations": 7,
+      "max_domain_size": 2,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": false
+  },
+  {
+    "id": "search_1_0",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "bottom"
+    ],
+    "max_domain_size": 0,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "Found",
+      "model": {
+        "complete": true,
+        "domains": {
+          "item": []
+        },
+        "constants": {},
+        "relations": {
+          "marked": []
+        }
+      },
+      "models_checked": 1,
+      "evaluations": 1,
+      "max_domain_size": 0,
+      "max_models": 1000,
+      "detail": ""
+    },
+    "compare_counts": false
+  },
+  {
+    "id": "search_1_1",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "bottom"
+    ],
+    "max_domain_size": 1,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "Found",
+      "model": {
+        "complete": true,
+        "domains": {
+          "item": []
+        },
+        "constants": {},
+        "relations": {
+          "marked": []
+        }
+      },
+      "models_checked": 1,
+      "evaluations": 1,
+      "max_domain_size": 1,
+      "max_models": 1000,
+      "detail": ""
+    },
+    "compare_counts": false
+  },
+  {
+    "id": "search_1_2",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "bottom"
+    ],
+    "max_domain_size": 2,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "Found",
+      "model": {
+        "complete": true,
+        "domains": {
+          "item": []
+        },
+        "constants": {},
+        "relations": {
+          "marked": []
+        }
+      },
+      "models_checked": 1,
+      "evaluations": 1,
+      "max_domain_size": 2,
+      "max_models": 1000,
+      "detail": ""
+    },
+    "compare_counts": false
+  },
+  {
+    "id": "search_2_0",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "forall",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "exists",
+      "item",
+      [
+        "unary",
+        "marked",
+        [
+          "var",
+          0
+        ]
+      ]
+    ],
+    "max_domain_size": 0,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "Found",
+      "model": {
+        "complete": true,
+        "domains": {
+          "item": []
+        },
+        "constants": {},
+        "relations": {
+          "marked": []
+        }
+      },
+      "models_checked": 1,
+      "evaluations": 2,
+      "max_domain_size": 0,
+      "max_models": 1000,
+      "detail": ""
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_2_1",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "forall",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "exists",
+      "item",
+      [
+        "unary",
+        "marked",
+        [
+          "var",
+          0
+        ]
+      ]
+    ],
+    "max_domain_size": 1,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "Found",
+      "model": {
+        "complete": true,
+        "domains": {
+          "item": []
+        },
+        "constants": {},
+        "relations": {
+          "marked": []
+        }
+      },
+      "models_checked": 1,
+      "evaluations": 2,
+      "max_domain_size": 1,
+      "max_models": 1000,
+      "detail": ""
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_2_2",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "forall",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "exists",
+      "item",
+      [
+        "unary",
+        "marked",
+        [
+          "var",
+          0
+        ]
+      ]
+    ],
+    "max_domain_size": 2,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "Found",
+      "model": {
+        "complete": true,
+        "domains": {
+          "item": []
+        },
+        "constants": {},
+        "relations": {
+          "marked": []
+        }
+      },
+      "models_checked": 1,
+      "evaluations": 2,
+      "max_domain_size": 2,
+      "max_models": 1000,
+      "detail": ""
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_3_0",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "exists",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "forall",
+      "item",
+      [
+        "unary",
+        "marked",
+        [
+          "var",
+          0
+        ]
+      ]
+    ],
+    "max_domain_size": 0,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 1,
+      "evaluations": 1,
+      "max_domain_size": 0,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_3_1",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "exists",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "forall",
+      "item",
+      [
+        "unary",
+        "marked",
+        [
+          "var",
+          0
+        ]
+      ]
+    ],
+    "max_domain_size": 1,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 3,
+      "evaluations": 7,
+      "max_domain_size": 1,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_3_2",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "exists",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "forall",
+      "item",
+      [
+        "unary",
+        "marked",
+        [
+          "var",
+          0
+        ]
+      ]
+    ],
+    "max_domain_size": 2,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "Found",
+      "model": {
+        "complete": true,
+        "domains": {
+          "item": [
+            "e0",
+            "e1"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "marked": [
+            [
+              "e0"
+            ]
+          ]
+        }
+      },
+      "models_checked": 5,
+      "evaluations": 15,
+      "max_domain_size": 2,
+      "max_models": 1000,
+      "detail": ""
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_4_0",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "exists",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "exists",
+      "item",
+      [
+        "top"
+      ]
+    ],
+    "max_domain_size": 0,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 1,
+      "evaluations": 1,
+      "max_domain_size": 0,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_4_1",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "exists",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "exists",
+      "item",
+      [
+        "top"
+      ]
+    ],
+    "max_domain_size": 1,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 3,
+      "evaluations": 7,
+      "max_domain_size": 1,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_4_2",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "exists",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "exists",
+      "item",
+      [
+        "top"
+      ]
+    ],
+    "max_domain_size": 2,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 7,
+      "evaluations": 23,
+      "max_domain_size": 2,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_5_0",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "or",
+      [
+        "forall",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "not",
+        [
+          "forall",
+          "item",
+          [
+            "unary",
+            "marked",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "max_domain_size": 0,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 1,
+      "evaluations": 2,
+      "max_domain_size": 0,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_5_1",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "or",
+      [
+        "forall",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "not",
+        [
+          "forall",
+          "item",
+          [
+            "unary",
+            "marked",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "max_domain_size": 1,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 3,
+      "evaluations": 11,
+      "max_domain_size": 1,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_5_2",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "or",
+      [
+        "forall",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "not",
+        [
+          "forall",
+          "item",
+          [
+            "unary",
+            "marked",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "max_domain_size": 2,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 7,
+      "evaluations": 35,
+      "max_domain_size": 2,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_6_0",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "bottom"
+      ]
+    ],
+    "conclusion": [
+      "bottom"
+    ],
+    "max_domain_size": 0,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 1,
+      "evaluations": 1,
+      "max_domain_size": 0,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": false
+  },
+  {
+    "id": "search_6_1",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "bottom"
+      ]
+    ],
+    "conclusion": [
+      "bottom"
+    ],
+    "max_domain_size": 1,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 3,
+      "evaluations": 3,
+      "max_domain_size": 1,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": false
+  },
+  {
+    "id": "search_6_2",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "bottom"
+      ]
+    ],
+    "conclusion": [
+      "bottom"
+    ],
+    "max_domain_size": 2,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 7,
+      "evaluations": 7,
+      "max_domain_size": 2,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": false
+  },
+  {
+    "id": "search_7_0",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "exists",
+        "item",
+        [
+          "not",
+          [
+            "unary",
+            "marked",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "forall",
+      "item",
+      [
+        "unary",
+        "marked",
+        [
+          "var",
+          0
+        ]
+      ]
+    ],
+    "max_domain_size": 0,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "NotFound",
+      "models_checked": 1,
+      "evaluations": 1,
+      "max_domain_size": 0,
+      "max_models": 1000,
+      "detail": "all finite models within the domain bound were exhausted"
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_7_1",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "exists",
+        "item",
+        [
+          "not",
+          [
+            "unary",
+            "marked",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "forall",
+      "item",
+      [
+        "unary",
+        "marked",
+        [
+          "var",
+          0
+        ]
+      ]
+    ],
+    "max_domain_size": 1,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "Found",
+      "model": {
+        "complete": true,
+        "domains": {
+          "item": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "marked": []
+        }
+      },
+      "models_checked": 2,
+      "evaluations": 6,
+      "max_domain_size": 1,
+      "max_models": 1000,
+      "detail": ""
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_7_2",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [
+      [
+        "exists",
+        "item",
+        [
+          "not",
+          [
+            "unary",
+            "marked",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "conclusion": [
+      "forall",
+      "item",
+      [
+        "unary",
+        "marked",
+        [
+          "var",
+          0
+        ]
+      ]
+    ],
+    "max_domain_size": 2,
+    "max_models": 1000,
+    "max_evaluations": 10000,
+    "expected_search": {
+      "status": "Found",
+      "model": {
+        "complete": true,
+        "domains": {
+          "item": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "marked": []
+        }
+      },
+      "models_checked": 2,
+      "evaluations": 6,
+      "max_domain_size": 2,
+      "max_models": 1000,
+      "detail": ""
+    },
+    "compare_counts": true
+  },
+  {
+    "id": "search_budget_0",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "or",
+      [
+        "forall",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "not",
+        [
+          "forall",
+          "item",
+          [
+            "unary",
+            "marked",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "max_domain_size": 2,
+    "max_models": 0,
+    "max_evaluations": 100,
+    "compare_counts": true,
+    "expected_search": {
+      "status": "ResourceLimit",
+      "models_checked": 0,
+      "evaluations": 0,
+      "max_domain_size": 2,
+      "max_models": 0,
+      "detail": "model-attempt budget exhausted"
+    }
+  },
+  {
+    "id": "search_budget_1",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "or",
+      [
+        "forall",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "not",
+        [
+          "forall",
+          "item",
+          [
+            "unary",
+            "marked",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "max_domain_size": 2,
+    "max_models": 100,
+    "max_evaluations": 0,
+    "compare_counts": true,
+    "expected_search": {
+      "status": "ResourceLimit",
+      "models_checked": 0,
+      "evaluations": 0,
+      "max_domain_size": 2,
+      "max_models": 100,
+      "detail": "evaluation budget exhausted"
+    }
+  },
+  {
+    "id": "search_budget_2",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "or",
+      [
+        "forall",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "not",
+        [
+          "forall",
+          "item",
+          [
+            "unary",
+            "marked",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "max_domain_size": 2,
+    "max_models": 1,
+    "max_evaluations": 100,
+    "compare_counts": true,
+    "expected_search": {
+      "status": "ResourceLimit",
+      "models_checked": 1,
+      "evaluations": 2,
+      "max_domain_size": 2,
+      "max_models": 1,
+      "detail": "model-attempt budget exhausted"
+    }
+  },
+  {
+    "id": "search_budget_3",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "or",
+      [
+        "forall",
+        "item",
+        [
+          "unary",
+          "marked",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "not",
+        [
+          "forall",
+          "item",
+          [
+            "unary",
+            "marked",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "max_domain_size": 2,
+    "max_models": 100,
+    "max_evaluations": 1,
+    "compare_counts": true,
+    "expected_search": {
+      "status": "ResourceLimit",
+      "models_checked": 1,
+      "evaluations": 1,
+      "max_domain_size": 2,
+      "max_models": 100,
+      "detail": "evaluation budget exhausted"
+    }
+  },
+  {
+    "id": "witness_0",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "forall",
+      "item",
+      [
+        "unary",
+        "marked",
+        [
+          "var",
+          0
+        ]
+      ]
+    ],
+    "model": {
+      "complete": true,
+      "domains": {
+        "item": [
+          "a"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "marked": []
+      }
+    },
+    "expected_check": {
+      "valid": true,
+      "premise_values": [],
+      "conclusion_value": false,
+      "evaluations": 2,
+      "environment_id": "2cb714257d0dd66a45865e6e897ae11bf2b0c3e8df3db99d5c53edffa27e9e0f",
+      "model_id": "4536bcd1d2e7251505f8fa46a87985ec791e2b84b37482d0b3cbec59c877ec84",
+      "status": "Valid",
+      "premise_meaning_ids": [],
+      "conclusion_meaning_id": "bcc21ee65e17be1ad834f32036e577ac21199c9836ee6583e8808e814849a08d"
+    }
+  },
+  {
+    "id": "witness_1",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "item": {
+            "description": "An item."
+          }
+        },
+        "predicates": {
+          "marked": {
+            "arguments": [
+              "item"
+            ],
+            "description": "Marked."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "premises": [],
+    "conclusion": [
+      "forall",
+      "item",
+      [
+        "unary",
+        "marked",
+        [
+          "var",
+          0
+        ]
+      ]
+    ],
+    "model": {
+      "complete": true,
+      "domains": {
+        "item": [
+          "a"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "marked": [
+          [
+            "a"
+          ]
+        ]
+      }
+    },
+    "expected_check": {
+      "valid": false,
+      "premise_values": [],
+      "conclusion_value": true,
+      "evaluations": 2,
+      "environment_id": "2cb714257d0dd66a45865e6e897ae11bf2b0c3e8df3db99d5c53edffa27e9e0f",
+      "model_id": "2db055c9f1be207aee4d30a9d1b4d01d96bd9309a682ef4ee2314d4529efa51a",
+      "status": "NotCountermodel",
+      "premise_meaning_ids": [],
+      "conclusion_meaning_id": "bcc21ee65e17be1ad834f32036e577ac21199c9836ee6583e8808e814849a08d"
+    }
+  }
+]
