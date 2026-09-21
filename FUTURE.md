@@ -18,7 +18,6 @@ Standing limits: no model training (no GPU yet), no pushing or publishing withou
 | Human study package: the E1 and E5 materials exported as a ready-to-run online study with preregistration | No humans are available now; the claim about human readability stays untested until this runs | E1 and E5 materials | 02:05 |
 | RL with VE-checked rewards | The training benefit (item 4 in the architecture doc) is untestable without GPUs; design the reward and the honest/deceptive comparison now | GPU access (user will provide) | 02:05 |
 | ACE import and comparison with Canonical English | Positions VE against the closest existing systems on the same items | renderer + E1 items | 02:05 |
-
 | Open-weight weak judges on Colab GPUs (1B-8B instruct models), as the bottom of the judge ladder | If Haiku and Luna read FOL too well, the sandwich has no gap. Small open models give a real capability gap, full control of sampling seeds, and no CLI-context asymmetry | E1 dev pilot result; Colab via the user's browser (~200 compute units) | 02:15 |
 
 ## Ideas log
