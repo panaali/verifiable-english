@@ -1,0 +1,1597 @@
+[
+  {
+    "id": "T1",
+    "title": "Diagonal lemma (Russell / barber / relational Cantor)",
+    "expect": "prove",
+    "environment": "environment.json",
+    "premise_labels": [],
+    "premises_ve": [],
+    "premises_fluent": [],
+    "conclusion_ve": "not (there exists point x0, (for every point x1, ((if (x0 lists x1), then (not (x1 lists x1))) and (if (not (x1 lists x1)), then (x0 lists x1))))).",
+    "conclusion_fluent": "it is false that (there is a point P such that for every point P2, both (if P lists P2 then P2 does not list P2) and (if P2 does not list P2 then P lists P2))",
+    "prove_seconds": 0.003,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 13,
+    "prove_detail": "",
+    "certificate_bytes": 678,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T2",
+    "title": "Corollary: the diagonal lemma at two distinct relations",
+    "expect": "prove",
+    "environment": "environment.json",
+    "premise_labels": [],
+    "premises_ve": [],
+    "premises_fluent": [],
+    "conclusion_ve": "(not (there exists point x0, (for every point x1, ((if (x0 lists x1), then (not (x1 lists x1))) and (if (not (x1 lists x1)), then (x0 lists x1)))))) and (not (there exists point x2, (for every point x3, ((if (x2 mentions x3), then (not (x3 mentions x3))) and (if (not (x3 mentions x3)), then (x2 mentions x3)))))).",
+    "conclusion_fluent": "both (it is false that (there is a point P such that for every point P2, both (if P lists P2 then P2 does not list P2) and (if P2 does not list P2 then P lists P2))) and (it is false that (there is a point P3 such that for every point P4, both (if P3 mentions P4 then P4 does not mention P4) and (if P4 does not mention P4 then P3 mentions P4)))",
+    "prove_seconds": 0.004,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 27,
+    "prove_detail": "",
+    "certificate_bytes": 1144,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T3",
+    "title": "Irreflexive and transitive implies asymmetric",
+    "expect": "prove",
+    "environment": "environment.json",
+    "premise_labels": [
+      "irreflexivity",
+      "transitivity"
+    ],
+    "premises_ve": [
+      "for every point x0, (not (x0 lt x0)).",
+      "for every point x0, (for every point x1, (for every point x2, (if ((x0 lt x1) and (x1 lt x2)), then (x0 lt x2))))."
+    ],
+    "premises_fluent": [
+      "for every point P, P does not precede P",
+      "for every point P and every point P2 and every point P3, if (both P precedes P2 and P2 precedes P3) then P precedes P3"
+    ],
+    "conclusion_ve": "for every point x0, (for every point x1, (if (x0 lt x1), then (not (x1 lt x0)))).",
+    "conclusion_fluent": "for every point P and every point P2, if P precedes P2 then P2 does not precede P",
+    "prove_seconds": 0.004,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 14,
+    "prove_detail": "",
+    "certificate_bytes": 928,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [
+      {
+        "dropped": "irreflexivity",
+        "status": "Found",
+        "domain_size": 1,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.001,
+        "file": "T3-without-irreflexivity.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [],
+            "least": [],
+            "lists": [],
+            "lt": [
+              [
+                "e0",
+                "e0"
+              ]
+            ],
+            "mentions": [],
+            "minimal": [],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      },
+      {
+        "dropped": "transitivity",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.003,
+        "file": "T3-without-transitivity.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [],
+            "least": [],
+            "lists": [],
+            "lt": [
+              [
+                "e0",
+                "e1"
+              ],
+              [
+                "e1",
+                "e0"
+              ]
+            ],
+            "mentions": [],
+            "minimal": [],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      }
+    ],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T4",
+    "title": "Asymmetric implies irreflexive",
+    "expect": "prove",
+    "environment": "environment.json",
+    "premise_labels": [
+      "asymmetry"
+    ],
+    "premises_ve": [
+      "for every point x0, (for every point x1, (if (x0 lt x1), then (not (x1 lt x0))))."
+    ],
+    "premises_fluent": [
+      "for every point P and every point P2, if P precedes P2 then P2 does not precede P"
+    ],
+    "conclusion_ve": "for every point x0, (not (x0 lt x0)).",
+    "conclusion_fluent": "for every point P, P does not precede P",
+    "prove_seconds": 0.003,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 8,
+    "prove_detail": "",
+    "certificate_bytes": 614,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [
+      {
+        "dropped": "asymmetry",
+        "status": "Found",
+        "domain_size": 1,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.001,
+        "file": "T4-without-asymmetry.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [],
+            "least": [],
+            "lists": [],
+            "lt": [
+              [
+                "e0",
+                "e0"
+              ]
+            ],
+            "mentions": [],
+            "minimal": [],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      }
+    ],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T5",
+    "title": "Uniqueness of a greatest element in a partial order",
+    "expect": "prove",
+    "environment": "environment.json",
+    "premise_labels": [
+      "definition of greatest",
+      "antisymmetry"
+    ],
+    "premises_ve": [
+      "for every point x0, ((if (x0 is greatest), then (for every point x1, (x1 le x0))) and (if (for every point x2, (x2 le x0)), then (x0 is greatest))).",
+      "for every point x0, (for every point x1, (if ((x0 le x1) and (x1 le x0)), then (x0 equals x1)))."
+    ],
+    "premises_fluent": [
+      "for every point P, both (if P is greatest then (for every point P2, P2 ranks below P)) and (if (for every point P3, P3 ranks below P) then P is greatest)",
+      "for every point P and every point P2, if (both P ranks below P2 and P2 ranks below P) then P is the same point as P2"
+    ],
+    "conclusion_ve": "for every point x0, (for every point x1, (if ((x0 is greatest) and (x1 is greatest)), then (x0 equals x1))).",
+    "conclusion_fluent": "for every point P and every point P2, if (both P is greatest and P2 is greatest) then P is the same point as P2",
+    "prove_seconds": 0.008,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 50,
+    "prove_detail": "",
+    "certificate_bytes": 1586,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [
+      {
+        "dropped": "definition of greatest",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.004,
+        "file": "T5-without-definition-of-greatest.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [
+              [
+                "e0"
+              ],
+              [
+                "e1"
+              ]
+            ],
+            "le": [],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      },
+      {
+        "dropped": "antisymmetry",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.02,
+        "file": "T5-without-antisymmetry.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [
+              [
+                "e0"
+              ],
+              [
+                "e1"
+              ]
+            ],
+            "le": [
+              [
+                "e0",
+                "e0"
+              ],
+              [
+                "e0",
+                "e1"
+              ],
+              [
+                "e1",
+                "e0"
+              ],
+              [
+                "e1",
+                "e1"
+              ]
+            ],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      }
+    ],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T6",
+    "title": "In a preorder, the symmetrisation is an equivalence relation",
+    "expect": "prove",
+    "environment": "environment.json",
+    "premise_labels": [
+      "definition of sim",
+      "reflexivity of le",
+      "transitivity of le"
+    ],
+    "premises_ve": [
+      "for every point x0, (for every point x1, ((if (x0 sim x1), then ((x0 le x1) and (x1 le x0))) and (if ((x0 le x1) and (x1 le x0)), then (x0 sim x1)))).",
+      "for every point x0, (x0 le x0).",
+      "for every point x0, (for every point x1, (for every point x2, (if ((x0 le x1) and (x1 le x2)), then (x0 le x2))))."
+    ],
+    "premises_fluent": [
+      "for every point P and every point P2, both (if P matches P2 then (both P ranks below P2 and P2 ranks below P)) and (if (both P ranks below P2 and P2 ranks below P) then P matches P2)",
+      "for every point P, P ranks below P",
+      "for every point P and every point P2 and every point P3, if (both P ranks below P2 and P2 ranks below P3) then P ranks below P3"
+    ],
+    "conclusion_ve": "(for every point x0, (x0 sim x0)) and ((for every point x1, (for every point x2, (if (x1 sim x2), then (x2 sim x1)))) and (for every point x3, (for every point x4, (for every point x5, (if ((x3 sim x4) and (x4 sim x5)), then (x3 sim x5)))))).",
+    "conclusion_fluent": "both (for every point P, P matches P) and (both (for every point P2 and every point P3, if P2 matches P3 then P3 matches P2) and (for every point P4 and every point P5 and every point P6, if (both P4 matches P5 and P5 matches P6) then P4 matches P6))",
+    "prove_seconds": 0.126,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 464,
+    "prove_detail": "",
+    "certificate_bytes": 10522,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [
+      {
+        "dropped": "definition of sim",
+        "status": "Found",
+        "domain_size": 1,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.001,
+        "file": "T6-without-definition-of-sim.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [
+              [
+                "e0",
+                "e0"
+              ]
+            ],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      },
+      {
+        "dropped": "reflexivity of le",
+        "status": "Found",
+        "domain_size": 1,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.001,
+        "file": "T6-without-reflexivity-of-le.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      },
+      {
+        "dropped": "transitivity of le",
+        "status": "Found",
+        "source": "hand-supplied candidate, re-checked by ve.check_countermodel",
+        "domain_size": 3,
+        "seconds": 0.002,
+        "file": "T6-without-transitivity-of-le.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "a",
+              "b",
+              "c"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [
+              [
+                "a",
+                "a"
+              ],
+              [
+                "a",
+                "b"
+              ],
+              [
+                "b",
+                "a"
+              ],
+              [
+                "b",
+                "b"
+              ],
+              [
+                "b",
+                "c"
+              ],
+              [
+                "c",
+                "b"
+              ],
+              [
+                "c",
+                "c"
+              ]
+            ],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": [
+              [
+                "a",
+                "a"
+              ],
+              [
+                "a",
+                "b"
+              ],
+              [
+                "b",
+                "a"
+              ],
+              [
+                "b",
+                "b"
+              ],
+              [
+                "b",
+                "c"
+              ],
+              [
+                "c",
+                "b"
+              ],
+              [
+                "c",
+                "c"
+              ]
+            ]
+          }
+        },
+        "recheck_valid": true
+      }
+    ],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T7mono",
+    "title": "The preorder respects its symmetrisation (monolithic attempt)",
+    "expect": "fail",
+    "environment": "environment.json",
+    "premise_labels": [
+      "definition of sim",
+      "transitivity of le"
+    ],
+    "premises_ve": [
+      "for every point x0, (for every point x1, ((if (x0 sim x1), then ((x0 le x1) and (x1 le x0))) and (if ((x0 le x1) and (x1 le x0)), then (x0 sim x1)))).",
+      "for every point x0, (for every point x1, (for every point x2, (if ((x0 le x1) and (x1 le x2)), then (x0 le x2))))."
+    ],
+    "premises_fluent": [
+      "for every point P and every point P2, both (if P matches P2 then (both P ranks below P2 and P2 ranks below P)) and (if (both P ranks below P2 and P2 ranks below P) then P matches P2)",
+      "for every point P and every point P2 and every point P3, if (both P ranks below P2 and P2 ranks below P3) then P ranks below P3"
+    ],
+    "conclusion_ve": "for every point x0, (for every point x1, (for every point x2, (for every point x3, (if ((x0 sim x1) and ((x2 sim x3) and (x0 le x2))), then (x1 le x3))))).",
+    "conclusion_fluent": "for every point P and every point P2 and every point P3 and every point P4, if (both P matches P2 and (both P3 matches P4 and P ranks below P3)) then P2 ranks below P4",
+    "prove_seconds": 17.585,
+    "prove_status": "ResourceLimit",
+    "max_steps": 1000000,
+    "prove_steps": 1000000,
+    "prove_detail": "tableau step or certificate nesting budget exhausted",
+    "certificate_bytes": 0,
+    "python_valid": false,
+    "python_status": "ResourceLimit",
+    "python_detail": "tableau step or certificate nesting budget exhausted",
+    "refutation_status": "ResourceLimit",
+    "refutation_domain_size": null,
+    "refutation_seconds": 17.065,
+    "refutation_detail": "evaluation budget exhausted",
+    "necessity": [],
+    "lean_valid": null,
+    "lean_note": "no certificate to check"
+  },
+  {
+    "id": "T7a",
+    "title": "Left congruence of the preorder under its symmetrisation",
+    "expect": "prove",
+    "environment": "environment.json",
+    "premise_labels": [
+      "definition of sim",
+      "transitivity of le"
+    ],
+    "premises_ve": [
+      "for every point x0, (for every point x1, ((if (x0 sim x1), then ((x0 le x1) and (x1 le x0))) and (if ((x0 le x1) and (x1 le x0)), then (x0 sim x1)))).",
+      "for every point x0, (for every point x1, (for every point x2, (if ((x0 le x1) and (x1 le x2)), then (x0 le x2))))."
+    ],
+    "premises_fluent": [
+      "for every point P and every point P2, both (if P matches P2 then (both P ranks below P2 and P2 ranks below P)) and (if (both P ranks below P2 and P2 ranks below P) then P matches P2)",
+      "for every point P and every point P2 and every point P3, if (both P ranks below P2 and P2 ranks below P3) then P ranks below P3"
+    ],
+    "conclusion_ve": "for every point x0, (for every point x1, (for every point x2, (if ((x0 sim x1) and (x0 le x2)), then (x1 le x2)))).",
+    "conclusion_fluent": "for every point P and every point P2 and every point P3, if (both P matches P2 and P ranks below P3) then P2 ranks below P3",
+    "prove_seconds": 0.056,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 221,
+    "prove_detail": "",
+    "certificate_bytes": 4676,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [
+      {
+        "dropped": "definition of sim",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.006,
+        "file": "T7a-without-definition-of-sim.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [
+              [
+                "e0",
+                "e0"
+              ]
+            ],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": [
+              [
+                "e0",
+                "e1"
+              ]
+            ]
+          }
+        },
+        "recheck_valid": true
+      },
+      {
+        "dropped": "transitivity of le",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.042,
+        "file": "T7a-without-transitivity-of-le.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [
+              [
+                "e0",
+                "e1"
+              ],
+              [
+                "e1",
+                "e0"
+              ]
+            ],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": [
+              [
+                "e0",
+                "e1"
+              ],
+              [
+                "e1",
+                "e0"
+              ]
+            ]
+          }
+        },
+        "recheck_valid": true
+      }
+    ],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T7b",
+    "title": "Right congruence of the preorder under its symmetrisation",
+    "expect": "prove",
+    "environment": "environment.json",
+    "premise_labels": [
+      "definition of sim",
+      "transitivity of le"
+    ],
+    "premises_ve": [
+      "for every point x0, (for every point x1, ((if (x0 sim x1), then ((x0 le x1) and (x1 le x0))) and (if ((x0 le x1) and (x1 le x0)), then (x0 sim x1)))).",
+      "for every point x0, (for every point x1, (for every point x2, (if ((x0 le x1) and (x1 le x2)), then (x0 le x2))))."
+    ],
+    "premises_fluent": [
+      "for every point P and every point P2, both (if P matches P2 then (both P ranks below P2 and P2 ranks below P)) and (if (both P ranks below P2 and P2 ranks below P) then P matches P2)",
+      "for every point P and every point P2 and every point P3, if (both P ranks below P2 and P2 ranks below P3) then P ranks below P3"
+    ],
+    "conclusion_ve": "for every point x0, (for every point x1, (for every point x2, (if ((x0 le x1) and (x1 sim x2)), then (x0 le x2)))).",
+    "conclusion_fluent": "for every point P and every point P2 and every point P3, if (both P ranks below P2 and P2 matches P3) then P ranks below P3",
+    "prove_seconds": 0.048,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 148,
+    "prove_detail": "",
+    "certificate_bytes": 3474,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [
+      {
+        "dropped": "definition of sim",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.006,
+        "file": "T7b-without-definition-of-sim.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [
+              [
+                "e0",
+                "e0"
+              ]
+            ],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": [
+              [
+                "e0",
+                "e1"
+              ]
+            ]
+          }
+        },
+        "recheck_valid": true
+      },
+      {
+        "dropped": "transitivity of le",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.043,
+        "file": "T7b-without-transitivity-of-le.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [
+              [
+                "e0",
+                "e1"
+              ],
+              [
+                "e1",
+                "e0"
+              ]
+            ],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": [
+              [
+                "e0",
+                "e1"
+              ],
+              [
+                "e1",
+                "e0"
+              ]
+            ]
+          }
+        },
+        "recheck_valid": true
+      }
+    ],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T7",
+    "title": "The preorder respects its symmetrisation (from the two congruence lemmas)",
+    "expect": "prove",
+    "environment": "environment.json",
+    "premise_labels": [
+      "left congruence (T7a)",
+      "right congruence (T7b)"
+    ],
+    "premises_ve": [
+      "for every point x0, (for every point x1, (for every point x2, (if ((x0 sim x1) and (x0 le x2)), then (x1 le x2)))).",
+      "for every point x0, (for every point x1, (for every point x2, (if ((x0 le x1) and (x1 sim x2)), then (x0 le x2))))."
+    ],
+    "premises_fluent": [
+      "for every point P and every point P2 and every point P3, if (both P matches P2 and P ranks below P3) then P2 ranks below P3",
+      "for every point P and every point P2 and every point P3, if (both P ranks below P2 and P2 matches P3) then P ranks below P3"
+    ],
+    "conclusion_ve": "for every point x0, (for every point x1, (for every point x2, (for every point x3, (if ((x0 sim x1) and ((x2 sim x3) and (x0 le x2))), then (x1 le x3))))).",
+    "conclusion_fluent": "for every point P and every point P2 and every point P3 and every point P4, if (both P matches P2 and (both P3 matches P4 and P ranks below P3)) then P2 ranks below P4",
+    "prove_seconds": 0.013,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 49,
+    "prove_detail": "",
+    "certificate_bytes": 1571,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [
+      {
+        "dropped": "left congruence (T7a)",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.017,
+        "file": "T7-without-left-congruence-(T7a).json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [
+              [
+                "e0",
+                "e0"
+              ],
+              [
+                "e0",
+                "e1"
+              ]
+            ],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": [
+              [
+                "e0",
+                "e1"
+              ]
+            ]
+          }
+        },
+        "recheck_valid": true
+      },
+      {
+        "dropped": "right congruence (T7b)",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.019,
+        "file": "T7-without-right-congruence-(T7b).json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [
+              [
+                "e0",
+                "e0"
+              ],
+              [
+                "e1",
+                "e0"
+              ]
+            ],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": [
+              [
+                "e0",
+                "e1"
+              ]
+            ]
+          }
+        },
+        "recheck_valid": true
+      }
+    ],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T8",
+    "title": "In a total strict order, a minimal element is least",
+    "expect": "prove",
+    "environment": "environment.json",
+    "premise_labels": [
+      "totality",
+      "definition of minimal",
+      "definition of least"
+    ],
+    "premises_ve": [
+      "for every point x0, (for every point x1, ((x0 equals x1) or ((x0 lt x1) or (x1 lt x0)))).",
+      "for every point x0, ((if (x0 is minimal), then (for every point x1, (not (x1 lt x0)))) and (if (for every point x2, (not (x2 lt x0))), then (x0 is minimal))).",
+      "for every point x0, ((if (x0 is least), then (for every point x1, (if (not (x1 equals x0)), then (x0 lt x1)))) and (if (for every point x2, (if (not (x2 equals x0)), then (x0 lt x2))), then (x0 is least)))."
+    ],
+    "premises_fluent": [
+      "for every point P and every point P2, either P is the same point as P2 or (either P precedes P2 or P2 precedes P, or both), or both",
+      "for every point P, both (if P is minimal then (for every point P2, P2 does not precede P)) and (if (for every point P3, P3 does not precede P) then P is minimal)",
+      "for every point P, both (if P is minimum then (for every point P2 that is not the same point as P, P precedes P2)) and (if (for every point P3 that is not the same point as P, P precedes P3) then P is minimum)"
+    ],
+    "conclusion_ve": "for every point x0, (if (x0 is minimal), then (x0 is least)).",
+    "conclusion_fluent": "for every point P that is minimal, P is minimum",
+    "prove_seconds": 0.007,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 26,
+    "prove_detail": "",
+    "certificate_bytes": 1392,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [
+      {
+        "dropped": "totality",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.01,
+        "file": "T8-without-totality.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [],
+            "least": [],
+            "lists": [],
+            "lt": [
+              [
+                "e0",
+                "e0"
+              ]
+            ],
+            "mentions": [],
+            "minimal": [
+              [
+                "e1"
+              ]
+            ],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      },
+      {
+        "dropped": "definition of minimal",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.019,
+        "file": "T8-without-definition-of-minimal.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [],
+            "least": [
+              [
+                "e0"
+              ]
+            ],
+            "lists": [],
+            "lt": [
+              [
+                "e0",
+                "e1"
+              ]
+            ],
+            "mentions": [],
+            "minimal": [
+              [
+                "e1"
+              ]
+            ],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      },
+      {
+        "dropped": "definition of least",
+        "status": "Found",
+        "domain_size": 1,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.002,
+        "file": "T8-without-definition-of-least.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [
+              [
+                "e0"
+              ]
+            ],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      }
+    ],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T9",
+    "title": "Closure induction: r included in transitive s implies tc[r] included in s",
+    "expect": "fail",
+    "environment": "environment-closure.json",
+    "premise_labels": [
+      "edge inclusion r <= s",
+      "transitivity of s"
+    ],
+    "premises_ve": [
+      "for every point x0, (for every point x1, (if (x0 r x1), then (x0 s x1))).",
+      "for every point x0, (for every point x1, (for every point x2, (if ((x0 s x1) and (x1 s x2)), then (x0 s x2))))."
+    ],
+    "premises_fluent": [
+      "for every point P and every point P2, if P links P2 then P spans P2",
+      "for every point P and every point P2 and every point P3, if (both P spans P2 and P2 spans P3) then P spans P3"
+    ],
+    "conclusion_ve": "for every point x0, (for every point x1, (if (tc[r](x0, x1)), then (x0 s x1))).",
+    "conclusion_fluent": "for every point P and every point P2, if (P2 is reachable from P by one or more r steps) then P spans P2",
+    "prove_seconds": 3.872,
+    "prove_status": "ResourceLimit",
+    "max_steps": 200000,
+    "prove_steps": 200000,
+    "prove_detail": "tableau step or certificate nesting budget exhausted",
+    "certificate_bytes": 0,
+    "python_valid": false,
+    "python_status": "ResourceLimit",
+    "python_detail": "tableau step or certificate nesting budget exhausted",
+    "refutation_status": "ResourceLimit",
+    "refutation_domain_size": null,
+    "refutation_seconds": 8.479,
+    "refutation_detail": "evaluation budget exhausted",
+    "necessity": [
+      {
+        "dropped": "edge inclusion r <= s",
+        "status": "Found",
+        "domain_size": 1,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.0,
+        "file": "T9-without-edge-inclusion-r-<=-s.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "r": [
+              [
+                "e0",
+                "e0"
+              ]
+            ],
+            "s": []
+          }
+        },
+        "recheck_valid": true
+      },
+      {
+        "dropped": "transitivity of s",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.019,
+        "file": "T9-without-transitivity-of-s.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "r": [
+              [
+                "e0",
+                "e1"
+              ],
+              [
+                "e1",
+                "e0"
+              ]
+            ],
+            "s": [
+              [
+                "e0",
+                "e1"
+              ],
+              [
+                "e1",
+                "e0"
+              ]
+            ]
+          }
+        },
+        "recheck_valid": true
+      }
+    ],
+    "lean_valid": null,
+    "lean_note": "no certificate to check"
+  },
+  {
+    "id": "T9a",
+    "title": "Every r-edge is a tc[r]-path",
+    "expect": "prove",
+    "environment": "environment-closure.json",
+    "premise_labels": [],
+    "premises_ve": [],
+    "premises_fluent": [],
+    "conclusion_ve": "for every point x0, (for every point x1, (if (x0 r x1), then (tc[r](x0, x1)))).",
+    "conclusion_fluent": "for every point P and every point P2, if P links P2 then (P2 is reachable from P by one or more r steps)",
+    "prove_seconds": 0.001,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 5,
+    "prove_detail": "",
+    "certificate_bytes": 435,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T9b",
+    "title": "tc[r] is included in rtc[r]",
+    "expect": "prove",
+    "environment": "environment-closure.json",
+    "premise_labels": [],
+    "premises_ve": [],
+    "premises_fluent": [],
+    "conclusion_ve": "for every point x0, (for every point x1, (if (tc[r](x0, x1)), then (rtc[r](x0, x1)))).",
+    "conclusion_fluent": "for every point P and every point P2, if (P2 is reachable from P by one or more r steps) then (P2 is reachable from P by zero or more r steps)",
+    "prove_seconds": 0.001,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 7,
+    "prove_detail": "",
+    "certificate_bytes": 519,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T9c",
+    "title": "rtc[r] is reflexive",
+    "expect": "prove",
+    "environment": "environment-closure.json",
+    "premise_labels": [],
+    "premises_ve": [],
+    "premises_fluent": [],
+    "conclusion_ve": "for every point x0, (rtc[r](x0, x0)).",
+    "conclusion_fluent": "for every point P, P is reachable from P by zero or more r steps",
+    "prove_seconds": 0.001,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 4,
+    "prove_detail": "",
+    "certificate_bytes": 397,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T9d",
+    "title": "tc[r] is transitive",
+    "expect": "prove",
+    "environment": "environment-closure.json",
+    "premise_labels": [],
+    "premises_ve": [],
+    "premises_fluent": [],
+    "conclusion_ve": "for every point x0, (for every point x1, (for every point x2, (if ((tc[r](x0, x1)) and (tc[r](x1, x2))), then (tc[r](x0, x2))))).",
+    "conclusion_fluent": "for every point P and every point P2 and every point P3, if (both (P2 is reachable from P by one or more r steps) and (P3 is reachable from P2 by one or more r steps)) then (P3 is reachable from P by one or more r steps)",
+    "prove_seconds": 0.002,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 7,
+    "prove_detail": "",
+    "certificate_bytes": 530,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [],
+    "lean_valid": true,
+    "lean_note": ""
+  },
+  {
+    "id": "T9e",
+    "title": "Monotonicity: r included in s implies tc[r] included in tc[s]",
+    "expect": "fail",
+    "environment": "environment-closure.json",
+    "premise_labels": [
+      "edge inclusion r <= s"
+    ],
+    "premises_ve": [
+      "for every point x0, (for every point x1, (if (x0 r x1), then (x0 s x1)))."
+    ],
+    "premises_fluent": [
+      "for every point P and every point P2, if P links P2 then P spans P2"
+    ],
+    "conclusion_ve": "for every point x0, (for every point x1, (if (tc[r](x0, x1)), then (tc[s](x0, x1)))).",
+    "conclusion_fluent": "for every point P and every point P2, if (P2 is reachable from P by one or more r steps) then (P2 is reachable from P by one or more s steps)",
+    "prove_seconds": 8.37,
+    "prove_status": "ResourceLimit",
+    "max_steps": 200000,
+    "prove_steps": 200000,
+    "prove_detail": "tableau step or certificate nesting budget exhausted",
+    "certificate_bytes": 0,
+    "python_valid": false,
+    "python_status": "ResourceLimit",
+    "python_detail": "tableau step or certificate nesting budget exhausted",
+    "refutation_status": "ResourceLimit",
+    "refutation_domain_size": null,
+    "refutation_seconds": 7.714,
+    "refutation_detail": "evaluation budget exhausted",
+    "necessity": [
+      {
+        "dropped": "edge inclusion r <= s",
+        "status": "Found",
+        "domain_size": 1,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.0,
+        "file": "T9e-without-edge-inclusion-r-<=-s.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "r": [
+              [
+                "e0",
+                "e0"
+              ]
+            ],
+            "s": []
+          }
+        },
+        "recheck_valid": true
+      }
+    ],
+    "lean_valid": null,
+    "lean_note": "no certificate to check"
+  },
+  {
+    "id": "C1",
+    "title": "CONJECTURE (false): every transitive symmetric relation is reflexive",
+    "expect": "refuted",
+    "environment": "environment.json",
+    "premise_labels": [
+      "transitivity",
+      "symmetry"
+    ],
+    "premises_ve": [
+      "for every point x0, (for every point x1, (for every point x2, (if ((x0 akin x1) and (x1 akin x2)), then (x0 akin x2)))).",
+      "for every point x0, (for every point x1, (if (x0 akin x1), then (x1 akin x0)))."
+    ],
+    "premises_fluent": [
+      "for every point P and every point P2 and every point P3, if (both P resembles P2 and P2 resembles P3) then P resembles P3",
+      "for every point P and every point P2, if P resembles P2 then P2 resembles P"
+    ],
+    "conclusion_ve": "for every point x0, (x0 akin x0).",
+    "conclusion_fluent": "for every point P, P resembles P",
+    "prove_seconds": 0.001,
+    "prove_status": "NotFound",
+    "max_steps": 200000,
+    "prove_steps": 10,
+    "prove_detail": "saturated open branch; no entailment certificate found",
+    "certificate_bytes": 0,
+    "python_valid": false,
+    "python_status": "NotFound",
+    "python_detail": "saturated open branch; no entailment certificate found",
+    "refutation_status": "Found",
+    "refutation_domain_size": 1,
+    "refutation_seconds": 0.001,
+    "refutation_model": {
+      "complete": true,
+      "domains": {
+        "point": [
+          "e0"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "akin": [],
+        "greatest": [],
+        "le": [],
+        "least": [],
+        "lists": [],
+        "lt": [],
+        "mentions": [],
+        "minimal": [],
+        "sim": []
+      }
+    },
+    "refutation_file": "C1-refutation.json",
+    "refutation_recheck_valid": true,
+    "necessity": [
+      {
+        "dropped": "transitivity",
+        "status": "Found",
+        "domain_size": 1,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.001,
+        "file": "C1-without-transitivity.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      },
+      {
+        "dropped": "symmetry",
+        "status": "Found",
+        "domain_size": 1,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.001,
+        "file": "C1-without-symmetry.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      }
+    ],
+    "lean_valid": null,
+    "lean_note": "no certificate to check"
+  },
+  {
+    "id": "C2",
+    "title": "Corrected: transitive, symmetric and serial implies reflexive",
+    "expect": "prove",
+    "environment": "environment.json",
+    "premise_labels": [
+      "transitivity",
+      "symmetry",
+      "seriality"
+    ],
+    "premises_ve": [
+      "for every point x0, (for every point x1, (for every point x2, (if ((x0 akin x1) and (x1 akin x2)), then (x0 akin x2)))).",
+      "for every point x0, (for every point x1, (if (x0 akin x1), then (x1 akin x0))).",
+      "for every point x0, (there exists point x1, (x0 akin x1))."
+    ],
+    "premises_fluent": [
+      "for every point P and every point P2 and every point P3, if (both P resembles P2 and P2 resembles P3) then P resembles P3",
+      "for every point P and every point P2, if P resembles P2 then P2 resembles P",
+      "for every point P, there is a point P2 such that P resembles P2"
+    ],
+    "conclusion_ve": "for every point x0, (x0 akin x0).",
+    "conclusion_fluent": "for every point P, P resembles P",
+    "prove_seconds": 0.008,
+    "prove_status": "Found",
+    "max_steps": 200000,
+    "prove_steps": 42,
+    "prove_detail": "",
+    "certificate_bytes": 1706,
+    "python_valid": true,
+    "python_status": "Valid",
+    "python_detail": "",
+    "necessity": [
+      {
+        "dropped": "transitivity",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.004,
+        "file": "C2-without-transitivity.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [
+              [
+                "e0",
+                "e1"
+              ],
+              [
+                "e1",
+                "e0"
+              ]
+            ],
+            "greatest": [],
+            "le": [],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      },
+      {
+        "dropped": "symmetry",
+        "status": "Found",
+        "domain_size": 2,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.003,
+        "file": "C2-without-symmetry.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0",
+              "e1"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [
+              [
+                "e0",
+                "e0"
+              ],
+              [
+                "e1",
+                "e0"
+              ]
+            ],
+            "greatest": [],
+            "le": [],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      },
+      {
+        "dropped": "seriality",
+        "status": "Found",
+        "domain_size": 1,
+        "source": "exhaustive search over domains of size 0-3",
+        "seconds": 0.001,
+        "file": "C2-without-seriality.json",
+        "model": {
+          "complete": true,
+          "domains": {
+            "point": [
+              "e0"
+            ]
+          },
+          "constants": {},
+          "relations": {
+            "akin": [],
+            "greatest": [],
+            "le": [],
+            "least": [],
+            "lists": [],
+            "lt": [],
+            "mentions": [],
+            "minimal": [],
+            "sim": []
+          }
+        },
+        "recheck_valid": true
+      }
+    ],
+    "lean_valid": true,
+    "lean_note": ""
+  }
+]

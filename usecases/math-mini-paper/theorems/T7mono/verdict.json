@@ -1,0 +1,28 @@
+{
+  "id": "T7mono",
+  "title": "The preorder respects its symmetrisation (monolithic attempt)",
+  "expect": "fail",
+  "environment": "environment.json",
+  "premise_labels": [
+    "definition of sim",
+    "transitivity of le"
+  ],
+  "conclusion_ve": "for every point x0, (for every point x1, (for every point x2, (for every point x3, (if ((x0 sim x1) and ((x2 sim x3) and (x0 le x2))), then (x1 le x3))))).",
+  "conclusion_fluent": "for every point P and every point P2 and every point P3 and every point P4, if (both P matches P2 and (both P3 matches P4 and P ranks below P3)) then P2 ranks below P4",
+  "prove_seconds": 17.585,
+  "prove_status": "ResourceLimit",
+  "max_steps": 1000000,
+  "prove_steps": 1000000,
+  "prove_detail": "tableau step or certificate nesting budget exhausted",
+  "certificate_bytes": 0,
+  "python_valid": false,
+  "python_status": "ResourceLimit",
+  "python_detail": "tableau step or certificate nesting budget exhausted",
+  "refutation_status": "ResourceLimit",
+  "refutation_domain_size": null,
+  "refutation_seconds": 17.065,
+  "refutation_detail": "evaluation budget exhausted",
+  "necessity": [],
+  "lean_valid": null,
+  "lean_note": "no certificate to check"
+}

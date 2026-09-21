@@ -1,0 +1,108 @@
+{
+  "id": "C1",
+  "title": "CONJECTURE (false): every transitive symmetric relation is reflexive",
+  "expect": "refuted",
+  "environment": "environment.json",
+  "premise_labels": [
+    "transitivity",
+    "symmetry"
+  ],
+  "conclusion_ve": "for every point x0, (x0 akin x0).",
+  "conclusion_fluent": "for every point P, P resembles P",
+  "prove_seconds": 0.001,
+  "prove_status": "NotFound",
+  "max_steps": 200000,
+  "prove_steps": 10,
+  "prove_detail": "saturated open branch; no entailment certificate found",
+  "certificate_bytes": 0,
+  "python_valid": false,
+  "python_status": "NotFound",
+  "python_detail": "saturated open branch; no entailment certificate found",
+  "refutation_status": "Found",
+  "refutation_domain_size": 1,
+  "refutation_seconds": 0.001,
+  "refutation_model": {
+    "complete": true,
+    "domains": {
+      "point": [
+        "e0"
+      ]
+    },
+    "constants": {},
+    "relations": {
+      "akin": [],
+      "greatest": [],
+      "le": [],
+      "least": [],
+      "lists": [],
+      "lt": [],
+      "mentions": [],
+      "minimal": [],
+      "sim": []
+    }
+  },
+  "refutation_file": "C1-refutation.json",
+  "refutation_recheck_valid": true,
+  "necessity": [
+    {
+      "dropped": "transitivity",
+      "status": "Found",
+      "domain_size": 1,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.001,
+      "file": "C1-without-transitivity.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [],
+          "least": [],
+          "lists": [],
+          "lt": [],
+          "mentions": [],
+          "minimal": [],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    },
+    {
+      "dropped": "symmetry",
+      "status": "Found",
+      "domain_size": 1,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.001,
+      "file": "C1-without-symmetry.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [],
+          "least": [],
+          "lists": [],
+          "lt": [],
+          "mentions": [],
+          "minimal": [],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    }
+  ],
+  "lean_valid": null,
+  "lean_note": "no certificate to check"
+}

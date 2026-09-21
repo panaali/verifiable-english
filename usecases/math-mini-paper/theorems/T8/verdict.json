@@ -1,0 +1,141 @@
+{
+  "id": "T8",
+  "title": "In a total strict order, a minimal element is least",
+  "expect": "prove",
+  "environment": "environment.json",
+  "premise_labels": [
+    "totality",
+    "definition of minimal",
+    "definition of least"
+  ],
+  "conclusion_ve": "for every point x0, (if (x0 is minimal), then (x0 is least)).",
+  "conclusion_fluent": "for every point P that is minimal, P is minimum",
+  "prove_seconds": 0.007,
+  "prove_status": "Found",
+  "max_steps": 200000,
+  "prove_steps": 26,
+  "prove_detail": "",
+  "certificate_bytes": 1392,
+  "python_valid": true,
+  "python_status": "Valid",
+  "python_detail": "",
+  "necessity": [
+    {
+      "dropped": "totality",
+      "status": "Found",
+      "domain_size": 2,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.01,
+      "file": "T8-without-totality.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0",
+            "e1"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [],
+          "least": [],
+          "lists": [],
+          "lt": [
+            [
+              "e0",
+              "e0"
+            ]
+          ],
+          "mentions": [],
+          "minimal": [
+            [
+              "e1"
+            ]
+          ],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    },
+    {
+      "dropped": "definition of minimal",
+      "status": "Found",
+      "domain_size": 2,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.019,
+      "file": "T8-without-definition-of-minimal.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0",
+            "e1"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [],
+          "least": [
+            [
+              "e0"
+            ]
+          ],
+          "lists": [],
+          "lt": [
+            [
+              "e0",
+              "e1"
+            ]
+          ],
+          "mentions": [],
+          "minimal": [
+            [
+              "e1"
+            ]
+          ],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    },
+    {
+      "dropped": "definition of least",
+      "status": "Found",
+      "domain_size": 1,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.002,
+      "file": "T8-without-definition-of-least.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [],
+          "least": [],
+          "lists": [],
+          "lt": [],
+          "mentions": [],
+          "minimal": [
+            [
+              "e0"
+            ]
+          ],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    }
+  ],
+  "lean_valid": true,
+  "lean_note": ""
+}

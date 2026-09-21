@@ -1,0 +1,116 @@
+{
+  "id": "T5",
+  "title": "Uniqueness of a greatest element in a partial order",
+  "expect": "prove",
+  "environment": "environment.json",
+  "premise_labels": [
+    "definition of greatest",
+    "antisymmetry"
+  ],
+  "conclusion_ve": "for every point x0, (for every point x1, (if ((x0 is greatest) and (x1 is greatest)), then (x0 equals x1))).",
+  "conclusion_fluent": "for every point P and every point P2, if (both P is greatest and P2 is greatest) then P is the same point as P2",
+  "prove_seconds": 0.008,
+  "prove_status": "Found",
+  "max_steps": 200000,
+  "prove_steps": 50,
+  "prove_detail": "",
+  "certificate_bytes": 1586,
+  "python_valid": true,
+  "python_status": "Valid",
+  "python_detail": "",
+  "necessity": [
+    {
+      "dropped": "definition of greatest",
+      "status": "Found",
+      "domain_size": 2,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.004,
+      "file": "T5-without-definition-of-greatest.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0",
+            "e1"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [
+            [
+              "e0"
+            ],
+            [
+              "e1"
+            ]
+          ],
+          "le": [],
+          "least": [],
+          "lists": [],
+          "lt": [],
+          "mentions": [],
+          "minimal": [],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    },
+    {
+      "dropped": "antisymmetry",
+      "status": "Found",
+      "domain_size": 2,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.02,
+      "file": "T5-without-antisymmetry.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0",
+            "e1"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [
+            [
+              "e0"
+            ],
+            [
+              "e1"
+            ]
+          ],
+          "le": [
+            [
+              "e0",
+              "e0"
+            ],
+            [
+              "e0",
+              "e1"
+            ],
+            [
+              "e1",
+              "e0"
+            ],
+            [
+              "e1",
+              "e1"
+            ]
+          ],
+          "least": [],
+          "lists": [],
+          "lt": [],
+          "mentions": [],
+          "minimal": [],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    }
+  ],
+  "lean_valid": true,
+  "lean_note": ""
+}

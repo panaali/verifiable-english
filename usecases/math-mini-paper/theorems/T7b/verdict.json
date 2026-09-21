@@ -1,0 +1,113 @@
+{
+  "id": "T7b",
+  "title": "Right congruence of the preorder under its symmetrisation",
+  "expect": "prove",
+  "environment": "environment.json",
+  "premise_labels": [
+    "definition of sim",
+    "transitivity of le"
+  ],
+  "conclusion_ve": "for every point x0, (for every point x1, (for every point x2, (if ((x0 le x1) and (x1 sim x2)), then (x0 le x2)))).",
+  "conclusion_fluent": "for every point P and every point P2 and every point P3, if (both P ranks below P2 and P2 matches P3) then P ranks below P3",
+  "prove_seconds": 0.048,
+  "prove_status": "Found",
+  "max_steps": 200000,
+  "prove_steps": 148,
+  "prove_detail": "",
+  "certificate_bytes": 3474,
+  "python_valid": true,
+  "python_status": "Valid",
+  "python_detail": "",
+  "necessity": [
+    {
+      "dropped": "definition of sim",
+      "status": "Found",
+      "domain_size": 2,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.006,
+      "file": "T7b-without-definition-of-sim.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0",
+            "e1"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [
+            [
+              "e0",
+              "e0"
+            ]
+          ],
+          "least": [],
+          "lists": [],
+          "lt": [],
+          "mentions": [],
+          "minimal": [],
+          "sim": [
+            [
+              "e0",
+              "e1"
+            ]
+          ]
+        }
+      },
+      "recheck_valid": true
+    },
+    {
+      "dropped": "transitivity of le",
+      "status": "Found",
+      "domain_size": 2,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.043,
+      "file": "T7b-without-transitivity-of-le.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0",
+            "e1"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [
+            [
+              "e0",
+              "e1"
+            ],
+            [
+              "e1",
+              "e0"
+            ]
+          ],
+          "least": [],
+          "lists": [],
+          "lt": [],
+          "mentions": [],
+          "minimal": [],
+          "sim": [
+            [
+              "e0",
+              "e1"
+            ],
+            [
+              "e1",
+              "e0"
+            ]
+          ]
+        }
+      },
+      "recheck_valid": true
+    }
+  ],
+  "lean_valid": true,
+  "lean_note": ""
+}

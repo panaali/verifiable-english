@@ -1,0 +1,178 @@
+{
+  "id": "T6",
+  "title": "In a preorder, the symmetrisation is an equivalence relation",
+  "expect": "prove",
+  "environment": "environment.json",
+  "premise_labels": [
+    "definition of sim",
+    "reflexivity of le",
+    "transitivity of le"
+  ],
+  "conclusion_ve": "(for every point x0, (x0 sim x0)) and ((for every point x1, (for every point x2, (if (x1 sim x2), then (x2 sim x1)))) and (for every point x3, (for every point x4, (for every point x5, (if ((x3 sim x4) and (x4 sim x5)), then (x3 sim x5)))))).",
+  "conclusion_fluent": "both (for every point P, P matches P) and (both (for every point P2 and every point P3, if P2 matches P3 then P3 matches P2) and (for every point P4 and every point P5 and every point P6, if (both P4 matches P5 and P5 matches P6) then P4 matches P6))",
+  "prove_seconds": 0.126,
+  "prove_status": "Found",
+  "max_steps": 200000,
+  "prove_steps": 464,
+  "prove_detail": "",
+  "certificate_bytes": 10522,
+  "python_valid": true,
+  "python_status": "Valid",
+  "python_detail": "",
+  "necessity": [
+    {
+      "dropped": "definition of sim",
+      "status": "Found",
+      "domain_size": 1,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.001,
+      "file": "T6-without-definition-of-sim.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [
+            [
+              "e0",
+              "e0"
+            ]
+          ],
+          "least": [],
+          "lists": [],
+          "lt": [],
+          "mentions": [],
+          "minimal": [],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    },
+    {
+      "dropped": "reflexivity of le",
+      "status": "Found",
+      "domain_size": 1,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.001,
+      "file": "T6-without-reflexivity-of-le.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [],
+          "least": [],
+          "lists": [],
+          "lt": [],
+          "mentions": [],
+          "minimal": [],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    },
+    {
+      "dropped": "transitivity of le",
+      "status": "Found",
+      "source": "hand-supplied candidate, re-checked by ve.check_countermodel",
+      "domain_size": 3,
+      "seconds": 0.002,
+      "file": "T6-without-transitivity-of-le.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "a",
+            "b",
+            "c"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [
+            [
+              "a",
+              "a"
+            ],
+            [
+              "a",
+              "b"
+            ],
+            [
+              "b",
+              "a"
+            ],
+            [
+              "b",
+              "b"
+            ],
+            [
+              "b",
+              "c"
+            ],
+            [
+              "c",
+              "b"
+            ],
+            [
+              "c",
+              "c"
+            ]
+          ],
+          "least": [],
+          "lists": [],
+          "lt": [],
+          "mentions": [],
+          "minimal": [],
+          "sim": [
+            [
+              "a",
+              "a"
+            ],
+            [
+              "a",
+              "b"
+            ],
+            [
+              "b",
+              "a"
+            ],
+            [
+              "b",
+              "b"
+            ],
+            [
+              "b",
+              "c"
+            ],
+            [
+              "c",
+              "b"
+            ],
+            [
+              "c",
+              "c"
+            ]
+          ]
+        }
+      },
+      "recheck_valid": true
+    }
+  ],
+  "lean_valid": true,
+  "lean_note": ""
+}

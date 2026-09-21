@@ -1,0 +1,40 @@
+{
+  "language": "ve.core@0.1",
+  "profiles": [
+    "closure@0",
+    "relational-fol@0"
+  ],
+  "spec_revision": "ve-v0.1-closure-2026-09-21",
+  "vocabulary": {
+    "sorts": {
+      "point": {
+        "description": "An element of the fixed carrier set under discussion.",
+        "verbalisation": {
+          "singular": "point",
+          "plural": "points"
+        }
+      }
+    },
+    "predicates": {
+      "r": {
+        "arguments": [
+          "point",
+          "point"
+        ],
+        "description": "The base edge relation whose transitive closure is discussed.",
+        "verbalisation": "{0} links {1}",
+        "negative_verbalisation": "{0} does not link {1}"
+      },
+      "s": {
+        "arguments": [
+          "point",
+          "point"
+        ],
+        "description": "A second binary relation, assumed transitive where stated.",
+        "verbalisation": "{0} spans {1}",
+        "negative_verbalisation": "{0} does not span {1}"
+      }
+    },
+    "constants": {}
+  }
+}

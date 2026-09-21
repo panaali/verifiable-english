@@ -1,0 +1,133 @@
+{
+  "id": "C2",
+  "title": "Corrected: transitive, symmetric and serial implies reflexive",
+  "expect": "prove",
+  "environment": "environment.json",
+  "premise_labels": [
+    "transitivity",
+    "symmetry",
+    "seriality"
+  ],
+  "conclusion_ve": "for every point x0, (x0 akin x0).",
+  "conclusion_fluent": "for every point P, P resembles P",
+  "prove_seconds": 0.008,
+  "prove_status": "Found",
+  "max_steps": 200000,
+  "prove_steps": 42,
+  "prove_detail": "",
+  "certificate_bytes": 1706,
+  "python_valid": true,
+  "python_status": "Valid",
+  "python_detail": "",
+  "necessity": [
+    {
+      "dropped": "transitivity",
+      "status": "Found",
+      "domain_size": 2,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.004,
+      "file": "C2-without-transitivity.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0",
+            "e1"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [
+            [
+              "e0",
+              "e1"
+            ],
+            [
+              "e1",
+              "e0"
+            ]
+          ],
+          "greatest": [],
+          "le": [],
+          "least": [],
+          "lists": [],
+          "lt": [],
+          "mentions": [],
+          "minimal": [],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    },
+    {
+      "dropped": "symmetry",
+      "status": "Found",
+      "domain_size": 2,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.003,
+      "file": "C2-without-symmetry.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0",
+            "e1"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [
+            [
+              "e0",
+              "e0"
+            ],
+            [
+              "e1",
+              "e0"
+            ]
+          ],
+          "greatest": [],
+          "le": [],
+          "least": [],
+          "lists": [],
+          "lt": [],
+          "mentions": [],
+          "minimal": [],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    },
+    {
+      "dropped": "seriality",
+      "status": "Found",
+      "domain_size": 1,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.001,
+      "file": "C2-without-seriality.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [],
+          "least": [],
+          "lists": [],
+          "lt": [],
+          "mentions": [],
+          "minimal": [],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    }
+  ],
+  "lean_valid": true,
+  "lean_note": ""
+}

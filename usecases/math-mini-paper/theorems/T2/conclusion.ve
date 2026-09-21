@@ -1,0 +1,1 @@
+(not (there exists point x0, (for every point x1, ((if (x0 lists x1), then (not (x1 lists x1))) and (if (not (x1 lists x1)), then (x0 lists x1)))))) and (not (there exists point x2, (for every point x3, ((if (x2 mentions x3), then (not (x3 mentions x3))) and (if (not (x3 mentions x3)), then (x2 mentions x3)))))).
