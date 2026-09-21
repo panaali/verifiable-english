@@ -1,12 +1,62 @@
 {
   "broad_constructive_random_queries": 320,
+  "closure_forged": 442,
+  "closure_lean_accepted": 63,
+  "closure_lean_rejected_forged": 442,
+  "closure_python_accepted": 63,
+  "closure_reviewer_outcomes": {
+    "body_named": {
+      "status": "Found",
+      "steps": 2
+    },
+    "first_edge": {
+      "status": "Found",
+      "steps": 2
+    },
+    "last_edge": {
+      "status": "Found",
+      "steps": 2
+    },
+    "monotonicity": {
+      "status": "ResourceLimit",
+      "steps": 400
+    },
+    "named_body": {
+      "status": "Found",
+      "steps": 2
+    },
+    "symmetric_reversal": {
+      "status": "ResourceLimit",
+      "steps": 400
+    },
+    "transitivity": {
+      "status": "Found",
+      "steps": 2
+    }
+  },
+  "closure_trace_rule_counts": {
+    "alpha:And:True": 8,
+    "alpha:Or:False": 2,
+    "close": 63,
+    "closure-compose@0": 20,
+    "closure-edge@0": 3,
+    "closure-first@0": 5,
+    "closure-last@0": 5,
+    "closure-named-body@0": 2,
+    "closure:Reach:False": 14,
+    "closure:Reach:True": 12,
+    "delta:Exists:True": 8,
+    "delta:Forall:False": 1,
+    "gamma:Forall:True": 4,
+    "not:Not:True": 8
+  },
   "completeness_regression_queries": 8,
   "constructive_random_queries": 320,
-  "forged": 150,
+  "forged": 592,
   "forged_lean_accepted": [],
-  "lean_accepted": 732,
-  "lean_rejected_forged": 150,
-  "python_accepted": 732,
+  "lean_accepted": 795,
+  "lean_rejected_forged": 592,
+  "python_accepted": 795,
   "python_accepted_lean_rejected": [],
   "search_outcomes": {
     "broadconstructive:Found": 320,

@@ -259,7 +259,7 @@ def test_lean_all_closure_cases_and_countermodels():
 
 @pytest.mark.parametrize('with_reach', [False, True])
 @pytest.mark.parametrize('version', [CLOSURE_CHECKER_VERSION, 've-tableau-checker@1', 've-tableau-checker@2'])
-def test_lean_profile_gate_rejects_python_closure_certificate(with_reach, version):
+def test_lean_profile_gate_accepts_only_closure_checker_version(with_reach, version):
     env, _, _ = load()
     f=Reach('star',Named('edge'),Const('start'),Const('start')) if with_reach else Top()
     proof=prove_entailment(env,(),f,max_steps=100)
@@ -268,9 +268,10 @@ def test_lean_profile_gate_rejects_python_closure_certificate(with_reach, versio
     request={'id':'closure_certificate_gate','environment':env.to_dict(),'premises':[],
              'conclusion':formula_to_data(env,f),'certificate':certificate}
     proc=subprocess.run([str(lean_bin()),'check-certificate'],input=json.dumps(request),text=True,capture_output=True,timeout=30)
-    assert proc.returncode==1
+    assert proc.returncode == 0, proc.stdout + proc.stderr
     response=json.loads(proc.stdout)[0]
-    assert response['valid'] is False and 'profile gate' in response['error']
+    assert response['status'] == 'ok'
+    assert response['valid'] is (version == CLOSURE_CHECKER_VERSION)
 
 
 @pytest.mark.parametrize('kind', ['plus', 'star'])
