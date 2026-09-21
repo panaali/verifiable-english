@@ -55,6 +55,8 @@ def test_minimal_pairs():
         (And(p, q), Or(p, q)), (Implies(p, q), Implies(q, p)), (And(p, q), p),
         (Not(And(p, q)), And(Not(p), q)),
         (Forall('item', Implies(px, qx)), Forall('item', And(px, qx))),
+        (Forall('item', Implies(And(px, Not(Unary('exempt', Var(0)))), qx)),
+         Forall('item', Implies(px, And(Not(Unary('exempt', Var(0))), qx)))),
     ]
     for a, b in pairs: assert roundtrip(a) != roundtrip(b)
 
@@ -178,3 +180,71 @@ def test_cli_english_all_five_commands_and_strict_compatibility(tmp_path):
     assert cli('render', '--env', env_path, strict_path).stdout == render(document, ENV, 've_english')
     assert cli('render', '--env', env_path, '--surface', 'strict', strict_path).stdout == strict_path.read_text()
     assert cli('render', '--env', env_path, '--view', 've_strict', strict_path).stdout == strict_path.read_text()
+
+
+@pytest.mark.parametrize('word', 'not no never lacks without every all some any each and or if then unless only nothing everybody solely many few always may must can person service x x0 reviewed unreviewed'.split())
+def test_precision_adjective_slot_cannot_smuggle_logic_or_symbols(word):
+    data = vocabulary()
+    data['vocabulary']['predicates']['active']['verbalisation'] = template = '{0} is fully ' + word
+    words = EnglishVocabulary(Environment(data))
+    assert words.predicates['active'] != template
+
+
+def test_empty_vocabulary_and_lexical_precision_negative_lint():
+    from ve import lint_vocabulary
+    data = vocabulary()
+    data['vocabulary'] = {'sorts': {}, 'predicates': {}, 'constants': {}}
+    env = Environment(data)
+    text = roundtrip(And(Top(), Bottom()), env)
+    parser = Lark(english_lark_grammar(env), parser='earley', lexer='dynamic_complete', ambiguity='explicit')
+    assert not list(parser.parse(text[0].lower() + text[1:]).find_data('_ambig'))
+    data = vocabulary()
+    data['vocabulary']['predicates']['active'].update(verbalisation='{0} is fully deployed', negative_verbalisation='{0} is not fully deployed')
+    env = Environment(data)
+    assert not lint_vocabulary(env, surface='english')
+    assert lint_vocabulary(env)
+    assert roundtrip(Not(Unary('active', Const('api'))), env) == 'Api is not fully deployed.\n'
+
+
+def test_committed_english_artifacts_are_reproducible_and_every_usecase_roundtrips():
+    from conformance.english_artifacts import generated_documentation
+    from ve.english import english_legend
+    marker = '<!-- BEGIN GENERATED ENGLISH EVIDENCE -->'
+    assert Path('docs/english-surface.md').read_text().split(marker)[1] == '\n' + generated_documentation()
+    for path in Path('usecases').glob('*/environment.json'):
+        env = Environment.from_json(path.read_bytes())
+        document = parse(env, path.with_name('claims.ve').read_bytes())
+        text = render(document, env, 've_english')
+        artifact = path.with_name('rendered-english.md').read_text()
+        assert '```text\n' + text + '```' in artifact
+        assert english_legend(env, 'compact') in artifact
+        assert parse_english(env, text) == document
+
+
+def test_rejected_template_equal_to_old_strict_fallback_stays_rejected():
+    data = vocabulary()
+    data['vocabulary']['predicates']['either'] = {'description': 'Opaque predicate', 'arguments': ['item'],
+                                                'verbalisation': '{0} is either'}
+    env = Environment(data)
+    assert EnglishVocabulary(env).predicates['either'] == '{0} is classified as "either"'
+    assert any('/either/' in i.path for i in EnglishVocabulary(env).issues)
+    roundtrip(Unary('either', Const('api')), env)
+
+
+def test_all_existing_negative_attack_templates_also_reject_in_english():
+    from test_fluent import negative_vocabulary, test_attacker_negative_templates_rejected_with_explicit_fallback
+    mark, = test_attacker_negative_templates_rejected_with_explicit_fallback.pytestmark
+    attacks = mark.args[1]
+    assert len(attacks) >= 14
+    for predicate, negative in attacks:
+        data = negative_vocabulary()
+        data['vocabulary']['predicates'][predicate]['negative_verbalisation'] = negative
+        env = Environment(data)
+        assert predicate not in EnglishVocabulary(env).negatives
+        atom = Unary(predicate, Const('api')) if predicate == 'reviewed' else Binary(predicate, Const('alice'), Const('api'))
+        assert roundtrip(Not(atom), env).startswith('It is not the case that ')
+
+
+def test_numbered_labels_must_use_declared_sort_letters():
+    with pytest.raises(VEError):
+        parse_english(ENV, 'For every service named Z1, Z1 is deployed.\n')
