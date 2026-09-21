@@ -70,6 +70,10 @@ upstream toolchain and its standard logical dependencies remain trusted.
   preservation and input-length fuel adequacy. `parse_wellFormed` proves that all
   accepted documents are nonempty, closed and typed. There is still no independent
   grammar relation or proof of grammar P1/P2/P3.
+* `VE/ParserContracts.lean`: accepted-text normalization, canonical reparse,
+  printer injectivity and uniqueness of canonical representations. Equal normal
+  forms of accepted texts are equivalent to exact indexed AST equality. These
+  results do not imply the contract's independent-grammar P1.
 * `VE/EnvironmentProofs.lean`: the executable finite vocabulary name validator
   implies precisely the declaration-name premise used by P4/P5. The entire JSON
   decoder and semantic environment/model validators remain unproved.

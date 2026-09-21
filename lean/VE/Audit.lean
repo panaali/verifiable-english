@@ -1,6 +1,7 @@
 import VE.Consequence
 import VE.SurfaceProofs
 import VE.EnvironmentProofs
+import VE.ParserContracts
 
 #print axioms VE.term_defined
 #print axioms VE.typed_empty
@@ -65,3 +66,10 @@ import VE.EnvironmentProofs
 
 #print axioms VE.Bridge.lookup_name
 #print axioms VE.Bridge.vocabulary_namesValid
+
+#print axioms VE.Surface.accepted_normalize
+#print axioms VE.Surface.accepted_reparse
+#print axioms VE.Surface.print_injective
+#print axioms VE.Surface.canonical_unique
+#print axioms VE.Surface.accepted_normalize_eq_iff
+#print axioms VE.Surface.normalize_print

@@ -55,4 +55,10 @@
 'VE.Surface.normalize_idempotent' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Bridge.lookup_name' depends on axioms: [propext, Quot.sound]
 'VE.Bridge.vocabulary_namesValid' depends on axioms: [propext, Quot.sound]
-PASS: 57 named theorems; only the declared standard axiom allowlist.
+'VE.Surface.accepted_normalize' depends on axioms: [propext]
+'VE.Surface.accepted_reparse' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Surface.print_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Surface.canonical_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Surface.accepted_normalize_eq_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Surface.normalize_print' depends on axioms: [propext, Classical.choice, Quot.sound]
+PASS: 63 named theorems; only the declared standard axiom allowlist.
