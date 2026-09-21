@@ -154,3 +154,18 @@ Hard stop at 150 units. If steps take longer than 50 s, cut from the bottom: the
 5. `ve_train/judge.py` (logit approval, fixed prompt per view); `bestofn.py`; `train_grpo.py` and `train_rft.py` (resumable, checkpoint every 50 steps); `eval_heldout.py`; a local `panel.py` using the PLAN's cached CLI calls.
 6. `colab/`: job template, `submit.sh`, `fetch.sh`, and a pinned `requirements-colab.txt` (trl, vllm, peft, transformers).
 7. `experiments/T/PREREG.md`, committed before any scored run: the primary contrast, margin, smallest useful effect, matched-acceptance rule, gate, and audit checklist.
+
+## Decision (user + orchestrator): how the policy emits valid VE
+
+Use both mechanisms, in different places:
+
+- **RL rollouts and evaluation:** grammar-constrained decoding (vLLM or SGLang guided decoding) with a per-environment
+  grammar exported by `ve/grammar.py` (branch `codex/grammar`). The output is structured: a `ve` field constrained by
+  the grammar, and a free-text `explanation` field. A grammar can enforce syntax, closed vocabulary, arity, and, for a
+  bounded binder depth, binding and sorts. Whatever it cannot enforce is checked by the parser; an invalid output gets
+  zero reward. No retry inside rollouts, so every arm has the same rollout procedure.
+- **SFT warm-up data and the coverage audit:** verify-and-retry (`ve/authoring.py`): the parser rejects with a located
+  diagnostic and the model repairs, up to k rounds; acceptance per round is reported.
+
+The constraint is identical in every arm, so it does not confound the A vs B' contrast. It removes format learning
+from the 200 steps and closes the "malformed output" route to reward hacking. It guarantees form, never faithfulness.
