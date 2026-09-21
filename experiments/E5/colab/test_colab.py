@@ -132,9 +132,9 @@ def test_frozen_means_first_line_and_exact_head_bytes(tmp_path):
 def test_draft_export_refuses_before_creating_directory(tmp_path):
     with pytest.raises(ValueError, match="Status: FROZEN"):
         exporter.export(split="scored", difficulty="medium", instruction="neutral", cells="a,b", out=tmp_path / "e5")
-    for experiment in ("E2", "E4"):
-        with pytest.raises(ValueError, match="Status: FROZEN"):
-            other_exporter.export(experiment=experiment, split="scored", cells=None, out=tmp_path / experiment)
+    # E4 is frozen; E2 and E5 remain draft-only.
+    with pytest.raises(ValueError, match="Status: FROZEN"):
+        other_exporter.export(experiment="E2", split="scored", cells=None, out=tmp_path / "E2")
     assert not list(tmp_path.iterdir())
 
 

@@ -166,6 +166,14 @@ def export_bundle(out, rows, labels, *, prereg, sources, split, experiment, sele
                "max_num_seqs": 1, "enforce_eager": True,
                **({"quantization": "awq", "dtype": "half"} if model.endswith("AWQ") else {})}
               for model in MODEL_IDS]
+    if experiment == "E4" and split == "scored":
+        # Frozen E4 calibration selected two judges from the same Qwen family.
+        models = models[:2]
+        for model in models:
+            model["max_num_seqs"] = 12
+            model.pop("enforce_eager")
+        for label in labels:
+            label["assigned_models"] = [model["id"] for model in models]
     lengths = length_report(rows, labels, models)
     out = Path(out)
     out.mkdir(parents=True, exist_ok=False)  # never mix styles/assignments or overwrite exports

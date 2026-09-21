@@ -1,3 +1,4 @@
+Status: DRAFT — 2026-09-21; scored run deferred today: 7B approves everything and no affordable judge met the gate.
 # E5 revision 3: truthful proof badges and record-grounding errors
 
 **Draft amendment, 2026-09-21; no live model calls in this revision.** This
