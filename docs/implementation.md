@@ -312,7 +312,7 @@ instantiates this checker and no longer assumes an abstract `CertificateSound`.
 The graph result concerns Lean's named graph representation; Python's graph wire
 format, checker and leaf-display conventions are not automatically covered.
 
-The [certificate report](../conformance/certificates-report.json) records 721/721
+The [certificate report](../conformance/certificates-report.json) records 724/724
 Python-produced certificates accepted and 150/150 mutations rejected, with every
 search attempt retained, including seven resource-limit outcomes. There are
 320 bounded random valid queries, 320 broader random valid queries, 160

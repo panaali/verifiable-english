@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -24,8 +25,10 @@ def lean_executable():
     lake = shutil.which("lake")
     if lake is None:
         pytest.skip("lake is not available")
-    build = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True, text=True, timeout=180)
-    assert build.returncode == 0, build.stdout + build.stderr
+    if not os.environ.get("VE_LEAN_PREBUILT"):
+        build = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True, text=True, timeout=180)
+        assert build.returncode == 0, build.stdout + build.stderr
+    assert (ROOT / "lean/.lake/build/bin/ve_conformance").exists()
     return ROOT / "lean/.lake/build/bin/ve_conformance"
 
 

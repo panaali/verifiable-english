@@ -135,4 +135,5 @@
 'VE.Closure.warshall_iff_path' depends on axioms: [propext, Quot.sound]
 'VE.Closure.warshall_preserves_closed' depends on axioms: [propext, Quot.sound]
 'VE.Closure.warshall_sound' depends on axioms: [propext, Quot.sound]
-PASS: 33 source files; 137 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+'VE.Tableau.compoundClosed_sound' depends on axioms: [propext, Quot.sound]
+PASS: 33 source files; 138 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.

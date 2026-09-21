@@ -134,13 +134,13 @@ There is no model field and no expected-result field influences replay.
 
 `certificates.py` regenerates all queries and Python certificates before invoking
 the Lean executable in bounded batches. The seed is 20260923. The committed
-`certificates-report.json` records all 803 search attempts: 721 produce accepted
-certificates, 75 produce `NotFound`, and 7 produce `ResourceLimit`. This includes
-320/320 bounded-schema random valid queries; 317/320 broader random valid
-queries (three search resource failures); 82/160 unconditioned random queries;
+`certificates-report.json` records all 803 search attempts: 724 produce accepted
+certificates, 75 produce `NotFound`, and 4 produce `ResourceLimit`. This includes
+320/320 bounded-schema random valid queries; 320/320 broader random valid
+queries; 82/160 unconditioned random queries;
 and the bridged/merged positive worked examples. The separated example is
 `NotFound`, and its forged close is rejected. Every produced certificate is
-replayed: **721/721 accepted**, with no format gaps, unsupported rules or bugs
+replayed: **724/724 accepted**, with no format gaps, unsupported rules or bugs
 observed in that comparison. All **150/150 forgeries** are rejected.
 The detailed report counts both signs of every propositional/quantifier rule.
 

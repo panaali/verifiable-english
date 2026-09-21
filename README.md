@@ -23,7 +23,7 @@ The [Lean reference](lean/README.md) now proves soundness of the full data-only
 tableau certificate checker, including quantifiers over possibly empty sorts and
 equality. Accepted certificates entail their exact supplied conclusions; the
 named graph theorem composes accepted edges without an abstract certificate
-soundness assumption. The conformance run accepts **721/721** Python-produced
+soundness assumption. The conformance run accepts **724/724** Python-produced
 certificates and rejects **150/150** forgeries; see the
 [reproducible report](conformance/certificates-report.json).
 

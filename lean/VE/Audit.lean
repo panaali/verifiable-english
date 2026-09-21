@@ -164,3 +164,5 @@ import VE.ModelProofs
 #print axioms VE.Closure.warshall_iff_path
 #print axioms VE.Closure.warshall_preserves_closed
 #print axioms VE.Closure.warshall_sound
+
+#print axioms VE.Tableau.compoundClosed_sound

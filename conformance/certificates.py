@@ -167,7 +167,7 @@ def positive_cases():
         claims = {c.name: c.ast for c in graph.claims}
         edge = graph.deductions[0]
         add(f"worked_{name}", graph.env, [claims[n] for n in edge.premises],
-            claims[edge.conclusion], name != "separated")
+            claims[edge.conclusion], name not in ("separated", "g1"))
     return cases, {"search_outcomes": dict(sorted(outcomes.items())),
                    "trace_rule_counts": dict(sorted(coverage.items()))}
 
@@ -181,7 +181,7 @@ def forged_cases():
         result = prove_entailment(env, ps, goal)
         base = envelope(f"base_{i}", env, ps, goal, result.certificate)
         mutations = {
-            "version": lambda c: c["certificate"].update(checker_version="ve-tableau-checker@2"),
+            "version": lambda c: c["certificate"].update(checker_version="ve-tableau-checker@999"),
             "environment_id": lambda c: c["certificate"].update(environment_id="0"*64),
             "premise_ids": lambda c: c["certificate"].update(premise_meaning_ids=[]),
             "conclusion_id": lambda c: c["certificate"].update(conclusion_meaning_id="f"*64),
@@ -222,7 +222,7 @@ def forged_cases():
         {"rule": "expand", "at": 1, "parameter": "w:0", "children": [{"rule": "close"}]}]}
     cases.append(envelope("forged_empty_sort_inhabitation", env, ps, goal,
                           {**_binding(env, tuple(ps), goal), "trace": trace}))
-    graph = worked_examples()["separated"]
+    graph = worked_examples()["g1"]
     claims = {c.name: c.ast for c in graph.claims}
     edge = graph.deductions[0]
     ps, goal = [claims[n] for n in edge.premises], claims[edge.conclusion]
@@ -261,8 +261,8 @@ def run(executable):
                   python_accepted=len(positive), lean_accepted=len(positive)-len(gaps),
                   forged=len(forged), lean_rejected_forged=len(forged)-len(false_accepts),
                   python_accepted_lean_rejected=gaps, forged_lean_accepted=false_accepts,
-                  worked_examples={"bridged": "accepted", "merged": "accepted",
-                                   "separated": "search NotFound; forged close rejected"})
+                  worked_examples={"g2": "accepted", "g3": "accepted",
+                                   "g1": "search NotFound; forged close rejected"})
     assert not gaps, gaps
     assert not false_accepts, false_accepts
     return report
