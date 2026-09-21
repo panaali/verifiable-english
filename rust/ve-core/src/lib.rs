@@ -11,6 +11,9 @@ mod wire;
 
 pub use ast::{Document, Formula, Term};
 pub use environment::Environment;
+#[cfg(feature = "bench-internals")]
+#[doc(hidden)]
+pub use eval::EvaluationKernel;
 pub use eval::{Evaluation, evaluate, evaluate_formula};
 pub use model::FiniteModel;
 pub use search::{

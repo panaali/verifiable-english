@@ -9,10 +9,14 @@ fn run(v: &Value) -> Result<Value> {
     let iterations = v["iterations"].as_u64().unwrap();
     let repeats = v["repeats"].as_u64().unwrap();
     let mut samples = Vec::new();
+    let mut kernel_samples = Vec::new();
     let mut observations = Value::Null;
+    let mut kernel_observations = Value::Null;
     if v["kind"] == "evaluation" {
         let model = FiniteModel::from_value(&env, &v["model"])?;
+        let kernel = EvaluationKernel::new(&doc, 0, &model, MAX_EVALUATIONS)?;
         evaluate_formula(&doc, 0, &model, MAX_EVALUATIONS)?;
+        kernel.evaluate();
         for _ in 0..repeats {
             let start = Instant::now();
             let mut last = None;
@@ -27,6 +31,15 @@ fn run(v: &Value) -> Result<Value> {
             samples.push(start.elapsed().as_secs_f64() / iterations as f64);
             let last = last.unwrap();
             observations = json!({"value":last.value,"evaluations":last.evaluations});
+            let start = Instant::now();
+            let mut last = None;
+            for _ in 0..iterations {
+                last = Some(black_box(black_box(&kernel).evaluate()));
+            }
+            kernel_samples.push(start.elapsed().as_secs_f64() / iterations as f64);
+            let last = last.unwrap();
+            kernel_observations = json!({"value":last.value,"evaluations":last.evaluations});
+            assert_eq!(kernel_observations, observations);
         }
     } else {
         let (last, premises) = doc.formulas().split_last().unwrap();
@@ -51,7 +64,10 @@ fn run(v: &Value) -> Result<Value> {
             observations = json!({"status":last.status,"models_checked":last.models_checked,"evaluations":last.evaluations});
         }
     }
-    Ok(json!({"id":v["id"],"seconds_per_call":samples,"observations":observations}))
+    Ok(
+        json!({"id":v["id"],"seconds_per_call":samples,"observations":observations,
+              "kernel_seconds_per_call":kernel_samples,"kernel_observations":kernel_observations}),
+    )
 }
 fn main() -> Result<()> {
     let bytes = std::fs::read(std::env::args().nth(1).expect("benchmark input path"))

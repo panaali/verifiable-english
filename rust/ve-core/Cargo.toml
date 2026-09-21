@@ -4,6 +4,14 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[features]
+# Exposes only a checked, prepared evaluator for separating benchmark layers.
+bench-internals = []
+
+[[example]]
+name = "bench"
+required-features = ["bench-internals"]
+
 [dependencies]
 serde.workspace = true
 serde_json.workspace = true
