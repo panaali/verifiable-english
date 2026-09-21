@@ -1,0 +1,226 @@
+[
+  {
+    "split": "dev",
+    "stratum": "invalid_edge_control",
+    "family": "merged_vocabulary",
+    "grounding_label": "bad",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "invalid_edge_control",
+    "family": "merged_vocabulary",
+    "grounding_label": "good",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "invalid_edge_control",
+    "family": "scope_mismatch",
+    "grounding_label": "bad",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "invalid_edge_control",
+    "family": "scope_mismatch",
+    "grounding_label": "good",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "invalid_edge_control",
+    "family": "stale_evidence",
+    "grounding_label": "bad",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "invalid_edge_control",
+    "family": "stale_evidence",
+    "grounding_label": "good",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "invalid_edge_control",
+    "family": "unsupported_leaf",
+    "grounding_label": "bad",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "invalid_edge_control",
+    "family": "unsupported_leaf",
+    "grounding_label": "good",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "primary",
+    "family": "merged_vocabulary",
+    "grounding_label": "bad",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "primary",
+    "family": "merged_vocabulary",
+    "grounding_label": "good",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "primary",
+    "family": "scope_mismatch",
+    "grounding_label": "bad",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "primary",
+    "family": "scope_mismatch",
+    "grounding_label": "good",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "primary",
+    "family": "stale_evidence",
+    "grounding_label": "bad",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "primary",
+    "family": "stale_evidence",
+    "grounding_label": "good",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "primary",
+    "family": "unsupported_leaf",
+    "grounding_label": "bad",
+    "n": 8
+  },
+  {
+    "split": "dev",
+    "stratum": "primary",
+    "family": "unsupported_leaf",
+    "grounding_label": "good",
+    "n": 8
+  },
+  {
+    "split": "scored",
+    "stratum": "invalid_edge_control",
+    "family": "merged_vocabulary",
+    "grounding_label": "bad",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "invalid_edge_control",
+    "family": "merged_vocabulary",
+    "grounding_label": "good",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "invalid_edge_control",
+    "family": "scope_mismatch",
+    "grounding_label": "bad",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "invalid_edge_control",
+    "family": "scope_mismatch",
+    "grounding_label": "good",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "invalid_edge_control",
+    "family": "stale_evidence",
+    "grounding_label": "bad",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "invalid_edge_control",
+    "family": "stale_evidence",
+    "grounding_label": "good",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "invalid_edge_control",
+    "family": "unsupported_leaf",
+    "grounding_label": "bad",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "invalid_edge_control",
+    "family": "unsupported_leaf",
+    "grounding_label": "good",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "primary",
+    "family": "merged_vocabulary",
+    "grounding_label": "bad",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "primary",
+    "family": "merged_vocabulary",
+    "grounding_label": "good",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "primary",
+    "family": "scope_mismatch",
+    "grounding_label": "bad",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "primary",
+    "family": "scope_mismatch",
+    "grounding_label": "good",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "primary",
+    "family": "stale_evidence",
+    "grounding_label": "bad",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "primary",
+    "family": "stale_evidence",
+    "grounding_label": "good",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "primary",
+    "family": "unsupported_leaf",
+    "grounding_label": "bad",
+    "n": 16
+  },
+  {
+    "split": "scored",
+    "stratum": "primary",
+    "family": "unsupported_leaf",
+    "grounding_label": "good",
+    "n": 16
+  }
+]
