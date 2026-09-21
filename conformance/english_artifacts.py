@@ -1,11 +1,9 @@
 """Regenerate reviewed examples and use-case English documents, without changing environments."""
-from copy import deepcopy
 import json
-from pathlib import Path
 
 from ve import ast, Environment, parse, render
 from ve.english import english_legend, parse_english
-from .english_surface import ROOT, lint_report
+from .english_surface import ROOT
 
 
 def examples():
@@ -56,52 +54,45 @@ def examples():
 def generated_documentation():
     report = json.loads((ROOT / 'conformance/english-surface-report.json').read_text())
     lines = [
-        '', f"**{report['roundtrips']:,} random well-typed environment/AST pairs** round-tripped through the public",
-        '`render` and `parse_english` APIs across ten vocabularies. Each vocabulary',
-        'contributed 5,000 distinct ASTs; duplicate generator draws are counted separately',
-        'in [the committed report](../conformance/english-surface-report.json).',
-        f"**{report['earley_texts']:,} rendered environment/text pairs** (500 distinct texts per vocabulary) had exactly one",
-        'Earley derivation, with zero ambiguity nodes. The sample includes closure,',
-        'duplicate aliases, structural function words in nouns and verbs, structural',
-        'identifiers/constants, expanded templates, and all four real vocabularies.',
-        'Seeds, environment IDs, corpus hashes, grammar hashes, and constructor counts',
-        'are recorded. Counts are environment-indexed; simple formulas can recur in',
-        'different vocabularies. This sample is not a uniform distribution over all ASTs.',
-        '',
-        f"All **{report['identity_fixtures']} existing identity fixtures** have an additional English",
-        'transport regression: English round trip preserves their strict bytes and',
-        'stored environment/meaning IDs. The original fixture regression still checks',
-        'all preimages, model IDs, and formula IDs. Minimal pairs test quantifier order,',
-        'argument reversal, scope, and/or, implication reversal, dropped conjuncts,',
-        'moved negation, and guard versus consequent.',
-        '',
-        '| Current use-case environment | Predicates | Declared templates | Accepted before | Accepted after | Missing metadata |',
+        '', f"**{report['roundtrips']:,} distinct well-typed environment/AST pairs** round-tripped through",
+        '`render` and `parse_english`, across fifteen configurations (the original ten,',
+        'four reviewed overlays, and explicitly accepted suggestions). Each configuration',
+        'contributed 5,000 distinct ASTs: directed boundary cases followed by seeded random',
+        'draws. Directed cases cover every template, validated negatives, subject and object relatives, two-atom guards,',
+        'both three-atom associations, deeper/mixed guards, nested implications, and the',
+        'actual use-case claims. Duplicate draws are recorded, not counted twice.',
+        f"**{report['earley_texts']:,} environment/text pairs** (500 per configuration) had exactly one",
+        'Earley dynamic-complete derivation, with zero ambiguity nodes. Every directed',
+        'case is in that sample. This is finite evidence, not a universal unambiguity proof.',
+        'The report records seeds, corpus/grammar hashes, overlay digests, constructor',
+        'counts, and all original environment IDs. Counts are configuration-indexed;',
+        'the same text may appear under different vocabularies.',
+        '', f"All **{report['identity_fixtures']} original identity fixtures** retain English transport checks.",
+        'Original environment JSON, strict claims, identities, and historical views remain unchanged.',
+        '', '| Use case | Predicates | Original declared wording | Accepted original wording | Reviewed overlay wording | Overlay lint issues |',
         '|---|---:|---:|---:|---:|---:|',
     ]
     for row in report['linter']:
-        lines.append(f"| {row['usecase']} | {row['predicates']} | {row['declared_templates']} | {row['accepted_before']} | {row['accepted_after']} | {len(row['missing_templates'])} |")
-    before = sum(r['accepted_before'] for r in report['linter'])
-    after = sum(r['accepted_after'] for r in report['linter'])
-    lines += ['', f'In total: **{before}/13 before, {after}/13 after**. Forty of the 53 predicates',
-              'have no declared template in the current integration files. Their absence',
-              'is not a rejection and is not counted as an accepted template. The old',
-              '`rendered.md` snapshots are not a substitute for current environment JSON.',
-              'No environment was edited to improve these numbers or its identities.', '',
-              'Still rejected:', '']
-    reasons = {
-        'citizen_of_state': 'Binary copula with a nominal complement; no validated active argument-order template is declared.',
-        'within_jurisdiction_of': 'Binary copula with a prepositional complement; outside the active-relation grammar.',
-        'abridges_priv_or_imm': 'Contains a lexical coordination using “or”; the linter does not decide whether this is an atomic idiom or a disjunction.',
-        'deprives': 'Places extra coordinated, punctuated content after the second argument; unsupported placeholder shape.',
-    }
-    for row in report['linter']:
-        for rejected in row['still_rejected']:
-            n = rejected['predicate']
-            lines.append(f"- `{n}` — `{rejected['template']}`. {reasons.get(n, 'Outside the finite lexical grammar.')} Codes: {', '.join(rejected['codes'])}.")
-    lines += ['', 'Missing template identifiers (all retained explicitly in the report and legends):', '']
-    for row in report['linter']:
-        if row['missing_templates']:
-            lines.append(f"- {row['usecase']}: " + ', '.join('`' + n + '`' for n in row['missing_templates']) + '.')
+        lines.append(f"| {row['usecase']} | {row['predicates']} | {row['declared_templates']} | {row['accepted_after']} | {row['reviewed_templates']} | {len(row['reviewed_lint'])} |")
+    lines += ['', 'The overlays supply reviewed wording for **all 53 predicates**, including the',
+              '40 originally missing templates. Finite lexical idioms also cover the four',
+              'previously rejected constitutional templates. The original declarations are',
+              'still visible alongside the selected wording in each artifact legend.',
+              '', '### Ten actual use-case sentences: before and after', '',
+              'The baseline text and commit are stored in `conformance/english-before-after.json`.',
+              'Each after-text is generated from the same strict claim and parsed back unchanged.', '']
+    baseline = json.loads((ROOT / 'conformance/english-before-after.json').read_text())
+    for item in baseline['sentences']:
+        path = ROOT / 'usecases' / item['usecase'] / 'environment.json'
+        env = Environment.from_json(path.read_bytes())
+        overlay = json.loads(path.with_name('environment.english.json').read_text())
+        formula = parse(env, path.with_name('claims.ve').read_bytes()).formulas[item['statement'] - 1]
+        doc = ast.Document((formula,))
+        after = render(doc, env, 've_english', vocabulary=overlay)
+        assert parse_english(env, after, vocabulary=overlay) == doc
+        lines += [f"#### {item['usecase']}, statement {item['statement']}", '',
+                  'Before:', '', '```text', item['before'], '```', '',
+                  'After:', '', '```text', after.rstrip(), '```', '']
     env, cases = examples()
     lines += ['', '### Twenty-five worked examples', '',
               'The example vocabulary is reproducible through `conformance.english_artifacts.examples()`.',
@@ -126,15 +117,17 @@ def artifacts():
         env = Environment.from_json(path.read_bytes())
         source = path.with_name('claims.ve')
         document = parse(env, source.read_bytes())
-        english = render(document, env, 've_english')
-        assert parse_english(env, english) == document
+        overlay = json.loads(path.with_name('environment.english.json').read_text())
+        english = render(document, env, 've_english', vocabulary=overlay)
+        assert parse_english(env, english, vocabulary=overlay) == document
         command = (f'UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run python -m ve render \\\n'
                    f'  --env {path.relative_to(ROOT)} --view ve_english \\\n'
+                   f'  --english-vocabulary {path.with_name("environment.english.json").relative_to(ROOT)} \\\n'
                    f'  {source.relative_to(ROOT)}')
         text = ('# English rendering\n\nGenerated from the unchanged environment and strict claims. '
-                'Quoted predicate names indicate missing or rejected lexical metadata.\n\n'
+                'The reviewed display-only overlay has its own digest in the legend; it does not change environment or meaning identity.\n\n'
                 '```sh\n' + command + '\n```\n\n## Statements\n\n```text\n' + english
-                + '```\n\n## Vocabulary and scope legend\n\n```text\n' + english_legend(env, 'compact') + '```\n')
+                + '```\n\n## Vocabulary and scope legend\n\n```text\n' + english_legend(env, 'compact', vocabulary=overlay) + '```\n')
         path.with_name('rendered-english.md').write_text(text)
 
 

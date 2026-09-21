@@ -214,11 +214,12 @@ def test_committed_english_artifacts_are_reproducible_and_every_usecase_roundtri
     for path in Path('usecases').glob('*/environment.json'):
         env = Environment.from_json(path.read_bytes())
         document = parse(env, path.with_name('claims.ve').read_bytes())
-        text = render(document, env, 've_english')
+        overlay = json.loads(path.with_name('environment.english.json').read_text())
+        text = render(document, env, 've_english', vocabulary=overlay)
         artifact = path.with_name('rendered-english.md').read_text()
         assert '```text\n' + text + '```' in artifact
-        assert english_legend(env, 'compact') in artifact
-        assert parse_english(env, text) == document
+        assert english_legend(env, 'compact', vocabulary=overlay) in artifact
+        assert parse_english(env, text, vocabulary=overlay) == document
 
 
 def test_rejected_template_equal_to_old_strict_fallback_stays_rejected():
@@ -248,3 +249,139 @@ def test_all_existing_negative_attack_templates_also_reject_in_english():
 def test_numbered_labels_must_use_declared_sort_letters():
     with pytest.raises(VEError):
         parse_english(ENV, 'For every service named Z1, Z1 is deployed.\n')
+
+
+def test_guards_coordinate_without_losing_binary_association():
+    data = vocabulary()
+    data['vocabulary']['predicates']['reviewed']['negative_verbalisation'] = '{0} is not reviewed'
+    env = Environment(data)
+    p, q = Unary('active', Var(0)), Unary('reviewed', Var(0))
+    guards = [p, And(p, Not(q)), And(And(p, q), p), And(p, And(q, p))]
+    parser = Lark(english_lark_grammar(env), parser='earley', lexer='dynamic_complete', ambiguity='explicit')
+    texts = []
+    for guard in guards:
+        formula = Forall('item', Implies(guard, q))
+        text = roundtrip(formula, env)
+        assert '(a)' not in text and 'following' not in text
+        assert not list(parser.parse(text[0].lower() + text[1:]).find_data('_ambig'))
+        texts.append(text)
+    assert texts[-1] != texts[-2]
+    for guard in [And(And(p, q), And(q, p)), And(p, Or(q, p))]:
+        assert 'following hold:' in roundtrip(Forall('item', Implies(guard, q)), env)
+    assert parse_english(env, 'For every service that is deployed and that is reviewed, that service is reviewed.') == Document((Forall('item', Implies(And(p, q), q)),))
+
+
+def test_no_single_item_lists_or_split_if_then_labels():
+    p, q = Unary('active', Const('api')), Unary('reviewed', Const('api'))
+    for f in [Implies(Not(Eq(Const('api'), Const('api'))), p),
+              Implies(Forall('item', p), Exists('item', q)),
+              Implies(Implies(p, q), p), Implies(p, Implies(q, p))]:
+        text = roundtrip(f)
+        assert text.startswith('If ') and ', then ' in text
+        assert 'following' not in text and '(a)' not in text
+    text = roundtrip(And(Forall('item', p), Exists('item', q)))
+    assert text.startswith('Both of the following hold:')
+
+
+def test_reviewed_overlays_preserve_all_historical_views_and_identities():
+    from ve import meaning_id
+    from ve.english import english_legend
+    from ve.printer import VIEWS, render_vocabulary
+    for path in Path('usecases').glob('*/environment.json'):
+        raw = path.read_bytes()
+        env = Environment.from_json(raw)
+        original = env.to_dict()
+        overlay = json.loads(path.with_name('environment.english.json').read_text())
+        doc = parse(env, path.with_name('claims.ve').read_bytes())
+        words = EnglishVocabulary(env, vocabulary=overlay)
+        assert not words.issues
+        assert len(overlay['predicates']) == len(env.predicates)
+        text = render(doc, env, 've_english', vocabulary=overlay)
+        copied = parse_english(env, text, vocabulary=overlay)
+        assert copied == doc and meaning_id(env, copied) == meaning_id(env, doc)
+        assert env.to_dict() == original and path.read_bytes() == raw
+        for view in VIEWS:
+            assert render(doc, env, view, vocabulary=overlay) == render(doc, env, view)
+            assert render_vocabulary(env, view, vocabulary=overlay) == render_vocabulary(env, view)
+        legend = json.loads(english_legend(env, vocabulary=overlay))
+        assert legend['environment_id'] == env.environment_id
+        assert legend['overlay_digest'] == words.overlay_digest
+        assert all(e['review_status'] == 'reviewed' for e in legend['predicates'].values())
+
+
+def test_suggestions_are_deterministic_linted_and_require_explicit_acceptance(tmp_path):
+    from ve import suggest_vocabulary
+    from ve.english import english_legend
+    from test_cli import cli
+    data = vocabulary()
+    data['vocabulary']['predicates'] = {
+        'is_active': {'description': 'Recorded as active.', 'arguments': ['item']},
+        'fully_reviewed': {'description': 'Recorded review.', 'arguments': ['item']},
+        'has_access_to': {'description': 'Access.', 'arguments': ['agent', 'item']},
+        'owns': {'description': 'Ownership.', 'arguments': ['agent', 'item']},
+        'opaque_flag': {'description': 'Recorded as honest.', 'arguments': ['agent']},
+        'us_citizen': {'description': 'Citizenship.', 'arguments': ['agent']},
+        'is_not_safe': {'description': 'Negation is not guessed.', 'arguments': ['item']},
+    }
+    env = Environment(data)
+    overlay = suggest_vocabulary(env)
+    assert overlay == suggest_vocabulary(env)
+    assert set(overlay['predicates']) == {'is_active', 'fully_reviewed', 'has_access_to', 'owns', 'opaque_flag'}
+    assert all(entry['suggested'] is True for entries in (overlay['sorts'], overlay['predicates']) for entry in entries.values())
+    options = dict(vocabulary=overlay, accept_suggested_vocabulary=True)
+    assert not EnglishVocabulary(env, **options).issues
+    doc = Document((Forall('item', Unary('is_active', Var(0))),))
+    original = render(doc, env, 've_english')
+    with pytest.raises(VEError, match='accept-suggested-vocabulary'):
+        render(doc, env, 've_english', vocabulary=overlay)
+    text = render(doc, env, 've_english', **options)
+    assert text != original and parse_english(env, text, **options) == doc
+    assert render(doc, env, 've_english') == original
+    legend = json.loads(english_legend(env, **options))
+    assert all(legend['predicates'][name]['review_status'] == 'unreviewed' for name in overlay['predicates'])
+    env_path, overlay_path, source = tmp_path / 'env.json', tmp_path / 'words.json', tmp_path / 'source.ve'
+    env_path.write_text(json.dumps(data)); overlay_path.write_text(json.dumps(overlay))
+    source.write_text(render(doc, env, 've_strict'))
+    args = ('render', '--env', env_path, '--english-vocabulary', overlay_path, source)
+    assert cli(*args).returncode == 2
+    assert cli(*args, '--accept-suggested-vocabulary').stdout == text
+    assert cli('render', '--env', env_path, source, '--accept-suggested-vocabulary').stdout == text
+    assert json.loads(cli('suggest-vocabulary', '--env', env_path).stdout) == overlay
+
+
+@pytest.mark.parametrize('mutation', ['identity', 'arguments', 'description', 'unknown', 'bad_template', 'bad_negative', 'suggested_type', 'null_entry'])
+def test_overlay_rejects_semantic_fields_and_invalid_metadata(mutation):
+    from ve import suggest_vocabulary
+    overlay = suggest_vocabulary(ENV)
+    overlay['predicates']['active'] = {'verbalisation': '{0} is deployed', 'suggested': False}
+    entry = overlay['predicates']['active']
+    if mutation == 'identity': overlay['environment_id'] = 'wrong'
+    elif mutation == 'unknown': overlay['predicates']['missing'] = entry
+    elif mutation == 'bad_template': entry['verbalisation'] = '{0} is either'
+    elif mutation == 'bad_negative': entry['negative_verbalisation'] = '{0} is deployed'
+    elif mutation == 'suggested_type': entry['suggested'] = 'false'
+    elif mutation == 'null_entry': overlay['predicates']['active'] = None
+    else: entry[mutation] = ['item'] if mutation == 'arguments' else 'Changed semantics'
+    with pytest.raises(VEError): EnglishVocabulary(ENV, vocabulary=overlay, accept_suggested_vocabulary=True)
+
+
+def test_object_relative_guards_preserve_argument_positions_and_mixed_coordination():
+    data = vocabulary()
+    data['vocabulary']['predicates']['owns']['negative_verbalisation'] = '{0} does not own {1}'
+    env = Environment(data)
+    incoming = Binary('owns', Const('alice'), Var(0))
+    unary = Unary('active', Var(0))
+    parser = Lark(english_lark_grammar(env), parser='earley', lexer='dynamic_complete', ambiguity='explicit')
+    for guard in [incoming, Not(incoming), And(incoming, unary), And(unary, incoming),
+                  And(And(incoming, unary), Not(incoming)), And(incoming, And(unary, incoming))]:
+        text = roundtrip(Forall('item', Implies(guard, Unary('reviewed', Var(0)))), env)
+        assert 'Every service that ' in text and 'following' not in text
+        assert not list(parser.parse(text[0].lower() + text[1:]).find_data('_ambig'))
+    assert roundtrip(Forall('item', Implies(incoming, unary)), env) == 'Every service that alice owns is deployed.\n'
+    # An object relative is a noun restriction, never a stand-alone assertion.
+    assert roundtrip(Forall('item', incoming), env) == 'For every service, alice owns that service.\n'
+    outer_subject = Binary('owns', Var(1), Var(0))
+    text = roundtrip(Forall('agent', Forall('item', Implies(And(outer_subject, outer_subject), unary))), env)
+    assert 'that that person owns and that person owns' in text
+    assert not list(parser.parse(text[0].lower() + text[1:]).find_data('_ambig'))
+    with pytest.raises(VEError): parse_english(env, 'Every service alice owns.')

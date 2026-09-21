@@ -10,11 +10,13 @@ from .parser import parse
 from .printer import print_document
 
 
-def check(env, source, model=None, *, candidate_ast=None, max_evaluations=1_000_000, trace=True, surface="strict"):
+def check(env, source, model=None, *, candidate_ast=None, max_evaluations=1_000_000, trace=True, surface="strict",
+          vocabulary=None, accept_suggested_vocabulary=False):
     paraphrase = None
     if surface == "english":
         from .english import parse_english_with_metadata
-        parsed = parse_english_with_metadata(env, source)
+        parsed = parse_english_with_metadata(env, source, vocabulary=vocabulary,
+                                             accept_suggested_vocabulary=accept_suggested_vocabulary)
         document, paraphrase = parsed.document, parsed.paraphrase()
     elif surface == "strict":
         document = parse(env, source)
