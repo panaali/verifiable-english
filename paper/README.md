@@ -1,66 +1,59 @@
-# VE manuscript handoff: scored results
+# Negative-result and methods note
 
-This manuscript is on `paper/v1`, drafted by GPT-6 Astra. Scored E1/E1b and E4
-results now replace the abstract, contribution, experiment, and cost placeholders.
-The headline is a negative E1 primary conclusion and limited E4 checking benefits,
-with exploratory renderer contrasts kept separate. A qualitative policy use case
-and prospective replication/external-baseline comparisons are included.
-A subsequent Claude-side manuscript claim audit is pending.
+Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
+This revision implements sections B (existing-data reanalysis, first) and A
+(rewriting) of the two-review synthesis. No model calls, new experiments, or
+network access were used. The main conclusion is no demonstrated strict-VE
+benefit for 32B on short authored translations; 14B fluent effects remain
+exploratory and confounded with requirement wording. E4 is uptake of explicit
+checker findings, with post hoc lenient parsing presented and protocol failures
+reported separately. Frozen decisions are preserved in one compact table.
 
-## Build and inspect
+## Rebuild offline
 
 From `paper/`:
 
 ```sh
-XDG_CACHE_HOME="$PWD/.cache" TECTONIC_CACHE_DIR="$PWD/.cache/tectonic" make html pdf
-make placeholders
+UV_CACHE_DIR=/private/tmp/ve-uv-cache XDG_CACHE_HOME="$PWD/.cache" TECTONIC_CACHE_DIR="$PWD/.cache/tectonic" make html pdf
+python3 analysis/check_numbers.py
 pdfinfo build/paper.pdf
 ```
 
-The build succeeds for HTML and PDF, with **27 pages** and 13,284 rendered words.
-Only the existing offline artifact generation and build verification were run;
-no test suites, model calls, training, experiment reruns, or pushes were performed.
-The Makefile uses workspace-local XDG, Tectonic, and Matplotlib caches and
-`/private/tmp/ve-uv-cache`. Ignored outputs are `build/paper.html`,
-`build/paper.pdf`, `build/paper.md`, and `build/draft-status.json`. Tectonic may
-warn about temporary absolute image paths; the PDF includes build metadata and
-is not claimed byte-reproducible. Rendered pages were inspected for layout.
+The Makefile uses `uv --offline` and Tectonic `--only-cached`; dependencies and
+TeX resources must already be cached. Outputs are `build/paper.html` and
+`build/paper.pdf`. Analysis scripts and results are committed under `analysis/`
+and `generated/`. `analysis/README.md` specifies endpoints, corrections, exact
+sign-flip enumeration, interval assumptions, the cluster-robust logistic
+alternative, inputs, and reproduction commands. The E4 script's three external
+archive paths can be overridden with flags. Raw E1 trials are in the repository.
 
-## Frozen evidence
+The post hoc weakening subset uses oracle relation labels (243 candidates,
+nine templates), not attack names. For 32B/e3, strict VE approves 52 versus
+31 under symbols; the paired template increase is .088, 95% sign-flip interval
+[-.009, .214], p=.125. This is observed harm with uncertainty spanning zero.
 
-`sources/manifest.json` pins every copied source and its SHA-256. E1 results
-come from `cb2b7ff`, its preregistration from `555b3ae`, and E4's preregistration
-from `cbc6a80`. The supplied external E4 score JSON/table and selected runner
-log entries were first committed as snapshots before manuscript authoring.
-Use-case snapshots pin `usecases/main`; one Sonnet agent produced that pair,
-without cross-review. Source comments locate each quantitative block.
-The build never reads moving branches or makes model calls.
+`statsmodels` could not be installed from the offline cache. An unpenalized
+binomial logistic model with template-clustered sandwich covariance was fitted
+using cached SciPy; base items are nested within those clusters. It is not a
+random-intercept model. Twelve fixed authored templates limit both this model
+and sign-randomisation inference. All new analyses are POST HOC.
 
-E1's 32B P1 is inconclusive; P2 refutes a 0.05 reduction without establishing
-harm; the combined claim is inconclusive and not supported. E4's 14B result
-satisfies its negative-upper-bound and HA-noninferiority rule; -0.22 is only
-a planning reference. The 7B prose floor does not establish protection, while
-its secondary HA contrast shows acceptance recovery. The snapshots preserve
-historical interpretations even when the manuscript qualifies them, including
-the use-case report's overstatement of bounded NotFound as entailment proof.
+## Provenance and remaining boundaries
 
-## Remaining placeholders and evidence gaps
+`sources/manifest.json` verifies frozen historical snapshots. New input hashes
+are in `generated/posthoc-e1.json` and `posthoc-e4-e0-provenance.json`. The two
+critical reviews and synthesis were read from the supplied local reviews
+archive; this revision has not received another independent review.
 
-Only `RESULT-T-GATE` and `RESULT-T-TRAINING` remain; training was not run.
-E5 has materials and pilots only. E2 was not run after context preflight failed.
-Humans, other families in scored comparisons, external baselines, long-context
-and compaction settings, and training remain untested.
+No human has read the Lean theorem statements, templates, or preregistrations;
+there is no external preregistration timestamp. E4 replay is Python, not Lean.
+No local documentation citation for verified FOL provers was available, so the
+requested explicit citation-needed marker remains. E2/E5, training, human
+sign-off, source-engine translation tests, larger/more varied judges, and
+frontier-scale settings remain unrun. Planned round 2 lists synthesis 11--16.
 
-The supplied records do not give E1b raw correct counts or per-view failures,
-E1 actual model-token usage, or absolute dishonest-arm E4 HA intervals. The
-paper reports available template means, total failures, token proxies, and
-paired contrasts without inventing missing values. Exact E1 runtime revisions
-are not supplied by RESULTS.md. E4's generic manifest says a 300-token cap,
-while its frozen design says 800; per-prompt overrides cannot be established
-from the summary. This discrepancy is disclosed.
-
-The runner's about-12 L4 estimate is in the earlier committed handoff, not the
-new result log. E1's about-7.1 units is traceable. The supplied under-2 E4 units
-is absent from the cited log; recorded load/generation times instead imply
-about 2.44 units at the stated rate, excluding overhead. The paper flags this
-unresolved estimate and gives no combined bill or dollar conversion.
+The PDF has **10 pages of main text, 1 reference page, and 24 appendix pages** (35 total). The main text ends at Planned round 2. References and labeled appendices follow;
+appendices retain the full exploratory tables, 10 sampled 7B replies with task
+opening/final instruction, all 77 E0 disputes, training plans, non-runs, Rust
+benchmarks, compute accounting, and process history. Page inventory and build
+verification are recorded in `build/draft-status.json` and the revision audit.

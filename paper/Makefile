@@ -6,10 +6,15 @@ export XDG_CACHE_HOME := $(CURDIR)/.cache
 export TECTONIC_CACHE_DIR := $(CURDIR)/.cache/tectonic
 export MPLCONFIGDIR := $(CURDIR)/.cache/matplotlib
 export PYTHONHASHSEED := 0
-PYTHON := uv run --project .. --frozen --with matplotlib==3.11.2 python
+PYTHON := uv run --offline --project .. --frozen --with matplotlib==3.11.2 python
 PANDOC := pandoc build/paper.md --metadata-file=metadata.yaml --from=markdown+pipe_tables+footnotes --number-sections --resource-path=.
 
-.PHONY: html pdf generate assemble check placeholders pages clean
+.PHONY: html pdf generate reanalysis assemble check placeholders pages clean
+
+reanalysis:
+	mkdir -p .cache/matplotlib generated
+	$(PYTHON) analysis/reanalyse_e1.py > .cache/e1-reanalysis.log
+	python3 analysis/reanalyse_e4_e0.py > .cache/e4-e0-reanalysis.log
 
 generate:
 	mkdir -p .cache/tectonic .cache/matplotlib build generated
@@ -17,6 +22,7 @@ generate:
 	$(PYTHON) figures/gen_implementation_tables.py
 	$(PYTHON) figures/gen_judge_ladder.py
 	$(PYTHON) figures/gen_system.py
+	$(MAKE) reanalysis
 
 assemble: generate
 	python3 build.py
@@ -26,7 +32,7 @@ html: assemble
 	python3 verify.py --html
 
 pdf: assemble
-	$(PANDOC) --lua-filter=keep-tables.lua --pdf-engine=tectonic -o build/paper.pdf
+	$(PANDOC) --lua-filter=keep-tables.lua --pdf-engine=tectonic --pdf-engine-opt=--only-cached -o build/paper.pdf
 	python3 verify.py --pdf
 
 check: html
