@@ -1,0 +1,24 @@
+'VE.term_defined' does not depend on any axioms
+'VE.typed_empty' depends on axioms: [propext]
+'VE.typed_cons' depends on axioms: [propext]
+'VE.check_iff_wellFormed' depends on axioms: [propext, Quot.sound]
+'VE.eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.eval_false_iff_not_denote' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.document_eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.composition_sound' depends on axioms: [propext, Quot.sound]
+'VE.entails_cut' does not depend on any axioms
+'VE.countermodelCheck_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.no_certificate_countermodel_conflict' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Surface.propositional_printAux' depends on axioms: [propext]
+'VE.Surface.propositional_check' depends on axioms: [propext]
+'VE.Surface.consume_append' depends on axioms: [propext]
+'VE.Surface.propositional_depth_le_length' depends on axioms: [propext, Quot.sound]
+'VE.Surface.parseRaw_propositional' depends on axioms: [propext, Quot.sound]
+'VE.Surface.propositional_code_nonempty' depends on axioms: [propext]
+'VE.Surface.parseStatements_nonempty' does not depend on any axioms
+'VE.Surface.parseStatements_propositional' depends on axioms: [propext, Quot.sound]
+'VE.Surface.propositional_document_length' depends on axioms: [propext, Quot.sound]
+'VE.Surface.parse_print_propositional' depends on axioms: [propext, Quot.sound]
+'VE.Surface.normalize_idempotent_propositional' depends on axioms: [propext, Quot.sound]
+PASS: 23 named theorems; only the declared standard axiom allowlist.

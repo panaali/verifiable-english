@@ -20,7 +20,40 @@ Standing limits: no model training (no GPU yet), no pushing or publishing withou
 | ACE import and comparison with Canonical English | Positions VE against the closest existing systems on the same items | renderer + E1 items | 02:05 |
 | Open-weight weak judges on Colab GPUs (1B-8B instruct models), as the bottom of the judge ladder | If Haiku and Luna read FOL too well, the sandwich has no gap. Small open models give a real capability gap, full control of sampling seeds, and no CLI-context asymmetry | E1 dev pilot result; Colab via the user's browser (~200 compute units) | 02:15 |
 
+## Phase U: use-case corpus with a language-gap feedback loop (user request; start when views, argument layer and grammar are merged)
+
+One subagent per document writes it, or a well-chosen part of it, in VE, and records what VE cannot yet say.
+
+Order (orchestrator's decision): first the documents that feed the experiments, then the ones the user finds interesting.
+1. Items from the oversight/debate datasets used in E0-E5 (FOLIO stories, Cedar and Gatekeeper policies, a QuALITY-style
+   debate question). These decide experiment coverage, so they come first.
+2. A real debate: https://opentodebate.substack.com/p/should-america-end-birthright-citizenship . Formalise each side's
+   claims as a VE claim graph; mark which disagreements are about premises, which about definitions (shared predicates
+   with different senses), and which steps are certified. This is the closest real test of VE's debate story.
+3. Part of the US Constitution (for example the 14th Amendment, section 1, which the debate turns on) and part of
+   Claude's constitution: norms, exceptions and priorities.
+4. The main theorem and definitions of one mathematics paper, one computer-science paper and one physics paper.
+5. A recent Reuters or AP news article: attribution ("X said that"), time and numbers.
+
+Feedback loop. Each subagent works in `usecases/<name>/` and produces `source.md` (the excerpt, with licence),
+`claims.ve.md`, a coverage table (sentence -> expressed / expressed only through an opaque predicate / not expressible),
+and `GAPS.md`. A gap entry names the missing construct (modality or obligation, time, numbers and counting, functions,
+n-ary relations, definitions, attribution and quotation, vagueness, exceptions and priorities), gives the smallest
+example, and proposes syntax plus semantics. The subagent sends blocking gaps to the orchestrator while it works; the
+orchestrator triages them into language-extension tasks for Worker X (semantics, renderer rules, grammar, Lean), and
+the subagent retries after the merge. The aggregated gaps table becomes the evidence-based roadmap for VE v1.
+
 ## Ideas log
+
+- 02:50 From Canonical English (site read; repo study in progress, results go to `design/related-systems.md`):
+  (a) **Sense-bound vocabulary.** CE binds every content word to a WordNet sense URI. VE's worst weakness is a vague
+  predicate grounded differently in each branch. Requiring each predicate to carry a sense binding, and flagging a
+  predicate whose cited evidence uses different senses, is a cheap defence to test as an extra cell in E5.
+  (b) **Linter as gatekeeper.** CE puts its checker in the generation loop (rejection sampling, or grammar-constrained
+  decoding on open-weight models). VE's parser can do the same: model proposes VE, parser rejects, model repairs. This
+  gives E0 an honest autoformalization cost, and works with constrained decoding on Colab models.
+  (c) **Document format.** CE's Markdown + JSON-LD frontmatter is a good carrier for a VE environment plus claims.
+  (d) CE has no truth-conditional semantics, entailment or countermodels; that is where VE goes further.
 
 - 02:05 The untrusted-explainer contrast (E1) may generalise: any place where an overseen agent controls the
   presentation of a formal object (proof summaries, diff descriptions, test reports) is a place for a deterministic
