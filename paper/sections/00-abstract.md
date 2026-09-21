@@ -16,8 +16,9 @@ rendering for the weaker 14B judge is an exploratory replication hypothesis.
 Hosted small models read FOL near-perfectly in development calibration, so
 model readability is not the bottleneck on these tasks. Machine-checked
 components did help in a separate countermodel-display demonstration: for 14B,
-checked feedback reduced false approval by -0.267 [-0.392, -0.142], satisfying
-the preregistered protection rule; for 7B, it rescued honest acceptance by
+checked feedback reduced false approval (preregistered -0.267 [-0.392, -0.142],
+satisfying the frozen protection rule; -0.117 [-0.231, -0.002] under lenient
+parsing in a post hoc sensitivity analysis, not preregistered); for 7B, it rescued honest acceptance by
 +0.80 [0.56, 1.04] from near-universal rejection (95% intervals). Replay rejects
 fabricated countermodels by construction. A qualitative, single-agent policy
 exercise exposes a disputed predicate but leaves much of the argument outside

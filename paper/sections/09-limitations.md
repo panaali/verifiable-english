@@ -7,7 +7,10 @@ rendering for the weaker 14B judge remains an exploratory hypothesis. Hosted
 small models' near-perfect FOL calibration suggests that model readability is
 not the bottleneck on this inventory; it does not show that all formal
 statements are easy. The checked components did help: the E4 14B FA contrast
-passes its preregistered protection rule, and 7B's secondary HA contrast shows
+passes its preregistered protection rule (-0.267 [-0.392, -0.142]); lenient
+parsing gives a smaller reduction, -0.117 [-0.231, -0.002], in a post hoc
+sensitivity analysis, not preregistered. The interval still excludes zero,
+but differential parse failures inflate the frozen contrast. The 7B secondary HA contrast shows
 recovery from near-universal prose-arm rejection. Replay also rejects dishonest
 countermodel claims by construction. These are limited benefits of the
 checking/display package, not evidence that English rendering improves oversight.
@@ -92,8 +95,9 @@ substitution only when the surrounding binding and display path is correct.
 
 Humans, other model families in scored comparisons, external baselines,
 long-context retention, compaction, and training remain untested. E4 has
-failure-sensitive operational endpoints, a floor in 7B prose FA, and an
-unresolved output-cap provenance discrepancy. The source report omits E1b raw
+failure-sensitive operational endpoints, a floor in 7B prose FA, and a
+manifest default of 300 tokens overridden by the submitted 800-token caps
+(no reply reached the effective cap). The source report omits E1b raw
 correct counts and per-view failures and E1 model-token covariates. These gaps
 are disclosed rather than filled from rounded estimates or assumed settings.
 <!-- src: paper/sources/e1-results.md; paper/sources/e4-score-summary.json;

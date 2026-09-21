@@ -387,7 +387,7 @@ greedy decoding with seed 0 and no retries, an 8,192-token context, and an
 800-token response cap, increased equally from 400 because dev responses
 truncated. The increased cap itself was not calibrated. Exact token preflight
 must pass; inputs are never shortened to fit. Recorded runtime settings and
-the unresolved cap discrepancy are reported with the scored results below.
+the per-prompt cap override are reported with the scored results below.
 
 Neither judge passed the original gate (prose FA 20--60%, HA at least 70%,
 parseability at least 90%). They were retained explicitly for a pilot-sized
@@ -450,9 +450,24 @@ under the preregistered rule**: its upper bound is below zero, and the HA
 contrast +0.150 [+0.027, +0.273] has lower bound at least -0.05. The rule does
 not require the FA upper bound to be below -0.22; that number is a planning
 reference, not the efficacy threshold. The result does not establish a reduction
-of at least 22 points. Parse failures contribute to the operational effect:
-11 of the prose arm's 16 bad-item approvals are failed verdicts. The effect
-therefore includes more reliable verdict production, not just semantic correction.
+of at least 22 points. This remains the result and decision under the frozen rule.
+
+**Post hoc sensitivity analysis, not preregistered.** We recover the last JSON
+object containing an approve/reject verdict anywhere in each reply, allowing
+trailing text; all 720 replies then yield verdicts. For 14B, prose FA becomes
+7/60 and HA 48/60, versus checked FA 0/60 and HA 53/60. The paired FA contrast
+is -0.117 [-0.231, -0.002], a smaller 11.7-percentage-point reduction whose
+95% interval still excludes zero; the paired HA contrast is +0.083
+[-0.017, +0.184]. Parse failures were concentrated in the 14B prose arm
+(11 bad, 7 good), versus dishonest critic (2 bad, 2 good) and checked
+(0 bad, 0 good), with zero in every 7B arm and label, so worst-case scoring
+inflates the preregistered contrast. Of the 11 failed bad prose verdicts,
+lenient parsing recovers nine rejections and two approvals: nine of the
+16 strict false approvals disappear. The 14B dishonest arm becomes FA 7/60
+and HA 51/60. All 7B counts and intervals are unchanged. This sensitivity
+analysis supports a smaller reduction, without replacing the frozen decision.
+
+<!-- INCLUDE generated/e4-sensitivity-table.md -->
 
 For 7B, the FA contrast is 0.00 [0.00, 0.00]. It excludes the 22-point
 planning reduction but cannot identify protection at the prose-arm floor:
@@ -479,16 +494,21 @@ an English-surface effect or establish family-general efficacy.
 
 The scored manifests identify an A100-SXM4-80GB, vLLM 0.29.0, seed 0,
 temperature 0, and 8,192-token context. Model revisions are pinned in the
-snapshot. The generic runner arguments record `max_new_tokens: 300`, whereas
-the frozen design specifies an 800-token cap. The summary does not resolve
-whether per-prompt overrides applied; actual cap compliance is unverified.
-No truncations were recorded. This provenance discrepancy is retained rather
-than silently treating design settings as measured runtime settings.
+snapshot. Both manifests record a generic `max_new_tokens: 300` default,
+but all 360 submitted prompts specify `max_new_tokens: 800`, and the runner
+uses the per-prompt value in preference to that default. The effective cap
+was therefore 800, as preregistered. No reply reached 800: the maximum was
+658 tokens for 14B and 7 for 7B. For 14B, 257/360 replies reached or exceeded
+the manifest default of 300 (one exactly, 256 above); these are not cap hits.
+All 360 7B replies were seven tokens, containing only a verdict. No output
+has a length finish reason.
 <!-- src: paper/sources/e4-score-summary.json (metrics, contrasts, provenance);
-paper/sources/e4-score-table.md; paper/sources/e4-prereg-frozen.md at cbc6a80.
-Intervals rounded from the JSON to three decimals (7B HA prose to two).
-The 11 failed bad-item prose trials are the primary contrast's failed_trials;
-the checked arm has zero failures. -->
+paper/sources/e4-score-table.md; paper/sources/e4-prereg-frozen.md at cbc6a80;
+paper/analysis/e4_sensitivity.py; paper/generated/e4-sensitivity-table.md.
+Raw outputs and manifests: manage-agents/colab/results/e4-scored-a/out/;
+submitted overrides: manage-agents/colab/jobs/e4-scored-a/prompts.jsonl;
+runner: manage-agents/colab/repo/jobs_lib/vllm_judge.py, SamplingParams max_tokens.
+Intervals rounded to three decimals. -->
 
 ## E5: materials and pilots only; scored run not executed
 
