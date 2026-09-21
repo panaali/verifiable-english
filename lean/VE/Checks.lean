@@ -75,4 +75,20 @@ private def emptyModel : FiniteModel String where
 #guard !(Formula.eval emptyModel [] (.ex "service" .top))
 #guard Formula.eval emptyModel [] (.implies (.ex "service" .top) .bottom)
 
+-- Raw evaluation is total, but undefined terms must not enter typed claims.
+#guard Formula.eval emptyModel [] (.not (.eq (.const "nope") (.const "nope")))
+#guard !(Formula.check env [] (.not (.eq (.const "nope") (.const "nope"))))
+
+-- Direct regressions for the semantic gate, independent of earlier wire checks.
+private def modelVocabulary : Bridge.Vocabulary :=
+  ⟨["thing"], [("p1", ["thing"])], [("c_0", "thing")]⟩
+private def modelData : Bridge.ModelData :=
+  ⟨[("thing", ["a"])], [("c_0", ("thing", "a"))], [("p1", [[("thing", "a")]])]⟩
+#guard modelData.valid modelVocabulary
+#guard !({ modelData with constants := [] }).valid modelVocabulary
+#guard !({ modelData with constants := [("c_0", ("thing", "missing"))] }).valid modelVocabulary
+#guard !({ modelData with relations := [("p1", [[("other", "a")]])] }).valid modelVocabulary
+#guard !({ modelData with relations := [("p1", [[]])] }).valid modelVocabulary
+#guard !({ modelData with relations := [("undeclared", [[("thing", "a")]])] }).valid modelVocabulary
+
 end VE.Checks

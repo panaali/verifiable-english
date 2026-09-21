@@ -2,8 +2,15 @@
 
 This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external
 Lake dependencies. It formalizes the full function-free relational syntax and
-Tarski semantics, proves finite evaluator equivalence (P6), semantic assumption
-composition (P10), and finite countermodel soundness (P11). P4/P5 are proved for the full v0 syntax under the spec's declaration-name
+Tarski semantics and proves finite evaluator equivalence (P6). **P10 is conditional:**
+`composition_sound` is semantic cut over steps that already carry entailment
+proofs; the separate named graph checker requires an explicit sound-certificate
+premise and does not verify Python graph checking or certificate replay.
+**P11 requires admissible models:** `decodeModel_valid` now proves that every
+successful executable model decode supplies this premise; typed countermodel
+queries refute precisely `Entails.{0}`. JSON/wire-spec correspondence, Python
+refinement and compiler/IO correctness remain outside the proof.
+P4/P5 are proved for the full v0 syntax under the spec's declaration-name
 restrictions, including arbitrarily many preorder-named binders and statements. These results do not
 upgrade the complete Python acceptance path from `experimental`.
 
@@ -13,6 +20,7 @@ From this directory:
 lake build
 python3 audit.py
 lake exe ve_conformance ../conformance/evaluation.json
+lake exe ve_conformance ../conformance/countermodels.json
 ```
 
 From the repository root:
@@ -22,12 +30,24 @@ UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run --frozen python -m pytest -q
 python3 conformance/generate.py
 ```
 
+The current inventory contains **9 headline results and 71 supporting lemmas or
+corollaries**, not 80 independent verification milestones. The headline results
+are `eval_iff_denote`, `composition_sound`, `Graph.check_sound`,
+`Bridge.decodeModel_valid`, `Bridge.CountermodelQuery.refutes_sound`,
+`Surface.parse_print`, `Surface.normalize_idempotent`, `Surface.print_injective`,
+and `Surface.accepted_normalize_eq_iff`. The detailed inventories below and in
+[METATHEORY.md](METATHEORY.md) distinguish their premises and helper roles.
+
 `lake build` builds the semantic library, all proofs, direct executable regression
 checks, and the JSON executable. `audit.py` checks that every named theorem has a
 `#print axioms` entry, reruns those audits, and rejects any transitive dependency
 outside `propext`, `Classical.choice`, and `Quot.sound`. All named theorems in the current [audit](axioms.txt) pass;
 there are no `sorry`, new axioms, unsafe declarations, or native-evaluation
-proofs. The source audit additionally prohibits those escape hatches. The
+proofs. The source audit scans every project `.lean` file, including `Main.lean`,
+root modules and nested directories (excluding the `.lake` dependency/build
+cache). It prohibits `partial`, `opaque`, `extern`, `implemented_by`, `unsafe`,
+`native_decide`, `axiom`, `sorry`, `sorryAx` and `admit` as literal source tokens,
+conservatively including comments and quoted text. The
 upstream toolchain and its standard logical dependencies remain trusted.
 
 ## Representations and scope
@@ -36,19 +56,22 @@ upstream toolchain and its standard logical dependencies remain trusted.
   unary/binary predicate signatures, constant sorts, extrinsic well-formedness,
   executable type/scope checker, and nonempty closed typed `Document`.
 * `VE/Semantics.lean`: a common carrier `Type u` with a domain predicate for each
-  sort; constants and relations must satisfy `Structure.Admissible`. This is the
-  usual extrinsic presentation of many-sorted semantics. Arbitrary separate
-  carriers can be represented by their tagged union. Empty domains are allowed;
+  sort; constants and relations must satisfy `Structure.Admissible`. Domains may
+  overlap. Equivalence with separate disjoint carriers for typed formulas is
+  an explicit unproved interpretation assumption, explained below. Empty domains are allowed;
   constants inhabit their declared domains; constants need not be distinct.
   Cross-sort equality is rejected by typing. No carrier is assumed finite or
   inhabited. `Entails.{u}` ranges over **all admissible structures in universe
-  u**, not just supplied inventories. Statements are uniform in that universe.
+  u**, not just supplied inventories. Generic semantic statements are uniform in
+  that universe. JSON entities are `String × String : Type 0`, and JSON-backed
+  consequence uses `Bridge.JsonEntails`, an alias of **`Entails.{0}`**.
 * `VE/Finite.lean`: finite domain lists and relation extensions, their embedding
   into `Structure`, and a structurally recursive Boolean evaluator. An infinite
   ambient ID type is permitted; quantifiers use only the enumerated domain.
   Evaluation and denotation agree even on raw formulas. Semantic claims use
-  well-formed formulas, valid environments, and admissible structures. Invalid
-  raw terms produce false atoms; `term_defined` excludes them on typed inputs.
+  closed well-formed formulas and admissible structures. A raw term whose
+  interpretation is `none` produces false atoms; `term_defined` excludes this
+  behavior for typed terms under typed valuations in admissible structures.
 * `VE/Consequence.lean`: finite acyclic proof trees whose steps carry actual
   entailment proofs, cut/composition, and finite countermodel soundness.
 * `VE/ClaimGraph.lean`: executable named claim-graph checking, with explicit leaf
@@ -84,18 +107,27 @@ upstream toolchain and its standard logical dependencies remain trusted.
   results do not imply the contract's independent-grammar P1.
 * `VE/EnvironmentProofs.lean`: the executable finite vocabulary name validator
   implies precisely the declaration-name premise used by P4/P5. The entire JSON
-  decoder and semantic environment/model validators remain unproved.
-* `VE/Json.lean` and `VE/Bridge.lean`: executable, unproved restricted JSON decoder
-  and validators. Model entities are `(sort, local_id)` pairs. The bridge invokes
+  decoder and semantic environment validation remain unproved.
+* `VE/ModelProofs.lean`: the final executable finite-table admissibility gate
+  implies `M.Valid E`; successful `decodeModel` necessarily passes that gate.
+  The decoded-countermodel theorem discharges P11's validity premise, and
+  `CountermodelQuery.refutes_sound` includes closed typing and universe 0.
+  This proves decoder-output admissibility, not correspondence with the wire spec.
+* `VE/Json.lean` and `VE/Bridge.lean`: restricted JSON decoding and validators.
+  Model entities are `(sort, local_id)` pairs. The bridge invokes
   the very `Formula.eval`/`Document.eval` covered by P6, not a separate evaluator.
   A decoded document carries a proof of well-formedness from the proved checker.
-  Environment validation and model admissibility are **tested, not proved**.
+  Environment wire validation is tested; model-output admissibility is proved.
 
-The bridge reads a case or array of cases from a path or stdin. A case contains
+The bridge reads a case or array of cases from a path or stdin. An evaluation case contains
 `id`, `environment`, `model`, and indexed document `ast`; optional `source` must
 parse to that AST. Every case also exercises canonical printing/parsing. It
 returns `id`, `status`, `values`, whole-document `value`, and `canonical`.
-`expected` in fixtures is ignored. Exit 0 is successful evaluation (including
+An opt-in `kind: "countermodel"` case instead supplies an ordered `premises` AST
+array (possibly empty) and one `conclusion` AST. Its response contains `id`,
+`status`, and Boolean `refutes`, computed by `countermodelCheck`. Both premises
+and conclusion must be closed and typed. `expected` and `expected_refutes` in
+fixtures are ignored. Exit 0 is successful evaluation (including
 false), 1 is case rejection, and 2 is JSON or invocation failure. See
 [`../conformance/README.md`](../conformance/README.md) for the shared corpus.
 
@@ -111,6 +143,47 @@ an adversarial-input service, proof-certificate worker, or replacement Python CL
 
 The new full-language theorem inventory and precise lexical conditions are in
 [METATHEORY.md](METATHEORY.md). The table below records the original milestone.
+
+## Typing, universes and the carrier interpretation assumption
+
+`Entails` and the generic P6/P11 lemmas deliberately extend to raw formulas;
+they contain no hidden typing premise. Raw denotation is total: if `nope` has no
+interpretation, `not (@nope equals @nope)` evaluates true because its equality
+atom is false. Raw cross-sort equality can also observe overlapping domains.
+Neither is a typed VE claim. `Formula.WellFormed E []` supplies closure and typing;
+`Document E`, `Derivation`, accepted graph reports and `CountermodelQuery E`
+carry that evidence. For open terms, `term_defined` additionally needs an
+admissible structure and `Valuation.Typed S Γ ρ`. Typed equality is same-sort;
+there is no unique-names assumption. Executable inputs reject undeclared
+constants, free indices and cross-sort equality before evaluating them.
+
+`Bridge.JsonEntails E premises conclusion` is exactly `Entails.{0} E premises
+conclusion`, quantifying over all admissible common-carrier **Type 0** structures,
+including infinite ones. JSON-backed P9 expected types must use this alias (or
+explicit `Entails.{0}`); the corresponding generic graph certificate contract
+must be instantiated at universe 0. No P9 replay implementation is supplied.
+The finite JSON witness is not claimed here to refute an unspecified universe.
+
+**Unproved external interpretation assumption — disjoint carriers.** We assume,
+only when comparing this presentation with independent disjoint many-sorted
+semantics, that satisfaction of typed formulas and typed valuations is preserved
+by tagging each domain element with its sort. The intended carrier is
+`Σ s : String, {x : S.Carrier // S.domain s x}`; the domain of sort `s` contains
+only tags `s`. Declared constants receive their declared sort's tag, and each
+relation tuple receives the tags of its declared signature. A valuation is tagged
+according to its typing context. Within a fixed sort, tagging is injective, so
+same-sort equality and aliased constants are preserved; quantifiers range over
+bijective copies of their original domains, including empty ones. Formula
+induction should establish satisfaction preservation. Conversely, disjoint
+carriers embed in their tagged union with the same argument. For closed typed
+premises/conclusions this would give equivalence of the two consequence notions.
+
+That construction and induction are **not Lean-proved in this project**. They
+are not valid for unrestricted raw formulas that compare distinct sorts. No
+Lean declaration introduces this assumption, and none of the audited theorems
+depends on it; all proved consequence statements refer to the explicitly defined
+common-carrier semantics. Claims transferring them to a separate disjoint-carrier
+formalization remain conditional on this interpretation assumption.
 
 ## Original theorem inventory in plain words
 
@@ -152,16 +225,17 @@ certificate expected-type binding are not proved. P10 now also covers the Lean
 named graph checker, conditional on the explicit
 certificate-validity soundness premise. It does not verify the Python argument
 graph or certificate replay implementation. P11 requires an admissible model;
-the JSON decoder's successful
-validation has no proved refinement to that premise. There is no combined
-finite-evaluation acceptance theorem, cryptographic identity theorem, model
+successful `decodeModel` now proves that premise, and typed accepted queries
+refute `Entails.{0}`. This does not prove JSON text/wire correspondence or an
+end-to-end IO theorem. There is no cryptographic identity theorem, model
 search completeness theorem, or claim of a complete entailment procedure.
 
-Tests cover all 177 shared cases / 776 formulas, full-constructor canonical
+Tests cover all 701 shared evaluation cases / 4,912 formulas and 708 countermodel
+cases, full-constructor canonical
 print/parse agreement, ordinary binder names, sibling scopes, source/AST
 substitution, malformed models/ASTs/JSON, Unicode descriptions, and explicit
 negative surface cases. They are empirical correspondence evidence only.
-They do not prove grammar uniqueness, arbitrary decoder behavior, or Python/Lean
+They do not prove grammar uniqueness, wire-decoder correspondence, or Python/Lean
 refinement. IO/UTF-8 decoding, generated binaries, compiler/runtime correctness,
 resource behavior, interpretation of declarations and all empirical premises
 remain outside the proved scope. The project does not consume arbitrary
