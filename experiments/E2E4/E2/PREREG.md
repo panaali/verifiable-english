@@ -1,3 +1,4 @@
+Status: DRAFT — 2026-09-21; scored run deferred today: size-256 prompts reach ~40k tokens and exceed judge context.
 # E2 revision 2: proof length, remaining evidence, and checker visibility
 
 Draft amendment; **no live model calls in this revision**. The earlier pilot was
