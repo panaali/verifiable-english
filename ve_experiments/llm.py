@@ -328,14 +328,8 @@ class Verdict:
     data: dict
 
 
-def parse_verdict(text: str | None, allowed: Sequence[str] = ("approve", "reject"), key: str = "verdict") -> Verdict:
-    """Parse the final JSON object of a reply, strictly.
-
-    The reply may contain reasoning first, but it must END with one JSON object (optionally inside
-    a closing ``` fence) whose `key` is exactly one of `allowed`. Anything else raises
-    VerdictParseError: no keyword search, no case folding, no guessing. The caller scores a parse
-    failure as a failed trial rather than dropping it.
-    """
+def parse_final_json(text: str | None) -> dict:
+    """The JSON object that ENDS the reply (optionally inside a closing ``` fence), or VerdictParseError."""
     if text is None:
         raise VerdictParseError("no reply")
     body = text.strip()
@@ -356,6 +350,18 @@ def parse_verdict(text: str | None, allowed: Sequence[str] = ("approve", "reject
             continue
     if not isinstance(obj, dict):
         raise VerdictParseError("no JSON object at the end of the reply")
+    return obj
+
+
+def parse_verdict(text: str | None, allowed: Sequence[str] = ("approve", "reject"), key: str = "verdict") -> Verdict:
+    """Parse the final JSON object of a reply, strictly.
+
+    The reply may contain reasoning first, but it must END with one JSON object (optionally inside
+    a closing ``` fence) whose `key` is exactly one of `allowed`. Anything else raises
+    VerdictParseError: no keyword search, no case folding, no guessing. The caller scores a parse
+    failure as a failed trial rather than dropping it.
+    """
+    obj = parse_final_json(text)
     if key not in obj:
         raise VerdictParseError(f"final JSON object has no {key!r} field")
     value = obj[key]
