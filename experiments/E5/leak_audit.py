@@ -7,6 +7,7 @@ from collections import Counter, defaultdict
 import gzip
 import hashlib
 import json
+from pathlib import Path
 import re
 
 import numpy as np
@@ -14,7 +15,7 @@ from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 
-from .materials import HERE, CELLS, INSTRUCTIONS, DIFFICULTIES, render_cell, packed
+from .materials import HERE, CELLS, INSTRUCTIONS, DIFFICULTIES, render_cell, packed, parse_memo
 
 
 def tokens(text):
@@ -31,6 +32,62 @@ def feature_bound(examples, feature):
 def load_rows(split):
     with gzip.open(HERE / f"{split}.jsonl.gz", "rt") as f:
         return [r for line in f if (r := json.loads(line))["payload"]["_audit"]["stratum"] == "primary"]
+
+
+def dossier_features(text):
+    """Equality/duplication graph from PROMPT text, without resolving selectors.
+
+    Retain IDs, displayed ordinals, citation incidence and the entire equivalence
+    relation (not just duplicate counts). Compare both ordered and unordered
+    profiles, and also near-duplicates with profile names erased. No content
+    values, labels, construction data, tags or selector resolutions are features.
+    """
+    prefix, body = text.split("Evidence records:\n", 1)
+    body = body.split("\nBadge:", 1)[0].strip()
+    citations = [set(re.findall(r"\br\d+\b", line.split("Cites:", 1)[1]))
+                 for line in prefix.splitlines() if "Cites:" in line]
+    records = ([parse_memo(chunk) for chunk in re.split(r"\n(?=Memo r\d+\.)", body)]
+               if body.startswith("Memo ") else [json.loads(line) for line in body.splitlines()])
+    nodes, keys = [], {kind: [] for kind in ("ordered", "unordered", "names_erased")}
+    for ordinal, record in enumerate(records):
+        if "profiles" not in record:
+            continue
+        nodes.append((record["record_id"], ordinal,
+                      tuple(record["record_id"] in ids for ids in citations)))
+        profiles = record["profiles"]
+        keys["ordered"].append(packed(profiles))
+        keys["unordered"].append(packed(sorted(packed(p) for p in profiles)))
+        keys["names_erased"].append(packed(sorted(packed({k: v for k, v in p.items() if k != "profile"})
+                                                for p in profiles)))
+    partitions = {}
+    for kind, values in keys.items():
+        first = {}
+        partitions[kind] = [first.setdefault(value, i) for i, value in enumerate(values)]
+    cited = [any(node[2]) for node in nodes]
+    exact = keys["unordered"]
+    unmatched = any(not is_cited and not any(other == value and cited[j] for j, other in enumerate(exact))
+                    for value, is_cited in zip(exact, cited))
+    return {"uncited_unmatched": unmatched,
+            "signature": packed({"nodes": nodes, "equality_partitions": partitions})}
+
+
+def structural_report(rows, texts):
+    features = [dossier_features(text) for text in texts]
+    result = {}
+    for difficulty in DIFFICULTIES:
+        selected = [(row, feature) for row, feature in zip(rows, features)
+                    if row["payload"]["_audit"]["difficulty"] == difficulty]
+        pairs = defaultdict(list)
+        for row, feature in selected:
+            pairs[row["payload"]["_audit"]["pair"]].append(feature["signature"])
+        correct = sum(feature["uncited_unmatched"] == (row["label"] == "bad") for row, feature in selected)
+        result[difficulty] = {"n": len(selected), "uncited_unmatched_correct": correct,
+            "uncited_unmatched_accuracy": correct / len(selected),
+            "any_equality_rule_empirical_bound": feature_bound(
+                [(feature["signature"], row["label"]) for row, feature in selected], lambda x: x),
+            "pairs": len(pairs),
+            "identical_pair_structures": sum(len(pair) == 2 and pair[0] == pair[1] for pair in pairs.values())}
+    return result
 
 
 def numeric_features(text):
@@ -60,7 +117,7 @@ def numeric_features(text):
 
 def audit():
     rows = {s: load_rows(s) for s in ("dev", "scored")}
-    report = {"input_sha256": {s: hashlib.sha256((HERE / f"{s}.jsonl.gz").read_bytes()).hexdigest() for s in rows}, "renderer_sha256": hashlib.sha256((HERE / "materials.py").read_bytes()).hexdigest(), "seed": 5301, "training_split": "dev", "evaluation_split": "scored", "model_calls": 0,
+    report = {"input_sha256": {s: hashlib.sha256((HERE / f"{s}.jsonl.gz").read_bytes()).hexdigest() for s in rows}, "renderer_sha256": hashlib.sha256((HERE / "materials.py").read_bytes()).hexdigest(), "audit_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), "seed": 5301, "training_split": "dev", "evaluation_split": "scored", "model_calls": 0,
         "scope": "primary, balanced overall approval labels only; controls excluded and counted separately",
         "instruction_styles": list(INSTRUCTIONS),
         "preprocessing": "Drop only the randomized instruction-style first line, whose text is constant within style. Assert all remaining bytes identical across styles. Full record bodies, panels and dates are retained.",
@@ -68,6 +125,7 @@ def audit():
         "feature_sets": {"char_1_5": [1, 5], "char_6_12": [6, 12], "word_1_3": [1, 3],
                          "counts_positions_dates_lengths": "record/citation counts; date counts; anomaly-marker absolute ordinal/relative positions and record lengths"},
         "interpretation": "Held-out predictive accuracy, not an upper bound for these feature classes. Chance .50. Results >.60 trigger review before model scoring, not removal of inconvenient families.",
+        "structural_probes": "Uncited dossier matches no cited dossier => BAD; plus empirical majority-label bound for ANY function of the complete dossier-equality signature, including IDs/positions/citation incidence, ordered/unordered profiles and name-erased near-duplicates. This bound applies only to these features on this finite inventory, not arbitrary semantic classifiers or future items.",
         "cells": {}}
     for cell in CELLS:
         texts, labels = {}, {}
@@ -82,7 +140,9 @@ def audit():
         result = {"train_n": len(rows["dev"]), "test_n": len(rows["scored"]), "scored_accuracy": {},
                   "by_difficulty": {d: {} for d in DIFFICULTIES},
                   "by_family": {f: {} for f in ("merged_vocabulary", "scope_mismatch", "unsupported_leaf", "stale_evidence")},
+                  "by_grounding_variant": {v: {} for v in ("profile", "authorization_chain")},
                   "merged_tag_condition": {tag: {} for tag in ("honest", "forged")}, "pair_balance": {}}
+        result["dossier_structure"] = {split: structural_report(rows[split], texts[split]) for split in rows}
         for name, analyzer, sizes in (("char_1_5", "char", (1, 5)), ("char_6_12", "char", (6, 12)), ("word_1_3", "word", (1, 3)),
                                       ("counts_positions_dates_lengths", None, None)):
             if analyzer:
@@ -104,6 +164,9 @@ def audit():
             for family in result["by_family"]:
                 mask = np.array([r["payload"]["_audit"]["family"] == family for r in rows["scored"]])
                 result["by_family"][family][name] = float(np.mean(prediction[mask] == labels["scored"][mask]))
+            for variant in result["by_grounding_variant"]:
+                mask = np.array([r["payload"]["_audit"]["grounding_variant"] == variant for r in rows["scored"]])
+                result["by_grounding_variant"][variant][name] = float(np.mean(prediction[mask] == labels["scored"][mask]))
             for tag in ("honest", "forged"):
                 mask = np.array([r["payload"]["_audit"]["family"] == "merged_vocabulary" and r["payload"]["_audit"]["tag_condition"] == tag for r in rows["scored"]])
                 result["merged_tag_condition"][tag][name] = float(np.mean(prediction[mask] == labels["scored"][mask]))

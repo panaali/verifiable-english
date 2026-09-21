@@ -22,6 +22,7 @@ def main():
         graphs = {(r["template"], r["vocabulary_family"], r["control"], r["graph_size"]): ArgumentGraph.from_dict(r["graph"])
                   for line in f if (r := json.loads(line))}
     positions = defaultdict(Counter)
+    variants = Counter()
     results = Counter()
     for split in ("dev", "scored"):
         path = HERE / f"{split}.jsonl.gz"
@@ -38,6 +39,7 @@ def main():
                 assert result.status == p["checker"]["status"]
                 assert (support["label"] == "good" and result.composed) == (row["label"] == "good")
                 results[split, row["label"]] += 1
+                variants[split, a["difficulty"], a["stratum"], a["grounding_variant"], a["grounding_label"]] += 1
                 if a["grounding_label"] == "bad":
                     positions[f"{a['difficulty']}/flawed_leaf"][a["flawed_leaf"]] += 1
                     index = next(i for i, r in enumerate(p["records"], 1) if r["record_id"] == a["flawed_record"])
@@ -46,6 +48,7 @@ def main():
                     positions[f"{a['difficulty']}/{a['control']}"][a["invalid_edge"]] += 1
     report["experiments"]["E5"] = {"labels_proved": sum(results.values()), "counts": {f"{s}/{label}": n for (s, label), n in sorted(results.items())}}
     report["E5_positions"] = {k: dict(sorted(v.items())) for k, v in sorted(positions.items())}
+    report["E5_grounding_variants"] = {"/".join(key): n for key, n in sorted(variants.items())}
     lengths = defaultdict(list)
     for experiment in ("E2", "E4"):
         results = Counter()
