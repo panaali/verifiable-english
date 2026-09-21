@@ -69,6 +69,9 @@ fn run(
     maximum: u64,
 ) -> Result<Evaluation> {
     compatible(doc, model, maximum)?;
+    Ok(run_formulas(model, formulas, maximum))
+}
+fn run_formulas(model: &FiniteModel, formulas: &[Formula], maximum: u64) -> Evaluation {
     let mut ev = Evaluator {
         model,
         maximum,
@@ -88,7 +91,7 @@ fn run(
             }
         }
     }
-    Ok(Evaluation {
+    Evaluation {
         status: match result {
             Some(true) => "Satisfied",
             Some(false) => "Violated",
@@ -96,7 +99,39 @@ fn run(
         },
         value: result,
         evaluations: ev.work,
-    })
+    }
+}
+
+/// Benchmark-only prepared call: compatibility and selection occur outside
+/// the timed kernel. Private fields still prevent unchecked evaluator inputs.
+#[cfg(feature = "bench-internals")]
+pub struct EvaluationKernel<'a> {
+    model: &'a FiniteModel,
+    formula: &'a Formula,
+    maximum: u64,
+}
+#[cfg(feature = "bench-internals")]
+impl<'a> EvaluationKernel<'a> {
+    pub fn new(
+        doc: &'a Document,
+        index: usize,
+        model: &'a FiniteModel,
+        maximum: u64,
+    ) -> Result<Self> {
+        compatible(doc, model, maximum)?;
+        let formula = doc
+            .formulas()
+            .get(index)
+            .ok_or_else(|| Error::new("InvalidInput", "formula index out of range"))?;
+        Ok(Self {
+            model,
+            formula,
+            maximum,
+        })
+    }
+    pub fn evaluate(&self) -> Evaluation {
+        run_formulas(self.model, std::slice::from_ref(self.formula), self.maximum)
+    }
 }
 pub fn evaluate(doc: &Document, model: &FiniteModel, maximum: u64) -> Result<Evaluation> {
     run(doc, model, doc.formulas(), maximum)
