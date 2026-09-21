@@ -1,0 +1,41 @@
+{
+  "complete": true,
+  "domains": {
+    "claude_model": ["claude"],
+    "mechanism": ["board_oversight", "red_team_review"],
+    "guideline": ["csam_guideline", "weapons_guideline"],
+    "principal": ["alice", "acme_corp"],
+    "action": ["helpful_answer", "harmful_exploit"],
+    "overseer": ["anthropic", "safety_reviewer"],
+    "property": ["safety", "ethics", "guidelines", "helpfulness"],
+    "situation": ["conflict_case"]
+  },
+  "constants": {
+    "claude": "claude",
+    "safety": "safety",
+    "ethics": "ethics",
+    "guidelines": "guidelines",
+    "helpfulness": "helpfulness",
+    "anthropic": "anthropic"
+  },
+  "relations": {
+    "current_claude_model": [["claude"]],
+    "ought_have_core_values": [["claude"]],
+    "appropriate": [["board_oversight"], ["red_team_review"]],
+    "undermines": [],
+    "honest": [["claude"]],
+    "inappropriately_harmful": [["harmful_exploit"]],
+    "performs": [["claude", "helpful_answer"]],
+    "relevant": [["csam_guideline"], ["weapons_guideline"]],
+    "follows": [["claude", "csam_guideline"], ["claude", "weapons_guideline"]],
+    "interacts": [["claude", "alice"], ["claude", "acme_corp"]],
+    "benefits": [["claude", "alice"], ["claude", "acme_corp"]],
+    "outranks": [["safety", "ethics"], ["ethics", "guidelines"], ["guidelines", "helpfulness"]],
+    "contends_for": [["conflict_case", "ethics"], ["conflict_case", "helpfulness"]],
+    "violates_hard_constraint": [],
+    "ought_follow": [["conflict_case", "ethics"]],
+    "undermines_check": [],
+    "sanctioned_check": [["anthropic"], ["safety_reviewer"]],
+    "bound_to_obey": []
+  }
+}

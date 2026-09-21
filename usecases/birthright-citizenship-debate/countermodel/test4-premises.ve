@@ -1,0 +1,3 @@
+for every person x0, (if (x0 is has_noncitizen_domiciled_parent), then (x0 is subject_to_jurisdiction)).
+for every person x0, (if (x0 is has_noncitizen_undocumented_parent), then (x0 is subject_to_jurisdiction)).
+@child is has_noncitizen_undocumented_parent.

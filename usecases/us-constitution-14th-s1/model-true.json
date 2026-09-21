@@ -1,0 +1,24 @@
+{
+  "complete": true,
+  "domains": {
+    "person": ["alice", "bob"],
+    "state": ["arizona"],
+    "law": ["law_a"]
+  },
+  "constants": {},
+  "relations": {
+    "born_in_us": [["alice"]],
+    "naturalized_in_us": [["bob"]],
+    "subject_to_us_jurisdiction": [["alice"], ["bob"]],
+    "us_citizen": [["alice"], ["bob"]],
+    "resides_in": [["alice", "arizona"], ["bob", "arizona"]],
+    "citizen_of_state": [["alice", "arizona"], ["bob", "arizona"]],
+    "makes_law": [["arizona", "law_a"]],
+    "enforces_law": [["arizona", "law_a"]],
+    "abridges_priv_or_imm": [],
+    "deprives": [["arizona", "bob"]],
+    "affords_due_process": [["arizona", "bob"]],
+    "within_jurisdiction_of": [["alice", "arizona"], ["bob", "arizona"]],
+    "denies_equal_protection": []
+  }
+}

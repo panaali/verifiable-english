@@ -1,0 +1,4 @@
+for every person x0, (if (((x0 is born_in_us) or (x0 is naturalized_in_us)) and (x0 is subject_to_us_jurisdiction)), then ((x0 is us_citizen) and (for every state x1, (if (x0 resides_in x1), then (x0 citizen_of_state x1))))).
+for every state x0, (for every law x1, (for every person x2, (if (((x0 makes_law x1) or (x0 enforces_law x1)) and (x2 is us_citizen)), then (not (x1 abridges_priv_or_imm x2))))).
+for every state x0, (for every person x1, (if (x0 deprives x1), then (x0 affords_due_process x1))).
+for every state x0, (for every person x1, (if (x1 within_jurisdiction_of x0), then (not (x0 denies_equal_protection x1)))).
