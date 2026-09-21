@@ -1,0 +1,30 @@
+[
+  {
+    "overlay_digest": "6669967f3970d60ef2aaa08ab007b43fa5cda8740a466b489e402d2a0737df3e",
+    "reviewer": "GPT-6 Astra (Worker X)",
+    "date": "2026-09-21",
+    "overlay": "usecases/birthright-citizenship-debate/environment.english.json",
+    "scope": "Wording and ordered argument roles checked against the bound environment declarations; opaque qualifications remain in the declarations and GAPS.md."
+  },
+  {
+    "overlay_digest": "8411f393465a93ed63fdb8de8ee1d78ce32efb7265660ae6458a986ab3062088",
+    "reviewer": "GPT-6 Astra (Worker X)",
+    "date": "2026-09-21",
+    "overlay": "usecases/claude-constitution-excerpt/environment.english.json",
+    "scope": "Wording and ordered argument roles checked against the bound environment declarations; opaque qualifications remain in the declarations and GAPS.md."
+  },
+  {
+    "overlay_digest": "1ac72251627cbccc6fb401eff18cdf8685218444191fbc5c0f43da0c0179e1e6",
+    "reviewer": "GPT-6 Astra (Worker X)",
+    "date": "2026-09-21",
+    "overlay": "usecases/news-article/environment.english.json",
+    "scope": "Wording and ordered argument roles checked against the bound environment declarations; opaque qualifications remain in the declarations and GAPS.md."
+  },
+  {
+    "overlay_digest": "ae4741bfe4a84aab00116945191867317df7b2b58837bfda3c5d11a070c76d64",
+    "reviewer": "GPT-6 Astra (Worker X)",
+    "date": "2026-09-21",
+    "overlay": "usecases/us-constitution-14th-s1/environment.english.json",
+    "scope": "Wording and ordered argument roles checked against the bound environment declarations; opaque qualifications remain in the declarations and GAPS.md."
+  }
+]

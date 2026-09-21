@@ -36,6 +36,8 @@ def _emit(value):
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="python -m ve", description="Experimental VE v0 language checking")
     commands = parser.add_subparsers(dest="command", required=True)
+    suggestions = commands.add_parser("suggest-vocabulary", help="emit unreviewed English vocabulary candidates")
+    suggestions.add_argument("--env", required=True)
     grammar = commands.add_parser("grammar", help="export an environment-specific decoding grammar")
     grammar.add_argument("--env", required=True, help="environment JSON file")
     grammar.add_argument("--dialect", choices=("lark", "gbnf", "ebnf"), default="lark")
@@ -57,6 +59,11 @@ def main(argv=None):
     for command in ("parse", "format", "render", "evaluate", "check", "import-fol", "countermodel"):
         sub = commands.add_parser(command)
         sub.add_argument("--env", required=True, help="environment JSON file")
+        sub.add_argument("--english-vocabulary", help="display-only English vocabulary overlay JSON")
+        sub.add_argument("--accept-suggested-vocabulary", action="store_true",
+                         help="explicitly accept unreviewed suggested wording")
+        sub.add_argument("--surface", choices=("strict", "english"),
+                         help="input language; render defaults to the canonical strict view")
         if command == "countermodel":
             sub.add_argument("--premises", help="VE document; omit for no premises")
             sub.add_argument("--conclusion", required=True, help="exactly one VE statement")
@@ -70,8 +77,8 @@ def main(argv=None):
         else:
             sub.add_argument("source", help="VE source or, for import-fol, FOL JSON; '-' reads stdin")
         if command in ("render", "import-fol"):
-            sub.add_argument("--view", choices=("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent",
-                                                 "canonical", "natural"), default="ve_strict")
+            sub.add_argument("--view", choices=("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent", "ve_english",
+                                                 "canonical", "natural"), default=None)
             sub.add_argument("--with-legend", action="store_true", help="include the shared vocabulary legend")
             sub.add_argument("--legend-style", choices=LEGEND_STYLES, default="json",
                              help="vocabulary legend format (used with --with-legend)")
@@ -86,6 +93,10 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         env = Environment.from_json(_read(args.env))
+        if args.command == "suggest-vocabulary":
+            from . import suggest_vocabulary
+            _emit(suggest_vocabulary(env))
+            return 0
         if args.command == "view-lengths":
             _emit(measure_jsonl_lengths(args.source, env, field=args.field,
                                        source_format=args.source_format, naming=args.naming,
@@ -100,14 +111,43 @@ def main(argv=None):
             else:
                 print(export_grammar(env, wrapper=args.wrapper, **options), end="")
             return 0
+        from . import suggest_vocabulary
+        from .english_vocabulary import overlay_provenance
+        surface = args.surface or "strict"
+        display_view = "ve_strict" if args.surface == "strict" else "ve_english"
+        if hasattr(args, "view") and args.view is None:
+            args.view = "ve_english" if args.command == "render" and args.surface == "english" else "ve_strict"
+
+        def load_english_options():
+            vocabulary = loads_json(_read(args.english_vocabulary)) if args.english_vocabulary else None
+            if vocabulary is None and args.accept_suggested_vocabulary:
+                vocabulary = suggest_vocabulary(env)
+            return (dict(vocabulary=vocabulary, accept_suggested_vocabulary=args.accept_suggested_vocabulary),
+                    overlay_provenance(vocabulary))
+
+        defer_display_options = surface == "strict" and args.command in ("check", "evaluate", "parse", "countermodel")
+        english_options, provenance = ({}, {}) if defer_display_options else load_english_options()
+        if (surface == "english" or getattr(args, "view", None) == "ve_english") and provenance.get("overlay_digest"):
+            print(json.dumps(provenance), file=sys.stderr)
+        paraphrases = {}
+
+        def read_document(path):
+            source = _read(path, MAX_SOURCE_BYTES)
+            if surface == "english":
+                from .english import parse_english_with_metadata
+                parsed = parse_english_with_metadata(env, source, **english_options)
+                paraphrases[path] = parsed.paraphrase()
+                return parsed.document
+            return parse(env, source)
+
         if args.command == "countermodel":
-            premises = parse(env, _read(args.premises, MAX_SOURCE_BYTES)).formulas if args.premises else ()
-            conclusion = parse(env, _read(args.conclusion, MAX_SOURCE_BYTES))
+            premises = read_document(args.premises).formulas if args.premises else ()
+            conclusion = read_document(args.conclusion)
             if len(conclusion.formulas) != 1:
                 raise VEError("A claimed entailment requires exactly one conclusion statement")
             nonvacuous = None
             if args.nonvacuous_for:
-                document = parse(env, _read(args.nonvacuous_for, MAX_SOURCE_BYTES))
+                document = read_document(args.nonvacuous_for)
                 if len(document.formulas) != 1:
                     raise VEError("--nonvacuous-for requires exactly one statement")
                 nonvacuous = document.formulas[0]
@@ -116,7 +156,18 @@ def main(argv=None):
                                        nonempty_domains=args.nonempty_domains, nonvacuous_for=nonvacuous,
                                        semantic_nonvacuity=args.semantic_nonvacuity,
                                        max_models=args.max_models, max_evaluations=args.max_evaluations)
-            _emit(result.to_dict())
+            record = result.to_dict()
+            try:
+                if defer_display_options:
+                    english_options, provenance = load_english_options()
+                record["conclusion_text"] = render(conclusion, env, display_view, **english_options)
+                record.update(provenance)
+            except Exception as exc:
+                record["display_omitted"] = type(exc).__name__
+            if paraphrases:
+                record["paraphrases"] = paraphrases
+                record.update(provenance)
+            _emit(record)
             return 0 if result.status == "Found" else (3 if result.status == "NotFound" else 4)
         if args.command == "import-fol":
             document = document_from_named_fol(env, loads_json(_read(args.source)))
@@ -125,7 +176,7 @@ def main(argv=None):
                 return 0
             view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(args.view, args.view)
             renderer = render_cell if args.with_legend else render
-            options = {"style": args.legend_style} if args.with_legend else {}
+            options = dict(english_options, **({"style": args.legend_style} if args.with_legend else {}))
             print(renderer(document, env, view, args.naming, **options), end="")
             return 0
         source = _read(args.source, MAX_SOURCE_BYTES)
@@ -135,19 +186,36 @@ def main(argv=None):
                          if getattr(args, "candidate_ast", None) else None)
             record = check(env, source, model, candidate_ast=candidate,
                            max_evaluations=getattr(args, "max_evaluations", 1_000_000),
-                           trace=not getattr(args, "no_trace", False))
+                           trace=not getattr(args, "no_trace", False), surface=surface, **english_options)
+            from .ast import document_from_data
+            # Display is outside the trusted verdict path, including vocabulary
+            # validation and unexpected renderer failures.
+            try:
+                if defer_display_options:
+                    english_options, provenance = load_english_options()
+                display = render(document_from_data(env, record["ast"]), env, display_view, **english_options)
+                record.update(display_text=display, **provenance)
+            except Exception as exc:
+                record["display_omitted"] = type(exc).__name__
             _emit(record)
             if model is None:
                 return 0
             return {"Satisfied": 0, "Violated": 1, "ResourceLimit": 4}[record["evaluation"]["status"]]
-        document = parse(env, source)
+        if surface == "english":
+            from .english import parse_english_with_metadata
+            parsed = parse_english_with_metadata(env, source, **english_options)
+            document = parsed.document
+            if parsed.paraphrase()["changed"]:
+                print(json.dumps({"paraphrase": parsed.paraphrase()}, ensure_ascii=False, indent=2), file=sys.stderr)
+        else:
+            document = parse(env, source)
         if args.command == "render":
             if args.view == "natural" and not args.with_legend:
                 _emit(natural_document(env, document, naming=args.naming).to_dict())
                 return 0
             view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(args.view, args.view)
             renderer = render_cell if args.with_legend else render
-            options = {"style": args.legend_style} if args.with_legend else {}
+            options = dict(english_options, **({"style": args.legend_style} if args.with_legend else {}))
             print(renderer(document, env, view, args.naming, **options), end="")
         else:
             print(print_document(env, document), end="")

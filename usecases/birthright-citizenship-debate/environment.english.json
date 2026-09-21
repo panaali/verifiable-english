@@ -1,0 +1,45 @@
+{
+  "format": "ve.english-vocabulary@1",
+  "environment_id": "8937bcba42188c0dab8fe6d85252d527e99cc0c91a6f9ff9f62d42e6f029b3d5",
+  "sorts": {
+    "person": {
+      "verbalisation": {
+        "singular": "person",
+        "plural": "people"
+      },
+      "suggested": false
+    }
+  },
+  "predicates": {
+    "born_in_us": {
+      "verbalisation": "{0} is born in the United States",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not born in the United States"
+    },
+    "us_citizen": {
+      "verbalisation": "{0} is a US citizen",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not a US citizen"
+    },
+    "subject_to_jurisdiction": {
+      "verbalisation": "{0} is subject to US jurisdiction",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not subject to US jurisdiction"
+    },
+    "has_noncitizen_domiciled_parent": {
+      "verbalisation": "{0} has a noncitizen parent domiciled in the United States",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not have a noncitizen parent domiciled in the United States"
+    },
+    "has_noncitizen_undocumented_parent": {
+      "verbalisation": "{0} has an undocumented noncitizen parent",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not have an undocumented noncitizen parent"
+    },
+    "has_noncitizen_temporary_parent": {
+      "verbalisation": "{0} has a noncitizen parent temporarily in the United States",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not have a noncitizen parent temporarily in the United States"
+    }
+  }
+}
