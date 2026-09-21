@@ -15,7 +15,9 @@ SPECS = [{"id": "org/model-a"}, {"id": "org/model-b", "max_model_len": 1536}]
 
 def make_exp(root, judges=(A, B, "judge-a")):
     conds = [Condition("fol", lambda p: f"FOL view: {p['text']}"), Condition("ve", lambda p: f"VE view: {p['text']}")]
-    return Experiment("EX", assign_splits(make_items(), 0.25, seed=1), conds, list(judges), root=root)
+    split_file = root / "experiments" / "EX" / "splits.json"
+    return Experiment("EX", assign_splits(make_items(), 0.25, seed=1, split_file=split_file), conds, list(judges), root=root,
+                      split_file=split_file)
 
 
 def fake_reply(model, row):
@@ -92,7 +94,7 @@ def test_exporting_the_scored_split_needs_the_committed_prereg(repo, tmp_path): 
     client = LLMClient(cache_dir=tmp_path / "cache")
     with pytest.raises(PreregistrationError):
         experiment_requests(exp, "scored", client)
-    (repo / "experiments" / "EX").mkdir(parents=True)
+    (repo / "experiments" / "EX").mkdir(parents=True, exist_ok=True)
     (repo / "experiments" / "EX" / "PREREG.md").write_text(PREREG)
     git(repo, "add", ".")
     git(repo, "commit", "-qm", "prereg")

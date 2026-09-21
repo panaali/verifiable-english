@@ -31,7 +31,7 @@ from pathlib import Path
 from typing import Protocol
 
 from .llm import OFFLINE_PREFIX, LLMClient, LLMResult, Request, cache_key
-from .runner import DesignError, Experiment, build_prompts, plan_trials, require_committed, require_prereg
+from .runner import DesignError, Experiment, build_prompts, check_design, plan_trials, require_scored_ready
 
 COLAB_DIR = Path("/Users/seyran/code/manage-agents/colab")
 TOKEN_FILE = Path("/Users/seyran/Downloads/hugginface-access-token.txt")
@@ -72,9 +72,8 @@ def experiment_requests(exp: Experiment, split: str, client: LLMClient) -> list[
     if not judges:
         raise DesignError("the experiment has no batch judge")
     if split == "scored":
-        require_prereg(exp.dir, exp.root)
-        if exp.split_file is not None:
-            require_committed(exp.split_file, exp.root)
+        check_design(exp)
+        require_scored_ready(exp, [it for it in exp.items if it.split == split])
     trials = [t for t in plan_trials(exp, split) if t.judge in judges]
     prompts = build_prompts(exp, trials)
     system = client.default_system if exp.system is None else exp.system

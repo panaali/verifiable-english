@@ -1,0 +1,36 @@
+{
+ "split": "scored",
+ "hedging_markers_dropped_as_requirement_words": [
+  "may",
+  "unless"
+ ],
+ "n_good": 280,
+ "n_bad": 594,
+ "authors": [
+  "gpt-6-astra"
+ ],
+ "length": {
+  "smd": -0.2234590982647629,
+  "diff": -0.42539306060789006,
+  "sd": 1.9036730386509841,
+  "mean_good": 59.85,
+  "mean_bad": 59.46801346801347,
+  "strata": 12,
+  "strata_skipped": 0
+ },
+ "hedging": {
+  "smd": 0.11594780019271674,
+  "diff": 0.017247456230128584,
+  "sd": 0.1487519056115045,
+  "mean_good": 0.010714285714285714,
+  "mean_bad": 0.025252525252525252,
+  "strata": 12,
+  "strata_skipped": 0
+ },
+ "loto_style_auc": 0.7764670514670514,
+ "pass": {
+  "B1_length": false,
+  "B2_hedging": true,
+  "B3_style_classifier": false
+ }
+}

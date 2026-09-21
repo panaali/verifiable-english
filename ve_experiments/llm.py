@@ -37,7 +37,13 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
 class BackendError(RuntimeError):
-    """A model call failed in a way that may succeed on retry."""
+    """A model call failed in a way that may succeed on retry. `tool_events` lists anything the model did
+    besides writing text before it failed; the client carries them over to the retry, so a judge that ran a
+    tool in a failed attempt stays invalid even if a later attempt answers cleanly."""
+
+    def __init__(self, message: str, tool_events: Sequence[str] = ()):
+        super().__init__(message)
+        self.tool_events = tuple(tool_events)
 
 
 @dataclass(frozen=True)
@@ -107,7 +113,8 @@ def split_model(model: str) -> tuple[str, dict[str, str]]:
     return base, settings
 
 
-def _run(cmd: Sequence[str], stdin: str, timeout_s: float, cwd: Path, env: dict | None = None) -> str:
+def _run(cmd: Sequence[str], stdin: str, timeout_s: float, cwd: Path, env: dict | None = None,
+         events_from: Callable[[str], list[str]] | None = None) -> str:
     try:
         proc = subprocess.run(
             list(cmd), input=stdin, capture_output=True, text=True, timeout=timeout_s, cwd=cwd,
@@ -119,15 +126,23 @@ def _run(cmd: Sequence[str], stdin: str, timeout_s: float, cwd: Path, env: dict 
         raise BackendError(f"cannot start {cmd[0]}: {exc}") from exc
     if proc.returncode != 0:
         tail = (proc.stderr or proc.stdout or "").strip()[-500:]
-        raise BackendError(f"{cmd[0]} exited {proc.returncode}: {tail}")
+        raise BackendError(f"{cmd[0]} exited {proc.returncode}: {tail}", events_from(proc.stdout or "") if events_from else ())
     return proc.stdout
+
+
+CLAUDE_ISOLATION = ("--safe-mode", "--setting-sources", "", "--disable-slash-commands")
+"""No ambient context for Claude judges: --safe-mode disables CLAUDE.md, skills, plugins, hooks, MCP servers,
+custom commands and agents, output styles; --setting-sources "" loads no user, project or local settings;
+--system-prompt replaces the default prompt; the cwd is an empty temporary directory. Checked live on
+2026-09-21: the model reports no context besides the message. NOT disabled, because no flag exists: admin-managed
+(policy) settings, and about 450 input tokens that the CLI adds to every call."""
 
 
 def claude_backend(model: str, system: str, prompt: str, timeout_s: float, cwd: Path) -> RawReply:
     base, settings = split_model(model)
     cmd = [
         "claude", "-p", "--model", base, "--output-format", "json",
-        "--tools", "", "--strict-mcp-config", "--system-prompt", system,
+        "--tools", "", "--strict-mcp-config", *CLAUDE_ISOLATION, "--system-prompt", system,
     ]  # fmt: skip
     env = {"MAX_THINKING_TOKENS": settings["thinking"]} if "thinking" in settings else None
     out = _run(cmd, prompt, timeout_s, cwd, env)
@@ -165,6 +180,24 @@ not plain text is recorded, and the runner scores such a trial as invalid."""
 _CODEX_TEXT_ITEMS = ("agent_message", "reasoning")
 
 
+def codex_tool_events(out: str) -> list[str]:
+    """Every non-text item in a codex event stream, also when the run failed afterwards."""
+    found: list[str] = []
+    for line in out.splitlines():
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        item = event.get("item") or {}
+        if event.get("type", "").startswith("item.") and item.get("type") not in _CODEX_TEXT_ITEMS:
+            if event.get("type") == "item.completed" or item.get("type") == "command_execution":
+                found.append(f"codex:{item.get('type')}:{str(item.get('command') or item.get('name') or '')[:120]}")
+    return list(dict.fromkeys(found))
+
+
 def parse_codex_events(out: str) -> RawReply:
     text: str | None = None
     usage: dict = {}
@@ -186,9 +219,9 @@ def parse_codex_events(out: str) -> RawReply:
         elif event.get("type") == "turn.completed":
             usage = event.get("usage") or {}
         elif event.get("type") in ("error", "turn.failed"):
-            raise BackendError(f"codex reported: {json.dumps(event)[-300:]}")
+            raise BackendError(f"codex reported: {json.dumps(event)[-300:]}", tool_events)
     if text is None:
-        raise BackendError(f"codex produced no agent message: {out[-300:]!r}")
+        raise BackendError(f"codex produced no agent message: {out[-300:]!r}", tool_events)
     return RawReply(
         text=text,
         input_tokens=usage.get("input_tokens"),
@@ -204,7 +237,7 @@ def codex_backend(model: str, system: str, prompt: str, timeout_s: float, cwd: P
     extra = ["-c", f'model_reasoning_effort="{settings["effort"]}"'] if "effort" in settings else []
     cmd = ["codex", "exec", "-m", base, *CODEX_FLAGS, *extra, "-"]
     full = f"{system}\n\n{prompt}" if system else prompt
-    return parse_codex_events(_run(cmd, full, timeout_s, cwd))
+    return parse_codex_events(_run(cmd, full, timeout_s, cwd, events_from=codex_tool_events))
 
 
 OFFLINE_PREFIX = "vllm:"
@@ -320,6 +353,7 @@ class LLMClient:
     def _call_uncached(self, model: str, system: str, prompt: str, seed: int, key: str, identity: str = "") -> LLMResult:
         backend = self.backend or default_backend_for(model)
         error = "no attempt made"
+        carried: list[str] = []  # tool events of failed attempts; they invalidate the trial whatever comes later
         start = time.monotonic()
         for attempt in range(1, self.retries + 1):
             with self._sem_for(model):
@@ -328,6 +362,7 @@ class LLMClient:
                     reply = backend(model, system, prompt, self.timeout_s, self._neutral_cwd())
                 except BackendError as exc:
                     error = str(exc)
+                    carried += [f"attempt{attempt}:{e}" for e in exc.tool_events]
                 else:
                     if reply.text.strip():
                         return LLMResult(
@@ -335,7 +370,7 @@ class LLMClient:
                             latency_s=round(time.monotonic() - t0, 3), attempts=attempt,
                             input_tokens=reply.input_tokens, output_tokens=reply.output_tokens,
                             cached_input_tokens=reply.cached_input_tokens,
-                            tool_events=tuple(reply.tool_events), identity=identity,
+                            tool_events=(*carried, *reply.tool_events), identity=identity,
                             finish_reason=reply.finish_reason,
                         )  # fmt: skip
                     error = "empty reply"
@@ -346,6 +381,7 @@ class LLMClient:
         return LLMResult(
             model=model, seed=seed, key=key, text=None, ok=False, error=error,
             latency_s=round(time.monotonic() - start, 3), attempts=self.retries, identity=identity,
+            tool_events=tuple(carried),
         )  # fmt: skip
 
     def _cache_path(self, key: str) -> Path:

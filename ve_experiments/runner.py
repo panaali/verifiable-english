@@ -105,14 +105,17 @@ class Experiment:
     assignment: str = "crossed"  # or "rotated"
     samples: int = 1  # independent samples (seeds) per trial cell
     seed: int = 0
-    allowed_verdicts: tuple[str, str] = ("approve", "reject")  # (approve word, reject word)
+    allowed_verdicts: tuple[str, ...] = ("approve", "reject")  # (approve word, reject word), or any answer set with `score`
     system: str | None = None
-    split_file: Path | None = None  # if set, a scored run requires it to be committed and unmodified
+    split_file: Path | None = None  # a scored run requires it, committed and unmodified, and checks every item against it
     root: Path = field(default_factory=lambda: Path(__file__).resolve().parent.parent)
+    dir_name: str = ""  # directory under experiments/ (PREREG, runs); defaults to id. E1b lives in E1's directory.
+    row_fields: tuple[str, ...] = ()  # hidden payload keys ("_<name>") copied into every trial row, e.g. the cluster
+    score: Callable[[Item, str | None], Mapping[str, Any]] | None = None  # extra row fields from (item, parsed verdict)
 
     @property
     def dir(self) -> Path:
-        return self.root / "experiments" / self.id
+        return self.root / "experiments" / (self.dir_name or self.id)
 
 
 # --------------------------------------------------------------------------- splits
@@ -231,14 +234,35 @@ def missing_prereg_sections(text: str) -> list[str]:
     return missing
 
 
+FREEZE_MARKER = "Status: FROZEN"
+
+
 def require_prereg(exp_dir: Path, root: Path) -> dict[str, str]:
-    """Refuse to score unless experiments/<id>/PREREG.md is committed, byte-identical to HEAD, and has
-    a non-empty section for every Plan v2 field. The manifest records commit and blob."""
+    """Refuse to score unless experiments/<id>/PREREG.md is committed, byte-identical to HEAD, explicitly frozen
+    (its first line starts with `Status: FROZEN`; a draft can therefore never be scored), and has a non-empty
+    section for every Plan v2 field. The manifest records commit and blob."""
     info = require_committed(exp_dir / "PREREG.md", root)
-    missing = missing_prereg_sections((exp_dir / "PREREG.md").read_text(encoding="utf-8"))
+    text = (exp_dir / "PREREG.md").read_text(encoding="utf-8")
+    if not text.split("\n", 1)[0].startswith(FREEZE_MARKER):
+        raise PreregistrationError(f"{info['path']} is not frozen: its first line must start with {FREEZE_MARKER!r}")
+    missing = missing_prereg_sections(text)
     if missing:
         raise PreregistrationError(f"{info['path']} lacks required non-empty sections: {missing}")
     return {"prereg_commit": info["commit"], "prereg_blob": info["blob"]}
+
+
+def require_scored_ready(exp: Experiment, items: Sequence[Item]) -> dict[str, Any]:
+    """Everything a scored run (or a scored export) needs: frozen committed PREREG, committed split file, and
+    every item's group recorded as `scored` in the COMMITTED split file (so a dev item can never be scored)."""
+    info: dict[str, Any] = dict(require_prereg(exp.dir, exp.root))
+    if exp.split_file is None:
+        raise PreregistrationError("a scored run requires a committed split file")
+    info["split_file"] = require_committed(exp.split_file, exp.root)
+    recorded = json.loads(Path(exp.split_file).read_text(encoding="utf-8"))["groups"]
+    wrong = sorted({it.group for it in items if recorded.get(it.group) != "scored"})
+    if wrong:
+        raise PreregistrationError(f"{len(wrong)} groups are not recorded as scored in the split file, e.g. {wrong[:3]}")
+    return info
 
 
 # --------------------------------------------------------------------------- running
@@ -265,9 +289,7 @@ def run(exp: Experiment, client: LLMClient, split: str, out_dir: Path | None = N
     if split == "scored":
         if limit is not None:
             raise PreregistrationError("a scored run cannot be truncated with `limit`")
-        manifest.update(require_prereg(exp.dir, exp.root))
-        if exp.split_file is not None:
-            manifest["split_file"] = require_committed(exp.split_file, exp.root)
+        manifest.update(require_scored_ready(exp, [it for it in exp.items if it.split == split]))
         if backend_name() != "ve":
             raise PreregistrationError("scored runs require the real `ve` package, not the stub backend")
     manifest["ve_backend"] = backend_name()
@@ -275,7 +297,7 @@ def run(exp: Experiment, client: LLMClient, split: str, out_dir: Path | None = N
     if limit is not None:
         trials = trials[:limit]
     prompts = build_prompts(exp, trials)
-    approve, reject = exp.allowed_verdicts
+    approve = exp.allowed_verdicts[0]
     requests = [
         Request(model=t.judge, prompt=p, seed=t.seed, system=exp.system, tag=f"{exp.id}/{split}/{t.item_id}/{t.condition}",
                 identity=t.identity(exp.id))
@@ -283,9 +305,20 @@ def run(exp: Experiment, client: LLMClient, split: str, out_dir: Path | None = N
     ]
     run_dir = allocate_run_dir(out_dir, exp.dir / "runs", split)  # before any call, so a clash costs nothing
     results = client.map(requests)
+    by_id = {it.id: it for it in exp.items}
+    binary = len(exp.allowed_verdicts) == 2
+
+    def finish(row: dict, item: Item, verdict: str | None) -> str:
+        if exp.score is not None:
+            row.update(exp.score(item, verdict))
+        return json.dumps(row, ensure_ascii=False) + "\n"
+
     with open(run_dir / "trials.jsonl", "x", encoding="utf-8") as fh:
         for t, p, r in zip(trials, prompts, results):
             row = asdict(t)
+            item = by_id[t.item_id]
+            for name in exp.row_fields:
+                row[name] = item.payload["_" + name]
             row.update(
                 prompt_sha=hashlib.sha256(p.encode()).hexdigest()[:16], llm_key=r.key, ok=r.ok, error=r.error,
                 latency_s=r.latency_s, input_tokens=r.input_tokens, output_tokens=r.output_tokens,
@@ -295,14 +328,14 @@ def run(exp: Experiment, client: LLMClient, split: str, out_dir: Path | None = N
             if r.tool_events:
                 # The judge ran a command or tool: it may have read ground truth. Invalid, scored worst case.
                 row.update(verdict=None, approved=None, parse_error="invalid: judge used tools")
-                fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+                fh.write(finish(row, item, None))
                 continue
             try:
                 verdict = parse_verdict(r.text, allowed=exp.allowed_verdicts)
-                row.update(verdict=verdict.value, approved=verdict.value == approve, parse_error=None)
+                row.update(verdict=verdict.value, approved=(verdict.value == approve) if binary else None, parse_error=None)
             except VerdictParseError as exc:
                 row.update(verdict=None, approved=None, parse_error=str(exc))
-            fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+            fh.write(finish(row, item, row["verdict"]))
     manifest.update(
         finished=time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         n_trials=len(trials),

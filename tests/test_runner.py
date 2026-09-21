@@ -9,7 +9,7 @@ from ve_experiments.runner import (
     plan_trials, require_prereg, run,
 )  # fmt: skip
 
-PREREG = ("# E\n## Primary contrast\nx\n## Refutation condition\nx\n## Honest-acceptance constraint\nx\n"
+PREREG = ("Status: FROZEN\n# E\n## Primary contrast\nx\n## Refutation condition\nx\n## Honest-acceptance constraint\nx\n"
           "## Smallest useful effect\nx\n## Capability gate and calibration gate\nx\n## Sample size\nx\n")
 
 
@@ -39,8 +39,9 @@ def make_items(n=20):
 
 def make_exp(root, assignment="crossed", samples=1):
     conds = [Condition("fol", lambda p: f"FOL view: {p['text']}"), Condition("ve", lambda p: f"VE view: {p['text']}")]
-    return Experiment("EX", assign_splits(make_items(), 0.25, seed=1), conds, ["judge-a", "judge-b"],
-                      assignment=assignment, samples=samples, root=root)  # fmt: skip
+    split_file = root / "experiments" / "EX" / "splits.json"
+    return Experiment("EX", assign_splits(make_items(), 0.25, seed=1, split_file=split_file), conds, ["judge-a", "judge-b"],
+                      assignment=assignment, samples=samples, root=root, split_file=split_file)  # fmt: skip
 
 
 def backend(model, system, prompt, timeout_s, cwd):
@@ -98,7 +99,7 @@ def test_scored_run_refused_without_committed_prereg(repo):
     client = LLMClient(cache_dir=repo / ".c", backend=backend)
     with pytest.raises(PreregistrationError, match="does not exist"):
         run(exp, client, "scored")
-    exp.dir.mkdir(parents=True)
+    exp.dir.mkdir(parents=True, exist_ok=True)
     (exp.dir / "PREREG.md").write_text(PREREG)
     with pytest.raises(PreregistrationError, match="not committed"):
         run(exp, client, "scored")
@@ -107,10 +108,39 @@ def test_scored_run_refused_without_committed_prereg(repo):
     (exp.dir / "PREREG.md").write_text(PREREG + "edited after the fact\n")
     with pytest.raises(PreregistrationError, match="differs from the committed"):
         run(exp, client, "scored")
-    (exp.dir / "PREREG.md").write_text("# nothing\n")
+    (exp.dir / "PREREG.md").write_text("Status: FROZEN\n# nothing\n")
     git(repo, "commit", "-qam", "gut prereg")
     with pytest.raises(PreregistrationError, match="lacks required"):
         require_prereg(exp.dir, repo)
+    (exp.dir / "PREREG.md").write_text(PREREG.replace("Status: FROZEN", "Status: DRAFT for review"))
+    git(repo, "commit", "-qam", "draft prereg")
+    with pytest.raises(PreregistrationError, match="not frozen"):
+        run(exp, client, "scored")
+
+
+def test_scored_run_refuses_an_item_the_committed_split_file_records_as_dev(repo):
+    exp = make_exp(repo)
+    (exp.dir / "PREREG.md").write_text(PREREG)
+    git(repo, "add", "experiments")
+    git(repo, "commit", "-qm", "prereg and splits")
+    client = LLMClient(cache_dir=repo / ".c", backend=backend)
+    dev_item = next(i for i in exp.items if i.split == "dev")
+    smuggled = [Item(i.id, i.label, i.payload, i.group, "scored") if i.group == dev_item.group else i for i in exp.items]
+    exp.items = smuggled
+    with pytest.raises(PreregistrationError, match="not recorded as scored"):
+        run(exp, client, "scored")
+    exp.split_file = None
+    with pytest.raises(PreregistrationError, match="requires a committed split file"):
+        run(exp, client, "scored")
+
+
+def test_row_fields_and_scorer_reach_the_trial_rows(repo):
+    exp = make_exp(repo)
+    exp.row_fields = ("attack",)
+    exp.score = lambda item, verdict: {"n_chars": len(item.payload["text"]), "said": verdict}
+    rows = load_trials(run(exp, LLMClient(cache_dir=repo / ".c", backend=backend), "dev"))
+    assert all(r["attack"] == "swap" and r["n_chars"] > 0 for r in rows)
+    assert {r["said"] for r in rows} <= {"approve", "reject", None}
 
 
 def test_dev_run_needs_no_prereg_and_scored_run_records_it(repo):
@@ -154,7 +184,7 @@ def test_prompt_never_sees_label_id_or_hidden_fields(tmp_path):
 
 def test_prereg_edit_hidden_by_assume_unchanged_is_caught(repo):
     exp = make_exp(repo)
-    exp.dir.mkdir(parents=True)
+    exp.dir.mkdir(parents=True, exist_ok=True)
     (exp.dir / "PREREG.md").write_text(PREREG)
     git(repo, "add", "experiments")
     git(repo, "commit", "-qm", "prereg")
@@ -239,7 +269,7 @@ def test_scored_run_refuses_the_stub_backend(repo, monkeypatch):
     import ve_experiments.runner as R
 
     exp = make_exp(repo)
-    exp.dir.mkdir(parents=True)
+    exp.dir.mkdir(parents=True, exist_ok=True)
     (exp.dir / "PREREG.md").write_text(PREREG)
     git(repo, "add", "experiments")
     git(repo, "commit", "-qm", "prereg")
