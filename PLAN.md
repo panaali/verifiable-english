@@ -132,9 +132,17 @@ Question: does a VE-checked reward make semantic deception less profitable to le
 
 - Task: given a requirement in prose, the policy writes a formalization (and, in the judge-only arm, an explanation).
   A hidden "tempting" objective makes weakened formalizations easier to satisfy, as in specification gaming.
-- Arms: (A) reward = a frozen weak judge's approval of prose/explanation; (B) reward = the same judge's approval of the
-  deterministic VE rendering plus the checker's verdicts (distinguishing-model tests against held-out scenarios);
-  (C) checker only. Same policy, data, steps and compute in every arm.
+- Arms, revised after the literature review (`design/phase-t-literature.md`): the first version's B-vs-A contrast was
+  close to true by construction, because B contained the ground-truth-linked checker. Prior work already shows that
+  weak-judge rewards teach deception (Wen et al. 2024; Mahmoud et al. 2026) and that better-structured rewards reduce
+  hacking (Kenton et al. 2026). The narrow new question is the training analogue of E1:
+  **A** = frozen weak judge reads the policy's own prose/explanation; **B'** = the same judge reads only the
+  deterministic VE rendering, no checker in the reward. **Primary contrast: B' vs A.** Ceilings: **B** = rendering +
+  checker, **C** = checker + hidden specification-strength check. Control: **R** = random reward.
+- Gate before any RL spend: show deception is inducible (best-of-n probe, n = 1..32, per reward on the base policy;
+  audit base-policy false positives). At least 5 seeds per arm on the primary contrast; cut arms before seeds.
+- The outcome is never the reward: held-out distinguishing models, renamed vocabulary, reference-AST comparison, a
+  cross-family judge panel, and 100 hand-audited rollouts per arm. Preregister an equivalence margin; a null is likely.
 - Everything must run inside Colab: small open-weight policy (about 1.5B-3B, LoRA, GRPO or rejection-sampling
   fine-tuning if RL is too slow), frozen small open-weight judge, and the pure-Python `ve` package as the checker.
 - Outcome: rate of approved-but-wrong formalizations on held-out items, measured by the checker, per arm, with seeds.
