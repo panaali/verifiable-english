@@ -1,8 +1,9 @@
 # Views cross-review resolution
 
 This records the reproductions in `manage-agents/review-views.md`, plus the
-requested follow-up checks. Rendering policy is now `ve.ace-explicit` version 2;
-strict canonical bytes and the AST/wire semantics are unchanged.
+requested follow-up checks. This historical report covers `ve.ace-explicit` version 2;
+strict canonical bytes and the AST/wire semantics are unchanged. See the
+[version-3 polish report](views-polish-report.md) for the current rendering policy.
 
 ## Exact reproduction outcomes
 
@@ -63,12 +64,20 @@ Templates, sort nouns, and descriptions remain trusted vocabulary data. The
 linter is a conservative heuristic, not a proof; it can reject truthful phrases
 and cannot detect every semantic lie. When an attacker authors vocabulary, the
 required **identical legend** is the defence against unequal raw identity and
-argument-order information. Showing it is an experiment-caller obligation; the
-plain `render` API does not prepend it automatically. The legend does not prove
+argument-order information. Use `ve.printer.render_cell` to include it automatically; the low-level
+`render` API still returns claim text alone. The legend does not prove
 that judges will interpret or scrutinize it correctly.
 
 Semantic non-vacuity checks the documented implication and clause guards; it is
-not arbitrary equivalence-invariant non-vacuity analysis. Bounded search remains
+not arbitrary equivalence-invariant non-vacuity analysis. In particular, the
+current `ve/search.py` recognizes explicit implication antecedents and maximal
+`Or` clauses under a universal, requiring the positive bodies of negated
+disjuncts to hold jointly at one assignment. It visits hidden branches and keeps
+guard occurrences separate, but does **not** normalize De Morgan forms such as
+`forall s. not (dep(s) and not rev(s))`, double negation, or distributive Boolean
+variants before collecting guards. Item 6 of the polish request requires a
+`ve/search.py` scope exception; no such change is included in the rendering-only
+patch. Do not describe current semantic mode as covering these equivalents. Bounded search remains
 exponential in **used** relation atoms and may still return `ResourceLimit`.
 Token-ish counts are not real tokenizer counts, and common explicit bracketing
 does not establish transfer to fluent ACE-style prose.

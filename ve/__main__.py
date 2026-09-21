@@ -12,7 +12,8 @@ from .fol import document_from_named_fol
 from .limits import MAX_PACKAGE_BYTES, MAX_SOURCE_BYTES
 from .model import FiniteModel
 from .parser import parse
-from .printer import natural_document, print_document, render
+from .printer import (NAMING_POLICIES, measure_jsonl_lengths, natural_document,
+                      print_document, render, render_cell)
 from .search import find_countermodel
 from .wire import loads_json
 
@@ -45,6 +46,13 @@ def main(argv=None):
     output = grammar.add_mutually_exclusive_group()
     output.add_argument("--wrapper", action="store_true", help="constrain the whole VE/explanation JSON object")
     output.add_argument("--spec", action="store_true", help="emit the structured-output adapter spec as JSON")
+    lengths = commands.add_parser("view-lengths", help="measure all five views of actual JSONL items")
+    lengths.add_argument("--env", required=True)
+    lengths.add_argument("source", help="JSONL item file")
+    lengths.add_argument("--field", default="ast", help="top-level field containing each item")
+    lengths.add_argument("--source-format", choices=("ast", "ve"), default="ast")
+    lengths.add_argument("--naming", choices=NAMING_POLICIES, default="per_statement")
+    lengths.add_argument("--without-legend", action="store_true", help="measure claim text alone")
     for command in ("parse", "format", "render", "evaluate", "check", "import-fol", "countermodel"):
         sub = commands.add_parser(command)
         sub.add_argument("--env", required=True, help="environment JSON file")
@@ -63,6 +71,8 @@ def main(argv=None):
         if command in ("render", "import-fol"):
             sub.add_argument("--view", choices=("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent",
                                                  "canonical", "natural"), default="ve_strict")
+            sub.add_argument("--with-legend", action="store_true", help="include the shared vocabulary legend")
+            sub.add_argument("--naming", choices=NAMING_POLICIES, default="per_statement")
         if command in ("evaluate", "check"):
             sub.add_argument("--model", required=command == "evaluate", help="complete finite-model JSON")
             sub.add_argument("--candidate-ast", help="document AST JSON to check against source")
@@ -73,6 +83,11 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         env = Environment.from_json(_read(args.env))
+        if args.command == "view-lengths":
+            _emit(measure_jsonl_lengths(args.source, env, field=args.field,
+                                       source_format=args.source_format, naming=args.naming,
+                                       include_vocabulary=not args.without_legend))
+            return 0
         if args.command == "grammar":
             from .grammar import export_grammar, structured_output_spec
             options = dict(dialect=args.dialect, mode=args.mode, max_binder_depth=args.max_binder_depth,
@@ -102,11 +117,12 @@ def main(argv=None):
             return 0 if result.status == "Found" else (3 if result.status == "NotFound" else 4)
         if args.command == "import-fol":
             document = document_from_named_fol(env, loads_json(_read(args.source)))
-            if args.view == "natural":
-                _emit(natural_document(env, document).to_dict())
+            if args.view == "natural" and not args.with_legend:
+                _emit(natural_document(env, document, naming=args.naming).to_dict())
                 return 0
-            view = {"canonical": "ve_strict"}.get(args.view, args.view)
-            print(render(document, env, view), end="")
+            view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(args.view, args.view)
+            renderer = render_cell if args.with_legend else render
+            print(renderer(document, env, view, args.naming), end="")
             return 0
         source = _read(args.source, MAX_SOURCE_BYTES)
         if args.command in ("check", "evaluate", "parse"):
@@ -122,11 +138,12 @@ def main(argv=None):
             return {"Satisfied": 0, "Violated": 1, "ResourceLimit": 4}[record["evaluation"]["status"]]
         document = parse(env, source)
         if args.command == "render":
-            if args.view == "natural":
-                _emit(natural_document(env, document).to_dict())
+            if args.view == "natural" and not args.with_legend:
+                _emit(natural_document(env, document, naming=args.naming).to_dict())
                 return 0
-            view = {"canonical": "ve_strict"}.get(args.view, args.view)
-            print(render(document, env, view), end="")
+            view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(args.view, args.view)
+            renderer = render_cell if args.with_legend else render
+            print(renderer(document, env, view, args.naming), end="")
         else:
             print(print_document(env, document), end="")
         return 0
