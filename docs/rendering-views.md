@@ -22,8 +22,8 @@ has additional lexical argument-list delimiters; these do not group formulas.
 The natural surface retains the common grouping, even where fluent prose could
 omit parentheses. The fifth surface uses `ve/fluent.py`, follows the same binder
 and operand preorder, and contracts only structures with an explicit inverse
-(see below). None of these views reorders or simplifies the AST. The existing
-four views and `ve.ace-explicit` renderer version remain byte-for-byte unchanged.
+(see below). None of these views reorders or simplifies the AST. The four explicit views retain the reviewed version-2 policy. Fluent version 2
+adopts that policy and adds checked negative templates and stable sort letters.
 
 | Constructor | FOL symbols | FOL keywords | VE strict | VE natural |
 |---|---|---|---|---|
@@ -142,8 +142,8 @@ template head as a word. Predicate heads are the first phrase word after the
 unary `is`, or the first binary phrase word; noun heads are the last noun word.
 A declaration may use its own identifier/head. `un`, `non`, `un-`, or `non-`
 prefixed to any predicate identifier/head is rejected, including its own head
-(e.g. `deployed` → `undeployed`). Variable tokens `x`, `xN`, and single capital
-letters are rejected. Capitals are also excluded by the lowercase grammar.
+(e.g. `deployed` → `undeployed`). Variable tokens `x`, `xN`, and capital letters with optional numeric
+suffixes (such as `S` and `S2`) are rejected. Capitals are also excluded by the lowercase grammar.
 Exact duplicate predicate templates are rejected for all owners. A sort noun
 must not equal another sort identifier or another sort's singular/plural noun.
 
@@ -162,7 +162,7 @@ Multiple diagnostics may identify the same rejected entry. Stable codes are:
 | `TEMPLATE_SHAPE` | Missing, misplaced, or unsupported placeholder/copula structure |
 | `PHRASE_SYNTAX` | Unsupported characters, placeholders in a phrase, spacing, or case |
 | `LOGICAL_WORD` | Reserved quantifier, connective, negation, or other display word |
-| `VARIABLE_TOKEN` | `x`, `xN`, or a single capital letter |
+| `VARIABLE_TOKEN` | `x`, `xN`, or a capital letter with optional numeric suffix |
 | `SYMBOL_COLLISION` | Word equals another identifier or lexical head |
 | `NEGATED_HEAD` | Negating prefix applied to a predicate identifier/head |
 | `BINARY_AUXILIARY` | Forbidden leading copula/auxiliary |
@@ -171,6 +171,31 @@ Multiple diagnostics may identify the same rejected entry. Stable codes are:
 | `UNARY_MODIFIER` | More than one complement word after unary `is` |
 | `DUPLICATE_TEMPLATE` | More than one predicate declares the same template |
 | `SORT_COLLISION` | Noun equals another sort's identifier or noun |
+| `NEGATIVE_WITHOUT_POSITIVE` | Negative metadata lacks an accepted declared positive template |
+| `NEGATIVE_NOT_NEGATION` | Negative metadata differs from the mechanically derived exact negation, or its binary verb is not whitelisted |
+
+Predicate entries may also carry an optional `negative_verbalisation` string,
+with the same type, 256-character limit, immutability, and identity binding as
+`verbalisation`. It is selected only after its declared positive template passes
+**all** checks above. Selection requires an exact byte match to this derivation:
+
+- Unary: `{0} is HEAD` becomes `{0} is not HEAD`, copying `HEAD` unchanged.
+- Binary: replace only the first verb with `does not BASE`, preserving the rest
+  of the phrase and both placeholders exactly. The complete whitelist is
+  `audits/audit`, `depends/depend`, `has/have`, `likes/like`, `links/link`,
+  `owns/own`, `reviews/review`, and `trusts/trust`.
+
+For example, `{0} is reviewed` permits only `{0} is not reviewed`, and
+`{0} owns {1}` permits only `{0} does not own {1}`. An attacker-supplied
+`{0} is not unreviewed`, positive-looking phrase, changed verb, reordered term,
+extra modifier, or format expression is rejected as a display template. It stays
+JSON-quoted in the environment and legend with a lint diagnostic; fluent uses
+`it is false that <positive unit>` instead. Malformed field types and oversized
+strings are environment errors. Missing metadata produces the same explicit
+fallback without a lint warning. No negative is guessed from a formal predicate
+identifier or a rejected positive. A declared negative never changes positive
+atomic rendering, and the four explicit views retain their ordinary negation
+syntax. The legend shows both raw and selected negative templates in every view.
 
 These checks are a **heuristic, not a proof** of English meaning or injectivity.
 Templates and sort nouns are **trusted vocabulary data**, as are descriptions.
@@ -210,56 +235,65 @@ grouping policy, and record the actual view alongside claim/environment IDs. A d
 metadata change still changes the environment identity and requires regenerating
 all cells consistently. The natural grammar is read-only; only `ve_strict` is
 accepted by the VE source parser.
-Freeze and independently review the vocabulary before generating attacked claims;
-template accuracy must not be chosen by the attacker for a particular cell.
 
-## Fifth view: `ve_fluent` (renderer `ve.fluent`, version `1`)
+## Fifth view: `ve_fluent` (renderer `ve.fluent`, version `2`)
 
 `render(formula, env, "ve_fluent")` and
 `render_fol(env, document, view="ve_fluent")` provide a deterministic read-only
-surface. Fluent formulas capitalize their first letter; documents additionally
-append a period and LF per statement. Constants still retain `@identifier`.
+surface. It follows the same lexical-case, punctuation, and 65,536-byte limit
+as every other view. Documents append a period and LF per statement; formulas
+have no final punctuation. Constants retain `@identifier`.
 Every bound scope remains visible in surface order. There are only global
-quantifiers: `For every ...` and `There is a ... such that ...`. In particular,
+quantifiers: `for every ...` and `there is a ... such that ...`. In particular,
 the E1 passive **“Every service is owned by a person” is never generated**.
-Relational templates headed by `is`, `was`, or `gets`, or containing ` by `,
-use strict atomic fallback. Unsupported lexical syntax and collisions use the
-same conservative vocabulary policy as the natural view. Atomic phrases remain
+Fluent uses exactly the same hardened lexical codebook as natural and the
+shared legend, including all auxiliary, converse, logical-word, head-collision,
+and modifier checks. Unsupported lexical syntax uses strict atomic fallback. Atomic phrases remain
 declared vocabulary assertions, not mechanically verified descriptions of the world.
 
 The changes from the four explicit surfaces are:
 
-- Names use the initial capital letter of the selected sort noun, with numeric
-  suffixes on collisions: `S`, `P`, `S2`, `P2`. Allocation follows binder preorder
-  across sibling scopes, with a fresh counter for each statement. **The binder
-  declaration counts as the first mention:** its name is included exactly when
-  the body refers to that binder. Thus an unused existential reads `There is a
-  person such that true`; an existential occurring once in the body reads `There
-  is a person P such that P owns S`. Removing that `P` would need `who`, another
-  pronoun, or a nonglobal existential contraction, all excluded by this grammar.
-  Unused binders retain their sort, operator, scope, and existence meaning.
+- Names use the initial capital letter of the selected sort noun. With distinct
+  initials, repeated named binders receive `S`, `S2`, `S3` or `P`, `P2`, `P3`.
+  Sorts sharing an initial are sorted by their **formal identifiers** and receive
+  disjoint suffix progressions: for `agent → specialist` and `item → service`,
+  `agent` uses `S`, `S3`, `S5`, ... and `item` uses `S2`, `S4`, `S6`, ... .
+  With N such sorts, sort position k receives suffix k + occurrence × N;
+  suffix 1 is omitted. Allocation follows binder preorder across sibling scopes
+  and **the entire document**, with a fresh counter for each render call, not
+  each statement. A letter/suffix always identifies the same sort in the same
+  environment even across separate render calls; document binders never reuse
+  a name. Dictionary insertion order and first-use order cannot change this
+  mapping. `render_vocabulary` states each sort's letter, first suffix, and stride.
+  Constants always have `@` and lowercase identifiers. Selected lexical words
+  are lowercase; metadata containing `S`, `S2`, etc. is rejected. Thus constants,
+  templates, and other binders cannot capture a variable name.
+  **The binder declaration counts as the first mention:** its name appears
+  exactly when its body refers to it; unnamed binders do not consume a suffix.
+  An unused existential reads `there is a person such that true`; a used one
+  reads `there is a person P such that P owns S`. Unused binders retain their
+  sort, operator, scope, and existence meaning.
 - A single universal whose body is an implication with a conjunctive guard uses
-  `For every service S that is deployed, ...`. Each guard leaf must be an atom
+  `for every service S that is deployed, ...`. Each guard leaf must be an atom
   or negated atom mentioning the bound variable. Relative clauses omit only the
   bound subject; object occurrences remain explicit. One literal or exactly two
   relative literals can be spelled `that ... [and that ...]`. Larger guard trees
   and object-position guards use `such that <unit>`, preserving every binary
   conjunction node. Guards always decode to an **implication**, never to a
   conjunction or an existential.
-- Consecutive universals are listed in order: `For every person P and every
+- Consecutive universals are listed in order: `for every person P and every
   service S, if P owns S then P audits S`. The list means nested universals in
   exactly that order. A multi-binder list keeps its antecedent in the explicit
   `if` clause; it does not attach a relative clause to an uncertain binder.
 - Equality is `P is the same person as P2`; its negation is `P is not the same
   person as P2`. The noun is the checked term sort, with the same safe aliases.
   Argument order is retained even for symmetric equality.
-- Negation otherwise uses `it is false that <unit>`. **The current environment
-  schema supplies only positive templates** (`verbalisation: string`), and has no
-  negative-template field. Therefore v1 does not guess inflections such as
-  `owns` → `does not own`, nor treat a declared negative-looking positive
-  predicate as logical negation. Even `not reviewed` uses the explicit form.
-  Adding identity-bound negative templates belongs to a later vocabulary-schema
-  change; no schema or identity change is part of this renderer task.
+- Negated unary/binary atoms use a declared, strictly validated negative template
+  when available, including in relative guards. For example, `S is not reviewed`
+  decodes to `Not(Unary(reviewed, S))`; `P does not own S` decodes to
+  `Not(Binary(owns, P, S))`. Validation is the exact derivation above, not a
+  negative-looking phrase heuristic. Every other negation uses
+  `it is false that <unit>`. Double negations remain distinct AST nodes.
 - Conjunction uses `both A and B`; inclusive disjunction uses `either A or B,
   or both`; implication uses `if A then B`. Their atomic operands have no
   parentheses. Every complex operand is grouped. Quantifier bodies extend to
@@ -277,11 +311,11 @@ switch binder naming systems in the middle of a scope.
 
 ### Fluent EBNF and inverse
 
-The grammar below describes the lowercase internal surface. Capitalize only the
-first character for a complete formula; remove that capitalization before
-decoding reserved initial words. Document framing is `sentence, ".", LF`,
-repeated with independent binder counters. Lexical expansions come from the
-fixed environment, selected using the collision policy above.
+The grammar below describes the emitted lexical case: reserved words and
+lexical phrases are lowercase, while bound names have capital initials.
+Document framing is `sentence, ".", LF`, repeated with document-wide binder
+allocation. Lexical expansions come from the fixed environment, selected using
+the collision and exact-negation policy above.
 
 ```ebnf
 formula = atom
@@ -294,7 +328,7 @@ formula = atom
         | "for every ", declaration, " ", guard, ", ", formula
         | "there is ", article, " ", declaration, " such that ", formula ;
 unit = atom | "(", formula, ")" ;
-atom = "true" | "false" | positive_atom
+atom = "true" | "false" | positive_atom | negative_atom
      | term, " is the same ", noun, " as ", term
      | term, " is not the same ", noun, " as ", term ;
 guard = relative, [ " and ", relative ] | "such that ", unit ;
@@ -306,9 +340,10 @@ article = "a" | "an" ;
 ```
 
 `noun` is a safe sort noun or formal identifier, `positive_atom` is a selected
-positive template or strict fallback, and `atomic_tail` is that selected atom
-without its subject, or the tail of a typed (in)equality. Relative templates are
-used only when the environment actually supplies the supported positive form.
+positive template or strict fallback, `negative_atom` is an accepted negative
+template expansion, and `atomic_tail` is a selected atom without its subject or
+the tail of a typed (in)equality. Predicate relative clauses require an accepted
+declared positive template and, for negated predicates, an accepted negative.
 `identifier` is the environment's ASCII identifier syntax. Suffixes start at 2;
 the article is `an` before a noun beginning with `a/e/i/o/u`, otherwise `a`.
 An omitted binder name is allowed only if the body has no reference to it. A
@@ -321,7 +356,8 @@ templates distinguish symbols and preserve all terms; prefix operator words
 and balanced `unit` delimiters determine immediate children; quantifier lists
 decode in the written order; guard syntax inserts exactly `Implies`; two
 relative clauses insert exactly one `And`; typed inequality inserts exactly
-`Not(Eq(...))`. Nearest-first scope lookup reconstructs each de Bruijn index.
+`Not(Eq(...))`; validated negative atoms insert exactly `Not` around their
+corresponding positive atom. Nearest-first scope lookup reconstructs each de Bruijn index.
 Induction over those productions gives `decode(encode(A)) = A`, provided the
 lexical codebook is injective. This is a grammar-level argument, **not a
 machine-checked theorem about the Python implementation or about unrestricted
@@ -333,10 +369,12 @@ lookup table. It shares the lexical codebook selection, but no structural
 traversal with the renderer. `tests/explicit_inverse.py` independently decodes
 the other four surfaces. `tests/test_fluent.py` checks exact AST recovery and
 injectivity for all five views on **6,846 distinct well-typed ASTs** from
-24,000 seeded draws, all-pairs consistency of the five recovered ASTs, and exact
-binder preorder including unnamed binders. Other checks cover 21 minimal pairs,
-80 adversarial vocabularies, same-initial sort names, sibling scopes, equality
-reversal, unused quantifiers, and maximum-depth structural fallback. Association
+24,000 seeded draws, in both positive-only and checked-negative environments
+(68,460 inverse checks total), all-pairs consistency of the five recovered ASTs,
+and exact binder preorder including unnamed binders. Other checks cover 21 minimal pairs,
+80 adversarial vocabularies, attacker-authored false negative templates,
+same-initial sort names (up to all 32 permitted sorts), sibling scopes, multiple
+statements, equality reversal, unused quantifiers, and maximum-depth fallback. Association
 pairs are deliberately retained even when logically equivalent: the contract
 preserves syntax, not just truth values. This empirical coverage complements
 the inverse construction; neither is human readability evidence.
@@ -351,16 +389,16 @@ is intentional; cross-environment outputs do not establish semantic equivalence.
 
 | Row | Fluent sentence | Deviation from the recommendation |
 |---|---|---|
-| 1 | For every service S that is deployed, S is reviewed. | Global universal and explicit reused subject. |
-| 2 | For every service S that is deployed, there is a person P such that P owns S. | Global existential; no `who` pronoun. |
-| 3 | There is a person P such that for every service S that is deployed, P owns S. | Universal stays in global form and in scope order. |
-| 4 | It is false that (there is a service S such that both S is deployed and (it is false that S is reviewed)). | Explicit global witness, binary grouping, and no undeclared negative template. |
-| 5 | For every service S that is deployed, it is false that S is reviewed. | `No service ...` is excluded; preserves `Forall(Implies(..., Not(...)))`. |
-| 6 | It is false that (for every service S that is deployed, S is reviewed). | Global universal and grouped complex negation. |
-| 7 | For every service S that is deployed and that is not the same service as @legacy, S is reviewed. | Global universal, named subject, and typed inequality. |
-| 8 | For every person P and every service S, if P owns S then P audits S. | Exact. |
-| 9 | For every person P and every service S, if P owns S then S audits P. | Exact sentence; separate typed environment as explained above. |
-| 10 | For every service S and every person P and every person P2, if (both P owns S and P2 owns S) then P is the same person as P2. | `P2` replaces `Q`; explicit binary conjunction, uniform binder list, and typed equality. |
+| 1 | for every service S that is deployed, S is reviewed. | Global universal and explicit reused subject. |
+| 2 | for every service S that is deployed, there is a person P such that P owns S. | Global existential; no `who` pronoun. |
+| 3 | there is a person P such that for every service S that is deployed, P owns S. | Universal stays in global form and in scope order. |
+| 4 | it is false that (there is a service S such that both S is deployed and (it is false that S is reviewed)). | Explicit global witness, binary grouping, and no undeclared negative template. |
+| 5 | for every service S that is deployed, it is false that S is reviewed. | `No service ...` is excluded; preserves `Forall(Implies(..., Not(...)))`. |
+| 6 | it is false that (for every service S that is deployed, S is reviewed). | Global universal and grouped complex negation. |
+| 7 | for every service S that is deployed and that is not the same service as @legacy, S is reviewed. | Global universal, named subject, and typed inequality. |
+| 8 | for every person P and every service S, if P owns S then P audits S. | Exact. |
+| 9 | for every person P and every service S, if P owns S then S audits P. | Exact sentence; separate typed environment as explained above. |
+| 10 | for every service S and every person P and every person P2, if (both P owns S and P2 owns S) then P is the same person as P2. | `P2` replaces `Q`; explicit binary conjunction, uniform binder list, and typed equality. |
 
 Reproduce all ten examples across all five views (50 renderings):
 
@@ -371,10 +409,10 @@ UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run pytest -q tests/test_fluent.
 
 **Every experimental cell must show `render_vocabulary(env, view)` alongside its
 claim text.** This API returns byte-identical deterministic JSON text for all
-four views. It includes the environment ID, all sort/predicate/constant
+five views. The `ve.vocabulary-legend@2` format includes the environment ID, all sort/predicate/constant
 identifiers and descriptions, predicate argument sorts **in declared order**,
-raw verbalisation metadata, the selected natural template/noun (including strict
-fallback), and lint diagnostics. Metadata is JSON-quoted data, not instructions
+raw positive/negative metadata, selected templates/nouns (including fallback),
+the fluent variable-to-sort sequences, and lint diagnostics. Metadata is JSON-quoted data, not instructions
 to the judge. Vocabulary ordering is independent of dictionary insertion order.
 The legend is separate from `render`; callers are responsible for displaying it.
 
@@ -404,7 +442,13 @@ non-whitespace symbols. With `include_vocabulary=True` it measures exactly
 covariates, and separately record counts from the actual model tokenizer when
 available; this heuristic does not predict BPE charges for `∀` or `∧`.
 
-Full formula bracketing is shared by all views and is deliberately explicit.
-Results do not establish transfer to fluent ACE prose or unbracketed English.
+Full formula bracketing is shared by the four explicit views. Fluent contracts
+only the reversible structures documented above. These checks do not establish
+human readability or transfer to unrestricted English.
 Review regressions and their precise limits are recorded in
 [the review resolution](views-review-resolution.md).
+
+Six reproducible examples in all five views, including checked negative atoms,
+are recorded with the complete shared legend in [fluent examples](fluent-examples.md).
+Regenerate with `UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run --frozen python
+examples/fluent_views.py`.

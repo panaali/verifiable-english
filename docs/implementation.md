@@ -4,7 +4,7 @@ The implementation supports exactly `ve.core@0`, `relational-fol@0`, and
 `ve-v0-draft-2026-09-20`. It implements the draft semantics; it does not establish
 the pending theorems in [the verification contract](spec/verification-contract.md).
 `uv.lock` pins the test/build dependencies. There are no third-party runtime
-dependencies. Use Python 3.14 and `uv sync`; run `uv run python -m pytest`.
+dependencies. Use Python 3.12 or later and `uv sync`; run `uv run python -m pytest`.
 
 ## Python API
 
@@ -80,16 +80,19 @@ Diagnostic result records use ordinary JSON, including `null` for an unavailable
 Boolean or absent search witness. They are not semantic input packages or new
 certificate encodings; the argument-layer wire contract remains a separate task.
 
-## Four views and FOL interchange
+## Five views and FOL interchange
 
 `render(ast, env, view)` returns a deterministic string for a closed formula or
-`Document`. The views are `fol_symbols`, `fol_keywords`, `ve_strict`, and
-`ve_natural`. They share one traversal, preorder binder names, and formula
-parenthesisation. Natural vocabulary templates, fallback rules, and the full
-read-only grammar are documented in [rendering views](rendering-views.md).
+`Document`. The views are `fol_symbols`, `fol_keywords`, `ve_strict`,
+`ve_natural`, and `ve_fluent`. The first four share one traversal and full formula
+parenthesisation. Fluent uses reversible contractions and sort-derived names
+that remain disjoint across sorts and statements. All five share the hardened
+vocabulary policy, identical legend, output limits, lexical case, punctuation,
+and length-measurement API. Exact negative-template validation, name allocation,
+and inverse grammars are documented in [rendering views](rendering-views.md).
 `print_document` preserves the existing strict canonical serialization.
 
-`render_fol(env, value, view=...)` accepts these four names and returns text.
+`render_fol(env, value, view=...)` accepts these five names and returns text.
 The legacy `canonical` default returns strict text; `natural` returns a
 `NaturalView` record. This adapter accepts a `Document`, an
 indexed document array, or the following explicit named-FOL object. This is an
@@ -426,7 +429,7 @@ outcomes and raised resource exceptions). JSON statuses preserve these distincti
 `evaluate` and `check` accept `--no-trace`. Search always omits traces and accepts
 `--min-domain-size`, `--nonempty-domains`, and `--nonvacuous-for FILE` (one strict
 VE statement), plus `--semantic-nonvacuity` to enable the clause-guard check
-(requires `--nonvacuous-for`). `render` and `import-fol` accept all four named
+(requires `--nonvacuous-for`). `render` and `import-fol` accept all five named
 views as plain text; legacy `--view natural` emits the identity-bound JSON view record.
 
 The v0 envelope bounds source bytes, JSON package size, AST depth/nodes,
