@@ -1,0 +1,24 @@
+{
+ "id": "e1-scored-0921",
+ "gpu": "NVIDIA A100-SXM4-80GB, 81920 MiB",
+ "started": 1790014083.253531,
+ "exit_code": 0,
+ "error": null,
+ "timed_out": false,
+ "install_s": 4.4,
+ "outputs": [
+  "out/Qwen--Qwen2.5-14B-Instruct-AWQ/manifest.json",
+  "out/Qwen--Qwen2.5-14B-Instruct-AWQ/outputs.jsonl",
+  "out/Qwen--Qwen2.5-14B-Instruct-AWQ/worker_log.txt",
+  "out/Qwen--Qwen2.5-32B-Instruct-AWQ/manifest.json",
+  "out/Qwen--Qwen2.5-32B-Instruct-AWQ/outputs.jsonl",
+  "out/Qwen--Qwen2.5-32B-Instruct-AWQ/worker_log.txt",
+  "out/summary.json"
+ ],
+ "finished": 1790017494.549899,
+ "wall_s": 3411.3,
+ "units_per_hour": 7.5,
+ "units_est_job": 7.107,
+ "units_est_runtime_total": 7.107,
+ "runtime_uptime_s": 3412
+}
