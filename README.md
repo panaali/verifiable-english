@@ -15,3 +15,4 @@ The central question is whether VE reduces successful deception at a fixed revie
 - [Debate claims and argument checking](docs/spec/debate-protocol.md)
 - [Verification contracts and status labels](docs/spec/verification-contract.md)
 - [Roadmap and acceptance criteria](docs/roadmap.md)
+- [Work plan and remaining tasks](docs/plan.md)
