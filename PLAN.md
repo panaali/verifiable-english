@@ -151,6 +151,23 @@ Question: does a VE-checked reward make semantic deception less profitable to le
 
 ## Status log
 
+- 02:09 **E0 second rater (GPT-6 Astra, blind to item labels) disagrees sharply with the first rater on policy sets.**
+  Strict fit (no reification): FOLIO 73%, ProofWriter 87%, Alloy 13%, Clover 10%, Gatekeeper 3%, Cedar 0%, FRET 0%.
+  Lenient fit (with a stated mechanical reification): FOLIO 83%, ProofWriter 87%, Alloy 60%, Clover 47%, Cedar 43%,
+  FRET 40%, Gatekeeper 20%. Cedar dropped from the first rater's 97% because entity-hierarchy membership needs
+  transitive closure; agreement on Cedar is 13% (kappa -0.11). n = 30 per dataset, Wilson intervals in the report.
+  Conclusion for the paper: v0 covers textbook-logic benchmarks and little of real policy or requirements text; the
+  honest headline is the spread and the ranked list of missing constructs (numbers 45 items, closure 27, strings 20).
+
+- 01:48 (real clock) **Capability gate fails with hosted judges.** Two independent dev pilots: on raw FOL, haiku-4.5 false
+  approval 1% (accuracy 0.99), luna 5%; on E5 items haiku 0/12 in both badge cells. Today's small hosted models read
+  first-order logic almost perfectly, so there is no sandwich gap to measure with them. This is a finding in itself and
+  goes in the paper. Response: a ladder of small open-weight judges (0.5B-8B) is being built (`claude/open-judges`);
+  the scored E1/E5 runs use the rungs whose raw-FOL false approval lands in 30-60% with honest acceptance >= 70%, plus
+  the hosted judges as the top of the ladder. Item difficulty may be raised only by natural, preregistered knobs.
+  Merged so far: core, argument layer, grammar, Lean. Under revision after review: views (+fluent), E5/E2/E4 materials,
+  harness (fixed by Worker C). Running: Rust core, Lean round-trip, equivalence oracle, E0 second rater.
+
 - 01:35 Both design critiques merged. Plan v2 frozen (section above). Worker C harness done, awaiting cross-review.
 - 01:10 Read the user's links on recent AI mathematics. Added the Lean track and stretch experiment E7.
 - 00:30 Plan v1 written. Worktrees created: `~/code/ve-claude` (`claude/main`), `~/code/ve-codex` (`codex/main`),
