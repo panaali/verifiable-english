@@ -48,31 +48,35 @@ formulas and 100 seeded additional extended formulas, including nested bodies.
 The full grammar exporter adds two-local context transitions and checks endpoint
 scope and homogeneous Named signatures. Syntax mode remains an overapproximation.
 
-Python's only new tableau expansions are:
+The Lean-checked tableau rules and their implementation status are listed in
+[v0.1-profiles.md](v0.1-profiles.md). Both polarities of plus/star
+unfolding and exact Reach congruence are checked, including outer captures
+through nested Body binders. New versioned rules add homogeneous Named edge
+inclusion, composition of all plus/star combinations, plus first/last-edge
+existence, and Named-to-binary-Body equivalence. Every new rule has a Lean
+soundness proof; no induction or cyclic certificate rule is accepted.
 
-- `closure-plus@0`: `R+(a,c)` becomes `R(a,c) or exists b (R(a,b) and R+(b,c))`.
-- `closure-star@0`: `R*(a,c)` becomes `a=c or R+(a,c)`.
+`CertificateWire` routes the exact closure envelope to
+`VE.Closure.Tableau.checkCertificate`. It validates the v0.1 environment/meaning
+identity domains and requires `ve-tableau-closure-checker@0`. V0 versions in a
+closure envelope are rejected, even for Reach-free formulas. V0 envelopes still
+use the unchanged original checker. The four original `Tableau*.lean` sources
+and `VE.Tableau.checkCertificate_sound` statement are unchanged.
 
-These equivalences can be expanded under either sign; ordinary signed rules
-then handle their connectives and quantifiers. Body substitution avoids capture,
-including through nested Body binders. Reflexivity of star follows from the
-second rule. Congruence preserves exact edge syntax and local indices while
-identifying equal endpoints and captured parameters. Different edge variants
-are never identified. There is no induction, inclusion-oracle, cyclic-proof,
-or saturated-branch-is-satisfiable rule. The new checker version is
-`ve-tableau-closure-checker@0`; parent indices and the exact identity-bound
-inputs determine the reconstructed expansion. Supplied witnesses are rejected.
+`VE.Closure.Tableau.checkCertificate_sound` ranges over all admissible structures
+at every universe. `checkCertificate_sound_v0` derives v0 entailment from accepted
+embedded formulas using conservativity. The recursion is bounded by the same
+124-expansion limit; extra consequences introduce no recursive proof search in
+replay. Failure to find a closure certificate explicitly says it is inconclusive.
+Monotonicity and symmetric reversal remain ResourceLimit in the reviewer tests.
 
-The **Lean certificate adapter rejects every v0.1 environment explicitly**.
-The proved v0 checker never sees a closure formula or closure trace. Integration
-retains integration's v0 version-2 complementary-formula close rule and its
-single `VE.Tableau.complementary_sound` proof over exact formulas AND parameter
-bindings. All four `Tableau*.lean` files match integration, preserving the
-version-1 gate, 124-expansion limit and exact `checkCertificate_sound` statement. Existing v0
-certificates remain supported. The oracle returns UNKNOWN when neither checked
-Python replay nor an independently re-evaluated finite countermodel succeeds;
-it does not infer validity from bounded search exhaustion. Python closure
-replay is not advertised as Lean-certified.
+Argument results expose `profiles`, `lean_checked`, and `lean_status`. The default
+Python API says `Lean-checked: no`; it does not infer an execution result from
+the existence of a soundness theorem. `check_argument(..., lean_executable=path)`
+independently replays every supporting deduction certificate and reports `yes`
+only when all are accepted. This label applies to those deduction certificates;
+the argument composition record and empirical assumptions remain separate.
+Missing executables, rejection and timeouts cannot produce `yes`.
 
 The exact proved Lean statements and proof gaps are in
 [lean/CLOSURE.md](../../lean/CLOSURE.md). The extended evaluator and independent
@@ -81,8 +85,8 @@ conservativity and both least-fixed-point characterizations are proved. The
 new syntax theorem covers Named atoms with arbitrary typed endpoints and
 canonical outer scope, public singleton-document round trip, and Named-atom
 printer injectivity; full extended-document/Body round trip and general printer
-injectivity are not proved. Closure substitution and tableau branch-preservation
-proofs remain open. The list-based Lean evaluator has no proved complexity or
+injectivity are not proved. Closure substitution, congruence, branch preservation and certificate soundness
+are now proved. An extended claim-graph checker theorem remains open. The list-based Lean evaluator has no proved complexity or
 runtime budget bound; JSON/IO/compiler correspondence and Python refinement
 remain outside the metatheory.
 
