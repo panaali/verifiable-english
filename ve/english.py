@@ -9,13 +9,14 @@ from collections import Counter
 from dataclasses import dataclass
 import json
 import re
+import warnings
 
 from . import ast
 from .errors import ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES
 from .printer import (_NaturalVocabulary, _LOGICAL_WORDS,
                       _fluent_variable_letters, _template_head, _AUXILIARIES, VocabularyLint)
-from .english_vocabulary import IDIOMS, negative_template, display_environment
+from .english_vocabulary import IDIOMS, negative_template, display_environment, overlay_provenance
 
 # These are lexical noun/adjective complements, not extra semantic operators.
 # They are deliberately finite: a linter cannot establish arbitrary English meaning.
@@ -36,14 +37,29 @@ _EXTRA_RESERVED = frozenset("this it holds impossible classified recorded relati
 _RESERVED = _LOGICAL_WORDS | _EXTRA_RESERVED
 
 
+# Function words cannot establish a semantic connection to a declaration.
+_CONTENT_STOP = frozenset("a an the is was are be been being has have its in on at to of for from by with and or as that this recorded predicate first second".split())
+
+
+def _content_words(text):
+    words = set(re.findall(r'[a-z]+', text.lower())) - _CONTENT_STOP
+    return {re.sub(r'(?:ing|ed|s)$', '', w) for w in words}
+
+
 def quote(name):
     return json.dumps(name, ensure_ascii=True)
+
+
+class UnreviewedVocabularyWarning(UserWarning):
+    """A claim-only API rendering uses an overlay without a pinned review."""
 
 
 class EnglishVocabulary:
     """Versioned precision pass; leaves the five historical views byte-stable."""
     def __init__(self, env, vocabulary=None, accept_suggested_vocabulary=False):
         env, self.overlay_digest, self.overlay = display_environment(env, vocabulary, accept_suggested_vocabulary)
+        self.provenance = overlay_provenance(vocabulary)
+        self.review_status = self.provenance["review_status"]
         old = _NaturalVocabulary(env)
         self.env = env
         self.sorts = {}
@@ -72,7 +88,7 @@ class EnglishVocabulary:
             path = f"/vocabulary/predicates/{name}/verbalisation"
             codes = {i.code for i in issues if i.path == path}
             accepted = template is not None and not codes
-            if template and not accepted:
+            if template and (not accepted or template in IDIOMS[len(decl.arguments)]):
                 phrase = template.removeprefix('{0} ')
                 unary = len(decl.arguments) == 1
                 if not unary:
@@ -81,9 +97,10 @@ class EnglishVocabulary:
                 shaped = template == '{0} ' + phrase + ('' if unary else ' {1}')
                 # Fixed idioms may contain articles/proper nouns and a sort noun.
                 # Predicate/constant collisions and negative heads still reject.
-                eligible = codes <= {'LOGICAL_WORD', 'PHRASE_SYNTAX', 'UNARY_MODIFIER',
+                eligible_codes = {'LOGICAL_WORD', 'PHRASE_SYNTAX', 'UNARY_MODIFIER',
                                       'TEMPLATE_SHAPE', 'TEMPLATE_LENGTH', 'SORT_NOUN',
                                       'SYMBOL_COLLISION', 'BINARY_CONVERSE', 'BINARY_AUXILIARY', 'BINARY_VERB'}
+                eligible = codes <= eligible_codes
                 collision = any(re.search(r'\b' + re.escape(other) + r'\b', phrase)
                                 for other in (*env.predicates, *env.constants) if other != name)
                 # Auxiliary/article heads from rejected templates are not lexical heads.
@@ -107,8 +124,37 @@ class EnglishVocabulary:
                 accepted = bool(shaped and eligible and not collision and not negated
                                 and len(template) <= 80
                                 and matches and safe_adjectives)
-                if template in IDIOMS[len(decl.arguments)] and 'DUPLICATE_TEMPLATE' not in codes:
-                    accepted = True
+                if template in IDIOMS[len(decl.arguments)]:
+                    # An idiom licenses syntax only. Check its lexical ownership
+                    # and direction against this declaration and every other entry.
+                    content = _content_words(template)
+                    anchored = bool(content & _content_words(name + ' ' + decl.description))
+                    idiom_collision = any(
+                        re.search(r'\b' + re.escape(other) + r'\b', phrase)
+                        for other in env.constants)
+                    for other, other_decl in env.predicates.items():
+                        if other == name:
+                            continue
+                        head = _template_head(other_decl.verbalisation or '', len(other_decl.arguments))
+                        for token in (other, head):
+                            if not token or token in {'is', 'was', 'a', 'an', 'has'}:
+                                continue
+                            # Shared lexical families (undermines/undermines_check)
+                            # require explicit ownership in BOTH predicate names.
+                            shared = token in name.split('_') and token in other.split('_')
+                            # Longer fixed complements distinguish shared heads.
+                            head_collision = (token == head and content <= _content_words(other_decl.verbalisation or ''))
+                            if not shared and (token == other or head_collision) and re.search(r'\b' + re.escape(token) + r'\b', phrase):
+                                idiom_collision = True
+                    # Passive "by" is admissible only with an explicitly passive
+                    # predicate name; a matching generic gloss cannot reverse it.
+                    converse = phrase.endswith(' by') and not name.endswith('_by')
+                    if not anchored:
+                        issues.add(VocabularyLint(path, 'IDIOM_UNRELATED'))
+                    if idiom_collision:
+                        issues.add(VocabularyLint(path, 'SYMBOL_COLLISION'))
+                    accepted = (codes <= (eligible_codes | {'VARIABLE_TOKEN'}) and anchored and not idiom_collision and not converse
+                                and not negated and 'DUPLICATE_TEMPLATE' not in codes)
             if template is None and re.fullmatch('[a-z]+', name) and name not in _RESERVED:
                 if len(decl.arguments) == 1 or name in {'owns', 'audits', 'undermines', 'performs', 'follows', 'benefits', 'outranks', 'exceeds'}:
                     self.predicates[name] = old.predicates[name]
@@ -316,6 +362,9 @@ def render_english(value, env, **options):
     else:
         ast.check_formula(env, value)
     traversal = EnglishTraversal(env, EnglishVocabulary(env, **options))
+    if traversal.words.review_status == 'unreviewed':
+        warnings.warn('English overlay ' + traversal.words.overlay_digest + ': unreviewed',
+                      UnreviewedVocabularyWarning, stacklevel=2)
     text = (''.join(traversal.render(f) + '.\n' for f in value.formulas)
             if type(value) is ast.Document else traversal.render(value))
     if len(text.encode('utf-8')) + (0 if type(value) is ast.Document else 2) > MAX_SOURCE_BYTES:
@@ -329,9 +378,12 @@ class EnglishParseResult:
     original: str
     english_text: str
     canonical_text: str
+    overlay_digest: str | None
+    review_status: str
 
     def paraphrase(self):
-        return {'input_text': self.original, 'english_text': self.english_text,
+        return {'overlay_digest': self.overlay_digest, 'review_status': self.review_status,
+                'input_text': self.original, 'english_text': self.english_text,
                 'canonical_text': self.canonical_text,
                 'changed': self.original != self.english_text}
 
@@ -590,7 +642,8 @@ def parse_english_with_metadata(env, source, **options):
         raise
     english = render_english(document, env, **options)
     from .printer import print_document
-    return EnglishParseResult(document, source, english, print_document(env, document))
+    return EnglishParseResult(document, source, english, print_document(env, document),
+                              **parser.words.provenance)
 
 
 def parse_english(env, source, **options):
@@ -601,7 +654,7 @@ def english_legend(env, style='json', **options):
     words = EnglishVocabulary(env, **options)
     record = {
         'format': 've.english-legend@1', 'environment_id': env.environment_id,
-        'overlay_digest': words.overlay_digest,
+        **words.provenance,
         'reference_rule': 'A unique sort uses that noun. Two simultaneous entities of a sort use '
                           'first and second throughout the statement. Beyond two, all entities of '
                           'that sort use numbered letters. Scope is lexical and restarts per statement.',
@@ -621,11 +674,11 @@ def english_legend(env, style='json', **options):
     for category in ('sorts', 'predicates'):
         for name, entry in words.overlay[category].items():
             record[category][name]['suggested'] = entry['suggested']
-            record[category][name]['review_status'] = 'unreviewed' if entry['suggested'] else 'reviewed'
+            record[category][name]['review_status'] = words.review_status
             record[category][name]['overlay_verbalisation'] = entry['verbalisation']
     if style == 'json': return json.dumps(record, ensure_ascii=False, sort_keys=True, indent=2) + '\n'
     lines = [f"English vocabulary: {record['format']}; environment: {env.environment_id}",
-             f"Display overlay digest: {words.overlay_digest or 'none'}",
+             f"Display overlay digest: {words.overlay_digest or 'none'}; review status: {words.review_status}",
              record['reference_rule'], record['constant_rule'], record['closure_rule'],
              'Numbered letters: ' + ', '.join(f'{s} = {l}' for s, l in sorted(words.letters.items()))]
     for name, entry in record['sorts'].items(): lines.append(f'Sort {name}: {json.dumps(entry, ensure_ascii=False)}')
@@ -647,7 +700,7 @@ def english_lark_grammar(env, **options):
     words = EnglishVocabulary(env, **options)
     lit = lambda s: json.dumps(s)
     rules = [
-        'start: formula "."',
+        'start: (formula ".")+',
         '?formula: atom | negation | compact | listing | universal | existential | reach',
         'negation: "it is not the case that" formula',
         'compact: "both" atom "and" atom -> conjunction\n'

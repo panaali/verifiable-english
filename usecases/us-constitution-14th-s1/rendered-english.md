@@ -28,7 +28,7 @@ For every state, for every person who is within the jurisdiction of that state, 
 
 ```text
 English vocabulary: ve.english-legend@1; environment: 49d16fe885310c0b43a882958da6799a89e926e925b42cc1da49e27d3de8fe15
-Display overlay digest: ae4741bfe4a84aab00116945191867317df7b2b58837bfda3c5d11a070c76d64
+Display overlay digest: ae4741bfe4a84aab00116945191867317df7b2b58837bfda3c5d11a070c76d64; review status: reviewed
 A unique sort uses that noun. Two simultaneous entities of a sort use first and second throughout the statement. Beyond two, all entities of that sort use numbered letters. Scope is lexical and restarts per statement.
 Constants use their identifier names; reserved or compound names are quoted.
 Starting from the first endpoint, the second is reachable. A step body binds source first and destination second; outer references stay fixed.

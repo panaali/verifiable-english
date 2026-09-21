@@ -35,7 +35,7 @@ Warsh pledged "pledge_lower_inflation".
 
 ```text
 English vocabulary: ve.english-legend@1; environment: b3f7afa3f97f000698d6fd0e9cd7024a7d7aed4773d2ed0241dabf9f26616371
-Display overlay digest: 1ac72251627cbccc6fb401eff18cdf8685218444191fbc5c0f43da0c0179e1e6
+Display overlay digest: 1ac72251627cbccc6fb401eff18cdf8685218444191fbc5c0f43da0c0179e1e6; review status: reviewed
 A unique sort uses that noun. Two simultaneous entities of a sort use first and second throughout the statement. Beyond two, all entities of that sort use numbered letters. Scope is lexical and restarts per statement.
 Constants use their identifier names; reserved or compound names are quoted.
 Starting from the first endpoint, the second is reachable. A step body binds source first and destination second; outer references stay fixed.

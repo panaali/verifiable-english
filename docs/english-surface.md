@@ -19,7 +19,7 @@ that the author intended the parsed meaning.
 
 ```sh
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run python -m ve render \
-  --env examples/fluent/environment.json examples/fluent/examples.ve
+  --env examples/fluent/environment.json --view ve_english examples/fluent/examples.ve
 
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run python -m ve check \
   --env examples/fluent/environment.json --surface english statement.txt
@@ -27,7 +27,9 @@ UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run python -m ve check \
 
 `parse`, `check`, `render`, `evaluate`, and `countermodel` accept `--surface
 english`. Omitted `--surface` retains strict input compatibility and selects
-English display. Explicit `--surface strict` selects strict input and display.
+English display in check records. The `render` command keeps canonical strict
+output by default; request `--view ve_english` for English rendering of strict
+input. Explicit `--surface strict` selects strict input and display.
 `--view ve_english` and `--view ve_strict` select render output independently of
 input. `format` always emits strict canonical text. Historical `import-fol`
 defaults and the five-view length-comparison cohort remain unchanged; the full
@@ -239,20 +241,44 @@ UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run pytest -q
 
 Each use case has a new `environment.english.json`. It binds the unchanged
 `environment_id` and contains only sort nouns and predicate wording, with
-`suggested: false` for the hand-written reviewed entries. The schema rejects
+`suggested: false` for hand-written entries. That flag is not a review attestation. The schema rejects
 arguments, descriptions, constants, and any other semantic fields. The overlay
 has its own domain-separated canonical JSON digest, shown in the English legend.
-It is never discovered or applied implicitly. Other views ignore display options
+An overlay is **reviewed only when its exact digest is pinned** in
+[`ve/reviewed-overlays.json`](../ve/reviewed-overlays.json), together with the
+reviewer's name and review date. The record is repository-owned and packaged
+with VE; the input overlay cannot supply it. Changing any overlay field requires
+another review. Missing or unreadable records mean **unreviewed**. The four
+initial records name Worker X's review of wording and ordered argument roles
+against the environment declarations; they do not claim independent human review.
+
+The linter is **NOT a defence against wording that misdescribes a predicate**.
+Only review of the exact overlay digest provides that defence; lint checks for
+unrelated idioms, collisions, and converse forms are incomplete heuristics.
+Identities are independent of display wording: overlays cannot change the bound
+environment, AST, meaning, model, or certificate identities. Exact source-byte
+identities still change when the input bytes change.
+
+Every structured English output carries `overlay_digest` and `review_status`,
+including check display records and paraphrases. Plain-text CLI output reports
+these on stderr; claim-only Python rendering emits `UnreviewedVocabularyWarning`
+for an unreviewed overlay. Use `english_legend` or parse metadata to retain the
+provenance when storing claim-only strings. Acceptance of suggested vocabulary
+never establishes review. Check display is best-effort: on any rendering error,
+`display_text` is omitted and `display_omitted` names the exception class, without
+changing the trusted verdict or exit code.
+
+An overlay is never discovered or applied implicitly. Other views ignore display options
 and retain their original bytes.
 
 ```sh
 uv run python -m ve render --env usecases/birthright-citizenship-debate/environment.json \
   --english-vocabulary usecases/birthright-citizenship-debate/environment.english.json \
-  --with-legend usecases/birthright-citizenship-debate/claims.ve
+  --view ve_english --with-legend usecases/birthright-citizenship-debate/claims.ve
 
 uv run python -m ve suggest-vocabulary --env environment.json > suggestions.json
 uv run python -m ve render --env environment.json --english-vocabulary suggestions.json \
-  --accept-suggested-vocabulary --with-legend claims.ve
+  --accept-suggested-vocabulary --view ve_english --with-legend claims.ve
 ```
 
 `ve.suggest_vocabulary(env)` returns deterministic, lint-clean overlay candidates,
@@ -266,8 +292,8 @@ roles produce no suggestion. This is intentionally incomplete.
 Passing a suggested overlay without `--accept-suggested-vocabulary` fails. With
 that flag and no overlay file, the CLI explicitly generates and accepts suggestions.
 In Python, pass `vocabulary=overlay, accept_suggested_vocabulary=True` to render,
-parse, check, or legend functions. Every suggested entry stays **unreviewed** in
-the legend after acceptance. Acceptance permits use; it does not certify meaning.
+parse, check, or legend functions. Every overlay absent from the pinned record stays **unreviewed** after acceptance,
+even when all its entries say `suggested: false`. Acceptance permits use; it does not certify meaning.
 The same overlay must accompany English parsing and rendering.
 
 Remaining awkward cases are real: nested mixed guards still read like legal
@@ -292,7 +318,13 @@ both three-atom associations, deeper/mixed guards, nested implications, and the
 actual use-case claims. Duplicate draws are recorded, not counted twice.
 **7,500 environment/text pairs** (500 per configuration) had exactly one
 Earley dynamic-complete derivation, with zero ambiguity nodes. Every directed
-case is in that sample. This is finite evidence, not a universal unambiguity proof.
+case is in that directed-heavy prefix of each configuration; it is **not a random sample**.
+A separate seeded random sample adds **3,750 texts**
+(250 per configuration), all at measured AST depths 6–9, each with exactly one
+all-derivations parse and an exact AST round trip. It excludes the original corpus.
+Another **750 five-statement documents** round-trip
+and have exactly one all-derivations parse using the document grammar.
+This is finite evidence, not a universal unambiguity proof.
 The report records seeds, corpus/grammar hashes, overlay digests, constructor
 counts, and all original environment IDs. Counts are configuration-indexed;
 the same text may appear under different vocabularies.

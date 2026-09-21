@@ -20,7 +20,7 @@ Every person who has a noncitizen parent domiciled in the United States is subje
 
 ```text
 English vocabulary: ve.english-legend@1; environment: 8937bcba42188c0dab8fe6d85252d527e99cc0c91a6f9ff9f62d42e6f029b3d5
-Display overlay digest: 6669967f3970d60ef2aaa08ab007b43fa5cda8740a466b489e402d2a0737df3e
+Display overlay digest: 6669967f3970d60ef2aaa08ab007b43fa5cda8740a466b489e402d2a0737df3e; review status: reviewed
 A unique sort uses that noun. Two simultaneous entities of a sort use first and second throughout the statement. Beyond two, all entities of that sort use numbered letters. Scope is lexical and restarts per statement.
 Constants use their identifier names; reserved or compound names are quoted.
 Starting from the first endpoint, the second is reachable. A step body binds source first and destination second; outer references stay fixed.

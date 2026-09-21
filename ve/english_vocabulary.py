@@ -1,10 +1,11 @@
 """Display-only English overlays and conservative, explicitly accepted suggestions."""
 from copy import deepcopy
 import re
+from importlib.resources import files
 
 from .environment import Environment
 from .errors import VEError
-from .wire import canonical_json, digest, require_fields
+from .wire import canonical_json, digest, require_fields, loads_json
 
 # Finite lexical idioms. These are atomic vocabulary, never new logical operators.
 # Argument positions remain literal and in order, including trailing complements.
@@ -67,6 +68,22 @@ def negative_template(template, arity):
     if template in IDIOMS[arity] and verb in past:
         return template.replace('{0} ' + verb + ' ', '{0} did not ' + past[verb] + ' ', 1)
     return _negative_template(template, 2) if arity == 2 or template in IDIOMS[1] else None
+
+
+def overlay_provenance(vocabulary):
+    """Only the repository's pinned record can attest to a reviewed digest."""
+    if vocabulary is None:
+        return {'overlay_digest': None, 'review_status': 'not_applicable'}
+    overlay_digest = digest('ve-english-vocabulary-v1\n', vocabulary)
+    # Missing/unreadable review records fail closed, without affecting checking.
+    try:
+        records = loads_json(files('ve').joinpath('reviewed-overlays.json').read_bytes())
+        reviewed = any(r.get('overlay_digest') == overlay_digest and r.get('reviewer')
+                       and r.get('date') for r in records)
+    except (OSError, VEError, TypeError, AttributeError):
+        reviewed = False
+    return {'overlay_digest': overlay_digest,
+            'review_status': 'reviewed' if reviewed else 'unreviewed'}
 
 
 def display_environment(env, vocabulary, accept_suggested_vocabulary):
