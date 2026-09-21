@@ -25,13 +25,13 @@ from ..runner import Condition, Experiment, Item, load_trials, run
 from ..stats import bootstrap_rate, rate
 from .pilot import E1, ROOT, STRONG, WEAK, load_candidates
 from .prompts import SEMANTICS
-from .views import render, vocabulary_text
+from .views import VIEWS, legend, render
 
 DOC_JUDGE = """You are the reviewer who signs off on formal specifications.
 
 {intro}
 
-Vocabulary
+Vocabulary legend (identical in every presentation of this task)
 {vocabulary}
 
 {semantics}
@@ -107,7 +107,7 @@ def prompt(payload: dict, view: str, explanation: str, budget: str) -> str:
         texts = [p["explanation"] for p in parts]
         text = texts[0] if len(parts) == 1 else "\n".join(f"{i}. {t}" for i, t in enumerate(texts, 1))
         block = EXPL.format(s="" if len(parts) == 1 else "s", text=text)
-    return DOC_JUDGE.format(intro=intro, vocabulary=vocabulary_text(env), semantics=SEMANTICS, body=body,
+    return DOC_JUDGE.format(intro=intro, vocabulary=legend(env), semantics=SEMANTICS, body=body,
                             explanation_block=block, answer=ANSWER[budget])  # fmt: skip
 
 
@@ -142,7 +142,7 @@ RUNS = {
     "doc4": ("doc4", ("reason", "direct"), ("fol_symbols",), ("none",), WEAK),
     # weak judges with hidden reasoning switched off; the verdict must come without visible reasoning either
     "noreason": ("single", ("direct",), ("fol_symbols",), ("none",), WEAK_NOREASON),
-    "noreason-cells": ("single", ("direct",), ("fol_symbols", "ve_strict"), ("none", "attacker"), WEAK_NOREASON),
+    "noreason-cells": ("single", ("direct",), VIEWS, ("none", "attacker"), WEAK_NOREASON),
     "noreason-doc4": ("doc4", ("direct",), ("fol_symbols",), ("none",), WEAK_NOREASON),
 }
 

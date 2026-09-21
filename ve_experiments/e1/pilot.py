@@ -27,7 +27,7 @@ E1 = ROOT / "experiments" / "E1"
 WEAK = ("claude-haiku-4-5-20251001", "gpt-5.6-luna")
 STRONG = ("claude-fable-5-1", "gpt-6-astra")
 HIDDEN = ("kind", "family_of_attack", "direction", "distinguishing_model", "explanation_author", "template", "family",
-          "binding", "e1b_truth", "distinguishing_model_nonvacuous", "verbalisation")  # fmt: skip
+          "binding", "e1b_truth", "distinguishing_model_nonvacuous")  # fmt: skip
 
 
 def load_candidates(split: str = "dev", name: str | None = None) -> list[dict]:
