@@ -4,7 +4,7 @@
 **Status:** Brainstorming synthesis / project direction  
 **Date:** September 2026
 
-**Source basis:** This memo consolidates [the brainstorming chat](<Chat-Formalize English In Lean.md>). External project, availability, licensing, and model-capability claims are discussion-time research notes and should be rechecked before implementation decisions. The [line-cited coverage review](../reviews/chat-coverage/README.md) records the September 20, 2026 audit and its changes.
+**Source basis:** This memo consolidates [the brainstorming chat](<archive/sources/Chat-Formalize English In Lean.md>). External project, availability, licensing, and model-capability claims are discussion-time research notes and should be rechecked before implementation decisions. The memo was checked against the full chat on September 20, 2026.
 
 ---
 
@@ -5248,7 +5248,7 @@ The following checklist maps the major questions from the brainstorming to where
 | Recommended concrete roadmap | §§20–21 |
 | Recommended current architecture | §§8, 25–27 |
 
-Additional details recovered by the line-cited coverage review:
+Additional details recovered during source review:
 
 | Discussion detail | Covered in |
 |---|---|
@@ -5261,20 +5261,20 @@ Additional details recovered by the line-cited coverage review:
 | Rustlight feature snapshot, common-subset validation, source-parser trust boundary | §11; §20, Phase 5; Appendix E.1–E.2, AD.15 |
 | Open constitutional standards, interpretive methods, and precedent-change queries | §16 |
 
-See the [coverage review](../reviews/chat-coverage/README.md) for exact chat lines, original memo lines, updated memo lines, and the disposition of each reviewer finding. This checklist should be updated whenever major new design decisions are added.
+This checklist should be updated whenever major new design decisions are added.
 
 ---
 
 # Appendix AF — Final Completeness Note
 
-On September 20, 2026, six reviewers examined non-overlapping portions of the full 3,286-line chat against the 5,219-line pre-edit memo. The integrating review checked their findings against both files, applied the supported additions and corrections, and recorded optional suggestions that were already covered or did not warrant duplication. The [review record](../reviews/chat-coverage/README.md) preserves coverage ownership and exact source, baseline, and updated line references.
+The September 20, 2026 review covered the full brainstorming chat and incorporated the supported additions and corrections into the relevant sections of this memo.
 
 Repeated exchanges and redundant examples are consolidated. Coverage of a discussion claim does not establish that an external project claim is current or correct; the historical research notes remain subject to verification before implementation.
 
 The source artifacts are:
 
-- [Chat-Formalize English In Lean.md](<Chat-Formalize English In Lean.md>): full chronological conversation, including answers and research links.
-- [Prompts-formal_language_user_prompts.md](Prompts-formal_language_user_prompts.md): separate chronological archive of the user's prompts.
-- `verifiable_english_brainstorming_and_architecture_complete.md`: consolidated research and design record.
+- [Chat-Formalize English In Lean.md](<archive/sources/Chat-Formalize English In Lean.md>): full chronological conversation, including answers and research links.
+- [Prompts-formal_language_user_prompts.md](archive/sources/Prompts-formal_language_user_prompts.md): separate chronological archive of the user's prompts.
+- `architecture-and-design.md`: consolidated research and design record.
 
 If a future decision materially changes the project, both the decision and its rationale should be added to this memo rather than relying on chat history alone.
