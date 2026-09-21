@@ -1,0 +1,165 @@
+{
+  "format": "ve.english-vocabulary@1",
+  "environment_id": "b3f7afa3f97f000698d6fd0e9cd7024a7d7aed4773d2ed0241dabf9f26616371",
+  "sorts": {
+    "institution": {
+      "verbalisation": {
+        "singular": "institution",
+        "plural": "institutions"
+      },
+      "suggested": false
+    },
+    "person": {
+      "verbalisation": {
+        "singular": "person",
+        "plural": "people"
+      },
+      "suggested": false
+    },
+    "decision": {
+      "verbalisation": {
+        "singular": "decision",
+        "plural": "decisions"
+      },
+      "suggested": false
+    },
+    "rate_range": {
+      "verbalisation": {
+        "singular": "rate range",
+        "plural": "rate ranges"
+      },
+      "suggested": false
+    },
+    "moment": {
+      "verbalisation": {
+        "singular": "moment",
+        "plural": "moments"
+      },
+      "suggested": false
+    },
+    "year": {
+      "verbalisation": {
+        "singular": "year",
+        "plural": "years"
+      },
+      "suggested": false
+    },
+    "goal": {
+      "verbalisation": {
+        "singular": "goal",
+        "plural": "goals"
+      },
+      "suggested": false
+    },
+    "text": {
+      "verbalisation": {
+        "singular": "text",
+        "plural": "texts"
+      },
+      "suggested": false
+    },
+    "cause": {
+      "verbalisation": {
+        "singular": "cause",
+        "plural": "causes"
+      },
+      "suggested": false
+    },
+    "event": {
+      "verbalisation": {
+        "singular": "event",
+        "plural": "events"
+      },
+      "suggested": false
+    },
+    "figure": {
+      "verbalisation": {
+        "singular": "figure",
+        "plural": "figures"
+      },
+      "suggested": false
+    }
+  },
+  "predicates": {
+    "unanimous": {
+      "verbalisation": "{0} is unanimous",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not unanimous"
+    },
+    "raised_on": {
+      "verbalisation": "{0} raised its policy rate on {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} did not raise its policy rate on {1}"
+    },
+    "voted_for": {
+      "verbalisation": "{0} voted for {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} did not vote for {1}"
+    },
+    "raised_to": {
+      "verbalisation": "{0} raised its policy rate to {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} did not raise its policy rate to {1}"
+    },
+    "promised": {
+      "verbalisation": "{0} promised {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} did not promise {1}"
+    },
+    "submitted_projection": {
+      "verbalisation": "{0} submitted a rate projection for {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} did not submit a rate projection for {1}"
+    },
+    "is_first_under": {
+      "verbalisation": "{0} is the first policy shift under {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not the first policy shift under {1}"
+    },
+    "appointed_by": {
+      "verbalisation": "{0} was appointed by {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} was not appointed by {1}"
+    },
+    "took_office_in": {
+      "verbalisation": "{0} took office in {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} did not take office in {1}"
+    },
+    "projected_for": {
+      "verbalisation": "{0} is projected for the end of {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not projected for the end of {1}"
+    },
+    "stated": {
+      "verbalisation": "{0} issued {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} did not issue {1}"
+    },
+    "attributes_to": {
+      "verbalisation": "{0} attributes elevated inflation to {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not attribute elevated inflation to {1}"
+    },
+    "scheduled_for": {
+      "verbalisation": "{0} is scheduled for {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not scheduled for {1}"
+    },
+    "exceeds": {
+      "verbalisation": "{0} exceeds {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not exceed {1}"
+    },
+    "projected_year": {
+      "verbalisation": "{0} is projected to occur in {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not projected to occur in {1}"
+    },
+    "pledged": {
+      "verbalisation": "{0} pledged {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} did not pledge {1}"
+    }
+  }
+}

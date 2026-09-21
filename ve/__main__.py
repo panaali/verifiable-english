@@ -36,6 +36,8 @@ def _emit(value):
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="python -m ve", description="Experimental VE v0 language checking")
     commands = parser.add_subparsers(dest="command", required=True)
+    suggestions = commands.add_parser("suggest-vocabulary", help="emit unreviewed English vocabulary candidates")
+    suggestions.add_argument("--env", required=True)
     grammar = commands.add_parser("grammar", help="export an environment-specific decoding grammar")
     grammar.add_argument("--env", required=True, help="environment JSON file")
     grammar.add_argument("--dialect", choices=("lark", "gbnf", "ebnf"), default="lark")
@@ -57,6 +59,9 @@ def main(argv=None):
     for command in ("parse", "format", "render", "evaluate", "check", "import-fol", "countermodel"):
         sub = commands.add_parser(command)
         sub.add_argument("--env", required=True, help="environment JSON file")
+        sub.add_argument("--english-vocabulary", help="display-only English vocabulary overlay JSON")
+        sub.add_argument("--accept-suggested-vocabulary", action="store_true",
+                         help="explicitly accept unreviewed suggested wording")
         sub.add_argument("--surface", choices=("strict", "english"),
                          help="input language; omitted means strict input and English display")
         if command == "countermodel":
@@ -88,6 +93,10 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         env = Environment.from_json(_read(args.env))
+        if args.command == "suggest-vocabulary":
+            from . import suggest_vocabulary
+            _emit(suggest_vocabulary(env))
+            return 0
         if args.command == "view-lengths":
             _emit(measure_jsonl_lengths(args.source, env, field=args.field,
                                        source_format=args.source_format, naming=args.naming,
@@ -102,6 +111,13 @@ def main(argv=None):
             else:
                 print(export_grammar(env, wrapper=args.wrapper, **options), end="")
             return 0
+        from .english import EnglishVocabulary
+        from . import suggest_vocabulary
+        vocabulary = loads_json(_read(args.english_vocabulary)) if args.english_vocabulary else None
+        if vocabulary is None and args.accept_suggested_vocabulary:
+            vocabulary = suggest_vocabulary(env)
+        english_options = dict(vocabulary=vocabulary, accept_suggested_vocabulary=args.accept_suggested_vocabulary)
+        EnglishVocabulary(env, **english_options)  # Validate even when the selected output is strict.
         surface = args.surface or "strict"
         display_view = "ve_strict" if args.surface == "strict" else "ve_english"
         if hasattr(args, "view") and args.view is None:
@@ -112,7 +128,7 @@ def main(argv=None):
             source = _read(path, MAX_SOURCE_BYTES)
             if surface == "english":
                 from .english import parse_english_with_metadata
-                parsed = parse_english_with_metadata(env, source)
+                parsed = parse_english_with_metadata(env, source, **english_options)
                 paraphrases[path] = parsed.paraphrase()
                 return parsed.document
             return parse(env, source)
@@ -134,7 +150,7 @@ def main(argv=None):
                                        semantic_nonvacuity=args.semantic_nonvacuity,
                                        max_models=args.max_models, max_evaluations=args.max_evaluations)
             record = result.to_dict()
-            record["conclusion_text"] = render(conclusion, env, display_view)
+            record["conclusion_text"] = render(conclusion, env, display_view, **english_options)
             if paraphrases:
                 record["paraphrases"] = paraphrases
             _emit(record)
@@ -146,7 +162,7 @@ def main(argv=None):
                 return 0
             view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(args.view, args.view)
             renderer = render_cell if args.with_legend else render
-            options = {"style": args.legend_style} if args.with_legend else {}
+            options = dict(english_options, **({"style": args.legend_style} if args.with_legend else {}))
             print(renderer(document, env, view, args.naming, **options), end="")
             return 0
         source = _read(args.source, MAX_SOURCE_BYTES)
@@ -156,16 +172,16 @@ def main(argv=None):
                          if getattr(args, "candidate_ast", None) else None)
             record = check(env, source, model, candidate_ast=candidate,
                            max_evaluations=getattr(args, "max_evaluations", 1_000_000),
-                           trace=not getattr(args, "no_trace", False), surface=surface)
+                           trace=not getattr(args, "no_trace", False), surface=surface, **english_options)
             from .ast import document_from_data
-            record["display_text"] = render(document_from_data(env, record["ast"]), env, display_view)
+            record["display_text"] = render(document_from_data(env, record["ast"]), env, display_view, **english_options)
             _emit(record)
             if model is None:
                 return 0
             return {"Satisfied": 0, "Violated": 1, "ResourceLimit": 4}[record["evaluation"]["status"]]
         if surface == "english":
             from .english import parse_english_with_metadata
-            parsed = parse_english_with_metadata(env, source)
+            parsed = parse_english_with_metadata(env, source, **english_options)
             document = parsed.document
             if parsed.paraphrase()["changed"]:
                 print(json.dumps({"paraphrase": parsed.paraphrase()}, ensure_ascii=False, indent=2), file=sys.stderr)
@@ -177,7 +193,7 @@ def main(argv=None):
                 return 0
             view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(args.view, args.view)
             renderer = render_cell if args.with_legend else render
-            options = {"style": args.legend_style} if args.with_legend else {}
+            options = dict(english_options, **({"style": args.legend_style} if args.with_legend else {}))
             print(renderer(document, env, view, args.naming, **options), end="")
         else:
             print(print_document(env, document), end="")

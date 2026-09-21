@@ -5,7 +5,7 @@ clauses use determiners, relative clauses, and definite noun references. Its
 complex clauses use enumerated provisions. It is deliberately smaller than
 unrestricted English: authors write the same forms that the renderer produces.
 There are no formula parentheses, implicit witnesses, pronoun resolution rules,
-passive argument reversals, omitted conditions, reassociation, or simplification.
+implicit argument reversals, omitted conditions, reassociation, or simplification.
 List markers such as `(a)` and `(i)` are structural labels, not formula brackets.
 
 The strict AST and serialization remain canonical. Environment, meaning, model,
@@ -58,7 +58,8 @@ not document numbering.
 Constants retain their declared identifier names. Simple nonreserved names are
 bare; reserved or compound names are double-quoted. A quote identifies a name,
 not a proposition or an English interpretation of that identifier. Vocabulary
-metadata cannot insert statement punctuation or structure. Rejected sort nouns
+metadata cannot insert statement boundaries or arbitrary logical structure.
+Finite atomic idioms can contain internal punctuation or coordination. Rejected sort nouns
 use `entity of sort "identifier"`. Rejected predicate templates use `is classified
 as "identifier"` or `has the recorded relation "identifier" to`. These explicit
 fallbacks keep every constructor available without inventing semantic aliases.
@@ -67,19 +68,31 @@ Undeclared binary verbs use bare spelling only for the finite transitive set
 `owns`, `audits`, `undermines`, `performs`, `follows`, `benefits`, `outranks`,
 and `exceeds`; a spelling ending in `s` alone does not establish transitivity. Missing metadata is distinguished from rejected data.
 
-An existential relative clause uses `who` for the selected noun `person` and
-`that` for other sorts. Neither is a cross-clause pronoun. Universal guards are
-contracted only when one accepted positive or validated negative atom has the
-new binder as its subject. A relative guard reconstructs an implication, not a
-conjunction. An existential relative clause reconstructs just its body, with no
-implicit guard. Rejected templates and more complicated guards retain explicit
-clauses. Negation uses a declared, mechanically validated negative template or
-`it is not the case that`. No `No ...` contraction is currently emitted.
+Relative clauses use `who` for the noun `person` and `that` for other sorts.
+Neither is a cross-clause pronoun. A universal guard contracts when its one,
+two, or three predicate atoms (positive or validated-negative) refer to the new binder as
+subject or object. Object relatives preserve argument order: `every service that
+alice owns` binds the service in the second argument, while `every person who
+owns legacy` binds the person in the first. Consequent contractions remain subject
+relatives. Two conjuncts use `A and B`. Three preserve exact binary association:
+`A and B, and C` means `(A ∧ B) ∧ C`; `A, and B and C` means `A ∧ (B ∧ C)`.
+The comma records the outer conjunction. This punctuation is necessary because
+VE preserves AST association, even for logically equivalent trees. An optional
+repeated `who`/`that` is accepted after each conjunction. Deeper or mixed and/or
+guards keep the enumerated structure. A relative guard reconstructs implication;
+an existential relative reconstructs its body without an implicit guard.
+
+Conditionals use `if FORMULA, then FORMULA`, including quantified or explicitly
+negated single clauses. The renderer never splits labels across if/then and
+never emits a one-item enumeration. Two atomic conjuncts use `both … and …`;
+two non-atomic clauses use `Both of the following hold:`. `All of the following
+hold:` is reserved for genuinely nested connective structure. Negation uses
+validated wording or `it is not the case that`; no `No …` contraction is emitted.
 
 For closure, `starting from SOURCE, DESTINATION is reachable by one or more
 "relation" steps` keeps the source before the destination. `zero or more`
 denotes reflexive transitive closure. A body-defined step introduces its source
-and destination in that order, then gives a scoped enumerated definition; outer
+and destination in that order, then gives a scoped `satisfies this condition:` definition; outer
 parameters remain available. Reachability is never inferred from an ordinary
 predicate or an English-looking relation name.
 
@@ -100,8 +113,8 @@ formula        = atom | negation | compact | listing
 negation       = "it is not the case that ", formula ;
 compact        = "both ", atom, " and ", atom
                | "either ", atom, " or ", atom, ", or both"
-               | "if ", atom, ", then ", atom ;
-listing        = "all of the following hold:", space,
+               | "if ", formula, ", then ", formula ;
+listing        = ("all of the following hold:" | "both of the following hold:"), space,
                  marker, space, formula, ";", space, marker, space, formula
                | "at least one of the following holds:", space,
                  marker, space, formula, ";", space, marker, space, formula
@@ -109,9 +122,16 @@ listing        = "all of the following hold:", space,
                  ";", space, "then the following holds:", space,
                  marker, space, formula ;
 universal      = "for every ", declaration, ", ", formula
-               | "for every ", declaration, " that ", relative, ", ", formula
+               | "for every ", declaration, relative-pronoun, guard, ", ", formula
                | "every ", declaration, " ", relative
-               | "every ", declaration, " that ", relative, " ", relative ;
+               | "every ", declaration, relative-pronoun, guard, " ", relative ;
+relative-pronoun = " who " | " that " ;
+guard          = guard-atom
+               | guard-atom, " and ", guard-relative
+               | guard-atom, " and ", guard-relative, ", and ", guard-relative
+               | guard-atom, ", and ", guard-relative, " and ", guard-relative ;
+guard-relative = ["who " | "that "], guard-atom ;
+guard-atom     = relative | template-with-bound-object-removed ;
 existential    = "there is ", article, " ", declaration, " such that ", formula
                | "there is ", article, " ", declaration, " who ", relative
                | "there is ", article, " ", declaration, " that ", relative ;
@@ -126,25 +146,26 @@ atom           = "this holds in all cases" | "this is impossible"
                | term, " is the same as ", term
                | instantiated-positive-template
                | instantiated-validated-negative-template ;
-relative       = accepted-template-with-new-binder-subject-removed ;
+relative       = selected-template-with-new-binder-subject-removed ;
 reach          = "starting from ", term, ", ", term, " is reachable by ",
                  count, " or more ", relation-name, " steps"
                | "starting from ", term, ", ", term, " is reachable by ",
                  count, " or more steps, where a step from ", article, " ",
                  declaration, " to ", article, " ", declaration,
-                 " satisfies the following:", space, "(a) ", formula ;
+                 " satisfies this condition: ", formula ;
 count          = "one" | "zero" ;
 ```
 
 Additional constraints enforce the environment's argument sorts and lexical
 scope; closure requires `closure@0`. The two list entries are ordered and never
-flattened: a three-leaf conjunction retains its original binary association as
-a nested list. At even list depth the two markers are `(a)`, `(b)`; at odd depth
+flattened: outside short relative guards, a three-leaf conjunction retains its
+original binary association as a nested list. At even list depth the two markers are `(a)`, `(b)`; at odd depth
 they are `(i)`, `(ii)`. Each nested list adds two spaces of indentation. A step
-definition has exactly one `(a)` entry. Marker spelling and fixed arity recover
+definition has no list marker. Legacy single-step and split-if lists remain
+accepted for backward compatibility, but are never emitted. Marker spelling and fixed arity recover
 the tree independently of visual indentation. Quantifiers and negation take one
-complete following formula, not an unspecified span of prose. Compact binary
-forms have atomic operands only. These restrictions avoid the familiar ambiguity
+complete following formula, not an unspecified span of prose. Compact `both` and `either`
+forms have atomic operands; prefix `if` accepts complete formulas. These restrictions avoid the familiar ambiguity
 of unbracketed `A and B or C` or a quantifier followed by an unscoped conjunction.
 
 The deterministic parser resolves declarations into a nearest-first scope stack,
@@ -181,7 +202,9 @@ relational phrases additionally include `reports/contributes/responds to`,
 `denies the equal protection of the laws to`. This is a versioned lexical
 allowlist, not a general English part-of-speech recognizer. Fixed nominal
 complements may contain articles or a sort word without introducing a binder.
-Predicate/constant/head collisions and negating prefixes still reject.
+Generic templates still reject symbol/head collisions and negating prefixes.
+The finite idiom set explicitly allows shared heads such as `undermines` and
+`undermines the oversight role of`; each expanded grammar is audited.
 
 Templates remain trusted semantic declarations. Lexical checks cannot discover
 that an author has used `disowns` to mean `owns`, or that a sort alias misdescribes
@@ -212,52 +235,259 @@ UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run python -m conformance.englis
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-fluent uv run pytest -q
 ```
 
+## Reviewed overlays and explicit suggestions
+
+Each use case has a new `environment.english.json`. It binds the unchanged
+`environment_id` and contains only sort nouns and predicate wording, with
+`suggested: false` for the hand-written reviewed entries. The schema rejects
+arguments, descriptions, constants, and any other semantic fields. The overlay
+has its own domain-separated canonical JSON digest, shown in the English legend.
+It is never discovered or applied implicitly. Other views ignore display options
+and retain their original bytes.
+
+```sh
+uv run python -m ve render --env usecases/birthright-citizenship-debate/environment.json \
+  --english-vocabulary usecases/birthright-citizenship-debate/environment.english.json \
+  --with-legend usecases/birthright-citizenship-debate/claims.ve
+
+uv run python -m ve suggest-vocabulary --env environment.json > suggestions.json
+uv run python -m ve render --env environment.json --english-vocabulary suggestions.json \
+  --accept-suggested-vocabulary --with-legend claims.ve
+```
+
+`ve.suggest_vocabulary(env)` returns deterministic, lint-clean overlay candidates,
+each marked `suggested: true`. It uses a finite adjective/modifier vocabulary,
+`is_` and adjectival snake_case, known transitive verbs, and checked `has_` idioms
+such as `has_access_to`. Exact simple descriptions can supply an adjective or
+establish “United States” for `born_in_us`; it never lowercases US into the pronoun
+“us”. Arbitrary descriptions, abbreviations, modality, and uncertain argument
+roles produce no suggestion. This is intentionally incomplete.
+
+Passing a suggested overlay without `--accept-suggested-vocabulary` fails. With
+that flag and no overlay file, the CLI explicitly generates and accepts suggestions.
+In Python, pass `vocabulary=overlay, accept_suggested_vocabulary=True` to render,
+parse, check, or legend functions. Every suggested entry stays **unreviewed** in
+the legend after acceptance. Acceptance permits use; it does not certify meaning.
+The same overlay must accompany English parsing and rendering.
+
+Remaining awkward cases are real: nested mixed guards still read like legal
+lists; object relatives can repeat `that` in `every state that that person resides in`;
+three-atom grouping commas are a controlled-language convention; multiple
+same-sort binders require first/second or numbered names; quoted constant IDs
+such as `"rate_decision"` and `"lower_prices_goal"` remain opaque. Reachability
+still names its relation and step endpoints explicitly. The Claude priority
+sentence remains long. Modal, normative, temporal, and contested legal predicates
+remain atomic labels whose fuller qualifications live in the original descriptions
+and use-case GAPS files. Reviewed wording supplies no modal calculus or resolution
+of the citizenship dispute. Suggestions intentionally leave uncertain names unworded.
+
 <!-- BEGIN GENERATED ENGLISH EVIDENCE -->
 
-**50,000 random well-typed environment/AST pairs** round-tripped through the public
-`render` and `parse_english` APIs across ten vocabularies. Each vocabulary
-contributed 5,000 distinct ASTs; duplicate generator draws are counted separately
-in [the committed report](../conformance/english-surface-report.json).
-**5,000 rendered environment/text pairs** (500 distinct texts per vocabulary) had exactly one
-Earley derivation, with zero ambiguity nodes. The sample includes closure,
-duplicate aliases, structural function words in nouns and verbs, structural
-identifiers/constants, expanded templates, and all four real vocabularies.
-Seeds, environment IDs, corpus hashes, grammar hashes, and constructor counts
-are recorded. Counts are environment-indexed; simple formulas can recur in
-different vocabularies. This sample is not a uniform distribution over all ASTs.
+**75,000 distinct well-typed environment/AST pairs** round-tripped through
+`render` and `parse_english`, across fifteen configurations (the original ten,
+four reviewed overlays, and explicitly accepted suggestions). Each configuration
+contributed 5,000 distinct ASTs: directed boundary cases followed by seeded random
+draws. Directed cases cover every template, validated negatives, subject and object relatives, two-atom guards,
+both three-atom associations, deeper/mixed guards, nested implications, and the
+actual use-case claims. Duplicate draws are recorded, not counted twice.
+**7,500 environment/text pairs** (500 per configuration) had exactly one
+Earley dynamic-complete derivation, with zero ambiguity nodes. Every directed
+case is in that sample. This is finite evidence, not a universal unambiguity proof.
+The report records seeds, corpus/grammar hashes, overlay digests, constructor
+counts, and all original environment IDs. Counts are configuration-indexed;
+the same text may appear under different vocabularies.
 
-All **706 existing identity fixtures** have an additional English
-transport regression: English round trip preserves their strict bytes and
-stored environment/meaning IDs. The original fixture regression still checks
-all preimages, model IDs, and formula IDs. Minimal pairs test quantifier order,
-argument reversal, scope, and/or, implication reversal, dropped conjuncts,
-moved negation, and guard versus consequent.
+All **706 original identity fixtures** retain English transport checks.
+Original environment JSON, strict claims, identities, and historical views remain unchanged.
 
-| Current use-case environment | Predicates | Declared templates | Accepted before | Accepted after | Missing metadata |
+| Use case | Predicates | Original declared wording | Accepted original wording | Reviewed overlay wording | Overlay lint issues |
 |---|---:|---:|---:|---:|---:|
-| birthright-citizenship-debate | 6 | 0 | 0 | 0 | 6 |
-| claude-constitution-excerpt | 18 | 0 | 0 | 0 | 18 |
-| news-article | 16 | 0 | 0 | 0 | 16 |
-| us-constitution-14th-s1 | 13 | 13 | 3 | 9 | 0 |
+| birthright-citizenship-debate | 6 | 0 | 0 | 6 | 0 |
+| claude-constitution-excerpt | 18 | 0 | 0 | 18 | 0 |
+| news-article | 16 | 0 | 0 | 16 | 0 |
+| us-constitution-14th-s1 | 13 | 13 | 13 | 13 | 0 |
 
-In total: **3/13 before, 9/13 after**. Forty of the 53 predicates
-have no declared template in the current integration files. Their absence
-is not a rejection and is not counted as an accepted template. The old
-`rendered.md` snapshots are not a substitute for current environment JSON.
-No environment was edited to improve these numbers or its identities.
+The overlays supply reviewed wording for **all 53 predicates**, including the
+40 originally missing templates. Finite lexical idioms also cover the four
+previously rejected constitutional templates. The original declarations are
+still visible alongside the selected wording in each artifact legend.
 
-Still rejected:
+### Ten actual use-case sentences: before and after
 
-- `citizen_of_state` — `{0} is a citizen of {1}`. Binary copula with a nominal complement; no validated active argument-order template is declared. Codes: BINARY_AUXILIARY, BINARY_CONVERSE, LOGICAL_WORD, SYMBOL_COLLISION.
-- `abridges_priv_or_imm` — `{0} abridges the privileges or immunities of {1}`. Contains a lexical coordination using “or”; the linter does not decide whether this is an atomic idiom or a disjunction. Codes: BINARY_CONVERSE, LOGICAL_WORD.
-- `deprives` — `{0} deprives {1} of life, liberty, or property`. Places extra coordinated, punctuated content after the second argument; unsupported placeholder shape. Codes: TEMPLATE_SHAPE.
-- `within_jurisdiction_of` — `{0} is within the jurisdiction of {1}`. Binary copula with a prepositional complement; outside the active-relation grammar. Codes: BINARY_AUXILIARY, BINARY_CONVERSE, LOGICAL_WORD, SYMBOL_COLLISION.
+The baseline text and commit are stored in `conformance/english-before-after.json`.
+Each after-text is generated from the same strict claim and parsed back unchanged.
 
-Missing template identifiers (all retained explicitly in the report and legends):
+#### birthright-citizenship-debate, statement 1
 
-- birthright-citizenship-debate: `born_in_us`, `has_noncitizen_domiciled_parent`, `has_noncitizen_temporary_parent`, `has_noncitizen_undocumented_parent`, `subject_to_jurisdiction`, `us_citizen`.
-- claude-constitution-excerpt: `appropriate`, `benefits`, `bound_to_obey`, `contends_for`, `current_claude_model`, `follows`, `honest`, `inappropriately_harmful`, `interacts`, `ought_follow`, `ought_have_core_values`, `outranks`, `performs`, `relevant`, `sanctioned_check`, `undermines`, `undermines_check`, `violates_hard_constraint`.
-- news-article: `appointed_by`, `attributes_to`, `exceeds`, `is_first_under`, `pledged`, `projected_for`, `projected_year`, `promised`, `raised_on`, `raised_to`, `scheduled_for`, `stated`, `submitted_projection`, `took_office_in`, `unanimous`, `voted_for`.
+Before:
+
+```text
+For every person, if the following holds:
+  (a) both that person is classified as "born_in_us" and that person is classified as "subject_to_jurisdiction";
+then the following holds:
+  (b) that person is classified as "us_citizen".
+```
+
+After:
+
+```text
+Every person who is born in the United States and is subject to US jurisdiction is a US citizen.
+```
+
+#### birthright-citizenship-debate, statement 2
+
+Before:
+
+```text
+For every person, if that person is classified as "has_noncitizen_domiciled_parent", then that person is classified as "subject_to_jurisdiction".
+```
+
+After:
+
+```text
+Every person who has a noncitizen parent domiciled in the United States is subject to US jurisdiction.
+```
+
+#### claude-constitution-excerpt, statement 1
+
+Before:
+
+```text
+For every entity of sort "claude_model", if that entity of sort "claude_model" is classified as "current_claude_model", then that entity of sort "claude_model" is classified as "ought_have_core_values".
+```
+
+After:
+
+```text
+Every Claude model that is current is expected to have the core values.
+```
+
+#### claude-constitution-excerpt, statement 2
+
+Before:
+
+```text
+For every mechanism, if the following holds:
+  (a) that mechanism is appropriate;
+then the following holds:
+  (b) it is not the case that claude undermines that mechanism.
+```
+
+After:
+
+```text
+For every mechanism that is appropriate, claude does not undermine that mechanism.
+```
+
+#### claude-constitution-excerpt, statement 3
+
+Before:
+
+```text
+All of the following hold:
+  (a) claude is honest;
+  (b) for every action, if the following holds:
+    (i) that action is classified as "inappropriately_harmful";
+  then the following holds:
+    (ii) it is not the case that claude performs that action.
+```
+
+After:
+
+```text
+Both of the following hold:
+  (a) claude is honest;
+  (b) for every action that is inappropriately dangerous or harmful, claude does not perform that action.
+```
+
+#### news-article, statement 1
+
+Before:
+
+```text
+Fed has the recorded relation "raised_on" to "sept16".
+```
+
+After:
+
+```text
+Fed raised its policy rate on "sept16".
+```
+
+#### news-article, statement 2
+
+Before:
+
+```text
+Both "rate_decision" is unanimous and warsh has the recorded relation "voted_for" to "rate_decision".
+```
+
+After:
+
+```text
+Both "rate_decision" is unanimous and warsh voted for "rate_decision".
+```
+
+#### news-article, statement 3
+
+Before:
+
+```text
+Trump has the recorded relation "promised" to "lower_prices_goal".
+```
+
+After:
+
+```text
+Trump promised "lower_prices_goal".
+```
+
+#### us-constitution-14th-s1, statement 1
+
+Before:
+
+```text
+For every person, if the following holds:
+  (a) all of the following hold:
+    (i) either that person was born in the United States or that person was naturalized in the United States, or both;
+    (ii) that person is subject to the jurisdiction of the United States;
+then the following holds:
+  (b) all of the following hold:
+    (i) that person is a citizen of the United States;
+    (ii) for every state, if that person resides in that state, then that person has the recorded relation "citizen_of_state" to that state.
+```
+
+After:
+
+```text
+For every person, if all of the following hold:
+  (a) either that person was born in the United States or that person was naturalized in the United States, or both;
+  (b) that person is subject to the jurisdiction of the United States, then both of the following hold:
+  (a) that person is a citizen of the United States;
+  (b) for every state that that person resides in, that person is a citizen of that state.
+```
+
+#### us-constitution-14th-s1, statement 2
+
+Before:
+
+```text
+For every state, for every law, for every person, if the following holds:
+  (a) all of the following hold:
+    (i) either that state makes that law or that state enforces that law, or both;
+    (ii) that person is a citizen of the United States;
+then the following holds:
+  (b) it is not the case that that law has the recorded relation "abridges_priv_or_imm" to that person.
+```
+
+After:
+
+```text
+For every state, for every law, for every person, if all of the following hold:
+  (a) either that state makes that law or that state enforces that law, or both;
+  (b) that person is a citizen of the United States, then that law does not abridge the privileges or immunities of that person.
+```
+
 
 ### Twenty-five worked examples
 
@@ -363,7 +593,7 @@ for every person P and every service S, if P owns S then P audits S.
 English:
 
 ```text
-For every person, for every service, if that person owns that service, then that person audits that service.
+For every person, for every service that that person owns, that person audits that service.
 ```
 
 #### 6. Existential relative
@@ -689,12 +919,9 @@ for every service S that is deployed and that is not the same service as @legacy
 English:
 
 ```text
-For every service, if the following holds:
-  (a) all of the following hold:
-    (i) that service is deployed;
-    (ii) it is not the case that that service is the same as legacy;
-then the following holds:
-  (b) that service is reviewed.
+For every service, if both of the following hold:
+  (a) that service is deployed;
+  (b) it is not the case that that service is the same as legacy, then that service is reviewed.
 ```
 
 #### 22. Negated universal
@@ -734,14 +961,11 @@ if (either (both @legacy is deployed and @legacy is not reviewed) or (for every 
 English:
 
 ```text
-If the following holds:
-  (a) at least one of the following holds:
-    (i) both legacy is deployed and legacy is not reviewed;
-    (ii) every service that is deployed is reviewed;
-then the following holds:
-  (b) all of the following hold:
-    (i) there is a person such that for every service, that person owns that service;
-    (ii) it is not the case that either legacy is deployed or legacy is reviewed, or both.
+If at least one of the following holds:
+  (a) both legacy is deployed and legacy is not reviewed;
+  (b) every service that is deployed is reviewed, then both of the following hold:
+  (a) there is a person such that for every service, that person owns that service;
+  (b) it is not the case that either legacy is deployed or legacy is reviewed, or both.
 ```
 
 #### 24. One or more named steps
@@ -781,8 +1005,7 @@ for every service S, @legacy is reachable from S by zero or more steps satisfyin
 English:
 
 ```text
-For every service named S1, starting from S1, legacy is reachable by zero or more steps, where a step from a service named S2 to a service named S3 satisfies the following:
-  (a) all of the following hold:
-    (i) S2 depends on S3;
-    (ii) it is not the case that S3 is the same as S1.
+For every service named S1, starting from S1, legacy is reachable by zero or more steps, where a step from a service named S2 to a service named S3 satisfies this condition: both of the following hold:
+  (a) S2 depends on S3;
+  (b) it is not the case that S3 is the same as S1.
 ```

@@ -1,0 +1,55 @@
+{
+  "baseline_commit": "67dff2c48b85005b3d7651afcbb78c2221e2af1a",
+  "sentences": [
+    {
+      "usecase": "birthright-citizenship-debate",
+      "statement": 1,
+      "before": "For every person, if the following holds:\n  (a) both that person is classified as \"born_in_us\" and that person is classified as \"subject_to_jurisdiction\";\nthen the following holds:\n  (b) that person is classified as \"us_citizen\"."
+    },
+    {
+      "usecase": "birthright-citizenship-debate",
+      "statement": 2,
+      "before": "For every person, if that person is classified as \"has_noncitizen_domiciled_parent\", then that person is classified as \"subject_to_jurisdiction\"."
+    },
+    {
+      "usecase": "claude-constitution-excerpt",
+      "statement": 1,
+      "before": "For every entity of sort \"claude_model\", if that entity of sort \"claude_model\" is classified as \"current_claude_model\", then that entity of sort \"claude_model\" is classified as \"ought_have_core_values\"."
+    },
+    {
+      "usecase": "claude-constitution-excerpt",
+      "statement": 2,
+      "before": "For every mechanism, if the following holds:\n  (a) that mechanism is appropriate;\nthen the following holds:\n  (b) it is not the case that claude undermines that mechanism."
+    },
+    {
+      "usecase": "claude-constitution-excerpt",
+      "statement": 3,
+      "before": "All of the following hold:\n  (a) claude is honest;\n  (b) for every action, if the following holds:\n    (i) that action is classified as \"inappropriately_harmful\";\n  then the following holds:\n    (ii) it is not the case that claude performs that action."
+    },
+    {
+      "usecase": "news-article",
+      "statement": 1,
+      "before": "Fed has the recorded relation \"raised_on\" to \"sept16\"."
+    },
+    {
+      "usecase": "news-article",
+      "statement": 2,
+      "before": "Both \"rate_decision\" is unanimous and warsh has the recorded relation \"voted_for\" to \"rate_decision\"."
+    },
+    {
+      "usecase": "news-article",
+      "statement": 3,
+      "before": "Trump has the recorded relation \"promised\" to \"lower_prices_goal\"."
+    },
+    {
+      "usecase": "us-constitution-14th-s1",
+      "statement": 1,
+      "before": "For every person, if the following holds:\n  (a) all of the following hold:\n    (i) either that person was born in the United States or that person was naturalized in the United States, or both;\n    (ii) that person is subject to the jurisdiction of the United States;\nthen the following holds:\n  (b) all of the following hold:\n    (i) that person is a citizen of the United States;\n    (ii) for every state, if that person resides in that state, then that person has the recorded relation \"citizen_of_state\" to that state."
+    },
+    {
+      "usecase": "us-constitution-14th-s1",
+      "statement": 2,
+      "before": "For every state, for every law, for every person, if the following holds:\n  (a) all of the following hold:\n    (i) either that state makes that law or that state enforces that law, or both;\n    (ii) that person is a citizen of the United States;\nthen the following holds:\n  (b) it is not the case that that law has the recorded relation \"abridges_priv_or_imm\" to that person."
+    }
+  ]
+}

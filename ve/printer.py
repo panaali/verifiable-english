@@ -386,7 +386,7 @@ def _compact_vocabulary(legend: dict[str, Any]) -> str:
 
 
 def render_vocabulary(env: Any, view: str = "ve_strict", naming: str = "per_statement",
-                      style: str = "json") -> str:
+                      style: str = "json", *, vocabulary=None, accept_suggested_vocabulary=False) -> str:
     """Return the identical, deterministic identity/argument-order legend in every view.
 
     JSON is the unchanged default; compact uses one line per entry. Both styles
@@ -398,7 +398,7 @@ def render_vocabulary(env: Any, view: str = "ve_strict", naming: str = "per_stat
     _check_legend_style(style)
     if view == "ve_english":
         from .english import english_legend
-        return english_legend(env, style)
+        return english_legend(env, style, vocabulary=vocabulary, accept_suggested_vocabulary=accept_suggested_vocabulary)
     selected = _NaturalVocabulary(env)
     legend = {
         "format": "ve.vocabulary-legend@3", "environment_id": env.environment_id,
@@ -512,7 +512,7 @@ class _Traversal:
 
 
 def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
-           naming: str = "per_statement") -> str:
+           naming: str = "per_statement", *, vocabulary=None, accept_suggested_vocabulary=False) -> str:
     """Render a checked AST with shared binder and operand preorder.
 
     A formula has no final punctuation; documents have a period and LF for each
@@ -524,7 +524,7 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
     _check_naming(naming)
     if view == "ve_english":
         from .english import render_english
-        return render_english(value, env)
+        return render_english(value, env, vocabulary=vocabulary, accept_suggested_vocabulary=accept_suggested_vocabulary)
     if view == "ve_fluent":
         from .fluent import FluentTraversal
         traversal = FluentTraversal(env)
@@ -556,9 +556,9 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
 
 
 def render_cell(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
-                naming: str = "per_statement", style: str = "json") -> str:
+                naming: str = "per_statement", style: str = "json", **options) -> str:
     """Render an experimental cell, ALWAYS including the identical view legend."""
-    return render_vocabulary(env, view, naming, style) + render(value, env, view, naming)
+    return render_vocabulary(env, view, naming, style, **options) + render(value, env, view, naming, **options)
 
 
 def measure_view_lengths(items: Iterable[ast.Document | ast.Formula], env: Any, *,

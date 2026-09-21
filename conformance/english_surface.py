@@ -15,8 +15,8 @@ import random
 
 from lark import Lark
 
-from ve import ast, Environment, parse, render
-from ve.english import EnglishParser, EnglishTraversal, EnglishVocabulary, english_lark_grammar, parse_english
+from ve import ast, Environment, parse, render, suggest_vocabulary
+from ve.english import EnglishVocabulary, english_lark_grammar, parse_english
 from ve.printer import _NaturalVocabulary
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -68,6 +68,52 @@ def vocabularies():
         yield path.parent.name, Environment.from_json(path.read_bytes())
 
 
+def configurations():
+    for name, env in vocabularies():
+        yield name, env, {}
+    for path in sorted((ROOT / 'usecases').glob('*/environment.json')):
+        yield path.parent.name + '-reviewed', Environment.from_json(path.read_bytes()), {
+            'vocabulary': json.loads(path.with_name('environment.english.json').read_text())}
+    data = json.loads((ROOT / 'examples/fluent/environment.json').read_text())
+    for decl in data['vocabulary']['predicates'].values():
+        decl.pop('verbalisation', None); decl.pop('negative_verbalisation', None)
+    env = Environment(data)
+    yield 'accepted-suggestions', env, {'vocabulary': suggest_vocabulary(env), 'accept_suggested_vocabulary': True}
+
+
+def directed_formulas(env, words):
+    """Force every new guard shape/lexical template into the Earley sample."""
+    object_coordination_checked = False
+    for name, decl in env.predicates.items():
+        atom = (ast.Unary(name, ast.Var(0)) if len(decl.arguments) == 1
+                else ast.Binary(name, ast.Var(0), ast.Var(1)))
+        def bind(body):
+            result = ast.Forall(decl.arguments[0], body)
+            return result if len(decl.arguments) == 1 else ast.Forall(decl.arguments[1], result)
+        atoms = [atom] + ([ast.Not(atom)] if name in words.negatives else [])
+        for p in atoms:
+            q = atom
+            guards = [p, ast.And(p, q), ast.And(ast.And(p, q), p), ast.And(p, ast.And(q, p)),
+                      ast.And(ast.And(p, q), ast.And(q, p)), ast.And(p, ast.Or(q, p))]
+            for guard in guards:
+                yield bind(ast.Implies(guard, q))
+                yield bind(ast.Implies(guard, ast.Not(ast.Eq(ast.Var(0), ast.Var(0)))))
+        yield bind(ast.Implies(ast.Not(ast.Eq(ast.Var(0), ast.Var(0))), atom))
+        if len(decl.arguments) == 2:
+            incoming = ast.Binary(name, ast.Var(1), ast.Var(0))
+            guards = [incoming] + ([ast.Not(incoming)] if name in words.negatives else [])
+            if not object_coordination_checked:
+                guards += [ast.And(incoming, incoming), ast.And(ast.And(incoming, incoming), incoming),
+                           ast.And(incoming, ast.And(incoming, incoming))]
+                object_coordination_checked = True
+            for guard in guards:
+                yield ast.Forall(decl.arguments[0], ast.Forall(decl.arguments[1], ast.Implies(guard, ast.Top())))
+    # Nested if/then scopes are deliberately exercised in both argument positions.
+    p, q = ast.Top(), ast.Bottom()
+    yield ast.Implies(ast.Implies(p, q), p)
+    yield ast.Implies(p, ast.Implies(q, p))
+
+
 def random_formula(rng, env, depth, scope=()):
     def available(sort):
         return [ast.Var(i) for i, s in enumerate(scope) if s == sort] + [ast.Const(n) for n, d in env.constants.items() if d.sort == sort]
@@ -105,12 +151,16 @@ def lint_report():
     for path in sorted((ROOT / 'usecases').glob('*/environment.json')):
         env = Environment.from_json(path.read_bytes())
         old, new = _NaturalVocabulary(env), EnglishVocabulary(env)
+        overlay = json.loads(path.with_name('environment.english.json').read_text())
+        reviewed = EnglishVocabulary(env, vocabulary=overlay)
         declared = {n: d.verbalisation for n, d in env.predicates.items() if d.verbalisation is not None}
         result.append({'usecase': path.parent.name, 'environment_id': env.environment_id,
                        'predicates': len(env.predicates), 'declared_templates': len(declared),
                        'missing_templates': sorted(set(env.predicates) - set(declared)),
                        'accepted_before': sum(t == old.predicates[n] for n, t in declared.items()),
                        'accepted_after': sum(t == new.predicates[n] for n, t in declared.items()),
+                       'reviewed_templates': len(overlay['predicates']), 'overlay_digest': reviewed.overlay_digest,
+                       'reviewed_lint': [i.to_dict() for i in reviewed.issues],
                        'still_rejected': [{'predicate': n, 'template': t,
                                            'codes': [i.code for i in new.issues if i.path == f'/vocabulary/predicates/{n}/verbalisation']}
                                           for n, t in declared.items() if t != new.predicates[n]]})
@@ -119,25 +169,30 @@ def lint_report():
 
 def audit(per_vocabulary=5000, earley_per_vocabulary=500):
     rows = []
-    for offset, (name, env) in enumerate(vocabularies()):
+    for offset, (name, env, options) in enumerate(configurations()):
         rng = random.Random(SEED + offset)
-        words = EnglishVocabulary(env)
-        visitor = EnglishTraversal(env, words)
-        grammar = english_lark_grammar(env)
+        words = EnglishVocabulary(env, **options)
+        grammar = english_lark_grammar(env, **options)
         earley = Lark(grammar, parser='earley', lexer='dynamic_complete', ambiguity='explicit')
         seen, texts = set(), {}
         digest = hashlib.sha256()
         constructors = Counter()
         draws = checked = earley_count = 0
+        directed = list(dict.fromkeys(directed_formulas(env, words)))
+        if name.removesuffix('-reviewed') in {p.name for p in (ROOT / 'usecases').iterdir()}:
+            directed += list(parse(env, (ROOT / 'usecases' / name.removesuffix('-reviewed') / 'claims.ve').read_bytes()).formulas)
+        directed = list(dict.fromkeys(directed))
+        assert len(directed) <= earley_per_vocabulary or earley_per_vocabulary == 0
+        targeted_count = len(directed)
         while checked < per_vocabulary:
-            formula = random_formula(rng, env, rng.randrange(2, 9))
+            formula = directed.pop(0) if directed else random_formula(rng, env, rng.randrange(2, 9))
             draws += 1
             if formula in seen: continue
             seen.add(formula)
             ast.check_formula(env, formula)
-            text = render(ast.Document((formula,)), env, 've_english')
+            text = render(ast.Document((formula,)), env, 've_english', **options)
             assert len(text.encode()) <= 65536
-            copied = parse_english(env, text)
+            copied = parse_english(env, text, **options)
             ast.check_document(env, copied)
             assert copied == ast.Document((formula,)), (name, text, formula, copied)
             assert texts.setdefault(text, formula) == formula
@@ -151,13 +206,14 @@ def audit(per_vocabulary=5000, earley_per_vocabulary=500):
             digest.update(text.encode())
             checked += 1
         row = {'vocabulary': name, 'environment_id': env.environment_id, 'seed': SEED + offset,
+               'overlay_digest': words.overlay_digest, 'directed_asts': targeted_count,
                'draws_including_duplicates': draws, 'unique_asts_roundtripped': checked,
                'unique_texts': len(texts), 'earley_texts': earley_count, 'ambiguous_texts': 0,
                'top_level_constructors': dict(sorted(constructors.items())),
                'corpus_sha256': digest.hexdigest(), 'grammar_sha256': hashlib.sha256(grammar.encode()).hexdigest()}
         rows.append(row)
         print(json.dumps(row), flush=True)
-    return {'method': 'unique random well-typed ASTs; separate Earley dynamic_complete all-derivations syntax envelope',
+    return {'method': 'unique directed and seeded random well-typed ASTs; separate Earley dynamic_complete all-derivations syntax envelope',
             'roundtrips': sum(r['unique_asts_roundtripped'] for r in rows),
             'earley_texts': sum(r['earley_texts'] for r in rows), 'ambiguous_texts': 0,
             'identity_fixtures': len(json.loads((ROOT / 'conformance/identity.json').read_text())),
