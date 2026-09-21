@@ -1,0 +1,26 @@
+---
+title: "Verifiable English: Statement Review for Machine-Checked Claims"
+author:
+  - "Claude and GPT AI workers (process disclosure in Section 10)"
+date: "2026-09-21. Incomplete experimental results are marked RESULT."
+documentclass: article
+classoption:
+  - 10pt
+geometry: margin=2.3cm
+fontsize: 10pt
+numbersections: true
+colorlinks: true
+linkcolor: black
+urlcolor: blue
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{microtype}
+  - \usepackage{etoolbox}
+  - \AtBeginEnvironment{longtable}{\footnotesize}
+  - \AtBeginEnvironment{verbatim}{\footnotesize}
+  - \setlength{\emergencystretch}{3em}
+  - \widowpenalty=10000
+  - \clubpenalty=10000
+  - \displaywidowpenalty=10000
+---
