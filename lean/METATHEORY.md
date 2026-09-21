@@ -25,10 +25,11 @@ interface premise, not a claimed decision procedure over arbitrary functions.
 
 `readIdent` previously mixed in the runtime 64-character cap. It now implements
 the unbounded reference identifier grammar; the bridge continues to limit wire
-declarations and model IDs to 64 ASCII bytes. This matters mathematically for
+declarations, model IDs and source identifier runs to 64 ASCII bytes. This matters mathematically for
 canonical binder indices with more than 63 digits. The spec explicitly separates
-reference definitions from runtime caps. The bridge still lacks a separately
-budgeted source-identifier scan (along with the pre-existing source budget gap).
+reference definitions from runtime caps. `Bridge.sourceIdentifierBudget` retains
+the executable source-identifier cap before reference parsing. The pre-existing
+whole-source size/work budget gaps remain.
 
 ## New theorem inventory: lexical foundations
 

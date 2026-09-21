@@ -65,7 +65,7 @@ upstream toolchain and its standard logical dependencies remain trusted.
   explicit fuel; the public parser supplies input length plus one. Full-language
   printer fuel adequacy is proved in `VE/RoundTrip.lean`.
   Reference identifier lexing is unbudgeted; the bridge retains its 64-byte
-  declaration/local-ID runtime limit. Whitespace is literal, scopes
+  declaration/local-ID/source-identifier runtime limit. Whitespace is literal, scopes
   do not shadow, statements end in period+LF, and typing is checked after parsing.
   Its failure result is `none`, not a source-location diagnostic.
 * `VE/SurfaceProofs.lean`: P4/P5 for any nonempty document of arbitrarily nested
