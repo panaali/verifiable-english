@@ -86,7 +86,7 @@ def experiment_requests(exp: Experiment, split: str, client: LLMClient) -> list[
 
 
 def export_job(job_dir: Path, job_id: str, requests: Sequence[KeyedRequest], model_specs: Sequence[dict],
-               max_new_tokens: int, model_timeout_min: int = 240, max_minutes: int = 600) -> dict:
+               max_new_tokens: int, model_timeout_min: int = 420, max_minutes: int = 780) -> dict:
     """Write prompts.jsonl, models.json and job.json. Every judge that shares a key must share the exact text."""
     judges = sorted({kr.request.model for kr in requests})
     spec_ids = [s["id"] for s in model_specs]

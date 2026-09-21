@@ -1,0 +1,24 @@
+{
+ "id": "e1-dev-diag-legend-0921",
+ "gpu": "NVIDIA L4, 23034 MiB",
+ "started": 1789998447.2372856,
+ "exit_code": 0,
+ "error": null,
+ "timed_out": false,
+ "install_s": 3.5,
+ "outputs": [
+  "out/Qwen--Qwen2.5-14B-Instruct-AWQ/manifest.json",
+  "out/Qwen--Qwen2.5-14B-Instruct-AWQ/outputs.jsonl",
+  "out/Qwen--Qwen2.5-14B-Instruct-AWQ/worker_log.txt",
+  "out/Qwen--Qwen2.5-7B-Instruct/manifest.json",
+  "out/Qwen--Qwen2.5-7B-Instruct/outputs.jsonl",
+  "out/Qwen--Qwen2.5-7B-Instruct/worker_log.txt",
+  "out/summary.json"
+ ],
+ "finished": 1789998904.441079,
+ "wall_s": 457.2,
+ "units_per_hour": 1.7,
+ "units_est_job": 0.216,
+ "units_est_runtime_total": 2.955,
+ "runtime_uptime_s": 6258
+}

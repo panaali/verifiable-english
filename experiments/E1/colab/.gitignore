@@ -1,0 +1,5 @@
+# regenerable (export) or duplicated in runs/*/trials.jsonl
+prompts.jsonl
+outputs.jsonl
+worker_log.txt
+log.txt

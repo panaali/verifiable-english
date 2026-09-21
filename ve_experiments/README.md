@@ -4,6 +4,7 @@
 |---|---|
 | `llm.py` | The only place that calls models. `LLMClient.call/map`, disk cache keyed by (model, system, prompt, seed), retries, concurrency limit 6, JSONL call log with tokens and latency, `parse_verdict` |
 | `runner.py` | `Experiment(items, conditions, judges)`: group-wise dev/scored split, paired assignment (`crossed` or `rotated`), preregistration gate, `run()` writes `experiments/<id>/runs/<split>-<time>/{trials.jsonl,manifest.json}` |
+| `colab.py` | Batch backend for open-weight judges (`vllm:<hf id>`): export prompts keyed by trial, one Colab job per split, import replies into the cache, replay through `runner.run` |
 | `stats.py` | False approval, honest acceptance, bootstrap CIs over groups, paired contrasts, exact sign test, per-judge breakdown, markdown table |
 | `ve_iface.py` | `render / evaluate / find_countermodel` interface to the `ve` package, with an untrusted stub until it lands |
 | `smoke.py` | `uv run python -m ve_experiments.smoke`: one live call per model plus a cached replay |
