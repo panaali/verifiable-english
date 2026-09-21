@@ -1,0 +1,140 @@
+[
+ {
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "n": 157,
+  "parse_fail": 0,
+  "false_approval": [
+   62,
+   109
+  ],
+  "honest_acceptance": [
+   40,
+   48
+  ],
+  "accuracy": [
+   87,
+   157
+  ],
+  "truncated": 0,
+  "in_band": true,
+  "out_tok_s": 467.3,
+  "s_per_prompt": 0.188,
+  "load_s": 130.0,
+  "generate_s": 29.5
+ },
+ {
+  "model": "meta-llama/Llama-3.1-8B-Instruct",
+  "n": 157,
+  "parse_fail": 1,
+  "false_approval": [
+   4,
+   109
+  ],
+  "honest_acceptance": [
+   11,
+   48
+  ],
+  "accuracy": [
+   116,
+   157
+  ],
+  "truncated": 0,
+  "in_band": false,
+  "out_tok_s": 438.1,
+  "s_per_prompt": 0.366,
+  "load_s": 138.9,
+  "generate_s": 57.52
+ },
+ {
+  "model": "stelterlab/phi-4-AWQ",
+  "n": 157,
+  "parse_fail": 26,
+  "false_approval": [
+   83,
+   109
+  ],
+  "honest_acceptance": [
+   46,
+   48
+  ],
+  "accuracy": [
+   72,
+   157
+  ],
+  "truncated": 25,
+  "in_band": false,
+  "out_tok_s": 694.8,
+  "s_per_prompt": 0.492,
+  "load_s": 195.7,
+  "generate_s": 77.23
+ },
+ {
+  "model": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+  "n": 157,
+  "parse_fail": 1,
+  "false_approval": [
+   42,
+   109
+  ],
+  "honest_acceptance": [
+   47,
+   48
+  ],
+  "accuracy": [
+   114,
+   157
+  ],
+  "truncated": 1,
+  "in_band": true,
+  "out_tok_s": 426.5,
+  "s_per_prompt": 0.297,
+  "load_s": 251.4,
+  "generate_s": 46.61
+ },
+ {
+  "model": "Qwen/Qwen2.5-32B-Instruct-AWQ",
+  "n": 157,
+  "parse_fail": 0,
+  "false_approval": [
+   15,
+   109
+  ],
+  "honest_acceptance": [
+   44,
+   48
+  ],
+  "accuracy": [
+   138,
+   157
+  ],
+  "truncated": 0,
+  "in_band": false,
+  "out_tok_s": 142.3,
+  "s_per_prompt": 0.917,
+  "load_s": 1010.9,
+  "generate_s": 144.04
+ },
+ {
+  "model": "google/gemma-2-9b-it=fp8",
+  "n": 157,
+  "parse_fail": 0,
+  "false_approval": [
+   105,
+   109
+  ],
+  "honest_acceptance": [
+   48,
+   48
+  ],
+  "accuracy": [
+   52,
+   157
+  ],
+  "truncated": 0,
+  "in_band": false,
+  "out_tok_s": 440.6,
+  "s_per_prompt": 0.246,
+  "load_s": 128.1,
+  "generate_s": 38.64
+ }
+]

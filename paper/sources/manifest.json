@@ -1,0 +1,104 @@
+{
+  "implementation_base": "14311840057b38e6554f35e7f5ff95c8e3c16145",
+  "files": [
+    {
+      "file": "e0-metrics.json",
+      "origin": "experiments/E0/second_rater_metrics.json",
+      "branch": "codex/e0-rater",
+      "revision": "46be9e1bafc85e37456cbf56e9dc92b6c8178666",
+      "sha256": "25540491bb2394084bfe4cd44597a5a51ac5ae1b883e3231bfb91afd60e50230"
+    },
+    {
+      "file": "e0-second-rater.md",
+      "origin": "experiments/E0/SECOND_RATER.md",
+      "branch": "codex/e0-rater",
+      "revision": "46be9e1bafc85e37456cbf56e9dc92b6c8178666",
+      "sha256": "1265e3346dc3b667732453d2e0e8f7852764c696e227a66d49adc0a9b3038916"
+    },
+    {
+      "file": "e0-first-survey.md",
+      "origin": "experiments/E0/SURVEY.md",
+      "branch": "claude/harness",
+      "revision": "f016ab082fd8ad919fab6fc7c6ace87b50cb9677",
+      "sha256": "e80555a47af78e8364320021d7dcf0009316e3163e69af93b60a465dbd9cfbf3"
+    },
+    {
+      "file": "local-ladder.md",
+      "origin": "experiments/judges/LADDER.md",
+      "branch": "claude/open-judges",
+      "revision": "fcd378c8dc8f8fd330bed26ed551132c754c10f5",
+      "sha256": "8d7a1f0bc55f46605af049a8fe68f9cd475a7fdca5a0c3e150c13e070bf85848"
+    },
+    {
+      "file": "e1-pilot-dev.md",
+      "origin": "experiments/E1/PILOT-dev.md",
+      "branch": "claude/e1",
+      "revision": "4a404adac9625fe52e11cca1856ef18dea41faee",
+      "sha256": "23390024560b29f8c3fa376fa8eef6be1e4343485d52a6d46e4c30e0edc813df"
+    },
+    {
+      "file": "e1-prereg-draft.md",
+      "origin": "experiments/E1/PREREG.md",
+      "branch": "claude/e1",
+      "revision": "4a404adac9625fe52e11cca1856ef18dea41faee",
+      "sha256": "e996febda21d63d829c794ab9a2e0b0ff0d676e8eb4b374d30bcf1a3f1d41396"
+    },
+    {
+      "file": "e5-prereg-draft.md",
+      "origin": "experiments/E5/PREREG.md",
+      "branch": "codex/e5",
+      "revision": "b5558b75dd68b19dcc04b5d9709b9dbe854bc5cc",
+      "sha256": "d2dd327b36e539cce365cae99d719a9ab9045b8b33487bf4c1926b309abf140e"
+    },
+    {
+      "file": "colab-ladder.json",
+      "origin": "/Users/seyran/code/manage-agents/colab/results/e1-dev-ladder/ladder_table.json",
+      "revision": null,
+      "status": "External supplied record, first committed with paper; not independently reproduced.",
+      "sha256": "c99537402c4f3bf84f5f878eed0e75de00951210b3a7106e5f63e84030052d7a"
+    },
+    {
+      "file": "colab-ladder.md",
+      "origin": "/Users/seyran/code/manage-agents/colab/results/e1-dev-ladder/ladder_table.md",
+      "revision": null,
+      "status": "External supplied record, first committed with paper; not independently reproduced.",
+      "sha256": "0eeede67ad30c6e93aacaed06805f05796c79b2ffeca936808c902a0c681ea3e"
+    },
+    {
+      "file": "review-lean.md",
+      "origin": "/Users/seyran/code/manage-agents/review-lean.md",
+      "revision": null,
+      "status": "External supplied record, first committed with paper; not independently reproduced.",
+      "sha256": "7415ca8d962c4a732b24d967d25fafe4708d071e6121ba47132f6c7f3e41d34f"
+    },
+    {
+      "file": "review-views.md",
+      "origin": "/Users/seyran/code/manage-agents/review-views.md",
+      "revision": null,
+      "status": "External supplied record, first committed with paper; not independently reproduced.",
+      "sha256": "5cb910632df269520b0b724e5baae1242c870eda94a4a1bac731cee2bff08bd8"
+    },
+    {
+      "file": "review-e5.md",
+      "origin": "/Users/seyran/code/manage-agents/review-e5.md",
+      "revision": null,
+      "status": "External supplied record, first committed with paper; not independently reproduced.",
+      "sha256": "110b592023fc2c84d7c0d19a61eff29192b62e8a8e6adbbc86d8f55ce58bab60"
+    },
+    {
+      "file": "capability-brief.md",
+      "origin": "/Users/seyran/code/manage-agents/model-capability-brief.md",
+      "revision": null,
+      "status": "External supplied record, first committed with paper; not independently reproduced.",
+      "sha256": "44d5e713aee6ed39d5cda98bdb579a357da8aed601a0f056cbee2681d3bc5417"
+    },
+    {
+      "file": "process-log-excerpts.md",
+      "origin": "/Users/seyran/code/manage-agents/ve-run-log.md",
+      "revision": null,
+      "status": "Selected complete timeline entries, copied verbatim.",
+      "original_sha256": "23d0bd02e70944b8a74795467a34f2b6f9d04c0790265095cc7b95a415f5879a",
+      "sha256": "961f022b7ccbc75f946e857a395f3b71941d0639be81ff2f4c78d091f5643893"
+    }
+  ]
+}
