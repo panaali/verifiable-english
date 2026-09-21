@@ -8,6 +8,9 @@ open Lean
 abbrev Entity := String × String
 abbrev Fields := List (String × Json)
 
+/-- The expected consequence type for JSON-backed certificates/countermodels. -/
+abbrev JsonEntails := Entails.{0}
+
 def fields (j : Json) : Except String Fields := do
   return (← j.getObj?).toList
 
@@ -118,7 +121,33 @@ private def localIds (j : Json) : Except String (List String) := do
   unless xs.all identifier do throw "invalid local identifier"
   pure xs
 
-def decodeModel (v : Vocabulary) (j : Json) : Except String (FiniteModel Entity) := do
+/-- Finite tables retained so semantic admissibility can be checked exhaustively. -/
+structure ModelData where
+  domains : List (String × List String)
+  constants : List (String × Entity)
+  relations : List (String × List (List Entity))
+
+def ModelData.toModel (d : ModelData) : FiniteModel Entity where
+  domains := fun s => ((lookup d.domains s).getD []).map (s, ·)
+  constants := lookup d.constants
+  relations := fun p => (lookup d.relations p).getD []
+
+def tupleCheck (M : FiniteModel Entity) : List String → List Entity → Bool
+  | [], [] => true
+  | s :: ss, x :: xs => (M.domains s).contains x && tupleCheck M ss xs
+  | _, _ => false
+
+/-- This final semantic gate is independent of the JSON parser and earlier wire
+checks. Its soundness is proved in ModelProofs for arbitrary finite tables. -/
+def ModelData.valid (d : ModelData) (v : Vocabulary) : Bool :=
+  v.constants.all (fun (c, s) => match d.toModel.constants c with
+    | some x => (d.toModel.domains s).contains x
+    | none => false) &&
+  d.relations.all (fun (p, rows) => match v.environment.predicates p with
+    | some ss => rows.all (tupleCheck d.toModel ss)
+    | none => false)
+
+def decodeModelData (v : Vocabulary) (j : Json) : Except String ModelData := do
   exactFields j ["complete", "domains", "constants", "relations"]
   unless (← (← j.getObjVal? "complete").getBool?) do throw "complete must be true"
   let ds ← j.getObjVal? "domains"
@@ -148,10 +177,13 @@ def decodeModel (v : Vocabulary) (j : Json) : Except String (FiniteModel Entity)
     pure (p, tuples)
   if (relations.map (fun p => p.2.length)).foldl (· + ·) 0 > 100000 then
     throw "ResourceLimit: tuple count"
-  pure {
-    domains := fun s => ((lookup domains s).getD []).map (s, ·)
-    constants := lookup constants
-    relations := fun p => (lookup relations p).getD [] }
+  pure ⟨domains, constants, relations⟩
+
+/-- Every successful result is admissible, by decodeModel_valid. -/
+def decodeModel (v : Vocabulary) (j : Json) : Except String (FiniteModel Entity) := do
+  let data ← decodeModelData v j
+  if data.valid v then pure data.toModel
+  else throw "model is not semantically admissible"
 
 def decodeTerm (j : Json) : Except String Term := do
   match (← j.getArr?).toList with
@@ -195,12 +227,39 @@ def decodeDocument (E : Environment) (j : Json) : Except String (Document E) := 
     pure ⟨fs, hn, fun a ha => (check_iff_wellFormed E [] a).mp (hw a ha)⟩
   else throw "ill-typed or unbound formula"
 
-/-- Input envelope: id, environment, model, ast. Output is per-formula truth and
-conjunction. The expected results in fixture files are never consulted here. -/
+/-- A countermodel request has closed typed formulas; zero premises are allowed. -/
+structure CountermodelQuery (E : Environment) where
+  premises : List Formula
+  conclusion : Formula
+  premises_typed : ∀ a ∈ premises, a.WellFormed E []
+  conclusion_typed : conclusion.WellFormed E []
+
+def decodeCountermodel (E : Environment) (j : Json) : Except String (CountermodelQuery E) := do
+  let ps ← (← (← j.getObjVal? "premises").getArr?).toList.mapM (decodeFormula 64)
+  let c ← decodeFormula 64 (← j.getObjVal? "conclusion")
+  if ((c :: ps).map formulaNodes).foldl (· + ·) 0 > 10000 then
+    throw "ResourceLimit: countermodel AST node count"
+  if hp : ∀ a ∈ ps, a.check E [] = true then
+    if hc : c.check E [] = true then
+      pure ⟨ps, c, fun a ha => (check_iff_wellFormed E [] a).mp (hp a ha),
+        (check_iff_wellFormed E [] c).mp hc⟩
+    else throw "ill-typed or unbound conclusion"
+  else throw "ill-typed or unbound premise"
+
+def CountermodelQuery.refutes {E : Environment} (q : CountermodelQuery E)
+    (M : FiniteModel Entity) : Bool :=
+  countermodelCheck M q.premises q.conclusion
+
+/-- Legacy evaluation envelopes retain their format. The optional kind field
+selects a countermodel request; fixture expected values are never consulted. -/
 def runCase (j : Json) : Except String Json := do
   let id ← stringField j "id"
   let v ← decodeEnvironment (← j.getObjVal? "environment")
   let m ← decodeModel v (← j.getObjVal? "model")
+  if let .ok kind := j.getObjVal? "kind" then
+    unless kind == .str "countermodel" do throw "unknown case kind"
+    let q ← decodeCountermodel v.environment j
+    return Json.mkObj [("id", .str id), ("status", .str "ok"), ("refutes", .bool (q.refutes m))]
   let d ← decodeDocument v.environment (← j.getObjVal? "ast")
   let canonical := Surface.print d.formulas
   unless Surface.parse v.environment canonical == some d.formulas do
