@@ -37,7 +37,9 @@ COLAB_DIR = Path("/Users/seyran/code/manage-agents/colab")
 TOKEN_FILE = Path("/Users/seyran/Downloads/hugginface-access-token.txt")
 VLLM_CMD = (
     "test -f /content/ve_work/venvs/vllm/.ok || (uv venv -q /content/ve_work/venvs/vllm && uv pip install -q -p "
-    "/content/ve_work/venvs/vllm vllm && touch /content/ve_work/venvs/vllm/.ok) && /content/ve_work/venvs/vllm/bin/python "
+    "/content/ve_work/venvs/vllm vllm && touch /content/ve_work/venvs/vllm/.ok) && uv pip install -q -p "
+    "/content/ve_work/venvs/vllm ninja && export PATH=/content/ve_work/venvs/vllm/bin:$PATH && "  # vLLM JIT kernels need ninja
+    "/content/ve_work/venvs/vllm/bin/python "
     "-u vllm_judge.py --prompts prompts.jsonl --out-dir out --models models.json --max-new-tokens {max_new_tokens} "
     "--temperature 0 --seed 0 --model-timeout-min {model_timeout_min}"
 )
