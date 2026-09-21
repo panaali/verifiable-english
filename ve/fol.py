@@ -4,69 +4,18 @@ No sort, declaration, quantifier, or premise is inferred by this module.
 """
 from __future__ import annotations
 
-from typing import Any, Mapping, Sequence
+from typing import Any, Mapping
 
 from . import ast
 from .errors import ResourceLimit, SyntaxError
-from .limits import MAX_DEPTH, MAX_INDEX, MAX_NODES
+from .limits import MAX_DEPTH, MAX_NODES
+from .wire import canonical_json
 from .printer import NaturalView, natural_document, print_document
 
 
 def _fail(message: str, path: str) -> None:
     raise SyntaxError(message, path=path)
 
-
-def _array(value: Any, length: int, path: str) -> list[Any]:
-    if not isinstance(value, list) or len(value) != length:
-        _fail(f"expected tagged array of length {length}", path)
-    return value
-
-
-def term_from_indexed_json(value: Any, *, path: str = "", depth: int = 0):
-    if depth > MAX_DEPTH: _fail("term nesting limit exceeded", path)
-    if not isinstance(value, list) or not value or not isinstance(value[0], str):
-        _fail("expected tagged term array", path)
-    if value[0] == "var":
-        _array(value, 2, path)
-        if isinstance(value[1], bool) or not isinstance(value[1], int) or not 0 <= value[1] <= MAX_INDEX:
-            _fail("variable index must be a bounded nonnegative integer", path + "/1")
-        return ast.Var(value[1])
-    if value[0] == "const":
-        _array(value, 2, path)
-        if not isinstance(value[1], str): _fail("constant id must be a string", path + "/1")
-        return ast.Const(value[1])
-    _fail(f"unknown term tag {value[0]!r}", path + "/0")
-
-
-def formula_from_indexed_json(value: Any, *, path: str = "", depth: int = 0,
-                              _count: list[int] | None = None):
-    if depth > MAX_DEPTH: raise ResourceLimit("formula nesting limit exceeded", path=path)
-    count = [0] if _count is None else _count
-    count[0] += 1
-    if count[0] > MAX_NODES: raise ResourceLimit("AST node limit exceeded", path=path)
-    if not isinstance(value, list) or not value or not isinstance(value[0], str):
-        _fail("expected tagged formula array", path)
-    tag = value[0]
-    if tag in ("top", "bottom"):
-        _array(value, 1, path); return ast.Top() if tag == "top" else ast.Bottom()
-    if tag == "unary":
-        _array(value, 3, path); return ast.Unary(value[1], term_from_indexed_json(value[2], path=path+"/2"))
-    if tag == "binary":
-        _array(value, 4, path); return ast.Binary(value[1], term_from_indexed_json(value[2], path=path+"/2"), term_from_indexed_json(value[3], path=path+"/3"))
-    if tag == "eq":
-        _array(value, 3, path); return ast.Eq(term_from_indexed_json(value[1], path=path+"/1"), term_from_indexed_json(value[2], path=path+"/2"))
-    if tag == "not":
-        _array(value, 2, path); return ast.Not(formula_from_indexed_json(value[1], path=path+"/1", depth=depth+1, _count=count))
-    binary = {"and": ast.And, "or": ast.Or, "implies": ast.Implies}
-    if tag in binary:
-        _array(value, 3, path)
-        return binary[tag](formula_from_indexed_json(value[1], path=path+"/1", depth=depth+1, _count=count), formula_from_indexed_json(value[2], path=path+"/2", depth=depth+1, _count=count))
-    binders = {"forall": ast.Forall, "exists": ast.Exists}
-    if tag in binders:
-        _array(value, 3, path)
-        if not isinstance(value[1], str): _fail("binder sort must be a string", path+"/1")
-        return binders[tag](value[1], formula_from_indexed_json(value[2], path=path+"/2", depth=depth+1, _count=count))
-    _fail(f"unknown formula tag {tag!r}", path + "/0")
 
 
 def document_from_indexed_json(env: Any, value: Any) -> ast.Document:
@@ -82,6 +31,7 @@ def document_from_named_fol(env: Any, value: Mapping[str, Any]) -> ast.Document:
     binders require ``sort``, ``variable``, and ``body``. Terms are
     ``{"var": name}`` or ``{"const": id}``.
     """
+    canonical_json(value)  # Validate the complete wire package before discarding source names.
     if not isinstance(value, Mapping) or set(value) != {"formulas"} or not isinstance(value["formulas"], list) or not value["formulas"]:
         _fail("named FOL document requires only a nonempty 'formulas' array", "")
     count = [0]

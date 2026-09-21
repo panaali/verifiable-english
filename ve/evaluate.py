@@ -7,7 +7,8 @@ from typing import Any
 from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall,
                   Implies, Not, Or, Top, Unary, Var, check_document, check_formula)
 from .model import FiniteModel
-from .errors import InvalidModel
+from .errors import InvalidModel, ResourceLimit, VEError
+from .limits import MAX_EVALUATIONS
 
 
 @dataclass(frozen=True, slots=True)
@@ -115,7 +116,7 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
     # than trusting that callers used from_dict/from_json.
     try:
         validated = FiniteModel.from_dict(env, model.to_dict())
-    except InvalidModel:
+    except VEError:
         raise
     except (AttributeError, KeyError, TypeError, ValueError) as exc:
         raise InvalidModel("malformed FiniteModel object") from exc
@@ -124,6 +125,8 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
     model = validated
     if not isinstance(max_evaluations, int) or isinstance(max_evaluations, bool) or max_evaluations < 0:
         raise ValueError("max_evaluations must be a nonnegative integer")
+    if max_evaluations > MAX_EVALUATIONS:
+        raise ResourceLimit("Evaluation budget exceeds the v0 limit of 1,000,000 nodes")
     if type(max_trace_nodes) is not int or max_trace_nodes < 0:
         raise ValueError("max_trace_nodes must be a nonnegative integer")
     if isinstance(value, Document):
@@ -141,10 +144,12 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
             result, trace = evaluator.formula(formula)
             children.append(trace)
             if not result:
-                root = Explanation("document", False, detail=f"statement {index} violated", children=tuple(children))
+                root = Explanation("document", False, detail=f"statement {index + 1} violated", children=tuple(children))
                 return EvaluationResult("Violated", False, root, evaluator.work)
         root = Explanation("document", True, detail="all statements satisfied", children=tuple(children))
         return EvaluationResult("Satisfied", True, root, evaluator.work)
     except _Exhausted:
-        root = Explanation("resource_limit", None, detail="formula-node evaluation budget exhausted", children=tuple(children))
+        detail = ("trace-node budget exhausted" if max_trace_nodes < max_evaluations
+                  else "formula-node evaluation budget exhausted")
+        root = Explanation("resource_limit", None, detail=detail, children=tuple(children))
         return EvaluationResult("ResourceLimit", None, root, evaluator.work)

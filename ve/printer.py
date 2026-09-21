@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from typing import Any
 
 from . import ast
+from .errors import ResourceLimit
+from .limits import MAX_SOURCE_BYTES
 
 NATURAL_RENDERER = "ve.ace-explicit"
 NATURAL_RENDERER_VERSION = "0"
@@ -53,7 +55,10 @@ class _Canonical:
 def print_formula(env: Any, formula: Any) -> str:
     """Print one closed formula without statement punctuation."""
     _checker()[1](env, formula)
-    return _Canonical().formula(formula, [])
+    text = _Canonical().formula(formula, [])
+    if len(text) + 2 > MAX_SOURCE_BYTES:
+        raise ResourceLimit("Canonical statement exceeds 64 KiB of VE text")
+    return text
 
 
 def print_document(env: Any, document: ast.Document) -> str:
@@ -63,7 +68,10 @@ def print_document(env: Any, document: ast.Document) -> str:
     for formula in document.formulas:
         # The naming counter resets at each statement.
         lines.append(_Canonical().formula(formula, []) + ".\n")
-    return "".join(lines)
+    text = "".join(lines)
+    if len(text) > MAX_SOURCE_BYTES:
+        raise ResourceLimit("Canonical document exceeds 64 KiB of VE text")
+    return text
 
 
 @dataclass(frozen=True, slots=True)
