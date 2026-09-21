@@ -10,20 +10,31 @@ from .parser import parse
 from .printer import print_document
 
 
-def check(env, source, model=None, *, candidate_ast=None, max_evaluations=1_000_000, trace=True):
-    document = parse(env, source)
+def check(env, source, model=None, *, candidate_ast=None, max_evaluations=1_000_000, trace=True, surface="strict"):
+    paraphrase = None
+    if surface == "english":
+        from .english import parse_english_with_metadata
+        parsed = parse_english_with_metadata(env, source)
+        document, paraphrase = parsed.document, parsed.paraphrase()
+    elif surface == "strict":
+        document = parse(env, source)
+    else:
+        raise ValueError("surface must be strict or english")
     if candidate_ast is not None:
         candidate = (check_document(env, candidate_ast) if type(candidate_ast) is Document
                      else document_from_data(env, candidate_ast))
         if candidate != document:
             raise VEError("Submitted candidate AST does not match the exact parsed source")
     canonical = print_document(env, document)
-    raw = source.encode("ascii") if type(source) is str else source
+    raw = source.encode("utf-8") if type(source) is str else source
     result = {"assurance": "experimental", "language": "accepted", "environment_id": env.environment_id,
               "source_id": source_id(source, env), "meaning_id": meaning_id(env, document),
               "ast": document_to_data(env, document), "canonical_text": canonical,
               "canonical": canonical.encode("ascii") == raw,
               "intent": "unconfirmed", "proof": "not_checked", "evaluation": "not_evaluated"}
+    if paraphrase is not None:
+        result["surface"] = "english"
+        result["paraphrase"] = paraphrase
     if model is not None:
         evaluation = evaluate(env, document, model, max_evaluations=max_evaluations, trace=trace)
         result["model_id"] = model.model_id
