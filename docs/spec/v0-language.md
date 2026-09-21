@@ -144,6 +144,17 @@ Every valid finite `M` determines an admissible structure, written `asStructure(
 
 A finite model satisfying every premise and falsifying the conclusion is a counterexample to `Entails(E,Δ,C)`. One model satisfying the conclusion does not prove entailment. Failure to find a finite counterexample also does not prove entailment. No complete decision procedure or terminating proof search for unrestricted first-order consequence is promised.
 
+This limitation is not just a resource cap: the fragment can describe an infinite structure with no finite model. Declare sort `item` and binary predicate `precedes : (item, item)`. The following premises require a nonempty domain with an irreflexive, transitive relation and a successor for every element:
+
+```text
+there exists item a, (true).
+for every item a, (not (a precedes a)).
+for every item a, (for every item b, (for every item c, (if ((a precedes b) and (b precedes c)), then (a precedes c)))).
+for every item a, (there exists item b, (a precedes b)).
+```
+
+The natural numbers with strict order satisfy these premises. No finite nonempty domain can: repeatedly choosing successors must revisit an element, and transitivity would violate irreflexivity. Thus these premises do not entail `false`, yet no finite `gap` witness exists for that inference. This is a mathematical example, not an implemented proof. A finite inventory also does not restrict general entailment to that inventory; any required domain-closure assumption must be explicit.
+
 Universal quantification over an empty domain is true; existential quantification is false. Material implication with a false antecedent is true. These are deliberate profile rules. A user who needs a nonempty set of deployed services must state that constraint explicitly. UI diagnostics should surface vacuous satisfaction rather than disguise it as evidence of a deployed service.
 
 Closed-world evaluation applies only within the complete submitted model. An empirical premise with no evidence remains unresolved in the debate; it does not acquire a false value from omission. The finite-model wire format represents examples and countermodels, not an incomplete knowledge base.
@@ -152,7 +163,9 @@ Closed-world evaluation applies only within the complete submitted model. An emp
 
 `print_E` emits the exact surface grammar, naming binders `x0`, `x1`, … in preorder, resetting the counter at each statement. Names are globally fresh within a statement. Statement order and all logical constructors remain unchanged. Every well-typed closed AST has one proposed rendering; bound source names do not form part of semantic identity.
 
-Generated names make identity independent of the author's choices, but `x0` and `x1` are harder to read than `s` and `p`, and reviewers see the canonical text. Whether to show reviewers the author's binder names, which a debater could choose to mislead, or names derived from the sort, such as `service1`, is open and should be settled in the inspection pilot. Identity would be computed from the indexed AST in either case.
+The indexed AST makes semantic identity independent of the author's binder names. Canonical printing uses `x0` and `x1`, which may be harder to read than `s` and `p`. Whether to show reviewers the author's binder names, which a debater could choose to mislead, or names derived from the sort, such as `service1`, is open and should be settled in the inspection pilot. Identity would be computed from the indexed AST in either case.
+
+A more natural read-only view may be tested alongside canonical text without expanding this input grammar. Until its rendering rules and correspondence are specified, it is experimental explanatory material. Confirmation records must identify the actual displayed view and renderer version as well as the underlying claim; the strict rendering remains available. A view must not omit conditions or silently collapse different quantifier scopes.
 
 `parse_E` accepts the strict grammar with any permitted binder names. `canonical_E(s)` additionally requires `print_E(parse_E(s)) = s`. Both ordinary binder names and canonical binder names may denote accepted VE; only the latter are canonical bytes. Do not silently modify the submitted source or claim its bytes were already canonical.
 

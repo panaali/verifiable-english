@@ -5,15 +5,18 @@ The repository currently contains the design and specifications. Implementation,
 Start with task 0. Its three checks are cheap and any of them can change or end the project, so do not begin tasks 1 and 2 until their results are in. Develop proofs and conformance checks alongside the implementation. Run the human pilot once the experimental end-to-end path works; completing every theorem is not a prerequisite for learning whether people can use VE.
 
 0. **Test the assumptions most likely to be false — Pre-A to Pre-C**
-   - [ ] Write the stop-or-redesign threshold for each check before running it.
-   - [ ] Coverage survey: hand-formalize a random sample of candidate benchmark tasks in v0.
+   - [ ] Use the [critical review](research-review.md#recommended-first-study) to define the first human review workflow; validate the provisional service-deployment target with prospective users.
+   - [ ] Record decision rules for each check, including inconclusive outcomes; freeze efficacy thresholds after calibration and before held-out scoring.
+   - [ ] Coverage survey: sample independently sourced requirements from a named application distribution before formalizing them; survey benchmarks separately if making benchmark claims.
      - [ ] Record the share that fits, the extension each excluded task would need, and any task that fits only by hiding the difficult check in an opaque predicate.
    - [ ] Baseline attack rate: run meaning-change attacks against natural-language debate with cross-examination and a shared glossary.
      - [ ] Use model judges first, then a few human judges; vary the separation between the conflicting uses.
+     - [ ] Calibrate attacker effectiveness and critic verification ability; retain honest controls and uncertainty estimates.
    - [ ] Disposable inspection pilot: hand-prepare the same claims as prose, structured formal claims, v0 VE, and a more natural ACE-style rendering.
      - [ ] Include wrong-but-valid specifications and the [merged-vocabulary attack](spec/debate-protocol.md#the-same-attack-when-the-vocabulary-is-merged).
      - [ ] Use an unverified script as the checker; record whether a “proof checked” label changes how often people find flaws in descriptions and leaves.
-   - [ ] Decide which judge VE is for: a human, a weaker model, or both.
+     - [ ] Test distinguishing inventories and a shared predicate-use/evidence panel; keep these tools equivalent across presentation conditions.
+   - [ ] Keep human and model-judge hypotheses separate; the provisional first interface audience is human reviewers.
    - [ ] **Completion:** each check has a recorded result against its threshold, and the fragment, surface and target have been kept, changed or dropped accordingly. See the [known weaknesses](architecture-and-design.md#known-weaknesses-of-the-current-design).
 
 1. **Define the first experiment and freeze the prototype contracts — G0**
@@ -21,6 +24,7 @@ Start with task 0. Its three checks are cheap and any of them can change or end 
      - [ ] Cover both wrong initial formalizations and meaning changes after confirmation.
      - [ ] Include cross-branch predicate substitutions, changed requirements, honest submissions, and legitimate repairs.
      - [ ] Specify intended meanings, evidence available to the judge, expected outcomes, and counterexamples or proof obligations.
+     - [ ] Independently validate both the requirement formalization and its evidence mappings; record disagreements and snapshot/scope identities.
      - [ ] Set eligibility rules for the ReaLMistake subset and independently authored tasks; check data-use terms and report unsupported requirements.
    - [ ] Define the comparison protocol.
      - [ ] Specify proposer, critic, and supervisor actions, clarification rules, and stopping conditions.
@@ -44,6 +48,7 @@ Start with task 0. Its three checks are cheap and any of them can change or end 
      - [ ] Validate claim references and acyclic dependencies under one environment.
      - [ ] Construct the exact expected proposition for each deduction; replay certificates and audit their dependencies.
      - [ ] Validate finite countermodels and distinguish `follows`, `refuted`, `gap`, and unresolved findings from operational failures.
+     - [ ] Treat `follows` plus a `gap` for one exact edge as `CheckerConflict`; distinguish it from inconsistent premises.
      - [ ] Compose positive certificates while retaining every undischarged assumption; display contradictory findings.
      - [ ] Bind results to the reviewed objects and invalidate evidence when relevant inputs change.
    - [ ] Turn the worked examples into executable fixtures.
@@ -54,6 +59,7 @@ Start with task 0. Its three checks are cheap and any of them can change or end 
 3. **Build the review interface and run a human pilot — G2**
    - [ ] Provide the minimum interface needed to inspect and repair claims.
      - [ ] Show the original task, canonical VE, vocabulary descriptions, quantifier scope, dependencies, and evidence.
+     - [ ] Test read-only English views without enlarging the input grammar; bind review records to the displayed view and group each predicate's evidence uses.
      - [ ] Separate interpretation confirmation, finite evaluation, inference findings, proof checking, and final approval.
      - [ ] Support approve, reject, repair, and unresolved decisions; make changed commitments and remaining assumptions visible.
      - [ ] Add bounded assisted authoring and clarification, while keeping manual review of the final artifact possible.
@@ -66,7 +72,8 @@ Start with task 0. Its three checks are cheap and any of them can change or end 
 4. **Run the adversarial comparison — G3**
    - [ ] Implement and calibrate the comparison conditions.
      - [ ] Natural-language debate with cross-examination and a shared glossary.
-     - [ ] ColMAD as a separate protocol comparator.
+     - [ ] One independent critique before testing the benefit of further debate rounds.
+     - [ ] ColMAD as a separate protocol comparator, with independent judgments and voting as a control.
      - [ ] Structured formal claims and VE using the same checker and debate strategy.
      - [ ] Direct judging and checker-only baselines where applicable; assess whether FormalJudge supports a fair additional comparison.
    - [ ] Build the evaluation harness.
@@ -74,6 +81,7 @@ Start with task 0. Its three checks are cheap and any of them can change or end 
      - [ ] Include adaptive attacks, honest submissions, false empirical premises, misleading definitions, inconsistent assumptions, and cases that should remain unresolved.
      - [ ] Vary graph size, depth, branch separation, and the measured capability gap between proposer and judge.
      - [ ] Record all costs, unsupported cases, timeouts, failures, and supervisor decisions.
+     - [ ] Separate fixed-artifact presentation comparisons from adaptive end-to-end evaluation; retain all assigned cases in rate denominators.
      - [ ] Instrument the [benefit measurements](roadmap.md#testing-the-expected-benefits): review effort by activity, challenge/repair accuracy, and safe reuse of subarguments, with matched access to prior work.
    - [ ] Fix the primary metric, meaningful effect size, legitimate-acceptance constraint, budgets, and analysis before held-out evaluation.
    - [ ] Run paired comparisons and report uncertainty accounting for repeated tasks and judges.

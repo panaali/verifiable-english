@@ -2,19 +2,21 @@
 
 **Status:** First draft. Implementation, proofs, and experiments are pending. Pilot sizes and resource limits below are provisional budgets, not measured results.
 
-VE's first research claim is: **at a fixed oversight budget, VE reduces successful deception through changes in meaning, beyond cross-examination, shared glossaries, and structured formal claims using the same checker.**
+VE's first empirical hypothesis is: **at a fixed human review budget, its presentation helps reviewers detect incorrect specifications and mismatched evidence beyond a structured interface using the same checker.** Test the benefit of formal commitments against prose separately, and test whether multi-round debate adds value beyond one critique. None of these benefits is established yet.
 
 The [architecture](architecture-and-design.md#research-target-and-evidence) connects this hypothesis to debate research. The [language](spec/v0-language.md), [argument protocol](spec/debate-protocol.md), and [verification contract](spec/verification-contract.md) define what is checked.
 
 The [work plan](plan.md) breaks the remaining work into nested tasks and prerequisites.
 
+The [critical review](research-review.md#recommended-first-study) proposes humans reviewing service-deployment requirements as the first application, with a small coverage screen and inspection study. This target is provisional. Human and model judges have separate hypotheses and results; model pilots cannot establish human readability.
+
 ## Research sequence
 
 | Gate | Deliverable | Decision criterion |
 |---|---|---|
-| Pre-A — Coverage survey | Hand-formalize a random sample of candidate tasks (ReaLMistake and any other source benchmark) in v0; record what fits, what needs an extension, and what would hide the difficult check in an opaque predicate | If only a small share of realistic tasks fits, change the fragment or the target before building anything |
-| Pre-B — Baseline attack rate | Run meaning-change attacks against natural-language debate with cross-examination and a shared glossary, using model judges and a few human judges; no VE implementation is needed | If the attacks rarely succeed against a well-run baseline, the motivating problem is too small to justify VE |
-| Pre-C — Disposable inspection pilot | Hand-prepared prose, structured formal, v0 VE, and a more natural ACE-style rendering of the same claims, including merged-vocabulary and wrong-but-valid cases; an unverified script may serve as the checker | If no English rendering helps people find errors that the structured form misses, drop or redesign the surface before specifying its parser and proofs |
+| Pre-A — Coverage survey | Sample from a named application distribution independently of v0; record direct coverage, required adapters/extensions, and opaque judgments; survey a benchmark separately if making claims about it | If coverage is insufficient for that workflow, change the fragment or target before building the implementation |
+| Pre-B — Baseline attack rate | Test prose with cross-examination and a shared glossary; calibrate attacker and critic on controls; keep model and human results separate | Rare baseline failures weaken this use case only if attack quality, task difficulty, and uncertainty have been assessed |
+| Pre-C — Disposable inspection pilot | Matched structured, strict VE, and more natural read-only views of the same AST; include merged vocabulary, wrong-but-valid cases, and distinguishing inventories | Diagnose usability, review errors, and proof-label effects; a small null result alone is not evidence of equivalence |
 | G0 — Task and protocol definition | Independently labeled cases, eligibility rules, comparison conditions, claim/graph/certificate wire formats, proof-worker isolation and replay design, and pinned dependencies | Tasks expose meaningful oversight failures; unsupported requirements remain visible; all methods receive equivalent information and clarification |
 | G1 — Minimal checked argument | Reference parser/printer, finite evaluation, exact certificate binding, one valid deduction, one failed inference with a countermodel, and a valid explicit repair | The complete path from displayed claims to checked conclusion and assumptions works on independently specified cases |
 | G2 — Human inspection pilot | Counterbalanced review of correct and wrong-but-valid specifications, with repair tasks and matched assistance | Identify whether VE helps people inspect meanings and where it causes errors; revise the interface before a scored comparison |
@@ -22,7 +24,7 @@ The [work plan](plan.md) breaks the remaining work into nested tasks and prerequ
 | G4 — Assurance and runtime | P1–P7 and P9–P11, the conformance corpus, display/decoder checks, and runtime measurements; P8 for a differing production implementation | Advertised guarantees match completed proof scope and explicit remaining trust assumptions |
 | G5 — Research and release decision | Reproducible results, dependency pins, proof replay, failure analysis, and supported task coverage | Report the demonstrated scope; broader alignment claims require additional evidence |
 
-The three preliminary steps each take days, need no Lean code, and test the assumptions most likely to be false; the architecture's [known weaknesses](architecture-and-design.md#known-weaknesses-of-the-current-design) explain why. Write down the threshold for stopping or redesigning before running each step, so that a disappointing result changes the plan and is not explained away afterwards.
+The preliminary steps need no Lean code and test major uncertainties; their duration depends on task access, independent labeling, and recruitment. The architecture's [known weaknesses](architecture-and-design.md#known-weaknesses-of-the-current-design) explain why they come first. Record decision rules before each step, including when the outcome will be inconclusive. Freeze quantitative efficacy thresholds after calibration and before held-out scoring; do not use an underpowered usability pilot to declare success or impossibility.
 
 The gates guide decisions, not a requirement to finish all metatheory before studying users. G2 and runtime measurement may use an experimental G1 slice. No verified runtime port or general mathematical language is needed to test the initial hypothesis. Estimate engineering effort from that slice, including proof repair and authoring failures.
 
@@ -32,11 +34,13 @@ The gates guide decisions, not a requirement to finish all metatheory before stu
 
 Start with graph sizes such as 8, 32, and 128 claims, varying depth and the separation between conflicting uses. These are experimental settings to calibrate, not evidence that oversight scales. The checker may inspect the submitted graph, but must not receive hidden answers to empirical leaves or an exhaustive tree unavailable to baselines.
 
-**Requirement reinterpretation.** Use a predefined expressible subset of [ReaLMistake](https://github.com/psunlpgroup/ReaLMistake), plus independently authored tasks with similar failure mechanisms. Include changing a conjunction to a disjunction, reversing an implication, weakening an exception, narrowing the checked inventory, and vacuous satisfaction. The published examples motivate attack types; success on selected examples is not a benchmark result. ReaLMistake's three tasks (math word problems, fact verification against Wikipedia text, answerability classification) depend on arithmetic, textual entailment and world knowledge, so expect the expressible subset to be very small; the coverage survey must confirm this before the benchmark is relied on. Its data is CC BY-SA 4.0 and its authors ask that examples not be published online in plain text, so do not commit examples to this repository.
+**Requirement reinterpretation.** Start from the selected application and independently authored mechanism cases. Include changing a conjunction to a disjunction, reversing an implication, weakening an exception, narrowing the checked inventory, and vacuous satisfaction. [ReaLMistake](https://github.com/psunlpgroup/ReaLMistake) is an optional external coverage check, not a mandatory first benchmark: its math word problems, fact verification, and answerability tasks require arithmetic, textual entailment, or world knowledge outside much of v0. If used, report a predefined expressible subset and exclusions. Its data is CC BY-SA 4.0 and its authors ask that examples not be published online in plain text, so do not commit examples to this repository.
 
 Task eligibility must be determined by semantic coverage before measuring baseline failures. Report the fraction excluded and why. Arithmetic, numeric formatting, temporal behavior, and textual entailment may need a specified adapter or a new profile. An agent-supplied flag saying that a response meets such a requirement is not an implementation of the check. Benchmark handling must respect its license and data-use terms.
 
 Independent reviewers establish the original intended requirements, expected formal interpretations, and relevant counterexamples or proof obligations. Genuinely ambiguous source tasks must be clarified equally for all conditions or excluded from binary scoring with the reason reported. Keep reference ASTs and scoring labels hidden from every evaluated method. Model agreement alone is not ground truth.
+
+Ground truth needs two distinct checks: the formal target agrees with the intended requirement, and the supplied evidence supports the relevant premises. A generated formula and a paraphrase from the same generator are not independent validation. Use small scenarios that separate plausible interpretations, independently reviewed evidence mappings, and adjudication of reviewer disagreements. Identify every evidence snapshot and the deployment or inventory scope it covers.
 
 Separate two tasks: detecting a wrong initial formalization, and preventing a change after confirmation. For initial formalization, count the human's inspection and correction work. For preservation, give every method the same clarified target; VE must not receive a better specification or more evidence than its comparators.
 
@@ -45,7 +49,9 @@ Separate two tasks: detecting a wrong initial formalization, and preventing a ch
 | Condition | Role in the comparison |
 |---|---|
 | Natural-language debate with cross-examination and a shared glossary | Tests whether ordinary debate can expose the same meaning changes using cross-branch questions |
+| Proposer plus one independent critique | Tests whether extra debate rounds improve on a cheaper review protocol |
 | ColMAD | Tests against a recent collaborative error-detection protocol, not only a weak competitive baseline |
+| Independent judgments with voting | Controls for the value of extra model calls in the ColMAD comparison |
 | Structured formal claims with the same checker | Isolates the value of exact formal commitments, dependency checks, and certificates without the VE surface |
 | VE with the same checker | Tests the additional benefit or cost of canonical English and assisted human inspection |
 
@@ -55,6 +61,8 @@ All conditions receive equivalent task information, clarification, evidence acce
 
 Use the same tasks and matched model configurations across conditions. Counterbalance order and use equivalent variants to limit memorization. Give natural-language baselines effective prompts and the opportunity to cross-examine. Preserve operational failures and unsupported cases in end-to-end results.
 
+Run comparisons in stages. First hold candidate claims, evidence, and prepared critiques fixed to isolate presentation. Give structured and English conditions equivalent scope displays, predicate-use panels, and examples. Then test adaptive agents and the extra value of debate. These are different estimands: fixed-artifact inspection cannot measure authoring cost or attack adaptation, while an end-to-end result alone cannot isolate the English surface. Do not spread a small pilot across every protocol and interface combination.
+
 ## Human inspection pilot
 
 Begin with an exploratory pilot of roughly 8–12 participants, sized for diagnosing problems rather than claiming population efficacy. Use counterbalanced task variants across prose plus clarification, a structured constraint editor, and VE. Hold the critic and checking capabilities constant.
@@ -62,6 +70,8 @@ Begin with an exploratory pilot of roughly 8–12 participants, sized for diagno
 Participants inspect the original task, candidate claims, definitions, and evidence; then approve, reject, or repair the candidate. Mix faithful specifications with wrong-but-valid ones, including candidates that pass their own checks. A passing evaluation or proof badge must not give away the experimental label.
 
 Measure false confirmations, successful corrections, false rejections, review time, clarification count, and understanding of conditional proof versus factual truth. Include unaided inspection of the final artifact even when authoring is assisted. Test display of quantifier scope, distinct predicate senses, remaining assumptions, vacuity, and changed commitments.
+
+Include satisfaction predictions on small inventories that distinguish competing readings, before revealing checker feedback. Test a separate intervention for proof-label presentation on valid deductions with both adequate and inadequate grounding. The interface must report the actual checking result in every condition. Record prior formal-methods experience, training time, and learning effects.
 
 Use the pilot to set task difficulty, review budgets, and a power analysis for a larger comparison. Do not treat zero observed errors in a small pilot as a safety guarantee, or select only tasks where VE looked promising. If structured forms perform as well with less effort, retain the checker and reconsider the English surface.
 
@@ -86,7 +96,7 @@ Allow attacks against initial definitions, inference composition, premise select
 
 The supervisor can approve, reject, request repair, or abstain. A proof-search timeout is not a finding that the claim is false. Prompted adversaries and best-of-N search are limited approximations to adversarial optimization; they do not establish the equilibrium or training guarantees of a debate theory.
 
-Primary outcomes are:
+Record the following outcomes; choose one primary contrast and endpoint before held-out scoring:
 
 - False approval rate on attacks, alongside acceptance of genuinely compliant submissions.
 - Successful detection and repair of specification errors, separated from preservation after confirmation.
@@ -96,6 +106,8 @@ Primary outcomes are:
 - Reward earned by honest versus deceptive submissions, to distinguish useful supervision from simple deference to a usually-correct agent.
 
 Report paired comparisons and confidence intervals, with uncertainty accounting for repeated tasks and judges. Fix the primary metric, meaningful effect size, legitimate-acceptance constraint, and budgets before held-out evaluation. Examine results as graph size, task difficulty, and the measured capability gap between proposer and judge increase. Fewer remaining premises is not itself a reduction in oversight difficulty.
+
+Define false approval as approved noncompliant submissions divided by all assigned noncompliant submissions, and honest acceptance as approved compliant submissions divided by all assigned compliant submissions. Retain failures and unresolved cases in these denominators and report them separately. A reject-all system passes no usefulness gate. Show human time and compute as separate costs, with any conversion weights declared in advance. Calibrate verification ability on candidate answers as well as standalone task-solving ability. Vary semantic difficulty and evidence dependencies rather than only graph length.
 
 An advantage over prose alone supports formalized oversight. An additional accuracy or effort advantage over the matched structured interface supports VE's language contribution. Failure to improve, reduced coverage, or displacement of errors into vocabulary and evidence limits the claim. A benchmark advantage is evidence on that distribution, not proof of general alignment.
 

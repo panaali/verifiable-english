@@ -42,6 +42,8 @@ The edge judgments are:
 
 Record all established findings rather than choosing a single winning label. Both `follows` and `refuted` can hold under inconsistent premises; their coexistence must be displayed as a contradiction in those premises. `refuted` and `gap` can coexist. Use `unresolved` only when no finding is established.
 
+For the exact same `E`, `Δ`, and `C`, `follows` and `gap` cannot both be sound: the latter supplies a model contradicting the former. Report `CheckerConflict` as an operational integrity error, retain both artifacts for diagnosis, and withhold a successful combined checking record. Do not explain this combination as inconsistent premises; a valid gap witness satisfies every premise. The same rule applies when a purported model of all premises accompanies both `follows` and `refuted`.
+
 Malformed artifacts, invalid proofs, resource exhaustion, and cancellation have separate operational statuses. Failure or timeout in proof search is not `gap` or `refuted`. Finite satisfaction alone cannot produce `follows`. A gap in an intermediate edge does not refute the root; another argument might establish it.
 
 When every edge supporting the root has a `follows` certificate, the checker composes the implications into `Entails(E,L,root)`, where `L` contains every undischarged premise leaf used by the submitted derivation. A `refuted` edge cannot support its original conclusion; using its proof requires an explicit claim for `Not(C)`. The checker displays all remaining leaves with the root. An uncertified intermediate claim remains an unresolved obligation and cannot be silently relabeled as an accepted premise. A supervisor may explicitly consider a different conditional argument with that extra assumption.
@@ -51,6 +53,10 @@ Certificates prove conditional claims. Assuming the desired answer does not reso
 ## Evidence and supervisor decisions
 
 Premise leaves may have empirical, interpretive, definitional, or normative descriptions, with source references and a supervisor's accepted/disputed/unassessed judgment. These are evidence metadata, not new logical operators or proof of facts. The checker never converts an unsupported claim into an axiom about reality.
+
+An evidence judgment must identify the claim, inspected evidence snapshot, relevant passage or records, reviewer, and target scope. A mutable URL alone is insufficient to identify the reviewed content. Keep evidence judgments separate from mathematical certificates: changing an evidence snapshot or the deployment under review requires reassessment of affected factual support and approval, even if the formula and conditional proof remain unchanged. Specify these records in G0 before implementing interchange.
+
+The review interface should group all uses of a predicate with their supporting evidence, so that the critic and supervisor can challenge whether those uses share one interpretation. This is a procedural defense to evaluate, not a new formal guarantee. A leaf needed for approval but left unassessed remains outstanding; sampling a few leaves does not establish all premises, and v0 supplies no statistical sampling guarantee.
 
 Finite models used as hypothetical examples need no factual attestation. If a model represents a real submission, the experiment or application must explain how its entries and completeness are established independently of the proposer. Values such as `safe`, `reviewed`, or `compliant` cannot stand in for computations or observations the system is meant to verify.
 
@@ -94,7 +100,7 @@ for every service s, (if (s is reviewed), then (s is approved)).
 
 The root now has a `follows` certificate. The proposer supports the first leaf with operations-review records and the second with a security policy. Each leaf looks acceptable when judged alone, and the checked proof asserts that they compose. The meaning change has moved from the deduction into the free-English description and the evidence attached to the leaves, where v0 checks nothing. This is the cross-branch inconsistency from the motivating research, and a certified edge may make it harder to notice than it would be in prose.
 
-v0's only defenses are procedural: the supervisor or critic must notice that one description covers two evidence sources, and must demand a vocabulary split. Whether people do this under VE more or less often than under cross-examination is an open empirical question and a required attack in the [adversarial evaluation](../roadmap.md#adversarial-evaluation). Who authors the vocabulary, and whether the critic may challenge it before commitment, must be fixed in G0.
+v0's defenses here are procedural: the supervisor or critic must notice that the evidence uses incompatible senses and demand a vocabulary split or adequate support under one interpretation. Multiple evidence sources alone are not a defect. Test the proposed predicate-use panel against equally equipped prose and structured interfaces. Whether people detect this attack more reliably is an open empirical question and a required attack in the [adversarial evaluation](../roadmap.md#adversarial-evaluation). Who authors the vocabulary, and whether the critic may challenge it before commitment, must be fixed in G0.
 
 These are mathematically specified expected outcomes, not execution results. The first example tests both a rejected substitution and a valid repair; the second tests a substitution the checker accepts. Both use only v0 syntax. [Formal obligations](verification-contract.md#argument-checking-contract) state what must be proved for the implementation.
 
