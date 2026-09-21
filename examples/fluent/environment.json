@@ -1,0 +1,51 @@
+{
+  "language": "ve.core@0",
+  "profile": "relational-fol@0",
+  "spec_revision": "ve-v0-draft-2026-09-20",
+  "vocabulary": {
+    "sorts": {
+      "person": {
+        "description": "A recorded person."
+      },
+      "service": {
+        "description": "A service recorded in the inventory."
+      }
+    },
+    "predicates": {
+      "deployed": {
+        "arguments": [
+          "service"
+        ],
+        "description": "Recorded as deployed.",
+        "verbalisation": "{0} is deployed"
+      },
+      "reviewed": {
+        "arguments": [
+          "service"
+        ],
+        "description": "Recorded as reviewed.",
+        "verbalisation": "{0} is reviewed",
+        "negative_verbalisation": "{0} is not reviewed"
+      },
+      "owns": {
+        "arguments": [
+          "person",
+          "service"
+        ],
+        "description": "Recorded ownership; person first, service second.",
+        "verbalisation": "{0} owns {1}",
+        "negative_verbalisation": "{0} does not own {1}"
+      }
+    },
+    "constants": {
+      "alice": {
+        "sort": "person",
+        "description": "The named person Alice."
+      },
+      "legacy": {
+        "sort": "service",
+        "description": "The named legacy service."
+      }
+    }
+  }
+}

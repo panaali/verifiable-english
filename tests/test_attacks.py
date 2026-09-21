@@ -85,3 +85,20 @@ def test_jsonl_cli_continues_after_bad_row_and_stores_models(tmp_path):
                              capture_output=True, text=True)
     assert process.returncode == 2
     assert input_path.read_text().startswith(json.dumps(rows[0]))
+
+
+def test_unknown_acceptance_is_null_including_serialized_rows():
+    result = validate_attack(ENV, Exists('item', P), Top(), Budgets(max_proof_steps=0))
+    assert result.status == UNKNOWN and result.accepted is None
+    assert result.to_dict()['accepted'] is None
+    assert json.loads(json.dumps(result.to_dict()))['accepted'] is None
+
+
+def test_certified_empty_only_attack_retains_model_and_policy_detail():
+    from ve.ast import Bottom
+    result = validate_attack(ENV, Forall('item', Bottom()), Bottom())
+    assert result.accepted is True
+    assert result.comparison.relation_detail == 'differs_only_on_empty_sorts'
+    assert result.comparison.nonempty_certificates
+    assert result.witnesses and result.warnings
+    assert all(not witness['preference_attempts'] for witness in result.witnesses)

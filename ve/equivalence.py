@@ -10,7 +10,7 @@ from dataclasses import asdict, dataclass, field
 from typing import Any
 
 from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall,
-                  Formula, Implies, Not, Or, Top, Unary, Var, check_formula)
+                  Formula, Implies, Not, Or, Top, Unary, Var, Reach, Body, check_formula)
 from .entailment import check_entailment_certificate, prove_entailment
 from .environment import validate_identifier
 from .errors import ResourceLimit, VEError
@@ -75,6 +75,15 @@ class ComparisonResult:
     a_meaning_id: str
     b_meaning_id: str
     reason: str = ""
+    nonempty_sorts: tuple[str, ...] = ()
+    nonempty_certificates: dict[str, dict] = field(default_factory=dict)
+
+    @property
+    def relation_detail(self):
+        """A checked refinement, independent of the strict-strength relation."""
+        if self.status == DIFFERENT and len(self.nonempty_certificates) == 2:
+            return "differs_only_on_empty_sorts"
+        return None
 
     @property
     def failed_directions(self):
@@ -105,6 +114,10 @@ class ComparisonResult:
 
     def to_dict(self):
         return {"status": self.status, "relation": self.relation,
+                "relation_detail": self.relation_detail,
+                "nonempty_equivalence": ({"sorts": list(self.nonempty_sorts),
+                    "certificates": self.nonempty_certificates}
+                    if self.relation_detail else None),
                 "failed_directions": list(self.failed_directions), "reason": self.reason,
                 "environment_id": self.environment_id, "a_meaning_id": self.a_meaning_id,
                 "b_meaning_id": self.b_meaning_id,
@@ -114,19 +127,30 @@ class ComparisonResult:
 
 def _direction(env, a, b, budgets):
     attempts = []
-    try:
-        proof = prove_entailment(env, (a,), b, max_steps=budgets.max_proof_steps)
-        attempts.append({"kind": "proof", "status": proof.status, "steps": proof.steps,
-                         "detail": proof.detail})
-        if proof.status == "Found":
-            replay = check_entailment_certificate(env, (a,), b, proof.certificate,
-                                                  max_steps=budgets.max_proof_steps)
-            if replay.valid:
-                return DirectionResult("ENTAILED", certificate=proof.certificate,
-                                       attempts=tuple(attempts))
-            attempts.append({"kind": "replay", **replay.to_dict()})
-    except ResourceLimit as exc:
-        attempts.append({"kind": "proof", "status": "ResourceLimit", "detail": str(exc)})
+
+    def proof_attempt(maximum):
+        try:
+            proof = prove_entailment(env, (a,), b, max_steps=maximum)
+            attempts.append({"kind": "proof", "status": proof.status, "steps": proof.steps,
+                             "detail": proof.detail})
+            if proof.status == "Found":
+                replay = check_entailment_certificate(env, (a,), b, proof.certificate,
+                                                      max_steps=budgets.max_proof_steps)
+                if replay.valid:
+                    return DirectionResult("ENTAILED", certificate=proof.certificate,
+                                           attempts=tuple(attempts)), proof.steps, False
+                attempts.append({"kind": "replay", **replay.to_dict()})
+            return None, proof.steps, proof.status == "ResourceLimit"
+        except ResourceLimit as exc:
+            attempts.append({"kind": "proof", "status": "ResourceLimit", "detail": str(exc)})
+            return None, maximum, True
+
+    # A satisfiable witness-generating branch must not monopolize comparison
+    # before even a one-object distinguishing model gets a chance. Easy proofs
+    # run first; model search then precedes the remaining aggregate proof budget.
+    result, spent, exhausted = proof_attempt(min(128, budgets.max_proof_steps))
+    if result is not None:
+        return result
     try:
         found = find_countermodel(env, (a,), b, **budgets.search_options())
         attempts.append({"kind": "search", "status": found.status,
@@ -140,6 +164,10 @@ def _direction(env, a, b, budgets):
             attempts.append({"kind": "model_replay", "status": checked.status})
     except ResourceLimit as exc:
         attempts.append({"kind": "search", "status": "ResourceLimit", "detail": str(exc)})
+    if exhausted and spent < budgets.max_proof_steps:
+        result, _, _ = proof_attempt(budgets.max_proof_steps - spent)
+        if result is not None:
+            return result
     return DirectionResult(UNKNOWN, reason="No checked proof or countermodel within budgets",
                            attempts=tuple(attempts))
 
@@ -160,20 +188,45 @@ def compare(env, a: Formula, b: Formula, budgets: Budgets | dict | None = None) 
     status = (DIFFERENT if "COUNTERMODEL" in statuses else
               EQUIVALENT if statuses == ("ENTAILED", "ENTAILED") else UNKNOWN)
     reason = "" if status != UNKNOWN else "At least one implication remains unproved; no distinguishing model found"
+    sorts, certificates = (), {}
+    witnesses = [direction.model for direction in (forward, reverse) if direction.model is not None]
+    if status == DIFFERENT and all(any(not domain for domain in model.domains.values())
+                                   for model in witnesses):
+        # A model proves a difference; bounded failure to find an inhabited
+        # model proves nothing. Only two replayed conditional proofs justify
+        # this refinement. These are ordinary certificates over extra premises.
+        sorts = tuple(sorted(env.sorts))
+        conditions = tuple(Exists(sort, Top()) for sort in sorts)
+        for label, left, right in (("a_implies_b", a, b), ("b_implies_a", b, a)):
+            try:
+                proof = prove_entailment(env, (left, *conditions), right,
+                                         max_steps=budgets.max_proof_steps)
+                if proof.certificate is not None and check_entailment_certificate(
+                        env, (left, *conditions), right, proof.certificate,
+                        max_steps=budgets.max_proof_steps).valid:
+                    certificates[label] = proof.certificate
+            except ResourceLimit:
+                pass
+        if len(certificates) != 2:
+            sorts, certificates = (), {}
     return ComparisonResult(status, forward, reverse, env.environment_id,
-                            meaning_id(env, a), meaning_id(env, b), reason)
+                            meaning_id(env, a), meaning_id(env, b), reason, sorts, certificates)
 
 
 def is_weaker(env, candidate, reference, budgets=None) -> bool | None:
     """Is candidate strictly weaker than reference? None means undecided."""
     result = compare(env, reference, candidate, budgets)
-    return None if result.relation == "unknown" else result.relation == "weaker"
+    if result.a_implies_b.status == "COUNTERMODEL" or result.b_implies_a.status == "ENTAILED":
+        return False
+    return True if result.relation == "weaker" else None
 
 
 def is_stronger(env, candidate, reference, budgets=None) -> bool | None:
     """Is candidate strictly stronger than reference? None means undecided."""
     result = compare(env, reference, candidate, budgets)
-    return None if result.relation == "unknown" else result.relation == "stronger"
+    if result.b_implies_a.status == "COUNTERMODEL" or result.a_implies_b.status == "ENTAILED":
+        return False
+    return True if result.relation == "stronger" else None
 
 
 def in_two_variable_fragment(f: Formula | Document) -> bool:
@@ -249,7 +302,9 @@ def non_vacuity_conditions(env, *formulas) -> tuple[Formula, ...]:
             for sort in reversed(binders):
                 guard = Exists(sort, guard)
             conditions.append(guard)
-        if type(f) in (Forall, Exists):
+        if type(f) is Reach and type(f.edge) is Body:
+            walk(f.edge.formula, binders + (f.edge.sort, f.edge.sort))
+        elif type(f) in (Forall, Exists):
             walk(f.body, binders + (f.sort,))
         elif type(f) is Not:
             walk(f.body, binders)

@@ -1,0 +1,93 @@
+{
+  "broad_constructive_random_queries": 320,
+  "closure_forged": 442,
+  "closure_lean_accepted": 63,
+  "closure_lean_rejected_forged": 442,
+  "closure_python_accepted": 63,
+  "closure_reviewer_outcomes": {
+    "body_named": {
+      "status": "Found",
+      "steps": 2
+    },
+    "first_edge": {
+      "status": "Found",
+      "steps": 2
+    },
+    "last_edge": {
+      "status": "Found",
+      "steps": 2
+    },
+    "monotonicity": {
+      "status": "ResourceLimit",
+      "steps": 400
+    },
+    "named_body": {
+      "status": "Found",
+      "steps": 2
+    },
+    "symmetric_reversal": {
+      "status": "ResourceLimit",
+      "steps": 400
+    },
+    "transitivity": {
+      "status": "Found",
+      "steps": 2
+    }
+  },
+  "closure_trace_rule_counts": {
+    "alpha:And:True": 8,
+    "alpha:Or:False": 2,
+    "close": 63,
+    "closure-compose@0": 20,
+    "closure-edge@0": 3,
+    "closure-first@0": 5,
+    "closure-last@0": 5,
+    "closure-named-body@0": 2,
+    "closure:Reach:False": 14,
+    "closure:Reach:True": 12,
+    "delta:Exists:True": 8,
+    "delta:Forall:False": 1,
+    "gamma:Forall:True": 4,
+    "not:Not:True": 8
+  },
+  "completeness_regression_queries": 8,
+  "constructive_random_queries": 320,
+  "forged": 592,
+  "forged_lean_accepted": [],
+  "lean_accepted": 795,
+  "lean_rejected_forged": 592,
+  "python_accepted": 795,
+  "python_accepted_lean_rejected": [],
+  "search_outcomes": {
+    "broadconstructive:Found": 320,
+    "constructive:Found": 320,
+    "reviewer:Found": 8,
+    "unconditioned:Found": 82,
+    "unconditioned:NotFound": 76,
+    "unconditioned:ResourceLimit": 2,
+    "worked:Found": 2,
+    "worked:NotFound": 1
+  },
+  "seed": 20260923,
+  "trace_rule_counts": {
+    "alpha:And:True": 60,
+    "alpha:Implies:False": 100,
+    "alpha:Or:False": 74,
+    "beta:And:False": 9,
+    "beta:Implies:True": 123,
+    "beta:Or:True": 46,
+    "close": 910,
+    "delta:Exists:True": 271,
+    "delta:Forall:False": 94,
+    "gamma:Exists:False": 344,
+    "gamma:Forall:True": 169,
+    "not:Not:False": 187,
+    "not:Not:True": 232
+  },
+  "unconditioned_random_queries": 160,
+  "worked_examples": {
+    "g1": "countermodel checked; search NotFound; forged close rejected",
+    "g2": "accepted",
+    "g3": "accepted"
+  }
+}

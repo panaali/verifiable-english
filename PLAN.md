@@ -151,6 +151,32 @@ Question: does a VE-checked reward make semantic deception less profitable to le
 
 ## Status log
 
+- 02:39 **Judge ladder, E1 dev, raw FOL, no explanation (dev pilot, not a result).** Open-weight 4-bit judges run locally:
+  Qwen2.5-0.5B, Llama-3.2-1B, Qwen2.5-1.5B, gemma-2-2b: false approval 0.98-1.00 (approve everything; forcing a verdict
+  removes parse failures and changes nothing). Qwen2.5-3B: 0.91. **Qwen2.5-7B: false approval 0.52 (57/109), honest
+  acceptance 0.79 (38/48): inside the 30-60% gate.** Hosted haiku 0.01, luna 0.05. So the usable weak-judge band starts
+  around 7B; rungs 7B-32B are being measured on a Colab L4 with vLLM. The scored E1/E5 runs will name their judges from
+  that ladder in PREREG; hosted judges stay as the strong end. Codex reports a Lean-verified tableau certificate
+  checker (full calculus; 721/721 real certificates accepted, 150/150 forgeries rejected); statement review running.
+  Phase V started: `closure@0`, Lean first (`codex/closure`).
+
+- 02:09 **E0 second rater (GPT-6 Astra, blind to item labels) disagrees sharply with the first rater on policy sets.**
+  Strict fit (no reification): FOLIO 73%, ProofWriter 87%, Alloy 13%, Clover 10%, Gatekeeper 3%, Cedar 0%, FRET 0%.
+  Lenient fit (with a stated mechanical reification): FOLIO 83%, ProofWriter 87%, Alloy 60%, Clover 47%, Cedar 43%,
+  FRET 40%, Gatekeeper 20%. Cedar dropped from the first rater's 97% because entity-hierarchy membership needs
+  transitive closure; agreement on Cedar is 13% (kappa -0.11). n = 30 per dataset, Wilson intervals in the report.
+  Conclusion for the paper: v0 covers textbook-logic benchmarks and little of real policy or requirements text; the
+  honest headline is the spread and the ranked list of missing constructs (numbers 45 items, closure 27, strings 20).
+
+- 01:48 (real clock) **Capability gate fails with hosted judges.** Two independent dev pilots: on raw FOL, haiku-4.5 false
+  approval 1% (accuracy 0.99), luna 5%; on E5 items haiku 0/12 in both badge cells. Today's small hosted models read
+  first-order logic almost perfectly, so there is no sandwich gap to measure with them. This is a finding in itself and
+  goes in the paper. Response: a ladder of small open-weight judges (0.5B-8B) is being built (`claude/open-judges`);
+  the scored E1/E5 runs use the rungs whose raw-FOL false approval lands in 30-60% with honest acceptance >= 70%, plus
+  the hosted judges as the top of the ladder. Item difficulty may be raised only by natural, preregistered knobs.
+  Merged so far: core, argument layer, grammar, Lean. Under revision after review: views (+fluent), E5/E2/E4 materials,
+  harness (fixed by Worker C). Running: Rust core, Lean round-trip, equivalence oracle, E0 second rater.
+
 - 01:35 Both design critiques merged. Plan v2 frozen (section above). Worker C harness done, awaiting cross-review.
 - 01:10 Read the user's links on recent AI mathematics. Added the Lean track and stretch experiment E7.
 - 00:30 Plan v1 written. Worktrees created: `~/code/ve-claude` (`claude/main`), `~/code/ve-codex` (`codex/main`),

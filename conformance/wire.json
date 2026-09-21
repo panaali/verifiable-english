@@ -1,0 +1,230 @@
+[
+  {
+    "id": "wire_0",
+    "raw": "true",
+    "expected": "true"
+  },
+  {
+    "id": "wire_1",
+    "raw": "false",
+    "expected": "false"
+  },
+  {
+    "id": "wire_2",
+    "raw": "0",
+    "expected": "0"
+  },
+  {
+    "id": "wire_3",
+    "raw": "9007199254740991",
+    "expected": "9007199254740991"
+  },
+  {
+    "id": "wire_4",
+    "raw": "{}",
+    "expected": "{}"
+  },
+  {
+    "id": "wire_5",
+    "raw": "[]",
+    "expected": "[]"
+  },
+  {
+    "id": "wire_6",
+    "raw": "{\"\\ue000\": 0, \"\\ud800\\udc00\": 1, \"\\ud83d\\ude00\": 2, \"\\r\": 3}",
+    "expected": "{\"\\r\":3,\"𐀀\":1,\"😀\":2,\"\":0}"
+  },
+  {
+    "id": "wire_7",
+    "raw": "{\"controls\": \"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\b\\t\\n\\u000b\\f\\r\\u000e\\u000f\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001a\\u001b\\u001c\\u001d\\u001e\\u001f\", \"unicode\": \"\\u00e9 e\\u0301 \\u20ac \\ud83d\\ude00 / \\u2028\\u2029\"}",
+    "expected": "{\"controls\":\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\b\\t\\n\\u000b\\f\\r\\u000e\\u000f\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001a\\u001b\\u001c\\u001d\\u001e\\u001f\",\"unicode\":\"é é € 😀 /   \"}"
+  },
+  {
+    "id": "wire_8",
+    "raw": "{\"b\": [true, 3], \"a\": {\"z\": \"\\\"\\\\\"}}",
+    "expected": "{\"a\":{\"z\":\"\\\"\\\\\"},\"b\":[true,3]}"
+  },
+  {
+    "id": "wire_9",
+    "raw": "[[[[[\"depth\"]]]]]",
+    "expected": "[[[[[\"depth\"]]]]]"
+  },
+  {
+    "id": "wire_negative_zero",
+    "raw": "-0",
+    "expected": "0"
+  },
+  {
+    "id": "wire_duplicate",
+    "raw": "{\"a\":1,\"a\":2}",
+    "reject": true,
+    "expected_error": "DuplicateDeclaration"
+  },
+  {
+    "id": "wire_escaped_duplicate",
+    "raw": "{\"a\":1,\"\\u0061\":2}",
+    "reject": true,
+    "expected_error": "DuplicateDeclaration"
+  },
+  {
+    "id": "wire_nested_duplicate",
+    "raw": "{\"a\":{\"b\":1,\"b\":2}}",
+    "reject": true,
+    "expected_error": "DuplicateDeclaration"
+  },
+  {
+    "id": "wire_null",
+    "raw": "null",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_fraction",
+    "raw": "1.0",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_exponent",
+    "raw": "1e0",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_negative",
+    "raw": "-1",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_integer_range",
+    "raw": "9007199254740992",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_high_surrogate",
+    "raw": "\"\\ud800\"",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_low_surrogate",
+    "raw": "\"\\udfff\"",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_surrogate_key",
+    "raw": "{\"\\ud800\":0}",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_surrogate_then_scalar",
+    "raw": "\"\\ud800\\u0041\"",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_surrogate_then_escape",
+    "raw": "\"\\ud800\\n\"",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_trailing_comma",
+    "raw": "[true,]",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_leading_zero",
+    "raw": "01",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_nan",
+    "raw": "NaN",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_infinity",
+    "raw": "Infinity",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_negative_infinity",
+    "raw": "-Infinity",
+    "reject": true,
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "wire_incomplete_null",
+    "raw": "nul",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_incomplete_fraction",
+    "raw": "1.",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_incomplete_exponent",
+    "raw": "1e",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_incomplete_signed_exponent",
+    "raw": "1e+",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_incomplete_array",
+    "raw": "[",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_trailing_value",
+    "raw": "true false",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_null_trailing",
+    "raw": "null false",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_bad_hex_escape",
+    "raw": "\"\\ud80x\"",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_unescaped_control",
+    "raw": "\"a\nb\"",
+    "reject": true,
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "wire_depth",
+    "raw": "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[true]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]",
+    "reject": true,
+    "expected_error": "ResourceLimit"
+  },
+  {
+    "id": "wire_surrogate_pair",
+    "raw": "\"\\ud83d\\ude00\"",
+    "expected": "\"😀\""
+  }
+]

@@ -1,0 +1,143 @@
+{
+  "id": "alloy-models/algorithms/multicasting/iolus.als@5190",
+  "dataset": "alloy",
+  "source": "assert Connected { all g, g\" : GSA | g in g\".*(parent + ~parent) }",
+  "provenance": {
+    "git_revision": "46be9e1bafc85e37456cbf56e9dc92b6c8178666",
+    "path": "experiments/E0/survey_samples/alloy.jsonl",
+    "text_sha256": "8d41abce7727adaeec1456427aa08fd3b054951d3d50f53bffc005e54b4b6efb"
+  },
+  "environment": {
+    "language": "ve.core@0.1",
+    "profiles": [
+      "closure@0",
+      "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.1-closure-2026-09-21",
+    "vocabulary": {
+      "sorts": {
+        "gsa": {
+          "description": "An Alloy GSA."
+        }
+      },
+      "predicates": {
+        "parent": {
+          "arguments": [
+            "gsa",
+            "gsa"
+          ],
+          "description": "Primitive parent field, at most one parent per GSA."
+        }
+      },
+      "constants": {}
+    }
+  },
+  "ast": [
+    [
+      "forall",
+      "gsa",
+      [
+        "forall",
+        "gsa",
+        [
+          "reach",
+          "star",
+          [
+            "body",
+            "gsa",
+            [
+              "or",
+              [
+                "binary",
+                "parent",
+                [
+                  "var",
+                  1
+                ],
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "binary",
+                "parent",
+                [
+                  "var",
+                  0
+                ],
+                [
+                  "var",
+                  1
+                ]
+              ]
+            ]
+          ],
+          [
+            "var",
+            0
+          ],
+          [
+            "var",
+            1
+          ]
+        ]
+      ]
+    ]
+  ],
+  "strict": "for every gsa x0, (for every gsa x1, (rtc[gsa x2, x3 | ((x2 parent x3) or (x3 parent x2))](x1, x0))).\n",
+  "adapter": {
+    "kind": "alloy-assertion@0",
+    "partial_functions": [
+      "parent"
+    ],
+    "conditions": [
+      "parent + ~parent is explicitly expanded as the disjunction of forward and reversed one-step edges.",
+      "The assertion quantifies all GSA pairs, from the second bound GSA to the first.",
+      "This translates the sampled assertion over its relevant signature; unrelated Iolus dynamics and source module facts are not premises."
+    ]
+  },
+  "contrast": "A three-vertex parent chain is connected through forward/converse steps. Removing b-to-c isolates c and falsifies the assertion.",
+  "true_model": {
+    "complete": true,
+    "domains": {
+      "gsa": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "constants": {},
+    "relations": {
+      "parent": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "b",
+          "c"
+        ]
+      ]
+    }
+  },
+  "false_model": {
+    "complete": true,
+    "domains": {
+      "gsa": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "constants": {},
+    "relations": {
+      "parent": [
+        [
+          "a",
+          "b"
+        ]
+      ]
+    }
+  }
+}

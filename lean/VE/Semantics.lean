@@ -5,8 +5,9 @@ universe u
 
 /-- A common carrier with a domain predicate per sort is an extrinsic presentation
 of many-sorted structures. It admits arbitrary (including infinite) carriers and
-empty sort domains. No carrier or sort is assumed inhabited. For disjoint carriers
-one can take their tagged union. Only well-typed formulas are semantic claims. -/
+empty sort domains. No carrier or sort is assumed inhabited. Equivalence to an
+independent disjoint-carrier semantics for typed formulas is an unproved external
+interpretation assumption; see README. No such assumption is used in the proofs. -/
 structure Structure where
   Carrier : Type u
   domain : String → Carrier → Prop
@@ -55,7 +56,11 @@ def Document.denote {E : Environment} (d : Document E) (S : Structure) : Prop :=
   ∀ a ∈ d.formulas, a.denote S []
 
 /-- Consequence ranges over every admissible structure in universe u, rather
-than over the finite models used by the executable. -/
+than over the finite models used by the executable. This raw relation contains
+no typing premise: typed applications must provide it separately (Document,
+Derivation, the graph checker and Bridge.CountermodelQuery do so). Undefined
+raw terms make atoms false, so their negations can be true. The JSON bridge's
+certificate target is explicitly Entails.{0}. -/
 def Entails (E : Environment) (premises : List Formula) (conclusion : Formula) : Prop :=
   ∀ S : Structure.{u}, S.Admissible E →
     (∀ a ∈ premises, a.denote S []) → conclusion.denote S []
