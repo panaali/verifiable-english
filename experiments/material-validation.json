@@ -1,0 +1,199 @@
+{
+  "model_calls": 0,
+  "inputs": {
+    "E5/certificates.jsonl.gz": "0cae21b362845a3372e61c0ca90064dfabd1517fa7d0d1013fba3ad7b9384faa",
+    "E5/dev.jsonl.gz": "8b76009ceeb5692d111a1c549ce80a1c1a5a85888f0e805271da1cbcc43db5fc",
+    "E5/scored.jsonl.gz": "80eaff73b6c00be156aada2baa09842da0d836a06141f7429acb2088364910fd",
+    "E2E4/e2-dev.jsonl.gz": "e8e68216824f3a9de9142d1ab4e3d139311c149aa7fa5bbe9ccf908bcd124a78",
+    "E2E4/e2-scored.jsonl.gz": "675e8ea5cfcfeac7dc48913a1e76b5eb4a9fdc463569e4a9471b667cc2df9e3a",
+    "E2E4/e4-dev.jsonl.gz": "93c4923c47c264c0046b002b800209ecb6ed2f2a97a61427d614585ee95f5f3d",
+    "E2E4/e4-scored.jsonl.gz": "abd31ca0ca7742603204f7ed5c78f2ad200ff643c8e2ba999e01903886c2be43",
+    "E2E4/certificates/conjunct_extension.jsonl.gz": "f4e662bd3159326007664ab0208c333fdac88679cab7b1ba72e75573b31c7457",
+    "E2E4/certificates/dev_deep.jsonl.gz": "726b1449384e7483a5d6911f17555ba0b9bb1a99fe433751d7eef60687e09c4c",
+    "E2E4/certificates/dev_guarded.jsonl.gz": "41ffcb10f4dcd920fc29190c2b678429aac2f2d332f235988377c7b899b14f4a",
+    "E2E4/certificates/dev_nested.jsonl.gz": "c99a7dd51bb7f5dc3ac831b10f914ff9c5dcf436c6cee2f44776713c1a7f6a27",
+    "E2E4/certificates/dev_repeated.jsonl.gz": "dba48d4d8fce258c2f8e91c39042d3f2a71ab7ca92f787dd6812b8a92a0c7cf9",
+    "E2E4/certificates/disjunct_extension.jsonl.gz": "3b8c730740850ee520820ff0fb1a257b5f010b423d72bdc10934723882818d4e",
+    "E2E4/certificates/mixed_clauses.jsonl.gz": "d9cce26dfab80980ce1d6a3a889065fe0699fd8e53edda5cf43114f624e6ed7f",
+    "E2E4/certificates/nested_or.jsonl.gz": "c7f2d92cce637b533a6c27d3a9fbbe3211f3f92b43d4fb51d8dfabf216a13051",
+    "E2E4/certificates/outer_disjunction.jsonl.gz": "feda47d7fdbd5b9e8a9f90de97627c330b8138b13a5e244dfad21e811eb2ab71",
+    "E2E4/certificates/parallel_conjuncts.jsonl.gz": "e5de93b99e1cc550c16dd2cb0576508d2316a01d6ed71af4c9eaf01c63046a7d",
+    "E2E4/certificates/parallel_disjuncts.jsonl.gz": "2f17a44e6e95a4d463e81345829522d2fc8948e80478b4467147a379067d4367",
+    "E2E4/certificates/two_conjunctions.jsonl.gz": "087c14ea67c89a025b17e265cdd055df3e96e600e64391e6d5a58e631a646e62"
+  },
+  "experiments": {
+    "E5": {
+      "labels_proved": 3072,
+      "counts": {
+        "dev/bad": 576,
+        "dev/good": 192,
+        "scored/bad": 1728,
+        "scored/good": 576
+      }
+    },
+    "E2": {
+      "labels_proved": 432,
+      "counts": {
+        "dev/bad": 96,
+        "dev/good": 48,
+        "scored/bad": 192,
+        "scored/good": 96
+      }
+    },
+    "E4": {
+      "labels_proved": 136,
+      "counts": {
+        "dev/bad": 8,
+        "dev/good": 8,
+        "scored/bad": 60,
+        "scored/good": 60
+      }
+    }
+  },
+  "E5_positions": {
+    "easy/converse": {
+      "s1": 36,
+      "s2": 34,
+      "s3": 22,
+      "s4": 24,
+      "s5": 12
+    },
+    "easy/dropped_premise": {
+      "s1": 36,
+      "s2": 34,
+      "s3": 22,
+      "s4": 24,
+      "s5": 12
+    },
+    "easy/flawed_leaf": {
+      "l1": 108,
+      "l2": 118,
+      "l3": 126,
+      "l4": 90,
+      "l5": 70
+    },
+    "easy/record_ordinal": {
+      "1": 88,
+      "2": 88,
+      "3": 78,
+      "4": 106,
+      "5": 84,
+      "6": 68
+    },
+    "hard/converse": {
+      "s1": 26,
+      "s2": 12,
+      "s3": 24,
+      "s4": 32,
+      "s5": 16,
+      "s6": 18
+    },
+    "hard/dropped_premise": {
+      "s1": 26,
+      "s2": 12,
+      "s3": 24,
+      "s4": 32,
+      "s5": 16,
+      "s6": 18
+    },
+    "hard/flawed_leaf": {
+      "l1": 102,
+      "l2": 78,
+      "l3": 90,
+      "l4": 90,
+      "l5": 80,
+      "l6": 72
+    },
+    "hard/record_ordinal": {
+      "1": 6,
+      "10": 24,
+      "11": 14,
+      "12": 8,
+      "13": 18,
+      "14": 22,
+      "15": 12,
+      "16": 16,
+      "17": 14,
+      "18": 16,
+      "19": 10,
+      "2": 18,
+      "20": 16,
+      "21": 10,
+      "22": 10,
+      "23": 16,
+      "24": 24,
+      "25": 26,
+      "26": 18,
+      "27": 10,
+      "28": 20,
+      "29": 24,
+      "3": 10,
+      "30": 8,
+      "31": 22,
+      "32": 4,
+      "4": 10,
+      "5": 22,
+      "6": 16,
+      "7": 34,
+      "8": 14,
+      "9": 20
+    },
+    "medium/converse": {
+      "s1": 36,
+      "s2": 20,
+      "s3": 24,
+      "s4": 14,
+      "s5": 34
+    },
+    "medium/dropped_premise": {
+      "s1": 36,
+      "s2": 20,
+      "s3": 24,
+      "s4": 14,
+      "s5": 34
+    },
+    "medium/flawed_leaf": {
+      "l1": 114,
+      "l2": 84,
+      "l3": 96,
+      "l4": 112,
+      "l5": 106
+    },
+    "medium/record_ordinal": {
+      "1": 30,
+      "10": 30,
+      "11": 40,
+      "12": 46,
+      "13": 43,
+      "14": 43,
+      "2": 40,
+      "3": 24,
+      "4": 24,
+      "5": 27,
+      "6": 42,
+      "7": 40,
+      "8": 37,
+      "9": 46
+    }
+  },
+  "E4_critique_lengths": {
+    "checked_countermodel": {
+      "min_words": 76,
+      "max_words": 93,
+      "mean_words": 84.20588235294117,
+      "mean_characters": 616.4117647058823
+    },
+    "dishonest_critic": {
+      "min_words": 76,
+      "max_words": 93,
+      "mean_words": 84.20588235294117,
+      "mean_characters": 597.1764705882352
+    },
+    "prose_critique": {
+      "min_words": 76,
+      "max_words": 93,
+      "mean_words": 84.20588235294117,
+      "mean_characters": 578.7058823529412
+    }
+  }
+}

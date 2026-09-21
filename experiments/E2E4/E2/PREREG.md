@@ -1,63 +1,100 @@
-# E2 preregistration: scaling mechanism demonstration
+# E2 revision 2: proof length, remaining evidence, and checker visibility
 
-E2 is reported as a mechanism demonstration unless VE differs from the matched structured-FOL
-arm, which receives the identical checker findings. The outcome is judge approval/rejection;
-false approval and honest acceptance retain failures and unparseable verdicts in their
-denominators, scored worst for the cell.
+Draft amendment; **no live model calls in this revision**. The earlier pilot was
+at floor for BAD items, so the revised materials require a new dev-only pilot.
+E2 remains a mechanism demonstration unless VE differs from matched structured
+FOL with the same checker findings and evidence. Do not attribute a generic
+checker advantage to VE language. Judge IDs and repetitions remain to be frozen.
 
 ## Primary contrast
 
-Change in false approval from size 4 to size 256 for VE versus direct review, estimated separately
-for every judge. The matched VE versus structured-FOL contrast diagnoses any VE-specific effect.
-The signed interaction is (FA_VE,256 − FA_VE,4) − (FA_direct,256 − FA_direct,4);
-negative values favor VE. The smallest useful benefit is an interaction of −0.10.
+Per judge, the paired interaction (FA_VE,256 − FA_VE,4) −
+(FA_direct,256 − FA_direct,4), negative favoring VE. Report it separately for
+fixed and growing evidence workloads and for checker-visible versus invisible
+errors; the combined balanced-error estimate is secondary. The VE versus
+structured-FOL interaction is the language-specific comparison. Size 32 is an
+intermediate descriptive point. Failure/unparseable/timeout trials remain in
+assigned denominators: approval for BAD, rejection for GOOD; report their rates.
 
 ## Refutation condition
 
-The scaling claim is refuted if the confidence interval rules out a 10-point smaller increase in
-false approval for VE than direct review, or if honest acceptance falls below the constraint. An
-interval spanning the 10-point threshold is inconclusive. A VE versus direct difference with no VE
-versus structured-FOL difference is evidence for the checker/display mechanism only.
-Specifically, a 95% interval with lower endpoint above −0.10 rules out the useful benefit.
+An interval entirely above zero rules out a scaling advantage in that setting.
+Intervals covering both benefit and harm are inconclusive. Without a feasible,
+dev-based precision calculation, no useful-size superiority/refutation claim is
+made. A VE/direct difference without a VE/FOL difference supports only the
+checker/display mechanism. Near-zero BAD approval precludes identification.
 
 ## Honest-acceptance constraint
 
-At every size, VE honest acceptance must be no more than 5 percentage points below direct review.
+Report GOOD acceptance at each size and workload. A protection claim also requires
+its lower paired 95% honest-acceptance bound relative to direct to be ≥−.05.
+Failure to establish that condition does not demonstrate harm. Size-dependent
+losses of GOOD acceptance remain outcomes even when BAD approval is at floor.
 
 ## Smallest useful effect
 
-The smallest useful interaction is a 10 percentage-point smaller increase in false approval from
-4 to 256 steps. An interval spanning that effect is inconclusive.
+No confirmatory useful-size effect is frozen by this small template inventory.
+The old 10-point threshold lacked a supported power calculation. Estimate dev
+cluster variance and freeze an attainable effect, expanded inventory if needed,
+judge IDs and repetitions before scored calls; otherwise report a pilot only.
+Repetitions reduce within-item noise, not uncertainty over eight scored templates.
 
 ## Capability gate
 
-On dev items each judge must achieve at least 60% balanced accuracy in the direct arm at size 4
-and must produce parseable verdicts on at least 90% of trials. Otherwise recalibrate before scoring.
+Use only dev: response parseability ≥90%, direct balanced accuracy ≥60% at size 4,
+and BAD approval away from floor/ceiling (target .20–.60) in a selected larger-size
+workload. Record failures of the gate and all attempted ladder judges. Do not claim
+this range has been attained without calls. Select settings and freeze the run
+manifest before scoring; do not optimize a size interaction on scored results.
 
 ## Sample size
 
-The committed scored set is a construction check and pilot. A scored model run's repetitions are
-chosen from dev variance before freezing the run manifest; report item and judge counts and do not
-pool judges. Bootstrap vocabulary families, retaining all three paired sizes within each sampled
-cluster. Codex-family judges receive about 13.6k CLI context tokens per call and Claude-family
-judges about 500; report each judge separately and do not pool across these families.
-There are 36 items, 18 per split: at each size the full inventory contains four honest
-controls, four invalid-step items, and four checker-invisible errors. Across all sizes,
-checker-invisible errors split six false leaves and six wrong specifications. Half of
-all error-bearing items are checker-visible. Report those two strata separately as
-well as the prespecified combined contrast. Only two scored families and a single
-padding mechanism preclude broad population inference. Freeze repetitions and judge
-IDs in a committed amendment before scored calls. Use 10,000 paired family-cluster
-bootstrap resamples, seed 5204, to compute the interaction directly; resample families
-jointly across sizes and conditions. Do not subtract endpoints from independent CIs.
+432 items: 144 dev, 288 scored. There are four dev and **eight scored distinct
+inference-shape templates**, each with two vocabulary families disjoint across
+splits. Each template × vocabulary × workload × size has one honest item, one
+invalid-step item and one invisible-error item. Workloads are fixed/growing;
+sizes are 4/32/256. Overall there are 144 honest, 144 invalid-step, 72 false-leaf
+and 72 wrong-specification items. Exactly half of error-bearing items have an
+error the logical checker cannot see, within every size and workload. Full scored
+crossing is 288 × 3 cells = 864 calls per judge per sample, before any selection.
 
-## Interpretation limitation
+Templates vary nesting, mixed clauses, shared clauses, extensions and parallel
+clauses. Every family gets fresh synthetic predicate names, not just a new
+registrar. Invalid intermediate steps strictly strengthen the current fact while
+using exactly the same word multiset (including connective and predicate counts) as
+the corresponding honest step. Invalid positions are seeded among nonfinal steps. Subsequent
+steps return to the faithful form, yielding exactly one checked gap. All local
+positive certificates and all negative witnesses are replayed; sources and
+adjacent links are checked against their certificate packages.
 
-The size manipulation is one connected dependency sequence with two fixed leaves and an explicit
-intermediate claim at each step. At size 256 the core claim bound prevents one monolithic argument
-package: local deductions and every adjacent boundary are checked, while the display states that
-the aggregate sequence has no single core composition certificate. Any apparent scaling benefit
-therefore applies to this local-check-plus-boundary interface, not to a 256-edge core graph.
-The extra steps are synthetic logical padding that alternate equivalent forms; they do not add new
-empirical leaves or new factual content as length grows. Results may measure tracing burden for a
-long connected derivation, but do not establish scaling to work whose evidence burden also grows.
+Half the items have a fixed two-leaf workload. In the other half, each nonfinal
+step additionally establishes a predicate of a newly named work-unit object
+from a new cited record. There are size+1 leaf obligations (5, 33, 257). Those
+claims are required for the submitted intermediate steps, although the final
+root can omit the auxiliary facts. Thus both checked prompts carry growing
+leaf statements, citations, records and remaining-premise lists—not merely a
+size integer. This creates real opportunities to overlook evidence or misuse
+a long outstanding-obligation list. It is still synthetic intermediate work,
+not a claim about every form of real-world problem growth.
+
+Structured-FOL converts **every formula-bearing field**, including records,
+leaf lists, root, unresolved deductions and checker obligation sources, to the
+FOL-keyword view. VE and FOL have equal semantic information; their strings and
+lengths necessarily differ. Countermodels remain the same extensional data.
+
+## Analysis and interpretation
+
+Pair item conditions and sizes before computing differences, then average within
+structural templates, retaining both vocabularies/workloads as paired variants.
+Use `experiments.cluster_stats.cluster_t` with df K−1, K=8 scored templates, on
+the directly computed interaction; never subtract unrelated CI endpoints or
+resample individual trials. With eight clusters, t intervals still depend on
+approximate normality and independent templates and can be fragile. Label this
+limitation and do not present it as broad population precision.
+
+The 256-step sequence exceeds one core argument package's claim-count envelope.
+Local inferences and every boundary are certified; the aggregate link audit is
+experiment code and is labeled as such. No single 256-step core composition
+certificate is claimed. Report every judge separately, including actual context
+limits and assigned failures; no pooling across judge families. Freeze any
+additional scored templates before inspecting scored effects.

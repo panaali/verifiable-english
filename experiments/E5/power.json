@@ -1,0 +1,12 @@
+{
+  "clusters": 24,
+  "bad_items_per_template_per_difficulty": 8,
+  "assumed_false_approval": 0.4,
+  "assumed_discordant_pairs": 0.2,
+  "reviewer_reference_clusters": 8,
+  "reviewer_reference_standard_error": 0.06,
+  "standard_error": 0.03464101615137754,
+  "half_width_95": 0.07166040169419632,
+  "approximate_mde_80": 0.10081501643973793,
+  "method": "reviewer SE scaled by sqrt(8/K); t critical + normal 80% quantile; planning approximation, not simulated power"
+}

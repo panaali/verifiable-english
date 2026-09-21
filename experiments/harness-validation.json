@@ -1,0 +1,44 @@
+{
+  "branch": "claude/harness",
+  "commit": "f016ab082fd8ad919fab6fc7c6ace87b50cb9677",
+  "committed_preregs_checked": true,
+  "model_calls": 0,
+  "results": [
+    {
+      "experiment": "E5",
+      "split": "dev",
+      "items": 768,
+      "prompts": 7680
+    },
+    {
+      "experiment": "E5",
+      "split": "scored",
+      "items": 2304,
+      "prompts": 23040
+    },
+    {
+      "experiment": "E2",
+      "split": "dev",
+      "items": 144,
+      "prompts": 432
+    },
+    {
+      "experiment": "E2",
+      "split": "scored",
+      "items": 288,
+      "prompts": 864
+    },
+    {
+      "experiment": "E4",
+      "split": "dev",
+      "items": 16,
+      "prompts": 48
+    },
+    {
+      "experiment": "E4",
+      "split": "scored",
+      "items": 120,
+      "prompts": 360
+    }
+  ]
+}

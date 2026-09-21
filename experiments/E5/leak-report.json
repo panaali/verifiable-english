@@ -1,20 +1,476 @@
 {
+  "input_sha256": {
+    "dev": "8b76009ceeb5692d111a1c549ce80a1c1a5a85888f0e805271da1cbcc43db5fc",
+    "scored": "80eaff73b6c00be156aada2baa09842da0d836a06141f7429acb2088364910fd"
+  },
+  "renderer_sha256": "8c242772e5e938c4a54acf930fadecd298c1d5ce1bf58a7085cf608eae949b17",
+  "seed": 5301,
   "training_split": "dev",
   "evaluation_split": "scored",
-  "threshold": 0.6,
-  "scope": "valid-deduction primary stratum; overall approval label",
-  "splits": {
-    "dev": {
-      "n": 64,
-      "bow_logistic_accuracy": 0.5,
-      "any_unigram_classifier_upper_bound": 0.5,
-      "length_keyword_classifier_upper_bound": 0.5
+  "model_calls": 0,
+  "scope": "primary, balanced overall approval labels only; controls excluded and counted separately",
+  "instruction_styles": [
+    "audit",
+    "neutral"
+  ],
+  "preprocessing": "Drop only the randomized instruction-style first line, whose text is constant within style. Assert all remaining bytes identical across styles. Full record bodies, panels and dates are retained.",
+  "classifier": "L2 logistic regression C=1, liblinear, max_iter=1000; numeric inputs standardized on dev; text L2-normalized hashed counts, 2^17 features, no alternate signs",
+  "feature_sets": {
+    "char_1_5": [
+      1,
+      5
+    ],
+    "char_6_12": [
+      6,
+      12
+    ],
+    "word_1_3": [
+      1,
+      3
+    ],
+    "counts_positions_dates_lengths": "record/citation counts; date counts; anomaly-marker absolute ordinal/relative positions and record lengths"
+  },
+  "interpretation": "Held-out predictive accuracy, not an upper bound for these feature classes. Chance .50. Results >.60 trigger review before model scoring, not removal of inconvenient families.",
+  "cells": {
+    "a": {
+      "train_n": 384,
+      "test_n": 1152,
+      "scored_accuracy": {
+        "char_1_5": 0.5,
+        "char_6_12": 0.4895833333333333,
+        "word_1_3": 0.5026041666666666,
+        "counts_positions_dates_lengths": 0.5034722222222222
+      },
+      "by_difficulty": {
+        "easy": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5104166666666666
+        },
+        "medium": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.46875,
+          "word_1_3": 0.4973958333333333,
+          "counts_positions_dates_lengths": 0.5026041666666666
+        },
+        "hard": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5104166666666666,
+          "counts_positions_dates_lengths": 0.4973958333333333
+        }
+      },
+      "by_family": {
+        "merged_vocabulary": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4756944444444444,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5208333333333334
+        },
+        "scope_mismatch": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.4965277777777778,
+          "counts_positions_dates_lengths": 0.4826388888888889
+        },
+        "unsupported_leaf": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.5138888888888888,
+          "counts_positions_dates_lengths": 0.4965277777777778
+        },
+        "stale_evidence": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4965277777777778,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5138888888888888
+        }
+      },
+      "merged_tag_condition": {
+        "honest": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4722222222222222,
+          "word_1_3": 0.5138888888888888,
+          "counts_positions_dates_lengths": 0.5347222222222222
+        },
+        "forged": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4791666666666667,
+          "word_1_3": 0.4861111111111111,
+          "counts_positions_dates_lengths": 0.5069444444444444
+        }
+      },
+      "pair_balance": {
+        "dev": {
+          "pairs": 192,
+          "equal_character_length": 192,
+          "equal_unigram_multiset": 192,
+          "equal_record_count": 192,
+          "equal_citation_positions": 192,
+          "equal_date_multiset": 192
+        },
+        "scored": {
+          "pairs": 576,
+          "equal_character_length": 576,
+          "equal_unigram_multiset": 576,
+          "equal_record_count": 576,
+          "equal_citation_positions": 576,
+          "equal_date_multiset": 576
+        }
+      }
     },
-    "scored": {
-      "n": 128,
-      "bow_logistic_accuracy": 0.5,
-      "any_unigram_classifier_upper_bound": 0.5,
-      "length_keyword_classifier_upper_bound": 0.5
+    "b": {
+      "train_n": 384,
+      "test_n": 1152,
+      "scored_accuracy": {
+        "char_1_5": 0.5,
+        "char_6_12": 0.4895833333333333,
+        "word_1_3": 0.5026041666666666,
+        "counts_positions_dates_lengths": 0.5034722222222222
+      },
+      "by_difficulty": {
+        "easy": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5104166666666666
+        },
+        "medium": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.46875,
+          "word_1_3": 0.4973958333333333,
+          "counts_positions_dates_lengths": 0.5026041666666666
+        },
+        "hard": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5104166666666666,
+          "counts_positions_dates_lengths": 0.4973958333333333
+        }
+      },
+      "by_family": {
+        "merged_vocabulary": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4756944444444444,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5208333333333334
+        },
+        "scope_mismatch": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.4965277777777778,
+          "counts_positions_dates_lengths": 0.4826388888888889
+        },
+        "unsupported_leaf": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.5138888888888888,
+          "counts_positions_dates_lengths": 0.4965277777777778
+        },
+        "stale_evidence": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4965277777777778,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5138888888888888
+        }
+      },
+      "merged_tag_condition": {
+        "honest": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4722222222222222,
+          "word_1_3": 0.5138888888888888,
+          "counts_positions_dates_lengths": 0.5347222222222222
+        },
+        "forged": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4791666666666667,
+          "word_1_3": 0.4861111111111111,
+          "counts_positions_dates_lengths": 0.5069444444444444
+        }
+      },
+      "pair_balance": {
+        "dev": {
+          "pairs": 192,
+          "equal_character_length": 192,
+          "equal_unigram_multiset": 192,
+          "equal_record_count": 192,
+          "equal_citation_positions": 192,
+          "equal_date_multiset": 192
+        },
+        "scored": {
+          "pairs": 576,
+          "equal_character_length": 576,
+          "equal_unigram_multiset": 576,
+          "equal_record_count": 576,
+          "equal_citation_positions": 576,
+          "equal_date_multiset": 576
+        }
+      }
+    },
+    "c": {
+      "train_n": 384,
+      "test_n": 1152,
+      "scored_accuracy": {
+        "char_1_5": 0.5,
+        "char_6_12": 0.4973958333333333,
+        "word_1_3": 0.4921875,
+        "counts_positions_dates_lengths": 0.5043402777777778
+      },
+      "by_difficulty": {
+        "easy": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5130208333333334
+        },
+        "medium": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.4921875,
+          "counts_positions_dates_lengths": 0.5
+        },
+        "hard": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4921875,
+          "word_1_3": 0.484375,
+          "counts_positions_dates_lengths": 0.5
+        }
+      },
+      "by_family": {
+        "merged_vocabulary": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5034722222222222,
+          "word_1_3": 0.4861111111111111,
+          "counts_positions_dates_lengths": 0.5173611111111112
+        },
+        "scope_mismatch": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.4756944444444444,
+          "counts_positions_dates_lengths": 0.4791666666666667
+        },
+        "unsupported_leaf": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.5138888888888888,
+          "counts_positions_dates_lengths": 0.5
+        },
+        "stale_evidence": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.4930555555555556,
+          "counts_positions_dates_lengths": 0.5208333333333334
+        }
+      },
+      "merged_tag_condition": {
+        "honest": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.4861111111111111,
+          "counts_positions_dates_lengths": 0.5277777777777778
+        },
+        "forged": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5069444444444444,
+          "word_1_3": 0.4861111111111111,
+          "counts_positions_dates_lengths": 0.5069444444444444
+        }
+      },
+      "pair_balance": {
+        "dev": {
+          "pairs": 192,
+          "equal_character_length": 192,
+          "equal_unigram_multiset": 192,
+          "equal_record_count": 192,
+          "equal_citation_positions": 192,
+          "equal_date_multiset": 192
+        },
+        "scored": {
+          "pairs": 576,
+          "equal_character_length": 576,
+          "equal_unigram_multiset": 576,
+          "equal_record_count": 576,
+          "equal_citation_positions": 576,
+          "equal_date_multiset": 576
+        }
+      }
+    },
+    "d": {
+      "train_n": 384,
+      "test_n": 1152,
+      "scored_accuracy": {
+        "char_1_5": 0.5008680555555556,
+        "char_6_12": 0.4982638888888889,
+        "word_1_3": 0.4921875,
+        "counts_positions_dates_lengths": 0.5034722222222222
+      },
+      "by_difficulty": {
+        "easy": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5130208333333334
+        },
+        "medium": {
+          "char_1_5": 0.5026041666666666,
+          "char_6_12": 0.4973958333333333,
+          "word_1_3": 0.4921875,
+          "counts_positions_dates_lengths": 0.4973958333333333
+        },
+        "hard": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4973958333333333,
+          "word_1_3": 0.484375,
+          "counts_positions_dates_lengths": 0.5
+        }
+      },
+      "by_family": {
+        "merged_vocabulary": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.4895833333333333,
+          "counts_positions_dates_lengths": 0.5208333333333334
+        },
+        "scope_mismatch": {
+          "char_1_5": 0.5034722222222222,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.4791666666666667,
+          "counts_positions_dates_lengths": 0.4826388888888889
+        },
+        "unsupported_leaf": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5034722222222222,
+          "word_1_3": 0.5138888888888888,
+          "counts_positions_dates_lengths": 0.4965277777777778
+        },
+        "stale_evidence": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5034722222222222,
+          "word_1_3": 0.4861111111111111,
+          "counts_positions_dates_lengths": 0.5138888888888888
+        }
+      },
+      "merged_tag_condition": {
+        "honest": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.4930555555555556,
+          "counts_positions_dates_lengths": 0.5277777777777778
+        },
+        "forged": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.4861111111111111,
+          "counts_positions_dates_lengths": 0.5138888888888888
+        }
+      },
+      "pair_balance": {
+        "dev": {
+          "pairs": 192,
+          "equal_character_length": 192,
+          "equal_unigram_multiset": 192,
+          "equal_record_count": 192,
+          "equal_citation_positions": 192,
+          "equal_date_multiset": 192
+        },
+        "scored": {
+          "pairs": 576,
+          "equal_character_length": 576,
+          "equal_unigram_multiset": 576,
+          "equal_record_count": 576,
+          "equal_citation_positions": 576,
+          "equal_date_multiset": 576
+        }
+      }
+    },
+    "e": {
+      "train_n": 384,
+      "test_n": 1152,
+      "scored_accuracy": {
+        "char_1_5": 0.5,
+        "char_6_12": 0.4991319444444444,
+        "word_1_3": 0.4913194444444444,
+        "counts_positions_dates_lengths": 0.5034722222222222
+      },
+      "by_difficulty": {
+        "easy": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4947916666666667,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5104166666666666
+        },
+        "medium": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.4947916666666667,
+          "counts_positions_dates_lengths": 0.5
+        },
+        "hard": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5026041666666666,
+          "word_1_3": 0.4791666666666667,
+          "counts_positions_dates_lengths": 0.5
+        }
+      },
+      "by_family": {
+        "merged_vocabulary": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.4930555555555556,
+          "counts_positions_dates_lengths": 0.5208333333333334
+        },
+        "scope_mismatch": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5034722222222222,
+          "word_1_3": 0.4791666666666667,
+          "counts_positions_dates_lengths": 0.4791666666666667
+        },
+        "unsupported_leaf": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5
+        },
+        "stale_evidence": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.4930555555555556,
+          "counts_positions_dates_lengths": 0.5138888888888888
+        }
+      },
+      "merged_tag_condition": {
+        "honest": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.4791666666666667,
+          "counts_positions_dates_lengths": 0.5208333333333334
+        },
+        "forged": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5069444444444444,
+          "counts_positions_dates_lengths": 0.5208333333333334
+        }
+      },
+      "pair_balance": {
+        "dev": {
+          "pairs": 192,
+          "equal_character_length": 192,
+          "equal_unigram_multiset": 192,
+          "equal_record_count": 192,
+          "equal_citation_positions": 192,
+          "equal_date_multiset": 192
+        },
+        "scored": {
+          "pairs": 576,
+          "equal_character_length": 576,
+          "equal_unigram_multiset": 576,
+          "equal_record_count": 576,
+          "equal_citation_positions": 576,
+          "equal_date_multiset": 576
+        }
+      }
     }
   }
 }

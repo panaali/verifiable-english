@@ -1,49 +1,57 @@
-# E5 materials
+# E5 revised materials
 
-No model calls. From the repository root:
+This revision makes no model calls. Read `PREREG.md` for estimands, the earlier
+floor pilot, difficulty/style gates, forged tags, and limits of the power estimate.
 
 ```sh
 export UV_CACHE_DIR=/private/tmp/ve-uv-cache
 uv run python -m experiments.E5.materials --write
 uv run python -m experiments.E5.leak_audit
-uv run pytest experiments/E5/tests -q
+uv run python -m experiments.cluster_stats
+uv run python -m experiments.validate_materials
+uv run pytest tests experiments/E5/tests experiments/E2E4/tests -q
+uv run python -m experiments.E5.check_harness --committed
 ```
 
-`materials.build_items("dev" | "scored")` returns dictionaries accepted by
-`ve_experiments.runner.Item(**row)`. `render_cell(item, "a" | "b" | "c" | "d" | "e")`
-accepts a full row, a harness Item, or the visible payload passed to a Condition.
-`harness_items` and `harness_conditions` lazily import the other worker's harness;
-this directory does not include or modify it. Set Experiment id `E5`, crossed
-assignment, and split_file to `experiments/E5/split.json`. A judge must return
-`{"verdict":"approve"}` or `{"verdict":"reject"}`. Labels/IDs/audit metadata are
-not rendered. The renderer explicitly selects fields rather than serializing payloads.
+`dev.jsonl.gz` and `scored.jsonl.gz` contain all 3,072 harness-ready items, not a
+sample. `certificates.jsonl.gz` contains the reusable conditional proofs and gap
+witnesses. All archives have deterministic gzip headers. Large expanded `.jsonl`
+files are generated locally and ignored. Use `gzip -dc scored.jsonl.gz` to inspect
+an archive. `counts.json`, `split.json`, `power.json`, `leak-report.json`, and
+`../material-validation.json` are small, inspectable audit artifacts. Reproducing
+checker-build identities requires the same core source and Python build.
 
-`dev.jsonl` / `scored.jsonl` are the frozen, harness-ready files. `split.json`
-records groups, templates and vocabulary families. Generation uses this assignment
-without rewriting it. `certificates.jsonl` stores each logical graph's replayable
-tableau certificates or countermodels once; `graph_for_payload` attaches the
-item's records as Evidence metadata and runs against the same logical structure.
-`check_argument(..., search=False)` certifies all positive edges and checks every
-gap witness. `_audit` stores exact checker/graph identities, family and strata.
-The E5 tags deliberately do not alter `ve/` vocabulary identity.
+`build_items("dev" | "scored", difficulty="easy" | "medium" | "hard")` constructs
+one level; omitting difficulty constructs all three. `make_pair` additionally
+accepts `records_per_leaf=1..4`, `distractors=0..8`, `flaw_spread=True|False`,
+`record_format="json"|"prose"`, and `graph_size=3..12` total claims. Custom overrides
+are not part of the frozen inventory. The split/size-specific DAGs are frozen in
+`split.json`. Its 24 scored templates are distinct even under node renaming.
 
-Grounding truth is defined by the records' structured fields and the documented
-closed support rule, not by a model. The independent checker certifies conditional
-logic only. Every leaf remains an unassessed assumption. The evidence record
-validity interval is substantive synthetic data, not the host machine's date.
+`render_cell(item, "a"|"b"|"c"|"d"|"e", instruction_style="audit"|"neutral")`
+accepts a row, harness Item, or visible payload. `harness_conditions()` returns
+ten conditions (`a_audit` through `e_neutral`); difficulty is an item factor.
+All cells/styles receive exactly the same record world and labels. No audit
+metadata, mismatch booleans or condition labels are rendered. Model replies use
+`{"verdict":"approve"}` or `{"verdict":"reject"}`. The harness contract check
+imports the existing `claude/harness` branch read-only and builds prompts in
+bounded batches; it never invokes a judge or modifies harness files.
 
-The 192 primary items are balanced 96/96 for approval. The 192 invalid-edge
-controls balance grounding GOOD/BAD, but all have approval label `bad` because
-an invalid argument cannot be approved. Select `_audit.stratum == "primary"`
-for the preregistered contrast; never mistake grounding GOOD for overall approval.
-For analysis, join `template` from `_audit` into the harness's trial rows and use
-`cluster="template"`, rather than the finer vocabulary group. Both grouping
-keys are frozen within one split. No data record supplies its audit fields to a judge.
+`grounding_audit` resolves the cited records and independently parses the actual
+prose memos in medium/hard items. It ignores supplied tags. `graph_for_payload`
+binds displayed claims and edges to the replayable proof package; factual
+support remains outside the logical checker. `python -m experiments.validate_materials`
+proves every frozen label from those records and certificates, records hashes,
+and reports flaw/control positions. It also validates E2/E4's frozen artifacts.
 
-Every matched GOOD/BAD pair has identical character count and exact unigram
-multiset in cell a. The leak audit fits a dev unigram logistic classifier and
-checks held-out accuracy plus an upper bound for any classifier using unigram
-counts or lengths/keyword counts. These tests cannot exclude semantic relational
-heuristics, which should solve these transparent synthetic cases. Eight scored
-templates are insufficient to promise narrow intervals; this is material and
-preregistration preparation, not an experiment result.
+GOOD/BAD grounding is balanced. Invalid-edge controls have BAD approval labels
+regardless of grounding. Half of merged-vocabulary BAD items carry forged tags;
+GOOD tags are honest. Analyze controls, stale evidence and forged/honest tags
+separately, and cluster on the structural template, not the vocabulary or item.
+
+The leak audit trains dev-only logistic probes on char 1–5 / 6–12 and word 1–3
+n-grams, plus numeric record counts/positions/dates/lengths, for all five cells.
+It reports held-out and difficulty-specific accuracy and exact pair balance.
+Both styles share the same body; only their label-constant first line is omitted
+in this offline feature audit. These are limited probes, not a proof that no
+semantic shortcut exists. No model capability gate was run in this task.
