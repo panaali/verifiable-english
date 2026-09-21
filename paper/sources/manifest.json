@@ -1,5 +1,5 @@
 {
-  "implementation_base": "14311840057b38e6554f35e7f5ff95c8e3c16145",
+  "implementation_base": "72531962193bd6b6068b2325998772dfd17b51ed",
   "files": [
     {
       "file": "e0-metrics.json",
@@ -69,7 +69,7 @@
       "origin": "/Users/seyran/code/manage-agents/review-lean.md",
       "revision": null,
       "status": "External supplied record, first committed with paper; not independently reproduced.",
-      "sha256": "7415ca8d962c4a732b24d967d25fafe4708d071e6121ba47132f6c7f3e41d34f"
+      "sha256": "8ea64b542ba710698b5e27238a29f199071fa042fd411fe9d331d22ee6f7efc7"
     },
     {
       "file": "review-views.md",
@@ -99,6 +99,168 @@
       "status": "Selected complete timeline entries, copied verbatim.",
       "original_sha256": "23d0bd02e70944b8a74795467a34f2b6f9d04c0790265095cc7b95a415f5879a",
       "sha256": "961f022b7ccbc75f946e857a395f3b71941d0639be81ff2f4c78d091f5643893"
+    },
+    {
+      "file": "e1-judges.json",
+      "origin": "experiments/E1/judges.json",
+      "branch": "claude/e1",
+      "revision": "56424dabbff9dbb66dc46b3f8390645ce388d9e8",
+      "sha256": "8ac6ce555183a6c8d081ae6170b857f61fde8ddbb0ace03c9ae92a22efbe6746"
+    },
+    {
+      "file": "e1-dev-qwen.md",
+      "origin": "experiments/E1/DEV-qwen.md",
+      "branch": "claude/e1",
+      "revision": "56424dabbff9dbb66dc46b3f8390645ce388d9e8",
+      "sha256": "7ebd3cb434e7c4adc42cd6b2c611e77daf7207073d05191d62a63fa9983e36c7"
+    },
+    {
+      "file": "e1-dev-qwen-e3.md",
+      "origin": "experiments/E1/DEV-qwen-e3.md",
+      "branch": "claude/e1",
+      "revision": "56424dabbff9dbb66dc46b3f8390645ce388d9e8",
+      "sha256": "69a8e15e40b3d2070920a88191e45275225fa4dde2a47c14c16e1cd2394dc0df"
+    },
+    {
+      "file": "e5-materials-pilots.md",
+      "origin": "experiments/E5/PREREG.md",
+      "branch": "codex/e5",
+      "revision": "cbc6a801fba65560223a9fe0089f67d7d0868af4",
+      "sha256": "a3a8597ae29f36129877b82f6c1f8a63ed817c601c432d751fb43e2ddc2ec9a0"
+    },
+    {
+      "file": "process-log-v1.md",
+      "origin": "/Users/seyran/code/manage-agents/ve-run-log.md",
+      "revision": null,
+      "status": "Post-v0 timeline through scored-run start; access-configuration tail omitted.",
+      "sha256": "4512d9949ba0d186f8688c96c7d1727e273cb2713997bd5a151f04c0691404af"
+    },
+    {
+      "file": "v1-handoff.md",
+      "origin": "User drafting handoff, 2026-09-21",
+      "revision": null,
+      "status": "Supplied compute accounting, approximate rather than metered final total.",
+      "sha256": "42aec7df935f8fa0317be930b0c7b3b09fd6a9757cf5a21dfa6a2170f79ea12c"
+    },
+    {
+      "file": "process-operations.md",
+      "origin": "/Users/seyran/code/manage-agents/ve-run-log.md",
+      "revision": null,
+      "status": "Complete 04:57 timeline entry; operational context for the v1 handoff.",
+      "sha256": "9273ffca58624fbda00e293c420da334516da6dab2ea7e9f3f6bda1bca9dc4e3"
+    },
+    {
+      "file": "e4-dev-summary.json",
+      "origin": "/Users/seyran/code/manage-agents/colab/results/e4-dev-c/out/score-summary.json",
+      "revision": null,
+      "status": "Selected dev metrics from supplied score summary; no new scoring.",
+      "sha256": "df76e6b1d25bd13dfb2f542e6c63549b3e601884c437c5cebe7851564e26fed3"
+    },
+    {
+      "file": "e1-results.md",
+      "origin": "experiments/E1/RESULTS.md",
+      "revision": "cb2b7ff76a5d7cc305b45b4f2dccdd23c00acdba",
+      "sha256": "d4c723c1976f0a3a93427b53adcae630a84e78f2877c7348f978d153272233e7",
+      "branch": "claude/e1"
+    },
+    {
+      "file": "e1-prereg-frozen.md",
+      "origin": "experiments/E1/PREREG.md",
+      "revision": "555b3ae030352c7ce2bad745bc8ed97988d471dd",
+      "sha256": "06f08395fdd1e97b5d9cde1db3f3eaa125092a69711efc5fe94448dbcbd4761a",
+      "branch": "claude/e1"
+    },
+    {
+      "file": "e4-prereg-frozen.md",
+      "origin": "experiments/E2E4/E4/PREREG.md",
+      "revision": "cbc6a801fba65560223a9fe0089f67d7d0868af4",
+      "sha256": "07c2e1cc113fae8646a0915f3a5281661a0db9d4163b4173559710341ded8c88",
+      "branch": "codex/e5"
+    },
+    {
+      "file": "e4-score-summary.json",
+      "origin": "/Users/seyran/code/manage-agents/colab/results/e4-scored-a/out/score-summary.json",
+      "revision": null,
+      "sha256": "4c73dfa83d5e8b6eb3bfee5d5741e6665c808726bdd36283833ede73e48e9d31",
+      "status": "Supplied scored record, first committed with paper; no new model calls or scoring."
+    },
+    {
+      "file": "e4-score-table.md",
+      "origin": "/Users/seyran/code/manage-agents/colab/results/e4-scored-a/out/score-table.md",
+      "revision": null,
+      "sha256": "0e723a84d8d9b5e8388137e0c5c7bf916acd908cfd1979c80cc3f5f2c71ebcf9",
+      "status": "Supplied scored record, first committed with paper; no new model calls or scoring."
+    },
+    {
+      "file": "debate-claim-graph.md",
+      "origin": "usecases/birthright-citizenship-debate/claim-graph.md",
+      "revision": "e1d40696fc3f8c0cfdb0078a861fa224210f972a",
+      "sha256": "458a9e7a0b2fd8247a8c7035e8c361c108ff4a61a9ad9cc40d8b3c860b1f7a88",
+      "branch": "usecases/main"
+    },
+    {
+      "file": "debate-countermodel-RESULTS.md",
+      "origin": "usecases/birthright-citizenship-debate/countermodel/RESULTS.md",
+      "revision": "e1d40696fc3f8c0cfdb0078a861fa224210f972a",
+      "sha256": "e22eaecf924b05cc84490a7a13b3399d2899226db39c2051c5bb2a6c314a08ed",
+      "branch": "usecases/main"
+    },
+    {
+      "file": "debate-GAPS.md",
+      "origin": "usecases/birthright-citizenship-debate/GAPS.md",
+      "revision": "e1d40696fc3f8c0cfdb0078a861fa224210f972a",
+      "sha256": "3944f343415b2a62b0b78002f530aad391c0819d1876439997764f1d1743c759",
+      "branch": "usecases/main"
+    },
+    {
+      "file": "debate-coverage.md",
+      "origin": "usecases/birthright-citizenship-debate/coverage.md",
+      "revision": "e1d40696fc3f8c0cfdb0078a861fa224210f972a",
+      "sha256": "669d060c4261e306e4ca3283c6106e740adce205e923ae735298c3a82ab1eb46",
+      "branch": "usecases/main"
+    },
+    {
+      "file": "debate-source.md",
+      "origin": "usecases/birthright-citizenship-debate/source.md",
+      "revision": "e1d40696fc3f8c0cfdb0078a861fa224210f972a",
+      "sha256": "4169fcd726f37c89ef7e0d75f67fe5036d69aaf3d542cb25f3bf3a37a49499aa",
+      "branch": "usecases/main"
+    },
+    {
+      "file": "amendment-coverage.md",
+      "origin": "usecases/us-constitution-14th-s1/coverage.md",
+      "revision": "e1d40696fc3f8c0cfdb0078a861fa224210f972a",
+      "sha256": "b002c6547a06234775fa10772fd0858eda852f3b703094e550061f4a218a2c2d",
+      "branch": "usecases/main"
+    },
+    {
+      "file": "amendment-GAPS.md",
+      "origin": "usecases/us-constitution-14th-s1/GAPS.md",
+      "revision": "e1d40696fc3f8c0cfdb0078a861fa224210f972a",
+      "sha256": "1c5752f29ddd6699bcf2cccf160eb34f7b3adc782ce79191af3424bc3151d0a8",
+      "branch": "usecases/main"
+    },
+    {
+      "file": "amendment-source.md",
+      "origin": "usecases/us-constitution-14th-s1/source.md",
+      "revision": "e1d40696fc3f8c0cfdb0078a861fa224210f972a",
+      "sha256": "6f69904cc8b04f619701ced478dd2e8246e35850631a04290c07cc98e7fa6ebe",
+      "branch": "usecases/main"
+    },
+    {
+      "file": "process-log-results.md",
+      "origin": "/Users/seyran/code/manage-agents/ve-run-log.md",
+      "revision": null,
+      "sha256": "84d7e5cd1115ad58f7bd09451a762a713ca45e31147aa358ebf7eb8ec1c6fe9c",
+      "status": "Complete 12:09 and 12:25 outcome entries; external runner estimates, not metered bills."
+    },
+    {
+      "file": "planned-replication.md",
+      "origin": "/Users/seyran/code/manage-agents/ve-run-log.md",
+      "revision": null,
+      "sha256": "c915eb829f91080a7d244e6e7a65d30904143b565c2111e17102973bcd4e438a",
+      "status": "Selected planning excerpts; prospective work, not executed results."
     }
-  ]
+  ],
+  "previous_implementation_base": "14311840057b38e6554f35e7f5ff95c8e3c16145"
 }

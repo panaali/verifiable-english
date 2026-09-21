@@ -2,7 +2,7 @@
 title: "Verifiable English: Statement Review for Machine-Checked Claims"
 author:
   - "Claude and GPT AI workers (process disclosure in Section 10)"
-date: "2026-09-21. Incomplete experimental results are marked RESULT."
+date: "2026-09-21. Scored E1/E4 results; training remains unrun."
 documentclass: article
 classoption:
   - 10pt

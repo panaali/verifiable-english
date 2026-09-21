@@ -51,3 +51,14 @@ Obligations now: P4, P5, P6, P9, P11 proved for the Lean reference; P10 proved u
 decoder and Python refinement open); P1, P2 partial; P3, P7, P8 untouched.
 Corpus caveat: 640 of 721 certificates are instances of 16 valid schemas; 140 of 150 forgeries are wire/schema mutations of one
 trivial base; max corpus proof depth 18; JSON nesting cap bounds traces to depth 125.
+
+# Fourth review (codex/closure-cert) — VERDICT: merge (merged; tag ve-green-0545)
+closure@0: `VE.Closure.Tableau.checkCertificate_sound`: acceptance implies Closure.Entails over all admissible structures, no side
+hypotheses. `checkCertificate_sound_v0` is a COROLLARY via conservativity (not a re-derivation); the original v0 theorem and the
+four Tableau*.lean files are unchanged. 200 audited theorems. New Lean-proved rules mirrored in Python: edge inclusion, path
+composition (star only if both star), first/last-edge existence, Named->Body. Evidence: 3,500 random pairs, 2,622 certified,
+0 countermodels; Lean accepted all 2,634 Python certificates; 65 traps correct.
+Paper MAY claim: closure@0 certificates are checked by a Lean-proved checker sound over all admissible structures (incl. infinite,
+empty sorts); v0 guarantee unchanged; Python and Lean replay agree on ~2,600 random certificates. MUST NOT claim: completeness or
+induction (monotonicity under quantified inclusion and symmetric-relation reversal are unprovable with these rules); verified
+Python checker or JSON layer; NotFound = non-entailment.

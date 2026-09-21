@@ -1,0 +1,24 @@
+{
+ "note": "Judge set of E1. Roles follow the rule in PREREG.md applied to dev_gate: dev split, cell fol_symbols|none, FINAL prompt (compact ve legend, 3,900 characters per prompt), 110 bad and 48 good candidates. Strong models in that cell: gpt-6-astra 158/158 (compact legend), claude-fable-5-1 158/158 (JSON legend; not re-measured, Claude quota). Each judge is analysed separately. Order of the vllm judges = run order in the batch job (32B last).",
+ "budget": "reason: at most 150 words, then the JSON verdict. vllm judges: max_new_tokens 400, temperature 0 (greedy), chat template with system = ve_experiments.llm.DEFAULT_SYSTEM and the judge prompt as the user turn. vllm_spec holds engine arguments only (memory, context length); on an A100 enforce_eager and max_num_seqs may be dropped.",
+ "judges": [
+  {"judge": "vllm:Qwen/Qwen2.5-14B-Instruct-AWQ", "role": "secondary_permissive", "budget": "reason", "load": "single",
+   "vllm_spec": {"max_model_len": 4096},
+   "dev_gate": {"source": "experiments/E1/runs/e1-dev-compact-0921", "accuracy": [80, 158], "false_approval": [73, 110], "honest_acceptance": [43, 48], "G1": true, "G2": false, "G3": true}},
+  {"judge": "vllm:Qwen/Qwen2.5-32B-Instruct-AWQ", "role": "primary", "budget": "reason", "load": "single",
+   "vllm_spec": {"max_model_len": 3072, "gpu_memory_utilization": 0.95, "enforce_eager": true, "max_num_seqs": 16},
+   "dev_gate": {"source": "experiments/E1/runs/e1-dev-compact-0921", "accuracy": [122, 158], "false_approval": [34, 110], "honest_acceptance": [46, 48], "G1": true, "G2": true, "G3": true,
+                "caveat": "one candidate inside the band: 33/110 = 0.300 is the lower edge"}},
+  {"judge": "gpt-5.6-luna", "role": "strong_end_reference", "budget": "reason", "load": "single",
+   "dev_gate": {"source": "experiments/E1/runs/gate-compact-gpt-dev", "accuracy": [153, 158], "false_approval": [5, 110], "honest_acceptance": [48, 48], "G1": false, "G2": false, "G3": true}},
+  {"judge": "claude-haiku-4-5-20251001", "role": "strong_end_reference", "budget": "reason", "load": "single",
+   "dev_gate": {"source": "experiments/E1/runs/pilot-gate-dev (JSON legend; not re-measured with the compact legend, Claude quota)", "accuracy": [154, 158], "false_approval": [4, 110], "honest_acceptance": [48, 48], "G1": false, "G2": false, "G3": true}}
+ ],
+ "not_scored": [
+  {"model": "Qwen/Qwen2.5-7B-Instruct", "reason": "final prompt: false approval 94/110 = 0.855, above the permissive limit 0.85 (by one candidate); accuracy 57/158, honest acceptance 41/48"},
+  {"model": "meta-llama/Llama-3.1-8B-Instruct", "reason": "ladder prompt: honest acceptance 11/48 fails G3 (rejects almost everything)"},
+  {"model": "google/gemma-2-9b-it (fp8)", "reason": "ladder prompt: false approval 105/109 (approves almost everything)"},
+  {"model": "stelterlab/phi-4-AWQ", "reason": "ladder prompt: 26/157 unparseable replies (25 truncated)"}
+ ],
+ "strong_end_reference": "Hosted judges are at the floor (fail G1 and G2). They are run only if quota allows, GPT family first, as the strong end of the capability trend; descriptive, and they cannot support or refute the claim."
+}

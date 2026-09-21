@@ -1,29 +1,37 @@
 # Abstract {.unnumbered}
 
-A proof checker establishes a formal consequence. It does not establish that the
-proved statement expresses the supervisor's intended requirement. Verifiable
-English (VE) addresses this statement-reading gap with a small relational
-language, deterministic presentations, and explicit assumption tracking. A claim
-is a closed formula of many-sorted, function-free first-order logic with equality.
-Its environment records the vocabulary and intended descriptions. Five views
-render the same syntax tree with a shared vocabulary legend. Finite evaluation,
-countermodels, tableau replay, and claim graphs separate logical support from
-interpretation and evidence. Lean proves evaluator correctness, canonical
-print/parse round trips, certificate soundness, and assumption-preserving graph
-composition for specified reference representations. These results do not verify
-the Python or Rust implementations, the full decoding boundary, or empirical
-premises. An opt-in reachability profile has a separately stated proof boundary.
-An exploratory coverage audit reports substantial disagreement between model
-raters, especially about policy hierarchies. Development pilots motivate a
-capability gate before testing presentation effects with model supervisors.
-**[RESULT-ABSTRACT: scored E1 and E5 effects and uncertainty are not yet available;
-insert the audited outcomes, including null or harmful effects.]**
-No human participants were studied. The implementation, experiments, reviews,
-and manuscript were produced by AI workers from different model families under
-an AI orchestrator and human project direction. The paper reports artifacts and
-experimental designs; improved oversight and human readability remain unestablished.
+A proof checker establishes a formal consequence, not that the statement
+expresses the supervisor's intended requirement. Verifiable English (VE)
+addresses this statement-reading gap with a small relational language, five
+deterministic views of one syntax tree, and checked composition with explicit
+assumptions. Lean proves specified reference evaluator, serialization,
+certificate, and graph properties; it does not verify production implementations
+or empirical premises. The scored evidence separates surface presentation from
+machine checking. For the primary Qwen2.5-32B-Instruct-AWQ judge, strict English
+showed no benefit over symbolic FOL: the false-approval contrast with an
+asserted-faithful explanation was +0.027 [-0.065, +0.120] (inconclusive), and
+without explanation +0.003 [-0.043, +0.049] (a 0.05 reduction refuted, not
+harmful), using 97.5% intervals. The combined claim is not supported. Fluent
+rendering for the weaker 14B judge is an exploratory replication hypothesis.
+Hosted small models read FOL near-perfectly in development calibration, so
+model readability is not the bottleneck on these tasks. Machine-checked
+components did help in a separate countermodel-display demonstration: for 14B,
+checked feedback reduced false approval (preregistered -0.267 [-0.392, -0.142],
+satisfying the frozen protection rule; -0.117 [-0.231, -0.002] under lenient
+parsing in a post hoc sensitivity analysis, not preregistered); for 7B, it rescued honest acceptance by
++0.80 [0.56, 1.04] from near-universal rejection (95% intervals). Replay rejects
+fabricated countermodels by construction. A qualitative, single-agent policy
+exercise exposes a disputed predicate but leaves much of the argument outside
+VE: five of nine debate claims are unformalized, and amendment clauses receive
+one REIFIED and three OPAQUE labels. Coverage without extensions is low.
+Humans, other judge families in scored comparisons, external baselines,
+long-context and compaction settings, and training remain untested. AI workers
+produced the artifacts and manuscript under human direction; improved human
+readability and general oversight remain unestablished.
 
-<!-- src: docs/rendering-views.md (five views); lean/METATHEORY.md;
-lean/CLOSURE.md; PROTOCOL.md; paper/sources/process-log-excerpts.md.
-All RESULT markers deliberately remain visible. Source comments name committed
-artifacts; external records were first committed under paper/sources/. -->
+<!-- src: paper/sources/e1-results.md (cb2b7ff), E1 and E1b;
+paper/sources/e1-prereg-frozen.md (555b3ae), decisions and hosted calibration;
+paper/sources/e4-score-summary.json and paper/sources/e4-prereg-frozen.md
+(cbc6a80), per-judge effects and decision rule;
+paper/sources/debate-coverage.md; paper/sources/amendment-coverage.md;
+lean/METATHEORY.md; lean/CLOSURE.md; PROTOCOL.md. -->
