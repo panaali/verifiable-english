@@ -11,8 +11,9 @@
 
 ## Rules the code enforces
 
-- A scored run refuses to start unless `experiments/<id>/PREREG.md` is committed and its working bytes equal the
-  HEAD blob (so `assume-unchanged` cannot hide an edit), and it has a non-empty section for each Plan v2 field:
+- A scored run (and a scored batch export) refuses to start unless line 1 of `experiments/<id>/PREREG.md` starts with
+  `Status: FROZEN`, every item's group is recorded as scored in the COMMITTED split file, and the PREREG is committed
+  with working bytes equal to the HEAD blob (so `assume-unchanged` cannot hide an edit), and it has a non-empty section for each Plan v2 field:
   primary contrast, refutation condition, honest-acceptance constraint, smallest useful effect, capability or
   calibration gate, sample size. The manifest records commit and blob. Scored runs cannot be truncated with `limit`,
   require the real `ve` backend (never the stub), and require the split file, if one is used, to be committed.
@@ -34,7 +35,9 @@
 
 ## Model calls
 
-Claude: `claude -p --model <id> --output-format json --tools "" --strict-mcp-config --system-prompt <s>`, prompt on
+Claude: `claude -p --model <id> --output-format json --tools "" --strict-mcp-config --safe-mode --setting-sources ""
+--disable-slash-commands --system-prompt <s>` (no CLAUDE.md, hooks, plugins, skills or settings; admin policy settings
+and about 450 CLI tokens cannot be removed), prompt on
 stdin. Codex: `codex exec -m <id> -s read-only --skip-git-repo-check --json --ephemeral --ignore-user-config
 --ignore-rules --disable shell_tool --disable apps --disable browser_use --disable computer_use --disable plugins
 -c web_search="disabled" -`, system text and prompt on stdin. Both run from an empty temporary directory.

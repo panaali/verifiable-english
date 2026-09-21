@@ -1,0 +1,49 @@
+{
+ "model": "Qwen/Qwen2.5-7B-Instruct",
+ "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+ "weight_gb": 15.23,
+ "spec": {
+  "id": "Qwen/Qwen2.5-7B-Instruct",
+  "max_model_len": 4096
+ },
+ "engine_args": {
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "dtype": "auto",
+  "seed": 0,
+  "trust_remote_code": false,
+  "max_model_len": 4096,
+  "gpu_memory_utilization": 0.9
+ },
+ "vllm": "0.29.0",
+ "torch": "2.13.0+cu130",
+ "gpu": {
+  "name": "NVIDIA L4",
+  "memory_mib": 23034,
+  "compute_cap": 8.9
+ },
+ "args": {
+  "prompts": "prompts.jsonl",
+  "out_dir": "out",
+  "models": "models.json",
+  "max_new_tokens": 400,
+  "max_model_len": 4096,
+  "temperature": 0.0,
+  "top_p": 1.0,
+  "seed": 0,
+  "batch_size": 64,
+  "limit": 0,
+  "raw_prompt": false,
+  "keep_cache": false,
+  "model_timeout_min": 420.0
+ },
+ "n_prompts": 2370,
+ "load_s": 55.4,
+ "generate_s": 476.6,
+ "input_tokens": 2086944,
+ "output_tokens": 199743,
+ "output_tokens_per_s": 419.1,
+ "prompts_per_s": 4.97,
+ "mean_s_per_prompt": 0.201,
+ "peak_gpu_mem_mib": "21802"
+}
