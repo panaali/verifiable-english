@@ -148,3 +148,29 @@ fn environment_binding_cannot_be_substituted() {
     let p = CountermodelProblem::new(&e, vec![], Formula::Bottom).unwrap();
     assert!(find_countermodel(&other, &p, Default::default()).is_err());
 }
+
+#[test]
+fn mixed_sort_constant_and_relation_products_are_exhaustive() {
+    let mut data = env(false, true).to_value();
+    data["vocabulary"]["sorts"]["person"] = json!({"description":"Person."});
+    data["vocabulary"]["constants"]["owner"] = json!({"sort":"person","description":"Owner."});
+    data["vocabulary"]["predicates"]["owns"] =
+        json!({"arguments":["person","item"],"description":"Owns."});
+    let e = Environment::from_value(&data).unwrap();
+    let d=parse(&e,b"(for every item a, ((a is marked) or (not (a is marked)))) and (for every person p, (for every item a, ((p owns a) or (not (p owns a))))).\n").unwrap();
+    let p = CountermodelProblem::new(&e, vec![], d.formulas()[0].clone()).unwrap();
+    let r = find_countermodel(&e, &p, Default::default()).unwrap();
+    let expected: u64 = (1..=2)
+        .flat_map(|item| {
+            (1..=2).map(move |person| item * item * person * (1_u64 << (item + person * item)))
+        })
+        .sum();
+    assert_eq!(r.status, "NotFound");
+    assert_eq!(r.models_checked, expected);
+    // A zero-sort environment still has one complete finite model.
+    let empty=Environment::from_value(&json!({"language":"ve.core@0","profile":"relational-fol@0","spec_revision":"ve-v0-draft-2026-09-20","vocabulary":{"sorts":{},"constants":{},"predicates":{}}})).unwrap();
+    let problem = CountermodelProblem::new(&empty, vec![], Formula::Top).unwrap();
+    let r = find_countermodel(&empty, &problem, Default::default()).unwrap();
+    assert_eq!(r.status, "NotFound");
+    assert_eq!(r.models_checked, 1);
+}

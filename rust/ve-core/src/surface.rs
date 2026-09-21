@@ -265,7 +265,7 @@ pub fn parse(env: &Environment, source: &[u8]) -> Result<Document> {
     Ok(parse_with_metadata(env, source)?.document)
 }
 
-pub fn print_document(doc: &Document) -> String {
+pub fn print_document(doc: &Document) -> Result<String> {
     fn term(t: &Term, names: &[String]) -> String {
         match t {
             Term::Var(i) => names[names.len() - 1 - *i as usize].clone(),
@@ -312,8 +312,13 @@ pub fn print_document(doc: &Document) -> String {
             }
         }
     }
-    doc.formulas()
-        .iter()
-        .map(|f| format!("{}.\n", formula(f, &mut Vec::new(), &mut 0)))
-        .collect()
+    let mut text = String::new();
+    for f in doc.formulas() {
+        let line = format!("{}.\n", formula(f, &mut Vec::new(), &mut 0));
+        if text.len() + line.len() > MAX_SOURCE_BYTES {
+            return error("ResourceLimit", "canonical document exceeds 64 KiB");
+        }
+        text.push_str(&line);
+    }
+    Ok(text)
 }
