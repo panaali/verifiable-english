@@ -1,0 +1,26 @@
+[
+ {
+  "requested": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+  "model": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+  "ok": true,
+  "exit_code": 0,
+  "wall_s": 1172.9,
+  "revision": "539535859b135b0244c91f3e59816150c8056698",
+  "load_s": 258.4,
+  "generate_s": 881.86,
+  "output_tokens_per_s": 1461.3,
+  "mean_s_per_prompt": 0.067
+ },
+ {
+  "requested": "Qwen/Qwen2.5-32B-Instruct-AWQ",
+  "model": "Qwen/Qwen2.5-32B-Instruct-AWQ",
+  "ok": true,
+  "exit_code": 0,
+  "wall_s": 2193.2,
+  "revision": "5c7cb76a268fc6cfbb9c4777eb24ba6e27f9ee6c",
+  "load_s": 175.2,
+  "generate_s": 1984.96,
+  "output_tokens_per_s": 796.8,
+  "mean_s_per_prompt": 0.151
+ }
+]

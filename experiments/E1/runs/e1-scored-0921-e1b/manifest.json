@@ -1,0 +1,35 @@
+{
+  "experiment": "E1b",
+  "split": "scored",
+  "started": "2026-09-21T12:07:53-0700",
+  "prereg_commit": "555b3ae030352c7ce2bad745bc8ed97988d471dd 2026-09-21T11:06:17-07:00",
+  "prereg_blob": "744b997ca7911d0e6e4faf9aa9806ef0ae40ae57",
+  "split_file": {
+    "path": "experiments/E1/splits.json",
+    "commit": "7bbb07b8730f5743056da2d6bb48ee2305c93480 2026-09-21T05:37:19-07:00",
+    "blob": "60c4f8b7b4336d1f91c8f81356625d020ed70bbd"
+  },
+  "ve_backend": "ve",
+  "finished": "2026-09-21T12:08:14-0700",
+  "n_trials": 8740,
+  "n_items": 874,
+  "conditions": [
+    "fol_symbols",
+    "fol_keywords",
+    "ve_strict",
+    "ve_natural",
+    "ve_fluent"
+  ],
+  "judges": [
+    "vllm:Qwen/Qwen2.5-14B-Instruct-AWQ",
+    "vllm:Qwen/Qwen2.5-32B-Instruct-AWQ"
+  ],
+  "assignment": "crossed",
+  "samples": 1,
+  "seed": 0,
+  "n_failed_calls": 0,
+  "n_tool_use_trials": 0,
+  "n_truncated": 11,
+  "git_head": "56424dabbff9dbb66dc46b3f8390645ce388d9e8",
+  "git_dirty": false
+}
