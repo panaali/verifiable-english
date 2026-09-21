@@ -23,7 +23,7 @@ inductive Trace where
   | expand (index : Nat) (parameter : Option String) (children : List Trace)
   deriving Repr
 
-/-- The five fields of ve-tableau-checker@1. Hash bindings are checked by the
+/-- The five fields shared by ve-tableau-checker@1 and @2. Hash bindings are checked by the
 wire adapter; semantic replay always uses the actual supplied ASTs and E. -/
 structure Certificate where
   checker_version : String

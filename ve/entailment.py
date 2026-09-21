@@ -276,6 +276,25 @@ def _connection_key(item: _Signed, opposite: bool = False) -> tuple:
     return walk(item.formula, item.positive != opposite)
 
 
+def _ground_connections(key: tuple) -> frozenset[tuple]:
+    """Ground literal hints, including beneath connectives/quantifiers.
+
+    A hint is only a candidate ranking: it does not assert that a subformula
+    holds, remove a binder, suppress an expansion, or close a branch.
+    """
+    if key[0] in ("and", "or"):
+        return frozenset().union(*(_ground_connections(part) for part in key[1]))
+    if key[0] in ("forall", "exists"):
+        return _ground_connections(key[2])
+    def has_bound(value):
+        if not isinstance(value, (tuple, frozenset)):
+            return False
+        if isinstance(value, tuple) and value and value[0] == "bound":
+            return True
+        return any(has_bound(part) for part in value)
+    return frozenset() if has_bound(key) or key[0] == "truth" else frozenset((key,))
+
+
 class _Searcher:
     def __init__(self, maximum: int):
         self.maximum, self.steps = maximum, 0
@@ -284,6 +303,7 @@ class _Searcher:
         self.depth_cutoffs = 0
         self.instance_key = lru_cache(maxsize=4096)(_instance_key)
         self.connection_key = lru_cache(maxsize=4096)(_connection_key)
+        self.ground_connections = lru_cache(maxsize=4096)(_ground_connections)
 
     def tick(self) -> None:
         if self.steps >= self.maximum: raise _Budget
@@ -298,6 +318,7 @@ class _Searcher:
         if _closed(branch): return {"rule": "close"}
         keys = {self.instance_key(item) for item in branch.formulas}
         complements = {self.connection_key(item, True) for item in branch.formulas}
+        ground_complements = frozenset().union(*(self.ground_connections(key) for key in complements))
         counts: dict[int, int] = {}
         for at, _ in branch.instantiated:
             counts[at] = counts.get(at, 0) + 1
@@ -328,11 +349,20 @@ class _Searcher:
                                self.connection_key(x) == ("truth", False)
                                for group in additions for x in group)
                 # Eager signed NNF/alpha expansion uses ordinary recorded rules.
-                # Connections precede fresh witnesses; otherwise least-used,
-                # oldest universals get their turn before another witness chain.
+                # Rank partial ground connections too: an outer instantiation
+                # can expose a relevant atom before its inner binder is opened.
+                # Otherwise unused constants can consume the depth budget before
+                # the pair of existential witnesses ever gets instantiated.
+                hints = (frozenset().union(*(self.ground_connections(self.connection_key(x))
+                                            for group in additions for x in group))
+                         if kind == "gamma" else frozenset())
+                hits = len(hints & ground_complements)
+                # Preserve least-used/oldest universal scheduling. Hints rank
+                # only the parameter choices of that same formula, so a new
+                # relevant universal cannot starve an older one.
                 priority = (0 if connects else 1 if kind in ("not", "alpha") else
                             2 if kind == "delta" else 3 if kind == "gamma" else 4)
-                choices.append(((priority, counts.get(at, 0), at, order), at, token, additions))
+                choices.append(((priority, counts.get(at, 0), at, -hits, order), at, token, additions))
         if not choices: return None
         choices.sort(key=lambda choice: choice[0])
         # A depth frontier is a failed ordering, not a global budget abort.
