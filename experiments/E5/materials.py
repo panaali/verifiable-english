@@ -406,7 +406,7 @@ def make_pair(template, vocabulary_family, family, control="none", difficulty="e
     tag_condition = "forged" if group_order.index(f"{template}/{vocabulary_family}") % 2 else "honest"
     data, citations = [], {}
     next_id = 1
-    positions = {}
+    positions, authorizations = {}, {}
     for index, rule in enumerate(rules):
         ids = [f"r{x:03}" for x in range(next_id, next_id + cfg.records_per_leaf)]
         next_id += cfg.records_per_leaf
@@ -425,15 +425,34 @@ def make_pair(template, vocabulary_family, family, control="none", difficulty="e
             data.append({"record_id": ids[0], "kind": "rule", "profiles": [profile]})
             positions[index] = ids[0]
         start = 2 if cfg.flaw_spread else 1
+        authorizations[index] = ids[start:]
         prior = ids[0]
         for eid in ids[start:]:
             data.append({"record_id": eid, "kind": "authorization", "authorizes": prior})
             prior = eid
     victim_id = positions[flawed_leaf]
     victim = next(r for r in data if r["record_id"] == victim_id)
+    # Half the hard unsupported-leaf pairs exercise required authorizations.
+    # Exchange corresponding links between two leaves: all global link targets
+    # and chain shapes survive, but the cited chains no longer support those leaves.
+    authorization_swap = None
+    if (difficulty == "hard" and family == "unsupported_leaf"
+            and cfg.records_per_leaf == 4 and cfg.flaw_spread
+            and group_order.index(f"{template}/{vocabulary_family}") % 2):
+        other_leaf = rng.choice([i for i in range(len(rules)) if i != flawed_leaf])
+        depth = rng.randrange(len(authorizations[flawed_leaf]))
+        authorization_swap = (authorizations[flawed_leaf][depth], authorizations[other_leaf][depth])
     decoy_id = None
+    decoy_sources = {}
+    dossiers = [r for r in data if r["kind"] in ("rule", "catalog")]
     for i in range(cfg.distractors):
-        decoy = deepcopy(victim if i == 0 else rng.choice([r for r in data if r["kind"] in ("rule", "catalog")]))
+        source = victim if i == 0 else rng.choice(dossiers)
+        if cfg.flaw_spread:
+            # Only plan identities here. Copy the dossier AFTER label mutations.
+            decoy_sources[f"r{next_id:03}"] = source["record_id"]
+            next_id += 1
+            continue
+        decoy = deepcopy(source)
         decoy["record_id"] = f"r{next_id:03}"
         next_id += 1
         if i == 0 and not cfg.flaw_spread:
@@ -441,7 +460,11 @@ def make_pair(template, vocabulary_family, family, control="none", difficulty="e
         data.append(decoy)
         if i == 0:
             decoy_id = decoy["record_id"]
-    rng.shuffle(data)
+    # IDs carry no ordinal clue to which selector/authorization belongs together.
+    original_ids = [r["record_id"] for r in data] + list(decoy_sources)
+    shuffled_ids = original_ids[:]
+    rng.shuffle(shuffled_ids)
+    renamed = dict(zip(original_ids, shuffled_ids))
     root = next(c for c in base.claims if c.name == base.root)
     content = {"domain": domain, "sort": sort, "scope": scope, "as_of": "2031-04-18",
         "knobs": vars(cfg), "record_format": cfg.record_format,
@@ -459,7 +482,10 @@ def make_pair(template, vocabulary_family, family, control="none", difficulty="e
         payload, current = deepcopy(content), deepcopy(data)
         target = next(r for r in current if r["record_id"] == victim_id)
         if grounding == "bad":
-            if cfg.flaw_spread:
+            if authorization_swap:
+                left, right = [next(r for r in current if r["record_id"] == rid) for rid in authorization_swap]
+                left["authorizes"], right["authorizes"] = right["authorizes"], left["authorizes"]
+            elif cfg.flaw_spread:
                 # The same dossier contains both profiles in both labels; only
                 # linking the selector to its definition identifies the mismatch.
                 for p in target["profiles"]:
@@ -469,6 +495,15 @@ def make_pair(template, vocabulary_family, family, control="none", difficulty="e
                 target["profiles"], decoy["profiles"] = decoy["profiles"], target["profiles"]
             else:
                 target["profiles"][0] = _flaw(target["profiles"][0], family, symbols[-1], seeded(template, family))
+        for decoy, source in decoy_sources.items():
+            current.append({**deepcopy(next(r for r in current if r["record_id"] == source)), "record_id": decoy})
+        for r in current:
+            for field in ("record_id", "dossier", "authorizes"):
+                if field in r:
+                    r[field] = renamed[r[field]]
+        for leaf in payload["leaves"]:
+            leaf["evidence_ids"] = [renamed[eid] for eid in leaf["evidence_ids"]]
+        seeded(template, vocabulary_family, family, difficulty, "record-order").shuffle(current)
         payload["records"] = []
         for r in current:
             style = seeded(template, vocabulary_family, r["record_id"], "phrasing").randrange(3)
@@ -499,7 +534,9 @@ def make_pair(template, vocabulary_family, family, control="none", difficulty="e
             "difficulty": difficulty, "grounding_label": grounding, "control": control,
             "invalid_deduction": control != "none", "stratum": "primary" if control == "none" else "invalid_edge_control",
             "tag_condition": tag_condition if family == "merged_vocabulary" else "honest",
-            "flawed_leaf": rules[flawed_leaf]["claim"], "flawed_record": victim_id,
+            "grounding_variant": "authorization_chain" if authorization_swap else "profile",
+            "flawed_leaf": rules[flawed_leaf]["claim"],
+            "flawed_record": renamed[authorization_swap[0] if authorization_swap else victim_id],
             "invalid_edge": next((k for k, v in result.findings.items() if "gap" in v), None),
             "pair": fingerprint([group, family, control, difficulty, vars(cfg)])[:16],
             "graph_id": result.graph_id, "checker_build": result.checker_build}

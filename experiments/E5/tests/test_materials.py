@@ -4,12 +4,14 @@ import gzip
 import hashlib
 import itertools
 import json
+from pathlib import Path
 import pytest
 
 from experiments.E5.materials import (HERE, CELLS, INSTRUCTIONS, FAMILIES, TEMPLATES, DIFFICULTIES,
     make_split_manifest, split_manifest, make_pair, graph_for_payload, grounding_audit, read_record,
-    topology_for, render_cell, sense_panel, parse_memo, packed)
-from experiments.E5.leak_audit import tokens
+    topology_for, render_cell, sense_panel, parse_memo, packed, memo_for)
+from experiments.E5 import leak_audit
+from experiments.E5.leak_audit import tokens, structural_report, dossier_features
 from ve.argument import ArgumentGraph, check_argument
 from ve.search import check_countermodel
 
@@ -48,7 +50,7 @@ def test_seeded_generator_matches_frozen_materials(rows):
     sampled = {}
     for row in rows:
         a = row["payload"]["_audit"]
-        sampled.setdefault((row["split"], a["difficulty"], a["family"], a["control"]), row)
+        sampled.setdefault((row["split"], a["difficulty"], a["family"], a["control"], a["grounding_variant"]), row)
     for row in sampled.values():
         a = row["payload"]["_audit"]
         pair = make_pair(a["template"], a["vocabulary_family"], a["family"], a["control"], a["difficulty"])
@@ -86,6 +88,58 @@ def test_record_solver_uses_prose_not_hidden_fields(rows):
     assert grounding_audit(p)["label"] == "bad"
     # Dates remain valid; a snapshot difference is an explicit version mismatch.
     assert {reason for _, reason in grounding_audit(p)["issues"]} == {"scope_mismatch"}
+
+
+def test_required_authorizations_can_fail_and_repair_from_displayed_text(rows):
+    pairs = defaultdict(dict)
+    for row in rows:
+        a = row["payload"]["_audit"]
+        if a["grounding_variant"] == "authorization_chain":
+            assert a["difficulty"] == "hard" and a["family"] == "unsupported_leaf"
+            pairs[a["pair"]][a["grounding_label"]] = row
+    assert len(pairs) == 64  # 8 dev + 24 scored, each primary and logical control.
+    depths = set()
+    for pair in pairs.values():
+        good, bad = (pair[label]["payload"] for label in ("good", "bad"))
+        audit = grounding_audit(bad)
+        assert len(audit["issues"]) == 2
+        assert {reason for _, reason in audit["issues"]} == {"unsupported_leaf"}
+        record = bad["_audit"]["flawed_record"]
+        leaf = next(l for l in bad["leaves"] if l["claim"] == bad["_audit"]["flawed_leaf"])
+        depths.add(leaf["evidence_ids"].index(record))
+        repaired = deepcopy(bad)
+        good_records = {r["record_id"]: r for r in good["records"]}
+        for r in repaired["records"]:
+            if parse_memo(r["memo"])["kind"] == "authorization":
+                r["memo"] = good_records[r["record_id"]]["memo"]
+        # Hidden construction fields still contain the broken links.
+        assert grounding_audit(repaired)["label"] == "good"
+    assert depths == {2, 3}
+
+
+def test_dossier_equality_rules_are_chance_on_every_split_and_difficulty(rows):
+    for split in ("dev", "scored"):
+        primary = [r for r in rows if r["split"] == split and r["payload"]["_audit"]["stratum"] == "primary"]
+        metrics = structural_report(primary, [render_cell(r, "a") for r in primary])
+        for difficulty, result in metrics.items():
+            assert result["n"] == (128 if split == "dev" else 384)
+            assert result["uncited_unmatched_accuracy"] == .5
+            assert result["any_equality_rule_empirical_bound"] == .5
+            assert result["identical_pair_structures"] == result["pairs"]
+
+
+@pytest.mark.parametrize("difficulty", ["medium", "hard"])
+def test_structural_probe_detects_original_pre_swap_distractor_regression(difficulty):
+    good, bad = make_pair("chain3", "dev_cinder", "merged_vocabulary", difficulty=difficulty)
+    cited = {rid for leaf in bad["payload"]["leaves"] for rid in leaf["evidence_ids"]}
+    originals = {r["record_id"]: r for r in good["payload"]["records"]}
+    for r in bad["payload"]["records"]:
+        if r["record_id"] not in cited:
+            # Reintroduce the exact old bug, with deliberately different phrasing.
+            r["memo"] = memo_for(originals[r["record_id"]]["data"], 2)
+    a, b = [dossier_features(render_cell(row, "a")) for row in (good, bad)]
+    assert not a["uncited_unmatched"] and b["uncited_unmatched"]
+    assert a["signature"] != b["signature"]
 
 
 def test_all_logical_artifacts_replay_and_positions_vary(rows):
@@ -171,10 +225,16 @@ def test_matched_pairs_all_cells_and_audit_artifact(rows):
     report = json.loads((HERE / "leak-report.json").read_text())
     assert report["input_sha256"] == {s: hashlib.sha256((HERE / f"{s}.jsonl.gz").read_bytes()).hexdigest() for s in ("dev", "scored")}
     assert report["renderer_sha256"] == hashlib.sha256((HERE / "materials.py").read_bytes()).hexdigest()
+    assert report["audit_sha256"] == hashlib.sha256(Path(leak_audit.__file__).read_bytes()).hexdigest()
     assert set(report["cells"]) == set(CELLS)
     for metrics in report["cells"].values():
         assert set(metrics["scored_accuracy"]) == {"char_1_5", "char_6_12", "word_1_3", "counts_positions_dates_lengths"}
         assert metrics["train_n"] == 384 and metrics["test_n"] == 1152
+        for split in ("dev", "scored"):
+            for result in metrics["dossier_structure"][split].values():
+                assert result["uncited_unmatched_accuracy"] == .5
+                assert result["any_equality_rule_empirical_bound"] == .5
+                assert result["identical_pair_structures"] == result["pairs"]
 
 
 def test_knob_ranges_and_odd_total_claim_counts():
