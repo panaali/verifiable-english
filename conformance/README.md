@@ -14,17 +14,17 @@ These are development fixtures, not an independently frozen evaluation corpus.
 Golden truth values are produced by Python, so the Lean comparison is a
 cross-implementation differential check, not an independent oracle for decoding.
 
-Regenerate with `python conformance/generate.py`. Run `python -m pytest
- tests/test_lean_conformance.py` (without the line break). When `lake` is available,
+Regenerate with `python conformance/generate.py`. Run `python -m pytest tests/test_lean_conformance.py`. When `lake` is available,
 the test builds the pinned Lean project and compares every shared formula. With
 no `lake`, the Python golden-value check runs and the Lean checks are skipped.
 
 From `lean/`, `lake exe ve_conformance ../conformance/evaluation.json` emits a JSON
-array of `{id, status, values, value}` records. A single case or array can also be
+array of `{id, status, values, value, canonical}` records. A single case or array can also be
 supplied on stdin. Exit 0 means all cases were evaluated; 1 means a case was
 rejected; 2 means malformed restricted JSON or incorrect invocation. Logical
 false is a successful result, not a decoder failure. The executable never reads
-`expected`; the surface `source` is currently metadata for this AST bridge.
+`expected`; when `source` is present, the Lean strict parser must recover the submitted AST.
+The bridge also checks its own canonical print/parse round trip on each input.
 
 The bridge validates vocabulary declarations, typed ASTs, and model inventories,
 and rejects duplicate JSON keys, unpaired surrogates, unsupported JSON numbers,

@@ -1,5 +1,6 @@
 import VE.Consequence
 import VE.Json
+import VE.Surface
 
 namespace VE.Bridge
 open Lean
@@ -175,9 +176,16 @@ def runCase (j : Json) : Except String Json := do
   let v ← decodeEnvironment (← j.getObjVal? "environment")
   let m ← decodeModel v (← j.getObjVal? "model")
   let d ← decodeDocument v.environment (← j.getObjVal? "ast")
+  let canonical := Surface.print d.formulas
+  unless Surface.parse v.environment canonical == some d.formulas do
+    throw "internal printer/parser disagreement"
+  if let .ok source := j.getObjVal? "source" then
+    let text ← source.getStr?
+    unless Surface.parse v.environment text == some d.formulas do
+      throw "source/AST mismatch"
   let values := d.formulas.map (fun a => a.eval m [])
   pure (Json.mkObj [("id", .str id), ("values", toJson values),
-    ("value", .bool (d.eval m)), ("status", .str "ok")])
+    ("value", .bool (d.eval m)), ("canonical", .str canonical), ("status", .str "ok")])
 
 def runCaseReported (j : Json) : Json :=
   match runCase j with

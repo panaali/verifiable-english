@@ -51,7 +51,7 @@ def test_lean_agrees_on_every_shared_case(lean_executable):
         doc = document_from_data(env, case["ast"])
         model = FiniteModel.from_dict(env, case["model"])
         expected = [evaluate(env, f, model).value for f in doc.formulas]
-        assert result == {"id": case["id"], "status": "ok", "values": expected, "value": all(expected)}
+        assert result == {"id": case["id"], "status": "ok", "values": expected, "value": all(expected), "canonical": case["source"]}
 
 
 def malformed_cases():
@@ -112,3 +112,64 @@ def test_both_decoders_reject_malformed_cases(lean_executable):
 def test_lean_rejects_invalid_raw_json(lean_executable, raw):
     result = subprocess.run([str(lean_executable)], input=raw, capture_output=True, text=True, timeout=10)
     assert result.returncode == 2, result.stdout + result.stderr
+
+
+def test_lean_source_resolution_and_canonical_binder_order(lean_executable):
+    cases = []
+    for original in CASES[:3] + CASES[-12:]:
+        case = copy.deepcopy(original)
+        case["source"] = case["source"].replace("x0", "trueish").replace("x1", "falsehood")
+        case["source"] = case["source"].replace("x2", "notable").replace("x3", "therefore")
+        cases.append(case)
+    sibling = copy.deepcopy(CASES[0])
+    sibling["id"] = "sibling_scopes"
+    sibling["source"] = "(for every service s, (s is deployed)) and (for every service s, (s is reviewed)).\n"
+    env = Environment.from_dict(sibling["environment"])
+    doc = parse(env, sibling["source"])
+    from ve.ast import document_to_data
+    sibling["ast"] = document_to_data(env, doc)
+    cases.append(sibling)
+    results = invoke(lean_executable, cases)
+    for case, result in zip(cases, results, strict=True):
+        env = Environment.from_dict(case["environment"])
+        doc = parse(env, case["source"])
+        assert result["canonical"] == print_document(env, doc), case["id"]
+
+
+@pytest.mark.parametrize("source", [
+    "true.", "true.\r\n", "true.\n\n", " true.\n", "true .\n", "(true).\n",
+    "true and false.\n", "True.\n", "true.\n#comment\n", "true.\t\n",
+    "for every service s, (for every service s, (true)).\n",
+    "for every service person, (true).\n", "for every service not, (true).\n",
+    "for every service s, (s is deployed).\nthere exists service t, (s is reviewed).\n",
+])
+def test_lean_rejects_non_strict_or_unbound_source(lean_executable, source):
+    case = copy.deepcopy(CASES[0])
+    case["source"] = source
+    env = Environment.from_dict(case["environment"])
+    with pytest.raises(VEError):
+        parse(env, source)
+    assert invoke(lean_executable, case, 1)[0]["status"] == "error"
+
+
+def test_lean_rejects_individually_valid_source_ast_substitution(lean_executable):
+    case = copy.deepcopy(CASES[0])
+    case["source"] = "true.\n"
+    assert invoke(lean_executable, case, 1)[0]["error"] == "source/AST mismatch"
+
+
+def test_lean_json_accepts_unicode_descriptions(lean_executable):
+    case = copy.deepcopy(CASES[0])
+    case["environment"]["vocabulary"]["sorts"]["person"]["description"] = "Person \U0001f600 \u20ac"
+    for escaped in (True, False):
+        result = subprocess.run([str(lean_executable)], input=json.dumps(case, ensure_ascii=escaped),
+                                capture_output=True, text=True, timeout=10)
+        assert result.returncode == 0, result.stderr + result.stdout
+
+
+def test_lean_transitive_axiom_allowlist(lean_executable):
+    import sys
+    result = subprocess.run([sys.executable, str(ROOT / "lean/audit.py")], cwd=ROOT,
+                            capture_output=True, text=True, timeout=60)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "PASS:" in result.stdout
