@@ -1,0 +1,198 @@
+[
+  {
+    "reference": "Bowman et al. (2022). Measuring Progress on Scalable Oversight for Large Language Models.",
+    "url": "https://arxiv.org/abs/2211.03540",
+    "repository_sources": [
+      "design/phase-t-literature.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Khan et al. (2024). Debating with More Persuasive LLMs Leads to More Truthful Answers.",
+    "url": "https://arxiv.org/abs/2402.06782v4",
+    "repository_sources": [
+      "docs/architecture-and-design.md",
+      "docs/research-review.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Kenton et al. (2024). On scalable oversight with weak LLMs judging strong LLMs.",
+    "url": "https://arxiv.org/abs/2407.04622v2",
+    "repository_sources": [
+      "docs/architecture-and-design.md",
+      "docs/research-review.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Buhl et al. (2025). An alignment safety case sketch based on debate.",
+    "url": "https://arxiv.org/html/2505.03989v3#S4.SS4.SSS2",
+    "repository_sources": [
+      "docs/research-review.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Brown-Cohen et al. (2025; revised 2026). Avoiding Obfuscation with Prover-Estimator Debate.",
+    "url": "https://arxiv.org/html/2506.13609v2#S8",
+    "repository_sources": [
+      "docs/architecture-and-design.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Fuchs, Kaljurand, and Kuhn (2008). Attempto Controlled English for Knowledge Representation.",
+    "url": "https://doi.org/10.1007/978-3-540-85658-0_3",
+    "repository_sources": [
+      "design/related-systems.md"
+    ],
+    "status": "NOT FRESHLY VERIFIED: DOI fetch failed; metadata and claim retained from repository review."
+  },
+  {
+    "reference": "Schwitter (2004). Representing knowledge in controlled natural language: A case study.",
+    "url": "https://researchers.mq.edu.au/en/publications/representing-knowledge-in-controlled-natural-language-a-case-stud/",
+    "repository_sources": [
+      "docs/architecture-and-design.md",
+      "docs/research-review.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Kowalski and Davila (2023). Logical English Demonstration.",
+    "url": "https://www.doc.ic.ac.uk/~rak/papers/Logical_English_Demonstration_for_ICLP.pdf",
+    "repository_sources": [
+      "docs/architecture-and-design.md",
+      "docs/research-review.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Kuhn (2013). The Understandability of OWL Statements in Controlled English.",
+    "url": "https://attempto.ifi.uzh.ch/site/pubs/papers/kuhn2013swj.pdf",
+    "repository_sources": [
+      "docs/architecture-and-design.md",
+      "docs/research-review.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Fuchs (2018). Understanding Texts in Attempto Controlled English.",
+    "url": "https://attempto.ifi.uzh.ch/site/pubs/papers/cnl2018main_fuchs.pdf",
+    "repository_sources": [
+      "docs/architecture-and-design.md",
+      "docs/research-review.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Greenman et al. (2022). Little Tricky Logic: Misconceptions in the Understanding of LTL.",
+    "url": "https://arxiv.org/abs/2211.01677",
+    "repository_sources": [
+      "docs/architecture-and-design.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Canonical English. Project website.",
+    "url": "https://canonical-english.org/",
+    "repository_sources": [
+      "docs/architecture-and-design.md",
+      "docs/research-review.md",
+      "design/related-systems.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Gordon and Matskevich (2023). Trustworthy Formal Natural Language Specifications.",
+    "url": "https://arxiv.org/html/2310.03885v1#S5",
+    "repository_sources": [
+      "docs/architecture-and-design.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "FormalJudge: A Neuro-Symbolic Paradigm for Agentic Oversight (2026).",
+    "url": "https://arxiv.org/html/2602.11136",
+    "repository_sources": [
+      "docs/architecture-and-design.md",
+      "docs/research-review.md",
+      "design/phase-t-literature.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Gao, Schulman, and Hilton (2022). Scaling Laws for Reward Model Overoptimization.",
+    "url": "https://arxiv.org/abs/2210.10760",
+    "repository_sources": [
+      "design/phase-t-literature.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Wen et al. (2024). Language Models Learn to Mislead Humans via RLHF.",
+    "url": "https://arxiv.org/abs/2409.12822",
+    "repository_sources": [
+      "design/phase-t-literature.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Yan et al. (2025; revised 2026). Re:Form -- Reducing Human Annotations in Scalable Formal Software Verification with RL in LLMs: A Preliminary Study on Dafny.",
+    "url": "https://arxiv.org/abs/2507.16331",
+    "repository_sources": [
+      "design/phase-t-literature.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Kenton et al. (2026). Debate Training Reduces Reward Hacking in RLAIF.",
+    "url": "https://arxiv.org/abs/2608.17776",
+    "repository_sources": [
+      "design/phase-t-literature.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Zheng et al. (2023). Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.",
+    "url": "https://arxiv.org/abs/2306.05685",
+    "repository_sources": [
+      "design/phase-t-literature.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Panickssery, Bowman, and Feng (2024). LLM Evaluators Recognize and Favor Their Own Generations.",
+    "url": "https://arxiv.org/abs/2404.13076",
+    "repository_sources": [
+      "design/phase-t-literature.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Anthropic. Formalizing Fermat's Last Theorem. Official project report.",
+    "url": "https://www.anthropic.com/research/formalizing-fermats-last-theorem",
+    "repository_sources": [
+      "paper/sources/capability-brief.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "OpenAI. Ten advances in mathematics and theoretical computer science. Official project report.",
+    "url": "https://openai.com/index/ten-advances-in-mathematics/",
+    "repository_sources": [
+      "paper/sources/capability-brief.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  },
+  {
+    "reference": "Lean Language Reference. Validating Proofs.",
+    "url": "https://lean-lang.org/doc/reference/latest/ValidatingProofs/",
+    "repository_sources": [
+      "docs/architecture-and-design.md",
+      "docs/research-review.md",
+      "docs/spec/verification-contract.md"
+    ],
+    "status": "Fetched during drafting; metadata and cited passage or abstract inspected."
+  }
+]
