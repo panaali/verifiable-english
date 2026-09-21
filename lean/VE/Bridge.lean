@@ -8,6 +8,9 @@ open Lean
 abbrev Entity := String × String
 abbrev Fields := List (String × Json)
 
+/-- The expected consequence type for JSON-backed certificates/countermodels. -/
+abbrev JsonEntails := Entails.{0}
+
 def fields (j : Json) : Except String Fields := do
   return (← j.getObj?).toList
 
@@ -22,19 +25,19 @@ def stringField (j : Json) (name : String) : Except String String := do
 def strings (j : Json) : Except String (List String) := do
   (← j.getArr?).toList.mapM Json.getStr?
 
+/-- Runtime identifiers additionally obey the 64-byte wire budget. -/
 def identifier (s : String) : Bool :=
-  match s.toList with
-  | [] => false
-  | c :: cs => s.utf8ByteSize ≤ 64 && c ≥ 'a' && c ≤ 'z' &&
-      cs.all (fun x => (x ≥ 'a' && x ≤ 'z') || (x ≥ '0' && x ≤ '9') || x == '_')
+  s.utf8ByteSize ≤ 64 && Surface.identifier s
 
-def reserved : List String := ["true", "false", "is", "equals", "not", "and", "or",
-  "if", "then", "for", "every", "there", "exists", "believes", "must", "eventually"]
+/-- Runtime-only cap on identifier runs in source. The unbudgeted reference
+parser remains independent of this wire-resource restriction. -/
+def sourceIdentifierBudget (text : String) : Bool :=
+  (text.toList.foldl (fun (state : Nat × Bool) c =>
+    if Surface.identChar c then (state.1 + 1, state.2 && state.1 < 64)
+    else (0, state.2)) (0, true)).2
 
-def generatedName (s : String) : Bool :=
-  match s.toList with
-  | 'x' :: cs => !cs.isEmpty && cs.all (fun c => c ≥ '0' && c ≤ '9')
-  | _ => false
+abbrev reserved := Surface.reserved
+abbrev generatedName := Surface.generatedName
 
 def lookup {α : Type} (xs : List (String × α)) (k : String) : Option α :=
   (xs.find? (fun x => x.1 == k)).map Prod.snd
@@ -47,8 +50,25 @@ structure Vocabulary where
 def Vocabulary.environment (v : Vocabulary) : Environment :=
   ⟨v.sorts, lookup v.predicates, lookup v.constants⟩
 
+/-- Decidable lexical conditions on the complete finite declaration inventory. -/
+def Vocabulary.namesValid (v : Vocabulary) : Bool :=
+  v.sorts.all Surface.declarationName &&
+  v.predicates.all (fun p => Surface.declarationName p.1) &&
+  v.constants.all (fun c => Surface.declarationName c.1)
+
 private def description (j : Json) : Except String Unit := do
   if (← stringField j "description").isEmpty then throw "empty description"
+
+-- Display metadata has no semantic interpretation here. Match Python's wire
+-- validation while leaving lexical acceptance/fallback to the view renderer.
+private def displayString (j : Json) : Except String Unit := do
+  let text ← j.getStr?
+  if text.isEmpty then throw "empty verbalisation"
+  if text.length > 256 then throw "ResourceLimit: verbalisation size"
+
+private def displayFields (j : Json) (required optional : List String) : Except String Unit := do
+  let names := (← fields j).map Prod.fst
+  exactFields j (required ++ optional.filter names.contains)
 
 def decodeEnvironment (j : Json) : Except String Vocabulary := do
   exactFields j ["language", "profile", "spec_revision", "vocabulary"]
@@ -69,12 +89,19 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
   if sorts.length > 32 || predicates.length > 256 then
     throw "ResourceLimit: vocabulary size"
   for (_, entry) in sorts do
-    exactFields entry ["description"]
+    displayFields entry ["description"] ["verbalisation"]
     description entry
+    if let .ok words := entry.getObjVal? "verbalisation" then
+      exactFields words ["singular", "plural"]
+      displayString (← words.getObjVal? "singular")
+      displayString (← words.getObjVal? "plural")
   let sortNames := sorts.map Prod.fst
   let ps ← predicates.mapM fun (p, entry) => do
-    exactFields entry ["arguments", "description"]
+    displayFields entry ["arguments", "description"] ["verbalisation", "negative_verbalisation"]
     description entry
+    for key in ["verbalisation", "negative_verbalisation"] do
+      if let .ok words := entry.getObjVal? key then
+        displayString words
     let ss ← strings (← entry.getObjVal? "arguments")
     unless (ss.length == 1 || ss.length == 2) && ss.all sortNames.contains do
       throw s!"invalid signature: {p}"
@@ -85,14 +112,42 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
     let s ← stringField entry "sort"
     unless sortNames.contains s do throw s!"unknown constant sort: {c}"
     pure (c, s)
-  pure ⟨sortNames, ps, cs⟩
+  let result : Vocabulary := ⟨sortNames, ps, cs⟩
+  unless result.namesValid do throw "invalid declaration names"
+  pure result
 
 private def localIds (j : Json) : Except String (List String) := do
   let xs ← strings j
   unless xs.all identifier do throw "invalid local identifier"
   pure xs
 
-def decodeModel (v : Vocabulary) (j : Json) : Except String (FiniteModel Entity) := do
+/-- Finite tables retained so semantic admissibility can be checked exhaustively. -/
+structure ModelData where
+  domains : List (String × List String)
+  constants : List (String × Entity)
+  relations : List (String × List (List Entity))
+
+def ModelData.toModel (d : ModelData) : FiniteModel Entity where
+  domains := fun s => ((lookup d.domains s).getD []).map (s, ·)
+  constants := lookup d.constants
+  relations := fun p => (lookup d.relations p).getD []
+
+def tupleCheck (M : FiniteModel Entity) : List String → List Entity → Bool
+  | [], [] => true
+  | s :: ss, x :: xs => (M.domains s).contains x && tupleCheck M ss xs
+  | _, _ => false
+
+/-- This final semantic gate is independent of the JSON parser and earlier wire
+checks. Its soundness is proved in ModelProofs for arbitrary finite tables. -/
+def ModelData.valid (d : ModelData) (v : Vocabulary) : Bool :=
+  v.constants.all (fun (c, s) => match d.toModel.constants c with
+    | some x => (d.toModel.domains s).contains x
+    | none => false) &&
+  d.relations.all (fun (p, rows) => match v.environment.predicates p with
+    | some ss => rows.all (tupleCheck d.toModel ss)
+    | none => false)
+
+def decodeModelData (v : Vocabulary) (j : Json) : Except String ModelData := do
   exactFields j ["complete", "domains", "constants", "relations"]
   unless (← (← j.getObjVal? "complete").getBool?) do throw "complete must be true"
   let ds ← j.getObjVal? "domains"
@@ -122,10 +177,13 @@ def decodeModel (v : Vocabulary) (j : Json) : Except String (FiniteModel Entity)
     pure (p, tuples)
   if (relations.map (fun p => p.2.length)).foldl (· + ·) 0 > 100000 then
     throw "ResourceLimit: tuple count"
-  pure {
-    domains := fun s => ((lookup domains s).getD []).map (s, ·)
-    constants := lookup constants
-    relations := fun p => (lookup relations p).getD [] }
+  pure ⟨domains, constants, relations⟩
+
+/-- Every successful result is admissible, by decodeModel_valid. -/
+def decodeModel (v : Vocabulary) (j : Json) : Except String (FiniteModel Entity) := do
+  let data ← decodeModelData v j
+  if data.valid v then pure data.toModel
+  else throw "model is not semantically admissible"
 
 def decodeTerm (j : Json) : Except String Term := do
   match (← j.getArr?).toList with
@@ -169,18 +227,46 @@ def decodeDocument (E : Environment) (j : Json) : Except String (Document E) := 
     pure ⟨fs, hn, fun a ha => (check_iff_wellFormed E [] a).mp (hw a ha)⟩
   else throw "ill-typed or unbound formula"
 
-/-- Input envelope: id, environment, model, ast. Output is per-formula truth and
-conjunction. The expected results in fixture files are never consulted here. -/
+/-- A countermodel request has closed typed formulas; zero premises are allowed. -/
+structure CountermodelQuery (E : Environment) where
+  premises : List Formula
+  conclusion : Formula
+  premises_typed : ∀ a ∈ premises, a.WellFormed E []
+  conclusion_typed : conclusion.WellFormed E []
+
+def decodeCountermodel (E : Environment) (j : Json) : Except String (CountermodelQuery E) := do
+  let ps ← (← (← j.getObjVal? "premises").getArr?).toList.mapM (decodeFormula 64)
+  let c ← decodeFormula 64 (← j.getObjVal? "conclusion")
+  if ((c :: ps).map formulaNodes).foldl (· + ·) 0 > 10000 then
+    throw "ResourceLimit: countermodel AST node count"
+  if hp : ∀ a ∈ ps, a.check E [] = true then
+    if hc : c.check E [] = true then
+      pure ⟨ps, c, fun a ha => (check_iff_wellFormed E [] a).mp (hp a ha),
+        (check_iff_wellFormed E [] c).mp hc⟩
+    else throw "ill-typed or unbound conclusion"
+  else throw "ill-typed or unbound premise"
+
+def CountermodelQuery.refutes {E : Environment} (q : CountermodelQuery E)
+    (M : FiniteModel Entity) : Bool :=
+  countermodelCheck M q.premises q.conclusion
+
+/-- Legacy evaluation envelopes retain their format. The optional kind field
+selects a countermodel request; fixture expected values are never consulted. -/
 def runCase (j : Json) : Except String Json := do
   let id ← stringField j "id"
   let v ← decodeEnvironment (← j.getObjVal? "environment")
   let m ← decodeModel v (← j.getObjVal? "model")
+  if let .ok kind := j.getObjVal? "kind" then
+    unless kind == .str "countermodel" do throw "unknown case kind"
+    let q ← decodeCountermodel v.environment j
+    return Json.mkObj [("id", .str id), ("status", .str "ok"), ("refutes", .bool (q.refutes m))]
   let d ← decodeDocument v.environment (← j.getObjVal? "ast")
   let canonical := Surface.print d.formulas
   unless Surface.parse v.environment canonical == some d.formulas do
     throw "internal printer/parser disagreement"
   if let .ok source := j.getObjVal? "source" then
     let text ← source.getStr?
+    unless sourceIdentifierBudget text do throw "ResourceLimit: source identifier exceeds 64 bytes"
     unless Surface.parse v.environment text == some d.formulas do
       throw "source/AST mismatch"
   let values := d.formulas.map (fun a => a.eval m [])

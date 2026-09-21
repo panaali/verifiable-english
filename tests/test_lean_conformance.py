@@ -12,9 +12,11 @@ import pytest
 from ve import Environment, FiniteModel, evaluate, parse, print_document
 from ve.ast import document_from_data
 from ve.errors import VEError
+from ve.search import check_countermodel
 
 ROOT = Path(__file__).resolve().parents[1]
 CASES = json.loads((ROOT / "conformance/evaluation.json").read_text())
+COUNTERMODELS = json.loads((ROOT / "conformance/countermodels.json").read_text())
 
 
 @pytest.fixture(scope="session")
@@ -52,6 +54,81 @@ def test_lean_agrees_on_every_shared_case(lean_executable):
         model = FiniteModel.from_dict(env, case["model"])
         expected = [evaluate(env, f, model).value for f in doc.formulas]
         assert result == {"id": case["id"], "status": "ok", "values": expected, "value": all(expected), "canonical": case["source"]}
+
+
+def countermodel_python(case):
+    env = Environment.from_dict(case["environment"])
+    model = FiniteModel.from_dict(env, case["model"])
+    doc = document_from_data(env, case["premises"] + [case["conclusion"]])
+    checked = check_countermodel(env, doc.formulas[:-1], doc.formulas[-1], model)
+    assert checked.status in ("Valid", "NotCountermodel"), case["id"]
+    return checked.valid
+
+
+def test_countermodel_python_golden_values():
+    for case in COUNTERMODELS:
+        assert countermodel_python(case) == case["expected_refutes"], case["id"]
+
+
+def test_lean_countermodels_agree_on_every_shared_case(lean_executable):
+    results = invoke(lean_executable, COUNTERMODELS)
+    assert len(results) == len(COUNTERMODELS)
+    for case, result in zip(COUNTERMODELS, results, strict=True):
+        assert result == {"id": case["id"], "status": "ok", "refutes": countermodel_python(case)}, case["id"]
+
+
+def test_corpus_coverage_and_stable_evaluation_envelope():
+    assert len(CASES) >= 600
+    assert len({c["id"] for c in CASES}) == len(CASES)
+    assert all(set(c) == {"id", "environment", "model", "ast", "source", "expected"} for c in CASES)
+    extended = [c for c in CASES if c["id"].startswith("extended_")]
+    assert {(len(c["model"]["domains"]["item"]), len(c["model"]["domains"]["person"]))
+            for c in extended} == {(i, p) for i in range(5) for p in range(5)}
+    for case in extended:
+        node = case["ast"][3]
+        kinds = []
+        for _ in range(6):
+            assert node[0] in ("forall", "exists")
+            kinds.append(node[0])
+            node = node[2]
+        assert all(a != b for a, b in zip(kinds, kinds[1:]))
+    assert {c["expected_refutes"] for c in COUNTERMODELS} == {False, True}
+    aliases = [c for c in extended if c["model"]["domains"]["item"]]
+    assert {c["expected"][-2] for c in aliases} == {False, True}
+
+
+@pytest.mark.parametrize("field, value", [
+    ("premises", [["bottom"], ["eq", ["const", "nope"], ["const", "nope"]]]),
+    ("conclusion", ["not", ["eq", ["const", "nope"], ["const", "nope"]]]),
+    ("conclusion", ["eq", ["var", 0], ["var", 0]]),
+    ("conclusion", ["forall", "person", ["exists", "service", ["eq", ["var", 0], ["var", 1]]]]),
+    ("premises", [["unary", "deployed", ["const", "nope"]]]),
+    ("conclusion", ["unary", "owns", ["const", "nope"]]),
+])
+def test_countermodel_rejects_ill_typed_formulas_before_evaluation(lean_executable, field, value):
+    case = copy.deepcopy(COUNTERMODELS[-1])
+    case[field] = value
+    with pytest.raises(VEError):
+        countermodel_python(case)
+    assert invoke(lean_executable, case, 1)[0]["status"] == "error"
+
+
+def test_countermodel_rejects_inadmissible_model(lean_executable):
+    case = copy.deepcopy(next(c for c in COUNTERMODELS if c["model"]["constants"]))
+    name = next(iter(case["model"]["constants"]))
+    case["model"]["constants"][name] = "missing"
+    with pytest.raises(VEError):
+        countermodel_python(case)
+    assert invoke(lean_executable, case, 1)[0]["status"] == "error"
+
+
+def test_countermodel_expected_is_ignored_and_kind_is_checked(lean_executable):
+    case = copy.deepcopy(COUNTERMODELS[-1])
+    expected = countermodel_python(case)
+    case["expected_refutes"] = not expected
+    assert invoke(lean_executable, case)[0]["refutes"] == expected
+    case["kind"] = "unknown"
+    assert invoke(lean_executable, case, 1)[0]["error"] == "unknown case kind"
 
 
 def malformed_cases():
@@ -167,9 +244,81 @@ def test_lean_json_accepts_unicode_descriptions(lean_executable):
         assert result.returncode == 0, result.stderr + result.stdout
 
 
+def test_lean_and_python_accept_identity_bound_display_metadata(lean_executable):
+    case = copy.deepcopy(CASES[0])
+    vocab = case["environment"]["vocabulary"]
+    vocab["sorts"]["person"]["verbalisation"] = {"singular": "person", "plural": "people"}
+    vocab["predicates"]["owns"].update(verbalisation="{0} owns {1}",
+                                        negative_verbalisation="{0} does not own {1}")
+    env = Environment(case["environment"])
+    doc = document_from_data(env, case["ast"])
+    model = FiniteModel.from_dict(env, case["model"])
+    assert invoke(lean_executable, case)[0]["values"] == [evaluate(env, f, model).value for f in doc.formulas]
+    # Rejected display templates remain inert data in both semantic decoders.
+    vocab["predicates"]["owns"]["negative_verbalisation"] = "{0} owns {1}"
+    Environment(case["environment"])
+    assert invoke(lean_executable, case)[0]["values"] == case["expected"]
+
+
+@pytest.mark.parametrize("field,bad", [
+    ("verbalisation", []), ("verbalisation", ""), ("verbalisation", "x" * 257),
+    ("negative_verbalisation", {}), ("negative_verbalisation", ""),
+    ("negative_verbalisation", "x" * 257), ("unknown_verbalisation", "word"),
+])
+def test_lean_and_python_reject_malformed_display_metadata(lean_executable, field, bad):
+    case = copy.deepcopy(CASES[0])
+    case["environment"]["vocabulary"]["predicates"]["owns"][field] = bad
+    with pytest.raises(VEError):
+        Environment(case["environment"])
+    assert invoke(lean_executable, case, 1)[0]["status"] == "error"
+
+
 def test_lean_transitive_axiom_allowlist(lean_executable):
     import sys
     result = subprocess.run([sys.executable, str(ROOT / "lean/audit.py")], cwd=ROOT,
                             capture_output=True, text=True, timeout=60)
     assert result.returncode == 0, result.stdout + result.stderr
     assert "PASS:" in result.stdout
+
+
+@pytest.fixture(scope="module")
+def source_audit():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("lean_source_audit", ROOT / "lean/audit.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.mark.parametrize("keyword", [
+    "partial", "opaque", "extern", "implemented_by", "unsafe", "native_decide", "axiom", "sorry", "sorryAx", "admit",
+])
+@pytest.mark.parametrize("path", ["Main.lean", "VE/Nested/Policy.lean", "Extra.lean"])
+def test_source_audit_rejects_escape_hatches_everywhere(source_audit, tmp_path, keyword, path):
+    source = tmp_path / path
+    source.parent.mkdir(parents=True, exist_ok=True)
+    source.write_text(f"{keyword}\n")
+    with pytest.raises(AssertionError, match=rf"{path}:1: forbidden {keyword}"):
+        source_audit.scan_sources(tmp_path)
+
+
+def test_source_audit_includes_root_and_dotted_theorems(source_audit, tmp_path):
+    (tmp_path / "Main.lean").write_text(
+        '/- comment /- nested -/ comment -/\n-- comment\ndef label := "ordinary"\n'
+        'theorem root_result : True := by trivial\nnamespace Demo\n'
+        '@[simp] theorem Nested.result : True := by trivial\nend Demo\n')
+    actual, sources = source_audit.scan_sources(tmp_path)
+    assert actual == {"root_result", "Demo.Nested.result"}
+    assert [p.name for p in sources] == ["Main.lean"]
+
+
+@pytest.mark.parametrize("text", [
+    'def message := s!"{(by sorry : Nat)}"',
+    'macro "bad" : term => `(by native_decide)',
+    '/- opaque -/',
+    'def message := "unsafe"',
+])
+def test_source_audit_scans_literal_tokens_in_quotations(source_audit, tmp_path, text):
+    (tmp_path / "Main.lean").write_text(text)
+    with pytest.raises(AssertionError, match="forbidden"):
+        source_audit.scan_sources(tmp_path)

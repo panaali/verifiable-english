@@ -1,4 +1,4 @@
-"""Additional portable fixtures; the original evaluation corpus is unchanged."""
+"""Additional portable fixtures derived from the shared evaluation corpus."""
 from __future__ import annotations
 import copy
 from ve import Environment, FiniteModel, parse, print_document
@@ -93,11 +93,48 @@ def wire_cases():
     cases = [{'id': f'wire_{i}', 'raw': json.dumps(v, ensure_ascii=True),
               'expected': canonical_json(v).decode()} for i, v in enumerate(values)]
     cases.append({'id': 'wire_negative_zero', 'raw': '-0', 'expected': '0'})
-    for i, raw in enumerate(['{"a":1,"a":2}', '{"a":1,"\\u0061":2}',
-                             '{"a":{"b":1,"b":2}}', 'null', '1.0', '1e0', '-1',
-                             '9007199254740992', '"\\ud800"', '"\\udfff"', '[true,]',
-                             '01', 'NaN', '[', 'true false', '['*257+'true'+']'*257]):
-        cases.append({'id': f'wire_invalid_{i}', 'raw': raw, 'reject': True})
+    # Pin diagnostic classes explicitly, independently of regeneration. Complete
+    # unsupported numeric literals use InvalidInput; incomplete JSON is syntax.
+    invalid = [
+        ('duplicate', '{"a":1,"a":2}', 'DuplicateDeclaration'),
+        ('escaped_duplicate', '{"a":1,"\\u0061":2}', 'DuplicateDeclaration'),
+        ('nested_duplicate', '{"a":{"b":1,"b":2}}', 'DuplicateDeclaration'),
+        ('null', 'null', 'InvalidInput'),
+        ('fraction', '1.0', 'InvalidInput'),
+        ('exponent', '1e0', 'InvalidInput'),
+        ('negative', '-1', 'InvalidInput'),
+        ('integer_range', '9007199254740992', 'InvalidInput'),
+        ('high_surrogate', '"\\ud800"', 'InvalidInput'),
+        ('low_surrogate', '"\\udfff"', 'InvalidInput'),
+        ('surrogate_key', '{"\\ud800":0}', 'InvalidInput'),
+        ('surrogate_then_scalar', '"\\ud800\\u0041"', 'InvalidInput'),
+        ('surrogate_then_escape', '"\\ud800\\n"', 'InvalidInput'),
+        ('trailing_comma', '[true,]', 'SyntaxError'),
+        ('leading_zero', '01', 'SyntaxError'),
+        ('nan', 'NaN', 'InvalidInput'),
+        ('infinity', 'Infinity', 'InvalidInput'),
+        ('negative_infinity', '-Infinity', 'InvalidInput'),
+        ('incomplete_null', 'nul', 'SyntaxError'),
+        ('incomplete_fraction', '1.', 'SyntaxError'),
+        ('incomplete_exponent', '1e', 'SyntaxError'),
+        ('incomplete_signed_exponent', '1e+', 'SyntaxError'),
+        ('incomplete_array', '[', 'SyntaxError'),
+        ('trailing_value', 'true false', 'SyntaxError'),
+        ('null_trailing', 'null false', 'SyntaxError'),
+        ('bad_hex_escape', '"\\ud80x"', 'SyntaxError'),
+        ('unescaped_control', '"a\nb"', 'SyntaxError'),
+        ('depth', '['*257+'true'+']'*257, 'ResourceLimit'),
+    ]
+    from ve.wire import loads_json
+    for name, raw, code in invalid:
+        try:
+            loads_json(raw)
+        except VEError as exc:
+            assert exc.code == code, (name, exc.code, code)
+        else:
+            raise AssertionError(f'Invalid wire case accepted: {name}')
+        cases.append({'id': f'wire_{name}', 'raw': raw, 'reject': True, 'expected_error': code})
+    cases.append({'id': 'wire_surrogate_pair', 'raw': '"\\ud83d\\ude00"', 'expected': '"😀"'})
     return cases
 
 
@@ -132,6 +169,20 @@ def validation_cases(evaluation):
         lambda c: c.update(ast=[['forall','person',['eq',['var',True],['var',0]]]]),
         lambda c: c.update(ast=[['forall','person',['exists','service',['eq',['var',0],['var',1]]]]]),
     ]
+    for name in ('a'*65, 'A'*65, 'é'*40, 'é'*65):
+        mutations.append(lambda c, name=name: c['environment']['vocabulary']['sorts'].update({name: {'description': 'Length/order.'}}))
+        mutations.append(lambda c, name=name: c['model']['domains']['person'].append(name))
+    for ast in [
+        [['unary', 5, ['var']]],
+        [['binary', 5, ['const', 5], ['var']]],
+        [['forall', 5, ['unknown']]],
+        [['unary', 5, ['var', 0]]],
+        [['forall', 5, ['top']]],
+        [['eq', ['const', 5], ['var']]],
+        [['unary', 5, ['var', 0]], ['unknown']],
+        [['unary', 'missing', ['var', 0]], ['eq', ['const', 5], ['const', 5]]],
+    ]:
+        mutations.append(lambda c, ast=ast: c.update(ast=ast))
     cases = []
     for i, mutate in enumerate(mutations):
         case = copy.deepcopy(evaluation[0]); case.pop('source'); case.pop('expected')
@@ -170,8 +221,8 @@ def search_cases():
                                        formula_from_data(env,conclusion),max_domain_size=size,
                                        max_models=1000,max_evaluations=10000)
             case['expected_search'] = {k: v for k, v in result.to_dict().items() if v is not None}
-            # Counts agree only when the single declared predicate is used.
-            case['compare_counts'] = i in (2,3,4,5,7)
+            # Both merged implementations now prune unused predicates.
+            case['compare_counts'] = True
             cases.append(case)
     for i, (models, work) in enumerate([(0,100), (100,0), (1,100), (100,1)]):
         case = {'id':f'search_budget_{i}', 'environment':env.to_dict(), 'premises':[],

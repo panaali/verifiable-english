@@ -33,11 +33,15 @@
       "status": "NotFound",
       "models_checked": 1,
       "evaluations": 1,
+      "min_domain_size": 0,
       "max_domain_size": 0,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
-    "compare_counts": false
+    "compare_counts": true
   },
   {
     "id": "search_0_1",
@@ -71,13 +75,17 @@
     "max_evaluations": 10000,
     "expected_search": {
       "status": "NotFound",
-      "models_checked": 3,
-      "evaluations": 3,
+      "models_checked": 2,
+      "evaluations": 2,
+      "min_domain_size": 0,
       "max_domain_size": 1,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
-    "compare_counts": false
+    "compare_counts": true
   },
   {
     "id": "search_0_2",
@@ -111,13 +119,17 @@
     "max_evaluations": 10000,
     "expected_search": {
       "status": "NotFound",
-      "models_checked": 7,
-      "evaluations": 7,
+      "models_checked": 3,
+      "evaluations": 3,
+      "min_domain_size": 0,
       "max_domain_size": 2,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
-    "compare_counts": false
+    "compare_counts": true
   },
   {
     "id": "search_1_0",
@@ -163,11 +175,15 @@
       },
       "models_checked": 1,
       "evaluations": 1,
+      "min_domain_size": 0,
       "max_domain_size": 0,
+      "nonempty_domains": false,
       "max_models": 1000,
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
       "detail": ""
     },
-    "compare_counts": false
+    "compare_counts": true
   },
   {
     "id": "search_1_1",
@@ -213,11 +229,15 @@
       },
       "models_checked": 1,
       "evaluations": 1,
+      "min_domain_size": 0,
       "max_domain_size": 1,
+      "nonempty_domains": false,
       "max_models": 1000,
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
       "detail": ""
     },
-    "compare_counts": false
+    "compare_counts": true
   },
   {
     "id": "search_1_2",
@@ -263,11 +283,15 @@
       },
       "models_checked": 1,
       "evaluations": 1,
+      "min_domain_size": 0,
       "max_domain_size": 2,
+      "nonempty_domains": false,
       "max_models": 1000,
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
       "detail": ""
     },
-    "compare_counts": false
+    "compare_counts": true
   },
   {
     "id": "search_2_0",
@@ -335,8 +359,12 @@
       },
       "models_checked": 1,
       "evaluations": 2,
+      "min_domain_size": 0,
       "max_domain_size": 0,
+      "nonempty_domains": false,
       "max_models": 1000,
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
       "detail": ""
     },
     "compare_counts": true
@@ -407,8 +435,12 @@
       },
       "models_checked": 1,
       "evaluations": 2,
+      "min_domain_size": 0,
       "max_domain_size": 1,
+      "nonempty_domains": false,
       "max_models": 1000,
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
       "detail": ""
     },
     "compare_counts": true
@@ -479,8 +511,12 @@
       },
       "models_checked": 1,
       "evaluations": 2,
+      "min_domain_size": 0,
       "max_domain_size": 2,
+      "nonempty_domains": false,
       "max_models": 1000,
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
       "detail": ""
     },
     "compare_counts": true
@@ -541,9 +577,13 @@
       "status": "NotFound",
       "models_checked": 1,
       "evaluations": 1,
+      "min_domain_size": 0,
       "max_domain_size": 0,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
     "compare_counts": true
   },
@@ -603,9 +643,13 @@
       "status": "NotFound",
       "models_checked": 3,
       "evaluations": 7,
+      "min_domain_size": 0,
       "max_domain_size": 1,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
     "compare_counts": true
   },
@@ -682,8 +726,12 @@
       },
       "models_checked": 5,
       "evaluations": 15,
+      "min_domain_size": 0,
       "max_domain_size": 2,
+      "nonempty_domains": false,
       "max_models": 1000,
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
       "detail": ""
     },
     "compare_counts": true
@@ -739,9 +787,13 @@
       "status": "NotFound",
       "models_checked": 1,
       "evaluations": 1,
+      "min_domain_size": 0,
       "max_domain_size": 0,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
     "compare_counts": true
   },
@@ -796,9 +848,13 @@
       "status": "NotFound",
       "models_checked": 3,
       "evaluations": 7,
+      "min_domain_size": 0,
       "max_domain_size": 1,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
     "compare_counts": true
   },
@@ -853,9 +909,13 @@
       "status": "NotFound",
       "models_checked": 7,
       "evaluations": 23,
+      "min_domain_size": 0,
       "max_domain_size": 2,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
     "compare_counts": true
   },
@@ -920,9 +980,13 @@
       "status": "NotFound",
       "models_checked": 1,
       "evaluations": 2,
+      "min_domain_size": 0,
       "max_domain_size": 0,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
     "compare_counts": true
   },
@@ -987,9 +1051,13 @@
       "status": "NotFound",
       "models_checked": 3,
       "evaluations": 11,
+      "min_domain_size": 0,
       "max_domain_size": 1,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
     "compare_counts": true
   },
@@ -1054,9 +1122,13 @@
       "status": "NotFound",
       "models_checked": 7,
       "evaluations": 35,
+      "min_domain_size": 0,
       "max_domain_size": 2,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
     "compare_counts": true
   },
@@ -1098,11 +1170,15 @@
       "status": "NotFound",
       "models_checked": 1,
       "evaluations": 1,
+      "min_domain_size": 0,
       "max_domain_size": 0,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
-    "compare_counts": false
+    "compare_counts": true
   },
   {
     "id": "search_6_1",
@@ -1140,13 +1216,17 @@
     "max_evaluations": 10000,
     "expected_search": {
       "status": "NotFound",
-      "models_checked": 3,
-      "evaluations": 3,
+      "models_checked": 2,
+      "evaluations": 2,
+      "min_domain_size": 0,
       "max_domain_size": 1,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
-    "compare_counts": false
+    "compare_counts": true
   },
   {
     "id": "search_6_2",
@@ -1184,13 +1264,17 @@
     "max_evaluations": 10000,
     "expected_search": {
       "status": "NotFound",
-      "models_checked": 7,
-      "evaluations": 7,
+      "models_checked": 3,
+      "evaluations": 3,
+      "min_domain_size": 0,
       "max_domain_size": 2,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
-    "compare_counts": false
+    "compare_counts": true
   },
   {
     "id": "search_7_0",
@@ -1251,9 +1335,13 @@
       "status": "NotFound",
       "models_checked": 1,
       "evaluations": 1,
+      "min_domain_size": 0,
       "max_domain_size": 0,
+      "nonempty_domains": false,
       "max_models": 1000,
-      "detail": "all finite models within the domain bound were exhausted"
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
+      "detail": "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)"
     },
     "compare_counts": true
   },
@@ -1328,8 +1416,12 @@
       },
       "models_checked": 2,
       "evaluations": 6,
+      "min_domain_size": 0,
       "max_domain_size": 1,
+      "nonempty_domains": false,
       "max_models": 1000,
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
       "detail": ""
     },
     "compare_counts": true
@@ -1405,8 +1497,12 @@
       },
       "models_checked": 2,
       "evaluations": 6,
+      "min_domain_size": 0,
       "max_domain_size": 2,
+      "nonempty_domains": false,
       "max_models": 1000,
+      "max_evaluations": 10000,
+      "semantic_nonvacuity": false,
       "detail": ""
     },
     "compare_counts": true
@@ -1473,8 +1569,12 @@
       "status": "ResourceLimit",
       "models_checked": 0,
       "evaluations": 0,
+      "min_domain_size": 0,
       "max_domain_size": 2,
+      "nonempty_domains": false,
       "max_models": 0,
+      "max_evaluations": 100,
+      "semantic_nonvacuity": false,
       "detail": "model-attempt budget exhausted"
     }
   },
@@ -1540,8 +1640,12 @@
       "status": "ResourceLimit",
       "models_checked": 0,
       "evaluations": 0,
+      "min_domain_size": 0,
       "max_domain_size": 2,
+      "nonempty_domains": false,
       "max_models": 100,
+      "max_evaluations": 0,
+      "semantic_nonvacuity": false,
       "detail": "evaluation budget exhausted"
     }
   },
@@ -1607,8 +1711,12 @@
       "status": "ResourceLimit",
       "models_checked": 1,
       "evaluations": 2,
+      "min_domain_size": 0,
       "max_domain_size": 2,
+      "nonempty_domains": false,
       "max_models": 1,
+      "max_evaluations": 100,
+      "semantic_nonvacuity": false,
       "detail": "model-attempt budget exhausted"
     }
   },
@@ -1674,8 +1782,12 @@
       "status": "ResourceLimit",
       "models_checked": 1,
       "evaluations": 1,
+      "min_domain_size": 0,
       "max_domain_size": 2,
+      "nonempty_domains": false,
       "max_models": 100,
+      "max_evaluations": 1,
+      "semantic_nonvacuity": false,
       "detail": "evaluation budget exhausted"
     }
   },

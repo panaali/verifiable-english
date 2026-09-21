@@ -18,8 +18,9 @@ sys.path.insert(0, str(ROOT))
 from ve import Environment, FiniteModel, evaluate, parse, print_document
 from ve.ast import (
     And, Binary, Bottom, Const, Document, Eq, Exists, Forall, Implies, Not,
-    Or, Top, Unary, Var, document_to_data,
+    Or, Top, Unary, Var, document_from_data, document_to_data,
 )
+from ve.search import check_countermodel
 
 
 def build_cases():
@@ -59,8 +60,8 @@ def build_cases():
         },
     }
     env = Environment.from_dict(base)
-    for size in range(3):
-        domain = ["a", "b"][:size]
+    for size in range(5):
+        domain = ["a", "b", "c", "d"][:size]
         for mask in range(1 << size):
             model = FiniteModel.from_dict(env, {
                 "complete": True, "domains": {"item": domain}, "constants": {},
@@ -118,10 +119,14 @@ def build_cases():
             kind = rng.randrange(5)
             if kind < 2:
                 return Top() if kind == 0 else Bottom()
+            available = set(context) | {d.sort for d in env.constants.values()}
+            if not available:
+                return Top() if rng.randrange(2) else Bottom()
             if kind == 2:
-                sort = rng.choice(list(env.sorts))
+                sort = rng.choice(sorted(available))
                 return Eq(term(sort), term(sort))
-            name = rng.choice(list(env.predicates))
+            candidates = [p for p, d in env.predicates.items() if set(d.arguments) <= available]
+            name = rng.choice(candidates)
             args = env.predicates[name].arguments
             return Unary(name, term(args[0])) if len(args) == 1 else Binary(name, term(args[0]), term(args[1]))
 
@@ -146,7 +151,74 @@ def build_cases():
         model = FiniteModel.from_dict(env, {"complete": True, "domains": domains,
                                          "constants": constants, "relations": relations})
         add(f"seeded_mixed_{i:03}", env, model, [formula(4, ()) for _ in range(4)])
+
+    # Exhaust all 25 pairs of sort sizes, including both mixed-empty directions.
+    # No constants are declared for an empty sort: such a model is inadmissible.
+    rng = random.Random(20260922)
+    for item_size in range(5):
+        for person_size in range(5):
+            for trial in range(20):
+                domains = {"item": ["same", "second", "third", "fourth"][:item_size],
+                           "person": ["same", "second", "third", "fourth"][:person_size]}
+                vocabulary = copy.deepcopy(mixed)
+                vocabulary["vocabulary"]["constants"] = {
+                    c: d for c, d in mixed["vocabulary"]["constants"].items() if domains[d["sort"]]
+                }
+                env = Environment.from_dict(vocabulary)
+                constants = {c: domains[d.sort][0] for c, d in env.constants.items()}
+                if item_size > 1 and trial % 2:
+                    constants["other"] = domains["item"][-1]
+                relations = {}
+                for p, d in env.predicates.items():
+                    rows = [[x] for x in domains[d.arguments[0]]] if len(d.arguments) == 1 else [
+                        [x, y] for x in domains[d.arguments[0]] for y in domains[d.arguments[1]]]
+                    relations[p] = [row for row in rows if rng.randrange(2)]
+                model = FiniteModel.from_dict(env, {
+                    "complete": True, "domains": domains, "constants": constants, "relations": relations})
+                # Six alternating binders; outermost person is index 5, innermost item is 0.
+                deep = Binary("owns", Var(5), Var(0))
+                prefix = [(Forall, "person"), (Exists, "item")] * 3
+                if trial % 2:
+                    prefix = [(Exists, "person"), (Forall, "item")] * 3
+                for binder, sort in reversed(prefix):
+                    deep = binder(sort, deep)
+                formulas = [formula(6, ()) for _ in range(3)] + [deep,
+                    Forall("person", Exists("item", Top())),
+                    Exists("person", Forall("item", Bottom()))]
+                if item_size:
+                    formulas += [Eq(Const("origin"), Const("other")),
+                                 Not(Eq(Const("origin"), Const("other")))]
+                add(f"extended_item{item_size}_person{person_size}_{trial:02}", env, model, formulas)
     return cases
+
+
+def build_countermodels(cases):
+    result = []
+
+    def add(name, case, premises, conclusion):
+        env = Environment.from_dict(case["environment"])
+        model = FiniteModel.from_dict(env, case["model"])
+        encoded = document_to_data(env, Document(tuple(premises) + (conclusion,)))
+        checked = check_countermodel(env, premises, conclusion, model)
+        assert checked.status in ("Valid", "NotCountermodel"), checked
+        result.append({"id": name, "kind": "countermodel", "environment": case["environment"],
+                       "model": case["model"], "premises": encoded[:-1], "conclusion": encoded[-1],
+                       "expected_refutes": checked.valid})
+
+    for i, case in enumerate(cases):
+        env = Environment.from_dict(case["environment"])
+        formulas = document_from_data(env, case["ast"]).formulas
+        premises = ((), (Top(), Top()), (Bottom(),), formulas[:-1])[i % 4]
+        conclusion = formulas[-1]
+        add(f"countermodel_{case['id']}", case, premises, conclusion)
+    for name, premises, conclusion in [
+        ("empty_refutes", (), Bottom()), ("empty_holds", (), Top()),
+        ("true_false", (Top(),), Bottom()), ("false_false", (Bottom(),), Bottom()),
+        ("true_true", (Top(),), Top()), ("mixed_premises", (Top(), Bottom()), Bottom()),
+        ("duplicate_premises", (Top(), Top()), Bottom()),
+    ]:
+        add(name, cases[0], premises, conclusion)
+    return result
 
 
 if __name__ == "__main__":
@@ -158,3 +230,6 @@ if __name__ == "__main__":
     for name, cases in (("parser", parser_cases(result)), ("identity", identity_cases(result)), ("wire", wire_cases()), ("validation", validation_cases(result)), ("search", search_cases())):
         (ROOT / f"conformance/{name}.json").write_text(json.dumps(cases, indent=2, ensure_ascii=False) + "\n")
         print(f"Wrote {len(cases)} {name} cases")
+    countermodels = build_countermodels(result)
+    (ROOT / "conformance/countermodels.json").write_text(json.dumps(countermodels, indent=2) + "\n")
+    print(f"Wrote {len(countermodels)} countermodel cases")
