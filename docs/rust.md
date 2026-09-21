@@ -1,7 +1,9 @@
-# Experimental Rust VE v0 core
+# Experimental Rust VE core
 
 The cargo workspace in `rust/` provides the `ve-core` library and `ve` CLI for
-`ve.core@0`, `relational-fol@0`, revision `ve-v0-draft-2026-09-20`.
+`ve.core@0`, `relational-fol@0`, revision `ve-v0-draft-2026-09-20`, and opt-in
+`ve.core@0.1`, profiles `["closure@0", "relational-fol@0"]`, revision
+`ve-v0.1-closure-2026-09-21`.
 **This implementation is not verified.** It is differentially tested against the
 Python reference and the executable Lean evaluator covered by the P6 theorem.
 Those tests do not transfer Lean's proofs to Rust or prove the input decoders.
@@ -74,9 +76,10 @@ arity, sort, closure, depth and aggregate node validation. This is extrinsic
 typing, as in Python and the Lean raw syntax/checker, not a Rust dependent type.
 The document carries its full environment ID; evaluation rejects a differently
 bound model. Sort-qualified entity IDs are internally compiled to domain indices.
-Rust currently accepts the core vocabulary entries; the newly merged optional
-`verbalisation` / `negative_verbalisation` display metadata is not implemented
-in Rust. Private immutable model/document fields preserve validation, so Rust need not
+Rust validates and identity-binds optional sort/predicate `verbalisation` and
+predicate `negative_verbalisation` metadata, including the 256-character limit.
+Display templates are not executed by the Rust core.
+Private immutable model/document fields preserve validation, so Rust need not
 repeat model decoding and hashing on each evaluation. Raw `to_value` helpers are
 not a validation boundary; in-process callers must check raw constructors before
 using them as claims.
@@ -94,9 +97,10 @@ and statement order.
 
 `evaluate` short-circuits a whole document; `evaluate_formula` selects one checked
 statement. Both return `Satisfied`, `Violated`, or `ResourceLimit`, an optional
-Boolean, and formula-node work count. Empty-domain universals and false-antecedent
+Boolean, and evaluation work count. Empty-domain universals and false-antecedent
 implications are true; empty-domain existentials are false. The budget is at most
-1,000,000 node evaluations. Resource exhaustion never becomes a false judgment.
+1,000,000 work units (formula visits plus closure edge/Warshall work).
+Resource exhaustion never becomes a false judgment.
 Rust currently returns no explanatory trace and therefore has no separate trace
 budget. Python's default 10,000-node trace cap can exhaust earlier, while
 `evaluate(..., trace=False)` disables that cap and explanatory traces. Comparisons
@@ -141,15 +145,49 @@ crate roots, tests and the benchmark example forbid unsafe code. Standard-librar
 and dependency internals, including any upstream unsafe implementation, remain
 part of the build/runtime trust boundary.
 
+## Closure representation and evaluation
+
+`Formula::Reach(ReachKind, Edge, Term, Term)` encodes exactly
+`["reach", k, e, t, u]`, where `k` is `"plus"` or `"star"` and `e` is
+`["named", relation]` or `["body", sort, formula]`. Raw invalid kinds remain
+rejected by the checker after structural decoding of the complete document.
+Named edges must be homogeneous binary predicates. A body adds two locals:
+index **0 is destination**, index **1 is source**, and outer variables shift
+by two. Endpoints are checked in the original outer context. Both local binder
+names must be fresh. The edge wrapper itself adds no AST node or depth level;
+its body adds one formula level, matching Python.
+
+Strict source forms are `tc[edge](t, u)` / `rtc[edge](t, u)` and
+`tc[node a, b | (body)](t, u)` / `rtc[node a, b | (body)](t, u)`.
+The printer allocates both body names in preorder even when unused. `tc` and
+`rtc` remain contextual tokens usable as ordinary vocabulary identifiers.
+The v0 profile rejects Reach; its identity preimages remain unchanged. Closure
+environments, meanings and models use the `v0.1` identity domain separators,
+including Reach-free documents under the closure profile.
+
+Finite evaluation materializes positive transitive closure using Warshall.
+It does not seed identity edges: positive self-reach needs a self-loop or cycle;
+star additionally accepts equal endpoints. Body edges evaluate every ordered
+pair while keeping outer parameters fixed. Cache keys contain the structural
+edge and the full outer binding vector, and caches are local to one model and
+evaluation context. Document evaluation can reuse a cache across statements;
+witness checking clears it between premises and conclusion, matching Python.
+Named edge visits, body evaluation and pivot work all consume the budget.
+Incomplete closure computation yields `ResourceLimit` with no Boolean.
+Search collects predicates from named edges and recursively from body formulas,
+including nested closures; unused predicates remain empty in witnesses.
+
 ## Differential evidence
 
 The commands below exercise the same committed files in Python, Rust and, where
 its API supports the operation, Lean:
 
 ```sh
-python conformance/generate.py
-UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run --frozen python -m pytest -q
-python conformance/fuzz.py --rust rust/target/release/ve --count 5000
+export UV_CACHE_DIR=/private/tmp/ve-uv-cache
+UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run --frozen python conformance/generate.py
+(cd lean && lake build)
+VE_LEAN_PREBUILT=1 uv run --frozen python -m pytest -q
+uv run --frozen python conformance/fuzz.py --rust rust/target/release/ve --count 5000
 ```
 
 The merged corpus has **701 cases / 4,912 formulas** and **708 countermodel
@@ -177,7 +215,7 @@ has not established exhaustive coverage or statistical error bounds. It does
 not fuzz malformed decoders, arbitrary search spaces or resource exhaustion;
 those have explicit finite regressions.
 
-Final validation on September 21, 2026: **652 Python tests passed**, including
+Original v0 validation on September 21, 2026: **652 Python tests passed**, including
 all available Lean comparisons and its 80-theorem axiom audit; **2 optional
 grammar-backend tests skipped** (`llguidance`, `xgrammar` are not installed).
 **11 Rust tests passed** with all features and one test thread; rustfmt and
@@ -185,6 +223,45 @@ Clippy with warnings denied passed. Regeneration left all corpus JSON bytes
 unchanged. CLI regressions cover overlong JSONL recovery
 (including newline-at-limit and EOF cases), empty premises rejection, source
 binding, and canonical output exceeding 64 KiB despite a valid AST node count.
+
+The closure extension additionally checks **46/46 cases / 866/866 formulas**,
+with byte-identical canonical text, AST preimages and environment/document/
+formula/model identities; **30/30 E0 witness models**, **204/204 countermodel
+checks** (including work exhaustion), **30/30 bounded-search statuses**, and
+**56/56 malformed-input diagnostic classes**. Search witnesses are checked by
+Python; bounded exhaustive results compare model counts. Enumeration order can
+differ, so first-witness and resource-work counts are not claimed identical.
+The full suite has no Rust closure skip.
+
+The new seeded stream agrees on **3,000/3,000 closure formula/model pairs** and
+all their identities: 1,701 true, 1,299 false, 1,204 with an empty sort, 2,500
+with body edges, 622 with nested closures, and 1,500 forced outer-parameter
+cases. Models include 961 with self-loops and 353 explicitly generated cycles
+of length at least two; categories overlap. The unchanged v0 stream still
+agrees on **5,000/5,000** pairs. Generator, seed and replay digest are in
+[`rust/fuzz_closure.py`](../rust/fuzz_closure.py) and
+[`rust/closure-fuzz-summary.json`](../rust/closure-fuzz-summary.json).
+Every generated pair contains Reach, though empty domains or short-circuiting
+may avoid evaluating a subformula. These remain development tests rather than
+independently sampled evidence. Failure reduction reuses the existing typed
+reducer; the replay JSONL stays under `rust/target`.
+
+Rust also compares all **512 directed three-vertex graphs**, all nine endpoint
+pairs, and three named/body plus/star formulas with independent path search:
+**13,824/13,824 Boolean agreements**. Regressions exercise captured-parameter
+cache separation, changing models, strict syntax, version gates, body scope,
+depth/node limits and every budget below completion on nested closures.
+
+Closure validation on September 21, 2026: **738 Python tests passed**, including
+all available Lean comparisons and the axiom audit; only the same two optional
+grammar backends were skipped. **16 Rust tests passed**, all features enabled,
+one test thread; rustfmt and Clippy with warnings denied passed. Commands and
+benchmarks run sequentially, with Cargo limited to two jobs.
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run --frozen python rust/fuzz_closure.py \
+  --rust rust/target/release/ve --count 3000 --summary rust/closure-fuzz-summary.json
+```
 
 ## Performance
 
@@ -219,8 +296,8 @@ These API costs explain why small-case API ratios are much higher than kernel
 ratios. Neither comparison isolates programming-language cost from data
 structures and implementation choices.
 
-The reviewer's characterization is **roughly 20–30x on the evaluation kernel**.
-The final loaded rerun is near that range's upper end: 31.46x at size 32 and
+The original v0 reviewer's characterization was **roughly 20–30x on the evaluation kernel**.
+That loaded rerun was near that range's upper end: 31.46x at size 32 and
 30.14x at size 64. Smaller fixtures have larger kernel ratios as shown below;
 this is an approximate workload-specific characterization, not a uniform speedup
 or a hard 30x upper bound. Public API ratios are reported separately.
@@ -261,6 +338,33 @@ pruned-search ratio is presented as a speedup.
 The benchmark does not establish production throughput, latency under load,
 broad workload generality or performance on other hardware. All five samples
 are retained; no timing outliers are removed.
+
+Closure evaluation has a separate recorded run in
+[`rust/closure-benchmark-results.json`](../rust/closure-benchmark-results.json):
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run --frozen python rust/benchmark.py \
+  --repeats 5 --closure-only --output rust/closure-benchmark-results.json
+```
+
+Both cases evaluate positive self-reach for every vertex of a directed
+12-vertex cycle. The body case uses `Body(item, edge(Var(1), Var(0)))`; the
+named case uses `Named(edge)`. Each implementation starts a fresh cache for
+every timed evaluation, includes the full outer context in cache keys, and
+performs the same Warshall work. Results are true with **4,405** work units for
+named closure and **5,989** for body closure, identical in both kernels/APIs.
+Initial validation and process startup stay outside timing. Five samples of
+five calls each are retained, with alternating Python/Rust execution order.
+
+| Closure evaluation | Python no-trace kernel ms | Rust kernel ms | Kernel ratio | Python no-trace API ms | Rust API ms | API ratio |
+|---|---:|---:|---:|---:|---:|---:|
+| closure_named_n12 | 0.5593 | 0.103950 | 5.38× | 0.7458 | 0.102375 | 7.29× |
+| closure_body_n12 | 1.8535 | 0.123458 | 15.01× | 2.0606 | 0.123617 | 16.67× |
+
+This run used the same tool/platform versions listed above; one-minute load was
+3.72. The result records the core commit and exact worktree source hashes,
+including the benchmark driver added alongside these results. These are small,
+specific closure workloads, not evidence for the v0 ratios or a general speedup.
 
 ## Trust, Lean and P8
 
