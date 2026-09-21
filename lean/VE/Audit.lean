@@ -1,3 +1,5 @@
+import VE.Order.Conservativity
+import VE.Order.Gate
 import VE.Closure.Bridge
 import VE.CertificateWire
 import VE.TableauChecks
@@ -230,3 +232,22 @@ import VE.ModelProofs
 #print axioms VE.Closure.subst_denote
 #print axioms VE.Closure.unfold_denote
 #print axioms VE.Closure.unlift_denote
+
+#print axioms VE.Order.certificate_profile_gate
+#print axioms VE.Order.check_iff_wellFormed
+#print axioms VE.Order.combined_profile_gate
+#print axioms VE.Order.compareEval_iff
+#print axioms VE.Order.conservativity
+#print axioms VE.Order.countermodelCheck_iff
+#print axioms VE.Order.countermodel_sound
+#print axioms VE.Order.embedTerm_denote
+#print axioms VE.Order.entails_v0
+#print axioms VE.Order.eval_false_iff_not_denote
+#print axioms VE.Order.eval_iff_denote
+#print axioms VE.Order.expand_relation_binary
+#print axioms VE.Order.expand_relation_unary
+#print axioms VE.Order.expansion_admissible
+#print axioms VE.Order.integer_of_domain
+#print axioms VE.Order.numerals_distinct
+#print axioms VE.Order.term_defined
+#print axioms VE.Order.tupleTyped_expand
