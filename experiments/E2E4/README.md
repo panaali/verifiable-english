@@ -48,3 +48,7 @@ recorded primary and honest-acceptance contrasts with
 It checks complete paired assignments, keeps failed calls in their denominators,
 and reports 60 items but 12 template clusters (df=11). Gate outcomes and the
 unchecked dishonest-critic arm still require separate reporting.
+
+Offline Colab DEV exports and native paired scoring are documented in
+[colab/README.md](colab/README.md). Submit only each bundle's `gpu/` subdirectory;
+labels stay local and overlength prompts are never silently truncated.

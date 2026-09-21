@@ -1,0 +1,2209 @@
+{
+  "model_calls": 0,
+  "bundles": [
+    {
+      "name": "E5 medium neutral",
+      "directory": "experiments/E5/colab/out/dev-medium/neutral",
+      "manifest": {
+        "experiment": "E5",
+        "split": "dev",
+        "selection": "medium-neutral",
+        "prompts": 1280,
+        "items": 256,
+        "cells": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e"
+        ],
+        "instructions": [
+          "neutral"
+        ],
+        "max_new_tokens": 400,
+        "model_calls": 0,
+        "head": "9d055ffa367102312e0d9cf957c4a8fe2de06d50",
+        "harness_system_source": "claude/harness:f016ab082fd8ad919fab6fc7c6ace87b50cb9677:ve_experiments/llm.py",
+        "sources_sha256": {
+          "experiments/E5/PREREG.md": "718f1dc137eb400813562b08ab92184f5df85e4647ef9629b064881ccd509783",
+          "experiments/E5/dev.jsonl.gz": "34fc16fa63c3eb03baa3b9ac7c92e773a73c74656327f7bff81e603da621fa89",
+          "experiments/E5/split.json": "d3b2fd3edfe5cdd48e5de71c5b152b8e08aba3402cc92bf076810e61c0294cbb",
+          "experiments/E5/materials.py": "8b8d3980d340fbd27f6048f473af9abacf3cdc6a9c3c23f12a1efbf4b01dbaab",
+          "experiments/colab_common.py": "9f8b39ce38ff1fc4dd6c7dfc46d1d0c91c8f8d33585adb0d694ed7086813be55",
+          "experiments/E5/colab/export_prompts.py": "e7dce628fdc2e4933da5134687cb49e41729389eeb9725c08c1b106b8fd4fcf5",
+          "experiments/E5/colab/preflight.py": "6526f8074767f822415f1a459a16ee9be5a0dad39df2187ed129b14fb28f573f"
+        },
+        "files_sha256": {
+          "gpu/job.json": "1af959b0327081526815d81fd9d281a5dac2d0b4aa177107567dc0f5e1c1a9a6",
+          "gpu/models.json": "be102ac311922213554c4e3a3fec5c43b7e33002927cff2c2f69b09dc877694c",
+          "gpu/preflight.py": "6526f8074767f822415f1a459a16ee9be5a0dad39df2187ed129b14fb28f573f",
+          "gpu/prompts.jsonl": "5008e7c824e1765c3b4de9431fd195fc5757acb8848bd121c985a7488c31905f",
+          "labels.jsonl": "212278ee74647cfb865d521916948af948e6f6e7e2d143379edb45accc6930f1",
+          "lengths.json": "c5eccdce3989291ca3a352e3a5672a212a9d488b3b127a65efbb03743d275fb7"
+        },
+        "upload_directory": "gpu",
+        "labels_upload": false,
+        "context_fit": "UNVERIFIED_REQUIRES_PREFLIGHT"
+      },
+      "lengths": {
+        "max_model_len_hint": 8192,
+        "max_prompt_tokens": 7792,
+        "whitespace_proxy": {
+          "prompt_tokens": {
+            "n": 1280,
+            "min": 1396,
+            "p50": 1536.5,
+            "p90": 1605.0,
+            "p95": 1616.05,
+            "p99": 1642.0,
+            "max": 1678,
+            "mean": 1528.56875
+          },
+          "prompt_plus_budget": {
+            "n": 1280,
+            "min": 1796,
+            "p50": 1936.5,
+            "p90": 2005.0,
+            "p95": 2016.05,
+            "p99": 2042.0,
+            "max": 2078,
+            "mean": 1928.56875
+          },
+          "prompts_over_6000": 0,
+          "items_over_6000": 0,
+          "prompts_over_context": 0,
+          "items_over_context": 0
+        },
+        "punctuation_proxy": {
+          "prompt_tokens": {
+            "n": 1280,
+            "min": 2153,
+            "p50": 3848.5,
+            "p90": 7029.1,
+            "p95": 7331.05,
+            "p99": 7514.0,
+            "max": 7826,
+            "mean": 3944.24375
+          },
+          "prompt_plus_budget": {
+            "n": 1280,
+            "min": 2553,
+            "p50": 4248.5,
+            "p90": 7429.1,
+            "p95": 7731.05,
+            "p99": 7914.0,
+            "max": 8226,
+            "mean": 4344.24375
+          },
+          "prompts_over_6000": 256,
+          "items_over_6000": 256,
+          "prompts_over_context": 2,
+          "items_over_context": 2
+        },
+        "characters": {
+          "n": 1280,
+          "min": 10031,
+          "p50": 14468.0,
+          "p90": 21967.2,
+          "p95": 22891.35,
+          "p99": 23447.0,
+          "max": 24351,
+          "mean": 14685.39375
+        },
+        "by_cell": {
+          "a": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 1396,
+                "p50": 1514.5,
+                "p90": 1585.5,
+                "p95": 1594.0,
+                "p99": 1609.0,
+                "max": 1642,
+                "mean": 1510.96875
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 1796,
+                "p50": 1914.5,
+                "p90": 1985.5,
+                "p95": 1994.0,
+                "p99": 2009.0,
+                "max": 2042,
+                "mean": 1910.96875
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 2153,
+                "p50": 2302.0,
+                "p90": 2387.0,
+                "p95": 2393.0,
+                "p99": 2413.0,
+                "max": 2455,
+                "mean": 2295.5
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 2553,
+                "p50": 2702.0,
+                "p90": 2787.0,
+                "p95": 2793.0,
+                "p99": 2813.0,
+                "max": 2855,
+                "mean": 2695.5
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "b": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 1401,
+                "p50": 1519.0,
+                "p90": 1590.0,
+                "p95": 1599.0,
+                "p99": 1613.0,
+                "max": 1646,
+                "mean": 1515.46875
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 1801,
+                "p50": 1919.0,
+                "p90": 1990.0,
+                "p95": 1999.0,
+                "p99": 2013.0,
+                "max": 2046,
+                "mean": 1915.46875
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 2162,
+                "p50": 2310.5,
+                "p90": 2395.5,
+                "p95": 2401.0,
+                "p99": 2421.0,
+                "max": 2463,
+                "mean": 2304
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 2562,
+                "p50": 2710.5,
+                "p90": 2795.5,
+                "p95": 2801.0,
+                "p99": 2821.0,
+                "max": 2863,
+                "mean": 2704
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "c": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 1416,
+                "p50": 1534.0,
+                "p90": 1605.0,
+                "p95": 1614.0,
+                "p99": 1628.0,
+                "max": 1661,
+                "mean": 1530.46875
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 1816,
+                "p50": 1934.0,
+                "p90": 2005.0,
+                "p95": 2014.0,
+                "p99": 2028.0,
+                "max": 2061,
+                "mean": 1930.46875
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 3700,
+                "p50": 3848.5,
+                "p90": 3933.5,
+                "p95": 3939.0,
+                "p99": 3959.0,
+                "max": 4001,
+                "mean": 3842
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 4100,
+                "p50": 4248.5,
+                "p90": 4333.5,
+                "p95": 4339.0,
+                "p99": 4359.0,
+                "max": 4401,
+                "mean": 4242
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "d": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 1424,
+                "p50": 1542.0,
+                "p90": 1613.0,
+                "p95": 1622.0,
+                "p99": 1636.0,
+                "max": 1669,
+                "mean": 1538.46875
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 1824,
+                "p50": 1942.0,
+                "p90": 2013.0,
+                "p95": 2022.0,
+                "p99": 2036.0,
+                "max": 2069,
+                "mean": 1938.46875
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 4067,
+                "p50": 4286.0,
+                "p90": 4378.0,
+                "p95": 4398.0,
+                "p99": 4408.0,
+                "max": 4464,
+                "mean": 4264.5
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 4467,
+                "p50": 4686.0,
+                "p90": 4778.0,
+                "p95": 4798.0,
+                "p99": 4808.0,
+                "max": 4864,
+                "mean": 4664.5
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "e": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 1433,
+                "p50": 1551.0,
+                "p90": 1622.0,
+                "p95": 1631.0,
+                "p99": 1645.0,
+                "max": 1678,
+                "mean": 1547.46875
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 1833,
+                "p50": 1951.0,
+                "p90": 2022.0,
+                "p95": 2031.0,
+                "p99": 2045.0,
+                "max": 2078,
+                "mean": 1947.46875
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 6313,
+                "p50": 7029.5,
+                "p90": 7492.0,
+                "p95": 7514.0,
+                "p99": 7636.0,
+                "max": 7826,
+                "mean": 7015.21875
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 6713,
+                "p50": 7429.5,
+                "p90": 7892.0,
+                "p95": 7914.0,
+                "p99": 8036.0,
+                "max": 8226,
+                "mean": 7415.21875
+              },
+              "prompts_over_6000": 256,
+              "items_over_6000": 256,
+              "prompts_over_context": 2,
+              "items_over_context": 2
+            }
+          }
+        },
+        "tokenizers": {
+          "Qwen/Qwen2.5-7B-Instruct": {
+            "status": "unavailable_offline",
+            "reason": "transformers is not installed"
+          },
+          "Qwen/Qwen2.5-14B-Instruct-AWQ": {
+            "status": "unavailable_offline",
+            "reason": "transformers is not installed"
+          },
+          "Qwen/Qwen2.5-32B-Instruct-AWQ": {
+            "status": "unavailable_offline",
+            "reason": "transformers is not installed"
+          }
+        },
+        "note": "Proxies exclude chat-template overhead and are NOT token counts or bounds. No prompts are truncated or excluded. Exact preflight is mandatory; 8k context does not guarantee 32B AWQ fits L4 GPU memory.",
+        "context_fit": "UNVERIFIED_REQUIRES_PREFLIGHT"
+      }
+    },
+    {
+      "name": "E5 medium audit",
+      "directory": "experiments/E5/colab/out/dev-medium/audit",
+      "manifest": {
+        "experiment": "E5",
+        "split": "dev",
+        "selection": "medium-audit",
+        "prompts": 1280,
+        "items": 256,
+        "cells": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e"
+        ],
+        "instructions": [
+          "audit"
+        ],
+        "max_new_tokens": 400,
+        "model_calls": 0,
+        "head": "9d055ffa367102312e0d9cf957c4a8fe2de06d50",
+        "harness_system_source": "claude/harness:f016ab082fd8ad919fab6fc7c6ace87b50cb9677:ve_experiments/llm.py",
+        "sources_sha256": {
+          "experiments/E5/PREREG.md": "718f1dc137eb400813562b08ab92184f5df85e4647ef9629b064881ccd509783",
+          "experiments/E5/dev.jsonl.gz": "34fc16fa63c3eb03baa3b9ac7c92e773a73c74656327f7bff81e603da621fa89",
+          "experiments/E5/split.json": "d3b2fd3edfe5cdd48e5de71c5b152b8e08aba3402cc92bf076810e61c0294cbb",
+          "experiments/E5/materials.py": "8b8d3980d340fbd27f6048f473af9abacf3cdc6a9c3c23f12a1efbf4b01dbaab",
+          "experiments/colab_common.py": "9f8b39ce38ff1fc4dd6c7dfc46d1d0c91c8f8d33585adb0d694ed7086813be55",
+          "experiments/E5/colab/export_prompts.py": "e7dce628fdc2e4933da5134687cb49e41729389eeb9725c08c1b106b8fd4fcf5",
+          "experiments/E5/colab/preflight.py": "6526f8074767f822415f1a459a16ee9be5a0dad39df2187ed129b14fb28f573f"
+        },
+        "files_sha256": {
+          "gpu/job.json": "b7d737c2130ebfd5cb7b8370531d87cdf03168e143b02a19d9e006c2233b02f5",
+          "gpu/models.json": "be102ac311922213554c4e3a3fec5c43b7e33002927cff2c2f69b09dc877694c",
+          "gpu/preflight.py": "6526f8074767f822415f1a459a16ee9be5a0dad39df2187ed129b14fb28f573f",
+          "gpu/prompts.jsonl": "609172c554197e3d6253abf8cdb195a6c917a766ea80b327df117afff5da4940",
+          "labels.jsonl": "9f0eb25a1dadb2540890346108c565795042dd70b37db8216a44c6c3a9754b7c",
+          "lengths.json": "1810c4945908910c70b1d5ef8190954c10debd55055974e7a97a811f98733099"
+        },
+        "upload_directory": "gpu",
+        "labels_upload": false,
+        "context_fit": "UNVERIFIED_REQUIRES_PREFLIGHT"
+      },
+      "lengths": {
+        "max_model_len_hint": 8192,
+        "max_prompt_tokens": 7792,
+        "whitespace_proxy": {
+          "prompt_tokens": {
+            "n": 1280,
+            "min": 1410,
+            "p50": 1550.5,
+            "p90": 1619.0,
+            "p95": 1630.05,
+            "p99": 1656.0,
+            "max": 1692,
+            "mean": 1542.56875
+          },
+          "prompt_plus_budget": {
+            "n": 1280,
+            "min": 1810,
+            "p50": 1950.5,
+            "p90": 2019.0,
+            "p95": 2030.05,
+            "p99": 2056.0,
+            "max": 2092,
+            "mean": 1942.56875
+          },
+          "prompts_over_6000": 0,
+          "items_over_6000": 0,
+          "prompts_over_context": 0,
+          "items_over_context": 0
+        },
+        "punctuation_proxy": {
+          "prompt_tokens": {
+            "n": 1280,
+            "min": 2167,
+            "p50": 3862.5,
+            "p90": 7043.1,
+            "p95": 7345.05,
+            "p99": 7528.0,
+            "max": 7840,
+            "mean": 3958.24375
+          },
+          "prompt_plus_budget": {
+            "n": 1280,
+            "min": 2567,
+            "p50": 4262.5,
+            "p90": 7443.1,
+            "p95": 7745.05,
+            "p99": 7928.0,
+            "max": 8240,
+            "mean": 4358.24375
+          },
+          "prompts_over_6000": 256,
+          "items_over_6000": 256,
+          "prompts_over_context": 2,
+          "items_over_context": 2
+        },
+        "characters": {
+          "n": 1280,
+          "min": 10119,
+          "p50": 14556.0,
+          "p90": 22055.2,
+          "p95": 22979.35,
+          "p99": 23535.0,
+          "max": 24439,
+          "mean": 14773.39375
+        },
+        "by_cell": {
+          "a": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 1410,
+                "p50": 1528.5,
+                "p90": 1599.5,
+                "p95": 1608.0,
+                "p99": 1623.0,
+                "max": 1656,
+                "mean": 1524.96875
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 1810,
+                "p50": 1928.5,
+                "p90": 1999.5,
+                "p95": 2008.0,
+                "p99": 2023.0,
+                "max": 2056,
+                "mean": 1924.96875
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 2167,
+                "p50": 2316.0,
+                "p90": 2401.0,
+                "p95": 2407.0,
+                "p99": 2427.0,
+                "max": 2469,
+                "mean": 2309.5
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 2567,
+                "p50": 2716.0,
+                "p90": 2801.0,
+                "p95": 2807.0,
+                "p99": 2827.0,
+                "max": 2869,
+                "mean": 2709.5
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "b": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 1415,
+                "p50": 1533.0,
+                "p90": 1604.0,
+                "p95": 1613.0,
+                "p99": 1627.0,
+                "max": 1660,
+                "mean": 1529.46875
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 1815,
+                "p50": 1933.0,
+                "p90": 2004.0,
+                "p95": 2013.0,
+                "p99": 2027.0,
+                "max": 2060,
+                "mean": 1929.46875
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 2176,
+                "p50": 2324.5,
+                "p90": 2409.5,
+                "p95": 2415.0,
+                "p99": 2435.0,
+                "max": 2477,
+                "mean": 2318
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 2576,
+                "p50": 2724.5,
+                "p90": 2809.5,
+                "p95": 2815.0,
+                "p99": 2835.0,
+                "max": 2877,
+                "mean": 2718
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "c": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 1430,
+                "p50": 1548.0,
+                "p90": 1619.0,
+                "p95": 1628.0,
+                "p99": 1642.0,
+                "max": 1675,
+                "mean": 1544.46875
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 1830,
+                "p50": 1948.0,
+                "p90": 2019.0,
+                "p95": 2028.0,
+                "p99": 2042.0,
+                "max": 2075,
+                "mean": 1944.46875
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 3714,
+                "p50": 3862.5,
+                "p90": 3947.5,
+                "p95": 3953.0,
+                "p99": 3973.0,
+                "max": 4015,
+                "mean": 3856
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 4114,
+                "p50": 4262.5,
+                "p90": 4347.5,
+                "p95": 4353.0,
+                "p99": 4373.0,
+                "max": 4415,
+                "mean": 4256
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "d": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 1438,
+                "p50": 1556.0,
+                "p90": 1627.0,
+                "p95": 1636.0,
+                "p99": 1650.0,
+                "max": 1683,
+                "mean": 1552.46875
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 1838,
+                "p50": 1956.0,
+                "p90": 2027.0,
+                "p95": 2036.0,
+                "p99": 2050.0,
+                "max": 2083,
+                "mean": 1952.46875
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 4081,
+                "p50": 4300.0,
+                "p90": 4392.0,
+                "p95": 4412.0,
+                "p99": 4422.0,
+                "max": 4478,
+                "mean": 4278.5
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 4481,
+                "p50": 4700.0,
+                "p90": 4792.0,
+                "p95": 4812.0,
+                "p99": 4822.0,
+                "max": 4878,
+                "mean": 4678.5
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "e": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 1447,
+                "p50": 1565.0,
+                "p90": 1636.0,
+                "p95": 1645.0,
+                "p99": 1659.0,
+                "max": 1692,
+                "mean": 1561.46875
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 1847,
+                "p50": 1965.0,
+                "p90": 2036.0,
+                "p95": 2045.0,
+                "p99": 2059.0,
+                "max": 2092,
+                "mean": 1961.46875
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 256,
+                "min": 6327,
+                "p50": 7043.5,
+                "p90": 7506.0,
+                "p95": 7528.0,
+                "p99": 7650.0,
+                "max": 7840,
+                "mean": 7029.21875
+              },
+              "prompt_plus_budget": {
+                "n": 256,
+                "min": 6727,
+                "p50": 7443.5,
+                "p90": 7906.0,
+                "p95": 7928.0,
+                "p99": 8050.0,
+                "max": 8240,
+                "mean": 7429.21875
+              },
+              "prompts_over_6000": 256,
+              "items_over_6000": 256,
+              "prompts_over_context": 2,
+              "items_over_context": 2
+            }
+          }
+        },
+        "tokenizers": {
+          "Qwen/Qwen2.5-7B-Instruct": {
+            "status": "unavailable_offline",
+            "reason": "transformers is not installed"
+          },
+          "Qwen/Qwen2.5-14B-Instruct-AWQ": {
+            "status": "unavailable_offline",
+            "reason": "transformers is not installed"
+          },
+          "Qwen/Qwen2.5-32B-Instruct-AWQ": {
+            "status": "unavailable_offline",
+            "reason": "transformers is not installed"
+          }
+        },
+        "note": "Proxies exclude chat-template overhead and are NOT token counts or bounds. No prompts are truncated or excluded. Exact preflight is mandatory; 8k context does not guarantee 32B AWQ fits L4 GPU memory.",
+        "context_fit": "UNVERIFIED_REQUIRES_PREFLIGHT"
+      }
+    },
+    {
+      "name": "E4 DEV",
+      "directory": "experiments/E2E4/colab/out/dev/E4",
+      "manifest": {
+        "experiment": "E4",
+        "split": "dev",
+        "selection": "native",
+        "prompts": 48,
+        "items": 16,
+        "cells": [
+          "checked_countermodel",
+          "dishonest_critic",
+          "prose_critique"
+        ],
+        "instructions": [
+          "harness"
+        ],
+        "max_new_tokens": 400,
+        "model_calls": 0,
+        "head": "9d055ffa367102312e0d9cf957c4a8fe2de06d50",
+        "harness_system_source": "claude/harness:f016ab082fd8ad919fab6fc7c6ace87b50cb9677:ve_experiments/llm.py",
+        "sources_sha256": {
+          "experiments/E2E4/E4/PREREG.md": "962bb605cb4abb5214c524a1ba98b59571512cb4078e4f9458bc2b0d4bfaf653",
+          "experiments/E2E4/e4-dev.jsonl.gz": "71e9f0bc3b459c7410e674d24a21dd50b202dccfa1a76e9952dc2b7c74da2893",
+          "experiments/E2E4/splits.json": "56ef1b4de981d1c2c127912116dda27b3c17fee2203811242ce976e9b077c626",
+          "experiments/E2E4/materials.py": "ffc7d440afcdfec533d2b6b4a6210f05dc1e0e420a7dcfad5ab67f4fd993b5fd",
+          "experiments/E2E4/e4.py": "898c9e989b700c710c9a91d100a0264e9d1deb6769b5ff12c1a5305c8284ef23",
+          "experiments/E2E4/common.py": "21cd0380a5815afa15069493214c63fb1197b60d6c8e9a220b90166868316803",
+          "experiments/E2E4/fol.py": "da4e757d6f9418aea5f34cfccaca30e4113be419a9a5fd90246e964ae90b0a80",
+          "experiments/colab_common.py": "9f8b39ce38ff1fc4dd6c7dfc46d1d0c91c8f8d33585adb0d694ed7086813be55",
+          "experiments/E2E4/colab/export_prompts.py": "ad4df7dc399998b231ece0b378f0afcb21e58f9c6ee56c4edf358524b542e1f3",
+          "experiments/E5/colab/preflight.py": "6526f8074767f822415f1a459a16ee9be5a0dad39df2187ed129b14fb28f573f"
+        },
+        "files_sha256": {
+          "gpu/job.json": "0212e4b4b220c858eb51b906f0c9bc0ea0de2c94bf734c98383131026af789b0",
+          "gpu/models.json": "be102ac311922213554c4e3a3fec5c43b7e33002927cff2c2f69b09dc877694c",
+          "gpu/preflight.py": "6526f8074767f822415f1a459a16ee9be5a0dad39df2187ed129b14fb28f573f",
+          "gpu/prompts.jsonl": "edf04f8bb5137512e83e92dc00aa86d682c24ca77b6dd69f035dbafb982827bd",
+          "labels.jsonl": "d30fd2056fb7c1f4474cf5ca22aa5f87eec6320fe7099461b4c09ed4b558e067",
+          "lengths.json": "f0c0f96a2ede5c5ed7bd2f191f764f2649ba684a3454b483647f42f06ead3d20"
+        },
+        "upload_directory": "gpu",
+        "labels_upload": false,
+        "context_fit": "UNVERIFIED_REQUIRES_PREFLIGHT"
+      },
+      "lengths": {
+        "max_model_len_hint": 8192,
+        "max_prompt_tokens": 7792,
+        "whitespace_proxy": {
+          "prompt_tokens": {
+            "n": 48,
+            "min": 149,
+            "p50": 157.5,
+            "p90": 163.0,
+            "p95": 163.0,
+            "p99": 163.0,
+            "max": 163,
+            "mean": 156.75
+          },
+          "prompt_plus_budget": {
+            "n": 48,
+            "min": 549,
+            "p50": 557.5,
+            "p90": 563.0,
+            "p95": 563.0,
+            "p99": 563.0,
+            "max": 563,
+            "mean": 556.75
+          },
+          "prompts_over_6000": 0,
+          "items_over_6000": 0,
+          "prompts_over_context": 0,
+          "items_over_context": 0
+        },
+        "punctuation_proxy": {
+          "prompt_tokens": {
+            "n": 48,
+            "min": 201,
+            "p50": 240.5,
+            "p90": 265.0,
+            "p95": 275.0,
+            "p99": 275.0,
+            "max": 275,
+            "mean": 238.5
+          },
+          "prompt_plus_budget": {
+            "n": 48,
+            "min": 601,
+            "p50": 640.5,
+            "p90": 665.0,
+            "p95": 675.0,
+            "p99": 675.0,
+            "max": 675,
+            "mean": 638.5
+          },
+          "prompts_over_6000": 0,
+          "items_over_6000": 0,
+          "prompts_over_context": 0,
+          "items_over_context": 0
+        },
+        "characters": {
+          "n": 48,
+          "min": 1031,
+          "p50": 1086.5,
+          "p90": 1127.0,
+          "p95": 1141.0,
+          "p99": 1144.0,
+          "max": 1144,
+          "mean": 1085.0833333333333
+        },
+        "by_cell": {
+          "checked_countermodel": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 16,
+                "min": 149,
+                "p50": 157.5,
+                "p90": 163.0,
+                "p95": 163.0,
+                "p99": 163.0,
+                "max": 163,
+                "mean": 156.75
+              },
+              "prompt_plus_budget": {
+                "n": 16,
+                "min": 549,
+                "p50": 557.5,
+                "p90": 563.0,
+                "p95": 563.0,
+                "p99": 563.0,
+                "max": 563,
+                "mean": 556.75
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 16,
+                "min": 238,
+                "p50": 255.5,
+                "p90": 275.0,
+                "p95": 275.0,
+                "p99": 275.0,
+                "max": 275,
+                "mean": 256
+              },
+              "prompt_plus_budget": {
+                "n": 16,
+                "min": 638,
+                "p50": 655.5,
+                "p90": 675.0,
+                "p95": 675.0,
+                "p99": 675.0,
+                "max": 675,
+                "mean": 656
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "prose_critique": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 16,
+                "min": 149,
+                "p50": 157.5,
+                "p90": 163.0,
+                "p95": 163.0,
+                "p99": 163.0,
+                "max": 163,
+                "mean": 156.75
+              },
+              "prompt_plus_budget": {
+                "n": 16,
+                "min": 549,
+                "p50": 557.5,
+                "p90": 563.0,
+                "p95": 563.0,
+                "p99": 563.0,
+                "max": 563,
+                "mean": 556.75
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 16,
+                "min": 201,
+                "p50": 213.5,
+                "p90": 225.0,
+                "p95": 225.0,
+                "p99": 225.0,
+                "max": 225,
+                "mean": 213.25
+              },
+              "prompt_plus_budget": {
+                "n": 16,
+                "min": 601,
+                "p50": 613.5,
+                "p90": 625.0,
+                "p95": 625.0,
+                "p99": 625.0,
+                "max": 625,
+                "mean": 613.25
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "dishonest_critic": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 16,
+                "min": 149,
+                "p50": 157.5,
+                "p90": 163.0,
+                "p95": 163.0,
+                "p99": 163.0,
+                "max": 163,
+                "mean": 156.75
+              },
+              "prompt_plus_budget": {
+                "n": 16,
+                "min": 549,
+                "p50": 557.5,
+                "p90": 563.0,
+                "p95": 563.0,
+                "p99": 563.0,
+                "max": 563,
+                "mean": 556.75
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 16,
+                "min": 229,
+                "p50": 245.5,
+                "p90": 265.0,
+                "p95": 265.0,
+                "p99": 265.0,
+                "max": 265,
+                "mean": 246.25
+              },
+              "prompt_plus_budget": {
+                "n": 16,
+                "min": 629,
+                "p50": 645.5,
+                "p90": 665.0,
+                "p95": 665.0,
+                "p99": 665.0,
+                "max": 665,
+                "mean": 646.25
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          }
+        },
+        "tokenizers": {
+          "Qwen/Qwen2.5-7B-Instruct": {
+            "status": "unavailable_offline",
+            "reason": "transformers is not installed"
+          },
+          "Qwen/Qwen2.5-14B-Instruct-AWQ": {
+            "status": "unavailable_offline",
+            "reason": "transformers is not installed"
+          },
+          "Qwen/Qwen2.5-32B-Instruct-AWQ": {
+            "status": "unavailable_offline",
+            "reason": "transformers is not installed"
+          }
+        },
+        "note": "Proxies exclude chat-template overhead and are NOT token counts or bounds. No prompts are truncated or excluded. Exact preflight is mandatory; 8k context does not guarantee 32B AWQ fits L4 GPU memory.",
+        "context_fit": "UNVERIFIED_REQUIRES_PREFLIGHT"
+      }
+    },
+    {
+      "name": "E2 DEV",
+      "directory": "experiments/E2E4/colab/out/dev/E2",
+      "manifest": {
+        "experiment": "E2",
+        "split": "dev",
+        "selection": "native",
+        "prompts": 432,
+        "items": 144,
+        "cells": [
+          "direct",
+          "structured_fol",
+          "ve"
+        ],
+        "instructions": [
+          "harness"
+        ],
+        "max_new_tokens": 400,
+        "model_calls": 0,
+        "head": "9d055ffa367102312e0d9cf957c4a8fe2de06d50",
+        "harness_system_source": "claude/harness:f016ab082fd8ad919fab6fc7c6ace87b50cb9677:ve_experiments/llm.py",
+        "sources_sha256": {
+          "experiments/E2E4/E2/PREREG.md": "eda5e604dbec3047e3b43356eeebfd1c865e5d7c14fad68edeeb9691bc009408",
+          "experiments/E2E4/e2-dev.jsonl.gz": "24b374d0c0f519bc073d2f4b81463dd37c2ab83728844964dd8df5b417553e85",
+          "experiments/E2E4/splits.json": "56ef1b4de981d1c2c127912116dda27b3c17fee2203811242ce976e9b077c626",
+          "experiments/E2E4/materials.py": "ffc7d440afcdfec533d2b6b4a6210f05dc1e0e420a7dcfad5ab67f4fd993b5fd",
+          "experiments/E2E4/e2.py": "4cd47816bbd3a2065aa5171a9c1707317119023e89f06a59c573cbfcb96ac293",
+          "experiments/E2E4/common.py": "21cd0380a5815afa15069493214c63fb1197b60d6c8e9a220b90166868316803",
+          "experiments/E2E4/fol.py": "da4e757d6f9418aea5f34cfccaca30e4113be419a9a5fd90246e964ae90b0a80",
+          "experiments/E2E4/certificates/conjunct_extension.jsonl.gz": "71c3a28da229ffd2d51910a1bc174f06923f1b0f66479993e17db6ceb5729807",
+          "experiments/E2E4/certificates/dev_deep.jsonl.gz": "ad5466cf942c055d34d4c7d49baf9ea7f0e789541595b289eca2db202dc5c8a0",
+          "experiments/E2E4/certificates/dev_guarded.jsonl.gz": "926769e1cb4537f5b5496f25669e9b74bf42df9aee9891ba764eb43d83a881fe",
+          "experiments/E2E4/certificates/dev_nested.jsonl.gz": "8e6181226881f9d513f8eb9922b52b620cd0e5b87e21307ae6af6fce5ea16e26",
+          "experiments/E2E4/certificates/dev_repeated.jsonl.gz": "0634ad24ccd24ca3bdeea60340485f4449e1ecd1d494d38f1aa083d1fcffcecc",
+          "experiments/E2E4/certificates/disjunct_extension.jsonl.gz": "bc7d416049f085e3bb7a70600b81f96f26e3cc5c95313cd3cc42f400cdbd947a",
+          "experiments/E2E4/certificates/mixed_clauses.jsonl.gz": "791425a7bf39e12b1f85ac23402bed85e900000304c0389f3128883aad38202c",
+          "experiments/E2E4/certificates/nested_or.jsonl.gz": "3f095660673962cdd20b2e75b2f89857545dcd6375b1d435ba98c2d94f538f55",
+          "experiments/E2E4/certificates/outer_disjunction.jsonl.gz": "0197cf7e58e870419ff6417b61406747e9cffa07961d5648418f0d7692825d0a",
+          "experiments/E2E4/certificates/parallel_conjuncts.jsonl.gz": "515bcaf3285b37d1e67136ebee8f904bc2489e50efb55fee45a306bbf2130dfe",
+          "experiments/E2E4/certificates/parallel_disjuncts.jsonl.gz": "a9544f038be309d9d0cf221c572daac9ef98afba5f647b56ff1932d557066a50",
+          "experiments/E2E4/certificates/two_conjunctions.jsonl.gz": "02474160644571c2e7c02072716fa048e12604870d2adf45d526eb3b0a4a9fa0",
+          "experiments/colab_common.py": "9f8b39ce38ff1fc4dd6c7dfc46d1d0c91c8f8d33585adb0d694ed7086813be55",
+          "experiments/E2E4/colab/export_prompts.py": "ad4df7dc399998b231ece0b378f0afcb21e58f9c6ee56c4edf358524b542e1f3",
+          "experiments/E5/colab/preflight.py": "6526f8074767f822415f1a459a16ee9be5a0dad39df2187ed129b14fb28f573f"
+        },
+        "files_sha256": {
+          "gpu/job.json": "24e7a80e7109b211d39f0a82d0754a2a6eb286232e53fc786c752e122848e430",
+          "gpu/models.json": "be102ac311922213554c4e3a3fec5c43b7e33002927cff2c2f69b09dc877694c",
+          "gpu/preflight.py": "6526f8074767f822415f1a459a16ee9be5a0dad39df2187ed129b14fb28f573f",
+          "gpu/prompts.jsonl": "a7d0667014323354a47815b6a97815ce09e74a1cebd85ab5b2876e0b96401e96",
+          "labels.jsonl": "d433ebec304f06fb9e567ed0e8812c69ceef107239faf54fa57ffe9e951add44",
+          "lengths.json": "dd2f51dcfd8d6ed774dd03dab90ec4c0c75461190f34129353f723f9391df34b"
+        },
+        "upload_directory": "gpu",
+        "labels_upload": false,
+        "context_fit": "UNVERIFIED_REQUIRES_PREFLIGHT"
+      },
+      "lengths": {
+        "max_model_len_hint": 8192,
+        "max_prompt_tokens": 7792,
+        "whitespace_proxy": {
+          "prompt_tokens": {
+            "n": 432,
+            "min": 189,
+            "p50": 337.5,
+            "p90": 6886.0,
+            "p95": 10898.0,
+            "p99": 11934.0,
+            "max": 11934,
+            "mean": 1978.5416666666667
+          },
+          "prompt_plus_budget": {
+            "n": 432,
+            "min": 589,
+            "p50": 737.5,
+            "p90": 7286.0,
+            "p95": 11298.0,
+            "p99": 12334.0,
+            "max": 12334,
+            "mean": 2378.5416666666665
+          },
+          "prompts_over_6000": 54,
+          "items_over_6000": 30,
+          "prompts_over_context": 24,
+          "items_over_context": 24
+        },
+        "punctuation_proxy": {
+          "prompt_tokens": {
+            "n": 432,
+            "min": 472,
+            "p50": 877.0,
+            "p90": 24817.0,
+            "p95": 28704.0,
+            "p99": 31035.0,
+            "max": 31035,
+            "mean": 6014.416666666667
+          },
+          "prompt_plus_budget": {
+            "n": 432,
+            "min": 872,
+            "p50": 1277.0,
+            "p90": 25217.0,
+            "p95": 29104.0,
+            "p99": 31435.0,
+            "max": 31435,
+            "mean": 6414.416666666667
+          },
+          "prompts_over_6000": 96,
+          "items_over_6000": 48,
+          "prompts_over_context": 96,
+          "items_over_context": 48
+        },
+        "characters": {
+          "n": 432,
+          "min": 1586,
+          "p50": 2816.0,
+          "p90": 70102.0,
+          "p95": 84801.0,
+          "p99": 90758.0,
+          "max": 91786,
+          "mean": 17493.68287037037
+        },
+        "by_cell": {
+          "direct|size=256|workload=growing": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 10898,
+                "p50": 10898.0,
+                "p90": 11934.0,
+                "p95": 11934.0,
+                "p99": 11934.0,
+                "max": 11934,
+                "mean": 11157
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 11298,
+                "p50": 11298.0,
+                "p90": 12334.0,
+                "p95": 12334.0,
+                "p99": 12334.0,
+                "max": 12334,
+                "mean": 11557
+              },
+              "prompts_over_6000": 24,
+              "items_over_6000": 24,
+              "prompts_over_context": 24,
+              "items_over_context": 24
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 28704,
+                "p50": 28704.0,
+                "p90": 31035.0,
+                "p95": 31035.0,
+                "p99": 31035.0,
+                "max": 31035,
+                "mean": 29286.75
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 29104,
+                "p50": 29104.0,
+                "p90": 31435.0,
+                "p95": 31435.0,
+                "p99": 31435.0,
+                "max": 31435,
+                "mean": 29686.75
+              },
+              "prompts_over_6000": 24,
+              "items_over_6000": 24,
+              "prompts_over_context": 24,
+              "items_over_context": 24
+            }
+          },
+          "structured_fol|size=256|workload=growing": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 5297,
+                "p50": 5303.0,
+                "p90": 5345.0,
+                "p95": 5358.6,
+                "p99": 5361.0,
+                "max": 5361,
+                "mean": 5316.333333333333
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 5697,
+                "p50": 5703.0,
+                "p90": 5745.0,
+                "p95": 5758.6,
+                "p99": 5761.0,
+                "max": 5761,
+                "mean": 5716.333333333333
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 24000,
+                "p50": 24021.0,
+                "p90": 24222.0,
+                "p95": 24265.35,
+                "p99": 24273.0,
+                "max": 24273,
+                "mean": 24084.416666666668
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 24400,
+                "p50": 24421.0,
+                "p90": 24622.0,
+                "p95": 24665.35,
+                "p99": 24673.0,
+                "max": 24673,
+                "mean": 24484.416666666668
+              },
+              "prompts_over_6000": 24,
+              "items_over_6000": 24,
+              "prompts_over_context": 24,
+              "items_over_context": 24
+            }
+          },
+          "ve|size=256|workload=growing": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 6886,
+                "p50": 6898.0,
+                "p90": 6956.0,
+                "p95": 6983.2,
+                "p99": 6988.0,
+                "max": 6988,
+                "mean": 6916
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 7286,
+                "p50": 7298.0,
+                "p90": 7356.0,
+                "p95": 7383.2,
+                "p99": 7388.0,
+                "max": 7388,
+                "mean": 7316
+              },
+              "prompts_over_6000": 24,
+              "items_over_6000": 24,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 24817,
+                "p50": 24844.0,
+                "p90": 25058.0,
+                "p95": 25114.95,
+                "p99": 25125.0,
+                "max": 25125,
+                "mean": 24911.083333333332
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 25217,
+                "p50": 25244.0,
+                "p90": 25458.0,
+                "p95": 25514.95,
+                "p99": 25525.0,
+                "max": 25525,
+                "mean": 25311.083333333332
+              },
+              "prompts_over_6000": 24,
+              "items_over_6000": 24,
+              "prompts_over_context": 24,
+              "items_over_context": 24
+            }
+          },
+          "direct|size=32|workload=fixed": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 760,
+                "p50": 777.0,
+                "p90": 917.0,
+                "p95": 917.0,
+                "p99": 917.0,
+                "max": 917,
+                "mean": 809.2083333333334
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 1160,
+                "p50": 1177.0,
+                "p90": 1317.0,
+                "p95": 1317.0,
+                "p99": 1317.0,
+                "max": 1317,
+                "mean": 1209.2083333333333
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 1508,
+                "p50": 1546.0,
+                "p90": 1861.0,
+                "p95": 1861.0,
+                "p99": 1861.0,
+                "max": 1861,
+                "mean": 1618.5
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 1908,
+                "p50": 1946.0,
+                "p90": 2261.0,
+                "p95": 2261.0,
+                "p99": 2261.0,
+                "max": 2261,
+                "mean": 2018.5
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "structured_fol|size=32|workload=fixed": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 189,
+                "p50": 199.0,
+                "p90": 234.0,
+                "p95": 247.59999999999997,
+                "p99": 250.0,
+                "max": 250,
+                "mean": 211.33333333333334
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 589,
+                "p50": 599.0,
+                "p90": 634.0,
+                "p95": 647.5999999999999,
+                "p99": 650.0,
+                "max": 650,
+                "mean": 611.3333333333334
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 511,
+                "p50": 547.0,
+                "p90": 713.0,
+                "p95": 756.3499999999999,
+                "p99": 764.0,
+                "max": 764,
+                "mean": 603.2916666666666
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 911,
+                "p50": 947.0,
+                "p90": 1113.0,
+                "p95": 1156.35,
+                "p99": 1164.0,
+                "max": 1164,
+                "mean": 1003.2916666666666
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "ve|size=32|workload=fixed": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 239,
+                "p50": 260.0,
+                "p90": 309.0,
+                "p95": 336.19999999999993,
+                "p99": 341.0,
+                "max": 341,
+                "mean": 277.5416666666667
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 639,
+                "p50": 660.0,
+                "p90": 709.0,
+                "p95": 736.1999999999999,
+                "p99": 741.0,
+                "max": 741,
+                "mean": 677.5416666666666
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 554,
+                "p50": 601.0,
+                "p90": 779.0,
+                "p95": 835.9499999999998,
+                "p99": 846.0,
+                "max": 846,
+                "mean": 661.8333333333334
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 954,
+                "p50": 1001.0,
+                "p90": 1179.0,
+                "p95": 1235.9499999999998,
+                "p99": 1246.0,
+                "max": 1246,
+                "mean": 1061.8333333333333
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "direct|size=4|workload=fixed": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 228,
+                "p50": 245.0,
+                "p90": 273.0,
+                "p95": 273.0,
+                "p99": 273.0,
+                "max": 273,
+                "mean": 249.41666666666666
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 628,
+                "p50": 645.0,
+                "p90": 673.0,
+                "p95": 673.0,
+                "p99": 673.0,
+                "max": 673,
+                "mean": 649.4166666666666
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 472,
+                "p50": 510.0,
+                "p90": 573.0,
+                "p95": 573.0,
+                "p99": 573.0,
+                "max": 573,
+                "mean": 519.9583333333334
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 872,
+                "p50": 910.0,
+                "p90": 973.0,
+                "p95": 973.0,
+                "p99": 973.0,
+                "max": 973,
+                "mean": 919.9583333333334
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "structured_fol|size=4|workload=fixed": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 189,
+                "p50": 199.0,
+                "p90": 234.0,
+                "p95": 247.59999999999997,
+                "p99": 250.0,
+                "max": 250,
+                "mean": 211.41666666666666
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 589,
+                "p50": 599.0,
+                "p90": 634.0,
+                "p95": 647.5999999999999,
+                "p99": 650.0,
+                "max": 650,
+                "mean": 611.4166666666666
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 511,
+                "p50": 547.0,
+                "p90": 713.0,
+                "p95": 756.3499999999999,
+                "p99": 764.0,
+                "max": 764,
+                "mean": 603.625
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 911,
+                "p50": 947.0,
+                "p90": 1113.0,
+                "p95": 1156.35,
+                "p99": 1164.0,
+                "max": 1164,
+                "mean": 1003.625
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "ve|size=4|workload=fixed": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 239,
+                "p50": 260.0,
+                "p90": 309.0,
+                "p95": 336.19999999999993,
+                "p99": 341.0,
+                "max": 341,
+                "mean": 277.75
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 639,
+                "p50": 660.0,
+                "p90": 709.0,
+                "p95": 736.1999999999999,
+                "p99": 741.0,
+                "max": 741,
+                "mean": 677.75
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 554,
+                "p50": 601.0,
+                "p90": 779.0,
+                "p95": 835.9499999999998,
+                "p99": 846.0,
+                "max": 846,
+                "mean": 662.2916666666666
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 954,
+                "p50": 1001.0,
+                "p90": 1179.0,
+                "p95": 1235.9499999999998,
+                "p99": 1246.0,
+                "max": 1246,
+                "mean": 1062.2916666666667
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "direct|size=32|workload=growing": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 1490,
+                "p50": 1490.0,
+                "p90": 1630.0,
+                "p95": 1630.0,
+                "p99": 1630.0,
+                "max": 1630,
+                "mean": 1525
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 1890,
+                "p50": 1890.0,
+                "p90": 2030.0,
+                "p95": 2030.0,
+                "p99": 2030.0,
+                "max": 2030,
+                "mean": 1925
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 3840,
+                "p50": 3840.0,
+                "p90": 4155.0,
+                "p95": 4155.0,
+                "p99": 4155.0,
+                "max": 4155,
+                "mean": 3918.75
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 4240,
+                "p50": 4240.0,
+                "p90": 4555.0,
+                "p95": 4555.0,
+                "p99": 4555.0,
+                "max": 4555,
+                "mean": 4318.75
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "structured_fol|size=32|workload=growing": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 817,
+                "p50": 823.0,
+                "p90": 865.0,
+                "p95": 878.5999999999999,
+                "p99": 881.0,
+                "max": 881,
+                "mean": 836.3333333333334
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 1217,
+                "p50": 1223.0,
+                "p90": 1265.0,
+                "p95": 1278.6,
+                "p99": 1281.0,
+                "max": 1281,
+                "mean": 1236.3333333333333
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 3392,
+                "p50": 3413.0,
+                "p90": 3614.0,
+                "p95": 3657.35,
+                "p99": 3665.0,
+                "max": 3665,
+                "mean": 3476.4166666666665
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 3792,
+                "p50": 3813.0,
+                "p90": 4014.0,
+                "p95": 4057.35,
+                "p99": 4065.0,
+                "max": 4065,
+                "mean": 3876.4166666666665
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "ve|size=32|workload=growing": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 1062,
+                "p50": 1074.0,
+                "p90": 1132.0,
+                "p95": 1159.1999999999998,
+                "p99": 1164.0,
+                "max": 1164,
+                "mean": 1092
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 1462,
+                "p50": 1474.0,
+                "p90": 1532.0,
+                "p95": 1559.1999999999998,
+                "p99": 1564.0,
+                "max": 1564,
+                "mean": 1492
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 3537,
+                "p50": 3564.0,
+                "p90": 3778.0,
+                "p95": 3834.95,
+                "p99": 3845.0,
+                "max": 3845,
+                "mean": 3631.0833333333335
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 3937,
+                "p50": 3964.0,
+                "p90": 4178.0,
+                "p95": 4234.95,
+                "p99": 4245.0,
+                "max": 4245,
+                "mean": 4031.0833333333335
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "direct|size=256|workload=fixed": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 5016,
+                "p50": 5033.0,
+                "p90": 6069.0,
+                "p95": 6069.0,
+                "p99": 6069.0,
+                "max": 6069,
+                "mean": 5289.625
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 5416,
+                "p50": 5433.0,
+                "p90": 6469.0,
+                "p95": 6469.0,
+                "p99": 6469.0,
+                "max": 6469,
+                "mean": 5689.625
+              },
+              "prompts_over_6000": 6,
+              "items_over_6000": 6,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 9796,
+                "p50": 9834.0,
+                "p90": 12165.0,
+                "p95": 12165.0,
+                "p99": 12165.0,
+                "max": 12165,
+                "mean": 10411.416666666666
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 10196,
+                "p50": 10234.0,
+                "p90": 12565.0,
+                "p95": 12565.0,
+                "p99": 12565.0,
+                "max": 12565,
+                "mean": 10811.416666666666
+              },
+              "prompts_over_6000": 24,
+              "items_over_6000": 24,
+              "prompts_over_context": 24,
+              "items_over_context": 24
+            }
+          },
+          "structured_fol|size=256|workload=fixed": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 189,
+                "p50": 199.0,
+                "p90": 234.0,
+                "p95": 247.59999999999997,
+                "p99": 250.0,
+                "max": 250,
+                "mean": 211.5
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 589,
+                "p50": 599.0,
+                "p90": 634.0,
+                "p95": 647.5999999999999,
+                "p99": 650.0,
+                "max": 650,
+                "mean": 611.5
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 511,
+                "p50": 547.0,
+                "p90": 713.0,
+                "p95": 756.3499999999999,
+                "p99": 764.0,
+                "max": 764,
+                "mean": 603.9583333333334
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 911,
+                "p50": 947.0,
+                "p90": 1113.0,
+                "p95": 1156.35,
+                "p99": 1164.0,
+                "max": 1164,
+                "mean": 1003.9583333333334
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "ve|size=256|workload=fixed": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 239,
+                "p50": 260.0,
+                "p90": 309.0,
+                "p95": 336.19999999999993,
+                "p99": 341.0,
+                "max": 341,
+                "mean": 277.9583333333333
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 639,
+                "p50": 660.0,
+                "p90": 709.0,
+                "p95": 736.1999999999999,
+                "p99": 741.0,
+                "max": 741,
+                "mean": 677.9583333333334
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 554,
+                "p50": 601.0,
+                "p90": 779.0,
+                "p95": 835.9499999999998,
+                "p99": 846.0,
+                "max": 846,
+                "mean": 662.75
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 954,
+                "p50": 1001.0,
+                "p90": 1179.0,
+                "p95": 1235.9499999999998,
+                "p99": 1246.0,
+                "max": 1246,
+                "mean": 1062.75
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "direct|size=4|workload=growing": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 297,
+                "p50": 314.0,
+                "p90": 342.0,
+                "p95": 342.0,
+                "p99": 342.0,
+                "max": 342,
+                "mean": 319.0833333333333
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 697,
+                "p50": 714.0,
+                "p90": 742.0,
+                "p95": 742.0,
+                "p99": 742.0,
+                "max": 742,
+                "mean": 719.0833333333334
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 694,
+                "p50": 732.0,
+                "p90": 795.0,
+                "p95": 795.0,
+                "p99": 795.0,
+                "max": 795,
+                "mean": 743.4583333333334
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 1094,
+                "p50": 1132.0,
+                "p90": 1195.0,
+                "p95": 1195.0,
+                "p99": 1195.0,
+                "max": 1195,
+                "mean": 1143.4583333333333
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "structured_fol|size=4|workload=growing": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 249,
+                "p50": 263.0,
+                "p90": 305.0,
+                "p95": 318.59999999999997,
+                "p99": 321.0,
+                "max": 321,
+                "mean": 274.9166666666667
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 649,
+                "p50": 663.0,
+                "p90": 705.0,
+                "p95": 718.5999999999999,
+                "p99": 721.0,
+                "max": 721,
+                "mean": 674.9166666666666
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 787,
+                "p50": 837.0,
+                "p90": 1036.5,
+                "p95": 1081.35,
+                "p99": 1089.0,
+                "max": 1089,
+                "mean": 895.25
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 1187,
+                "p50": 1237.0,
+                "p90": 1436.5,
+                "p95": 1481.35,
+                "p99": 1489.0,
+                "max": 1489,
+                "mean": 1295.25
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          },
+          "ve|size=4|workload=growing": {
+            "whitespace_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 317,
+                "p50": 346.0,
+                "p90": 404.0,
+                "p95": 431.19999999999993,
+                "p99": 436.0,
+                "max": 436,
+                "mean": 361.3333333333333
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 717,
+                "p50": 746.0,
+                "p90": 804.0,
+                "p95": 831.1999999999999,
+                "p99": 836.0,
+                "max": 836,
+                "mean": 761.3333333333334
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            },
+            "punctuation_proxy": {
+              "prompt_tokens": {
+                "n": 24,
+                "min": 839,
+                "p50": 904.0,
+                "p90": 1116.5,
+                "p95": 1174.9499999999998,
+                "p99": 1185.0,
+                "max": 1185,
+                "mean": 964.6666666666666
+              },
+              "prompt_plus_budget": {
+                "n": 24,
+                "min": 1239,
+                "p50": 1304.0,
+                "p90": 1516.5,
+                "p95": 1574.9499999999998,
+                "p99": 1585.0,
+                "max": 1585,
+                "mean": 1364.6666666666667
+              },
+              "prompts_over_6000": 0,
+              "items_over_6000": 0,
+              "prompts_over_context": 0,
+              "items_over_context": 0
+            }
+          }
+        },
+        "tokenizers": {
+          "Qwen/Qwen2.5-7B-Instruct": {
+            "status": "unavailable_offline",
+            "reason": "transformers is not installed"
+          },
+          "Qwen/Qwen2.5-14B-Instruct-AWQ": {
+            "status": "unavailable_offline",
+            "reason": "transformers is not installed"
+          },
+          "Qwen/Qwen2.5-32B-Instruct-AWQ": {
+            "status": "unavailable_offline",
+            "reason": "transformers is not installed"
+          }
+        },
+        "note": "Proxies exclude chat-template overhead and are NOT token counts or bounds. No prompts are truncated or excluded. Exact preflight is mandatory; 8k context does not guarantee 32B AWQ fits L4 GPU memory.",
+        "context_fit": "UNVERIFIED_REQUIRES_PREFLIGHT"
+      }
+    }
+  ]
+}

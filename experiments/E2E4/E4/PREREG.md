@@ -5,6 +5,18 @@ template pilot was at floor/ceiling. This revision needs a fresh dev-only pilot;
 its prose false-approval rate is not yet known. E4 is a countermodel/display
 mechanism experiment, not by itself evidence of an advantage specific to VE.
 
+## Colab DEV output budget (not a scored freeze)
+
+max_new_tokens: 400
+
+The offline exporter reads this cap; the DEV ladder uses temperature 0, seed 0,
+one response per item/cell, and an 8192-token context including the response.
+The three judges are Qwen2.5-7B-Instruct, 14B-Instruct-AWQ and 32B-Instruct-AWQ.
+Export full prompts and require exact chat-template counts to pass preflight
+before inference. Never truncate. Whitespace counts do not establish token fit
+or L4 memory fit. Scored export requires this file to begin `Status: FROZEN`
+and equal HEAD byte for byte. This DEV budget does not freeze scored settings.
+
 ## Primary contrast
 
 Per judge, false approval of invalid inferences in checked-countermodel minus

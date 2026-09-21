@@ -8,6 +8,21 @@ separately. This document freezes construction and proposed analysis; judge IDs,
 context limits, sampling counts and the dev-selected difficulty/style remain to
 be committed before scoring. Do not call the earlier pilot a pilot of this revision.
 
+## Colab DEV output budget (not a scored freeze)
+
+max_new_tokens: 400
+
+The offline Colab DEV exporter reads this response-token cap. Use temperature 0,
+seed 0, one response per assigned item/cell/style, and an 8192-token model context
+(prompt plus this cap). Export complete prompts without truncation. Exact Qwen
+chat-template token counts must pass the exported preflight before inference;
+whitespace counts alone do not establish fit. No L4 memory-fit claim follows
+from context length. The DEV ladder is Qwen2.5-7B-Instruct, 14B-Instruct-AWQ and
+32B-Instruct-AWQ. Model revisions and actual GPU settings are recorded by the
+job runner. This DEV budget does not select a judge or freeze scored settings.
+Scored export requires a literal first line `Status: FROZEN` and working bytes
+identical to HEAD. This draft deliberately does not satisfy that gate.
+
 ## Primary contrast
 
 Per judge, false approval b−a on BAD-GROUNDING, VALID-DEDUCTION items, within
