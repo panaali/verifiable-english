@@ -1,0 +1,156 @@
+{
+ "population": 3235,
+ "seed": 20260921,
+ "sample": [
+  {
+   "id": "e773:c",
+   "nl": "Bank of America payment cards are international.",
+   "fol": "PaymentCard(bankOfAmerica) ∧ International(bankOfAmerica)"
+  },
+  {
+   "id": "e115:c",
+   "nl": "White Town was a successful band.",
+   "fol": "Successful(whiteTown)"
+  },
+  {
+   "id": "e545:c",
+   "nl": "Henry will not be ejected from the rest of the game.",
+   "fol": "¬EjectFromRestOfGame(henry)"
+  },
+  {
+   "id": "e1336:c",
+   "nl": "The sea eel is an eel.",
+   "fol": "Eel(seaEel)"
+  },
+  {
+   "id": "e1203:c",
+   "nl": "James does not have a high income.",
+   "fol": "¬HighIncome(james)"
+  },
+  {
+   "id": "s47:p2",
+   "nl": "If a child is exposed to a controlled substance, they are in chemical endangerment.",
+   "fol": "∀x ∀y ((Child(x) ∧ ControlledSubstances(y) ∧ ExposedTo(x, y)) → InChemicalEndangerment(x))"
+  },
+  {
+   "id": "e388:c",
+   "nl": "Supervised learning is used to train the state-of-the-art text summarization model.",
+   "fol": "∃x (SupervisedLearningAlgorithm(x) ∧ TrainedWith(stateOfTheArtTextSummarizationModel, x))"
+  },
+  {
+   "id": "s181:p3",
+   "nl": "America's top-ten favorite superheroes speak English.",
+   "fol": "∀x (American(x) ∧ TopTenFavorite(x) ∧ Superhero(x)  → Speak(x, english)) "
+  },
+  {
+   "id": "s151:p0",
+   "nl": "Barutin Cove is a cove named after the Bulgarian settlement of Barutin.",
+   "fol": "Cove(barutinCove) ∧ NamedAfter(barutinCove, barutinSettlement) ∧ LocatedIn(barutinSettlement, bulgaria)"
+  },
+  {
+   "id": "e532:c",
+   "nl": "Karen will share \"Black Mirror\" with Lisa.",
+   "fol": "ShareWith(karen, blackMirror, lisa)"
+  },
+  {
+   "id": "s482:p2",
+   "nl": "If someone in Potterville flies, then they are cool.",
+   "fol": "∀x (In(x, potterville) ∧ Fly(x) → Cool(x))"
+  },
+  {
+   "id": "s131:p4",
+   "nl": "The Machine Learning algorithm for training text summarization models requires labeled data.",
+   "fol": "∀x ((MachineLearningAlgorithm(x) ∧ TrainedWith(stateOfTheArtTextSummarizationModel, x)) → Require(x, labeledData))"
+  },
+  {
+   "id": "s129:p3",
+   "nl": "Richard Hamming researched numerical methods.",
+   "fol": "ContributedTo(richardHamming, numericalMethods)"
+  },
+  {
+   "id": "e1303:c",
+   "nl": "If Marvin is not from Mars, then Marvin is a human.",
+   "fol": "¬From(marvin, mars) → Human(marvin)"
+  },
+  {
+   "id": "s161:p1",
+   "nl": "If a student gets an A+ in English class, then his score is greater than 95.",
+   "fol": "∀x ∀y (Student(x) ∧ GetGradeIn(x, aPlus, englishClass) → EnglishClassScore(x, y) ∧ GreaterThan95(y))"
+  },
+  {
+   "id": "e968:c",
+   "nl": "Sam is living in this neighborhood and he owns at least one coffeemaker and one blender in his home.",
+   "fol": "∃y (CoffeemakerAndBlender(y) ∧ Own(sam, y))"
+  },
+  {
+   "id": "s470:p0",
+   "nl": "A Unix operating system used in the lab computers is a piece of software.",
+   "fol": "∀x (UsedIn(x, labComputer) ∧ UnixOperatingSystem(x) → Software(x))"
+  },
+  {
+   "id": "e12:c",
+   "nl": "If Thor is happy, then Peter Parker wears a uniform.",
+   "fol": "Happy(thor) → Wears(peterParker, uniform)"
+  },
+  {
+   "id": "s203:p3",
+   "nl": "Space is a vacuum.",
+   "fol": "Vacuum(space)"
+  },
+  {
+   "id": "s367:p0",
+   "nl": "All people who went to Clay's school and who make their own matcha teas every morning with ceremonial-grade matcha powder do not wake up late and start their schedules past noon regularly.",
+   "fol": "∀x (GoTo(x, claysSchool) ∧ MakeWith(x, theirOwnMatchTea, ceremonialGradePowder) → ¬(WakeUpLate(x) ∧ StartPastNoonRegularly(x, schedule)))"
+  },
+  {
+   "id": "e578:c",
+   "nl": "Space sucks.",
+   "fol": "Suck(space)"
+  },
+  {
+   "id": "e1126:c",
+   "nl": "Rina doesn't want to be addicted to caffeine or is unaware that caffeine is a drug.",
+   "fol": "¬WantToBeAddictedTo(rina, caffeine) ∨ (¬AwareThatDrug(rina, caffeine))"
+  },
+  {
+   "id": "s352:p5",
+   "nl": "If the Harvard Weekly Book Club is created under law, then it is not a private company. ",
+   "fol": "CreatedUnderLaw(harvardWeeklyBookClub) → ¬PrivateCompany(harvardWeeklyBookClub)"
+  },
+  {
+   "id": "s433:p5",
+   "nl": "Tower A is neither a building in New Haven nor a skyscraper in Manhattan.",
+   "fol": "Buildings(towerA) ∧ (¬InNewHaven(towerA)) ∧ (¬ManhattanSkyscraper(towerA))"
+  },
+  {
+   "id": "s312:p4",
+   "nl": "If Tom does not study in the United States as a foreigner, he is enrolled in an academic program.",
+   "fol": "¬StudyIn(x, unitedStates) → EnrolledIn(x, academicProgram)"
+  },
+  {
+   "id": "e573:c",
+   "nl": "It is possible to reach the yellow stage without ever reaching the green stage.",
+   "fol": "∃x (Player(x) ∧ RedToYellow(x))"
+  },
+  {
+   "id": "s428:p0",
+   "nl": "All devices belonging to the company are connected to Google Home. ",
+   "fol": "∀x ((Devices(x) ∧ BelongTo(x, company)) → ConnectTo(x, googleHome))"
+  },
+  {
+   "id": "s69:p1",
+   "nl": "After being injured, Brian Winter retired in 2012.",
+   "fol": "Retired(brianWinter) ∧ RetiredIn(brianWinter, yr2012)"
+  },
+  {
+   "id": "s217:p2",
+   "nl": "If George can compose and wants to compose, he will compose.",
+   "fol": "(WantToCompose(george) ∧ CanCompose(george)) → WillCompose(george)"
+  },
+  {
+   "id": "e964:c",
+   "nl": "The mixture contains carbon.",
+   "fol": "Contain(mixture, carbon)"
+  }
+ ]
+}

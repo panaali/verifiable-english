@@ -1,0 +1,49 @@
+{
+ "model": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+ "revision": "539535859b135b0244c91f3e59816150c8056698",
+ "weight_gb": 9.98,
+ "spec": {
+  "id": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+  "max_model_len": 4096
+ },
+ "engine_args": {
+  "model": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+  "revision": "539535859b135b0244c91f3e59816150c8056698",
+  "dtype": "auto",
+  "seed": 0,
+  "trust_remote_code": false,
+  "max_model_len": 4096,
+  "gpu_memory_utilization": 0.9
+ },
+ "vllm": "0.29.0",
+ "torch": "2.13.0+cu130",
+ "gpu": {
+  "name": "NVIDIA A100-SXM4-80GB",
+  "memory_mib": 81920,
+  "compute_cap": 8.0
+ },
+ "args": {
+  "prompts": "prompts.jsonl",
+  "out_dir": "out",
+  "models": "models.json",
+  "max_new_tokens": 400,
+  "max_model_len": 4096,
+  "temperature": 0.0,
+  "top_p": 1.0,
+  "seed": 0,
+  "batch_size": 64,
+  "limit": 0,
+  "raw_prompt": false,
+  "keep_cache": false,
+  "model_timeout_min": 420.0
+ },
+ "n_prompts": 13110,
+ "load_s": 258.4,
+ "generate_s": 881.86,
+ "input_tokens": 11605702,
+ "output_tokens": 1288680,
+ "output_tokens_per_s": 1461.3,
+ "prompts_per_s": 14.87,
+ "mean_s_per_prompt": 0.067,
+ "peak_gpu_mem_mib": "73862"
+}

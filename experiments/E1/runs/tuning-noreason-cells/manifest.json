@@ -1,0 +1,32 @@
+{
+  "experiment": "E1",
+  "split": "dev",
+  "started": "2026-09-21T02:27:19-0700",
+  "ve_backend": "ve",
+  "finished": "2026-09-21T02:57:07-0700",
+  "n_trials": 3160,
+  "n_items": 158,
+  "conditions": [
+    "single/direct|fol_symbols|none",
+    "single/direct|fol_symbols|attacker",
+    "single/direct|fol_keywords|none",
+    "single/direct|fol_keywords|attacker",
+    "single/direct|ve_strict|none",
+    "single/direct|ve_strict|attacker",
+    "single/direct|ve_natural|none",
+    "single/direct|ve_natural|attacker",
+    "single/direct|ve_fluent|none",
+    "single/direct|ve_fluent|attacker"
+  ],
+  "judges": [
+    "claude-haiku-4-5-20251001@thinking=0",
+    "gpt-5.6-luna@effort=none"
+  ],
+  "assignment": "crossed",
+  "samples": 1,
+  "seed": 0,
+  "n_failed_calls": 0,
+  "n_tool_use_trials": 0,
+  "git_head": "db51da3671a85d9da6e88d8b8655d72cf2b60a29",
+  "git_dirty": true
+}

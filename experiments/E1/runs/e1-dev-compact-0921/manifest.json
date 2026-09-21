@@ -1,0 +1,34 @@
+{
+  "experiment": "E1",
+  "split": "dev",
+  "started": "2026-09-21T08:30:27-0700",
+  "ve_backend": "ve",
+  "finished": "2026-09-21T08:30:37-0700",
+  "n_trials": 4740,
+  "n_items": 158,
+  "conditions": [
+    "fol_symbols|none",
+    "fol_symbols|attacker",
+    "fol_keywords|none",
+    "fol_keywords|attacker",
+    "ve_strict|none",
+    "ve_strict|attacker",
+    "ve_natural|none",
+    "ve_natural|attacker",
+    "ve_fluent|none",
+    "ve_fluent|attacker"
+  ],
+  "judges": [
+    "vllm:Qwen/Qwen2.5-7B-Instruct",
+    "vllm:Qwen/Qwen2.5-14B-Instruct-AWQ",
+    "vllm:Qwen/Qwen2.5-32B-Instruct-AWQ"
+  ],
+  "assignment": "crossed",
+  "samples": 1,
+  "seed": 0,
+  "n_failed_calls": 0,
+  "n_tool_use_trials": 0,
+  "n_truncated": 0,
+  "git_head": "c8efd585717dcfdd6e929a03ff17eaba2a138ccd",
+  "git_dirty": false
+}

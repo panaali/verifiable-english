@@ -1,0 +1,23 @@
+{
+  "experiment": "E1",
+  "split": "dev",
+  "started": "2026-09-21T01:57:40-0700",
+  "ve_backend": "ve",
+  "finished": "2026-09-21T02:12:47-0700",
+  "n_trials": 314,
+  "n_items": 157,
+  "conditions": [
+    "single/direct|fol_symbols|none"
+  ],
+  "judges": [
+    "claude-haiku-4-5-20251001",
+    "gpt-5.6-luna"
+  ],
+  "assignment": "crossed",
+  "samples": 1,
+  "seed": 0,
+  "n_failed_calls": 0,
+  "n_tool_use_trials": 0,
+  "git_head": "14128bf5d5f098797623fc23541965f5a7bb3823",
+  "git_dirty": true
+}
