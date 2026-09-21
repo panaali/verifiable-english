@@ -238,7 +238,7 @@ Lean result. The default Python API continues to use Python replay.
 ## Opt-in closure@0 fixtures
 
 `closure.json` contains 46 v0.1 environments/models and 866 formulas. It is kept
-separate so v0 consumers, including Rust, retain the original fixture envelopes.
+separate so v0 consumers retain the original fixture envelopes.
 `closure.py` deterministically regenerates it. Cases cover empty sorts, all
 two-vertex graphs, positive cycles, isolated star reflexivity, direction,
 Body parameters and nested closure. Python/Lean evaluation and canonical source
@@ -246,11 +246,12 @@ agree on every case; tests additionally exercise all five view inverses and
 100 seeded extended formulas. See `docs/spec/closure-implementation.md` and
 `lean/CLOSURE.md` for proof and runtime boundaries.
 
-Rust supports only `relational-fol@0`. The named pytest case
-`test_rust_closure_evaluation` explicitly skips `closure.json`, with that reason
-shown by `pytest -ra`; closure E0 witnesses are checked by Python/Lean, not Rust.
+Rust runs every closure fixture through `test_rust_closure_evaluation`, including
+all 866 formulas and their canonical AST/text and versioned identities. Its
+tests also check the 30 closure E0 witnesses and closure countermodel requests.
 All seven v0 files in the table above still run against Rust, including its
-5,000-case v0 fuzz stream. The full-suite command does not exclude the Rust module.
+5,000-case v0 fuzz stream. `rust/fuzz_closure.py` adds 3,000 seeded closure pairs;
+see `docs/rust.md` for reproduction and counts. There is no closure skip.
 
 ## Frozen v0 replay regression
 
