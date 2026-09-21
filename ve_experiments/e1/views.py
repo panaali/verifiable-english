@@ -17,6 +17,7 @@ from ve.printer import render_vocabulary
 
 VIEWS = tuple(_VE_VIEWS)
 NAMING = "per_statement"
+LEGEND_STYLE = "compact"  # plain text, same information as the JSON legend, byte-identical across views
 
 
 @lru_cache(maxsize=256)
@@ -37,7 +38,7 @@ def render(environment: dict, f: list, view: str) -> str:
 
 def legend(environment: dict) -> str:
     env = _env(json.dumps(environment, sort_keys=True))
-    texts = {render_vocabulary(env, v, NAMING) for v in VIEWS}
+    texts = {render_vocabulary(env, v, NAMING, LEGEND_STYLE) for v in VIEWS}
     if len(texts) != 1:
         raise RuntimeError("vocabulary legend differs between views")
     return texts.pop()

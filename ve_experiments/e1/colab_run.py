@@ -1,4 +1,4 @@
-"""E1 on the open-weight judges: `uv run python -m ve_experiments.e1.colab_run export|submit|fetch|score <split> <job id>`.
+"""E1 on the open-weight judges: `uv run python -m ve_experiments.e1.colab_run export|submit|fetch|score|hosted <split> <job id>`.
 
 export  writes experiments/E1/colab/<job id>/ : every E1 cell (5 views x {none, attacker}) and every E1b prompt
         of the split, once, for all vllm judges of experiments/E1/judges.json (one job per split).
@@ -18,6 +18,7 @@ from pathlib import Path
 from ..colab import ColabJobRunner, export_job, experiment_requests, import_outputs, is_batch_judge, model_id
 from ..llm import LLMClient
 from ..runner import run
+from .balance import check as check_balance
 from .pilot import E1, e1b_experiment, experiment, load_candidates
 from .prompts import EXPLANATIONS, MAX_NEW_TOKENS
 from .views import VIEWS
@@ -33,8 +34,14 @@ def usable(split: str) -> list[dict]:  # used by the dev diagnostic
     return [c for c in load_candidates(name=split) if c["split"] == split and c.get("explanation")]
 
 
-def experiments(split: str) -> tuple:
-    judges = [j["judge"] for j in batch_judges()]
+def hosted_judges() -> list[str]:
+    return [j["judge"] for j in json.loads(JUDGES_FILE.read_text(encoding="utf-8"))["judges"] if not is_batch_judge(j["judge"])]
+
+
+def experiments(split: str, judges: list[str] | None = None) -> tuple:
+    if split == "scored":
+        check_balance(split)  # raises BalanceError: explanations must not reveal the label through style
+    judges = judges or [j["judge"] for j in batch_judges()]
     cands = load_candidates(name=split)
     return experiment(cands, VIEWS, EXPLANATIONS, judges), e1b_experiment(cands, judges)
 
@@ -52,6 +59,11 @@ def main() -> None:
         print(ColabJobRunner().submit(job_dir))
     elif what == "fetch":
         print(ColabJobRunner().wait_fetch(job_id, results_dir))
+    elif what == "hosted":  # the hosted judges of judges.json, live, through the same runner (E1 then E1b)
+        exp, exp_b = experiments(split, hosted_judges())
+        live = LLMClient(timeout_s=600)
+        print(run(exp, live, split, out_dir=E1 / "runs" / job_id))
+        print(run(exp_b, live, split, out_dir=E1 / "runs" / f"{job_id}-e1b"))
     elif what == "score":
         exp, exp_b = experiments(split)
         reqs = experiment_requests(exp, split, client) + experiment_requests(exp_b, split, client)

@@ -68,3 +68,31 @@ def test_random_models_have_unique_ids_across_sorts():
         m = A.random_model(v.environment()["vocabulary"], random.Random(1))
         ids = [x for d in m["domains"].values() for x in d]
         assert len(ids) == len(set(ids))
+
+
+def test_the_oracle_gates_every_bad_candidate(tmp_path, monkeypatch):
+    import pytest
+
+    from ve_experiments.e1 import build as B
+
+    monkeypatch.setattr(B, "OUT", tmp_path)
+    calls = []
+
+    def boom(*a, **k):
+        calls.append(1)
+        raise RuntimeError("oracle unavailable")
+
+    monkeypatch.setattr(B, "oracle_validate_attack", boom)
+    with pytest.raises(RuntimeError, match="oracle unavailable"):
+        B.build("dev", use_llm=False)
+    assert calls and not list(tmp_path.glob("*.jsonl"))
+
+    class Unknown:
+        status, reason = "UNKNOWN", "budget"
+
+    monkeypatch.setattr(B, "oracle_validate_attack", lambda *a, **k: Unknown())
+    base = B.base_items("dev")[0]
+    rejected = []
+    assert B.mechanical_candidates(base, rejected) == []
+    assert rejected and all(r["reason"].startswith(("oracle UNKNOWN", "string-detectable", "type error")) for r in rejected)
+    assert any(r["reason"].startswith("oracle UNKNOWN") for r in rejected)
