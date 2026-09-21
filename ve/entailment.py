@@ -7,6 +7,7 @@ tableau with :func:`check_entailment_certificate`.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Any, Sequence
 
 from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall, Implies,
@@ -209,42 +210,158 @@ def _apply(branch: _Branch, at: int, parameter: str | None,
     return result
 
 
+def _instance_key(item: _Signed) -> tuple:
+    """Search-only identity: ignore unused bindings and peel signed negations.
+
+    This is NOT a closure rule. Every selected expansion and every close still
+    goes through the unchanged replayer on the original, unnormalized inputs.
+    """
+    def walk(f, bound=0):
+        def term(t):
+            if type(t) is Const:
+                return ("parameter", f"c:{t.name}")
+            return (("bound", t.index) if t.index < bound else
+                    ("parameter", item.bindings[t.index - bound]))
+        kind = type(f)
+        if kind in (Top, Bottom): return (kind.__name__,)
+        if kind is Unary: return ("Unary", f.predicate, term(f.term))
+        if kind is Binary: return ("Binary", f.predicate, term(f.left), term(f.right))
+        if kind is Eq: return ("Eq", term(f.left), term(f.right))
+        if kind is Not: return ("Not", walk(f.body, bound))
+        if kind in (Forall, Exists): return (kind.__name__, f.sort, walk(f.body, bound + 1))
+        return (kind.__name__, walk(f.left, bound), walk(f.right, bound))
+    f, positive = item.formula, item.positive
+    while type(f) is Not:
+        f, positive = f.body, not positive
+    return (positive, walk(f))
+
+
+def _connection_key(item: _Signed, opposite: bool = False) -> tuple:
+    """NNF + associative/commutative connectives for candidate ranking ONLY.
+
+    Matching keys do not close a branch, rewrite its formulas, or skip a rule.
+    In particular, quantifiers are never dropped on an assumed inhabited sort.
+    """
+    def connective(kind, parts):
+        flat = set()
+        identity = kind == "and"
+        for part in parts:
+            if part == ("truth", not identity): return part
+            if part == ("truth", identity): continue
+            if part[0] == kind: flat.update(part[1])
+            else: flat.add(part)
+        if not flat: return ("truth", identity)
+        if len(flat) == 1: return next(iter(flat))
+        return (kind, frozenset(flat))
+
+    def walk(f, positive, bound=0):
+        def term(t):
+            if type(t) is Const: return ("parameter", f"c:{t.name}")
+            return (("bound", t.index) if t.index < bound else
+                    ("parameter", item.bindings[t.index - bound]))
+        kind = type(f)
+        if kind in (Top, Bottom): return ("truth", positive == (kind is Top))
+        if kind is Unary: return ("unary", positive, f.predicate, term(f.term))
+        if kind is Binary: return ("binary", positive, f.predicate, term(f.left), term(f.right))
+        if kind is Eq: return ("eq", positive, frozenset((term(f.left), term(f.right))))
+        if kind is Not: return walk(f.body, not positive, bound)
+        if kind in (Forall, Exists):
+            quantifier = "forall" if positive == (kind is Forall) else "exists"
+            return (quantifier, f.sort, walk(f.body, positive, bound + 1))
+        if kind is Implies:
+            return connective("or" if positive else "and",
+                              (walk(f.left, not positive, bound), walk(f.right, positive, bound)))
+        connective_kind = "and" if positive == (kind is And) else "or"
+        return connective(connective_kind, (walk(f.left, positive, bound), walk(f.right, positive, bound)))
+    return walk(item.formula, item.positive != opposite)
+
+
 class _Searcher:
     def __init__(self, maximum: int):
         self.maximum, self.steps = maximum, 0
+        self.instance_limit = 1
+        self.cutoff = False
+        self.depth_cutoffs = 0
+        self.instance_key = lru_cache(maxsize=4096)(_instance_key)
+        self.connection_key = lru_cache(maxsize=4096)(_connection_key)
 
     def tick(self) -> None:
         if self.steps >= self.maximum: raise _Budget
         self.steps += 1
 
     def search(self, branch: _Branch, depth: int = 0) -> dict[str, Any] | None:
-        # Keep Python call-stack exhaustion inside the advertised resource class.
-        if depth > MAX_TABLEAU_DEPTH: raise _Budget
         self.tick()
+        if depth > MAX_TABLEAU_DEPTH:
+            self.depth_cutoffs += 1
+            self.cutoff = True
+            return None
         if _closed(branch): return {"rule": "close"}
-        choice: tuple[int, str | None] | None = None
-        # Apply one-shot and witness rules before revisiting universals.
+        keys = {self.instance_key(item) for item in branch.formulas}
+        complements = {self.connection_key(item, True) for item in branch.formulas}
+        counts: dict[int, int] = {}
+        for at, _ in branch.instantiated:
+            counts[at] = counts.get(at, 0) + 1
+        choices = []
         for at, item in enumerate(branch.formulas):
-            if at not in branch.expanded and _kind(item) in ("not", "alpha", "beta", "delta"):
-                choice = (at, None); break
-        if choice is None:
-            for at, item in enumerate(branch.formulas):
-                if _kind(item) == "gamma":
-                    for token, sort in branch.parameters.items():
-                        if sort == item.formula.sort and (at, token) not in branch.instantiated:
-                            choice = (at, token); break
-                    if choice is not None: break
-        if choice is None: return None
-        at, parameter = choice
-        alternatives = _derive(branch, at, parameter)
-        children: list[dict[str, Any]] = []
-        for addition in alternatives:
-            child = self.search(_apply(branch, at, parameter, addition), depth + 1)
-            if child is None: return None
-            children.append(child)
-        node: dict[str, Any] = {"rule": "expand", "at": at, "children": children}
-        if parameter is not None: node["parameter"] = parameter
-        return node
+            kind = _kind(item)
+            if kind == "literal" or (kind != "gamma" and at in branch.expanded):
+                continue
+            if kind == "delta":
+                # Existing witnesses only suppress redundant SEARCH work. Never
+                # reuse a witness as a delta eigenparameter in a certificate.
+                if any(self.instance_key(_Signed(item.formula.body, item.positive,
+                        (token,) + item.bindings)) in keys
+                       for token, sort in branch.parameters.items() if sort == item.formula.sort):
+                    continue
+            tokens = ([token for token, sort in branch.parameters.items()
+                       if sort == item.formula.sort and (at, token) not in branch.instantiated]
+                      if kind == "gamma" else [None])
+            for order, token in enumerate(tokens):
+                additions = _derive(branch, at, token)
+                derived = [self.instance_key(x) for group in additions for x in group]
+                if kind == "gamma" and all(key in keys for key in derived):
+                    continue
+                if kind == "gamma" and counts.get(at, 0) >= self.instance_limit:
+                    self.cutoff = True
+                    continue
+                connects = any(self.connection_key(x) in complements or
+                               self.connection_key(x) == ("truth", False)
+                               for group in additions for x in group)
+                # Eager signed NNF/alpha expansion uses ordinary recorded rules.
+                # Connections precede fresh witnesses; otherwise least-used,
+                # oldest universals get their turn before another witness chain.
+                priority = (0 if connects else 1 if kind in ("not", "alpha") else
+                            2 if kind == "delta" else 3 if kind == "gamma" else 4)
+                choices.append(((priority, counts.get(at, 0), at, order), at, token, additions))
+        if not choices: return None
+        choices.sort(key=lambda choice: choice[0])
+        # A depth frontier is a failed ordering, not a global budget abort.
+        # Try other available expansions while retaining the global step cap.
+        for _, at, parameter, alternatives in choices:
+            frontier = self.depth_cutoffs
+            children = []
+            for addition in alternatives:
+                child = self.search(_apply(branch, at, parameter, addition), depth + 1)
+                if child is None: break
+                children.append(child)
+            else:
+                node: dict[str, Any] = {"rule": "expand", "at": at, "children": children}
+                if parameter is not None: node["parameter"] = parameter
+                return node
+            if self.depth_cutoffs == frontier:
+                # Saturation or an instantiation frontier: retry at the next
+                # per-universal bound, rather than permuting this same round.
+                return None
+        return None
+
+    def prove(self, branch: _Branch) -> dict[str, Any] | None:
+        while self.instance_limit <= MAX_TABLEAU_DEPTH:
+            self.cutoff = False
+            trace = self.search(branch)
+            if trace is not None or not self.cutoff:
+                return trace
+            self.instance_limit *= 2
+        raise _Budget
 
 
 def _binding(env: Any, premises: tuple[Any, ...], conclusion: Any) -> dict[str, Any]:
@@ -262,7 +379,7 @@ def prove_entailment(env: Any, premises: Sequence[Any], conclusion: Any, *,
         raise ValueError("max_steps must be a nonnegative integer")
     searcher = _Searcher(max_steps)
     try:
-        trace = searcher.search(_initial_branch(env, premises, conclusion))
+        trace = searcher.prove(_initial_branch(env, premises, conclusion))
     except (_Budget, RecursionError):
         return EntailmentResult("ResourceLimit", None, searcher.steps, "tableau step or certificate nesting budget exhausted")
     if trace is None:
