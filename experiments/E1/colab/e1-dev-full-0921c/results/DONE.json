@@ -1,0 +1,27 @@
+{
+ "id": "e1-dev-full-0921c",
+ "gpu": "NVIDIA L4, 23034 MiB",
+ "started": 1789993499.7353168,
+ "exit_code": 0,
+ "error": null,
+ "timed_out": false,
+ "install_s": 4.9,
+ "outputs": [
+  "out/Qwen--Qwen2.5-14B-Instruct-AWQ/manifest.json",
+  "out/Qwen--Qwen2.5-14B-Instruct-AWQ/outputs.jsonl",
+  "out/Qwen--Qwen2.5-14B-Instruct-AWQ/worker_log.txt",
+  "out/Qwen--Qwen2.5-32B-Instruct-AWQ/manifest.json",
+  "out/Qwen--Qwen2.5-32B-Instruct-AWQ/outputs.jsonl",
+  "out/Qwen--Qwen2.5-32B-Instruct-AWQ/worker_log.txt",
+  "out/Qwen--Qwen2.5-7B-Instruct/manifest.json",
+  "out/Qwen--Qwen2.5-7B-Instruct/outputs.jsonl",
+  "out/Qwen--Qwen2.5-7B-Instruct/worker_log.txt",
+  "out/summary.json"
+ ],
+ "finished": 1789998189.558941,
+ "wall_s": 4689.8,
+ "units_per_hour": 1.7,
+ "units_est_job": 2.215,
+ "units_est_runtime_total": 2.617,
+ "runtime_uptime_s": 5543
+}

@@ -1,0 +1,8 @@
+{
+ "id": "e1-dev-compact-0921",
+ "cmd": "test -f /content/ve_work/venvs/vllm/.ok || (uv venv -q /content/ve_work/venvs/vllm && uv pip install -q -p /content/ve_work/venvs/vllm vllm && touch /content/ve_work/venvs/vllm/.ok) && uv pip install -q -p /content/ve_work/venvs/vllm ninja && export PATH=/content/ve_work/venvs/vllm/bin:$PATH && /content/ve_work/venvs/vllm/bin/python -u vllm_judge.py --prompts prompts.jsonl --out-dir out --models models.json --max-new-tokens 400 --temperature 0 --seed 0 --model-timeout-min 420",
+ "inputs": [
+  "jobs_lib/vllm_judge.py"
+ ],
+ "max_minutes": 780
+}

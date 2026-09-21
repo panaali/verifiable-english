@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "verifiable-english"
 version = "0.1.0"
-description = "Experimental VE v0 relational first-order language core"
+description = "Verifiable English: VE v0 language core (ve) and experiment harness (ve_experiments)"
 requires-python = ">=3.12"
 dependencies = []
 
@@ -13,8 +13,9 @@ dependencies = []
 dev = ["pytest>=8.4", "hypothesis>=6.140", "lark>=1.3"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["ve"]
+packages = ["ve", "ve_experiments"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra"
+markers = ["live: calls real model CLIs (run with `pytest -m live`)"]
+addopts = "-ra -m 'not live'"

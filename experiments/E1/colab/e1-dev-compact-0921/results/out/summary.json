@@ -1,0 +1,38 @@
+[
+ {
+  "requested": "Qwen/Qwen2.5-7B-Instruct",
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "ok": true,
+  "exit_code": 0,
+  "wall_s": 540.7,
+  "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "load_s": 55.4,
+  "generate_s": 476.6,
+  "output_tokens_per_s": 419.1,
+  "mean_s_per_prompt": 0.201
+ },
+ {
+  "requested": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+  "model": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+  "ok": true,
+  "exit_code": 0,
+  "wall_s": 710.8,
+  "revision": "539535859b135b0244c91f3e59816150c8056698",
+  "load_s": 70.8,
+  "generate_s": 630.83,
+  "output_tokens_per_s": 372.7,
+  "mean_s_per_prompt": 0.266
+ },
+ {
+  "requested": "Qwen/Qwen2.5-32B-Instruct-AWQ",
+  "model": "Qwen/Qwen2.5-32B-Instruct-AWQ",
+  "ok": true,
+  "exit_code": 0,
+  "wall_s": 2783.2,
+  "revision": "5c7cb76a268fc6cfbb9c4777eb24ba6e27f9ee6c",
+  "load_s": 123.6,
+  "generate_s": 2650.32,
+  "output_tokens_per_s": 104.7,
+  "mean_s_per_prompt": 1.118
+ }
+]

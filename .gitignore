@@ -6,6 +6,10 @@ __pycache__/
 .review/
 *.egg-info/
 dist/
+.llm_cache/
+data/*
+!data/README.md
+experiments/*/items/*.nollm*
 .cargo-home/
 rust/target/
 .cache/

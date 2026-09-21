@@ -1,0 +1,10 @@
+[
+ {
+  "id": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+  "max_model_len": 4096
+ },
+ {
+  "id": "Qwen/Qwen2.5-32B-Instruct-AWQ",
+  "max_model_len": 3072
+ }
+]

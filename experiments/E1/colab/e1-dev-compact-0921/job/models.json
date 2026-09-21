@@ -1,0 +1,17 @@
+[
+ {
+  "id": "Qwen/Qwen2.5-7B-Instruct",
+  "max_model_len": 4096
+ },
+ {
+  "id": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+  "max_model_len": 4096
+ },
+ {
+  "id": "Qwen/Qwen2.5-32B-Instruct-AWQ",
+  "max_model_len": 3072,
+  "gpu_memory_utilization": 0.95,
+  "enforce_eager": true,
+  "max_num_seqs": 16
+ }
+]

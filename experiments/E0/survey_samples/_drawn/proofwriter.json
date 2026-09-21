@@ -1,0 +1,216 @@
+{
+ "population": 85468,
+ "seed": 20260921,
+ "sample": [
+  {
+   "id": "AttNoneg-OWA-D3-1678#row58201",
+   "config": "depth-3",
+   "theory": "Dave is green. Erin is furry. Erin is green. Fiona is kind. Fiona is rough. Fiona is round. Harry is green. Harry is kind. Harry is rough. Harry is round. All kind, green things are furry. If Dave is green then Dave is kind. If Dave is kind and Dave is furry then Dave is rough. If Fiona is rough and Fiona is round then Fiona is quiet. All kind things are quiet. Furry, quiet things are round.",
+   "question": "Harry is not rough.",
+   "answer": "False"
+  },
+  {
+   "id": "AttNeg-OWA-D1-2570#row81100",
+   "config": "depth-1",
+   "theory": "Anne is young. Erin is green. Harry is young. Young things are not green. If something is big and green then it is nice. If something is young and quiet then it is not nice. If Harry is quiet then Harry is not nice. If something is big and nice then it is round. If something is green and not young then it is quiet.",
+   "question": "Harry is not white.",
+   "answer": "Unknown"
+  },
+  {
+   "id": "AttNoneg-OWA-D2-1054#row27258",
+   "config": "depth-3ext-NatLang",
+   "theory": "Bob is white. Dave is smart. Fiona is blue. Harry is young. If something is blue and smart then it is rough. All smart things are blue.",
+   "question": "Harry is not white.",
+   "answer": "Unknown"
+  },
+  {
+   "id": "AttNeg-OWA-D3-1247#row63340",
+   "config": "depth-3",
+   "theory": "Anne is blue. Fiona is not white. Gary is young. Harry is white. If someone is furry then they are round. If someone is blue then they are furry. If someone is rough and young then they are kind. If Fiona is rough and Fiona is white then Fiona is not young. All round people are white. Rough people are white. If Harry is rough then Harry is not white. If Harry is kind and Harry is not round then Harry is rough.",
+   "question": "Anne is white.",
+   "answer": "True"
+  },
+  {
+   "id": "AttNeg-OWA-D1-780#row81032",
+   "config": "depth-1",
+   "theory": "Bob is blue. Bob is cold. Bob is kind. Bob is young. Erin is green. Erin is round. Harry is blue. Harry is cold. Harry is not green. Harry is kind. Harry is quiet. Harry is young. All green, round people are quiet.",
+   "question": "Erin is quiet.",
+   "answer": "True"
+  },
+  {
+   "id": "AttNoneg-OWA-D0-5556#row48937",
+   "config": "depth-3ext",
+   "theory": "Bob is white. Charlie is green. Erin is nice. Fiona is round. Round things are blue. All blue things are cold. All round things are green. All cold, round things are nice. Cold things are nice. If something is green then it is blue.",
+   "question": "Bob is not white.",
+   "answer": "False"
+  },
+  {
+   "id": "RelNeg-OWA-D0-6084#row3763",
+   "config": "depth-0",
+   "theory": "The cow is cold. The cow is nice. The cow likes the tiger. The cow needs the tiger. The tiger is cold. The tiger is not nice. The tiger is red. The tiger is rough. The tiger is not young. The tiger likes the cow. The tiger does not need the cow. The tiger visits the cow. If someone needs the cow and they like the tiger then the tiger is not cold. If someone is nice then they need the tiger.",
+   "question": "The tiger is not cold.",
+   "answer": "False"
+  },
+  {
+   "id": "AttNonegNatLang-OWA-60#row11574",
+   "config": "NatLang",
+   "theory": "Young and round are accurate ways to describe Bob, and so are cold, red, big and rough. Fred is very big for being so young. Gary is young in age, round in form, wears blue and is rough. If you come across a cold, red person with a round shape you'll find they are nice people. Big round people are usually blue. Don't worry about asking a person who has skin that is green and red for a favor because they are nice. A rough person will also be a cold person. Cold and rough people are usually red. Young people who are big are often rough. Big and round people,though cold,are often nice.",
+   "question": "Fred is not kind.",
+   "answer": "Unknown"
+  },
+  {
+   "id": "AttNoneg-OWA-D1-755#row54539",
+   "config": "depth-3ext",
+   "theory": "Charlie is quiet. Fiona is rough. All quiet people are nice. If someone is nice then they are big. If Charlie is young then Charlie is nice.",
+   "question": "Charlie is not quiet.",
+   "answer": "False"
+  },
+  {
+   "id": "AttNonegNatLang-OWA-211#row10260",
+   "config": "NatLang",
+   "theory": "The round, rough, and green one was labeled Alan after all. Charlie has been blue because he's green with envy. Fred tends to be blue because he is big and this makes him a little rough around the edges. Gary wears a green and red coat, but is always cold. Someone who is green and cold is, at the same time, blue in every case. A young person that is rough and kind if often assumed to be nice. Red, green and cold people are certain to be young people, too. A green young person will certainly be nice as well. If you paint someone who is round blue and green, they must be young. Nice folks with blue and red coloration are fairly kind to others. People who are nice and kind are usually also cold.",
+   "question": "Gary is kind.",
+   "answer": "True"
+  },
+  {
+   "id": "AttNonegNatLang-OWA-2#row12794",
+   "config": "NatLang",
+   "theory": "Alan has been blue because he's green with envy. Bob is a young , Round fellow with a red color and nice disposition. Charlie is very big for being so young. The round, rough, and green one was labeled Fred after all. People who are young and a bit round in shape are green and inexperienced in life. People with stripes of green and blue on their skin who are also nice to others tend to feel cold to the touch. It's truly amazing that blue, kind, round people are always so nice. Being round and green and nice makes someone blue. A young person that is also big and round is usually though of as green,. People who are nice and kind are usually also cold.",
+   "question": "Fred is not big.",
+   "answer": "Unknown"
+  },
+  {
+   "id": "AttNeg-OWA-D3-1064#row63240",
+   "config": "depth-3",
+   "theory": "Anne is furry. Anne is kind. Anne is not nice. Anne is quiet. Charlie is green. Erin is furry. Erin is nice. Erin is round. Fiona is furry. Fiona is kind. Fiona is not nice. Fiona is round. If someone is green then they are not round. If Charlie is round then Charlie is kind. If Erin is green then Erin is quiet. If Charlie is not round then Charlie is smart. If someone is round and not quiet then they are furry. If someone is smart then they are furry.",
+   "question": "Charlie is not quiet.",
+   "answer": "Unknown"
+  },
+  {
+   "id": "AttNonegNatLang-OWA-92#row10996",
+   "config": "NatLang",
+   "theory": "Bob is embarrassed he is so round at such a young age. The anguish has turned him red and he feels blue. Dave is a nice and kind fellow who is also feeling blue because he is cold. Eric is very big for being so young. A downhearted and blue person who is rough around the edges but kind is round. Kind and round people are often cold to people. All persons who are big are also kind. Just as you might expect, blue and red people are always big. People that are very big and slightly blue will be on the young side. A young person that is also big and round is usually though of as green,. A human being that's blue, rough and big is also going to be a cold human being.",
+   "question": "Bob is not nice.",
+   "answer": "Unknown"
+  },
+  {
+   "id": "AttNoneg-OWA-D5-271#row67881",
+   "config": "depth-5",
+   "theory": "Bob is rough. Charlie is red. Charlie is rough. Erin is blue. Erin is rough. Erin is smart. Harry is blue. Harry is nice. Harry is red. Harry is rough. Nice people are smart. Nice people are red. All red, rough people are smart. If someone is smart and rough then they are nice. All rough people are red. All round, rough people are blue. All red, big people are nice. All nice, rough people are round. If Bob is nice then Bob is rough.",
+   "question": "Harry is big.",
+   "answer": "Unknown"
+  },
+  {
+   "id": "AttNeg-OWA-D3-1048#row31060",
+   "config": "depth-3ext-NatLang",
+   "theory": "Bob is not smart. Dave is not quiet. Dave is red. Dave is round. Dave is smart. Dave is not white. Dave is young. Gary is smart. Harry is not green. Harry is red. Smart people are green. If Gary is green then Gary is round. If Gary is green and Gary is not red then Gary is smart. If someone is round then they are young. If someone is white and quiet then they are not round. If Dave is not green then Dave is quiet.",
+   "question": "Bob is not red.",
+   "answer": "Unknown"
+  },
+  {
+   "id": "RelNeg-OWA-D2-1099#row37111",
+   "config": "depth-2",
+   "theory": "The mouse is nice. The mouse likes the squirrel. The mouse visits the squirrel. The squirrel is red. The squirrel is not young. The squirrel likes the mouse. The squirrel visits the mouse. If the squirrel is rough then the squirrel visits the mouse. If something visits the squirrel then the squirrel visits the mouse. If something likes the squirrel then the squirrel is red. If something needs the mouse and it is red then the mouse needs the squirrel. If the mouse likes the squirrel then the mouse does not need the squirrel. If the mouse is nice and the mouse is young then the mouse does not visit the squirrel. If the mouse is not red then the mouse likes the squirrel. If something likes the squirrel and it does not need the squirrel then it visits the mouse.",
+   "question": "The mouse does not visit the mouse.",
+   "answer": "False"
+  },
+  {
+   "id": "RelNoneg-OWA-D2-372#row34143",
+   "config": "depth-2",
+   "theory": "The bald eagle chases the dog. The bald eagle is blue. The bald eagle is green. The bald eagle is red. The bald eagle is round. The bald eagle is young. The bald eagle likes the dog. The bald eagle visits the dog. The dog chases the bald eagle. The dog is green. The dog is red. The dog is round. The dog is young. The dog likes the bald eagle. The dog visits the bald eagle. If the bald eagle is blue then the bald eagle chases the dog. If someone chases the dog then the dog visits the bald eagle. If someone visits the dog then they chase the dog. If someone is round then they visit the dog. If someone chases the dog and the dog chases the bald eagle then the dog visits the bald eagle. If someone likes the dog then the dog chases the bald eagle.",
+   "question": "The dog does not visit the dog.",
+   "answer": "False"
+  },
+  {
+   "id": "AttNoneg-OWA-D2-1717#row35179",
+   "config": "depth-2",
+   "theory": "Charlie is quiet. Gary is rough. Gary is round. Gary is smart. Harry is cold. Harry is round. Harry is smart. Cold people are quiet. If Gary is rough then Gary is cold.",
+   "question": "Charlie is not quiet.",
+   "answer": "False"
+  },
+  {
+   "id": "AttNeg-OWA-D1-1513#row83162",
+   "config": "depth-1",
+   "theory": "Bob is not big. Bob is nice. Bob is smart. Fiona is big. Fiona is cold. Fiona is nice. Gary is not big. Gary is green. Gary is smart. Gary is not white. Smart, white people are blue. White, blue people are not smart. If Gary is big then Gary is white. If someone is big then they are white. If Bob is blue and Bob is not big then Bob is not green. If Bob is smart and Bob is cold then Bob is white.",
+   "question": "Fiona is white.",
+   "answer": "True"
+  },
+  {
+   "id": "RelNoneg-OWA-D1-63#row82168",
+   "config": "depth-1",
+   "theory": "The bald eagle chases the rabbit. The bald eagle is big. The bald eagle is cold. The bald eagle is nice. The bald eagle is rough. The bald eagle is round. The bald eagle likes the rabbit. The bald eagle needs the rabbit. The rabbit chases the bald eagle. The rabbit is big. The rabbit is nice. The rabbit is rough. The rabbit is round. The rabbit likes the bald eagle. The rabbit needs the bald eagle. If someone is cold and round then they need the rabbit. If someone likes the bald eagle then they like the rabbit. If someone is cold then they chase the bald eagle.",
+   "question": "The bald eagle is rough.",
+   "answer": "True"
+  },
+  {
+   "id": "RelNoneg-OWA-D5-992#row65395",
+   "config": "depth-5",
+   "theory": "The bear is nice. The bear likes the cat. The bear sees the dog. The cat eats the bear. The cat is cold. The cat sees the bear. The dog eats the bear. The dog eats the lion. The dog is blue. The dog sees the cat. The lion eats the cat. The lion is cold. The lion likes the bear. The lion likes the cat. If someone is big then they eat the dog. If someone is cold then they are nice. If someone is blue and they see the bear then they see the dog. If someone eats the dog then the dog is nice. If someone is blue and they see the dog then they are big. If someone eats the bear and they are nice then they are blue. If someone eats the bear and they see the dog then the dog is big.",
+   "question": "The cat is rough.",
+   "answer": "Unknown"
+  },
+  {
+   "id": "RelNeg-OWA-D5-771#row71601",
+   "config": "depth-5",
+   "theory": "The cat needs the dog. The cat sees the rabbit. The dog needs the squirrel. The rabbit chases the dog. The rabbit chases the squirrel. The rabbit is cold. The rabbit is green. The rabbit needs the dog. The squirrel chases the cat. The squirrel is not blue. The squirrel needs the rabbit. If someone is kind then they see the dog. If someone sees the squirrel then the squirrel sees the dog. If the squirrel chases the cat then the cat is kind. If someone is blue and red then they chase the dog. If the cat is green and the cat sees the dog then the dog needs the rabbit. If someone is blue then they do not chase the squirrel. If someone sees the dog then they see the squirrel. If someone chases the rabbit then the rabbit sees the cat.",
+   "question": "The cat does not see the squirrel.",
+   "answer": "False"
+  },
+  {
+   "id": "AttNoneg-OWA-D2-166#row33879",
+   "config": "depth-2",
+   "theory": "Anne is big. Anne is blue. Anne is cold. Anne is green. Anne is quiet. Charlie is blue. Charlie is furry. Charlie is quiet. Gary is green. Gary is quiet. Cold things are blue. Green things are cold.",
+   "question": "Anne is not big.",
+   "answer": "False"
+  },
+  {
+   "id": "RelNoneg-OWA-D5-439#row72635",
+   "config": "depth-5",
+   "theory": "The bald eagle is cold. The bald eagle is green. The bald eagle needs the lion. The bald eagle visits the rabbit. The dog sees the lion. The lion is cold. The lion is green. The lion needs the dog. The lion needs the rabbit. The lion visits the bald eagle. The lion visits the dog. The rabbit is round. The rabbit visits the dog. The rabbit visits the lion. If something is round then it is rough. If something visits the rabbit and it needs the bald eagle then the rabbit visits the bald eagle. If something is rough then it visits the lion. If the dog needs the rabbit and the rabbit sees the bald eagle then the bald eagle sees the dog. If the rabbit visits the lion and the rabbit needs the dog then the dog is round. If something visits the rabbit then the rabbit needs the bald eagle. If something visits the lion and the lion needs the dog then it needs the dog.",
+   "question": "The dog does not need the dog.",
+   "answer": "False"
+  },
+  {
+   "id": "RelNeg-OWA-D2-672#row37344",
+   "config": "depth-2",
+   "theory": "The cat does not chase the tiger. The cat is green. The cat is round. The cat sees the tiger. The dog chases the mouse. The dog chases the tiger. The dog is green. The dog sees the mouse. The dog sees the tiger. The dog visits the cat. The mouse chases the cat. The mouse is not round. The mouse sees the cat. The mouse does not visit the cat. The tiger visits the dog. If someone is round and they do not see the dog then they do not see the cat. If someone sees the cat and the cat visits the tiger then the cat visits the mouse. If someone visits the mouse then they do not chase the mouse. If someone sees the mouse then they chase the dog. If someone is green and they see the tiger then the tiger sees the mouse. If someone chases the tiger and they do not see the cat then the tiger sees the mouse. If someone sees the mouse and the mouse does not chase the tiger then the mouse does not chase the dog. If someone chases the dog and they see the cat then the dog sees the mouse.",
+   "question": "The tiger does not visit the mouse.",
+   "answer": "Unknown"
+  },
+  {
+   "id": "AttNoneg-OWA-D5-189#row71830",
+   "config": "depth-5",
+   "theory": "Dave is blue. Dave is kind. Dave is rough. Erin is blue. Erin is furry. Erin is quiet. Erin is smart. Gary is blue. Gary is quiet. Harry is big. All blue things are rough. If something is kind and furry then it is big. If something is kind and big then it is rough. All quiet, kind things are rough. All kind things are furry. If something is big then it is quiet. Quiet things are blue. Rough things are kind.",
+   "question": "Gary is furry.",
+   "answer": "True"
+  },
+  {
+   "id": "RelNeg-OWA-D3-464#row23356",
+   "config": "depth-3ext-NatLang",
+   "theory": "The bald eagle does not chase the squirrel. The cow does not chase the bald eagle. The cow chases the squirrel. The cow is cold. The cow is green. The cow is not nice. The cow needs the bald eagle. The cow does not need the squirrel. The squirrel chases the cow. The squirrel eats the bald eagle. The squirrel is not cold. The squirrel needs the cow. If something chases the squirrel and it needs the cow then the squirrel needs the bald eagle. If something eats the bald eagle and it is not cold then it needs the squirrel. If something is green then it needs the cow. If something needs the bald eagle and it needs the cow then it does not eat the cow. If something chases the cow and it is not nice then the cow does not need the bald eagle. If the bald eagle is round and the bald eagle does not need the cow then the cow needs the bald eagle.",
+   "question": "The squirrel needs the squirrel.",
+   "answer": "True"
+  },
+  {
+   "id": "RelNoneg-OWA-D1-1859#row80494",
+   "config": "depth-1",
+   "theory": "The bear is nice. If something is nice then it is cold. Big, cold things are kind.",
+   "question": "The bear is nice.",
+   "answer": "True"
+  },
+  {
+   "id": "RelNoneg-OWA-D3-1163#row31346",
+   "config": "depth-3ext-NatLang",
+   "theory": "The bear likes the mouse. The mouse chases the bear. The rabbit visits the bear. If the mouse is rough and the mouse visits the rabbit then the mouse is nice. If someone visits the rabbit and the rabbit visits the bear then the rabbit is nice. If someone is big then they chase the bear. If someone likes the mouse then they visit the rabbit. If someone chases the mouse and they chase the rabbit then the rabbit chases the bear. All nice, young people are green. If someone likes the rabbit and the rabbit visits the bear then they visit the mouse. If someone is nice then they visit the mouse.",
+   "question": "The rabbit is not young.",
+   "answer": "Unknown"
+  },
+  {
+   "id": "RelNoneg-OWA-D0-1850#row7599",
+   "config": "depth-0",
+   "theory": "The bald eagle chases the cat. The bald eagle chases the tiger. The bald eagle is blue. The bald eagle is cold. The bald eagle is nice. The bald eagle likes the cat. The bald eagle likes the tiger. The bald eagle visits the cat. The bald eagle visits the tiger. The cat chases the bald eagle. The cat chases the tiger. The cat is big. The cat is blue. The cat is kind. The cat visits the bald eagle. The tiger visits the bald eagle. If the cat visits the bald eagle and the cat likes the bald eagle then the bald eagle chases the cat. If someone visits the cat and they chase the bald eagle then the cat chases the tiger. If someone visits the bald eagle and the bald eagle is nice then they are big.",
+   "question": "The bald eagle is kind.",
+   "answer": "Unknown"
+  }
+ ]
+}
