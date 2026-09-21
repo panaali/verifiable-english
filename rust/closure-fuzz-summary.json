@@ -1,0 +1,15 @@
+{
+  "seed": 20260924,
+  "cases": 3000,
+  "agreements": 3000,
+  "identity_agreements": 3000,
+  "true": 1701,
+  "false": 1299,
+  "empty_domain_cases": 1204,
+  "body_cases": 2500,
+  "nested_cases": 622,
+  "forced_outer_parameter_cases": 1500,
+  "self_loop_models": 961,
+  "forced_cycle_models": 353,
+  "jsonl_sha256": "9f8b34bc81b3fff394945e77b0ef8da7335e3764088f65edb55e25655127ad2b"
+}

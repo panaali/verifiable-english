@@ -1,5 +1,10 @@
-use crate::{Document, Error, FiniteModel, Formula, MAX_EVALUATIONS, Result, Term, error};
+use crate::{
+    Document, Edge, Error, FiniteModel, Formula, MAX_EVALUATIONS, ReachKind, Result, Term, error,
+};
 use serde::Serialize;
+use std::collections::{BTreeSet, HashMap};
+
+type ClosureCache<'a> = HashMap<(&'a Edge, Vec<usize>), BTreeSet<(usize, usize)>>;
 
 #[derive(Clone, Debug, Serialize)]
 pub struct Evaluation {
@@ -12,19 +17,38 @@ pub(crate) struct Evaluator<'a> {
     pub model: &'a FiniteModel,
     pub maximum: u64,
     pub work: u64,
+    // Structural edge identity plus the entire captured context. Never shared
+    // between models; plus/star reuse the same positive closure, without seeding
+    // diagonal edges. Borrowing avoids cloning nested edge ASTs into the cache.
+    closures: ClosureCache<'a>,
 }
-impl Evaluator<'_> {
+impl<'a> Evaluator<'a> {
+    pub fn new(model: &'a FiniteModel, maximum: u64) -> Self {
+        Self {
+            model,
+            maximum,
+            work: 0,
+            closures: HashMap::new(),
+        }
+    }
+    pub fn clear_closures(&mut self) {
+        self.closures.clear();
+    }
+    fn tick(&mut self) -> Result<()> {
+        if self.work >= self.maximum {
+            return error("ResourceLimit", "evaluation budget exhausted");
+        }
+        self.work += 1;
+        Ok(())
+    }
     fn term(&self, t: &Term, bindings: &[usize]) -> usize {
         match t {
             Term::Var(i) => bindings[bindings.len() - 1 - *i as usize],
             Term::Const(n) => self.model.constants[n],
         }
     }
-    pub fn formula(&mut self, f: &Formula, bindings: &mut Vec<usize>) -> Result<bool> {
-        if self.work >= self.maximum {
-            return error("ResourceLimit", "formula-node evaluation budget exhausted");
-        }
-        self.work += 1;
+    pub fn formula(&mut self, f: &'a Formula, bindings: &mut Vec<usize>) -> Result<bool> {
+        self.tick()?;
         Ok(match f {
             Formula::Top => true,
             Formula::Bottom => false,
@@ -33,6 +57,65 @@ impl Evaluator<'_> {
             }
             Formula::Binary(p, t, u) => self.model.relations[p]
                 .contains([self.term(t, bindings), self.term(u, bindings)].as_slice()),
+            Formula::Reach(kind, edge, t, u) => {
+                let key = (edge, bindings.clone());
+                if !self.closures.contains_key(&key) {
+                    let mut edges = BTreeSet::new();
+                    let domain: Vec<usize> = match edge {
+                        Edge::Named(p) => {
+                            let mut active = BTreeSet::new();
+                            for row in &self.model.relations[p] {
+                                self.tick()?;
+                                edges.insert((row[0], row[1]));
+                                active.extend([row[0], row[1]]);
+                            }
+                            active.into_iter().collect()
+                        }
+                        Edge::Body(s, body) => {
+                            let domain: Vec<_> = (0..self.model.domains[s].len()).collect();
+                            for &source in &domain {
+                                for &destination in &domain {
+                                    let outer_len = bindings.len();
+                                    bindings.extend([source, destination]);
+                                    let value = self.formula(body, bindings);
+                                    bindings.truncate(outer_len);
+                                    if value? {
+                                        edges.insert((source, destination));
+                                    }
+                                }
+                            }
+                            domain
+                        }
+                    };
+                    // Materialize each pivot's incoming/outgoing sets before
+                    // adding paths. Charge edge visits and Warshall work, as in
+                    // Python, so dense/nested closures respect the work limit.
+                    for &pivot in &domain {
+                        let mut incoming = Vec::new();
+                        let mut outgoing = Vec::new();
+                        for &x in &domain {
+                            self.tick()?;
+                            if edges.contains(&(x, pivot)) {
+                                incoming.push(x);
+                            }
+                            if edges.contains(&(pivot, x)) {
+                                outgoing.push(x);
+                            }
+                        }
+                        for &x in &incoming {
+                            for &y in &outgoing {
+                                self.tick()?;
+                                edges.insert((x, y));
+                            }
+                        }
+                    }
+                    self.closures.insert(key.clone(), edges);
+                }
+                let left = self.term(t, bindings);
+                let right = self.term(u, bindings);
+                (matches!(kind, ReachKind::Star) && left == right)
+                    || self.closures[&key].contains(&(left, right))
+            }
             Formula::Eq(t, u) => self.term(t, bindings) == self.term(u, bindings),
             Formula::Not(a) => !self.formula(a, bindings)?,
             Formula::And(a, b) => self.formula(a, bindings)? && self.formula(b, bindings)?,
@@ -72,11 +155,7 @@ fn run(
     Ok(run_formulas(model, formulas, maximum))
 }
 fn run_formulas(model: &FiniteModel, formulas: &[Formula], maximum: u64) -> Evaluation {
-    let mut ev = Evaluator {
-        model,
-        maximum,
-        work: 0,
-    };
+    let mut ev = Evaluator::new(model, maximum);
     let mut result = Some(true);
     for formula in formulas {
         match ev.formula(formula, &mut Vec::new()) {

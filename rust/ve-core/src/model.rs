@@ -125,7 +125,7 @@ impl FiniteModel {
         let data = json!({"complete":true,"domains":domains,"constants":constant_data,"relations":relation_data});
         let environment_id = env.environment_id().to_owned();
         let model_id = digest(
-            "ve-model-v0\n",
+            &format!("ve-model-{}\n", env.identity_version()),
             &json!({"environment_id":environment_id,"model":data}),
         )?;
         Ok(Self {

@@ -2,7 +2,7 @@ use crate::{
     Error, Result, canonical_json, digest, error, loads_json,
     wire::{fields, object},
 };
-use serde_json::Value;
+use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 
 pub(crate) const RESERVED: &[&str] = &[
@@ -51,9 +51,31 @@ fn description(v: &Value) -> Result<()> {
     }
     Ok(())
 }
+fn verbalisation(v: &Value) -> Result<()> {
+    description(v)?;
+    if v.as_str().unwrap().chars().count() > 256 {
+        return error("ResourceLimit", "verbalisation exceeds 256 characters");
+    }
+    Ok(())
+}
+fn entry_fields<'a>(
+    v: &'a Value,
+    required: &[&str],
+    negative: bool,
+) -> Result<&'a serde_json::Map<String, Value>> {
+    let mut keys = required.to_vec();
+    if v.get("verbalisation").is_some() {
+        keys.push("verbalisation");
+    }
+    if negative && v.get("negative_verbalisation").is_some() {
+        keys.push("negative_verbalisation");
+    }
+    fields(v, &keys, "InvalidInput")
+}
 
 #[derive(Clone, Debug)]
 pub struct Environment {
+    closure: bool,
     pub(crate) sorts: BTreeSet<String>,
     pub(crate) predicates: BTreeMap<String, Vec<String>>,
     pub(crate) constants: BTreeMap<String, String>,
@@ -66,15 +88,26 @@ impl Environment {
     }
     pub fn from_value(data: &Value) -> Result<Self> {
         canonical_json(data)?;
+        let closure = data.get("language") == Some(&json!("ve.core@0.1"));
         let obj = fields(
             data,
-            &["language", "profile", "spec_revision", "vocabulary"],
+            &[
+                "language",
+                if closure { "profiles" } else { "profile" },
+                "spec_revision",
+                "vocabulary",
+            ],
             "InvalidInput",
         )?;
-        if obj["language"] != "ve.core@0"
-            || obj["profile"] != "relational-fol@0"
-            || obj["spec_revision"] != "ve-v0-draft-2026-09-20"
-        {
+        let supported = if closure {
+            obj["profiles"] == json!(["closure@0", "relational-fol@0"])
+                && obj["spec_revision"] == "ve-v0.1-closure-2026-09-21"
+        } else {
+            obj["language"] == "ve.core@0"
+                && obj["profile"] == "relational-fol@0"
+                && obj["spec_revision"] == "ve-v0-draft-2026-09-20"
+        };
+        if !supported {
             return error(
                 "UnsupportedProfile",
                 "unsupported language, profile or specification revision",
@@ -105,11 +138,17 @@ impl Environment {
             }
         }
         for decl in sorts.values() {
-            description(&fields(decl, &["description"], "InvalidInput")?["description"])?;
+            let d = entry_fields(decl, &["description"], false)?;
+            if let Some(v) = d.get("verbalisation") {
+                let v = fields(v, &["singular", "plural"], "InvalidInput")?;
+                verbalisation(&v["singular"])?;
+                verbalisation(&v["plural"])?;
+            }
+            description(&d["description"])?;
         }
         let mut predicates = BTreeMap::new();
         for (name, decl) in preds {
-            let d = fields(decl, &["arguments", "description"], "InvalidInput")?;
+            let d = entry_fields(decl, &["arguments", "description"], true)?;
             let args = d["arguments"]
                 .as_array()
                 .filter(|a| matches!(a.len(), 1 | 2))
@@ -121,6 +160,11 @@ impl Environment {
                     return error("UnknownSymbol", "unknown predicate argument sort");
                 }
                 signature.push(s.to_owned());
+            }
+            for key in ["verbalisation", "negative_verbalisation"] {
+                if let Some(v) = d.get(key) {
+                    verbalisation(v)?;
+                }
             }
             description(&d["description"])?;
             predicates.insert(name.clone(), signature);
@@ -136,11 +180,19 @@ impl Environment {
             constants.insert(name.clone(), s.into());
         }
         Ok(Self {
+            closure,
             sorts: sorts.keys().cloned().collect(),
             predicates,
             constants,
             data: data.clone(),
-            id: digest("ve-environment-v0\n", data)?,
+            id: digest(
+                if closure {
+                    "ve-environment-v0.1\n"
+                } else {
+                    "ve-environment-v0\n"
+                },
+                data,
+            )?,
         })
     }
     pub fn to_value(&self) -> Value {
@@ -148,6 +200,12 @@ impl Environment {
     }
     pub fn environment_id(&self) -> &str {
         &self.id
+    }
+    pub fn closure(&self) -> bool {
+        self.closure
+    }
+    pub fn identity_version(&self) -> &'static str {
+        if self.closure { "v0.1" } else { "v0" }
     }
     pub(crate) fn schema_name(&self, s: &str) -> bool {
         self.sorts.contains(s) || self.predicates.contains_key(s) || self.constants.contains_key(s)
