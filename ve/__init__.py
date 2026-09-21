@@ -1,4 +1,4 @@
-"""VE v0 experimental language core. No general entailment certification yet."""
+"""VE v0 experimental language, finite semantics and checked argument API."""
 from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall,
                   Formula, Implies, Not, Or, Term, Top, Unary, Var,
                   check_document, check_formula, doc_from_json,
@@ -14,5 +14,10 @@ from .model import FiniteModel
 from .evaluate import evaluate
 from .search import check_countermodel, find_countermodel
 from .check import check
+from .entailment import (EntailmentResult, EntailmentCertificateCheck,
+                         prove_entailment, check_entailment_certificate)
+from .argument import (Claim, Deduction, Evidence, ArgumentGraph, ArgumentResult,
+                       check_argument, deduction_identity, outstanding_obligations,
+                       predicate_use_panel)
 
 __version__ = "0.1.0"

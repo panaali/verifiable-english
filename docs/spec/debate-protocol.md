@@ -2,6 +2,12 @@
 
 **Status:** First draft. The protocol, certificate replay path, and proofs are pending. This is the local research prototype's contract, not a claim of a secure public proof service or a complete alignment protocol.
 
+**Experimental implementation:** The Python prototype implements these graph
+and finding semantics using data-only tableau certificates checked by a small
+Python replay checker. This is a separately labeled trust boundary, not the Lean
+replay path or completed metatheory described below. See the
+[implementation contract](../implementation.md#entailment-evidence-and-trust-boundary).
+
 VE supplies claims and checks for a proposer, critic, and supervisor. It can be used with cross-examination or other debate strategies; it does not select a training algorithm, reward equilibrium, or probabilistic evidence aggregator. The [roadmap](../roadmap.md) compares these choices experimentally.
 
 ## Commitments and scope
@@ -102,7 +108,12 @@ The root now has a `follows` certificate. The proposer supports the first leaf w
 
 v0's defenses here are procedural: the supervisor or critic must notice that the evidence uses incompatible senses and demand a vocabulary split or adequate support under one interpretation. Multiple evidence sources alone are not a defect. Test the proposed predicate-use panel against equally equipped prose and structured interfaces. Whether people detect this attack more reliably is an open empirical question and a required attack in the [adversarial evaluation](../roadmap.md#adversarial-evaluation). Who authors the vocabulary, and whether the critic may challenge it before commitment, must be fixed in G0.
 
-These are mathematically specified expected outcomes, not execution results. The first example tests both a rejected substitution and a valid repair; the second tests a substitution the checker accepts. Both use only v0 syntax. [Formal obligations](verification-contract.md#argument-checking-contract) state what must be proved for the implementation.
+These expected outcomes are executable as `ve.argument_fixtures.worked_examples()`
+and tested in `tests/test_argument_fixtures.py`. The first example tests both a
+rejected substitution and a valid repair; the second tests a substitution the
+checker accepts. Both use only v0 syntax. Passing those tests is empirical
+implementation evidence; the [formal obligations](verification-contract.md#argument-checking-contract)
+remain pending.
 
 ## Bounds and unsupported claims
 
