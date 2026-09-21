@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall,
-                  Implies, Not, Or, Top, Unary, Var, check_document, check_formula)
+                  Implies, Not, Or, Top, Unary, Var, Reach, Named, Body, check_document, check_formula)
 from .model import FiniteModel
 from .errors import InvalidModel, ResourceLimit, VEError
 from .limits import MAX_EVALUATIONS
@@ -45,6 +45,7 @@ class _Exhausted(Exception):
 class _Evaluator:
     def __init__(self, env: Any, model: FiniteModel, maximum: int, trace: bool = True):
         self.env, self.model, self.maximum, self.work, self.trace = env, model, maximum, 0, trace
+        self.closures = {}  # scoped to this exact model; outer bindings are part of each key
 
     def explanation(self, kind: str, value: bool | None, bindings=(), detail: str = "", children=()):
         if not self.trace:
@@ -74,6 +75,42 @@ class _Evaluator:
         if isinstance(f, Binary):
             row = (self.term(f.left, bindings), self.term(f.right, bindings)); value = row in self.model.relations[f.predicate]
             return value, self.explanation("binary", value, shown, f"{f.predicate}{row}")
+        if isinstance(f, Reach):
+            key = (f.edge, bindings)
+            if key not in self.closures:
+                if type(f.edge) is Named:
+                    edges = set()
+                    for row in self.model.relations[f.edge.relation]:
+                        self.tick()
+                        edges.add(row)
+                    domain = sorted({x for pair in edges for x in pair})
+                else:
+                    domain = self.model.domains[f.edge.sort]
+                    edges = set()
+                    for x in domain:
+                        for y in domain:
+                            value, _ = self.formula(f.edge.formula,
+                                ((f.edge.sort, y), (f.edge.sort, x)) + bindings)
+                            if value:
+                                edges.add((x, y))
+                # Materialize each Warshall pivot; identity is never seeded for plus.
+                for pivot in domain:
+                    incoming, outgoing = [], []
+                    for x in domain:
+                        self.tick()
+                        if (x, pivot) in edges:
+                            incoming.append(x)
+                        if (pivot, x) in edges:
+                            outgoing.append(x)
+                    for x in incoming:
+                        for y in outgoing:
+                            self.tick()
+                            edges.add((x, y))
+                self.closures[key] = edges
+            left, right = self.term(f.left, bindings), self.term(f.right, bindings)
+            value = (f.kind == "star" and left == right) or (left, right) in self.closures[key]
+            return value, self.explanation("reach", value, shown,
+                f"{f.kind}: {left} to {right}; finite directed paths")
         if isinstance(f, Eq):
             left, right = self.term(f.left, bindings), self.term(f.right, bindings); value = left == right
             return value, self.explanation("equality", value, shown, f"{left} equals {right}")

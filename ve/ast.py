@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import TypeAlias
 
 from .environment import Environment
-from .errors import ResourceLimit, SyntaxError, TypeMismatch, UnboundVariable, UnknownSymbol, VEError
+from .errors import ResourceLimit, SyntaxError, TypeMismatch, UnboundVariable, UnknownSymbol, UnsupportedProfile, VEError
 from .limits import MAX_DEPTH, MAX_INDEX, MAX_NODES
 from .wire import loads_json
 
@@ -90,7 +90,29 @@ class Exists:
     body: "Formula"
 
 
-Formula: TypeAlias = Top | Bottom | Unary | Binary | Eq | Not | And | Or | Implies | Forall | Exists
+@dataclass(frozen=True, slots=True)
+class Named:
+    relation: str
+
+
+@dataclass(frozen=True, slots=True)
+class Body:
+    sort: str
+    formula: "Formula"
+
+
+Edge: TypeAlias = Named | Body
+
+
+@dataclass(frozen=True, slots=True)
+class Reach:
+    kind: str  # exactly "plus" or "star"
+    edge: Edge
+    left: Term
+    right: Term
+
+
+Formula: TypeAlias = Top | Bottom | Unary | Binary | Eq | Not | And | Or | Implies | Forall | Exists | Reach
 
 
 @dataclass(frozen=True, slots=True)
@@ -146,6 +168,28 @@ class _Checker:
             actual = tuple(self.term(t, context) for t in terms)
             if actual != signature:
                 raise TypeMismatch(f"Predicate {p!r} expects {signature}, received {actual}")
+        elif kind is Reach:
+            if not self.env.closure:
+                raise UnsupportedProfile("Reach requires closure@0")
+            if type(node.kind) is not str or node.kind not in ("plus", "star"):
+                raise TypeMismatch("Reach kind must be plus or star")
+            if type(node.edge) is Named:
+                p = node.edge.relation
+                if type(p) is not str or p not in self.env.predicates:
+                    raise UnknownSymbol(f"Unknown closure relation {p!r}")
+                args = self.env.predicates[p].arguments
+                if len(args) != 2 or args[0] != args[1]:
+                    raise TypeMismatch("Named closure requires a homogeneous binary relation")
+                sort = args[0]
+            elif type(node.edge) is Body:
+                sort = node.edge.sort
+                if type(sort) is not str or sort not in self.env.sorts:
+                    raise UnknownSymbol(f"Unknown closure sort {sort!r}")
+                self.formula(node.edge.formula, (sort, sort) + context, depth + 1)
+            else:
+                raise TypeMismatch("Unknown closure edge variant")
+            if self.term(node.left, context) != sort or self.term(node.right, context) != sort:
+                raise TypeMismatch("Closure endpoints must have the edge sort in the outer context")
         elif kind is Eq:
             left, right = self.term(node.left, context), self.term(node.right, context)
             if left != right:
@@ -190,6 +234,10 @@ def _to_data(node):
         return ["unary", node.predicate, _to_data(node.term)]
     if kind is Binary:
         return ["binary", node.predicate, _to_data(node.left), _to_data(node.right)]
+    if kind is Reach:
+        edge = (["named", node.edge.relation] if type(node.edge) is Named else
+                ["body", node.edge.sort, _to_data(node.edge.formula)])
+        return ["reach", node.kind, edge, _to_data(node.left), _to_data(node.right)]
     if kind is Eq:
         return ["eq", _to_data(node.left), _to_data(node.right)]
     if kind is Not:
@@ -222,7 +270,7 @@ class _Decoder:
         tag = data[0]
         arities = {"var": 2, "const": 2} if term else {"top": 1, "bottom": 1, "unary": 3,
                    "binary": 4, "eq": 3, "not": 2, "and": 3, "or": 3, "implies": 3,
-                   "forall": 3, "exists": 3}
+                   "forall": 3, "exists": 3, "reach": 5}
         if tag not in arities or len(data) != arities[tag]:
             raise SyntaxError(f"Unknown AST tag or incorrect arity: {tag!r}")
         if tag == "var":
@@ -239,6 +287,18 @@ class _Decoder:
             return Binary(data[1], self.decode(data[2], depth + 1, True), self.decode(data[3], depth + 1, True))
         if tag == "eq":
             return Eq(self.decode(data[1], depth + 1, True), self.decode(data[2], depth + 1, True))
+        if tag == "reach":
+            edge = data[2]
+            if type(edge) is not list or not edge or type(edge[0]) is not str:
+                raise SyntaxError("Reach edge must be a tagged array")
+            if edge[0] == "named" and len(edge) == 2:
+                edge = Named(edge[1])
+            elif edge[0] == "body" and len(edge) == 3:
+                edge = Body(edge[1], self.decode(edge[2], depth + 1))
+            else:
+                raise SyntaxError("Unknown Reach edge tag or incorrect arity")
+            return Reach(data[1], edge, self.decode(data[3], depth + 1, True),
+                         self.decode(data[4], depth + 1, True))
         if tag == "not":
             return Not(self.decode(data[1], depth + 1))
         if tag in ("and", "or", "implies"):

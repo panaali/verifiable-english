@@ -234,3 +234,14 @@ the approximately 5.5 MiB replay stream stays in the ignored build directory.
 
 See [`../docs/rust.md`](../docs/rust.md) for API scope, operational differences,
 trust and the benchmark command/results.
+
+## Opt-in closure@0 fixtures
+
+`closure.json` contains 46 v0.1 environments/models and 866 formulas. It is kept
+separate so v0 consumers, including Rust, retain the original fixture envelopes.
+`closure.py` deterministically regenerates it. Cases cover empty sorts, all
+two-vertex graphs, positive cycles, isolated star reflexivity, direction,
+Body parameters and nested closure. Python/Lean evaluation and canonical source
+agree on every case; tests additionally exercise all five view inverses and
+100 seeded extended formulas. See `docs/spec/closure-implementation.md` and
+`lean/CLOSURE.md` for proof and runtime boundaries.

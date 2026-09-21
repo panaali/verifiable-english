@@ -10,7 +10,7 @@ from dataclasses import asdict, dataclass, field
 from typing import Any
 
 from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall,
-                  Formula, Implies, Not, Or, Top, Unary, Var, check_formula)
+                  Formula, Implies, Not, Or, Top, Unary, Var, Reach, Body, check_formula)
 from .entailment import check_entailment_certificate, prove_entailment
 from .environment import validate_identifier
 from .errors import ResourceLimit, VEError
@@ -249,7 +249,9 @@ def non_vacuity_conditions(env, *formulas) -> tuple[Formula, ...]:
             for sort in reversed(binders):
                 guard = Exists(sort, guard)
             conditions.append(guard)
-        if type(f) in (Forall, Exists):
+        if type(f) is Reach and type(f.edge) is Body:
+            walk(f.edge.formula, binders + (f.edge.sort, f.edge.sort))
+        elif type(f) in (Forall, Exists):
             walk(f.body, binders + (f.sort,))
         elif type(f) is Not:
             walk(f.body, binders)
