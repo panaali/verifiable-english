@@ -1,0 +1,3 @@
+there exists service s, (s is deployed).
+for every service s, (if (s is deployed), then (there exists person p, (p owns s))).
+for every service s, (if (s is deployed), then (s is reviewed)).

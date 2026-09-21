@@ -1,0 +1,6 @@
+{
+  "complete": true,
+  "domains": {"person": ["alice"], "service": ["api"]},
+  "constants": {},
+  "relations": {"deployed": [["api"]], "reviewed": [["api"]], "owns": [["alice", "api"]]}
+}
