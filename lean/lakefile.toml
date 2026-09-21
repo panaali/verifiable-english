@@ -1,0 +1,10 @@
+name = "veReference"
+version = "0.1.0"
+defaultTargets = ["VE", "ve_conformance"]
+
+[[lean_lib]]
+name = "VE"
+
+[[lean_exe]]
+name = "ve_conformance"
+root = "Main"
