@@ -1,5 +1,6 @@
 import VE.Consequence
 import VE.SurfaceProofs
+import VE.EnvironmentProofs
 
 #print axioms VE.term_defined
 #print axioms VE.typed_empty
@@ -27,3 +28,40 @@ import VE.SurfaceProofs
 #print axioms VE.Surface.propositional_document_length
 #print axioms VE.Surface.parse_print_propositional
 #print axioms VE.Surface.normalize_idempotent_propositional
+
+#print axioms VE.Surface.decimal_digit
+#print axioms VE.Surface.digitsCore_valid
+#print axioms VE.Surface.digitsCore_value
+#print axioms VE.Surface.digitsCore_nonempty
+#print axioms VE.Surface.canonicalName_generated
+#print axioms VE.Surface.canonicalName_injective
+#print axioms VE.Surface.generated_identifier
+#print axioms VE.Surface.canonicalName_identifier
+#print axioms VE.Surface.generated_not_reserved
+#print axioms VE.Surface.span_ident_loop
+#print axioms VE.Surface.span_ident_append
+#print axioms VE.Surface.readIdent_append
+
+#print axioms VE.Surface.scope_mono
+#print axioms VE.Surface.scope_fresh
+#print axioms VE.Surface.scope_cons
+#print axioms VE.Surface.canonical_binderAllowed
+#print axioms VE.Surface.printAux_counter
+#print axioms VE.Surface.index_lookup
+#print axioms VE.Surface.parseTerm_print
+#print axioms VE.Surface.printTerm_head
+#print axioms VE.Surface.parseRaw_term
+#print axioms VE.Surface.consume_sound
+#print axioms VE.Surface.consume_keyword_ne
+#print axioms VE.Surface.declaration_identifier
+#print axioms VE.Surface.declaration_not_reserved
+#print axioms VE.Surface.depth_le_print_length
+#print axioms VE.Surface.parseRaw_print
+#print axioms VE.Surface.document_length
+#print axioms VE.Surface.parseStatements_print
+#print axioms VE.Surface.parse_print
+#print axioms VE.Surface.parse_wellFormed
+#print axioms VE.Surface.normalize_idempotent
+
+#print axioms VE.Bridge.lookup_name
+#print axioms VE.Bridge.vocabulary_namesValid

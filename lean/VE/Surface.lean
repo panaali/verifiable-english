@@ -62,10 +62,32 @@ def readIdent (input : List Char) : Option (String × List Char) := do
   if !(c ≥ 'a' && c ≤ 'z') then none
   else
     let (name, rest) := input.span identChar
-    if name.length > 64 then none else some (String.mk name, rest)
+    some (String.mk name, rest)
 
 def reserved : List String := ["true", "false", "is", "equals", "not", "and", "or",
   "if", "then", "for", "every", "there", "exists", "believes", "must", "eventually"]
+
+/-- Unbudgeted ASCII identifier grammar. Runtime byte limits belong to the bridge. -/
+def identifier (s : String) : Bool :=
+  match s.toList with
+  | [] => false
+  | c :: cs => (c ≥ 'a' && c ≤ 'z') && cs.all identChar
+
+def generatedName (s : String) : Bool :=
+  match s.toList with
+  | 'x' :: cs => !cs.isEmpty && cs.all (fun c => c ≥ '0' && c ≤ '9')
+  | _ => false
+
+def declarationName (s : String) : Bool :=
+  identifier s && !reserved.contains s && !generatedName s
+
+/-- Only lexical side conditions needed for P4. Each declaration is checked by
+`declarationName`; finite wire vocabularies validate these conditions executably.
+Semantic signature validity and cross-category distinctness are separate. -/
+def NamesValid (E : Environment) : Prop :=
+  (∀ s ∈ E.sorts, declarationName s = true) ∧
+  (∀ p ss, E.predicates p = some ss → declarationName p = true) ∧
+  (∀ c s, E.constants c = some s → declarationName c = true)
 
 def binderAllowed (E : Environment) (names : List String) (name : String) : Bool :=
   !names.contains name && !reserved.contains name && !E.sorts.contains name &&
@@ -97,8 +119,7 @@ def parseAtom (names : List String) (input : List Char) : Option (Formula × Lis
 
 /-- Total prefix parser: recursive calls decrease explicit fuel. Public parsing
 uses input length plus one, so the unbudgeted reference does not guess a depth.
-The executable parser covers all v0 constructors. The proofs below intentionally
-cover only the atom-free propositional fragment. -/
+The executable parser covers all v0 constructors. The full round-trip proof is in `RoundTrip.lean`. -/
 def parseRaw (E : Environment) : Nat → List String → List Char → Option (Formula × List Char)
   | 0, _, _ => none
   | fuel + 1, names, input =>
