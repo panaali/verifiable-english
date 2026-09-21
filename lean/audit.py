@@ -6,14 +6,14 @@ import subprocess
 ROOT = Path(__file__).resolve().parent
 ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
 actual = set()
-for source in sorted((ROOT / "VE").glob("*.lean")):
+for source in sorted((ROOT / "VE").rglob("*.lean")):
     text = source.read_text()
     namespace = re.search(r"^namespace (\S+)", text, re.M)
     declarations = re.findall(r"^theorem (\w+)", text, re.M)
     if declarations:
         assert namespace, source
         actual.update(f"{namespace[1]}.{name}" for name in declarations)
-    assert not re.search(r"\b(sorry|axiom|unsafe|native_decide|implemented_by)\b", text), source
+    assert not re.search(r"\b(sorry|sorryAx|admit|axiom|unsafe|native_decide|implemented_by)\b", text), source
 recorded = set(re.findall(r"^#print axioms (\S+)", (ROOT / "VE/Audit.lean").read_text(), re.M))
 assert actual == recorded, {"missing": actual - recorded, "extra": recorded - actual}
 result = subprocess.run(["lake", "env", "lean", "VE/Audit.lean"], cwd=ROOT,
