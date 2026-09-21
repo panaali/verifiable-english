@@ -12,7 +12,7 @@ from .fol import document_from_named_fol
 from .limits import MAX_PACKAGE_BYTES, MAX_SOURCE_BYTES
 from .model import FiniteModel
 from .parser import parse
-from .printer import (NAMING_POLICIES, measure_jsonl_lengths, natural_document,
+from .printer import (LEGEND_STYLES, NAMING_POLICIES, measure_jsonl_lengths, natural_document,
                       print_document, render, render_cell)
 from .search import find_countermodel
 from .wire import loads_json
@@ -53,6 +53,7 @@ def main(argv=None):
     lengths.add_argument("--source-format", choices=("ast", "ve"), default="ast")
     lengths.add_argument("--naming", choices=NAMING_POLICIES, default="per_statement")
     lengths.add_argument("--without-legend", action="store_true", help="measure claim text alone")
+    lengths.add_argument("--legend-style", choices=LEGEND_STYLES, default="json")
     for command in ("parse", "format", "render", "evaluate", "check", "import-fol", "countermodel"):
         sub = commands.add_parser(command)
         sub.add_argument("--env", required=True, help="environment JSON file")
@@ -72,6 +73,8 @@ def main(argv=None):
             sub.add_argument("--view", choices=("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent",
                                                  "canonical", "natural"), default="ve_strict")
             sub.add_argument("--with-legend", action="store_true", help="include the shared vocabulary legend")
+            sub.add_argument("--legend-style", choices=LEGEND_STYLES, default="json",
+                             help="vocabulary legend format (used with --with-legend)")
             sub.add_argument("--naming", choices=NAMING_POLICIES, default="per_statement")
         if command in ("evaluate", "check"):
             sub.add_argument("--model", required=command == "evaluate", help="complete finite-model JSON")
@@ -86,7 +89,7 @@ def main(argv=None):
         if args.command == "view-lengths":
             _emit(measure_jsonl_lengths(args.source, env, field=args.field,
                                        source_format=args.source_format, naming=args.naming,
-                                       include_vocabulary=not args.without_legend))
+                                       include_vocabulary=not args.without_legend, style=args.legend_style))
             return 0
         if args.command == "grammar":
             from .grammar import export_grammar, structured_output_spec
@@ -122,7 +125,8 @@ def main(argv=None):
                 return 0
             view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(args.view, args.view)
             renderer = render_cell if args.with_legend else render
-            print(renderer(document, env, view, args.naming), end="")
+            options = {"style": args.legend_style} if args.with_legend else {}
+            print(renderer(document, env, view, args.naming, **options), end="")
             return 0
         source = _read(args.source, MAX_SOURCE_BYTES)
         if args.command in ("check", "evaluate", "parse"):
@@ -143,7 +147,8 @@ def main(argv=None):
                 return 0
             view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(args.view, args.view)
             renderer = render_cell if args.with_legend else render
-            print(renderer(document, env, view, args.naming), end="")
+            options = {"style": args.legend_style} if args.with_legend else {}
+            print(renderer(document, env, view, args.naming, **options), end="")
         else:
             print(print_document(env, document), end="")
         return 0
