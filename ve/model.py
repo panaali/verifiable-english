@@ -45,8 +45,6 @@ class FiniteModel:
 
     @classmethod
     def from_json(cls, env: Any, data: str | bytes) -> "FiniteModel":
-        if len(data if isinstance(data, bytes) else data.encode("utf-8")) > MAX_PACKAGE_BYTES:
-            raise ResourceLimit("model package exceeds size limit")
         from .wire import loads_json
         return cls.from_dict(env, loads_json(data))
 

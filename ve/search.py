@@ -10,7 +10,8 @@ from .ast import check_formula
 from .evaluate import evaluate
 from .model import FiniteModel
 from .identity import meaning_id
-from .limits import MAX_ENTITIES, MAX_NODES, MAX_TUPLES
+from .limits import MAX_ENTITIES, MAX_EVALUATIONS, MAX_NODES, MAX_TUPLES
+from .errors import ResourceLimit, VEError
 
 
 class _SearchSpaceLimit(Exception):
@@ -29,8 +30,18 @@ def _node_count(root: Any) -> int:
 
 
 def _check_aggregate_ast(premises: Sequence[Any], conclusion: Any) -> None:
+    if len(premises) > MAX_NODES:
+        raise ResourceLimit("Premise count exceeds aggregate AST limit")
     if sum(_node_count(x) for x in (*premises, conclusion)) > MAX_NODES:
-        raise ValueError(f"premises and conclusion exceed aggregate {MAX_NODES}-node search limit")
+        raise ResourceLimit(f"premises and conclusion exceed aggregate {MAX_NODES}-node search limit")
+
+
+def _premises(value):
+    if not isinstance(value, Sequence):
+        raise VEError("Premises must be an ordered sequence, not a consumable iterator")
+    if len(value) > MAX_NODES:
+        raise ResourceLimit("Premise count exceeds aggregate AST limit")
+    return tuple(value)
 
 
 @dataclass(frozen=True, slots=True)
@@ -65,8 +76,11 @@ class CountermodelCheck:
 def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model: FiniteModel,
                        *, max_evaluations: int = 1_000_000) -> CountermodelCheck:
     """Independently validate and check a purported finite countermodel."""
+    premises = _premises(premises)
     if type(max_evaluations) is not int or max_evaluations < 0:
         raise ValueError("max_evaluations must be a nonnegative integer")
+    if max_evaluations > MAX_EVALUATIONS:
+        raise ResourceLimit("Evaluation budget exceeds the v0 limit of 1,000,000 nodes")
     for formula in premises:
         check_formula(env, formula)
     check_formula(env, conclusion)
@@ -160,10 +174,13 @@ def _models(env: Any, maximum: int) -> Iterator[FiniteModel]:
 def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max_domain_size: int = 2,
                       max_models: int = 10_000, max_evaluations: int = 1_000_000) -> CountermodelResult:
     """Enumerate all models in the size bound until a countermodel or budget limit."""
+    premises = _premises(premises)
     if any(type(x) is not int or x < 0 for x in (max_domain_size, max_models, max_evaluations)):
         raise ValueError("search bounds must be nonnegative integers")
+    if max_evaluations > MAX_EVALUATIONS:
+        raise ResourceLimit("Evaluation budget exceeds the v0 limit of 1,000,000 nodes")
     if max_domain_size > MAX_ENTITIES:
-        raise ValueError(f"max_domain_size cannot exceed {MAX_ENTITIES}")
+        raise ResourceLimit(f"max_domain_size cannot exceed {MAX_ENTITIES}")
     _check_aggregate_ast(premises, conclusion)
     for formula in premises:
         check_formula(env, formula)
@@ -189,7 +206,7 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
                                       "evaluation budget exhausted")
         if result.valid:
             return CountermodelResult("Found", model, checked, work, max_domain_size, max_models)
-    # Determine whether the cap happened exactly at exhaustion without consuming another model.
+    # Probe exhaustion once more; this validates but does not evaluate another model.
     try:
         next(iterator)
     except StopIteration:

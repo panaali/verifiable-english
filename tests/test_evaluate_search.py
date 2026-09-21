@@ -2,9 +2,9 @@ import json
 
 import pytest
 
-from ve.ast import Binary, Bottom, Const, Eq, Exists, Forall, Implies, Top, Unary, Var
+from ve.ast import Binary, Bottom, Const, Eq, Exists, Forall, Implies, Not, Top, Unary, Var
 from ve.environment import Environment
-from ve.errors import InvalidModel, ResourceLimit
+from ve.errors import InvalidModel, ResourceLimit, VEError
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
 from ve.search import _subsets, check_countermodel, find_countermodel
@@ -128,3 +128,33 @@ def test_search_allows_aliasing_constants_and_distinguishes_not_found(env):
 def test_search_model_budget_is_explicit_resource_limit(env):
     result = find_countermodel(env, (), Top(), max_domain_size=2, max_models=0)
     assert result.status == "ResourceLimit" and result.models_checked == 0
+
+
+def test_distinct_constant_names_do_not_assert_distinct_entities(env):
+    data = env.to_dict()
+    data["vocabulary"]["constants"]["other"] = {"sort": "item", "description": "Another constant."}
+    two = Environment.from_dict(data)
+    result = find_countermodel(two, (), Not(Eq(Const("origin"), Const("other"))), max_domain_size=1)
+    assert result.status == "Found"
+    assert result.model.constants["origin"] == result.model.constants["other"]
+
+
+def test_search_reaches_two_entity_full_unary_relation(env):
+    premises = [Exists("item", Exists("item", Not(Eq(Var(0), Var(1))))),
+                Forall("item", Unary("marked", Var(0)))]
+    result = find_countermodel(env, premises, Bottom(), max_domain_size=2, max_models=1000)
+    assert result.status == "Found"
+    assert len(result.model.domains["item"]) == len(result.model.relations["marked"]) == 2
+    assert check_countermodel(env, premises, Bottom(), result.model).valid
+
+
+def test_consumable_premises_cannot_silently_become_empty(env):
+    with pytest.raises(VEError, match="sequence"):
+        check_countermodel(env, iter([Bottom()]), Bottom(), model(env))
+
+
+def test_revalidation_preserves_resource_error_class(env):
+    forged = FiniteModel({"item": tuple(f"e{i}" for i in range(1001))}, {"origin": "e0"},
+                         {"edge": frozenset(), "marked": frozenset()}, env.environment_id, "0" * 64)
+    with pytest.raises(ResourceLimit):
+        evaluate(env, Top(), forged)
