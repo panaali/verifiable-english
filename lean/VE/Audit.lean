@@ -1,5 +1,15 @@
+import VE.Closure.Bridge
+import VE.CertificateWire
+import VE.TableauChecks
+import VE.TableauChecker
+import VE.TableauClosure
+import VE.Tableau
 import VE.Consequence
 import VE.SurfaceProofs
+import VE.EnvironmentProofs
+import VE.ParserContracts
+import VE.GraphChecks
+import VE.ModelProofs
 
 #print axioms VE.term_defined
 #print axioms VE.typed_empty
@@ -27,3 +37,196 @@ import VE.SurfaceProofs
 #print axioms VE.Surface.propositional_document_length
 #print axioms VE.Surface.parse_print_propositional
 #print axioms VE.Surface.normalize_idempotent_propositional
+
+#print axioms VE.Surface.decimal_digit
+#print axioms VE.Surface.digitsCore_valid
+#print axioms VE.Surface.digitsCore_value
+#print axioms VE.Surface.digitsCore_nonempty
+#print axioms VE.Surface.canonicalName_generated
+#print axioms VE.Surface.canonicalName_injective
+#print axioms VE.Surface.generated_identifier
+#print axioms VE.Surface.canonicalName_identifier
+#print axioms VE.Surface.generated_not_reserved
+#print axioms VE.Surface.span_ident_loop
+#print axioms VE.Surface.span_ident_append
+#print axioms VE.Surface.readIdent_append
+
+#print axioms VE.Surface.scope_mono
+#print axioms VE.Surface.scope_fresh
+#print axioms VE.Surface.scope_cons
+#print axioms VE.Surface.canonical_binderAllowed
+#print axioms VE.Surface.printAux_counter
+#print axioms VE.Surface.index_lookup
+#print axioms VE.Surface.parseTerm_print
+#print axioms VE.Surface.printTerm_head
+#print axioms VE.Surface.parseRaw_term
+#print axioms VE.Surface.consume_sound
+#print axioms VE.Surface.consume_keyword_ne
+#print axioms VE.Surface.declaration_identifier
+#print axioms VE.Surface.declaration_not_reserved
+#print axioms VE.Surface.depth_le_print_length
+#print axioms VE.Surface.parseRaw_print
+#print axioms VE.Surface.document_length
+#print axioms VE.Surface.parseStatements_print
+#print axioms VE.Surface.parse_print
+#print axioms VE.Surface.parse_wellFormed
+#print axioms VE.Surface.normalize_idempotent
+
+#print axioms VE.Bridge.lookup_name
+#print axioms VE.Bridge.vocabulary_namesValid
+
+#print axioms VE.Surface.accepted_normalize
+#print axioms VE.Surface.accepted_reparse
+#print axioms VE.Surface.print_injective
+#print axioms VE.Surface.canonical_unique
+#print axioms VE.Surface.accepted_normalize_eq_iff
+#print axioms VE.Surface.normalize_print
+
+#print axioms VE.Graph.acyclicCheck_dependency
+#print axioms VE.Graph.path_rank
+#print axioms VE.Graph.acyclicCheck_sound
+#print axioms VE.Graph.lookup_sound
+#print axioms VE.Graph.resolve_sound
+#print axioms VE.Graph.checkNode_sound
+#print axioms VE.Graph.checkNodes_sound
+#print axioms VE.Graph.check_sound
+#print axioms VE.Graph.check_entails
+#print axioms VE.Graph.check_unfolds
+
+#print axioms VE.GraphChecks.testCertificate_sound
+
+#print axioms VE.Bridge.lookup_mem
+#print axioms VE.Bridge.tupleCheck_iff
+#print axioms VE.Bridge.modelData_valid
+#print axioms VE.Bridge.decodeModel_valid
+#print axioms VE.Bridge.decoded_countermodel_sound
+#print axioms VE.Bridge.CountermodelQuery.refutes_sound
+
+#print axioms VE.Tableau.token_defined
+#print axioms VE.Tableau.bindings_extend
+#print axioms VE.Tableau.holds_extend
+#print axioms VE.Tableau.typed_extend
+#print axioms VE.Tableau.add_holds
+#print axioms VE.Tableau.one_holds
+#print axioms VE.Tableau.two_holds
+#print axioms VE.Tableau.gamma_holds
+#print axioms VE.Tableau.delta_witness
+
+#print axioms VE.Tableau.bindings_get
+#print axioms VE.Tableau.termToken_denote
+#print axioms VE.Tableau.ground_denote
+#print axioms VE.Tableau.literals_hold
+#print axioms VE.Tableau.mem_dedup
+#print axioms VE.Tableau.equalities_sound
+#print axioms VE.Tableau.grow_sound
+#print axioms VE.Tableau.reachable_sound
+#print axioms VE.Tableau.equivalent_sound
+#print axioms VE.Tableau.matches_sound
+#print axioms VE.Tableau.closes_sound
+#print axioms VE.Tableau.closed_sound
+#print axioms VE.Tableau.complementary_sound
+
+#print axioms VE.Tableau.next_sound
+#print axioms VE.Tableau.checkChildren_member
+#print axioms VE.Tableau.replay_sound
+#print axioms VE.Tableau.checkCertificate_sound
+
+#print axioms VE.Graph.check_sound_of_certificateSound
+#print axioms VE.Graph.check_entails_of_certificateSound
+#print axioms VE.Graph.check_unfolds_of_certificateSound
+#print axioms VE.Graph.tableau_certificateSound
+
+#print axioms VE.CertificateWire.Query.accepts_sound
+
+#print axioms VE.Closure.Path.least
+#print axioms VE.Closure.Path.trans
+#print axioms VE.Closure.Path.unfold
+#print axioms VE.Closure.Surface.parseRaw_print_named
+#print axioms VE.Closure.check_iff_wellFormed
+#print axioms VE.Closure.conservativity
+#print axioms VE.Closure.conservativity_without_reach
+#print axioms VE.Closure.countermodelCheck_iff
+#print axioms VE.Closure.countermodel_sound
+#print axioms VE.Closure.embed_of_erase
+#print axioms VE.Closure.erase_embed
+#print axioms VE.Closure.eval_false_iff_not_denote
+#print axioms VE.Closure.eval_iff_denote
+#print axioms VE.Closure.mem_bodyEdges
+#print axioms VE.Closure.mem_dedup
+#print axioms VE.Closure.mem_namedEdges
+#print axioms VE.Closure.mem_pivot
+#print axioms VE.Closure.pivot_closed
+#print axioms VE.Closure.pivot_preserves_closed
+#print axioms VE.Closure.reachEval_iff
+#print axioms VE.Closure.reachable_congr
+#print axioms VE.Closure.star_least
+#print axioms VE.Closure.warshall_closed
+#print axioms VE.Closure.warshall_extends
+#print axioms VE.Closure.warshall_iff_path
+#print axioms VE.Closure.warshall_preserves_closed
+#print axioms VE.Closure.warshall_sound
+
+
+#print axioms VE.Closure.Surface.parseStatements_nonempty
+#print axioms VE.Closure.Surface.parse_print_named
+#print axioms VE.Closure.Surface.print_injective_named
+
+#print axioms VE.CertificateWire.ClosureQuery.accepts_sound
+#print axioms VE.Closure.Path.first
+#print axioms VE.Closure.Path.last
+#print axioms VE.Closure.Tableau.add_holds
+#print axioms VE.Closure.Tableau.bindings_extend
+#print axioms VE.Closure.Tableau.bindings_get
+#print axioms VE.Closure.Tableau.checkCertificate_sound
+#print axioms VE.Closure.Tableau.checkCertificate_sound_v0
+#print axioms VE.Closure.Tableau.checkChildren_member
+#print axioms VE.Closure.Tableau.closed_sound
+#print axioms VE.Closure.Tableau.closes_sound
+#print axioms VE.Closure.Tableau.closure_holds
+#print axioms VE.Closure.Tableau.complementary_sound
+#print axioms VE.Closure.Tableau.composeStep_sound
+#print axioms VE.Closure.Tableau.delta_witness
+#print axioms VE.Closure.Tableau.edgeStep_sound
+#print axioms VE.Closure.Tableau.endStep_sound
+#print axioms VE.Closure.Tableau.equalities_sound
+#print axioms VE.Closure.Tableau.equivalent_sound
+#print axioms VE.Closure.Tableau.extra_sound
+#print axioms VE.Closure.Tableau.gamma_holds
+#print axioms VE.Closure.Tableau.ground_denote
+#print axioms VE.Closure.Tableau.grow_sound
+#print axioms VE.Closure.Tableau.holds_extend
+#print axioms VE.Closure.Tableau.known_bindings
+#print axioms VE.Closure.Tableau.literals_hold
+#print axioms VE.Closure.Tableau.matches_sound
+#print axioms VE.Closure.Tableau.mem_dedup
+#print axioms VE.Closure.Tableau.namedStep_sound
+#print axioms VE.Closure.Tableau.next_sound
+#print axioms VE.Closure.Tableau.one_holds
+#print axioms VE.Closure.Tableau.reachClosed_sound
+#print axioms VE.Closure.Tableau.reachable_sound
+#print axioms VE.Closure.Tableau.replay_sound
+#print axioms VE.Closure.Tableau.rule_closure_formula
+#print axioms VE.Closure.Tableau.step_sound
+#print axioms VE.Closure.Tableau.termToken_denote
+#print axioms VE.Closure.Tableau.token_defined
+#print axioms VE.Closure.Tableau.two_holds
+#print axioms VE.Closure.Tableau.typed_extend
+#print axioms VE.Closure.Tableau.unfoldAt_sound
+#print axioms VE.Closure.edge_at_denote
+#print axioms VE.Closure.edge_inclusion
+#print axioms VE.Closure.edge_shift_denote
+#print axioms VE.Closure.edge_typed
+#print axioms VE.Closure.endEdge_sound
+#print axioms VE.Closure.formula_matches_sound
+#print axioms VE.Closure.liftMatch_sound
+#print axioms VE.Closure.liftSub_denote
+#print axioms VE.Closure.liftTerm_denote
+#print axioms VE.Closure.named_body_denote
+#print axioms VE.Closure.pair_values
+#print axioms VE.Closure.reach_compose
+#print axioms VE.Closure.reach_denote
+#print axioms VE.Closure.reachable_trans
+#print axioms VE.Closure.substTerm_denote
+#print axioms VE.Closure.subst_denote
+#print axioms VE.Closure.unfold_denote
+#print axioms VE.Closure.unlift_denote

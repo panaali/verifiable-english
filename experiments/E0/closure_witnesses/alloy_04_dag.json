@@ -1,0 +1,120 @@
+{
+  "id": "alloy-models/models/java/javatypes_soundness.als@282",
+  "dataset": "alloy",
+  "source": "fact { graph/dag[xtends] }",
+  "provenance": {
+    "git_revision": "46be9e1bafc85e37456cbf56e9dc92b6c8178666",
+    "path": "experiments/E0/survey_samples/alloy.jsonl",
+    "text_sha256": "e2262123da94eab9601296a1c965ee3ec2ff5d61d0fcfcaee77f0764209cd595"
+  },
+  "environment": {
+    "language": "ve.core@0.1",
+    "profiles": [
+      "closure@0",
+      "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.1-closure-2026-09-21",
+    "vocabulary": {
+      "sorts": {
+        "jtype": {
+          "description": "An Alloy Type."
+        }
+      },
+      "predicates": {
+        "xtends": {
+          "arguments": [
+            "jtype",
+            "jtype"
+          ],
+          "description": "Primitive Type.xtends relation."
+        }
+      },
+      "constants": {}
+    }
+  },
+  "ast": [
+    [
+      "forall",
+      "jtype",
+      [
+        "not",
+        [
+          "reach",
+          "plus",
+          [
+            "named",
+            "xtends"
+          ],
+          [
+            "var",
+            0
+          ],
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ]
+  ],
+  "strict": "for every jtype x0, (not (tc[xtends](x0, x0))).\n",
+  "adapter": {
+    "kind": "alloy-fact@0",
+    "conditions": [
+      "graph/dag[xtends] expands to no positive xtends cycle.",
+      "Type is the relevant carrier. These instances can use Interface atoms, whose xtends field permits a set of interfaces.",
+      "The fact itself is the checked claim, not a premise that would exclude its falsifying model. Other Java fields are outside the sampled fact."
+    ]
+  },
+  "contrast": "Adding the edge c-to-a closes a positive cycle; no inequality test is substituted for positive length.",
+  "true_model": {
+    "complete": true,
+    "domains": {
+      "jtype": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "constants": {},
+    "relations": {
+      "xtends": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "b",
+          "c"
+        ]
+      ]
+    }
+  },
+  "false_model": {
+    "complete": true,
+    "domains": {
+      "jtype": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "constants": {},
+    "relations": {
+      "xtends": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "b",
+          "c"
+        ],
+        [
+          "c",
+          "a"
+        ]
+      ]
+    }
+  }
+}

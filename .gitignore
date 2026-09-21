@@ -9,3 +9,5 @@ dist/
 # Complete frozen materials are compressed; expanded outputs stay local.
 /experiments/E5/*.jsonl
 /experiments/E2E4/*.jsonl
+.cargo-home/
+rust/target/

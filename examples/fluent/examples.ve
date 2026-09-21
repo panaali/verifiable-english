@@ -1,0 +1,6 @@
+for every service x0, (if (x0 is deployed), then (x0 is reviewed)).
+for every service x0, (if (x0 is deployed), then (there exists person x1, (x1 owns x0))).
+there exists person x0, (for every service x1, (if (x1 is deployed), then (x0 owns x1))).
+not (there exists service x0, ((x0 is deployed) and (not (x0 is reviewed)))).
+for every service x0, (if ((x0 is deployed) and (not (x0 equals @legacy))), then (not (@alice owns x0))).
+for every service x0, (for every person x1, (for every person x2, (if ((x1 owns x0) and (x2 owns x0)), then (x1 equals x2)))).

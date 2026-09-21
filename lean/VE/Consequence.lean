@@ -57,7 +57,9 @@ theorem countermodelCheck_iff {α : Type u} [DecidableEq α] (M : FiniteModel α
   simp [countermodelCheck, eval_iff_denote, eval_false_iff_not_denote]
 
 /-- P11: an admissible finite countermodel refutes consequence over arbitrary
-admissible structures in the same universe. -/
+admissible structures in the same universe. This general lemma also holds for
+raw formulas under their total semantics; it does not establish typing. The
+bridge's CountermodelQuery.refutes_sound includes closed typing explicitly. -/
 theorem countermodel_sound {α : Type u} [DecidableEq α] {E : Environment}
     (M : FiniteModel α) (valid : M.Valid E) (premises : List Formula)
     (conclusion : Formula) (checked : countermodelCheck M premises conclusion = true) :

@@ -1,0 +1,159 @@
+{
+  "platform": "macOS-26.3.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)",
+  "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05) (Homebrew)",
+  "git_revision": "b8c54efc27fcbb3f59fac97ea4d778754538bf74",
+  "source_sha256": {
+    "rust/Cargo.lock": "fcea8b7c55e8a185408920b82312d71e997c3db18a0f0d6298fcd927c0e1c97c",
+    "rust/benchmark.py": "9b27b1342dbaa3d399f987315d3a145cbbaf13f7c5d66764f6816a27b5d4477d",
+    "rust/ve-core/Cargo.toml": "cab76d0ce4a11b16fb541f594d2bfc53fb52e54841e331463d0e9c1d273dd95a",
+    "rust/ve-core/examples/bench.rs": "fd16d75f2d8955ae2b3884162e04f23eec447362b742e8089a76714d4a0d39ab",
+    "rust/ve-core/src/ast.rs": "172513706b43826f8a7488126ca5d86668bf0b50e7130113b40cb7b2f0b959b4",
+    "rust/ve-core/src/environment.rs": "c21045a27d594a841a20173ab607eab19803873fe8291cee6bb8f31577b16602",
+    "rust/ve-core/src/eval.rs": "0aafb653d20c314623341c685aa818d7b5bcae8a059f4cb6019dcb54a6f0f2dc",
+    "rust/ve-core/src/lib.rs": "24e4cc199949815fc32e23107cb10ce1cd8e06623de44f2005beda02ba02d62f",
+    "rust/ve-core/src/model.rs": "e7310f27c168467a6b2d0c258e8649744bd0f5ffc81b5246223f7f4fa05b53cb",
+    "rust/ve-core/src/search.rs": "b3d7aa7819ef39d764017763d7ebac8fd4a43f1b2c049d97949d63075e4e1927",
+    "rust/ve-core/src/surface.rs": "2e8d7e480824d663f980d32ad8fd1cfccfee8f5bcbf19ae1e8c79438d28dd29a",
+    "rust/ve-core/src/wire.rs": "9d6a44e5fa7df017abbcb10bb1f8e572eb49ea518d9edef2163f7c506437259a",
+    "ve/__init__.py": "befbbb3006bfe199ed22f86707c1ef80fdd480545f36546081bbeadf2f4b9bb6",
+    "ve/__main__.py": "894e360febdb7189ed3f15329ec9e93ff00b37fd2e772b07e272df7be6d1b004",
+    "ve/argument.py": "1e0eae8413f8292dc97aa65ad7fdfba64b77c20f340307ec424113df29c8db03",
+    "ve/argument_fixtures.py": "f3ebd7dca40cf67269d97518ed3c691cf638ef479fc51788200049c27ed613a9",
+    "ve/ast.py": "e30543569f02d69ad0466b8cb6bfdecf51c7015892acfd87fe10259e0a823069",
+    "ve/attacks.py": "c2be0bae0da77d2b900b8f3e61d38f5f7b560f1e13efec5596338224c405d146",
+    "ve/authoring.py": "2f8660901d24fda45192a228b3296771d349401c8746a3e1355126e69dc33348",
+    "ve/check.py": "c0567c19f560bc7f10e893a4d3499c0e982a3457ffb0c3ce3360581a000df970",
+    "ve/closure.py": "07138aebef66a18a19f3e6080e09074cfd54d88643609732a7eda44d7792f893",
+    "ve/entailment.py": "b78017e8a255e4dff4397b4184df033b11d1035cb12b5a85533004a2281c5681",
+    "ve/environment.py": "bb10e6fd9a97f4fac9b3c4517b1a757fb25fd188a2b63583074c4ccec113e476",
+    "ve/equivalence.py": "879d1c46776515eb33702ea7a07a202adb371d9f9e839b7e8d59158ddfef8dba",
+    "ve/errors.py": "486f2d3fc45727775256ebc91ad82f32ceba3ed2882fda5f97162edc45f89b1b",
+    "ve/evaluate.py": "4e307af422892da4eafed0b767e7adf5d5d98266e7e6ef2290d37c8225f05721",
+    "ve/fluent.py": "aae69937ba172164e4bd6500a5bc86e1ce1bf8fe48132fdf3a86c7f226f65659",
+    "ve/fol.py": "1adcedc1aa3be107165e16fc0e24d9ed8823c14461de8bfed775ec0964e9162e",
+    "ve/grammar.py": "8f5389044aaabceb8585e5a2e9cec5378e335681b5d087bc146b1af708800438",
+    "ve/identity.py": "1ea165d6152bd4bbfdb42466ddc2d204a5aa0da9fb7b672f9360e5a546bc7721",
+    "ve/limits.py": "bf335f7902574dec3c743a84b1130ecda08ead02e148467c8971f1354860b5f7",
+    "ve/model.py": "6ea346a92194e69e60931ca6d28d17be46d98abfdabb30990cc8e84ad67af9d4",
+    "ve/parser.py": "271eb6207f011183b21b92106d600aec0b1a50a2036384e1897eccbc32144a6f",
+    "ve/printer.py": "7837805035d70501119263f6a03f89428d587ae365aab84fb65b005881feb346",
+    "ve/search.py": "e45c5f0d22713158f0e1ad6f28023089fa5b3ed0013ead7a7930ffb2f37ddc00",
+    "ve/wire.py": "fe12216e4f1cca4a8ecca2b0beea48a0bc2578b804cb664c16566cca74b49b07"
+  },
+  "load_average_start": [
+    3.7177734375,
+    7.09814453125,
+    7.13134765625
+  ],
+  "load_average_end": [
+    3.7177734375,
+    7.09814453125,
+    7.13134765625
+  ],
+  "trace": false,
+  "repeats": 5,
+  "gc_enabled": true,
+  "command": "python rust/benchmark.py --repeats 5 --output rust/closure-benchmark-results.json --closure-only",
+  "method": "Sequential no-trace API-vs-API and kernel-vs-kernel benchmarks.\n\nSetup, decoding, process startup and initial input validation are not timed.\nPython API calls revalidate models and recompute hashes; Rust API calls check\nimmutable input compatibility. Both return results without explanatory traces.\nKernels evaluate already-checked formulas/models with the same work budget and\nresult wrapping: Python _evaluate_validated(trace=False) and Rust's feature-gated\nEvaluationKernel. Search includes candidate construction and validation. Pruned\nsearch reports raw times/counts only; both implementations now prune unused predicates.\n",
+  "results": [
+    {
+      "id": "closure_named_n12",
+      "kind": "evaluation",
+      "size": 12,
+      "iterations_per_sample": 5,
+      "python_seconds_per_call": [
+        0.0010788165964186192,
+        0.0009395415952894836,
+        0.00073141660541296,
+        0.0007363250013440847,
+        0.0007458250038325787
+      ],
+      "rust_seconds_per_call": [
+        0.00010432499999999999,
+        0.000102375,
+        0.0001013916,
+        0.0001068666,
+        0.0001009666
+      ],
+      "python_median_ms": 0.7458250038325787,
+      "rust_median_ms": 0.102375,
+      "python_observations": {
+        "value": true,
+        "evaluations": 4405
+      },
+      "rust_observations": {
+        "evaluations": 4405,
+        "value": true
+      },
+      "api_ratio": 7.285225922662551,
+      "python_kernel_seconds_per_call": [
+        0.0011095500027295201,
+        0.0006630665971897543,
+        0.0005497083999216557,
+        0.0005473082012031228,
+        0.000559341796906665
+      ],
+      "rust_kernel_seconds_per_call": [
+        0.00010395,
+        0.00010398339999999998,
+        0.0001024666,
+        0.0001071166,
+        0.0001015418
+      ],
+      "python_kernel_median_ms": 0.559341796906665,
+      "rust_kernel_median_ms": 0.10395,
+      "kernel_ratio": 5.380873467115584
+    },
+    {
+      "id": "closure_body_n12",
+      "kind": "evaluation",
+      "size": 12,
+      "iterations_per_sample": 5,
+      "python_seconds_per_call": [
+        0.0027112499985378234,
+        0.0022017831972334532,
+        0.0019670833949930965,
+        0.00197301660082303,
+        0.002060599997639656
+      ],
+      "rust_seconds_per_call": [
+        0.0001258334,
+        0.000122875,
+        0.0001246834,
+        0.0001234334,
+        0.0001236166
+      ],
+      "python_median_ms": 2.060599997639656,
+      "rust_median_ms": 0.1236166,
+      "python_observations": {
+        "value": true,
+        "evaluations": 5989
+      },
+      "rust_observations": {
+        "evaluations": 5989,
+        "value": true
+      },
+      "api_ratio": 16.66928226176465,
+      "python_kernel_seconds_per_call": [
+        0.002294925000751391,
+        0.0018844000005628914,
+        0.0017915832053404302,
+        0.0018015081994235515,
+        0.0018534918024670332
+      ],
+      "rust_kernel_seconds_per_call": [
+        0.00012570839999999998,
+        0.00012305,
+        0.0001261584,
+        0.0001232168,
+        0.00012345839999999998
+      ],
+      "python_kernel_median_ms": 1.8534918024670333,
+      "rust_kernel_median_ms": 0.12345839999999998,
+      "kernel_ratio": 15.013087829317676
+    }
+  ]
+}

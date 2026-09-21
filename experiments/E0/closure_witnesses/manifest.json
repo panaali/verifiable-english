@@ -1,0 +1,80 @@
+{
+  "profile": "closure@0",
+  "items": [
+    {
+      "file": "cedar_01.json",
+      "id": "cedar-examples/cedar-example-use-cases/sales_orgs/templated/policies.cedar#3",
+      "dataset": "cedar"
+    },
+    {
+      "file": "cedar_02.json",
+      "id": "cedar-examples/cedar-example-use-cases/github_example/policies.cedar#5",
+      "dataset": "cedar"
+    },
+    {
+      "file": "cedar_03.json",
+      "id": "cedar-examples/cedar-example-use-cases/sales_orgs/static/policies.cedar#5",
+      "dataset": "cedar"
+    },
+    {
+      "file": "cedar_04.json",
+      "id": "cedar-examples/oopsla2024-benchmarks/benches/github-templates/cedar/policies.cedar#0",
+      "dataset": "cedar"
+    },
+    {
+      "file": "cedar_05.json",
+      "id": "cedar-examples/cedar-policy-language-in-action/PhotoApp/photoapp.cedar#4",
+      "dataset": "cedar"
+    },
+    {
+      "file": "cedar_06.json",
+      "id": "cedar-examples/oopsla2024-benchmarks/benches/gdrive-templates/cedar/policies.cedar#0",
+      "dataset": "cedar"
+    },
+    {
+      "file": "cedar_07.json",
+      "id": "cedar-integration-tests/tests/example_use_cases/policies_3c.cedar#0",
+      "dataset": "cedar"
+    },
+    {
+      "file": "cedar_08.json",
+      "id": "cedar-integration-tests/tests/example_use_cases/policies_2a.cedar#0",
+      "dataset": "cedar"
+    },
+    {
+      "file": "cedar_09.json",
+      "id": "cedar-examples/cedar-java-partial-evaluation/app/src/main/resources/policies.cedar#0",
+      "dataset": "cedar"
+    },
+    {
+      "file": "cedar_10.json",
+      "id": "cedar-integration-tests/tests/example_use_cases/policies_3a.cedar#0",
+      "dataset": "cedar"
+    },
+    {
+      "file": "alloy_01_chord2.json",
+      "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@81",
+      "dataset": "alloy"
+    },
+    {
+      "file": "alloy_02_chord.json",
+      "id": "alloy-models/algorithms/distributed-hashtable/chord.als@80",
+      "dataset": "alloy"
+    },
+    {
+      "file": "alloy_03_connected.json",
+      "id": "alloy-models/algorithms/multicasting/iolus.als@5190",
+      "dataset": "alloy"
+    },
+    {
+      "file": "alloy_04_dag.json",
+      "id": "alloy-models/models/java/javatypes_soundness.als@282",
+      "dataset": "alloy"
+    },
+    {
+      "file": "alloy_05_one_node.json",
+      "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@4943",
+      "dataset": "alloy"
+    }
+  ]
+}

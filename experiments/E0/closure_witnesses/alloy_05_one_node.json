@@ -1,0 +1,578 @@
+{
+  "id": "alloy-models/algorithms/distributed-hashtable/chord2.als@4943",
+  "dataset": "alloy",
+  "source": "pred ShowMe1Node { #Node = 1 all s : State | NextCorrect[s] State.active = Node }",
+  "provenance": {
+    "git_revision": "46be9e1bafc85e37456cbf56e9dc92b6c8178666",
+    "path": "experiments/E0/survey_samples/alloy.jsonl",
+    "text_sha256": "155552ea4abc7109baeac2b8a6853e7c906419d0b9d96ac37c6e18ebbbfd90f0"
+  },
+  "environment": {
+    "language": "ve.core@0.1",
+    "profiles": [
+      "closure@0",
+      "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.1-closure-2026-09-21",
+    "vocabulary": {
+      "sorts": {
+        "node": {
+          "description": "An Alloy Node."
+        },
+        "identifier": {
+          "description": "An Alloy Id."
+        },
+        "state": {
+          "description": "An Alloy State."
+        },
+        "node_data": {
+          "description": "An Alloy NodeData."
+        },
+        "data_entry": {
+          "description": "A reified State.data(state,node,node_data) tuple."
+        }
+      },
+      "predicates": {
+        "active": {
+          "arguments": [
+            "state",
+            "node"
+          ],
+          "description": "State.active membership."
+        },
+        "node_id": {
+          "arguments": [
+            "node",
+            "identifier"
+          ],
+          "description": "The total Node.id field, injective as required by the source fact."
+        },
+        "next_id": {
+          "arguments": [
+            "identifier",
+            "identifier"
+          ],
+          "description": "Primitive Id.next successor field."
+        },
+        "entry_state": {
+          "arguments": [
+            "data_entry",
+            "state"
+          ],
+          "description": "State coordinate of a State.data tuple."
+        },
+        "entry_node": {
+          "arguments": [
+            "data_entry",
+            "node"
+          ],
+          "description": "Node coordinate of a State.data tuple."
+        },
+        "entry_value": {
+          "arguments": [
+            "data_entry",
+            "node_data"
+          ],
+          "description": "NodeData value coordinate of a State.data tuple."
+        },
+        "successor": {
+          "arguments": [
+            "node_data",
+            "node"
+          ],
+          "description": "Primitive NodeData.next field; not transitive reachability."
+        }
+      },
+      "constants": {}
+    }
+  },
+  "ast": [
+    [
+      "and",
+      [
+        "exists",
+        "node",
+        [
+          "forall",
+          "node",
+          [
+            "eq",
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        ]
+      ],
+      [
+        "and",
+        [
+          "forall",
+          "state",
+          [
+            "forall",
+            "node",
+            [
+              "implies",
+              [
+                "binary",
+                "active",
+                [
+                  "var",
+                  1
+                ],
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "exists",
+                "data_entry",
+                [
+                  "exists",
+                  "node_data",
+                  [
+                    "exists",
+                    "node",
+                    [
+                      "exists",
+                      "identifier",
+                      [
+                        "and",
+                        [
+                          "binary",
+                          "entry_state",
+                          [
+                            "var",
+                            3
+                          ],
+                          [
+                            "var",
+                            5
+                          ]
+                        ],
+                        [
+                          "and",
+                          [
+                            "binary",
+                            "entry_node",
+                            [
+                              "var",
+                              3
+                            ],
+                            [
+                              "var",
+                              4
+                            ]
+                          ],
+                          [
+                            "and",
+                            [
+                              "binary",
+                              "entry_value",
+                              [
+                                "var",
+                                3
+                              ],
+                              [
+                                "var",
+                                2
+                              ]
+                            ],
+                            [
+                              "and",
+                              [
+                                "binary",
+                                "successor",
+                                [
+                                  "var",
+                                  2
+                                ],
+                                [
+                                  "var",
+                                  1
+                                ]
+                              ],
+                              [
+                                "and",
+                                [
+                                  "binary",
+                                  "node_id",
+                                  [
+                                    "var",
+                                    4
+                                  ],
+                                  [
+                                    "var",
+                                    0
+                                  ]
+                                ],
+                                [
+                                  "and",
+                                  [
+                                    "forall",
+                                    "node",
+                                    [
+                                      "implies",
+                                      [
+                                        "and",
+                                        [
+                                          "binary",
+                                          "active",
+                                          [
+                                            "var",
+                                            6
+                                          ],
+                                          [
+                                            "var",
+                                            0
+                                          ]
+                                        ],
+                                        [
+                                          "not",
+                                          [
+                                            "eq",
+                                            [
+                                              "var",
+                                              0
+                                            ],
+                                            [
+                                              "var",
+                                              5
+                                            ]
+                                          ]
+                                        ]
+                                      ],
+                                      [
+                                        "exists",
+                                        "identifier",
+                                        [
+                                          "exists",
+                                          "identifier",
+                                          [
+                                            "and",
+                                            [
+                                              "binary",
+                                              "node_id",
+                                              [
+                                                "var",
+                                                2
+                                              ],
+                                              [
+                                                "var",
+                                                1
+                                              ]
+                                            ],
+                                            [
+                                              "and",
+                                              [
+                                                "binary",
+                                                "node_id",
+                                                [
+                                                  "var",
+                                                  4
+                                                ],
+                                                [
+                                                  "var",
+                                                  0
+                                                ]
+                                              ],
+                                              [
+                                                "not",
+                                                [
+                                                  "reach",
+                                                  "plus",
+                                                  [
+                                                    "body",
+                                                    "identifier",
+                                                    [
+                                                      "and",
+                                                      [
+                                                        "binary",
+                                                        "next_id",
+                                                        [
+                                                          "var",
+                                                          1
+                                                        ],
+                                                        [
+                                                          "var",
+                                                          0
+                                                        ]
+                                                      ],
+                                                      [
+                                                        "not",
+                                                        [
+                                                          "eq",
+                                                          [
+                                                            "var",
+                                                            0
+                                                          ],
+                                                          [
+                                                            "var",
+                                                            5
+                                                          ]
+                                                        ]
+                                                      ]
+                                                    ]
+                                                  ],
+                                                  [
+                                                    "var",
+                                                    1
+                                                  ],
+                                                  [
+                                                    "var",
+                                                    0
+                                                  ]
+                                                ]
+                                              ]
+                                            ]
+                                          ]
+                                        ]
+                                      ]
+                                    ]
+                                  ],
+                                  [
+                                    "or",
+                                    [
+                                      "not",
+                                      [
+                                        "eq",
+                                        [
+                                          "var",
+                                          1
+                                        ],
+                                        [
+                                          "var",
+                                          4
+                                        ]
+                                      ]
+                                    ],
+                                    [
+                                      "exists",
+                                      "node",
+                                      [
+                                        "and",
+                                        [
+                                          "binary",
+                                          "active",
+                                          [
+                                            "var",
+                                            6
+                                          ],
+                                          [
+                                            "var",
+                                            0
+                                          ]
+                                        ],
+                                        [
+                                          "forall",
+                                          "node",
+                                          [
+                                            "implies",
+                                            [
+                                              "binary",
+                                              "active",
+                                              [
+                                                "var",
+                                                7
+                                              ],
+                                              [
+                                                "var",
+                                                0
+                                              ]
+                                            ],
+                                            [
+                                              "eq",
+                                              [
+                                                "var",
+                                                0
+                                              ],
+                                              [
+                                                "var",
+                                                1
+                                              ]
+                                            ]
+                                          ]
+                                        ]
+                                      ]
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "forall",
+          "node",
+          [
+            "exists",
+            "state",
+            [
+              "binary",
+              "active",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]
+  ],
+  "strict": "(there exists node x0, (for every node x1, (x1 equals x0))) and ((for every state x2, (for every node x3, (if (x2 active x3), then (there exists data_entry x4, (there exists node_data x5, (there exists node x6, (there exists identifier x7, ((x4 entry_state x2) and ((x4 entry_node x3) and ((x4 entry_value x5) and ((x5 successor x6) and ((x3 node_id x7) and ((for every node x8, (if ((x2 active x8) and (not (x8 equals x3))), then (there exists identifier x9, (there exists identifier x10, ((x8 node_id x9) and ((x6 node_id x10) and (not (tc[identifier x11, x12 | ((x11 next_id x12) and (not (x12 equals x7)))](x9, x10))))))))) and ((not (x6 equals x3)) or (there exists node x13, ((x2 active x13) and (for every node x14, (if (x2 active x14), then (x14 equals x13))))))))))))))))))) and (for every node x15, (there exists state x16, (x16 active x15)))).\n",
+  "adapter": {
+    "kind": "alloy-predicate@0",
+    "total_functions": [
+      "node_id",
+      "next_id",
+      "entry_state",
+      "entry_node",
+      "entry_value",
+      "successor"
+    ],
+    "conditions": [
+      "#Node=1 is expanded by existence and universal equality; no numeric profile is assumed.",
+      "NextCorrect expands both no-intervening-active-node and successor-not-self-or-exactly-one-active-node clauses.",
+      "less_than is expanded by positive Body closure of next_id with edges INTO the fixed origin removed.",
+      "State.data is represented by unique tuples: exactly one NodeData per active (state,node) pair and none for inactive pairs.",
+      "State.active=Node denotes UNION across states, not every state containing every node.",
+      "No arbitrary numeric command scope or opaque NextCorrect/less_than predicate is supplied. Unused NodeData fields can be expanded independently."
+    ]
+  },
+  "contrast": "The true structure has one active node in one state. The false structure keeps one node and the same Id cycle but has an empty State carrier, so State.active=Node fails. In both, the relation multiplicities remain valid.",
+  "true_model": {
+    "complete": true,
+    "domains": {
+      "node": [
+        "n0"
+      ],
+      "identifier": [
+        "i0",
+        "i1"
+      ],
+      "state": [
+        "s0"
+      ],
+      "node_data": [
+        "d0"
+      ],
+      "data_entry": [
+        "e0"
+      ]
+    },
+    "constants": {},
+    "relations": {
+      "active": [
+        [
+          "s0",
+          "n0"
+        ]
+      ],
+      "node_id": [
+        [
+          "n0",
+          "i0"
+        ]
+      ],
+      "next_id": [
+        [
+          "i0",
+          "i1"
+        ],
+        [
+          "i1",
+          "i0"
+        ]
+      ],
+      "entry_state": [
+        [
+          "e0",
+          "s0"
+        ]
+      ],
+      "entry_node": [
+        [
+          "e0",
+          "n0"
+        ]
+      ],
+      "entry_value": [
+        [
+          "e0",
+          "d0"
+        ]
+      ],
+      "successor": [
+        [
+          "d0",
+          "n0"
+        ]
+      ]
+    }
+  },
+  "false_model": {
+    "complete": true,
+    "domains": {
+      "node": [
+        "n0"
+      ],
+      "identifier": [
+        "i0",
+        "i1"
+      ],
+      "state": [],
+      "node_data": [
+        "d0"
+      ],
+      "data_entry": []
+    },
+    "constants": {},
+    "relations": {
+      "active": [],
+      "node_id": [
+        [
+          "n0",
+          "i0"
+        ]
+      ],
+      "next_id": [
+        [
+          "i0",
+          "i1"
+        ],
+        [
+          "i1",
+          "i0"
+        ]
+      ],
+      "entry_state": [],
+      "entry_node": [],
+      "entry_value": [],
+      "successor": [
+        [
+          "d0",
+          "n0"
+        ]
+      ]
+    }
+  }
+}
