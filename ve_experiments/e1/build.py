@@ -131,7 +131,7 @@ Fixed form, the same for every explanation you ever write in this exercise:
 End your reply with one JSON object: {{"explanation": "<your paragraph>"}}"""
 
 EXPLAIN_PROMPTS = {"e1": EXPLAIN_PROMPT, "e2": EXPLAIN_PROMPT_V2}
-EXPLAIN_RECIPE = "e1"
+EXPLAIN_RECIPE = "e2"  # fixed-form explanations; e1 failed the balance gate (balance.py)
 
 
 def _h(*parts: str) -> int:
@@ -278,6 +278,33 @@ def add_explanations(cands: list[dict], client: LLMClient, recipe: str = EXPLAIN
         except VerdictParseError:
             text = None
         c["explanation"] = text.strip() if isinstance(text, str) and text.strip() else None
+
+
+def length_match(cands: list[dict], client: LLMClient, recipe: str = EXPLAIN_RECIPE) -> int:
+    """Length-matching step of the explanation-balance gate (balance.py). Good explanations came out about one word
+    longer than bad ones. For every GOOD candidate a second sample (seed 1) of the same prompt is drawn, and the
+    sample whose word count is closer to the mean word count of the BAD explanations of the same template is kept
+    (ties: the first sample). The rule uses label, template and length only; no judge is involved."""
+    by_t: dict[str, list[int]] = {}
+    for c in cands:
+        if c["label"] == "bad":
+            by_t.setdefault(c["template"], []).append(len(c["explanation"].split()))
+    goods = [c for c in cands if c["label"] == "good"]
+    reqs = [Request(EXPLAINER, EXPLAIN_PROMPTS[recipe].format(
+        vocabulary=vocabulary_text(c["environment"]), requirement=c["requirement"],
+        statement=render(c["environment"], c["ast"], "ve_strict") + "."), seed=1, tag=f"E1/explain2/{c['id']}") for c in goods]  # fmt: skip
+    swapped = 0
+    for c, res in zip(goods, client.map(reqs, _progress("second samples"))):
+        try:
+            alt = parse_final_json(res.text).get("explanation")
+        except VerdictParseError:
+            alt = None
+        target = sum(by_t[c["template"]]) / len(by_t[c["template"]])
+        c["explanation_sample"] = 0
+        if isinstance(alt, str) and alt.strip() and abs(len(alt.split()) - target) < abs(len(c["explanation"].split()) - target):
+            c["explanation"], c["explanation_sample"] = alt.strip(), 1
+            swapped += 1
+    return swapped
 
 
 def add_e1b_models(c: dict) -> None:
