@@ -152,7 +152,18 @@ Search uses private validated evaluation paths after validating each generated
 model once; public witness checks still independently validate submitted models.
 
 `find_countermodel` enumerates finite domains, constant denotations (including
-aliases), and relation subsets within explicit size/model/work bounds. It is a
+aliases), and relation subsets within explicit size/model/work bounds. Only
+predicates occurring in the premises/conclusion or `a`/`b`, plus
+`nonvacuous_for`, have their relations enumerated. Every other declared predicate
+is fixed to the empty relation in the complete returned model. This reduction
+is sound for finding distinguishing/countermodels: changing an unused predicate
+cannot affect any checked formula's truth or guard satisfaction. Bounded
+`NotFound` exhausts representatives modulo unused relations, not every complete
+interpretation of the vocabulary. Domain vectors are streamed by total entity
+count then lexical size vector. Within each vector, used relation interpretations
+are streamed by total tuple count across all relations then sorted predicate
+names and generated domain order; each is paired with all constant denotations.
+Sparse small witnesses come first without materializing the exponential set of interpretations. It is a
 small exponential search tool intended for mechanism examples, not a scalable
 general-purpose solver. `Found` supplies a witness; `NotFound` means only that
 the bounded enumeration finished; `ResourceLimit` means the search stopped
@@ -176,14 +187,41 @@ node are checked independently. The inspection and antecedent evaluations share
 the request's work budget. The condition is conservative: an impossible
 antecedent disqualifies a candidate; there is no silent logical-feasibility
 exemption. Such a request may return `NotFound` even when ordinary distinguishing
-models exist. This avoids returning vacuous examples as E1 attack evidence.
+models exist. This legacy default is syntactic: `not dep(s) or rev(s)` is not an
+`Implies` node, so its empty antecedent relation is not detected in this mode.
+
+Set `semantic_nonvacuity=True` together with `nonvacuous_for=formula` to also
+check clause guards semantically in each candidate model. Precisely:
+
+- Retain every legacy quantifier-domain and implication-antecedent check.
+- For each maximal tree of `Or` nodes beneath at least one enclosing `Forall`,
+  flatten its disjuncts in order. Each disjunct of the form `Not(G)` contributes
+  `G` to the guard. Non-negated disjuncts do not contribute. For example,
+  `not dep(s) or rev(s)` has guard `dep(s)`; `not A or not B or C` has joint
+  guard `A and B`, independent of left/right association or disjunct order.
+- If there is at least one such negated disjunct, require **one assignment** of
+  the occurrence's enclosing universal/existential binders on which **all** its
+  guard bodies evaluate true simultaneously. Each occurrence is independent;
+  individual guard satisfaction on different assignments is insufficient.
+- Inspect all branches, even under negation or a short-circuiting connective.
+  This conservative occurrence check does not require the whole formula, its
+  consequent, or its enclosing conditions to be true. Witnesses may differ
+  between occurrences; this is not a per-outer-assignment witness requirement.
+
+Guard recognition is structural; guard **satisfaction** uses the evaluator and
+shares the search work budget, including inspection. There is no arbitrary CNF
+normalization, English interpretation, or invariance under every logically
+equivalent rewrite. A disjunction with no negated disjunct, or with no enclosing
+universal, adds no clause guard. An impossible joint guard rejects the model.
+The result records `semantic_nonvacuity` and `nonvacuous_for_meaning_id` so that
+filtered `NotFound` is not mistaken for unconstrained exhaustion.
 
 ```python
 from ve import find_distinguishing_model
 
 witness = find_distinguishing_model(
     env, faithful, candidate, min_domain_size=1, max_domain_size=2,
-    nonvacuous_for=faithful, max_evaluations=1_000_000,
+    nonvacuous_for=faithful, semantic_nonvacuity=True, max_evaluations=1_000_000,
 )
 if witness.status == "Found":
     assert evaluate(env, faithful, witness.model, trace=False).value != evaluate(
@@ -210,20 +248,22 @@ cannot conceal malformed input. The examples in the README are executable.
 optionally takes `--model` and `--candidate-ast`; `evaluate` requires a model.
 Records explicitly retain `assurance: experimental`, `intent: unconfirmed`, and
 `proof: not_checked`. Exit 0 means successful output or a found countermodel;
-exit 1 means `Violated`; exit 3 means bounded/filtered `NotFound`; exit 2 means
-invalid input or resource exhaustion. Read the distinct JSON status fields.
+exit 1 means `Violated`; exit 2 means `InvalidInput`; exit 3 means
+bounded/filtered `NotFound`; exit 4 means `ResourceLimit` (both returned budget
+outcomes and raised resource exceptions). JSON statuses preserve these distinctions.
 `evaluate`, `check`, and `countermodel` accept `--max-evaluations`.
 `evaluate` and `check` accept `--no-trace`. Search always omits traces and accepts
 `--min-domain-size`, `--nonempty-domains`, and `--nonvacuous-for FILE` (one strict
-VE statement). `render` and `import-fol` accept all four named views as plain
-text; legacy `--view natural` emits the identity-bound JSON view record.
+VE statement), plus `--semantic-nonvacuity` to enable the clause-guard check
+(requires `--nonvacuous-for`). `render` and `import-fol` accept all four named
+views as plain text; legacy `--view natural` emits the identity-bound JSON view record.
 
 The v0 envelope bounds source bytes, JSON package size, AST depth/nodes,
 vocabulary size, model entities/tuples, explanatory trace size, and formula-node evaluations. JSON
 nesting additionally has a 256-level decoding guard. Search is separately
 bounded; search also stops if a candidate domain vector requires more than
-100,000 possible relation atoms. Host cancellation remains a process interruption,
-not a logical finding.
+100,000 possible **used-predicate** relation atoms. Host cancellation remains
+a process interruption, not a logical finding.
 
 ## Trust and tests
 

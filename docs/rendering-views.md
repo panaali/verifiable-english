@@ -1,12 +1,16 @@
-# Deterministic rendering views, version 1
+# Deterministic rendering views, version 2
 
 `ve.render(ast, env, view)` returns text for a closed formula or a `Document`.
 `view` is `fol_symbols`, `fol_keywords`, `ve_strict`, or `ve_natural`. A single
 formula has no final punctuation. Documents append a period and LF to every
-statement; natural documents capitalize each statement's first letter.
+statement. All views preserve lexical case without sentence capitalization.
+`natural_formula(...).text` follows the same unpunctuated formula policy.
+Every view has the same 65,536-byte UTF-8 output limit; formula checks reserve
+two bytes for the period and LF of a possible one-statement document.
 `print_formula` and `print_document` retain the exact strict canonical bytes.
 `natural_formula` and `natural_document` additionally return environment and
-meaning IDs with renderer `ve.ace-explicit`, version `1`.
+meaning IDs with renderer `ve.ace-explicit`, version `2`. Version 2 changes
+natural case/punctuation and template acceptance; regenerate prior natural views.
 
 All four surfaces use **one recursive traversal** in `ve/printer.py`. It assigns
 `x0`, `x1`, ... to binders in preorder, resets at each statement, resolves every
@@ -100,7 +104,7 @@ Usable lexical templates have this grammar:
 ```ebnf
 word              = lowercase ASCII letters, one or more ;
 phrase            = word, { " ", word } ;
-unary_template    = "{0} is ", phrase ;
+unary_template    = "{0} is ", word ;
 binary_template   = "{0} ", phrase, " {1}" ;
 sort_noun         = phrase ;
 ```
@@ -108,11 +112,11 @@ sort_noun         = phrase ;
 A phrase cannot contain any word in this reserved display set:
 
 ```text
-all any every some no none not never neither nor and or both either if then
+all any every some each no none not never neither nor and or both either if then
 unless except without only exists forall implies true false equal equals there
 such that case condition for at least most exactly does do must may can cannot
 should shall will would whenever when iff otherwise always sometimes one two
-three four five six seven eight nine ten a an the
+three four five six seven eight nine ten a an the lacks
 ```
 
 Each argument placeholder occurs exactly once, in declared order. There are no
@@ -120,31 +124,62 @@ format conversions, attributes, escapes, punctuation, parentheses, embedded
 variables, or executable expressions. The renderer performs literal placeholder
 replacement, never evaluates supplied formatting code. A template is a declared
 positive atomic relation phrase, not a place to add quantifiers or conditions.
-The binary phrase must start with a word ending in `s` (the supported finite
-verb spelling, e.g. `owns`, `depends`, `has`, `is`); bare `is` is excluded to
-avoid an implicit equality rendering. Unary templates require an explicit
-copula and nonempty complement. These lexical restrictions do not constitute
-an English grammar checker: vocabulary authors remain responsible for selecting
-grammatical, accurate atomic phrases. Unsupported forms use strict fallback.
-Plural nouns are retained for vocabulary display but are not used to replace
-explicitly bound singular variables. The existential article is `an` for a noun
-beginning with `a/e/i/o/u`, otherwise `a`; authors should use nouns for which this
-simple rule is appropriate.
+The binary phrase must start with a word ending in `s` (e.g. `owns`,
+`depends`, `has`). It must not start with `is`, `are`, `was`, `were`, `be`,
+`been`, `being`, `gets`, or `got`; it must not end with `by`, `to`, `of`,
+`from`, `with`, or `for`. There is no metadata override for these restrictions.
+Unary templates require `is` followed by exactly one complement head word;
+trailing modifiers such as `reviewed already` are rejected. This deliberately
+narrow grammar can reject truthful English phrases.
 
-A candidate predicate template is used only if it is unique among the usable
-templates in the complete vocabulary and does not equal another predicate's
-strict atomic template. Otherwise that atom uses the strict rendering. A sort
-noun must be unique and must not equal a different sort identifier; otherwise
-its sort identifier is used. Unsafe or unsupported template syntax also falls
-back to strict text. These checks apply across the complete environment,
-including symbols absent from the current formula. Thus two symbols cannot
-collapse to one displayed atom or binder sort. Logical constructs always have
-an explicit representation in the table above; none is paraphrased away.
+Every phrase and both singular/plural sort nouns are checked against the entire
+environment, including unused symbols and rejected declarations. They may not
+contain another predicate/sort/constant identifier or another declaration's
+template head as a word. Predicate heads are the first phrase word after the
+unary `is`, or the first binary phrase word; noun heads are the last noun word.
+A declaration may use its own identifier/head. `un`, `non`, `un-`, or `non-`
+prefixed to any predicate identifier/head is rejected, including its own head
+(e.g. `deployed` → `undeployed`). Variable tokens `x`, `xN`, and single capital
+letters are rejected. Capitals are also excluded by the lowercase grammar.
+Exact duplicate predicate templates are rejected for all owners. A sort noun
+must not equal another sort identifier or another sort's singular/plural noun.
+
+Unsupported templates use the strict atom; a rejected singular **or plural**
+noun makes the sort use its identifier. Plurals remain in metadata but do not
+replace bound variables. The existential article is `an` for a selected noun
+starting with `a/e/i/o/u`, otherwise `a`.
+
+`lint_vocabulary(env)` returns a deterministic tuple of `VocabularyLint` records,
+sorted by JSON `path` then `code`. Each record has `.path`, `.code`, and
+`.to_dict()`. Missing optional metadata is supported fallback, not a warning.
+Multiple diagnostics may identify the same rejected entry. Stable codes are:
+
+| Code | Rejection |
+|---|---|
+| `TEMPLATE_SHAPE` | Missing, misplaced, or unsupported placeholder/copula structure |
+| `PHRASE_SYNTAX` | Unsupported characters, placeholders in a phrase, spacing, or case |
+| `LOGICAL_WORD` | Reserved quantifier, connective, negation, or other display word |
+| `VARIABLE_TOKEN` | `x`, `xN`, or a single capital letter |
+| `SYMBOL_COLLISION` | Word equals another identifier or lexical head |
+| `NEGATED_HEAD` | Negating prefix applied to a predicate identifier/head |
+| `BINARY_AUXILIARY` | Forbidden leading copula/auxiliary |
+| `BINARY_CONVERSE` | Forbidden final preposition |
+| `BINARY_VERB` | Binary first word does not end in `s` |
+| `UNARY_MODIFIER` | More than one complement word after unary `is` |
+| `DUPLICATE_TEMPLATE` | More than one predicate declares the same template |
+| `SORT_COLLISION` | Noun equals another sort's identifier or noun |
+
+These checks are a **heuristic, not a proof** of English meaning or injectivity.
+Templates and sort nouns are **trusted vocabulary data**, as are descriptions.
+An arbitrary alias, for example `service` → `owner` or `person` → `asset`, can
+remain accepted if it collides with no declaration. The linter cannot establish
+its truthfulness. Experiments must not treat an empty lint report as validation
+of vocabulary meaning.
 
 For the example above, the natural document is:
 
 ```text
-For every service x0: (if (x0 is deployed), then (there is a person x1 such that (x1 owns x0))).
+for every service x0: (if (x0 is deployed), then (there is a person x1 such that (x1 owns x0))).
 ```
 
 The witness `x1` remains inside the scope of `x0` and its antecedent. Changing
@@ -172,5 +207,43 @@ cells. Record the actual view alongside claim/environment IDs. A display-only
 metadata change still changes the environment identity and requires regenerating
 all cells consistently. The natural grammar is read-only; only `ve_strict` is
 accepted by the VE source parser.
-Freeze and independently review the vocabulary before generating attacked claims;
-template accuracy must not be chosen by the attacker for a particular cell.
+
+**Every experimental cell must show `render_vocabulary(env, view)` alongside its
+claim text.** This API returns byte-identical deterministic JSON text for all
+four views. It includes the environment ID, all sort/predicate/constant
+identifiers and descriptions, predicate argument sorts **in declared order**,
+raw verbalisation metadata, the selected natural template/noun (including strict
+fallback), and lint diagnostics. Metadata is JSON-quoted data, not instructions
+to the judge. Vocabulary ordering is independent of dictionary insertion order.
+The legend is separate from `render`; callers are responsible for displaying it.
+
+For E1, freeze and independently review the vocabulary before generating attacked
+claims. Where the attacker authors vocabulary (E5), **the identical legend is
+the defence**: every judge can inspect raw predicate identity, argument order,
+and any misleading aliases. Lexical filtering alone does not defeat an arbitrary
+semantic lie in trusted metadata. Do not claim that the natural phrase alone
+carries all raw identity information, or that the legend guarantees a judge
+will notice every mismatch.
+
+```python
+from ve import lint_vocabulary, render, render_vocabulary, measure_view_lengths
+
+issues = [issue.to_dict() for issue in lint_vocabulary(env)]
+cell_text = render_vocabulary(env, view) + render(document, env, view)
+length_rows = measure_view_lengths(items, env, include_vocabulary=True)
+```
+
+`measure_view_lengths(items, env, include_vocabulary=False)` returns one row per
+item per view, in input order then `VIEWS` order. Rows contain `item_index`, `view`,
+`characters`, `tokenish`, and `includes_vocabulary`. Characters count Unicode
+code points (including punctuation/newlines), not UTF-8 bytes. Token-ish length
+counts matches of Unicode regex `\w+|[^\w\s]`: word runs or individual
+non-whitespace symbols. With `include_vocabulary=True` it measures exactly
+`render_vocabulary(env, view) + render(item, env, view)`. Report these lengths as
+covariates, and separately record counts from the actual model tokenizer when
+available; this heuristic does not predict BPE charges for `∀` or `∧`.
+
+Full formula bracketing is shared by all views and is deliberately explicit.
+Results do not establish transfer to fluent ACE prose or unbracketed English.
+Review regressions and their precise limits are recorded in
+[the review resolution](views-review-resolution.md).
