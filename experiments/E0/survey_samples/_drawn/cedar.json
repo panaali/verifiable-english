@@ -1,0 +1,126 @@
+{
+ "population": 143,
+ "seed": 20260921,
+ "sample": [
+  {
+   "id": "cedar-examples/cedar-example-use-cases/tax_preparer/policies.cedar#0",
+   "text": "permit (\n  principal,\n  action == Taxpreparer::Action::\"viewDocument\",\n  resource\n)\nwhen\n{\n  principal.assigned_orgs\n    .contains\n    (\n      {\n        organization: resource.owner.organization,\n        serviceline: resource.serviceline,\n        location: resource.location\n      }\n    )\n};"
+  },
+  {
+   "id": "cedar-examples/cedar-example-use-cases/document_cloud/policies.cedar#5",
+   "text": "permit (\n  principal,\n  action == Action::\"ModifyDocument\",\n  resource\n)\nwhen { principal == resource.owner };"
+  },
+  {
+   "id": "cedar-examples/cedar-example-use-cases/sales_orgs/templated/policies.cedar#3",
+   "text": "@id(\"template-edit for owner\")\npermit (\n  principal,\n  action in Action::\"PrezEditActions\",\n  resource\n)\nwhen { resource.owner == principal };"
+  },
+  {
+   "id": "cedar-examples/cedar-example-use-cases/github_example/policies.cedar#5",
+   "text": "permit (\n  principal,\n  action == Action::\"push\",\n  resource\n)\nwhen { principal in resource.writers };"
+  },
+  {
+   "id": "cedar-examples/cedar-example-use-cases/document_cloud/policies.cedar#7",
+   "text": "permit (\n  principal == Public::\"public\",\n  action == Action::\"ViewDocument\",\n  resource\n)\nwhen { resource.publicAccess == \"edit\" }\nunless { resource.isPrivate };"
+  },
+  {
+   "id": "cedar-examples/cedar-example-use-cases/sales_orgs/static/policies.cedar#5",
+   "text": "@id(\"market-template-view\")\npermit (\n  principal,\n  action in Action::\"MarketTemplateViewActions\",\n  resource\n)\nwhen { principal in resource.viewerMarkets };"
+  },
+  {
+   "id": "cedar-examples/oopsla2024-benchmarks/benches/github-templates/cedar/policies.cedar#0",
+   "text": "@id(\"readTemplate\")\npermit (\n    principal in ?principal,\n    action == Action::\"read\",\n    resource == ?resource\n);"
+  },
+  {
+   "id": "cedar-examples/cedar-policy-language-in-action/PhotoApp/photoapp.cedar#4",
+   "text": "@id(\"DoeFamily\")\npermit (\n  principal in PhotoApp::UserGroup::\"DoeFamily\",\n  action == PhotoApp::Action::\"viewPhoto\",\n  resource in PhotoApp::Album::\"DoePhotos\"\n);"
+  },
+  {
+   "id": "cedar-integration-tests/tests/multi/policies_4.cedar#3",
+   "text": "forbid (principal, action, resource)\nwhen { !context.authenticated };"
+  },
+  {
+   "id": "cedar-examples/cedar-policy-language-in-action/GitApp/gitapp.cedar#4",
+   "text": "@id(\"resource.contributors_Repo\")\npermit (\n  principal,\n  action in\n    [GitApp::Action::\"pushRepo\",\n     GitApp::Action::\"pullRepo\",\n     GitApp::Action::\"forkRepo\"],\n  resource in GitApp::Application::\"GitApp\"\n)\nwhen { resource has contributors && principal in resource.contributors };"
+  },
+  {
+   "id": "cedar-examples/cedar-policy-language-in-action/GitApp/gitapp.cedar#3",
+   "text": "@id(\"resource.contributors_Issue\")\npermit (\n  principal,\n  action in\n    [GitApp::Action::\"addIssue\",\n     GitApp::Action::\"editIssue\",\n     GitApp::Action::\"assignIssue\",\n     GitApp::Action::\"closeIssue\"],\n  resource in GitApp::Application::\"GitApp\"\n)\nwhen { resource has contributors && principal in resource.contributors };"
+  },
+  {
+   "id": "cedar-examples/cedar-example-use-cases/github_example/policies.cedar#4",
+   "text": "permit (\n  principal,\n  action == Action::\"assign_issue\",\n  resource\n)\nwhen { principal in resource.repo.triagers };"
+  },
+  {
+   "id": "cedar-examples/oopsla2024-benchmarks/benches/gdrive-templates/cedar/policies.cedar#0",
+   "text": "@id(\"template\")\npermit (\n    principal in ?principal,\n    action == Action::\"read\",\n    resource in ?resource\n);"
+  },
+  {
+   "id": "cedar-examples/cedar-java-partial-evaluation/app/src/main/resources/policies.cedar#3",
+   "text": "@id(\"policy3\")\npermit(\n    principal == User::\"Alice_admin\",\n    action == Action::\"Read\",\n    resource == Document::\"confidential_doc1\"\n);"
+  },
+  {
+   "id": "cedar-examples/cedar-example-use-cases/github_example/policies.cedar#3",
+   "text": "permit (\n  principal,\n  action == Action::\"edit_issue\",\n  resource\n)\nwhen { principal in resource.repo.readers && principal == resource.reporter };"
+  },
+  {
+   "id": "cedar-examples/oopsla2024-benchmarks/benches/github-templates/cedar/policies.cedar#6",
+   "text": "permit (\n    principal,\n    action in Action::\"write\",\n    resource\n)\nwhen { principal in resource.owner.writers };"
+  },
+  {
+   "id": "cedar-integration-tests/tests/example_use_cases/policies_3c.cedar#0",
+   "text": "permit (\n  principal == User::\"alice\",\n  action,\n  resource in Album::\"jane_vacation\"\n);"
+  },
+  {
+   "id": "cedar-examples/cedar-java-partial-evaluation/app/src/main/resources/policies.cedar#2",
+   "text": "@id(\"policy2\")\nforbid(\n    principal == User::\"Bob_admin\",\n    action == Action::\"Read\",\n    resource == Document::\"protected_doc1\"\n);"
+  },
+  {
+   "id": "cedar-examples/cedar-example-use-cases/hotel_chains/static/policies.cedar#2",
+   "text": "permit (\n  principal,\n  action in\n    [Action::\"viewReservation\",\n     Action::\"updateReservation\",\n     Action::\"createReservation\",\n     Action::\"grantAccessReservation\"\n    \n    ],\n  resource\n)\nwhen\n{\n  resource in principal.hotelAdminPermissions ||\n  resource in principal.propertyAdminPermissions\n};"
+  },
+  {
+   "id": "cedar-examples/oopsla2024-benchmarks/benches/tinytodo/cedar/tinytodo.cedar#1",
+   "text": "permit (principal, action, resource)\nwhen { resource has owner && resource.owner == principal };"
+  },
+  {
+   "id": "cedar-integration-tests/tests/example_use_cases/policies_2a.cedar#0",
+   "text": "permit (\n  principal in UserGroup::\"jane_friends\",\n  action == Action::\"view\",\n  resource == Photo::\"VacationPhoto94.jpg\"\n);"
+  },
+  {
+   "id": "cedar-examples/cedar-example-use-cases/document_cloud/policies.cedar#11",
+   "text": "permit (\n  principal,\n  action in [Action::\"ModifyGroup\", Action::\"DeleteGroup\"],\n  resource\n)\nwhen { principal == resource.owner };"
+  },
+  {
+   "id": "cedar-examples/cedar-java-partial-evaluation/app/src/main/resources/policies.cedar#14",
+   "text": "@id(\"policy14\")\npermit(\n    principal == User::\"Alice_admin\",\n    action == Action::\"Delete\",\n    resource == DocumentGroup::\"Public\"\n) when {\n    context.authenticated == true &&\n    context.delete_confirmation == true\n};"
+  },
+  {
+   "id": "cedar-examples/oopsla2024-benchmarks/benches/github/cedar/policies.cedar#3",
+   "text": "permit (\n    principal,\n    action in Action::\"maintain\",\n    resource\n)\nwhen { principal in resource.maintainers };"
+  },
+  {
+   "id": "cedar-integration-tests/tests/ip/policies_1.cedar#0",
+   "text": "permit (\n  principal,\n  action == Action::\"view\",\n  resource == Photo::\"VacationPhoto94.jpg\"\n)\nwhen { context.source_ip == ip(\"222.222.222.222\") };"
+  },
+  {
+   "id": "cedar-examples/cedar-java-partial-evaluation/app/src/main/resources/policies.cedar#0",
+   "text": "@id(\"policy0\")\npermit(\n    principal in UserGroup::\"Admin\",\n    action in Action::\"Read\",\n    resource in DocumentGroup::\"Protected\"\n);"
+  },
+  {
+   "id": "cedar-integration-tests/tests/example_use_cases/policies_3a.cedar#0",
+   "text": "permit (\n  principal,\n  action == Action::\"view\",\n  resource in Album::\"jane_vacation\"\n);"
+  },
+  {
+   "id": "cedar-examples/cedar-policy-language-in-action/GitApp/gitapp.cedar#2",
+   "text": "@id(\"resource.reporters\")\npermit (\n  principal,\n  action in\n    [GitApp::Action::\"pullRepo\",\n     GitApp::Action::\"forkRepo\",\n     GitApp::Action::\"addIssue\"],\n  resource in GitApp::Application::\"GitApp\"\n)\nwhen { resource has reporters && principal in resource.reporters };"
+  },
+  {
+   "id": "cedar-examples/oopsla2024-benchmarks/benches/gdrive/cedar/policies.cedar#0",
+   "text": "permit (\n    principal,\n    action == Action::\"read\",\n    resource\n)\nwhen { resource in principal.documentsAndFoldersWithViewAccess };"
+  },
+  {
+   "id": "cedar-examples/cedar-example-use-cases/streaming_service/policies.cedar#1",
+   "text": "@id(\"subscriber-content-access/movie\")\npermit (\n  principal is Subscriber,\n  action == Action::\"watch\",\n  resource is Movie\n)\nunless { resource.needsRentOrBuy };"
+  }
+ ]
+}
