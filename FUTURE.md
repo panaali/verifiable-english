@@ -40,6 +40,16 @@ reviewers' point that the helpful view has no proved property); (3) replace the 
 enumerated sub-clauses in the style of legal drafting ("all of the following hold: (a) ...; (b) ..."); (4) a precision pass
 on the template linter, which currently rejects many natural templates (seen in all four use cases).
 
+## Working position on mathematics (14:52; endorsed by the project lead)
+
+For serious mathematics Lean is the right logic; that is why the labs use it. VE's role there is a readable, verified
+STATEMENT layer over Lean: render a Lean theorem statement in VE-style English, let a person (or a checker with
+distinguishing scenarios) confirm what it says, keep the proofs in Lean. The problem worth solving is reading the
+statement, not checking the proof. Test case: statements from public AI-produced Lean developments (the FLT
+formalisation, `openai/ten-proofs`, the zeta-zeros result), each paired with its informal claim; show where a weakened
+statement would pass unnoticed (this is stretch experiment E7). The use case `usecases/math-mini-paper` reports what
+VE's own logic can and cannot carry and tests this position against the alternatives.
+
 ## Phase 2 candidates (after the first paper draft)
 
 | Idea | Why it matters | Depends on | Added |
