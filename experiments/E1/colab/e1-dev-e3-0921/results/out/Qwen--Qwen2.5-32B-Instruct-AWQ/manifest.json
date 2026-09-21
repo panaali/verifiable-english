@@ -1,0 +1,54 @@
+{
+ "model": "Qwen/Qwen2.5-32B-Instruct-AWQ",
+ "revision": "5c7cb76a268fc6cfbb9c4777eb24ba6e27f9ee6c",
+ "weight_gb": 19.33,
+ "spec": {
+  "id": "Qwen/Qwen2.5-32B-Instruct-AWQ",
+  "max_model_len": 3072,
+  "gpu_memory_utilization": 0.95,
+  "enforce_eager": true,
+  "max_num_seqs": 16
+ },
+ "engine_args": {
+  "model": "Qwen/Qwen2.5-32B-Instruct-AWQ",
+  "revision": "5c7cb76a268fc6cfbb9c4777eb24ba6e27f9ee6c",
+  "dtype": "auto",
+  "seed": 0,
+  "trust_remote_code": false,
+  "max_model_len": 3072,
+  "gpu_memory_utilization": 0.95,
+  "max_num_seqs": 16,
+  "enforce_eager": true
+ },
+ "vllm": "0.29.0",
+ "torch": "2.13.0+cu130",
+ "gpu": {
+  "name": "NVIDIA L4",
+  "memory_mib": 23034,
+  "compute_cap": 8.9
+ },
+ "args": {
+  "prompts": "prompts.jsonl",
+  "out_dir": "out",
+  "models": "models.json",
+  "max_new_tokens": 400,
+  "max_model_len": 4096,
+  "temperature": 0.0,
+  "top_p": 1.0,
+  "seed": 0,
+  "batch_size": 64,
+  "limit": 0,
+  "raw_prompt": false,
+  "keep_cache": false,
+  "model_timeout_min": 420.0
+ },
+ "n_prompts": 745,
+ "load_s": 121.6,
+ "generate_s": 747.95,
+ "input_tokens": 662754,
+ "output_tokens": 88179,
+ "output_tokens_per_s": 117.9,
+ "prompts_per_s": 1.0,
+ "mean_s_per_prompt": 1.004,
+ "peak_gpu_mem_mib": "20754"
+}
