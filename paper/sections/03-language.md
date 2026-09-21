@@ -1,142 +1,85 @@
-# The VE language
+# Language, checking, and assurance engineering
 
-## Syntax, environments, and semantics
+VE's base profile is function-free, many-sorted first-order logic with equality,
+unary/binary predicates, constants, Boolean connectives, and quantifiers.
+Sorts may be empty unless constants or assumptions require inhabitants.
+Typed, closed formulas have classical semantics. Vocabulary declarations carry
+ordered argument signatures and human descriptions; descriptions are trusted
+assertions, not semantic proofs. Canonical identities bind the environment,
+formula, and finite interpretation, under a hash-collision assumption. An
+identity establishes neither truth nor equivalence to an informal source.
 
-The base profile, `relational-fol@0`, is many-sorted, function-free first-order
-logic with equality. An environment declares sorts, constants, unary predicates,
-and binary predicates with ordered argument sorts. Each declaration has a
-human-readable description. Profiles and specification revisions are explicit.
-Unknown versions fail. Descriptions do not define predicate extensions, create
-axioms, or establish facts.
-<!-- src: docs/spec/v0-language.md. -->
+Five deterministic displays share the same logical candidate: symbolic FOL
+(S), keyword FOL (K), strict VE (V), explicit natural VE (N), and fluent VE (F).
+Only strict VE is accepted as source syntax. The other views are displays;
+fluent rendering contracts selected patterns and falls back when a pattern is
+unavailable. A compact common legend exposes predicate identity and argument
+order. Lexical lint checks reject several dangerous wording patterns, but
+cannot prove that a description is honest.
 
-Terms are bound variables or declared constants, written with `@`. Formulas
-contain truth, falsity, predicate application, same-sort equality, negation,
-conjunction, inclusive disjunction, material implication, and universal or
-existential quantification. Strict VE has explicit grouping and binders. Each
-statement ends in a period and line feed. It rejects implicit precedence,
-undeclared symbols, free variables, shadowing, and ill-typed terms. The semantic
-AST stores nearest-first de Bruijn indices; author-chosen names and source spans
-are diagnostic metadata. A document is a nonempty ordered list of closed formulas.
+For example, the requirement that each deployed service has some owner permits
+different owners for different services:
 
-For an environment $E$, an admissible structure $S$ gives each sort a domain,
-each constant a correctly sorted element, and each predicate an appropriately
-typed relation. Domains may be infinite or empty. A declared constant requires
-an inhabitant, but different constants may denote the same element. Equality is
-identity within a sort. The interpretation is classical Tarski semantics:
+$$\forall s:\mathrm{service},\quad \mathrm{deployed}(s)\to
+\exists p:\mathrm{person},\quad \mathrm{owns}(p,s).$$
 
-$$
-\begin{aligned}
-(S,\rho)\models\forall x:s.\,A
-  &\iff \forall d\in D_s,\ (S,d::\rho)\models A,\\
-(S,\rho)\models\exists x:s.\,A
-  &\iff \exists d\in D_s,\ (S,d::\rho)\models A.
-\end{aligned}
-$$
+The generated fluent view says, "for every service S that is deployed, there is
+a person P such that P owns S." Moving the existential before the universal
+would require one owner for all deployed services. The renderer exposes a
+quantifier dependency; whether a reader notices it is an empirical question.
+The complete five-view example is retained in the artifact.
 
-An empty-sort universal is true; an empty-sort existential is false. A false
-antecedent makes a material implication true. Existence and nonemptiness must be
-stated when required. For closed premises $\Delta$ and conclusion $C$,
+Finite evaluation checks a formula in a fully specified interpretation. A
+countermodel to a submitted consequence makes every premise true and the
+conclusion false. Bounded search can propose such a model or a tableau
+certificate, but search failure is UNKNOWN, never evidence of validity or
+non-entailment. Replay checks the proposed object against exact formulas.
+Claim graphs preserve the assumptions needed by the root rather than hiding
+them behind a "proved" badge. Empirical truth and applicability of those
+assumptions remain separate obligations.
 
-$$
-E,\Delta\models C\quad\iff\quad
-\forall\text{ admissible }S,\
-\bigl(\forall A\in\Delta,\ S\models A\bigr)\Rightarrow S\models C.
-$$
+The opt-in closure profile adds positive and reflexive-transitive finite-path
+relations, including named edges and filtered Body edges with explicit local
+scope. It recomputes reachability from base edges; an uninterpreted predicate
+named `reachable` is not an implementation. The language still lacks interpreted
+arithmetic, unrestricted counting, regex, probability, causality, obligations,
+beliefs, and general temporal operators. Reifying an event or tuple may expose
+its participants without supplying those missing meanings.
 
-The finite-model interface uses sort-qualified local identifiers. The Lean
-reference instead permits overlapping domains within a common carrier. The
-transfer between these presentations for typed formulas is explained but not
-proved in Lean; Section 5 states the resulting interpretation boundary.
-<!-- src: docs/spec/v0-language.md; lean/README.md, carrier interpretation assumption. -->
+## Exact assurance scope
 
-## Canonical form and identities
+The Lean work supplies engineering assurance about the definitions below.
+It is not a proof of the implemented oversight workflow or its novelty.
 
-Canonical printing assigns fresh names in binder preorder and resets at each
-statement. It preserves constructor order and association. It does not sort
-conjuncts, eliminate double negations, recognize synonyms, or compute a logical
-equivalence class. Alpha-renaming preserves the indexed AST; a logically
-equivalent rewrite can change it.
+| Reference component | What is established | Boundary |
+|---|---|---|
+| `eval_iff_denote` | Finite Boolean evaluation agrees with Tarski denotation in the embedded structure | Accepted VE claims additionally require typing and closure checks |
+| `Surface.parse_print`, `print_injective` | Canonical strict printer/parser round trip; equal printed strings imply equal indexed documents, under declaration-name conditions | No independent grammar-unambiguity theorem; no property of the fluent renderer |
+| `Tableau.checkCertificate_sound` | Acceptance entails the exact conclusion from the exact ordered premises over admissible common-carrier structures, including empty sorts and infinite structures | Soundness, not search completeness; generic theorem is universe-polymorphic |
+| `Graph.check_sound`, `check_entails` | Lean base-profile graph checking preserves provenance and establishes root entailment from reported assumptions | No refinement of Python's graph representation or extended closure graph theorem |
+| `Bridge.decodeModel_valid`, `CountermodelQuery.refutes_sound` | Decoded models are admissible; an accepted typed finite countermodel refutes the exact universe-zero consequence | Full byte/wire correspondence is not proved |
+| Closure checker and evaluator | Finite-path semantics, conservativity, evaluator correctness, and extended certificate soundness | Named singleton surface round trip only; no arbitrary Body/document round trip, completeness, or general induction |
 
-Domain-separated SHA-256 identifiers bind exact source bytes, the full
-environment, the AST under that environment, and normalized finite models.
-Descriptions and optional display metadata contribute to the environment
-identity. Restricted canonical JSON fixes serialization; duplicate keys and
-invalid values are rejected. Hashes index artifacts under a collision-resistance
-assumption. They establish neither semantic equivalence nor factual truth.
-Changes to evidence snapshots or review scope can invalidate an evidence
-assessment without invalidating the unchanged conditional theorem.
-<!-- src: docs/spec/v0-language.md, identity preimages; docs/implementation.md,
-argument interchange. SHA-256 is the algorithm name, not an experimental count. -->
+Closure rules cover edge inclusion, mixed positive/reflexive path composition,
+first/last-edge existence, and Named-to-Body conversion. The original base
+certificate theorem remains unchanged; a closure corollary follows by
+conservativity. These are scoped reference results, not a completeness claim
+for first-order logic with reachability.
 
-## Deterministic views and a worked example
+Lean's logic and kernel and the correctness of the theorem statements remain
+trusted. The axiom audit permits `propext`, `Classical.choice`, and `Quot.sound`.
+Executable use additionally trusts compilation, runtime, decoding, serialization,
+IO, hashing, and display. Lean's common carrier allows overlapping sort domains;
+the documented sort-tagging argument to independent disjoint domains is not
+mechanized. Python graph display deduplicates assumptions that Lean records as
+ordered lists, and that correspondence is unproved. Natural/fluent rendering,
+lexical linting, Python replay, and Rust execution are outside the reference
+soundness theorems. E4 artifacts were replayed in Python, not Lean.
 
-The views range from symbolic FOL through keyword FOL and strict VE to explicit
-natural and contracted fluent VE. The first four share a structural traversal.
-The fluent renderer contracts specified patterns and has explicit fallback.
-Only strict VE is accepted as source text. The others are read-only displays.
-<!-- src: docs/rendering-views.md (five views, first four shared traversal). -->
-
-Consider the requirement that every deployed service has an owner. The owner may
-depend on the service. The following outputs are generated from one committed
-AST and environment, not manually paraphrased. Line wrapping below is layout;
-the generated artifact also preserves the exact strings.
-
-<!-- INCLUDE generated/worked-example.md -->
-
-A scenario with distinct deployed services and different sole owners satisfies
-this formula but can falsify the alternative with an existential owner outside
-the universal. The renderer makes the dependency visible; it does not guarantee
-that a reader notices it. The shared legend records each raw identifier,
-description, ordered signature, selected wording and fallback, renderer naming
-policy, and lint diagnostics. The table below summarizes this example;
-the complete API legend is saved with its generated strings.
-
-The renderer now also provides `render_vocabulary(..., style="compact")`.
-It retains vocabulary identity, ordered signatures, descriptions, selected
-wording and lint information in a shorter display. E1 uses this compact legend,
-byte-identical across all five views. Its earlier roughly 4,000-character JSON
-legend (the final compact prompt is about 3,900 characters in total)
-swamped the statement and moved every tested Qwen judge outside the
-primary gate. Compact display is therefore part of the frozen prompt, not a
-cosmetic implementation detail.
-<!-- src: docs/rendering-views.md; paper/sources/e1-prereg-frozen.md;
-paper/sources/process-log-v1.md. -->
-
-<!-- INCLUDE generated/worked-legend.md -->
-
-Natural and fluent templates are trusted vocabulary assertions. The linter
-rejects many dangerous forms: reordered or repeated arguments, inserted logical
-words, passive/converse patterns, lexical collisions, and unchecked negative
-phrases. Rejected templates fall back to explicit atoms. These checks are
-heuristics. A collision-free antonym or misleading sort noun can still pass.
-The legend exposes raw identity and argument order in every cell; it cannot
-ensure truthful vocabulary or attentive review. E1 freezes that
-vocabulary before scored judging. Vocabulary-authored attacks need their own evaluation.
-<!-- src: docs/rendering-views.md; paper/sources/review-views.md. -->
-
-## The closure profile and exclusions
-
-The opt-in `closure@0` profile adds positive and reflexive-transitive reachability.
-Named edges refer to a homogeneous binary relation. Body edges define a relation
-with source and destination locals while keeping outer parameters fixed. Strict
-syntax includes `tc[parent](a, b)` and `rtc[parent](a, b)`. Positive closure means
-a finite path of positive length. Reflexive closure also allows a zero-length
-path. A cycle can make positive reachability hold from an element to itself.
-<!-- src: docs/spec/closure-implementation.md; lean/CLOSURE.md. -->
-
-Closure is interpreted by least finite-path relations even on infinite
-structures. Evaluation recomputes closure from base edges; a supplied
-`reachable` relation is not a substitute. Filtered Body edges can express paths
-that exclude edges into a fixed outer endpoint. Direction, path kind, local
-scope, and edge syntax remain explicit in the views. The old profile retains
-its original identities and meaning; there is no silent migration.
-
-The integer `order@0` profile remains a design proposal. Base VE has no
-interpreted arithmetic, unrestricted counting, regex, functions, higher-order
-quantification, probability, causality, obligation, belief, or general temporal
-operators. Some bounded statements admit explicit relational encodings, with
-adapter obligations. Giving a predicate the name of an unsupported computation
-does not implement that computation. The motivating research-level mathematical
-statements are outside this prototype's language.
-<!-- src: docs/spec/v0.1-profiles.md; docs/spec/v0.1-coverage.md; FUTURE.md. -->
+Differential certificate and evaluator corpora are useful integration evidence,
+not production-refinement proofs. In particular, successful replay of generated
+fixtures cannot establish that source requirements were faithfully formalized.
+Implementation benchmarks and the full conformance inventory are in the
+appendices; the assurance label remains experimental.
+<!-- src: lean/METATHEORY.md; lean/CLOSURE.md; lean/README.md;
+docs/rendering-views.md; docs/implementation.md; paper/sources/review-lean.md. -->

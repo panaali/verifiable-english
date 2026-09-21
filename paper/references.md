@@ -1,4 +1,4 @@
-The URLs below are copied from the repository's literature reviews or the supplied capability brief. Linked sources were fetched during drafting except where marked. Fetching a report does not independently verify its research artifacts.
+The URLs below are copied from repository literature reviews or the supplied capability brief. This revision used no network; previous drafting fetches did not independently validate research artifacts.
 
 - [Bowman et al. (2022). Measuring Progress on Scalable Oversight for Large Language Models.](https://arxiv.org/abs/2211.03540)
 
@@ -91,3 +91,5 @@ The URLs below are copied from the repository's literature reviews or the suppli
 - [Lean Language Reference. Validating Proofs.](https://lean-lang.org/doc/reference/latest/ValidatingProofs/)
 
   <!-- src: docs/architecture-and-design.md; docs/research-review.md; docs/spec/verification-contract.md; URL copied exactly. -->
+
+- [NASA. Formal Requirements Elicitation Tool (FRET).](https://github.com/NASA-SW-VnV/fret) Existing repository citation; not freshly fetched.

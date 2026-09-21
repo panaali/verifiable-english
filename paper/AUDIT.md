@@ -173,3 +173,30 @@ from `paper/`; no test suites were run.
 | 13 | Prefixed the graph result with its Lean reference checker scope. | `f32be8b` |
 | 14 | Added the final compact prompt's total character count. | `f32be8b` |
 | 15 | Retained the Gatekeeper opaque-exemption sentence as requested; no change required. | No fix needed; retained in `f32be8b`. |
+
+## Critical-review synthesis revision (2026-09-21)
+
+Read the orchestrator's accepted synthesis plus both xhigh reviews from
+`/Users/seyran/code/manage-agents/reviews/`. Per instruction, completed B before
+A, using local archives only. No new model calls, network, or delegated work.
+
+| Synthesis | Implemented response |
+|---|---|
+| B7 | Every E1 judge/cell has balanced accuracy, log-linear corrected d-prime and criterion; exhaustive paired sign flips, inverted intervals, leave-one-template-out ranges, per-template plot, threshold sensitivity. Offline statsmodels unavailable; fitted template-clustered binomial GLM with view/explanation/judge/view-by-judge, separately by label. |
+| B8 | Oracle weakening relation, 243 candidates/nine templates; all per-view/judge rates and intervals. 32B/e3 strict is worse in observed FA (.214 vs .128), with paired .088 [-.009,.214], p=.125. |
+| B9 | Present lenient E4 verdicts; protocol failures separate. Seeded random 7B prose sample includes all ten raw replies, full prompt JSON, task opening and final instruction. Replies do not identify internal interpretation. |
+| B10 | Item-specific dispute table for all 77 E0 inter-rater disagreements, by dataset, preserving adapter assumptions and proposed/frozen distinction. |
+| A1--A3 | Negative-result title/abstract; capability-by-surface pattern, e2 dev finding, exact E4 answer-bearing strings; shorter main text, archived auxiliary material. |
+| A4 | Capability/guarantee table for all requested predecessors. Lean framed as assurance engineering. Missing local verified-FOL-prover citation retained explicitly, without invented reference. |
+| A5--A6 | All four use cases; no human statement review/no external timestamp/Python E4 replay; narrow E1 translation scope and no size manipulation; fluent alignment/length confound. |
+| Planned only | Items 11--16 and long context/compaction, larger reviewed work, equal-strength adversaries with forged-checker control, long-horizon drift. |
+
+Validation: raw-trial arithmetic independently recomputed by the stdlib checker;
+all 16 paired sign-flip contrasts match; table column counts checked. HTML/PDF
+build verifies frozen source hashes and citation allowlist. PDF visual review
+covered every page; long appendix identifiers and historical unescaped condition
+separators were repaired. Generated figures use stable metadata/identifiers.
+The revised inference is a sensitivity analysis, not a new preregistration or
+an independent replication. No further critical review has been run.
+
+Final layout: **10 main-text pages, 1 reference page, 24 appendix pages (35 total)**. `make html pdf` passes offline, including source/citation verification and independent numerical/table checks. No substantive overfull text remains; the PDF was visually inspected page by page.
