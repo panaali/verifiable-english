@@ -86,7 +86,7 @@ and no formal notation. All 96 scored base items have explanations (111 samples,
 hedging SMD 0, and style AUC 0.469 pass the frozen thresholds: absolute SMD below
 0.20 and AUC in [0.40, 0.60]. Within a base item the text carries no candidate
 label information; aggregate residual imbalance reflects different candidate
-counts. The style feature lists were revised before freezing to remove logical
+counts. The style feature lists were revised twice before freezing to remove logical
 content words; thresholds were unchanged.
 
 Final e3 dev also lowered false approval in every view for both judges. One of
@@ -451,6 +451,8 @@ contrast +0.150 [+0.027, +0.273] has lower bound at least -0.05. The rule does
 not require the FA upper bound to be below -0.22; that number is a planning
 reference, not the efficacy threshold. The result does not establish a reduction
 of at least 22 points. This remains the result and decision under the frozen rule.
+The checked arm is itself at floor (0/60), so the frozen rule's floor caveat
+limits mechanism identification here too.
 
 **Post hoc sensitivity analysis, not preregistered.** We recover the last JSON
 object containing an approve/reject verdict anywhere in each reply, allowing

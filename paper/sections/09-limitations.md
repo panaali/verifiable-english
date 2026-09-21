@@ -3,10 +3,9 @@
 The scored results narrow the claim. Strict English showed no benefit for the
 capable primary judge: P1 is inconclusive and P2 rules out a useful 0.05
 reduction. The combined E1 claim is not supported. Any benefit of fluent
-rendering for the weaker 14B judge remains an exploratory hypothesis. Hosted
-small models' near-perfect FOL calibration suggests that model readability is
-not the bottleneck on this inventory; it does not show that all formal
-statements are easy. The checked components did help: the E4 14B FA contrast
+rendering for the weaker 14B judge remains an exploratory hypothesis. The two hosted reference judges (one measured only under the earlier JSON
+legend) were at ceiling on these development items, so these items do not
+saturate capable readers. The checked components did help: the E4 14B FA contrast
 passes its preregistered protection rule (-0.267 [-0.392, -0.142]); lenient
 parsing gives a smaller reduction, -0.117 [-0.231, -0.002], in a post hoc
 sensitivity analysis, not preregistered. The interval still excludes zero,
