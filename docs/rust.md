@@ -14,10 +14,10 @@ in this sandbox; `.gitignore` excludes them. `Cargo.lock` pins the dependencies.
 ```sh
 export CARGO_HOME="$PWD/.cargo-home"
 export CARGO_TARGET_DIR="$PWD/rust/target"
-cargo build --locked --release --manifest-path rust/Cargo.toml
-cargo test --locked --manifest-path rust/Cargo.toml
+cargo build -j 2 --locked --release --manifest-path rust/Cargo.toml
+cargo test -j 2 --locked --all-features --manifest-path rust/Cargo.toml -- --test-threads=1
 cargo fmt --manifest-path rust/Cargo.toml --all --check
-cargo clippy --manifest-path rust/Cargo.toml --workspace --all-targets -- -D warnings
+cargo clippy -j 2 --manifest-path rust/Cargo.toml --workspace --all-targets --all-features -- -D warnings
 
 rust/target/release/ve parse --env examples/environment.json --source examples/requirements.ve
 rust/target/release/ve format --env examples/environment.json --source examples/requirements.ve
@@ -26,14 +26,17 @@ rust/target/release/ve countermodel --env examples/environment.json --premises e
 ```
 
 `check-countermodel` takes the same inference source arguments plus `--model`.
-A conclusion must contain exactly one statement. An empty premises file denotes
-no premises; ordinary VE documents remain nonempty. File argument `-` reads
+A conclusion must contain exactly one statement. An empty premises file is
+rejected with `SyntaxError`, matching Python. Empty premise arrays remain valid
+in the programmatic inference envelope. File argument `-` reads
 stdin. `--help` lists the commands. These are small explicit commands, not a
 replacement for every Python CLI option or acceptance-record field.
 
 `conformance FILE.json` reads a case or array, producing one result per case.
 `jsonl FILE.jsonl` streams the same envelope one case per line, with a 16 MiB
-per-line cap. Envelopes contain `environment`, `ast` and/or `source`, optional
+per-line cap (including a terminating LF). An oversized record emits one
+`ResourceLimit` record, drains through its newline using bounded storage, and
+continues with subsequent lines. Envelopes contain `environment`, `ast` and/or `source`, optional
 `model` and `id`. Submitted source and AST must agree. An inference envelope
 instead has an ordered `premises` AST array and single `conclusion` AST; `model`
 selects witness checking, otherwise optional `max_domain_size`, `max_models` and
@@ -71,7 +74,9 @@ arity, sort, closure, depth and aggregate node validation. This is extrinsic
 typing, as in Python and the Lean raw syntax/checker, not a Rust dependent type.
 The document carries its full environment ID; evaluation rejects a differently
 bound model. Sort-qualified entity IDs are internally compiled to domain indices.
-Private immutable model/document fields preserve validation, so Rust need not
+Rust currently accepts the core vocabulary entries; the newly merged optional
+`verbalisation` / `negative_verbalisation` display metadata is not implemented
+in Rust. Private immutable model/document fields preserve validation, so Rust need not
 repeat model decoding and hashing on each evaluation. Raw `to_value` helpers are
 not a validation boundary; in-process callers must check raw constructors before
 using them as claims.
@@ -93,7 +98,8 @@ Boolean, and formula-node work count. Empty-domain universals and false-antecede
 implications are true; empty-domain existentials are false. The budget is at most
 1,000,000 node evaluations. Resource exhaustion never becomes a false judgment.
 Rust currently returns no explanatory trace and therefore has no separate trace
-budget. Python's default 10,000-node trace cap can exhaust earlier. Comparisons
+budget. Python's default 10,000-node trace cap can exhaust earlier, while
+`evaluate(..., trace=False)` disables that cap and explanatory traces. Comparisons
 of Boolean semantics require both evaluators to have sufficient resources;
 resource behavior is not claimed byte-identical to Python.
 
@@ -111,7 +117,8 @@ The search preserves empty domains and imposes a 100,000-used-atom allocation ca
 model count and work bounds. It uses a bounded bit vector rather than allocating
 an exponential list. A returned witness can be checked independently through the
 public witness API. `NotFound` and `ResourceLimit` never establish entailment.
-Counts can differ from Python, whose search enumerates unused predicates too.
+The merged Python search also fixes unused predicates to empty; the shared
+search and benchmark cases now agree on model/work counts.
 
 `canonical_json` uses UTF-16 key ordering, minimal string escaping and restricted
 integer serialization. SHA-256 uses the specified domain-separated preimages.
@@ -145,14 +152,20 @@ UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run --frozen python -m pytest -q
 python conformance/fuzz.py --rust rust/target/release/ve --count 5000
 ```
 
-The unchanged original corpus has **177 cases / 776 formulas**. Added fixtures
-check **218 parser cases**, **182 identity cases** (including Unicode/escaping,
-model reordering and individual formula IDs), **27 restricted JSON cases**,
-**27 malformed environment/model/AST cases**, and **30 search/witness cases**.
-Python and Rust agree on all expectations. Lean consumes evaluation, parser,
-identity and validation files directly; it checks evaluation, text and acceptance,
-not hashes, exact error classes or search. These added files overlap the original
-cases and are not independent draws. The golden values come from Python.
+The merged corpus has **701 cases / 4,912 formulas** and **708 countermodel
+requests**, all checked by Python, Lean and Rust. Added fixtures check **742
+parser cases**, **706 identity cases** (including Unicode/escaping, model
+reordering and individual formula IDs), **40 restricted JSON cases**, **43
+malformed environment/model/AST cases**, and **30 search/witness cases**.
+Python and Rust agree on all pinned expectations. Lean consumes evaluation,
+countermodel, parser, identity and validation files directly; it checks values,
+text and acceptance, not hashes or exact error classes. These files overlap and
+are not independent draws. Semantic golden values come from Python; wire classes
+are explicitly pinned in the generator and fixture. Incomplete `nul`, `1.`, `1e`
+are `SyntaxError`; `NaN`, `Infinity`, `-Infinity` and escaped lone surrogates are
+`InvalidInput`. The [diagnostic contract](spec/v0-language.md#rejection-and-resource-behavior)
+records identifier length/order and structural AST decoding precedence too.
+Python already follows these choices; no Python implementation change is needed.
 
 The seeded fuzz run agrees on **5,000/5,000** formula/model pairs: 2,900 true,
 2,100 false, with 781 cases containing an empty domain. It also compares ASTs and
@@ -164,13 +177,14 @@ has not established exhaustive coverage or statistical error bounds. It does
 not fuzz malformed decoders, arbitrary search spaces or resource exhaustion;
 those have explicit finite regressions.
 
-Final validation on September 21, 2026: **135 Python tests passed**, including
-all available Lean comparisons and its 23-theorem axiom audit; **9 Rust tests
-passed**; rustfmt and Clippy with warnings denied passed. Corpus regeneration
-produced no changes. Review found and fixed a canonical-printer limit mismatch:
-a 9,000-node wire document can be valid while its printed text exceeds 64 KiB.
-Both implementations now reject that rendering with `ResourceLimit`; a Rust
-regression and a Python/Rust differential test retain the case.
+Final validation on September 21, 2026: **652 Python tests passed**, including
+all available Lean comparisons and its 80-theorem axiom audit; **2 optional
+grammar-backend tests skipped** (`llguidance`, `xgrammar` are not installed).
+**11 Rust tests passed** with all features and one test thread; rustfmt and
+Clippy with warnings denied passed. Regeneration left all corpus JSON bytes
+unchanged. CLI regressions cover overlong JSONL recovery
+(including newline-at-limit and EOF cases), empty premises rejection, source
+binding, and canonical output exceeding 64 KiB despite a valid AST node count.
 
 ## Performance
 
@@ -182,39 +196,71 @@ The reproducible driver and committed raw samples are
 python rust/benchmark.py --repeats 5 --output rust/benchmark-results.json
 ```
 
-The driver builds the release timed example, checks matching values/work for
-comparable workloads, alternates Python/Rust order across five samples, and
-reports the median time per call. Setup, JSON decoding and process startup are
-excluded. Evaluation uses three nested universal quantifiers over a fully
-populated binary relation, forcing all `n³` atomic visits. Both use a 1,000,000
-work budget; Python's trace cap is raised to match. Public API timing includes
-Python's repeated model validation/hashes and traces, while Rust uses previously
-checked immutable inputs and returns no trace. A separate Python internal
-`_Evaluator` measurement excludes validation/hashes but still builds traces.
-These are implementation/API ratios, not an isolated Rust-versus-Python language
-speed comparison. Search includes candidate construction and validation on both
-sides; Rust avoids repeated claim hashing and revalidation for each candidate.
+The driver builds the release timed example with two Cargo jobs, checks matching
+values and formula-node work, alternates Python/Rust order across five samples,
+and runs everything sequentially. Setup, JSON decoding and process startup are
+excluded. Evaluation uses three nested universal quantifiers over a full binary
+relation, forcing all `n³` atomic visits; the size-64 case does 266,305 formula-node
+evaluations. Both implementations use the same 1,000,000-node budget and return
+results without traces.
 
-Measured on macOS-26.3.1-arm64-arm-64bit-Mach-O (`arm64`), Python 3.14.6, rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew) and cargo 1.98.1 (797e8a9bc 2026-08-05) (Homebrew). The sandbox denied the CPU-brand and RAM `sysctl` queries; their exact errors are recorded in the result file. No specific CPU model is claimed.
+**Kernel-vs-kernel:** Python `_evaluate_validated(..., trace=False)` and Rust's
+benchmark-only `EvaluationKernel` evaluate already-validated inputs and wrap
+results. Initial validation, model hashing and environment compatibility checks
+are outside this timing. The Rust harness is enabled only by the `bench-internals`
+feature and still requires checked inputs. Python's no-trace path retains its
+ordinary interpreter overhead, including detail-string construction; it is the
+merged production implementation, not a separately optimized benchmark kernel.
 
-| Workload | Python API ms | Rust API ms | API ratio | Python evaluator ms | Evaluator/API ratio |
-|---|---:|---:|---:|---:|---:|
-| eval_n2 | 0.1428 | 0.000165 | 865.33× | 0.0165 | 99.91× |
-| eval_n4 | 0.2721 | 0.001138 | 239.11× | 0.0949 | 83.41× |
-| eval_n8 | 1.0604 | 0.009319 | 113.80× | 0.6647 | 71.33× |
-| eval_n16 | 7.4375 | 0.090754 | 81.95× | 5.9406 | 65.46× |
-| eval_n24 | 23.8864 | 0.352028 | 67.85× | 21.1495 | 60.08× |
-| eval_n32 | 57.0947 | 0.855514 | 66.74× | 52.7801 | 61.69× |
-| search_binary_n1 | 0.9520 | 0.017229 | 55.25× | — | — |
-| search_binary_n2 | 6.6052 | 0.105111 | 62.84× | — | — |
-| search_binary_n3 | 206.9242 | 3.675541 | 56.30× | — | — |
+**API-vs-API:** Python `evaluate(..., trace=False)` is compared with Rust
+`evaluate_formula`. Python rechecks its AST and model and recomputes hashes on
+each call; Rust checks compatibility of previously validated immutable objects.
+These API costs explain why small-case API ratios are much higher than kernel
+ratios. Neither comparison isolates programming-language cost from data
+structures and implementation choices.
 
-Binary search through size 3 checks 531 models in each implementation. The unused-binary-predicate workload takes 1691.941 ms in Python (4,165 models) and 0.0787 ms in Rust (15 models), a 21,507.91× API ratio combining predicate pruning with the implementation differences above.
+The reviewer's characterization is **roughly 20–30x on the evaluation kernel**.
+The final loaded rerun is near that range's upper end: 31.46x at size 32 and
+30.14x at size 64. Smaller fixtures have larger kernel ratios as shown below;
+this is an approximate workload-specific characterization, not a uniform speedup
+or a hard 30x upper bound. Public API ratios are reported separately.
 
-The separate unused-predicate example deliberately enumerates different search
-spaces and is reported as an algorithmic optimization, not a matched-work
-language comparison. The benchmark does not establish production throughput,
-latency under load, broad workload generality or performance on other hardware.
+Measured on macOS-26.3.1-arm64-arm-64bit-Mach-O, Python 3.14.6, rustc 1.98.1 and
+cargo 1.98.1. CPU model and RAM were not queried in this run. The committed result
+records the measured commit, exact source hashes, platform/tool versions, load
+averages and all raw timing samples. The
+machine is shared and loaded; timings are observations, not isolated performance
+estimates. One-minute load was 10.24 at the start and 10.72 at the end.
+
+| Evaluation | Python kernel ms | Rust kernel ms | Kernel ratio | Python API ms | Rust API ms | API ratio |
+|---|---:|---:|---:|---:|---:|---:|
+| eval_n2 | 0.0112 | 0.000164 | 68.30× | 0.1453 | 0.000184 | 790.07× |
+| eval_n4 | 0.0673 | 0.001133 | 59.36× | 0.2561 | 0.001226 | 208.80× |
+| eval_n8 | 0.4666 | 0.009898 | 47.14× | 0.9016 | 0.009630 | 93.63× |
+| eval_n16 | 3.5513 | 0.092900 | 38.23× | 5.1507 | 0.092415 | 55.74× |
+| eval_n24 | 11.2413 | 0.344097 | 32.67× | 14.5407 | 0.340000 | 42.77× |
+| eval_n32 | 27.5279 | 0.874889 | 31.46× | 33.6687 | 0.884653 | 38.06× |
+| eval_n64 | 244.7169 | 8.119430 | 30.14× | 280.0671 | 8.086500 | 34.63× |
+
+Search includes candidate construction and validation in both implementations;
+the merged Python search also uses no-trace evaluation. Matched binary search
+checks 3, 19 and 531 models respectively:
+
+| Search | Python API ms | Rust API ms | API ratio |
+|---|---:|---:|---:|
+| search_binary_n1 | 0.2735 | 0.017548 | 15.58× |
+| search_binary_n2 | 1.9604 | 0.111930 | 17.51× |
+| search_binary_n3 | 67.0155 | 3.712666 | 18.05× |
+
+For the unused-binary-predicate example, Python takes 1.6762 ms
+and Rust 0.081625 ms. **Both now check 15 models / 117 formula nodes.**
+Only raw times and counts are reported for this pruning workload. The old
+comparison against Python's 4,165-model enumeration is obsolete, and no
+pruned-search ratio is presented as a speedup.
+
+The benchmark does not establish production throughput, latency under load,
+broad workload generality or performance on other hardware. All five samples
+are retained; no timing outliers are removed.
 
 ## Trust, Lean and P8
 
@@ -228,10 +274,12 @@ record or empirical-evidence verification is implemented here.
 
 The [Lean project](../lean/README.md) proves P6 for its actual finite evaluator,
 P10 for semantic assumption composition and P11 for admissible countermodels.
-P4/P5 cover only its atom-free propositional fragment. Rust has no refinement
-proof to those definitions; even the Lean bridge's JSON validation, compiler and
-native execution remain trusted. Conformance is empirical evidence relating
-these concrete executions, not a Rust P6, P8 or complete acceptance theorem.
+The merged follow-ups prove successful model decoding implies admissibility,
+and P4/P5 cover the full v0 language under the declaration-name conditions.
+Rust has no refinement proof to those definitions. The Lean bridge's wire-spec
+correspondence, compiler and native execution remain trusted. Conformance is
+empirical evidence relating these concrete executions, not a Rust P6, P8 or
+complete acceptance theorem.
 
 P8 would require an explicit representation relation from Rust's checked
 objects/domain indices to `VE.Term`, `VE.Formula`, environments, contexts and
@@ -251,9 +299,9 @@ reference operations on identical inputs. A concrete work plan is:
    duplicate detection, set normalization, domain-index encoding and exact
    environment binding in scope, or list them as remaining trusted boundaries.
 3. Prove parser soundness against an independent grammar-and-binding relation;
-   connect printing and successful parse/print to the full-language AST. The
-   current Lean fragment round-trip theorem is insufficient for quantifiers,
-   equality or predicates. Preserve source/AST substitution rejection.
+   connect Rust printing and successful parse/print to the full-language AST and
+   Lean's full-language round-trip theorem. Preserve source/AST substitution
+   rejection and its declaration-name premises.
 4. Prove budgeted Rust evaluation agrees with the Lean evaluator whenever it
    returns a Boolean, and conditional completeness with sufficient resources.
    Prove work limits/overflow and failure paths preserve the distinction between

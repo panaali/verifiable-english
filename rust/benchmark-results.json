@@ -4,12 +4,59 @@
   "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]",
   "rustc": "rustc 1.98.1 (48a229cea 2026-09-01) (Homebrew)",
   "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05) (Homebrew)",
-  "processor": "Unavailable: sysctl: sysctl fmt -1 1024 1: Operation not permitted",
-  "memory_bytes": "Unavailable: sysctl: sysctl fmt -1 1024 1: Operation not permitted",
+  "git_revision": "5273ac4ec1bc147fcf7e9f252457943397883d42",
+  "source_sha256": {
+    "rust/Cargo.lock": "fcea8b7c55e8a185408920b82312d71e997c3db18a0f0d6298fcd927c0e1c97c",
+    "rust/benchmark.py": "c44723448a1eac695bc79da11b86601f12d2b69e52055f252537ccd9c0f4c5f6",
+    "rust/ve-core/Cargo.toml": "cab76d0ce4a11b16fb541f594d2bfc53fb52e54841e331463d0e9c1d273dd95a",
+    "rust/ve-core/examples/bench.rs": "fd16d75f2d8955ae2b3884162e04f23eec447362b742e8089a76714d4a0d39ab",
+    "rust/ve-core/src/ast.rs": "edcd245a40ebf16bc685666b6520bd3861687b1479b577a347ec86d8ff10aa12",
+    "rust/ve-core/src/environment.rs": "211d5b6f06c4b9337ae75fee5b09b427037ca119de48ecdffc3869d37540f24d",
+    "rust/ve-core/src/eval.rs": "1fd11dae13a2dd7641b8c95c4db95fc4b6ae895098a1f8979141fb660b3f3361",
+    "rust/ve-core/src/lib.rs": "bed9b61c24caf4efa7e02f514506c30dc2c4bc027d98dd1d685bee41c40029a0",
+    "rust/ve-core/src/model.rs": "bc95485a994c703c2ffc12ef02d0fa05e8b75cc03fc4274efa6bae93f880c1b0",
+    "rust/ve-core/src/search.rs": "9b342fba50e420e865e0c7031f71fec64ae2250d4c2d7970375f7b7ac7cb7b5c",
+    "rust/ve-core/src/surface.rs": "2aefa16ceb302a813e760d56ac063baf6b403a2ddf467fe72971222004111290",
+    "rust/ve-core/src/wire.rs": "9d6a44e5fa7df017abbcb10bb1f8e572eb49ea518d9edef2163f7c506437259a",
+    "ve/__init__.py": "4c2778142f38c15fbe291195d2e44b0ef5a0e84e1dca66addf6ce70a0c940b5f",
+    "ve/__main__.py": "894e360febdb7189ed3f15329ec9e93ff00b37fd2e772b07e272df7be6d1b004",
+    "ve/argument.py": "f08be27f8eac94115e3d1179eb75b7daf761f4d0f7aecb45c956818b58bbeaf6",
+    "ve/argument_fixtures.py": "f3ebd7dca40cf67269d97518ed3c691cf638ef479fc51788200049c27ed613a9",
+    "ve/ast.py": "d771643dc1be65fdf958d3b2e10940eaa8ee0246c5eb38d3f9ab5b8b2a0e8605",
+    "ve/attacks.py": "6cbf0b1b0f604b5d3a5a8feb82fff5efac0ed177edf27dc990f35a1ff26dcbb7",
+    "ve/authoring.py": "2f8660901d24fda45192a228b3296771d349401c8746a3e1355126e69dc33348",
+    "ve/check.py": "fb563a1d62f76f7668295c3d6748d5390ddb8c74d87396beef9949cc14f09718",
+    "ve/entailment.py": "d04cd3be50dce99c41917fa65956e3dad8ec30262dee79cae896b94e28108519",
+    "ve/environment.py": "f94bafa616c4480ae6e9f26e280a900f9d154921a27a482af9471272a52abb00",
+    "ve/equivalence.py": "2206cb24319144916188cca9f40ec5265e49226f6993e21fdda046c307ed6e20",
+    "ve/errors.py": "486f2d3fc45727775256ebc91ad82f32ceba3ed2882fda5f97162edc45f89b1b",
+    "ve/evaluate.py": "f68a1d8d8913031b4dee26d5dfece31021abeb0dbbf7965898c9324990527db1",
+    "ve/fluent.py": "1016b26c1452772bf71055c1b8ddabb217202e7db3e3344dad547e19420bc403",
+    "ve/fol.py": "da2ee0d125bcae1ee104f976bafb98ac2bff9a54cd7778096ed9fddc1cbd9e05",
+    "ve/grammar.py": "4c23bdc18346759de14fff38b1bd14250ad17e27f8cb1b0700d7a4f34961372d",
+    "ve/identity.py": "467aab8b254974ba42c78448a495e3dc3c557d30d6fdceb8e474caa023d40eb5",
+    "ve/limits.py": "bf335f7902574dec3c743a84b1130ecda08ead02e148467c8971f1354860b5f7",
+    "ve/model.py": "8a026352dc3bdbba8b67ba3d74d06cb49b46d0f3198ce644ed174d54434ff8d8",
+    "ve/parser.py": "f108ec768e13276fcd4c7a90b30674ff5ffc5a894c3eb48026e37986c2b8a0d9",
+    "ve/printer.py": "4ff99748f0868f00eb6ad8a6c525d92ac906edff89c4e81ae70b0ac9c5bd1af5",
+    "ve/search.py": "3415d823e3bf2bea136ae778143683b110b7150005499cb39c68e7569da312b0",
+    "ve/wire.py": "fe12216e4f1cca4a8ecca2b0beea48a0bc2578b804cb664c16566cca74b49b07"
+  },
+  "load_average_start": [
+    10.2373046875,
+    16.787109375,
+    25.95361328125
+  ],
+  "load_average_end": [
+    10.7158203125,
+    16.46240234375,
+    25.62255859375
+  ],
+  "trace": false,
   "repeats": 5,
   "gc_enabled": true,
   "command": "python rust/benchmark.py --repeats 5 --output rust/benchmark-results.json",
-  "method": "Reproducible checked-API benchmark; no process startup or input decoding timed.\n\nPython's API revalidates models, recomputes hashes, and builds explanations.\nRust's immutable checked types avoid revalidation and its evaluator has no trace.\nAlso time Python's internal evaluator (still builds explanations), and report\nsearch with matched enumeration separately from unused-predicate pruning.\n",
+  "method": "Sequential no-trace API-vs-API and kernel-vs-kernel benchmarks.\n\nSetup, decoding, process startup and initial input validation are not timed.\nPython API calls revalidate models and recompute hashes; Rust API calls check\nimmutable input compatibility. Both return results without explanatory traces.\nKernels evaluate already-checked formulas/models with the same work budget and\nresult wrapping: Python _evaluate_validated(trace=False) and Rust's feature-gated\nEvaluationKernel. Search includes candidate construction and validation. Pruned\nsearch reports raw times/counts only; both implementations now prune unused predicates.\n",
   "results": [
     {
       "id": "eval_n2",
@@ -17,22 +64,21 @@
       "size": 2,
       "iterations_per_sample": 500,
       "python_seconds_per_call": [
-        0.0001463610820355825,
-        0.00013738008198561146,
-        0.00013648441602708773,
-        0.00014277966599911452,
-        0.0001452806660090573
+        0.00013818166800774634,
+        0.00017374050000216811,
+        0.00016404108400456608,
+        0.00013994216604623944,
+        0.00014530666597420349
       ],
       "rust_seconds_per_call": [
-        1.6841600000000002e-07,
-        1.5799999999999999e-07,
-        1.59584e-07,
-        1.6741600000000002e-07,
-        1.65e-07
+        1.84084e-07,
+        5.82418e-07,
+        1.6866799999999999e-07,
+        1.8391600000000002e-07,
+        1.81166e-07
       ],
-      "python_median_ms": 0.1427796659991145,
-      "rust_median_ms": 0.000165,
-      "api_speedup": 865.3313090855426,
+      "python_median_ms": 0.1453066659742035,
+      "rust_median_ms": 0.000183916,
       "python_observations": {
         "value": true,
         "evaluations": 15
@@ -41,15 +87,24 @@
         "evaluations": 15,
         "value": true
       },
-      "python_evaluator_seconds_per_call": [
-        1.6485833970364184e-05,
-        1.605299999937415e-05,
-        1.6157500038389118e-05,
-        1.6864416014868767e-05,
-        1.653150003403425e-05
+      "api_ratio": 790.0708256715211,
+      "python_kernel_seconds_per_call": [
+        1.1224250018130988e-05,
+        1.3715916022192687e-05,
+        2.6664416014682502e-05,
+        1.1066750041209161e-05,
+        1.1163250019308179e-05
       ],
-      "python_evaluator_median_ms": 0.016485833970364183,
-      "evaluator_speedup": 99.91414527493444
+      "rust_kernel_seconds_per_call": [
+        1.7133200000000002e-07,
+        1.6175e-07,
+        1.5908400000000002e-07,
+        1.64334e-07,
+        1.6725e-07
+      ],
+      "python_kernel_median_ms": 0.011224250018130988,
+      "rust_kernel_median_ms": 0.000164334,
+      "kernel_ratio": 68.30144716328324
     },
     {
       "id": "eval_n4",
@@ -57,22 +112,21 @@
       "size": 4,
       "iterations_per_sample": 500,
       "python_seconds_per_call": [
-        0.0002701786659890786,
-        0.00027031991799594834,
-        0.0002721071660052985,
-        0.0002803608339745551,
-        0.00029132716596359386
+        0.00025475216802442447,
+        0.0004268141660140827,
+        0.0003169353340053931,
+        0.0002520643339958042,
+        0.0002560893339687027
       ],
       "rust_seconds_per_call": [
-        1.166168e-06,
-        1.1235e-06,
-        1.138e-06,
-        1.182334e-06,
-        1.1315839999999999e-06
+        1.17975e-06,
+        1.182834e-06,
+        1.279334e-06,
+        1.248e-06,
+        1.2265e-06
       ],
-      "python_median_ms": 0.2721071660052985,
-      "rust_median_ms": 0.001138,
-      "api_speedup": 239.10998770237126,
+      "python_median_ms": 0.2560893339687027,
+      "rust_median_ms": 0.0012265,
       "python_observations": {
         "value": true,
         "evaluations": 85
@@ -81,15 +135,24 @@
         "evaluations": 85,
         "value": true
       },
-      "python_evaluator_seconds_per_call": [
-        9.411050000926479e-05,
-        9.44574159802869e-05,
-        9.506775002228097e-05,
-        9.601674997247755e-05,
-        9.492008195957169e-05
+      "api_ratio": 208.7968479157788,
+      "python_kernel_seconds_per_call": [
+        6.382774998201057e-05,
+        9.691891598049551e-05,
+        6.81302499724552e-05,
+        6.312949996208772e-05,
+        6.725191802252085e-05
       ],
-      "python_evaluator_median_ms": 0.09492008195957169,
-      "evaluator_speedup": 83.40956235463243
+      "rust_kernel_seconds_per_call": [
+        1.133e-06,
+        1.2545e-06,
+        1.130584e-06,
+        1.197916e-06,
+        1.121416e-06
+      ],
+      "python_kernel_median_ms": 0.06725191802252084,
+      "rust_kernel_median_ms": 0.001133,
+      "kernel_ratio": 59.357385721554145
     },
     {
       "id": "eval_n8",
@@ -97,22 +160,21 @@
       "size": 8,
       "iterations_per_sample": 170,
       "python_seconds_per_call": [
-        0.0010584401999093483,
-        0.0010501164234215943,
-        0.0010604348057634471,
-        0.0011048156882786904,
-        0.0010810624999815926
+        0.0008727480410872137,
+        0.005699668629334637,
+        0.000998671564807677,
+        0.0009016083353130585,
+        0.0008730173999484738
       ],
       "rust_seconds_per_call": [
-        9.65514705882353e-06,
-        9.275e-06,
-        9.254170588235293e-06,
-        9.330635294117647e-06,
-        9.318629411764707e-06
+        9.249017647058823e-06,
+        9.629658823529411e-06,
+        9.35759411764706e-06,
+        1.0175982352941176e-05,
+        9.78725294117647e-06
       ],
-      "python_median_ms": 1.0604348057634472,
-      "rust_median_ms": 0.009318629411764706,
-      "api_speedup": 113.797293454406,
+      "python_median_ms": 0.9016083353130585,
+      "rust_median_ms": 0.00962965882352941,
       "python_observations": {
         "value": true,
         "evaluations": 585
@@ -121,15 +183,24 @@
         "evaluations": 585,
         "value": true
       },
-      "python_evaluator_seconds_per_call": [
-        0.0006625196059330312,
-        0.0006646816177047132,
-        0.0006528436235385016,
-        0.0006823897058733136,
-        0.0006736681413124589
+      "api_ratio": 93.62827404747095,
+      "python_kernel_seconds_per_call": [
+        0.00046658749993452257,
+        0.000524649752975058,
+        0.00044796102926792465,
+        0.00044427573533646544,
+        0.0004739933823550339
       ],
-      "python_evaluator_median_ms": 0.6646816177047132,
-      "evaluator_speedup": 71.32825958993038
+      "rust_kernel_seconds_per_call": [
+        9.898282352941176e-06,
+        1.0060541176470589e-05,
+        9.485535294117647e-06,
+        1.4692647058823529e-05,
+        9.314211764705883e-06
+      ],
+      "python_kernel_median_ms": 0.4665874999345226,
+      "rust_kernel_median_ms": 0.009898282352941176,
+      "kernel_ratio": 47.1382289671582
     },
     {
       "id": "eval_n16",
@@ -137,22 +208,21 @@
       "size": 16,
       "iterations_per_sample": 22,
       "python_seconds_per_call": [
-        0.006894448863352987,
-        0.007413134500066834,
-        0.0074558390452611175,
-        0.007482249998826195,
-        0.007437488636986183
+        0.005150740545518188,
+        0.007921825727945279,
+        0.005252971591703085,
+        0.004805143954317001,
+        0.005007446953889236
       ],
       "rust_seconds_per_call": [
-        0.00010782386363636364,
-        8.854922727272727e-05,
-        8.744504545454546e-05,
-        9.116854545454545e-05,
-        9.075381818181818e-05
+        9.014018181818182e-05,
+        9.241477272727274e-05,
+        0.00010718181818181817,
+        0.00011464013636363637,
+        8.722159090909092e-05
       ],
-      "python_median_ms": 7.437488636986183,
-      "rust_median_ms": 0.09075381818181819,
-      "api_speedup": 81.95234961999897,
+      "python_median_ms": 5.150740545518188,
+      "rust_median_ms": 0.09241477272727273,
       "python_observations": {
         "value": true,
         "evaluations": 4369
@@ -161,15 +231,24 @@
         "evaluations": 4369,
         "value": true
       },
-      "python_evaluator_seconds_per_call": [
-        0.0058085378629832785,
-        0.005862344727078876,
-        0.0059406363632826305,
-        0.006105020818226462,
-        0.005947710226543925
+      "api_ratio": 55.73503449192751,
+      "python_kernel_seconds_per_call": [
+        0.0034097140001408247,
+        0.012733571954992261,
+        0.003469897726476616,
+        0.0035512973633806473,
+        0.003664083318488503
       ],
-      "python_evaluator_median_ms": 5.94063636328263,
-      "evaluator_speedup": 65.45880363271361
+      "rust_kernel_seconds_per_call": [
+        9.104354545454545e-05,
+        8.84299090909091e-05,
+        9.938822727272728e-05,
+        9.36230909090909e-05,
+        9.289963636363637e-05
+      ],
+      "python_kernel_median_ms": 3.5512973633806473,
+      "rust_kernel_median_ms": 0.09289963636363636,
+      "kernel_ratio": 38.227247192656705
     },
     {
       "id": "eval_n24",
@@ -177,22 +256,21 @@
       "size": 24,
       "iterations_per_sample": 6,
       "python_seconds_per_call": [
-        0.023454465335817076,
-        0.022749062496586703,
-        0.024378645830438472,
-        0.02397216666819683,
-        0.023886395831747603
+        0.014350708331524705,
+        0.03420688199791281,
+        0.014540708337638838,
+        0.014415777831648787,
+        0.015191854166914709
       ],
       "rust_seconds_per_call": [
-        0.00048170833333333334,
-        0.0003366388333333333,
-        0.0003360971666666667,
-        0.0003615348333333333,
-        0.0003520278333333333
+        0.00034049316666666667,
+        0.0003766388333333334,
+        0.00034,
+        0.0003342291666666667,
+        0.00033768750000000004
       ],
-      "python_median_ms": 23.886395831747603,
-      "rust_median_ms": 0.3520278333333333,
-      "api_speedup": 67.85371374066806,
+      "python_median_ms": 14.540708337638838,
+      "rust_median_ms": 0.34,
       "python_observations": {
         "value": true,
         "evaluations": 14425
@@ -201,15 +279,24 @@
         "evaluations": 14425,
         "value": true
       },
-      "python_evaluator_seconds_per_call": [
-        0.020244548499855835,
-        0.020497243167483248,
-        0.02138815983198583,
-        0.021149520835024305,
-        0.02322230566642247
+      "api_ratio": 42.76678922834952,
+      "python_kernel_seconds_per_call": [
+        0.011090256996491613,
+        0.0318479791652256,
+        0.011241270835550191,
+        0.011045305499768196,
+        0.011459097169184437
       ],
-      "python_evaluator_median_ms": 21.149520835024305,
-      "evaluator_speedup": 60.079115434596716
+      "rust_kernel_seconds_per_call": [
+        0.00034087500000000003,
+        0.00035847216666666667,
+        0.00034409733333333334,
+        0.00033258333333333333,
+        0.0003789721666666666
+      ],
+      "python_kernel_median_ms": 11.241270835550191,
+      "rust_kernel_median_ms": 0.34409733333333337,
+      "kernel_ratio": 32.66886937673698
     },
     {
       "id": "eval_n32",
@@ -217,22 +304,21 @@
       "size": 32,
       "iterations_per_sample": 3,
       "python_seconds_per_call": [
-        0.054102041671285406,
-        0.056894999996681385,
-        0.05865313899509298,
-        0.05709474999457598,
-        0.0591460000044511
+        0.03407002767198719,
+        0.03773668066908916,
+        0.031784250003208094,
+        0.03318840299228517,
+        0.03366869466844946
       ],
       "rust_seconds_per_call": [
-        0.0011472916666666667,
-        0.0008485553333333332,
-        0.000855514,
-        0.0009052776666666667,
-        0.0008502916666666667
+        0.0008975973333333332,
+        0.0008843333333333333,
+        0.0008833613333333333,
+        0.0008846526666666667,
+        0.0009069443333333334
       ],
-      "python_median_ms": 57.09474999457598,
-      "rust_median_ms": 0.855514,
-      "api_speedup": 66.73736489943586,
+      "python_median_ms": 33.66869466844946,
+      "rust_median_ms": 0.8846526666666668,
       "python_observations": {
         "value": true,
         "evaluations": 33825
@@ -241,15 +327,72 @@
         "evaluations": 33825,
         "value": true
       },
-      "python_evaluator_seconds_per_call": [
-        0.04874431932694279,
-        0.04945612499917237,
-        0.05849172199183764,
-        0.057125513994833454,
-        0.052780111000174657
+      "api_ratio": 38.058659558797984,
+      "python_kernel_seconds_per_call": [
+        0.026031958327318232,
+        0.027527888664432492,
+        0.02678086100301395,
+        0.028080749994842336,
+        0.02916652800437684
       ],
-      "python_evaluator_median_ms": 52.78011100017466,
-      "evaluator_speedup": 61.694035398806626
+      "rust_kernel_seconds_per_call": [
+        0.000823514,
+        0.000945778,
+        0.0008748886666666666,
+        0.0009053053333333334,
+        0.0008483750000000001
+      ],
+      "python_kernel_median_ms": 27.527888664432492,
+      "rust_kernel_median_ms": 0.8748886666666666,
+      "kernel_ratio": 31.464447664311376
+    },
+    {
+      "id": "eval_n64",
+      "kind": "evaluation",
+      "size": 64,
+      "iterations_per_sample": 3,
+      "python_seconds_per_call": [
+        0.28295269433874637,
+        0.2800670833288071,
+        0.23525095833853507,
+        0.23554811099893413,
+        0.36733579167048447
+      ],
+      "rust_seconds_per_call": [
+        0.007824875,
+        0.008665305666666666,
+        0.0080865,
+        0.008237236,
+        0.008032555333333333
+      ],
+      "python_median_ms": 280.0670833288071,
+      "rust_median_ms": 8.0865,
+      "python_observations": {
+        "value": true,
+        "evaluations": 266305
+      },
+      "rust_observations": {
+        "evaluations": 266305,
+        "value": true
+      },
+      "api_ratio": 34.633906304186866,
+      "python_kernel_seconds_per_call": [
+        0.24471690300075957,
+        0.27225218033224036,
+        0.22183665266493335,
+        0.21205956933166212,
+        0.34445606932664913
+      ],
+      "rust_kernel_seconds_per_call": [
+        0.007799777666666667,
+        0.008859708333333332,
+        0.008454319333333333,
+        0.008101361333333333,
+        0.008119430333333334
+      ],
+      "python_kernel_median_ms": 244.71690300075957,
+      "rust_kernel_median_ms": 8.119430333333334,
+      "kernel_ratio": 30.139664108712665
     },
     {
       "id": "search_binary_n1",
@@ -257,22 +400,21 @@
       "size": 1,
       "iterations_per_sample": 6,
       "python_seconds_per_call": [
-        0.0009037153358804062,
-        0.0009132708364631981,
-        0.0009519721643300727,
-        0.0009597848305323472,
-        0.0009912778332363814
+        0.0002734653341273467,
+        0.0003031596667521323,
+        0.00024803466415808845,
+        0.000262305504293181,
+        0.00030822916596662253
       ],
       "rust_seconds_per_call": [
-        2.3069333333333336e-05,
-        1.5986166666666666e-05,
-        1.7229166666666668e-05,
-        1.9763833333333332e-05,
-        1.7222333333333333e-05
+        1.8513833333333332e-05,
+        1.9569333333333333e-05,
+        1.6715333333333332e-05,
+        1.6916666666666667e-05,
+        1.75485e-05
       ],
-      "python_median_ms": 0.9519721643300727,
-      "rust_median_ms": 0.017229166666666667,
-      "api_speedup": 55.25352344358342,
+      "python_median_ms": 0.2734653341273467,
+      "rust_median_ms": 0.017548499999999998,
       "python_observations": {
         "status": "NotFound",
         "models_checked": 3,
@@ -282,7 +424,8 @@
         "evaluations": 11,
         "models_checked": 3,
         "status": "NotFound"
-      }
+      },
+      "api_ratio": 15.583402235367506
     },
     {
       "id": "search_binary_n2",
@@ -290,22 +433,21 @@
       "size": 2,
       "iterations_per_sample": 3,
       "python_seconds_per_call": [
-        0.006329721994309996,
-        0.006605221996627127,
-        0.006808819336583838,
-        0.0067882360017392784,
-        0.00651984700622658
+        0.002041611325694248,
+        0.001960430662923803,
+        0.0016633333289064467,
+        0.0017945556707369785,
+        0.0028047359955962747
       ],
       "rust_seconds_per_call": [
-        0.00014068066666666668,
-        0.00010370833333333332,
-        0.00010259700000000001,
-        0.000113139,
-        0.00010511133333333334
+        0.00011206966666666667,
+        0.00011497233333333333,
+        0.00011193033333333333,
+        0.00011030566666666668,
+        0.00011180566666666667
       ],
-      "python_median_ms": 6.605221996627127,
-      "rust_median_ms": 0.10511133333333333,
-      "api_speedup": 62.84024554878757,
+      "python_median_ms": 1.960430662923803,
+      "rust_median_ms": 0.11193033333333333,
       "python_observations": {
         "status": "NotFound",
         "models_checked": 19,
@@ -315,7 +457,8 @@
         "evaluations": 251,
         "models_checked": 19,
         "status": "NotFound"
-      }
+      },
+      "api_ratio": 17.51473978984371
     },
     {
       "id": "search_binary_n3",
@@ -323,22 +466,21 @@
       "size": 3,
       "iterations_per_sample": 1,
       "python_seconds_per_call": [
-        0.20841716701397672,
-        0.20318070898065343,
-        0.20581858299556188,
-        0.2069242080033291,
-        0.2079779579944443
+        0.06701545798568986,
+        0.07004774999222718,
+        0.05961912500788458,
+        0.059712708985898644,
+        0.07153054198715836
       ],
       "rust_seconds_per_call": [
-        0.004956417,
-        0.003604917,
-        0.00356075,
-        0.003829167,
-        0.003675541
+        0.003541041,
+        0.004134541,
+        0.003866583,
+        0.003633958,
+        0.003712666
       ],
-      "python_median_ms": 206.9242080033291,
-      "rust_median_ms": 3.675541,
-      "api_speedup": 56.29761931735467,
+      "python_median_ms": 67.01545798568986,
+      "rust_median_ms": 3.712666,
       "python_observations": {
         "status": "NotFound",
         "models_checked": 531,
@@ -348,7 +490,8 @@
         "evaluations": 16123,
         "models_checked": 531,
         "status": "NotFound"
-      }
+      },
+      "api_ratio": 18.050494708031874
     },
     {
       "id": "search_unused_binary_n3",
@@ -356,32 +499,32 @@
       "size": 3,
       "iterations_per_sample": 1,
       "python_seconds_per_call": [
-        1.654113166994648,
-        1.6432213749794755,
-        1.691940875025466,
-        1.7051608750189189,
-        1.6973654579778668
+        0.0014246250211726874,
+        0.0017530829936731607,
+        0.0013934579910710454,
+        0.001676249987212941,
+        0.0018314580083824694
       ],
       "rust_seconds_per_call": [
-        0.000102083,
-        7.8666e-05,
-        7.5041e-05,
-        8.2042e-05,
-        7.7958e-05
+        7.6666e-05,
+        8.0959e-05,
+        8.2917e-05,
+        8.1625e-05,
+        8.2125e-05
       ],
-      "python_median_ms": 1691.940875025466,
-      "rust_median_ms": 0.078666,
-      "api_speedup": 21507.9052579954,
+      "python_median_ms": 1.676249987212941,
+      "rust_median_ms": 0.081625,
       "python_observations": {
         "status": "NotFound",
-        "models_checked": 4165,
-        "evaluations": 41425
+        "models_checked": 15,
+        "evaluations": 117
       },
       "rust_observations": {
         "evaluations": 117,
         "models_checked": 15,
         "status": "NotFound"
-      }
+      },
+      "comparison": "Both prune unused predicates; raw times and counts only, no speedup ratio."
     }
   ]
 }
