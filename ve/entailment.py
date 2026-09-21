@@ -13,11 +13,11 @@ from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall, Impl
                   Not, Or, Top, Unary, Var, check_document)
 from .errors import ResourceLimit, VEError
 from .identity import meaning_id
-from .limits import MAX_NODES
+from .limits import MAX_NODES, MAX_TABLEAU_DEPTH
 from .wire import canonical_json
 
 
-ENTAILMENT_CHECKER_VERSION = "ve-tableau-checker@1"
+ENTAILMENT_CHECKER_VERSION = "ve-tableau-checker@2"
 
 
 @dataclass(frozen=True, slots=True)
@@ -115,6 +115,12 @@ def _term_token(term: Any, bindings: tuple[str, ...]) -> str:
 
 def _closed(branch: _Branch) -> bool:
     """Congruence closure for this relation-only language, independent of search."""
+    # Complementary compound formulas close just as complementary atoms do.
+    # Including parameter bindings is essential under quantifier instantiation.
+    positive_formulas = {(item.formula, item.bindings) for item in branch.formulas if item.positive}
+    if any((item.formula, item.bindings) in positive_formulas
+           for item in branch.formulas if not item.positive):
+        return True
     parent = {token: token for token in branch.parameters}
 
     def find(x: str) -> str:
@@ -213,7 +219,7 @@ class _Searcher:
 
     def search(self, branch: _Branch, depth: int = 0) -> dict[str, Any] | None:
         # Keep Python call-stack exhaustion inside the advertised resource class.
-        if depth >= 500: raise _Budget
+        if depth > MAX_TABLEAU_DEPTH: raise _Budget
         self.tick()
         if _closed(branch): return {"rule": "close"}
         choice: tuple[int, str | None] | None = None
@@ -258,7 +264,7 @@ def prove_entailment(env: Any, premises: Sequence[Any], conclusion: Any, *,
     try:
         trace = searcher.search(_initial_branch(env, premises, conclusion))
     except (_Budget, RecursionError):
-        return EntailmentResult("ResourceLimit", None, searcher.steps, "tableau step budget exhausted")
+        return EntailmentResult("ResourceLimit", None, searcher.steps, "tableau step or certificate nesting budget exhausted")
     if trace is None:
         return EntailmentResult("NotFound", None, searcher.steps,
                                 "saturated open branch; no entailment certificate found")
@@ -276,7 +282,7 @@ class _Replayer:
     def __init__(self, maximum: int): self.maximum, self.steps = maximum, 0
 
     def replay(self, branch: _Branch, node: Any, depth: int = 0) -> None:
-        if depth >= 500: raise _Budget
+        if depth > MAX_TABLEAU_DEPTH: raise _Budget
         if self.steps >= self.maximum: raise _Budget
         self.steps += 1
         if type(node) is not dict: raise _InvalidTrace("trace node must be an object")
