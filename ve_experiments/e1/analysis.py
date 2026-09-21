@@ -18,12 +18,15 @@ from ..stats import cluster_t_contrast, paired_contrast, rate
 from .pilot import E1, load_candidates
 from .views import VIEWS
 
-PRIMARY = ("ve_strict|attacker", "fol_symbols|attacker")
+PRIMARY = ("ve_strict|attacker", "fol_symbols|attacker")  # co-primary P1
+PRIMARY_2 = ("ve_strict|none", "fol_symbols|none")  # co-primary P2
+CO_PRIMARY_ALPHA = 0.025  # Bonferroni over P1 and P2: 97.5% cluster-t intervals
 SECONDARY = [
     ("ve_strict|attacker", "fol_keywords|attacker"),
     ("ve_natural|attacker", "fol_symbols|attacker"),
     ("ve_fluent|attacker", "fol_symbols|attacker"),
-    ("ve_strict|none", "fol_symbols|none"),
+    ("fol_keywords|attacker", "fol_symbols|attacker"),
+    ("fol_keywords|none", "fol_symbols|none"),
     ("ve_natural|none", "fol_symbols|none"),
     ("ve_fluent|none", "fol_symbols|none"),
     *[(f"{v}|attacker", f"{v}|none") for v in VIEWS],
@@ -51,7 +54,7 @@ def report(split: str, run_name: str, e1b_name: str | None = None) -> str:
     out = [f"# E1 `{split}` results, run `{run_name}`", "",
            f"{len(rows)} trials, {len({r['item_id'] for r in rows})} candidates, {n_t} templates. Failures (failed call, "
            "unparseable, truncated, tool use) are scored as the worst case. Contrasts: `t` = mean of per-template "
-           "differences with a 95% cluster-t interval (primary method); `pooled` = difference of pooled rates with a 95% "
+           "differences with a cluster-t interval (primary method; 97.5% for the two co-primary contrasts, 95% otherwise); `pooled` = difference of pooled rates with a 95% "
            f"percentile bootstrap over templates, {N_BOOT} resamples, seed 0 (secondary method).", ""]  # fmt: skip
     out += ["## Rates per judge and cell", "", "| judge | cell | false approval | honest acceptance | failures | truncated |", "|---|---|---|---|---|---|"]
     for j in judges:
@@ -62,10 +65,13 @@ def report(split: str, run_name: str, e1b_name: str | None = None) -> str:
     out += ["", "## Contrasts (a - b)", "", "| judge | metric | a | b | t diff | t 95% CI | pooled diff | bootstrap 95% CI | role |", "|---|---|---|---|---|---|---|---|---|"]
     for j in judges:
         for metric in ("false_approval", "honest_acceptance"):
-            for a, b in [PRIMARY, *SECONDARY]:
+            for a, b in [PRIMARY, PRIMARY_2, *SECONDARY]:
+                co = (a, b) in (PRIMARY, PRIMARY_2)
                 c = paired_contrast(rows, metric, a, b, j, N_BOOT, 0, cluster="template")
-                t = cluster_t_contrast(rows, metric, a, b, j, "template")
-                role = "primary" if (a, b) == PRIMARY and metric == "false_approval" else "constraint" if (a, b) == PRIMARY else "secondary"
+                t = cluster_t_contrast(rows, metric, a, b, j, "template", alpha=CO_PRIMARY_ALPHA if co else 0.05)
+                name = "P1" if (a, b) == PRIMARY else "P2"
+                role = (f"co-primary {name} (97.5% t interval; primary judge only)" if co and metric == "false_approval"
+                        else f"constraint for {name} (97.5% t interval)" if co else "secondary")
                 out.append(f"| {j} | {metric} | {a} | {b} | {t.diff:+.3f} | [{t.ci_low:+.3f}, {t.ci_high:+.3f}] | {c.diff:+.3f} | [{c.ci_low:+.3f}, {c.ci_high:+.3f}] | {role} |")
     out += ["", "## Per-template differences of the primary contrast (false approval)", "",
             "| judge | per-template differences | SD between templates | SE with 12 templates | 95% half-width with 12 (t, 11 df) |", "|---|---|---|---|---|"]  # fmt: skip

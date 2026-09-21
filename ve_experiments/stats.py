@@ -183,6 +183,24 @@ T975 = {1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571, 6: 2.447, 7: 2.365, 8
         21: 2.080, 22: 2.074, 23: 2.069, 24: 2.064, 25: 2.060, 26: 2.056, 27: 2.052, 28: 2.048, 29: 2.045, 30: 2.042}  # fmt: skip
 
 
+def t_quantile(q: float, df: int) -> float:
+    """Quantile of Student's t by Simpson integration of the density and bisection (no scipy here)."""
+    import math
+
+    c = math.gamma((df + 1) / 2) / (math.sqrt(df * math.pi) * math.gamma(df / 2))
+    pdf = lambda x: c * (1 + x * x / df) ** (-(df + 1) / 2)  # noqa: E731
+
+    def cdf(x: float, n: int = 4000) -> float:
+        h = x / n
+        return 0.5 + h / 3 * (pdf(0) + pdf(x) + sum((4 if i % 2 else 2) * pdf(i * h) for i in range(1, n)))
+
+    lo, hi = 0.0, 1000.0
+    for _ in range(200):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if cdf(mid) < q else (lo, mid)
+    return (lo + hi) / 2
+
+
 @dataclass(frozen=True)
 class ClusterT:
     metric: str
@@ -197,9 +215,10 @@ class ClusterT:
     per_cluster: dict
 
 
-def cluster_t_contrast(rows: Sequence[dict], metric: str, a: str, b: str, judge: str, cluster: str = "template") -> ClusterT:
+def cluster_t_contrast(rows: Sequence[dict], metric: str, a: str, b: str, judge: str, cluster: str = "template",
+                       alpha: float = 0.05) -> ClusterT:
     """The per-cluster differences d_c = rate_a(c) - rate_b(c) are the data; the estimate is their mean, the 95%
-    interval is mean +/- t(0.975, G-1) * sd / sqrt(G). Clusters weigh equally whatever their number of items.
+    interval is mean +/- t(1 - alpha/2, G-1) * sd / sqrt(G) (alpha = 0.025 for Bonferroni over two co-primaries). Clusters weigh equally whatever their number of items.
     Requires complete pairing and at least two clusters (at most 31)."""
     _require_paired(rows, metric, a, b, judge)
     ca = _group_counts(_select(rows, metric, a, judge), cluster)
@@ -210,7 +229,7 @@ def cluster_t_contrast(rows: Sequence[dict], metric: str, a: str, b: str, judge:
         raise ValueError(f"cluster-t needs between 2 and 31 clusters, got {g}")
     mean = sum(d.values()) / g
     sd = (sum((x - mean) ** 2 for x in d.values()) / (g - 1)) ** 0.5
-    half = T975[g - 1] * sd / g**0.5
+    half = (T975[g - 1] if alpha == 0.05 else t_quantile(1 - alpha / 2, g - 1)) * sd / g**0.5
     return ClusterT(metric, a, b, judge, mean, mean - half, mean + half, sd, g, d)
 
 
