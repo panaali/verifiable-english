@@ -6,7 +6,7 @@ spawns one. It provides:
 * a disk cache keyed by (model, system prompt, prompt, seed);
 * retries with backoff, and a result object (never an exception) when all attempts fail, so that
   failed calls stay in experiment denominators;
-* a process-wide concurrency limit (default 6);
+* a concurrency limit per provider CLI (default 6 each for `claude` and `codex`);
 * a JSONL call log with tokens and latency;
 * strict parsing of a final JSON verdict (`parse_verdict`).
 
@@ -31,7 +31,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
-CACHE_VERSION = 1
+CACHE_VERSION = 2  # 2: hardened CLI flags, trial identity in the key, tool-use detection
 DEFAULT_SYSTEM = "You are a careful reviewer. Follow the instructions in the user message exactly."
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -46,6 +46,7 @@ class RawReply:
     input_tokens: int | None = None
     output_tokens: int | None = None
     cached_input_tokens: int | None = None
+    tool_events: tuple[str, ...] = ()  # anything the model did besides writing text (commands, tools, searches)
 
 
 @dataclass(frozen=True)
@@ -62,6 +63,12 @@ class LLMResult:
     input_tokens: int | None = None
     output_tokens: int | None = None
     cached_input_tokens: int | None = None
+    tool_events: tuple[str, ...] = ()
+    identity: str = ""
+
+    @property
+    def used_tools(self) -> bool:
+        return bool(self.tool_events)
 
 
 @dataclass(frozen=True)
@@ -70,7 +77,8 @@ class Request:
     prompt: str
     seed: int = 0
     system: str | None = None
-    tag: str = ""  # free-form label copied to the log (experiment id, trial id)
+    tag: str = ""  # free-form label copied to the log
+    identity: str = ""  # stable trial identity; part of the cache key, never shown to the model
 
 
 Backend = Callable[[str, str, str, float, Path], RawReply]
@@ -107,6 +115,10 @@ def claude_backend(model: str, system: str, prompt: str, timeout_s: float, cwd: 
         raise BackendError(f"claude returned non-JSON output: {out[-300:]!r}") from exc
     if data.get("is_error") or not isinstance(data.get("result"), str):
         raise BackendError(f"claude reported an error: {str(data.get('result'))[-300:]}")
+    tool_events = []
+    if (data.get("num_turns") or 1) > 1:
+        tool_events.append(f"claude:num_turns={data.get('num_turns')}")
+    tool_events += [f"claude:permission_denial:{json.dumps(d)[:120]}" for d in data.get("permission_denials") or []]
     usage = data.get("usage") or {}
     cached = (usage.get("cache_read_input_tokens") or 0) + (usage.get("cache_creation_input_tokens") or 0)
     return RawReply(
@@ -114,19 +126,27 @@ def claude_backend(model: str, system: str, prompt: str, timeout_s: float, cwd: 
         input_tokens=(usage.get("input_tokens") or 0) + cached,
         output_tokens=usage.get("output_tokens"),
         cached_input_tokens=usage.get("cache_read_input_tokens"),
+        tool_events=tuple(tool_events),
     )
 
 
-def codex_backend(model: str, system: str, prompt: str, timeout_s: float, cwd: Path) -> RawReply:
-    # codex exec has no system-prompt flag; the system text is prepended to the prompt.
-    cmd = [
-        "codex", "exec", "-m", model, "-s", "read-only", "--skip-git-repo-check",
-        "--json", "--ephemeral", "-",
-    ]  # fmt: skip
-    full = f"{system}\n\n{prompt}" if system else prompt
-    out = _run(cmd, full, timeout_s, cwd)
+CODEX_FLAGS = (
+    "-s", "read-only", "--skip-git-repo-check", "--json", "--ephemeral", "--ignore-user-config", "--ignore-rules",
+    "--disable", "shell_tool", "--disable", "apps", "--disable", "browser_use", "--disable", "computer_use",
+    "--disable", "plugins", "-c", 'web_search="disabled"',
+)  # fmt: skip
+"""`-s read-only` alone still lets the model READ the whole filesystem, including ground truth in this
+repository. Disabling the shell tool and the other tool features removes that ability (verified live:
+asked to run `ls`, the model answers that it cannot). As a second line of defence every event that is
+not plain text is recorded, and the runner scores such a trial as invalid."""
+
+_CODEX_TEXT_ITEMS = ("agent_message", "reasoning")
+
+
+def parse_codex_events(out: str) -> RawReply:
     text: str | None = None
     usage: dict = {}
+    tool_events: list[str] = []
     for line in out.splitlines():
         line = line.strip()
         if not line.startswith("{"):
@@ -135,8 +155,12 @@ def codex_backend(model: str, system: str, prompt: str, timeout_s: float, cwd: P
             event = json.loads(line)
         except json.JSONDecodeError:
             continue
-        if event.get("type") == "item.completed" and event.get("item", {}).get("type") == "agent_message":
-            text = event["item"].get("text")
+        item = event.get("item") or {}
+        if event.get("type", "").startswith("item.") and item.get("type") not in _CODEX_TEXT_ITEMS:
+            if event.get("type") == "item.completed" or item.get("type") == "command_execution":
+                tool_events.append(f"codex:{item.get('type')}:{str(item.get('command') or item.get('name') or '')[:120]}")
+        if event.get("type") == "item.completed" and item.get("type") == "agent_message":
+            text = item.get("text")
         elif event.get("type") == "turn.completed":
             usage = event.get("usage") or {}
         elif event.get("type") in ("error", "turn.failed"):
@@ -148,7 +172,15 @@ def codex_backend(model: str, system: str, prompt: str, timeout_s: float, cwd: P
         input_tokens=usage.get("input_tokens"),
         output_tokens=usage.get("output_tokens"),
         cached_input_tokens=usage.get("cached_input_tokens"),
+        tool_events=tuple(dict.fromkeys(tool_events)),
     )
+
+
+def codex_backend(model: str, system: str, prompt: str, timeout_s: float, cwd: Path) -> RawReply:
+    # codex exec has no system-prompt flag; the system text is prepended to the prompt.
+    cmd = ["codex", "exec", "-m", model, *CODEX_FLAGS, "-"]
+    full = f"{system}\n\n{prompt}" if system else prompt
+    return parse_codex_events(_run(cmd, full, timeout_s, cwd))
 
 
 def default_backend_for(model: str) -> Backend:
@@ -162,8 +194,10 @@ def default_backend_for(model: str) -> Backend:
 # --------------------------------------------------------------------------- client
 
 
-def cache_key(model: str, system: str, prompt: str, seed: int) -> str:
-    payload = json.dumps([CACHE_VERSION, model, system, prompt, seed], ensure_ascii=False)
+def cache_key(model: str, system: str, prompt: str, seed: int, identity: str = "") -> str:
+    """`identity` names the trial (experiment, item, cell, judge, sample). It keeps two trials that
+    happen to share a prompt from collapsing into one model call, and is never sent to the model."""
+    payload = json.dumps([CACHE_VERSION, model, system, prompt, seed, identity], ensure_ascii=False)
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
@@ -177,7 +211,7 @@ class LLMClient:
     backoff_s: float = 2.0
     backend: Backend | None = None  # override for tests; default routes by model name
     default_system: str = DEFAULT_SYSTEM
-    _sem: threading.BoundedSemaphore = field(init=False, repr=False)
+    _sems: dict = field(init=False, repr=False)
     _log_lock: threading.Lock = field(init=False, repr=False)
     _key_locks: dict[str, threading.Lock] = field(init=False, repr=False)
     _cwd: Path | None = field(init=False, default=None, repr=False)
@@ -186,23 +220,25 @@ class LLMClient:
         self.cache_dir = Path(self.cache_dir)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.log_path = Path(self.log_path) if self.log_path else self.cache_dir / "calls.jsonl"
-        self._sem = threading.BoundedSemaphore(self.max_concurrency)
+        self._sems = {}
         self._log_lock = threading.Lock()
         self._key_locks = {}
         self._meta_lock = threading.Lock()
 
     # -- public API
 
-    def call(self, model: str, prompt: str, seed: int = 0, system: str | None = None, tag: str = "") -> LLMResult:
+    def call(
+        self, model: str, prompt: str, seed: int = 0, system: str | None = None, tag: str = "", identity: str = ""
+    ) -> LLMResult:
         system = self.default_system if system is None else system
-        key = cache_key(model, system, prompt, seed)
+        key = cache_key(model, system, prompt, seed, identity)
         with self._lock_for(key):  # identical concurrent requests make one model call
             hit = self._cache_read(key)
             if hit is not None:
                 result = LLMResult(**{**hit, "from_cache": True})
                 self._log(result, tag)
                 return result
-            result = self._call_uncached(model, system, prompt, seed, key)
+            result = self._call_uncached(model, system, prompt, seed, key, identity)
             if result.ok:
                 self._cache_write(key, result, system, prompt)
         self._log(result, tag)
@@ -216,17 +252,23 @@ class LLMClient:
 
         def one(r: Request) -> LLMResult:
             nonlocal done
-            res = self.call(r.model, r.prompt, r.seed, r.system, r.tag)
+            res = self.call(r.model, r.prompt, r.seed, r.system, r.tag, r.identity)
             with lock:
                 done += 1
                 if progress:
                     progress(done, len(reqs))
             return res
 
-        with ThreadPoolExecutor(max_workers=max(1, self.max_concurrency)) as pool:
+        with ThreadPoolExecutor(max_workers=max(1, 2 * self.max_concurrency)) as pool:
             return list(pool.map(one, reqs))
 
     # -- internals
+
+    def _sem_for(self, model: str) -> threading.BoundedSemaphore:
+        """One limit per provider CLI (`claude*` vs everything else), since their rate limits are separate."""
+        family = "claude" if model.startswith("claude") else "codex"
+        with self._meta_lock:
+            return self._sems.setdefault(family, threading.BoundedSemaphore(self.max_concurrency))
 
     def _lock_for(self, key: str) -> threading.Lock:
         with self._meta_lock:
@@ -238,12 +280,12 @@ class LLMClient:
                 self._cwd = Path(tempfile.mkdtemp(prefix="ve-llm-neutral-"))
             return self._cwd
 
-    def _call_uncached(self, model: str, system: str, prompt: str, seed: int, key: str) -> LLMResult:
+    def _call_uncached(self, model: str, system: str, prompt: str, seed: int, key: str, identity: str = "") -> LLMResult:
         backend = self.backend or default_backend_for(model)
         error = "no attempt made"
         start = time.monotonic()
         for attempt in range(1, self.retries + 1):
-            with self._sem:
+            with self._sem_for(model):
                 t0 = time.monotonic()
                 try:
                     reply = backend(model, system, prompt, self.timeout_s, self._neutral_cwd())
@@ -256,13 +298,14 @@ class LLMClient:
                             latency_s=round(time.monotonic() - t0, 3), attempts=attempt,
                             input_tokens=reply.input_tokens, output_tokens=reply.output_tokens,
                             cached_input_tokens=reply.cached_input_tokens,
+                            tool_events=tuple(reply.tool_events), identity=identity,
                         )  # fmt: skip
                     error = "empty reply"
             if attempt < self.retries:
                 time.sleep(self.backoff_s * 2 ** (attempt - 1))
         return LLMResult(
             model=model, seed=seed, key=key, text=None, ok=False, error=error,
-            latency_s=round(time.monotonic() - start, 3), attempts=self.retries,
+            latency_s=round(time.monotonic() - start, 3), attempts=self.retries, identity=identity,
         )  # fmt: skip
 
     def _cache_path(self, key: str) -> Path:
