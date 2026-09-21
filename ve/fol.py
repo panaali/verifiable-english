@@ -7,14 +7,29 @@ from __future__ import annotations
 from typing import Any, Mapping
 
 from . import ast
-from .errors import ResourceLimit, SyntaxError
-from .limits import MAX_DEPTH, MAX_NODES
+from .environment import RESERVED, valid_identifier
+from .errors import ResourceLimit, ShadowedVariable, SyntaxError, UnboundVariable
+from .limits import MAX_DEPTH, MAX_IDENTIFIER_BYTES, MAX_NODES
 from .wire import canonical_json
 from .printer import NaturalView, natural_document, print_document
 
 
 def _fail(message: str, path: str) -> None:
     raise SyntaxError(message, path=path)
+
+
+def _variable_name(env: Any, value: Any, path: str) -> str:
+    """Validate a source-level variable name at the named-FOL boundary."""
+    if type(value) is str and len(value) > MAX_IDENTIFIER_BYTES:
+        raise ResourceLimit(
+            f"variable name exceeds {MAX_IDENTIFIER_BYTES} ASCII bytes", path=path
+        )
+    if not valid_identifier(value):
+        _fail(f"invalid variable name {value!r}", path)
+    schema = set(env.sorts) | set(env.predicates) | set(env.constants)
+    if value in RESERVED or value in schema:
+        _fail(f"invalid variable name {value!r}", path)
+    return value
 
 
 
@@ -38,9 +53,11 @@ def document_from_named_fol(env: Any, value: Mapping[str, Any]) -> ast.Document:
     def term(raw, scope, path):
         if not isinstance(raw, Mapping) or len(raw) != 1: _fail("invalid named term", path)
         if "const" in raw and isinstance(raw["const"], str): return ast.Const(raw["const"])
-        if "var" in raw and isinstance(raw["var"], str):
-            try: return ast.Var(list(reversed(scope)).index(raw["var"]))
-            except ValueError: _fail(f"unbound variable {raw['var']!r}", path)
+        if "var" in raw:
+            name = _variable_name(env, raw["var"], path + "/var")
+            try: return ast.Var(list(reversed(scope)).index(name))
+            except ValueError:
+                raise UnboundVariable(f"unbound variable {name!r}", path=path + "/var")
         _fail("term requires string 'var' or 'const'", path)
     def formula(raw, scope, path, depth=0):
         if depth > MAX_DEPTH: raise ResourceLimit("formula nesting limit exceeded", path=path)
@@ -64,11 +81,54 @@ def document_from_named_fol(env: Any, value: Mapping[str, Any]) -> ast.Document:
         if op in ("and","or","implies"):
             cls={"and":ast.And,"or":ast.Or,"implies":ast.Implies}[op]
             return cls(formula(raw["left"],scope,path+"/left",depth+1),formula(raw["right"],scope,path+"/right",depth+1))
-        if not isinstance(raw["sort"],str) or not isinstance(raw["variable"],str): _fail("binder sort and variable must be strings",path)
+        if not isinstance(raw["sort"],str): _fail("binder sort must be a string",path + "/sort")
+        name = _variable_name(env, raw["variable"], path + "/variable")
+        if name in scope:
+            raise ShadowedVariable(
+                f"binder {name!r} shadows an active binder", path=path + "/variable"
+            )
         cls=ast.Forall if op=="forall" else ast.Exists
-        return cls(raw["sort"],formula(raw["body"],[*scope,raw["variable"]],path+"/body",depth+1))
+        return cls(raw["sort"],formula(raw["body"],[*scope,name],path+"/body",depth+1))
     document=ast.Document(tuple(formula(v,[],f"/formulas/{i}") for i,v in enumerate(value["formulas"])))
     return ast.check_document(env,document)
+
+
+def document_to_named_fol(env: Any, document: ast.Document) -> dict[str, list[dict[str, Any]]]:
+    """Export *document* with deterministic preorder names and explicit sorts."""
+    ast.check_document(env, document)
+
+    def term(value: ast.Term, scope: list[str]) -> dict[str, str]:
+        if type(value) is ast.Var:
+            return {"var": scope[value.index]}
+        return {"const": value.name}
+
+    def export_formula(value: ast.Formula, scope: list[str], counter: list[int]) -> dict[str, Any]:
+        kind = type(value)
+        if kind is ast.Top: return {"op": "top"}
+        if kind is ast.Bottom: return {"op": "bottom"}
+        if kind is ast.Unary:
+            return {"op": "unary", "predicate": value.predicate,
+                    "term": term(value.term, scope)}
+        if kind is ast.Binary:
+            return {"op": "binary", "predicate": value.predicate,
+                    "left": term(value.left, scope), "right": term(value.right, scope)}
+        if kind is ast.Eq:
+            return {"op": "eq", "left": term(value.left, scope),
+                    "right": term(value.right, scope)}
+        if kind is ast.Not:
+            return {"op": "not", "body": export_formula(value.body, scope, counter)}
+        if kind in (ast.And, ast.Or, ast.Implies):
+            op = {ast.And: "and", ast.Or: "or", ast.Implies: "implies"}[kind]
+            return {"op": op, "left": export_formula(value.left, scope, counter),
+                    "right": export_formula(value.right, scope, counter)}
+        name = f"x{counter[0]}"
+        counter[0] += 1
+        return {"op": "forall" if kind is ast.Forall else "exists",
+                "sort": value.sort, "variable": name,
+                "body": export_formula(value.body, [name, *scope], counter)}
+
+    return {"formulas": [export_formula(formula, [], [0])
+                          for formula in document.formulas]}
 
 
 def render_fol(env: Any, value: ast.Document | list[Any] | Mapping[str, Any], *, view: str = "canonical") -> str | NaturalView:
@@ -80,4 +140,7 @@ def render_fol(env: Any, value: ast.Document | list[Any] | Mapping[str, Any], *,
     else: document=document_from_named_fol(env,value)
     if view == "canonical": return print_document(env,document)
     if view == "natural": return natural_document(env,document)
-    raise ValueError("view must be 'canonical' or 'natural'")
+    if view in {"fol_symbols", "fol_keywords", "ve_strict", "ve_natural"}:
+        from .printer import render
+        return render(document, env, view)
+    raise ValueError("unknown rendering view")
