@@ -9,7 +9,7 @@ For a worked inventory, run:
 
 ```sh
 uv run python -m ve evaluate --env examples/environment.json --model examples/model.json examples/requirements.ve
-uv run python -m ve render --env examples/environment.json --view natural examples/requirements.ve
+uv run python -m ve render --env examples/environment.json --view ve_natural examples/requirements.ve
 uv run python -m ve countermodel --env examples/environment.json --premises examples/premise.ve --conclusion examples/conclusion.ve
 ```
 

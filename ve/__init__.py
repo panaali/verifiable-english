@@ -8,11 +8,11 @@ from .environment import Environment
 from .errors import VEError
 from .identity import meaning_id, source_id
 from .parser import canonicalize, is_canonical, parse, parse_with_metadata
-from .printer import natural_document, natural_formula, print_document, print_formula
-from .fol import document_from_named_fol, render_fol
+from .printer import natural_document, natural_formula, print_document, print_formula, render
+from .fol import document_from_named_fol, document_to_named_fol, render_fol
 from .model import FiniteModel
 from .evaluate import evaluate
-from .search import check_countermodel, find_countermodel
+from .search import check_countermodel, find_countermodel, find_distinguishing_model
 from .check import check
 
 __version__ = "0.1.0"
