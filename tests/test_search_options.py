@@ -117,3 +117,162 @@ def test_public_countermodel_check_always_revalidates_forged_model_identity():
     forged = FiniteModel({"item": ()}, {}, {"active": frozenset()}, ENV.environment_id, "0" * 64)
     with pytest.raises(InvalidModel):
         check_countermodel(ENV, (), Bottom(), forged)
+
+
+def review_search_environment(predicate_count=7):
+    data = ENV.to_dict()
+    data['vocabulary'] = {
+        'sorts': {'service': {'description': 'Service'}, 'person': {'description': 'Person'}},
+        'predicates': {
+            name: {'arguments': args, 'description': name}
+            for name, args in list({
+                'owns': ['person', 'service'], 'audits': ['person', 'service'],
+                'links': ['service', 'service'], 'serves': ['person', 'service'],
+                'dep': ['service'], 'rev': ['service'], 'ready': ['person'],
+            }.items())[:predicate_count]
+        },
+        'constants': {},
+    }
+    return Environment(data)
+
+
+@pytest.mark.parametrize('predicate_count', [5, 7])
+def test_review_quantifier_swap_found_with_default_budgets(predicate_count):
+    from ve import Binary
+    env = review_search_environment(predicate_count)
+    a = Forall('service', Exists('person', Binary('owns', Var(0), Var(1))))
+    b = Exists('person', Forall('service', Binary('owns', Var(1), Var(0))))
+    # Exclude the trivial empty-sort witness: this must find the real dependency
+    # counterexample with two services and two different owners.
+    result = find_distinguishing_model(env, a, b, nonvacuous_for=a)
+    assert result.status == 'Found', result
+    assert result.models_checked < 100 and result.evaluations < 10_000
+    assert evaluate(env, a, result.model).value is True
+    assert evaluate(env, b, result.model).value is False
+    assert all(len(domain) == 2 for domain in result.model.domains.values())
+    assert len(result.model.relations['owns']) == 2
+    assert all(not rows for name, rows in result.model.relations.items() if name != 'owns')
+
+
+def test_unused_predicates_do_not_multiply_models_or_trigger_atom_limit(monkeypatch):
+    import ve.search as search
+    env = review_search_environment()
+    # Unused declarations must not even consume the possible-atom space cap.
+    monkeypatch.setattr(search, 'MAX_TUPLES', 1)
+    result = find_distinguishing_model(env, Top(), Top(), min_domain_size=1)
+    assert result.status == 'NotFound' and result.models_checked == 4
+    assert find_countermodel(env, (), Top(), min_domain_size=1).models_checked == 4
+
+
+def test_enumeration_small_domains_and_globally_sparse_relations_first():
+    from itertools import product
+    from ve.search import _domain_sizes, _models, _relation_assignments, _subsets
+    vectors = list(_domain_sizes([0, 1, 0], 2))
+    assert len(vectors) == len(set(vectors)) == 18
+    assert vectors == sorted(product(range(3), range(1, 3), range(3)), key=lambda v: (sum(v), v))
+    assert list(_domain_sizes([], 2)) == [()]
+    assert list(_domain_sizes([1], 0)) == []
+    env = review_search_environment()
+    domains = {'service': ['e0', 'e1'], 'person': ['e0']}
+    assignments = list(_relation_assignments(env, domains, frozenset({'owns', 'dep'})))
+    assert len(assignments) == 16  # Four used atoms, each interpretation exactly once.
+    assert len({repr(rows) for rows in assignments}) == 16
+    counts = [sum(map(len, rows.values())) for rows in assignments]
+    assert counts == sorted(counts)
+    assert all(not rows['audits'] and not rows['rev'] for rows in assignments)
+    subsets = list(_subsets(domains, ('service',)))
+    assert [len(s) for s in subsets] == [0, 1, 1, 2]
+    models = list(_models(env, 1, 2, frozenset({'dep'})))
+    totals = [sum(map(len, model.domains.values())) for model in models]
+    assert totals == sorted(totals)
+
+
+@pytest.mark.parametrize('operation', ['countermodel', 'distinguishing'])
+def test_used_predicates_include_every_formula_and_nonvacuity_filter(operation):
+    env = review_search_environment()
+    a = Exists('service', Unary('dep', Var(0)))
+    b = Forall('service', Not(Unary('rev', Var(0))))
+    guard = Forall('person', Implies(Unary('ready', Var(0)), Top()))
+    options = dict(nonempty_domains=True, max_domain_size=1, nonvacuous_for=guard)
+    result = (find_countermodel(env, (a,), b, **options) if operation == 'countermodel'
+              else find_distinguishing_model(env, And(a, Not(b)), Bottom(), **options))
+    assert result.status == 'Found'
+    assert all(result.model.relations[name] for name in ('dep', 'rev', 'ready'))
+    assert all(not result.model.relations[name] for name in ('owns', 'audits', 'links', 'serves'))
+
+
+@pytest.mark.parametrize('operation', ['countermodel', 'distinguishing'])
+def test_review_clause_nonvacuity_excludes_empty_guard_relation(operation):
+    env = review_search_environment()
+    clause = Forall('service', Or(Not(Unary('dep', Var(0))), Unary('rev', Var(0))))
+    no_deployed = Forall('service', Not(Unary('dep', Var(0))))
+    def run(semantic):
+        options = dict(nonvacuous_for=clause, semantic_nonvacuity=semantic)
+        return (find_countermodel(env, (no_deployed,), Bottom(), **options)
+                if operation == 'countermodel' else
+                find_distinguishing_model(env, no_deployed, Bottom(), **options))
+    assert run(False).status == 'Found'  # Legacy syntactic behavior is explicit.
+    assert run(True).status == 'NotFound'
+    found = find_countermodel(env, (clause,), Bottom(), nonvacuous_for=clause,
+                              semantic_nonvacuity=True)
+    assert found.status == 'Found'
+    assert found.model.relations['dep'] and found.model.relations['rev']
+    assert found.to_dict()['semantic_nonvacuity'] is True
+
+
+def test_semantic_guard_matches_implication_across_all_small_interpretations():
+    from ve.search import _models, _nonvacuous
+    env = review_search_environment()
+    p, q = Unary('dep', Var(0)), Unary('rev', Var(0))
+    implication = Forall('service', Implies(p, q))
+    clauses = [Forall('service', Or(Not(p), q)), Forall('service', Or(q, Not(p)))]
+    for model in _models(env, 0, 2, frozenset({'dep', 'rev'})):
+        expected, _, exhausted = _nonvacuous(env, implication, model, 10_000, semantic=True)
+        assert not exhausted
+        for clause in clauses:
+            actual, _, exhausted = _nonvacuous(env, clause, model, 10_000, semantic=True)
+            assert actual == expected and not exhausted
+
+
+def test_semantic_clause_guard_is_joint_per_occurrence_and_checks_hidden_branches():
+    from ve.search import _nonvacuous
+    env = review_search_environment()
+    p, q = Unary('dep', Var(0)), Unary('rev', Var(0))
+    # Individually possible but never simultaneous: dep={a}, rev={b}.
+    model = FiniteModel.from_dict(env, {
+        'complete': True, 'domains': {'service': ['a', 'b'], 'person': ['p']}, 'constants': {},
+        'relations': {name: ([['a']] if name == 'dep' else [['b']] if name == 'rev' else [])
+                      for name in env.predicates}})
+    for body in (Or(Not(p), Or(Top(), Not(q))), Or(Or(Not(q), Top()), Not(p))):
+        hidden = Or(Top(), Forall('service', body))
+        assert _nonvacuous(env, hidden, model, 1000, semantic=True)[0] is False
+    # A hit at one disjunction must not satisfy a separate impossible guard.
+    separate = Forall('service', And(Or(Not(p), Top()), Or(Not(And(p, q)), Top())))
+    assert _nonvacuous(env, separate, model, 1000, semantic=True)[0] is False
+    # No universal binder: clause checking is deliberately not applied.
+    existential = Exists('service', Or(Not(And(p, q)), Top()))
+    assert _nonvacuous(env, existential, model, 1000, semantic=True)[0] is True
+
+
+def test_semantic_nonvacuity_budget_is_shared_and_exhaustion_is_not_notfound():
+    env = review_search_environment()
+    clause = Forall('service', Or(Not(Unary('dep', Var(0))), Top()))
+    options = dict(min_domain_size=1, max_domain_size=1, nonvacuous_for=clause,
+                   semantic_nonvacuity=True)
+    found = find_distinguishing_model(env, Top(), Bottom(), **options)
+    assert found.status == 'Found'
+    limit = found.evaluations - 1
+    result = find_distinguishing_model(env, Top(), Bottom(), max_evaluations=limit, **options)
+    assert (result.status, result.evaluations) == ('ResourceLimit', limit)
+    assert not result.model
+
+
+@pytest.mark.parametrize('options', [
+    {'semantic_nonvacuity': True}, {'semantic_nonvacuity': 1},
+    {'max_domain_size': True}, {'max_models': True}, {'max_domain_size': -1},
+])
+def test_new_and_boolean_option_validation_is_shared(options):
+    with pytest.raises(ValueError):
+        find_countermodel(ENV, (), Bottom(), **options)
+    with pytest.raises(ValueError):
+        find_distinguishing_model(ENV, Top(), Bottom(), **options)
