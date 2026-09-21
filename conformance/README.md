@@ -112,60 +112,6 @@ work-budget outcome; the bridge is for bounded conformance inputs, not hostile
 workloads. A separate certificate replay mode is described below. Both committed files are below the bridge's
 16 MiB batch cap.
 
-## Data-only certificate replay
-
-`ve_conformance check-certificate [file|-]` reads one query or a batch of queries:
-
-| Key | Value |
-|---|---|
-| `id` | Case label. |
-| `environment` | Exact VE environment including descriptions/display metadata. |
-| `premises` | Ordered formula AST array; duplicates and zero premises are allowed. |
-| `conclusion` | One formula AST, not a document. |
-| `certificate` | Unchanged `ve.entailment` certificate, including all five fields and its trace. |
-
-The adapter validates typed inputs, exact certificate fields and node schemas,
-recomputes environment/premise/conclusion SHA-256 bindings, and calls the proved
-Lean checker. An ordinary result is `{id, status: "ok", valid: boolean}`.
-Malformed or stale data gives `{id, status: "error", valid: false, error}` and
-exit 1; malformed restricted JSON gives exit 2. **Only `valid: true` is an
-acceptance**, since a well-formed rejected trace returns exit 0 with false.
-There is no model field and no expected-result field influences replay.
-
-`certificates.py` regenerates all queries and Python certificates before invoking
-the Lean executable in bounded batches. The seed is 20260923. The committed
-`certificates-report.json` records all 803 search attempts: 724 produce accepted
-certificates, 75 produce `NotFound`, and 4 produce `ResourceLimit`. This includes
-320/320 bounded-schema random valid queries; 320/320 broader random valid
-queries; 82/160 unconditioned random queries;
-and the bridged/merged positive worked examples. The separated example is
-`NotFound`, and its forged close is rejected. Every produced certificate is
-replayed: **724/724 accepted**, with no format gaps, unsupported rules or bugs
-observed in that comparison. All **150/150 forgeries** are rejected.
-The detailed report counts both signs of every propositional/quantifier rule.
-
-These are seeded development cohorts, not an independently frozen corpus or an
-unbiased estimate of real-workload acceptance. Forgeries include fresh/future
-and wrong-sort gamma tokens, supplied delta witnesses, an empty-sort existence
-fallacy, wrong indices/branch counts, stale ordered identities and malformed
-schemas. Separate tests cover duplicate JSON keys, null, fractional/negative
-indices and premise order/multiplicity. Identity tests include Unicode and
-control-character descriptions and SHA-256 inputs spanning several blocks.
-
-Reproduce from the repository root:
-
-```sh
-(cd lean && lake build)
-.venv/bin/python conformance/certificates.py --report conformance/certificates-report.json
-.venv/bin/python -m pytest -q tests/test_lean_certificates.py
-```
-
-The checker theorem ranges over all admissible structures, including infinite
-ones and empty sorts; the JSON target is `Entails.{0}`. The proof covers replay
-on decoded ASTs, not JSON/wire/hash correspondence, IO, compiler/runtime, or
-Python refinement. Python search and its replay filter are untrusted for the
-Lean result. The default Python API continues to use Python replay.
-
 ## Rust and extended shared fixtures
 
 The merged generator retains the Lean evaluation/countermodel extensions and
@@ -197,7 +143,7 @@ From the root:
 ```sh
 export CARGO_HOME="$PWD/.cargo-home"
 export CARGO_TARGET_DIR="$PWD/rust/target"
-cargo test -j 2 --locked --manifest-path rust/Cargo.toml -- --test-threads=1
+cargo test -j 1 --locked --manifest-path rust/Cargo.toml -- --test-threads=1
 python conformance/generate.py
 UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run --frozen python -m pytest tests/test_rust_conformance.py -q
 ```
@@ -235,6 +181,60 @@ the approximately 5.5 MiB replay stream stays in the ignored build directory.
 See [`../docs/rust.md`](../docs/rust.md) for API scope, operational differences,
 trust and the benchmark command/results.
 
+## Data-only certificate replay
+
+`ve_conformance check-certificate [file|-]` reads one query or a batch of queries:
+
+| Key | Value |
+|---|---|
+| `id` | Case label. |
+| `environment` | Exact VE environment including descriptions/display metadata. |
+| `premises` | Ordered formula AST array; duplicates and zero premises are allowed. |
+| `conclusion` | One formula AST, not a document. |
+| `certificate` | Unchanged `ve.entailment` certificate, including all five fields and its trace. |
+
+The adapter validates typed inputs, exact certificate fields and node schemas,
+recomputes environment/premise/conclusion SHA-256 bindings, and calls the proved
+Lean checker. An ordinary result is `{id, status: "ok", valid: boolean}`.
+Malformed or stale data gives `{id, status: "error", valid: false, error}` and
+exit 1; malformed restricted JSON gives exit 2. **Only `valid: true` is an
+acceptance**, since a well-formed rejected trace returns exit 0 with false.
+There is no model field and no expected-result field influences replay.
+
+`certificates.py` regenerates all queries and Python certificates before invoking
+the Lean executable in bounded batches. The seed is 20260923. The committed
+`certificates-report.json` records all 811 search attempts: 732 produce accepted
+certificates, 77 produce `NotFound`, and 2 produce `ResourceLimit`. This includes
+320/320 bounded-schema random valid queries; 320/320 broader random valid
+queries; 82/160 unconditioned random queries; eight existential weakening
+regressions; and the bridged/merged positive worked examples. The separated example is
+`NotFound`, and its forged close is rejected. Every produced certificate is
+replayed: **732/732 accepted**, with no format gaps, unsupported rules or bugs
+observed in that comparison. All **150/150 forgeries** are rejected.
+The detailed report counts both signs of every propositional/quantifier rule.
+
+These are seeded development cohorts, not an independently frozen corpus or an
+unbiased estimate of real-workload acceptance. Forgeries include fresh/future
+and wrong-sort gamma tokens, supplied delta witnesses, an empty-sort existence
+fallacy, wrong indices/branch counts, stale ordered identities and malformed
+schemas. Separate tests cover duplicate JSON keys, null, fractional/negative
+indices and premise order/multiplicity. Identity tests include Unicode and
+control-character descriptions and SHA-256 inputs spanning several blocks.
+
+Reproduce from the repository root:
+
+```sh
+(cd lean && lake build)
+.venv/bin/python conformance/certificates.py --report conformance/certificates-report.json
+.venv/bin/python -m pytest -q tests/test_lean_certificates.py
+```
+
+The checker theorem ranges over all admissible structures, including infinite
+ones and empty sorts; the JSON target is `Entails.{0}`. The proof covers replay
+on decoded ASTs, not JSON/wire/hash correspondence, IO, compiler/runtime, or
+Python refinement. Python search and its replay filter are untrusted for the
+Lean result. The default Python API continues to use Python replay.
+
 ## Opt-in closure@0 fixtures
 
 `closure.json` contains 46 v0.1 environments/models and 866 formulas. It is kept
@@ -245,3 +245,26 @@ Body parameters and nested closure. Python/Lean evaluation and canonical source
 agree on every case; tests additionally exercise all five view inverses and
 100 seeded extended formulas. See `docs/spec/closure-implementation.md` and
 `lean/CLOSURE.md` for proof and runtime boundaries.
+
+Rust supports only `relational-fol@0`. The named pytest case
+`test_rust_closure_evaluation` explicitly skips `closure.json`, with that reason
+shown by `pytest -ra`; closure E0 witnesses are checked by Python/Lean, not Rust.
+All seven v0 files in the table above still run against Rust, including its
+5,000-case v0 fuzz stream. The full-suite command does not exclude the Rust module.
+
+## Frozen v0 replay regression
+
+`v0-replay-baseline.json` records the entire certificate corpus generated and
+replayed by integration commit `6798e034c4aa7082dafacbb7b130879cd4eec4f6`, before
+any closure changes: 732 accepted certificates and all 150 rejected forgeries.
+It includes each original query/trace and full replay result (validity, status,
+step count and diagnostic), as well as every corpus search outcome. No failed
+search is converted into a certificate or removed from the generation report.
+
+Regenerate with `UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run python
+conformance/replay_baseline.py`. The generator extracts the pinned commit into a
+temporary directory and runs both its corpus generator and its replay checker
+there; it never imports the current checker to produce expected verdicts.
+`tests/test_replay_conservativity.py` replays all 882 frozen cases using the
+current checker and requires identical complete results. This test needs no git
+checkout or regenerated proofs at test time.

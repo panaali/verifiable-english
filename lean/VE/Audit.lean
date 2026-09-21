@@ -124,6 +124,7 @@ import VE.ModelProofs
 #print axioms VE.Tableau.matches_sound
 #print axioms VE.Tableau.closes_sound
 #print axioms VE.Tableau.closed_sound
+#print axioms VE.Tableau.complementary_sound
 
 #print axioms VE.Tableau.next_sound
 #print axioms VE.Tableau.checkChildren_member
@@ -165,7 +166,6 @@ import VE.ModelProofs
 #print axioms VE.Closure.warshall_preserves_closed
 #print axioms VE.Closure.warshall_sound
 
-#print axioms VE.Tableau.compoundClosed_sound
 
 #print axioms VE.Closure.Surface.parseStatements_nonempty
 #print axioms VE.Closure.Surface.parse_print_named

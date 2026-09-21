@@ -156,3 +156,74 @@ def test_proof_and_model_outputs_are_independently_replayed(monkeypatch):
     # Use formulas unlike the stolen proof and a model satisfying both sides.
     result = compare(ENV, Not(a), Not(a))
     assert result.status == UNKNOWN
+
+
+@pytest.mark.parametrize('a,b', [
+    (Forall('item', Exists('item', Unary('q', Var(1)))),
+     Forall('item', Exists('item', Not(Not(Unary('q', Var(1))))))),
+    (Exists('item', Forall('item', P)), Exists('item', Not(Exists('item', Not(P))))),
+])
+def test_reviewer_quantifier_starvation_regressions(a, b):
+    result = compare(ENV, a, b)
+    assert result.status == EQUIVALENT
+    for left, right, certificate in ((a, b, result.a_implies_b.certificate),
+                                     (b, a, result.b_implies_a.certificate)):
+        assert check_entailment_certificate(ENV, (left,), right, certificate).valid
+
+
+def test_empty_only_detail_needs_checked_models_and_conditional_proofs():
+    from ve.search import check_countermodel
+    a, b = Forall('item', Bottom()), Bottom()
+    result = compare(ENV, a, b)
+    assert result.status == DIFFERENT
+    assert result.relation_detail == 'differs_only_on_empty_sorts'
+    assert result.relation == 'stronger'
+    assert result.nonempty_sorts == ('item',)
+    assert not result.a_implies_b.model.domains['item']
+    assert check_countermodel(ENV, (a,), b, result.a_implies_b.model).valid
+    for label, left, right in [('a_implies_b', a, b), ('b_implies_a', b, a)]:
+        assert check_entailment_certificate(ENV, (left, Exists('item', Top())), right,
+                                           result.nonempty_certificates[label]).valid
+        assert not check_entailment_certificate(ENV, (left,), right,
+                                               result.nonempty_certificates[label]).valid
+    assert result.to_dict()['nonempty_equivalence']['sorts'] == ['item']
+    # An empty witness by itself is not an empty-only certificate.
+    assert compare(ENV, a, b, Budgets(max_proof_steps=0)).relation_detail is None
+    assert compare(ENV, Forall('item', P), Exists('item', P)).relation_detail is None
+
+
+def test_strict_strength_is_refuted_even_when_other_direction_unknown():
+    budgets = Budgets(max_proof_steps=0)
+    a = Exists('item', P)
+    assert is_weaker(ENV, a, Top(), budgets) is False
+    assert is_stronger(ENV, Top(), a, budgets) is False
+    assert is_weaker(ENV, Top(), a, budgets) is None
+    assert is_stronger(ENV, a, Top(), budgets) is None
+
+
+def test_empty_only_certificate_covers_multiple_sorts():
+    from test_entailment_adversarial import environment
+    env = environment(constants=False)
+    a = Forall('left', Exists('right', Top()))
+    b = Exists('right', Forall('left', Top()))
+    result = compare(env, a, b)
+    assert result.relation_detail == 'differs_only_on_empty_sorts'
+    conditions = tuple(Exists(sort, Top()) for sort in result.nonempty_sorts)
+    assert result.nonempty_sorts == ('left', 'right')
+    for label, left, right in [('a_implies_b', a, b), ('b_implies_a', b, a)]:
+        assert check_entailment_certificate(env, (left, *conditions), right,
+                                           result.nonempty_certificates[label]).valid
+
+
+def test_infinite_witness_chain_does_not_starve_countermodel_search():
+    data = ENV.to_dict()
+    data['vocabulary']['predicates']['r'] = {'arguments': ['item', 'item'], 'description': 'R.'}
+    env = Environment.from_dict(data)
+    a = And(Exists('item', Top()), Forall('item', Exists('item', Binary('r', Var(1), Var(0)))))
+    b = Forall('item', Forall('item', Binary('r', Var(1), Var(0))))
+    result = compare(env, a, b)
+    assert result.status == DIFFERENT and result.a_implies_b.model is not None
+    attempts = result.a_implies_b.attempts
+    assert attempts[0]['kind'] == 'proof' and attempts[0]['status'] == 'ResourceLimit'
+    assert attempts[1]['kind'] == 'search' and attempts[1]['status'] == 'Found'
+    assert attempts[0]['steps'] < Budgets().max_proof_steps

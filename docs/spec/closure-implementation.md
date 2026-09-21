@@ -65,8 +65,10 @@ inputs determine the reconstructed expansion. Supplied witnesses are rejected.
 
 The **Lean certificate adapter rejects every v0.1 environment explicitly**.
 The proved v0 checker never sees a closure formula or closure trace. Integration
-also required the v0 version-2 complementary-formula close rule; its additional
-Lean proof ranges over exact formulas AND parameter bindings. Existing v0
+retains integration's v0 version-2 complementary-formula close rule and its
+single `VE.Tableau.complementary_sound` proof over exact formulas AND parameter
+bindings. All four `Tableau*.lean` files match integration, preserving the
+version-1 gate, 124-expansion limit and exact `checkCertificate_sound` statement. Existing v0
 certificates remain supported. The oracle returns UNKNOWN when neither checked
 Python replay nor an independently re-evaluated finite countermodel succeeds;
 it does not infer validity from bounded search exhaustion. Python closure
@@ -87,10 +89,14 @@ remain outside the metatheory.
 Reproduce sequentially from the root:
 
 ```sh
+export UV_CACHE_DIR=/private/tmp/ve-uv-cache
+export CARGO_HOME="$PWD/.cargo-home"
+export CARGO_TARGET_DIR="$PWD/rust/target"
+export CARGO_BUILD_JOBS=1
 (cd lean && lake build)
-(cd lean && python3 audit.py)
-UV_CACHE_DIR=/private/tmp/ve-uv-cache .venv/bin/python conformance/closure.py
-VE_LEAN_PREBUILT=1 UV_CACHE_DIR=/private/tmp/ve-uv-cache .venv/bin/python -m pytest -q --ignore=tests/test_rust_conformance.py
+uv run python lean/audit.py
+VE_LEAN_PREBUILT=1 uv run pytest -q
+cargo test -j 1 --locked --manifest-path rust/Cargo.toml -- --test-threads=1
 ```
 
 `VE_LEAN_PREBUILT=1` keeps pytest from starting a nested build. It requires the
@@ -104,5 +110,10 @@ Rust still rejects the new envelope. It would need matching profile/wire types,
 Body scoping and substitution, checker and parser/printer support, budgeted finite
 closure evaluation, updated base-predicate discovery, v0.1 identity domains,
 and replay of `conformance/closure.json` plus the E0 witnesses. Its v0 behavior
-and existing fixture files are unchanged; Rust builds/tests were not part of
-this task.
+and existing fixture files are unchanged. Rust v0 conformance and cargo tests
+are included in the integration verification; only its named closure corpus
+test is explicitly skipped because that profile is unsupported. The complete
+882-case frozen v0 certificate replay regression is documented in
+[conformance/README.md](../../conformance/README.md). The full trusted-code change
+inventory and verification results are in
+[the merge report](../closure-merge-report.md).

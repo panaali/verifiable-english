@@ -86,8 +86,51 @@ private def value : Nat → Parser Json
       return toJson n
     else fail "expected restricted JSON value"
 
-def parse (text : String) : Except String Json := do
+def parse (text : String) (depth : Nat := 256) : Except String Json := do
   if text.utf8ByteSize > 16777216 then throw "ResourceLimit: package exceeds 16 MiB"
-  Parser.run (do ws; let j ← value 256; eof; pure j) text
+  Parser.run (do ws; let j ← value depth; eof; pure j) text
+
+/-- Split only the outer batch array, without recursively decoding its cases.
+Each slice still goes through the restricted parser. This lets a depth error
+stay local to one case without allocating a deeply nested Json value. -/
+private def caseTexts (text : String) : Except String (Array String) := do
+  let text := text.trim
+  if !text.startsWith "[" then return #[text]
+  unless text.endsWith "]" do throw "unterminated batch array"
+  let body := (text.drop 1).dropRight 1
+  if body.trim.isEmpty then return #[]
+  let mut cases := #[]
+  let mut chars : Array Char := #[]
+  let mut depth := 0
+  let mut quoted := false
+  let mut escaped := false
+  for c in body.toList do
+    if !quoted && depth == 0 && c == ',' then
+      cases := cases.push (String.mk chars.toList)
+      chars := #[]
+    else
+      chars := chars.push c
+      if quoted then
+        if escaped then escaped := false
+        else if c == '\\' then escaped := true
+        else if c == '"' then quoted := false
+      else if c == '"' then quoted := true
+      else if c == '[' || c == '{' then depth := depth + 1
+      else if c == ']' || c == '}' then
+        if depth == 0 then throw "unexpected batch delimiter"
+        depth := depth - 1
+  if quoted || depth != 0 then throw "unterminated batch case"
+  return cases.push (String.mk chars.toList)
+
+def parseCases (text : String) : Except String (Array (Except String Json)) := do
+  if text.utf8ByteSize > 16777216 then throw "ResourceLimit: package exceeds 16 MiB"
+  let depth := if text.trim.startsWith "[" then 255 else 256
+  (← caseTexts text).mapM fun raw => do
+    match parse raw depth with
+    | .ok j => pure (.ok j)
+    | .error message =>
+      if (message.splitOn "ResourceLimit: JSON depth").length > 1 then
+        pure (.error "ResourceLimit: JSON depth exceeds 256")
+      else throw message
 
 end VE.JsonInput

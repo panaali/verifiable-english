@@ -127,34 +127,37 @@ theorem checkChildren_member (check : Branch → Trace → Bool) (bs : List Bran
       · exact ih ts hc'.2 x hx
 
 /-- Fuel counts depth, not successful logical steps. Exhaustion rejects. -/
-def replay (E : Environment) : Nat → Branch → Trace → Bool
+def replay (E : Environment) (compound : Bool := false) : Nat → Branch → Trace → Bool
   | 0, _, _ => false
   | fuel + 1, b, t =>
     b.scoped && b.known E && match t with
-      | .close => closed E b
+      | .close => closed E b || (compound && complementary b)
       | .expand index parameter children =>
         match next E b index parameter with
         | none => false
-        | some bs => checkChildren (replay E fuel) bs children
+        | some bs => checkChildren (replay E compound fuel) bs children
 
 theorem replay_sound {E : Environment} {S : Structure} (hS : S.Admissible E)
-    (fuel : Nat) (b : Branch) (ρ : Assignment S) (hρ : Assignment.Typed S b ρ)
-    (hh : b.Holds S ρ) (t : Trace) (hc : replay E fuel b t = true) : False := by
+    (compound : Bool) (fuel : Nat) (b : Branch) (ρ : Assignment S) (hρ : Assignment.Typed S b ρ)
+    (hh : b.Holds S ρ) (t : Trace) (hc : replay E compound fuel b t = true) : False := by
   induction fuel generalizing b ρ t with
   | zero => contradiction
   | succ fuel ih =>
     have hc' := Bool.and_eq_true_iff.mp hc
     obtain ⟨hs, hk⟩ := Bool.and_eq_true_iff.mp hc'.1
     cases t with
-    | close => exact closed_sound hS b ρ hρ hk hh hc'.2
+    | close =>
+      rcases Bool.or_eq_true_iff.mp hc'.2 with hl | hc
+      · exact closed_sound hS b ρ hρ hk hh hl
+      · exact complementary_sound b ρ hh (Bool.and_eq_true_iff.mp hc).2
     | expand index parameter children =>
       cases hn : next E b index parameter with
       | none => simp [replay, hn] at hc
       | some bs =>
-        have hchildren : checkChildren (replay E fuel) bs children = true := by
+        have hchildren : checkChildren (replay E compound fuel) bs children = true := by
           simpa [hn] using hc'.2
         obtain ⟨child, hm, σ, ht, hh⟩ := next_sound hS b ρ hρ hs hh index parameter bs hn
-        obtain ⟨t, hc⟩ := checkChildren_member (replay E fuel) bs children hchildren child hm
+        obtain ⟨t, hc⟩ := checkChildren_member (replay E compound fuel) bs children hchildren child hm
         exact ih child σ ht hh t hc
 
 def initial (premises : List Formula) (conclusion : Formula) : Branch :=
@@ -166,7 +169,7 @@ def checkCertificate (E : Environment) (premises : List Formula) (conclusion : F
     (c : Certificate) : Bool :=
   (c.checker_version == "ve-tableau-checker@1" || c.checker_version == "ve-tableau-checker@2") &&
     premises.all (fun f => f.check E []) && conclusion.check E [] &&
-    replay E 500 (initial premises conclusion) c.trace
+    replay E (c.checker_version == "ve-tableau-checker@2") 125 (initial premises conclusion) c.trace
 
 /-- Sound over every admissible structure at every universe, including empty
 sorts and an empty common carrier. There is no certificate-soundness premise. -/
@@ -177,9 +180,9 @@ theorem checkCertificate_sound (E : Environment) (premises : List Formula)
   intro S hS hp
   apply Classical.byContradiction
   intro hn
-  have hr : replay E 500 (initial premises conclusion) c.trace = true :=
+  have hr : replay E (c.checker_version == "ve-tableau-checker@2") 125 (initial premises conclusion) c.trace = true :=
     (Bool.and_eq_true_iff.mp hc).2
-  apply replay_sound hS _ (initial premises conclusion) (fun _ => none) _ _ c.trace hr
+  apply replay_sound hS _ _ (initial premises conclusion) (fun _ => none) _ _ c.trace hr
   · intro i s hi
     simp [initial] at hi
   · intro a ha

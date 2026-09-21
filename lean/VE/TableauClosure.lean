@@ -204,26 +204,28 @@ def closes (E : Environment) (b : Branch) (ls : List Literal) (l : Literal) : Bo
   | a, false => ls.any fun p => p.positive && atomMatches edges p.atom a
   | _, _ => false
 
-/-- Exact complementary formulas close independently of their connective.
-Bindings are compared as well as syntax, matching the integrated Python v0@2 rule. -/
-def compoundClosed (b : Branch) : Bool :=
-  b.formulas.any fun a => a.positive && b.formulas.any (fun n => decide (n = {a with positive := false}))
-
-theorem compoundClosed_sound {S : Structure} (b : Branch) (ρ : Assignment S)
-    (hh : b.Holds S ρ) (hc : compoundClosed b = true) : False := by
-  obtain ⟨a, ha, h⟩ := List.any_eq_true.mp hc
-  obtain ⟨hp, hn⟩ := Bool.and_eq_true_iff.mp h
-  have ht := hh a ha
-  obtain ⟨n, hn, he⟩ := List.any_eq_true.mp hn
-  have he := of_decide_eq_true he
-  subst n
-  have hf := hh {a with positive := false} hn
-  simp only [Signed.Holds, hp, if_true] at ht
-  exact hf ht
-
 def closed (E : Environment) (b : Branch) : Bool :=
   let ls := literals b
-  compoundClosed b || ls.any (closes E b ls)
+  ls.any (closes E b ls)
+
+/-- Version 2's existing Python rule: exact formula AND exact bindings with
+opposite signs. No normalization or search heuristic is part of this test. -/
+def complementary (b : Branch) : Bool :=
+  b.formulas.any fun a => a.positive && b.formulas.any fun n =>
+    !n.positive && decide (a.formula = n.formula ∧ a.bindings = n.bindings)
+
+theorem complementary_sound {S : Structure} (b : Branch) (ρ : Assignment S)
+    (hh : b.Holds S ρ) (hc : complementary b = true) : False := by
+  obtain ⟨a, ha, hc⟩ := List.any_eq_true.mp hc
+  obtain ⟨hp, hc⟩ := Bool.and_eq_true_iff.mp hc
+  obtain ⟨n, hn, hc⟩ := List.any_eq_true.mp hc
+  obtain ⟨hnpos, he⟩ := Bool.and_eq_true_iff.mp hc
+  have he' : a.formula = n.formula ∧ a.bindings = n.bindings := of_decide_eq_true he
+  have hapos := hh a ha
+  have hnneg := hh n hn
+  have hnpos' : n.positive = false := by cases h : n.positive <;> simp_all
+  simp only [Signed.Holds, hp, hnpos', if_true, Bool.false_eq_true, if_false] at hapos hnneg
+  exact hnneg (by simpa only [he'.1, he'.2] using hapos)
 
 theorem closes_sound {E : Environment} {S : Structure} (hS : S.Admissible E)
     (b : Branch) (ρ : Assignment S) (hρ : Assignment.Typed S b ρ)
@@ -252,8 +254,6 @@ theorem closed_sound {E : Environment} {S : Structure} (hS : S.Admissible E)
     (b : Branch) (ρ : Assignment S) (hρ : Assignment.Typed S b ρ)
     (hk : b.known E = true) (hh : b.Holds S ρ) (hc : closed E b = true) : False := by
   have hl := literals_hold hS b ρ hρ hk hh
-  obtain hc | hc := Bool.or_eq_true_iff.mp hc
-  · exact compoundClosed_sound b ρ hh hc
   obtain ⟨l, hm, hc⟩ := List.any_eq_true.mp hc
   exact closes_sound hS b ρ hρ (literals b) hl l (hl l hm) hc
 

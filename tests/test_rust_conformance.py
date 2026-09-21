@@ -26,7 +26,7 @@ def rust_executable():
     cargo = shutil.which('cargo')
     if not cargo: pytest.skip('cargo is not available')
     env = {**os.environ, 'CARGO_HOME': str(ROOT/'.cargo-home'), 'CARGO_TARGET_DIR': str(ROOT/'rust/target')}
-    run = subprocess.run([cargo, 'build', '-j', '2', '--locked', '--release', '--manifest-path', str(ROOT/'rust/Cargo.toml')],
+    run = subprocess.run([cargo, 'build', '-j', '1', '--locked', '--release', '--manifest-path', str(ROOT/'rust/Cargo.toml')],
                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=180)
     assert run.returncode == 0, run.stdout + run.stderr
     return ROOT/'rust/target/release/ve'
@@ -37,6 +37,15 @@ def invoke(executable, cases, errors=False):
                          capture_output=True, timeout=60)
     assert run.returncode == int(errors), run.stdout + run.stderr
     return json.loads(run.stdout)
+
+
+@pytest.mark.skip(reason="Rust supports relational-fol@0 only; conformance/closure.json requires closure@0 (see conformance/README.md)")
+def test_rust_closure_evaluation(rust_executable):
+    cases = fixture('closure')
+    results = invoke(rust_executable, cases)
+    for case, result in zip(cases, results, strict=True):
+        assert result['values'] == case['expected'], case['id']
+        assert result['canonical'] == case['source'], case['id']
 
 
 def test_rust_shared_evaluation(rust_executable):
@@ -151,8 +160,10 @@ def test_seeded_5000_case_fuzz(rust_executable):
 def lean_shared_executable():
     lake = shutil.which('lake')
     if not lake: pytest.skip('lake is not available')
-    run = subprocess.run([lake,'build'],cwd=ROOT/'lean',text=True,capture_output=True,timeout=180)
-    assert run.returncode == 0, run.stdout + run.stderr
+    if not os.environ.get('VE_LEAN_PREBUILT'):
+        run = subprocess.run([lake,'build'],cwd=ROOT/'lean',text=True,capture_output=True,timeout=180)
+        assert run.returncode == 0, run.stdout + run.stderr
+    assert (ROOT/'lean/.lake/build/bin/ve_conformance').exists()
     return ROOT/'lean/.lake/build/bin/ve_conformance'
 
 
