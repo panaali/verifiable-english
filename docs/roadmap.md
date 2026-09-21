@@ -6,6 +6,8 @@ VE's first research claim is: **at a fixed oversight budget, VE reduces successf
 
 The [architecture](architecture-and-design.md#research-target-and-evidence) connects this hypothesis to debate research. The [language](spec/v0-language.md), [argument protocol](spec/debate-protocol.md), and [verification contract](spec/verification-contract.md) define what is checked.
 
+The [work plan](plan.md) breaks the remaining work into nested tasks and prerequisites.
+
 ## Research sequence
 
 | Gate | Deliverable | Decision criterion |
