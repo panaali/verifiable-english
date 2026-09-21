@@ -325,9 +325,12 @@ def run(exp: Experiment, client: LLMClient, split: str, out_dir: Path | None = N
                 from_cache=r.from_cache, reply=r.text, tool_events=list(r.tool_events),
                 finish_reason=r.finish_reason, truncated=r.truncated,
             )  # fmt: skip
-            if r.tool_events:
-                # The judge ran a command or tool: it may have read ground truth. Invalid, scored worst case.
-                row.update(verdict=None, approved=None, parse_error="invalid: judge used tools")
+            invalid = ("judge used tools" if r.tool_events else "failed call" if not r.ok
+                       else "reply truncated at the token limit" if r.truncated else None)
+            if invalid:
+                # Tool use may have read ground truth; a failed or truncated reply has no complete verdict, even if
+                # its text happens to end in valid JSON. Kept in the rows, never parsed, scored as the worst case.
+                row.update(verdict=None, approved=None, parse_error=f"invalid: {invalid}")
                 fh.write(finish(row, item, None))
                 continue
             try:
