@@ -70,6 +70,8 @@ The graph validator rejects cycles, missing claims, conflicting aliases, and sta
 
 A countermodel check validates `M`, evaluates each premise as true and the conclusion as false, and binds the result to `E`, `Δ`, `C`, and `M`. P11 connects these finite computations to failure of general entailment. A model satisfying `C`, or a failed search for countermodels, supplies no positive entailment evidence.
 
+P9 and P11 imply that a sound positive certificate and a valid countermodel cannot coexist for one exact edge. Such a result is `CheckerConflict`, an operational integrity error requiring investigation, not an ordinary combination of inference findings. In contrast, proofs of both the conclusion and its negation imply unsatisfiable premises and may coexist. Conformance checks must exercise this distinction and reject a claimed finite model of those contradictory premises.
+
 Changes to the root, environment, dependencies, leaf assumptions, or certificate invalidate the affected argument record. Human confirmation and evidence judgments apply only to the objects actually reviewed. Exact dependency checking establishes formal correspondence; it does not establish that an unchanged predicate description is an adequate model of reality.
 
 The main research property is that accepted argument composition cannot silently change a committed formal meaning. This requires P1–P7 and P9–P11, correct artifact decoding, and faithful display, with P8 for any differing production implementation. Whether humans can recognize an initially wrong or misleading commitment is measured experimentally, not asserted by these theorems.
@@ -82,16 +84,18 @@ These fields are independent, not a single progress ladder:
 |---|---|---|
 | `language: accepted` — “Accepted VE” | Successful specified parsing and type checking, environment identity, exact source and AST | Truth, agreement with ordinary-English intent, or a completed implementation proof |
 | `canonical: true` — “Canonical text” | Exact source bytes equal `print_E(A)` | A logical equivalence class for all paraphrases |
-| `intent: confirmed` — “Interpretation confirmed by …” | Identified reviewer confirms this canonical rendering, environment, descriptions, and target scope | Proof of intent recovery, truth, or completeness of the requirements |
+| `intent: confirmed` — “Interpretation confirmed by …” | Identified reviewer confirms the claim, environment, descriptions, target scope, and actual displayed rendering with its version | Proof of intent recovery, truth, or completeness of the requirements |
 | `evaluation: satisfied/violated` — “Satisfied/violated in inventory …” | Successful evaluation on the identified valid model; checker build and assurance level recorded | Truth about a live system or universal validity across models |
 | `inference: findings[]` — “Follows under premises …” / “Negation follows …” / “Counterexample to inference …”; empty means “Unresolved” | Every established `follows`, `refuted`, or `gap` finding, with the certificate or countermodel required by the debate protocol | A `gap` does not make the conclusion false; a conditional proof does not approve its premises; contradictory findings must remain visible |
 | `proof: checked` — “Proof checked under listed assumptions” | Exact expected proposition, audited proof dependencies, successful permitted proof-checking path | Unstated assumptions, empirical correctness, or a verified executable binary |
 
 Missing evidence yields `unconfirmed`, `not_evaluated`, `unresolved`, or `not_checked` as appropriate. Operational errors carry their own error codes. A violated formula may still have a checked proof of its negation; record the conclusion explicitly. A human-confirmed statement may still be false. Evidence assessment and the supervisor's final approval remain separate from every checker status.
 
-Show implementation assurance separately: `experimental`, `reference-theorems-checked`, or `production-refinement-checked`, with links to the specific proof/build evidence and covered operations. The finite evaluator requires P1–P7; the argument layer additionally requires P9–P11. Before those obligations are met, results are experimental and cannot advertise the full formal contract. A completed source-level refinement proof does not upgrade compiler correctness.
+Show implementation assurance separately: `experimental`, `reference-theorems-checked`, or `production-refinement-checked`, with links to the specific proof/build evidence and covered operations. The finite parsing/rendering/evaluation path requires P1–P6 and the combined acceptance contract. Generated Lean propositions additionally require P7; the full argument layer requires P9–P11 as well, and a differing production implementation requires P8. List the covered operations rather than granting a blanket assurance label. Before the applicable obligations are met, results are experimental. A completed source-level refinement proof does not upgrade compiler correctness.
 
 Changing the source or environment invalidates all attached acceptance/confirmation evidence. A model change invalidates evaluations and model-specific proofs. Unchanged meaning under binder renaming may preserve a meaning-level confirmation only through an explicit, recorded correspondence check; never copy statuses merely because the screen text looks similar.
+
+Evidence support and final approval have separate bindings. A changed evidence snapshot, review scope, or displayed interpretation requires reassessment of affected judgments; an unchanged conditional theorem may still be valid. Proof-checking status must never be copied into an evidence-accepted or result-approved field.
 
 ## Proof dependencies and trusted components
 

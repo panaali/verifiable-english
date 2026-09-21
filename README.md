@@ -10,6 +10,9 @@ The first research target is **meaning changes during debate**: reinterpreting a
 
 The central question is whether VE reduces successful deception at a fixed review budget, beyond debate with cross-examination, shared definitions, and structured formal claims using the same checker. Formal verification establishes consequences of the stated assumptions; human intent, empirical evidence, and the usefulness of the oversight protocol still need evaluation.
 
+The current recommendation is a small study of **human review of requirements and evidence**, before building the full verified implementation. Test formal commitments, readable presentation, and debate separately. A useful review interface may survive even if a new language or multi-round debate adds no benefit.
+
+- [Critical review, source checks, and recommended first study](docs/research-review.md)
 - [Architecture, rationale, and alternatives](docs/architecture-and-design.md)
 - [v0 language specification](docs/spec/v0-language.md)
 - [Debate claims and argument checking](docs/spec/debate-protocol.md)
