@@ -6,11 +6,11 @@ build-backend = "hatchling.build"
 name = "verifiable-english"
 version = "0.1.0"
 description = "Experimental VE v0 relational first-order language core"
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = []
 
 [dependency-groups]
-dev = ["pytest>=8.4", "hypothesis>=6.140"]
+dev = ["pytest>=8.4", "hypothesis>=6.140", "lark>=1.3"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["ve"]
