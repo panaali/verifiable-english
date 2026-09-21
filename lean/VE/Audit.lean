@@ -1,3 +1,4 @@
+import VE.Tableau
 import VE.Consequence
 import VE.SurfaceProofs
 import VE.EnvironmentProofs
@@ -95,3 +96,13 @@ import VE.ModelProofs
 #print axioms VE.Bridge.decodeModel_valid
 #print axioms VE.Bridge.decoded_countermodel_sound
 #print axioms VE.Bridge.CountermodelQuery.refutes_sound
+
+#print axioms VE.Tableau.token_defined
+#print axioms VE.Tableau.bindings_extend
+#print axioms VE.Tableau.holds_extend
+#print axioms VE.Tableau.typed_extend
+#print axioms VE.Tableau.add_holds
+#print axioms VE.Tableau.one_holds
+#print axioms VE.Tableau.two_holds
+#print axioms VE.Tableau.gamma_holds
+#print axioms VE.Tableau.delta_witness

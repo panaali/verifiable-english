@@ -78,4 +78,13 @@
 'VE.Bridge.decodeModel_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Bridge.decoded_countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Bridge.CountermodelQuery.refutes_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
-PASS: 20 source files; 80 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+'VE.Tableau.token_defined' does not depend on any axioms
+'VE.Tableau.bindings_extend' depends on axioms: [propext, Quot.sound]
+'VE.Tableau.holds_extend' depends on axioms: [propext, Quot.sound]
+'VE.Tableau.typed_extend' depends on axioms: [propext, Quot.sound]
+'VE.Tableau.add_holds' depends on axioms: [propext]
+'VE.Tableau.one_holds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Tableau.two_holds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Tableau.gamma_holds' depends on axioms: [propext, Quot.sound]
+'VE.Tableau.delta_witness' depends on axioms: [propext, Classical.choice, Quot.sound]
+PASS: 21 source files; 89 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
