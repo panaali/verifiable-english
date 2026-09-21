@@ -1,0 +1,818 @@
+{
+  "input_sha256": {
+    "dev": "34fc16fa63c3eb03baa3b9ac7c92e773a73c74656327f7bff81e603da621fa89",
+    "scored": "bb8ca9b53fcc3ece82e8438eaba22831b7bc69824d317dc720165d8f2751a766"
+  },
+  "renderer_sha256": "8b8d3980d340fbd27f6048f473af9abacf3cdc6a9c3c23f12a1efbf4b01dbaab",
+  "audit_sha256": "f17280c74ad60803ec883e4d39e40fa7fd9fe59170777b9f3e2166bd0964c09b",
+  "seed": 5301,
+  "training_split": "dev",
+  "evaluation_split": "scored",
+  "model_calls": 0,
+  "scope": "primary, balanced overall approval labels only; controls excluded and counted separately",
+  "instruction_styles": [
+    "audit",
+    "neutral"
+  ],
+  "preprocessing": "Drop only the randomized instruction-style first line, whose text is constant within style. Assert all remaining bytes identical across styles. Full record bodies, panels and dates are retained.",
+  "classifier": "L2 logistic regression C=1, liblinear, max_iter=1000; numeric inputs standardized on dev; text L2-normalized hashed counts, 2^17 features, no alternate signs",
+  "feature_sets": {
+    "char_1_5": [
+      1,
+      5
+    ],
+    "char_6_12": [
+      6,
+      12
+    ],
+    "word_1_3": [
+      1,
+      3
+    ],
+    "counts_positions_dates_lengths": "record/citation counts; date counts; anomaly-marker absolute ordinal/relative positions and record lengths"
+  },
+  "interpretation": "Held-out predictive accuracy, not an upper bound for these feature classes. Chance .50. Results >.60 trigger review before model scoring, not removal of inconvenient families.",
+  "structural_probes": "Uncited dossier matches no cited dossier => BAD; plus empirical majority-label bound for ANY function of the complete dossier-equality signature, including IDs/positions/citation incidence, ordered/unordered profiles and name-erased near-duplicates. This bound applies only to these features on this finite inventory, not arbitrary semantic classifiers or future items.",
+  "cells": {
+    "a": {
+      "train_n": 384,
+      "test_n": 1152,
+      "scored_accuracy": {
+        "char_1_5": 0.5,
+        "char_6_12": 0.4913194444444444,
+        "word_1_3": 0.4861111111111111,
+        "counts_positions_dates_lengths": 0.5052083333333334
+      },
+      "by_difficulty": {
+        "easy": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.515625
+        },
+        "medium": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4791666666666667,
+          "word_1_3": 0.4791666666666667,
+          "counts_positions_dates_lengths": 0.4973958333333333
+        },
+        "hard": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4947916666666667,
+          "word_1_3": 0.4791666666666667,
+          "counts_positions_dates_lengths": 0.5026041666666666
+        }
+      },
+      "by_family": {
+        "merged_vocabulary": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5104166666666666,
+          "word_1_3": 0.4895833333333333,
+          "counts_positions_dates_lengths": 0.5173611111111112
+        },
+        "scope_mismatch": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4756944444444444,
+          "word_1_3": 0.4756944444444444,
+          "counts_positions_dates_lengths": 0.5034722222222222
+        },
+        "unsupported_leaf": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5069444444444444,
+          "word_1_3": 0.5104166666666666,
+          "counts_positions_dates_lengths": 0.5069444444444444
+        },
+        "stale_evidence": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4722222222222222,
+          "word_1_3": 0.46875,
+          "counts_positions_dates_lengths": 0.4930555555555556
+        }
+      },
+      "by_grounding_variant": {
+        "profile": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.49094202898550726,
+          "word_1_3": 0.4855072463768116,
+          "counts_positions_dates_lengths": 0.5054347826086957
+        },
+        "authorization_chain": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5
+        }
+      },
+      "merged_tag_condition": {
+        "honest": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5138888888888888,
+          "word_1_3": 0.4930555555555556,
+          "counts_positions_dates_lengths": 0.5138888888888888
+        },
+        "forged": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5069444444444444,
+          "word_1_3": 0.4861111111111111,
+          "counts_positions_dates_lengths": 0.5208333333333334
+        }
+      },
+      "pair_balance": {
+        "dev": {
+          "pairs": 192,
+          "equal_character_length": 192,
+          "equal_unigram_multiset": 192,
+          "equal_record_count": 192,
+          "equal_citation_positions": 192,
+          "equal_date_multiset": 192
+        },
+        "scored": {
+          "pairs": 576,
+          "equal_character_length": 576,
+          "equal_unigram_multiset": 576,
+          "equal_record_count": 576,
+          "equal_citation_positions": 576,
+          "equal_date_multiset": 576
+        }
+      },
+      "dossier_structure": {
+        "dev": {
+          "easy": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          },
+          "medium": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          },
+          "hard": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          }
+        },
+        "scored": {
+          "easy": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          },
+          "medium": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          },
+          "hard": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          }
+        }
+      }
+    },
+    "b": {
+      "train_n": 384,
+      "test_n": 1152,
+      "scored_accuracy": {
+        "char_1_5": 0.5,
+        "char_6_12": 0.4913194444444444,
+        "word_1_3": 0.4861111111111111,
+        "counts_positions_dates_lengths": 0.5052083333333334
+      },
+      "by_difficulty": {
+        "easy": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.515625
+        },
+        "medium": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4791666666666667,
+          "word_1_3": 0.4791666666666667,
+          "counts_positions_dates_lengths": 0.4947916666666667
+        },
+        "hard": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4947916666666667,
+          "word_1_3": 0.4791666666666667,
+          "counts_positions_dates_lengths": 0.5052083333333334
+        }
+      },
+      "by_family": {
+        "merged_vocabulary": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5104166666666666,
+          "word_1_3": 0.4895833333333333,
+          "counts_positions_dates_lengths": 0.5208333333333334
+        },
+        "scope_mismatch": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4756944444444444,
+          "word_1_3": 0.4756944444444444,
+          "counts_positions_dates_lengths": 0.5034722222222222
+        },
+        "unsupported_leaf": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5069444444444444,
+          "word_1_3": 0.5104166666666666,
+          "counts_positions_dates_lengths": 0.5034722222222222
+        },
+        "stale_evidence": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4722222222222222,
+          "word_1_3": 0.46875,
+          "counts_positions_dates_lengths": 0.4930555555555556
+        }
+      },
+      "by_grounding_variant": {
+        "profile": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.49094202898550726,
+          "word_1_3": 0.4855072463768116,
+          "counts_positions_dates_lengths": 0.5054347826086957
+        },
+        "authorization_chain": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5
+        }
+      },
+      "merged_tag_condition": {
+        "honest": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5138888888888888,
+          "word_1_3": 0.4930555555555556,
+          "counts_positions_dates_lengths": 0.5138888888888888
+        },
+        "forged": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5069444444444444,
+          "word_1_3": 0.4861111111111111,
+          "counts_positions_dates_lengths": 0.5277777777777778
+        }
+      },
+      "pair_balance": {
+        "dev": {
+          "pairs": 192,
+          "equal_character_length": 192,
+          "equal_unigram_multiset": 192,
+          "equal_record_count": 192,
+          "equal_citation_positions": 192,
+          "equal_date_multiset": 192
+        },
+        "scored": {
+          "pairs": 576,
+          "equal_character_length": 576,
+          "equal_unigram_multiset": 576,
+          "equal_record_count": 576,
+          "equal_citation_positions": 576,
+          "equal_date_multiset": 576
+        }
+      },
+      "dossier_structure": {
+        "dev": {
+          "easy": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          },
+          "medium": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          },
+          "hard": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          }
+        },
+        "scored": {
+          "easy": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          },
+          "medium": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          },
+          "hard": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          }
+        }
+      }
+    },
+    "c": {
+      "train_n": 384,
+      "test_n": 1152,
+      "scored_accuracy": {
+        "char_1_5": 0.5008680555555556,
+        "char_6_12": 0.4921875,
+        "word_1_3": 0.4939236111111111,
+        "counts_positions_dates_lengths": 0.5052083333333334
+      },
+      "by_difficulty": {
+        "easy": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.515625
+        },
+        "medium": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4869791666666667,
+          "word_1_3": 0.4947916666666667,
+          "counts_positions_dates_lengths": 0.5
+        },
+        "hard": {
+          "char_1_5": 0.5026041666666666,
+          "char_6_12": 0.4895833333333333,
+          "word_1_3": 0.4869791666666667,
+          "counts_positions_dates_lengths": 0.5
+        }
+      },
+      "by_family": {
+        "merged_vocabulary": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4965277777777778,
+          "word_1_3": 0.4895833333333333,
+          "counts_positions_dates_lengths": 0.5173611111111112
+        },
+        "scope_mismatch": {
+          "char_1_5": 0.5034722222222222,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5104166666666666,
+          "counts_positions_dates_lengths": 0.5034722222222222
+        },
+        "unsupported_leaf": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.5104166666666666,
+          "counts_positions_dates_lengths": 0.5034722222222222
+        },
+        "stale_evidence": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4791666666666667,
+          "word_1_3": 0.4652777777777778,
+          "counts_positions_dates_lengths": 0.4965277777777778
+        }
+      },
+      "by_grounding_variant": {
+        "profile": {
+          "char_1_5": 0.5009057971014492,
+          "char_6_12": 0.49184782608695654,
+          "word_1_3": 0.4936594202898551,
+          "counts_positions_dates_lengths": 0.5054347826086957
+        },
+        "authorization_chain": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5
+        }
+      },
+      "merged_tag_condition": {
+        "honest": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4861111111111111,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5138888888888888
+        },
+        "forged": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5069444444444444,
+          "word_1_3": 0.4791666666666667,
+          "counts_positions_dates_lengths": 0.5208333333333334
+        }
+      },
+      "pair_balance": {
+        "dev": {
+          "pairs": 192,
+          "equal_character_length": 192,
+          "equal_unigram_multiset": 192,
+          "equal_record_count": 192,
+          "equal_citation_positions": 192,
+          "equal_date_multiset": 192
+        },
+        "scored": {
+          "pairs": 576,
+          "equal_character_length": 576,
+          "equal_unigram_multiset": 576,
+          "equal_record_count": 576,
+          "equal_citation_positions": 576,
+          "equal_date_multiset": 576
+        }
+      },
+      "dossier_structure": {
+        "dev": {
+          "easy": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          },
+          "medium": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          },
+          "hard": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          }
+        },
+        "scored": {
+          "easy": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          },
+          "medium": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          },
+          "hard": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          }
+        }
+      }
+    },
+    "d": {
+      "train_n": 384,
+      "test_n": 1152,
+      "scored_accuracy": {
+        "char_1_5": 0.5,
+        "char_6_12": 0.4956597222222222,
+        "word_1_3": 0.4930555555555556,
+        "counts_positions_dates_lengths": 0.5026041666666666
+      },
+      "by_difficulty": {
+        "easy": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5104166666666666
+        },
+        "medium": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4895833333333333,
+          "word_1_3": 0.4947916666666667,
+          "counts_positions_dates_lengths": 0.4947916666666667
+        },
+        "hard": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4973958333333333,
+          "word_1_3": 0.484375,
+          "counts_positions_dates_lengths": 0.5026041666666666
+        }
+      },
+      "by_family": {
+        "merged_vocabulary": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.4895833333333333,
+          "counts_positions_dates_lengths": 0.5138888888888888
+        },
+        "scope_mismatch": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5104166666666666,
+          "counts_positions_dates_lengths": 0.5034722222222222
+        },
+        "unsupported_leaf": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.5069444444444444,
+          "counts_positions_dates_lengths": 0.5034722222222222
+        },
+        "stale_evidence": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4895833333333333,
+          "word_1_3": 0.4652777777777778,
+          "counts_positions_dates_lengths": 0.4895833333333333
+        }
+      },
+      "by_grounding_variant": {
+        "profile": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4954710144927536,
+          "word_1_3": 0.4927536231884058,
+          "counts_positions_dates_lengths": 0.5027173913043478
+        },
+        "authorization_chain": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5
+        }
+      },
+      "merged_tag_condition": {
+        "honest": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5138888888888888
+        },
+        "forged": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.4791666666666667,
+          "counts_positions_dates_lengths": 0.5138888888888888
+        }
+      },
+      "pair_balance": {
+        "dev": {
+          "pairs": 192,
+          "equal_character_length": 192,
+          "equal_unigram_multiset": 192,
+          "equal_record_count": 192,
+          "equal_citation_positions": 192,
+          "equal_date_multiset": 192
+        },
+        "scored": {
+          "pairs": 576,
+          "equal_character_length": 576,
+          "equal_unigram_multiset": 576,
+          "equal_record_count": 576,
+          "equal_citation_positions": 576,
+          "equal_date_multiset": 576
+        }
+      },
+      "dossier_structure": {
+        "dev": {
+          "easy": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          },
+          "medium": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          },
+          "hard": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          }
+        },
+        "scored": {
+          "easy": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          },
+          "medium": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          },
+          "hard": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          }
+        }
+      }
+    },
+    "e": {
+      "train_n": 384,
+      "test_n": 1152,
+      "scored_accuracy": {
+        "char_1_5": 0.5,
+        "char_6_12": 0.5008680555555556,
+        "word_1_3": 0.4913194444444444,
+        "counts_positions_dates_lengths": 0.5060763888888888
+      },
+      "by_difficulty": {
+        "easy": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5182291666666666
+        },
+        "medium": {
+          "char_1_5": 0.4973958333333333,
+          "char_6_12": 0.5,
+          "word_1_3": 0.4947916666666667,
+          "counts_positions_dates_lengths": 0.5
+        },
+        "hard": {
+          "char_1_5": 0.5026041666666666,
+          "char_6_12": 0.5026041666666666,
+          "word_1_3": 0.4791666666666667,
+          "counts_positions_dates_lengths": 0.5
+        }
+      },
+      "by_family": {
+        "merged_vocabulary": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.4861111111111111,
+          "counts_positions_dates_lengths": 0.5173611111111112
+        },
+        "scope_mismatch": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4965277777777778,
+          "word_1_3": 0.5069444444444444,
+          "counts_positions_dates_lengths": 0.5034722222222222
+        },
+        "unsupported_leaf": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5069444444444444,
+          "word_1_3": 0.5034722222222222,
+          "counts_positions_dates_lengths": 0.5034722222222222
+        },
+        "stale_evidence": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5069444444444444,
+          "word_1_3": 0.46875,
+          "counts_positions_dates_lengths": 0.5
+        }
+      },
+      "by_grounding_variant": {
+        "profile": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5009057971014492,
+          "word_1_3": 0.49094202898550726,
+          "counts_positions_dates_lengths": 0.5063405797101449
+        },
+        "authorization_chain": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.5,
+          "word_1_3": 0.5,
+          "counts_positions_dates_lengths": 0.5
+        }
+      },
+      "merged_tag_condition": {
+        "honest": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.4930555555555556,
+          "counts_positions_dates_lengths": 0.5138888888888888
+        },
+        "forged": {
+          "char_1_5": 0.5,
+          "char_6_12": 0.4930555555555556,
+          "word_1_3": 0.4791666666666667,
+          "counts_positions_dates_lengths": 0.5208333333333334
+        }
+      },
+      "pair_balance": {
+        "dev": {
+          "pairs": 192,
+          "equal_character_length": 192,
+          "equal_unigram_multiset": 192,
+          "equal_record_count": 192,
+          "equal_citation_positions": 192,
+          "equal_date_multiset": 192
+        },
+        "scored": {
+          "pairs": 576,
+          "equal_character_length": 576,
+          "equal_unigram_multiset": 576,
+          "equal_record_count": 576,
+          "equal_citation_positions": 576,
+          "equal_date_multiset": 576
+        }
+      },
+      "dossier_structure": {
+        "dev": {
+          "easy": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          },
+          "medium": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          },
+          "hard": {
+            "n": 128,
+            "uncited_unmatched_correct": 64,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 64,
+            "identical_pair_structures": 64
+          }
+        },
+        "scored": {
+          "easy": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          },
+          "medium": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          },
+          "hard": {
+            "n": 384,
+            "uncited_unmatched_correct": 192,
+            "uncited_unmatched_accuracy": 0.5,
+            "any_equality_rule_empirical_bound": 0.5,
+            "pairs": 192,
+            "identical_pair_structures": 192
+          }
+        }
+      }
+    }
+  }
+}
