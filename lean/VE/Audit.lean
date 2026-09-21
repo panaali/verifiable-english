@@ -1,4 +1,4 @@
-import VE.Finite
+import VE.Consequence
 
 #print axioms VE.term_defined
 #print axioms VE.typed_empty
@@ -8,3 +8,9 @@ import VE.Finite
 #print axioms VE.eval_iff_denote
 #print axioms VE.eval_false_iff_not_denote
 #print axioms VE.document_eval_iff_denote
+
+#print axioms VE.composition_sound
+#print axioms VE.entails_cut
+#print axioms VE.countermodelCheck_iff
+#print axioms VE.countermodel_sound
+#print axioms VE.no_certificate_countermodel_conflict
