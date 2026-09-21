@@ -1,0 +1,147 @@
+import json
+import threading
+import time
+
+import pytest
+
+from ve_experiments.llm import BackendError, LLMClient, RawReply, Request, VerdictParseError, parse_verdict, summarize_log
+
+
+class FakeBackend:
+    def __init__(self, fail_first=0, delay=0.0, text='{"verdict": "approve"}'):
+        self.calls = 0
+        self.fail_first = fail_first
+        self.delay = delay
+        self.text = text
+        self.active = 0
+        self.max_active = 0
+        self.cwds = set()
+        self.lock = threading.Lock()
+
+    def __call__(self, model, system, prompt, timeout_s, cwd):
+        with self.lock:
+            self.calls += 1
+            n = self.calls
+            self.active += 1
+            self.max_active = max(self.max_active, self.active)
+            self.cwds.add(cwd)
+        try:
+            time.sleep(self.delay)
+            if n <= self.fail_first:
+                raise BackendError("transient")
+            return RawReply(f"{self.text}", input_tokens=10, output_tokens=5)
+        finally:
+            with self.lock:
+                self.active -= 1
+
+
+def client(tmp_path, backend, **kw):
+    return LLMClient(cache_dir=tmp_path / "cache", backend=backend, backoff_s=0.0, **kw)
+
+
+def test_cache_is_keyed_by_model_prompt_and_seed(tmp_path):
+    be = FakeBackend()
+    c = client(tmp_path, be)
+    a = c.call("m1", "p")
+    assert a.ok and not a.from_cache and be.calls == 1
+    b = c.call("m1", "p")
+    assert b.from_cache and b.text == a.text and be.calls == 1
+    c.call("m1", "p", seed=1)
+    c.call("m2", "p")
+    c.call("m1", "q")
+    c.call("m1", "p", system="other")
+    assert be.calls == 5
+    # a new client on the same directory reuses the cache
+    assert client(tmp_path, be).call("m1", "p").from_cache and be.calls == 5
+
+
+def test_retries_then_succeeds(tmp_path):
+    be = FakeBackend(fail_first=2)
+    r = client(tmp_path, be, retries=3).call("m", "p")
+    assert r.ok and r.attempts == 3
+
+
+def test_failure_is_returned_not_raised_and_not_cached(tmp_path):
+    be = FakeBackend(fail_first=99)
+    c = client(tmp_path, be, retries=2)
+    r = c.call("m", "p")
+    assert not r.ok and r.text is None and r.error == "transient" and r.attempts == 2
+    be.fail_first = 0
+    assert c.call("m", "p").ok  # the failure was not cached
+
+
+def test_empty_reply_counts_as_failure(tmp_path):
+    r = client(tmp_path, FakeBackend(text="  "), retries=1).call("m", "p")
+    assert not r.ok and r.error == "empty reply"
+
+
+def test_concurrency_limit_and_order(tmp_path):
+    be = FakeBackend(delay=0.05)
+    c = client(tmp_path, be, max_concurrency=3)
+    res = c.map(Request("m", f"p{i}") for i in range(12))
+    assert [r.key for r in res] == [c.call("m", f"p{i}").key for i in range(12)]
+    assert be.max_active <= 3 and be.max_active >= 2
+
+
+def test_identical_concurrent_requests_make_one_call(tmp_path):
+    be = FakeBackend(delay=0.05)
+    res = client(tmp_path, be).map(Request("m", "same") for _ in range(6))
+    assert be.calls == 1 and sum(r.from_cache for r in res) == 5
+
+
+def test_calls_run_outside_the_repository(tmp_path):
+    be = FakeBackend()
+    client(tmp_path, be).call("m", "p")
+    (cwd,) = be.cwds
+    assert list(cwd.iterdir()) == [] and "ve-claude" not in str(cwd)
+
+
+def test_log_records_tokens_and_cache_hits(tmp_path):
+    c = client(tmp_path, FakeBackend())
+    c.call("m", "p", tag="t")
+    c.call("m", "p", tag="t")
+    rows = [json.loads(x) for x in c.log_path.read_text().splitlines()]
+    assert [r["from_cache"] for r in rows] == [False, True]
+    assert rows[0]["input_tokens"] == 10 and rows[0]["tag"] == "t" and "text" not in rows[0]
+    s = summarize_log(c.log_path)["m"]
+    assert s["calls"] == 2 and s["cache_hits"] == 1 and s["output_tokens"] == 5
+
+
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        ('{"verdict": "approve"}', "approve"),
+        ('Reasoning here {not json}.\n{"verdict": "reject", "confidence": 0.7}', "reject"),
+        ('text\n```json\n{"verdict": "reject"}\n```', "reject"),
+        ('{"verdict": "approve"}\n\nfinal: {"verdict": "reject", "why": {"a": 1}}', "reject"),
+    ],
+)
+def test_parse_verdict_accepts(text, expected):
+    assert parse_verdict(text).value == expected
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        None,
+        "",
+        "I approve.",
+        '{"verdict": "approve"} I hope this helps!',  # JSON is not final
+        '{"verdict": "Approve"}',  # no case folding
+        '{"verdict": "maybe"}',
+        '{"decision": "approve"}',
+        '{"verdict": true}',
+        '["approve"]',
+        '{"verdict": "approve"',
+    ],
+)
+def test_parse_verdict_rejects(text):
+    with pytest.raises(VerdictParseError):
+        parse_verdict(text)
+
+
+@pytest.mark.live
+def test_live_smoke():
+    from ve_experiments.smoke import DEFAULT_MODELS, main
+
+    assert main(list(DEFAULT_MODELS)) == 0
