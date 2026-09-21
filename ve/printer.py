@@ -301,7 +301,7 @@ def lint_vocabulary(env: Any) -> tuple[VocabularyLint, ...]:
 
 
 def _check_view(view: str) -> None:
-    if view not in VIEWS:
+    if view not in (*VIEWS, "ve_english"):
         raise ValueError(f"view must be one of {VIEWS}")
 
 
@@ -389,6 +389,9 @@ def render_vocabulary(env: Any, view: str = "ve_strict", naming: str = "per_stat
     _check_view(view)
     _check_naming(naming)
     _check_legend_style(style)
+    if view == "ve_english":
+        from .english import english_legend
+        return english_legend(env, style)
     selected = _NaturalVocabulary(env)
     legend = {
         "format": "ve.vocabulary-legend@3", "environment_id": env.environment_id,
@@ -512,6 +515,9 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
     """
     _check_view(view)
     _check_naming(naming)
+    if view == "ve_english":
+        from .english import render_english
+        return render_english(value, env)
     if view == "ve_fluent":
         from .fluent import FluentTraversal
         traversal = FluentTraversal(env)
