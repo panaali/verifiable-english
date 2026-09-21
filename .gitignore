@@ -8,3 +8,5 @@ __pycache__/
 dist/
 .cargo-home/
 rust/target/
+.cache/
+paper/.cache/
