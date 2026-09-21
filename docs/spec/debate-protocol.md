@@ -83,7 +83,20 @@ for every service s, (if (s is ops_reviewed), then (s is security_reviewed)).
 
 That bridge is now a visible leaf to assess. The proof does not make it a fact. A proof produced with this bridge cannot be attached to the original two-premise edge.
 
-These are mathematically specified expected outcomes, not execution results. The example tests both a rejected substitution and a valid repair, and uses only v0 syntax. [Formal obligations](verification-contract.md#argument-checking-contract) state what must be proved for the implementation.
+### The same attack when the vocabulary is merged
+
+The example above presupposes that someone already split “reviewed” into two predicates. That split is where the equivocation was actually caught, and the checker did not perform it. An adversarial proposer would instead declare a single predicate `reviewed` with the description “Recorded as reviewed,” and submit:
+
+```text
+for every service s, (if (s is deployed), then (s is reviewed)).
+for every service s, (if (s is reviewed), then (s is approved)).
+```
+
+The root now has a `follows` certificate. The proposer supports the first leaf with operations-review records and the second with a security policy. Each leaf looks acceptable when judged alone, and the checked proof asserts that they compose. The meaning change has moved from the deduction into the free-English description and the evidence attached to the leaves, where v0 checks nothing. This is the cross-branch inconsistency from the motivating research, and a certified edge may make it harder to notice than it would be in prose.
+
+v0's only defenses are procedural: the supervisor or critic must notice that one description covers two evidence sources, and must demand a vocabulary split. Whether people do this under VE more or less often than under cross-examination is an open empirical question and a required attack in the [adversarial evaluation](../roadmap.md#adversarial-evaluation). Who authors the vocabulary, and whether the critic may challenge it before commitment, must be fixed in G0.
+
+These are mathematically specified expected outcomes, not execution results. The first example tests both a rejected substitution and a valid repair; the second tests a substitution the checker accepts. Both use only v0 syntax. [Formal obligations](verification-contract.md#argument-checking-contract) state what must be proved for the implementation.
 
 ## Bounds and unsupported claims
 
