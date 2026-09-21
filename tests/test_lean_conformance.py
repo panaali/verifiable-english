@@ -322,3 +322,36 @@ def test_source_audit_scans_literal_tokens_in_quotations(source_audit, tmp_path,
     (tmp_path / "Main.lean").write_text(text)
     with pytest.raises(AssertionError, match="forbidden"):
         source_audit.scan_sources(tmp_path)
+
+
+def test_oracle_witnesses_replay_in_lean(lean_executable):
+    from ve import Document, Eq, Exists, Forall, Implies, Top, Unary, Var
+    from ve.ast import document_to_data
+    from ve.equivalence import compare, validate_reference
+    from test_equivalence import ENV
+
+    p, q = Unary('p', Var(0)), Unary('q', Var(0))
+    pairs = (
+        (Forall('item', Implies(p, q)), Top()),
+        (Forall('item', p), Exists('item', p)),
+        (Exists('item', p), Exists('item', q)),
+        (Exists('item', Eq(Var(0), Var(0))), Top()),
+    )
+    cases = []
+    for a, b in pairs:
+        result = compare(ENV, a, b)
+        for direction, model in result.models.items():
+            doc = Document((a, b))
+            cases.append({'id': str(len(cases)), 'environment': ENV.to_dict(),
+                          'ast': document_to_data(ENV, doc), 'source': print_document(ENV, doc),
+                          'model': model.to_dict(),
+                          'expected': [direction == 'a_not_implies_b', direction == 'b_not_implies_a']})
+    reference = validate_reference(ENV, Forall('item', Implies(p, q)))
+    for model, value in ((reference.satisfying_model, True), (reference.falsifying_model, False)):
+        doc = Document((Forall('item', Implies(p, q)),))
+        cases.append({'id': str(len(cases)), 'environment': ENV.to_dict(),
+                      'ast': document_to_data(ENV, doc), 'source': print_document(ENV, doc),
+                      'model': model.to_dict(), 'expected': [value]})
+    results = invoke(lean_executable, cases)
+    for case, result in zip(cases, results, strict=True):
+        assert result['status'] == 'ok' and result['values'] == case['expected']

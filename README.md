@@ -52,3 +52,7 @@ The current recommendation is a small study of **human review of requirements an
 - [Verification contracts and status labels](docs/spec/verification-contract.md)
 - [Roadmap and acceptance criteria](docs/roadmap.md)
 - [Work plan and remaining tasks](docs/plan.md)
+
+The [semantic oracle and attack validator](docs/oracle.md) return checked proofs,
+distinguishing models, or explicit uncertainty, with a JSONL validation CLI and
+a reproducible FO2 template audit.

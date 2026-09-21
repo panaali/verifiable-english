@@ -1,0 +1,28 @@
+{
+  "draws": 2000,
+  "environment": "tests.test_fluent.negative_vocabulary",
+  "generator": "tests.test_views._random_formula; depth uniform in 1..6; no deduplication",
+  "seed": 20260921,
+  "stats": {
+    "equality_negations": 71,
+    "equality_negations_share": 0.14853556485355648,
+    "fallback_negations": 359,
+    "fallback_negations_share": 0.7510460251046025,
+    "guards": 5,
+    "items": 2000,
+    "negations": 478,
+    "predicate_negations": 113,
+    "relative_guards": 5,
+    "relative_guards_share": 1.0,
+    "statements": 2000,
+    "structural_both_guards": 0,
+    "structural_both_guards_share": 0.0,
+    "structural_guards": 0,
+    "structural_guards_share": 0.0,
+    "uncontracted_universal_groups": 403,
+    "universal_groups": 408,
+    "whitelisted_negations": 48,
+    "whitelisted_negations_share": 0.100418410041841,
+    "whitelisted_predicate_negations_share": 0.4247787610619469
+  }
+}

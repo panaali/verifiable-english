@@ -404,13 +404,14 @@ All findings are retained:
 
 The protocol uses `gap` for a countermodel; it reserves `refuted` for a proof of
 negation. Proof search failure never produces either finding. Result statuses
-are `Checked`, `Incomplete`, `InvalidInput`, `ResourceLimit`, and
-`CheckerConflict`. Search exhaustion is retained in per-edge attempts, and
-produces overall `ResourceLimit` when a required inference remains unsupported.
+are `Checked`, `Incomplete`, `ContradictoryPremises`, `InvalidInput`,
+`ResourceLimit`, and `CheckerConflict`. Search exhaustion is retained in per-edge attempts, and
+produces overall `ResourceLimit` when a required edge has no checked finding.
 Exhausting the countermodel/negative search does not revoke a valid positive
-proof. Submitted invalid artifacts withhold successful composition even when
-other evidence was valid. A `follows`/`gap` conflict retains both artifacts and
-withholds composition. `follows`/`refuted` records contradictory premises; a
+proof. Invalid extra artifacts on edges with checked findings become explicit warnings;
+structurally invalid packages still fail validation. A `follows`/`gap` conflict retains both artifacts and
+withholds composition. `follows`/`refuted` yields `ContradictoryPremises`, withholds
+composition, and lists the affected edges at the top level and in the display; a
 validated model satisfying those premises instead triggers `CheckerConflict`.
 
 Composition uses the acyclic graph's checked positive edges and lists **every**
@@ -426,7 +427,8 @@ null and is separate from the restricted semantic-input encoding.
 
 `outstanding_obligations(graph, result)` returns root interpretation status,
 all remaining assumptions with reported assessments and cited snapshots,
-literal target-scope agreement, unresolved deductions, and unassessed approval.
+literal target-scope agreement, unresolved deductions, contradictory premises,
+warnings, and unassessed approval.
 Accepted evidence never removes a logical assumption. Scope string agreement
 is display metadata, not proof that grounding is adequate.
 `predicate_use_panel(graph, result=None)` returns each predicate's declared
