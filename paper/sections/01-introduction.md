@@ -47,7 +47,7 @@ The contributions available for inspection are:
 
 - A relational language specification, canonical serialization, and Python,
   Lean, and Rust cores with distinct documented boundaries; an opt-in closure
-  extension is implemented in Python and the Lean reference at this draft's base
+  extension is implemented in Python, Rust, and the Lean reference
   (`docs/spec/`, `ve/`, `lean/`, `rust/`).
 - Five deterministic views and a common vocabulary legend, with inverse-parser
   tests that recover indexed syntax on development cases
@@ -61,10 +61,11 @@ The contributions available for inspection are:
 - A cross-family model-rater coverage audit with preserved disagreements,
   checked syntax witnesses, and a profile-extension ledger
   (`paper/sources/e0-second-rater.md`, `docs/spec/v0.1-coverage.md`).
-- Development judge calibration, draft experimental designs, and a process
-  record of defects caught during review. **[RESULT-CONTRIBUTIONS: scored
-  experimental contributions not yet established.]**
+- Prompt-sensitive development calibration, frozen E1 and E4 designs, E5
+  materials and pilots, and a process record of defects and operational failures.
+  **[RESULT-CONTRIBUTIONS: insert scored E1 and E4 findings within their
+  per-judge and mechanism-demonstration limits.]**
 
 <!-- src: docs/rendering-views.md (five); docs/spec/closure-implementation.md;
 paper/sources/manifest.json pins the implementation base and branch documents.
-No claim that the draft preregistrations are frozen is intended. -->
+E1 v5 and E4 revision 2 are frozen; E5 remains a deferred draft. -->

@@ -26,7 +26,10 @@ def main():
     assert urls <= allowed, urls - allowed
     assert len(re.findall(r'^# (?!Abstract|References)', body, re.M)) == 11
     status = json.loads((ROOT / 'build/draft-status.json').read_text())
-    assert len(status['result_placeholders']) == 11, status['result_placeholders']
+    assert set(status['result_placeholders']) == {
+        'RESULT-ABSTRACT', 'RESULT-CONTRIBUTIONS', 'RESULT-E1', 'RESULT-E1B',
+        'RESULT-E4', 'RESULT-COST', 'RESULT-T-GATE', 'RESULT-T-TRAINING',
+    }, status['result_placeholders']
     if '--html' in sys.argv:
         html = (ROOT / 'build/paper.html').read_text()
         assert '<html' in html and '<math' in html and 'data:image/svg+xml' in html

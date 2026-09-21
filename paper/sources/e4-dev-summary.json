@@ -1,0 +1,348 @@
+{
+  "source_sha256": "f96468d9267c3e8b39dac193c96abe0b03cf9f43ba61323d9d6bdc72ca391d43",
+  "selection": "E4 dev, family ALL, 7B and 14B; supplied counts, not rerun",
+  "metrics": [
+    {
+      "judge": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+      "experiment": "E4",
+      "split": "dev",
+      "instruction": "harness",
+      "difficulty": "native",
+      "size": null,
+      "workload": null,
+      "subset": "primary",
+      "family": "ALL",
+      "cell": "checked_countermodel",
+      "n": 16,
+      "n_items": 16,
+      "n_templates": 4,
+      "bad": 8,
+      "good": 8,
+      "false_approval": {
+        "count": 0,
+        "denominator": 8,
+        "rate": 0.0
+      },
+      "honest_acceptance": {
+        "count": 8,
+        "denominator": 8,
+        "rate": 1.0
+      },
+      "parse_failure": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "missing": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "backend_failure": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "failed": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "truncated": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "truncation_unknown": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      }
+    },
+    {
+      "judge": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+      "experiment": "E4",
+      "split": "dev",
+      "instruction": "harness",
+      "difficulty": "native",
+      "size": null,
+      "workload": null,
+      "subset": "primary",
+      "family": "ALL",
+      "cell": "dishonest_critic",
+      "n": 16,
+      "n_items": 16,
+      "n_templates": 4,
+      "bad": 8,
+      "good": 8,
+      "false_approval": {
+        "count": 1,
+        "denominator": 8,
+        "rate": 0.125
+      },
+      "honest_acceptance": {
+        "count": 7,
+        "denominator": 8,
+        "rate": 0.875
+      },
+      "parse_failure": {
+        "count": 2,
+        "denominator": 16,
+        "rate": 0.125
+      },
+      "missing": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "backend_failure": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "failed": {
+        "count": 2,
+        "denominator": 16,
+        "rate": 0.125
+      },
+      "truncated": {
+        "count": 3,
+        "denominator": 16,
+        "rate": 0.1875
+      },
+      "truncation_unknown": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      }
+    },
+    {
+      "judge": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+      "experiment": "E4",
+      "split": "dev",
+      "instruction": "harness",
+      "difficulty": "native",
+      "size": null,
+      "workload": null,
+      "subset": "primary",
+      "family": "ALL",
+      "cell": "prose_critique",
+      "n": 16,
+      "n_items": 16,
+      "n_templates": 4,
+      "bad": 8,
+      "good": 8,
+      "false_approval": {
+        "count": 1,
+        "denominator": 8,
+        "rate": 0.125
+      },
+      "honest_acceptance": {
+        "count": 4,
+        "denominator": 8,
+        "rate": 0.5
+      },
+      "parse_failure": {
+        "count": 2,
+        "denominator": 16,
+        "rate": 0.125
+      },
+      "missing": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "backend_failure": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "failed": {
+        "count": 2,
+        "denominator": 16,
+        "rate": 0.125
+      },
+      "truncated": {
+        "count": 2,
+        "denominator": 16,
+        "rate": 0.125
+      },
+      "truncation_unknown": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      }
+    },
+    {
+      "judge": "Qwen/Qwen2.5-7B-Instruct",
+      "experiment": "E4",
+      "split": "dev",
+      "instruction": "harness",
+      "difficulty": "native",
+      "size": null,
+      "workload": null,
+      "subset": "primary",
+      "family": "ALL",
+      "cell": "checked_countermodel",
+      "n": 16,
+      "n_items": 16,
+      "n_templates": 4,
+      "bad": 8,
+      "good": 8,
+      "false_approval": {
+        "count": 0,
+        "denominator": 8,
+        "rate": 0.0
+      },
+      "honest_acceptance": {
+        "count": 8,
+        "denominator": 8,
+        "rate": 1.0
+      },
+      "parse_failure": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "missing": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "backend_failure": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "failed": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "truncated": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "truncation_unknown": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      }
+    },
+    {
+      "judge": "Qwen/Qwen2.5-7B-Instruct",
+      "experiment": "E4",
+      "split": "dev",
+      "instruction": "harness",
+      "difficulty": "native",
+      "size": null,
+      "workload": null,
+      "subset": "primary",
+      "family": "ALL",
+      "cell": "dishonest_critic",
+      "n": 16,
+      "n_items": 16,
+      "n_templates": 4,
+      "bad": 8,
+      "good": 8,
+      "false_approval": {
+        "count": 0,
+        "denominator": 8,
+        "rate": 0.0
+      },
+      "honest_acceptance": {
+        "count": 3,
+        "denominator": 8,
+        "rate": 0.375
+      },
+      "parse_failure": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "missing": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "backend_failure": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "failed": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "truncated": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "truncation_unknown": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      }
+    },
+    {
+      "judge": "Qwen/Qwen2.5-7B-Instruct",
+      "experiment": "E4",
+      "split": "dev",
+      "instruction": "harness",
+      "difficulty": "native",
+      "size": null,
+      "workload": null,
+      "subset": "primary",
+      "family": "ALL",
+      "cell": "prose_critique",
+      "n": 16,
+      "n_items": 16,
+      "n_templates": 4,
+      "bad": 8,
+      "good": 8,
+      "false_approval": {
+        "count": 0,
+        "denominator": 8,
+        "rate": 0.0
+      },
+      "honest_acceptance": {
+        "count": 0,
+        "denominator": 8,
+        "rate": 0.0
+      },
+      "parse_failure": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "missing": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "backend_failure": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "failed": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "truncated": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      },
+      "truncation_unknown": {
+        "count": 0,
+        "denominator": 16,
+        "rate": 0.0
+      }
+    }
+  ]
+}
