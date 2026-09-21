@@ -102,6 +102,70 @@ prove the verification contract's stronger P1 about *all derivations* of an
 independently specified grammar. Acceptance typing and canonical reparse are
 progress toward P2/P3; the equation for `normalize` alone is definitional.
 
+## Named claim graphs and P10
+
+`Graph.ClaimGraph Certificate` contains a list of named AST claims and a root
+name. Each node is explicitly either an assumption or a deduction with an
+ordered list of premise names and a certificate. Nodes must be supplied in
+topological order, with every premise before its conclusion. The checker
+validates this order by ranks, checks unique names and typing, resolves every
+premise from earlier checked nodes, checks every submitted edge (even outside
+the root's dependency closure), and finally resolves the root. Unknown names,
+cycles, forward references, conflicting aliases, and invalid certificates cause
+`none`; there is no fallback that turns a failed deduction into an assumption.
+A valid DAG submitted in another order is rejected. Sorting completeness is
+not proved or claimed.
+
+The returned report contains the exact named root and ordered named assumption
+list. Child lists are concatenated in premise order; shared children and repeated
+premise references repeat their leaves. An empty-premise certified edge contributes
+no leaves. The independent `Unfolds` inductive relation specifies this computation.
+Acyclicity is specified independently as absence of a nonempty dependency path
+from any name to itself, not merely as success of the checker.
+
+The checker is parameterized by a **decidable certificate-validity predicate**.
+The semantic theorem explicitly assumes `CertificateSound E valid`: whenever
+that predicate accepts a certificate with an exact list of named premises and
+an exact named conclusion, the premises' formulas entail the conclusion's
+formula over all admissible structures in the chosen universe, under this `E`.
+This is a theorem parameter, not a new global logical assumption. The small
+`GraphChecks` predicate is proved sound and executable, but is only a regression
+fixture, not the production certificate interface.
+
+Names in the following table have prefix `VE.Graph.` unless otherwise shown.
+
+| Theorem | Exact statement in plain words |
+|---|---|
+| `acyclicCheck_dependency` | If the rank checker accepts a graph, every edge in its independent dependency relation strictly decreases rank from parent to child. |
+| `path_rank` | Under the same acceptance premise, every nonempty dependency path strictly decreases rank. |
+| `acyclicCheck_sound` | Every graph accepted by the rank checker has no nonempty dependency path from a name back to itself. |
+| `lookup_sound` | Successful lookup returns an actual member of the stored report list whose root name is exactly the requested name. |
+| `resolve_sound` | Successful ordered premise resolution returns only reports in the supplied store, and their root-name list is exactly the requested name list, preserving order and multiplicity. |
+| `checkNode_sound` | Given a sound certificate predicate, stored reports satisfying `SoundReport` and a node belonging to the graph, a successful local check produces a `SoundReport`: typed root, exact submitted root provenance, typed explicit-assumption provenance for every leaf, entailment from reported leaves, and an `Unfolds` derivation for precisely the reported ordered leaf list. |
+| `checkNodes_sound` | Given the same certificate contract and valid initial reports, successfully checking a node list whose nodes all belong to the graph yields only `SoundReport` entries. |
+| `check_sound` | **Graph P10:** For every environment, certificate predicate with a decision procedure and an explicit `CertificateSound` proof, graph and returned report, if the executable checker returns that report, the graph is acyclic, all submitted claim names are unique, the reported root has exactly the requested name, and the report satisfies all five `SoundReport` properties above. |
+| `check_entails` | Under the same parameters and acceptance premise, the reported root formula is entailed by the formulas of exactly the reported named assumption list, over all admissible structures in the selected universe. |
+| `check_unfolds` | Under the same parameters and acceptance premise, the exact reported root and assumption list satisfy the independent ordered graph-unfolding relation. |
+| `VE.GraphChecks.testCertificate_sound` | For every environment, the regression-only predicate binding exact named inputs and accepting only truth introduction or direct premise reuse satisfies `CertificateSound`. |
+
+Python remains trusted to implement the certificate predicate soundly: it must
+construct the expected entailment proposition from this exact environment and
+the resolved ordered premise/conclusion ASTs, replay the submitted artifact
+against that proposition in the pinned Lean environment, audit the permitted
+logical dependencies, and isolate untrusted proof generation. A worker build,
+theorem name, certificate-supplied proposition, stale environment, or subset of
+the premise list does not establish this contract. No code or proof here supplies
+Python replay, P9 proposition generation/expected-type binding, the graph wire
+decoder, certificate decoding, hash/identity checks, or faithful assumption display.
+There is no theorem refining a Python graph validator to this Lean checker.
+In this base checkout there is no Python argument graph/replay module to connect.
+
+The checker terminates structurally over the finite node list and each ordered
+premise list, given a terminating certificate decision procedure. It does not
+prove graph completeness, proof-search completeness or production resource
+bounds. Repeated shared leaves can make explicit output large; there is no
+claim of polynomial output size, deduplication, or a verified runtime budget.
+
 ## Remaining obligations
 
 No independent `ParseSpec` or general grammar soundness/completeness/uniqueness

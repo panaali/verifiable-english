@@ -50,12 +50,20 @@ upstream toolchain and its standard logical dependencies remain trusted.
   well-formed formulas, valid environments, and admissible structures. Invalid
   raw terms produce false atoms; `term_defined` excludes them on typed inputs.
 * `VE/Consequence.lean`: finite acyclic proof trees whose steps carry actual
-  entailment proofs and whose leaf list is computed by concatenation. A DAG can
-  be unfolded into such a tree, but no submitted graph decoder, DAG unfolding
-  implementation, cryptographic identity layer, or certificate replay is proved.
+  entailment proofs, cut/composition, and finite countermodel soundness.
+* `VE/ClaimGraph.lean`: executable named claim-graph checking, with explicit leaf
+  nodes, ordered premise references and a checked topological order. Under the
+  abstract sound-certificate predicate, acceptance proves acyclicity, unique
+  aliases, exact root identity, typing, named leaf provenance, exact ordered
+  leaf unfolding (including duplicates), and entailment of the root from those
+  leaves. `VE/GraphChecks.lean` exercises positive/negative cases with a small
+  proved-sound test certificate language. No Python graph/replay refinement,
+  graph wire decoder, cryptographic identity layer or proof-artifact replay is
+  proved.
 * `VE/Surface.lean`: canonical preorder binder naming and a total strict parser
   for all constructors, with name-to-index resolution. Parser recursion decreases
-  explicit fuel; the public parser supplies input length plus one. Full-language printer fuel adequacy is proved in `VE/RoundTrip.lean`.
+  explicit fuel; the public parser supplies input length plus one. Full-language
+  printer fuel adequacy is proved in `VE/RoundTrip.lean`.
   Reference identifier lexing is unbudgeted; the bridge retains its 64-byte
   declaration/local-ID runtime limit. Whitespace is literal, scopes
   do not shadow, statements end in period+LF, and typing is checked after parsing.
@@ -139,10 +147,12 @@ leaves. All surface-fragment statements refer to `Propositional` as defined abov
 
 ## Remaining obligations and trust boundary
 
-Grammar P1–P3, P7 proposition generation, P8 production
-refinement, and P9 certificate expected-type binding are not proved. P10 is a
-semantic proof-tree theorem, not a theorem about the Python argument graph
-implementation. P11 requires an admissible model; the JSON decoder's successful
+Grammar P1–P3, P7 proposition generation, P8 production refinement, and P9
+certificate expected-type binding are not proved. P10 now also covers the Lean
+named graph checker, conditional on the explicit
+certificate-validity soundness premise. It does not verify the Python argument
+graph or certificate replay implementation. P11 requires an admissible model;
+the JSON decoder's successful
 validation has no proved refinement to that premise. There is no combined
 finite-evaluation acceptance theorem, cryptographic identity theorem, model
 search completeness theorem, or claim of a complete entailment procedure.
