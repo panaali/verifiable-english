@@ -3,17 +3,40 @@ use crate::{
 };
 use serde_json::{Value, json};
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Term {
     Var(u64),
     Const(String),
 }
-#[derive(Clone, Debug, PartialEq, Eq)]
+/// A directed edge: Body binds source then destination (nearest-first 1, 0).
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum Edge {
+    Named(String),
+    Body(String, Box<Formula>),
+}
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum ReachKind {
+    Plus,
+    Star,
+    /// Raw wire value retained until the complete AST has been decoded.
+    Invalid(String),
+}
+impl ReachKind {
+    fn as_str(&self) -> &str {
+        match self {
+            Self::Plus => "plus",
+            Self::Star => "star",
+            Self::Invalid(s) => s,
+        }
+    }
+}
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Formula {
     Top,
     Bottom,
     Unary(String, Term),
     Binary(String, Term, Term),
+    Reach(ReachKind, Edge, Term, Term),
     Eq(Term, Term),
     Not(Box<Formula>),
     And(Box<Formula>, Box<Formula>),
@@ -37,6 +60,13 @@ impl Formula {
             Self::Bottom => json!(["bottom"]),
             Self::Unary(p, t) => json!(["unary", p, t.to_value()]),
             Self::Binary(p, t, u) => json!(["binary", p, t.to_value(), u.to_value()]),
+            Self::Reach(k, e, t, u) => {
+                let edge = match e {
+                    Edge::Named(p) => json!(["named", p]),
+                    Edge::Body(s, f) => json!(["body", s, f.to_value()]),
+                };
+                json!(["reach", k.as_str(), edge, t.to_value(), u.to_value()])
+            }
             Self::Eq(t, u) => json!(["eq", t.to_value(), u.to_value()]),
             Self::Not(f) => json!(["not", f.to_value()]),
             Self::And(a, b) | Self::Or(a, b) | Self::Implies(a, b) => json!([
@@ -64,6 +94,10 @@ impl Formula {
             Self::Unary(p, _) | Self::Binary(p, _, _) => {
                 result.insert(p.clone());
             }
+            Self::Reach(_, Edge::Named(p), _, _) => {
+                result.insert(p.clone());
+            }
+            Self::Reach(_, Edge::Body(_, f), _, _) => f.predicates(result),
             Self::Not(a) | Self::Forall(_, a) | Self::Exists(_, a) => a.predicates(result),
             Self::And(a, b) | Self::Or(a, b) | Self::Implies(a, b) => {
                 a.predicates(result);
@@ -78,6 +112,7 @@ impl Formula {
 pub struct Document {
     formulas: Vec<Formula>,
     environment_id: String,
+    identity_version: &'static str,
 }
 impl Document {
     pub fn check(env: &Environment, formulas: Vec<Formula>) -> Result<Self> {
@@ -91,6 +126,7 @@ impl Document {
         Ok(Self {
             formulas,
             environment_id: env.environment_id().into(),
+            identity_version: env.identity_version(),
         })
     }
     pub fn from_json(env: &Environment, bytes: &[u8]) -> Result<Self> {
@@ -118,7 +154,7 @@ impl Document {
     }
     pub fn meaning_id(&self) -> Result<String> {
         digest(
-            "ve-meaning-v0\n",
+            &format!("ve-meaning-{}\n", self.identity_version),
             &json!({"environment_id":self.environment_id,"ast":self.to_value()}),
         )
     }
@@ -128,7 +164,7 @@ impl Document {
             .get(index)
             .ok_or_else(|| Error::new("InvalidInput", "formula index out of range"))?;
         digest(
-            "ve-meaning-v0\n",
+            &format!("ve-meaning-{}\n", self.identity_version),
             &json!({"environment_id":self.environment_id,"ast":f.to_value()}),
         )
     }
@@ -206,6 +242,43 @@ impl Checker<'_> {
                     return error("TypeMismatch", "equality requires one sort");
                 }
             }
+            Formula::Reach(kind, edge, left, right) => {
+                if !self.env.closure() {
+                    return error("UnsupportedProfile", "Reach requires closure@0");
+                }
+                if matches!(kind, ReachKind::Invalid(_)) {
+                    return error("TypeMismatch", "Reach kind must be plus or star");
+                }
+                let sort = match edge {
+                    Edge::Named(p) => {
+                        let args = self.env.predicates.get(p).ok_or_else(|| {
+                            Error::new("UnknownSymbol", "unknown closure relation")
+                        })?;
+                        if args.len() != 2 || args[0] != args[1] {
+                            return error(
+                                "TypeMismatch",
+                                "closure requires a homogeneous binary relation",
+                            );
+                        }
+                        args[0].clone()
+                    }
+                    Edge::Body(s, f) => {
+                        if !self.env.sorts.contains(s) {
+                            return error("UnknownSymbol", "unknown closure sort");
+                        }
+                        context.extend([s.clone(), s.clone()]);
+                        self.formula(f, context, depth + 1)?;
+                        context.truncate(context.len() - 2);
+                        s.clone()
+                    }
+                };
+                if self.term(left, context)? != sort || self.term(right, context)? != sort {
+                    return error(
+                        "TypeMismatch",
+                        "closure endpoints require the edge sort in the outer context",
+                    );
+                }
+            }
             Formula::Not(a) => self.formula(a, context, depth + 1)?,
             Formula::And(a, b) | Formula::Or(a, b) | Formula::Implies(a, b) => {
                 self.formula(a, context, depth + 1)?;
@@ -268,6 +341,7 @@ impl AstDecoder {
             "not" => 2,
             "unary" | "eq" | "and" | "or" | "implies" | "forall" | "exists" => 3,
             "binary" => 4,
+            "reach" => 5,
             _ => 0,
         };
         if a.len() != arity {
@@ -283,6 +357,27 @@ impl AstDecoder {
                 self.term(&a[3], depth + 1)?,
             ),
             "eq" => Formula::Eq(self.term(&a[1], depth + 1)?, self.term(&a[2], depth + 1)?),
+            "reach" => {
+                let edge = a[2].as_array().ok_or_else(|| {
+                    Error::new("SyntaxError", "Reach edge must be a tagged array")
+                })?;
+                let edge = match (edge.first().and_then(Value::as_str), edge.len()) {
+                    (Some("named"), 2) => Edge::Named(Self::symbol(&edge[1])),
+                    (Some("body"), 3) => Edge::Body(
+                        Self::symbol(&edge[1]),
+                        Box::new(self.formula(&edge[2], depth + 1)?),
+                    ),
+                    _ => return error("SyntaxError", "invalid Reach edge tag or arity"),
+                };
+                let left = self.term(&a[3], depth + 1)?;
+                let right = self.term(&a[4], depth + 1)?;
+                let kind = match a[1].as_str() {
+                    Some("plus") => ReachKind::Plus,
+                    Some("star") => ReachKind::Star,
+                    _ => ReachKind::Invalid(Self::symbol(&a[1])),
+                };
+                Formula::Reach(kind, edge, left, right)
+            }
             "not" => Formula::Not(Box::new(self.formula(&a[1], depth + 1)?)),
             "and" | "or" | "implies" => {
                 let left = Box::new(self.formula(&a[1], depth + 1)?);
