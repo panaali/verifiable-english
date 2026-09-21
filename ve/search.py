@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from itertools import product
+from itertools import combinations, product
 import math
 from typing import Any, Iterator, Sequence
 
@@ -59,6 +59,7 @@ class CountermodelResult:
     nonempty_domains: bool = False
     max_evaluations: int = MAX_EVALUATIONS
     nonvacuous_for_meaning_id: str | None = None
+    semantic_nonvacuity: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {"status": self.status, "model": None if self.model is None else self.model.to_dict(),
@@ -67,6 +68,7 @@ class CountermodelResult:
                 "nonempty_domains": self.nonempty_domains,
                 "max_models": self.max_models, "max_evaluations": self.max_evaluations,
                 "nonvacuous_for_meaning_id": self.nonvacuous_for_meaning_id,
+                "semantic_nonvacuity": self.semantic_nonvacuity,
                 "detail": self.detail}
 
 
@@ -124,100 +126,141 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
                              meaning_id(env, conclusion))
 
 
+def _used_predicates(*formulas: Any) -> frozenset[str]:
+    names, stack = set(), [f for f in formulas if f is not None]
+    while stack:
+        node = stack.pop()
+        if isinstance(node, (Unary, Binary)):
+            names.add(node.predicate)
+        elif isinstance(node, (And, Or, Implies)):
+            stack.extend((node.left, node.right))
+        elif isinstance(node, (Not, Forall, Exists)):
+            stack.append(node.body)
+    return frozenset(names)
+
+
 def _subsets(domains: dict[str, list[str]], signature: tuple[str, ...]) -> Iterator[list[list[str]]]:
-    """Stream every subset, regenerating polynomial atoms for each bit mask."""
-    atom_count = 1
-    for sort in signature:
-        atom_count *= len(domains[sort])
-    for mask in range(1 << atom_count):
-        if mask.bit_count() > MAX_TUPLES:
-            continue
-        rows: list[list[str]] = []
-        bits = mask
-        while bits:
-            low = bits & -bits
-            index = low.bit_length() - 1
-            row = [""] * len(signature)
-            for position in range(len(signature) - 1, -1, -1):
-                domain = domains[signature[position]]
-                index, offset = divmod(index, len(domain))
-                row[position] = domain[offset]
-            rows.append(row)
-            bits ^= low
-        yield rows
+    """Stream relation subsets by increasing tuple count, then given domain order."""
+    atoms = tuple(product(*(domains[s] for s in signature)))
+    for size in range(min(len(atoms), MAX_TUPLES) + 1):
+        for subset in combinations(atoms, size):
+            yield [list(row) for row in subset]
 
 
-def _relation_assignments(env: Any, domains: dict[str, list[str]]) -> Iterator[dict[str, list[list[str]]]]:
-    names = sorted(env.predicates)
-    current: dict[str, list[list[str]]] = {}
-    def walk(index: int) -> Iterator[dict[str, list[list[str]]]]:
-        if index == len(names):
-            yield {k: v for k, v in current.items()}
+def _relation_assignments(env: Any, domains: dict[str, list[str]],
+                          used: frozenset[str]) -> Iterator[dict[str, list[list[str]]]]:
+    # Tag atoms across relations so sparsity is GLOBAL, rather than exhausting
+    # a dense final relation before trying the first atom of an earlier one.
+    possible = sum(math.prod(len(domains[s]) for s in env.predicates[name].arguments)
+                   for name in used)
+    if possible > MAX_TUPLES:
+        raise _SearchSpaceLimit
+    atoms = tuple((name, row) for name in sorted(used)
+                  for row in product(*(domains[s] for s in env.predicates[name].arguments)))
+    for size in range(len(atoms) + 1):
+        for subset in combinations(atoms, size):
+            relations = {name: [] for name in sorted(env.predicates)}
+            for name, row in subset:
+                relations[name].append(list(row))
+            yield relations
+
+
+def _domain_sizes(minima: list[int], maximum: int) -> Iterator[tuple[int, ...]]:
+    """Stream bounded vectors by total entities, then lexicographically."""
+    suffix_min = [0] * (len(minima) + 1)
+    for index in range(len(minima) - 1, -1, -1):
+        suffix_min[index] = minima[index] + suffix_min[index + 1]
+
+    def walk(index, remaining, prefix):
+        if index == len(minima):
+            if remaining == 0:
+                yield prefix
             return
-        name = names[index]
-        signature = env.predicates[name].arguments
-        prior_total = sum(len(rows) for key, rows in current.items() if key != name)
-        for subset in _subsets(domains, signature):
-            if len(subset) + prior_total > MAX_TUPLES:
-                continue
-            current[name] = subset
-            yield from walk(index + 1)
-        current.pop(name, None)
-    yield from walk(0)
+        low = max(minima[index], remaining - maximum * (len(minima) - index - 1))
+        high = min(maximum, remaining - suffix_min[index + 1])
+        for size in range(low, high + 1):
+            yield from walk(index + 1, remaining - size, (*prefix, size))
+
+    for total in range(sum(minima), len(minima) * maximum + 1):
+        yield from walk(0, total, ())
 
 
-def _models(env: Any, minimum_size: int, maximum: int) -> Iterator[FiniteModel]:
+def _models(env: Any, minimum_size: int, maximum: int,
+            used: frozenset[str]) -> Iterator[FiniteModel]:
     sorts = sorted(env.sorts)
     constants = sorted(env.constants)
     minimum = {sort: minimum_size for sort in sorts}
     for declaration in env.constants.values():
         minimum[declaration.sort] = max(minimum[declaration.sort], 1)
-    ranges = [range(minimum[s], maximum + 1) for s in sorts]
-    for sizes in product(*ranges):
+    for sizes in _domain_sizes([minimum[s] for s in sorts], maximum):
         domains = {sort: [f"e{i}" for i in range(size)] for sort, size in zip(sorts, sizes, strict=True)}
-        possible_atoms = sum(math.prod(len(domains[s]) for s in p.arguments)
-                             for p in env.predicates.values())
-        if possible_atoms > MAX_TUPLES:
-            raise _SearchSpaceLimit
         choices = [domains[env.constants[name].sort] for name in constants]
-        for denotations in product(*choices):
-            constant_map = dict(zip(constants, denotations, strict=True))
-            for relations in _relation_assignments(env, domains):
+        for relations in _relation_assignments(env, domains, used):
+            for denotations in product(*choices):
+                constant_map = dict(zip(constants, denotations, strict=True))
                 yield FiniteModel.from_dict(env, {"complete": True, "domains": domains,
                                                   "constants": constant_map, "relations": relations})
 
 
-def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int) -> tuple[bool, int, bool]:
+def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int, *,
+               semantic: bool = False) -> tuple[bool, int, bool]:
     """Check the conservative non-vacuity condition.
 
     Every encountered quantifier must have a nonempty domain.  Every implication
     occurrence must have a true antecedent for at least one assignment induced by
     its enclosing quantifiers.  An impossible antecedent therefore rejects the
-    model rather than being guessed to be exempt.
+    model rather than being guessed to be exempt. Semantic mode also recognizes
+    maximal disjunctions under a universal: their negated disjuncts together
+    form a guard, whose positive bodies must jointly hold at some assignment.
     """
     evaluator = _Evaluator(env, model, maximum, trace=False)
-    implication_hits: dict[tuple[int, ...], bool] = {}
+    guard_hits: dict[tuple[int, ...], bool] = {}
     ok = True
 
-    def walk(node: Any, bindings=(), path=()) -> None:
+    def hit(guards, bindings, path):
+        guard_hits.setdefault(path, False)
+        value = True
+        for guard in guards:
+            result, _ = evaluator.formula(guard, bindings)
+            value &= result
+            if not value:
+                break
+        guard_hits[path] |= value
+
+    def clause_guards(node):
+        guards, stack = [], [node]
+        while stack:
+            disjunct = stack.pop()
+            evaluator.tick()
+            if isinstance(disjunct, Or):
+                stack.extend((disjunct.right, disjunct.left))
+            elif isinstance(disjunct, Not):
+                guards.append(disjunct.body)
+        return guards
+
+    def walk(node: Any, bindings=(), path=(), universal=False, in_clause=False) -> None:
         nonlocal ok
         evaluator.tick()
         if isinstance(node, Implies):
-            key = path
-            implication_hits.setdefault(key, False)
-            value, _ = evaluator.formula(node.left, bindings)
-            implication_hits[key] |= value
-            walk(node.left, bindings, path + (0,)); walk(node.right, bindings, path + (1,))
+            hit((node.left,), bindings, path)
+            walk(node.left, bindings, path + (0,), universal)
+            walk(node.right, bindings, path + (1,), universal)
         elif isinstance(node, (And, Or)):
-            walk(node.left, bindings, path + (0,)); walk(node.right, bindings, path + (1,))
+            if semantic and universal and isinstance(node, Or) and not in_clause:
+                guards = clause_guards(node)
+                if guards:
+                    hit(guards, bindings, path)
+            for index, child in enumerate((node.left, node.right)):
+                walk(child, bindings, path + (index,), universal, isinstance(node, Or))
         elif isinstance(node, Not):
-            walk(node.body, bindings, path + (0,))
+            walk(node.body, bindings, path + (0,), universal)
         elif isinstance(node, (Forall, Exists)):
             domain = model.domains[node.sort]
             if not domain:
                 ok = False
             for entity in domain:
-                walk(node.body, ((node.sort, entity),) + bindings, path + (0,))
+                walk(node.body, ((node.sort, entity),) + bindings, path + (0,),
+                     universal or isinstance(node, Forall))
         elif isinstance(node, (Unary, Binary, Eq)):
             return
 
@@ -225,20 +268,18 @@ def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int) -> tup
         walk(formula)
     except _Exhausted:
         return False, evaluator.work, True
-    return ok and all(implication_hits.values()), evaluator.work, False
+    return ok and all(guard_hits.values()), evaluator.work, False
 
 
-def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max_domain_size: int = 2,
-                      min_domain_size: int = 0, nonempty_domains: bool = False,
-                      nonvacuous_for: Any | None = None, max_models: int = 10_000,
-                      max_evaluations: int = 1_000_000) -> CountermodelResult:
-    """Enumerate all models in the size bound until a countermodel or budget limit."""
-    premises = _premises(premises)
-    if any(type(x) is not int or isinstance(x, bool) or x < 0
+def _validate_options(min_domain_size, max_domain_size, max_models, max_evaluations,
+                      nonempty_domains, nonvacuous_for, semantic_nonvacuity):
+    if any(type(x) is not int or x < 0
            for x in (min_domain_size, max_domain_size, max_models, max_evaluations)):
         raise ValueError("search bounds must be nonnegative integers")
-    if type(nonempty_domains) is not bool:
-        raise ValueError("nonempty_domains must be a boolean")
+    if type(nonempty_domains) is not bool or type(semantic_nonvacuity) is not bool:
+        raise ValueError("nonempty_domains and semantic_nonvacuity must be booleans")
+    if semantic_nonvacuity and nonvacuous_for is None:
+        raise ValueError("semantic_nonvacuity requires nonvacuous_for")
     minimum_size = max(min_domain_size, 1 if nonempty_domains else 0)
     if minimum_size > max_domain_size:
         raise ValueError("min_domain_size cannot exceed max_domain_size")
@@ -246,6 +287,19 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
         raise ResourceLimit("Evaluation budget exceeds the v0 limit of 1,000,000 nodes")
     if max_domain_size > MAX_ENTITIES:
         raise ResourceLimit(f"max_domain_size cannot exceed {MAX_ENTITIES}")
+    return minimum_size
+
+
+def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max_domain_size: int = 2,
+                      min_domain_size: int = 0, nonempty_domains: bool = False,
+                      nonvacuous_for: Any | None = None, semantic_nonvacuity: bool = False,
+                      max_models: int = 10_000,
+                      max_evaluations: int = 1_000_000) -> CountermodelResult:
+    """Search used-relation interpretations; fix all unused predicates to empty."""
+    premises = _premises(premises)
+    minimum_size = _validate_options(min_domain_size, max_domain_size, max_models,
+                                     max_evaluations, nonempty_domains,
+                                     nonvacuous_for, semantic_nonvacuity)
     _check_aggregate_ast(premises, conclusion)
     for formula in premises:
         check_formula(env, formula)
@@ -256,16 +310,17 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
     def finish(status, model, checked, work, detail=""):
         return CountermodelResult(status, model, checked, work, max_domain_size, max_models,
                                   detail, min_domain_size, nonempty_domains,
-                                  max_evaluations, nonvacuous_id)
+                                  max_evaluations, nonvacuous_id, semantic_nonvacuity)
     checked = work = 0
-    iterator = _models(env, minimum_size, max_domain_size)
+    iterator = _models(env, minimum_size, max_domain_size,
+                       _used_predicates(*premises, conclusion, nonvacuous_for))
     while checked < max_models:
         try:
             model = next(iterator)
         except StopIteration:
-            detail = ("all finite models satisfying the non-vacuity constraints within the domain bound were exhausted"
+            detail = ("all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
                       if nonvacuous_for is not None else
-                      "all finite models within the domain bound were exhausted")
+                      "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)")
             return finish("NotFound", None, checked, work, detail)
         except _SearchSpaceLimit:
             return finish("ResourceLimit", None, checked, work,
@@ -273,7 +328,8 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
         if work >= max_evaluations:
             return finish("ResourceLimit", None, checked, work, "evaluation budget exhausted")
         if nonvacuous_for is not None:
-            suitable, used, exhausted = _nonvacuous(env, nonvacuous_for, model, max_evaluations - work)
+            suitable, used, exhausted = _nonvacuous(env, nonvacuous_for, model, max_evaluations - work,
+                                                 semantic=semantic_nonvacuity)
             work += used
             if exhausted:
                 return finish("ResourceLimit", None, checked + 1, work, "evaluation budget exhausted")
@@ -291,9 +347,9 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
     try:
         next(iterator)
     except StopIteration:
-        detail = ("all finite models satisfying the non-vacuity constraints within the domain bound were exhausted"
+        detail = ("all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
                   if nonvacuous_for is not None else
-                  "all finite models within the domain bound were exhausted")
+                  "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)")
         return finish("NotFound", None, checked, work, detail)
     except _SearchSpaceLimit:
         return finish("ResourceLimit", None, checked, work,
@@ -303,21 +359,13 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
 
 def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int = 2,
                               min_domain_size: int = 0, nonempty_domains: bool = False,
-                              nonvacuous_for: Any | None = None, max_models: int = 10_000,
+                              nonvacuous_for: Any | None = None, semantic_nonvacuity: bool = False,
+                              max_models: int = 10_000,
                               max_evaluations: int = 1_000_000) -> CountermodelResult:
     """Find a bounded finite model on which two closed formulas differ."""
-    if any(type(x) is not int or isinstance(x, bool) or x < 0
-           for x in (min_domain_size, max_domain_size, max_models, max_evaluations)):
-        raise ValueError("search bounds must be nonnegative integers")
-    if type(nonempty_domains) is not bool:
-        raise ValueError("nonempty_domains must be a boolean")
-    minimum_size = max(min_domain_size, 1 if nonempty_domains else 0)
-    if minimum_size > max_domain_size:
-        raise ValueError("min_domain_size cannot exceed max_domain_size")
-    if max_evaluations > MAX_EVALUATIONS:
-        raise ResourceLimit("Evaluation budget exceeds the v0 limit of 1,000,000 nodes")
-    if max_domain_size > MAX_ENTITIES:
-        raise ResourceLimit(f"max_domain_size cannot exceed {MAX_ENTITIES}")
+    minimum_size = _validate_options(min_domain_size, max_domain_size, max_models,
+                                     max_evaluations, nonempty_domains,
+                                     nonvacuous_for, semantic_nonvacuity)
     if _node_count(a) + _node_count(b) > MAX_NODES:
         raise ResourceLimit(f"formula pair exceeds aggregate {MAX_NODES}-node search limit")
     check_formula(env, a); check_formula(env, b)
@@ -327,17 +375,18 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
     def finish(status, model, checked, work, detail=""):
         return CountermodelResult(status, model, checked, work, max_domain_size, max_models,
                                   detail, min_domain_size, nonempty_domains,
-                                  max_evaluations, nonvacuous_id)
+                                  max_evaluations, nonvacuous_id, semantic_nonvacuity)
 
     checked = work = 0
-    iterator = _models(env, minimum_size, max_domain_size)
+    iterator = _models(env, minimum_size, max_domain_size,
+                       _used_predicates(a, b, nonvacuous_for))
     while checked < max_models:
         try:
             model = next(iterator)
         except StopIteration:
-            detail = ("all finite models satisfying the non-vacuity constraints within the domain bound were exhausted"
+            detail = ("all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
                       if nonvacuous_for is not None else
-                      "all finite models within the domain bound were exhausted")
+                      "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)")
             return finish("NotFound", None, checked, work, detail)
         except _SearchSpaceLimit:
             return finish("ResourceLimit", None, checked, work,
@@ -345,7 +394,8 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
         if work >= max_evaluations:
             return finish("ResourceLimit", None, checked, work, "evaluation budget exhausted")
         if nonvacuous_for is not None:
-            suitable, used, exhausted = _nonvacuous(env, nonvacuous_for, model, max_evaluations - work)
+            suitable, used, exhausted = _nonvacuous(env, nonvacuous_for, model, max_evaluations - work,
+                                                 semantic=semantic_nonvacuity)
             work += used
             if exhausted:
                 return finish("ResourceLimit", None, checked + 1, work, "evaluation budget exhausted")
@@ -365,9 +415,9 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
     try:
         next(iterator)
     except StopIteration:
-        detail = ("all finite models satisfying the non-vacuity constraints within the domain bound were exhausted"
+        detail = ("all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
                   if nonvacuous_for is not None else
-                  "all finite models within the domain bound were exhausted")
+                  "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)")
         return finish("NotFound", None, checked, work, detail)
     except _SearchSpaceLimit:
         return finish("ResourceLimit", None, checked, work,

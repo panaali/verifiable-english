@@ -49,13 +49,13 @@ def test_four_views_exact_example_and_legacy_entry_points():
     }
     for view, expected in texts.items():
         assert render(formula, ENV, view) == expected
-        doc_text = expected[0].upper() + expected[1:] if view == "ve_natural" else expected
+        doc_text = expected
         assert render(Document((formula,)), ENV, view) == doc_text + ".\n"
         assert render_fol(ENV, Document((formula,)), view=view) == doc_text + ".\n"
-    assert natural_formula(ENV, formula).text == texts["ve_natural"] + "."
+    assert natural_formula(ENV, formula).text == texts["ve_natural"]
     document = Document((formula, formula))
     assert render(document, ENV, "ve_strict") == print_document(ENV, document)
-    assert natural_document(ENV, document).text.count("For every service x0") == 2
+    assert natural_document(ENV, document).text.count("for every service x0") == 2
     assert "x2" not in natural_document(ENV, document).text
     with pytest.raises(ValueError):
         render(formula, ENV, "informal")
@@ -236,3 +236,205 @@ def test_injectivity_across_template_collisions_and_sort_aliases():
         formulas = atoms + [cls(sort, body) for cls in (Forall, Exists)
                             for sort in env.sorts for body in atoms]
         assert len({render(f, env, "ve_natural") for f in formulas}) == len(formulas)
+
+
+def review_vocabulary():
+    """The review's deployed/reviewed/owns/audits vocabulary and typed constants."""
+    data = vocabulary()
+    data['vocabulary'] = {
+        'sorts': {'service': {'description': 'Service'}, 'person': {'description': 'Person'}},
+        'predicates': {
+            'deployed': {'arguments': ['service'], 'description': 'Deployed'},
+            'reviewed': {'arguments': ['service'], 'description': 'Reviewed'},
+            'owns': {'arguments': ['person', 'service'], 'description': 'Ownership'},
+            'audits': {'arguments': ['person', 'service'], 'description': 'Auditing'},
+        },
+        'constants': {'api': {'sort': 'service', 'description': 'API'},
+                      'alice': {'sort': 'person', 'description': 'Alice'}},
+    }
+    return data
+
+
+@pytest.mark.parametrize('predicate,template,code', [
+    # All newly accepted-template reproductions in review-views.md.
+    ('owns', '{0} is owned by {1}', 'BINARY_AUXILIARY'),
+    ('owns', '{0} belongs to {1}', 'BINARY_CONVERSE'),
+    ('owns', '{0} lacks {1}', 'LOGICAL_WORD'),
+    ('owns', '{0} audits carefully {1}', 'SYMBOL_COLLISION'),
+    ('deployed', '{0} is undeployed', 'NEGATED_HEAD'),
+    ('deployed', '{0} is reviewed already', 'UNARY_MODIFIER'),
+    # Already rejected cases must stay rejected and now produce diagnostics.
+    ('owns', '{1} owns {0}', 'TEMPLATE_SHAPE'),
+    ('owns', '{0} owns', 'TEMPLATE_SHAPE'),
+    ('owns', '{0} owns {0} {1}', 'PHRASE_SYNTAX'),
+    ('owns', '{0} (owns) {1}', 'PHRASE_SYNTAX'),
+    ('owns', '{0} owns\n{1}', 'TEMPLATE_SHAPE'),
+    ('owns', '{0} Owns {1}', 'PHRASE_SYNTAX'),
+    ('owns', '{0} owns  things {1}', 'PHRASE_SYNTAX'),
+    ('owns', '{0:10} owns {1}', 'TEMPLATE_SHAPE'),
+    ('deployed', '{0.__class__}', 'TEMPLATE_SHAPE'),
+    ('owns', '{0} owns and audits {1}', 'LOGICAL_WORD'),
+    ('owns', '{0} is {1}', 'BINARY_AUXILIARY'),
+    ('deployed', '{0} is reviewed', 'SYMBOL_COLLISION'),
+    ('deployed', '{0} is  ', 'PHRASE_SYNTAX'),
+])
+def test_review_template_reproductions_fall_back_and_lint(predicate, template, code):
+    from ve import lint_vocabulary
+    data = review_vocabulary()
+    data['vocabulary']['predicates'][predicate]['verbalisation'] = template
+    env = Environment(data)
+    formula = (Unary(predicate, Const('api')) if predicate == 'deployed'
+               else Binary(predicate, Const('alice'), Const('api')))
+    assert render(formula, env, 've_natural') == render(formula, env, 've_strict')
+    path = f'/vocabulary/predicates/{predicate}/verbalisation'
+    assert (path, code) in {(issue.path, issue.code) for issue in lint_vocabulary(env)}
+
+
+@pytest.mark.parametrize('word', 'is are was were be been being gets got'.split())
+def test_all_binary_auxiliaries_rejected(word):
+    from ve import lint_vocabulary
+    data = review_vocabulary()
+    data['vocabulary']['predicates']['owns']['verbalisation'] = f'{{0}} {word} owning {{1}}'
+    env = Environment(data)
+    assert any(i.code == 'BINARY_AUXILIARY' for i in lint_vocabulary(env))
+    assert render(Binary('owns', Const('alice'), Const('api')), env, 've_natural') == '@alice owns @api'
+
+
+@pytest.mark.parametrize('word', 'by to of from with for'.split())
+def test_all_binary_converse_endings_rejected(word):
+    from ve import lint_vocabulary
+    data = review_vocabulary()
+    data['vocabulary']['predicates']['owns']['verbalisation'] = f'{{0}} belongs {word} {{1}}'
+    assert any(i.code == 'BINARY_CONVERSE' for i in lint_vocabulary(Environment(data)))
+
+
+@pytest.mark.parametrize('word', [
+    'not', 'no', 'never', 'lacks', 'without', 'every', 'all', 'some', 'any', 'each',
+    'and', 'or', 'if', 'then', 'unless', 'only', 'x', 'x0', 'x12', 'X', 'A',
+    'api', 'person', 'audits', 'unreviewed', 'nonreviewed', 'un-reviewed', 'non-reviewed',
+])
+def test_forbidden_words_checked_in_templates_and_both_sort_nouns(word):
+    from ve import lint_vocabulary
+    for field in ('predicate', 'singular', 'plural'):
+        data = review_vocabulary()
+        if field == 'predicate':
+            data['vocabulary']['predicates']['owns']['verbalisation'] = f'{{0}} owns {word} {{1}}'
+            path = '/vocabulary/predicates/owns/verbalisation'
+        else:
+            noun = {'singular': 'service', 'plural': 'services'}
+            noun[field] = 'service ' + word
+            data['vocabulary']['sorts']['service']['verbalisation'] = noun
+            path = '/vocabulary/sorts/service/verbalisation/' + field
+        env = Environment(data)
+        assert any(i.path == path for i in lint_vocabulary(env)), (word, field)
+        formula = (Binary('owns', Const('alice'), Const('api')) if field == 'predicate'
+                   else Forall('service', Top()))
+        expected = '@alice owns @api' if field == 'predicate' else 'for every service x0: (true)'
+        assert render(formula, env, 've_natural') == expected
+
+
+@pytest.mark.parametrize('noun', ['x', 'service x', 'x1', 'X'])
+def test_review_variable_sort_nouns_rejected(noun):
+    from ve import lint_vocabulary
+    data = review_vocabulary()
+    data['vocabulary']['sorts']['service']['verbalisation'] = {'singular': noun, 'plural': 'services'}
+    env = Environment(data)
+    assert render(Forall('service', Top()), env, 've_natural') == 'for every service x0: (true)'
+    assert any(i.code == 'VARIABLE_TOKEN' for i in lint_vocabulary(env))
+
+
+def test_template_head_and_identifier_collisions_across_all_categories():
+    from ve import lint_vocabulary
+    data = review_vocabulary()
+    data['vocabulary']['predicates']['audits']['verbalisation'] = '{0} inspects {1}'
+    data['vocabulary']['predicates']['owns']['verbalisation'] = '{0} inspects carefully {1}'
+    data['vocabulary']['sorts']['service']['verbalisation'] = {'singular': 'inspects', 'plural': 'services'}
+    env = Environment(data)
+    assert render(Binary('owns', Const('alice'), Const('api')), env, 've_natural') == '@alice owns @api'
+    assert render(Forall('service', Top()), env, 've_natural') == 'for every service x0: (true)'
+    assert len([i for i in lint_vocabulary(env) if i.code == 'SYMBOL_COLLISION']) >= 2
+    # Exact duplicate templates are explicitly diagnosed for both declarations.
+    data['vocabulary']['predicates']['owns']['verbalisation'] = '{0} inspects {1}'
+    assert len([i for i in lint_vocabulary(Environment(data)) if i.code == 'DUPLICATE_TEMPLATE']) == 2
+
+
+@pytest.mark.parametrize('sort,noun', [('service', 'owner'), ('person', 'asset')])
+def test_review_sort_aliases_remain_visible_and_declared_collisions_reject(sort, noun):
+    import json
+    from ve import lint_vocabulary, render_vocabulary
+    data = review_vocabulary()
+    data['vocabulary']['sorts'][sort]['verbalisation'] = {'singular': noun, 'plural': noun + 's'}
+    env = Environment(data)
+    # Arbitrary aliases are trusted data: no lexical heuristic can prove that
+    # "asset" truthfully describes person. Every judge must see the same mapping.
+    legends = {render_vocabulary(env, view) for view in VIEWS}
+    assert len(legends) == 1
+    entry = next(s for s in json.loads(legends.pop())['sorts'] if s['identifier'] == sort)
+    assert entry['verbalisation']['singular'] == entry['rendered_noun'] == noun
+    # If the name belongs to another declared sort, it is rejected outright.
+    data['vocabulary']['sorts'][noun] = {'description': noun}
+    env = Environment(data)
+    assert render(Forall(sort, Top()), env, 've_natural') == f'for every {sort} x0: (true)'
+    assert any(i.code == 'SORT_COLLISION' for i in lint_vocabulary(env))
+    # The same check covers another sort's noun even when its identifier differs.
+    data['vocabulary']['sorts'].pop(noun)
+    data['vocabulary']['sorts']['other'] = {
+        'description': 'Other', 'verbalisation': {'singular': noun, 'plural': noun + 's'}}
+    assert any(i.code == 'SORT_COLLISION' for i in lint_vocabulary(Environment(data)))
+
+
+def test_legend_identical_deterministic_complete_and_lint_order_stable():
+    import json
+    from ve import lint_vocabulary, render_vocabulary
+    data = review_vocabulary()
+    data['vocabulary']['predicates']['owns']['verbalisation'] = '{0} is owned by {1}'
+    env = Environment(data)
+    text = render_vocabulary(env, 've_natural')
+    assert all(render_vocabulary(env, view) == text for view in VIEWS)
+    legend = json.loads(text)
+    owns = next(p for p in legend['predicates'] if p['identifier'] == 'owns')
+    assert owns == {'identifier': 'owns', 'arguments': ['person', 'service'],
+                    'description': 'Ownership', 'verbalisation': '{0} is owned by {1}',
+                    'rendered_template': '{0} owns {1}'}
+    assert {c['identifier'] for c in legend['constants']} == {'alice', 'api'}
+    for category in data['vocabulary']:
+        data['vocabulary'][category] = dict(reversed(list(data['vocabulary'][category].items())))
+    reversed_env = Environment(data)
+    assert render_vocabulary(reversed_env) == text
+    assert lint_vocabulary(env) == lint_vocabulary(reversed_env)
+    assert legend['lint'] == [i.to_dict() for i in lint_vocabulary(env)]
+    with pytest.raises(ValueError):
+        render_vocabulary(env, 'unknown')
+
+
+def test_same_real_output_limit_in_all_views():
+    data = review_vocabulary()
+    name, constant = 'p' * 64, 'c' * 64
+    data['vocabulary']['predicates'] = {name: {'arguments': ['service'], 'description': 'P'}}
+    data['vocabulary']['constants'] = {constant: {'sort': 'service', 'description': 'C'}}
+    env = Environment(data)
+    small = Document((Unary(name, Const(constant)),) * 400)
+    large = Document((Unary(name, Const(constant)),) * 600)
+    for view in VIEWS:
+        assert len(render(small, env, view).encode()) < 65536
+        with pytest.raises(ResourceLimit, match='65536-byte'):
+            render(large, env, view)
+
+
+def test_per_item_view_length_covariates_measure_actual_text_and_optional_legend():
+    from ve import measure_view_lengths, render_vocabulary
+    items = [Top(), Document((Top(), Bottom()))]
+    rows = measure_view_lengths(iter(items), ENV)
+    assert len(rows) == 8
+    for row in rows:
+        text = render(items[row['item_index']], ENV, row['view'])
+        assert row['characters'] == len(text)
+        assert row['tokenish'] == len(re.findall(r'\w+|[^\w\s]', text))
+        assert row['includes_vocabulary'] is False
+    assert rows[0]['characters'] == rows[0]['tokenish'] == 1  # Unicode symbol, not UTF-8 bytes
+    assert rows[1]['characters'] == 4 and rows[1]['tokenish'] == 1
+    with_legend = measure_view_lengths(items, ENV, include_vocabulary=True)
+    for row, full in zip(rows, with_legend, strict=True):
+        assert full['characters'] - row['characters'] == len(render_vocabulary(ENV))
+        assert full['includes_vocabulary'] is True
+    assert measure_view_lengths([], ENV) == []

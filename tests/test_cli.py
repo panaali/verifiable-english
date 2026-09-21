@@ -45,7 +45,7 @@ def test_cli_negative_and_resource_outcomes_are_distinct(tmp_path):
     limited = cli("evaluate", "--env", ENV, "--model", MODEL, "--max-evaluations", "0", SOURCE)
     assert negative.returncode == 1
     assert json.loads(negative.stdout)["evaluation"]["status"] == "Violated"
-    assert limited.returncode == 2
+    assert limited.returncode == 4
     assert json.loads(limited.stdout)["evaluation"]["status"] == "ResourceLimit"
 
 
@@ -90,7 +90,7 @@ def test_cli_named_fol_natural_view_and_canonical_output(tmp_path):
     assert canonical.stdout == "there exists person x0, (true).\n"
     assert natural.returncode == canonical.returncode == 0
     view = json.loads(natural.stdout)
-    assert view["text"] == "There is a person x0 such that (true).\n"
+    assert view["text"] == "there is a person x0 such that (true).\n"
     assert view["environment_id"] and view["meaning_id"]
     assert view["renderer"] and view["version"]
 
@@ -121,3 +121,31 @@ def test_environment_mutation_invalidates_models():
     changed["vocabulary"]["sorts"]["service"]["description"] = "Changed meaning."
     with pytest.raises(VEError):
         check(Environment.from_dict(changed), SOURCE.read_bytes(), model)
+
+
+def test_invalid_input_and_both_resource_limit_paths_have_distinct_exit_codes(tmp_path):
+    invalid = tmp_path / 'invalid.ve'
+    invalid.write_text('not a VE statement\n')
+    assert cli('parse', '--env', ENV, invalid).returncode == 2
+    huge = tmp_path / 'oversized.ve'
+    huge.write_bytes(b'true.\n' * 12000)
+    result = cli('parse', '--env', ENV, huge)
+    assert result.returncode == 4 and json.loads(result.stdout)['status'] == 'ResourceLimit'
+    result = cli('countermodel', '--env', ENV, '--conclusion', ROOT / 'examples/conclusion.ve',
+                 '--max-models', '0')
+    assert result.returncode == 4 and json.loads(result.stdout)['status'] == 'ResourceLimit'
+
+
+def test_cli_semantic_nonvacuity_clause_guard(tmp_path):
+    clause = tmp_path / 'clause.ve'
+    clause.write_text('for every service s, ((not (s is deployed)) or (s is reviewed)).\n')
+    bottom = tmp_path / 'bottom.ve'
+    bottom.write_text('false.\n')
+    result = cli('countermodel', '--env', ENV, '--conclusion', bottom, '--premises', clause,
+                 '--nonvacuous-for', clause, '--semantic-nonvacuity')
+    assert result.returncode == 0, result.stdout
+    record = json.loads(result.stdout)
+    assert record['semantic_nonvacuity'] is True
+    assert record['model']['relations']['deployed'] and record['model']['relations']['reviewed']
+    invalid = cli('countermodel', '--env', ENV, '--conclusion', bottom, '--semantic-nonvacuity')
+    assert invalid.returncode == 2
