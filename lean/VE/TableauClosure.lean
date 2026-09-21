@@ -208,6 +208,25 @@ def closed (E : Environment) (b : Branch) : Bool :=
   let ls := literals b
   ls.any (closes E b ls)
 
+/-- Version 2's existing Python rule: exact formula AND exact bindings with
+opposite signs. No normalization or search heuristic is part of this test. -/
+def complementary (b : Branch) : Bool :=
+  b.formulas.any fun a => a.positive && b.formulas.any fun n =>
+    !n.positive && decide (a.formula = n.formula ∧ a.bindings = n.bindings)
+
+theorem complementary_sound {S : Structure} (b : Branch) (ρ : Assignment S)
+    (hh : b.Holds S ρ) (hc : complementary b = true) : False := by
+  obtain ⟨a, ha, hc⟩ := List.any_eq_true.mp hc
+  obtain ⟨hp, hc⟩ := Bool.and_eq_true_iff.mp hc
+  obtain ⟨n, hn, hc⟩ := List.any_eq_true.mp hc
+  obtain ⟨hnpos, he⟩ := Bool.and_eq_true_iff.mp hc
+  have he' : a.formula = n.formula ∧ a.bindings = n.bindings := of_decide_eq_true he
+  have hapos := hh a ha
+  have hnneg := hh n hn
+  have hnpos' : n.positive = false := by cases h : n.positive <;> simp_all
+  simp only [Signed.Holds, hp, hnpos', if_true, Bool.false_eq_true, if_false] at hapos hnneg
+  exact hnneg (by simpa only [he'.1, he'.2] using hapos)
+
 theorem closes_sound {E : Environment} {S : Structure} (hS : S.Admissible E)
     (b : Branch) (ρ : Assignment S) (hρ : Assignment.Typed S b ρ)
     (ls : List Literal) (hh : ∀ l ∈ ls, l.Holds S ρ) (l : Literal)
