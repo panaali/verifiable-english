@@ -290,6 +290,7 @@ def run(exp: Experiment, client: LLMClient, split: str, out_dir: Path | None = N
                 prompt_sha=hashlib.sha256(p.encode()).hexdigest()[:16], llm_key=r.key, ok=r.ok, error=r.error,
                 latency_s=r.latency_s, input_tokens=r.input_tokens, output_tokens=r.output_tokens,
                 from_cache=r.from_cache, reply=r.text, tool_events=list(r.tool_events),
+                finish_reason=r.finish_reason, truncated=r.truncated,
             )  # fmt: skip
             if r.tool_events:
                 # The judge ran a command or tool: it may have read ground truth. Invalid, scored worst case.
@@ -313,6 +314,7 @@ def run(exp: Experiment, client: LLMClient, split: str, out_dir: Path | None = N
         seed=exp.seed,
         n_failed_calls=sum(not r.ok for r in results),
         n_tool_use_trials=sum(bool(r.tool_events) for r in results),
+        n_truncated=sum(r.truncated for r in results),
         git_head=_git(exp.root, "rev-parse", "HEAD").stdout.strip(),
         git_dirty=bool(_git(exp.root, "status", "--porcelain", "--untracked-files=no").stdout.strip()),
     )

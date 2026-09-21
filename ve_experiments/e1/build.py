@@ -22,7 +22,9 @@ import random
 import sys
 from pathlib import Path
 
-from ve import formula_to_data
+from ve import formula_from_data, formula_to_data
+from ve.attacks import validate_attack as oracle_validate_attack
+from ve.equivalence import EQUIVALENT, compare as oracle_compare
 from ve.parser import parse
 
 from ..ve_iface import VeBackend
@@ -37,6 +39,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "experiments" / "E1" / "items"
 SPLIT_FILE = ROOT / "experiments" / "E1" / "splits.json"
 ATTACKERS = ("claude-fable-5-1", "gpt-6-astra")
+EXPLAINER = "gpt-6-astra"  # one explanation writer for every candidate (PREREG, Deviations: Claude quota)
 MAX_REWRITES = 2
 MODEL_ATTACKS_PER_ATTACKER = 2
 
@@ -143,6 +146,16 @@ def validate_attack(base: dict, g: list, seed: str) -> tuple[dict | None, str]:
     real = VeBackend(env)
     if real.evaluate(f, cmp["model"]) == real.evaluate(g, cmp["model"]):
         return None, "ve evaluator does not confirm the distinguishing model"
+    # The three-valued oracle has the last word: VALID means a replayed distinguishing model AND both
+    # implication directions decided. UNKNOWN and REJECTED candidates never reach a judge.
+    ve_env, ff = check(env, f)
+    verdict = oracle_validate_attack(ve_env, ff, formula_from_data(ve_env, g))
+    if verdict.status != "VALID":
+        return None, f"oracle {verdict.status}: {verdict.reason}"
+    oracle_direction = {"weakening": "weaker", "strengthening": "stronger", "incomparable": "incomparable"}[verdict.classification]
+    cmp = {**cmp, "direction": oracle_direction, "oracle": "VALID",
+           "oracle_empty_sorts_only": verdict.comparison.relation_detail == "differs_only_on_empty_sorts",
+           "oracle_warnings": len(verdict.warnings)}
     return cmp, "ok"
 
 
@@ -159,24 +172,31 @@ def mechanical_candidates(base: dict, rejected: list) -> list[dict]:
         if A.inside_negation(base["faithful"], path) and cmp["direction"] == "weaker":
             kind = "weakened_exception"
         out.append({"label": "bad", "kind": f"mech:{kind}", "family_of_attack": kind, "ast": g, "direction": cmp["direction"],
-                    "distinguishing_model": cmp["model"], "distinguishing_model_nonvacuous": cmp["nonvacuous"]})  # fmt: skip
+                    "distinguishing_model": cmp["model"], "distinguishing_model_nonvacuous": cmp["nonvacuous"],
+                    "oracle": cmp["oracle"], "oracle_empty_sorts_only": cmp["oracle_empty_sorts_only"]})  # fmt: skip
     return out
 
 
-def faithful_candidates(base: dict) -> list[dict]:
+def faithful_candidates(base: dict, rejected: list) -> list[dict]:
     f, env = base["faithful"], base["environment"]
-    out = [{"label": "good", "kind": "faithful:canonical", "ast": f}]
+    out = [{"label": "good", "kind": "faithful:canonical", "ast": f, "oracle": "EQUIVALENT"}]
     rewrites = []
+    ve_env, ff = check(env, f)
     for name, g in A.equivalent_rewrites(f):
         check(env, g)
-        if g not in [r[1] for r in rewrites] and A.compare(f, g, env["vocabulary"], base["group"] + name)["model"] is None:
-            rewrites.append((name, g))
+        if g in [r[1] for r in rewrites] or A.compare(f, g, env["vocabulary"], base["group"] + name)["model"] is not None:
+            continue
+        status = oracle_compare(ve_env, ff, formula_from_data(ve_env, g)).status
+        if status != EQUIVALENT:  # a "good" candidate must be CERTIFIED equivalent; excluded before selection
+            rejected.append({"group": base["group"], "kind": f"faithful:{name}", "reason": f"oracle {status}: rewrite not certified equivalent", "ast": g})
+            continue
+        rewrites.append((name, g))
     random.Random(_h(base["group"], "rewrites")).shuffle(rewrites)
     picked: list[tuple[str, list]] = []
     for name, g in rewrites:  # prefer distinct rewrite rules
         if len(picked) < MAX_REWRITES and name not in [p[0] for p in picked]:
             picked.append((name, g))
-    out += [{"label": "good", "kind": f"faithful:{name}", "ast": g} for name, g in picked]
+    out += [{"label": "good", "kind": f"faithful:{name}", "ast": g, "oracle": "EQUIVALENT"} for name, g in picked]
     return out
 
 
@@ -213,14 +233,15 @@ def model_candidates(bases: list[dict], client: LLMClient, rejected: list, recip
                 continue
             out[base["group"]].append({"label": "bad", "kind": f"model:{attacker}", "family_of_attack": f"model:{attacker}",
                                        "ast": g, "direction": cmp["direction"], "distinguishing_model": cmp["model"],
-                                       "distinguishing_model_nonvacuous": cmp["nonvacuous"]})  # fmt: skip
+                                       "distinguishing_model_nonvacuous": cmp["nonvacuous"], "oracle": cmp["oracle"],
+                                       "oracle_empty_sorts_only": cmp["oracle_empty_sorts_only"]})  # fmt: skip
     return out
 
 
 def add_explanations(cands: list[dict], client: LLMClient) -> None:
     reqs = []
     for c in cands:
-        author = c["kind"].split(":", 1)[1] if c["kind"].startswith("model:") else ATTACKERS[_h(c["id"], "author") % 2]
+        author = EXPLAINER
         c["explanation_author"] = author
         prompt = EXPLAIN_PROMPT.format(vocabulary=vocabulary_text(c["environment"]), requirement=c["requirement"],
                                        statement=render(c["environment"], c["ast"], "ve_strict") + ".")  # fmt: skip
@@ -263,7 +284,7 @@ def _progress(name: str):
 def build(split: str, use_llm: bool = True, client: LLMClient | None = None, recipe: str = "v1") -> list[dict]:
     bases = base_items(split)
     rejected: list[dict] = []
-    per_group = {b["group"]: faithful_candidates(b) + mechanical_candidates(b, rejected) for b in bases}
+    per_group = {b["group"]: faithful_candidates(b, rejected) + mechanical_candidates(b, rejected) for b in bases}
     if use_llm:
         client = client or LLMClient(timeout_s=600)
         for group, extra in model_candidates(bases, client, rejected, recipe).items():

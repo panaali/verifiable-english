@@ -47,6 +47,7 @@ class RawReply:
     output_tokens: int | None = None
     cached_input_tokens: int | None = None
     tool_events: tuple[str, ...] = ()  # anything the model did besides writing text (commands, tools, searches)
+    finish_reason: str | None = None  # "length" = the reply hit the token limit (known for vLLM judges only)
 
 
 @dataclass(frozen=True)
@@ -65,6 +66,11 @@ class LLMResult:
     cached_input_tokens: int | None = None
     tool_events: tuple[str, ...] = ()
     identity: str = ""
+    finish_reason: str | None = None  # "length" when the reply was cut at the token limit; None when unknown
+
+    @property
+    def truncated(self) -> bool:
+        return self.finish_reason == "length"
 
     @property
     def used_tools(self) -> bool:
@@ -201,7 +207,19 @@ def codex_backend(model: str, system: str, prompt: str, timeout_s: float, cwd: P
     return parse_codex_events(_run(cmd, full, timeout_s, cwd))
 
 
+OFFLINE_PREFIX = "vllm:"
+"""Judges named `vllm:<hugging face id>` are open-weight models run as a batch job on a GPU runtime
+(ve_experiments/colab.py). Their replies are imported into the cache under the same key a live call would
+use; a cache miss is therefore a missing import, never a reason to call anything."""
+
+
+def offline_backend(model: str, system: str, prompt: str, timeout_s: float, cwd: Path) -> RawReply:
+    raise BackendError(f"{model} is a batch judge and this trial was not imported (see ve_experiments/colab.py)")
+
+
 def default_backend_for(model: str) -> Backend:
+    if model.startswith(OFFLINE_PREFIX):
+        return offline_backend
     if model.startswith("claude"):
         return claude_backend
     if model.startswith(("gpt", "o1", "o3", "o4", "codex")):
@@ -253,6 +271,7 @@ class LLMClient:
         with self._lock_for(key):  # identical concurrent requests make one model call
             hit = self._cache_read(key)
             if hit is not None:
+                hit["tool_events"] = tuple(hit.get("tool_events") or ())
                 result = LLMResult(**{**hit, "from_cache": True})
                 self._log(result, tag)
                 return result
@@ -317,8 +336,11 @@ class LLMClient:
                             input_tokens=reply.input_tokens, output_tokens=reply.output_tokens,
                             cached_input_tokens=reply.cached_input_tokens,
                             tool_events=tuple(reply.tool_events), identity=identity,
+                            finish_reason=reply.finish_reason,
                         )  # fmt: skip
                     error = "empty reply"
+            if backend is offline_backend:
+                break  # nothing to retry
             if attempt < self.retries:
                 time.sleep(self.backoff_s * 2 ** (attempt - 1))
         return LLMResult(
@@ -337,6 +359,13 @@ class LLMClient:
             return json.loads(path.read_text(encoding="utf-8"))["result"]
         except (json.JSONDecodeError, KeyError, OSError):
             return None  # a corrupt entry is treated as a miss and overwritten
+
+    def store(self, result: LLMResult, system: str, prompt: str) -> None:
+        """Put an externally produced reply (a batch judge) into the cache. `result.key` must be the key of
+        the call it stands for. Failed results are stored too, so a replay reports the same failure."""
+        if result.key != cache_key(result.model, system, prompt, result.seed, result.identity):
+            raise ValueError("result.key does not match (model, system, prompt, seed, identity)")
+        self._cache_write(result.key, result, system, prompt)
 
     def _cache_write(self, key: str, result: LLMResult, system: str, prompt: str) -> None:
         path = self._cache_path(key)
