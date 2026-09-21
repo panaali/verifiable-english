@@ -94,7 +94,9 @@ upstream toolchain and its standard logical dependencies remain trusted.
   parameter assignments preserve branch satisfiability; fresh delta extensions
   preserve older valuations; gamma requires a known element. Equality closure
   supports reflexivity, symmetry, transitivity and unary/binary substitution.
-  Replay is total with depth fuel 500. Its entailment theorem is universe
+  Version 2 also checks exact complementary formulas with identical bindings,
+  matching the existing Python rule; version 1 retains literal-only closure.
+  Replay is total with depth fuel 125 (124 expansions plus a close). Its entailment theorem is universe
   polymorphic and permits infinite structures, empty sorts and empty carriers.
 * `VE/CertificateWire.lean`: exact certificate JSON decoding, canonical JSON and
   SHA-256 identity checks, plus the `check-certificate` mode. Its query acceptance
@@ -270,7 +272,7 @@ still uses its own checker and is not automatically upgraded to the Lean path.
 There is no graph wire/refinement theorem, completeness theorem, production
 resource-bound proof, or verification of empirical evidence.
 
-The certificate conformance run accepts **721/721** Python-produced certificates
+The certificate conformance run accepts **732/732** Python-produced certificates
 and rejects **150/150** forgeries, including missing/wrong-sort/future parameters,
 empty-sort inhabitation, illegal delta witnesses, stale identities and malformed
 branches. The two positive worked examples pass; the separated example has no

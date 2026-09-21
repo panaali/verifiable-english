@@ -99,7 +99,7 @@ def digest (domain : String) (j : Json) : Except String String := do
   pure (sha256 (domain ++ (← canonical 257 j)).toUTF8)
 
 def decodeTrace : Nat → Json → Except String Tableau.Trace
-  | 0, _ => throw "ResourceLimit: certificate depth exceeds 500"
+  | 0, _ => throw "ResourceLimit: certificate expansion depth exceeds 124"
   | fuel + 1, j => do
     let rule ← Bridge.stringField j "rule"
     if rule == "close" then
@@ -120,7 +120,7 @@ def decodeCertificate (j : Json) : Except String Tableau.Certificate := do
     "conclusion_meaning_id", "trace"]
   pure ⟨← Bridge.stringField j "checker_version", ← Bridge.stringField j "environment_id",
     ← Bridge.strings (← j.getObjVal? "premise_meaning_ids"),
-    ← Bridge.stringField j "conclusion_meaning_id", ← decodeTrace 500 (← j.getObjVal? "trace")⟩
+    ← Bridge.stringField j "conclusion_meaning_id", ← decodeTrace 125 (← j.getObjVal? "trace")⟩
 
 def meaningId (environmentId : String) (ast : Json) : Except String String :=
   digest "ve-meaning-v0\n" (Json.mkObj [("environment_id", .str environmentId), ("ast", ast)])

@@ -281,6 +281,9 @@ Closure checks true `false`, false `true`, a false equality whose terms coincide
 after positive-equality union, or opposite relation atoms modulo those equality
 classes. Well-typed inputs and sorted instantiation prevent cross-sort equality.
 Fresh parameters may denote equal elements; freshness never implies inequality.
+Version 2 also closes exact opposite-signed formulas with identical bindings.
+Lean supports that existing Python rule with a soundness proof and retains
+literal-only closure for version 1. Search hints never become closure rules.
 
 In the default Python API, replay rules, equality closure, input bindings and
 validators remain trusted Python. Search is untrusted, even though it shares
@@ -304,6 +307,12 @@ acceptance; exit 0 alone does not (a well-formed invalid trace returns false).
 No Python process, solver, certificate code or submitted Lean declaration runs
 inside this executable.
 
+Python search/replay and Lean trace decoding/replay allow at most 124 expansions
+along a path, followed by a close (125 trace nodes). This fits the 256-level JSON
+cap, reserving eight levels for package envelopes. A too-deep case fails with
+`ResourceLimit` while other cases in its batch continue; if its ID cannot be
+decoded, the error carries its zero-based `case_index` instead.
+
 `checkCertificate_sound` proves that acceptance entails the supplied conclusion
 from the exact supplied premises over every admissible structure, in every
 universe, including empty sorts. The JSON query theorem uses `Entails.{0}`.
@@ -312,11 +321,12 @@ instantiates this checker and no longer assumes an abstract `CertificateSound`.
 The graph result concerns Lean's named graph representation; Python's graph wire
 format, checker and leaf-display conventions are not automatically covered.
 
-The [certificate report](../conformance/certificates-report.json) records 721/721
+The [certificate report](../conformance/certificates-report.json) records 732/732
 Python-produced certificates accepted and 150/150 mutations rejected, with every
-search attempt retained, including seven resource-limit outcomes. There are
+search attempt retained, including two resource-limit outcomes. There are
 320 bounded random valid queries, 320 broader random valid queries, 160
-unconditioned random queries and all three worked examples. The search limitations
+unconditioned random queries, all three worked examples and eight existential
+weakening regressions after two De Morgan transformations. The search limitations
 and remaining interpretation assumptions are detailed in
 [METATHEORY.md](../lean/METATHEORY.md).
 

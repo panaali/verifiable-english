@@ -79,6 +79,10 @@ Tableau search and replay share a nesting bound derived from the JSON cap of
 Eight levels are reserved for certificate/package envelopes, giving a maximum
 trace depth of 124. Search beyond that returns `ResourceLimit`, and every emitted
 certificate has already passed wire validation and replay.
+Lean uses the same 124-expansion bound (125 trace nodes including the close),
+and depth errors affect only the submitted case, not the rest of its batch.
+Its version-2 replay now implements the same exact-formula closure rule as Python;
+version-1 Lean certificates retain their original literal-only closure semantics.
 
 ## Reference and attack validation
 
@@ -173,7 +177,11 @@ limit what is reached.
 ## Fair search and empty-sort-only refinements
 
 The prover schedules gamma expansions by increasing instantiation count, then
-formula age and parameter age, with complementary ground instances prioritized.
+formula age, with complementary ground instances prioritized. Within one
+formula's parameter choices, ground atoms beneath connectives or quantifiers
+rank likely connections before parameter age; atoms still containing bound
+variables supply no hint. This preserves the least-used/oldest formula order
+while avoiding irrelevant instances before a useful pair of witnesses.
 It starts at one instance per universal and increases that bound geometrically.
 Search-only NNF, trivial-connective, and associative/commutative keys rank
 connections; signed negations and alpha rules still use ordinary certificate
