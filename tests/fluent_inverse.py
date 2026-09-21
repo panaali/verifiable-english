@@ -70,6 +70,29 @@ class Inverse:
             if match:
                 self.pos += match.end()
                 return constructor()
+        match = re.compile("(" + TERM + ") is reachable from (" + TERM + r") by (one|zero) or more ").match(self.text, self.pos)
+        if match:
+            self.pos = match.end()
+            right, left = self.term(match[1], scope), self.term(match[2], scope)
+            kind = "plus" if match[3] == "one" else "star"
+            if self.take("steps satisfying ["):
+                sort = self.noun()
+                self.need(" ")
+                src = re.match(TERM, self.text[self.pos:])[0]
+                self.pos += len(src)
+                self.need(", ")
+                dst = re.match(TERM, self.text[self.pos:])[0]
+                self.pos += len(dst)
+                self.need(" | (")
+                body = self.formula(((dst, sort), (src, sort), *scope))
+                self.need(")]")
+                edge = ast.Body(sort, body)
+            else:
+                name = re.match(r"[a-z][a-z0-9_]*", self.text[self.pos:])[0]
+                self.pos += len(name)
+                self.need(" steps")
+                edge = ast.Named(name)
+            return ast.Reach(kind, edge, left, right)
         candidates = []
         for name, negative, pattern in self.atoms:
             match = pattern.match(self.text, self.pos)

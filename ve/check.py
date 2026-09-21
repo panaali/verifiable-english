@@ -20,7 +20,7 @@ def check(env, source, model=None, *, candidate_ast=None, max_evaluations=1_000_
     canonical = print_document(env, document)
     raw = source.encode("ascii") if type(source) is str else source
     result = {"assurance": "experimental", "language": "accepted", "environment_id": env.environment_id,
-              "source_id": source_id(source), "meaning_id": meaning_id(env, document),
+              "source_id": source_id(source, env), "meaning_id": meaning_id(env, document),
               "ast": document_to_data(env, document), "canonical_text": canonical,
               "canonical": canonical.encode("ascii") == raw,
               "intent": "unconfirmed", "proof": "not_checked", "evaluation": "not_evaluated"}

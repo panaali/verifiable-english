@@ -49,6 +49,33 @@ def parse_explicit(env, text, view, scope=()):
             match = re.fullmatch(pattern, text)
             if match:
                 return kind(sort, parse_explicit(env, match[2], view, (match[1], *scope)))
+    token = r"(@[a-z][a-z0-9_]*|x[0-9]+)"
+    if view in ("ve_strict", "fol_keywords"):
+        m = re.fullmatch(r"(tc|rtc)\[([a-z][a-z0-9_]*)\]\(" + token + ", " + token + r"\)", text)
+        if m:
+            return ast.Reach("plus" if m[1] == "tc" else "star", ast.Named(m[2]), term(m[3]), term(m[4]))
+        m = re.fullmatch(r"(tc|rtc)\[([a-z][a-z0-9_]*) (x\d+), (x\d+) \| \((.*)\)\]\(" + token + ", " + token + r"\)", text)
+        if m:
+            body = parse_explicit(env, m[5], view, (m[4], m[3], *scope))
+            return ast.Reach("plus" if m[1] == "tc" else "star", ast.Body(m[2], body), term(m[6]), term(m[7]))
+    elif symbols:
+        m = re.fullmatch(r"([a-z][a-z0-9_]*)(⁺|\*)\(" + token + ", " + token + r"\)", text)
+        if m:
+            return ast.Reach("plus" if m[2] == "⁺" else "star", ast.Named(m[1]), term(m[3]), term(m[4]))
+        m = re.fullmatch(r"\((TC|RTC) (x\d+):([a-z][a-z0-9_]*),(x\d+):([a-z][a-z0-9_]*)\.\((.*)\)\)\(" + token + "," + token + r"\)", text)
+        if m:
+            assert m[3] == m[5]
+            body = parse_explicit(env, m[6], view, (m[4], m[2], *scope))
+            return ast.Reach("plus" if m[1] == "TC" else "star", ast.Body(m[3], body), term(m[7]), term(m[8]))
+    elif view == "ve_natural":
+        m = re.fullmatch(token + " is reachable from " + token + r" by (one|zero) or more ([a-z][a-z0-9_]*) steps", text)
+        if m:
+            return ast.Reach("plus" if m[3] == "one" else "star", ast.Named(m[4]), term(m[2]), term(m[1]))
+        for sort in env.sorts:
+            m = re.fullmatch(token + " is reachable from " + token + r" by (one|zero) or more steps satisfying \[" + re.escape(natural.sorts[sort]) + r" (x\d+), (x\d+) \| \((.*)\)\]", text)
+            if m:
+                body = parse_explicit(env, m[6], view, (m[5], m[4], *scope))
+                return ast.Reach("plus" if m[3] == "one" else "star", ast.Body(sort, body), term(m[2]), term(m[1]))
     if text.startswith("if "):
         left, rest = first_group(text[3:])
         assert rest.startswith(", then ")

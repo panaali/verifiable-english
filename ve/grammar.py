@@ -89,6 +89,9 @@ class _Grammar:
                     self.add(name, args[0], q(f" is {pred}"))
                 else:
                     self.add(name, args[0], q(f" {pred} "), args[1])
+                    if self.env.closure and decl.arguments[0] == decl.arguments[1]:
+                        for op in ("tc", "rtc"):
+                            self.add(name, q(f"{op}[{pred}]("), args[0], q(", "), args[1], q(")"))
             for term in terms.values():
                 if term is not None:
                     self.add(name, term, q(" equals "), term)
@@ -100,6 +103,15 @@ class _Grammar:
                 self.add(name, q("("), left, q(") and ("), right, q(")"))
                 self.add(name, q("("), left, q(") or ("), right, q(")"))
                 self.add(name, q("if ("), left, q("), then ("), right, q(")"))
+        if self.env.closure and begin + 2 <= end and depth + 2 <= self.depth:
+            for sort in self.sorts:
+                endpoint = self.term(context, sort)
+                nested = context + ((begin, sort), (begin + 1, sort)) if self.mode == "full" else ()
+                body = self.state(nested, depth + 2, begin + 2, end)
+                if endpoint is not None and body is not None:
+                    for op in ("tc", "rtc"):
+                        self.add(name, q(f"{op}[{sort} x{begin}, x{begin + 1} | ("), body,
+                                 q(")]("), endpoint, q(", "), endpoint, q(")"))
         if begin < end:
             for sort in self.sorts:
                 nested = context + ((begin, sort),) if self.mode == "full" else ()

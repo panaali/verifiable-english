@@ -6,7 +6,7 @@ from itertools import combinations, product
 import math
 from typing import Any, Iterator, Sequence
 
-from .ast import (And, Binary, Eq, Exists, Forall, Implies, Not, Or, Unary,
+from .ast import (Reach, Named, Body, And, Binary, Eq, Exists, Forall, Implies, Not, Or, Unary,
                   check_formula)
 from .evaluate import (_Evaluator, _Exhausted, _evaluate_validated,
                        _validate_model)
@@ -132,6 +132,11 @@ def _used_predicates(*formulas: Any) -> frozenset[str]:
         node = stack.pop()
         if isinstance(node, (Unary, Binary)):
             names.add(node.predicate)
+        elif isinstance(node, Reach):
+            if type(node.edge) is Named:
+                names.add(node.edge.relation)
+            else:
+                stack.append(node.edge.formula)
         elif isinstance(node, (And, Or, Implies)):
             stack.extend((node.left, node.right))
         elif isinstance(node, (Not, Forall, Exists)):

@@ -1,0 +1,171 @@
+{
+  "id": "alloy-models/algorithms/distributed-hashtable/chord.als@80",
+  "dataset": "alloy",
+  "source": "pred less_than [from, i,j: Id] { let next\" = Id<:next - (Id->from) | j in i.^next\" }",
+  "provenance": {
+    "git_revision": "46be9e1bafc85e37456cbf56e9dc92b6c8178666",
+    "path": "experiments/E0/survey_samples/alloy.jsonl",
+    "text_sha256": "24ca79b8a76da0b5c779b66d823541c1476093888ff7096ed2f79cadff5b0a06"
+  },
+  "environment": {
+    "language": "ve.core@0.1",
+    "profiles": [
+      "closure@0",
+      "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.1-closure-2026-09-21",
+    "vocabulary": {
+      "sorts": {
+        "identifier": {
+          "description": "An Alloy Id."
+        }
+      },
+      "predicates": {
+        "next_id": {
+          "arguments": [
+            "identifier",
+            "identifier"
+          ],
+          "description": "The primitive Id-restricted next field, one successor for each Id."
+        }
+      },
+      "constants": {
+        "origin": {
+          "sort": "identifier",
+          "description": "Supplied argument origin of less_than; arguments are fixed for this predicate call."
+        },
+        "left_id": {
+          "sort": "identifier",
+          "description": "Supplied argument left_id of less_than; arguments are fixed for this predicate call."
+        },
+        "right_id": {
+          "sort": "identifier",
+          "description": "Supplied argument right_id of less_than; arguments are fixed for this predicate call."
+        }
+      }
+    }
+  },
+  "ast": [
+    [
+      "reach",
+      "plus",
+      [
+        "body",
+        "identifier",
+        [
+          "and",
+          [
+            "binary",
+            "next_id",
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "not",
+            [
+              "eq",
+              [
+                "var",
+                0
+              ],
+              [
+                "const",
+                "origin"
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "const",
+        "left_id"
+      ],
+      [
+        "const",
+        "right_id"
+      ]
+    ]
+  ],
+  "strict": "tc[identifier x0, x1 | ((x0 next_id x1) and (not (x1 equals @origin)))](@left_id, @right_id).\n",
+  "adapter": {
+    "kind": "alloy-predicate-call@0",
+    "total_functions": [
+      "next_id"
+    ],
+    "conditions": [
+      "Id<:next restricts the source to Id; the carrier and next_id already enforce that signature.",
+      "Id->from is removed by excluding DESTINATION equal to origin inside the Body, fixed on every step.",
+      "No unfolding of a recursive helper or command scope is assumed. Constants supply arbitrary predicate arguments.",
+      "Both models retain the total successor cycle and the source fact that every Id is reachable from every Id."
+    ]
+  },
+  "contrast": "Changing only the fixed origin from i0 to i1 removes the first edge of the i0-to-i2 path. Outgoing edges of origin are not removed.",
+  "true_model": {
+    "complete": true,
+    "domains": {
+      "identifier": [
+        "i0",
+        "i1",
+        "i2"
+      ]
+    },
+    "constants": {
+      "origin": "i0",
+      "left_id": "i0",
+      "right_id": "i2"
+    },
+    "relations": {
+      "next_id": [
+        [
+          "i0",
+          "i1"
+        ],
+        [
+          "i1",
+          "i2"
+        ],
+        [
+          "i2",
+          "i0"
+        ]
+      ]
+    }
+  },
+  "false_model": {
+    "complete": true,
+    "domains": {
+      "identifier": [
+        "i0",
+        "i1",
+        "i2"
+      ]
+    },
+    "constants": {
+      "origin": "i1",
+      "left_id": "i0",
+      "right_id": "i2"
+    },
+    "relations": {
+      "next_id": [
+        [
+          "i0",
+          "i1"
+        ],
+        [
+          "i1",
+          "i2"
+        ],
+        [
+          "i2",
+          "i0"
+        ]
+      ]
+    }
+  }
+}
