@@ -3,7 +3,9 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from dataclasses import dataclass
+from itertools import product
 import json
+from pathlib import Path
 import re
 from typing import Any, Iterable
 
@@ -13,7 +15,8 @@ from .limits import MAX_SOURCE_BYTES
 
 VIEWS = ("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent")
 NATURAL_RENDERER = "ve.ace-explicit"
-NATURAL_RENDERER_VERSION = "2"
+NATURAL_RENDERER_VERSION = "3"
+NAMING_POLICIES = ("per_statement", "per_document")
 
 # These tables contain surface vocabulary only. Children arrive already grouped
 # by the ONE traversal below; no surface can change scope, names, or child order.
@@ -58,17 +61,24 @@ _LOGICAL_WORDS = frozenset("""all any every some each no none not never neither 
     true false equal equals there such that case condition for at least most
     exactly does do must may can cannot should shall will would whenever when
     implies iff otherwise always sometimes one two three four five six seven
-    eight nine ten a an the lacks""".split())
+    eight nine ten a an the lacks nothing nobody everything everybody just solely
+    many several another but plus few might""".split())
 _AUXILIARIES = frozenset("is are was were be been being gets got".split())
 _CONVERSE_ENDINGS = frozenset("by to of from with for".split())
 _TOKENS = re.compile(r"[A-Za-z][A-Za-z0-9_]*(?:-[A-Za-z]+)?", re.ASCII)
-_VARIABLE = re.compile(r"(?:x[0-9]*|[A-Z][0-9]*)\Z", re.ASCII)
+_VARIABLE = re.compile(r"(?:x[0-9]*|[A-Z]+[0-9]*)\Z", re.ASCII)
+MAX_TEMPLATE_CHARS = 80
+MAX_TEMPLATE_WORDS = 8
 
-# No guessed morphology: only these exact finite/base pairs support a declared
-# binary negative. All remaining words and placeholders are copied unchanged.
-_NEGATIVE_VERBS = {
-    "audits": "audit", "depends": "depend", "has": "have", "likes": "like",
-    "links": "link", "owns": "own", "reviews": "review", "trusts": "trust",
+# Exceptions to regular third-person spelling, including ambiguous -es/-ies.
+# This is a lexical convention, not proof of an English verb's meaning.
+_IRREGULAR_VERBS = {
+    "has": "have", "does": "do", "goes": "go", "says": "say",
+    "dies": "die", "lies": "lie", "ties": "tie", "unties": "untie", "vies": "vie",
+    "quizzes": "quiz", "gases": "gas", "biases": "bias",
+    "buses": "bus", "focuses": "focus", "echoes": "echo", "vetoes": "veto",
+    "aches": "ache", "caches": "cache", "niches": "niche", "axes": "axe",
+    "shoes": "shoe", "toes": "toe", "tiptoes": "tiptoe",
 }
 
 
@@ -77,25 +87,46 @@ def _negative_template(positive: str, arity: int) -> str | None:
     if arity == 1:
         return positive.replace("{0} is ", "{0} is not ", 1)
     words = positive.split()
-    base = _NEGATIVE_VERBS.get(words[1])
-    if base is None:
+    verb = words[1]
+    if verb in _IRREGULAR_VERBS:
+        base = _IRREGULAR_VERBS[verb]
+    elif len(verb) > 3 and verb.endswith("ies") and verb[-4] not in "aeiou":
+        base = verb[:-3] + "y"
+    elif verb.endswith(("ches", "shes", "sses", "xes", "zzes")):
+        base = verb[:-2]
+    elif len(verb) > 2 and verb.endswith("s") and not verb.endswith(("ss", "us", "is", "ous", "oes")):
+        base = verb[:-1]
+    else:
         return None
     return "{0} does not " + base + " " + " ".join(words[2:])
 
 
-def _fluent_variable_sequences(sorts):
-    """Disjoint numeric progressions, ordered by formal sort identifier.
+def _fluent_variable_letters(sorts, env):
+    """Stable distinct letters; digits only count occurrences, never encode sorts.
 
-    Suffix 1 is written without a number. Reserving a progression per sort makes
-    every variable's sort recoverable from the environment alone, even across
-    separate render calls. No selected lexical token can contain these names.
+    More than 23 sorts (or reserved identifiers) can exhaust single letters.
+    In that case use alphabetic codes BB, BC, ... in the same fixed order.
+    Avoid case-insensitive identifier collisions, including suffixed names.
     """
-    groups = defaultdict(list)
+    alphabet = "BCDEFGHJKLMNPQRSTUVWXYZ"
+    reserved = {re.sub(r"[0-9]+$", "", name.upper())
+                for declarations in (env.sorts, env.predicates, env.constants)
+                for name in declarations}
+    used = set(reserved)
+    result = {}
     for sort, noun in sorted(sorts.items()):
-        groups[noun[0].upper()].append(sort)
-    return {sort: {"letter": letter, "first_suffix": index, "stride": len(group)}
-            for letter, group in sorted(groups.items())
-            for index, sort in enumerate(group, 1)}
+        candidates = [noun[0].upper()]
+        candidates += [letter for letter in noun.upper() if letter in alphabet and letter not in "EU"]
+        candidates += list(alphabet)
+        letter = next((c for c in candidates if c in alphabet and c not in used), None)
+        width = 2
+        while letter is None:
+            letter = next(("".join(code) for code in product(alphabet, repeat=width)
+                           if "".join(code) not in used), None)
+            width += 1
+        result[sort] = letter
+        used.add(letter)
+    return result
 
 
 @dataclass(frozen=True, slots=True)
@@ -151,6 +182,17 @@ class _NaturalVocabulary:
         def report(path, code):
             issues.add(VocabularyLint(path, code))
 
+        def template_checks(value, path):
+            # Placeholders count as words, and all template characters count.
+            if len(value) > MAX_TEMPLATE_CHARS or len(value.split()) > MAX_TEMPLATE_WORDS:
+                report(path, "TEMPLATE_LENGTH")
+            words = _TOKENS.findall(value)
+            for noun in nouns:
+                tokens = _TOKENS.findall(noun)
+                if tokens and any(words[i:i + len(tokens)] == tokens
+                                  for i in range(len(words) - len(tokens) + 1)):
+                    report(path, "SORT_NOUN")
+
         def phrase_checks(name, phrase, path):
             words = _TOKENS.findall(phrase)
             if not _WORDS.fullmatch(phrase):
@@ -175,6 +217,7 @@ class _NaturalVocabulary:
                 continue
             path = f"/vocabulary/predicates/{name}/verbalisation"
             before = len(issues)
+            template_checks(value, path)
             if counts[value] > 1:
                 report(path, "DUPLICATE_TEMPLATE")
             arity = len(p.arguments)
@@ -212,11 +255,13 @@ class _NaturalVocabulary:
             if value is None:
                 continue
             path = f"/vocabulary/predicates/{name}/negative_verbalisation"
+            before = len(issues)
+            template_checks(value, path)
             if name not in accepted:
                 report(path, "NEGATIVE_WITHOUT_POSITIVE")
             elif value != _negative_template(self.predicates[name], len(p.arguments)):
                 report(path, "NEGATIVE_NOT_NEGATION")
-            else:
+            if len(issues) == before:
                 self.negatives[name] = value
 
         self.sorts = {}
@@ -258,23 +303,34 @@ def _check_view(view: str) -> None:
         raise ValueError(f"view must be one of {VIEWS}")
 
 
-def render_vocabulary(env: Any, view: str = "ve_strict") -> str:
+def _check_naming(naming: str) -> None:
+    if naming not in NAMING_POLICIES:
+        raise ValueError(f"naming must be one of {NAMING_POLICIES}")
+
+
+def render_vocabulary(env: Any, view: str = "ve_strict", naming: str = "per_statement") -> str:
     """Return the identical, deterministic identity/argument-order legend in every view.
 
     Raw metadata is JSON-quoted data. Both declared and selected templates are
     shown so a judge can inspect rejected metadata as well as the actual display.
     """
     _check_view(view)
+    _check_naming(naming)
     selected = _NaturalVocabulary(env)
     legend = {
-        "format": "ve.vocabulary-legend@2", "environment_id": env.environment_id,
+        "format": "ve.vocabulary-legend@3", "environment_id": env.environment_id,
+        "naming": naming,
         "fluent_variables": {
-            "sequences_by_sort": _fluent_variable_sequences(selected.sorts),
-            "rule": "For each sort, suffix = first_suffix + occurrence * stride, with "
-                    "occurrence starting at 0; suffix 1 is omitted. Allocate named binders "
-                    "in preorder across the entire document. Reset for each render call. "
+            "letters_by_sort": _fluent_variable_letters(selected.sorts, env),
+            "rule": "Distinct sort letters exclude A/I/O and declared identifiers (case-insensitive). "
+                    "Choose the noun initial, then its unused consonants, then BCDEFGHJKLMNPQRSTUVWXYZ; "
+                    "on exhaustion use alphabetic codes BB, BC, ... . Within the naming scope, "
+                    "each sort's named binders use suffixes 1, 2, ... in preorder; omit 1. "
                     "Constants have @; lexical words are lowercase.",
         },
+        "naming_rule": "Allocate binders in preorder. " + (
+            "Restart names in each statement." if naming == "per_statement" else
+            "Continue numbering across statements in the document; reset for each render call."),
         "sorts": [{"identifier": name, "description": s.description,
                    "verbalisation": None if s.verbalisation is None else {
                        "singular": s.verbalisation.singular, "plural": s.verbalisation.plural},
@@ -339,24 +395,30 @@ class _Traversal:
         return self.surface[kind].format_map(fields)
 
 
-def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict") -> str:
+def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
+           naming: str = "per_statement") -> str:
     """Render a checked AST with shared binder and operand preorder.
 
     A formula has no final punctuation; documents have a period and LF for each
     statement. All views preserve lexical case without sentence capitalization.
-    Explicit-view counters reset per statement; fluent names are unique across
-    the document. No view rewrites or normalizes the AST.
+    All views use the selected naming scope, defaulting to per-statement resets.
+    No view rewrites or normalizes the AST.
     """
     _check_view(view)
-    fluent = None
+    _check_naming(naming)
     if view == "ve_fluent":
         from .fluent import FluentTraversal
-        fluent = FluentTraversal(env)
+        traversal = FluentTraversal(env)
+    else:
+        traversal = _Traversal(env, view)
 
     def render_one(formula):
-        if fluent is not None:
-            return fluent.formula(formula)
-        return _Traversal(env, view).formula(formula, ())
+        if naming == "per_statement":
+            if view == "ve_fluent":
+                traversal.names.clear()
+            else:
+                traversal.next_name = 0
+        return traversal.formula(formula, ())
 
     if isinstance(value, ast.Document):
         ast.check_document(env, value)
@@ -374,22 +436,78 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict")
     return text
 
 
+def render_cell(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
+                naming: str = "per_statement") -> str:
+    """Render an experimental cell, ALWAYS including the identical view legend."""
+    return render_vocabulary(env, view, naming) + render(value, env, view, naming)
+
+
 def measure_view_lengths(items: Iterable[ast.Document | ast.Formula], env: Any, *,
-                         include_vocabulary: bool = False) -> list[dict[str, Any]]:
+                         include_vocabulary: bool = False,
+                         naming: str = "per_statement") -> list[dict[str, Any]]:
     r"""Measure each item/view's Unicode characters and word-or-symbol tokens.
 
     The Unicode regex ``\w+|[^\w\s]`` treats each non-whitespace punctuation or
     logic symbol as one token. These are reproducible covariates, not model/BPE
     token counts. Optional legend bytes are exactly those shown to every judge.
     """
-    legend = render_vocabulary(env) if include_vocabulary else ""
+    _check_naming(naming)
+    legend = render_vocabulary(env, naming=naming) if include_vocabulary else ""
     rows = []
     for index, item in enumerate(items):
         for view in VIEWS:
-            text = legend + render(item, env, view)
+            text = legend + render(item, env, view, naming)
             rows.append({"item_index": index, "view": view, "characters": len(text),
                          "tokenish": len(re.findall(r"\w+|[^\w\s]", text)),
                          "includes_vocabulary": include_vocabulary})
+    return rows
+
+
+def measure_jsonl_lengths(path: str | Path, env: Any, *, field: str = "ast",
+                          source_format: str = "ast", include_vocabulary: bool = True,
+                          naming: str = "per_statement") -> list[dict[str, Any]]:
+    """Measure actual JSONL records, preserving source line and optional item ID.
+
+    Select a top-level field containing a tagged formula/document AST, or strict
+    VE text with source_format='ve'. No invalid record is silently dropped.
+    The environment must match the file; a present environment_id is checked.
+    """
+    from .parser import parse
+    from .wire import _pairs, _invalid_number
+    from .limits import MAX_PACKAGE_BYTES
+    _check_naming(naming)
+    if source_format not in ("ast", "ve"):
+        raise ValueError("source_format must be ast or ve")
+    rows = []
+    with Path(path).open("rb") as stream:
+        line_number = 0
+        while line := stream.readline(MAX_PACKAGE_BYTES + 1):
+            line_number += 1
+            if len(line) > MAX_PACKAGE_BYTES:
+                raise ResourceLimit(f"JSONL line {line_number} exceeds {MAX_PACKAGE_BYTES} bytes")
+            # Item envelopes may contain ordinary JSON metadata (null/floats).
+            # Only the selected AST/source field is subject to VE's wire rules.
+            try:
+                record = json.loads(line, object_pairs_hook=_pairs, parse_constant=_invalid_number)
+            except RecursionError as exc:
+                raise ResourceLimit(f"JSONL line {line_number} exceeds the nesting limit") from exc
+            if not isinstance(record, dict) or field not in record:
+                raise ValueError(f"JSONL line {line_number} requires field {field!r}")
+            if record.get("environment_id", env.environment_id) != env.environment_id:
+                raise ValueError(f"JSONL line {line_number} has a different environment_id")
+            value = record[field]
+            if source_format == "ve":
+                item = parse(env, value)
+            elif isinstance(value, list) and value and isinstance(value[0], str):
+                item = ast.formula_from_data(env, value)
+            else:
+                item = ast.document_from_data(env, value)
+            for row in measure_view_lengths([item], env, include_vocabulary=include_vocabulary,
+                                            naming=naming):
+                row.update(item_index=line_number - 1, line=line_number)
+                if "id" in record:
+                    row["item_id"] = record["id"]
+                rows.append(row)
     return rows
 
 
@@ -419,16 +537,16 @@ class NaturalView:
                 "version": self.version}
 
 
-def natural_document(env: Any, document: ast.Document) -> NaturalView:
+def natural_document(env: Any, document: ast.Document, *, naming: str = "per_statement") -> NaturalView:
     """Render a validated read-only view with explicit scope and dependencies."""
     ast.check_document(env, document)
     from .identity import meaning_id
-    return NaturalView(render(document, env, "ve_natural"), env.environment_id,
+    return NaturalView(render(document, env, "ve_natural", naming), env.environment_id,
                        meaning_id(env, document))
 
 
-def natural_formula(env: Any, formula: Any) -> NaturalView:
+def natural_formula(env: Any, formula: Any, *, naming: str = "per_statement") -> NaturalView:
     ast.check_formula(env, formula)
     from .identity import meaning_id
-    return NaturalView(render(formula, env, "ve_natural"), env.environment_id,
+    return NaturalView(render(formula, env, "ve_natural", naming), env.environment_id,
                        meaning_id(env, formula))

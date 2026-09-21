@@ -7,11 +7,11 @@ operands. It never normalizes, reassociates, or exchanges AST nodes.
 from collections import Counter
 
 from . import ast
-from .printer import _NaturalVocabulary, _fluent_variable_sequences
+from .printer import _NaturalVocabulary, _fluent_variable_letters, _check_naming
 
 
 FLUENT_RENDERER = "ve.fluent"
-FLUENT_RENDERER_VERSION = "2"
+FLUENT_RENDERER_VERSION = "3"
 
 
 # Every view's legend and both English visitors use exactly one lexical policy.
@@ -48,7 +48,8 @@ class FluentTraversal:
         self.env = env
         self.words = _FluentVocabulary(env)
         self.names = Counter()
-        self.sequences = _fluent_variable_sequences(self.words.sorts)
+        self.letters = _fluent_variable_letters(self.words.sorts, env)
+        self.stats = Counter()
 
     def binder(self, value):
         noun = self.words.sorts[value.sort]
@@ -56,10 +57,9 @@ class FluentTraversal:
         # A declaration is the first mention. A body reference is a subsequent
         # mention; vacuous binders alone can omit their names in global syntax.
         if _references(value.body):
-            sequence = self.sequences[value.sort]
-            count = sequence["first_suffix"] + self.names[value.sort] * sequence["stride"]
             self.names[value.sort] += 1
-            name = sequence["letter"] + (str(count) if count > 1 else "")
+            count = self.names[value.sort]
+            name = self.letters[value.sort] + (str(count) if count > 1 else "")
         return (name, value.sort), noun + (" " + name if name else "")
 
     @staticmethod
@@ -105,11 +105,15 @@ class FluentTraversal:
     def guard(self, value, scope):
         relative = self.relative(value, scope)
         if relative is not None:
+            self.stats["relative_guards"] += 1
             return relative
         if type(value) is ast.And:
             left, right = self.relative(value.left, scope), self.relative(value.right, scope)
             if left is not None and right is not None:
+                self.stats["relative_guards"] += 1
                 return left + " and " + right
+        self.stats["structural_guards"] += 1
+        self.stats["structural_both_guards"] += int(type(value) is ast.And)
         return "such that " + self.unit(value, scope)
 
     def negative_atom(self, value):
@@ -151,6 +155,7 @@ class FluentTraversal:
             return ("there is " + article + " " + declaration + " such that "
                     + self.formula(value.body, (binding, *scope)))
         if kind is ast.Forall:
+            self.stats["universal_groups"] += 1
             declarations = []
             while type(value) is ast.Forall:
                 binding, declaration = self.binder(value)
@@ -163,3 +168,62 @@ class FluentTraversal:
                         + self.formula(value.right, scope))
             return prefix + ", " + self.formula(value, scope)
         raise TypeError("Unknown checked formula constructor")
+
+
+def contraction_stats(items, env, naming="per_statement"):
+    """Count emitted guard forms and negations over checked formulas/documents.
+
+    One guard is one universal group with an implication antecedent. Structural
+    guards include single object-position literals; structural_both_guards is
+    the subset spelled 'such that (both ...)'. Negation counts visit AST Not
+    occurrences once, including those in relative guards and nested negations.
+    Whitelisted means a declared negative passed the mechanical lexical check;
+    typed inequalities are reported separately. Empty denominators yield 0.0.
+    """
+    _check_naming(naming)
+    from .printer import render
+    keys = ("items", "statements", "universal_groups", "relative_guards",
+            "structural_guards", "structural_both_guards", "negations",
+            "predicate_negations", "whitelisted_negations", "equality_negations",
+            "fallback_negations")
+    counts = Counter(dict.fromkeys(keys, 0))
+    for item in items:
+        # Apply the same validation and output limits as the public renderer.
+        render(item, env, "ve_fluent", naming)
+        visitor = FluentTraversal(env)
+        formulas = item.formulas if isinstance(item, ast.Document) else (item,)
+        counts["items"] += 1
+        counts["statements"] += len(formulas)
+        for formula in formulas:
+            if naming == "per_statement":
+                visitor.names.clear()
+            visitor.formula(formula)
+            stack = [formula]
+            while stack:
+                node = stack.pop()
+                if type(node) is ast.Not:
+                    counts["negations"] += 1
+                    if type(node.body) in (ast.Unary, ast.Binary):
+                        counts["predicate_negations"] += 1
+                        key = ("whitelisted_negations" if node.body.predicate in visitor.words.negatives
+                               else "fallback_negations")
+                    else:
+                        key = "equality_negations" if type(node.body) is ast.Eq else "fallback_negations"
+                    counts[key] += 1
+                if type(node) in (ast.Not, ast.Forall, ast.Exists):
+                    stack.append(node.body)
+                elif type(node) in (ast.And, ast.Or, ast.Implies):
+                    stack.extend((node.right, node.left))
+        counts.update(visitor.stats)
+    result = dict(counts)
+    guards = counts["relative_guards"] + counts["structural_guards"]
+    result["guards"] = guards
+    result["uncontracted_universal_groups"] = counts["universal_groups"] - guards
+    for key in ("relative_guards", "structural_guards", "structural_both_guards"):
+        result[key + "_share"] = counts[key] / guards if guards else 0.0
+    for key in ("whitelisted_negations", "fallback_negations", "equality_negations"):
+        result[key + "_share"] = counts[key] / counts["negations"] if counts["negations"] else 0.0
+    result["whitelisted_predicate_negations_share"] = (
+        counts["whitelisted_negations"] / counts["predicate_negations"]
+        if counts["predicate_negations"] else 0.0)
+    return result

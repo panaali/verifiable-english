@@ -34,7 +34,7 @@ def test_committed_graph_and_generated_certificates_roundtrip_and_replay():
     assert clone == graph
     result = check_argument(clone, search=False)
     assert result.status == "Checked" and result.composed
-    assert result.remaining_assumptions == ("operations_review", "security_policy")
+    assert result.remaining_assumptions == ("c1", "c2")
     data = json.loads(result.to_json())
     assert len(data["checker_build"]) == 64
     assert len(data["record_id"]) == 64
@@ -66,7 +66,7 @@ def test_unchecked_intermediate_is_obligation_not_leaf():
     graph = simple({"leaf": "true.\n", "middle": "false.\n", "root": "true.\n"},
         [("bad", ("leaf",), "middle"), ("final", ("middle",), "root")], "root")
     result = check_argument(graph)
-    assert result.status == "Incomplete" and not result.composed
+    assert result.status == "ContradictoryPremises" and not result.composed
     assert result.remaining_assumptions == ("leaf",)
     assert result.unresolved_obligations == ("middle",)
     assert result.findings["bad"] == ("refuted", "gap")
@@ -77,7 +77,9 @@ def test_inconsistent_premises_record_both_directions_not_checker_conflict():
     graph = simple({"leaf": "false.\n", "root": "true.\n"},
                    [("deduce", ("leaf",), "root")], "root")
     result = check_argument(graph)
-    assert result.status == "Checked"
+    assert result.status == "ContradictoryPremises" and not result.composed
+    assert result.contradictory_premises == ("deduce",)
+    assert outstanding_obligations(graph, result)["contradictory_premises"] == ["deduce"]
     assert result.findings["deduce"] == ("follows", "refuted")
     assert result.edges[0]["contradictory_premises"]
     assert result.remaining_assumptions == ("leaf",)
@@ -143,8 +145,8 @@ def test_panel_lists_intermediate_premises_and_all_evidence_citations():
     graph = replace(graph, claims=graph.claims + (extra,), deductions=graph.deductions + (newedge,), root=extra.name)
     rows = {r["claim"]: r for p in predicate_use_panel(graph)["predicates"] for r in p["premises"]}
     assert graph.claims[-2].name in rows
-    assert rows["operations_review"]["evidence_ids"] == ["operations-records"]
-    assert not rows["approval"]["is_leaf"]
+    assert rows["c1"]["evidence_ids"] == ["r1"]
+    assert not rows["c3"]["is_leaf"]
 
 
 @pytest.mark.parametrize("mutation", [
