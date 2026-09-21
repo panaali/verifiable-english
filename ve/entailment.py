@@ -17,7 +17,7 @@ from .limits import MAX_NODES, MAX_TABLEAU_DEPTH
 from .wire import canonical_json
 
 
-ENTAILMENT_CHECKER_VERSION = "ve-tableau-checker@1"
+ENTAILMENT_CHECKER_VERSION = "ve-tableau-checker@2"
 
 
 @dataclass(frozen=True, slots=True)

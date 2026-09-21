@@ -127,10 +127,11 @@ def test_deep_tableau_roundtrips_within_json_envelope():
     env = merged_vocabulary_example().env
     # Shallow independent ASTs require a long linear tableau before the final
     # negated tautology closes. This used to exceed the JSON nesting limit.
-    premises = (Not(Bottom()),) * 120 + (Not(Top()),)
+    premises = (Not(Bottom()),) * (MAX_TABLEAU_DEPTH - 1) + (Not(Top()),)
     result = prove_entailment(env, premises, Bottom())
     assert result.status == 'Found' and result.steps > 100
-    replay = loads_json(canonical_json(result.certificate))
+    package = {'deductions': [{'certificates': [{'proof': result.certificate}]}]}
+    replay = loads_json(canonical_json(package))['deductions'][0]['certificates'][0]['proof']
     assert check_entailment_certificate(env, premises, Bottom(), replay).valid
     # Oversized traces must stop during search rather than emit unreplayable data.
     too_deep = (Not(Bottom()),) * (MAX_TABLEAU_DEPTH + 5) + (Not(Top()),)
