@@ -1,0 +1,44 @@
+{
+  "model_calls": 0,
+  "lean_build": {
+    "command": "cd lean && lake build",
+    "result": "passed; 76 jobs"
+  },
+  "full_suite": {
+    "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache VE_LEAN_PREBUILT=1 uv run pytest tests experiments/E5/tests experiments/E2E4/tests experiments/E5/colab/test_colab.py -q",
+    "passed": 801,
+    "failed": 1,
+    "skipped": 2,
+    "seconds": 307.7,
+    "failure": "experiments/E5/tests/test_materials.py::test_matched_pairs_all_cells_and_audit_artifact: stale E5 leak-report archive hashes after checker metadata regeneration"
+  },
+  "resolution": {
+    "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run python -m experiments.E5.leak_audit",
+    "result": "passed; only the two archive input hashes changed; all leak diagnostic numbers unchanged"
+  },
+  "affected_test_rerun": {
+    "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run pytest experiments/E5/tests/test_materials.py::test_matched_pairs_all_cells_and_audit_artifact -q",
+    "passed": 1,
+    "failed": 0,
+    "seconds": 13.17
+  },
+  "colab_contract_tests": {
+    "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run pytest experiments/E5/colab/test_colab.py -q",
+    "passed": 22,
+    "seconds": 2.51
+  },
+  "material_validation": {
+    "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run python -m experiments.validate_materials",
+    "labels_proved": {
+      "E5": 3072,
+      "E2": 432,
+      "E4": 136
+    }
+  },
+  "all_802_nonoptional_tests_passed_across_full_run_and_targeted_rerun": true,
+  "optional_skips": [
+    "llguidance unavailable",
+    "xgrammar unavailable"
+  ],
+  "gpu_inference_and_exact_tokenizer_preflight": "not run; offline tokenizers unavailable"
+}

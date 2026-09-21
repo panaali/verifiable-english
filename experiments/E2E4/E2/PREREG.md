@@ -6,6 +6,20 @@ E2 remains a mechanism demonstration unless VE differs from matched structured
 FOL with the same checker findings and evidence. Do not attribute a generic
 checker advantage to VE language. Judge IDs and repetitions remain to be frozen.
 
+## Colab DEV output budget (not a scored freeze)
+
+max_new_tokens: 400
+
+The offline exporter reads this cap; the DEV ladder uses temperature 0, seed 0,
+one response per item/cell, and an 8192-token context including the response.
+The three judges are Qwen2.5-7B-Instruct, 14B-Instruct-AWQ and 32B-Instruct-AWQ.
+Export all sizes/workloads without truncation or exclusion. The exact-token
+preflight refuses a job if any assigned prompt plus the cap exceeds context;
+large E2 assignments may require a separately reviewed larger-context run.
+Whitespace counts do not establish token fit or L4 memory fit. Scored export
+requires this file to begin `Status: FROZEN` and equal HEAD byte for byte.
+This DEV budget does not freeze scored settings or change the primary analysis.
+
 ## Primary contrast
 
 Per judge, the paired interaction (FA_VE,256 − FA_VE,4) −

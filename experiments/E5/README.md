@@ -75,3 +75,6 @@ and check the probe detects it despite different record phrasing.
 Both styles share the same body; only their label-constant first line is omitted
 in this offline feature audit. These are limited probes, not a proof that no
 semantic shortcut exists. No model capability gate was run in this task.
+
+Offline Colab prompt exports, context checks and paired scoring are documented in
+[colab/README.md](colab/README.md). Labels remain outside the GPU upload directory.
