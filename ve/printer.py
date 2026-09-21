@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 import re
 from typing import Any, Iterable
+import unicodedata
 
 from . import ast
 from .errors import ResourceLimit
@@ -17,6 +18,7 @@ VIEWS = ("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent")
 NATURAL_RENDERER = "ve.ace-explicit"
 NATURAL_RENDERER_VERSION = "3"
 NAMING_POLICIES = ("per_statement", "per_document")
+LEGEND_STYLES = ("compact", "json")
 
 # These tables contain surface vocabulary only. Children arrive already grouped
 # by the ONE traversal below; no surface can change scope, names, or child order.
@@ -308,14 +310,85 @@ def _check_naming(naming: str) -> None:
         raise ValueError(f"naming must be one of {NAMING_POLICIES}")
 
 
-def render_vocabulary(env: Any, view: str = "ve_strict", naming: str = "per_statement") -> str:
+def _check_legend_style(style: str) -> None:
+    if style not in LEGEND_STYLES:
+        raise ValueError(f"style must be one of {LEGEND_STYLES}")
+
+
+def _legend_quote(value: str) -> str:
+    """Quote data on one physical/display line, including Unicode controls.
+
+    JSON already escapes quotes, backslashes and C0 controls. Escape C1,
+    bidi/format controls and Unicode line/paragraph separators as well, so raw
+    rejected metadata and descriptions cannot forge or reorder legend lines.
+    """
+    return "".join(json.dumps(char, ensure_ascii=True)[1:-1]
+                   if unicodedata.category(char) in ("Cc", "Cf", "Zl", "Zp") else char
+                   for char in json.dumps(value, ensure_ascii=False))
+
+
+def _compact_vocabulary(legend: dict[str, Any]) -> str:
+    """Present the same legend fields without JSON keys or repeated metadata."""
+    quote = _legend_quote
+    lines = [f"Vocabulary: {legend['format']}; environment: {legend['environment_id']}"]
+    lines.append("Sorts:" if legend["sorts"] else "Sorts: none")
+    for entry in legend["sorts"]:
+        raw, noun = entry["verbalisation"], entry["rendered_noun"]
+        nouns = quote(noun)
+        if raw is None:
+            nouns += "; declared: none"
+        elif raw["singular"] == noun:
+            nouns += "/" + quote(raw["plural"])
+        else:
+            nouns += f"; declared: {quote(raw['singular'])}/{quote(raw['plural'])}"
+        lines.append(f"  {entry['identifier']} (noun: {nouns}) — {quote(entry['description'])}")
+    lines.append("Constants:" if legend["constants"] else "Constants: none")
+    for entry in legend["constants"]:
+        lines.append(f"  @{entry['identifier']} : {entry['sort']} — {quote(entry['description'])}")
+    lines.append("Predicates:" if legend["predicates"] else "Predicates: none")
+    for entry in legend["predicates"]:
+        template = quote(entry["rendered_template"])
+        raw = entry["verbalisation"]
+        if raw != entry["rendered_template"]:
+            template += f" (strict fallback; declared: {quote(raw) if raw is not None else 'none'})"
+        line = (f"  {entry['identifier']}({', '.join(entry['arguments'])}) — "
+                f"{template} — {quote(entry['description'])}")
+        negative, raw_negative = entry["rendered_negative_template"], entry["negative_verbalisation"]
+        if negative is not None or raw_negative is not None:
+            line += "; negative: " + (quote(negative) if negative is not None else "none")
+            if raw_negative != negative:
+                line += f" (declared: {quote(raw_negative)})"
+        lines.append(line)
+    fluent = legend["fluent_variables"]
+    letters = ", ".join(f"{sort} = {letter}" for sort, letter in fluent["letters_by_sort"].items())
+    lines.append("Fluent variable letters: " + (letters or "none"))
+    lines.append("Fluent variable rule: " + fluent["rule"])
+    lines.append(f"Naming: {legend['naming']} — {legend['naming_rule']}")
+    lines.append("Lint:" if legend["lint"] else "Lint: none")
+    for issue in legend["lint"]:
+        lines.append(f"  {issue['path']}: {issue['code']}")
+    if "closure" in legend:
+        closure = legend["closure"]
+        lines.append("Closure: " + closure["profile"])
+        for kind, meaning in closure["kinds"].items():
+            lines.append(f"  {kind}: {meaning}")
+        for field in ("direction", "body", "cycles"):
+            lines.append(f"  {field}: {closure[field]}")
+        lines.append("  relations: " + (", ".join(closure["relations"]) or "none"))
+    return "\n".join(lines) + "\n"
+
+
+def render_vocabulary(env: Any, view: str = "ve_strict", naming: str = "per_statement",
+                      style: str = "json") -> str:
     """Return the identical, deterministic identity/argument-order legend in every view.
 
-    Raw metadata is JSON-quoted data. Both declared and selected templates are
-    shown so a judge can inspect rejected metadata as well as the actual display.
+    JSON is the unchanged default; compact uses one line per entry. Both styles
+    quote raw metadata and preserve declared and selected templates, so a judge
+    can inspect rejected metadata as well as the actual display.
     """
     _check_view(view)
     _check_naming(naming)
+    _check_legend_style(style)
     selected = _NaturalVocabulary(env)
     legend = {
         "format": "ve.vocabulary-legend@3", "environment_id": env.environment_id,
@@ -355,6 +428,8 @@ def render_vocabulary(env: Any, view: str = "ve_strict", naming: str = "per_stat
                           if len(p.arguments) == 2 and p.arguments[0] == p.arguments[1]],
             "cycles": "Positive closure can contain (a,a) on a cycle; zero steps require star.",
         }
+    if style == "compact":
+        return _compact_vocabulary(legend)
     return json.dumps(legend, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
 
 
@@ -468,14 +543,14 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
 
 
 def render_cell(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
-                naming: str = "per_statement") -> str:
+                naming: str = "per_statement", style: str = "json") -> str:
     """Render an experimental cell, ALWAYS including the identical view legend."""
-    return render_vocabulary(env, view, naming) + render(value, env, view, naming)
+    return render_vocabulary(env, view, naming, style) + render(value, env, view, naming)
 
 
 def measure_view_lengths(items: Iterable[ast.Document | ast.Formula], env: Any, *,
                          include_vocabulary: bool = False,
-                         naming: str = "per_statement") -> list[dict[str, Any]]:
+                         naming: str = "per_statement", style: str = "json") -> list[dict[str, Any]]:
     r"""Measure each item/view's Unicode characters and word-or-symbol tokens.
 
     The Unicode regex ``\w+|[^\w\s]`` treats each non-whitespace punctuation or
@@ -483,7 +558,8 @@ def measure_view_lengths(items: Iterable[ast.Document | ast.Formula], env: Any, 
     token counts. Optional legend bytes are exactly those shown to every judge.
     """
     _check_naming(naming)
-    legend = render_vocabulary(env, naming=naming) if include_vocabulary else ""
+    _check_legend_style(style)
+    legend = render_vocabulary(env, naming=naming, style=style) if include_vocabulary else ""
     rows = []
     for index, item in enumerate(items):
         for view in VIEWS:
@@ -496,7 +572,7 @@ def measure_view_lengths(items: Iterable[ast.Document | ast.Formula], env: Any, 
 
 def measure_jsonl_lengths(path: str | Path, env: Any, *, field: str = "ast",
                           source_format: str = "ast", include_vocabulary: bool = True,
-                          naming: str = "per_statement") -> list[dict[str, Any]]:
+                          naming: str = "per_statement", style: str = "json") -> list[dict[str, Any]]:
     """Measure actual JSONL records, preserving source line and optional item ID.
 
     Select a top-level field containing a tagged formula/document AST, or strict
@@ -507,6 +583,7 @@ def measure_jsonl_lengths(path: str | Path, env: Any, *, field: str = "ast",
     from .wire import _pairs, _invalid_number
     from .limits import MAX_PACKAGE_BYTES
     _check_naming(naming)
+    _check_legend_style(style)
     if source_format not in ("ast", "ve"):
         raise ValueError("source_format must be ast or ve")
     rows = []
@@ -534,7 +611,7 @@ def measure_jsonl_lengths(path: str | Path, env: Any, *, field: str = "ast",
             else:
                 item = ast.document_from_data(env, value)
             for row in measure_view_lengths([item], env, include_vocabulary=include_vocabulary,
-                                            naming=naming):
+                                            naming=naming, style=style):
                 row.update(item_index=line_number - 1, line=line_number)
                 if "id" in record:
                     row["item_id"] = record["id"]
