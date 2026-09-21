@@ -140,7 +140,7 @@ def render_fol(env: Any, value: ast.Document | list[Any] | Mapping[str, Any], *,
     else: document=document_from_named_fol(env,value)
     if view == "canonical": return print_document(env,document)
     if view == "natural": return natural_document(env,document)
-    if view in {"fol_symbols", "fol_keywords", "ve_strict", "ve_natural"}:
-        from .printer import render
+    from .printer import VIEWS, render
+    if view in VIEWS:
         return render(document, env, view)
     raise ValueError("unknown rendering view")
