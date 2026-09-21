@@ -88,10 +88,24 @@ Backend = Callable[[str, str, str, float, Path], RawReply]
 # --------------------------------------------------------------------------- CLI backends
 
 
-def _run(cmd: Sequence[str], stdin: str, timeout_s: float, cwd: Path) -> str:
+def split_model(model: str) -> tuple[str, dict[str, str]]:
+    """"gpt-5.6-luna@effort=none" -> ("gpt-5.6-luna", {"effort": "none"}). Settings are part of the
+    judge's name everywhere (cache key, trials, reports), so a judge with reasoning disabled can never
+    be confused with the default one. Supported: `effort=<level>` (codex model_reasoning_effort) and
+    `thinking=<max tokens>` (claude MAX_THINKING_TOKENS)."""
+    base, _, rest = model.partition("@")
+    settings = dict(kv.split("=", 1) for kv in rest.split(",") if kv)
+    unknown = set(settings) - {"effort", "thinking"}
+    if unknown:
+        raise ValueError(f"unknown model settings {sorted(unknown)} in {model!r}")
+    return base, settings
+
+
+def _run(cmd: Sequence[str], stdin: str, timeout_s: float, cwd: Path, env: dict | None = None) -> str:
     try:
         proc = subprocess.run(
-            list(cmd), input=stdin, capture_output=True, text=True, timeout=timeout_s, cwd=cwd
+            list(cmd), input=stdin, capture_output=True, text=True, timeout=timeout_s, cwd=cwd,
+            env={**os.environ, **env} if env else None,
         )
     except subprocess.TimeoutExpired as exc:
         raise BackendError(f"timeout after {timeout_s}s") from exc
@@ -104,11 +118,13 @@ def _run(cmd: Sequence[str], stdin: str, timeout_s: float, cwd: Path) -> str:
 
 
 def claude_backend(model: str, system: str, prompt: str, timeout_s: float, cwd: Path) -> RawReply:
+    base, settings = split_model(model)
     cmd = [
-        "claude", "-p", "--model", model, "--output-format", "json",
+        "claude", "-p", "--model", base, "--output-format", "json",
         "--tools", "", "--strict-mcp-config", "--system-prompt", system,
     ]  # fmt: skip
-    out = _run(cmd, prompt, timeout_s, cwd)
+    env = {"MAX_THINKING_TOKENS": settings["thinking"]} if "thinking" in settings else None
+    out = _run(cmd, prompt, timeout_s, cwd, env)
     try:
         data = json.loads(out)
     except json.JSONDecodeError as exc:
@@ -178,7 +194,9 @@ def parse_codex_events(out: str) -> RawReply:
 
 def codex_backend(model: str, system: str, prompt: str, timeout_s: float, cwd: Path) -> RawReply:
     # codex exec has no system-prompt flag; the system text is prepended to the prompt.
-    cmd = ["codex", "exec", "-m", model, *CODEX_FLAGS, "-"]
+    base, settings = split_model(model)
+    extra = ["-c", f'model_reasoning_effort="{settings["effort"]}"'] if "effort" in settings else []
+    cmd = ["codex", "exec", "-m", base, *CODEX_FLAGS, *extra, "-"]
     full = f"{system}\n\n{prompt}" if system else prompt
     return parse_codex_events(_run(cmd, full, timeout_s, cwd))
 

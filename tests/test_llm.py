@@ -182,3 +182,14 @@ def test_identity_separates_cache_entries(tmp_path):
     c.call("m", "p", identity="t2")
     c.call("m", "p", identity="t1")
     assert be.calls == 2
+
+
+def test_model_settings_suffix():
+    from ve_experiments.llm import cache_key, default_backend_for, split_model
+
+    assert split_model("gpt-5.6-luna@effort=none") == ("gpt-5.6-luna", {"effort": "none"})
+    assert split_model("claude-haiku-4-5-20251001") == ("claude-haiku-4-5-20251001", {})
+    assert cache_key("m@effort=none", "s", "p", 0) != cache_key("m", "s", "p", 0)
+    assert default_backend_for("claude-haiku-4-5-20251001@thinking=0").__name__ == "claude_backend"
+    with pytest.raises(ValueError):
+        split_model("m@temperature=0")
