@@ -1,0 +1,3244 @@
+[
+  {
+    "id": "validation_000",
+    "environment": {
+      "language": "unknown",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "UnsupportedProfile"
+  },
+  {
+    "id": "validation_001",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      },
+      "extra": "unknown"
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "validation_002",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": ""
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "validation_003",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "unknown",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "UnknownSymbol"
+  },
+  {
+    "id": "validation_004",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidInput"
+  },
+  {
+    "id": "validation_005",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          },
+          "x0": {
+            "description": "Reserved."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "DuplicateDeclaration"
+  },
+  {
+    "id": "validation_006",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          },
+          "owns": {
+            "description": "Duplicate."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "DuplicateDeclaration"
+  },
+  {
+    "id": "validation_007",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": false,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidModel"
+  },
+  {
+    "id": "validation_008",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": 1,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidModel"
+  },
+  {
+    "id": "validation_009",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      },
+      "extra": []
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidModel"
+  },
+  {
+    "id": "validation_010",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidModel"
+  },
+  {
+    "id": "validation_011",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidModel"
+  },
+  {
+    "id": "validation_012",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice",
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidModel"
+  },
+  {
+    "id": "validation_013",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice",
+          "Bad"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidModel"
+  },
+  {
+    "id": "validation_014",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ],
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidModel"
+  },
+  {
+    "id": "validation_015",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "missing",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidModel"
+  },
+  {
+    "id": "validation_016",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "api",
+            "alice"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidModel"
+  },
+  {
+    "id": "validation_017",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "exists",
+        "service",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "owns",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "forall",
+        "service",
+        [
+          "implies",
+          [
+            "unary",
+            "deployed",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "reviewed",
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "InvalidModel"
+  },
+  {
+    "id": "validation_018",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [],
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "validation_019",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top",
+        "extra"
+      ]
+    ],
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "validation_020",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "unknown"
+      ]
+    ],
+    "expected_error": "SyntaxError"
+  },
+  {
+    "id": "validation_021",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "eq",
+        [
+          "var",
+          0
+        ],
+        [
+          "var",
+          0
+        ]
+      ]
+    ],
+    "expected_error": "UnboundVariable"
+  },
+  {
+    "id": "validation_022",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "forall",
+        "missing",
+        [
+          "top"
+        ]
+      ]
+    ],
+    "expected_error": "UnknownSymbol"
+  },
+  {
+    "id": "validation_023",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "forall",
+        "person",
+        [
+          "unary",
+          "deployed",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "TypeMismatch"
+  },
+  {
+    "id": "validation_024",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "forall",
+        "person",
+        [
+          "unary",
+          "owns",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "TypeMismatch"
+  },
+  {
+    "id": "validation_025",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "forall",
+        "person",
+        [
+          "eq",
+          [
+            "var",
+            true
+          ],
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "UnboundVariable"
+  },
+  {
+    "id": "validation_026",
+    "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "A person recorded in the inventory."
+          },
+          "service": {
+            "description": "A service recorded in the inventory."
+          }
+        },
+        "predicates": {
+          "deployed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as deployed in this inventory."
+          },
+          "owns": {
+            "arguments": [
+              "person",
+              "service"
+            ],
+            "description": "The person is recorded as an owner of the service."
+          },
+          "reviewed": {
+            "arguments": [
+              "service"
+            ],
+            "description": "Recorded as reviewed in this inventory."
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "service": [
+          "api"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "deployed": [
+          [
+            "api"
+          ]
+        ],
+        "owns": [
+          [
+            "alice",
+            "api"
+          ]
+        ],
+        "reviewed": [
+          [
+            "api"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "forall",
+        "person",
+        [
+          "exists",
+          "service",
+          [
+            "eq",
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        ]
+      ]
+    ],
+    "expected_error": "TypeMismatch"
+  }
+]

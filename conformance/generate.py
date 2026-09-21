@@ -153,3 +153,8 @@ if __name__ == "__main__":
     result = build_cases()
     (ROOT / "conformance/evaluation.json").write_text(json.dumps(result, indent=2) + "\n")
     print(f"Wrote {len(result)} cases / {sum(len(c['ast']) for c in result)} formulas")
+
+    from conformance.extend import parser_cases, identity_cases, wire_cases, validation_cases, search_cases
+    for name, cases in (("parser", parser_cases(result)), ("identity", identity_cases(result)), ("wire", wire_cases()), ("validation", validation_cases(result)), ("search", search_cases())):
+        (ROOT / f"conformance/{name}.json").write_text(json.dumps(cases, indent=2, ensure_ascii=False) + "\n")
+        print(f"Wrote {len(cases)} {name} cases")
