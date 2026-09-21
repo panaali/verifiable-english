@@ -38,7 +38,6 @@ Each experiment names the VE-specific claim, the baseline that could beat it, an
 | E4 | Countermodels are critiques a judge can verify | Invalid inference + critic objection given as a checked finite countermodel or as prose. Include dishonest critics who object to valid inferences | prose critique; no critique |
 | E5 | Harm check: a "proof checked" label raises false approval of grounding errors | Valid deductions with good or bad grounding, with and without the label, and with a fuller "outstanding obligations" display | no label |
 | E6 | Debate rounds beyond one critique add value | Same tasks as E3/E4 with 0, 1, and 3 rounds, charging tokens | single critique |
-
 | E7 (stretch) | Statement sign-off on real AI-produced theorems | Theorem statements from public AI-generated Lean developments (for example `openai/ten-proofs`), each paired with its informal claim; half are weakened so that a proof would still plausibly exist. Judge decides whether the formal statement matches the informal claim. These statements are outside v0, so this measures the sign-off problem and the untrusted-explainer risk, not the v0 renderer | raw Lean; Lean + untrusted explanation; Lean + honest explanation |
 
 The most VE-specific angle is in E1: in an oversight setting the explainer is the agent being overseen, so an LLM
