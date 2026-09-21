@@ -49,6 +49,12 @@ def test_cli_negative_and_resource_outcomes_are_distinct(tmp_path):
     assert json.loads(limited.stdout)["evaluation"]["status"] == "ResourceLimit"
 
 
+def test_cli_no_trace_omits_explanation():
+    result = cli("evaluate", "--env", ENV, "--model", MODEL, "--no-trace", SOURCE)
+    assert result.returncode == 0
+    assert json.loads(result.stdout)["evaluation"]["explanation"] is None
+
+
 def test_cli_preserves_crlf_for_rejection(tmp_path):
     source = tmp_path / "bad.ve"
     source.write_bytes(b"true.\r\n")
@@ -66,6 +72,15 @@ def test_cli_finds_empty_domain_gap():
     assert payload["model"]["domains"]["service"] == []
 
 
+def test_cli_countermodel_not_found_has_exit_code_three(tmp_path):
+    tautology = tmp_path / "tautology.ve"
+    tautology.write_text("true.\n")
+    result = cli("countermodel", "--env", ENV, "--conclusion", tautology,
+                 "--nonempty-domains", "--max-domain-size", "1")
+    assert result.returncode == 3
+    assert json.loads(result.stdout)["status"] == "NotFound"
+
+
 def test_cli_named_fol_natural_view_and_canonical_output(tmp_path):
     path = tmp_path / "fol.json"
     path.write_text(json.dumps({"formulas": [{"op": "exists", "sort": "person",
@@ -75,9 +90,20 @@ def test_cli_named_fol_natural_view_and_canonical_output(tmp_path):
     assert canonical.stdout == "there exists person x0, (true).\n"
     assert natural.returncode == canonical.returncode == 0
     view = json.loads(natural.stdout)
-    assert "there exists at least one person" in view["text"]
-    assert view["environment_id"]
-    assert view["meaning_id"]
+    assert view["text"] == "There is a person x0 such that (true).\n"
+    assert view["environment_id"] and view["meaning_id"]
+    assert view["renderer"] and view["version"]
+
+
+def test_cli_four_e1_view_names_emit_plain_text(tmp_path):
+    path = tmp_path / "fol.json"
+    path.write_text(json.dumps({"formulas": [{"op": "exists", "sort": "person",
+                                             "variable": "someone", "body": {"op": "top"}}]}))
+    outputs = {view: cli("import-fol", "--env", ENV, "--view", view, path)
+               for view in ("fol_symbols", "fol_keywords", "ve_strict", "ve_natural")}
+    assert all(result.returncode == 0 for result in outputs.values())
+    assert all(not result.stdout.lstrip().startswith("{") for result in outputs.values())
+    assert len({result.stdout for result in outputs.values()}) == 4
 
 
 def test_acceptance_rejects_individually_valid_substituted_ast():

@@ -8,11 +8,11 @@ from .ast import doc_from_json, document_to_data
 from .check import check
 from .environment import Environment
 from .errors import ResourceLimit, VEError
-from .fol import render_fol
+from .fol import document_from_named_fol
 from .limits import MAX_PACKAGE_BYTES, MAX_SOURCE_BYTES
 from .model import FiniteModel
 from .parser import parse
-from .printer import natural_document, print_document
+from .printer import natural_document, print_document, render
 from .search import find_countermodel
 from .wire import loads_json
 
@@ -42,16 +42,22 @@ def main(argv=None):
             sub.add_argument("--premises", help="VE document; omit for no premises")
             sub.add_argument("--conclusion", required=True, help="exactly one VE statement")
             sub.add_argument("--max-domain-size", type=int, default=2)
+            sub.add_argument("--min-domain-size", type=int, default=0)
+            sub.add_argument("--nonempty-domains", action="store_true")
+            sub.add_argument("--nonvacuous-for", help="VE formula whose quantifiers and implications must be non-vacuous")
             sub.add_argument("--max-models", type=int, default=10_000)
         else:
             sub.add_argument("source", help="VE source or, for import-fol, FOL JSON; '-' reads stdin")
         if command in ("render", "import-fol"):
-            sub.add_argument("--view", choices=("canonical", "natural"), default="canonical")
+            sub.add_argument("--view", choices=("fol_symbols", "fol_keywords", "ve_strict", "ve_natural",
+                                                 "canonical", "natural"), default="ve_strict")
         if command in ("evaluate", "check"):
             sub.add_argument("--model", required=command == "evaluate", help="complete finite-model JSON")
             sub.add_argument("--candidate-ast", help="document AST JSON to check against source")
         if command in ("evaluate", "check", "countermodel"):
             sub.add_argument("--max-evaluations", type=int, default=1_000_000)
+        if command in ("evaluate", "check"):
+            sub.add_argument("--no-trace", action="store_true", help="omit explanations to use the full evaluation budget")
     args = parser.parse_args(argv)
     try:
         env = Environment.from_json(_read(args.env))
@@ -60,16 +66,25 @@ def main(argv=None):
             conclusion = parse(env, _read(args.conclusion, MAX_SOURCE_BYTES))
             if len(conclusion.formulas) != 1:
                 raise VEError("A claimed entailment requires exactly one conclusion statement")
+            nonvacuous = None
+            if args.nonvacuous_for:
+                document = parse(env, _read(args.nonvacuous_for, MAX_SOURCE_BYTES))
+                if len(document.formulas) != 1:
+                    raise VEError("--nonvacuous-for requires exactly one statement")
+                nonvacuous = document.formulas[0]
             result = find_countermodel(env, premises, conclusion.formulas[0], max_domain_size=args.max_domain_size,
+                                       min_domain_size=args.min_domain_size,
+                                       nonempty_domains=args.nonempty_domains, nonvacuous_for=nonvacuous,
                                        max_models=args.max_models, max_evaluations=args.max_evaluations)
             _emit(result.to_dict())
-            return 0 if result.status == "Found" else (2 if result.status == "ResourceLimit" else 1)
+            return 0 if result.status == "Found" else (3 if result.status == "NotFound" else 2)
         if args.command == "import-fol":
-            rendered = render_fol(env, loads_json(_read(args.source)), view=args.view)
-            if isinstance(rendered, str):
-                print(rendered, end="")
-            else:
-                _emit(rendered.to_dict())
+            document = document_from_named_fol(env, loads_json(_read(args.source)))
+            if args.view == "natural":
+                _emit(natural_document(env, document).to_dict())
+                return 0
+            view = {"canonical": "ve_strict"}.get(args.view, args.view)
+            print(render(document, env, view), end="")
             return 0
         source = _read(args.source, MAX_SOURCE_BYTES)
         if args.command in ("check", "evaluate", "parse"):
@@ -77,14 +92,19 @@ def main(argv=None):
             candidate = (doc_from_json(env, _read(args.candidate_ast))
                          if getattr(args, "candidate_ast", None) else None)
             record = check(env, source, model, candidate_ast=candidate,
-                           max_evaluations=getattr(args, "max_evaluations", 1_000_000))
+                           max_evaluations=getattr(args, "max_evaluations", 1_000_000),
+                           trace=not getattr(args, "no_trace", False))
             _emit(record)
             if model is None:
                 return 0
             return {"Satisfied": 0, "Violated": 1, "ResourceLimit": 2}[record["evaluation"]["status"]]
         document = parse(env, source)
-        if args.command == "render" and args.view == "natural":
-            _emit(natural_document(env, document).to_dict())
+        if args.command == "render":
+            if args.view == "natural":
+                _emit(natural_document(env, document).to_dict())
+                return 0
+            view = {"canonical": "ve_strict"}.get(args.view, args.view)
+            print(render(document, env, view), end="")
         else:
             print(print_document(env, document), end="")
         return 0
