@@ -111,6 +111,34 @@ def test_cli_five_e1_view_names_emit_plain_text(tmp_path):
         parse(env, SOURCE.read_bytes()), env, "ve_fluent")
 
 
+@pytest.mark.parametrize("naming", ["per_statement", "per_document"])
+def test_cli_cell_legend_and_naming_across_all_views(tmp_path, naming):
+    from ve.printer import VIEWS, render_cell
+    env = Environment.from_json(ENV.read_bytes())
+    source = tmp_path / "two.ve"
+    source.write_text("for every service s, (s equals s).\n" * 2)
+    document = parse(env, source.read_bytes())
+    for view in (*VIEWS, "canonical", "natural"):
+        result = cli("render", "--env", ENV, "--view", view, "--with-legend",
+                     "--naming", naming, source)
+        actual_view = {"canonical": "ve_strict", "natural": "ve_natural"}.get(view, view)
+        assert result.returncode == 0, result.stdout
+        assert result.stdout == render_cell(document, env, actual_view, naming)
+
+
+def test_cli_jsonl_view_lengths_and_invalid_records(tmp_path):
+    from ve.printer import measure_jsonl_lengths
+    env = Environment.from_json(ENV.read_bytes())
+    path = tmp_path / "items.jsonl"
+    path.write_text('{"id":"real-item-1","claim":"true.\\n"}\n')
+    result = cli("view-lengths", "--env", ENV, "--field", "claim", "--source-format", "ve", path)
+    assert result.returncode == 0, result.stdout
+    assert json.loads(result.stdout) == measure_jsonl_lengths(path, env, field="claim", source_format="ve")
+    path.write_text('{}\n')
+    result = cli("view-lengths", "--env", ENV, path)
+    assert result.returncode == 2 and json.loads(result.stdout)["status"] == "InvalidInput"
+
+
 def test_acceptance_rejects_individually_valid_substituted_ast():
     env = Environment.from_json(ENV.read_bytes())
     with pytest.raises(VEError, match="does not match"):
