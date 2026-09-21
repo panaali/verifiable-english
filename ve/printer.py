@@ -1,4 +1,4 @@
-"""Four deterministic surfaces of one checked AST and one scope traversal."""
+"""Five deterministic, read-only surfaces of one checked AST."""
 from __future__ import annotations
 
 from collections import Counter
@@ -10,7 +10,7 @@ from . import ast
 from .errors import ResourceLimit
 from .limits import MAX_PACKAGE_BYTES, MAX_SOURCE_BYTES
 
-VIEWS = ("fol_symbols", "fol_keywords", "ve_strict", "ve_natural")
+VIEWS = ("fol_symbols", "fol_keywords", "ve_strict", "ve_natural", "ve_fluent")
 NATURAL_RENDERER = "ve.ace-explicit"
 NATURAL_RENDERER_VERSION = "1"
 
@@ -160,26 +160,33 @@ class _Traversal:
 
 
 def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict") -> str:
-    """Render a checked AST with shared preorder names and formula grouping.
+    """Render a checked AST with shared binder and operand preorder.
 
     A formula has no final punctuation; documents have a period and LF for each
-    statement. Natural documents capitalize the first letter of each statement.
+    statement. English documents capitalize the first letter of each statement.
     The counter resets per statement. No view rewrites or normalizes the AST.
     """
     if view not in VIEWS:
         raise ValueError(f"view must be one of {VIEWS}")
+    def render_one(formula):
+        if view == "ve_fluent":
+            from .fluent import FluentTraversal
+            text = FluentTraversal(env).formula(formula)
+            return text[0].upper() + text[1:]
+        return _Traversal(env, view).formula(formula, ())
+
     if isinstance(value, ast.Document):
         ast.check_document(env, value)
         lines = []
         for formula in value.formulas:
-            line = _Traversal(env, view).formula(formula, ())
+            line = render_one(formula)
             if view == "ve_natural":
                 line = line[0].upper() + line[1:]
             lines.append(line + ".\n")
         text = "".join(lines)
     else:
         ast.check_formula(env, value)
-        text = _Traversal(env, view).formula(value, ())
+        text = render_one(value)
     limit = MAX_SOURCE_BYTES if view == "ve_strict" else MAX_PACKAGE_BYTES
     if len(text.encode("utf-8")) + (0 if isinstance(value, ast.Document) else 2) > limit:
         raise ResourceLimit(f"Rendered {view} text exceeds its {limit}-byte limit")

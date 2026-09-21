@@ -96,14 +96,16 @@ def _grouping(text, view):
 
 def test_large_random_sample_all_views_injective_names_and_grouping_identical():
     rng = random.Random(20260921)
-    seen = {view: {} for view in VIEWS}
+    # The fifth view deliberately has different names and grouping. Its inverse
+    # and all-five consistency checks are in test_fluent.py.
+    seen = {view: {} for view in VIEWS if view != "ve_fluent"}
     sample = set()
     for _ in range(24000):
         sample.add(_random_formula(rng, rng.randrange(1, 7)))
     assert len(sample) >= 6000
     for formula in sample:
         names, grouping = None, None
-        for view in VIEWS:
+        for view in seen:
             text = render(formula, ENV, view)
             assert seen[view].setdefault(text, formula) == formula, (view, text)
             current_names = re.findall(r"\bx[0-9]+\b", text)
