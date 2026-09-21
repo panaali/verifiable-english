@@ -24,7 +24,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from ve import Environment, FiniteModel, evaluate, find_countermodel
-from ve.ast import (Binary, Document, Forall, Not, Or, Unary, Var, document_from_data, document_to_data)
+from ve.ast import (Binary, Body, Document, Forall, Named, Not, Or, Reach, Unary, Var, document_from_data, document_to_data)
 from ve.evaluate import _evaluate_validated
 
 
@@ -43,6 +43,22 @@ def inputs(repeats):
         cases.append({'id':f'eval_n{n}','kind':'evaluation','size':n,'environment':env.to_dict(),
                       'model':model.to_dict(),'ast':document_to_data(env,Document((f,))),
                       'iterations':max(3,min(500,100000//work)),'repeats':repeats})
+    closure_data = {**data, 'language':'ve.core@0.1', 'profiles':['closure@0','relational-fol@0'],
+                    'spec_revision':'ve-v0.1-closure-2026-09-21'}
+    closure_data.pop('profile')
+    closure_env = Environment.from_dict(closure_data)
+    # A fixed directed cycle, with and without a body edge. One quantifier
+    # varies the endpoints/captured context; setup and parsing stay untimed.
+    for body in (False, True):
+        n = 12
+        domain = [f'e{i:02}' for i in range(n)]
+        model = FiniteModel.from_dict(closure_env, {'complete':True, 'domains':{'item':domain}, 'constants':{},
+            'relations':{'edge':[[domain[i],domain[(i+1)%n]] for i in range(n)]}})
+        edge = Body('item', Binary('edge',Var(1),Var(0))) if body else Named('edge')
+        closure = Forall('item', Reach('plus',edge,Var(0),Var(0)))
+        cases.append({'id':f'closure_{"body" if body else "named"}_n{n}', 'kind':'evaluation', 'size':n,
+            'environment':closure_env.to_dict(), 'model':model.to_dict(),
+            'ast':document_to_data(closure_env,Document((closure,))), 'iterations':5, 'repeats':repeats})
     atom = Binary('edge',Var(1),Var(0))
     conclusion = Forall('item',Forall('item',Or(atom,Not(atom))))
     for n in [1,2,3]:
@@ -67,11 +83,13 @@ def timed(fn, iterations, repeats):
     return values,last
 
 
-def main(repeats, output):
+def main(repeats, output, closure_only=False):
     env = {**os.environ,'CARGO_HOME':str(ROOT/'.cargo-home'),'CARGO_TARGET_DIR':str(ROOT/'rust/target')}
     subprocess.run(['cargo','build','-j','2','--locked','--release','--manifest-path',str(ROOT/'rust/Cargo.toml'),
                     '--features','bench-internals','--example','bench'],cwd=ROOT,env=env,check=True)
     cases=inputs(repeats)
+    if closure_only:
+        cases = [c for c in cases if c['id'].startswith('closure_')]
     path=ROOT/'rust/target/benchmark-input.json';path.write_text(json.dumps(cases))
     # Alternate language order across repetitions by collecting one sample at a time.
     # Python and Rust run sequentially, not concurrently competing for CPU.
@@ -146,7 +164,7 @@ def main(repeats, output):
               'load_average_start':load_start,'load_average_end':os.getloadavg(),
               'trace':False,
               'repeats':repeats,'gc_enabled':gc.isenabled(),
-              'command':f'python rust/benchmark.py --repeats {repeats} --output {output}',
+              'command':f'python rust/benchmark.py --repeats {repeats} --output {output}' + (' --closure-only' if closure_only else ''),
               'method':__doc__,'results':results}
     output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(metadata,indent=2)+'\n')
     for r in results:
@@ -158,4 +176,5 @@ def main(repeats, output):
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--repeats',type=int,default=5)
     p.add_argument('--output',type=Path,default=ROOT/'rust/benchmark-results.json')
-    a=p.parse_args();main(a.repeats,a.output)
+    p.add_argument('--closure-only',action='store_true')
+    a=p.parse_args();main(a.repeats,a.output,a.closure_only)
