@@ -1,0 +1,21 @@
+{
+  "id": "T2",
+  "title": "Corollary: the diagonal lemma at two distinct relations",
+  "expect": "prove",
+  "environment": "environment.json",
+  "premise_labels": [],
+  "conclusion_ve": "(not (there exists point x0, (for every point x1, ((if (x0 lists x1), then (not (x1 lists x1))) and (if (not (x1 lists x1)), then (x0 lists x1)))))) and (not (there exists point x2, (for every point x3, ((if (x2 mentions x3), then (not (x3 mentions x3))) and (if (not (x3 mentions x3)), then (x2 mentions x3)))))).",
+  "conclusion_fluent": "both (it is false that (there is a point P such that for every point P2, both (if P lists P2 then P2 does not list P2) and (if P2 does not list P2 then P lists P2))) and (it is false that (there is a point P3 such that for every point P4, both (if P3 mentions P4 then P4 does not mention P4) and (if P4 does not mention P4 then P3 mentions P4)))",
+  "prove_seconds": 0.004,
+  "prove_status": "Found",
+  "max_steps": 200000,
+  "prove_steps": 27,
+  "prove_detail": "",
+  "certificate_bytes": 1144,
+  "python_valid": true,
+  "python_status": "Valid",
+  "python_detail": "",
+  "necessity": [],
+  "lean_valid": true,
+  "lean_note": ""
+}

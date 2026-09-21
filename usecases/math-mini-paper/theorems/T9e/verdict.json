@@ -1,0 +1,55 @@
+{
+  "id": "T9e",
+  "title": "Monotonicity: r included in s implies tc[r] included in tc[s]",
+  "expect": "fail",
+  "environment": "environment-closure.json",
+  "premise_labels": [
+    "edge inclusion r <= s"
+  ],
+  "conclusion_ve": "for every point x0, (for every point x1, (if (tc[r](x0, x1)), then (tc[s](x0, x1)))).",
+  "conclusion_fluent": "for every point P and every point P2, if (P2 is reachable from P by one or more r steps) then (P2 is reachable from P by one or more s steps)",
+  "prove_seconds": 8.37,
+  "prove_status": "ResourceLimit",
+  "max_steps": 200000,
+  "prove_steps": 200000,
+  "prove_detail": "tableau step or certificate nesting budget exhausted",
+  "certificate_bytes": 0,
+  "python_valid": false,
+  "python_status": "ResourceLimit",
+  "python_detail": "tableau step or certificate nesting budget exhausted",
+  "refutation_status": "ResourceLimit",
+  "refutation_domain_size": null,
+  "refutation_seconds": 7.714,
+  "refutation_detail": "evaluation budget exhausted",
+  "necessity": [
+    {
+      "dropped": "edge inclusion r <= s",
+      "status": "Found",
+      "domain_size": 1,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.0,
+      "file": "T9e-without-edge-inclusion-r-<=-s.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "r": [
+            [
+              "e0",
+              "e0"
+            ]
+          ],
+          "s": []
+        }
+      },
+      "recheck_valid": true
+    }
+  ],
+  "lean_valid": null,
+  "lean_note": "no certificate to check"
+}

@@ -1,0 +1,1 @@
+not (there exists point x0, (for every point x1, ((if (x0 lists x1), then (not (x1 lists x1))) and (if (not (x1 lists x1)), then (x0 lists x1))))).

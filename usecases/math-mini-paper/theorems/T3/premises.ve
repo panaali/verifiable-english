@@ -1,0 +1,2 @@
+for every point x0, (not (x0 lt x0)).
+for every point x0, (for every point x1, (for every point x2, (if ((x0 lt x1) and (x1 lt x2)), then (x0 lt x2)))).

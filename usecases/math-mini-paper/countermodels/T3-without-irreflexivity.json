@@ -1,0 +1,25 @@
+{
+  "complete": true,
+  "domains": {
+    "point": [
+      "e0"
+    ]
+  },
+  "constants": {},
+  "relations": {
+    "akin": [],
+    "greatest": [],
+    "le": [],
+    "least": [],
+    "lists": [],
+    "lt": [
+      [
+        "e0",
+        "e0"
+      ]
+    ],
+    "mentions": [],
+    "minimal": [],
+    "sim": []
+  }
+}

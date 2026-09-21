@@ -1,0 +1,1 @@
+for every number x0, (if (x0 is prime), then (there exists number x1, ((x1 is prime) and (x0 lt x1)))).

@@ -1,0 +1,46 @@
+{
+  "language": "ve.core@0",
+  "profile": "relational-fol@0",
+  "spec_revision": "ve-v0-draft-2026-09-20",
+  "vocabulary": {
+    "sorts": {
+      "number": {
+        "description": "An uninterpreted element standing in for a positive integer. VE has no numeric sort; nothing here forces this domain to be the integers, to be infinite, or to be ordered.",
+        "verbalisation": {"singular": "number", "plural": "numbers"}
+      }
+    },
+    "predicates": {
+      "prime": {
+        "arguments": ["number"],
+        "description": "Uninterpreted unary symbol intended to mean 'is prime'. VE cannot state the definition, which quantifies over factorisations and needs a ternary multiplication relation.",
+        "verbalisation": "{0} is prime",
+        "negative_verbalisation": "{0} is not prime"
+      },
+      "unit": {
+        "arguments": ["number"],
+        "description": "Uninterpreted unary symbol intended to mean 'equals 1'.",
+        "verbalisation": "{0} is trivial",
+        "negative_verbalisation": "{0} is not trivial"
+      },
+      "divides": {
+        "arguments": ["number", "number"],
+        "description": "Uninterpreted binary symbol intended to mean 'the first divides the second'.",
+        "verbalisation": "{0} divides {1}",
+        "negative_verbalisation": "{0} does not divide {1}"
+      },
+      "associate": {
+        "arguments": ["number", "number"],
+        "description": "Uninterpreted binary symbol intended to mean 'the two numbers are equal up to units'.",
+        "verbalisation": "{0} matches {1}",
+        "negative_verbalisation": "{0} does not match {1}"
+      },
+      "lt": {
+        "arguments": ["number", "number"],
+        "description": "Uninterpreted binary symbol intended to mean strict numeric order.",
+        "verbalisation": "{0} precedes {1}",
+        "negative_verbalisation": "{0} does not precede {1}"
+      }
+    },
+    "constants": {}
+  }
+}

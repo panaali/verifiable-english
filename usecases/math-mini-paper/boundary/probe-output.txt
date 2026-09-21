@@ -1,0 +1,63 @@
+{
+  "attempts": [
+    {
+      "name": "euclid-statement",
+      "note": "Parses and type-checks. Says nothing about arithmetic: `prime` is an uninterpreted unary symbol.",
+      "ve": "for every number x0, (if (x0 is prime), then (there exists number x1, ((x1 is prime) and (x0 lt x1)))).",
+      "fluent": "for every number N that is prime, there is a number N2 such that both N2 is prime and N precedes N2"
+    },
+    {
+      "name": "primality-definition",
+      "note": "Cannot be written: `p is prime iff p > 1 and for all a, b, a*b = p implies a = 1 or b = 1` needs the ternary relation times(a, b, c).",
+      "error": "UnknownSymbol: Unknown predicate 'times'"
+    },
+    {
+      "name": "divides-reflexive",
+      "note": "Statable: divisibility is a binary relation.",
+      "ve": "for every number x0, (x0 divides x0).",
+      "fluent": "for every number N, N divides N"
+    },
+    {
+      "name": "divides-transitive",
+      "note": "Statable.",
+      "ve": "for every number x0, (for every number x1, (for every number x2, (if ((x0 divides x1) and (x1 divides x2)), then (x0 divides x2)))).",
+      "fluent": "for every number N and every number N2 and every number N3, if (both N divides N2 and N2 divides N3) then N divides N3"
+    },
+    {
+      "name": "prime-has-no-proper-divisor",
+      "note": "Statable as an AXIOM about uninterpreted symbols. It is a consequence of primality in arithmetic; here it has to be assumed.",
+      "ve": "for every number x0, (if (x0 is prime), then (for every number x1, (if (x1 divides x0), then ((x1 is unit) or (x1 associate x0))))).",
+      "fluent": "for every number N that is prime, for every number N2 that divides N, either N2 is trivial or N2 matches N, or both"
+    }
+  ],
+  "unaxiomatised": {
+    "prove_status": "NotFound",
+    "countermodel_status": "Found",
+    "countermodel": {
+      "complete": true,
+      "domains": {
+        "number": [
+          "e0"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "associate": [],
+        "divides": [],
+        "lt": [],
+        "prime": [
+          [
+            "e0"
+          ]
+        ],
+        "unit": []
+      }
+    }
+  },
+  "missing_for_the_proof": [
+    "N = p1 * p2 * ... * pk + 1 : a product over a FINITE SET of unknown size, i.e. an iterated binary operation. Needs function symbols (G1), arity > 2 (G2), a set or list sort (G3) and recursion over it.",
+    "every n > 1 has a prime divisor : provable by strong induction; VE has no induction (G5).",
+    "p | N and p | N-1 implies p | 1 : needs subtraction and the unit (G1, G6).",
+    "the set of primes is finite / enumerate p1..pk : needs finiteness, hence sets or numbers (G3, G6)."
+  ]
+}
