@@ -1,8 +1,8 @@
 ---
-title: "Verifiable English: a controlled language, a checker and a test plan for signing off on machine-checked claims"
+title: "Verifiable English: Statement Review for Machine-Checked Claims"
 author:
-  - "Draft. Written by AI agents (Claude Fable 5.1 and GPT-6 Astra) under an AI orchestrator; see Section 10."
-date: "Draft of 2026-09-21. Experimental results are not yet in; placeholders are marked RESULT."
+  - "Claude and GPT AI workers (process disclosure in Section 10)"
+date: "2026-09-21. Incomplete experimental results are marked RESULT."
 documentclass: article
 classoption:
   - 10pt
@@ -20,5 +20,4 @@ header-includes:
   - \AtBeginEnvironment{longtable}{\footnotesize}
   - \AtBeginEnvironment{verbatim}{\footnotesize}
   - \setlength{\emergencystretch}{3em}
-  - \newcommand{\resultbox}[1]{\fbox{\textbf{RESULT: #1}}}
 ---

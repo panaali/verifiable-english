@@ -1,34 +1,41 @@
-# Build the VE paper. Requires pandoc and tectonic. Run from paper/: `make pdf`.
-SECTIONS := $(sort $(wildcard sections/*.md))
-GENERATED := generated/e0-coverage-table.md generated/e0-constructs-table.md
+# Serial, offline-data paper build. Model calls and benchmark reruns are never made.
+.NOTPARALLEL:
+.DEFAULT_GOAL := html
+export UV_CACHE_DIR := /private/tmp/ve-uv-cache
+export XDG_CACHE_HOME := $(CURDIR)/.cache
+export TECTONIC_CACHE_DIR := $(CURDIR)/.cache/tectonic
+export MPLCONFIGDIR := $(CURDIR)/.cache/matplotlib
+export PYTHONHASHSEED := 0
+PYTHON := uv run --project .. --frozen --with matplotlib==3.11.2 python
+PANDOC := pandoc build/paper.md --metadata-file=metadata.yaml --from=markdown+pipe_tables+footnotes --number-sections --resource-path=.
 
-.PHONY: pdf tables figures placeholders pages clean
+.PHONY: html pdf generate assemble check placeholders pages clean
 
-pdf: build/paper.pdf
+generate:
+	mkdir -p .cache/tectonic .cache/matplotlib build generated
+	$(PYTHON) figures/gen_e0_tables.py
+	$(PYTHON) figures/gen_implementation_tables.py
+	$(PYTHON) figures/gen_judge_ladder.py
+	$(PYTHON) figures/gen_system.py
 
-# Tables are generated from committed data (see figures/gen_e0_tables.py). The outputs are
-# committed too, so `make pdf` also works where the source branch is not available.
-tables:
-	python3 figures/gen_e0_tables.py
-
-figures: figures/system.pdf
-
-figures/system.pdf: figures/system.tex
-	cd figures && tectonic system.tex
-
-build/paper.md: $(SECTIONS) $(GENERATED) build.py
+assemble: generate
 	python3 build.py
 
-build/paper.pdf: build/paper.md metadata.yaml figures/system.pdf
-	pandoc build/paper.md --metadata-file=metadata.yaml --from=markdown+pipe_tables+footnotes \
-	  --pdf-engine=tectonic --resource-path=. -o build/paper.pdf
+html: assemble
+	$(PANDOC) --standalone --embed-resources --mathml --lua-filter=html-images.lua --css=style.css -o build/paper.html
+	python3 verify.py --html
 
-# List every result placeholder that still has to be filled.
+pdf: assemble
+	$(PANDOC) --pdf-engine=tectonic -o build/paper.pdf
+	python3 verify.py --pdf
+
+check: html
+
 placeholders:
-	@grep -n -o "RESULT-[A-Z0-9-]*" $(SECTIONS) | sort -u -t: -k3
+	python3 build.py --placeholders
 
-pages: build/paper.pdf
-	@python3 -c "import re,sys; d=open('build/paper.pdf','rb').read(); print(max(int(n) for n in re.findall(rb'/Count (\d+)', d)))"
+pages:
+	pdfinfo build/paper.pdf
 
 clean:
 	rm -rf build

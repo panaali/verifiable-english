@@ -1,93 +1,86 @@
 #!/usr/bin/env python3
-"""Generate the E0 coverage tables for the paper from committed data.
-
-Data source: experiments/E0/second_rater_metrics.json at the pinned commit of
-branch codex/e0-rater (the same commit that docs/spec/v0.1-coverage.md pins).
-The file is read with `git show`, so this script needs the repository but no
-checkout of that branch. Output: Markdown tables in paper/generated/.
-
-Usage: python3 paper/figures/gen_e0_tables.py
-"""
-from __future__ import annotations
-
+"""Recompute Wilson intervals from pinned counts; retain frozen/adjudicated separation."""
+from pathlib import Path
 import json
-import pathlib
-import subprocess
+from math import sqrt
+from statistics import NormalDist
 
-E0_COMMIT = "46be9e1bafc85e37456cbf56e9dc92b6c8178666"
-METRICS = "experiments/E0/second_rater_metrics.json"
-HERE = pathlib.Path(__file__).resolve().parent
-OUT = HERE.parent / "generated"
+ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / 'generated'
+DATASETS = [('folio','FOLIO'),('proofwriter','ProofWriter'),('cedar','Cedar'),
+            ('gatekeeper','Gatekeeper'),('alloy','Alloy'),('fret','FRET'),('clover','Clover')]
+SRC = '<!-- src: paper/sources/e0-metrics.json; paper/sources/e0-second-rater.md; provenance in paper/sources/manifest.json. -->'
 
-DATASETS = [
-    ("folio", "FOLIO"),
-    ("proofwriter", "ProofWriter"),
-    ("cedar", "Cedar"),
-    ("gatekeeper", "Gatekeeper"),
-    ("alloy", "Alloy"),
-    ("fret", "FRET"),
-    ("clover", "Clover"),
-]
+def write(name, text):
+    path = OUT / name
+    text = text.rstrip() + '\n'
+    if not path.exists() or path.read_text() != text:
+        path.write_text(text)
 
+def wilson(k, n):
+    z = NormalDist().inv_cdf(.975)
+    p = k/n
+    center = (p+z*z/(2*n))/(1+z*z/n)
+    half = z*sqrt(p*(1-p)/n+z*z/(4*n*n))/(1+z*z/n)
+    return max(0., center-half), min(1., center+half)
 
-def load() -> dict:
-    raw = subprocess.run(
-        ["git", "show", f"{E0_COMMIT}:{METRICS}"],
-        check=True, capture_output=True, cwd=HERE,
-    ).stdout
-    return json.loads(raw)
+def cell(k,n):
+    lo,hi = wilson(k,n)
+    return f'{k}/{n}; {100*k/n:.1f}% [{100*lo:.1f}, {100*hi:.1f}]'
 
+def table(headers, rows):
+    return '\n'.join(['| '+' | '.join(headers)+' |','|'+'---|'*len(headers),
+                      *['| '+' | '.join(map(str,r))+' |' for r in rows]])+'\n'
 
-def cell(rate: dict) -> str:
-    return "{k}/{n} = {p:.1f}% [{lo:.1f}, {hi:.1f}]".format(
-        k=rate["k"], n=rate["n"], p=100 * rate["rate"],
-        lo=100 * rate["ci_low"], hi=100 * rate["ci_high"],
-    )
-
-
-def coverage_table(metrics: dict) -> str:
-    rows = [
-        "| Dataset | Strict fit | Lenient fit | Agreement | Kappa |",
-        "|:---|:------------|:------------|---:|---:|",
-    ]
-    for key, name in DATASETS:
-        rates = metrics["second_rates"][key]
-        agreement = metrics["agreement"][key]
-        binary = agreement["collapsed"]  # FIT = DIRECT or REIFIED; NO_FIT = OPAQUE or NO
-        kappa = binary["kappa"]
-        rows.append(
-            "| {name} | {strict} | {lenient} | {m}/{n} | {kappa} |".format(
-                name=name, strict=cell(rates["strict"]), lenient=cell(rates["lenient"]),
-                m=binary["matching"], n=binary["n"],
-                kappa="undefined" if kappa is None else f"{kappa:.2f}",
-            )
-        )
-    return "\n".join(rows) + "\n"
-
-
-def constructs_table(metrics: dict) -> str:
-    header = "| Missing construct | " + " | ".join(n for _, n in DATASETS) + " | Items |"
-    rows = [header, "|---|" + "---:|" * (len(DATASETS) + 1)]
-    for entry in metrics["roadmap_independent"]:
-        per = entry["per_dataset"]
-        rows.append(
-            "| {c} | {cells} | {t} |".format(
-                c=entry["construct"],
-                cells=" | ".join(str(per[k]) for k, _ in DATASETS),
-                t=entry["total"],
-            )
-        )
-    return "\n".join(rows) + "\n"
-
-
-def main() -> None:
-    metrics = load()
+def main():
     OUT.mkdir(exist_ok=True)
-    (OUT / "e0-coverage-table.md").write_text(coverage_table(metrics))
-    (OUT / "e0-constructs-table.md").write_text(constructs_table(metrics))
-    print("wrote", OUT / "e0-coverage-table.md")
-    print("wrote", OUT / "e0-constructs-table.md")
+    m = json.loads((ROOT/'sources/e0-metrics.json').read_text())
+    n = m['denominator_per_dataset']
+    assert n == 30
+    for key,_ in DATASETS:
+        c = m['second_counts'][key]
+        assert sum(c.values()) == n
+        for name,k in [('strict',c['DIRECT']),('lenient',c['DIRECT']+c['REIFIED'])]:
+            r = m['second_rates'][key][name]
+            lo,hi = wilson(k,n)
+            assert k == r['k'] and abs(lo-r['ci_low']) < 1e-12 and abs(hi-r['ci_high']) < 1e-12
+    for filename,caption,get in [
+        ('e0-first-table.md','First-rater frozen counts. Strict and lenient fit with nominal 95% Wilson intervals. Gatekeeper rows classify core rules, not all exemptions.',lambda k:m['agreement'][k]['first_counts']),
+        ('e0-coverage-table.md','Second-rater frozen counts. Strict and lenient fit with nominal 95% Wilson intervals.',lambda k:m['second_counts'][k])]:
+        rows=[]
+        for key,name in DATASETS:
+            c=get(key); rows.append([name,cell(c.get('DIRECT',0),n),cell(c.get('DIRECT',0)+c.get('REIFIED',0),n)])
+        write(filename,caption+'\n\n'+table(['Dataset','Strict fit','Lenient fit'],rows)+'\n'+SRC)
+    rows=[]
+    for key,name in DATASETS:
+        a=m['agreement'][key]; row=[name]
+        for mode in ['four_way','collapsed']:
+            v=a[mode]; row.extend([f"{v['matching']}/{v['n']} ({100*v['observed']:.1f}%)",'undefined' if v['kappa'] is None else f"{v['kappa']:.3f}"])
+        rows.append(row)
+    write('e0-agreement-table.md',table(['Dataset','Four-way agreement','Kappa','Fit/no-fit agreement','Kappa'],rows)+'\n'+SRC)
+    rows=[]
+    for key in ['cedar','gatekeeper']:
+        c=m['proposed_adjudicated_counts'][key]
+        rows.append([key.title(),cell(c['DIRECT'],n),cell(c['DIRECT']+c['REIFIED'],n)])
+    rows.extend([['All frozen claimed-fit witnesses','114 parse/type checks','3 Cedar translations later found defective'],['Proposed corrected fit inventory','111/210','Not a pooled population estimate']])
+    write('e0-corrections-table.md','Proposed adjudication only; unchanged datasets retain the frozen counts.\n\n'+table(['Dataset / inventory','Strict fit / checks','Lenient fit / qualification'],rows)+'\n'+SRC)
+    rows=[]
+    for e in m['roadmap_independent']:
+        rows.append([e['construct'],e['total'],', '.join(f'{name} {e["per_dataset"][key]}' for key,name in DATASETS if e['per_dataset'][key])])
+    write('e0-constructs-table.md',table(['Missing construct','Items','Dataset counts'],rows)+'\n'+SRC)
+    # The per-dataset ledger is a committed design judgment, not an inferred measurement.
+    ledger=(ROOT.parent/'docs/spec/v0.1-coverage.md').read_text()
+    import re
+    rows=[]
+    for key,name in DATASETS:
+        match=re.search(r'^\| '+key+r' \| (\d+) \| (\d+) \| (\d+) \| (\d+) \| (\d+) \| (\d+) \| (\d+) \| (\d+) \|$',ledger,re.M)
+        assert match,key
+        v=list(map(int,match.groups()))
+        rows.append([name,*[f'{x}/{n}' for x in v[:4]]])
+    write('coverage-projection-table.md','PROJECTION: lenient fits from the frozen baseline; A = closure, B = proposed linear integer arithmetic.\n\n'+table(['Dataset','Base','A','B','A+B'],rows)+'\nFrozen inventory totals: 114/210, 141/210, 128/210, and 155/210. With proposed adjudication: 111/210, 141/210, 125/210, and 155/210, respectively. These are heterogeneous inventory totals.\n\n<!-- src: docs/spec/v0.1-coverage.md, Per-dataset fit projection. -->')
+    r=json.loads((ROOT.parent/'experiments/E0/closure_witnesses/report.json').read_text())
+    write('closure-witness-table.md',table(['Closure development artifact','Count'],[['Cedar items',r['cedar_items']],['Alloy items',r['alloy_items']],['Paired true/false models',r['models']],['Python/Lean agreements',f"{r['python_lean_agree']}/{r['models']}"]])+'\n<!-- src: experiments/E0/closure_witnesses/report.json; README.md in that directory. -->')
+    print('E0 tables: counts checked; Wilson intervals independently recomputed.')
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

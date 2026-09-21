@@ -1,0 +1,1 @@
+for every service x0, (if (x0 is deployed), then (there exists person x1, (x1 owns x0))).
