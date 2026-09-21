@@ -1,0 +1,21 @@
+{
+  "id": "T9b",
+  "title": "tc[r] is included in rtc[r]",
+  "expect": "prove",
+  "environment": "environment-closure.json",
+  "premise_labels": [],
+  "conclusion_ve": "for every point x0, (for every point x1, (if (tc[r](x0, x1)), then (rtc[r](x0, x1)))).",
+  "conclusion_fluent": "for every point P and every point P2, if (P2 is reachable from P by one or more r steps) then (P2 is reachable from P by zero or more r steps)",
+  "prove_seconds": 0.001,
+  "prove_status": "Found",
+  "max_steps": 200000,
+  "prove_steps": 7,
+  "prove_detail": "",
+  "certificate_bytes": 519,
+  "python_valid": true,
+  "python_status": "Valid",
+  "python_detail": "",
+  "necessity": [],
+  "lean_valid": true,
+  "lean_note": ""
+}

@@ -1,0 +1,21 @@
+{
+  "id": "T9d",
+  "title": "tc[r] is transitive",
+  "expect": "prove",
+  "environment": "environment-closure.json",
+  "premise_labels": [],
+  "conclusion_ve": "for every point x0, (for every point x1, (for every point x2, (if ((tc[r](x0, x1)) and (tc[r](x1, x2))), then (tc[r](x0, x2))))).",
+  "conclusion_fluent": "for every point P and every point P2 and every point P3, if (both (P2 is reachable from P by one or more r steps) and (P3 is reachable from P2 by one or more r steps)) then (P3 is reachable from P by one or more r steps)",
+  "prove_seconds": 0.002,
+  "prove_status": "Found",
+  "max_steps": 200000,
+  "prove_steps": 7,
+  "prove_detail": "",
+  "certificate_bytes": 530,
+  "python_valid": true,
+  "python_status": "Valid",
+  "python_detail": "",
+  "necessity": [],
+  "lean_valid": true,
+  "lean_note": ""
+}

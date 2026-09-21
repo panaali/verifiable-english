@@ -1,0 +1,1 @@
+for every point x0, (for every point x1, (for every point x2, (for every point x3, (if ((x0 sim x1) and ((x2 sim x3) and (x0 le x2))), then (x1 le x3))))).

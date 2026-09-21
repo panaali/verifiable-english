@@ -1,0 +1,58 @@
+{
+  "id": "T4",
+  "title": "Asymmetric implies irreflexive",
+  "expect": "prove",
+  "environment": "environment.json",
+  "premise_labels": [
+    "asymmetry"
+  ],
+  "conclusion_ve": "for every point x0, (not (x0 lt x0)).",
+  "conclusion_fluent": "for every point P, P does not precede P",
+  "prove_seconds": 0.003,
+  "prove_status": "Found",
+  "max_steps": 200000,
+  "prove_steps": 8,
+  "prove_detail": "",
+  "certificate_bytes": 614,
+  "python_valid": true,
+  "python_status": "Valid",
+  "python_detail": "",
+  "necessity": [
+    {
+      "dropped": "asymmetry",
+      "status": "Found",
+      "domain_size": 1,
+      "source": "exhaustive search over domains of size 0-3",
+      "seconds": 0.001,
+      "file": "T4-without-asymmetry.json",
+      "model": {
+        "complete": true,
+        "domains": {
+          "point": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "akin": [],
+          "greatest": [],
+          "le": [],
+          "least": [],
+          "lists": [],
+          "lt": [
+            [
+              "e0",
+              "e0"
+            ]
+          ],
+          "mentions": [],
+          "minimal": [],
+          "sim": []
+        }
+      },
+      "recheck_valid": true
+    }
+  ],
+  "lean_valid": true,
+  "lean_note": ""
+}

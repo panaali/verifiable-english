@@ -1,0 +1,1 @@
+(for every point x0, (x0 sim x0)) and ((for every point x1, (for every point x2, (if (x1 sim x2), then (x2 sim x1)))) and (for every point x3, (for every point x4, (for every point x5, (if ((x3 sim x4) and (x4 sim x5)), then (x3 sim x5)))))).

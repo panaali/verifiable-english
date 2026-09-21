@@ -1,0 +1,3 @@
+for every point x0, (for every point x1, ((x0 equals x1) or ((x0 lt x1) or (x1 lt x0)))).
+for every point x0, ((if (x0 is minimal), then (for every point x1, (not (x1 lt x0)))) and (if (for every point x2, (not (x2 lt x0))), then (x0 is minimal))).
+for every point x0, ((if (x0 is least), then (for every point x1, (if (not (x1 equals x0)), then (x0 lt x1)))) and (if (for every point x2, (if (not (x2 equals x0)), then (x0 lt x2))), then (x0 is least))).

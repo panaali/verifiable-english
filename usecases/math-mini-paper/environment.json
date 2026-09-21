@@ -1,0 +1,97 @@
+{
+  "language": "ve.core@0",
+  "profile": "relational-fol@0",
+  "spec_revision": "ve-v0-draft-2026-09-20",
+  "vocabulary": {
+    "sorts": {
+      "point": {
+        "description": "An element of the fixed carrier set under discussion.",
+        "verbalisation": {
+          "singular": "point",
+          "plural": "points"
+        }
+      }
+    },
+    "predicates": {
+      "greatest": {
+        "arguments": [
+          "point"
+        ],
+        "description": "Holds of a point that the greatest-element definition axiom characterises.",
+        "verbalisation": "{0} is greatest",
+        "negative_verbalisation": "{0} is not greatest"
+      },
+      "minimal": {
+        "arguments": [
+          "point"
+        ],
+        "description": "Holds of a point that the minimality definition axiom characterises.",
+        "verbalisation": "{0} is minimal",
+        "negative_verbalisation": "{0} is not minimal"
+      },
+      "least": {
+        "arguments": [
+          "point"
+        ],
+        "description": "Holds of a point that the least-element definition axiom characterises (rendered as 'is minimum'; 'least' is a reserved logical word for the renderer).",
+        "verbalisation": "{0} is minimum",
+        "negative_verbalisation": "{0} is not minimum"
+      },
+      "lists": {
+        "arguments": [
+          "point",
+          "point"
+        ],
+        "description": "The first point lists the second point; an arbitrary binary relation.",
+        "verbalisation": "{0} lists {1}",
+        "negative_verbalisation": "{0} does not list {1}"
+      },
+      "mentions": {
+        "arguments": [
+          "point",
+          "point"
+        ],
+        "description": "The first point mentions the second point; a second, independent binary relation.",
+        "verbalisation": "{0} mentions {1}",
+        "negative_verbalisation": "{0} does not mention {1}"
+      },
+      "lt": {
+        "arguments": [
+          "point",
+          "point"
+        ],
+        "description": "Strict order candidate: the first point is strictly below the second (rendered as 'precedes').",
+        "verbalisation": "{0} precedes {1}",
+        "negative_verbalisation": "{0} does not precede {1}"
+      },
+      "le": {
+        "arguments": [
+          "point",
+          "point"
+        ],
+        "description": "Order candidate: the first point is at most the second (rendered as 'ranks below', which here means 'is at most', NOT the strict order).",
+        "verbalisation": "{0} ranks below {1}",
+        "negative_verbalisation": "{0} does not rank below {1}"
+      },
+      "sim": {
+        "arguments": [
+          "point",
+          "point"
+        ],
+        "description": "Symmetrisation candidate of the order, characterised by a definition axiom (rendered as 'matches').",
+        "verbalisation": "{0} matches {1}",
+        "negative_verbalisation": "{0} does not match {1}"
+      },
+      "akin": {
+        "arguments": [
+          "point",
+          "point"
+        ],
+        "description": "An unconstrained binary relation used for the conjecture section.",
+        "verbalisation": "{0} resembles {1}",
+        "negative_verbalisation": "{0} does not resemble {1}"
+      }
+    },
+    "constants": {}
+  }
+}

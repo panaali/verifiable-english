@@ -1,0 +1,1 @@
+for every point x0, (for every point x1, (if (x0 r x1), then (tc[r](x0, x1)))).
