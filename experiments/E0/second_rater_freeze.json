@@ -1,0 +1,48 @@
+{
+  "frozen_at_utc": "2026-09-21T08:59:38.236659+00:00",
+  "phase": "independent ratings and witnesses complete; first item labels not inspected",
+  "checker_revision": "12538d8d418b3eeec59e58d74c3886786e5139da",
+  "checker_files_sha256": {
+    "ve/__init__.py": "dffcba8c823c7f57db586e35aabaef6b4193f51a2d815e15c8fc4c5d628fdf8a",
+    "ve/__main__.py": "e8afc7fdd8b781febd081ffa65fc7f3d423fc58cd4a351019537abdb5611d75a",
+    "ve/argument.py": "fbd6d84f3ddf139d481cda98de852343a73a426588340855f9237983c94d7378",
+    "ve/argument_fixtures.py": "b1677fd9199d94bb99687e22c328c5209186b0446f6eaf760d160a245986e2c8",
+    "ve/ast.py": "d771643dc1be65fdf958d3b2e10940eaa8ee0246c5eb38d3f9ab5b8b2a0e8605",
+    "ve/authoring.py": "2f8660901d24fda45192a228b3296771d349401c8746a3e1355126e69dc33348",
+    "ve/check.py": "29f68ae5a62ee360873c88101e864a2fe60ba3341d72d81a21bec01ba7c36a21",
+    "ve/entailment.py": "2b4c6bfe5bdf47698a142c54d5b978f10f1530ee68604b94491ef264a23f6aad",
+    "ve/environment.py": "a6119f90f41e41148bf114653c27fdff8ecb9ff033c32e81e5750ccea89aa97d",
+    "ve/errors.py": "486f2d3fc45727775256ebc91ad82f32ceba3ed2882fda5f97162edc45f89b1b",
+    "ve/evaluate.py": "3f68cecb5c627f704c95240b4f7dab4263cae7f13f03ec1ded850cc0e94c8409",
+    "ve/fol.py": "9ab0145b9e27ee80cb90f8d71749f1e4d04279ddf96df521ba808e40786bb18b",
+    "ve/grammar.py": "4c23bdc18346759de14fff38b1bd14250ad17e27f8cb1b0700d7a4f34961372d",
+    "ve/identity.py": "467aab8b254974ba42c78448a495e3dc3c557d30d6fdceb8e474caa023d40eb5",
+    "ve/limits.py": "674d08bb41a8475dfc5fd8a682c918a05365d47db3de675f5ed3f52f7f8c15b1",
+    "ve/model.py": "8a026352dc3bdbba8b67ba3d74d06cb49b46d0f3198ce644ed174d54434ff8d8",
+    "ve/parser.py": "f108ec768e13276fcd4c7a90b30674ff5ffc5a894c3eb48026e37986c2b8a0d9",
+    "ve/printer.py": "e972d366a6cdd9fcd757b0752b031950d3c9a18a65e8224a186b83f30c2afa24",
+    "ve/search.py": "9f560ef3a42ed3cafd5b524957df28edb3c4c988c7f360e3eb41fd606f8f8798",
+    "ve/wire.py": "3dbc5cfed26096ae8a75cadd0c0ecd9ccfe8da1462334f767478990fdb798a00"
+  },
+  "second_rater_sha256": "7ccc3f08df03c0408fe3d42fa1fe0db2e23dc4b25588b15eb3997d652dc33fa2",
+  "n": 210,
+  "fit_witnesses_checked": {
+    "folio": 25,
+    "proofwriter": 26,
+    "cedar": 13,
+    "gatekeeper": 6,
+    "alloy": 18,
+    "fret": 12,
+    "clover": 14
+  },
+  "samples_sha256": {
+    "folio": "39977d1417a613b7e410aa2d026fb5819ef23810683ab296e728b941f52cdba9",
+    "proofwriter": "a4356db2ef3a951b1f435aa5f18dbbb9a297c31fe1d0ac737e2e4fbee9374806",
+    "cedar": "72e1629a51dd8e12350840ddef0ef194da0ee25b08089bb09eb63ba1b712c24a",
+    "gatekeeper": "f46eaad97ebc91498b83b16b77aa309ec3c890d5170222c3586be85e10698a16",
+    "alloy": "f0c85540a4c1b5a99149b7af16249f2662203300d4e9858295a23c49000de8ad",
+    "fret": "a10f53bdbb791db3528195a77dc034f1860eadcd14c550281ca3f76c0d5275a4",
+    "clover": "8d48a7a0a0e937c8fa3050e220ac07e88e9fae7d4603d02adc34b42f320dba62"
+  },
+  "blinding_disclosure": "Parent performed schema-only programmatic inspection of first-rater JSONL files (keys/counts, not class or reason values). A location search printed SURVEY.md aggregate counts and dataset commentary before rating. No item-specific first-rater label or rationale was displayed before freeze. Seven dataset agents received fresh contexts without those aggregates and were instructed to avoid SURVEY.md and all first-rater JSONL files. This is not a fully aggregate-blind parent audit."
+}

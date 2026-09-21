@@ -1,0 +1,219 @@
+{
+  "Boolean equivalence": [],
+  "ability modality": [
+    "Modal and propositional-attitude semantics"
+  ],
+  "absolute difference": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "absolute_value": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "acyclicity": [
+    "Transitive closure and reachability"
+  ],
+  "arithmetic": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "arithmetic ranges": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "arithmetic subtraction": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "array indexing": [],
+  "array semantics": [],
+  "cardinality/order": [],
+  "character membership": [],
+  "decimal parsing": [
+    "String operations, regex and parsing"
+  ],
+  "dependent_lookup": [],
+  "disjunction": [],
+  "division": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "embedded proposition": [
+    "Modal and propositional-attitude semantics"
+  ],
+  "entity-hierarchy transitive closure": [
+    "Transitive closure and reachability"
+  ],
+  "epistemic-qualification": [
+    "Modal and propositional-attitude semantics"
+  ],
+  "expanded_helper_predicates": [],
+  "expanded_helpers": [],
+  "figurative-language-disambiguation": [
+    "Lexical sense disambiguation"
+  ],
+  "fixed_cardinality": [],
+  "frame conditions": [],
+  "frame_condition": [],
+  "frequency-or-default-quantification": [
+    "Frequency and defeasible/default quantification"
+  ],
+  "functional_lookup": [],
+  "future modality": [
+    "Modal and propositional-attitude semantics"
+  ],
+  "general counting": [
+    "General counting and multiplicities"
+  ],
+  "general_cardinality": [
+    "General counting and multiplicities"
+  ],
+  "higher_order_quantification": [
+    "Higher-order quantification"
+  ],
+  "implication": [],
+  "integer addition": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "integer arithmetic": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "integer modulo": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "integer multiplication": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "integer order": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "integer subtraction": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "integer successor/subtraction": [],
+  "integer_arithmetic": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "length": [],
+  "length arithmetic": [],
+  "length sentinel": [],
+  "map/set comprehension": [],
+  "metric_time": [
+    "Metric time and duration"
+  ],
+  "modulo": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "multiplication": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "multiset cardinality": [
+    "General counting and multiplicities"
+  ],
+  "mutable array state": [],
+  "mutable old state": [],
+  "mutable state": [],
+  "natural-number arithmetic": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "negation": [],
+  "nested mutable arrays": [],
+  "numeric comparison beyond v0": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "numeric_comparison": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "old state": [],
+  "old-free search state": [],
+  "ordered comparison": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "ordered_future": [],
+  "ordered_predecessor": [],
+  "ordered_predecessors": [],
+  "ordered_sequence": [],
+  "ordered_successor": [],
+  "parameterized_predicate": [],
+  "persistence_operator": [
+    "Metric time and duration"
+  ],
+  "predicate input": [],
+  "previous_value": [],
+  "propositional attitude": [
+    "Modal and propositional-attitude semantics"
+  ],
+  "quaternary_relation": [],
+  "reachability/path quantification": [
+    "Transitive closure and reachability"
+  ],
+  "real arithmetic": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "real_arithmetic": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "recursive_definition": [],
+  "reflexive_transitive_closure": [
+    "Transitive closure and reachability"
+  ],
+  "regular expressions": [
+    "String operations, regex and parsing"
+  ],
+  "relation_converse": [],
+  "relation_difference": [],
+  "relation_image": [],
+  "relation_override": [],
+  "relation_parameter_reification": [],
+  "relation_union": [],
+  "relation_valued_state": [],
+  "relational skeleton": [],
+  "relational_image": [],
+  "relational_join": [],
+  "sentinel integer": [],
+  "sequence concatenation": [],
+  "sequence indexing": [],
+  "sequence membership": [],
+  "sequence slicing": [],
+  "set_comprehension": [],
+  "set_equality": [],
+  "set_parameter_reification": [],
+  "sign_function": [
+    "Numeric arithmetic and value comparisons"
+  ],
+  "state_transition": [],
+  "string case conversion": [
+    "String operations, regex and parsing"
+  ],
+  "string concatenation": [
+    "String operations, regex and parsing"
+  ],
+  "string containment": [
+    "String operations, regex and parsing"
+  ],
+  "string indexing": [],
+  "string prefix": [
+    "String operations, regex and parsing"
+  ],
+  "string sorting": [
+    "String operations, regex and parsing"
+  ],
+  "string splitting": [
+    "String operations, regex and parsing"
+  ],
+  "string suffix": [
+    "String operations, regex and parsing"
+  ],
+  "string suffix processing": [
+    "String operations, regex and parsing"
+  ],
+  "successor": [],
+  "template parameter binding": [],
+  "temporal avoidance": [],
+  "temporal/frequency interpretation beyond v0": [
+    "Frequency and defeasible/default quantification"
+  ],
+  "temporal_until": [],
+  "ternary_relation_reification": [],
+  "transitive_closure": [
+    "Transitive closure and reachability"
+  ],
+  "trigonometric_functions": [
+    "Transcendental numeric functions"
+  ]
+}
