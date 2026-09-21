@@ -1,12 +1,26 @@
 # Future work
 
-The next empirical step is to complete the frozen E1 and E4 scored analyses
-and report benefits, harms, and inconclusive outcomes under their fixed rules.
-Additional judge families require a replication or extension, not a change to
-the frozen roster. E2 needs smaller derivations or longer-context judges; E5
-needs an affordable, calibrated judge before a scored freeze. A human study must separately test specification sign-off,
-model-satisfaction prediction, and evidence review. The prepared materials can
-support such a study, but model results cannot substitute for participants.
+**What would change our mind.** A replication preregistered before new scored
+judging should use a multi-family judge ladder, fixed provider/model settings,
+and `ve_fluent` as a named contrast, with the same paired FA and HA safeguards.
+A reproducible useful reduction across families would change the current
+surface-benefit conclusion; exploratory 14B contrasts alone do not. The planned
+external-baseline comparisons include debate, critique, voting, and
+FormalJudge-style review, alongside checked structured FOL and controlled
+language or structured-editor interfaces. Matched information and compute
+budgets should test which component earns its cost. Long-context retention,
+compaction, and agent hand-offs are planned settings, not demonstrated benefits.
+The replication is prospective; no completed preregistration or scored
+replication result is claimed here.
+<!-- src: paper/sources/planned-replication.md (separately preregistered E1-R
+plan and Phase S comparisons); paper/sources/e1-results.md (fluent hypothesis);
+FUTURE.md; docs/research-review.md. -->
+
+E2 needs smaller derivations or longer-context judges; E5 needs an affordable,
+calibrated judge before a scored freeze. A human study must separately test
+specification sign-off, model-satisfaction prediction, and evidence review.
+The prepared materials can support such a study, but model results cannot
+substitute for participants.
 <!-- src: FUTURE.md, human study package; docs/research-review.md. -->
 
 Coverage should guide language growth. Closure witnesses need broader translation
@@ -17,7 +31,8 @@ certificates. Temporal, normative, and probabilistic extensions need explicit
 interactions rather than unrelated modules whose names suggest completeness.
 <!-- src: FUTURE.md, Phase V; docs/spec/v0.1-profiles.md. -->
 
-A use-case corpus could formalize policy and debate documents, legal text,
+The initial qualitative use cases need independent review and expansion to
+policy and debate documents, legal text,
 research statements, and attributed news claims while retaining each missing
 construct and modeling decision. Broader motivation from AI mathematics calls
 for statement-review experiments on actual Lean developments; those statements

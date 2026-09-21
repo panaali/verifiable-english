@@ -1,4 +1,30 @@
-# Limitations and threats to validity
+# Discussion, limitations, and threats to validity
+
+The scored results narrow the claim. Strict English showed no benefit for the
+capable primary judge: P1 is inconclusive and P2 rules out a useful 0.05
+reduction. The combined E1 claim is not supported. Any benefit of fluent
+rendering for the weaker 14B judge remains an exploratory hypothesis. Hosted
+small models' near-perfect FOL calibration suggests that model readability is
+not the bottleneck on this inventory; it does not show that all formal
+statements are easy. The checked components did help: the E4 14B FA contrast
+passes its preregistered protection rule, and 7B's secondary HA contrast shows
+recovery from near-universal prose-arm rejection. Replay also rejects dishonest
+countermodel claims by construction. These are limited benefits of the
+checking/display package, not evidence that English rendering improves oversight.
+<!-- src: paper/sources/e1-results.md; paper/sources/e1-prereg-frozen.md;
+paper/sources/e4-score-summary.json; paper/sources/e4-prereg-frozen.md. -->
+
+The qualitative policy exercise exposes low coverage without extensions.
+Five of nine debate claims are unformalized; the amendment has one REIFIED
+and three OPAQUE clauses. Deontic force, open-textured terms, empirical
+premises, and authority judgments do not become checked merely by being named.
+One Sonnet agent produced this exercise, without cross-review, using
+summarizing source retrieval; its quotations and interpretation need independent
+review. The bounded search's NotFound outputs must not be mistaken for general
+entailment proofs. These limitations constrain what the use case can demonstrate.
+<!-- src: paper/sources/debate-coverage.md; paper/sources/debate-source.md;
+paper/sources/debate-countermodel-RESULTS.md; paper/sources/amendment-coverage.md;
+paper/sources/amendment-GAPS.md. -->
 
 There are no human participants. Model supervisors may already understand
 symbolic logic, respond to authority labels differently from people, or exploit
@@ -43,8 +69,9 @@ variants, and their point estimates can change with quantization, prompts,
 reasoning budgets, or batching. Small numbers of independent templates make
 interval estimates fragile. E1 v5 and E4 revision 2 froze before scored judging; the reported dev
 selection remains part of their evidential limits. E1 has only one primary judge,
-one candidate inside its band, and its final explanation condition was easier
-than no explanation on dev. E4 retained two judges that failed its original gate.
+one candidate inside its band, and its final explanation condition lowered both false approval and honest
+acceptance on the scored split. The 12-template intervals are sensitive to the
+structural sample; vocabulary renamings are not independent clusters. E4 retained two judges that failed its original gate.
 E2 was not run, and E5 has no scored results. Leak audits
 only cover the features and inventory actually tested; their success is not a
 general absence-of-shortcuts guarantee. All 96 E1 scored base items have final explanations, but four oracle-UNKNOWN
@@ -62,3 +89,12 @@ not decide all consequences, authenticate facts, recover omitted requirements,
 or ensure useful proof search. Canonical identities prevent accidental artifact
 substitution only when the surrounding binding and display path is correct.
 <!-- src: lean/METATHEORY.md; lean/CLOSURE.md; docs/implementation.md. -->
+
+Humans, other model families in scored comparisons, external baselines,
+long-context retention, compaction, and training remain untested. E4 has
+failure-sensitive operational endpoints, a floor in 7B prose FA, and an
+unresolved output-cap provenance discrepancy. The source report omits E1b raw
+correct counts and per-view failures and E1 model-token covariates. These gaps
+are disclosed rather than filled from rounded estimates or assumed settings.
+<!-- src: paper/sources/e1-results.md; paper/sources/e4-score-summary.json;
+paper/sources/e4-prereg-frozen.md; paper/sources/planned-replication.md. -->
