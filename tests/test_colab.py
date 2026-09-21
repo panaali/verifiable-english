@@ -99,3 +99,16 @@ def test_exporting_the_scored_split_needs_the_committed_prereg(repo, tmp_path): 
     git(repo, "add", ".")
     git(repo, "commit", "-qm", "prereg")
     assert experiment_requests(exp, "scored", client)
+
+
+def test_a_rerun_exports_only_trials_that_are_not_cached(repo, tmp_path):  # noqa: F811
+    from ve_experiments.colab import uncached
+
+    exp = make_exp(repo, judges=(A, B))
+    client = LLMClient(cache_dir=tmp_path / "cache")
+    reqs = experiment_requests(exp, "dev", client)
+    fol = [kr for kr in reqs if "|fol|" in kr.key]
+    export_job(tmp_path / "job", "job-4", fol, SPECS, max_new_tokens=400)
+    import_outputs(client, fol, FakeJobRunner(fake_reply)(tmp_path / "job", tmp_path / "results"))
+    left = uncached(client, reqs)
+    assert left and all("|ve|" in kr.key for kr in left) and len(left) == len(reqs) - len(fol)
