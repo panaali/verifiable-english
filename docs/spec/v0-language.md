@@ -1,10 +1,10 @@
-# VE v0: Finite Constraint Language
+# VE v0: Relational Claim Language
 
 **Status:** Proposed specification, September 20, 2026. The definitions below are design notation, not compiled Lean code or completed proofs. This document owns v0 syntax and semantics; see the [architecture](../architecture-and-design.md) for purpose and the [verification contract](verification-contract.md) for guarantees.
 
 ## Semantic profile and environment
 
-The only admitted profile is `finite-constraints@0`, using `ve.core@0`. A document denotes constraints on one explicitly supplied finite relational structure. It does not assert that the structure accurately describes the world, and it does not itself issue commands or permissions.
+The only admitted profile is `relational-fol@0`, using `ve.core@0`. A document consists of closed first-order formulas interpreted over a typed relational structure. The profile supports two distinct judgments: evaluating claims in a supplied finite structure, and certifying that a conclusion follows from explicit premises in every admissible structure. The [debate protocol](debate-protocol.md) defines the latter's claim and certificate bindings. Neither judgment supplies evidence that the vocabulary or premises accurately describe the world, nor issues commands or permissions.
 
 The environment `E` contains the language/profile identifiers, specification revision, and complete local vocabulary `Σ`. Its artifact identifier binds all these fields together. `Σ` declares:
 
@@ -18,14 +18,14 @@ Predicate symbols have no hidden definitions or inference rules. A supplied mode
 
 No remote lookup, implicit import, subtyping, overloaded symbol, inferred sort, recursive definition, or executable vocabulary entry is allowed. Unknown language/profile versions are errors. Schema and model validation are part of the checking boundary, not preprocessing that may silently repair inputs.
 
-This fragment supports finite requirements exchange. G0 must establish that representative tasks can express their acceptance conditions without turning computations that VE is meant to check into opaque agent-supplied predicates. The [architecture](../architecture-and-design.md#language-choices) explains the tradeoffs against arithmetic, richer relations and references.
+This fragment supports the first experiments on requirement reinterpretation and inconsistent meanings across argument branches. Task selection must establish which requirements and deductions it can express without turning difficult checks into opaque agent-supplied predicates. Arithmetic and claims about textual formatting need specified extensions or input adapters; a predicate named `uses_decimals` does not implement either check. The [architecture](../architecture-and-design.md#language-choices) explains the tradeoffs.
 
 The environment wire shape is shown below using the worked example's vocabulary. All displayed fields are required, including empty maps; unknown fields are rejected. Sort entries contain only `description`; predicate entries contain `arguments` (an ordered array of one or two declared sorts) and `description`; constant entries contain `sort` and `description`. Descriptions are nonempty Unicode strings. The specification revision must identify an immutable revision supported by the checker; a matching language name alone is insufficient. This draft identifier is illustrative, not an implemented release.
 
 ```json
 {
   "language": "ve.core@0",
-  "profile": "finite-constraints@0",
+  "profile": "relational-fol@0",
   "spec_revision": "ve-v0-draft-2026-09-20",
   "vocabulary": {
     "sorts": {
@@ -105,17 +105,11 @@ Forall(service, Exists(person, Binary(owns, Var(0), Var(1))))
 
 Under the two binders, `Γ = [person, service]`; reversing the relation's arguments is a type error. No pronouns, implied quantifiers, higher-order arguments, function symbols, or embedded Lean source occur in v0.
 
-## Finite models and denotation
+## Structures and denotation
 
-A valid model `M` supplies a finite enumeration `D_s` for each declared sort, an element of `D_s` for each constant of sort `s`, and a finite set of tuples for each predicate, matching its declared arity and sorts. Every declared sort, constant, and predicate must have an entry, even when its domain or relation is empty. Unknown entries, duplicate entries, dangling entities, and wrong-sort tuples are errors.
+An admissible structure `S` assigns a domain `D_s` to each declared sort, a correctly sorted domain element to each constant, and a relation of the declared sorts to each predicate. Domains may be finite or infinite, and empty if no constant requires an inhabitant. There is no unique-name assumption. A valuation `ρ` assigns a correctly sorted element to each bound variable. Variables and constants denote their assigned elements; atomic predicates denote membership in the assigned relations.
 
-An entity is identified by `(sort, local_id)`; identical strings in different sorts do not make equal entities. Local IDs use the identifier character pattern, but may equal reserved words or schema names because they occur only as model data. Constants may denote the same entity; no unique-name assumption is inferred. Domains may be empty if no declared constant requires an inhabitant. The inventory includes `complete: true`: the submitter explicitly attests that it is the complete finite structure to be evaluated. This is a data-model assertion, not a checker guarantee of completeness about reality.
-
-The model has exactly four required fields: `complete` (the literal Boolean `true`), `domains` (sort-to-array-of-local-IDs map), `constants` (constant-to-local-ID map), and `relations` (predicate-to-array-of-tuples map). Tuple entries are local-ID strings whose sorts come from the predicate signature. Unknown fields are errors; no defaults are inserted. Duplicate JSON object keys must be detected before a decoder can overwrite them.
-
-Within that supplied structure, a tuple absent from a declared relation is false. A missing relation entry is an invalid model, not an empty relation. This distinction prevents a partial submission from silently choosing the closed-world profile.
-
-Let `ρ` assign a correctly sorted element to each variable in `Γ`. Interpret variables by `ρ`, constants by `M`, and predicate applications by membership in the corresponding relation. The remaining clauses are:
+The formula clauses are:
 
 ```text
 ⟦Top⟧ = True                        ⟦Bottom⟧ = False
@@ -127,9 +121,32 @@ Let `ρ` assign a correctly sorted element to each variable in `Γ`. Interpret v
 ⟦document⟧ = conjunction of its closed statements, evaluated at ρ = []
 ```
 
-All predicate membership and equality tests are decidable on these finite structures. This permits a terminating recursive Boolean evaluator with a proposed theorem equating its result to the denotation. There is no promise to decide unrestricted first-order validity, find an arbitrary satisfying model, or prove a requirement true for every possible inventory.
+Write `Denote(E,A,S)` for this interpretation. For a finite list of closed premises `Δ` and closed conclusion `C`, all under `E`, logical consequence means:
+
+```text
+Entails(E, Δ, C) := ∀ admissible S,
+  (∀ A ∈ Δ, Denote(E,A,S)) → Denote(E,C,S)
+```
+
+This quantifies over all admissible structures, not just examples submitted during a debate. Universal statements over empty domains and implications with false antecedents are true. Nonemptiness or existence needed by an argument must be expressed as premises; the checker may not infer it from a sort name or an illustrative example.
+
+## Finite models and evaluation
+
+A valid model `M` supplies a finite enumeration `D_s` for each declared sort, an element of `D_s` for each constant of sort `s`, and a finite set of tuples for each predicate, matching its declared arity and sorts. Every declared sort, constant, and predicate must have an entry, even when its domain or relation is empty. Unknown entries, duplicate entries, dangling entities, and wrong-sort tuples are errors.
+
+An entity is identified by `(sort, local_id)`; identical strings in different sorts do not make equal entities. Local IDs use the identifier character pattern, but may equal reserved words or schema names because they occur only as model data. Constants may denote the same entity; no unique-name assumption is inferred. Domains may be empty if no declared constant requires an inhabitant. The inventory includes `complete: true`: the submitter explicitly attests that it is the complete finite structure to be evaluated. This is a data-model assertion, not a checker guarantee of completeness about reality.
+
+The model has exactly four required fields: `complete` (the literal Boolean `true`), `domains` (sort-to-array-of-local-IDs map), `constants` (constant-to-local-ID map), and `relations` (predicate-to-array-of-tuples map). Tuple entries are local-ID strings whose sorts come from the predicate signature. Unknown fields are errors; no defaults are inserted. Duplicate JSON object keys must be detected before a decoder can overwrite them.
+
+Within that supplied structure, a tuple absent from a declared relation is false. A missing relation entry is an invalid model, not an empty relation. This distinction prevents a partial submission from silently being evaluated as a complete model.
+
+Every valid finite `M` determines an admissible structure, written `asStructure(M)`. Use the same denotation above; abbreviate `Denote(E,A,asStructure(M))` as `Denote(E,A,M)`. All predicate membership and equality tests are decidable on these finite structures. This permits a terminating recursive Boolean evaluator with a proposed theorem equating its result to denotation.
+
+A finite model satisfying every premise and falsifying the conclusion is a counterexample to `Entails(E,Δ,C)`. One model satisfying the conclusion does not prove entailment. Failure to find a finite counterexample also does not prove entailment. No complete decision procedure or terminating proof search for unrestricted first-order consequence is promised.
 
 Universal quantification over an empty domain is true; existential quantification is false. Material implication with a false antecedent is true. These are deliberate profile rules. A user who needs a nonempty set of deployed services must state that constraint explicitly. UI diagnostics should surface vacuous satisfaction rather than disguise it as evidence of a deployed service.
+
+Closed-world evaluation applies only within the complete submitted model. An empirical premise with no evidence remains unresolved in the debate; it does not acquire a false value from omission. The finite-model wire format represents examples and countermodels, not an incomplete knowledge base.
 
 ## Canonical representation and identity
 

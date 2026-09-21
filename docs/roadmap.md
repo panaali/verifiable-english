@@ -1,95 +1,106 @@
 # VE v0: Experiments and Acceptance Criteria
 
-**Status:** First draft. All gates are **not started**. Numerical targets are provisional experiment budgets, not measured results.
+**Status:** First draft. Implementation, proofs, and experiments are pending. Pilot sizes and resource limits below are provisional budgets, not measured results.
 
-The [architecture](architecture-and-design.md) explains the workflow, rationale and alternatives. The [language specification](spec/v0-language.md) and [verification contract](spec/verification-contract.md) define the rules being tested.
+VE's first research claim is: **at a fixed oversight budget, VE reduces successful deception through changes in meaning, beyond cross-examination, shared glossaries, and structured formal claims using the same checker.**
 
-## Order and decision gates
+The [architecture](architecture-and-design.md#research-target-and-evidence) connects this hypothesis to debate research. The [language](spec/v0-language.md), [argument protocol](spec/debate-protocol.md), and [verification contract](spec/verification-contract.md) define what is checked.
 
-| Gate | Deliverable and effort cap | Pass condition | Failure or fallback |
-|---|---|---|---|
-| G0 — Establish task fit and freeze the experiment | Task stories, corpus, exact schema/package format, machine profile, and dependency pins; initial allowance 2 focused engineering days | Representative author/submit/check/revise workflows have useful acceptance conditions expressible in the profile; every corpus item has an independently reviewed expected AST/error and model outcome where applicable | Revise the profile or explicitly narrow the intended workflow; do not conceal missing computations in agent-supplied predicates or proceed with undefined labels |
-| G1 — Reference core and formal contracts | Small Lean definitions, parser/printer, model validator, evaluator, and P1–P7; 10 focused engineering days | All required proofs kernel-checked with audited dependencies; all frozen conformance cases correct; no placeholder axioms | Produce a concrete obstruction and revise grammar, semantics, or proof approach; do not add domains to conceal failure |
-| G2 — Authoring and exchange prototype | CLI first, then only the interface needed for the pilot; 5 focused engineering days | Complete the worked workflow, reject mismatched artifacts, preserve provenance, and meet the pilot criteria below | Simplify the surface or retain typed forms as the interface; checker work remains reusable |
-| G3 — Runtime measurement | Measure Lean reference first on fixed workloads; 2 focused engineering days | The selected runtime meets the latency/memory envelope | Profile failures, optimize the reference or investigate Rust, and rerun G3; identifying a bottleneck alone does not pass |
-| G4 — Conditional runtime/proof comparison | Optimized reference versus a representative Rust/Aeneas slice, only after a measured runtime or concrete deployment need; 5 focused engineering days | Same required behavior and workload; demonstrated slice refinement including failure paths; enough measured deployment/performance benefit to justify recorded implementation and proof-maintenance cost | Retain Lean reference or narrow deployment scope; ordinary Rust may remain an untrusted proposer. Do not claim full refinement or require a compiler-compatible subset |
-| G5 — Release decision | Reproducible evidence bundle and scope review; 1 focused engineering day | Mandatory G0–G3 passed; claims match delivered proof scope; any trusted implementation differing from the reference definitions also has full P8 | Release only an explicitly experimental prototype or pause the proposed product workflow |
+## Research sequence
 
-Estimate delivery effort from the first representative implementation/proof slice. Track human effort, agent runs, compute cost and unresolved issues. A successful G4 slice supports deciding whether to fund full refinement; it does not satisfy P8 for the whole runtime.
+| Gate | Deliverable | Decision criterion |
+|---|---|---|
+| G0 — Task and protocol definition | Independently labeled cases, eligibility rules, comparison conditions, claim/graph/certificate wire formats, proof-worker isolation and replay design, and pinned dependencies | Tasks expose meaningful oversight failures; unsupported requirements remain visible; all methods receive equivalent information and clarification |
+| G1 — Minimal checked argument | Reference parser/printer, finite evaluation, exact certificate binding, one valid deduction, one failed inference with a countermodel, and a valid explicit repair | The complete path from displayed claims to checked conclusion and assumptions works on independently specified cases |
+| G2 — Human inspection pilot | Counterbalanced review of correct and wrong-but-valid specifications, with repair tasks and matched assistance | Identify whether VE helps people inspect meanings and where it causes errors; revise the interface before a scored comparison |
+| G3 — Adversarial comparison | Held-out tasks, adaptive attacks, strong baselines, cost and uncertainty estimates | Test whether any reduction in false approval persists at comparable legitimate acceptance and total oversight cost |
+| G4 — Assurance and runtime | P1–P7 and P9–P11, the conformance corpus, display/decoder checks, and runtime measurements; P8 for a differing production implementation | Advertised guarantees match completed proof scope and explicit remaining trust assumptions |
+| G5 — Research and release decision | Reproducible results, dependency pins, proof replay, failure analysis, and supported task coverage | Report the demonstrated scope; broader alignment claims require additional evidence |
 
-The gates are release obligations, not a requirement to finish all formal proofs before learning from users. Start G2 when an experimental reference slice passes the independently reviewed workflow cases; label its results experimental while G1 is incomplete. G3 may also measure that slice. Do not fund a second runtime or complete an unwanted surface solely to preserve the order of the table.
+The gates guide decisions, not a requirement to finish all metatheory before studying users. G2 and runtime measurement may use an experimental G1 slice. No verified runtime port or general mathematical language is needed to test the initial hypothesis. Estimate engineering effort from that slice, including proof repair and authoring failures.
 
-G0 freezes the schema/model wire fields and semantic artifact encoding from the proposed specification into a machine-readable format contract. If this exposes omissions or inconsistencies, update that specification first. The implementation must not invent unrecorded defaults.
+## Task families and ground truth
 
-Task stories must identify the intended user, submitted artifact, facts supplied versus computations checked, a passing submission, a meaningful violation, and a revision that invalidates old evidence. Record required arithmetic, counts, n-ary relations, external observations or time-dependent behavior that the proposed fragment cannot express. Do not drop an essential task merely to make the current grammar pass. If temporal requirements are central, compare FRET before inventing a temporal extension.
+**Inconsistent meanings across branches.** Construct finite argument graphs with known interpretations and controlled attacks: reuse a label for different predicates, change the domain of a quantifier, import a certificate from another environment, or omit an assumption needed to connect two branches. Include valid alpha-renamings, equivalent formulas linked by checked deductions, valid repairs with added premises, and arguments whose premises remain disputed. The [worked example](spec/debate-protocol.md#worked-example) is a minimal instance.
 
-During the first G1 slice, compare the proof burden of intrinsically typed ASTs with raw syntax plus well-formedness evidence for nested binding and printing. Keep the same wire AST. Choose one representation and record the reason; this is not a mandate to build two complete implementations. If a material Lean-specific obstacle remains, compare the same obligation in Rocq when available expertise or reusable work makes that comparison useful.
+Start with graph sizes such as 8, 32, and 128 claims, varying depth and the separation between conflicting uses. These are experimental settings to calibrate, not evidence that oversight scales. The checker may inspect the submitted graph, but must not receive hidden answers to empirical leaves or an exhaustive tree unavailable to baselines.
 
-## Frozen correctness corpus
+**Requirement reinterpretation.** Use a predefined expressible subset of [ReaLMistake](https://github.com/psunlpgroup/ReaLMistake), plus independently authored tasks with similar failure mechanisms. Include changing a conjunction to a disjunction, reversing an implication, weakening an exception, narrowing the checked inventory, and vacuous satisfaction. The published examples motivate attack types; success on selected examples is not a benchmark result.
 
-Create 240 authored cases, split into 160 development and 80 held-out cases by semantic pattern and vocabulary family, not random near-duplicates:
+Task eligibility must be determined by semantic coverage before measuring baseline failures. Report the fraction excluded and why. Arithmetic, numeric formatting, temporal behavior, and textual entailment may need a specified adapter or a new profile. An agent-supplied flag saying that a response meets such a requirement is not an implementation of the check. Benchmark handling must respect its license and data-use terms.
+
+Independent reviewers establish the original intended requirements, expected formal interpretations, and relevant counterexamples or proof obligations. Genuinely ambiguous source tasks must be clarified equally for all conditions or excluded from binary scoring with the reason reported. Keep reference ASTs and scoring labels hidden from every evaluated method. Model agreement alone is not ground truth.
+
+Separate two tasks: detecting a wrong initial formalization, and preventing a change after confirmation. For initial formalization, count the human's inspection and correction work. For preservation, give every method the same clarified target; VE must not receive a better specification or more evidence than its comparators.
+
+## Comparison conditions
+
+| Condition | Role in the comparison |
+|---|---|
+| Natural-language debate with cross-examination and a shared glossary | Tests whether ordinary debate can expose the same meaning changes using cross-branch questions |
+| ColMAD | Tests against a recent collaborative error-detection protocol, not only a weak competitive baseline |
+| Structured formal claims with the same checker | Isolates the value of exact formal commitments, dependency checks, and certificates without the VE surface |
+| VE with the same checker | Tests the additional benefit or cost of canonical English and assisted human inspection |
+
+Keep the debate strategy identical between structured formal claims and VE; use cross-examination for the initial matched comparison. ColMAD is a separate protocol comparator. If results justify combining VE with ColMAD or prover-estimator debate, evaluate that combination separately rather than attributing a protocol change to the language.
+
+All conditions receive equivalent task information, clarification, evidence access, and model assistance. Charge certificate generation, tools, and extra agent calls to the method using them. Also include direct judging and a checker-only baseline wherever the available formal inputs already determine the answer; do not withhold a cheap deterministic solution just to make debate useful. FormalJudge is relevant related work for specification synthesis; include an applicable implementation if the chosen tasks support a fair comparison.
+
+Use the same tasks and matched model configurations across conditions. Counterbalance order and use equivalent variants to limit memorization. Give natural-language baselines effective prompts and the opportunity to cross-examine. Preserve operational failures and unsupported cases in end-to-end results.
+
+## Human inspection pilot
+
+Begin with an exploratory pilot of roughly 8–12 participants, sized for diagnosing problems rather than claiming population efficacy. Use counterbalanced task variants across prose plus clarification, a structured constraint editor, and VE. Hold the critic and checking capabilities constant.
+
+Participants inspect the original task, candidate claims, definitions, and evidence; then approve, reject, or repair the candidate. Mix faithful specifications with wrong-but-valid ones, including candidates that pass their own checks. A passing evaluation or proof badge must not give away the experimental label.
+
+Measure false confirmations, successful corrections, false rejections, review time, clarification count, and understanding of conditional proof versus factual truth. Include unaided inspection of the final artifact even when authoring is assisted. Test display of quantifier scope, distinct predicate senses, remaining assumptions, vacuity, and changed commitments.
+
+Use the pilot to set task difficulty, review budgets, and a power analysis for a larger comparison. Do not treat zero observed errors in a small pilot as a safety guarantee, or select only tasks where VE looked promising. If structured forms perform as well with less effort, retain the checker and reconsider the English surface.
+
+## Adversarial evaluation
+
+Use a proposer trying to obtain approval for a noncompliant result and a critic trying to expose the problem. Start with controlled attacks to check the mechanism, then allow adaptive attacks on development tasks. Keep held-out semantic patterns and vocabulary families unavailable during attack tuning.
+
+Allow attacks against initial definitions, inference composition, premise selection, and presentation. Include correct proofs of weakened claims, false but persuasive empirical leaves, contradictory assumptions, attempted reuse of stale certificates, and trivial arguments that assume their own conclusion. Include honest submissions, legitimate repairs, cases where both agents are wrong, and cases that should remain unresolved.
+
+The supervisor can approve, reject, request repair, or abstain. A proof-search timeout is not a finding that the claim is false. Prompted adversaries and best-of-N search are limited approximations to adversarial optimization; they do not establish the equilibrium or training guarantees of a debate theory.
+
+Primary outcomes are:
+
+- False approval rate on attacks, alongside acceptance of genuinely compliant submissions.
+- Successful detection and repair of specification errors, separated from preservation after confirmation.
+- Human review time and evidence queries; agent tokens, tool use, certificate production/replay, and total compute.
+- Unresolved, unsupported, timeout, and invalid-certificate rates, without dropping these cases.
+- Confidence on correct and incorrect approvals, to detect increased trust in wrong-but-valid claims.
+- Reward earned by honest versus deceptive submissions, to distinguish useful supervision from simple deference to a usually-correct agent.
+
+Report paired comparisons and confidence intervals, with uncertainty accounting for repeated tasks and judges. Fix the primary metric, meaningful effect size, legitimate-acceptance constraint, and budgets before held-out evaluation. Examine results as graph size, task difficulty, and the measured capability gap between proposer and judge increase. Fewer remaining premises is not itself a reduction in oversight difficulty.
+
+An advantage over prose alone supports formalized oversight. An additional accuracy or effort advantage over the matched structured interface supports VE's language contribution. Failure to improve, reduced coverage, or displacement of errors into vocabulary and evidence limits the claim. A benchmark advantage is evidence on that distribution, not proof of general alignment.
+
+## Frozen conformance corpus
+
+Create 240 independently specified cases, with 160 for development and 80 held out by semantic pattern and vocabulary family:
 
 | Group | Count | Required coverage |
 |---|---:|---|
-| Well-typed documents with valid finite models | 120 | Both satisfied and violated outcomes; alternating quantifiers, negation, implication, equality, alpha-renaming, empty domains, and vacuous satisfaction |
-| Mismatched artifact/evidence packages | 40 | Individually valid text/AST pairs that disagree; changed environment or model with stale evidence; wrong proof conclusion |
-| Invalid syntax, types, or models | 40 | Free variables, capture/shadowing, wrong relation arity, unknown identifiers, omitted relation tables, duplicates, dangling entities, invalid bytes |
-| Unsupported profiles and exceeded limits | 40 | Temporal/modal language, unknown imports, embedded code, excessive size/depth/work, and cancellation |
+| Claims and finite models | 80 | True/false outcomes, binders, negation, implication, equality, empty domains, vacuity, and finite embedding |
+| Commitment and evidence mismatches | 40 | Individually valid but mismatched source/AST, changed descriptions, substituted roots, stale model or proof evidence |
+| Arguments and certificates | 40 | Valid composition, explicit repairs, countermodels, missing bridges, extra proof assumptions, negated conclusions, cycles, and conditional roots |
+| Invalid syntax, types, or packages | 40 | Free variables, capture/shadowing, wrong arity, unknown IDs, duplicate aliases/keys, missing model tables, and dangling references |
+| Unsupported inputs and resource behavior | 40 | Unsupported operators/imports, excessive aggregate size/depth/work, failed proof search, replay limits, and cancellation |
 
-Every corpus group has explicit expected outputs, including distinctions between a false formula and an invalid input. Include at least 20 minimal pairs that change quantifier order, negation scope, argument order, or domain assumptions. Authors document why each changed meaning differs. Validate labels independently of the production parser/evaluator; using its output as the gold answer would make the test circular.
+Include at least 20 minimal pairs differing in quantifier order, negation, argument order, domain assumptions, or premise scope. Validate expected outcomes independently of the implementation. Keep this engineering corpus distinct from the human and adversarial efficacy data.
 
-The correctness gate requires **zero incorrect acceptance, source/AST mismatch, evaluation disagreement, stale-evidence reuse, or unsupported-input fallback** across the frozen corpus. Rejecting every input fails: all supported well-typed cases inside the resource envelope must be accepted, including false formulas. Hold-out results are reported once before fixes; later fixes create a new version of the corpus and a fresh hold-out set.
+The correctness gate requires zero disagreement with expected parsing, evaluation, binding, certificate, and error outcomes. Rejecting every input fails: supported claims and valid certificates inside the declared budget must succeed, including claims false in a particular model. Fuzzing supplements the corpus; tests do not replace formal proofs.
 
-Property-based generation and fuzzing extend this corpus but do not replace the proofs. Report seed, generated case count, limits, and failures. A passing finite test suite is never presented as proof of universal correctness.
+## Runtime and release scope
 
-## Usefulness and authoring pilot
+Measure the Lean reference before considering another implementation language. Pin hardware, OS, compiler, Lean and package versions, build settings, workloads, and process mode. Report cold start and warm execution separately. Measure source parsing, model validation, finite evaluation, graph checking, proof production and proof replay separately and end to end.
 
-Recruit eight pilot users and assign twelve service-inventory tasks per person, with counterbalanced equivalent variants across these three conditions:
+Use the language and argument protocol's provisional size limits. Set latency, memory and proof-search budgets using representative tasks before scored runs. Report resource exhaustion honestly; a slow proof or unsupported task must not disappear from the comparison.
 
-1. ordinary prose plus clarification, followed by an explicitly inspected formal constraint;
-2. a typed form/JSON constraint editor;
-3. VE with assisted authoring and canonical back-translation.
+Only a measured runtime or deployment need justifies a Rust/Aeneas slice. Compare it against the reference on scoped binding, parsing, relation lookup, graph validation and errors, including the required refinement obligations and proof-maintenance cost. Compiler assurance remains a separate question; see the [implementation alternatives](architecture-and-design.md#implementation-language-and-proof-tools).
 
-All conditions use the same schema, finite evaluator, model cases, and result capabilities. Each receives the same assistance budget and any shared model/version is recorded. At least four tasks per person per condition, with changed entity names/data to reduce memorization. Use an expert-reviewed expected interpretation, blind to the assigned interface where practical. The pilot is exploratory, not a population-level efficacy claim.
-
-Initial progression thresholds:
-
-- At least 80% of VE tasks reach the correct confirmed interpretation and evaluation within ten minutes each.
-- No silently wrong confirmed interpretation in the pilot; any such error triggers diagnosis and a revised interface before progression. This empirical result cannot establish perfect intent recovery.
-- Median clarification count is at most two per completed VE task.
-- VE's task accuracy is at least that of each baseline, and median completion time is no more than 1.25 times the faster baseline at comparable accuracy.
-- At least six of eight users correctly distinguish “Accepted VE,” “Interpretation confirmed,” and “Satisfied in inventory” on the post-task check.
-
-Report failures and individual distributions, not just successful examples or averages. If typed forms perform better without a compensating readability benefit, do not force an English surface into the first product. Retain the formal core and revise the interface hypothesis.
-
-The participant count and numerical thresholds are initial exploratory budgets, not a power analysis or validated usability standard. Calibrate tasks and limits before scored runs, publish the rationale, then freeze them. Include manual authoring and track failures caused by punctuation, identifiers, canonical wording and misunderstood vacuity; model-assisted success alone does not establish that people can inspect the result.
-
-## Runtime measurements
-
-Before optimization, publish one pinned machine profile: hardware, OS, compiler, Lean version, dependency commits, build flags, and process mode. Use warm local execution, one request at a time, exclude network/LLM calls, and report cold-start separately.
-
-The typical workload contains at most 20 statements, 2,000 AST nodes, 100 entities per sort, 1,000 relation tuples, and 100,000 evaluator node steps. Measure at least 1,000 repetitions across distinct published inputs. Initial targets are p95 at most 100 ms for parsing/type checking/canonical printing, p95 at most 250 ms for evaluation, and peak process RSS at most 256 MiB. Report proof-generation/checking time separately rather than hiding it inside or excluding it from an end-to-end claim.
-
-The hard limits in the language specification define a larger rejection envelope, not a latency promise. Deep quantifier alternation can exhaust the evaluator budget even within size limits. It must yield `ResourceLimit`, never a false result. Test adversarial cases at and beyond the bounds, including cancellation and partial reads.
-
-Keep the reference runtime if it meets the useful workload. Otherwise, profile the bottleneck and compare optimization against a small Rust experiment. Performance improvement must preserve P2/P6/P8 and the supported input scope.
-
-The numerical targets are initial application budgets, not evidence that Rust, C or Lean will meet them. Reassess them against the selected task and machine before freezing the measurement plan. Quantifier enumeration can dominate the algorithm in any language; changing languages alone is not an answer to a combinatorial workload.
-
-## Toolchain and automation experiments
-
-For G4, record exact Rust, Charon/Aeneas, Lean, and library revisions; licenses; invoked commands; unsupported constructs; assumptions about external definitions; and generated artifacts. If using hax, pin it too and document that its current Lean backend invokes Charon/Aeneas rather than providing an independent proof path. The slice must include scoped binding, relation lookup, recursive traversal, error propagation, and the actual proposed data representation. Proving a trivial arithmetic function does not validate a parser/checker pipeline.
-
-Check supported constructs and relevant regression cases at the pinned tool versions. Measure proof repair after a deliberate grammar change as well as initial success. Add Kani or Verus only for a specific property or proof-effort question with its own trust account.
-
-Measure AI assistance on representative implementation, proof, and deliberate-change tasks. Record attempts, successful checked artifacts, human corrections, axiom audits, and proof maintenance after changing a grammar rule. Passing evidence is the artifact and its checks, not the model's explanation. No external model benchmark is a prerequisite or a substitute.
-
-Canonical English collaboration is optional research, not a gate. Assess source availability, license, semantics, and integration cost if a concrete component would help. Do not wait for another project to define the v0 core.
-
-If compiler verification becomes a requirement, first compare C/VST/CompCert and HOL4/CakeML, with RustCompCert as another candidate after a pinned compatibility demonstration. Check supported targets, source-proof/compiler semantics, input and IO boundaries, proof maintenance, and dependency licenses. A Frama-C proof plus a CompCert build does not by itself establish a checked bridge between the chosen models. No verified-compilation path is required for v0, and a syntactic subset accepted by two tools is not enough.
-
-## Evidence required for a release claim
-
-Publish the specification revision, frozen corpus and outcomes, exact toolchain pins, proof statements and dependency audits, replay logs, runtime results, pilot results, known limitations, and artifact-identification rules. Include failed cases and link each advertised guarantee to its evidence.
-
-The v0 decision concerns bounded requirements exchange. Broader mathematics, temporal reasoning, science, and law each require a new profile specification and a new acceptance gate before being advertised as supported.
+A release claim must identify the supported judgments, task coverage, completed theorems and their dependencies, trusted decoding/display/replay components, reproducible experiment configuration, and known failures. General mathematics, uncertain evidence aggregation, temporal or normative reasoning, public proof-service deployment, and alignment-training guarantees require their own specifications and evidence.
