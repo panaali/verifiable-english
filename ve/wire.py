@@ -7,7 +7,7 @@ import hashlib
 import json
 
 from .errors import DuplicateDeclaration, ResourceLimit, SyntaxError, VEError
-from .limits import MAX_INDEX, MAX_PACKAGE_BYTES
+from .limits import MAX_INDEX, MAX_PACKAGE_BYTES, MAX_JSON_DEPTH
 
 
 def _string(value: str) -> None:
@@ -16,8 +16,8 @@ def _string(value: str) -> None:
 
 
 def validate_json(value, depth: int = 0) -> None:
-    if depth > 256:
-        raise ResourceLimit("JSON nesting exceeds 256 levels")
+    if depth > MAX_JSON_DEPTH:
+        raise ResourceLimit(f"JSON nesting exceeds {MAX_JSON_DEPTH} levels")
     if type(value) is str:
         _string(value)
     elif type(value) is bool:
