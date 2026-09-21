@@ -248,7 +248,8 @@ even on simple valid formulas. It has no authority to assert validity; generated
 traces are replayed before `Found` is returned.
 
 `check_entailment_certificate(env, premises, conclusion, certificate,
-max_steps=10000)` is the separate trusted replay entry point. Its result has
+max_steps=10000)` is the separate replay entry point, trusted when using the
+Python-only API. Its result has
 `valid`, `status` (`Valid`, `InvalidCertificate`, or `ResourceLimit`), `steps`,
 and `detail`. It accepts restricted JSON data only. It constructs the initial
 branch from **the supplied expected formulas**, with every premise true and the
@@ -281,17 +282,50 @@ after positive-equality union, or opposite relation atoms modulo those equality
 classes. Well-typed inputs and sorted instantiation prevent cross-sort equality.
 Fresh parameters may denote equal elements; freshness never implies inequality.
 
-The small replay rules, equality closure, expected-input bindings, and input
-validators are trusted Python. The search strategy is untrusted, although it
-calls these same logical rule helpers to construct candidate traces. Replay
-does not invoke search and reconstructs branch state independently of submitted
-search output. The rest of the existing parser/evaluator/display trust boundary
-still applies. This is **experimental Python tableau checking**, not Lean kernel
-checking or a discharge of P9–P11. The draft Lean replay design in the specs is
-not implemented by this path. No third-party solver or runtime dependency is
-needed. A future verified checker must establish soundness of these rules and
-their correspondence to the independent semantics; finite property tests cannot
-replace that proof.
+In the default Python API, replay rules, equality closure, input bindings and
+validators remain trusted Python. Search is untrusted, even though it shares
+rule helpers with replay. This Python path has not been replaced or proved to
+refine Lean.
+
+The separate **Lean-verified replay path** is now implemented:
+
+```sh
+(cd lean && lake build)
+lean/.lake/build/bin/ve_conformance check-certificate query.json
+.venv/bin/python conformance/certificates.py --report conformance/certificates-report.json
+```
+
+A query is `{id, environment, premises, conclusion, certificate}`, where premises
+are ordered formula ASTs and conclusion is one formula AST. The exact Python
+certificate format above is used unchanged. The Lean adapter independently
+checks the environment and typed ASTs, recomputes all identity bindings, then
+runs the proved `Tableau.checkCertificate`. The response's `valid: true` means
+acceptance; exit 0 alone does not (a well-formed invalid trace returns false).
+No Python process, solver, certificate code or submitted Lean declaration runs
+inside this executable.
+
+`checkCertificate_sound` proves that acceptance entails the supplied conclusion
+from the exact supplied premises over every admissible structure, in every
+universe, including empty sorts. The JSON query theorem uses `Entails.{0}`.
+All rules above, including equality substitution, are proved. `Graph.check_entails`
+instantiates this checker and no longer assumes an abstract `CertificateSound`.
+The graph result concerns Lean's named graph representation; Python's graph wire
+format, checker and leaf-display conventions are not automatically covered.
+
+The [certificate report](../conformance/certificates-report.json) records 721/721
+Python-produced certificates accepted and 150/150 mutations rejected, with every
+search attempt retained, including seven resource-limit outcomes. There are
+320 bounded random valid queries, 320 broader random valid queries, 160
+unconditioned random queries and all three worked examples. The search limitations
+and remaining interpretation assumptions are detailed in
+[METATHEORY.md](../lean/METATHEORY.md).
+
+On this Lean path, Python proof search and Python replay are untrusted producers
+and filters. The remaining trust base includes Lean's kernel and standard logic,
+compiler/runtime and library, UTF-8/JSON/environment/AST/certificate decoding,
+canonical serialization/hash bindings, IO and faithful display. Decoder and
+hash correspondence are tested, not formally proved. No completeness or
+production resource-isolation guarantee is claimed.
 
 ## Argument API and interchange
 
@@ -450,10 +484,13 @@ dataset claims are about their source syntax. The CLI/file-I/O boundary is
 trusted to supply and display the checked objects.
 
 Search has no authority to assert validity: found models are checked separately.
-There are no external solver or model calls in the core, no Lean proof replay, no
-hidden domain nonemptiness or unique-name axioms, and no empirical evidence
-verification. All metatheory obligations P1–P11 remain pending. Property tests
-are empirical evidence, not proofs of grammar uniqueness or correspondence.
+There are no external solver or model calls in the core, no hidden domain
+nonemptiness or unique-name axioms, and no empirical evidence verification.
+The separate Lean checker now supplies data-only certificate replay and the
+[reference metatheory](../lean/METATHEORY.md) supplies P4/P5/P6/P9/P10 and decoded
+P11 results within its stated scope. Python production refinement and grammar
+P1–P3 remain pending. Property tests are empirical evidence, not proofs of
+grammar uniqueness or correspondence.
 
 The tests include spec examples, malformed packages, scope/type errors, source
 substitution and environment changes, all logical constructors, vacuity,
