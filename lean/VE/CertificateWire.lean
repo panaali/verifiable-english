@@ -152,6 +152,8 @@ def decodeQuery (environment : Json) (v : Bridge.Vocabulary) (j : Json) : Except
 def runCase (j : Json) : Except String Json := do
   let id ← Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
+  if environment.getObjValD "language" == .str "ve.core@0.1" then
+    throw "profile gate: closure@0 certificates are unsupported by the proved v0 checker"
   let v ← Bridge.decodeEnvironment environment
   let q ← decodeQuery environment v j
   pure (Json.mkObj [("id", .str id), ("status", .str "ok"), ("valid", .bool q.accepts)])
