@@ -120,7 +120,7 @@ class FiniteModel:
         }
         from .wire import digest
         environment_id = env.environment_id
-        model_id = digest("ve-model-v0\n", {"environment_id": environment_id, "model": normalized})
+        model_id = digest(f"ve-model-{env.identity_version}\n", {"environment_id": environment_id, "model": normalized})
         return cls(MappingProxyType(domains), MappingProxyType(constants), MappingProxyType(relations), environment_id, model_id)
 
     def to_dict(self) -> dict[str, Any]:

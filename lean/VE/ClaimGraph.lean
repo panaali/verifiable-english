@@ -1,5 +1,6 @@
 import VE.Consequence
 import VE.Typing
+import VE.TableauChecker
 
 namespace VE.Graph
 universe u
@@ -265,7 +266,7 @@ theorem checkNodes_sound (E : Environment) (valid : CertificatePredicate Certifi
 /-- P10 for an executable named DAG checker, conditional only on the explicit
 valid-certificate contract. Acyclicity, alias uniqueness, exact root identity,
 leaf provenance, typing and entailment are all conclusions of acceptance. -/
-theorem check_sound (E : Environment) (valid : CertificatePredicate Certificate)
+theorem check_sound_of_certificateSound (E : Environment) (valid : CertificatePredicate Certificate)
     [∀ c ps r, Decidable (valid c ps r)] (certificates : CertificateSound.{u} E valid)
     (g : ClaimGraph Certificate) (r : Report) (accepted : check E valid g = some r) :
     Acyclic g ∧ (g.nodes.map (fun n => n.claim.name)).Nodup ∧
@@ -286,18 +287,47 @@ theorem check_sound (E : Environment) (valid : CertificatePredicate Certificate)
           (by simp) seen hn r hm⟩
 
 /-- Direct P10 consequence of the complete acceptance theorem. -/
-theorem check_entails (E : Environment) (valid : CertificatePredicate Certificate)
+theorem check_entails_of_certificateSound (E : Environment) (valid : CertificatePredicate Certificate)
     [∀ c ps r, Decidable (valid c ps r)] (certificates : CertificateSound.{u} E valid)
     (g : ClaimGraph Certificate) (r : Report) (accepted : check E valid g = some r) :
     Entails.{u} E (r.assumptions.map Claim.formula) r.root.formula :=
-  (check_sound E valid certificates g r accepted).2.2.2.2.2.2.1
+  (check_sound_of_certificateSound E valid certificates g r accepted).2.2.2.2.2.2.1
 
 /-- Acceptance reports precisely a leaf list permitted by ordered graph
 unfolding; it cannot silently discard a shared or repeated dependency. -/
-theorem check_unfolds (E : Environment) (valid : CertificatePredicate Certificate)
+theorem check_unfolds_of_certificateSound (E : Environment) (valid : CertificatePredicate Certificate)
     [∀ c ps r, Decidable (valid c ps r)] (certificates : CertificateSound.{u} E valid)
     (g : ClaimGraph Certificate) (r : Report) (accepted : check E valid g = some r) :
     Unfolds g r.root r.assumptions :=
-  (check_sound E valid certificates g r accepted).2.2.2.2.2.2.2
+  (check_sound_of_certificateSound E valid certificates g r accepted).2.2.2.2.2.2.2
+
+/-- Production certificate validity is computed on the exact resolved ASTs. -/
+def tableauValid (E : Environment) : CertificatePredicate Tableau.Certificate :=
+  fun c ps r => Tableau.checkCertificate E (ps.map Claim.formula) r.formula c = true
+
+instance (E : Environment) (c : Tableau.Certificate) (ps : List Claim) (r : Claim) :
+    Decidable (tableauValid E c ps r) := inferInstanceAs (Decidable (_ = true))
+
+theorem tableau_certificateSound (E : Environment) : CertificateSound.{u} E (tableauValid E) :=
+  fun c ps r h => Tableau.checkCertificate_sound E (ps.map Claim.formula) r.formula c h
+
+def checkTableau (E : Environment) (g : ClaimGraph Tableau.Certificate) : Option Report :=
+  check E (tableauValid E) g
+
+/-- Unconditional P10 for the proved data-only tableau checker. -/
+theorem check_sound (E : Environment) (g : ClaimGraph Tableau.Certificate) (r : Report)
+    (accepted : checkTableau E g = some r) :
+    Acyclic g ∧ (g.nodes.map (fun n => n.claim.name)).Nodup ∧
+    r.root.name = g.root ∧ SoundReport.{u} E g r :=
+  check_sound_of_certificateSound E (tableauValid E) (tableau_certificateSound E) g r accepted
+
+theorem check_entails (E : Environment) (g : ClaimGraph Tableau.Certificate) (r : Report)
+    (accepted : checkTableau E g = some r) :
+    Entails.{u} E (r.assumptions.map Claim.formula) r.root.formula :=
+  check_entails_of_certificateSound E (tableauValid E) (tableau_certificateSound E) g r accepted
+
+theorem check_unfolds (E : Environment) (g : ClaimGraph Tableau.Certificate) (r : Report)
+    (accepted : checkTableau E g = some r) : Unfolds g r.root r.assumptions :=
+  check_unfolds_of_certificateSound.{0} E (tableauValid E) (tableau_certificateSound E) g r accepted
 
 end VE.Graph

@@ -126,14 +126,14 @@ no leaves. The independent `Unfolds` inductive relation specifies this computati
 Acyclicity is specified independently as absence of a nonempty dependency path
 from any name to itself, not merely as success of the checker.
 
-The checker is parameterized by a **decidable certificate-validity predicate**.
-The semantic theorem explicitly assumes `CertificateSound E valid`: whenever
-that predicate accepts a certificate with an exact list of named premises and
-an exact named conclusion, the premises' formulas entail the conclusion's
-formula over all admissible structures in the chosen universe, under this `E`.
-This is a theorem parameter, not a new global logical assumption. The small
-`GraphChecks` predicate is proved sound and executable, but is only a regression
-fixture, not the production certificate interface.
+`Graph.checkTableau E` instantiates the generic graph checker with
+`Tableau.checkCertificate` on the exact ordered formulas resolved for each edge.
+`tableau_certificateSound` discharges the old `CertificateSound` premise with
+the proved checker theorem. The public `Graph.check_sound`, `check_entails` and
+`check_unfolds` now require only successful `checkTableau` execution. There is no
+caller-supplied certificate-soundness assumption. The generic versions remain
+available with the suffix `_of_certificateSound`; the small `GraphChecks`
+certificate language remains a separate regression fixture.
 
 Names in the following table have prefix `VE.Graph.` unless otherwise shown.
 
@@ -146,27 +146,26 @@ Names in the following table have prefix `VE.Graph.` unless otherwise shown.
 | `resolve_sound` | Successful ordered premise resolution returns only reports in the supplied store, and their root-name list is exactly the requested name list, preserving order and multiplicity. |
 | `checkNode_sound` | Given a sound certificate predicate, stored reports satisfying `SoundReport` and a node belonging to the graph, a successful local check produces a `SoundReport`: typed root, exact submitted root provenance, typed explicit-assumption provenance for every leaf, entailment from reported leaves, and an `Unfolds` derivation for precisely the reported ordered leaf list. |
 | `checkNodes_sound` | Given the same certificate contract and valid initial reports, successfully checking a node list whose nodes all belong to the graph yields only `SoundReport` entries. |
-| `check_sound` | **Graph P10:** For every environment, certificate predicate with a decision procedure and an explicit `CertificateSound` proof, graph and returned report, if the executable checker returns that report, the graph is acyclic, all submitted claim names are unique, the reported root has exactly the requested name, and the report satisfies all five `SoundReport` properties above. |
+| `check_sound` | **Unconditional graph P10:** For every environment, tableau-carrying graph and report, if `checkTableau E g = some r`, the graph is acyclic, all submitted claim names are unique, the reported root has exactly the requested name, and the report satisfies all five `SoundReport` properties above. |
 | `check_entails` | Under the same parameters and acceptance premise, the reported root formula is entailed by the formulas of exactly the reported named assumption list, over all admissible structures in the selected universe. |
 | `check_unfolds` | Under the same parameters and acceptance premise, the exact reported root and assumption list satisfy the independent ordered graph-unfolding relation. |
+| `tableau_certificateSound` | The concrete tableau predicate meets `CertificateSound` for every environment and universe, by `Tableau.checkCertificate_sound`. |
+| `check_sound_of_certificateSound`, `check_entails_of_certificateSound`, `check_unfolds_of_certificateSound` | Generic counterparts of the three results above, retaining the explicit soundness premise for other certificate languages. |
 | `VE.GraphChecks.testCertificate_sound` | For every environment, the regression-only predicate binding exact named inputs and accepting only truth introduction or direct premise reuse satisfies `CertificateSound`. |
 
-Python remains trusted to implement the certificate predicate soundly: it must
-construct the expected entailment proposition from this exact environment and
-the resolved ordered premise/conclusion ASTs, replay the submitted artifact
-against that proposition in the pinned Lean environment, audit the permitted
-logical dependencies, and isolate untrusted proof generation. A worker build,
-theorem name, certificate-supplied proposition, stale environment, or subset of
-the premise list does not establish this contract. No code or proof here supplies
-Python replay, P9 proposition generation/expected-type binding, the graph wire
-decoder, certificate decoding, hash/identity checks, or faithful assumption display.
-There is no theorem refining a Python graph validator to this Lean checker.
-In this base checkout there is no Python argument graph/replay module to connect.
+Certificates are replayed against the supplied environment and resolved ASTs;
+there is no certificate-supplied proposition, theorem name or executable proof
+code. The core graph theorem binds names and AST provenance through the graph;
+artifact hashes and descriptions are additional wire-level checks, not the
+semantic definition of identity. The certificate wire adapter checks hashes.
+There is still no graph JSON decoder or refinement theorem for Python's
+`check_argument`, whose default execution still uses Python replay. Its
+composition record is not automatically a result of the Lean graph checker.
 
 For JSON-backed claims the expected proposition is `Bridge.JsonEntails`, exactly
-`Entails.{0}`. Instantiate the universe-polymorphic graph certificate contract at
-universe 0 as well. The JSON countermodel theorem below refutes this precise
-target; it supplies no P9 expected-type binding or certificate replay code.
+`Entails.{0}`. `CertificateWire.Query.accepts_sound` proves this target for the
+same decoded ordered premises and conclusion used by replay. Instantiate graph
+entailment at universe 0 when pairing it with the JSON countermodel theorem.
 
 The checker terminates structurally over the finite node list and each ordered
 premise list, given a terminating certificate decision procedure. It does not
@@ -174,12 +173,139 @@ prove graph completeness, proof-search completeness or production resource
 bounds. Repeated shared leaves can make explicit output large; there is no
 claim of polynomial output size, deduplication, or a verified runtime budget.
 
+## Verified tableau certificates: P9 and the discharged P10 premise
+
+`VE/Tableau.lean`, `TableauClosure.lean` and `TableauChecker.lean` implement the
+full Python calculus. The data type has the five exact certificate fields:
+`checker_version`, `environment_id`, ordered `premise_meaning_ids`,
+`conclusion_meaning_id`, and `trace`. Trace nodes are `close` or `expand` with a
+natural-number `at`, optional String `parameter`, and ordered child list. The
+logical rule is inferred from the indexed signed formula. All alpha/beta cases,
+negation, gamma/delta cases and equality closure are supported. There is no
+unsupported-rule subset in this milestone.
+
+Replay starts with every supplied premise positive and the supplied conclusion
+negative, with empty binder stacks. It checks closure/typing of every input.
+Constants are `c:name`; a branch's delta witnesses are `w:0`, `w:1`, etc. Each
+witness records its quantified sort. Gamma accepts only a declared constant or
+an existing witness of the exact requested sort. A numeric-looking token such
+as `w:00` does not alias `w:0`. Delta accepts no supplied parameter, allocates the
+next unused index and requires every older witness reference to be below it.
+Each branch tracks one-shot expansion indices and gamma (index, token) pairs,
+rejecting duplicates. Child counts and order match the inferred rule exactly.
+
+The invariant is satisfiability under a parameter assignment in an arbitrary
+admissible structure. Assignments return optional values, so neither the common
+carrier nor any sort needs an inhabitant. Gamma obtains its element from
+constant admissibility or a previously introduced sorted witness. Delta obtains
+an element from a true existential or a false universal, extends the assignment
+at a fresh index, and preserves every old formula's binder valuation. A beta
+step preserves at least one satisfiable child; an alpha step preserves its
+single child. A successful replay closes all children, contradicting this
+invariant if the initial branch had been satisfiable.
+
+Closure grounds only literals, keeping de Bruijn binder stacks explicit. Positive
+equalities generate undirected edges; bounded reachability supplies reflexivity,
+symmetry and transitivity. Related tokens denote the same optional value.
+Unary and binary predicates preserve truth when arguments have equal values.
+A negative equality closes only when its related terms are also known to denote;
+positive bottom and negative top close directly. Thus equality reflexivity never
+manufactures an inhabitant. No unique-name assumption is made.
+
+Names below have prefix `VE.Tableau.` except the last row.
+
+| Theorem | Exact statement in plain words |
+|---|---|
+| `token_defined` | In an admissible structure under a sorted witness assignment, a token with inferred sort `s` denotes an element of that domain. |
+| `bindings_extend` | Extending at index `n` preserves any binder stack whose witness references are strictly below `n`. |
+| `holds_extend` | Such an extension preserves all signed truths on a scoped branch. |
+| `typed_extend` | Adding an element of sort `s` at the next witness index preserves sorted assignment validity for the appended witness inventory. |
+| `add_holds` | Appending signed formulas that hold preserves branch satisfaction. |
+| `one_holds` | A true signed one-child rule supplies every one of its additions. |
+| `two_holds` | A true signed two-child rule supplies at least one alternative. |
+| `gamma_holds` | A gamma formula supplies its signed body when instantiated by a token denoting an element of the requested sort. |
+| `delta_witness` | A delta formula supplies an element of its quantified sort and its signed body under the extended binder valuation. |
+| `bindings_get` | If every binder token denotes, indexing its interpreted list agrees with indexing the tokens then interpreting the selected token. |
+| `termToken_denote` | Under that defined-binder premise, grounding a term preserves its optional denotation. |
+| `ground_denote` | Grounding a literal under that premise preserves its truth. |
+| `literals_hold` | On an admissible, satisfied branch with known binder tokens and a sorted assignment, every extracted signed literal holds. |
+| `mem_dedup` | Token deduplication preserves membership in both directions. |
+| `equalities_sound` | Every extracted positive equality has endpoints with equal optional denotations. |
+| `grow_sound`, `reachable_sound` | If all equality edges preserve a value and every initial reachable token has that value, one expansion and any finite number of expansions preserve that fact. |
+| `equivalent_sound` | Accepted token reachability under satisfied positive equalities implies equal optional denotations. |
+| `matches_sound` | Accepted unary/binary atom matching under those equalities implies equivalent atom truth. |
+| `closes_sound`, `closed_sound` | No satisfied admissible branch under a sorted assignment and known bindings can pass literal closure. |
+| `complementary_sound` | Exact opposite-signed formulas with identical parameter bindings cannot both hold; this is Python's existing version-2 closure rule. |
+| `next_sound` | Any accepted expansion of a scoped satisfiable branch has a satisfiable child, under a possibly extended sorted assignment. |
+| `checkChildren_member` | Successful child replay supplies a successful trace for every generated branch; none can be omitted. |
+| `replay_sound` | For every fuel, successful replay contradicts branch satisfaction in every admissible structure under every sorted assignment. |
+| `checkCertificate_sound` | **P9:** For every `E`, ordered premise list, conclusion and certificate, `checkCertificate E premises conclusion c = true` implies `Entails.{u} E premises conclusion`, for every universe `u`. No certificate-validity soundness hypothesis occurs. |
+| `VE.CertificateWire.Query.accepts_sound` | For every decoded typed query with `accepts = true`, its exact ordered premises entail its exact conclusion at universe 0. |
+
+All recursive checking is structural or fuel recursive. Public replay and trace
+decoding have 125 levels of fuel: at most 124 expansions followed by a close,
+matching Python's `MAX_TABLEAU_DEPTH`. Exhaustion rejects. It is not proof search and is not
+claimed complete. Equality reachability uses one expansion round per positive
+equality edge; its soundness is proved, but equivalence with Python union-find
+and general acceptance completeness are not proved. The wire boundary retains
+the 16 MiB batch and 256-level JSON caps, 64-level formula cap and 10,000-node
+aggregate AST cap. Each expansion consumes two JSON levels; eight levels are
+reserved for enclosing packages. The outer batch is split without recursive
+decoding, so a too-deep case returns its own `ResourceLimit` error and other
+cases still run. If JSON depth prevents decoding the case ID, its zero-based
+`case_index` identifies the error. Malformed JSON and the aggregate byte cap
+still reject the input. These differ from a complete production work-budget policy.
+
+Version 1 retains the original literal/equality closure rules. Version 2 also
+accepts exact complementary formulas with identical bindings, using
+`complementary_sound`; this ports the existing Python rule introduced by the
+oracle branch. No search normalization or ground-connection hint is a replay rule.
+
+`ve_conformance check-certificate [file|-]` decodes the environment, typed
+premises/conclusion and certificate, recomputes the Python domain-separated
+SHA-256 bindings (including order, duplicates and descriptions), then invokes
+the very proved checker. Lean's standalone logical checker deliberately does
+not use hash metadata as evidence: it replays against actual ASTs. The wire
+adapter rejects stale bindings even if a trace could prove another true query.
+Its total SHA-256/canonical-JSON code is tested against Python identities and
+standard digest vectors, but neither cryptographic correctness nor JSON
+correspondence is formally proved.
+
+The committed [report](../conformance/certificates-report.json) records **732/732
+Python-produced certificates accepted (100%) and 150/150 forgeries rejected**.
+There are no Python-accepted/Lean-rejected cases to classify in this corpus.
+Two seeded cohorts each contain 320 randomly instantiated valid inference
+schemas: both cohorts yield all 320 certificates. Among 160 unconditioned random
+queries, 82 yield certificates, 76 yield `NotFound`, and 2 hit `ResourceLimit`.
+The bridge-repair and merged-vocabulary worked examples yield accepted proofs;
+the separated-vocabulary example yields `NotFound` and its forged close is
+rejected. Eight twice-De-Morgan existential weakening regressions also yield
+accepted certificates, including unused constants and quantifier duals.
+Every produced certificate is checked, and all search outcomes remain
+in the denominator. This is development conformance evidence, not a workload
+acceptance estimate or completeness proof. Reproduce with:
+
+```sh
+.venv/bin/python conformance/certificates.py --report conformance/certificates-report.json
+.venv/bin/python -m pytest -q tests/test_lean_certificates.py
+```
+
+The remaining trust base for executable acceptance is Lean's kernel and standard
+logical foundations (`propext`, `Classical.choice`, `Quot.sound`), the pinned Lean
+compiler/runtime and standard library, UTF-8/JSON/environment/formula/certificate
+decoding, canonical serialization/hash binding, IO and faithful display of the
+actual checked query. The Python prover and its replay checker are **untrusted
+search/filtering** when their outputs go through this Lean path. Python's default
+API has not been switched to Lean, and no Python refinement theorem is claimed.
+Human interpretation, empirical premises and evidence authenticity remain
+outside logical entailment. The assurance label remains `experimental`.
+
 ## Model-output admissibility and executable P11
 
 Names below have prefix `VE.Bridge.`. These are six audited declarations:
 two headline results (`decodeModel_valid`, `CountermodelQuery.refutes_sound`)
-and four supporting lemmas/corollaries. The complete project inventory is nine
-headline results plus 71 supporting declarations; see [README.md](README.md).
+and four supporting lemmas/corollaries. The complete project inventory is 11
+headline results plus 99 supporting declarations; see [README.md](README.md).
 
 | Theorem | Exact statement in plain words |
 |---|---|
@@ -209,7 +335,8 @@ No independent `ParseSpec` or general grammar soundness/completeness/uniqueness
 (P1/P2/P3) is proved by this milestone. P4/P5 do not prove that parser and printer
 avoid shared grammar errors. The lexical validator theorem and model-output
 admissibility theorem do not prove JSON decoding matches the wire spec.
-Python parsing/evaluation refinement,
-P7 proposition generation, P9 exact certificate expected-type binding, compiler,
-runtime, IO, cryptographic identities and human interpretation remain outside
-these theorems. The assurance label remains `experimental`.
+Python parsing/evaluation/graph refinement, P7 source-to-proposition correspondence,
+JSON-to-checked-AST correspondence, compiler/runtime and IO correctness,
+cryptographic identities and human interpretation remain outside these theorems.
+P9 now binds replay directly to the exact decoded query; it does not prove the
+JSON boundary or correspondence to a separate proposition generator. The assurance label remains `experimental`.

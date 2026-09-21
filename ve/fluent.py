@@ -25,6 +25,9 @@ def _references(value, index=0):
         return int(value.term == ast.Var(index))
     if kind in (ast.Binary, ast.Eq):
         return int(value.left == ast.Var(index)) + int(value.right == ast.Var(index))
+    if kind is ast.Reach:
+        endpoints = int(value.left == ast.Var(index)) + int(value.right == ast.Var(index))
+        return endpoints + (_references(value.edge.formula, index + 2) if type(value.edge) is ast.Body else 0)
     if kind is ast.Not:
         return _references(value.body, index)
     if kind in (ast.And, ast.Or, ast.Implies):
@@ -131,6 +134,20 @@ class FluentTraversal:
         if kind in (ast.Unary, ast.Binary):
             terms = (value.term,) if kind is ast.Unary else (value.left, value.right)
             return self.words.atom(value.predicate, tuple(self.term(t, scope) for t in terms))
+        if kind is ast.Reach:
+            left, right = self.term(value.left, scope), self.term(value.right, scope)
+            count = "one or more" if value.kind == "plus" else "zero or more"
+            prefix = f"{right} is reachable from {left} by {count} "
+            if type(value.edge) is ast.Named:
+                return prefix + value.edge.relation + " steps"
+            sort = value.edge.sort
+            self.names[sort] += 1
+            n = self.names[sort]
+            src = self.letters[sort] + (str(n) if n > 1 else "")
+            self.names[sort] += 1
+            dst = self.letters[sort] + str(self.names[sort])
+            body = self.formula(value.edge.formula, ((dst, sort), (src, sort), *scope))
+            return prefix + f"steps satisfying [{self.words.sorts[sort]} {src}, {dst} | ({body})]"
         if kind is ast.Eq:
             return self.equality(value, scope)
         if kind is ast.Not:
@@ -212,6 +229,8 @@ def contraction_stats(items, env, naming="per_statement"):
                     counts[key] += 1
                 if type(node) in (ast.Not, ast.Forall, ast.Exists):
                     stack.append(node.body)
+                elif type(node) is ast.Reach and type(node.edge) is ast.Body:
+                    stack.append(node.edge.formula)
                 elif type(node) in (ast.And, ast.Or, ast.Implies):
                     stack.extend((node.right, node.left))
         counts.update(visitor.stats)

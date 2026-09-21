@@ -10,6 +10,9 @@ from .wire import canonical_json, digest, loads_json, require_fields
 LANGUAGE = "ve.core@0"
 PROFILE = "relational-fol@0"
 SPEC_REVISION = "ve-v0-draft-2026-09-20"
+CLOSURE_LANGUAGE = "ve.core@0.1"
+CLOSURE_PROFILES = ("closure@0", PROFILE)
+CLOSURE_REVISION = "ve-v0.1-closure-2026-09-21"
 RESERVED = frozenset("true false is equals not and or if then for every there exists believes must eventually".split())
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_]*\Z", re.ASCII)
 
@@ -79,7 +82,8 @@ class ConstantDecl:
 @dataclass(frozen=True, slots=True, init=False)
 class Environment:
     language: str
-    profile: str
+    profile: str | None
+    profiles: tuple[str, ...]
     spec_revision: str
     sorts: object
     predicates: object
@@ -87,8 +91,12 @@ class Environment:
 
     def __init__(self, data):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
-        require_fields(data, {"language", "profile", "spec_revision", "vocabulary"})
-        if (data["language"], data["profile"], data["spec_revision"]) != (LANGUAGE, PROFILE, SPEC_REVISION):
+        closure = data.get("language") == CLOSURE_LANGUAGE if type(data) is dict else False
+        require_fields(data, {"language", "profiles" if closure else "profile", "spec_revision", "vocabulary"})
+        if closure:
+            if data["profiles"] != list(CLOSURE_PROFILES) or data["spec_revision"] != CLOSURE_REVISION:
+                raise UnsupportedProfile("Unsupported profiles or specification revision")
+        elif (data["language"], data["profile"], data["spec_revision"]) != (LANGUAGE, PROFILE, SPEC_REVISION):
             raise UnsupportedProfile("Unsupported language, semantic profile, or specification revision")
         vocab = data["vocabulary"]
         require_fields(vocab, {"sorts", "predicates", "constants"}, path="/vocabulary")
@@ -137,7 +145,9 @@ class Environment:
             if type(sort) is not str or sort not in sorts:
                 raise UnknownSymbol(f"Undeclared constant sort: {sort!r}")
             constants[name] = ConstantDecl(sort, _description(entry["description"]))
-        for field, value in (("language", LANGUAGE), ("profile", PROFILE), ("spec_revision", SPEC_REVISION),
+        for field, value in (("language", data["language"]), ("profile", None if closure else PROFILE),
+                             ("profiles", CLOSURE_PROFILES if closure else (PROFILE,)),
+                             ("spec_revision", data["spec_revision"]),
                              ("sorts", MappingProxyType(sorts)), ("predicates", MappingProxyType(predicates)),
                              ("constants", MappingProxyType(constants))):
             object.__setattr__(self, field, value)
@@ -166,12 +176,20 @@ class Environment:
                 entry["negative_verbalisation"] = declaration.negative_verbalisation
             return entry
 
-        return {"language": self.language, "profile": self.profile, "spec_revision": self.spec_revision,
+        return {"language": self.language, **({"profiles": list(self.profiles)} if self.closure else {"profile": self.profile}), "spec_revision": self.spec_revision,
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
                                "constants": {k: {"sort": v.sort, "description": v.description}
                                              for k, v in self.constants.items()}}}
 
     @property
+    def closure(self):
+        return "closure@0" in self.profiles
+
+    @property
+    def identity_version(self):
+        return "v0.1" if self.closure else "v0"
+
+    @property
     def environment_id(self):
-        return digest("ve-environment-v0\n", self.to_dict())
+        return digest(f"ve-environment-{self.identity_version}\n", self.to_dict())

@@ -1,6 +1,6 @@
 """VE v0 experimental language, finite semantics and checked argument API."""
 from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall,
-                  Formula, Implies, Not, Or, Term, Top, Unary, Var,
+                  Formula, Implies, Not, Or, Term, Top, Unary, Var, Reach, Named, Body, Edge,
                   check_document, check_formula, doc_from_json,
                   document_from_data, document_to_data, formula_from_data,
                   formula_to_data)

@@ -10,3 +10,5 @@ dist/
 data/*
 !data/README.md
 experiments/*/items/*.nollm*
+.cargo-home/
+rust/target/

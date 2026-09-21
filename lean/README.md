@@ -2,10 +2,13 @@
 
 This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external
 Lake dependencies. It formalizes the full function-free relational syntax and
-Tarski semantics and proves finite evaluator equivalence (P6). **P10 is conditional:**
-`composition_sound` is semantic cut over steps that already carry entailment
-proofs; the separate named graph checker requires an explicit sound-certificate
-premise and does not verify Python graph checking or certificate replay.
+Tarski semantics and proves finite evaluator equivalence (P6). **P9/P10 now use
+proved tableau replay:** `Tableau.checkCertificate_sound` proves that every
+accepted data-only certificate entails its exact supplied conclusion from its
+ordered premises, over all admissible structures. `Graph.check_entails` uses
+this theorem without a caller-supplied `CertificateSound` hypothesis. All
+propositional, quantifier and equality rules are supported, including empty
+sorts. Python graph/refinement and the JSON boundary are not verified.
 **P11 requires admissible models:** `decodeModel_valid` now proves that every
 successful executable model decode supplies this premise; typed countermodel
 queries refute precisely `Entails.{0}`. JSON/wire-spec correspondence, Python
@@ -21,6 +24,7 @@ lake build
 python3 audit.py
 lake exe ve_conformance ../conformance/evaluation.json
 lake exe ve_conformance ../conformance/countermodels.json
+lake exe ve_conformance check-certificate certificate-query.json
 ```
 
 From the repository root:
@@ -28,15 +32,17 @@ From the repository root:
 ```sh
 UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run --frozen python -m pytest -q
 python3 conformance/generate.py
+.venv/bin/python conformance/certificates.py --report conformance/certificates-report.json
 ```
 
-The current inventory contains **9 headline results and 71 supporting lemmas or
-corollaries**, not 80 independent verification milestones. The headline results
-are `eval_iff_denote`, `composition_sound`, `Graph.check_sound`,
+The current inventory contains **11 headline results and 99 supporting lemmas or
+corollaries**, not 110 independent milestones. The headline results are
+`eval_iff_denote`, `composition_sound`, `Graph.check_sound`,
+`Tableau.checkCertificate_sound`, `CertificateWire.Query.accepts_sound`,
 `Bridge.decodeModel_valid`, `Bridge.CountermodelQuery.refutes_sound`,
 `Surface.parse_print`, `Surface.normalize_idempotent`, `Surface.print_injective`,
-and `Surface.accepted_normalize_eq_iff`. The detailed inventories below and in
-[METATHEORY.md](METATHEORY.md) distinguish their premises and helper roles.
+and `Surface.accepted_normalize_eq_iff`. [METATHEORY.md](METATHEORY.md) gives exact
+plain-word statements and the remaining premises.
 
 `lake build` builds the semantic library, all proofs, direct executable regression
 checks, and the JSON executable. `audit.py` checks that every named theorem has a
@@ -75,14 +81,27 @@ upstream toolchain and its standard logical dependencies remain trusted.
 * `VE/Consequence.lean`: finite acyclic proof trees whose steps carry actual
   entailment proofs, cut/composition, and finite countermodel soundness.
 * `VE/ClaimGraph.lean`: executable named claim-graph checking, with explicit leaf
-  nodes, ordered premise references and a checked topological order. Under the
-  abstract sound-certificate predicate, acceptance proves acyclicity, unique
+  nodes, ordered premise references and a checked topological order. The concrete
+  `checkTableau` predicate has proved soundness, so acceptance proves acyclicity, unique
   aliases, exact root identity, typing, named leaf provenance, exact ordered
   leaf unfolding (including duplicates), and entailment of the root from those
   leaves. `VE/GraphChecks.lean` exercises positive/negative cases with a small
-  proved-sound test certificate language. No Python graph/replay refinement,
-  graph wire decoder, cryptographic identity layer or proof-artifact replay is
-  proved.
+  proved-sound test certificate language; `VE/TableauChecks.lean` tests the actual
+  tableau-backed graph path. No Python graph refinement, graph wire decoder or
+  cryptographic identity correctness theorem is supplied.
+* `VE/Tableau.lean`, `VE/TableauClosure.lean`, `VE/TableauChecker.lean`: the full
+  signed-tableau calculus and sound executable certificate checking. Sorted
+  parameter assignments preserve branch satisfiability; fresh delta extensions
+  preserve older valuations; gamma requires a known element. Equality closure
+  supports reflexivity, symmetry, transitivity and unary/binary substitution.
+  Version 2 also checks exact complementary formulas with identical bindings,
+  matching the existing Python rule; version 1 retains literal-only closure.
+  Replay is total with depth fuel 125 (124 expansions plus a close). Its entailment theorem is universe
+  polymorphic and permits infinite structures, empty sorts and empty carriers.
+* `VE/CertificateWire.lean`: exact certificate JSON decoding, canonical JSON and
+  SHA-256 identity checks, plus the `check-certificate` mode. Its query acceptance
+  theorem pins the expected target to `Entails.{0}`. Decoder/serializer/hash
+  correspondence and machine execution remain tested boundary code.
 * `VE/Surface.lean`: canonical preorder binder naming and a total strict parser
   for all constructors, with name-to-index resolution. Parser recursion decreases
   explicit fuel; the public parser supplies input length plus one. Full-language
@@ -131,6 +150,14 @@ fixtures are ignored. Exit 0 is successful evaluation (including
 false), 1 is case rejection, and 2 is JSON or invocation failure. See
 [`../conformance/README.md`](../conformance/README.md) for the shared corpus.
 
+The separate `check-certificate` mode takes one query or a batch of
+`{id, environment, premises, conclusion, certificate}` objects and returns
+`{id, status: "ok", valid: boolean}`. `premises` is an ordered AST list;
+`conclusion` is a single formula AST. A stale/malformed package returns
+`{id, status: "error", valid: false, error}` and exit 1. A well-formed trace that
+fails replay returns `valid: false` with exit 0; invalid JSON/invocation is exit 2.
+**Acceptance is `valid: true`, never the process exit code alone.**
+
 The decoder rejects duplicate keys before map insertion, invalid surrogate
 escapes, null, fractions/exponents, out-of-range integers, invalid names,
 unsupported versions, missing fields, duplicate inventory entries, wrong arity,
@@ -141,9 +168,10 @@ predicate `negative_verbalisation`, checking their field shapes and string
 bounds. These are inert display data; lexical linting and negative-template
 selection belong to the Python renderer and are outside the Lean proofs.
 It does not implement Python's evaluation-work or trace budgets, source-size
-budget, diagnostics, explanations, JCS hashes or assurance records. Its 16 MiB
-input cap applies to the entire batch envelope. It is a conformance tool, not
-an adversarial-input service, proof-certificate worker, or replacement Python CLI.
+budget, diagnostics, explanations or assurance records. Its 16 MiB input cap
+applies to the entire batch envelope. The certificate mode does check JCS/SHA-256
+bindings. It is a conformance tool with verified logical replay, not a resource
+isolation service or replacement Python CLI.
 
 The new full-language theorem inventory and precise lexical conditions are in
 [METATHEORY.md](METATHEORY.md). The table below records the original milestone.
@@ -165,7 +193,8 @@ constants, free indices and cross-sort equality before evaluating them.
 conclusion`, quantifying over all admissible common-carrier **Type 0** structures,
 including infinite ones. JSON-backed P9 expected types must use this alias (or
 explicit `Entails.{0}`); the corresponding generic graph certificate contract
-must be instantiated at universe 0. No P9 replay implementation is supplied.
+must be instantiated at universe 0. The certificate query theorem proves exactly
+this target; the underlying tableau and graph entailment theorems hold at every universe.
 The finite JSON witness is not claimed here to refute an unspecified universe.
 
 **Unproved external interpretation assumption — disjoint carriers.** We assume,
@@ -224,15 +253,37 @@ leaves. All surface-fragment statements refer to `Propositional` as defined abov
 
 ## Remaining obligations and trust boundary
 
-Grammar P1–P3, P7 proposition generation, P8 production refinement, and P9
-certificate expected-type binding are not proved. P10 now also covers the Lean
-named graph checker, conditional on the explicit
-certificate-validity soundness premise. It does not verify the Python argument
-graph or certificate replay implementation. P11 requires an admissible model;
-successful `decodeModel` now proves that premise, and typed accepted queries
-refute `Entails.{0}`. This does not prove JSON text/wire correspondence or an
-end-to-end IO theorem. There is no cryptographic identity theorem, model
-search completeness theorem, or claim of a complete entailment procedure.
+Grammar P1–P3, P7 source/proposition correspondence and P8 production refinement
+remain unproved. P9 is now supplied by direct replay against the exact decoded
+query, and P10 by `Graph.checkTableau`; neither needs an abstract certificate
+soundness premise. These results do not verify Python's default argument/replay
+implementation or prove JSON correspondence. P11 requires an admissible model;
+successful `decodeModel` supplies that premise. The finite countermodel and
+JSON certificate theorems share precisely `Entails.{0}`.
+
+For Lean-accepted certificates, the Python prover and Python replay are
+untrusted search/filtering. Remaining trusted executable components include
+Lean's kernel, the standard logical foundations, compiler/runtime and standard
+library, UTF-8/JSON/environment/AST/certificate decoding, canonical serialization
+and hash identity checks, IO and faithful display of the checked query. The
+SHA-256 implementation has standard-vector and Python-identity tests; it has
+no cryptographic correctness proof. The existing Python `check_argument` API
+still uses its own checker and is not automatically upgraded to the Lean path.
+There is no graph wire/refinement theorem, completeness theorem, production
+resource-bound proof, or verification of empirical evidence.
+
+The certificate conformance run accepts **732/732** Python-produced certificates
+and rejects **150/150** forgeries, including missing/wrong-sort/future parameters,
+empty-sort inhabitation, illegal delta witnesses, stale identities and malformed
+branches. The two positive worked examples pass; the separated example has no
+proof and a forged close is rejected. All 811 search attempts and their outcomes
+are retained in [the report](../conformance/certificates-report.json); 320 bounded
+random valid queries all produce certificates, and another 320 broader valid
+queries also all produce certificates. Eight existential weakening regressions
+prove; 160 unconditioned queries give 82 certificates, 76 `NotFound` and two
+resource-limit outcomes. These are seeded schema
+and random-query tests, not an independently sampled workload or a completeness
+claim. No produced certificate in this corpus was rejected by Lean.
 
 Tests cover all 701 shared evaluation cases / 4,912 formulas and 708 countermodel
 cases, full-constructor canonical
@@ -242,5 +293,21 @@ negative surface cases. They are empirical correspondence evidence only.
 They do not prove grammar uniqueness, wire-decoder correspondence, or Python/Lean
 refinement. IO/UTF-8 decoding, generated binaries, compiler/runtime correctness,
 resource behavior, interpretation of declarations and all empirical premises
-remain outside the proved scope. The project does not consume arbitrary
-agent-produced Lean code or claim to implement a safe certificate replay path.
+remain outside the proved scope. Certificates are data-only; the executable
+does not consume agent-produced Lean code.
+
+Tableau milestone validation (September 21, 2026): `lake build` passes;
+`python3 lean/audit.py` audits 25 source files and 110 named theorems;
+`.venv/bin/python -m pytest -q` passes **528 tests**, with **2 skips** for the
+uninstalled optional `llguidance` and `xgrammar` backends. Dependencies were
+synced with `UV_CACHE_DIR=/private/tmp/ve-uv-cache uv sync --frozen` before the full run.
+
+## Opt-in closure profile
+
+`VE.Closure` adds finite-path plus/star semantics, Named/Body edges, proved
+finite evaluation and typing, Reach-free conservativity, and least-fixed-point
+characterizations. Both edge forms have executable strict syntax; the new
+round-trip theorem covers Named atoms. The JSON bridge dispatches the v0.1
+closure envelope separately, and certificate replay explicitly rejects that
+profile. Exact statements and remaining proof obligations are in
+[`CLOSURE.md`](CLOSURE.md).

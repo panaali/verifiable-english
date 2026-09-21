@@ -12,7 +12,7 @@ from pathlib import Path
 import sys
 from typing import Any
 
-from .ast import (Formula, Not, Unary, Binary, formula_from_data, formula_to_data)
+from .ast import (Reach, Named, Body, Formula, Not, Unary, Binary, formula_from_data, formula_to_data)
 from .environment import Environment, validate_identifier
 from .errors import InvalidModel, ResourceLimit, VEError
 from .identity import meaning_id, source_id
@@ -29,7 +29,7 @@ MAX_REFERENCES = 512
 
 def _checker_build():
     modules = ("argument", "entailment", "ast", "environment", "identity", "parser",
-               "printer", "model", "evaluate", "search", "wire", "limits", "errors")
+               "printer", "model", "evaluate", "search", "wire", "limits", "errors", "closure")
     payload = {name: hashlib.sha256(Path(__file__).with_name(name + ".py").read_bytes()).hexdigest()
                for name in modules}
     payload["python"] = sys.version
@@ -74,7 +74,7 @@ class Claim:
             if candidate != ast:
                 raise VEError("Claim AST does not match its exact source")
         source = source.decode("ascii") if type(source) is bytes else source
-        return cls(name, source, ast, env.environment_id, source_id(source),
+        return cls(name, source, ast, env.environment_id, source_id(source, env),
                    meaning_id(env, ast), evidence_ids)
 
     @property
@@ -546,6 +546,11 @@ def _predicates(formula):
         node = pending.pop()
         if type(node) in (Unary, Binary):
             found.add(node.predicate)
+        if type(node) is Reach:
+            if type(node.edge) is Named:
+                found.add(node.edge.relation)
+            else:
+                pending.append(node.edge.formula)
         for key in ("body", "left", "right"):
             child = getattr(node, key, None)
             if child is not None:
