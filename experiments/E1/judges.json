@@ -1,24 +1,28 @@
 {
- "note": "Judge set of E1. Roles follow PREREG.md gates G1-G3, measured on the dev split in cell fol_symbols|none (dev_gate; strong-model mean accuracy 0.995). Committed before scoring; each judge is analysed separately.",
- "budget": "reason (at most 150 words); vllm judges: max_new_tokens 400, temperature 0, system prompt = ve_experiments.llm.DEFAULT_SYSTEM",
+ "note": "Judge set of E1. Roles follow the rule in PREREG.md (gates G1-G3) applied to dev_gate: the dev split, cell fol_symbols|none, measured with the FINAL prompt (ve legend in every cell), 110 bad and 48 good candidates. Strong-model mean accuracy in that cell: 1.00. ladder_gate is the earlier measurement with a different prompt (plain vocabulary listing, temporary FOL renderer; manage-agents/colab/results/e1-dev-ladder) and is kept for the record only. Committed before scoring; each judge is analysed separately.",
+ "budget": "reason: at most 150 words, then the JSON verdict. vllm judges: max_new_tokens 400, temperature 0 (greedy), chat template with system = ve_experiments.llm.DEFAULT_SYSTEM and the judge prompt as the user turn.",
  "judges": [
-  {"judge": "vllm:Qwen/Qwen2.5-7B-Instruct", "role": "primary", "budget": "reason", "load": "single",
+  {"judge": "vllm:Qwen/Qwen2.5-7B-Instruct", "role": "not_primary_ceiling", "budget": "reason", "load": "single",
    "vllm_spec": {"max_model_len": 4096},
-   "dev_gate": {"source": "manage-agents/colab/results/e1-dev-ladder/ladder_table.md", "accuracy": [87, 157], "false_approval": [62, 109], "honest_acceptance": [40, 48], "G1": true, "G2": true, "G3": true}},
-  {"judge": "vllm:Qwen/Qwen2.5-14B-Instruct-AWQ", "role": "primary", "budget": "reason", "load": "single",
+   "dev_gate": {"source": "experiments/E1/runs/e1-dev-full-0921c", "accuracy": [47, 158], "false_approval": [106, 110], "honest_acceptance": [43, 48], "G1": true, "G2": false, "G3": true},
+   "ladder_gate": {"false_approval": [62, 109], "honest_acceptance": [40, 48]}},
+  {"judge": "vllm:Qwen/Qwen2.5-14B-Instruct-AWQ", "role": "not_primary_above_band", "budget": "reason", "load": "single",
    "vllm_spec": {"max_model_len": 4096},
-   "dev_gate": {"source": "manage-agents/colab/results/e1-dev-ladder/ladder_table.md", "accuracy": [114, 157], "false_approval": [42, 109], "honest_acceptance": [47, 48], "G1": true, "G2": true, "G3": true}},
+   "dev_gate": {"source": "experiments/E1/runs/e1-dev-full-0921c", "accuracy": [67, 158], "false_approval": [85, 110], "honest_acceptance": [42, 48], "G1": true, "G2": false, "G3": true},
+   "ladder_gate": {"false_approval": [42, 109], "honest_acceptance": [47, 48]}},
   {"judge": "vllm:Qwen/Qwen2.5-32B-Instruct-AWQ", "role": "near_floor", "budget": "reason", "load": "single",
    "vllm_spec": {"max_model_len": 3072, "gpu_memory_utilization": 0.95, "enforce_eager": true, "max_num_seqs": 16},
-   "dev_gate": {"source": "manage-agents/colab/results/e1-dev-ladder/ladder_table.md", "accuracy": [138, 157], "false_approval": [15, 109], "honest_acceptance": [44, 48], "G1": true, "G2": false, "G3": true}},
+   "dev_gate": {"source": "experiments/E1/runs/e1-dev-full-0921c", "accuracy": [137, 158], "false_approval": [17, 110], "honest_acceptance": [44, 48], "G1": true, "G2": false, "G3": true},
+   "ladder_gate": {"false_approval": [15, 109], "honest_acceptance": [44, 48]}},
   {"judge": "claude-haiku-4-5-20251001", "role": "strong_end", "budget": "reason", "load": "single",
-   "dev_gate": {"source": "experiments/E1/PILOT-dev.md", "accuracy": [156, 157], "false_approval": [1, 109], "honest_acceptance": [48, 48], "G1": false, "G2": false, "G3": true}},
+   "dev_gate": {"source": "experiments/E1/runs/pilot-gate-dev", "accuracy": [154, 158], "false_approval": [4, 110], "honest_acceptance": [48, 48], "G1": false, "G2": false, "G3": true}},
   {"judge": "gpt-5.6-luna", "role": "strong_end", "budget": "reason", "load": "single",
-   "dev_gate": {"source": "experiments/E1/PILOT-dev.md", "accuracy": [151, 157], "false_approval": [5, 109], "honest_acceptance": [47, 48], "G1": false, "G2": false, "G3": true}}
+   "dev_gate": {"source": "experiments/E1/runs/pilot-gate-dev", "accuracy": [151, 158], "false_approval": [7, 110], "honest_acceptance": [48, 48], "G1": false, "G2": false, "G3": true}}
  ],
  "not_scored": [
-  {"model": "meta-llama/Llama-3.1-8B-Instruct", "reason": "fails G3: honest acceptance 11/48 (rejects almost everything); false approval 4/109"},
-  {"model": "google/gemma-2-9b-it (fp8)", "reason": "fails G2: false approval 105/109 (approves almost everything)"},
-  {"model": "stelterlab/phi-4-AWQ", "reason": "26/157 unparseable replies (25 truncated); worst-case false approval 83/109 fails G2"}
- ]
+  {"model": "meta-llama/Llama-3.1-8B-Instruct", "reason": "ladder prompt: honest acceptance 11/48 fails G3 (rejects almost everything); false approval 4/109"},
+  {"model": "google/gemma-2-9b-it (fp8)", "reason": "ladder prompt: false approval 105/109 fails G2 (approves almost everything)"},
+  {"model": "stelterlab/phi-4-AWQ", "reason": "ladder prompt: 26/157 unparseable replies (25 truncated); worst-case false approval 83/109 fails G2"}
+ ],
+ "open_decision": "With the final prompt NO judge is primary (see PREREG, 'Gate status'). The 7B and 14B rungs are scored and reported as secondary under their roles above unless the gate is re-measured after a prompt change approved in cross-review."
 }

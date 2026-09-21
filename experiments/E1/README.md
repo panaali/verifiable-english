@@ -1,10 +1,13 @@
 # E1: sign-off on adversarially weakened formalizations
 
-Code: `ve_experiments/e1/`. Nothing here has touched the scored split.
+Code: `ve_experiments/e1/`. The scored materials are built; no judge has seen a scored item.
 
 | File | Content |
 |---|---|
 | `PREREG.md` | Draft preregistration, parametrised by judge set. Must be committed unchanged before a scored run |
+| `judges.json` | Judge set with measured dev gates and roles |
+| `DEV-qwen.md` | Dev results of the open-weight judges: ten cells, contrasts, per-template variance, E1b |
+| `items/scored.jsonl` | Scored candidates (874), generated before any judge call; `colab/` holds batch job inputs and outputs |
 | `PILOT.md` | Dev capability gate: four models on fol_symbols, no explanation |
 | `TUNING.md` | Dev false approval for every difficulty setting and judge tier tried |
 | `items/dev.jsonl` | Dev candidates, attack recipe v1 (157: 48 good, 109 bad). `dev-v2.jsonl`: recipe v2 (not adopted) |
