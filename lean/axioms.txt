@@ -107,4 +107,5 @@
 'VE.Graph.check_entails_of_certificateSound' depends on axioms: [propext, Quot.sound]
 'VE.Graph.check_unfolds_of_certificateSound' depends on axioms: [propext, Quot.sound]
 'VE.Graph.tableau_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]
-PASS: 24 source files; 109 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+'VE.CertificateWire.Query.accepts_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+PASS: 25 source files; 110 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.

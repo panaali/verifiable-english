@@ -1,3 +1,4 @@
+import VE.CertificateWire
 import VE.TableauChecks
 import VE.TableauChecker
 import VE.TableauClosure
@@ -132,3 +133,5 @@ import VE.ModelProofs
 #print axioms VE.Graph.check_entails_of_certificateSound
 #print axioms VE.Graph.check_unfolds_of_certificateSound
 #print axioms VE.Graph.tableau_certificateSound
+
+#print axioms VE.CertificateWire.Query.accepts_sound
