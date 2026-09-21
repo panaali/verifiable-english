@@ -2,18 +2,20 @@
 
 An English-like language for human-inspectable, machine-checkable claims in AI oversight.
 
-**Stage:** experimental Python v0 core implemented and tested; formal proofs and oversight experiments are pending.
+**Stage:** experimental Python v0 core, argument layer, constrained grammars, and Lean reference proofs implemented; full verification and oversight experiments are pending.
 
-Run `uv sync`, then `uv run python -m pytest`. The package requires Python 3.14.
+Run `uv sync`, then `uv run python -m pytest`. The package requires Python 3.12 or later.
 For a worked inventory, run:
 
 ```sh
 uv run python -m ve evaluate --env examples/environment.json --model examples/model.json examples/requirements.ve
 uv run python -m ve render --env examples/environment.json --view ve_natural examples/requirements.ve
+uv run python -m ve render --env examples/environment.json --view ve_fluent examples/requirements.ve
 uv run python -m ve countermodel --env examples/environment.json --premises examples/premise.ve --conclusion examples/conclusion.ve
 ```
 
-See [the implementation/API guide](docs/implementation.md) for encodings, FOL import,
+See [six examples across all five views with the shared legend](docs/fluent-examples.md)
+and [the implementation/API guide](docs/implementation.md) for encodings, FOL import,
 resource outcomes, and the explicit trust boundary. A successful finite evaluation
 does not certify entailment, intent, or empirical grounding.
 
