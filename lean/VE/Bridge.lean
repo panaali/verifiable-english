@@ -50,6 +50,17 @@ def Vocabulary.environment (v : Vocabulary) : Environment :=
 private def description (j : Json) : Except String Unit := do
   if (← stringField j "description").isEmpty then throw "empty description"
 
+-- Display metadata has no semantic interpretation here. Match Python's wire
+-- validation while leaving lexical acceptance/fallback to the view renderer.
+private def displayString (j : Json) : Except String Unit := do
+  let text ← j.getStr?
+  if text.isEmpty then throw "empty verbalisation"
+  if text.length > 256 then throw "ResourceLimit: verbalisation size"
+
+private def displayFields (j : Json) (required optional : List String) : Except String Unit := do
+  let names := (← fields j).map Prod.fst
+  exactFields j (required ++ optional.filter names.contains)
+
 def decodeEnvironment (j : Json) : Except String Vocabulary := do
   exactFields j ["language", "profile", "spec_revision", "vocabulary"]
   unless (← stringField j "language") == "ve.core@0" &&
@@ -69,12 +80,19 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
   if sorts.length > 32 || predicates.length > 256 then
     throw "ResourceLimit: vocabulary size"
   for (_, entry) in sorts do
-    exactFields entry ["description"]
+    displayFields entry ["description"] ["verbalisation"]
     description entry
+    if let .ok words := entry.getObjVal? "verbalisation" then
+      exactFields words ["singular", "plural"]
+      displayString (← words.getObjVal? "singular")
+      displayString (← words.getObjVal? "plural")
   let sortNames := sorts.map Prod.fst
   let ps ← predicates.mapM fun (p, entry) => do
-    exactFields entry ["arguments", "description"]
+    displayFields entry ["arguments", "description"] ["verbalisation", "negative_verbalisation"]
     description entry
+    for key in ["verbalisation", "negative_verbalisation"] do
+      if let .ok words := entry.getObjVal? key then
+        displayString words
     let ss ← strings (← entry.getObjVal? "arguments")
     unless (ss.length == 1 || ss.length == 2) && ss.all sortNames.contains do
       throw s!"invalid signature: {p}"

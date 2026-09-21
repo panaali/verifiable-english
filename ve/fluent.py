@@ -7,27 +7,15 @@ operands. It never normalizes, reassociates, or exchanges AST nodes.
 from collections import Counter
 
 from . import ast
-from .printer import _NaturalVocabulary, _predicate_template
+from .printer import _NaturalVocabulary, _fluent_variable_sequences
 
 
 FLUENT_RENDERER = "ve.fluent"
-FLUENT_RENDERER_VERSION = "1"
+FLUENT_RENDERER_VERSION = "2"
 
 
-class _FluentVocabulary(_NaturalVocabulary):
-    def __init__(self, env):
-        super().__init__(env)
-        # Natural accepts copular binary templates. Fluent must never conceal
-        # the declared subject/object order behind a relational passive.
-        for name, declaration in env.predicates.items():
-            template = self.predicates[name]
-            if (" by " in template or
-                    (len(declaration.arguments) == 2 and
-                     template.split()[1] in {"is", "was", "gets"})):
-                self.predicates[name] = ("{0} is " + name if len(declaration.arguments) == 1
-                                         else "{0} " + name + " {1}")
-        # Falling back can expose a strict spelling. Natural already rejects
-        # candidates colliding with ANY strict spelling, so this stays injective.
+# Every view's legend and both English visitors use exactly one lexical policy.
+_FluentVocabulary = _NaturalVocabulary
 
 
 def _references(value, index=0):
@@ -60,6 +48,7 @@ class FluentTraversal:
         self.env = env
         self.words = _FluentVocabulary(env)
         self.names = Counter()
+        self.sequences = _fluent_variable_sequences(self.words.sorts)
 
     def binder(self, value):
         noun = self.words.sorts[value.sort]
@@ -67,10 +56,10 @@ class FluentTraversal:
         # A declaration is the first mention. A body reference is a subsequent
         # mention; vacuous binders alone can omit their names in global syntax.
         if _references(value.body):
-            initial = noun[0].upper()
-            self.names[initial] += 1
-            count = self.names[initial]
-            name = initial + (str(count) if count > 1 else "")
+            sequence = self.sequences[value.sort]
+            count = sequence["first_suffix"] + self.names[value.sort] * sequence["stride"]
+            self.names[value.sort] += 1
+            name = sequence["letter"] + (str(count) if count > 1 else "")
         return (name, value.sort), noun + (" " + name if name else "")
 
     @staticmethod
@@ -91,7 +80,7 @@ class FluentTraversal:
         text = self.formula(value, scope)
         if type(value) in (ast.Top, ast.Bottom, ast.Unary, ast.Binary, ast.Eq):
             return text
-        if type(value) is ast.Not and type(value.body) is ast.Eq:
+        if self.negative_atom(value):
             return text
         return "(" + text + ")"
 
@@ -103,13 +92,12 @@ class FluentTraversal:
         subject = atom.term if type(atom) is ast.Unary else atom.left
         if subject != ast.Var(0):
             return None
-        if type(value) is ast.Not and type(atom) is not ast.Eq:
-            return None  # No declared negative predicate templates in v0.
+        if type(value) is ast.Not and not self.negative_atom(value):
+            return None
         if type(atom) in (ast.Unary, ast.Binary):
             # Formal fallback names need not be grammatical relative verbs.
             declaration = self.env.predicates[atom.predicate]
-            if self.words.predicates[atom.predicate] != _predicate_template(
-                    declaration.verbalisation, len(declaration.arguments)):
+            if self.words.predicates[atom.predicate] != declaration.verbalisation:
                 return None
         text = self.formula(value, scope)
         return "that " + text[len(scope[0][0]) + 1:]
@@ -123,6 +111,12 @@ class FluentTraversal:
             if left is not None and right is not None:
                 return left + " and " + right
         return "such that " + self.unit(value, scope)
+
+    def negative_atom(self, value):
+        return (type(value) is ast.Not and
+                (type(value.body) is ast.Eq or
+                 (type(value.body) in (ast.Unary, ast.Binary) and
+                  value.body.predicate in self.words.negatives)))
 
     def formula(self, value, scope=()):
         kind = type(value)
@@ -138,6 +132,11 @@ class FluentTraversal:
         if kind is ast.Not:
             if type(value.body) is ast.Eq:
                 return self.equality(value.body, scope, negative=True)
+            if self.negative_atom(value):
+                atom = value.body
+                terms = (atom.term,) if type(atom) is ast.Unary else (atom.left, atom.right)
+                return self.words.atom(atom.predicate, tuple(self.term(t, scope) for t in terms),
+                                       negative=True)
             return "it is false that " + self.unit(value.body, scope)
         if kind in (ast.And, ast.Or, ast.Implies):
             left, right = self.unit(value.left, scope), self.unit(value.right, scope)

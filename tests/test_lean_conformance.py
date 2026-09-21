@@ -167,6 +167,35 @@ def test_lean_json_accepts_unicode_descriptions(lean_executable):
         assert result.returncode == 0, result.stderr + result.stdout
 
 
+def test_lean_and_python_accept_identity_bound_display_metadata(lean_executable):
+    case = copy.deepcopy(CASES[0])
+    vocab = case["environment"]["vocabulary"]
+    vocab["sorts"]["person"]["verbalisation"] = {"singular": "person", "plural": "people"}
+    vocab["predicates"]["owns"].update(verbalisation="{0} owns {1}",
+                                        negative_verbalisation="{0} does not own {1}")
+    env = Environment(case["environment"])
+    doc = document_from_data(env, case["ast"])
+    model = FiniteModel.from_dict(env, case["model"])
+    assert invoke(lean_executable, case)[0]["values"] == [evaluate(env, f, model).value for f in doc.formulas]
+    # Rejected display templates remain inert data in both semantic decoders.
+    vocab["predicates"]["owns"]["negative_verbalisation"] = "{0} owns {1}"
+    Environment(case["environment"])
+    assert invoke(lean_executable, case)[0]["values"] == case["expected"]
+
+
+@pytest.mark.parametrize("field,bad", [
+    ("verbalisation", []), ("verbalisation", ""), ("verbalisation", "x" * 257),
+    ("negative_verbalisation", {}), ("negative_verbalisation", ""),
+    ("negative_verbalisation", "x" * 257), ("unknown_verbalisation", "word"),
+])
+def test_lean_and_python_reject_malformed_display_metadata(lean_executable, field, bad):
+    case = copy.deepcopy(CASES[0])
+    case["environment"]["vocabulary"]["predicates"]["owns"][field] = bad
+    with pytest.raises(VEError):
+        Environment(case["environment"])
+    assert invoke(lean_executable, case, 1)[0]["status"] == "error"
+
+
 def test_lean_transitive_axiom_allowlist(lean_executable):
     import sys
     result = subprocess.run([sys.executable, str(ROOT / "lean/audit.py")], cwd=ROOT,

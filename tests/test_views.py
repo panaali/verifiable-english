@@ -286,6 +286,7 @@ def test_review_template_reproductions_fall_back_and_lint(predicate, template, c
     formula = (Unary(predicate, Const('api')) if predicate == 'deployed'
                else Binary(predicate, Const('alice'), Const('api')))
     assert render(formula, env, 've_natural') == render(formula, env, 've_strict')
+    assert render(formula, env, 've_fluent') == render(formula, env, 've_strict')
     path = f'/vocabulary/predicates/{predicate}/verbalisation'
     assert (path, code) in {(issue.path, issue.code) for issue in lint_vocabulary(env)}
 
@@ -395,7 +396,8 @@ def test_legend_identical_deterministic_complete_and_lint_order_stable():
     owns = next(p for p in legend['predicates'] if p['identifier'] == 'owns')
     assert owns == {'identifier': 'owns', 'arguments': ['person', 'service'],
                     'description': 'Ownership', 'verbalisation': '{0} is owned by {1}',
-                    'rendered_template': '{0} owns {1}'}
+                    'rendered_template': '{0} owns {1}', 'negative_verbalisation': None,
+                    'rendered_negative_template': None}
     assert {c['identifier'] for c in legend['constants']} == {'alice', 'api'}
     for category in data['vocabulary']:
         data['vocabulary'][category] = dict(reversed(list(data['vocabulary'][category].items())))
@@ -425,7 +427,7 @@ def test_per_item_view_length_covariates_measure_actual_text_and_optional_legend
     from ve import measure_view_lengths, render_vocabulary
     items = [Top(), Document((Top(), Bottom()))]
     rows = measure_view_lengths(iter(items), ENV)
-    assert len(rows) == 8
+    assert len(rows) == len(items) * len(VIEWS) == 10
     for row in rows:
         text = render(items[row['item_index']], ENV, row['view'])
         assert row['characters'] == len(text)

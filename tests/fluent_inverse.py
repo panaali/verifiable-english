@@ -18,20 +18,17 @@ class Inverse:
         self.env = env
         self.words = _FluentVocabulary(env)
         self.text = text
-        for prefix in ("For every ", "There is ", "It is false that ", "Both ", "Either ", "If ", "True", "False"):
-            if self.text.startswith(prefix):
-                self.text = self.text[0].lower() + self.text[1:]
-                break
         self.pos = 0
         self.binders = []
         self.nouns = sorted(((noun, sort) for sort, noun in self.words.sorts.items()),
                             key=lambda pair: -len(pair[0]))
         self.atoms = []
-        for name, template in self.words.predicates.items():
-            pattern = re.escape(template)
-            for i in range(len(env.predicates[name].arguments)):
-                pattern = pattern.replace(re.escape("{" + str(i) + "}"), "(" + TERM + ")")
-            self.atoms.append((name, re.compile(pattern + BOUNDARY)))
+        for negative, templates in ((False, self.words.predicates), (True, self.words.negatives)):
+            for name, template in templates.items():
+                pattern = re.escape(template)
+                for i in range(len(env.predicates[name].arguments)):
+                    pattern = pattern.replace(re.escape("{" + str(i) + "}"), "(" + TERM + ")")
+                self.atoms.append((name, negative, re.compile(pattern + BOUNDARY)))
 
     def take(self, literal):
         if self.text.startswith(literal, self.pos):
@@ -74,12 +71,13 @@ class Inverse:
                 self.pos += match.end()
                 return constructor()
         candidates = []
-        for name, pattern in self.atoms:
+        for name, negative, pattern in self.atoms:
             match = pattern.match(self.text, self.pos)
             if match:
                 terms = tuple(self.term(t, scope) for t in match.groups())
                 constructor = ast.Unary if len(terms) == 1 else ast.Binary
-                candidates.append((match.end(), constructor(name, *terms)))
+                atom = constructor(name, *terms)
+                candidates.append((match.end(), ast.Not(atom) if negative else atom))
         for noun, sort in self.nouns:
             pattern = ("(" + TERM + r") is (not )?the same " + re.escape(noun)
                        + " as (" + TERM + ")" + BOUNDARY)

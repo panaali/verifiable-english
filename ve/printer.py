@@ -62,7 +62,40 @@ _LOGICAL_WORDS = frozenset("""all any every some each no none not never neither 
 _AUXILIARIES = frozenset("is are was were be been being gets got".split())
 _CONVERSE_ENDINGS = frozenset("by to of from with for".split())
 _TOKENS = re.compile(r"[A-Za-z][A-Za-z0-9_]*(?:-[A-Za-z]+)?", re.ASCII)
-_VARIABLE = re.compile(r"(?:x[0-9]*|[A-Z])\Z", re.ASCII)
+_VARIABLE = re.compile(r"(?:x[0-9]*|[A-Z][0-9]*)\Z", re.ASCII)
+
+# No guessed morphology: only these exact finite/base pairs support a declared
+# binary negative. All remaining words and placeholders are copied unchanged.
+_NEGATIVE_VERBS = {
+    "audits": "audit", "depends": "depend", "has": "have", "likes": "like",
+    "links": "link", "owns": "own", "reviews": "review", "trusts": "trust",
+}
+
+
+def _negative_template(positive: str, arity: int) -> str | None:
+    """Mechanically negate an already accepted positive lexical template."""
+    if arity == 1:
+        return positive.replace("{0} is ", "{0} is not ", 1)
+    words = positive.split()
+    base = _NEGATIVE_VERBS.get(words[1])
+    if base is None:
+        return None
+    return "{0} does not " + base + " " + " ".join(words[2:])
+
+
+def _fluent_variable_sequences(sorts):
+    """Disjoint numeric progressions, ordered by formal sort identifier.
+
+    Suffix 1 is written without a number. Reserving a progression per sort makes
+    every variable's sort recoverable from the environment alone, even across
+    separate render calls. No selected lexical token can contain these names.
+    """
+    groups = defaultdict(list)
+    for sort, noun in sorted(sorts.items()):
+        groups[noun[0].upper()].append(sort)
+    return {sort: {"letter": letter, "first_suffix": index, "stride": len(group)}
+            for letter, group in sorted(groups.items())
+            for index, sort in enumerate(group, 1)}
 
 
 @dataclass(frozen=True, slots=True)
@@ -134,6 +167,7 @@ class _NaturalVocabulary:
         counts = Counter(p.verbalisation for p in env.predicates.values()
                          if p.verbalisation is not None)
         self.predicates = {}
+        accepted = set()
         for name, p in env.predicates.items():
             value = p.verbalisation
             self.predicates[name] = strict[name]
@@ -170,6 +204,20 @@ class _NaturalVocabulary:
                         report(path, "BINARY_VERB")
             if len(issues) == before:
                 self.predicates[name] = value
+                accepted.add(name)
+
+        self.negatives = {}
+        for name, p in env.predicates.items():
+            value = p.negative_verbalisation
+            if value is None:
+                continue
+            path = f"/vocabulary/predicates/{name}/negative_verbalisation"
+            if name not in accepted:
+                report(path, "NEGATIVE_WITHOUT_POSITIVE")
+            elif value != _negative_template(self.predicates[name], len(p.arguments)):
+                report(path, "NEGATIVE_NOT_NEGATION")
+            else:
+                self.negatives[name] = value
 
         self.sorts = {}
         for name, s in env.sorts.items():
@@ -187,10 +235,10 @@ class _NaturalVocabulary:
                 self.sorts[name] = s.verbalisation.singular
         self.issues = tuple(sorted(issues, key=lambda issue: (issue.path, issue.code)))
 
-    def atom(self, predicate, terms):
+    def atom(self, predicate, terms, *, negative=False):
         # Literal replacement only. Terms cannot contain braces, and every safe
         # template contains each positional placeholder exactly once in order.
-        text = self.predicates[predicate]
+        text = (self.negatives if negative else self.predicates)[predicate]
         for index, term in enumerate(terms):
             text = text.replace("{" + str(index) + "}", term)
         return text
@@ -219,7 +267,14 @@ def render_vocabulary(env: Any, view: str = "ve_strict") -> str:
     _check_view(view)
     selected = _NaturalVocabulary(env)
     legend = {
-        "format": "ve.vocabulary-legend@1", "environment_id": env.environment_id,
+        "format": "ve.vocabulary-legend@2", "environment_id": env.environment_id,
+        "fluent_variables": {
+            "sequences_by_sort": _fluent_variable_sequences(selected.sorts),
+            "rule": "For each sort, suffix = first_suffix + occurrence * stride, with "
+                    "occurrence starting at 0; suffix 1 is omitted. Allocate named binders "
+                    "in preorder across the entire document. Reset for each render call. "
+                    "Constants have @; lexical words are lowercase.",
+        },
         "sorts": [{"identifier": name, "description": s.description,
                    "verbalisation": None if s.verbalisation is None else {
                        "singular": s.verbalisation.singular, "plural": s.verbalisation.plural},
@@ -227,7 +282,9 @@ def render_vocabulary(env: Any, view: str = "ve_strict") -> str:
                   for name, s in sorted(env.sorts.items())],
         "predicates": [{"identifier": name, "arguments": list(p.arguments),
                         "description": p.description, "verbalisation": p.verbalisation,
-                        "rendered_template": selected.predicates[name]}
+                        "rendered_template": selected.predicates[name],
+                        "negative_verbalisation": p.negative_verbalisation,
+                        "rendered_negative_template": selected.negatives.get(name)}
                        for name, p in sorted(env.predicates.items())],
         "constants": [{"identifier": name, "sort": c.sort, "description": c.description}
                       for name, c in sorted(env.constants.items())],
@@ -249,7 +306,7 @@ class _Traversal:
         return "@" + value.name
 
     def child(self, value, scope):
-        # Every immediate formula operand is grouped in EVERY view, even atoms.
+        # Every immediate operand is grouped in the four explicit views, even atoms.
         # Predicate application parentheses in FOL are lexical argument lists.
         return "(" + self.formula(value, scope) + ")"
 
@@ -287,14 +344,18 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict")
 
     A formula has no final punctuation; documents have a period and LF for each
     statement. All views preserve lexical case without sentence capitalization.
-    The counter resets per statement. No view rewrites or normalizes the AST.
+    Explicit-view counters reset per statement; fluent names are unique across
+    the document. No view rewrites or normalizes the AST.
     """
     _check_view(view)
+    fluent = None
+    if view == "ve_fluent":
+        from .fluent import FluentTraversal
+        fluent = FluentTraversal(env)
 
     def render_one(formula):
-        if view == "ve_fluent":
-            from .fluent import FluentTraversal
-            return FluentTraversal(env).formula(formula)
+        if fluent is not None:
+            return fluent.formula(formula)
         return _Traversal(env, view).formula(formula, ())
 
     if isinstance(value, ast.Document):

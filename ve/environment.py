@@ -40,11 +40,13 @@ def _verbalisation(value):
     return value
 
 
-def _entry_fields(entry, required, *, path):
+def _entry_fields(entry, required, *, path, negative=False):
     # Optional display metadata is identity-bound, but never executable syntax.
     fields = set(required)
     if type(entry) is dict and "verbalisation" in entry:
         fields.add("verbalisation")
+    if negative and type(entry) is dict and "negative_verbalisation" in entry:
+        fields.add("negative_verbalisation")
     require_fields(entry, fields, path=path)
 
 
@@ -65,6 +67,7 @@ class PredicateDecl:
     arguments: tuple[str, ...]
     description: str
     verbalisation: str | None = None
+    negative_verbalisation: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -115,7 +118,8 @@ class Environment:
                                                   _verbalisation(raw["plural"]))
             sorts[name] = SortDecl(_description(entry["description"]), verbalisation)
         for name, entry in vocab["predicates"].items():
-            _entry_fields(entry, {"arguments", "description"}, path=f"/vocabulary/predicates/{name}")
+            _entry_fields(entry, {"arguments", "description"}, path=f"/vocabulary/predicates/{name}",
+                          negative=True)
             args = entry["arguments"]
             if type(args) is not list or len(args) not in (1, 2):
                 raise VEError("Predicate arguments must be an array of one or two sort identifiers")
@@ -123,7 +127,10 @@ class Environment:
                 if type(sort) is not str or sort not in sorts:
                     raise UnknownSymbol(f"Undeclared predicate argument sort: {sort!r}")
             verbalisation = _verbalisation(entry["verbalisation"]) if "verbalisation" in entry else None
-            predicates[name] = PredicateDecl(tuple(args), _description(entry["description"]), verbalisation)
+            negative = (_verbalisation(entry["negative_verbalisation"])
+                        if "negative_verbalisation" in entry else None)
+            predicates[name] = PredicateDecl(tuple(args), _description(entry["description"]),
+                                             verbalisation, negative)
         for name, entry in vocab["constants"].items():
             require_fields(entry, {"sort", "description"}, path=f"/vocabulary/constants/{name}")
             sort = entry["sort"]
@@ -155,6 +162,8 @@ class Environment:
             entry = {"arguments": list(declaration.arguments), "description": declaration.description}
             if declaration.verbalisation is not None:
                 entry["verbalisation"] = declaration.verbalisation
+            if declaration.negative_verbalisation is not None:
+                entry["negative_verbalisation"] = declaration.negative_verbalisation
             return entry
 
         return {"language": self.language, "profile": self.profile, "spec_revision": self.spec_revision,
