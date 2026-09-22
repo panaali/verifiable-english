@@ -494,7 +494,7 @@ def test_absent_or_invalid_pinned_review_fails_closed(monkeypatch, tmp_path, rec
 
 def test_conformance_report_includes_deep_random_and_document_samples():
     report = json.loads(Path('conformance/english-surface-report.json').read_text())
-    assert len(report['vocabularies']) == 15
+    assert len(report['vocabularies']) == 16
     assert report['random_earley_texts'] >= 3750
     assert report['multi_statement_documents'] >= 750
     for row in report['vocabularies']:

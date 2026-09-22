@@ -1,6 +1,6 @@
 {
   "ambiguous_texts": 0,
-  "earley_texts": 7500,
+  "earley_texts": 8000,
   "identity_fixtures": 706,
   "linter": [
     {
@@ -104,9 +104,9 @@
     }
   ],
   "method": "unique directed and seeded random well-typed ASTs; separate Earley dynamic_complete all-derivations syntax envelope",
-  "multi_statement_documents": 750,
-  "random_earley_texts": 3750,
-  "roundtrips": 75000,
+  "multi_statement_documents": 800,
+  "random_earley_texts": 4000,
+  "roundtrips": 80000,
   "vocabularies": [
     {
       "ambiguous_texts": 0,
@@ -116,7 +116,7 @@
       "draws_including_duplicates": 10704,
       "earley_texts": 500,
       "environment_id": "5dc3ed0a1fd9158bce6aa4760681a327838d5586210b1c9ff4a5145256199b97",
-      "grammar_sha256": "8f3a06695516c8abf60717087748bebbea931cc2c0e82ccd9d4008f91d3f9e8e",
+      "grammar_sha256": "b4dc46a7c76cd373da41761b7a64a402fb2569ac45629ed3db3fb3e7f2f1a0a8",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -156,7 +156,7 @@
       "draws_including_duplicates": 9995,
       "earley_texts": 500,
       "environment_id": "2c22626bf7cef0a86ddc4046202f811bdb8d6f63e1a4c3ae4e21a3ebaa2d59a0",
-      "grammar_sha256": "8f3a06695516c8abf60717087748bebbea931cc2c0e82ccd9d4008f91d3f9e8e",
+      "grammar_sha256": "b4dc46a7c76cd373da41761b7a64a402fb2569ac45629ed3db3fb3e7f2f1a0a8",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -197,7 +197,7 @@
       "draws_including_duplicates": 10715,
       "earley_texts": 500,
       "environment_id": "35839fea488199bfc210ecebb67bc8ac28ddec42c0749acb5b27b7ce2f7d8bd9",
-      "grammar_sha256": "858103cd400ff62074b69b8216bdf55c043936ebf846e31bbe7b97d54d340872",
+      "grammar_sha256": "2a0c784758dd7dc480bd582cff3e1d34593f9adaaad894abd3ab66b256143ba2",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -237,7 +237,7 @@
       "draws_including_duplicates": 9075,
       "earley_texts": 500,
       "environment_id": "60a3aa181cde157f02a28ac4a8600cfdafabb2dcabf1ead31fce2be22eb05f45",
-      "grammar_sha256": "5ceb46d156688b5a4f9a334341374def376c14acf25fb9fe6a4eb1368ed64ae8",
+      "grammar_sha256": "e4bf8f47d64429797221ffb97d2ed6e317534086fb3c76a309f9ad8481efd97f",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -277,7 +277,7 @@
       "draws_including_duplicates": 10645,
       "earley_texts": 500,
       "environment_id": "595ff19388c63ebec4d3a324ccaf00d5a261ef4a710df6360bd989cf6c9f678c",
-      "grammar_sha256": "4dd300aabaf534d8a0c49fcbd9e960b91f8acaae6bce922c6800d22e9331d239",
+      "grammar_sha256": "d93e3a95b671f3e5bbfbd49bddf64da5eab6cbe11a41d21c9857bda7af4096b5",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -317,7 +317,7 @@
       "draws_including_duplicates": 10690,
       "earley_texts": 500,
       "environment_id": "3953bdcd7da45cb8a8ae6a723592fa10cf6b6e40f99228eb685a1002ac84b884",
-      "grammar_sha256": "7a2ce4f703cd7db30797fa3e6555111c8ff6af2d9c672327bb94748b73954178",
+      "grammar_sha256": "26d85f17a9baaad52f2908eb6085d79561eac31bf3b38d408f71e688161e5599",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -357,7 +357,7 @@
       "draws_including_duplicates": 10920,
       "earley_texts": 500,
       "environment_id": "8937bcba42188c0dab8fe6d85252d527e99cc0c91a6f9ff9f62d42e6f029b3d5",
-      "grammar_sha256": "66a7a3d3acc834e58339fe142053e0b85477dbdefa4f31744d7c1b494cc52e5f",
+      "grammar_sha256": "ced29010328c59af33d3e8b971c92efb90312d7fecf162f38616da907ee74331",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -396,7 +396,7 @@
       "draws_including_duplicates": 8507,
       "earley_texts": 500,
       "environment_id": "98dbed69e9ed29c573756d4658b1fae39223466f3cb525f994648b7a5d4622cb",
-      "grammar_sha256": "822cc03a9a65b5619ac383a5ebbbfa1afe34be2ea270b102ef79ae7f719e9271",
+      "grammar_sha256": "d28958cb4890eb58bc315b189270ffe4adb41a0b67cb2cce486d908e9c3b5d62",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -437,7 +437,7 @@
       "draws_including_duplicates": 8298,
       "earley_texts": 500,
       "environment_id": "b3f7afa3f97f000698d6fd0e9cd7024a7d7aed4773d2ed0241dabf9f26616371",
-      "grammar_sha256": "9e5311b3da630b8545f2fdc8b8b022a9558d142c25e9c3245f68277ff6328a42",
+      "grammar_sha256": "488db59084a4e56ce4ed35476eeb7703d72fd31e423f28a33a54f89f61aab5aa",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -477,7 +477,7 @@
       "draws_including_duplicates": 7072,
       "earley_texts": 500,
       "environment_id": "49d16fe885310c0b43a882958da6799a89e926e925b42cc1da49e27d3de8fe15",
-      "grammar_sha256": "1ddd6c9c87e12f3b77cea45acabbd80f413c5c4a2e75bbd42ecee737c601bbe9",
+      "grammar_sha256": "2d8c745b06ee95d43abea8f37b9053f15ad13fefd621475ecd15c775563e1610",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -514,7 +514,7 @@
       "draws_including_duplicates": 10842,
       "earley_texts": 500,
       "environment_id": "8937bcba42188c0dab8fe6d85252d527e99cc0c91a6f9ff9f62d42e6f029b3d5",
-      "grammar_sha256": "0385649abedfbc527f3b96d8246cc174bc69bb72da87700b89a7c522a149e531",
+      "grammar_sha256": "c2602304c8917b86582c2900c75e70c84fa01f3c99d88ccece7810cf522fbe08",
       "multi_statement_documents": 50,
       "overlay_digest": "6669967f3970d60ef2aaa08ab007b43fa5cda8740a466b489e402d2a0737df3e",
       "random_earley_actual_depths": {
@@ -553,7 +553,7 @@
       "draws_including_duplicates": 8150,
       "earley_texts": 500,
       "environment_id": "98dbed69e9ed29c573756d4658b1fae39223466f3cb525f994648b7a5d4622cb",
-      "grammar_sha256": "f9d06c30e579219e79f2abb8f533e5d2ba35520d8cef47e02d8269fac08f0217",
+      "grammar_sha256": "6109f4d4cb1021e091eabad39f3048ea446e62cffd87375ee710cbc6746aa8e2",
       "multi_statement_documents": 50,
       "overlay_digest": "8411f393465a93ed63fdb8de8ee1d78ce32efb7265660ae6458a986ab3062088",
       "random_earley_actual_depths": {
@@ -594,7 +594,7 @@
       "draws_including_duplicates": 7926,
       "earley_texts": 500,
       "environment_id": "b3f7afa3f97f000698d6fd0e9cd7024a7d7aed4773d2ed0241dabf9f26616371",
-      "grammar_sha256": "5008e9a03c5cceded70e10852b73092b938902e1333fc17593f1b486ad3146ec",
+      "grammar_sha256": "af4e51b640ddcc61d3c1a239d2e6cd5d70b47e30f2c279acf973efa16adb867b",
       "multi_statement_documents": 50,
       "overlay_digest": "1ac72251627cbccc6fb401eff18cdf8685218444191fbc5c0f43da0c0179e1e6",
       "random_earley_actual_depths": {
@@ -634,7 +634,7 @@
       "draws_including_duplicates": 6976,
       "earley_texts": 500,
       "environment_id": "49d16fe885310c0b43a882958da6799a89e926e925b42cc1da49e27d3de8fe15",
-      "grammar_sha256": "4965b8fce85eda11c187319c77980985183d2594a46e353e2a3c4de4c48bf110",
+      "grammar_sha256": "c4f867c307b9a9bc37f62356f3b65075e1323140646643ee2b4e948f0edb1aa8",
       "multi_statement_documents": 50,
       "overlay_digest": "ae4741bfe4a84aab00116945191867317df7b2b58837bfda3c5d11a070c76d64",
       "random_earley_actual_depths": {
@@ -671,7 +671,7 @@
       "draws_including_duplicates": 10915,
       "earley_texts": 500,
       "environment_id": "2d84b403957a06235861cecb1e2d97373caa346fa9b72117eefe4c93672281b5",
-      "grammar_sha256": "d15c84430b2fd7323a5e8ecb06ccb06097c7abb5fa59e3d5bc3c51ba1db59968",
+      "grammar_sha256": "20a325132ff9fe7dbe869a2ced7d696854206a4ea2c40542d7bb3f7864c02788",
       "multi_statement_documents": 50,
       "overlay_digest": "9e2b89947803ae0a281c900e7eed9a33e45a2411e8dfae82af07c51b64272e0c",
       "random_earley_actual_depths": {
@@ -702,6 +702,45 @@
       "unique_asts_roundtripped": 5000,
       "unique_texts": 5000,
       "vocabulary": "accepted-suggestions"
+    },
+    {
+      "ambiguous_texts": 0,
+      "corpus_sha256": "5aa822f69995c452af5ac2a279be1fdb134f2acedd06c6987d01e06f20a9932f",
+      "directed_asts": 177,
+      "document_corpus_sha256": "10ff2320c5ed03957c2db3c5c89edb366f6b053e11c25dc9b522be7c2d8fc4ae",
+      "draws_including_duplicates": 10663,
+      "earley_texts": 500,
+      "environment_id": "3cb0a9bbaeaf431c806732df792d5da08979a4df03e67761ab7db2c0567becca",
+      "grammar_sha256": "1777761d1201d09cede6e696715358e98c6d6b64fc5d81bfc04d1533318d4735",
+      "multi_statement_documents": 50,
+      "overlay_digest": "ed961187596c1d43a6e1830253585a27019eae9a6bc09eacd5d84ad427e61969",
+      "random_earley_actual_depths": {
+        "6": 47,
+        "7": 76,
+        "8": 79,
+        "9": 48
+      },
+      "random_earley_corpus_sha256": "10ff2320c5ed03957c2db3c5c89edb366f6b053e11c25dc9b522be7c2d8fc4ae",
+      "random_earley_draws": 1033,
+      "random_earley_seed": 2026192122,
+      "random_earley_texts": 250,
+      "review_status": "unreviewed",
+      "seed": 2026092122,
+      "top_level_constructors": {
+        "And": 1021,
+        "Bottom": 1,
+        "Eq": 1,
+        "Exists": 609,
+        "Forall": 797,
+        "Implies": 1023,
+        "Not": 560,
+        "Or": 980,
+        "Top": 1,
+        "Unary": 7
+      },
+      "unique_asts_roundtripped": 5000,
+      "unique_texts": 5000,
+      "vocabulary": "adopted-unary"
     }
   ]
 }

@@ -294,3 +294,17 @@ The exact original four v0 tableau source files and theorem are preserved.
 The default argument checker labels Python replay separately; callers can use
 `check_argument(graph, lean_executable=path)` to obtain an actual Lean acceptance
 label for every supporting deduction certificate.
+
+### Adopted unary English vocabulary
+
+The proposal generator has no unambiguity claim. The finite lexicon produced by
+explicit adoption is included in `english_surface.configurations()`. Reproduce
+its separate audit report (5,000 round trips; 500 directed-prefix plus 250 deep
+random all-derivations checks; 50 multi-statement documents) with:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-propose uv run python -m conformance.english_surface --adopted-only --output conformance/proposed-vocabulary-report.json
+```
+
+The audit uses `ve.propose.adopt`, reloads the written files, and checks the
+ordinary finite English grammar. Its overlay and report remain unreviewed.

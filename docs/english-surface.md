@@ -15,6 +15,68 @@ strict source does. The parser returns the same checked De Bruijn AST. Nothing i
 this surface upgrades an experimental acceptance record into a proof or confirms
 that the author intended the parsed meaning.
 
+## Writing a sentence with a new word
+
+Closed English errors name the unknown phrase, give its character span (zero-based,
+end-exclusive; line/column are one-based), and suggest declared wordings. The
+shortest adoption workflow for the lead's sentence is one command from the
+repository root (after reviewing the `us_citizen` near-duplicate):
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-propose uv run python -m ve propose --env usecases/birthright-citizenship-debate/environment.json --english-vocabulary usecases/birthright-citizenship-debate/environment.english.json --acknowledge us_citizen --adopt-to /private/tmp/uk-citizen-adopted 'Every person who is born in the United States and is subject to US jurisdiction is a UK citizen.'
+```
+
+Omit `--acknowledge us_citizen` to inspect the blocked preview first: it exits 2
+and writes no files. The preview shows `uk_citizen(person)`, its source span,
+machine-proposed description, nearest symbols (including `content_overlap`), and
+English/strict paraphrases. Every flagged symbol requires its own `--acknowledge`.
+Flags are required for edit distance at most two, a shared final token, or shared
+content tokens. Content comparison ignores articles and prepositions and token
+order; a terminal `s` is removed from words longer than three characters unless
+they end in `ss` (so `US` stays intact). This is a warning heuristic, not semantics.
+
+Output directories must be new. `propose` accepts `-` for stdin. Without
+`--output` or `--adopt-to` it only previews. For separate review, use `--output DIR`
+to write wrapped candidates, then `python -m ve adopt DIR/proposal.json --output
+NEW_DIR --acknowledge us_citizen`. Adoption requires its **own** acknowledgement
+flags, verifies source/base-environment/base-overlay and proposal digests, and
+recomputes the candidate and near-duplicates from the recorded inputs. Edited or
+stale previews must be regenerated. These digests detect changes; they do not
+attest to an external author's approval. Adoption prints the new `environment_id`;
+it does **not** review wording. All adopted overlay entries have `suggested: true`
+and remain **unreviewed**. Parsing them requires `--accept-suggested-vocabulary`.
+
+Only unary `is a/an …`, `is …`, and `is not …` slots with an in-scope binder can
+introduce predicates. The binder's declared noun supplies the sort. Phrases stop
+at `is`, `does`, `not`, `and`, `or`, `if`, `then`, `that`, `who`, `which`, `both`,
+`either`, `every`, `some`, `for`, commas, and periods. Templates must fit the finite
+unary word/hyphen grammar and the 80-character limit, then pass the template linter.
+Existing content wordings match regardless of case; printing retains stored casing.
+Case, whitespace, or hyphen-versus-space differences cannot create a second
+predicate, including in handwritten overlays. A prefix extension such as `is a
+US citizen of record` reports the existing wording and symbol.
+
+**Not inferred:** sorts, constants, binary relations, passive/converse argument
+structure, plural or verb inflections, synonyms, or new clause forms. Constant
+subjects cannot introduce predicates. Declared constants, sort identifiers,
+singular/plural sort nouns, reference typos, and known binary frames are rejected
+inside proposed unary content. `than`, `by`, `no`, `never`, `longer`, `neither`,
+`nor`, `without`, `true`, `false`, `equals`, and `equal` are blocked, including in
+hyphenated content. Hyphenated `un-`/`non-` content and joined `un`/`non` forms of
+declared predicate heads are rejected; use explicit `is not` for negation.
+A capitalized token immediately after a preposition is also rejected (for
+example, `of France`). Capitalization elsewhere can be part of an opaque lexical
+phrase, as in `UK citizen`; it never declares a constant. A permitted phrase such
+as `member of the guild` remains one opaque unary predicate. Plural-looking words
+can likewise be opaque content; the tool does not infer their singular meaning.
+
+Candidate files use proposal envelopes rejected by the ordinary environment
+loader, including proof, countermodel, and certificate workflows. Only adoption
+writes loadable files. It changes the environment identity and invalidates the
+old overlay's pinned review; identity algorithms and trusted checking stay
+unchanged. This checkout has no `check --prove` option. Unambiguity is audited
+only for the finite vocabulary after adoption, not for the proposal step.
+
 ## Reading and writing
 
 ```sh
@@ -42,7 +104,8 @@ original input, strict canonical text, and the deterministic English paraphrase.
 Acceptance JSON shows both input and paraphrase and a `changed` flag. The render
 and format commands report a differing paraphrase to stderr, leaving stdout
 usable as a document. Countermodel JSON includes paraphrases for each input file.
-Sentence-initial capitalization and inter-word whitespace may vary. Statements
+Sentence-initial capitalization, content-word casing, and inter-word whitespace may vary.
+Quoted identifiers and numbered variable labels retain exact casing. Statements
 end with a period. Diagnostics include a character offset, line, column, and a
 plain-language account of what was expected. Type and scope errors also reject.
 
@@ -309,20 +372,20 @@ of the citizenship dispute. Suggestions intentionally leave uncertain names unwo
 
 <!-- BEGIN GENERATED ENGLISH EVIDENCE -->
 
-**75,000 distinct well-typed environment/AST pairs** round-tripped through
-`render` and `parse_english`, across fifteen configurations (the original ten,
-four reviewed overlays, and explicitly accepted suggestions). Each configuration
+**80,000 distinct well-typed environment/AST pairs** round-tripped through
+`render` and `parse_english`, across sixteen configurations (the original ten,
+four reviewed overlays, accepted suggestions, and an adopted unary vocabulary). Each configuration
 contributed 5,000 distinct ASTs: directed boundary cases followed by seeded random
 draws. Directed cases cover every template, validated negatives, subject and object relatives, two-atom guards,
 both three-atom associations, deeper/mixed guards, nested implications, and the
 actual use-case claims. Duplicate draws are recorded, not counted twice.
-**7,500 environment/text pairs** (500 per configuration) had exactly one
+**8,000 environment/text pairs** (500 per configuration) had exactly one
 Earley dynamic-complete derivation, with zero ambiguity nodes. Every directed
 case is in that directed-heavy prefix of each configuration; it is **not a random sample**.
-A separate seeded random sample adds **3,750 texts**
+A separate seeded random sample adds **4,000 texts**
 (250 per configuration), all at measured AST depths 6–9, each with exactly one
 all-derivations parse and an exact AST round trip. It excludes the original corpus.
-Another **750 five-statement documents** round-trip
+Another **800 five-statement documents** round-trip
 and have exactly one all-derivations parse using the document grammar.
 This is finite evidence, not a universal unambiguity proof.
 The report records seeds, corpus/grammar hashes, overlay digests, constructor
