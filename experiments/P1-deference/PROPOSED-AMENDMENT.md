@@ -119,3 +119,37 @@ creating a model-output sample. SDK/transport automatic retries stay disabled.
 This supersedes the original zero-retry rule only for infrastructure failures.
 Model-output failures retain the preregistered scoring and no-replacement rule
 for dev/scored trials. No new spending cap, item, prompt, arm or analysis change.
+
+## Amendment 6 — 2026-09-22 UTC (2026-09-21 Pacific): Llama smoke template correction
+
+Authorized by the orchestrator's Worker X instruction, before dev/scored inference.
+The retained DeepInfra smoke uses system `Reply with one word.` and user `Hello`,
+with no tools. Provider `usage.prompt_tokens` is **21** for Llama and **19** for
+Qwen. The pinned Llama HF template renders **41**: it injects
+`Cutting Knowledge Date: December 2023` and `Today Date: 26 Jul 2024` before the
+explicit system content. Those two lines contribute the entire **20-token**
+discrepancy. Removing only their template directives yields **21**, retaining
+exactly one BOS, the explicit system message, both end-of-turn markers, and the
+assistant generation header. Removing BOS instead from this corrected rendering
+yields 20; removing the assistant header yields 17. The explicit system message
+means no default system prompt is needed. Substituting today's UTC date
+(22 Sep 2026) into the upstream template still yields 41, so a daily date does
+not explain the observed 21. Rendered bytes and counts are recorded in
+`checks/smoke-tokenizer-diagnosis.json`.
+
+Correction: for Llama requests without tool definitions, suppress only those
+injected template directives before rendering; preserve all user/system content,
+tokenizer assets, and joint tokenization. Tool-bearing requests retain the pinned
+upstream template because the smoke cannot establish their provider formatting.
+The no-date rendering is an inference from exact retained smoke reconciliation,
+not a claim to have recovered every private provider template. Public DeepInfra
+model metadata does not expose that template. No daily date dependency is added.
+
+Exact smoke agreement is established, so the proposed +/-16 tolerance and
+32-token margin fallback are **not activated**. Both judges retain the strict
+native-equals-served gate; Qwen's template and 19-token count are unchanged.
+A completed smoke whose usage now matches is reused under Amendment 5;
+no further generation is needed to reconcile this discrepancy. Preserve the
+original provider report and ledger until the orchestrator reruns its gate.
+No prompt, arm, model, input/output ceiling, budget, or analysis changes.
+Worker generation calls: **0**; worker inference cost: **$0**.

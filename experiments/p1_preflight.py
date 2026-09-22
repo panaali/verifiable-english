@@ -262,6 +262,7 @@ def preflight_openrouter(cap, counter_path=None):
                     # Fixed tiny smoke prompt; conservative reservation, never a study verdict.
                     req = PaidRequest(f'provider-preflight/{judge}', judge,
                         [{'role': 'system', 'content': 'Reply with one word.'}, {'role': 'user', 'content': 'Hello'}], 3072, 1)
+                    row['native_smoke_tokens'] = backend.count(req)
                     client = PaidClient(backend, ledger)
                     try:
                         # Recheck cached evidence with today's counter and full panel.

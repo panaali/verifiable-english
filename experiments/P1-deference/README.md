@@ -3,7 +3,7 @@
 The approved replacement probe is complete (10 valid responses), selecting
 `full_256`. Original attempts remain in `results/probe-attempt{1,2}.json` and
 `runs/probe-attempt{1,2}/`. No dev or scored inference has run. See `freeze.json`
-for current gate outcomes and `PROPOSED-AMENDMENT.md` for the three amendments.
+for current gate outcomes and `PROPOSED-AMENDMENT.md` for the dated amendments.
 
 ## Preflight
 
@@ -52,9 +52,15 @@ Its interface is full OpenRouter wire JSON on stdin and one integer on stdout.
 The bundled counter is loaded in-process by preflight so tokenizer loading is
 amortized across all fixtures; custom executables retain the subprocess interface.
 It uses `tokenizers` to encode the entire rendered chat once, with no truncation,
-padding, approximate fallback, or duplicate special tokens. The unchanged native
+padding, approximate fallback, or duplicate special tokens. The native
 Jinja chat templates include system messages, tool schemas, assistant tool calls,
-replay results, and the assistant generation prefix. OpenAI JSON argument strings
+replay results, and the assistant generation prefix. Amendment 6 omits the
+HF-injected date header for Llama requests without tool definitions: the retained
+DeepInfra smoke counts 21, exactly matching this rendering, versus 41 with the
+dates. BOS and the assistant header remain; Qwen stays at 19. Tool-bearing Llama
+requests retain the upstream template. See `checks/smoke-tokenizer-diagnosis.json`
+for the rendered variants. Strict smoke equality remains required for both judges.
+OpenAI JSON argument strings
 are decoded to objects before rendering. Unsupported models/content fail closed.
 
 Tokenizer provenance is pinned in `tokenizers/sources.json`, with Git blob hashes
@@ -124,11 +130,11 @@ approximate counts to bypass a failure.
 ## Latest executed gates
 
 The amended preflight passed all six gates: known-answer, 500 Lean replay
-queries, 200 semantic pairs, 1,341 tests (two optional-backend skips), pending
+queries, 200 semantic pairs, 1,345 tests (two optional-backend skips), pending
 calendar timestamp inspection, and **1,816/1,816 fresh Vertex counts**. There
 were zero token errors or overflows; the maximum including generated reserves
 was 6,175. The separate local native-counter receipts passed **1,536/1,536**
-fixtures for each of Qwen (maximum 4,548) and Llama (maximum 4,105). These are
+fixtures for each of Qwen (maximum 4,548) and Llama (maximum 4,085). These are
 local counts, not OpenRouter usage confirmations. No judge/OpenRouter calls
 were made; worker inference spend was $0.
 
