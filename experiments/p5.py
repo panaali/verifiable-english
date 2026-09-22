@@ -27,7 +27,7 @@ from experiments.p5_tokens import P5VertexBackend as VertexBackend
 
 ROOT=HERE.parents[1]
 CAP=Decimal('40')
-MATCHED_CAP=Decimal('.16')
+MATCHED_CAP=Decimal('.45')  # Amendment 2026-09-22 (orchestrator): common matched ceiling raised from .16
 STUDY_REVISION='study-v9'
 # Amendment P5-1 lowers author/repair to 1024 total billed tokens. The original
 # 2048 ceilings remain in the immutable design inventory for transparent audit.

@@ -858,3 +858,7 @@ infeasible; a $0.45 common ceiling is pending explicit amendment. See
 [SCHEDULE-AMENDMENT.md](SCHEDULE-AMENDMENT.md) for all scenarios, deterministic
 balanced selection, retained cost accounting and the reduced-power consequence.
 Six new Gemini config smokes cost $0.035710; no dev/scored calls were made.
+
+## Amendment (orchestrator, 2026-09-22): common item/arm ceiling $0.16 -> $0.45; scenario (a) with 9 scored families
+
+After the 4,096-token Gemini caps (Gemini thinking is billed output), VE retained-plus-future cost per item reaches $0.4465, above the $0.16 matched ceiling. The ceiling is raised to $0.45 for EVERY arm (matched-ceiling framing unchanged). Budget: scenario (a) selected (Gemini + Qwen judges, all arms, preregistered k, 9 scored families; worst case $35.23 of the $40 cap). With 9 families the primary-contrast half-width is about +/-0.49: P5 is explicitly a FEASIBILITY pilot; no efficacy claim will be made from it.
