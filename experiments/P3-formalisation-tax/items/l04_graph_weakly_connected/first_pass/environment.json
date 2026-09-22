@@ -1,0 +1,31 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "atom": {
+    "description": "An Alloy atom of the instance (one universe)."
+   }
+  },
+  "predicates": {
+   "sig_node": {
+    "arguments": [
+     "atom"
+    ],
+    "description": "Atom of the graph's node sig."
+   },
+   "f_edges": {
+    "arguments": [
+     "atom",
+     "atom"
+    ],
+    "description": "The relation r (field edges) over node."
+   }
+  },
+  "constants": {}
+ }
+}

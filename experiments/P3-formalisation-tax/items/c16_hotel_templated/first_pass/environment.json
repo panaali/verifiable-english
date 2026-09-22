@@ -1,0 +1,106 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "A Cedar entity UID, record node, or the request context node."
+   }
+  },
+  "predicates": {
+   "parent": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Immediate hierarchy edge, child to parent."
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "The request principal."
+   },
+   "action": {
+    "sort": "entity",
+    "description": "The request action."
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "The request resource."
+   },
+   "u_alice": {
+    "sort": "entity",
+    "description": "User::\"Alice\""
+   },
+   "r_hotel_g": {
+    "sort": "entity",
+    "description": "Hotel::\"G\""
+   },
+   "r_property_green": {
+    "sort": "entity",
+    "description": "Property::\"Green\""
+   },
+   "u_bob": {
+    "sort": "entity",
+    "description": "User::\"Bob\""
+   },
+   "r_hotel_r": {
+    "sort": "entity",
+    "description": "Hotel::\"R\""
+   },
+   "viewreservation": {
+    "sort": "entity",
+    "description": "Action::\"viewReservation\""
+   },
+   "updatereservation": {
+    "sort": "entity",
+    "description": "Action::\"updateReservation\""
+   },
+   "createreservation": {
+    "sort": "entity",
+    "description": "Action::\"createReservation\""
+   },
+   "grantaccessreservation": {
+    "sort": "entity",
+    "description": "Action::\"grantAccessReservation\""
+   },
+   "viewhotel": {
+    "sort": "entity",
+    "description": "Action::\"viewHotel\""
+   },
+   "viewproperty": {
+    "sort": "entity",
+    "description": "Action::\"viewProperty\""
+   },
+   "updatehotel": {
+    "sort": "entity",
+    "description": "Action::\"updateHotel\""
+   },
+   "createhotel": {
+    "sort": "entity",
+    "description": "Action::\"createHotel\""
+   },
+   "updateproperty": {
+    "sort": "entity",
+    "description": "Action::\"updateProperty\""
+   },
+   "createproperty": {
+    "sort": "entity",
+    "description": "Action::\"createProperty\""
+   },
+   "grantaccesshotel": {
+    "sort": "entity",
+    "description": "Action::\"grantAccessHotel\""
+   },
+   "grantaccessproperty": {
+    "sort": "entity",
+    "description": "Action::\"grantAccessProperty\""
+   }
+  }
+ }
+}

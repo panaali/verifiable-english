@@ -1,0 +1,117 @@
+{
+ "family": "iam",
+ "synthetic": false,
+ "question": "Is each request allowed by these identity-based policies (explicit deny > allow > implicit deny)?",
+ "provenance": {
+  "repository": "docs.aws.amazon.com IAM User Guide",
+  "commit": "fetched 2026-09-22",
+  "licence": "AWS documentation (example policy excerpt)",
+  "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_s3_rw-bucket.html",
+  "note": "Policy JSON verbatim from the page; requests synthetic."
+ },
+ "world": {
+  "policies": [
+   {
+    "Version": "2012-10-17",
+    "Statement": [
+     {
+      "Sid": "ListObjectsInBucket",
+      "Effect": "Allow",
+      "Action": [
+       "s3:ListBucket"
+      ],
+      "Resource": [
+       "arn:aws:s3:::bucket-name"
+      ]
+     },
+     {
+      "Sid": "AllObjectActions",
+      "Effect": "Allow",
+      "Action": "s3:*Object",
+      "Resource": [
+       "arn:aws:s3:::bucket-name/*"
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "questions": [
+  {
+   "description": "w01-0",
+   "request": {
+    "action": "s3:ListBucket",
+    "resource": "arn:aws:s3:::bucket-name",
+    "context": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w01-1",
+   "request": {
+    "action": "s3:GetObject",
+    "resource": "arn:aws:s3:::bucket-name/photos/a.jpg",
+    "context": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w01-2",
+   "request": {
+    "action": "s3:PutObject",
+    "resource": "arn:aws:s3:::bucket-name/x",
+    "context": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w01-3",
+   "request": {
+    "action": "s3:GetObjectAcl",
+    "resource": "arn:aws:s3:::bucket-name/x",
+    "context": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w01-4",
+   "request": {
+    "action": "s3:DeleteBucket",
+    "resource": "arn:aws:s3:::bucket-name",
+    "context": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w01-5",
+   "request": {
+    "action": "s3:ListBucket",
+    "resource": "arn:aws:s3:::other-bucket",
+    "context": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w01-6",
+   "request": {
+    "action": "s3:GetObject",
+    "resource": "arn:aws:s3:::bucket-name",
+    "context": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w01-7",
+   "request": {
+    "action": "s3:getobject",
+    "resource": "arn:aws:s3:::bucket-name/k",
+    "context": {}
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "w01_s3_rw_bucket",
+ "source_files": {
+  "source.json": "6857b9f7349401edcb26418e3fa9017664c196e4db651a7f05404b73a5db6854"
+ }
+}

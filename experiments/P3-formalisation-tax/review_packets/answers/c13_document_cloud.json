@@ -1,0 +1,14 @@
+{"answers": [
+ {"n": 0, "answer": true, "why": "CreateDocument on Drive permit (unconstrained principal); authenticated; drive has no owner so private-forbid inapplicable"},
+ {"n": 1, "answer": true, "why": "alice is owner; alice.blocked=[bob] does not contain alice; not private"},
+ {"n": 2, "answer": true, "why": "charlie in alice_public_view via charlie_personal (transitive); not private; no block relation with alice"},
+ {"n": 3, "answer": false, "why": "forbid when !context.is_authenticated fires"},
+ {"n": 4, "answer": false, "why": "viewACL permit matches but block-forbid fires: alice.blocked contains bob"},
+ {"n": 5, "answer": false, "why": "is_authenticated is an entity so auth-forbid errors and is skipped, but block-forbid (alice blocked bob) still fires"},
+ {"n": 6, "answer": false, "why": "unauthenticated forbid fires"},
+ {"n": 7, "answer": false, "why": "CreateGroup permit requires resource == Drive::\"drive\"; no other permit matches"},
+ {"n": 8, "answer": true, "why": "CreateDocument permit has unconstrained principal; authenticated; drive lacks owner"},
+ {"n": 9, "answer": false, "why": "principal not group owner (bob); viewACL permit errors (no viewACL on Group) and is skipped; public permit needs Public principal; no permit"}
+],
+"confidence": "high",
+"notes": "Q5 relies on !<entity> being a type error so the auth forbid is skipped; outcome is deny anyway due to block-forbid. Q9: F1 short-circuits on 'principal has blocked' false; F3 false since Group lacks isPrivate."}

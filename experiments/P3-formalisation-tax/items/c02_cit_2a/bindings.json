@@ -1,0 +1,13 @@
+{
+ "constants": {
+  "jane_friends": {
+   "entity": "UserGroup::\"jane_friends\""
+  },
+  "view": {
+   "entity": "Action::\"view\""
+  },
+  "photo94": {
+   "entity": "Photo::\"VacationPhoto94.jpg\""
+  }
+ }
+}

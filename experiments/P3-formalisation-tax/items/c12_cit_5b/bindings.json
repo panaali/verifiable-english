@@ -1,0 +1,22 @@
+{
+ "constants": {
+  "add_photo": {
+   "entity": "Action::\"addPhoto\""
+  },
+  "alice_account": {
+   "entity": "Account::\"alice\""
+  },
+  "avteam": {
+   "entity": "UserGroup::\"AVTeam\""
+  },
+  "jpeg": {
+   "value": "JPEG"
+  },
+  "png": {
+   "value": "PNG"
+  },
+  "raw": {
+   "value": "RAW"
+  }
+ }
+}

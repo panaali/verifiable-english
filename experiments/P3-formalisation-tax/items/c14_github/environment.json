@@ -1,0 +1,131 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "A Cedar entity UID, record node, or the request context node."
+   }
+  },
+  "predicates": {
+   "parent": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Immediate hierarchy edge, child to parent."
+   },
+   "ea_readers": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute readers."
+   },
+   "ea_triagers": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute triagers."
+   },
+   "ea_writers": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute writers."
+   },
+   "ea_maintainers": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute maintainers."
+   },
+   "ea_admins": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute admins."
+   },
+   "ea_repo": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute repo."
+   },
+   "ea_reporter": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute reporter."
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "The request principal."
+   },
+   "action": {
+    "sort": "entity",
+    "description": "The request action."
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "The request resource."
+   },
+   "pull": {
+    "sort": "entity",
+    "description": "Action::\"pull\""
+   },
+   "fork": {
+    "sort": "entity",
+    "description": "Action::\"fork\""
+   },
+   "delete_issue": {
+    "sort": "entity",
+    "description": "Action::\"delete_issue\""
+   },
+   "edit_issue": {
+    "sort": "entity",
+    "description": "Action::\"edit_issue\""
+   },
+   "assign_issue": {
+    "sort": "entity",
+    "description": "Action::\"assign_issue\""
+   },
+   "push": {
+    "sort": "entity",
+    "description": "Action::\"push\""
+   },
+   "add_reader": {
+    "sort": "entity",
+    "description": "Action::\"add_reader\""
+   },
+   "add_triager": {
+    "sort": "entity",
+    "description": "Action::\"add_triager\""
+   },
+   "add_writer": {
+    "sort": "entity",
+    "description": "Action::\"add_writer\""
+   },
+   "add_maintainer": {
+    "sort": "entity",
+    "description": "Action::\"add_maintainer\""
+   },
+   "add_admin": {
+    "sort": "entity",
+    "description": "Action::\"add_admin\""
+   }
+  }
+ }
+}

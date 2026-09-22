@@ -1,0 +1,95 @@
+{
+ "note": "Usage reported by the agent runtime for each fresh subagent (same model, Opus 5.5): total tokens processed and wall-clock. Includes each agent's fixed system/tool prompt overhead.",
+ "review": {
+  "c05_cit_3a": {
+   "tokens": 19880,
+   "ms": 12984
+  },
+  "c11_cit_4f": {
+   "tokens": 20868,
+   "ms": 12484
+  },
+  "c13_document_cloud": {
+   "tokens": 22328,
+   "ms": 19536
+  },
+  "c17_sales_static": {
+   "tokens": 22819,
+   "ms": 18651
+  },
+  "k05_crontab_default_roles": {
+   "tokens": 21387,
+   "ms": 15967
+  },
+  "k07_subresource_wildcard": {
+   "tokens": 19616,
+   "ms": 13689
+  },
+  "w03_mfa_selfmanage": {
+   "tokens": 21311,
+   "ms": 20159
+  },
+  "l07_marksweep_mark": {
+   "tokens": 20770,
+   "ms": 13317
+  }
+ },
+ "author": {
+  "c05_cit_3a": {
+   "tokens": 23630,
+   "ms": 15527,
+   "check_runs": 1,
+   "error_runs": 0,
+   "repairs_after_semantic_doubt": 0
+  },
+  "c11_cit_4f": {
+   "tokens": 27385,
+   "ms": 37418,
+   "check_runs": 1,
+   "error_runs": 0,
+   "repairs_after_semantic_doubt": 0
+  },
+  "l07_marksweep_mark": {
+   "tokens": 28430,
+   "ms": 41155,
+   "check_runs": 1,
+   "error_runs": 0,
+   "repairs_after_semantic_doubt": 0
+  },
+  "k05_crontab_default_roles": {
+   "tokens": 31803,
+   "ms": 74532,
+   "check_runs": 2,
+   "error_runs": 1,
+   "repairs_after_semantic_doubt": 0
+  },
+  "c13_document_cloud": {
+   "tokens": 33474,
+   "ms": 93809,
+   "check_runs": 1,
+   "error_runs": 0,
+   "repairs_after_semantic_doubt": 0
+  },
+  "w03_mfa_selfmanage": {
+   "tokens": 34210,
+   "ms": 76158,
+   "check_runs": 3,
+   "error_runs": 2,
+   "repairs_after_semantic_doubt": 0
+  },
+  "k07_subresource_wildcard": {
+   "tokens": 31890,
+   "ms": 83794,
+   "check_runs": 1,
+   "error_runs": 0,
+   "repairs_after_semantic_doubt": 0
+  },
+  "c17_sales_static": {
+   "tokens": 38071,
+   "ms": 118303,
+   "check_runs": 1,
+   "error_runs": 0,
+   "repairs_after_semantic_doubt": 0
+  }
+ }
+}

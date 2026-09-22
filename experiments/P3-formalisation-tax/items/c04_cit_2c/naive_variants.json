@@ -1,0 +1,7 @@
+[
+ {
+  "name": "action-in-as-equality",
+  "description": "Cedar `action in [A,B,C]` translated as equality (ignores the action hierarchy).",
+  "ve": "(@principal equals @alice) and (((@action equals @view) or ((@action equals @edit) or (@action equals @comment))) and (rtc[parent](@resource, @jane_vacation))).\n"
+ }
+]

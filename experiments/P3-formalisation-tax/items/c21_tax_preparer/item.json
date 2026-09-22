@@ -1,0 +1,197 @@
+{
+ "family": "cedar",
+ "synthetic": false,
+ "provenance": {
+  "repository": "cedar-policy/cedar-examples",
+  "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+  "licence": "Apache-2.0",
+  "policy_path": "cedar-example-use-cases/tax_preparer/policies.cedar",
+  "entities_path": "cedar-example-use-cases/tax_preparer/entities.json",
+  "schema_path": "cedar-example-use-cases/tax_preparer/policies.cedarschema",
+  "requests": "cedar-example-use-cases/tax_preparer/ALLOW, cedar-example-use-cases/tax_preparer/DENY",
+  "schema_used_for_action_hierarchy": true
+ },
+ "question": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "world": {
+  "entities": [
+   {
+    "uid": "Taxpreparer::Professional::\"Alice\"",
+    "attrs": {
+     "location": "IAD",
+     "assigned_orgs": [
+      {
+       "organization": "org-1",
+       "serviceline": "corporate",
+       "location": "IAD"
+      }
+     ]
+    },
+    "parents": []
+   },
+   {
+    "uid": "Taxpreparer::Professional::\"Bob\"",
+    "attrs": {
+     "location": "JFK",
+     "assigned_orgs": [
+      {
+       "organization": "org-1",
+       "serviceline": "corporate",
+       "location": "JFK"
+      }
+     ]
+    },
+    "parents": []
+   },
+   {
+    "uid": "Taxpreparer::Client::\"Ramon\"",
+    "attrs": {
+     "organization": "org-1"
+    },
+    "parents": []
+   },
+   {
+    "uid": "Taxpreparer::Document::\"ABC\"",
+    "attrs": {
+     "serviceline": "corporate",
+     "location": "IAD",
+     "owner": {
+      "__entity": "Taxpreparer::Client::\"Ramon\""
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "Taxpreparer::Document::\"DEF\"",
+    "attrs": {
+     "serviceline": "corporate",
+     "location": "JFK",
+     "owner": {
+      "__entity": "Taxpreparer::Client::\"Ramon\""
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "Taxpreparer::Action::\"viewDocument\"",
+    "attrs": {},
+    "parents": []
+   }
+  ],
+  "linked": [
+   {
+    "template_id": "adhoc-access",
+    "link_id": "AliceView",
+    "args": {
+     "?principal": "Taxpreparer::Professional::\"Alice\"",
+     "?resource": "Taxpreparer::Document::\"DEF\""
+    }
+   }
+  ]
+ },
+ "questions": [
+  {
+   "description": "ALLOW/alice_read_ABC.json",
+   "request": {
+    "principal": "Taxpreparer::Professional::\"Alice\"",
+    "action": "Taxpreparer::Action::\"viewDocument\"",
+    "resource": "Taxpreparer::Document::\"ABC\"",
+    "context": {
+     "consent": {
+      "client": {
+       "__entity": "Taxpreparer::Client::\"Ramon\""
+      },
+      "team_region_list": [
+       "IAD",
+       "JFK"
+      ]
+     }
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/alice_read_DEF.json",
+   "request": {
+    "principal": "Taxpreparer::Professional::\"Alice\"",
+    "action": "Taxpreparer::Action::\"viewDocument\"",
+    "resource": "Taxpreparer::Document::\"DEF\"",
+    "context": {
+     "consent": {
+      "client": {
+       "__entity": "Taxpreparer::Client::\"Ramon\""
+      },
+      "team_region_list": [
+       "IAD",
+       "JFK"
+      ]
+     }
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/bob_read_DEF.json",
+   "request": {
+    "principal": "Taxpreparer::Professional::\"Bob\"",
+    "action": "Taxpreparer::Action::\"viewDocument\"",
+    "resource": "Taxpreparer::Document::\"DEF\"",
+    "context": {
+     "consent": {
+      "client": {
+       "__entity": "Taxpreparer::Client::\"Ramon\""
+      },
+      "team_region_list": [
+       "IAD",
+       "JFK"
+      ]
+     }
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "DENY/alice_read_ABC.json",
+   "request": {
+    "principal": "Taxpreparer::Professional::\"Alice\"",
+    "action": "Taxpreparer::Action::\"viewDocument\"",
+    "resource": "Taxpreparer::Document::\"ABC\"",
+    "context": {
+     "consent": {
+      "client": {
+       "__entity": "Taxpreparer::Client::\"Ramon\""
+      },
+      "team_region_list": [
+       "JFK"
+      ]
+     }
+    }
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "DENY/bob_read_ABC.json",
+   "request": {
+    "principal": "Taxpreparer::Professional::\"Bob\"",
+    "action": "Taxpreparer::Action::\"viewDocument\"",
+    "resource": "Taxpreparer::Document::\"ABC\"",
+    "context": {
+     "consent": {
+      "client": {
+       "__entity": "Taxpreparer::Client::\"Ramon\""
+      },
+      "team_region_list": [
+       "IAD",
+       "JFK"
+      ]
+     }
+    }
+   },
+   "recorded_decision": "deny"
+  }
+ ],
+ "id": "c21_tax_preparer",
+ "source_files": {
+  "source.cedar": "485cd67ed3395ea5940e248cf3632c9ed7d8eb88278da2593cf98acea75645eb",
+  "linked.json": "522bdc2fa48705235181142f93fe9ff093d530ec79bd8bfc732cea8182d1d4ce"
+ }
+}

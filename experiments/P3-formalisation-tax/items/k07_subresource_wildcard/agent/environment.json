@@ -1,0 +1,361 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "role": {
+    "description": "role"
+   },
+   "binding": {
+    "description": "binding"
+   },
+   "rule": {
+    "description": "rule"
+   },
+   "sel": {
+    "description": "sel"
+   },
+   "str": {
+    "description": "str"
+   }
+  },
+  "predicates": {
+   "is_role": {
+    "arguments": [
+     "role"
+    ],
+    "description": "namespaced Role"
+   },
+   "is_clusterrole": {
+    "arguments": [
+     "role"
+    ],
+    "description": "ClusterRole"
+   },
+   "role_name": {
+    "arguments": [
+     "role",
+     "str"
+    ],
+    "description": "role name"
+   },
+   "role_ns": {
+    "arguments": [
+     "role",
+     "str"
+    ],
+    "description": "role namespace"
+   },
+   "role_label": {
+    "arguments": [
+     "role",
+     "str"
+    ],
+    "description": "role label key=value"
+   },
+   "has_aggregation": {
+    "arguments": [
+     "role"
+    ],
+    "description": "role has aggregationRule"
+   },
+   "role_selector": {
+    "arguments": [
+     "role",
+     "sel"
+    ],
+    "description": "clusterRoleSelectors entry"
+   },
+   "sel_label": {
+    "arguments": [
+     "sel",
+     "str"
+    ],
+    "description": "matchLabels key=value of selector"
+   },
+   "role_rule": {
+    "arguments": [
+     "role",
+     "rule"
+    ],
+    "description": "rules as written"
+   },
+   "rule_verb": {
+    "arguments": [
+     "rule",
+     "str"
+    ],
+    "description": "rule verb"
+   },
+   "rule_group": {
+    "arguments": [
+     "rule",
+     "str"
+    ],
+    "description": "rule apiGroup"
+   },
+   "rule_resource": {
+    "arguments": [
+     "rule",
+     "str"
+    ],
+    "description": "rule resource"
+   },
+   "rule_resname": {
+    "arguments": [
+     "rule",
+     "str"
+    ],
+    "description": "rule resourceName"
+   },
+   "is_rolebinding": {
+    "arguments": [
+     "binding"
+    ],
+    "description": "RoleBinding"
+   },
+   "is_clusterrolebinding": {
+    "arguments": [
+     "binding"
+    ],
+    "description": "ClusterRoleBinding"
+   },
+   "binding_ns": {
+    "arguments": [
+     "binding",
+     "str"
+    ],
+    "description": "binding namespace"
+   },
+   "ref_role": {
+    "arguments": [
+     "binding"
+    ],
+    "description": "roleRef kind Role"
+   },
+   "ref_clusterrole": {
+    "arguments": [
+     "binding"
+    ],
+    "description": "roleRef kind ClusterRole"
+   },
+   "ref_name": {
+    "arguments": [
+     "binding",
+     "str"
+    ],
+    "description": "roleRef name"
+   },
+   "subject_user": {
+    "arguments": [
+     "binding",
+     "str"
+    ],
+    "description": "User subject"
+   },
+   "subject_group": {
+    "arguments": [
+     "binding",
+     "str"
+    ],
+    "description": "Group subject"
+   },
+   "req_group": {
+    "arguments": [
+     "str"
+    ],
+    "description": "group of requesting user"
+   }
+  },
+  "constants": {
+   "sr_log": {
+    "sort": "str",
+    "description": "the string \"log\""
+   },
+   "sw_log": {
+    "sort": "str",
+    "description": "the string \"*/log\" (any-resource wildcard for subresource log)"
+   },
+   "sr_exec": {
+    "sort": "str",
+    "description": "the string \"exec\""
+   },
+   "sw_exec": {
+    "sort": "str",
+    "description": "the string \"*/exec\" (any-resource wildcard for subresource exec)"
+   },
+   "sr_status": {
+    "sort": "str",
+    "description": "the string \"status\""
+   },
+   "sw_status": {
+    "sort": "str",
+    "description": "the string \"*/status\" (any-resource wildcard for subresource status)"
+   },
+   "sr_scale": {
+    "sort": "str",
+    "description": "the string \"scale\""
+   },
+   "sw_scale": {
+    "sort": "str",
+    "description": "the string \"*/scale\" (any-resource wildcard for subresource scale)"
+   },
+   "sr_attach": {
+    "sort": "str",
+    "description": "the string \"attach\""
+   },
+   "sw_attach": {
+    "sort": "str",
+    "description": "the string \"*/attach\" (any-resource wildcard for subresource attach)"
+   },
+   "sr_portforward": {
+    "sort": "str",
+    "description": "the string \"portforward\""
+   },
+   "sw_portforward": {
+    "sort": "str",
+    "description": "the string \"*/portforward\" (any-resource wildcard for subresource portforward)"
+   },
+   "sr_proxy": {
+    "sort": "str",
+    "description": "the string \"proxy\""
+   },
+   "sw_proxy": {
+    "sort": "str",
+    "description": "the string \"*/proxy\" (any-resource wildcard for subresource proxy)"
+   },
+   "sr_eviction": {
+    "sort": "str",
+    "description": "the string \"eviction\""
+   },
+   "sw_eviction": {
+    "sort": "str",
+    "description": "the string \"*/eviction\" (any-resource wildcard for subresource eviction)"
+   },
+   "sr_binding": {
+    "sort": "str",
+    "description": "the string \"binding\""
+   },
+   "sw_binding": {
+    "sort": "str",
+    "description": "the string \"*/binding\" (any-resource wildcard for subresource binding)"
+   },
+   "sr_finalize": {
+    "sort": "str",
+    "description": "the string \"finalize\""
+   },
+   "sw_finalize": {
+    "sort": "str",
+    "description": "the string \"*/finalize\" (any-resource wildcard for subresource finalize)"
+   },
+   "sr_approval": {
+    "sort": "str",
+    "description": "the string \"approval\""
+   },
+   "sw_approval": {
+    "sort": "str",
+    "description": "the string \"*/approval\" (any-resource wildcard for subresource approval)"
+   },
+   "sr_ephemeralcontainers": {
+    "sort": "str",
+    "description": "the string \"ephemeralcontainers\""
+   },
+   "sw_ephemeralcontainers": {
+    "sort": "str",
+    "description": "the string \"*/ephemeralcontainers\" (any-resource wildcard for subresource ephemeralcontainers)"
+   },
+   "sr_token": {
+    "sort": "str",
+    "description": "the string \"token\""
+   },
+   "sw_token": {
+    "sort": "str",
+    "description": "the string \"*/token\" (any-resource wildcard for subresource token)"
+   },
+   "sr_resize": {
+    "sort": "str",
+    "description": "the string \"resize\""
+   },
+   "sw_resize": {
+    "sort": "str",
+    "description": "the string \"*/resize\" (any-resource wildcard for subresource resize)"
+   },
+   "sr_ephemeral": {
+    "sort": "str",
+    "description": "the string \"ephemeral\""
+   },
+   "sw_ephemeral": {
+    "sort": "str",
+    "description": "the string \"*/ephemeral\" (any-resource wildcard for subresource ephemeral)"
+   },
+   "sr_rollback": {
+    "sort": "str",
+    "description": "the string \"rollback\""
+   },
+   "sw_rollback": {
+    "sort": "str",
+    "description": "the string \"*/rollback\" (any-resource wildcard for subresource rollback)"
+   },
+   "sr_spec": {
+    "sort": "str",
+    "description": "the string \"spec\""
+   },
+   "sw_spec": {
+    "sort": "str",
+    "description": "the string \"*/spec\" (any-resource wildcard for subresource spec)"
+   },
+   "sr_metrics": {
+    "sort": "str",
+    "description": "the string \"metrics\""
+   },
+   "sw_metrics": {
+    "sort": "str",
+    "description": "the string \"*/metrics\" (any-resource wildcard for subresource metrics)"
+   },
+   "user": {
+    "sort": "str",
+    "description": "requesting user name"
+   },
+   "verb": {
+    "sort": "str",
+    "description": "request verb"
+   },
+   "apigroup": {
+    "sort": "str",
+    "description": "request API group"
+   },
+   "resource": {
+    "sort": "str",
+    "description": "request resource"
+   },
+   "subresource": {
+    "sort": "str",
+    "description": "request subresource, empty if none"
+   },
+   "path": {
+    "sort": "str",
+    "description": "resource/subresource or resource"
+   },
+   "namespace": {
+    "sort": "str",
+    "description": "request namespace, empty if cluster-scoped"
+   },
+   "name": {
+    "sort": "str",
+    "description": "request object name, empty if none"
+   },
+   "star": {
+    "sort": "str",
+    "description": "the string *"
+   },
+   "empty": {
+    "sort": "str",
+    "description": "the empty string"
+   }
+  }
+ }
+}

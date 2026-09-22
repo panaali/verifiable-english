@@ -1,0 +1,340 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "A Cedar entity UID, record node, or the request context node."
+   },
+   "value": {
+    "description": "A Cedar string, long or extension literal value."
+   }
+  },
+  "predicates": {
+   "parent": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Immediate hierarchy edge, child to parent."
+   },
+   "type_record": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Anonymous record node."
+   },
+   "has_viewers": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute viewers present."
+   },
+   "sa_viewers": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar attribute viewers."
+   },
+   "bt_viewers": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "viewers is Boolean true."
+   },
+   "bf_viewers": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "viewers is Boolean false."
+   },
+   "ss_viewers": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar member of set attribute viewers."
+   },
+   "es_viewers": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record member of set attribute viewers."
+   },
+   "ea_viewers": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record-valued attribute viewers."
+   },
+   "has_editors": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute editors present."
+   },
+   "sa_editors": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar attribute editors."
+   },
+   "bt_editors": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "editors is Boolean true."
+   },
+   "bf_editors": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "editors is Boolean false."
+   },
+   "ss_editors": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar member of set attribute editors."
+   },
+   "es_editors": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record member of set attribute editors."
+   },
+   "ea_editors": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record-valued attribute editors."
+   },
+   "has_viewermarkets": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute viewermarkets present."
+   },
+   "sa_viewermarkets": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar attribute viewermarkets."
+   },
+   "bt_viewermarkets": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "viewermarkets is Boolean true."
+   },
+   "bf_viewermarkets": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "viewermarkets is Boolean false."
+   },
+   "ss_viewermarkets": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar member of set attribute viewermarkets."
+   },
+   "es_viewermarkets": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record member of set attribute viewermarkets."
+   },
+   "ea_viewermarkets": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record-valued attribute viewermarkets."
+   },
+   "has_editormarkets": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute editormarkets present."
+   },
+   "sa_editormarkets": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar attribute editormarkets."
+   },
+   "bt_editormarkets": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "editormarkets is Boolean true."
+   },
+   "bf_editormarkets": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "editormarkets is Boolean false."
+   },
+   "ss_editormarkets": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar member of set attribute editormarkets."
+   },
+   "es_editormarkets": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record member of set attribute editormarkets."
+   },
+   "ea_editormarkets": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record-valued attribute editormarkets."
+   },
+   "ea_owner": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute owner."
+   },
+   "ea_job": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute job."
+   },
+   "ea_target": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute target (context)."
+   },
+   "ea_targetuser": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute targetUser (context)."
+   },
+   "has_owner": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute owner present."
+   },
+   "has_job": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute job present."
+   },
+   "has_customerid": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute customerId present."
+   },
+   "sa_customerid": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "String attribute customerId."
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "The request principal."
+   },
+   "action": {
+    "sort": "entity",
+    "description": "The request action."
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "The request resource."
+   },
+   "context": {
+    "sort": "entity",
+    "description": "The request context record node."
+   },
+   "external_prez_view": {
+    "sort": "entity",
+    "description": "Action::\"ExternalPrezViewActions\""
+   },
+   "internal_prez_view": {
+    "sort": "entity",
+    "description": "Action::\"InternalPrezViewActions\""
+   },
+   "prez_edit": {
+    "sort": "entity",
+    "description": "Action::\"PrezEditActions\""
+   },
+   "market_template_view": {
+    "sort": "entity",
+    "description": "Action::\"MarketTemplateViewActions\""
+   },
+   "internal_template_view": {
+    "sort": "entity",
+    "description": "Action::\"InternalTemplateViewActions\""
+   },
+   "template_edit": {
+    "sort": "entity",
+    "description": "Action::\"TemplateEditActions\""
+   },
+   "grant_view_prez": {
+    "sort": "entity",
+    "description": "Action::\"grantViewAccessToPresentation\""
+   },
+   "grant_edit_prez": {
+    "sort": "entity",
+    "description": "Action::\"grantEditAccessToPresentation\""
+   },
+   "grant_view_template": {
+    "sort": "entity",
+    "description": "Action::\"grantViewAccessToTemplate\""
+   },
+   "grant_edit_template": {
+    "sort": "entity",
+    "description": "Action::\"grantEditAccessToTemplate\""
+   },
+   "job_internal": {
+    "sort": "entity",
+    "description": "Job::\"internal\""
+   },
+   "job_customer": {
+    "sort": "entity",
+    "description": "Job::\"customer\""
+   },
+   "job_distributor": {
+    "sort": "entity",
+    "description": "Job::\"distributor\""
+   }
+  }
+ }
+}

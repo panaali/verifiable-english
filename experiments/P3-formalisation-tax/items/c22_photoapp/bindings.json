@@ -1,0 +1,37 @@
+{
+ "constants": {
+  "app": {
+   "entity": "PhotoApp::Application::\"PhotoApp\""
+  },
+  "view_photo": {
+   "entity": "PhotoApp::Action::\"viewPhoto\""
+  },
+  "edit_photo": {
+   "entity": "PhotoApp::Action::\"editPhoto\""
+  },
+  "delete_photo": {
+   "entity": "PhotoApp::Action::\"deletePhoto\""
+  },
+  "photo_judge": {
+   "entity": "PhotoApp::Role::\"PhotoJudge\""
+  },
+  "doe_family": {
+   "entity": "PhotoApp::UserGroup::\"DoeFamily\""
+  },
+  "doe_photos": {
+   "entity": "PhotoApp::Album::\"DoePhotos\""
+  },
+  "john_doe": {
+   "entity": "PhotoApp::User::\"JohnDoe\""
+  },
+  "jane_vacation": {
+   "entity": "PhotoApp::Album::\"JaneVacation\""
+  },
+  "s_contest": {
+   "value": "contest"
+  },
+  "s_private": {
+   "value": "private"
+  }
+ }
+}

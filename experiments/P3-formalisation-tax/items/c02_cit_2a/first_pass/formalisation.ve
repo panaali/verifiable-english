@@ -1,0 +1,1 @@
+(rtc[parent](@principal, @jane_friends)) and ((@action equals @view) and (@resource equals @photo94)).

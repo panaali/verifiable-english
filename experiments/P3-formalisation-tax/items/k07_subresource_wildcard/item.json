@@ -1,0 +1,196 @@
+{
+ "family": "k8s",
+ "synthetic": false,
+ "question": "Does Kubernetes RBAC authorize each request given these RBAC objects?",
+ "provenance": {
+  "repository": "kubernetes/website",
+  "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+  "licence": "CC-BY-4.0",
+  "paths": [
+   "content/en/docs/reference/access-authn-authz/rbac.md#referring-to-resources"
+  ],
+  "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+ },
+ "world": {
+  "objects": [
+   {
+    "kind": "Role",
+    "metadata": {
+     "namespace": "default",
+     "name": "pod-and-pod-logs-reader"
+    },
+    "rules": [
+     {
+      "apiGroups": [
+       ""
+      ],
+      "resources": [
+       "pods",
+       "pods/log"
+      ],
+      "verbs": [
+       "get",
+       "list"
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "Role",
+    "metadata": {
+     "namespace": "default",
+     "name": "example.com-superuser"
+    },
+    "rules": [
+     {
+      "apiGroups": [
+       "example.com"
+      ],
+      "resources": [
+       "*"
+      ],
+      "verbs": [
+       "*"
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "RoleBinding",
+    "metadata": {
+     "name": "lee-logs",
+     "namespace": "default"
+    },
+    "subjects": [
+     {
+      "kind": "User",
+      "name": "lee",
+      "apiGroup": "rbac.authorization.k8s.io"
+     }
+    ],
+    "roleRef": {
+     "kind": "Role",
+     "name": "pod-and-pod-logs-reader",
+     "apiGroup": "rbac.authorization.k8s.io"
+    },
+    "synthetic": true
+   },
+   {
+    "kind": "RoleBinding",
+    "metadata": {
+     "name": "platform-super",
+     "namespace": "default"
+    },
+    "subjects": [
+     {
+      "kind": "Group",
+      "name": "platform",
+      "apiGroup": "rbac.authorization.k8s.io"
+     }
+    ],
+    "roleRef": {
+     "kind": "Role",
+     "name": "example.com-superuser",
+     "apiGroup": "rbac.authorization.k8s.io"
+    },
+    "synthetic": true
+   }
+  ]
+ },
+ "questions": [
+  {
+   "description": "k07-0",
+   "request": {
+    "user": "lee",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "log",
+    "namespace": "default",
+    "name": "p"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k07-1",
+   "request": {
+    "user": "lee",
+    "groups": [],
+    "verb": "list",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "",
+    "namespace": "default",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k07-2",
+   "request": {
+    "user": "lee",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "exec",
+    "namespace": "default",
+    "name": "p"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k07-3",
+   "request": {
+    "user": "root",
+    "groups": [
+     "platform"
+    ],
+    "verb": "delete",
+    "apiGroup": "example.com",
+    "resource": "widgets",
+    "subresource": "",
+    "namespace": "default",
+    "name": "w1"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k07-4",
+   "request": {
+    "user": "root",
+    "groups": [
+     "platform"
+    ],
+    "verb": "delete",
+    "apiGroup": "example.com",
+    "resource": "widgets",
+    "subresource": "",
+    "namespace": "other",
+    "name": "w1"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k07-5",
+   "request": {
+    "user": "root",
+    "groups": [
+     "platform"
+    ],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "",
+    "namespace": "default",
+    "name": "p"
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "k07_subresource_wildcard",
+ "source_files": {
+  "source.yaml": "6b283515f42763214d5009d4794ac9253a8efe863bbf71544898c7241894bc0f"
+ }
+}

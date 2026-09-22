@@ -1,0 +1,142 @@
+[
+ {
+  "item": "c02_cit_2a",
+  "variant": "in-as-direct-edge",
+  "description": "`principal in UserGroup` as a single parent edge (no transitive membership).",
+  "item_questions_wrong": 0,
+  "perturbations_wrong": 1,
+  "perturbations": 300,
+  "caught": true,
+  "caught_by_item_questions_alone": false
+ },
+ {
+  "item": "c04_cit_2c",
+  "variant": "action-in-as-equality",
+  "description": "Cedar `action in [A,B,C]` translated as equality (ignores the action hierarchy).",
+  "item_questions_wrong": 0,
+  "perturbations_wrong": 1,
+  "perturbations": 300,
+  "caught": true,
+  "caught_by_item_questions_alone": false
+ },
+ {
+  "item": "c11_cit_4f",
+  "variant": "ignore-error-semantics",
+  "description": "`A || B` as plain disjunction; an erroring left operand should skip the policy.",
+  "item_questions_wrong": 0,
+  "perturbations_wrong": 0,
+  "perturbations": 300,
+  "caught": false,
+  "caught_by_item_questions_alone": false
+ },
+ {
+  "item": "c13_document_cloud",
+  "variant": "naive-unless-and-negation",
+  "description": "`unless {isPrivate}` as `not (isPrivate = true)`, `!context.is_authenticated` as `not (is_authenticated = true)`, and no has-blocked guard on the owner: Cedar skips a policy whose condition errors on a missing attribute.",
+  "item_questions_wrong": 0,
+  "perturbations_wrong": 16,
+  "perturbations": 300,
+  "caught": true,
+  "caught_by_item_questions_alone": false
+ },
+ {
+  "item": "c17_sales_static",
+  "variant": "ignore-error-semantics",
+  "description": "Conditions translated as plain Boolean logic; Cedar skips a policy whose condition errors (missing context.target, job, owner).",
+  "item_questions_wrong": 0,
+  "perturbations_wrong": 3,
+  "perturbations": 300,
+  "caught": true,
+  "caught_by_item_questions_alone": false
+ },
+ {
+  "item": "k02_secret_reader_rolebinding",
+  "variant": "rolebinding-namespace-ignored",
+  "description": "A RoleBinding treated as granting in every namespace.",
+  "item_questions_wrong": 2,
+  "perturbations_wrong": 78,
+  "perturbations": 300,
+  "caught": true,
+  "caught_by_item_questions_alone": true
+ },
+ {
+  "item": "k05_crontab_default_roles",
+  "variant": "aggregation-one-level",
+  "description": "Aggregation followed one level only (no transitive closure).",
+  "item_questions_wrong": 0,
+  "perturbations_wrong": 1,
+  "perturbations": 300,
+  "caught": true,
+  "caught_by_item_questions_alone": false
+ },
+ {
+  "item": "k07_subresource_wildcard",
+  "variant": "wildcard-ignored",
+  "description": "The \"*\" wildcard treated as a literal string.",
+  "item_questions_wrong": 1,
+  "perturbations_wrong": 38,
+  "perturbations": 300,
+  "caught": true,
+  "caught_by_item_questions_alone": true
+ },
+ {
+  "item": "l01_genealogy_biology",
+  "variant": "star-for-plus",
+  "description": "`p in p.^parents` written with reflexive closure (always true).",
+  "item_questions_wrong": 3,
+  "perturbations_wrong": 101,
+  "perturbations": 300,
+  "caught": true,
+  "caught_by_item_questions_alone": true
+ },
+ {
+  "item": "l02_grandpa1_fact",
+  "variant": "one-direction-equality",
+  "description": "`wife = ~husband` as the inclusion wife in ~husband only.",
+  "item_questions_wrong": 0,
+  "perturbations_wrong": 28,
+  "perturbations": 300,
+  "caught": true,
+  "caught_by_item_questions_alone": false
+ },
+ {
+  "item": "l05_graph_ring",
+  "variant": "closure-direction-swapped",
+  "description": "rootedAt as `root in node.*r` instead of `node in root.*r`.",
+  "item_questions_wrong": 0,
+  "perturbations_wrong": 0,
+  "perturbations": 300,
+  "caught": false,
+  "caught_by_item_questions_alone": false
+ },
+ {
+  "item": "l08_addressbook_lookup",
+  "variant": "plus-as-star",
+  "description": "`n.^(b.addr)` written with reflexive closure.",
+  "item_questions_wrong": 0,
+  "perturbations_wrong": 0,
+  "perturbations": 300,
+  "caught": false,
+  "caught_by_item_questions_alone": false
+ },
+ {
+  "item": "w02_deny_requested_region",
+  "variant": "negated-operator-missing-key",
+  "description": "StringNotEquals with the key absent treated as not matching (AWS: it matches).",
+  "item_questions_wrong": 1,
+  "perturbations_wrong": 74,
+  "perturbations": 300,
+  "caught": true,
+  "caught_by_item_questions_alone": true
+ },
+ {
+  "item": "w03_mfa_selfmanage",
+  "variant": "ifexists-ignored",
+  "description": "BoolIfExists treated as Bool (missing key -> false).",
+  "item_questions_wrong": 0,
+  "perturbations_wrong": 9,
+  "perturbations": 300,
+  "caught": true,
+  "caught_by_item_questions_alone": false
+ }
+]

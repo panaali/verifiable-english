@@ -1,0 +1,55 @@
+{
+ "constants": {
+  "u_alice": {
+   "entity": "User::\"Alice\""
+  },
+  "r_hotel_g": {
+   "entity": "Hotel::\"G\""
+  },
+  "r_property_green": {
+   "entity": "Property::\"Green\""
+  },
+  "u_bob": {
+   "entity": "User::\"Bob\""
+  },
+  "r_hotel_r": {
+   "entity": "Hotel::\"R\""
+  },
+  "viewreservation": {
+   "entity": "Action::\"viewReservation\""
+  },
+  "updatereservation": {
+   "entity": "Action::\"updateReservation\""
+  },
+  "createreservation": {
+   "entity": "Action::\"createReservation\""
+  },
+  "grantaccessreservation": {
+   "entity": "Action::\"grantAccessReservation\""
+  },
+  "viewhotel": {
+   "entity": "Action::\"viewHotel\""
+  },
+  "viewproperty": {
+   "entity": "Action::\"viewProperty\""
+  },
+  "updatehotel": {
+   "entity": "Action::\"updateHotel\""
+  },
+  "createhotel": {
+   "entity": "Action::\"createHotel\""
+  },
+  "updateproperty": {
+   "entity": "Action::\"updateProperty\""
+  },
+  "createproperty": {
+   "entity": "Action::\"createProperty\""
+  },
+  "grantaccesshotel": {
+   "entity": "Action::\"grantAccessHotel\""
+  },
+  "grantaccessproperty": {
+   "entity": "Action::\"grantAccessProperty\""
+  }
+ }
+}

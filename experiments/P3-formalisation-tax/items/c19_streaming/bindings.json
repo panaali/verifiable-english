@@ -1,0 +1,16 @@
+{
+ "constants": {
+  "watch": {
+   "entity": "Action::\"watch\""
+  },
+  "rent": {
+   "entity": "Action::\"rent\""
+  },
+  "buy": {
+   "entity": "Action::\"buy\""
+  },
+  "premium": {
+   "value": "premium"
+  }
+ }
+}

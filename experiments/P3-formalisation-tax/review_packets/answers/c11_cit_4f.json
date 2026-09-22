@@ -1,0 +1,16 @@
+{
+ "answers": [
+  {"n": 0, "answer": true, "why": "vacation.jpg.account = Account::alice whose owner is User::alice == principal"},
+  {"n": 1, "answer": false, "why": "sales_projections owner is stacey, admins = [giuseppe]; alice matches neither"},
+  {"n": 2, "answer": true, "why": "sales_projections.admins contains User::giuseppe"},
+  {"n": 3, "answer": true, "why": "alice owns vacation.jpg's account; policy ignores action and context"},
+  {"n": 4, "answer": false, "why": "Action::edit is neither owner (stacey) nor in admins; no error, condition false"},
+  {"n": 5, "answer": false, "why": "alice not owner nor admin of sales_projections"},
+  {"n": 6, "answer": false, "why": "alice not owner nor admin of sales_projections"},
+  {"n": 7, "answer": false, "why": "owner is User::alice, not Account::alice; admins empty"},
+  {"n": 8, "answer": false, "why": "alice not owner nor admin of sales_projections"},
+  {"n": 9, "answer": true, "why": "alice owns vacation.jpg's account; action-agnostic policy"}
+ ],
+ "confidence": "high",
+ "notes": "Single permit, no forbids, no schema given so type-mismatched principals (Action, Account) are evaluated without validation and simply fail the equality/contains tests. All Photo resources have both account and admins, so no evaluation errors arise."
+}

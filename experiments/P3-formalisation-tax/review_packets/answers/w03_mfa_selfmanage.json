@@ -1,0 +1,16 @@
+{
+  "answers": [
+    {"n": 0, "answer": true, "why": "AllowUserToManageTheirOwnMFA matches user/alice; EnableMFADevice is in the Deny's NotAction list so the Deny does not apply"},
+    {"n": 1, "answer": true, "why": "Deactivate allow matches (MFA=true); the BoolIfExists false Deny does not match because MFA is true"},
+    {"n": 2, "answer": false, "why": "Allow's Bool true condition fails; the Deny matches (MFA=false, action not in NotAction)"},
+    {"n": 3, "answer": false, "why": "Bool on a missing key fails so there is no allow; BoolIfExists on a missing key matches, so the explicit Deny applies"},
+    {"n": 4, "answer": true, "why": "AllowListActions on *; ListUsers is excluded from the Deny via NotAction"},
+    {"n": 5, "answer": false, "why": "The resource user/bob does not match user/${aws:username}=user/alice, so the result is implicit deny"},
+    {"n": 6, "answer": false, "why": "No statement allows ec2:RunInstances (the Deny does not match because MFA=true), so the result is implicit deny"},
+    {"n": 7, "answer": false, "why": "GetMFADevice is only allowed on user/${aws:username}, not on mfa/alice; the Deny does not match (MFA true), so the result is implicit deny"},
+    {"n": 8, "answer": false, "why": "aws:username is absent, so the ${aws:username} Resource cannot match and there is no allow; the Deny excludes EnableMFADevice, so the result is implicit deny"},
+    {"n": 9, "answer": false, "why": "The resource user/alice does not match user/bob, so there is no allow; the Deny also applies because MFA is absent (BoolIfExists)"}
+  ],
+  "confidence": "high",
+  "notes": "Q8 relies on AWS behaviour that a policy variable with a missing key makes the Resource element fail to match. Q6: the ec2 action on an IAM mfa ARN is irrelevant; nothing allows it."
+}

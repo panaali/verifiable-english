@@ -1,0 +1,31 @@
+{
+ "constants": {
+  "op_stringequals": {
+   "value": "StringEquals"
+  },
+  "op_stringnotequals": {
+   "value": "StringNotEquals"
+  },
+  "op_stringequalsifexists": {
+   "value": "StringEqualsIfExists"
+  },
+  "op_stringnotequalsifexists": {
+   "value": "StringNotEqualsIfExists"
+  },
+  "op_bool": {
+   "value": "Bool"
+  },
+  "op_boolifexists": {
+   "value": "BoolIfExists"
+  },
+  "op_null": {
+   "value": "Null"
+  },
+  "s_true": {
+   "value": "true"
+  },
+  "s_false": {
+   "value": "false"
+  }
+ }
+}

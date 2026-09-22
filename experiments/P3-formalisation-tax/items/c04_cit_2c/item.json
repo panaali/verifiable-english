@@ -1,0 +1,190 @@
+{
+ "family": "cedar",
+ "synthetic": false,
+ "provenance": {
+  "repository": "cedar-policy/cedar-integration-tests",
+  "commit": "1999ea249229e26cabb398a279fea721854a471d",
+  "licence": "Apache-2.0",
+  "policy_path": "tests/example_use_cases/policies_2c.cedar",
+  "entities_path": "sample-data/sandbox_a/entities.json",
+  "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+  "test_path": "tests/example_use_cases/2c.json"
+ },
+ "question": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "world": {
+  "entities": [
+   {
+    "uid": "User::\"alice\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"jane_friends\""
+    ]
+   },
+   {
+    "uid": "User::\"bob\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "User::\"tim\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"jane_friends\""
+    ]
+   },
+   {
+    "uid": "UserGroup::\"jane_friends\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Administrator::\"ahmad\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"view\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"comment\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"edit\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"delete\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"listAlbums\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"listPhotos\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Photo::\"VacationPhoto94.jpg\"",
+    "attrs": {},
+    "parents": [
+     "Album::\"jane_vacation\""
+    ]
+   },
+   {
+    "uid": "Photo::\"passportscan.jpg\"",
+    "attrs": {},
+    "parents": [
+     "Account::\"jane\""
+    ]
+   },
+   {
+    "uid": "Video::\"surf.mp4\"",
+    "attrs": {},
+    "parents": [
+     "Album::\"jane_vacation\""
+    ]
+   },
+   {
+    "uid": "Photo::\"selfie.jpg\"",
+    "attrs": {},
+    "parents": [
+     "Account::\"bob\""
+    ]
+   },
+   {
+    "uid": "Album::\"jane_vacation\"",
+    "attrs": {},
+    "parents": [
+     "Account::\"jane\""
+    ]
+   },
+   {
+    "uid": "Account::\"jane\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Account::\"bob\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"addPhoto\"",
+    "attrs": {},
+    "parents": []
+   }
+  ],
+  "linked": []
+ },
+ "questions": [
+  {
+   "description": "alice should be allowed to edit the photo",
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"edit\"",
+    "resource": "Photo::\"VacationPhoto94.jpg\"",
+    "context": {
+     "source_ip": "123.123.123.123",
+     "confidence_score": "0.6",
+     "authenticated": true
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "alice should not be allowed to delete the photo",
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"delete\"",
+    "resource": "Photo::\"VacationPhoto94.jpg\"",
+    "context": {
+     "source_ip": "123.123.123.123",
+     "confidence_score": "0.6",
+     "authenticated": true
+    }
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "bob should not be allowed to edit the photo",
+   "request": {
+    "principal": "User::\"bob\"",
+    "action": "Action::\"edit\"",
+    "resource": "Photo::\"VacationPhoto94.jpg\"",
+    "context": {
+     "source_ip": "123.123.123.123",
+     "confidence_score": "0.6",
+     "authenticated": true
+    }
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "alice should not be allowed to view an unrelated photo",
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"view\"",
+    "resource": "Photo::\"passportscan.jpg\"",
+    "context": {
+     "source_ip": "123.123.123.123",
+     "confidence_score": "0.6",
+     "authenticated": true
+    }
+   },
+   "recorded_decision": "deny"
+  }
+ ],
+ "id": "c04_cit_2c",
+ "source_files": {
+  "source.cedar": "34aa36fb8fe227cabf26d9781b08e42bdb5580a293416beac0f9af67e0b3fb29"
+ }
+}

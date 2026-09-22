@@ -1,0 +1,5634 @@
+[
+ {
+  "item": "c01_cit_1a",
+  "family": "cedar",
+  "mutants": 6,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 0,
+  "killed": 6,
+  "killed_by_item_questions_alone": 6,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "c02_cit_2a",
+  "family": "cedar",
+  "mutants": 9,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 0,
+  "killed": 9,
+  "killed_by_item_questions_alone": 6,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "swap-direction",
+    "path": "left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "closure->edge",
+    "path": "left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": false
+   }
+  ]
+ },
+ {
+  "item": "c03_cit_2b",
+  "family": "cedar",
+  "mutants": 9,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 2,
+  "survivors_unknown": 0,
+  "killed": 7,
+  "killed_by_item_questions_alone": 6,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   }
+  ]
+ },
+ {
+  "item": "c04_cit_2c",
+  "family": "cedar",
+  "mutants": 24,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 2,
+  "survivors_unknown": 0,
+  "killed": 22,
+  "killed_by_item_questions_alone": 13,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "or->and",
+    "path": "right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.left.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.left.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.left.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "or->and",
+    "path": "right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.left.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.left.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   }
+  ]
+ },
+ {
+  "item": "c05_cit_3a",
+  "family": "cedar",
+  "mutants": 6,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 0,
+  "killed": 6,
+  "killed_by_item_questions_alone": 3,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": false
+   }
+  ]
+ },
+ {
+  "item": "c06_cit_3b",
+  "family": "cedar",
+  "mutants": 24,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 1,
+  "survivors_unknown": 0,
+  "killed": 23,
+  "killed_by_item_questions_alone": 19,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "or->and",
+    "path": "right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.left.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.left.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.left.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "or->and",
+    "path": "right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.left.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "c08_cit_4a",
+  "family": "cedar",
+  "mutants": 21,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 1,
+  "killed": 20,
+  "killed_by_item_questions_alone": 10,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "or->and",
+    "path": "right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.left.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.left.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.left.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   }
+  ]
+ },
+ {
+  "item": "c09_cit_4d",
+  "family": "cedar",
+  "mutants": 4,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 0,
+  "killed": 4,
+  "killed_by_item_questions_alone": 4,
+  "rows": [
+   {
+    "operator": "exists->forall",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "c10_cit_4e",
+  "family": "cedar",
+  "mutants": 15,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 0,
+  "killed": 15,
+  "killed_by_item_questions_alone": 14,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.body.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.body.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.body.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.body.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.body.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.body.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "c11_cit_4f",
+  "family": "cedar",
+  "mutants": 16,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 2,
+  "survivors_unknown": 0,
+  "killed": 14,
+  "killed_by_item_questions_alone": 14,
+  "rows": [
+   {
+    "operator": "or->and",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-negation",
+    "path": "right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.left.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.left.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.left.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-negation",
+    "path": "right.left.body.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "c12_cit_5b",
+  "family": "cedar",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 3,
+  "survivors_unknown": 0,
+  "killed": 22,
+  "killed_by_item_questions_alone": 18,
+  "rows": [
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right.body.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.right.body.right.left.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.right.body.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.body.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "or->and",
+    "path": "right.right.body.right.left.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.right.body.right.left.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.body.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "c13_document_cloud",
+  "family": "cedar",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 1,
+  "survivors_unknown": 12,
+  "killed": 12,
+  "killed_by_item_questions_alone": 5,
+  "rows": [
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.left.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right.right.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "swap-direction",
+    "path": "left.right.right.right.right.right.right.right.right.right.right.right.left.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "closure->edge",
+    "path": "left.right.right.right.right.right.right.right.right.right.right.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.body.left.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.right.right.right.right.left.right.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.right.right.right.right.right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.body.left.left.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.body.left.left.right.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.right.right.right.right.right.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.body.left.right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "swap-direction",
+    "path": "left.right.right.right.right.right.right.right.right.right.left.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.body.left.left.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "star<->plus",
+    "path": "left.right.right.right.right.right.right.left.right.left.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.body.left.left.right.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.right.right.right.left.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.left.right.left.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.right.right.right.right.right.right.right.right.left.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "c14_github",
+  "family": "cedar",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 5,
+  "survivors_unknown": 9,
+  "killed": 11,
+  "killed_by_item_questions_alone": 3,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "right.right.right.right.right.right.left.right.body.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right.right.right.left.right.body.body.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.right.right.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "or->and",
+    "path": "right.right.right.right.right.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.right.right.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.right.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right.right.right.right.right.right.right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.right.right.right.right.right.left.right.body.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.right.right.left.right.body.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.right.right.right.right.right.left.right.body.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.right.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "or->and",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.right.right.right.right.right.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.right.right.right.right.right.right.right.left.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right.right.right.right.right.right.right.left.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.right.left.right.left.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.right.right.right.right.right.right.right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right.right.right.right.right.left.right.body.body.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right.right.left.right.left.body.body.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   }
+  ]
+ },
+ {
+  "item": "c15_hotel_static",
+  "family": "cedar",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 16,
+  "killed": 9,
+  "killed_by_item_questions_alone": 6,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "left.right.left.body.right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.right.right.left.right.right.right.right.body.right.left.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-negation",
+    "path": "right.right.right.right.left.right.left.body.right.left.right.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.right.right.left.right.left.body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-negation",
+    "path": "right.right.right.left.right.left.body.right.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.left.right.right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.left.left.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.right.right.left.right.left.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.right.right.left.right.left.body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.right.right.right.left.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.right.right.right.right.right.right.right.left.right.right.right.right.right.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right.right.right.left.left.right.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.right.right.left.right.left.body.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.right.right.left.left.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.right.right.left.right.right.right.right.body.right.left.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.right.right.left.right.right.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.right.right.left.right.right.right.right.body.right.left.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-negation",
+    "path": "left.right.right.left.body.right.right.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.right.left.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.right.left.right.right.right.right.body.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.right.body.right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.right.body.right.left.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   }
+  ]
+ },
+ {
+  "item": "c16_hotel_templated",
+  "family": "cedar",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 1,
+  "survivors_unknown": 9,
+  "killed": 15,
+  "killed_by_item_questions_alone": 7,
+  "rows": [
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "swap-direction",
+    "path": "left.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.right.right.left.right.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right.left.right.left.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.right.right.right.right.right.left.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.right.right.left.right.left.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right.right.right.right.right.left.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.right.left.right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "right.right.right.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.right.right.right.right.right.left.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.right.right.left.right.left.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.right.right.right.right.right.left.right.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.right.right.right.right.right.left.right.right.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "or->and",
+    "path": "right.right.right.left.right.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.right.right.left.right.left.right.right.right.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.right.right.left.right.left.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "closure->edge",
+    "path": "left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "or->and",
+    "path": "right.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.right.right.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "or->and",
+    "path": "right.right.left.right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right.right.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.right.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   }
+  ]
+ },
+ {
+  "item": "c17_sales_static",
+  "family": "cedar",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 3,
+  "survivors_unknown": 17,
+  "killed": 5,
+  "killed_by_item_questions_alone": 2,
+  "rows": [
+   {
+    "operator": "star<->plus",
+    "path": "left.right.right.right.right.right.right.right.right.left.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "left.right.right.right.right.left.right.right.left.right.right.right.right.right.body.body.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "exists->forall",
+    "path": "left.right.left.right.right.left.right.right.right.right.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-negation",
+    "path": "left.right.left.right.right.left.right.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.right.left.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "exists->forall",
+    "path": "left.right.right.left.right.right.right.left.right.right.right.right.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.body.right.right.left.right.body.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.right.left.right.left.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right.right.right.left.right.left.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right.right.left.right.right.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-negation",
+    "path": "left.right.right.right.left.right.left.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-negation",
+    "path": "left.right.right.left.right.right.right.left.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "exists->forall",
+    "path": "left.right.right.left.right.right.right.left.right.right.right.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.left.right.right.right.left.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "left.right.right.right.right.right.right.right.right.left.left.right.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right.right.right.right.right.right.right.right.right.right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.right.right.right.right.right.right.left.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.left.right.body.right.right.right.right.right.right.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.right.right.right.right.right.right.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   }
+  ]
+ },
+ {
+  "item": "c18_sales_templated",
+  "family": "cedar",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 12,
+  "survivors_unknown": 3,
+  "killed": 10,
+  "killed_by_item_questions_alone": 3,
+  "rows": [
+   {
+    "operator": "or->and",
+    "path": "right.body.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "or->and",
+    "path": "left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.left.right.body.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.body.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-negation",
+    "path": "right.body.right.left.right.body.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.left.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "star<->plus",
+    "path": "left.right.left.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "closure->edge",
+    "path": "left.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.left.right.body.right.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "or->and",
+    "path": "right.body.left.right.body.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right.left.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.left.right.body.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right.right.left.right.body.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "left.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.left.right.body.right.right.right.right.right.right.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.left.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   }
+  ]
+ },
+ {
+  "item": "c19_streaming",
+  "family": "cedar",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 2,
+  "survivors_unknown": 2,
+  "killed": 21,
+  "killed_by_item_questions_alone": 13,
+  "rows": [
+   {
+    "operator": "exists->forall",
+    "path": "right.body.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.left.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "or->and",
+    "path": "left.left.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.left.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.right.right.right.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right.right.right.left.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right.right.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.left.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.right.right.right.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right.right.right.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   }
+  ]
+ },
+ {
+  "item": "c20_tags_n_roles",
+  "family": "cedar",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 4,
+  "survivors_unknown": 2,
+  "killed": 19,
+  "killed_by_item_questions_alone": 8,
+  "rows": [
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.right.right.right.right.body.right.body.right.right.body.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.right.left.body.right.body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "or->and",
+    "path": "right.right.right.right.left.body.right.body.right.right.body.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.right.right.left.body.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.left.body.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "or->and",
+    "path": "right.right.right.left.body.right.body.right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "or->and",
+    "path": "left.right.right.left.body.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.right.right.right.left.body.right.body.right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.right.left.body.right.body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.right.right.right.right.body.right.body.right.right.body.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right.right.left.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.right.left.body.right.body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "or->and",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.right.left.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.right.right.right.body.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.right.right.right.left.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.right.left.body.right.body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.right.right.left.body.right.body.right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.left.body.right.body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   }
+  ]
+ },
+ {
+  "item": "c21_tax_preparer",
+  "family": "cedar",
+  "mutants": 25,
+  "survivors_equivalent": 1,
+  "survivors_distinguishable": 1,
+  "survivors_unknown": 2,
+  "killed": 21,
+  "killed_by_item_questions_alone": 12,
+  "rows": [
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right.right.left.body.body.body.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "equivalent"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.left.right.body.right.right.left.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.body.right.left.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-negation",
+    "path": "right.body.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "or->and",
+    "path": "right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.body.right.right.left.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.body.right.right.right.left.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.left.right.body.right.right.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "exists->forall",
+    "path": "left.left.right.body.right.left.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.left.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.right.left.body.body.body.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.left.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.left.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "left.left.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.left.right.body.right.left.body.body.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   }
+  ]
+ },
+ {
+  "item": "c22_photoapp",
+  "family": "cedar",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 1,
+  "survivors_unknown": 4,
+  "killed": 20,
+  "killed_by_item_questions_alone": 17,
+  "rows": [
+   {
+    "operator": "swap-direction",
+    "path": "right.body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.body.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "swap-direction",
+    "path": "left.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "swap-direction",
+    "path": "left.right.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "left.right.right.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "closure->edge",
+    "path": "left.left.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "left.right.right.left.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "left.right.left.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "c23_gitapp",
+  "family": "cedar",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 9,
+  "killed": 16,
+  "killed_by_item_questions_alone": 13,
+  "rows": [
+   {
+    "operator": "closure->edge",
+    "path": "right.left.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.right.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.right.right.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "right.right.right.left.right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right.right.left.right.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.right.right.left.left.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right.right.left.left.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "closure->edge",
+    "path": "left.left.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.right.right.left.left.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.left.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.left.left.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right.left.left.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "left.right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "k01_pod_reader",
+  "family": "k8s",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 10,
+  "killed": 15,
+  "killed_by_item_questions_alone": 14,
+  "rows": [
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "forall->exists",
+    "path": "body.right.right.body.right.body.left.edge.right.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.left.left.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.right.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.right.right.body.left.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.right.right.body.left.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "body.right.right.body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body.right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "or->and",
+    "path": "body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.left.edge.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.left.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   }
+  ]
+ },
+ {
+  "item": "k02_secret_reader_rolebinding",
+  "family": "k8s",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 12,
+  "killed": 13,
+  "killed_by_item_questions_alone": 12,
+  "rows": [
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.left.edge.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.right.right.body.left.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.right.body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body.right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "body.right.right.body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.left.edge",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "or->and",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.right.right.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.left.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body.right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "k03_secret_reader_global",
+  "family": "k8s",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 2,
+  "survivors_unknown": 15,
+  "killed": 8,
+  "killed_by_item_questions_alone": 7,
+  "rows": [
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.left.edge.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.left.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.right.right.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body.left.edge",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.right.right.body.left.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.left.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.left.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.left.right.right.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.right.body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body.right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   }
+  ]
+ },
+ {
+  "item": "k04_monitoring_aggregation",
+  "family": "k8s",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 1,
+  "survivors_unknown": 8,
+  "killed": 16,
+  "killed_by_item_questions_alone": 13,
+  "rows": [
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body.left.edge.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "body.right.right.body.right.body.left.edge.right.right.body.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.right.right.body.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.left.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.left.right.right.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.left.right.right.right.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-negation",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.left.edge.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.right.body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.left.edge",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.left.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.left.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   }
+  ]
+ },
+ {
+  "item": "k05_crontab_default_roles",
+  "family": "k8s",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 8,
+  "killed": 17,
+  "killed_by_item_questions_alone": 15,
+  "rows": [
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.left.edge.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body.left.edge",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.left.right.right.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.right.right.body.right.body.left.edge.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-negation",
+    "path": "body.right.right.body.right.body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.right.right.body.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.left.right.right.right.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.right.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body.left.edge.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.left.right.right.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "exists->forall",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.left.left.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "k06_configmap_updater",
+  "family": "k8s",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 1,
+  "survivors_unknown": 11,
+  "killed": 13,
+  "killed_by_item_questions_alone": 13,
+  "rows": [
+   {
+    "operator": "exists->forall",
+    "path": "body.right.right.body.left.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.right.right.right.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.left.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body.left.edge.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.left.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.right.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "swap-direction",
+    "path": "body.right.right.body.right.body.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.left.edge.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body.left.edge",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "exists->forall",
+    "path": "",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "or->and",
+    "path": "body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.right.body.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "k07_subresource_wildcard",
+  "family": "k8s",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 9,
+  "killed": 16,
+  "killed_by_item_questions_alone": 14,
+  "rows": [
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "or->and",
+    "path": "body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body.left.edge.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.right.body.left.edge",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.left.left.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body.right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "forall->exists",
+    "path": "body.right.right.body.right.body.left.edge.right.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.right.right.right.left.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.right.body.left.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.right.right.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.left.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.right.body.right.body.left.edge.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.right.body.right.body.left.edge.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   }
+  ]
+ },
+ {
+  "item": "l01_genealogy_biology",
+  "family": "alloy",
+  "mutants": 8,
+  "survivors_equivalent": 1,
+  "survivors_distinguishable": 1,
+  "survivors_unknown": 0,
+  "killed": 6,
+  "killed_by_item_questions_alone": 6,
+  "rows": [
+   {
+    "operator": "drop-negation",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "star<->plus",
+    "path": "body.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "body.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "equivalent"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "body.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "l02_grandpa1_fact",
+  "family": "alloy",
+  "mutants": 20,
+  "survivors_equivalent": 1,
+  "survivors_distinguishable": 1,
+  "survivors_unknown": 0,
+  "killed": 18,
+  "killed_by_item_questions_alone": 16,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-negation",
+    "path": "left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "left.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "star<->plus",
+    "path": "left.body.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "left.body.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "equivalent"
+   },
+   {
+    "operator": "or->and",
+    "path": "left.body.body.right.edge",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.body.body.right.edge",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.body.body.right.edge",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "forall->exists",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "forall->exists",
+    "path": "right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "right.body.body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "right.body.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "l03_grandpa1_noselfgrandpa",
+  "family": "alloy",
+  "mutants": 12,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 1,
+  "survivors_unknown": 0,
+  "killed": 11,
+  "killed_by_item_questions_alone": 10,
+  "rows": [
+   {
+    "operator": "drop-negation",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.body.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.body.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.body.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "or->and",
+    "path": "body.body.right.body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.body.right.body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.body.right.body.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   }
+  ]
+ },
+ {
+  "item": "l04_graph_weakly_connected",
+  "family": "alloy",
+  "mutants": 11,
+  "survivors_equivalent": 1,
+  "survivors_distinguishable": 4,
+  "survivors_unknown": 0,
+  "killed": 6,
+  "killed_by_item_questions_alone": 6,
+  "rows": [
+   {
+    "operator": "forall->exists",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "forall->exists",
+    "path": "body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.body.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.body.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.body.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "star<->plus",
+    "path": "body.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "body.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "equivalent"
+   },
+   {
+    "operator": "or->and",
+    "path": "body.body.right.edge",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "body.body.right.edge",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "body.body.right.edge",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "l05_graph_ring",
+  "family": "alloy",
+  "mutants": 16,
+  "survivors_equivalent": 1,
+  "survivors_distinguishable": 3,
+  "survivors_unknown": 0,
+  "killed": 12,
+  "killed_by_item_questions_alone": 11,
+  "rows": [
+   {
+    "operator": "forall->exists",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "body.right.left.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "body.right.left.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "body.right.left.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "forall->exists",
+    "path": "body.right.left.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "body.right.left.body.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "forall->exists",
+    "path": "body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "body.right.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "star<->plus",
+    "path": "body.right.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "swap-direction",
+    "path": "body.right.right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "equivalent"
+   },
+   {
+    "operator": "closure->edge",
+    "path": "body.right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "l06_graph_tree",
+  "family": "alloy",
+  "mutants": 25,
+  "survivors_equivalent": 1,
+  "survivors_distinguishable": 3,
+  "survivors_unknown": 0,
+  "killed": 21,
+  "killed_by_item_questions_alone": 21,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "forall->exists",
+    "path": "right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.left.body.right.body.body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "closure->edge",
+    "path": "left.body.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.body.body.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "forall->exists",
+    "path": "right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "forall->exists",
+    "path": "left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-negation",
+    "path": "left.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "forall->exists",
+    "path": "right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "right.left.body.right.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.body.body.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-negation",
+    "path": "right.right.body.body.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.left.body.right.body.body.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "left.body.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.body.body.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "right.right.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.body.body.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.body.body.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "right.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "drop-negation",
+    "path": "right.right.body.body.left.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "swap-direction",
+    "path": "left.body.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "equivalent"
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   }
+  ]
+ },
+ {
+  "item": "l07_marksweep_mark",
+  "family": "alloy",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 0,
+  "killed": 25,
+  "killed_by_item_questions_alone": 12,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "left.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.body.left.right.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.left.right.edge.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.body.left.left.left.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.body.right.right.left.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.body.right.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.body.left.left.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "right.body.body.left.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.body.body.left.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "left.body.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.body.body.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.body.right.left.left.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.body.left.left.left.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.body.left.left.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.body.left.right.left.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.body.left.left.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.body.right.left.edge",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "forall->exists",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "left.body.right.left.edge.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.body.left.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "right.body.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.left.right.edge.left.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.body.left.left.right.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.left.right.edge.left.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "l08_addressbook_lookup",
+  "family": "alloy",
+  "mutants": 12,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 2,
+  "survivors_unknown": 0,
+  "killed": 10,
+  "killed_by_item_questions_alone": 10,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "star<->plus",
+    "path": "right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "swap-direction",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.edge",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.edge.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.edge.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.edge.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "distinguishable"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.edge.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.edge.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.edge.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   }
+  ]
+ },
+ {
+  "item": "w01_s3_rw_bucket",
+  "family": "iam",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 22,
+  "killed": 3,
+  "killed_by_item_questions_alone": 3,
+  "rows": [
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.body.body.right.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.body.right.right.right.body.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.body.body.right.right.right.body.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-negation",
+    "path": "left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.body.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.body.body.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.body.right.right.right.body.right.right.left.right.body.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "left.body.body.right.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-negation",
+    "path": "left.body.body.right.right.right.body.right.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.body.right.right.left.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "left.body.body.right.right.right.body.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.body.body.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.left.right.right.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.right.right.body.right.left.right.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.right.left.right.right.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.body.body.right.right.right.body.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.body.body.right.right.right.body.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right.right.right.body.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right.left.right.right.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.body.body.right.right.right.body.right.right.left.right.body.body.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.right.right.body.right.right.right.right.right.left.body.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.body.right.left.right.right.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   }
+  ]
+ },
+ {
+  "item": "w02_deny_requested_region",
+  "family": "iam",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 19,
+  "killed": 6,
+  "killed_by_item_questions_alone": 6,
+  "rows": [
+   {
+    "operator": "and->or",
+    "path": "right.body.right.right.right.body.right.right.right.right.right.right.body.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.body.body.right.right.right.body.right.left.right.body.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.body.body.right.right.right.body.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.body.right.right.right.body.right.right.left.right.body.body.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.right.right.body.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-negation",
+    "path": "right.body.right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.right.right.body.right.right.right.left.right.body.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.body.right.right.right.body.right.right.right.left.right.body.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.body.body.right.right.right.body.right.right.right.right.right.right.body.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.body.body.right.right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.right.right.body.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.right.right.body.right.right.right.right.right.left.body.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-negation",
+    "path": "right.body.right.right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.body.right.left.left.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "exists->forall",
+    "path": "right.body.right.right.right.body.right.right.left.right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.right.right.body.right.right.left.right.body.body.body.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.left.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "right.body.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right.right.right.body.right.right.right.right.right.left.body.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "left.body.body.right.right.right.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.body.body.right.right.right.body.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right.right.right.body.right.right.right.right.right.left.body.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "right.body.right.right.right.body.right.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   }
+  ]
+ },
+ {
+  "item": "w03_mfa_selfmanage",
+  "family": "iam",
+  "mutants": 25,
+  "survivors_equivalent": 0,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 9,
+  "killed": 16,
+  "killed_by_item_questions_alone": 15,
+  "rows": [
+   {
+    "operator": "or->and",
+    "path": "left.body.body.right.right.right.body.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right.right.left.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.body.body.right.right.right.body.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "exists->forall",
+    "path": "left.body.body.right.right.right.body.right.right.right.right.right.left.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right.left.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.body.body.right.right.right.body.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.body.right.left.right.right.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "left.body.body.right.right.right.body.right.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.body.body.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "left.body.body.right.right.left.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.body.right.left.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.body.right.right.right.body.right.right.right.left.right.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "left.body.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body.right.right.left.left.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.body.body.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.right.right.body.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "left.body.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "left.body.body.right.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-negation",
+    "path": "left.body.body.right.left.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.right.right.body.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right.right.left.left.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.right.right.body.right.right.right.left.right.body.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-left-disjunct",
+    "path": "right.body.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right.right.right.body.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   }
+  ]
+ }
+]

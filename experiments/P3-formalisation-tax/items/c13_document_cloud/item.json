@@ -1,0 +1,252 @@
+{
+ "family": "cedar",
+ "synthetic": false,
+ "provenance": {
+  "repository": "cedar-policy/cedar-examples",
+  "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+  "licence": "Apache-2.0",
+  "policy_path": "cedar-example-use-cases/document_cloud/policies.cedar",
+  "entities_path": "cedar-example-use-cases/document_cloud/entities.json",
+  "schema_path": "cedar-example-use-cases/document_cloud/policies.cedarschema",
+  "requests": "cedar-example-use-cases/document_cloud/ALLOW, cedar-example-use-cases/document_cloud/DENY",
+  "schema_used_for_action_hierarchy": true
+ },
+ "question": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "world": {
+  "entities": [
+   {
+    "uid": "User::\"alice\"",
+    "attrs": {
+     "personalGroup": {
+      "__entity": "Group::\"alice_personal\""
+     },
+     "blocked": [
+      {
+       "__entity": "User::\"bob\""
+      }
+     ]
+    },
+    "parents": [
+     "Group::\"alice_personal\""
+    ]
+   },
+   {
+    "uid": "User::\"bob\"",
+    "attrs": {
+     "personalGroup": {
+      "__entity": "Group::\"bob_personal\""
+     },
+     "blocked": []
+    },
+    "parents": [
+     "Group::\"bob_personal\""
+    ]
+   },
+   {
+    "uid": "User::\"charlie\"",
+    "attrs": {
+     "personalGroup": {
+      "__entity": "Group::\"charlie_personal\""
+     },
+     "blocked": []
+    },
+    "parents": [
+     "Group::\"charlie_personal\""
+    ]
+   },
+   {
+    "uid": "Group::\"alice_personal\"",
+    "attrs": {
+     "owner": {
+      "__entity": "User::\"alice\""
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "Group::\"bob_personal\"",
+    "attrs": {
+     "owner": {
+      "__entity": "User::\"bob\""
+     }
+    },
+    "parents": [
+     "DocumentShare::\"alice_public_view\""
+    ]
+   },
+   {
+    "uid": "Group::\"charlie_personal\"",
+    "attrs": {
+     "owner": {
+      "__entity": "User::\"charlie\""
+     }
+    },
+    "parents": [
+     "DocumentShare::\"alice_public_view\""
+    ]
+   },
+   {
+    "uid": "Document::\"alice_public\"",
+    "attrs": {
+     "owner": {
+      "__entity": "User::\"alice\""
+     },
+     "isPrivate": false,
+     "publicAccess": "view",
+     "viewACL": {
+      "__entity": "DocumentShare::\"alice_public_view\""
+     },
+     "modifyACL": {
+      "__entity": "Document::\"alice_public_modify\""
+     },
+     "manageACL": {
+      "__entity": "Document::\"alice_public_manage\""
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "DocumentShare::\"alice_public_view\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "DocumentShare::\"alice_public_modify\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "DocumentShare::\"alice_public_manage\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Public::\"unauthenticated\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Drive::\"drive\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"DeleteGroup\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"ModifyGroup\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"CreateGroup\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"ViewDocument\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"AddToShareACL\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"DeleteDocument\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"EditIsPrivate\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"EditPublicAccess\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"ModifyDocument\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"CreateDocument\"",
+    "attrs": {},
+    "parents": []
+   }
+  ],
+  "linked": []
+ },
+ "questions": [
+  {
+   "description": "ALLOW/alice_create_authenticated.json",
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"CreateDocument\"",
+    "resource": "Drive::\"drive\"",
+    "context": {
+     "is_authenticated": true
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/alice_view_alice_public.json",
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"ViewDocument\"",
+    "resource": "Document::\"alice_public\"",
+    "context": {
+     "is_authenticated": true
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/charlie_view_alice_public.json",
+   "request": {
+    "principal": "User::\"charlie\"",
+    "action": "Action::\"ViewDocument\"",
+    "resource": "Document::\"alice_public\"",
+    "context": {
+     "is_authenticated": true
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "DENY/alice_create_unauthenticated.json",
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"CreateDocument\"",
+    "resource": "Drive::\"drive\"",
+    "context": {
+     "is_authenticated": false
+    }
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "DENY/bob_view_alice_public.json",
+   "request": {
+    "principal": "User::\"bob\"",
+    "action": "Action::\"ViewDocument\"",
+    "resource": "Document::\"alice_public\"",
+    "context": {
+     "is_authenticated": true
+    }
+   },
+   "recorded_decision": "deny"
+  }
+ ],
+ "id": "c13_document_cloud",
+ "source_files": {
+  "source.cedar": "fe0a1f463dbac5756b256df94807c34d6eb81eb501b76e627f54802b5811f990"
+ }
+}

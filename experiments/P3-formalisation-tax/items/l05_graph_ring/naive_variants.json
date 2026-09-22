@@ -1,0 +1,7 @@
+[
+ {
+  "name": "closure-direction-swapped",
+  "description": "rootedAt as `root in node.*r` instead of `node in root.*r`.",
+  "ve": "for every atom n, (if (n is sig_node), then ((there exists atom y, ((n f_edges y) and (for every atom z, (if (n f_edges z), then (z equals y))))) and (for every atom m, (if (m is sig_node), then (rtc[f_edges](m, n)))))).\n"
+ }
+]

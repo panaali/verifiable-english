@@ -1,0 +1,16 @@
+{
+ "constants": {
+  "list_photos": {
+   "entity": "Action::\"listPhotos\""
+  },
+  "view": {
+   "entity": "Action::\"view\""
+  },
+  "device_prototypes": {
+   "entity": "Album::\"device_prototypes\""
+  },
+  "hw": {
+   "value": "HardwareEngineering"
+  }
+ }
+}
