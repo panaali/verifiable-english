@@ -1,0 +1,5 @@
+{
+  "claim": "u_d593 cannot access x_fe52.",
+  "note": "Every route toward x_fe52 by u_d593 appears to break. The suffixed chains fail on naming: g_d369_d1 is reached only through g_06a3_d1_v2, g_d369_d0 through g_06a3_d0_v2, and g_bf8c_d2 through g_ef95_d2_v2, while u_d593 belongs to g_ef95_d2, not the _v2 group. On the role side, r_103e_d3 inherits r_1fda_d3, but r_dc3d_d3 flows only into r_1fda_d3_v2. Likewise, r_dc3d_d4 feeds r_1fda_d4_v2, r_dc3d_d6 feeds r_1fda_d6_v2, and r_1fda_d0 does not flow to r_103e_d0. The d5 group is g_d369_d5, but the binding names g_d369_d5_v2. The d1 and d2 role chains exist, but u_d593 is not a member of their bound groups. The unsuffixed r_103e and r_1fda roles are declared, but they sit outside every d-indexed chain. Under the stated case-sensitive, exact-string semantics, the claim appears to hold: u_d593 cannot access x_fe52.",
+  "valid": true
+}

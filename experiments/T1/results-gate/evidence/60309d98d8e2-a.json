@@ -1,0 +1,5 @@
+{
+  "claim": "u_32d5 cannot access x_efae.",
+  "note": "The claim holds: u_32d5 cannot access x_efae. u_32d5 has no direct bindings. Its groups are g_1b9b and g_1b9b_d0 through g_1b9b_d6. Only four of these lead anywhere: g_1b9b\u2192g_0953 gets r_7cab, g_1b9b_d0\u2192g_0953_d0 gets r_7cab_d0, g_1b9b_d1\u2192g_0953_d1 gets r_7cab_d1, and g_1b9b_d2\u2192g_0953_d2 gets r_7cab_d2. g_1b9b_d3 reaches g_0953_d3, which has no binding; the r_7cab_d3 binding belongs to g_0953_d3_v2. The d4, d5 and d6 edges start from the _v2 groups, which u_32d5 does not belong to. None of the four roles reaches a d436 role. r_7cab_v2, not r_7cab, inherits r_999c. r_7cab_d2_v2, not r_7cab_d2, inherits r_999c_d2. r_999c_d1 flows to r_7cab_d1_v2, not r_7cab_d1. r_7cab_d0 does inherit r_999c_d0, but r_999c_d0 has nothing: only r_999c_d0_v2 receives r_d436_d0. None of these roles grants x_efae directly or inherits any other role. x_efae is granted only through the r_d436* roles, so no path exists.",
+  "valid": true
+}

@@ -1,0 +1,5 @@
+{
+  "claim": "u_efc5 cannot access x_b4bb.",
+  "note": "The claim holds: no path connects u_efc5 to x_b4bb. u_efc5 belongs only to g_8014 and g_8014_d0 through g_8014_d6. Each chain breaks on a near-miss identifier. d0: g_8014_d0\u2192g_2126_d0\u2192g_41d4_d0, but the next edge is from g_41d4_d0_v2. d1: \u2192g_2126_d1\u2192g_41d4_d1, but the next edge is from g_41d4_d1_v2. d2: \u2192g_2126_d2, but the next edge is from g_2126_d2_v2. d3: \u2192g_2126_d3\u2192g_41d4_d3\u2192g_349c_d3\u2192g_433c_d3, but the next edge is from g_433c_d3_v2. d5: \u2192\u2026\u2192g_433c_d5, but the next edge is from g_433c_d5_v2. d6: the edge into g_2126_d6 is from g_8014_d6_v2. g_8014: the edge into g_2126 is from g_8014_v2. d4 reaches g_6f16_d4, which holds r_3bd8_d4. But the inheritance line covers r_3bd8_d4_v2, not r_3bd8_d4, and r_3bd8_d4 has no resource binding. So r_3bd8_d4 grants nothing. Therefore u_efc5 cannot access x_b4bb.",
+  "valid": true
+}

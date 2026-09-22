@@ -1,0 +1,5 @@
+{
+  "claim": "u_9a00 cannot access x_a53d.",
+  "note": "I checked every route to x_a53d, and u_9a00 has none. x_a53d is bound only to the r_0cc1 family: r_0cc1, r_0cc1_d0 through r_0cc1_d6. u_9a00 has no direct role bindings. Its memberships are g_e5f3 and g_e5f3_d0 through g_e5f3_d6. The suffixed chains break because of name mismatches. g_e5f3_d0 joins g_b2ab_d0, but the binding needs g_e5f3_d0_v2. g_b2ab_d4 appears only as g_b2ab_d4_v2. g_8620_d2_v2 holds r_9f9a_d2, but g_a937_d2 feeds g_8620_d2. r_9f9a_d1 is not linked to r_804a_d1; only r_9f9a_d1_v2 is. In the d0 and d2 chains, the inheritance runs from r_0cc1 to r_804a, the wrong direction to grant access. The unsuffixed chain goes g_e5f3, g_b2ab, g_a937, g_8620, r_9f9a, r_804a. It ends at r_804a, and no stated inheritance gives r_804a the permissions of r_0cc1 in a way that reaches x_a53d. So the claim holds: u_9a00 cannot access x_a53d.",
+  "valid": true
+}

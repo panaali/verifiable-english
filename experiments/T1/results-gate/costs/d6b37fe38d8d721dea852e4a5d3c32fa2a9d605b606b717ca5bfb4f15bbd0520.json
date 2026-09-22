@@ -1,0 +1,12 @@
+{
+  "account_label": "danielsaeedi37",
+  "arm": "a",
+  "elapsed_s": 8.51606112497393,
+  "input_tokens": 29880,
+  "item_id": "c526b858bb4a/a/opus/1/decision",
+  "key": "d6b37fe38d8d721dea852e4a5d3c32fa2a9d605b606b717ca5bfb4f15bbd0520",
+  "output_tokens": 875,
+  "role": "judge",
+  "served_model": "claude-opus-5-5",
+  "thinking_tokens_reported": 595
+}

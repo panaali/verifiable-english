@@ -1,0 +1,5 @@
+{
+  "claim": "u_68aa cannot access x_a3ef.",
+  "note": "The claim holds. u_68aa belongs only to g_a58c and g_a58c_d0 through g_a58c_d6. Each chain dead-ends. (1) g_a58c\u2192g_ba7b\u2192g_7750\u2192g_019c has r_e800, but r_e800 has no resources or inheritance; only r_e800_v2 receives r_3929. (2) The d0 chain stops at g_7750_d0, since g_7750_d0_v2 is a different group. (3) The d1 chain reaches g_019c_d1, but r_e800_d1 is bound to g_019c_d1_v2. (4) The d2 chain likewise reaches g_019c_d2, but r_e800_d2 is bound to g_019c_d2_v2. (5) The d3 chain reaches g_019c_d3 with r_e800_d3, but the only related rule gives r_3929_d3 permissions to r_e800_d3_v2, not to r_e800_d3. (6) The d4 chain reaches g_019c_d4, but r_e800_d4 is bound to g_019c_d4_v2. (7) The d5 chain stops at g_7750_d5, since only g_7750_d5_v2 joins g_019c_d5. (8) The d6 chain reaches g_019c_d6 with r_e800_d6, but r_3929_d6 flows only to r_e800_d6_v2. None of the reached roles grant x_a3ef, so no path exists.",
+  "valid": true
+}

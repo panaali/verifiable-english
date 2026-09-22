@@ -1,0 +1,5 @@
+{
+  "claim": "u_52d9 cannot access x_1f1b.",
+  "note": "True: no path exists. u_52d9's only memberships are g_a62d and g_a62d_d0 through g_a62d_d6. Tracing each chain: (base) g_a62d\u2192g_c7d0\u2192g_db2d\u2192g_df84, but r_7830 is bound to g_df84_v2, not g_df84. (d0) chain reaches g_df84_d0; the binding is on g_df84_d0_v2. (d1) chain stops at g_db2d_d1; only g_db2d_d1_v2 is in g_df84_d1. (d3), (d5), (d6) likewise stop at g_db2d_d3/d5/d6; only the _v2 variants join g_df84_*. (d4) chain reaches g_df84_d4; the binding is on g_df84_d4_v2. (d2) chain reaches g_df84_d2, which holds r_7830_d2. r_7830_d2 inherits r_7648_d2, but r_7648_d2 has no grants or inheritance: r_63b7_d2 flows only to r_7648_d2_v2, a different identifier. x_1f1b is reachable only via r_63b7* roles, and none of u_52d9's groups hold any other role that could reach it. Therefore u_52d9 cannot access x_1f1b.",
+  "valid": true
+}

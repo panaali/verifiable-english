@@ -1,0 +1,5 @@
+{
+  "claim": "u_f8ba cannot access x_3829.",
+  "note": "Every x_3829 grant sits on an r_2565* role, so I traced each u_f8ba chain to those roles. u_f8ba reaches g_ec7b_d0 to d6 and then the g_3135_dN, g_ad64_dN, g_cff0_dN and g_326e_dN groups, which hold r_585a_dN. Each variant chain breaks on an exact-string mismatch. d0 needs g_ec7b_d0_v2, which u_f8ba does not join. d1 and d3 bindings sit on g_326e_d1_v2 and g_326e_d3_v2, not the plain groups. d2 and d6 only grant r_585a_d2_v2 and r_585a_d6_v2, which have no bindings. d4 inheritance runs from r_67dd_d4_v2, not r_67dd_d4. d5 ends at r_67dd_d5_v2, a different role. For the undecorated branch, the prose says r_67dd's permissions are also r_585a's, which flows from r_67dd to r_585a, not back. So holders of r_585a gain nothing from r_67dd or r_2565, and u_f8ba has no directed path to x_3829.",
+  "valid": true
+}

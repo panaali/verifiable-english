@@ -1,0 +1,5 @@
+{
+  "claim": "u_583f cannot access x_f64c.",
+  "note": "u_583f belongs only to the diversified groups g_5c00_d0 through g_5c00_d6 and to the base g_5c00. Each _dN chain (for example g_5c00_d1\u2192g_ddbd_d1\u2192g_7e38_d1\u2192g_7e72_d1) ends at a variant group. None of those variant groups has a binding that reaches any r_96f2_* role. g_7e72_d1_v2, g_7e72_d4_v2 and similar groups are distinct identifiers that u_583f is not a member of. The base chain g_5c00\u2192g_ddbd\u2192g_7e38\u2192g_7e72 does give r_4506. However, the only link between r_4506 and r_59a1 is 'Every permission of role r_59a1 is also a permission of role r_4506.' Read as a containment statement, that sentence constrains r_59a1's permission set relative to r_4506. It does not grant r_4506 holders anything from r_59a1, so r_4506 holders never obtain r_59a1 or r_96f2. No other binding or inheritance line connects u_583f's roles to r_96f2 or its variants. Therefore x_f64c is unreachable, and the claim holds.",
+  "valid": true
+}

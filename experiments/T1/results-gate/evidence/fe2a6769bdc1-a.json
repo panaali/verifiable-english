@@ -1,0 +1,5 @@
+{
+  "claim": "u_ee78 cannot access x_3227.",
+  "note": "The claim is true: no path leads from u_ee78 to x_3227. u_ee78 belongs directly to g_f11a and g_f11a_d0 through g_f11a_d6. Every chain toward a g_08fe* group breaks. g_f11a leads to g_36d2, g_c8a8, g_916a, g_ad34 and g_08fe, but g_08fe has no bindings; only g_08fe_v2 does. For d0 and d1, g_916a_d0 and g_916a_d1 have no parent groups; the g_ad34 links belong to the separate _v2 groups. For d3, d4 and d6, g_f11a_d3/d4/d6 have no parent groups; only their _v2 variants connect to g_36d2. For d5, g_36d2_d5 has no parent; only g_36d2_d5_v2 links to g_c8a8_d5. For d2, the chain does reach g_08fe_d2, which holds r_7c25_d2. But r_7c25_d2 has no resource binding and no inheritance; the only related rule gives r_7c25_d2_v2, a different role, the permissions of r_62eb_d2. So none of the r_62eb* or r_7c25* roles that reach x_3227 is held by u_ee78, and none of its groups holds any other role.",
+  "valid": true
+}

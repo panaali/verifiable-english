@@ -1,0 +1,5 @@
+{
+  "claim": "u_d938 cannot access x_6027.",
+  "note": "The claim is true: u_d938 has no path to x_6027. Only the r_e52b roles (r_e52b, _d0 to _d6) grant x_6027. Only r_9f12_d0 and r_9f12_d4 receive an r_e52b role's permissions. The other statements run the wrong way (r_e52b to r_9f12) or target r_9f12_d2_v2. u_d938 belongs to g_dd5a and g_dd5a_d0 to _d6, and every chain breaks. d0: the chain reaches g_5c14_d0, but only g_5c14_d0_v2 is in g_9110_d0. d1: it reaches g_9110_d1, but r_9f12_d1 is bound to g_9110_d1_v2. d2: it reaches g_9110_d2 (r_9f12_d2), but r_e52b_d2 flows to r_9f12_d2_v2. d3: it reaches g_05b5_d3, but only g_05b5_d3_v2 is in g_5c14_d3. d4: it reaches g_9110_d4, but r_9f12_d4 is bound to g_9110_d4_v2. d5: g_dd5a_d5 has no parent; only g_dd5a_d5_v2 is in g_7344_d5. d6: it reaches g_ae75_d6, but only g_ae75_d6_v2 is in g_05b5_d6; r_e52b_d6 also flows the wrong way. Base: it reaches g_5c14, but only g_5c14_v2 is in g_9110; r_e52b also flows the wrong way. No other binding reaches an r_e52b role.",
+  "valid": true
+}

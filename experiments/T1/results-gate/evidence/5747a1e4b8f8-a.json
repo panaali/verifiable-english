@@ -1,0 +1,5 @@
+{
+  "claim": "u_3795 cannot access x_977e.",
+  "note": "The claim holds: every path from u_3795 breaks before reaching a role that grants x_977e. u_3795 belongs only to g_bd07 and g_bd07_d0 through g_bd07_d6. - Base: g_bd07\u2192g_d6fb\u2192g_1388\u2192g_eeb6\u2192g_d5b7\u2192g_7ca7. g_7ca7 has no binding; r_9570 is bound only to g_7ca7_v2. - d0: chain reaches g_d5b7_d0, but only g_d5b7_d0_v2 is in g_7ca7_d0. - d1: reaches g_7ca7_d1, which holds r_9570_d1. Only r_9570_d1_v2 receives r_602b_d1. - d2: reaches r_9570_d2, which inherits r_602b_d2. Only r_602b_d2_v2 receives r_c95c_d2. - d3: g_d6fb_d3\u2192g_1388_d3, but only g_1388_d3_v2 is in g_eeb6_d3. The r_602b_d3 rule also points the wrong way. - d4: stops at g_1388_d4 (g_1388_d4_v2 differs). The r_c95c_d4 rule also points the wrong way. - d5: stops at g_d6fb_d5, because only g_d6fb_d5_v2 is in g_1388_d5. - d6: reaches g_7ca7_d6, but r_9570_d6 is bound only to g_7ca7_d6_v2. No c95c role reachable, so u_3795 cannot access x_977e.",
+  "valid": true
+}

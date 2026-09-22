@@ -1,0 +1,5 @@
+{
+  "claim": "u_a866 cannot access x_e891.",
+  "note": "The claim holds: no directed path runs from u_a866 to x_e891. u_a866 has no direct role bindings. Its groups are g_90f6 and g_90f6_d0 through g_90f6_d6. g_90f6_d3 belongs to no group (only g_90f6_d3_v2 links to g_4a38_d3). Each other group has exactly one parent, and every chain stops before a role that grants x_e891. g_90f6\u2192g_4a38\u2192r_3398: r_3398 inherits nothing, since the rule from r_3c7e goes to r_3398_v2. d0: r_3398_d0\u2192r_3c7e_d0\u2192r_c344_d0, which inherits nothing; only r_c344_d0_v2 gets r_5b54_d0. d1: r_3398_d1 inherits nothing; only r_3398_d1_v2 gets r_3c7e_d1. d2: r_3398_d2\u2192r_3c7e_d2, which inherits nothing; the rule applies to r_3c7e_d2_v2. d4: r_3398_d4\u2192r_3c7e_d4\u2192r_c344_d4, which inherits nothing; only r_c344_d4_v2 gets r_5b54_d4. d5: r_3398_d5\u2192r_3c7e_d5, which inherits nothing; only r_3c7e_d5_v2 gets r_c344_d5. d6: r_3398_d6\u2192r_3c7e_d6, which inherits nothing; the r_c344_d6 rule targets r_3c7e_d6_v2. No reachable role grants x_e891, so u_a866 cannot access x_e891.",
+  "valid": true
+}

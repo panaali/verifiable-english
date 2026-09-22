@@ -1,0 +1,5 @@
+{
+  "claim": "u_57a7 cannot access x_1ad5.",
+  "note": "The claim holds: u_57a7 has no path to x_1ad5. Each of its membership chains either stops at a near-miss name or reaches a role that lacks the needed inheritance. - d0: g_1539_d0 has no parent group. The edge is g_1539_d0_v2 -> g_ac97_d0. - d2: g_a7cb_d2 has no parent. Only g_a7cb_d2_v2 -> g_3ac4_d2 exists. - d3: g_a7cb_d3 has no parent. The edge is g_a7cb_d3_v2 -> g_3ac4_d3. - d4: the chain stops at g_ac97_d4. The edge is g_ac97_d4_v2 -> g_3cd2_d4. - base: u_57a7 reaches g_3cd2 and r_84ad. r_84ad inherits r_9aca, but r_9aca inherits nothing, because only r_9aca_v2 receives r_4d0b. - d1: u_57a7 reaches r_84ad_d1 and r_9aca_d1. r_4d0b_d1 feeds r_9aca_d1_v2, not r_9aca_d1. - d5: u_57a7 reaches r_84ad_d5. Only r_84ad_d5_v2 receives r_9aca_d5. - d6: u_57a7 reaches r_84ad_d6, r_9aca_d6 and r_4d0b_d6. r_1881_d6 feeds r_4d0b_d6_v2, not r_4d0b_d6. No other bindings or inheritance lines connect u_57a7's roles to any r_1881* role. Since identifiers are exact strings, access is denied.",
+  "valid": true
+}

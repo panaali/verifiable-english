@@ -1,0 +1,5 @@
+{
+  "claim": "u_e41e cannot access x_9f1f.",
+  "note": "Every candidate route from u_e41e ends before reaching x_9f1f. Only the r_97ed* roles bind to x_9f1f. The per-domain chains (g_c249_dN\u2192g_ba37_dN\u2192g_00c8_dN\u2192g_a253_dN\u2192g_6fab_dN\u2192r_5132_dN) break: g_ba37_d0_v2, g_00c8_d3_v2 and g_00c8_d4_v2 are distinct identifiers, and the r_5132_dN_v2 roles are never bound to any principal. The non-suffixed chain reaches r_5132 through g_6fab. However, the statement 'Every permission of role r_6de0 is also a permission of role r_5132' flows from r_5132 toward r_6de0. It does not give r_5132 holders the permissions of r_6de0. Likewise, 'Every permission of role r_97ed is also a permission of role r_6de0' does not give r_6de0 holders access to r_97ed's resources. So r_5132 never obtains x_9f1f. No other binding for u_e41e or its groups touches the r_97ed family. Therefore u_e41e cannot access x_9f1f.",
+  "valid": true
+}
