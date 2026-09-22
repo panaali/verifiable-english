@@ -18,3 +18,15 @@ reference predicate computed from the informal problem by an INDEPENDENT formali
 (c) without the independent formaliser (harness only reports small instances where the statement is true/false, no
 reference). Metrics: detection F1/false alarms vs the published 0.15-0.18 anchor; cost. Requires a separate Lean+Mathlib
 project (not the repo's trusted Lean). VE-language contribution is NOT claimed; this tests the protocol idea.
+
+## After review (2026-09-22): both reviewers "revise; narrow feasibility pilot only"
+
+Corrections: the 0.15-0.18 F1 is ONLY the "Formalization Error" category on 92 curated problems (overall 0.37-0.42);
+not comparable to a balanced binary task; the real gap is false alarms (recall already ~0.85). A distinguishing example
+shows two formalisations differ, not which is right; seeded executable mutations make arm (c) win by construction.
+Evaluation is limited to N/Z/finite statements (R and unbounded quantifiers are not decidable).
+Adopted minimum pilot: (1) ~30 miniF2F-v2 pairs where v2 changed the statement (original = unfaithful, corrected =
+faithful), labels human/independently checked; (2) measure WITNESS YIELD: fraction of unfaithful statements for which
+Mathlib `plausible`/`decide` finds a small-instance witness; STOP if < 30%; (3) only if >= 30%: Opus judge, arms
+(a) baseline vs (d) witness evidence, then reference-only vs reference+search at matched budget; report TPR/FPR with Wilson
+intervals, natural errors as the headline. Separate Lean+Mathlib project pinned to miniF2F-v2's toolchain.
