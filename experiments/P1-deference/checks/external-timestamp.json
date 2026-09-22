@@ -8,9 +8,9 @@
     "info",
     "/Users/seyran/code/ve-codex/experiments/PREREG-HASHES.txt.ots"
   ],
-  "completed_at": "2026-09-22T04:36:27.419673+00:00",
+  "completed_at": "2026-09-22T04:58:29.131733+00:00",
   "exit_code": 0,
-  "freeze_sha256": "f15901496a5794f063ce67baba3ab212c939075fff5aa8cf875b4e76b8e18e21",
+  "freeze_sha256": "3238548278e22b5984e554b171295656ca26bf367c330d8e6f211e4279725af9",
   "hash_file_sha256": "d9d0907811f4c9389415bde81538c944e72f5a567535adff41a27c0d7900782c",
   "passed": true,
   "pending_calendar_sufficient_for_pilot": true,

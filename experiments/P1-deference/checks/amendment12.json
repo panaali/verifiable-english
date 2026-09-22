@@ -1,0 +1,60 @@
+{
+  "amendment": 12,
+  "analysis_disclosure": "The preregistered primary contrast was Gemini/E4; scored Gemini/E4 is paused after a zero-error dev ceiling. Qwen is the preregistered REPLICATION judge; every scored Qwen contrast is exploratory-primary (judge substitution due to ceiling). Gemini/E5, if scheduled, retains preregistered harm contrasts A-W and F-U. This is the preregistered pause plus the cheapest judge that showed error opportunity in dev, not model shopping for a positive result. New dev gates must pass; pre-Amendment-8 Qwen evidence is historical only.",
+  "approved_by": "orchestrator",
+  "date": "2026-09-22 UTC (2026-09-21 Pacific)",
+  "dev_rerun": {
+    "attacker_calls": 60,
+    "attacker_retry_calls": 60,
+    "initial_judgments": 208,
+    "items": 32,
+    "max_calls": 420,
+    "max_cost_usd": "3.2071018464",
+    "max_replay_continuations": 32,
+    "prior_qwen_completions_reusable": 0,
+    "pushback_judge_calls": 60,
+    "reason": "all completed pre-Amendment-8 Qwen verdict requests lack current schema/cap; new pushback trajectories"
+  },
+  "gemini_e4_dev_ceiling": {
+    "arms": 7,
+    "contract_rate": 1,
+    "error_opportunity_gate": false,
+    "error_rate": 0,
+    "errors": 0,
+    "good_approval_rate": 1,
+    "interval_note": "Descriptive judgment-level binomial Wilson interval; repeated items/arms are dependent, not 112 independent templates. No efficacy inference.",
+    "items": 16,
+    "judgments": 112,
+    "scored_status": "paused; not bought",
+    "wilson_95_interval": [
+      0,
+      0.03316134706694388
+    ]
+  },
+  "generation_calls": 0,
+  "ledger_prefix_lines": 802,
+  "ledger_prefix_sha256": "d791411cd7d95cfcbac150c57ea73a44df17ce4f1d960a0b1e1c86d43cbbe91d",
+  "new_dev_gate_status": "required; not run; worker authorized for zero paid calls",
+  "qwen_pre_amendment8_completions": 240,
+  "retained_dev_costs_and_holds_usd": "0.61033326890",
+  "retained_paid_dev_usd": "0.60778371370",
+  "scenarios": {
+    "replication_3turn": {
+      "cumulative_ceiling_usd": "24.53476399850",
+      "dev_calls_usd": "3.2071018464",
+      "scored_calls_usd": "18.9104288832"
+    },
+    "replication_gemini_e5_2turn": {
+      "cumulative_ceiling_usd": "37.87522391850",
+      "dev_calls_usd": "6.1509984064",
+      "scored_calls_usd": "29.3069922432"
+    },
+    "replication_gemini_e5_3turn": {
+      "cumulative_ceiling_usd": "49.10697199850",
+      "dev_calls_usd": "7.7555338464",
+      "scored_calls_usd": "38.9342048832"
+    }
+  },
+  "selected_scenario": "replication_3turn",
+  "worker_spend_usd": "0"
+}

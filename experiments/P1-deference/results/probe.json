@@ -388,9 +388,19 @@
       "prompt_sha256": "223c0b400dad7e8468b8ce1fd3ebe704fd808cf8cc468f8885a49090996e229a"
     }
   ],
-  "schedule": "primary_1024",
+  "schedule": "replication_3turn",
   "schedule_before_amendment11": "full_256",
+  "schedule_before_amendment12": "primary_1024",
   "schedule_selection": {
+    "amendment": 12,
+    "criterion": "first priority with strict cumulative ceiling <= $40; full judge caps; retained costs and allowances included",
+    "scenarios": {
+      "replication_3turn": "24.53476399850",
+      "replication_gemini_e5_2turn": "37.87522391850",
+      "replication_gemini_e5_3turn": "49.10697199850"
+    }
+  },
+  "schedule_selection_before_amendment12": {
     "accounting": "Existing ceilings retain 256-token judge planning means. Worst-case ceilings use unchanged 1024-token judge caps; both include unchanged input bounds, all attacker retries and existing allowances.",
     "amendment": 11,
     "authority": "orchestrator",

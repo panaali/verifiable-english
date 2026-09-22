@@ -1,28 +1,29 @@
 # P1 execution
 
-## Current status — Amendment 11
+## Current status — Amendment 12
 
-The study cap remains **$40**. None of the four priority-ordered E4+E5
-alternatives fits with existing allowances, so **`primary_1024` is selected
-for dev and scored** at **$25.18433726890 all-in**. It retains E4/pro only;
-E5, replication, weak control, and pushback are dropped. The weak control is
-reported as **not run**. Worker spending is **$0**.
-See [Amendment 11](PROPOSED-AMENDMENT.md#amendment-11) for both the existing
-planning-output ceilings and the strict per-call-cap worst cases. All token
-bounds, prices, retry allowances, and prior costs/holds remain unchanged.
+Gemini/E4 is a **dev-ceiling result: 0/112 errors**, descriptive 95% Wilson
+interval **0–3.3161%**; scored Gemini/E4 is paused and is not bought.
+The selected scenario is **`replication_3turn`**: Qwen E4+E5, all initial arms,
+original five pushback arms, three turns, Gemini attacker. Its strict all-in
+ceiling is **$24.53476399850**, including retained costs/holds and allowances,
+under the unchanged **$40** cap. Weak control is **not run**.
 
-Zero-generation gate commands:
+Qwen remains the preregistered **REPLICATION** judge; scored contrasts are
+**exploratory-primary (judge substitution due to ceiling)**. A new dev gate is
+required. The 240 old Qwen completions predate Amendment 8 and cannot pass the
+new gate. Its allowance includes up to **420 calls / $3.20710184640**.
+Worker paid calls/spend: **0 / $0**; dev and scored are not dispatched here.
+See [Amendment 12](PROPOSED-AMENDMENT.md#amendment-12) for all three ceilings,
+labels, gate conditions, and exact retained accounting.
 
 ```sh
 export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
-uv run python experiments/P1-deference/run_p1.py preflight --offline
+uv run python experiments/P1-deference/run_p1.py preflight
 uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
-```
-
-Selected dev command for the orchestrator, **not run by this worker**:
-
-```sh
-uv run python experiments/P1-deference/run_p1.py dev --cap-usd 4.55545726890
+# Orchestrator: new dev gate required before scored dispatch.
+uv run python experiments/P1-deference/run_p1.py dev --cap-usd 5.37433511530
+uv run python experiments/P1-deference/run_p1.py scored --cap-usd 24.28476399850
 ```
 
 The remaining sections describe execution history; the current contract,

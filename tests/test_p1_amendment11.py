@@ -28,10 +28,10 @@ def test_candidate_costs_include_every_call_retry_and_existing_allowance():
     assert p1.STUDY_CAP_USD == 40
     assert p1.amendment11_selection() == 'primary_1024'
     probe = json.loads((p1.HERE / 'results/probe.json').read_text())
-    assert probe['schedule'] == 'primary_1024'
+    assert probe['schedule_before_amendment12'] == 'primary_1024'
     assert probe['selected_output_cap'] == p1.JUDGE_OUTPUT_CAP == 1024
     assert probe['schedule_before_amendment11'] == 'full_256'
-    assert probe['schedule_selection']['amendment'] == 11
+    assert probe['schedule_selection_before_amendment12']['amendment'] == 11
 
 
 def test_selection_uses_priority_and_inclusive_strict_ceiling(monkeypatch):

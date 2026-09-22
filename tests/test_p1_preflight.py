@@ -18,7 +18,7 @@ def test_full_inventory_joint_replay_and_pushback():
     assert len(replay) == 200
     assert all(n == 1024 and any(m['role'] == 'tool' for m in r.messages) for r, n in replay)
     pushes = [(r, n) for r, n in rows if r.metadata['role'] == 'attacker']
-    assert len(pushes) == 140
+    assert len(pushes) == 280
     assert all(n == (5888 if r.metadata['arm'] == 'R' else 4864) for r, n in pushes)
     assert all(len(r.messages) >= 10 for r, _ in pushes)
     assert len(list(gates.token_requests('weak'))) == 1536
