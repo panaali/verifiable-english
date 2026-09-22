@@ -82,14 +82,18 @@ def test_offline_prose_is_honest_and_no_gold():
     with pytest.raises(ValueError):offline_pass([{'label':'shift'}])
 
 
-def test_review_blind_missing_and_hash_guard(tmp_path,items,labels):
+def test_review_blind_missing_and_hash_guard(tmp_path,items,labels,monkeypatch):
+    import experiments.p5_leakage as leakage
+    monkeypatch.setattr(leakage, "audit", lambda base: {"passed":True})
     for split in ('dev','scored'):archive(tmp_path/f'materials/{split}.jsonl.gz',[i for i in items if i['split']==split])
     archive(tmp_path/'labels.jsonl.gz',labels)
     out=tmp_path/'review.json';review.review_export(out,tmp_path)
-    rows=json.loads(out.read_text())
+    manifest=json.loads(out.read_text())
+    paths=[out.parent/path for batch in manifest['assignments'] for path in batch]
+    rows=[json.loads(path.read_text())[0] for path in paths]
     assert len(rows)==84 and all('kind' not in r['packet'] for r in rows)
     assert not review.gate(tmp_path)['passed']
-    with pytest.raises(PreflightError):review.submit(out,tmp_path)
+    with pytest.raises(PreflightError):review.submit(paths[0],tmp_path)
     rows[0]['packet_sha256']='tampered';out.write_text(json.dumps(rows))
     with pytest.raises(PreflightError,match='hash'):review.submit(out,tmp_path)
 
@@ -196,7 +200,7 @@ def test_sibling_glossaries_and_workload_identical(items):
         assert len({digest([(n['id'],n['parents']) for n in s['nodes']]) for s in siblings})==1
         assert len({digest(s['records']) for s in siblings})==1
         assert len({packed(s['nodes']) for s in siblings})==3
-        assert all('argument' not in s for s in siblings)
+        assert all(len(s['argument'].split('\n\n')) == 16 for s in siblings)
         assert all('rule_record' not in n for s in siblings for n in s['nodes'])
         assert all(len(s['nodes'])==16 and len(s['records'])==16 and len(s['premises'])==6 for s in siblings)
 
@@ -244,10 +248,10 @@ def test_rendered_prose_and_active_decoys(items):
     graphs={r['id']:r for r in read(p.HERE/'materials/graphs.jsonl.gz')}
     for item in items:
         q=item['payload']; g=graphs[item['id']]
-        assert g['construction']['version']==3
+        assert g['construction']['version']==4
         assert len(g['construction']['redundant_edges'])>=1
         for n in q['nodes']:
-            assert p.packet(item).count(n['text']) == 1
+            assert p.packet(item, 'VE').count(n['text']) == 1
             assert n['text'].startswith(('Given ', 'From ', 'Using ')) and ', ' in n['text']
         from ve import ArgumentGraph
         graph=ArgumentGraph.from_dict(g['intended'])
@@ -260,7 +264,7 @@ def test_rendered_prose_and_active_decoys(items):
         assert len(set(comparisons))==2
         import re
         assert set(re.findall(r'p\d+',g['bridge']['source'])) <= set(re.findall(r'p\d+',' '.join(comparisons)))
-        assert 'argument' not in q
+        assert len(q['argument'].split('\n\n')) == 16
         assert 'Possible senses' not in p.packet(item)
         assert 'rule_record' not in p.packet(item)
         assert 'rule_record' not in packed(p.request(item,'shared','paraphrase').messages)
@@ -270,9 +274,13 @@ def test_export_is_reproducible_and_not_variant_order(tmp_path,items,labels):
     for split in ('dev','scored'):
         archive(tmp_path/f'materials/{split}.jsonl.gz',[i for i in items if i['split']==split])
     out=tmp_path/'review.json';review.review_export(out,tmp_path)
-    rows=json.loads(out.read_text()); first=out.read_bytes()
-    kinds={l['id']:l['kind'] for l in labels}
-    assert all(len({kinds[r['item_id']] for r in rows[k::3]})==3 for k in range(3))
+    manifest=json.loads(out.read_text()); first=out.read_bytes()
+    family={i['id']:i['group'] for i in items}
+    assert len(manifest['assignments'])==3
+    for batch in manifest['assignments']:
+        rows=[json.loads((out.parent/path).read_text())[0] for path in batch]
+        assert len(rows)==28 and len({family[r['item_id']] for r in rows})==28
+        assert all('nodes' not in r['packet'] and 'argument' in r['packet'] for r in rows)
     # Reversing the input archives cannot alter the seeded export.
     for split in ('dev','scored'):
         archive(tmp_path/f'materials/{split}.jsonl.gz',list(reversed([i for i in items if i['split']==split])))
@@ -346,3 +354,76 @@ def test_node_relations_cover_balanced_units_and_independent_sense_orders(items,
     corrupt['nodes'][0]['text'] = 'Unparsed prose must block the gate, never silently lose a node.'
     with pytest.raises(ValueError, match='unparsed inference'):
         node_features(corrupt)
+
+
+def test_private_ids_and_nonce_lifecycle(tmp_path, items):
+    import hashlib
+    from experiments.p5_materials import private_nonce, packet_id
+    path = tmp_path/'nonce'
+    key = private_nonce(path)
+    assert key == private_nonce(path) and len(key) == 32
+    assert path.stat().st_mode & 0o777 == 0o600
+    slot = {'id':'example'}
+    assert packet_id(slot,key) == packet_id(slot,key)
+    assert packet_id(slot,key) != packet_id(slot,bytes(32))
+    # Enumerate the exact disclosed v3 dictionary; none recovers a current ID.
+    from experiments.prereg_inventory import p5
+    public = {'i'+hashlib.sha256(f"P5-construction-v3/{s['cluster']}/{v}".encode()).hexdigest()[:12]
+              for s in p5()['slots'] for v in range(3)}
+    assert not public & {i['id'] for i in items}
+    assert len({i['id'] for i in items}) == 84
+
+
+def test_prose_topology_and_reference_content(items):
+    import re
+    graphs={r['id']:r for r in read(p.HERE/'materials/graphs.jsonl.gz')}
+    critical_ranks=set()
+    for item in items:
+        q=item['payload']; paragraphs=q['argument'].split('\n\n')
+        seen={n['id'] for n in q['premises']}
+        refs=[]
+        for index,(n,para) in enumerate(zip(q['nodes'],paragraphs,strict=True)):
+            assert set(n['parents']) <= seen
+            seen.add(n['id'])
+            assert para.startswith(f"[{n['id']}] Taking ")
+            assert not re.search(r'\bn\d+\b',para.split('] ',1)[1])
+            m=re.search(r'the immediately preceding ([a-z-]+) result',para)
+            if m:
+                assert index>0
+                previous=q['nodes'][index-1]['text'].partition('. ')[0]
+                assert re.search(r', unit\d+ is '+re.escape(m[1])+r'(?: \(|\.)',previous)
+                refs.append(n['id'])
+        assert q['nodes'][-1]['id']==q['root']
+        assert len(refs)==4
+        critical_ranks.add(refs.index(graphs[item['id']]['construction']['target']))
+        assert set(refs)==set(graphs[item['id']]['construction']['unqualified_reference_nodes'])
+        for arm in ('X','S','L','shared'):
+            text=packed(p.request(item,arm,'paraphrase' if arm=='shared' else 'lone' if arm=='L' else 'author').messages)
+            assert 'VE node block' not in text and 'Taking ' in text
+        assert 'VE node block' in packed(p.request(item,'VE','author').messages)
+
+    assert len(critical_ranks)>1  # Never an exact first/last-reference shortcut.
+
+def test_context_and_reviewer_sibling_isolation(items):
+    from experiments.p5_isolation import validate_exposure
+    from experiments.p5_paraphrase import offline_pass
+    first=items[0]; sibling=next(i for i in items if i['group']==first['group'] and i['id']!=first['id'])
+    with pytest.raises(PreflightError,match='one dossier'):
+        p.request(first,'X','author',examples=[sibling])
+    with pytest.raises(PreflightError,match='history'):
+        p.request(first,'X','judge',history=[{'item_id':sibling['id'],'text':'bad'}])
+    with pytest.raises(ValueError,match='exactly one'):
+        offline_pass([first['payload'],sibling['payload']])
+    prior=[{'item_id':first['id'],'reviewer_id':'same-person'}]
+    incoming=[{'item_id':sibling['id'],'reviewer_id':'same-person'}]
+    with pytest.raises(PreflightError,match='siblings'):
+        validate_exposure(incoming,prior,{i['id']:i for i in items})
+    validate_exposure([{**incoming[0],'reviewer_id':'new-person'}],prior,{i['id']:i for i in items})
+
+
+def test_best_of_k_permutation_comparison():
+    from experiments.p5_leakage import permutation_summary
+    # An accuracy above 1/3 is fine if typical of the full search under null.
+    assert permutation_summary([.4,.45], [[.4,.5]]*199)['passed']
+    assert not permutation_summary([1.,.45], [[.4,.5]]*199)['passed']
+    assert permutation_summary([1.], [[.5]]*199)['p_value']==.005

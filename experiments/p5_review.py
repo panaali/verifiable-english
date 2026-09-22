@@ -5,6 +5,7 @@ import json
 import random
 from pathlib import Path
 from experiments.p5_materials import HERE, SEED, archive, read, write_json
+from experiments.p5_isolation import blind_packet, export_isolated, validate_exposure
 from ve_experiments.paid import digest, PreflightError
 
 CHECKS = ('source_fidelity', 'root_preserved', 'no_added_assumption', 'no_repaired_flaw',
@@ -18,14 +19,13 @@ def review_export(destination, base=HERE):
     items.sort(key=lambda item: item['id'])
     random.Random(f'{SEED}/packet-order-v3').shuffle(items)
     # No split/family/variant/formal artifact in review packets.
-    rows = [{'item_id': i['id'], 'packet_sha256':digest(i['payload']), 'packet':i['payload'],
+    rows = [{'item_id': i['id'], 'packet_sha256':digest(i['payload']), 'packet':blind_packet(i['payload']),
              'reviewer_id':'', 'reviewer_kind':'human|project_lead|model', 'model_family':'',
              'minutes':0, 'checks':{k:None for k in CHECKS},
              'annotation':{'kind':None, 'sense_use_mapping':{}, 'required_assumptions':[],
                  'root_meaning':'', 'acceptable_locations':[], 'source_evidence':[]},
              'corrections':[], 'notes':''} for i in items]
-    write_json(Path(destination), rows)
-    return {'packets':len(rows), 'output':str(destination)}
+    return export_isolated(destination, rows, {i['id']:i['group'] for i in items})
 
 
 def submit(path, base=HERE):
@@ -33,6 +33,7 @@ def submit(path, base=HERE):
     items = {i['id']:i for split in ('dev','scored') for i in read(base/f'materials/{split}.jsonl.gz')}
     ledger_path = base/'materials/review-ledger.jsonl.gz'
     ledger = read(ledger_path)
+    validate_exposure(submitted, ledger, items)
     prior = {(r['item_id'],r['reviewer_id'],r['packet_sha256']) for r in ledger if r['event']=='review'}
     new = []
     for row in submitted:
@@ -71,6 +72,7 @@ def adjudicate(path, base=HERE):
     ledger=read(base/'materials/review-ledger.jsonl.gz')
     items={i['id']:i for split in ('dev','scored') for i in read(base/f'materials/{split}.jsonl.gz')}
     item=items.get(row.get('item_id'))
+    validate_exposure([{**row, 'reviewer_id':row.get('adjudicator')}], ledger, items)
     if item is None or row.get('packet_sha256') != digest(item['payload']):
         raise PreflightError('adjudication must bind the current packet')
     matching=[r for r in ledger if r['event']=='review' and r['item_id']==row.get('item_id')

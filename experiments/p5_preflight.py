@@ -27,10 +27,10 @@ def fixtures():
                         'followup':author+critic+3*512,
                         'judge':author+critic+(3*512+256+512 if arm=='X' else 1024)+
                             (p.STAGES['repair'][1]+1024 if arm=='VE' else 0)}[stage]
-                    req=p.request(item,arm,stage,history=[{'stage':'reserved_history','text':''}] if reserve else None)
+                    req=p.request(item,arm,stage,history=[{'item_id':item['id'],'stage':'reserved_history','text':''}] if reserve else None)
                 yield req,reserve
                 if stage in ('judge','lone'):
-                    yield p.request(item,arm,stage,history=[{'stage':'reserved_history','text':''}] if reserve else None,judge='replication'),reserve
+                    yield p.request(item,arm,stage,history=[{'item_id':item['id'],'stage':'reserved_history','text':''}] if reserve else None,judge='replication'),reserve
         dossier=next(d for d in read(p.HERE/'materials/dossiers.jsonl.gz') if d['id']==item['id'])
         yield p.request({'id':item['id'],'split':'materials','payload':dossier},'shared','paraphrase'),0
 
@@ -137,6 +137,44 @@ def role_boundaries():
         'judges_structured':all(p.request(item,a,'lone' if a=='L' else 'judge').response_schema==p.VERDICT_SCHEMA for a in p.ARMS)}
 
 
+
+def packet_safety():
+    import re
+    from experiments.p5_isolation import validate_exposure
+    items=p.materials(); bad=[]
+    for item in items:
+        q=item['payload']; seen={n['id'] for n in q['premises']}
+        paragraphs=q['argument'].split('\n\n'); references=0
+        if len(paragraphs)!=16 or q['nodes'][-1]['id']!=q['root']:
+            bad.append(item['id']); continue
+        for index,(n,para) in enumerate(zip(q['nodes'],paragraphs,strict=True)):
+            if not set(n['parents']) <= seen or not para.startswith(f"[{n['id']}] "):
+                bad.append(item['id'])
+            seen.add(n['id'])
+            if re.search(r'\bn\d+\b',para.split('] ',1)[-1]):
+                bad.append(item['id'])
+            refs=re.findall(r'the immediately preceding ([a-z-]+) result',para)
+            references+=len(refs)
+            for term in refs:
+                previous=q['nodes'][index-1]['text'].partition('. ')[0] if index else ''
+                if not re.search(r', unit\d+ is '+re.escape(term)+r'(?: \(|\.)',previous):
+                    bad.append(item['id'])
+        if references!=4:
+            bad.append(item['id'])
+    sample=items[0]; sibling=next(i for i in items if i['group']==sample['group'] and i['id']!=sample['id'])
+    rejected=[]
+    for check in (
+        lambda:p.request(sample,'X','author',examples=[sibling]),
+        lambda:p.request(sample,'X','judge',history=[{'item_id':sibling['id']}]),
+        lambda:validate_exposure([{'item_id':sibling['id'],'reviewer_id':'fixture'}],
+            [{'item_id':sample['id'],'reviewer_id':'fixture'}],{i['id']:i for i in items})):
+        try:check();rejected.append(False)
+        except PreflightError:rejected.append(True)
+    return {'passed':len(items)==84 and not bad and all(rejected), 'items':len(items),
+            'prose_failures':sorted(set(bad)), 'references_per_packet':4,
+            'sibling_guards':rejected, 'context_policy':'one packet; no examples; item-bound transcript; disjoint raters',
+            'generation_calls':0}
+
 def external_timestamp(stamp):
     # Exact aggregate hash publication is required; local dates/commits are insufficient.
     proof=p.HERE/'freeze-manifest.sha256.ots';source=p.HERE/'freeze-manifest.sha256'
@@ -155,7 +193,9 @@ def preflight(offline=False):
         ('independent-prose',lambda:{'passed':len(read(p.HERE/'materials/paraphrases.jsonl.gz'))==84 and all(r['provenance'].get('independent_qwen_pass') for r in read(p.HERE/'materials/paraphrases.jsonl.gz'))}),
         ('construction',lambda:json.loads((p.HERE/'checks/construction.json').read_text())),
         ('known-answer',lambda:p.known_answer(p.materials(),p.check_labels())),
-        ('lean-replay',lean_replay),('leakage',leakage),('role-boundaries',role_boundaries),
+        ('lean-replay',lean_replay),('packet-safety',packet_safety),
+        ('leakage',lambda:json.loads((p.HERE/'checks/leakage.json').read_text())
+            if 'leakage_passed' in reports['review'] else {'passed':False,'reason':'review leakage audit failed'}),('role-boundaries',role_boundaries),
         ('external-timestamp',lambda:external_timestamp(stamp))]
     if not offline:checks.append(('tokenizer',tokenize))
     else:
@@ -229,19 +269,24 @@ def provider_smoke(cap,only_openrouter=False):
 
 def explanations(split,export=None,submit=None):
     rows=read(p.HERE/f'runs/{split}/trials.jsonl');items={i['id']:i for i in p.materials(split)}
+    from experiments.p5_isolation import blind_packet, export_isolated, validate_exposure
     if export:
         records=[]
         for row in rows:
             key=digest({k:row[k] for k in ('item_id','condition','judge','answer')})
-            records.append({'response_sha256':key,'packet':items[row['item_id']]['payload'],
+            records.append({'response_sha256':key,'item_id':row['item_id'],'packet':blind_packet(items[row['item_id']]['payload']),
                 'answer':row['answer'],'rater_id':'','source_grounded':None,'reason':'','protocol_recognized':None,
                 'source_fidelity':None,'event':'rating'})
         # Opaque hashes; no arm/model/order clues.
         import random
-        random.Random(p.SEED).shuffle(records);write_json(export,records)
-        return {'ratings_exported':len(records)}
+        random.Random(p.SEED).shuffle(records)
+        return export_isolated(export,records,{i['id']:i['group'] for i in items.values()})
     if submit:
         incoming=json.loads(submit.read_text());allowed={digest({k:r[k] for k in ('item_id','condition','judge','answer')}) for r in rows}
+        response_items={digest({k:r[k] for k in ('item_id','condition','judge','answer')}):r['item_id'] for r in rows}
+        incoming=[{**r, 'item_id':response_items.get(r.get('response_sha256'))} for r in incoming]
+        prior=read(p.HERE/f'runs/{split}/ratings.jsonl')
+        validate_exposure(incoming,prior,items,identity='rater_id')
         for r in incoming:
             if r.get('response_sha256') not in allowed or not r.get('rater_id') or type(r.get('source_grounded')) is not bool or not r.get('reason'):
                 raise PreflightError('complete identified, source-grounded ratings required')

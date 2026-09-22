@@ -43,7 +43,7 @@ export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
 uv run python experiments/P5-shifting-definitions/run_p5.py generate
 uv run python experiments/P5-shifting-definitions/run_p5.py inventory --count-tokens
 uv run python experiments/P5-shifting-definitions/run_p5.py known-answer
-uv run python experiments/P5-shifting-definitions/run_p5.py review --export /private/tmp/p5-review.json
+uv run python experiments/P5-shifting-definitions/run_p5.py review --export /private/tmp/p5-review-v4.json
 uv run python experiments/P5-shifting-definitions/run_p5.py review --submit /path/to/completed-review.json
 uv run python experiments/P5-shifting-definitions/run_p5.py review --adjudicate /path/to/resolution.json
 uv run python experiments/P5-shifting-definitions/run_p5.py freeze --scenario dual_judge
@@ -92,21 +92,27 @@ billing. A panel halt is retained, missing assigned outcomes score zero, and
 completed responses are reused on resume. Local oracle receipts are fsynced
 before subsequent paid stages so restart does not silently change history.
 
-Construction revision 3 addresses the second blinded NOT READY review. Four
-branches cover both senses on both lot and sample; the downstream unit is
-counterbalanced so every label uses a sample result in 14/28 packets. Critical
-predicates are reserved outside the ordinary chain. Both decoy senses remain
-active. Records stay fixed within each family, and no node has a rule pointer.
-The proposed prose appears once, in the nodes; ambiguous senses are glossed
-inline, without a duplicate glossary header in model requests. There are 16
-steps, with all existing token and budget caps unchanged. See
-[CONSTRUCTION-V3.md](CONSTRUCTION-V3.md) for checks and retained failed attempts.
+Construction revision 4 addresses the third blinded review. IDs use HMAC-SHA256
+with a private random nonce outside the repository. All 84 IDs have changed.
+The argument is now topological prose, one paragraph per step, with premises
+stated by content. Four unqualified references in every packet (three harmless,
+one critical) point to the immediately preceding result. Only VE requests add
+the node/parent block. Source records and formal argument design are preserved.
+See [CONSTRUCTION-V4.md](CONSTRUCTION-V4.md).
 
-The original three logistic leakage probes and two depth-3 node-relation trees
-must each score at most 33.33%; the reviewer's adapted unit/rank rule must also
-stay at chance. Node trees use stratified six-fold CV, with a separate grouped
-six-fold check. IDs, sense ranks, unit types and marker phrases are public-text
-features; no reference locations or derivations enter these probes.
+Every call/editor context contains exactly one dossier; few-shot pools are
+forbidden. Review and explanation exports are path-only manifests with three
+family-disjoint assignments. Each file holds one packet. A reviewer may receive
+one assignment only, and each model review uses a fresh context per file.
+Imports reject sibling exposure under the same reviewer/rater identity,
+including across earlier submissions. Never concatenate the assignments.
+
+The leakage gate refits every probe under 199 within-family label permutations
+and compares the observed best-of-561 accuracy to the permuted best-of-561 null.
+It passes at **p >= 0.05**, correcting for feature/probe selection. Three logistic
+probes, two depth-3 trees, the prior reviewer's rule, and all 555 single-feature
+majority lookups are fixed before the run; seeds, nonce and hyperparameters are
+not searched. This screen does not establish semantic readiness.
 
 Independent review instructions and open questions are in
 [REVIEW-CHECKLIST.md](REVIEW-CHECKLIST.md). Explanation ratings are separately

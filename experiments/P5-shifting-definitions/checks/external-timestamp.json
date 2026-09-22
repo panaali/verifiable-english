@@ -1,5 +1,5 @@
 {
-  "freeze_sha256": "31ce5c4154d7659d4825c44b04d11891aef42e201abab39a11e2cfd911a44958",
+  "freeze_sha256": "b5fd6dccd41b285cff3886e359198e881fd903211a89a52848123edae8aedfb4",
   "passed": false,
   "reason": "publish exact manifest hash and retain bound OpenTimestamps receipt"
 }

@@ -14,6 +14,7 @@ import sys
 import time
 
 from experiments.p5_materials import HERE, SEED, read, archive, write_json, generate
+from experiments.p5_isolation import single_context
 from experiments.p5_analysis import ARMS, parse, analyze, known_answer
 from experiments import p5_review as review
 from experiments.p1 import append, sha, infrastructure_state
@@ -60,21 +61,24 @@ ROLES={
  'VE_defender':'Answer the critic, re-author affected uses and re-certify in a complete artifact. '+FORMAL,
  'repair':'Repair only the diagnosed syntax/coverage failures. One repair is allowed; retain the original root. '+FORMAL,
  'judge':'Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence.',
- 'paraphrase':'Independently rewrite the proposed argument as node texts into ordinary prose. Preserve substantive content and any inconsistency; do not repair it. Return JSON {"texts":{"node_id":"rewritten node text"}}. Include every existing node ID exactly once. No additional fields.'}
+ 'paraphrase':'Independently rewrite the proposed argument into one ordinary-prose paragraph per step in the given topological order. State premises by content, never parent IDs, and preserve the immediately-preceding back-references. Preserve substantive content and any inconsistency; do not repair it. Return JSON {"texts":{"node_id":"rewritten node text"}}. Include every existing node ID exactly once. No additional fields.'}
 
 
 def materials(split=None):
     return [i for s in ('dev','scored') if split is None or s==split for i in read(HERE/f'materials/{s}.jsonl.gz')]
 
 
-def packet(item):
+def packet(item, arm=None):
     p=item['payload']
     # Explicit allowlist; no label, reference environment, family or variant.
-    return '\n'.join(['Dossier '+p['id'],
-        'Declared premises:']+[f"{n['id']}: {n['text']}" for n in p['premises']]+['Authoritative records:']+
-        [f"{r['id']}: {r['text']}" for r in p['records']]+['Proposed graph:']+
-        [f"{n['id']} ({','.join(n['parents'])}): {n['text']}" for n in p['nodes']]+
-        [f"Original root {p['root']}."])
+    single_context([item])
+    lines = ['Dossier '+p['id'], 'Declared premises:']
+    lines += [f"{n['id']}: {n['text']}" for n in p['premises']]
+    lines += ['Authoritative records:'] + [f"{r['id']}: {r['text']}" for r in p['records']]
+    lines += ['Proposed argument:', p['argument'], f"Original root {p['root']}."]
+    if arm == 'VE':
+        lines += ['VE node block:'] + [f"{n['id']} ({','.join(n['parents'])}): {n['text']}" for n in p['nodes']]
+    return '\n'.join(lines)
 
 
 def stage_list(arm):
@@ -102,19 +106,22 @@ def ceilings(scenario):
         'replication_policy':'same frozen Gemini role transcript; separate Qwen final judgment; Qwen lone floor'}
 
 
-def request(item,arm,stage,history=None,*,judge='pro',turn=0,commitment=None,question=None):
+def request(item,arm,stage,history=None,*,judge='pro',turn=0,commitment=None,question=None,examples=()):
+    single_context([item, *examples])
+    if history and any(r.get('item_id') != item['id'] for r in history):
+        raise PreflightError('history must bind this dossier; cross-packet histories are forbidden')
     model=judge if stage in ('judge','lone') else 'replication' if stage=='paraphrase' else 'pro'
     role='judge' if stage=='lone' else stage
     if stage in ('answer','followup_answer'):
         # Exactly three isolated fields: never receive history or authored defense.
         if history:
             raise PreflightError('isolated answers must not receive a transcript')
-        content=packet(item)+'\nFrozen commitment:\n'+(commitment or '')+'\nOne question:\n'+(question or '')
+        content=packet(item,arm)+'\nFrozen commitment:\n'+(commitment or '')+'\nOne question:\n'+(question or '')
         instruction=ROLES['answer']
     elif stage=='paraphrase':
-        content=packet(item); instruction=ROLES['paraphrase']
+        content=packet(item,arm); instruction=ROLES['paraphrase']
     else:
-        content=packet(item)
+        content=packet(item,arm)
         if history: content+='\nProtocol record:\n'+packed(history)
         instruction=ROLES.get(arm+'_'+role,ROLES.get(role,''))
     schema=VERDICT_SCHEMA if role=='judge' else None
@@ -200,10 +207,10 @@ def execute(item,arm,client,judge_clients,*,local_events=None,local_cache=(),eve
                 obligations.append('oracle query limit exceeded'); break
             query_count+=1
             result=local('query',{'query':q,'committed':committed,'packet':item['payload']},5)
-            history.append({'stage':'oracle','record':bounded_record(result)})
+            history.append({'item_id':item['id'],'stage':'oracle','record':bounded_record(result)})
     try:
         if arm!='L':
-            author=call('author'); history.append({'stage':'author','text':author})
+            author=call('author'); history.append({'item_id':item['id'],'stage':'author','text':author})
             if arm=='VE':
                 try:
                     artifact=json.loads(author)
@@ -211,21 +218,21 @@ def execute(item,arm,client,judge_clients,*,local_events=None,local_cache=(),eve
                 except (ValueError,KeyError,TypeError) as exc:
                     artifact={}; diagnostic={'ok':False,'error':str(exc)}
                 if not diagnostic.get('ok'):
-                    repair=call('repair',history=[history[0],{'stage':'diagnostics','record':bounded_record(diagnostic)}])
-                    history.append({'stage':'repair','text':repair})
+                    repair=call('repair',history=[history[0],{'item_id':item['id'],'stage':'diagnostics','record':bounded_record(diagnostic)}])
+                    history.append({'item_id':item['id'],'stage':'repair','text':repair})
                     try:
                         artifact=json.loads(repair)
                         diagnostic=local('author',{'artifact':artifact,'packet':item['payload']},wall_remaining)
                     except (ValueError,KeyError,TypeError) as exc:
                         artifact={};diagnostic={'ok':False,'error':str(exc)}
                 author_failure=not diagnostic.get('ok')
-                history.append({'stage':'diagnostics','record':bounded_record(diagnostic)})
+                history.append({'item_id':item['id'],'stage':'diagnostics','record':bounded_record(diagnostic)})
                 queries(artifact,artifact)
                 # Critic gets repaired artifact, never superseded author output.
                 critic_history=history[1:] if any(h['stage']=='repair' for h in history) else history[:]
             else:
                 critic_history=history[:]
-            critic=call('critic',history=critic_history); history.append({'stage':'critic','text':critic})
+            critic=call('critic',history=critic_history); history.append({'item_id':item['id'],'stage':'critic','text':critic})
             if arm=='X':
                 commitment=json.loads(author)['commitment']; exact_text_tokens(client,commitment,512)
                 questions=json.loads(critic)['questions']
@@ -234,18 +241,18 @@ def execute(item,arm,client,judge_clients,*,local_events=None,local_cache=(),eve
                 for n,q in enumerate(questions):
                     exact_text_tokens(client,q,256)
                     answer=call('answer',turn=n,commitment=commitment,question=q)
-                    history.append({'stage':'isolated_answer','question':q,'text':answer})
-                followup=call('followup',history=history); history.append({'stage':'followup','text':followup})
+                    history.append({'item_id':item['id'],'stage':'isolated_answer','question':q,'text':answer})
+                followup=call('followup',history=history); history.append({'item_id':item['id'],'stage':'followup','text':followup})
                 q=json.loads(followup)['question']
                 if q:
                     exact_text_tokens(client,q,256)
                     answer=call('followup_answer',commitment=commitment,question=q)
-                    history.append({'stage':'isolated_followup_answer','question':q,'text':answer})
+                    history.append({'item_id':item['id'],'stage':'isolated_followup_answer','question':q,'text':answer})
             else:
                 if arm=='VE':
                     try: queries(json.loads(critic),artifact)
                     except (ValueError,KeyError,TypeError) as exc: obligations.append(str(exc))
-                defender=call('defender',history=history);history.append({'stage':'defender','text':defender})
+                defender=call('defender',history=history);history.append({'item_id':item['id'],'stage':'defender','text':defender})
                 if arm=='VE':
                     try:
                         revised=json.loads(defender)
@@ -260,12 +267,12 @@ def execute(item,arm,client,judge_clients,*,local_events=None,local_cache=(),eve
                         if diagnostic.get('ok') and not author_failure and resolved and split_count<=4:
                             obligations=[o for o in obligations if o not in {x for e in split_obligations for x in e.get('affected_ids',[])}]
                         else: obligations.append('unrepaired formalisation or unresolved original root')
-                        history.append({'stage':'recertification','record':bounded_record(diagnostic)})
+                        history.append({'item_id':item['id'],'stage':'recertification','record':bounded_record(diagnostic)})
                     except (ValueError,KeyError,TypeError) as exc: obligations.append(str(exc))
         error=None
     except (ValueError,KeyError,TypeError) as exc:
         error=f'protocol failure: {exc}'; obligations.append(error)
-        history.append({'stage':'failure','error':error})
+        history.append({'item_id':item['id'],'stage':'failure','error':error})
         author_failure |= arm=='VE'
     # Even a failed formalisation stays assigned; common-prose detection remains
     # possible but benign completion cannot be rescued by hidden reference data.
@@ -311,7 +318,7 @@ def freeze(scenario):
            ROOT/'experiments/p1.py',ROOT/'experiments/p1_preflight.py',ROOT/'experiments/prereg_inventory.py',
            ROOT/'experiments/trial_analysis.py',ROOT/'tests/test_p5.py',ROOT/'pyproject.toml',ROOT/'uv.lock',
            HERE/'PREREG.md',ROOT/'experiments/PREREG-DESIGN.md',HERE/'inventory.json',HERE/'AMENDMENTS.md',
-           HERE/'prompts.json',HERE/'CONSTRUCTION-V3.md',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
+           HERE/'prompts.json',HERE/'CONSTRUCTION-V3.md',HERE/'CONSTRUCTION-V4.md',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
            ROOT/'experiments/P1-deference/native_counter.py',*ROOT.glob('experiments/P1-deference/tokenizers/*.json'),
            *ROOT.glob('ve/*.py'), ROOT/'lean/.lake/build/bin/ve_conformance']
     hashes={str(p.relative_to(ROOT)):sha(p) for p in paths if p.exists()}
@@ -344,7 +351,7 @@ def gate_receipt(name,result,stamp):
 
 def require_gates(scored=False):
     f=verify_freeze(); blockers=[]
-    for name in ('review','independent-prose','construction','known-answer','tokenizer','lean-replay','leakage','role-boundaries','external-timestamp','provider-preflight',*(['dev'] if scored else [])):
+    for name in ('review','independent-prose','construction','known-answer','tokenizer','lean-replay','packet-safety','leakage','role-boundaries','external-timestamp','provider-preflight',*(['dev'] if scored else [])):
         path=HERE/f'checks/{name}.json'
         r=json.loads(path.read_text()) if path.exists() else {}
         if r.get('passed') is not True or r.get('freeze_sha256')!=f['manifest_sha256']:
@@ -458,7 +465,7 @@ def paraphrase(cap):
             originals={n['id']:n for n in dossier['nodes']}
             if set(row)!= {'texts'} or set(row['texts'])!=set(originals) or any(not isinstance(t,str) or not t for t in row['texts'].values()):
                 raise PreflightError('paraphrase malformed; no replacement sample')
-            paraphrased={'nodes':[{**n,'text':row['texts'][n['id']]} for n in dossier['nodes']]}
+            paraphrased={'argument':'\n\n'.join(f"[{n['id']}] {row['texts'][n['id']]}" for n in dossier['nodes'])}
             output.append({'id':dossier['id'],**paraphrased,'provenance':{'method':'one Qwen72 call in separate context',
                 'input_sha256':digest(dossier),'request_sha256':digest(req.messages),
                 'response_sha256':digest(reply.text),'revision':reply.revision,'independent_qwen_pass':True}})
@@ -467,7 +474,7 @@ def paraphrase(cap):
     by_id={r['id']:r for r in output}
     for split in ('dev','scored'):
         archive(HERE/f'materials/{split}.jsonl.gz',[{'id':d['id'],'group':label_map[d['id']]['family'],
-            'split':split,'payload':{**d,'nodes':by_id[d['id']]['nodes']},
+            'split':split,'payload':{**d,'argument':by_id[d['id']]['argument']},
             'paraphrase_status':'QWEN_PENDING_REVIEW'} for d in dossiers if label_map[d['id']]['split']==split])
     book.release_block(block)
     return {'slots':len(output),'review_required':True,'refreeze_required':True}

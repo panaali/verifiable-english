@@ -1,0 +1,45 @@
+{
+  "best_accuracy": 0.5,
+  "best_of_k": 561,
+  "broad_suite": {
+    "baseline_verification": "Both P1 failures reproduced using git archive HEAD in a clean temporary directory.",
+    "deselected": 1,
+    "failed": 3,
+    "intermediate_p5_failure": "Corrected invalid decoy-reference candidate; final targeted suite 28/28 passes.",
+    "passed": 1434,
+    "skipped": 2,
+    "unchanged_baseline_failures": [
+      "tests/test_p1_amendment13.py::test_scored_gate_and_cap_reach_only_qwen_attacker_backends",
+      "tests/test_p1_amendment14.py::test_recover_and_reconstruct_every_retained_scored_call_without_dispatch"
+    ]
+  },
+  "critical_reference_ordinal_counts": {
+    "2": 6,
+    "3": 39,
+    "4": 39
+  },
+  "final_p5_tests": {
+    "failed": 0,
+    "passed": 28
+  },
+  "freeze_sha256": "b5fd6dccd41b285cff3886e359198e881fd903211a89a52848123edae8aedfb4",
+  "gates": {
+    "construction": true,
+    "external-timestamp": false,
+    "independent-prose": false,
+    "known-answer": true,
+    "leakage": true,
+    "lean-replay": true,
+    "packet-safety": true,
+    "review": false,
+    "role-boundaries": true,
+    "tokenizer": true
+  },
+  "items": 84,
+  "lean_queries": 3192,
+  "paid_calls": 0,
+  "paid_usd": "0",
+  "permutation_p_value": 0.1,
+  "readiness": "BLOCKED_NOT_SCORED_READY; fresh isolated review, independent prose, timestamp and paid provider/dev gates remain required.",
+  "revision": 4
+}

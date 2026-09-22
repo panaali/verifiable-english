@@ -1,7 +1,13 @@
 # Blinded review gate
 
-Two independent reviewers examine **all 84** packets before scoring. At least
-one is a human or project lead. Work separately before comparing annotations.
+Every one of the **84** packets needs two independent reviews before scoring,
+including one human or project lead. Use disjoint reviewer pools for the three
+assignments: no reviewer sees two siblings. The export index contains paths
+only; give each reviewer ONE assignment and open each packet in a fresh model
+context. Never concatenate assignments, build few-shot pools, or carry sibling
+material into paraphrase, review, rating or adjudication contexts. Imports reject
+repeated sibling exposure under the same reviewer/rater identity. Work
+separately before comparing annotations.
 Review packets contain no planted label, variant, split, formal witness or model
 outcome. Do not open labels.jsonl.gz or graphs.jsonl.gz while annotating.
 
@@ -23,8 +29,12 @@ old packet hashes and require fresh independent reviews. A planted-label mismatc
 requires construction repair and an amendment; it is never silently relabeled.
 
 The previous 84-packet NOT READY review is retained against its old hashes and
-cannot approve these replacement packets. Revision 3 keeps records fixed across
-siblings and renders the proposed inferences in full. Alternative checks in a
+cannot approve these replacement packets. Revision 4 keeps records fixed across
+siblings and renders inferences as topologically ordered prose paragraphs.
+Step labels support localization; parent IDs are absent from prose. The four
+unqualified references per packet have unique immediately-preceding referents;
+three are harmless. Inspect the critical inference without silently qualifying
+or repairing it. Only VE-arm requests include the additional node block. Alternative checks in a
 sentence are conditional comparisons, not additional declared facts. In
 particular, naming a unit as a sample of a lot supplies no rule transporting its
 properties to the lot, or from the lot back to the sample.

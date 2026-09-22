@@ -1,6 +1,6 @@
 {
   "balanced_binary_chance": 0.5,
-  "freeze_sha256": "31ce5c4154d7659d4825c44b04d11891aef42e201abab39a11e2cfd911a44958",
+  "freeze_sha256": "b5fd6dccd41b285cff3886e359198e881fd903211a89a52848123edae8aedfb4",
   "menu": "uniform over one approve/none/empty plus shift and smuggle rejection for every one/two-ID set",
   "menu_size": 507,
   "model_calls": 0,
@@ -562,7 +562,7 @@
     }
   },
   "passed": true,
-  "random_exact": 0.0026298487836949377,
-  "random_simulated": 0.0025476190476190477,
+  "random_exact": 0.002629848783694938,
+  "random_simulated": 0.0024761904761904764,
   "random_tolerance": 0.02
 }

@@ -31,14 +31,31 @@ def feature_row(item, index):
             len(set(sense_indices)), sum('rule_record' in n for n in q['nodes'])]
 
 
+PERMUTATIONS = 199
+
+
+def permutation_summary(observed, null):
+    """One-sided max statistic: repeat the entire best-of-k search under null."""
+    import numpy as np
+    null = np.asarray(null)
+    maximum = np.max(null, axis=1)
+    pvalues = (1 + (maximum[:, None] >= np.asarray(observed)[None, :] - 1e-12).sum(0)) / (len(null) + 1)
+    return {'p_values':pvalues.tolist(), 'p_value':float(min(pvalues)),
+            'passed':bool(min(pvalues) >= .05),
+            'null_max_mean':float(maximum.mean()), 'null_max_p95':float(np.quantile(maximum, .95)),
+            'null_maxima':maximum.tolist()}
+
+
 def audit(base=HERE):
     import numpy as np
     from scipy.sparse import csr_matrix, hstack
+    from sklearn.feature_extraction import DictVectorizer
     from sklearn.feature_extraction.text import CountVectorizer
     from sklearn.linear_model import LogisticRegression
-    from sklearn.metrics import accuracy_score, balanced_accuracy_score, confusion_matrix
-    from sklearn.model_selection import LeaveOneGroupOut
+    from sklearn.model_selection import LeaveOneGroupOut, StratifiedKFold, StratifiedGroupKFold
     from sklearn.preprocessing import StandardScaler
+    from sklearn.tree import DecisionTreeClassifier
+    from threadpoolctl import threadpool_limits
 
     items = read(base/'materials/dev.jsonl.gz') + read(base/'materials/scored.jsonl.gz')
     labels = {l['id']: l for l in read(base/'labels.jsonl.gz')}
@@ -52,43 +69,86 @@ def audit(base=HERE):
     X = np.asarray([feature_row(i, n) for n, i in enumerate(items)], dtype=float)
     texts = [packed(i['payload']) for i in items]
     folds = list(LeaveOneGroupOut().split(X, y, groups))
-    predictions = {key: np.empty(len(items), dtype=int) for key in ('tokens', 'structure', 'combined')}
-    convergence = []
+    prepared = []
     for train, test in folds:
-        # Fit every transformation inside the held-family-out fold.
         vectorizer = CountVectorizer(token_pattern=r'(?u)\b\w+\b')
         a = vectorizer.fit_transform([texts[k] for k in train])
         b = vectorizer.transform([texts[k] for k in test])
         scaler = StandardScaler()
         c = csr_matrix(scaler.fit_transform(X[train])); d = csr_matrix(scaler.transform(X[test]))
-        for key, training, testing in [('tokens', a, b), ('structure', c, d),
-                                       ('combined', hstack([a, c]), hstack([b, d]))]:
-            clf = LogisticRegression(C=1.0, solver='lbfgs', max_iter=15000, random_state=SEED)
-            clf.fit(training, y[train])
-            convergence.append({'held_out_family':str(groups[test[0]]), 'probe':key,
-                'iterations':int(max(clf.n_iter_)), 'converged':int(max(clf.n_iter_)) < clf.max_iter})
-            predictions[key][test] = clf.predict(testing)
-    probes = {}
-    for key, pred in predictions.items():
-        accuracy = float(accuracy_score(y, pred))
-        probes[key] = {'accuracy': accuracy, 'balanced_accuracy': float(balanced_accuracy_score(y, pred)),
-                       'correct': int(sum(pred == y)), 'confusion_matrix': confusion_matrix(y, pred, labels=range(3)).tolist(),
-                       'passed': accuracy <= 1/3,
-                       'predictions': [{'item_id': i['id'], 'truth': classes[int(t)], 'predicted': classes[int(v)]}
-                                       for i, t, v in zip(items, y, pred)]}
-    probes.update(relational_probes(items, y, groups))
-    return {'passed': all(r['passed'] for r in probes.values()) and all(r['converged'] for r in convergence),
-            'estimator':{'model':'LogisticRegression', 'C':1.0, 'solver':'lbfgs', 'max_iter':15000, 'seed':SEED},
-            'convergence':convergence, 'chance_accuracy': 1/3,
-            'threshold': 1/3, 'accuracy': max(r['accuracy'] for r in probes.values()),
-            'policy': 'Every fixed probe must score at or below three-class chance; no seed/hyperparameter selection.',
-            'fit_scope': 'All 84 slots. Logistic: 28 leave-family-out folds. Node trees: stratified and stratified-grouped 6-fold CV (reported separately).',
-            'classes': classes, 'features': list(FEATURE_NAMES), 'probes': probes,
-            'packet_sha256': digest([i['payload'] for i in items]),
-            'label_sha256': digest([labels[i['id']]['kind'] for i in items]),
-            'export_order_sha256': digest([i['id'] for i in items]),
-            'order_mod3_counts': {str(k): dict(Counter(labels[i['id']]['kind'] for n, i in enumerate(items) if n%3==k)) for k in range(3)},
-            'generation_calls': 0, 'limitation': 'Shortcut screen, not proof of semantic difficulty or source fidelity.'}
+        prepared.append((train, test, [(a,b), (c,d), (hstack([a,c]).tocsr(),hstack([b,d]).tocsr())]))
+    features = [node_features(i['payload']) for i in items]
+    vectorizer = DictVectorizer(sparse=False)
+    Z = vectorizer.fit_transform(features)
+    all_features = np.column_stack([X, Z])
+    names = [*FEATURE_NAMES, *vectorizer.feature_names_]
+    # Fixed label-independent seven-fold family assignment. Value->majority
+    # lookup is refitted for every feature, fold, and permuted label vector.
+    family_names = sorted(set(groups)); random.Random(1).shuffle(family_names)
+    assignment = {g:n % 7 for n,g in enumerate(family_names)}
+    lookup_folds = []
+    for f in range(7):
+        test = np.flatnonzero([assignment[g] == f for g in groups])
+        train = np.flatnonzero([assignment[g] != f for g in groups])
+        equal = (all_features[test].T[:,:,None] == all_features[train].T[:,None,:]).astype(float)
+        lookup_folds.append((train,test,equal))
+    rule = np.asarray([2 if f['branch_con_unit_is_sample'] else
+                       0 if f['branch_con_sense_rank'] == 1 else 1 for f in features])
+    convergence = []
+    def scores(yy, retain=False):
+        pred = np.empty((6+len(names), len(yy)), dtype=int)
+        for train,test,matrices in prepared:
+            for k,(a,b) in enumerate(matrices):
+                clf = LogisticRegression(C=1.0, solver='lbfgs', max_iter=15000, random_state=SEED)
+                clf.fit(a, yy[train]); pred[k,test] = clf.predict(b)
+                if max(clf.n_iter_) >= clf.max_iter:
+                    raise ValueError('nonconverged permutation probe')
+                if retain:
+                    convergence.append({'probe':k,'held_out_family':str(groups[test[0]]),
+                                        'iterations':int(max(clf.n_iter_)), 'converged':True})
+        for k,splitter in enumerate((StratifiedKFold(6,shuffle=True,random_state=1),
+                                    StratifiedGroupKFold(6,shuffle=True,random_state=1)),3):
+            for train,test in splitter.split(Z,yy,groups if k == 4 else None):
+                clf = DecisionTreeClassifier(max_depth=3,random_state=1)
+                clf.fit(Z[train],yy[train]); pred[k,test] = clf.predict(Z[test])
+        pred[5] = rule
+        for train,test,equal in lookup_folds:
+            counts = equal @ np.eye(3)[yy[train]]
+            votes = counts.argmax(2)
+            votes[counts.sum(2) == 0] = np.bincount(yy[train],minlength=3).argmax()
+            pred[6:,test] = votes
+        return (pred == yy).mean(1), pred
+    # Exchange labels within families, preserving one of each label in every
+    # family. Refit every estimator, including label-dependent stratification.
+    # The ID nonce is never regenerated based on these results.
+    with threadpool_limits(limits=1):
+        observed, predictions = scores(y, True)
+        rng = np.random.default_rng(SEED)
+        members = [np.flatnonzero(groups == g) for g in sorted(set(groups))]
+        null = []
+        for _ in range(PERMUTATIONS):
+            yy = y.copy()
+            for members_in_family in members:
+                yy[members_in_family] = rng.permutation(yy[members_in_family])
+            null.append(scores(yy)[0])
+    comparison = permutation_summary(observed, null)
+    probe_names = ['tokens','structure','combined','node_relations','node_relations_grouped',
+                   'reviewer_unit_rank_rule', *['single/'+n for n in names]]
+    probes = {name:{'accuracy':float(a),'correct':int(round(a*len(items))),
+                   'adjusted_p_value':pv,'passed':pv >= .05}
+              for name,a,pv in zip(probe_names,observed,comparison['p_values'])}
+    return {'passed':comparison['passed'], 'probes':probes, 'accuracy':float(max(observed)),
+            'best_probe':probe_names[int(observed.argmax())], 'convergence':convergence,
+            'chance_accuracy':1/3, 'minimum_p_value':.05,
+            'permutation_null':{k:v for k,v in comparison.items() if k != 'p_values'},
+            'permutations':PERMUTATIONS, 'k':len(probes), 'seed':SEED,
+            'policy':'Within-family label permutations; refit all probes and compare best-of-k to each permuted best-of-k. Pass p >= 0.05; no seed or nonce search.',
+            'features':names, 'classes':classes,
+            'packet_sha256':digest([i['payload'] for i in items]),
+            'label_sha256':digest([labels[i['id']]['kind'] for i in items]),
+            'export_order_sha256':digest([i['id'] for i in items]),
+            'order_mod3_counts':{str(k):dict(Counter(labels[i['id']]['kind'] for n,i in enumerate(items) if n%3==k)) for k in range(3)},
+            'generation_calls':0, 'limitation':'Shortcut screen, not proof of semantic difficulty or source fidelity.'}
 
 ATOM = re.compile(r'(unit\d+) is ([a-z-]+)(?: \(([a-z -]+)\))?')
 MARKERS = ('Given', 'From', 'Using', 'would establish', 'would imply', 'would yield')
@@ -155,45 +215,3 @@ def node_features(packet):
         raise ValueError('expected one four-way branch node')
     features.update({f'branch_{k}':v for k, v in candidates[0].items()})
     return features
-
-
-def relational_probes(items, y, groups):
-    import numpy as np
-    from sklearn.feature_extraction import DictVectorizer
-    from sklearn.model_selection import StratifiedKFold, StratifiedGroupKFold
-    from sklearn.tree import DecisionTreeClassifier
-    from sklearn.metrics import accuracy_score, confusion_matrix
-    features = [node_features(i['payload']) for i in items]
-    vectorizer = DictVectorizer(sparse=False)
-    X = vectorizer.fit_transform(features)  # names only; no learned statistics
-    result = {}
-    # Fix seeds/hyperparameters before inspecting construction results.
-    for key, splitter in [('node_relations', StratifiedKFold(6, shuffle=True, random_state=1)),
-                          ('node_relations_grouped', StratifiedGroupKFold(6, shuffle=True, random_state=1))]:
-        pred = np.empty(len(y), dtype=int)
-        folds = []
-        for train, test in splitter.split(X, y, groups if 'grouped' in key else None):
-            clf = DecisionTreeClassifier(max_depth=3, random_state=1)
-            clf.fit(X[train], y[train]); pred[test] = clf.predict(X[test])
-            folds.append({'test_ids':[items[k]['id'] for k in test],
-                          'split_features':[vectorizer.feature_names_[v] for v in clf.tree_.feature if v >= 0]})
-        accuracy = float(accuracy_score(y, pred))
-        result[key] = {'accuracy':accuracy, 'balanced_accuracy':accuracy,
-                       'correct':int(sum(pred == y)), 'passed':accuracy <= 1/3,
-                       'confusion_matrix':confusion_matrix(y, pred, labels=range(3)).tolist(),
-                       'estimator':{'model':'DecisionTreeClassifier', 'max_depth':3, 'random_state':1},
-                       'cv':type(splitter).__name__, 'n_splits':6,
-                       'features':vectorizer.feature_names_, 'folds':folds,
-                       'predictions':[{'item_id':i['id'], 'truth':int(t), 'predicted':int(v)}
-                                      for i,t,v in zip(items,y,pred)]}
-    # Adapt the reviewer's closed-form unit/rank rule to every current phrase.
-    # In the four-way construction, tied senses have ranks 0 or 2, never 1.
-    pred = np.asarray([2 if f['branch_con_unit_is_sample'] else
-                       0 if f['branch_con_sense_rank'] == 1 else 1 for f in features])
-    accuracy = float(accuracy_score(y, pred))
-    result['reviewer_unit_rank_rule'] = {
-        'accuracy':accuracy, 'balanced_accuracy':accuracy, 'correct':int(sum(pred == y)),
-        'passed':accuracy <= 1/3, 'coverage':len(items),
-        'rule':'branch conclusion is sample -> smuggle; else sense rank 1 -> benign; else shift',
-        'confusion_matrix':confusion_matrix(y, pred, labels=range(3)).tolist()}
-    return result

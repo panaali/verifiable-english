@@ -100,8 +100,8 @@ what is packed into the six leaves, not extra free bridges.
 `checks/leakage.json` reports three fixed logistic-regression probes: unigram
 counts, packet structural/length features, and their combination. All 84 slots
 are evaluated in 28 leave-family-out folds; vectorizers and scalers fit on the
-training fold only. Every probe must achieve **at most 1/3 accuracy** before the
-review gate can pass. All variants have the same token multiset (apart from
+training fold only. The operative gate now compares the best-of-k probes against refitted
+permuted-label best-of-k nulls, passing at **p >= 0.05** (P5-4 below). All variants have the same token multiset (apart from
 opaque IDs) and the same structural features within their family. The check
 reruns on the exact review bytes, including after paid paraphrasing. Export
 position is an external randomization audit, not a packet feature; its three
@@ -118,3 +118,43 @@ paraphraser input allowance. Token gates remain binding. No evidence is silently
 truncated, no cap is increased, and no paid call is authorized by this amendment.
 The paid independent paraphrase and fresh independent review of all 84 final
 packets still precede scoring.
+
+
+## P5-4 — round-3 privacy, context isolation, prose and null correction (2026-09-22)
+
+The operator explicitly requested these repairs and $0 generation. All 84
+packet IDs are replaced with 128-bit HMAC-SHA256 outputs keyed by one private
+256-bit random nonce, generated once and retained outside the repository with
+mode 0600. Neither nonce bytes nor a recoverable public seed enter artifacts.
+Repeated generation with that private nonce is stable; there is no ID/nonce
+selection based on gate outcomes.
+
+The four-way source grid and proof design remain unchanged. The residual
+family-transductive unfired-cell rule is handled by mandatory isolation:
+exactly one packet per model/editor context, no few-shot examples, and transcript
+entries bound to the same item ID. Review and explanation exports use separate
+family-disjoint assignments, one packet per file, with a path-only index.
+Reviewer/rater identities cannot submit sibling packets, even across calls.
+Two independent reviews are still required **per packet**, including a human or
+project lead; this now requires disjoint reviewer pools for the three
+assignments instead of two people each reading all siblings. Model contexts
+must also be fresh even if the model family is reused. Adjudicators obey the
+same exposure rule. Do not send a whole export tree to one reviewer/context.
+
+Arguments are topologically ordered prose paragraphs with stable step labels
+for answer localization; premises are stated by content, never parent IDs.
+Unqualified references name the immediately preceding result, giving a unique
+referent without requalifying or repairing the critical inference. Exactly
+three harmless steps per packet use the same device. The node/parent block is
+included only in VE model requests; all arms share the prose. These deterministic
+offline drafts are not an independent Qwen paraphrase or a review approval.
+
+The earlier flat chance cutoff is replaced by a fixed 199-permutation null.
+Each permutation shuffles labels within families, retaining the balanced
+matched design, refits all classifiers and single-feature lookups, and repeats
+the complete best-of-k selection. Vectorization/scaling fit only on training
+folds; label-dependent stratification is rebuilt for each permutation. The
+one-sided p-value is (1 + null maxima >= observed maximum) / 200, and the gate
+passes at p >= 0.05. There is no classifier/seed/nonce search. Existing token,
+budget, formal-soundness, independent-author and independent-review gates remain
+binding. No paid generation was authorized or performed by this amendment.

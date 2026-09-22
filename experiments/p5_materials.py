@@ -4,6 +4,8 @@ from collections import Counter
 from dataclasses import replace
 import gzip
 import hashlib
+import hmac
+import os
 import json
 from pathlib import Path
 import random
@@ -19,6 +21,34 @@ HERE = Path(__file__).resolve().parent / 'P5-shifting-definitions'
 SEED = 20260921
 STEPS = 16
 CLAIMS = STEPS + 6
+NONCE_PATH = Path('/private/tmp/ve-p5-id-nonce')
+
+
+def private_nonce(path=NONCE_PATH):
+    """Create once, outside the repository; never serialize the key in artifacts."""
+    if path.resolve().is_relative_to(HERE.parents[1]):
+        raise PreflightError('ID nonce must be outside the repository')
+    try:
+        fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    except FileExistsError:
+        pass
+    else:
+        with os.fdopen(fd, 'wb') as stream:
+            stream.write(os.urandom(32))
+    key = path.read_bytes()
+    if len(key) != 32 or path.stat().st_mode & 0o077:
+        raise PreflightError('ID nonce must be 32 private bytes (mode 0600)')
+    return key
+
+
+def packet_id(slot, nonce):
+    message = ('P5-construction-v4/' + slot['id']).encode()
+    return 'i' + hmac.new(nonce, message, hashlib.sha256).hexdigest()[:32]
+
+
+def prose_argument(nodes):
+    return '\n\n'.join(f"[{n['id']}] {n['text']}" for n in nodes)
+
 
 
 def write_json(path, value):
@@ -128,7 +158,7 @@ AMBIGUITIES = [
 ]
 
 
-def build(slot, parents):
+def build(slot, parents, nonce=None):
     """Four source branches span the sense × unit Cartesian product.
 
     The downstream unit is independently balanced across families. The shift
@@ -332,6 +362,8 @@ def build(slot, parents):
     for group in range(5):
         plain_leaves.append({'id': ids[group+1], 'text': 'Rules ' + ', '.join(r['id'] for r in records[group::5]) + ' are declared.'})
     nodes, record_uses = [], {}
+    reference_rng = random.Random(slot['topology_seed'] + '/unqualified-references-v4')
+    reference_steps = sorted([target, *reference_rng.sample([n for n in range(8, CLAIMS) if n != target], 3)])
     for n, ps in enumerate(parents, 6):
         cited = [proposed_atoms[p] for p in ps]
         # At the target the term is reused without its qualifier. The record's
@@ -343,8 +375,12 @@ def build(slot, parents):
         for q, a in zip(ps, cited):
             # Refer to the earlier result by content, without silently
             # restating a lot fact when only a sample fact was established.
-            contents.append(f'the {surfaces[primary][0]} result' if q == parent
-                            else english(a, qualified=n != target))
+            if q == parent and n > target:
+                continue  # Redundant context is not needed to state this inference.
+            if q == n - 1 and n in reference_steps:
+                contents.append(f'the immediately preceding {surfaces[a[0]][0]} result')
+            else:
+                contents.append(english(a))
         if n == parent:
             contents.append(english(selector_atoms[kind_index]))
         opening = rng.choice(['Given', 'From', 'Using'])
@@ -361,10 +397,10 @@ def build(slot, parents):
             'source_record': record_ids[n-6]}
     glossary = [{'term': surfaces[p][0], 'sense': descriptions[p]} for p in names]
     random.Random(slot['seed'] + '/glossary-position').shuffle(glossary)
-    rng.shuffle(nodes); rng.shuffle(plain_leaves); rng.shuffle(records)
-    public_id = 'i' + hashlib.sha256(('P5-construction-v3/' + slot['cluster'] + '/' + str(('shift','smuggle','benign').index(slot['variant']))).encode()).hexdigest()[:12]
+    rng.shuffle(plain_leaves); rng.shuffle(records)
+    public_id = packet_id(slot, private_nonce() if nonce is None else nonce)
     dossier = {'id': public_id, 'glossary': glossary, 'premises': plain_leaves,
-        'records': records, 'nodes': nodes, 'root': ids[CLAIMS-1]}
+        'records': records, 'nodes': nodes, 'argument': prose_argument(nodes), 'root': ids[CLAIMS-1]}
     return dossier, {'id': public_id, 'slot_id': slot['id'], 'family': slot['cluster'], 'split': slot['split'],
         'kind': slot['variant'], 'predicates': size, 'acceptable_locations': [[ids[parent], ids[target]]]
         if slot['variant']=='shift' else [[ids[target]], [ids[parent], ids[target]]] if slot['variant']=='smuggle' else [[]],
@@ -373,7 +409,8 @@ def build(slot, parents):
         'id': public_id, 'slot': slot, 'topology': parents, 'structural_signature': structural_signature(parents),
         'intended': intended.to_dict(), 'merged': proposed.to_dict(), 'model': model.to_dict(),
         'negative': negative, 'bridge': bridge.to_dict(env), 'augmented': augmented.to_dict(),
-        'construction': {'version': 3, 'target': ids[target], 'parent': ids[parent],
+        'construction': {'version': 4, 'target': ids[target], 'parent': ids[parent],
+            'unqualified_reference_nodes': [ids[n] for n in reference_steps],
             'redundant_edges': [[ids[n], ids[q]] for n, q in redundant],
             'decoy_nodes': [ids[n] for n in decoy_pairs],
             'comparison_nodes': [ids[12], ids[13]],
@@ -386,6 +423,7 @@ def generate(base=HERE):
         raise PreflightError('scored material change requires amendment and separately labeled run')
     if (base / 'freeze.json').exists() and json.loads((base/'freeze.json').read_text()).get('status') == 'READY_FOR_SCORED':
         raise PreflightError('frozen materials require an amendment')
+    nonce = private_nonce()
     dossiers, labels, graphs, attempts, signatures, family_topologies = [], [], [], read(base/'materials/construction-ledger.jsonl.gz'), set(), {}
     for slot in p5()['slots']:
         family = slot['cluster']
@@ -402,7 +440,7 @@ def generate(base=HERE):
                                  'reason': 'structural invariant collision; reject conservatively'})
                 increment += 1
         try:
-            dossier, label, graph = build(slot, family_topologies[family])
+            dossier, label, graph = build(slot, family_topologies[family], nonce)
         except Exception as exc:
             attempts.append({'slot': slot, 'topology': family_topologies[family], 'reason': str(exc)})
             archive(base/'materials/construction-ledger.jsonl.gz', attempts)
@@ -431,21 +469,24 @@ def generate(base=HERE):
     # A reproducible process-isolated OFFLINE DRAFT pass is deliberately not
     # represented as the preregistered Qwen independent author.
     import subprocess, sys
-    process = subprocess.run([sys.executable, '-m', 'experiments.p5_paraphrase'],
-        input=packed(dossiers), text=True, capture_output=True, check=True)
-    paraphrases = json.loads(process.stdout)
+    paraphrases = []
+    for dossier in dossiers:
+        # One packet per process: sibling content never enters the editor context.
+        process = subprocess.run([sys.executable, '-m', 'experiments.p5_paraphrase'],
+            input=packed([dossier]), text=True, capture_output=True, check=True)
+        paraphrases.extend(json.loads(process.stdout))
     archive(base/'materials/paraphrases.jsonl.gz', paraphrases)
     by_id = {p['id']: p for p in paraphrases}
     for split in ('dev','scored'):
         archive(base/f'materials/{split}.jsonl.gz', [dict(id=d['id'], group=l['family'], split=split,
-            payload={**d, 'nodes': by_id[d['id']]['nodes']},
+            payload={**d, 'argument': by_id[d['id']]['argument']},
             paraphrase_status='OFFLINE_DRAFT_NOT_QWEN') for d,l in zip(dossiers,labels) if l['split']==split])
     if not (base/'materials/review-ledger.jsonl.gz').exists():
         archive(base/'materials/review-ledger.jsonl.gz', [])
     report = {'passed': len(signatures)==28, 'slots': len(labels), 'families':28,
         'method':'pairwise distinct directed degree/depth invariants; sufficient non-isomorphism test',
         'failed_candidates': len(attempts), 'actual_formal_graph_families': len(set(actual_signatures.values())),
-        'generator_version': 3, 'deduction_steps': STEPS, 'source_records_fixed_within_family': True, 'independent_prose_ready': False,
+        'generator_version': 4, 'deduction_steps': STEPS, 'source_records_fixed_within_family': True, 'independent_prose_ready': False,
         'status':'BUILT_REFERENCE_AND_OFFLINE_DRAFT_REVIEW_BLOCKED', 'paid_calls':0}
     write_json(base/'checks/construction.json', report)
     return report

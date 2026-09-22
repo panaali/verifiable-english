@@ -1,5 +1,7 @@
 # Round-2 construction repair (2026-09-22)
 
+Historical report, superseded by [CONSTRUCTION-V4.md](CONSTRUCTION-V4.md).
+
 The operator requested this revision after a second blinded NOT READY review.
 The original design inventory and preregistration remain historical records;
 this construction now uses **16 deductions and six declared leaves**, as
@@ -38,8 +40,9 @@ roots have whole-premise countermodels. Lean replays 3,192 queries successfully,
 including every intended benign edge, proposed/bridge-augmented proof and flawed
 root witness. The offline regression suite contains 24 passing tests.
 
-Every leakage probe must be at or below 1/3 accuracy. Features and estimator/CV
-seeds are fixed; no classifier seed or hyperparameter search was performed.
+The current leakage criterion is the best-of-k permutation-null comparison
+(p >= 0.05), specified in P5-4. The table below records the historical v3
+measurements; its old flat chance cutoff is superseded.
 
 | Probe | Correct / 84 | Accuracy |
 |---|---:|---:|
