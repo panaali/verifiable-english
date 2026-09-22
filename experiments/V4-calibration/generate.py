@@ -156,7 +156,7 @@ def generate_item(split,lever,index,target_words=300):
     j=0
     while sum(len(p['english'].split()) for p in premises)+len(q['english'].split())<target_words:
         pred=f'd{j}'
-        phrase=f'wears the {colors[j%8]} badge from numbered club {j}'
+        phrase=f'records the {colors[j%8]} entry in numbered register {j}'
         preds[pred]={'arguments':['person'],'description':phrase}
         premises.append({'english':'Ben '+phrase+'.','gold_ast':['unary',pred,['const','ben']]})
         for rels in raw_witnesses.values(): rels[pred]=[['b']]
