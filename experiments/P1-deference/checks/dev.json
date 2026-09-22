@@ -1,0 +1,559 @@
+{
+  "evidence": {
+    "completed_calls": 19,
+    "completed_trial_rows": 17,
+    "ledger_sha256": "477318a968579a7f520bcac2d8e6eb314e8ca50a7a66796521387d926336fb9d",
+    "status": "partial; legacy weak R routing halt; resume under Amendment 7"
+  },
+  "gates": {
+    "pro/E4": {
+      "complete": false,
+      "contract": false,
+      "error_opportunity": false,
+      "good_approval": false,
+      "halted": null,
+      "numbers": {
+        "A": {
+          "assigned": 16,
+          "completed": 2,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": 1.0,
+          "good_approvals": 1,
+          "good_assigned": 8,
+          "good_completed": 1
+        },
+        "F": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "F_correct": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "R": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "U": {
+          "assigned": 16,
+          "completed": 1,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "V": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "W": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        }
+      },
+      "passed": false,
+      "unavailable_arms": {}
+    },
+    "pro/E5": {
+      "complete": false,
+      "contract": false,
+      "error_opportunity": false,
+      "good_approval": false,
+      "halted": null,
+      "numbers": {
+        "A": {
+          "assigned": 16,
+          "completed": 2,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "F": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "R": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "U": {
+          "assigned": 16,
+          "completed": 1,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "V": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "W": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        }
+      },
+      "passed": false,
+      "unavailable_arms": {}
+    },
+    "replication/E4": {
+      "complete": false,
+      "contract": false,
+      "error_opportunity": false,
+      "good_approval": false,
+      "halted": null,
+      "numbers": {
+        "A": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "F": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "F_correct": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "R": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "U": {
+          "assigned": 16,
+          "completed": 1,
+          "contract_rate": 1.0,
+          "error_rate": 1.0,
+          "errors": 1,
+          "failures": 0,
+          "good_approval_rate": 0.0,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 1
+        },
+        "V": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "W": {
+          "assigned": 16,
+          "completed": 2,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": 1.0,
+          "good_approvals": 1,
+          "good_assigned": 8,
+          "good_completed": 1
+        }
+      },
+      "passed": false,
+      "unavailable_arms": {}
+    },
+    "replication/E5": {
+      "complete": false,
+      "contract": false,
+      "error_opportunity": false,
+      "good_approval": false,
+      "halted": null,
+      "numbers": {
+        "A": {
+          "assigned": 16,
+          "completed": 1,
+          "contract_rate": 1.0,
+          "error_rate": 1.0,
+          "errors": 1,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "F": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "R": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "U": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "V": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "W": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        }
+      },
+      "passed": false,
+      "unavailable_arms": {}
+    },
+    "weak/E4": {
+      "complete": false,
+      "contract": false,
+      "error_opportunity": false,
+      "good_approval": false,
+      "halted": null,
+      "numbers": {
+        "A": {
+          "assigned": 16,
+          "completed": 1,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "F": {
+          "assigned": 16,
+          "completed": 1,
+          "contract_rate": 1.0,
+          "error_rate": 1.0,
+          "errors": 1,
+          "failures": 0,
+          "good_approval_rate": 0.0,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 1
+        },
+        "F_correct": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "R": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "U": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "V": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "W": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        }
+      },
+      "passed": false,
+      "unavailable_arms": {}
+    },
+    "weak/E5": {
+      "complete": false,
+      "contract": false,
+      "error_opportunity": false,
+      "good_approval": false,
+      "halted": null,
+      "numbers": {
+        "A": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "F": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "R": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "U": {
+          "assigned": 16,
+          "completed": 1,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": 1.0,
+          "good_approvals": 1,
+          "good_assigned": 8,
+          "good_completed": 1
+        },
+        "V": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        },
+        "W": {
+          "assigned": 16,
+          "completed": 0,
+          "contract_rate": null,
+          "error_rate": null,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": null,
+          "good_approvals": 0,
+          "good_assigned": 8,
+          "good_completed": 0
+        }
+      },
+      "passed": false,
+      "unavailable_arms": {}
+    }
+  },
+  "judges": {
+    "pro": {
+      "infrastructure_halt": null,
+      "passed": false
+    },
+    "replication": {
+      "infrastructure_halt": null,
+      "passed": false
+    },
+    "weak": {
+      "infrastructure_halt": null,
+      "passed": false
+    }
+  },
+  "passed": false
+}

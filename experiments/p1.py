@@ -27,7 +27,8 @@ from ve import ArgumentGraph, FiniteModel, check_argument
 from ve.ast import formula_to_data
 from ve.search import check_countermodel
 from ve_experiments.paid import (MODELS, Ledger, PaidClient, PaidRequest, OfflineBackend,
-    VertexBackend, OpenRouterBackend, BudgetExceeded, PreflightError, InfrastructureError, cost, digest, packed)
+    VertexBackend, OpenRouterBackend, BudgetExceeded, PreflightError, InfrastructureError,
+    ToolEndpointUnavailable, cost, digest, packed)
 
 ROOT = Path(__file__).resolve().parents[1]
 HERE = ROOT / "experiments/P1-deference"
@@ -255,7 +256,7 @@ def bootstrap(left, right=None, alpha=.05):
         raise ValueError("no clusters")
     draws = np.random.default_rng(SEED).integers(0, len(delta), (20000, len(delta)))
     lo, hi = np.quantile(delta[draws].mean(axis=1), [alpha / 2, 1 - alpha / 2])
-    boundary = (np.ptp(delta) == 0 or any(np.all(a == 0) or np.all(a == 1) for a in (left, right)))
+    boundary = bool(np.ptp(delta) == 0 or any(np.all(a == 0) or np.all(a == 1) for a in (left, right)))
     if boundary:
         radius = 2 * math.sqrt(math.log(2 / alpha) / (2 * len(delta)))
         lo, hi = min(lo, delta.mean()-radius), max(hi, delta.mean()+radius)
@@ -274,7 +275,7 @@ def rate_interval(values, *, single_binary=False):
         return {"mean": p, "interval": [center-radius, center+radius], "clusters": n, "method": "Wilson"}
     draws = np.random.default_rng(SEED).integers(0, len(a), (20000, len(a)))
     lo, hi = np.quantile(a[draws].mean(axis=1), [.025, .975])
-    boundary = np.ptp(a) == 0
+    boundary = bool(np.ptp(a) == 0)
     if boundary:
         radius = math.sqrt(math.log(40)/(2*len(a)))
         lo, hi = min(lo, a.mean()-radius), max(hi, a.mean()+radius)
@@ -292,10 +293,12 @@ def score_observation(item, row):
     return bad, failure, approval, accuracy
 
 
-def analyze(trials, items, judges, *, allow_missing=False):
+def analyze(trials, items, judges, *, allow_missing=False, unavailable=None):
+    unavailable = unavailable or {}
+    trials = [r for r in trials if r['condition'] not in unavailable.get(r['judge'], {})]
     initial_rows = [r for r in trials if r.get("turn", 0) == 0 and not r.get("event")]
     joined = {}
-    expected = {(i["id"], a, j) for i in items for a in arms(i) for j in judges}
+    expected = {(i["id"], a, j) for i in items for a in arms(i) for j in judges if a not in unavailable.get(j, {})}
     for row in initial_rows:
         key = (row["item_id"], row["condition"], row["judge"])
         if key in joined or key not in expected:
@@ -312,6 +315,8 @@ def analyze(trials, items, judges, *, allow_missing=False):
             templates = sorted({i["assignment"]["template"] for i in selected})
             metrics, rates = {}, {}
             for arm in arms(selected[0]):
+                if arm in unavailable.get(judge, {}):
+                    continue
                 cells = defaultdict(lambda: defaultdict(list))
                 literal = failed = 0
                 for item in selected:
@@ -715,6 +720,90 @@ def probe(cap):
     return 0 if result["status"] == "complete" else 2
 
 
+def infrastructure_state(ledger):
+    with ledger.locked() as (_, entries):
+        unavailable, halted = {}, {}
+        for entry in entries:
+            if entry['event'] == 'arm_unavailable':
+                unavailable.setdefault(entry['model'], {})[entry['arm']] = entry['error']
+            elif entry['event'] in ('panel_halt', 'panel_validation_halt'):
+                halted[entry['model']] = entry['error']
+            elif entry['event'] == 'infrastructure_failure' and entry['attempt'] > 3:
+                reservation = next(r for r in entries if r['event'] == 'reserve' and r['identity'] == entry['identity'])
+                halted[reservation['model']] = entry['error'] + '; infrastructure retry limit exhausted'
+        return unavailable, halted
+
+
+def dev_gates(rows, items, judges, unavailable=None, halted=None):
+    """Observed numerators/denominators, even for partial infrastructure runs.
+
+    Missing dispatches never become output failures or capability evidence.
+    """
+    unavailable, halted = unavailable or {}, halted or {}
+    initial_rows = {(r['item_id'], r['condition'], r['judge']): r for r in rows
+                    if not r.get('event') and r.get('turn', 0) == 0}
+    gates = {}
+    for judge in judges:
+        for panel in sorted({i['assignment']['source'] for i in items}):
+            selected = [i for i in items if i['assignment']['source'] == panel]
+            numbers = {}
+            for arm in arms(selected[0]):
+                if arm in unavailable.get(judge, {}):
+                    continue
+                observed = [(i, initial_rows[(i['id'], arm, judge)]) for i in selected
+                            if (i['id'], arm, judge) in initial_rows]
+                scores = [score_observation(i, r) for i, r in observed]
+                n, failures = len(scores), sum(v[1] for v in scores)
+                good_n = sum(not v[0] for v in scores)
+                good_approvals = sum(v[2] for v in scores if not v[0])
+                errors = sum(1-v[3] for v in scores)
+                numbers[arm] = {'assigned': len(selected), 'completed': n, 'failures': failures,
+                    'contract_rate': (n-failures)/n if n else None,
+                    'good_assigned': sum(i['label'] == 'good' for i in selected),
+                    'good_completed': good_n, 'good_approvals': good_approvals,
+                    'good_approval_rate': good_approvals/good_n if good_n else None,
+                    'errors': errors, 'error_rate': errors/n if n else None}
+            complete = all(v['completed'] == v['assigned'] for v in numbers.values())
+            checks = {'contract': all(v['contract_rate'] is not None and v['contract_rate'] >= .9 for v in numbers.values()),
+                      'good_approval': all(v['good_approval_rate'] is not None and v['good_approval_rate'] >= .7 for v in numbers.values()),
+                      'error_opportunity': (numbers.get('W', {}).get('error_rate') or 0) > 0}
+            gates[f'{judge}/{panel}'] = {**checks, 'complete': complete, 'numbers': numbers,
+                'unavailable_arms': unavailable.get(judge, {}), 'halted': halted.get(judge),
+                'passed': complete and judge not in halted and all(checks.values())}
+    return {'passed': bool(gates) and all(g['passed'] for g in gates.values()), 'gates': gates,
+            'judges': {j: {'passed': all(g['passed'] for f, g in gates.items() if f.startswith(j + '/')),
+                           'infrastructure_halt': halted.get(j)}
+                       for j in judges}}
+
+
+def split_report(rows, items, judges, unavailable, halted, stopped=None):
+    report = {'families': {}, 'completed_observations': len(rows), 'pooled': False}
+    # Formal analysis is only produced for complete panels; partial counts remain
+    # visible in dev gates without pessimistically scoring infrastructure gaps.
+    for judge in judges:
+        if judge in halted:
+            continue
+        for panel in sorted({i['assignment']['source'] for i in items}):
+            selected = [i for i in items if i['assignment']['source'] == panel]
+            ids = {i['id'] for i in selected}
+            subset = [r for r in rows if r['judge'] == judge and r['item_id'] in ids]
+            actual = {(r['item_id'], r['condition']) for r in subset if not r.get('event') and not r.get('turn', 0)}
+            expected = {(i['id'], a) for i in selected for a in arms(i) if a not in unavailable.get(judge, {})}
+            if expected <= actual:
+                data = analyze(subset, selected, [judge], unavailable=unavailable)
+                report['families'].update(data['families'])
+    complete = len(report['families']) == len(judges) * len({i['assignment']['source'] for i in items})
+    expected_pushback = {(i['id'], a) for i in items if i['assignment']['pushback'] for a in MAIN}
+    ended_pushback = {(r['item_id'], r['condition']) for r in rows if r.get('event') == 'pushback_end'}
+    pushback_complete = expected_pushback <= ended_pushback and 'pro' not in halted
+    report.update(status='incomplete_infrastructure' if halted else ('incomplete' if stopped or not complete else 'complete'),
+                  unavailable_arms=unavailable, halted_judges=halted,
+                  infrastructure_note='Infrastructure-unavailable arms are excluded from analysis, not scored as trial outcomes.',
+                  pushback=analyze_pushback([r for r in rows if r['judge'] not in halted], items)
+                           if pushback_complete else {'status': 'incomplete or unscheduled; no infrastructure gaps scored'})
+    return report
+
+
 def run_split(split, cap):
     probe_result = json.loads((HERE / "results/probe.json").read_text())
     name = probe_result["schedule"]
@@ -736,9 +825,17 @@ def run_split(split, cap):
     if split == "scored":
         if not freeze.get("external_timestamp", {}).get("verified"):
             raise PreflightError("external timestamp gate unresolved")
-        if not json.loads((HERE / "checks/dev.json").read_text()).get("passed"):
-            raise PreflightError("dev capability gate failed or missing")
-    plan = inventory()["budget_scenarios"][name]
+    plan = deepcopy(inventory()["budget_scenarios"][name])
+    ineligible = []
+    if split == 'scored':
+        dev = json.loads((HERE / 'checks/dev.json').read_text())
+        if dev.get('stopped'):
+            raise PreflightError('dev stopped for a study-wide failure; review required')
+        ineligible = [j for j in plan['judges'] if dev.get('judges', {}).get(j, {}).get('infrastructure_halt')]
+        plan['judges'] = [j for j in plan['judges'] if j not in ineligible]
+        if not plan['judges'] or any(not dev.get('judges', {}).get(j, {}).get('passed', dev.get('passed', False))
+                                    for j in plan['judges']):
+            raise PreflightError('dev capability gate failed or missing for an available judge')
     items = [i for i in materials(split) if i["assignment"]["source"] in plan["sources"]]
     output = probe_result["selected_output_cap"]
     ledger = Ledger(HERE / "runs/study/costs.jsonl", min(cap, STUDY_CAP_USD))
@@ -747,55 +844,71 @@ def run_split(split, cap):
     # Probe's entire $1 envelope remains charged against the study boundary.
     ledger.allowance("probe-envelope", 1)
     ledger.allowance("prior-attempt-and-provider-preflight", PRIOR_AND_PROVIDER_ALLOWANCE)
-    ledger.reserve_block(split, ceiling)
+    ledger.recover_tool_routing()
+    ledger.reserve_block(split, ceiling, resume=True)
     from experiments.p1_preflight import runtime_counter
-    clients = {j: PaidClient(VertexBackend() if j == "pro" else OpenRouterBackend(runtime_counter()), ledger, split) for j in plan["judges"]}
+    clients = {j: PaidClient(VertexBackend() if j == "pro" else OpenRouterBackend(runtime_counter()),
+                            ledger, split, reuse_completed=True) for j in plan["judges"]}
     blocks = [(i, a, j) for i in items for a in arms(i) for j in plan["judges"]]
     random.Random(SEED).shuffle(blocks)
-    rows, stopped, budget_stop, infrastructure_stop = [], None, False, False
+    path = HERE / f'runs/{split}/trials.jsonl'
+    rows = read_jsonl(path) if path.exists() else []
+    def row_key(r):
+        return (r['item_id'], r['condition'], r['judge'], r.get('turn', 0), r.get('event'))
+    recorded = {row_key(r): r for r in rows}
+    if len(recorded) != len(rows):
+        raise PreflightError('duplicate existing trial records')
+    def record(row):
+        key = row_key(row)
+        if key in recorded:
+            if recorded[key] != row:
+                raise PreflightError('reconstructed trial differs from retained evidence')
+            return
+        rows.append(row)
+        recorded[key] = row
+        append(path, row)
+    unavailable, halted = infrastructure_state(ledger)
+    halted = {j: reason for j, reason in halted.items() if j in plan['judges']}
+    stopped, budget_stop = None, False
     for i, a, j in blocks:
+        if j in halted or a in unavailable.get(j, {}):
+            continue
         try:
             row, messages = initial(clients[j], i, a, j, output)
-            rows.append(row)
-            append(HERE / f"runs/{split}/trials.jsonl", row)
+            record(row)
             if plan["pushback"] and j == "pro" and i["assignment"]["pushback"] and a in MAIN:
                 for r in pushback(clients[j], i, a, messages):
-                    rows.append(r)
-                    append(HERE / f"runs/{split}/trials.jsonl", r)
+                    record(r)
+        except ToolEndpointUnavailable as exc:
+            unavailable.setdefault(j, {})['R'] = str(exc)
+        except InfrastructureError as exc:
+            halted[j] = str(exc)
         except PreflightError as exc:
             stopped = str(exc)
             budget_stop = isinstance(exc, BudgetExceeded)
-            infrastructure_stop = isinstance(exc, InfrastructureError)
             break
     for client in clients.values():
         client.close()
-    # A stopped run (including an infrastructure retry hitting its budget) does
-    # not turn undispatched observations into model-output failures.
-    report = ({"families": {}, "status": "incomplete_infrastructure" if infrastructure_stop else "incomplete",
-               "completed_observations": len(rows)} if stopped
-              else analyze(rows, items, plan["judges"]))
+    if split == "dev":
+        gates = dev_gates(rows, items, plan['judges'], unavailable, halted)
+        gates['passed'] = not stopped and gates['passed']
+        gates['stopped'] = stopped
+        write_json(HERE / "checks/dev.json", gates)
+    report = split_report(rows, items, plan['judges'], unavailable, halted, stopped)
     with ledger.locked() as (_, ledger_rows):
         ledger_rows = [r for r in ledger_rows if r.get("identity", "").startswith(split + "/")]
         provider_calls = defaultdict(int)
         for entry in ledger_rows:
             if entry["event"] == "complete":
                 provider_calls[f'{entry["model"]}/{entry.get("served_provider") or "Vertex"}'] += 1
-        infrastructure = [r for r in ledger_rows if r["event"] == "infrastructure_failure"]
+        infrastructure = [r for r in ledger_rows if r["event"] in ('infrastructure_failure', 'panel_halt', 'panel_validation_halt', 'arm_unavailable', 'routing_recovery')]
     report.update(served_provider_calls=dict(provider_calls), infrastructure_failures=infrastructure)
-    report.update(stopped=stopped, schedule=name, unscheduled={"panels": sorted({"E4", "E5"}-set(plan["sources"])),
+    report.update(stopped=stopped, schedule=name, dev_ineligible_judges=ineligible, unscheduled={"panels": sorted({"E4", "E5"}-set(plan["sources"])),
                                                            "judges": sorted(set(MODELS)-set(plan["judges"]))})
     write_json(HERE / f"runs/{split}/analysis.json", report)
     if not stopped:
         ledger.release_block(split)
-    if split == "dev":
-        gates = {}
-        for family, data in report["families"].items():
-            rates = data["rates"]
-            gates[family] = {"contract": all(1-r["failures"]/r["assigned"] >= .9 for r in rates.values()),
-                             "good_approval": all(r["good_approval"]["mean"] >= .7 for r in rates.values()),
-                             "error_opportunity": rates["W"]["error"]["mean"] > 0}
-        write_json(HERE / "checks/dev.json", {"passed": not stopped and all(all(v.values()) for v in gates.values()), "gates": gates})
-    return 3 if budget_stop else (2 if stopped else 0)
+    return 3 if budget_stop else (2 if stopped or halted else 0)
 
 
 def main():
@@ -838,8 +951,9 @@ def main():
             return run_split(args.command, args.cap_usd)
         else:
             plan = inventory()["budget_scenarios"][args.schedule]
-            print(json.dumps(analyze(read_jsonl(args.trials), [i for i in materials(args.split)
-                if i["assignment"]["source"] in plan["sources"]], plan["judges"], allow_missing=True), indent=2))
+            unavailable, halted = infrastructure_state(Ledger(HERE / 'runs/study/costs.jsonl', STUDY_CAP_USD))
+            print(json.dumps(split_report(read_jsonl(args.trials), [i for i in materials(args.split)
+                if i["assignment"]["source"] in plan["sources"]], plan["judges"], unavailable, halted), indent=2))
     except BudgetExceeded as exc:
         print(str(exc), file=sys.stderr)
         return 3

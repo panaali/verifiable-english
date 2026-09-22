@@ -2,7 +2,7 @@
 
 The approved replacement probe is complete (10 valid responses), selecting
 `full_256`. Original attempts remain in `results/probe-attempt{1,2}.json` and
-`runs/probe-attempt{1,2}/`. No dev or scored inference has run. See `freeze.json`
+`runs/probe-attempt{1,2}/`. Dev halted after 19 completed calls; scored inference has not run. See `freeze.json`
 for current gate outcomes and `PROPOSED-AMENDMENT.md` for the dated amendments.
 
 ## Preflight
@@ -88,8 +88,9 @@ counter agreement on the smoke prompt, and counts all initial/replay fixtures
 for both judges. Amendment 5 preserves successful smoke results and reruns only
 failed judges. It recovers successful usage from the durable ledger if an older
 run overwrote the report; a changed freeze revalidates cached usage locally.
-Weak control routes in order through DeepInfra, Novita and Groq only; Qwen
-remains pinned to DeepInfra. Provider evidence is stored in `checks/provider-preflight.json`;
+Weak control routes in order through DeepInfra, Novita and Groq only, except
+R: Amendment 7 removes provider and quantization restrictions for weak R while
+requiring parameter support. Qwen remains pinned to tool-capable DeepInfra. Provider evidence is stored in `checks/provider-preflight.json`;
 paid reservations/responses go to `runs/provider-preflight/costs.jsonl`.
 Local fixture counting must pass before the smoke generation for that judge.
 Missing or mismatched native assets block the panel without guessing. The worker
@@ -114,8 +115,15 @@ these attempts are logged separately from samples. Unknown timeout/5xx billing
 keeps a full-ceiling infrastructure hold against the same cap. Output failures
 are scored as preregistered and cannot buy replacement dev/scored samples.
 Served providers appear per call in the ledger and trials, with counts in the
-run analysis. An exhausted infrastructure run is marked incomplete without
-scoring its missing observations as model failures.
+run analysis. An exhausted infrastructure panel is marked incomplete without
+scoring its missing observations as model failures; the other judges continue.
+An explicit no-tool-endpoint 404 for unrestricted weak R excludes that whole
+arm from analysis and gates, with a durable infrastructure-unavailable receipt.
+Dev gate files retain observed numerators and denominators for every judge.
+Both dev and scored automatically resume from the ledger: completed calls and
+transcripts are reused, trial rows are deduplicated, and the original 19 dev
+completions are never repurchased. Do not delete the existing run directories.
+Refresh preflight and provider receipts for amended code before resuming.
 
 ```sh
 uv run python experiments/P1-deference/run_p1.py dev --cap-usd 6.7108092992
@@ -130,17 +138,19 @@ approximate counts to bypass a failure.
 ## Latest executed gates
 
 The amended preflight passed all six gates: known-answer, 500 Lean replay
-queries, 200 semantic pairs, 1,345 tests (two optional-backend skips), pending
+queries, 200 semantic pairs, 1,356 tests (two optional-backend skips), pending
 calendar timestamp inspection, and **1,816/1,816 fresh Vertex counts**. There
 were zero token errors or overflows; the maximum including generated reserves
 was 6,175. The separate local native-counter receipts passed **1,536/1,536**
 fixtures for each of Qwen (maximum 4,548) and Llama (maximum 4,085). These are
-local counts, not OpenRouter usage confirmations. No judge/OpenRouter calls
-were made; worker inference spend was $0.
+local counts, not OpenRouter usage confirmations. No new model generations
+were made; worker inference spend was $0. Provider revalidation reused both
+retained smoke replies. Amendment 7 tests also reconstruct the original dev
+ledger prefix, preserving its 19 completions and 17 trial rows without dispatch.
 
 See `checks/` and `freeze.json` for the receipts and current blockers.
 The pre-amendment Vertex gate had 118 overflows among 1,816 real counts, all in
 A/R. Amendment 3 applies the smallest hundred-token ceiling admitting its
 6,175-token maximum with a 10% margin: 6,800. Other arms, all items, prompts,
 replay text, and output bounds are unchanged. The selected full_256 schedule
-fits the amended $36 budget and awaits the current OpenRouter provider gate.
+fits the amended $36 budget; all gate receipts must match the execution freeze.

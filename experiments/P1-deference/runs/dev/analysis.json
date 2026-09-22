@@ -1,0 +1,17 @@
+{
+  "completed_observations": 17,
+  "families": {},
+  "infrastructure_failures": [],
+  "schedule": "full_256",
+  "served_provider_calls": {
+    "pro/Vertex": 12,
+    "replication/DeepInfra": 4,
+    "weak/DeepInfra": 3
+  },
+  "status": "incomplete",
+  "stopped": "InfrastructureError: OpenRouter HTTP 404: {\"error\":{\"message\":\"No endpoints found that support tool use. Try disabling \\\"replay\\\". To learn more about provider routing, visit: https://openrouter.ai/docs/guides/routing/provider-selection\",\"code\":404,\"metadata\":{\"routing_funnel\":[{\"step\":\"Initial Endpoints\",\"endpoint_count\":5},{\"step\":\"Filter by Allowed Providers\",\"endpoint_count\":3},{\"step\":\"Filter by Quantization\",\"endpoint_count\":2}],\"failed_routing_step\":\"Filter by Tool Compatibility\"}}}",
+  "unscheduled": {
+    "judges": [],
+    "panels": []
+  }
+}
