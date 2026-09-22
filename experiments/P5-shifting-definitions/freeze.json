@@ -53,6 +53,14 @@
     "reconcile",
     "analyze --split scored"
   ],
+  "external_timestamp": {
+    "freeze_sha256": "e3673204837523d1bbcf797c3c5abe0b893cdcd2e02ceffbd31cd75c1d7f5637",
+    "passed": true,
+    "policy": "bound calendar submission is pilot timestamp evidence; not a claim of verified Bitcoin confirmation",
+    "proof_sha256": "ffb5c03bfba0d4aefd80ee09ccaaa7dc6ed778a697034deb42775feb7506f1b3",
+    "source_sha256": "b48fabf73ae126932bee526161507640e1a63265578e31792de921f548b1a5a7",
+    "stdout": "File sha256 hash: b48fabf73ae126932bee526161507640e1a63265578e31792de921f548b1a5a7\nTimestamp:\nappend a6ce6979066aa72206a6ebe3d878444c\nsha256\n -> append 1e5c1be07ed9650d\n    sha256\n    append aa60f7580ba552e70be65cc61055f78ff10e6c2b43f7ede3c18b4e32db33f4f1\n    sha256\n    append 198ad65c5fd1cf1bc3355cf9727b2163\n    sha256\n    prepend ebab775a7360ed1aa13f0dad03040de4883600755c6b7338e21c48afd18a1102\n    sha256\n    append 8c4e725ab5fa392888c0dfc653ef87715cd39bd5d6fedafffb69a02a3ceb9c0b\n    sha256\n    append 927ae0049cbbb5ecaf58575b4ac7e3ba90d743a2486ea8b5f191c4da9f072872\n    sha256\n    prepend 6ab30023\n    append 1f0975f9e4bbc483\n    verify PendingAttestation('https://alice.btc.calendar.opentimestamps.org')\n -> append 3ae87db733ecc1256a87ba989110198e\n    sha256\n    append 1c064c91440930d210ea10ffba1caea942dd84ee48e7af1376471a5533b11987\n    sha256\n    append 18cf3d6594d489f14e603ca0f5c5c61592ec186c0e2aa181872d31e65a48120a\n    sha256\n    append 3a700965ac1a4ba9912f4b7fbf6058c4642fee61e50d6f6fa85a6812d7105480\n    sha256\n    prepend 6ab30024\n    append f6d3052511768d48\n    verify PendingAttestation('https://finney.calendar.eternitywall.com')\n -> append 8c209844dceb8ac3\n    sha256\n    append 3485c0fd6da4c1c47a464bd6d44ce80f\n    sha256\n    append b48a1f2af54e0f383fdc32b364dd147d59be486e744108159e2b4139df4b0af1\n    sha256\n    append b511297c683a4f3e075d934554cdecdf4979f6b8bb1482cc50f425d9903dc56b\n    sha256\n    append 65ae03ccd9951c551daeb84d420817299faba1da0b7127fd792f292bff5b4013\n    sha256\n    prepend 6ab30023\n    append 9bb804f29c33e0ba\n    verify PendingAttestation('https://bob.btc.calendar.opentimestamps.org')\n -> append abec65cb4ffa4812ebbbf8132aa4c628\n    sha256\n    append 2e3ac22c65005c6984e26ed6f6a3dcdc217b9ae0de7a23684ae7fc6ecd8bb000\n    sha256\n    append c9934b8698cf89098c61b85bf76a144f9421469fe0fd9a3cfa70d7399e0c8476\n    sha256\n    prepend 6ab30023\n    append f415457ac0ab5610\n    verify PendingAttestation('https://btc.calendar.catallaxy.com')\n\n"
+  },
   "gemini_calibration": {
     "configs": {
       "0f5ae9c09c122840e00544555c13e18a2f86f1208db0e45ba59f073475b37773": {
@@ -1494,5 +1502,8 @@
     "temperature": 0
   },
   "scenario": "dual_judge",
-  "status": "BLOCKED_NOT_SCORED_READY"
+  "status": "BLOCKED_NOT_SCORED_READY",
+  "unresolved": [
+    "dev"
+  ]
 }

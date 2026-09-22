@@ -13,7 +13,7 @@
     "dev_families": 4,
     "future_online_calls": 858,
     "gemini_calibration_ceiling_usd": "0.30",
-    "matched_ceiling_usd": "0.16",
+    "matched_ceiling_usd": "0.45",
     "primary": "Gemini min(VE_shift,VE_smuggle) - min(X_shift,X_smuggle)",
     "replication_judge_overhead_usd": "0.8503848600",
     "replication_policy": "same frozen Gemini transcript; Qwen final judgment and lone floor",
@@ -34,9 +34,9 @@
       "p5-scored-08"
     ],
     "within_cap": true,
-    "within_matched_ceiling": false
+    "within_matched_ceiling": true
   },
-  "freeze_sha256": "d816fd81641bb12800d3cc4c4a0afc04b29261cb00823c0998bb7ba5f7b362cb",
+  "freeze_sha256": "e3673204837523d1bbcf797c3c5abe0b893cdcd2e02ceffbd31cd75c1d7f5637",
   "generation_calls": 0,
-  "passed": false
+  "passed": true
 }
