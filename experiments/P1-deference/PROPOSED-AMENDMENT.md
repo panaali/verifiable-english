@@ -598,3 +598,7 @@ smokes without buying replacements:
 uv run python experiments/P1-deference/run_p1.py preflight
 uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
 ```
+
+## Amendment 12b — 2026-09-22 (orchestrator): schedule selection
+
+Selected `replication_gemini_e5_2turn` (cumulative ceiling $37.88 <= $40) instead of `replication_3turn`: it keeps the Gemini E5 premise/harm panel (preregistered harm contrasts A-W, F-U) at the price of 2 pushback turns instead of 3 for all judges. Decided before any scored inference; recorded in results/probe.json.

@@ -1,444 +1,446 @@
 {
-  "calls": [
-    {
-      "billed_output_tokens": 91,
-      "cached_tokens": 0,
-      "cost_usd": 0.001576,
-      "identity": "dev/e4-086d3b59c2f1ac4d1d/V/pro/probe/0",
-      "input_tokens": 242,
-      "latency_s": 2.630273582995869,
-      "output_tokens": 6,
-      "parse_status": "valid",
-      "provider_billing": {
-        "invoice_reconciliation": "pending; design-table estimate",
-        "usage_metadata": {
-          "candidates_token_count": 6,
-          "candidates_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 6
-            }
-          ],
-          "prompt_token_count": 242,
-          "prompt_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 242
-            }
-          ],
-          "thoughts_token_count": 85,
-          "total_token_count": 333,
-          "traffic_type": "ON_DEMAND"
-        }
-      },
-      "served_revision": "gemini-3.1-pro-preview",
-      "thinking_tokens": 85
-    },
-    {
-      "billed_output_tokens": 76,
-      "cached_tokens": 0,
-      "cost_usd": 0.001396,
-      "identity": "dev/e4-e593908907ba459975/V/pro/probe/0",
-      "input_tokens": 242,
-      "latency_s": 2.041954499989515,
-      "output_tokens": 6,
-      "parse_status": "valid",
-      "provider_billing": {
-        "invoice_reconciliation": "pending; design-table estimate",
-        "usage_metadata": {
-          "candidates_token_count": 6,
-          "candidates_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 6
-            }
-          ],
-          "prompt_token_count": 242,
-          "prompt_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 242
-            }
-          ],
-          "thoughts_token_count": 70,
-          "total_token_count": 318,
-          "traffic_type": "ON_DEMAND"
-        }
-      },
-      "served_revision": "gemini-3.1-pro-preview",
-      "thinking_tokens": 70
-    },
-    {
-      "billed_output_tokens": 96,
-      "cached_tokens": 0,
-      "cost_usd": 0.001742,
-      "identity": "dev/e4-086d3b59c2f1ac4d1d/W/pro/probe/0",
-      "input_tokens": 295,
-      "latency_s": 2.150746832980076,
-      "output_tokens": 6,
-      "parse_status": "valid",
-      "provider_billing": {
-        "invoice_reconciliation": "pending; design-table estimate",
-        "usage_metadata": {
-          "candidates_token_count": 6,
-          "candidates_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 6
-            }
-          ],
-          "prompt_token_count": 295,
-          "prompt_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 295
-            }
-          ],
-          "thoughts_token_count": 90,
-          "total_token_count": 391,
-          "traffic_type": "ON_DEMAND"
-        }
-      },
-      "served_revision": "gemini-3.1-pro-preview",
-      "thinking_tokens": 90
-    },
-    {
-      "billed_output_tokens": 138,
-      "cached_tokens": 0,
-      "cost_usd": 0.002246,
-      "identity": "dev/e4-e593908907ba459975/W/pro/probe/0",
-      "input_tokens": 295,
-      "latency_s": 2.445837916980963,
-      "output_tokens": 5,
-      "parse_status": "valid",
-      "provider_billing": {
-        "invoice_reconciliation": "pending; design-table estimate",
-        "usage_metadata": {
-          "candidates_token_count": 5,
-          "candidates_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 5
-            }
-          ],
-          "prompt_token_count": 295,
-          "prompt_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 295
-            }
-          ],
-          "thoughts_token_count": 133,
-          "total_token_count": 433,
-          "traffic_type": "ON_DEMAND"
-        }
-      },
-      "served_revision": "gemini-3.1-pro-preview",
-      "thinking_tokens": 133
-    },
-    {
-      "billed_output_tokens": 90,
-      "cached_tokens": 0,
-      "cost_usd": 0.003332,
-      "identity": "dev/e4-086d3b59c2f1ac4d1d/A/pro/probe/0",
-      "input_tokens": 1126,
-      "latency_s": 2.527838000009069,
-      "output_tokens": 11,
-      "parse_status": "valid",
-      "provider_billing": {
-        "invoice_reconciliation": "pending; design-table estimate",
-        "usage_metadata": {
-          "candidates_token_count": 11,
-          "candidates_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 11
-            }
-          ],
-          "prompt_token_count": 1126,
-          "prompt_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 1126
-            }
-          ],
-          "thoughts_token_count": 79,
-          "total_token_count": 1216,
-          "traffic_type": "ON_DEMAND"
-        }
-      },
-      "served_revision": "gemini-3.1-pro-preview",
-      "thinking_tokens": 79
-    },
-    {
-      "billed_output_tokens": 116,
-      "cached_tokens": 0,
-      "cost_usd": 0.003662,
-      "identity": "dev/e4-e593908907ba459975/A/pro/probe/0",
-      "input_tokens": 1135,
-      "latency_s": 2.5140382919926196,
-      "output_tokens": 11,
-      "parse_status": "valid",
-      "provider_billing": {
-        "invoice_reconciliation": "pending; design-table estimate",
-        "usage_metadata": {
-          "candidates_token_count": 11,
-          "candidates_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 11
-            }
-          ],
-          "prompt_token_count": 1135,
-          "prompt_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 1135
-            }
-          ],
-          "thoughts_token_count": 105,
-          "total_token_count": 1251,
-          "traffic_type": "ON_DEMAND"
-        }
-      },
-      "served_revision": "gemini-3.1-pro-preview",
-      "thinking_tokens": 105
-    },
-    {
-      "billed_output_tokens": 131,
-      "cached_tokens": 0,
-      "cost_usd": 0.00275,
-      "identity": "dev/e4-086d3b59c2f1ac4d1d/F/pro/probe/0",
-      "input_tokens": 589,
-      "latency_s": 2.615208791976329,
-      "output_tokens": 6,
-      "parse_status": "valid",
-      "provider_billing": {
-        "invoice_reconciliation": "pending; design-table estimate",
-        "usage_metadata": {
-          "candidates_token_count": 6,
-          "candidates_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 6
-            }
-          ],
-          "prompt_token_count": 589,
-          "prompt_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 589
-            }
-          ],
-          "thoughts_token_count": 125,
-          "total_token_count": 720,
-          "traffic_type": "ON_DEMAND"
-        }
-      },
-      "served_revision": "gemini-3.1-pro-preview",
-      "thinking_tokens": 125
-    },
-    {
-      "billed_output_tokens": 118,
-      "cached_tokens": 0,
-      "cost_usd": 0.0026,
-      "identity": "dev/e4-e593908907ba459975/F/pro/probe/0",
-      "input_tokens": 592,
-      "latency_s": 3.014575374982087,
-      "output_tokens": 6,
-      "parse_status": "valid",
-      "provider_billing": {
-        "invoice_reconciliation": "pending; design-table estimate",
-        "usage_metadata": {
-          "candidates_token_count": 6,
-          "candidates_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 6
-            }
-          ],
-          "prompt_token_count": 592,
-          "prompt_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 592
-            }
-          ],
-          "thoughts_token_count": 112,
-          "total_token_count": 710,
-          "traffic_type": "ON_DEMAND"
-        }
-      },
-      "served_revision": "gemini-3.1-pro-preview",
-      "thinking_tokens": 112
-    },
-    {
-      "billed_output_tokens": 125,
-      "cached_tokens": 0,
-      "cost_usd": 0.002174,
-      "identity": "dev/e4-086d3b59c2f1ac4d1d/R/pro/probe/0",
-      "input_tokens": 337,
-      "latency_s": 2.8356533749902155,
-      "output_tokens": 11,
-      "parse_status": "valid",
-      "provider_billing": {
-        "invoice_reconciliation": "pending; design-table estimate",
-        "usage_metadata": {
-          "candidates_token_count": 11,
-          "candidates_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 11
-            }
-          ],
-          "prompt_token_count": 337,
-          "prompt_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 337
-            }
-          ],
-          "thoughts_token_count": 114,
-          "total_token_count": 462,
-          "traffic_type": "ON_DEMAND"
-        }
-      },
-      "served_revision": "gemini-3.1-pro-preview",
-      "thinking_tokens": 114
-    },
-    {
-      "billed_output_tokens": 192,
-      "cached_tokens": 0,
-      "cost_usd": 0.002978,
-      "identity": "dev/e4-e593908907ba459975/R/pro/probe/0",
-      "input_tokens": 337,
-      "latency_s": 2.942956624989165,
-      "output_tokens": 11,
-      "parse_status": "valid",
-      "provider_billing": {
-        "invoice_reconciliation": "pending; design-table estimate",
-        "usage_metadata": {
-          "candidates_token_count": 11,
-          "candidates_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 11
-            }
-          ],
-          "prompt_token_count": 337,
-          "prompt_tokens_details": [
-            {
-              "modality": "TEXT",
-              "token_count": 337
-            }
-          ],
-          "thoughts_token_count": 181,
-          "total_token_count": 529,
-          "traffic_type": "ON_DEMAND"
-        }
-      },
-      "served_revision": "gemini-3.1-pro-preview",
-      "thinking_tokens": 181
+ "calls": [
+  {
+   "billed_output_tokens": 91,
+   "cached_tokens": 0,
+   "cost_usd": 0.001576,
+   "identity": "dev/e4-086d3b59c2f1ac4d1d/V/pro/probe/0",
+   "input_tokens": 242,
+   "latency_s": 2.630273582995869,
+   "output_tokens": 6,
+   "parse_status": "valid",
+   "provider_billing": {
+    "invoice_reconciliation": "pending; design-table estimate",
+    "usage_metadata": {
+     "candidates_token_count": 6,
+     "candidates_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 6
+      }
+     ],
+     "prompt_token_count": 242,
+     "prompt_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 242
+      }
+     ],
+     "thoughts_token_count": 85,
+     "total_token_count": 333,
+     "traffic_type": "ON_DEMAND"
     }
+   },
+   "served_revision": "gemini-3.1-pro-preview",
+   "thinking_tokens": 85
+  },
+  {
+   "billed_output_tokens": 76,
+   "cached_tokens": 0,
+   "cost_usd": 0.001396,
+   "identity": "dev/e4-e593908907ba459975/V/pro/probe/0",
+   "input_tokens": 242,
+   "latency_s": 2.041954499989515,
+   "output_tokens": 6,
+   "parse_status": "valid",
+   "provider_billing": {
+    "invoice_reconciliation": "pending; design-table estimate",
+    "usage_metadata": {
+     "candidates_token_count": 6,
+     "candidates_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 6
+      }
+     ],
+     "prompt_token_count": 242,
+     "prompt_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 242
+      }
+     ],
+     "thoughts_token_count": 70,
+     "total_token_count": 318,
+     "traffic_type": "ON_DEMAND"
+    }
+   },
+   "served_revision": "gemini-3.1-pro-preview",
+   "thinking_tokens": 70
+  },
+  {
+   "billed_output_tokens": 96,
+   "cached_tokens": 0,
+   "cost_usd": 0.001742,
+   "identity": "dev/e4-086d3b59c2f1ac4d1d/W/pro/probe/0",
+   "input_tokens": 295,
+   "latency_s": 2.150746832980076,
+   "output_tokens": 6,
+   "parse_status": "valid",
+   "provider_billing": {
+    "invoice_reconciliation": "pending; design-table estimate",
+    "usage_metadata": {
+     "candidates_token_count": 6,
+     "candidates_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 6
+      }
+     ],
+     "prompt_token_count": 295,
+     "prompt_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 295
+      }
+     ],
+     "thoughts_token_count": 90,
+     "total_token_count": 391,
+     "traffic_type": "ON_DEMAND"
+    }
+   },
+   "served_revision": "gemini-3.1-pro-preview",
+   "thinking_tokens": 90
+  },
+  {
+   "billed_output_tokens": 138,
+   "cached_tokens": 0,
+   "cost_usd": 0.002246,
+   "identity": "dev/e4-e593908907ba459975/W/pro/probe/0",
+   "input_tokens": 295,
+   "latency_s": 2.445837916980963,
+   "output_tokens": 5,
+   "parse_status": "valid",
+   "provider_billing": {
+    "invoice_reconciliation": "pending; design-table estimate",
+    "usage_metadata": {
+     "candidates_token_count": 5,
+     "candidates_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 5
+      }
+     ],
+     "prompt_token_count": 295,
+     "prompt_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 295
+      }
+     ],
+     "thoughts_token_count": 133,
+     "total_token_count": 433,
+     "traffic_type": "ON_DEMAND"
+    }
+   },
+   "served_revision": "gemini-3.1-pro-preview",
+   "thinking_tokens": 133
+  },
+  {
+   "billed_output_tokens": 90,
+   "cached_tokens": 0,
+   "cost_usd": 0.003332,
+   "identity": "dev/e4-086d3b59c2f1ac4d1d/A/pro/probe/0",
+   "input_tokens": 1126,
+   "latency_s": 2.527838000009069,
+   "output_tokens": 11,
+   "parse_status": "valid",
+   "provider_billing": {
+    "invoice_reconciliation": "pending; design-table estimate",
+    "usage_metadata": {
+     "candidates_token_count": 11,
+     "candidates_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 11
+      }
+     ],
+     "prompt_token_count": 1126,
+     "prompt_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 1126
+      }
+     ],
+     "thoughts_token_count": 79,
+     "total_token_count": 1216,
+     "traffic_type": "ON_DEMAND"
+    }
+   },
+   "served_revision": "gemini-3.1-pro-preview",
+   "thinking_tokens": 79
+  },
+  {
+   "billed_output_tokens": 116,
+   "cached_tokens": 0,
+   "cost_usd": 0.003662,
+   "identity": "dev/e4-e593908907ba459975/A/pro/probe/0",
+   "input_tokens": 1135,
+   "latency_s": 2.5140382919926196,
+   "output_tokens": 11,
+   "parse_status": "valid",
+   "provider_billing": {
+    "invoice_reconciliation": "pending; design-table estimate",
+    "usage_metadata": {
+     "candidates_token_count": 11,
+     "candidates_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 11
+      }
+     ],
+     "prompt_token_count": 1135,
+     "prompt_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 1135
+      }
+     ],
+     "thoughts_token_count": 105,
+     "total_token_count": 1251,
+     "traffic_type": "ON_DEMAND"
+    }
+   },
+   "served_revision": "gemini-3.1-pro-preview",
+   "thinking_tokens": 105
+  },
+  {
+   "billed_output_tokens": 131,
+   "cached_tokens": 0,
+   "cost_usd": 0.00275,
+   "identity": "dev/e4-086d3b59c2f1ac4d1d/F/pro/probe/0",
+   "input_tokens": 589,
+   "latency_s": 2.615208791976329,
+   "output_tokens": 6,
+   "parse_status": "valid",
+   "provider_billing": {
+    "invoice_reconciliation": "pending; design-table estimate",
+    "usage_metadata": {
+     "candidates_token_count": 6,
+     "candidates_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 6
+      }
+     ],
+     "prompt_token_count": 589,
+     "prompt_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 589
+      }
+     ],
+     "thoughts_token_count": 125,
+     "total_token_count": 720,
+     "traffic_type": "ON_DEMAND"
+    }
+   },
+   "served_revision": "gemini-3.1-pro-preview",
+   "thinking_tokens": 125
+  },
+  {
+   "billed_output_tokens": 118,
+   "cached_tokens": 0,
+   "cost_usd": 0.0026,
+   "identity": "dev/e4-e593908907ba459975/F/pro/probe/0",
+   "input_tokens": 592,
+   "latency_s": 3.014575374982087,
+   "output_tokens": 6,
+   "parse_status": "valid",
+   "provider_billing": {
+    "invoice_reconciliation": "pending; design-table estimate",
+    "usage_metadata": {
+     "candidates_token_count": 6,
+     "candidates_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 6
+      }
+     ],
+     "prompt_token_count": 592,
+     "prompt_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 592
+      }
+     ],
+     "thoughts_token_count": 112,
+     "total_token_count": 710,
+     "traffic_type": "ON_DEMAND"
+    }
+   },
+   "served_revision": "gemini-3.1-pro-preview",
+   "thinking_tokens": 112
+  },
+  {
+   "billed_output_tokens": 125,
+   "cached_tokens": 0,
+   "cost_usd": 0.002174,
+   "identity": "dev/e4-086d3b59c2f1ac4d1d/R/pro/probe/0",
+   "input_tokens": 337,
+   "latency_s": 2.8356533749902155,
+   "output_tokens": 11,
+   "parse_status": "valid",
+   "provider_billing": {
+    "invoice_reconciliation": "pending; design-table estimate",
+    "usage_metadata": {
+     "candidates_token_count": 11,
+     "candidates_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 11
+      }
+     ],
+     "prompt_token_count": 337,
+     "prompt_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 337
+      }
+     ],
+     "thoughts_token_count": 114,
+     "total_token_count": 462,
+     "traffic_type": "ON_DEMAND"
+    }
+   },
+   "served_revision": "gemini-3.1-pro-preview",
+   "thinking_tokens": 114
+  },
+  {
+   "billed_output_tokens": 192,
+   "cached_tokens": 0,
+   "cost_usd": 0.002978,
+   "identity": "dev/e4-e593908907ba459975/R/pro/probe/0",
+   "input_tokens": 337,
+   "latency_s": 2.942956624989165,
+   "output_tokens": 11,
+   "parse_status": "valid",
+   "provider_billing": {
+    "invoice_reconciliation": "pending; design-table estimate",
+    "usage_metadata": {
+     "candidates_token_count": 11,
+     "candidates_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 11
+      }
+     ],
+     "prompt_token_count": 337,
+     "prompt_tokens_details": [
+      {
+       "modality": "TEXT",
+       "token_count": 337
+      }
+     ],
+     "thoughts_token_count": 181,
+     "total_token_count": 529,
+     "traffic_type": "ON_DEMAND"
+    }
+   },
+   "served_revision": "gemini-3.1-pro-preview",
+   "thinking_tokens": 181
+  }
+ ],
+ "envelope_usd": 1,
+ "max_billed_output_tokens": 192,
+ "mean_billed_output_tokens": 117.3,
+ "mean_latency_s": 2.5719083291885907,
+ "planned_calls": 10,
+ "probe_assignments": [
+  {
+   "identity": "dev/e4-086d3b59c2f1ac4d1d/V/pro/probe/0",
+   "prompt_sha256": "2a4692d432fedbea30f39d4e32764d52646a5dc0095be65239c5a2eb1159d1c6"
+  },
+  {
+   "identity": "dev/e4-e593908907ba459975/V/pro/probe/0",
+   "prompt_sha256": "ce42e93af0098b3874fc36eb0829f7ea359fb4080f1087b1b8dd4476690a715f"
+  },
+  {
+   "identity": "dev/e4-086d3b59c2f1ac4d1d/W/pro/probe/0",
+   "prompt_sha256": "d509d9e6d2bbb158561bb535fe1f1b2b9462a07147c2de1df17bd4ebbcb37a29"
+  },
+  {
+   "identity": "dev/e4-e593908907ba459975/W/pro/probe/0",
+   "prompt_sha256": "223c0b400dad7e8468b8ce1fd3ebe704fd808cf8cc468f8885a49090996e229a"
+  },
+  {
+   "identity": "dev/e4-086d3b59c2f1ac4d1d/A/pro/probe/0",
+   "prompt_sha256": "babd555543fc4908c3312f033600ddde36c697a39fe6d6c3b337ad852a581d94"
+  },
+  {
+   "identity": "dev/e4-e593908907ba459975/A/pro/probe/0",
+   "prompt_sha256": "4fa591963d667c7b1789c2b88faca03c9f00894920c489e06cbabd6610219eb7"
+  },
+  {
+   "identity": "dev/e4-086d3b59c2f1ac4d1d/F/pro/probe/0",
+   "prompt_sha256": "19c8075209102aae7bdac6f93357a12dfb7bdcc4d621b3c833eac4637c6fb5dc"
+  },
+  {
+   "identity": "dev/e4-e593908907ba459975/F/pro/probe/0",
+   "prompt_sha256": "b55fb715c2b54cfab200cd16f283fc12bc5a8255d1f77adbda02068616ba33c4"
+  },
+  {
+   "identity": "dev/e4-086d3b59c2f1ac4d1d/R/pro/probe/0",
+   "prompt_sha256": "d509d9e6d2bbb158561bb535fe1f1b2b9462a07147c2de1df17bd4ebbcb37a29"
+  },
+  {
+   "identity": "dev/e4-e593908907ba459975/R/pro/probe/0",
+   "prompt_sha256": "223c0b400dad7e8468b8ce1fd3ebe704fd808cf8cc468f8885a49090996e229a"
+  }
+ ],
+ "schedule": "replication_gemini_e5_2turn",
+ "schedule_before_amendment11": "full_256",
+ "schedule_before_amendment12": "primary_1024",
+ "schedule_selection": {
+  "amendment": 12,
+  "criterion": "first priority with strict cumulative ceiling <= $40; full judge caps; retained costs and allowances included",
+  "scenarios": {
+   "replication_3turn": "24.53476399850",
+   "replication_gemini_e5_2turn": "37.87522391850",
+   "replication_gemini_e5_3turn": "49.10697199850"
+  }
+ },
+ "schedule_selection_before_amendment12": {
+  "accounting": "Existing ceilings retain 256-token judge planning means. Worst-case ceilings use unchanged 1024-token judge caps; both include unchanged input bounds, all attacker retries and existing allowances.",
+  "amendment": 11,
+  "authority": "orchestrator",
+  "cumulative_ceilings_usd": {
+   "full_2turn": "41.54871065770",
+   "pro_3turn": "46.61316926890",
+   "pro_replication_2turn": "40.78892430250",
+   "pro_replication_3turn": "49.42076430250"
+  },
+  "date_utc": "2026-09-22",
+  "priority": [
+   "pro_replication_3turn",
+   "pro_3turn",
+   "full_2turn",
+   "pro_replication_2turn"
   ],
-  "envelope_usd": 1,
-  "max_billed_output_tokens": 192,
-  "mean_billed_output_tokens": 117.3,
-  "mean_latency_s": 2.5719083291885907,
-  "planned_calls": 10,
-  "probe_assignments": [
-    {
-      "identity": "dev/e4-086d3b59c2f1ac4d1d/V/pro/probe/0",
-      "prompt_sha256": "2a4692d432fedbea30f39d4e32764d52646a5dc0095be65239c5a2eb1159d1c6"
-    },
-    {
-      "identity": "dev/e4-e593908907ba459975/V/pro/probe/0",
-      "prompt_sha256": "ce42e93af0098b3874fc36eb0829f7ea359fb4080f1087b1b8dd4476690a715f"
-    },
-    {
-      "identity": "dev/e4-086d3b59c2f1ac4d1d/W/pro/probe/0",
-      "prompt_sha256": "d509d9e6d2bbb158561bb535fe1f1b2b9462a07147c2de1df17bd4ebbcb37a29"
-    },
-    {
-      "identity": "dev/e4-e593908907ba459975/W/pro/probe/0",
-      "prompt_sha256": "223c0b400dad7e8468b8ce1fd3ebe704fd808cf8cc468f8885a49090996e229a"
-    },
-    {
-      "identity": "dev/e4-086d3b59c2f1ac4d1d/A/pro/probe/0",
-      "prompt_sha256": "babd555543fc4908c3312f033600ddde36c697a39fe6d6c3b337ad852a581d94"
-    },
-    {
-      "identity": "dev/e4-e593908907ba459975/A/pro/probe/0",
-      "prompt_sha256": "4fa591963d667c7b1789c2b88faca03c9f00894920c489e06cbabd6610219eb7"
-    },
-    {
-      "identity": "dev/e4-086d3b59c2f1ac4d1d/F/pro/probe/0",
-      "prompt_sha256": "19c8075209102aae7bdac6f93357a12dfb7bdcc4d621b3c833eac4637c6fb5dc"
-    },
-    {
-      "identity": "dev/e4-e593908907ba459975/F/pro/probe/0",
-      "prompt_sha256": "b55fb715c2b54cfab200cd16f283fc12bc5a8255d1f77adbda02068616ba33c4"
-    },
-    {
-      "identity": "dev/e4-086d3b59c2f1ac4d1d/R/pro/probe/0",
-      "prompt_sha256": "d509d9e6d2bbb158561bb535fe1f1b2b9462a07147c2de1df17bd4ebbcb37a29"
-    },
-    {
-      "identity": "dev/e4-e593908907ba459975/R/pro/probe/0",
-      "prompt_sha256": "223c0b400dad7e8468b8ce1fd3ebe704fd808cf8cc468f8885a49090996e229a"
-    }
-  ],
-  "schedule": "replication_3turn",
-  "schedule_before_amendment11": "full_256",
-  "schedule_before_amendment12": "primary_1024",
-  "schedule_selection": {
-    "amendment": 12,
-    "criterion": "first priority with strict cumulative ceiling <= $40; full judge caps; retained costs and allowances included",
-    "scenarios": {
-      "replication_3turn": "24.53476399850",
-      "replication_gemini_e5_2turn": "37.87522391850",
-      "replication_gemini_e5_3turn": "49.10697199850"
-    }
-  },
-  "schedule_selection_before_amendment12": {
-    "accounting": "Existing ceilings retain 256-token judge planning means. Worst-case ceilings use unchanged 1024-token judge caps; both include unchanged input bounds, all attacker retries and existing allowances.",
-    "amendment": 11,
-    "authority": "orchestrator",
-    "cumulative_ceilings_usd": {
-      "full_2turn": "41.54871065770",
-      "pro_3turn": "46.61316926890",
-      "pro_replication_2turn": "40.78892430250",
-      "pro_replication_3turn": "49.42076430250"
-    },
-    "date_utc": "2026-09-22",
-    "priority": [
-      "pro_replication_3turn",
-      "pro_3turn",
-      "full_2turn",
-      "pro_replication_2turn"
-    ],
-    "reason": "No E4+E5 candidate fits the unchanged $40 cap with existing allowances; select primary_1024 as authorized.",
-    "reference": "PROPOSED-AMENDMENT.md#amendment-11",
-    "worst_case_cumulative_ceilings_usd": {
-      "full_2turn": "58.90010086570",
-      "pro_3turn": "64.63966526890",
-      "pro_replication_2turn": "58.02299175850",
-      "pro_replication_3turn": "67.94507175850"
-    }
-  },
-  "selected_output_cap": 1024,
-  "selected_output_cap_before_amendment11": 256,
-  "settings": {
-    "max_input_tokens": 3072,
-    "max_output_tokens": 4096,
-    "model": "gemini-3.1-pro-preview",
-    "seed": 20260921,
-    "temperature": 0,
-    "thinking_level": "LOW",
-    "timeout_s": 120
-  },
-  "status": "complete",
-  "total_cost_usd": 0.024456,
-  "total_thinking_tokens": 1094,
-  "unused_allowance_usd": 0.44704
+  "reason": "No E4+E5 candidate fits the unchanged $40 cap with existing allowances; select primary_1024 as authorized.",
+  "reference": "PROPOSED-AMENDMENT.md#amendment-11",
+  "worst_case_cumulative_ceilings_usd": {
+   "full_2turn": "58.90010086570",
+   "pro_3turn": "64.63966526890",
+   "pro_replication_2turn": "58.02299175850",
+   "pro_replication_3turn": "67.94507175850"
+  }
+ },
+ "selected_output_cap": 1024,
+ "selected_output_cap_before_amendment11": 256,
+ "settings": {
+  "max_input_tokens": 3072,
+  "max_output_tokens": 4096,
+  "model": "gemini-3.1-pro-preview",
+  "seed": 20260921,
+  "temperature": 0,
+  "thinking_level": "LOW",
+  "timeout_s": 120
+ },
+ "status": "complete",
+ "total_cost_usd": 0.024456,
+ "total_thinking_tokens": 1094,
+ "unused_allowance_usd": 0.44704,
+ "schedule_before_amendment12b": "replication_3turn",
+ "amendment_12b": "2026-09-22 orchestrator: selected replication_gemini_e5_2turn (ceiling $37.88 <= $40) over replication_3turn to keep the Gemini E5 premise/harm panel; decided before any scored inference."
 }
