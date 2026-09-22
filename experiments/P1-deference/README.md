@@ -79,8 +79,11 @@ The command checks served model IDs and endpoint metadata, then dispatches at
 most one output token per planned OpenRouter judge, serially, through the
 existing durable budget ledger. It checks native usage reconciliation and
 counter agreement on the smoke prompt, and counts all initial/replay fixtures
-for both judges. It never substitutes an endpoint/model or retries an assigned
-smoke call. Provider evidence is stored in `checks/provider-preflight.json`;
+for both judges. Amendment 5 preserves successful smoke results and reruns only
+failed judges. It recovers successful usage from the durable ledger if an older
+run overwrote the report; a changed freeze revalidates cached usage locally.
+Weak control routes in order through DeepInfra, Novita and Groq only; Qwen
+remains pinned to DeepInfra. Provider evidence is stored in `checks/provider-preflight.json`;
 paid reservations/responses go to `runs/provider-preflight/costs.jsonl`.
 Local fixture counting must pass before the smoke generation for that judge.
 Missing or mismatched native assets block the panel without guessing. The worker
@@ -98,16 +101,18 @@ $0.056900 for attempt 1 (including its unresolved dispatch), and a $0.50
 provider-preflight envelope. Attempt 2's completed calls are already included
 in the completed replacement probe, not counted twice. Amendment 3 raises A/R
 input bounds to 6,800. The resulting full_256 all-in
-ceiling is **$35.71826352**, above the unchanged $30 cap. This is a budget blocker
-in addition to the unrun provider gate; the runner refuses dev/scored before any
-paid dispatch. The anticipated sub-$1 increase was inconsistent with uniform
-arm-level ceilings; the actual API ceiling delta is **+$6.00758880**. No schedule
-substitution or larger spending cap is authorized.
+ceiling is **$35.71826352**, within Amendment 4's approved **$36** study cap.
+The current provider gate must pass before dev can start. Amendment 5 permits
+three infrastructure retries with 1/2/4-second backoff for 429/5xx/timeouts;
+these attempts are logged separately from samples. Unknown timeout/5xx billing
+keeps a full-ceiling infrastructure hold against the same cap. Output failures
+are scored as preregistered and cannot buy replacement dev/scored samples.
+Served providers appear per call in the ledger and trials, with counts in the
+run analysis. An exhausted infrastructure run is marked incomplete without
+scoring its missing observations as model failures.
 
 ```sh
 uv run python experiments/P1-deference/run_p1.py dev --cap-usd 6.7108092992
-# Dev currently exits 3 until the orchestrator resolves the full-schedule budget.
-# Use regenerated freeze.json commands after that decision; no scored run is authorized.
 ```
 
 The dev runner now requires current test-suite and external-timestamp receipts
@@ -119,7 +124,7 @@ approximate counts to bypass a failure.
 ## Latest executed gates
 
 The amended preflight passed all six gates: known-answer, 500 Lean replay
-queries, 200 semantic pairs, 1,324 tests (two optional-backend skips), pending
+queries, 200 semantic pairs, 1,341 tests (two optional-backend skips), pending
 calendar timestamp inspection, and **1,816/1,816 fresh Vertex counts**. There
 were zero token errors or overflows; the maximum including generated reserves
 was 6,175. The separate local native-counter receipts passed **1,536/1,536**
@@ -132,4 +137,4 @@ The pre-amendment Vertex gate had 118 overflows among 1,816 real counts, all in
 A/R. Amendment 3 applies the smallest hundred-token ceiling admitting its
 6,175-token maximum with a 10% margin: 6,800. Other arms, all items, prompts,
 replay text, and output bounds are unchanged. The selected full_256 schedule
-remains blocked by its recomputed budget and the unrun OpenRouter provider gate.
+fits the amended $36 budget and awaits the current OpenRouter provider gate.

@@ -38,6 +38,7 @@ def test_amendment_three_bounds_and_inventory_agree():
 
 
 def test_overbudget_schedule_blocks_before_provider_calls(monkeypatch):
+    monkeypatch.setattr(p1, 'STUDY_CAP_USD', 30)
     monkeypatch.setattr(p1, 'VertexBackend', lambda: pytest.fail('generation forbidden'))
     with pytest.raises(p1.BudgetExceeded, match='selected schedule ceiling exceeds'):
         p1.run_split('dev', 30)

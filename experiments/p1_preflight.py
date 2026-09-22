@@ -148,7 +148,7 @@ def refresh_status():
     stamp = freeze['manifest_sha256']
     unresolved = []
     if not freeze['cost_ceilings'].get(freeze['selected_schedule'], {}).get('within_study_cap', False):
-        unresolved.append('selected schedule exceeds $30 study cap')
+        unresolved.append(f'selected schedule exceeds ${p.STUDY_CAP_USD} study cap')
     for name in (*GATES, 'provider-preflight'):
         gatepath = p.HERE / f'checks/{name}.json'
         report = json.loads(gatepath.read_text()) if gatepath.exists() else {}
@@ -218,24 +218,36 @@ def runtime_counter():
 
 
 def preflight_openrouter(cap, counter_path=None):
-    """Explicitly invoked only by the orchestrator; two serial 1-token calls."""
+    """Resume infrastructure checks, reusing successful smoke calls durably."""
     import httpx
     freeze = json.loads((p.HERE / 'freeze.json').read_text())
     for path, expected in freeze['hashes'].items():
         if p.sha(p.ROOT / path) != expected:
             raise PreflightError(f'freeze hash changed: {path}; rerun preflight')
     def run():
-        report = {'passed': False, 'judges': {}, 'counter': None}
+        path = p.HERE / 'checks/provider-preflight.json'
+        report = json.loads(path.read_text()) if path.exists() else {}
+        report.update(passed=False)
+        report.setdefault('judges', {})
+        report.pop('error', None)
         counter = CommandCounter(counter_path or p.HERE / 'native_counter.py')
-        if counter:
-            report['counter'] = {'path': str(counter.path), 'sha256': counter.sha256}
+        counter_spec = {'path': str(counter.path), 'sha256': counter.sha256}
+        current = report.get('freeze_sha256') == freeze['manifest_sha256'] and report.get('counter') == counter_spec
+        todo = [j for j in ('replication', 'weak') if not (current and report['judges'].get(j, {}).get('passed'))]
+        report['counter'] = counter_spec
         ledger = Ledger(p.HERE / 'runs/provider-preflight/costs.jsonl', min(cap, .50))
         with httpx.Client(transport=httpx.HTTPTransport(retries=0), timeout=120) as http:
-            response = http.get('https://openrouter.ai/api/v1/models')
-            response.raise_for_status()
-            models = {x['id']: x for x in response.json()['data']}
-            for judge in ('replication', 'weak'):
-                row = report['judges'][judge] = {'passed': False, 'requested_model': p.MODELS[judge]}
+            models = {}
+            if todo:
+                response = http.get('https://openrouter.ai/api/v1/models')
+                response.raise_for_status()
+                models = {x['id']: x for x in response.json()['data']}
+            for judge in todo:
+                old = report['judges'].get(judge, {})
+                row = report['judges'][judge] = {**old, 'passed': False, 'requested_model': p.MODELS[judge]}
+                row.pop('error', None)
+                row.pop('endpoint_passed', None)
+                row.pop('reused_smoke', None)
                 try:
                     if p.MODELS[judge] not in models:
                         raise PreflightError('planned model is not served; substitution forbidden')
@@ -252,10 +264,18 @@ def preflight_openrouter(cap, counter_path=None):
                         [{'role': 'system', 'content': 'Reply with one word.'}, {'role': 'user', 'content': 'Hello'}], 3072, 1)
                     client = PaidClient(backend, ledger)
                     try:
-                        reply = client.call(req)
+                        # Recheck cached evidence with today's counter and full panel.
+                        # A failed counter-agreement smoke may be rerun, but never
+                        # replace a smoke whose usage already agrees.
+                        reply = ledger.cached_reply(req)
+                        if reply is None or backend.count(req) != reply.input_tokens:
+                            reply = client.call(req)
+                        else:
+                            row['reused_smoke'] = True
                     finally:
                         client.close()
-                    row.update(served_revision=reply.revision, usage=reply.response.get('usage'), endpoint_passed=True)
+                    row.update(served_revision=reply.revision, served_provider=reply.response.get('provider'),
+                               usage=reply.response.get('usage'), endpoint_passed=True)
                     if backend.count(req) != reply.input_tokens:
                         raise PreflightError('native counter disagrees with smoke prompt usage')
                     row['passed'] = row['tokenizer']['passed']
@@ -269,6 +289,13 @@ def preflight_openrouter(cap, counter_path=None):
         report['vertex'] = {'status': probe['status'], 'served_revisions': sorted({c['served_revision'] for c in probe['calls']})}
         report['passed'] = probe['status'] == 'complete' and len(report['judges']) == 2 and all(r['passed'] for r in report['judges'].values())
         return report
-    result = receipt('provider-preflight', freeze['manifest_sha256'], run)
+    def preserve_failure():
+        try:
+            return run()
+        except Exception as exc:
+            path = p.HERE / 'checks/provider-preflight.json'
+            report = json.loads(path.read_text()) if path.exists() else {}
+            return {**report, 'passed': False, 'error': f'{type(exc).__name__}: {exc}'}
+    result = receipt('provider-preflight', freeze['manifest_sha256'], preserve_failure)
     refresh_status()
     return 0 if result['passed'] else 2

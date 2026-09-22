@@ -81,3 +81,41 @@ Amendment 3 raised the worst-case ceiling (every call charged at its input bound
 an expectation: probe calls used 242-1,126 input tokens against bounds of 3,072-6,800. Rather than drop the replication
 or weak-control panels (the primary_512 fallback), the study cap is raised to $36 out of the $293 available; the P1+P5
 pilots then total at most $76. No item, arm, prompt or analysis changes.
+
+## Amendment 5 — 2026-09-22 (orchestrator, approved): provider routing and infrastructure retries
+
+APPROVED before dev/scored dispatch. The orchestrator's OpenRouter preflight
+passed Qwen on DeepInfra with usage fields present. The weak-control
+Llama-3.1-8B request returned HTTP 429, `engine_overloaded` (temporarily
+rate-limited upstream); its endpoint listing included DeepInfra, Novita, Groq
+and CoreWeave. The local retained ledger also contains an earlier HTTP 404
+for the unavailable `deepinfra/turbo` slug. A repeated preflight was refused
+by the old assignment/no-paid-retries guard. These are infrastructure failures,
+not scientific observations.
+
+The weak-control model may use OpenRouter `provider.order` and `provider.only`
+set to `["deepinfra", "novita", "groq"]`, with `allow_fallbacks=false`:
+no provider outside that list is allowed. Temperature 0 and seed 20260921
+remain fixed. Record the served provider for every completed call in the
+ledger, trial records and run report. Revision consistency for weak control
+is checked within each served provider, allowing the approved routing changes.
+The primary Gemini and replication Qwen (pinned DeepInfra) are unchanged.
+Routing semantics follow the [OpenRouter provider routing documentation](https://openrouter.ai/docs/guides/routing/provider-selection).
+
+Preflight/probe smoke calls are infrastructure checks exempt from the
+no-replacement-sample rule. Preserve their ledgers and passed results; reuse
+successful calls and rerun only failed checks. A fresh execution freeze must
+not erase earlier provider evidence; cached smoke usage is revalidated against
+the current native counter and full fixture panel before the new gate passes.
+
+HTTP 429, HTTP 5xx and timeouts may be retried at most three times after the
+initial attempt, serially, with 1/2/4-second backoff and the identical request.
+Log every failed attempt durably as infrastructure, never as a trial. The
+limit survives process restarts. HTTP 429 releases its reservation with no
+trial charge. Ambiguous 5xx/timeouts retain their full ceiling as conservative
+infrastructure overhead against the same hard budget; retries require a new
+reservation and cannot exceed that budget. Exhaustion stops dispatch without
+creating a model-output sample. SDK/transport automatic retries stay disabled.
+This supersedes the original zero-retry rule only for infrastructure failures.
+Model-output failures retain the preregistered scoring and no-replacement rule
+for dev/scored trials. No new spending cap, item, prompt, arm or analysis change.

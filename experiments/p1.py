@@ -27,7 +27,7 @@ from ve import ArgumentGraph, FiniteModel, check_argument
 from ve.ast import formula_to_data
 from ve.search import check_countermodel
 from ve_experiments.paid import (MODELS, Ledger, PaidClient, PaidRequest, OfflineBackend,
-    VertexBackend, OpenRouterBackend, BudgetExceeded, PreflightError, cost, digest, packed)
+    VertexBackend, OpenRouterBackend, BudgetExceeded, PreflightError, InfrastructureError, cost, digest, packed)
 
 ROOT = Path(__file__).resolve().parents[1]
 HERE = ROOT / "experiments/P1-deference"
@@ -212,7 +212,9 @@ def trial(item, arm, judge, reply, *, turn=0, error=None):
             "approved": verdict == "approve" if verdict in ("approve", "reject") else None,
             "ok": not (error or parse_error), "error": error or parse_error,
             "at_token_cap": bool(reply and reply.finish_reason in ("MAX_TOKENS", "length")),
-            "response": reply.text if reply else None}
+            "response": reply.text if reply else None,
+            "served_provider": reply.response.get("provider") if reply else None,
+            "served_revision": reply.revision if reply else None}
 
 
 def replay_response(item, calls):
@@ -629,21 +631,27 @@ def freeze_execution():
                        "provider_preflight_envelope_usd": "0.50", "local_allowance_usd": "0.25"},
         "unresolved": ["offline gates require current execution", "full schedule tokenizer and joint-history gates",
                        "OpenRouter native joint counter and served revision preflight", "external timestamp", "dev capability gate"]})
-    write_json(HERE / "checks/provider-preflight.json", {"passed": False, "freeze_sha256": stamp,
-        "vertex": {"served_revision": next((c["served_revision"] for c in probe_result.get("calls", [])), None),
-                   "status": probe_result.get("status", "not_run")},
-        "openrouter": {"status": "not called; native joint tokenizer and role support unverified"}})
+    provider_path = HERE / "checks/provider-preflight.json"
+    if not provider_path.exists():
+        write_json(provider_path, {"passed": False, "freeze_sha256": stamp,
+            "vertex": {"served_revision": next((c["served_revision"] for c in probe_result.get("calls", [])), None),
+                       "status": probe_result.get("status", "not_run")},
+            "openrouter": {"status": "not called; native joint tokenizer and role support unverified"}})
     return stamp
 
 
 def probe(cap):
     result_path = HERE / "results/probe.json"
-    if result_path.exists():
-        raise PreflightError("probe result already exists; no replacement samples")
+    previous = json.loads(result_path.read_text()) if result_path.exists() else None
+    if previous and previous.get("status") == "complete":
+        return 0
     ledger = Ledger(HERE / "runs/probe/costs.jsonl", min(cap, 1))
-    ledger.require_block(1)
-    ledger.allowance("unused-probe-envelope", ".447040")
-    ledger.reserve_block("probe", ".552960")
+    with ledger.locked() as (_, rows):
+        started = any(r["event"] == "block_reserve" and r["block_id"] == "probe" for r in rows)
+    if not started:
+        ledger.require_block(1)
+        ledger.allowance("unused-probe-envelope", ".447040")
+        ledger.reserve_block("probe", ".552960")
     # Lexicographically first good/bad dev pair; same two fixed items in each main arm.
     candidates = [i for i in materials("dev") if i["assignment"]["source"] == "E4"]
     pair = sorted({i["group"] for i in candidates})[0]
@@ -664,7 +672,16 @@ def probe(cap):
             raise PreflightError("probe input exceeds 3072 tokens")
         client = PaidClient(backend, ledger, "probe")
         for r in requests:
-            reply = client.call(r)
+            reply = ledger.cached_reply(r)
+            if reply:
+                _, cached_error = parse(reply.text)
+                if reply.tool_calls:
+                    assigned = next(i for i in selected if i["id"] == r.metadata["item_id"])
+                    _, valid = replay_response(assigned, reply.tool_calls)
+                    cached_error = None if r.metadata["arm"] == "R" and valid else "invalid_tool_use"
+                if cached_error:
+                    reply = None
+            reply = reply or client.call(r)
             verdict, error = parse(reply.text)
             # An R native tool request is a valid probe schema; never buy a continuation.
             if reply.tool_calls:
@@ -703,8 +720,10 @@ def run_split(split, cap):
     name = probe_result["schedule"]
     if name == "stop" or probe_result["status"] != "complete":
         raise PreflightError("probe selected stop; no dev/scored dispatch")
-    if not inventory()["budget_scenarios"][name]["within_study_cap"]:
-        raise BudgetExceeded("selected schedule ceiling exceeds $30 including allowances; orchestrator budget decision required")
+    from decimal import Decimal
+    all_in = split_ceiling(name, "dev") + split_ceiling(name, "scored") + Decimal(1) + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + Decimal(".25")
+    if all_in > Decimal(str(STUDY_CAP_USD)):
+        raise BudgetExceeded(f"selected schedule ceiling exceeds ${STUDY_CAP_USD} including allowances")
     freeze = json.loads((HERE / "freeze.json").read_text())
     required = ["known-answer", "tokenizer", "lean-replay", "semantic-pairs", "test-suite", "external-timestamp", "provider-preflight"]
     for gate in required:
@@ -733,7 +752,7 @@ def run_split(split, cap):
     clients = {j: PaidClient(VertexBackend() if j == "pro" else OpenRouterBackend(runtime_counter()), ledger, split) for j in plan["judges"]}
     blocks = [(i, a, j) for i in items for a in arms(i) for j in plan["judges"]]
     random.Random(SEED).shuffle(blocks)
-    rows, stopped, budget_stop = [], None, False
+    rows, stopped, budget_stop, infrastructure_stop = [], None, False, False
     for i, a, j in blocks:
         try:
             row, messages = initial(clients[j], i, a, j, output)
@@ -746,8 +765,23 @@ def run_split(split, cap):
         except PreflightError as exc:
             stopped = str(exc)
             budget_stop = isinstance(exc, BudgetExceeded)
+            infrastructure_stop = isinstance(exc, InfrastructureError)
             break
-    report = analyze(rows, items, plan["judges"], allow_missing=True)
+    for client in clients.values():
+        client.close()
+    # A stopped run (including an infrastructure retry hitting its budget) does
+    # not turn undispatched observations into model-output failures.
+    report = ({"families": {}, "status": "incomplete_infrastructure" if infrastructure_stop else "incomplete",
+               "completed_observations": len(rows)} if stopped
+              else analyze(rows, items, plan["judges"]))
+    with ledger.locked() as (_, ledger_rows):
+        ledger_rows = [r for r in ledger_rows if r.get("identity", "").startswith(split + "/")]
+        provider_calls = defaultdict(int)
+        for entry in ledger_rows:
+            if entry["event"] == "complete":
+                provider_calls[f'{entry["model"]}/{entry.get("served_provider") or "Vertex"}'] += 1
+        infrastructure = [r for r in ledger_rows if r["event"] == "infrastructure_failure"]
+    report.update(served_provider_calls=dict(provider_calls), infrastructure_failures=infrastructure)
     report.update(stopped=stopped, schedule=name, unscheduled={"panels": sorted({"E4", "E5"}-set(plan["sources"])),
                                                            "judges": sorted(set(MODELS)-set(plan["judges"]))})
     write_json(HERE / f"runs/{split}/analysis.json", report)
