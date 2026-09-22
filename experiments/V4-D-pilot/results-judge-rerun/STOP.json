@@ -1,0 +1,13 @@
+{
+  "error": "CLI exit 1",
+  "item_id": "d-06",
+  "arm": "debate",
+  "judge": "haiku",
+  "expected_model": "claude-haiku-4-5-20251001",
+  "observed_model_ids": [
+    "<synthetic>",
+    "claude-haiku-4-5-20251001"
+  ],
+  "account_label": "danielsaeedi37",
+  "timestamp": "2026-09-22T22:27:09.429563+00:00"
+}

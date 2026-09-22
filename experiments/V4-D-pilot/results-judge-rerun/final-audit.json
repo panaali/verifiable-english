@@ -1,0 +1,32 @@
+{
+  "frozen_files": 185,
+  "frozen_all_unchanged": true,
+  "frozen_mismatches": [],
+  "old_started": 210,
+  "new_started": 131,
+  "new_status_counts": {
+    "started": 131,
+    "ok": 130,
+    "error": 1
+  },
+  "served_models": {
+    "claude-sonnet-5": 64,
+    "claude-haiku-4-5-20251001": 66
+  },
+  "all_new_rows_expected_account": true,
+  "all_served_models_match_request": true,
+  "all_judges_default_thinking": true,
+  "score_count": 128,
+  "complete_grid": false,
+  "score_keys_unique": true,
+  "superseded_not_pooled": true,
+  "prompts_match_unchanged_arguments": true,
+  "thinking_usage_missing": 0,
+  "thinking_above_old_1024": 18,
+  "stop_exists": true,
+  "total_started": 341,
+  "within_global_ceiling": true,
+  "historical_rows_attributed": 420,
+  "all_historical_rows_attributed_lead_main": true,
+  "post_stop_started_calls": 0
+}
