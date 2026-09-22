@@ -1,0 +1,6 @@
+{
+  "at": "2026-09-22T23:47:32.789329+00:00",
+  "error": "RuntimeError: Served canonical model changed",
+  "resample": false,
+  "split": "gate"
+}

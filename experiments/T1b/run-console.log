@@ -1,0 +1,19 @@
+{"event": "call_ok", "key": "403ffc2968ff/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 30135, "output_tokens": 1304}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/run.py", line 381, in <module>
+    main()
+    ~~~~^^
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/run.py", line 375, in main
+    run('gate')
+    ~~~^^^^^^^^
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/run.py", line 352, in run
+    runner.judge(item,arm,judge,sample,evidence[arm])
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/run.py", line 211, in judge
+    response=self.ask(judge,item['id']+f'/{arm}/{judge}/{sample}/decision',system,
+        packet(item)+'\nUNTRUSTED SUBMISSION:\n'+json.dumps(displayed),role='judge',arm=arm,sample=sample)
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/run.py", line 160, in ask
+    raise RuntimeError('Served canonical model changed')
+RuntimeError: Served canonical model changed

@@ -1,0 +1,5 @@
+{
+  "claim": "u_1f28 cannot access x_7f4c.",
+  "note": "The claim holds: u_1f28 has no path to x_7f4c. u_1f28 belongs to g_cbd9 and g_cbd9_d0 through g_cbd9_d6. Only five of these groups continue: g_cbd9 to g_ce8b, and g_cbd9_d1, d2, d3 and d6 to the matching g_ce8b_dN. The groups g_cbd9_d0, d4 and d5 lead nowhere, because the edges into g_ce8b_d0, d4 and d5 come from the _v2 groups. The reachable roles are r_65d7 and r_65d7_d1, d2, d3, d6. None of their inheritance chains reaches a role that grants x_7f4c (r_0930 or r_0930_d0 to d6). r_65d7 gets r_af35, which gets r_e284, and r_e284 inherits nothing further; r_0930 feeds only r_e284_v2. r_65d7_d1 gets r_af35_d1, then r_e284_d1, which has no inheritance; r_0930_d1 feeds only r_e284_d1_v2. r_65d7_d2 has no inheritance; only r_65d7_d2_v2 gets r_af35_d2. r_65d7_d3 gets r_af35_d3, then r_e284_d3, which has no inheritance; r_0930_d3 feeds only r_e284_d3_v2. r_65d7_d6 gets r_af35_d6, which has no inheritance; r_e284_d6 feeds r_af35_d6_v2. The _v2 near-miss names never connect, so access is denied.",
+  "valid": true
+}
