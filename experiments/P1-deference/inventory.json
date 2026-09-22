@@ -8,26 +8,29 @@
       "source": "E4",
       "split": "dev",
       "template": "dev_existential",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_aster"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-111d40b2b652acfcf4",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "dev",
       "template": "dev_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_brindle"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-1ad7538c1d4963f898",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "dev",
       "template": "dev_relation",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_brindle"
     },
     {
@@ -38,26 +41,29 @@
       "source": "E4",
       "split": "dev",
       "template": "dev_relation",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_aster"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-49c2af0d5e547c99e2",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "dev",
       "template": "dev_existential",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_brindle"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-6a721e9a37f4ac3c28",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "dev",
       "template": "dev_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_brindle"
     },
     {
@@ -68,26 +74,29 @@
       "source": "E4",
       "split": "dev",
       "template": "dev_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_aster"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-87ea96ea3851e0f24b",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "dev",
       "template": "dev_existential",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_brindle"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-9b6046f1f00afb1c57",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "dev",
       "template": "dev_relation",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_brindle"
     },
     {
@@ -98,6 +107,7 @@
       "source": "E4",
       "split": "dev",
       "template": "dev_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_aster"
     },
     {
@@ -108,6 +118,7 @@
       "source": "E4",
       "split": "dev",
       "template": "dev_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_aster"
     },
     {
@@ -118,6 +129,7 @@
       "source": "E4",
       "split": "dev",
       "template": "dev_relation",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_aster"
     },
     {
@@ -128,6 +140,7 @@
       "source": "E4",
       "split": "dev",
       "template": "dev_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_aster"
     },
     {
@@ -138,26 +151,29 @@
       "source": "E4",
       "split": "dev",
       "template": "dev_existential",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_aster"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-fbdc56b961180ea23f",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "dev",
       "template": "dev_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_brindle"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-fd56fc9149e1c4a492",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "dev",
       "template": "dev_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_brindle"
     },
     {
@@ -168,6 +184,7 @@
       "source": "E5",
       "split": "dev",
       "template": "chain2",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -178,6 +195,7 @@
       "source": "E5",
       "split": "dev",
       "template": "chain3",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -188,6 +206,7 @@
       "source": "E5",
       "split": "dev",
       "template": "dag16",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -198,6 +217,7 @@
       "source": "E5",
       "split": "dev",
       "template": "fork_tail",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -208,6 +228,7 @@
       "source": "E5",
       "split": "dev",
       "template": "chain2",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -218,6 +239,7 @@
       "source": "E5",
       "split": "dev",
       "template": "dag13",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -228,6 +250,7 @@
       "source": "E5",
       "split": "dev",
       "template": "dag13",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -238,6 +261,7 @@
       "source": "E5",
       "split": "dev",
       "template": "fork_tail",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -248,6 +272,7 @@
       "source": "E5",
       "split": "dev",
       "template": "dag15",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -258,6 +283,7 @@
       "source": "E5",
       "split": "dev",
       "template": "fork2",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -268,6 +294,7 @@
       "source": "E5",
       "split": "dev",
       "template": "dag14",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -278,6 +305,7 @@
       "source": "E5",
       "split": "dev",
       "template": "dag16",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -288,6 +316,7 @@
       "source": "E5",
       "split": "dev",
       "template": "dag15",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -298,6 +327,7 @@
       "source": "E5",
       "split": "dev",
       "template": "chain3",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -308,6 +338,7 @@
       "source": "E5",
       "split": "dev",
       "template": "fork2",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
@@ -318,46 +349,51 @@
       "source": "E5",
       "split": "dev",
       "template": "dag14",
+      "unstyled_assertion_control": true,
       "vocabulary": "dev_cinder"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-00477073ce7f464362",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "transitive_path",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-0249e408a0f5013896",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "negative_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-074abde2e3f20420f7",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_subject",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-09005a874fee6a0588",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "negative_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
@@ -368,96 +404,106 @@
       "source": "E4",
       "split": "scored",
       "template": "witness_sharing",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-0d0a1fbb8f6eaa2fc3",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_order",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-0da622c05439a5b4c1",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_sharing",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-0dabe6a66d39e924f1",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_range",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-0fe0fbf790dab31371",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "universal_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-15f3f24b8b62278123",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "existential_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-1d1ebfdadd501c15c4",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_inclusion",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-1d9e5b29030e4dd9be",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_inclusion",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-241dc4fb8f50b40146",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_inclusion",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-2796ee71f8f5e8b92b",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "transitive_path",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
@@ -468,46 +514,51 @@
       "source": "E4",
       "split": "scored",
       "template": "transitive_path",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-2dad696c498a2e4335",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "negative_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-2e4f194772c0a25dc6",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_sharing",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-32eab34b2b171b3b79",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "guarded_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-34e137569214863ba8",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "universal_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
@@ -518,46 +569,51 @@
       "source": "E4",
       "split": "scored",
       "template": "quantifier_order",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-3a7ff41412456f3090",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "existential_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-42a71dfe22b9fa342c",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_range",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-459b1bd64ecab3f9bb",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_sharing",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-468a9bd3a6364c6de1",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "transitive_path",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
@@ -568,56 +624,62 @@
       "source": "E4",
       "split": "scored",
       "template": "relation_range",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-474b5c6e6c2eff81c8",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_inclusion",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-49424913a5662b2bd8",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_sharing",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-4a966db932d88e004f",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "existential_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-4bcb86ea1bc0985d77",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "transitive_path",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-4c11f05ba81b0eefd6",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "guarded_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
@@ -628,6 +690,7 @@
       "source": "E4",
       "split": "scored",
       "template": "universal_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
@@ -638,26 +701,29 @@
       "source": "E4",
       "split": "scored",
       "template": "quantifier_order",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-53eaeddc81536671a5",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_order",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-54ba1a48b73c244e9c",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "universal_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
@@ -668,36 +734,40 @@
       "source": "E4",
       "split": "scored",
       "template": "quantifier_negation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-5c2ce1f46496cc1fbe",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_order",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-5e1dd0a2b1358ecb3c",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "guarded_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-5e252459833acdf83c",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_sharing",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
@@ -708,36 +778,40 @@
       "source": "E4",
       "split": "scored",
       "template": "transitive_path",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-61ddd8bf25d30e946f",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "guarded_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-658b646a0a4ee844b2",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "negative_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-65d5f39198136e235e",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_subject",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
@@ -748,126 +822,139 @@
       "source": "E4",
       "split": "scored",
       "template": "relation_inclusion",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-6ac045c0e8ef1053c9",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "negative_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-6c3df411c3fab0aa93",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "transitive_path",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-6ecd6a4927ea3c01f0",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_subject",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-735777cb7ae2c86b17",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_subject",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-73fb8f1522ae99c217",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "universal_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-74056c3eba1c3af007",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_inclusion",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-7873173b74960f5677",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "transitive_path",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-7b3967bbabdaead92f",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_range",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-7bbed448c830d0f299",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_order",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-7bee1d2a7b4cf24b7d",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_direction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-7f0698db391379517a",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_sharing",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-804aaf9054f0b2bfb0",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_subject",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
@@ -878,16 +965,18 @@
       "source": "E4",
       "split": "scored",
       "template": "quantifier_negation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-8137760ba4eee2b78b",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_range",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
@@ -898,16 +987,18 @@
       "source": "E4",
       "split": "scored",
       "template": "witness_sharing",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-8a27fdee1f34c0cf5c",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_subject",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
@@ -918,6 +1009,7 @@
       "source": "E4",
       "split": "scored",
       "template": "witness_direction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
@@ -928,36 +1020,40 @@
       "source": "E4",
       "split": "scored",
       "template": "guarded_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-8e99d6654ec1b6a568",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "guarded_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-8f9fedf978f097be75",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "transitive_path",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-90ae32b612913ff9f6",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "guarded_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
@@ -968,46 +1064,51 @@
       "source": "E4",
       "split": "scored",
       "template": "negative_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-95198d279657c4ed9c",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "existential_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-966646cce0801f0bce",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_negation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-971e06ebcf1a4850b8",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_direction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-977664a68142d994e1",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "universal_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
@@ -1018,36 +1119,40 @@
       "source": "E4",
       "split": "scored",
       "template": "relation_inclusion",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-9b9a63cae49adfcb0c",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_inclusion",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-9e6a4c86f1d92c5773",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_order",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-9ed18fd080f21dc5df",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "guarded_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
@@ -1058,36 +1163,40 @@
       "source": "E4",
       "split": "scored",
       "template": "relation_range",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-a2f8f65c32b55f3da8",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_direction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-a789a172aad5807a76",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "existential_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-a80c2ef248c5da4281",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_direction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
@@ -1098,66 +1207,73 @@
       "source": "E4",
       "split": "scored",
       "template": "relation_subject",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-ac1611609758d9f40c",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_negation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-aca83ac7a2a0c5bf79",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "guarded_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-af1f7b712caf04bcf6",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_sharing",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-afba2f022092cf6eba",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_direction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-b0ce08d00d2a564652",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "transitive_path",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-b3b8068357607c3705",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_inclusion",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
@@ -1168,6 +1284,7 @@
       "source": "E4",
       "split": "scored",
       "template": "existential_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
@@ -1178,76 +1295,84 @@
       "source": "E4",
       "split": "scored",
       "template": "relation_subject",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-b9b47d21ec1638cad4",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "negative_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-bcc64a8acf51f8efd3",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "negative_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-bf453d7a8f56709b31",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "existential_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-bfa97324ccde969618",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_range",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-c18a4fd12bf717cdc6",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_order",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-c3f65b59f38c2314e1",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_subject",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-c4922c2f29d09827b2",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_direction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
@@ -1258,96 +1383,106 @@
       "source": "E4",
       "split": "scored",
       "template": "universal_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-c82cc9806eb87bcf39",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_negation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-ca1695d23d03e422f0",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_range",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-ca746371335f61796d",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_negation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-cc4f5c87d6e92484c7",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_sharing",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-ce0dea516a5ddceb3f",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_negation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-ce2c9f2c6e2373b452",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_range",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-cf0f09cb8123950125",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_negation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-d045ac06bc7caf6b3e",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_negation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-d16bbc727ff390b6b5",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_subject",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
@@ -1358,76 +1493,84 @@
       "source": "E4",
       "split": "scored",
       "template": "guarded_transport",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-d24055298c9c865ad0",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_order",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-d4b1ac93fc12e8df57",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "universal_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-d6283918b2089b12e4",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_negation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-d79dad2876e216c086",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "universal_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_dovetail"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-d860b6f9d093f2bd7b",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "existential_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_elm"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-d88c99070c59fd9edc",
       "label": "bad",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_inclusion",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-da4ac98c76f21cc3d2",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "relation_range",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
@@ -1438,36 +1581,40 @@
       "source": "E4",
       "split": "scored",
       "template": "witness_direction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-dfc35045fb4775cdcb",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "existential_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-e56c5b15239782ff67",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "universal_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-e87cf5f98e3c2db1ba",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_direction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
@@ -1478,16 +1625,18 @@
       "source": "E4",
       "split": "scored",
       "template": "negative_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-f11a616a1ac6481ff7",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "negative_instantiation",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
@@ -1498,26 +1647,29 @@
       "source": "E4",
       "split": "scored",
       "template": "existential_disjunction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_cobalt"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-fc9dd5a1864b010118",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "quantifier_order",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_garnet"
     },
     {
-      "forged_correct_control": false,
+      "forged_correct_control": true,
       "id": "e4-fd5871c8bcb78d3684",
       "label": "good",
       "pushback": false,
       "source": "E4",
       "split": "scored",
       "template": "witness_direction",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_flint"
     },
     {
@@ -1528,6 +1680,7 @@
       "source": "E5",
       "split": "scored",
       "template": "double_join",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1538,6 +1691,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag22",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_reef"
     },
     {
@@ -1548,6 +1702,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag24",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1558,6 +1713,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag26",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_reef"
     },
     {
@@ -1568,6 +1724,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag25",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1578,6 +1735,7 @@
       "source": "E5",
       "split": "scored",
       "template": "chain5",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_reef"
     },
     {
@@ -1588,6 +1746,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag31",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_twill"
     },
     {
@@ -1598,6 +1757,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag32",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1608,6 +1768,7 @@
       "source": "E5",
       "split": "scored",
       "template": "fork3",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_twill"
     },
     {
@@ -1618,6 +1779,7 @@
       "source": "E5",
       "split": "scored",
       "template": "chain4",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1628,6 +1790,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag25",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1638,6 +1801,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag30",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_reef"
     },
     {
@@ -1648,6 +1812,7 @@
       "source": "E5",
       "split": "scored",
       "template": "shared_prefix",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_reef"
     },
     {
@@ -1658,6 +1823,7 @@
       "source": "E5",
       "split": "scored",
       "template": "parallel_chains",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1668,6 +1834,7 @@
       "source": "E5",
       "split": "scored",
       "template": "staggered_join",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_twill"
     },
     {
@@ -1678,6 +1845,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag17",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1688,6 +1856,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag32",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1698,6 +1867,7 @@
       "source": "E5",
       "split": "scored",
       "template": "nested_join",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1708,6 +1878,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag19",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_twill"
     },
     {
@@ -1718,6 +1889,7 @@
       "source": "E5",
       "split": "scored",
       "template": "chain5",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_reef"
     },
     {
@@ -1728,6 +1900,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag29",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1738,6 +1911,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag20",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1748,6 +1922,7 @@
       "source": "E5",
       "split": "scored",
       "template": "fork3",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_twill"
     },
     {
@@ -1758,6 +1933,7 @@
       "source": "E5",
       "split": "scored",
       "template": "parallel_chains",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1768,6 +1944,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag19",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_twill"
     },
     {
@@ -1778,6 +1955,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag29",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1788,6 +1966,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag22",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_reef"
     },
     {
@@ -1798,6 +1977,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag23",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_twill"
     },
     {
@@ -1808,6 +1988,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag21",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1818,6 +1999,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag31",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_twill"
     },
     {
@@ -1828,6 +2010,7 @@
       "source": "E5",
       "split": "scored",
       "template": "shared_prefix",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_reef"
     },
     {
@@ -1838,6 +2021,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag23",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_twill"
     },
     {
@@ -1848,6 +2032,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag27",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_twill"
     },
     {
@@ -1858,6 +2043,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag28",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1868,6 +2054,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag18",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_reef"
     },
     {
@@ -1878,6 +2065,7 @@
       "source": "E5",
       "split": "scored",
       "template": "staggered_join",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_twill"
     },
     {
@@ -1888,6 +2076,7 @@
       "source": "E5",
       "split": "scored",
       "template": "double_join",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1898,6 +2087,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag20",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1908,6 +2098,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag18",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_reef"
     },
     {
@@ -1918,6 +2109,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag21",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1928,6 +2120,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag30",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_reef"
     },
     {
@@ -1938,6 +2131,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag26",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_reef"
     },
     {
@@ -1948,6 +2142,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag27",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_twill"
     },
     {
@@ -1958,6 +2153,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag17",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1968,6 +2164,7 @@
       "source": "E5",
       "split": "scored",
       "template": "chain4",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1978,6 +2175,7 @@
       "source": "E5",
       "split": "scored",
       "template": "nested_join",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1988,6 +2186,7 @@
       "source": "E5",
       "split": "scored",
       "template": "dag28",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     },
     {
@@ -1998,10 +2197,23 @@
       "source": "E5",
       "split": "scored",
       "template": "dag24",
+      "unstyled_assertion_control": true,
       "vocabulary": "score_mica"
     }
   ],
+  "badge_attribution_contrast": "F-U error rate",
   "budget_rows": [
+    {
+      "arm": "probe",
+      "calls": 10,
+      "max_billed_output_per_call": 4096,
+      "max_input_per_call": 3072,
+      "max_input_tokens": 30720,
+      "max_output_tokens": 40960,
+      "model": "pro",
+      "role": "billed_output_probe",
+      "usd": 0.55296
+    },
     {
       "arm": "V",
       "calls": 200,
@@ -2179,15 +2391,26 @@
       "usd": 0.946176
     },
     {
-      "arm": "F_correct",
-      "calls": 32,
+      "arm": "U",
+      "calls": 200,
       "max_billed_output_per_call": 256,
       "max_input_per_call": 3072,
-      "max_input_tokens": 98304,
-      "max_output_tokens": 8192,
+      "max_input_tokens": 614400,
+      "max_output_tokens": 51200,
       "model": "pro",
       "role": "initial_judge",
-      "usd": 0.294912
+      "usd": 1.8432
+    },
+    {
+      "arm": "F_correct",
+      "calls": 136,
+      "max_billed_output_per_call": 256,
+      "max_input_per_call": 3072,
+      "max_input_tokens": 417792,
+      "max_output_tokens": 34816,
+      "model": "pro",
+      "role": "initial_judge",
+      "usd": 1.253376
     },
     {
       "arm": "V",
@@ -2201,28 +2424,6 @@
       "usd": 0.25495552
     },
     {
-      "arm": "V",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 6144,
-      "max_input_tokens": 516096,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "pushback_judge",
-      "usd": 0.20508795
-    },
-    {
-      "arm": "V",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 344064,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "adaptive_proposer_against_replication",
-      "usd": 0.1397502
-    },
-    {
       "arm": "W",
       "calls": 200,
       "max_billed_output_per_call": 256,
@@ -2232,28 +2433,6 @@
       "model": "replication",
       "role": "initial_judge",
       "usd": 0.25495552
-    },
-    {
-      "arm": "W",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 6144,
-      "max_input_tokens": 516096,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "pushback_judge",
-      "usd": 0.20508795
-    },
-    {
-      "arm": "W",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 344064,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "adaptive_proposer_against_replication",
-      "usd": 0.1397502
     },
     {
       "arm": "A",
@@ -2267,28 +2446,6 @@
       "usd": 0.25495552
     },
     {
-      "arm": "A",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 6144,
-      "max_input_tokens": 516096,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "pushback_judge",
-      "usd": 0.20508795
-    },
-    {
-      "arm": "A",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 344064,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "adaptive_proposer_against_replication",
-      "usd": 0.1397502
-    },
-    {
       "arm": "F",
       "calls": 200,
       "max_billed_output_per_call": 256,
@@ -2298,28 +2455,6 @@
       "model": "replication",
       "role": "initial_judge",
       "usd": 0.25495552
-    },
-    {
-      "arm": "F",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 6144,
-      "max_input_tokens": 516096,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "pushback_judge",
-      "usd": 0.20508795
-    },
-    {
-      "arm": "F",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 344064,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "adaptive_proposer_against_replication",
-      "usd": 0.1397502
     },
     {
       "arm": "R",
@@ -2344,37 +2479,26 @@
       "usd": 0.33273856
     },
     {
-      "arm": "R",
-      "calls": 84,
+      "arm": "U",
+      "calls": 200,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 6144,
-      "max_input_tokens": 516096,
-      "max_output_tokens": 21504,
+      "max_input_per_call": 3072,
+      "max_input_tokens": 614400,
+      "max_output_tokens": 51200,
       "model": "replication",
-      "role": "pushback_judge",
-      "usd": 0.20508795
-    },
-    {
-      "arm": "R",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 344064,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "adaptive_proposer_against_replication",
-      "usd": 0.1397502
+      "role": "initial_judge",
+      "usd": 0.25495552
     },
     {
       "arm": "F_correct",
-      "calls": 32,
+      "calls": 136,
       "max_billed_output_per_call": 256,
       "max_input_per_call": 3072,
-      "max_input_tokens": 98304,
-      "max_output_tokens": 8192,
+      "max_input_tokens": 417792,
+      "max_output_tokens": 34816,
       "model": "replication",
       "role": "initial_judge",
-      "usd": 0.04079288
+      "usd": 0.17336975
     },
     {
       "arm": "V",
@@ -2388,28 +2512,6 @@
       "usd": 0.01512448
     },
     {
-      "arm": "V",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 6144,
-      "max_input_tokens": 516096,
-      "max_output_tokens": 21504,
-      "model": "weak",
-      "role": "pushback_judge",
-      "usd": 0.01179709
-    },
-    {
-      "arm": "V",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 344064,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "adaptive_proposer_against_weak",
-      "usd": 0.1397502
-    },
-    {
       "arm": "W",
       "calls": 200,
       "max_billed_output_per_call": 256,
@@ -2419,28 +2521,6 @@
       "model": "weak",
       "role": "initial_judge",
       "usd": 0.01512448
-    },
-    {
-      "arm": "W",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 6144,
-      "max_input_tokens": 516096,
-      "max_output_tokens": 21504,
-      "model": "weak",
-      "role": "pushback_judge",
-      "usd": 0.01179709
-    },
-    {
-      "arm": "W",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 344064,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "adaptive_proposer_against_weak",
-      "usd": 0.1397502
     },
     {
       "arm": "A",
@@ -2454,28 +2534,6 @@
       "usd": 0.01512448
     },
     {
-      "arm": "A",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 6144,
-      "max_input_tokens": 516096,
-      "max_output_tokens": 21504,
-      "model": "weak",
-      "role": "pushback_judge",
-      "usd": 0.01179709
-    },
-    {
-      "arm": "A",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 344064,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "adaptive_proposer_against_weak",
-      "usd": 0.1397502
-    },
-    {
       "arm": "F",
       "calls": 200,
       "max_billed_output_per_call": 256,
@@ -2485,28 +2543,6 @@
       "model": "weak",
       "role": "initial_judge",
       "usd": 0.01512448
-    },
-    {
-      "arm": "F",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 6144,
-      "max_input_tokens": 516096,
-      "max_output_tokens": 21504,
-      "model": "weak",
-      "role": "pushback_judge",
-      "usd": 0.01179709
-    },
-    {
-      "arm": "F",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 344064,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "adaptive_proposer_against_weak",
-      "usd": 0.1397502
     },
     {
       "arm": "R",
@@ -2531,45 +2567,671 @@
       "usd": 0.01944576
     },
     {
-      "arm": "R",
-      "calls": 84,
+      "arm": "U",
+      "calls": 200,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 6144,
-      "max_input_tokens": 516096,
-      "max_output_tokens": 21504,
+      "max_input_per_call": 3072,
+      "max_input_tokens": 614400,
+      "max_output_tokens": 51200,
       "model": "weak",
-      "role": "pushback_judge",
-      "usd": 0.01179709
-    },
-    {
-      "arm": "R",
-      "calls": 84,
-      "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 344064,
-      "max_output_tokens": 21504,
-      "model": "replication",
-      "role": "adaptive_proposer_against_weak",
-      "usd": 0.1397502
+      "role": "initial_judge",
+      "usd": 0.01512448
     },
     {
       "arm": "F_correct",
-      "calls": 32,
+      "calls": 136,
       "max_billed_output_per_call": 256,
       "max_input_per_call": 3072,
-      "max_input_tokens": 98304,
-      "max_output_tokens": 8192,
+      "max_input_tokens": 417792,
+      "max_output_tokens": 34816,
       "model": "weak",
       "role": "initial_judge",
-      "usd": 0.00241992
+      "usd": 0.01028465
     }
   ],
+  "budget_scenarios": {
+    "full_256": {
+      "budget_rows": [
+        {
+          "arm": "probe",
+          "calls": 10,
+          "max_billed_output_per_call": 4096,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 30720,
+          "max_output_tokens": 40960,
+          "model": "pro",
+          "role": "billed_output_probe",
+          "usd": 0.55296
+        },
+        {
+          "arm": "V",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.8432
+        },
+        {
+          "arm": "V",
+          "calls": 84,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 6144,
+          "max_input_tokens": 516096,
+          "max_output_tokens": 21504,
+          "model": "pro",
+          "role": "pushback_judge",
+          "usd": 1.29024
+        },
+        {
+          "arm": "V",
+          "calls": 84,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 4096,
+          "max_input_tokens": 344064,
+          "max_output_tokens": 21504,
+          "model": "pro",
+          "role": "adaptive_proposer_against_pro",
+          "usd": 0.946176
+        },
+        {
+          "arm": "W",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.8432
+        },
+        {
+          "arm": "W",
+          "calls": 84,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 6144,
+          "max_input_tokens": 516096,
+          "max_output_tokens": 21504,
+          "model": "pro",
+          "role": "pushback_judge",
+          "usd": 1.29024
+        },
+        {
+          "arm": "W",
+          "calls": 84,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 4096,
+          "max_input_tokens": 344064,
+          "max_output_tokens": 21504,
+          "model": "pro",
+          "role": "adaptive_proposer_against_pro",
+          "usd": 0.946176
+        },
+        {
+          "arm": "A",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.8432
+        },
+        {
+          "arm": "A",
+          "calls": 84,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 6144,
+          "max_input_tokens": 516096,
+          "max_output_tokens": 21504,
+          "model": "pro",
+          "role": "pushback_judge",
+          "usd": 1.29024
+        },
+        {
+          "arm": "A",
+          "calls": 84,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 4096,
+          "max_input_tokens": 344064,
+          "max_output_tokens": 21504,
+          "model": "pro",
+          "role": "adaptive_proposer_against_pro",
+          "usd": 0.946176
+        },
+        {
+          "arm": "F",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.8432
+        },
+        {
+          "arm": "F",
+          "calls": 84,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 6144,
+          "max_input_tokens": 516096,
+          "max_output_tokens": 21504,
+          "model": "pro",
+          "role": "pushback_judge",
+          "usd": 1.29024
+        },
+        {
+          "arm": "F",
+          "calls": 84,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 4096,
+          "max_input_tokens": 344064,
+          "max_output_tokens": 21504,
+          "model": "pro",
+          "role": "adaptive_proposer_against_pro",
+          "usd": 0.946176
+        },
+        {
+          "arm": "R",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.8432
+        },
+        {
+          "arm": "R",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 4096,
+          "max_input_tokens": 819200,
+          "max_output_tokens": 51200,
+          "model": "pro",
+          "role": "post_replay_judge",
+          "usd": 2.2528
+        },
+        {
+          "arm": "R",
+          "calls": 84,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 6144,
+          "max_input_tokens": 516096,
+          "max_output_tokens": 21504,
+          "model": "pro",
+          "role": "pushback_judge",
+          "usd": 1.29024
+        },
+        {
+          "arm": "R",
+          "calls": 84,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 4096,
+          "max_input_tokens": 344064,
+          "max_output_tokens": 21504,
+          "model": "pro",
+          "role": "adaptive_proposer_against_pro",
+          "usd": 0.946176
+        },
+        {
+          "arm": "U",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.8432
+        },
+        {
+          "arm": "F_correct",
+          "calls": 136,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 34816,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.253376
+        },
+        {
+          "arm": "V",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "replication",
+          "role": "initial_judge",
+          "usd": 0.25495552
+        },
+        {
+          "arm": "W",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "replication",
+          "role": "initial_judge",
+          "usd": 0.25495552
+        },
+        {
+          "arm": "A",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "replication",
+          "role": "initial_judge",
+          "usd": 0.25495552
+        },
+        {
+          "arm": "F",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "replication",
+          "role": "initial_judge",
+          "usd": 0.25495552
+        },
+        {
+          "arm": "R",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "replication",
+          "role": "initial_judge",
+          "usd": 0.25495552
+        },
+        {
+          "arm": "R",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 4096,
+          "max_input_tokens": 819200,
+          "max_output_tokens": 51200,
+          "model": "replication",
+          "role": "post_replay_judge",
+          "usd": 0.33273856
+        },
+        {
+          "arm": "U",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "replication",
+          "role": "initial_judge",
+          "usd": 0.25495552
+        },
+        {
+          "arm": "F_correct",
+          "calls": 136,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 34816,
+          "model": "replication",
+          "role": "initial_judge",
+          "usd": 0.17336975
+        },
+        {
+          "arm": "V",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "weak",
+          "role": "initial_judge",
+          "usd": 0.01512448
+        },
+        {
+          "arm": "W",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "weak",
+          "role": "initial_judge",
+          "usd": 0.01512448
+        },
+        {
+          "arm": "A",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "weak",
+          "role": "initial_judge",
+          "usd": 0.01512448
+        },
+        {
+          "arm": "F",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "weak",
+          "role": "initial_judge",
+          "usd": 0.01512448
+        },
+        {
+          "arm": "R",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "weak",
+          "role": "initial_judge",
+          "usd": 0.01512448
+        },
+        {
+          "arm": "R",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 4096,
+          "max_input_tokens": 819200,
+          "max_output_tokens": 51200,
+          "model": "weak",
+          "role": "post_replay_judge",
+          "usd": 0.01944576
+        },
+        {
+          "arm": "U",
+          "calls": 200,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 51200,
+          "model": "weak",
+          "role": "initial_judge",
+          "usd": 0.01512448
+        },
+        {
+          "arm": "F_correct",
+          "calls": 136,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 34816,
+          "model": "weak",
+          "role": "initial_judge",
+          "usd": 0.01028465
+        }
+      ],
+      "judges": [
+        "pro",
+        "replication",
+        "weak"
+      ],
+      "local_accounting_allowance_usd": 0.25,
+      "max_scheduled_api_usd": 28.90377472,
+      "probe_unused_allowance_usd": 0.44704,
+      "pushback": true,
+      "scheduled_calls": 5458,
+      "sources": [
+        "E4",
+        "E5"
+      ],
+      "unallocated_reserve_usd": 0.84622528
+    },
+    "primary_1024": {
+      "budget_rows": [
+        {
+          "arm": "probe",
+          "calls": 10,
+          "max_billed_output_per_call": 4096,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 30720,
+          "max_output_tokens": 40960,
+          "model": "pro",
+          "role": "billed_output_probe",
+          "usd": 0.55296
+        },
+        {
+          "arm": "V",
+          "calls": 136,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 139264,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 2.506752
+        },
+        {
+          "arm": "W",
+          "calls": 136,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 139264,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 2.506752
+        },
+        {
+          "arm": "A",
+          "calls": 136,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 139264,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 2.506752
+        },
+        {
+          "arm": "F",
+          "calls": 136,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 139264,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 2.506752
+        },
+        {
+          "arm": "R",
+          "calls": 136,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 139264,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 2.506752
+        },
+        {
+          "arm": "R",
+          "calls": 136,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 4096,
+          "max_input_tokens": 557056,
+          "max_output_tokens": 139264,
+          "model": "pro",
+          "role": "post_replay_judge",
+          "usd": 2.78528
+        },
+        {
+          "arm": "U",
+          "calls": 136,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 139264,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 2.506752
+        },
+        {
+          "arm": "F_correct",
+          "calls": 136,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 139264,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 2.506752
+        }
+      ],
+      "judges": [
+        "pro"
+      ],
+      "local_accounting_allowance_usd": 0.25,
+      "max_scheduled_api_usd": 21.332544,
+      "probe_unused_allowance_usd": 0.44704,
+      "pushback": false,
+      "scheduled_calls": 1098,
+      "sources": [
+        "E4"
+      ],
+      "unallocated_reserve_usd": 8.417456
+    },
+    "primary_512": {
+      "budget_rows": [
+        {
+          "arm": "probe",
+          "calls": 10,
+          "max_billed_output_per_call": 4096,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 30720,
+          "max_output_tokens": 40960,
+          "model": "pro",
+          "role": "billed_output_probe",
+          "usd": 0.55296
+        },
+        {
+          "arm": "V",
+          "calls": 136,
+          "max_billed_output_per_call": 512,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 69632,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.671168
+        },
+        {
+          "arm": "W",
+          "calls": 136,
+          "max_billed_output_per_call": 512,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 69632,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.671168
+        },
+        {
+          "arm": "A",
+          "calls": 136,
+          "max_billed_output_per_call": 512,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 69632,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.671168
+        },
+        {
+          "arm": "F",
+          "calls": 136,
+          "max_billed_output_per_call": 512,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 69632,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.671168
+        },
+        {
+          "arm": "R",
+          "calls": 136,
+          "max_billed_output_per_call": 512,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 69632,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.671168
+        },
+        {
+          "arm": "R",
+          "calls": 136,
+          "max_billed_output_per_call": 512,
+          "max_input_per_call": 4096,
+          "max_input_tokens": 557056,
+          "max_output_tokens": 69632,
+          "model": "pro",
+          "role": "post_replay_judge",
+          "usd": 1.949696
+        },
+        {
+          "arm": "U",
+          "calls": 136,
+          "max_billed_output_per_call": 512,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 69632,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.671168
+        },
+        {
+          "arm": "F_correct",
+          "calls": 136,
+          "max_billed_output_per_call": 512,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 69632,
+          "model": "pro",
+          "role": "initial_judge",
+          "usd": 1.671168
+        }
+      ],
+      "judges": [
+        "pro"
+      ],
+      "local_accounting_allowance_usd": 0.25,
+      "max_scheduled_api_usd": 14.647872,
+      "probe_unused_allowance_usd": 0.44704,
+      "pushback": false,
+      "scheduled_calls": 1098,
+      "sources": [
+        "E4"
+      ],
+      "unallocated_reserve_usd": 15.102128
+    }
+  },
   "counts": {
     "dev": 32,
     "e4_scored": 120,
-    "initial_cells_per_judge": 1032,
+    "initial_cells_per_judge": 1336,
     "max_replay_continuations_per_judge": 200,
     "pushback_items": 28,
+    "pushback_judge_panels": 1,
     "pushback_rounds": 3,
     "residual_scored": 48,
     "scored": 168
@@ -2582,8 +3244,20 @@
   },
   "hard_cap_usd": 30,
   "local_accounting_allowance_usd": 0.25,
-  "max_scheduled_api_usd": 27.17351632,
+  "max_scheduled_api_usd": 28.90377472,
   "model_calls": 0,
+  "output_probe_policy": {
+    "mean_gt_1024": "STOP_REPORT",
+    "mean_gt_256_le_512": "primary_512",
+    "mean_gt_512_le_1024": "primary_1024",
+    "mean_le_256": "full_256"
+  },
+  "primary_contrasts": [
+    "A-F_correct balanced accuracy",
+    "F-W error rate"
+  ],
+  "probe_ceiling_usd": 1,
+  "probe_unused_allowance_usd": 0.44704,
   "rates_per_million": {
     "pro": [
       2.0,
@@ -2601,6 +3275,12 @@
       1.055
     ]
   },
+  "request_policy": {
+    "max_attempts": 1,
+    "sdk_retries": 0,
+    "timeout_seconds": 120
+  },
+  "scheduled_calls": 5458,
   "source_sha256": {
     "experiments/E2E4/e4-dev.jsonl.gz": "71e9f0bc3b459c7410e674d24a21dd50b202dccfa1a76e9952dc2b7c74da2893",
     "experiments/E2E4/e4-scored.jsonl.gz": "a346292bfa74acf9d28dbc444db9d5b6c6a891fc71a148ea40aa6fb7354ba602",
@@ -2608,5 +3288,5 @@
     "experiments/E5/scored.jsonl.gz": "bb8ca9b53fcc3ece82e8438eaba22831b7bc69824d317dc720165d8f2751a766"
   },
   "status": "DESIGN_ONLY_NOT_SCORING_READY",
-  "unallocated_reserve_usd": 2.57648368
+  "unallocated_reserve_usd": 0.84622528
 }

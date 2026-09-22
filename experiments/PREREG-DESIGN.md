@@ -23,7 +23,12 @@ Design review inputs: [Astra review](../../manage-agents/reviews/plan-review-ast
 §§2–3, 6–7 (existing controls, matched total cost, independent translations,
 small cluster counts); [Fable review](../../manage-agents/reviews/plan-review-fable.md)
 §§2–4, 7 (missing F2, worst flaw, deference harm, 10-point margin, oracle/random
-harness checks). These files are external to this repository; the paths resolve
+harness checks). The follow-up [Astra prereg review](../../manage-agents/reviews/prereg-review-astra.md)
+and [Fable prereg review](../../manage-agents/reviews/prereg-review-fable.md)
+are incorporated in the revised study-specific contrasts, controls, pilot
+framing and budgets. Study-specific schedules and intervals below supersede
+earlier matched-dollar, output-cap and t-interval assumptions.
+These files are external to this repository; the paths resolve
 from this checkout and must be archived with the later freeze.
 [Paper audit](../paper/AUDIT.md), findings 1, 3, 6, 7, 9, 13 and “Critical-review
 synthesis revision,” requires accurate assurance scope, disclosure of failed
@@ -62,6 +67,12 @@ Temperature 0, one sample per item/arm/judge, seed 20260921 where supported
 (record unsupported seeds). No paid retries, replacement samples, optional
 stopping on results, or silent substitutions. A 120-second wall timeout per API
 call and the per-call billed-output cap apply, including hidden thinking tokens.
+Set SDK, transport and provider retries to zero (one attempt), disable automatic
+paid tool continuations and dispatch serially. Reserve worst-case billing before
+dispatch and keep timed-out calls reserved until reconciled; cancellation is not
+proof that billing stopped. Unknown billing stops further dispatch. P1 includes
+a separate ten-call/$1 output probe and deterministic reduced schedules; P5
+uses its scheduled dev calls to validate total-output feasibility.
 An endpoint that cannot enforce these caps fails preflight. Input limits include
 system messages, tools, schema and the whole visible history; exact provider
 counting/tokenization must pass before calls. Never truncate source evidence or
@@ -100,12 +111,13 @@ not an observed calibration result.
 
 For each row, cost = calls × (input_cap × input_rate + billed_output_cap ×
 output_rate) / 1e6 × fee_multiplier. Inventory rows include every model role,
-optional replay continuation, dev call and maximum pushback/top-up call.
+optional replay continuation, dev/probe call, isolated answer, follow-up, repair
+and maximum pushback call. There is no P5 cost-matching top-up.
 Checker tokens = 0 model tokens; checker bytes returned to models count in input.
 Local CPU, engineering and manual validation time are reported separately.
 P5 additionally charges a notional $0.024/core-hour, at most 60 core-seconds
-per item-arm ($0.0004), against matched cost; this is an explicit accounting
-assumption, not a cloud invoice. Exceeding it is a cost failure, not free work.
+per item-arm ($0.0004), against attributed cost under the matched ceiling; this
+is an explicit accounting assumption, not a cloud invoice. Exceeding it is a cost failure, not free work.
 P1 local bookkeeping/replay has a $0.25 allowance from its reserve. Neither
 experiment measures engineering cost amortization in deployment.
 
