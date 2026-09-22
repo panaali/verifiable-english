@@ -44,3 +44,11 @@ Serial regression command: `UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run pyte
 - The full ProverGen LLM language-realization stage was replaced with declared compositional English. This is a symbolic-generator adaptation with a restricted language distribution; lexical meanings are supplied by the vocabulary. Upstream licensing of redistributed rule templates needs clarification before broader redistribution.
 - The preregistration is local, not externally timestamped. Human audit of 12 preselected item clusters, independent-model fidelity audit, API replication, full k=3 sampling and bulk subscription approval are pending. The smoke IDs must be excluded from confirmatory rates or a fresh study generated.
 - No C/D calibration, debate, or powered comparison was built or run.
+
+## Full B controls revision (before the main run)
+
+Lead authorized serial subscription use. The final ten-call endpoint audit succeeded: five canaries **337/337/337/337/337** input tokens; five trivial probes **259/259/259/259/259**, all `OK`, all served `claude-opus-5-5`. These fixed reference-input baselines include supplied text; absolute wrapper-only overhead is still **unmeasured**, not 337 or 259. Full logs: `results/endpoint-controlled.jsonl`. Fixed empty cwd, shell `/bin/sh`, locale `en_US.UTF-8`, UTC; host release pinned in attempt controls. The shipped CLI reads the real date despite exposing an unused override flag, so calls are guarded before/after against the fixed UTC date `2026-09-22` and stop at rollover. There is no clock tampering or asserted unsupported override.
+
+The SDK identity prefix **“You are a Claude agent, built on Anthropic's Claude Agent SDK.” is an uncontrolled constant**. Injected environment/model/cutoff/token-budget/date context remains observable. New model identities in C necessarily have model-specific constant context, not identical overhead across models. Equal counts and canary reports are not complete provider-context attestation.
+
+Fresh main-study corpus: `items-b.jsonl`, seed 2026092217, 60 items, no prior smoke identities reused. Revised protocol and material hashes are in `PREREG-B.md` / `HASHES`; the earlier smoke protocol is preserved as `PREREG-B-smoke.md`. Human and independent-model fidelity audits remain deferred.

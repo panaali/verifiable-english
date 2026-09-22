@@ -118,20 +118,22 @@ def realize(sk, index, rng):
             "atom_mapping":mapping, "atom_english":text}
 
 
-def generate():
-    rng=random.Random(SEED)
+def generate(seed=SEED, filename="items.jsonl", prefix="v4"):
+    rng=random.Random(seed)
     labels=["True","False","Uncertain"]*20
     rows=[]
     for i,label in enumerate(labels):
         sk=skeleton(rng,label,rng.choice([6,7,8,9]))
-        rows.append(realize(sk,i,rng))
-    path=HERE/"items.jsonl"
+        row=realize(sk,i,rng)
+        row.update(id=f"{prefix}-{i:03d}", seed=seed)
+        rows.append(row)
+    path=HERE/filename
     path.write_text("".join(json.dumps(row,ensure_ascii=False)+"\n" for row in rows))
-    dump(HERE/"manifest.json", {"seed":SEED,"items":60,"labels":dict(Counter(r['label'] for r in rows)),
+    dump(path.with_name(path.stem+"-manifest.json" if filename != "items.jsonl" else "manifest.json"), {"seed":seed,"items":60,"labels":dict(Counter(r['label'] for r in rows)),
          "sha256":hashlib.sha256(path.read_bytes()).hexdigest(),"e0_fit_pass":60,
          "satisfiable_items":60,"gold_validation":"Independent Tseitin/DPLL plus VE evaluation of all satisfying witnesses",
          "smoke_ids":[r["id"] for r in rows[:3]],
-         "hand_audit_ids":[r["id"] for r in random.Random(SEED+1).sample(rows,12)]})
+         "hand_audit_ids":[r["id"] for r in random.Random(seed+1).sample(rows,12)]})
     print("Generated and E0/VE validated 60 fresh items",flush=True)
 
 
@@ -164,6 +166,7 @@ def compare_translation(env, source, gold):
     relation="EQUIVALENT" if exact else ve.compare(env,reference,candidate,BUDGET).status
     data=ve.formula_to_data(env,candidate)
     return {"exact_structure":exact,"relation":relation,"faithful_mechanical":relation=="EQUIVALENT",
+            "submitted_ast":data,
             "gold_structure":features(gold),"submitted_structure":features(data)}
 
 
@@ -171,6 +174,8 @@ def score(item,response):
     result={"id":item["id"],"faithful_mechanical":False,"certified_answer":False,"grounded_certificate":False}
     try:
         obj=parse_final_json(response) if isinstance(response,str) else response
+        answer=obj.get("answer")
+        result.update(answer=answer,answer_correct=answer==item["label"])
         env=ve.Environment.from_dict(item["environment"])
         translations=obj["translations"]
         expected={p["id"] for p in item["premises"]}

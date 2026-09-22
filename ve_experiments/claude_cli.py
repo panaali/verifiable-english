@@ -14,6 +14,7 @@ import fcntl
 import hashlib
 import json
 import os
+import platform
 from pathlib import Path
 import shutil
 import subprocess
@@ -33,6 +34,13 @@ def now():
     return datetime.now(timezone.utc).isoformat()
 
 
+def check_context_date(controls):
+    # The shipped native CLI reads the real local date; its override flag is not
+    # wired into that code path. Pin TZ=UTC and fail closed across UTC midnight.
+    if datetime.now(timezone.utc).date().isoformat() != controls.context_date:
+        raise EndpointError("Injected context date would drift; pinned UTC date expired")
+
+
 class EndpointError(RuntimeError):
     pass
 
@@ -46,6 +54,7 @@ class Controls:
     effort: str = "low"
     timeout_s: float = 240
     working_directory: str = "/private/tmp/ve-claude-v4-empty"
+    context_date: str = "2026-09-22"
 
     def __post_init__(self):
         if self.model not in MODELS.values():
@@ -98,8 +107,9 @@ def command(executable, controls, system, mcp):
 def isolated_env(base, config, home, token, controls):
     # Deliberate allowlist: no inherited provider endpoints, API keys, model aliases,
     # Claude/Codex config, tracing, proxy settings, or shell initialization.
-    env = {k: base[k] for k in ("PATH", "LANG", "LC_ALL", "SSL_CERT_FILE") if k in base}
+    env = {k: base[k] for k in ("PATH", "SSL_CERT_FILE") if k in base}
     env.update(HOME=str(home), TMPDIR=str(home), CLAUDE_CONFIG_DIR=str(config),
+               LANG="en_US.UTF-8", LC_ALL="en_US.UTF-8", TZ="UTC", SHELL="/bin/sh",
                CLAUDE_CODE_OAUTH_TOKEN=token, MAX_THINKING_TOKENS=str(controls.thinking_tokens),
                CLAUDE_CODE_MAX_OUTPUT_TOKENS=str(controls.output_tokens),
                CLAUDE_CODE_MAX_RETRIES="0", DISABLE_AUTOUPDATER="1",
@@ -165,7 +175,9 @@ class ClaudeCLI:
             if not executable:
                 raise EndpointError("claude not found")
             binary_hash = hashlib.sha256(Path(executable).read_bytes()).hexdigest()
-            control = {**asdict(self.controls), "binary_sha256": binary_hash, "backend_revision": 1}
+            control = {**asdict(self.controls), "binary_sha256": binary_hash, "backend_revision": 2,
+                       "host_system": platform.system(), "host_release": platform.release(),
+                       "shell": "/bin/sh", "locale": "en_US.UTF-8", "timezone": "UTC"}
             group = digest([control, system, prompt, content_tokens])
             key = digest([group, item_id, sample_index])
             matching = [r for r in history if r.get("key") == key]
@@ -181,6 +193,7 @@ class ClaudeCLI:
             prior = [r for r in history if r["status"] == "started"]
             if prior and prior[0]["controls"] != control:
                 raise EndpointError("Controls/binary drift; start a separately named ledger")
+            check_context_date(self.controls)
             token = oauth_token()
             base = {"key": key, "item_id": item_id, "sample_index": sample_index,
                     "prompt_group": group, "system": system, "prompt": prompt,
@@ -211,6 +224,7 @@ class ClaudeCLI:
                     if proc.returncode:
                         raise EndpointError(f"CLI exit {proc.returncode}")
                     parsed = parse_stream(raw, self.controls.model)
+                    check_context_date(self.controls)
                 overhead = None if content_tokens is None else parsed["input_tokens"] - content_tokens
                 comparable = [r for r in history if r["status"] == "ok" and r["prompt_group"] == group]
                 if any(r["input_tokens"] != parsed["input_tokens"] for r in comparable):

@@ -1,0 +1,28 @@
+{
+  "seed": 2026092217,
+  "items": 60,
+  "labels": {
+    "True": 20,
+    "False": 20,
+    "Uncertain": 20
+  },
+  "sha256": "dfe81cbd45c3a4677bd8be1f9e55e97c9d7e741201fe977e0a2ffa7b1e842c7c",
+  "e0_fit_pass": 60,
+  "satisfiable_items": 60,
+  "gold_validation": "Independent Tseitin/DPLL plus VE evaluation of all satisfying witnesses",
+  "smoke_ids": [],
+  "hand_audit_ids": [
+    "v4b-006",
+    "v4b-023",
+    "v4b-045",
+    "v4b-056",
+    "v4b-054",
+    "v4b-002",
+    "v4b-041",
+    "v4b-049",
+    "v4b-025",
+    "v4b-014",
+    "v4b-048",
+    "v4b-022"
+  ]
+}

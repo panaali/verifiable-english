@@ -1,0 +1,25 @@
+{
+  "calls": 10,
+  "model_ids": [
+    "claude-opus-5-5"
+  ],
+  "input_tokens_by_probe": {
+    "canary": [
+      337,
+      337,
+      337,
+      337,
+      337
+    ],
+    "trivial": [
+      259,
+      259,
+      259,
+      259,
+      259
+    ]
+  },
+  "absolute_wrapper_tokens": null,
+  "context_date": "2026-09-22",
+  "identity_prefix_control": "uncontrolled constant"
+}
