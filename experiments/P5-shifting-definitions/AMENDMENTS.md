@@ -558,3 +558,7 @@ authorized by this amendment. The OpenRouter key is absent in Worker X's
 environment: prepare and freeze v6 source material, then stop before dispatch.
 Gemini review is dependent on all 84 accepted new paraphrases and therefore
 cannot run on the superseded prose merely to claim completion.
+
+## Amendment (orchestrator, 2026-09-22): paraphrase stage waits for DeepInfra on 429
+
+Novita rejected the v6 paraphrase request (HTTP 400, "does not support endpoint: completions"). The paraphrase stage now retries DeepInfra after 20/60/120 s pauses instead of falling back to another provider. Authoring only; judges unchanged. Refreeze.
