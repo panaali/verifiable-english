@@ -109,9 +109,12 @@ uv run python experiments/P5-shifting-definitions/run_p5.py analyze --split scor
 feasibility uses its scheduled dev calls. Successful smokes are durable and
 reused, including after a material refreeze with identical requests. Changed
 model revisions/prices, unresolved billing, output overrun or source-label
-mismatch stop dispatch. `reconcile` reports holds or accepts documented block
-releases/allowance adjustments; it cannot fabricate a refund or erase unknown
-billing. A panel halt is retained, missing assigned outcomes score zero, and
+mismatch stop dispatch. After stopping the caller, `reconcile` charges each
+outstanding call at its full reserved ceiling in the study and revision ledgers,
+marks it interrupted (never a trial), and permits the identical request to be
+re-issued within the remaining cap. Audited receipts are still required for
+block releases/allowance adjustments; unknown billing is never refunded.
+A completed-response panel halt is retained, missing assigned outcomes score zero, and
 completed responses are reused on resume. Local oracle receipts are fsynced
 before subsequent paid stages so restart does not silently change history.
 

@@ -1,0 +1,71 @@
+{
+  "actual_ledger_copy_check": {
+    "completed_calls_retained": 9,
+    "idempotent": true,
+    "identical_retry_reserves_under_original_cap": true,
+    "original_ledger_unchanged": true
+  },
+  "date": "2026-09-22",
+  "final_focused_tests": {
+    "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run pytest -q tests/test_p1_reconcile.py tests/test_p5_reconcile.py tests/test_p5.py -k 'interrupted or item_arm_ceiling or cli_reconciles'",
+    "failed": 0,
+    "passed": 11
+  },
+  "freeze_sha256": "cfee8edf24db975d5ab24fb375cb2f629250e3d9f45206ce2837a4c810ff1681",
+  "generation_calls": 0,
+  "interrupted_charge_usd": "0.0020742144",
+  "new_provider_spend_usd": "0",
+  "next_commands": [
+    "export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex",
+    "uv run python experiments/P5-shifting-definitions/run_p5.py preflight-openrouter --offline",
+    "uv run python experiments/P5-shifting-definitions/run_p5.py paraphrase --revision v7 --cap-usd .40"
+  ],
+  "offline_openrouter_preflight": {
+    "generation_calls": 0,
+    "requested_models_passed": true,
+    "reused_smoke": true
+  },
+  "offline_preflight": {
+    "blockers": [
+      "surface-soundness",
+      "review",
+      "independent-prose",
+      "known-answer",
+      "packet-safety",
+      "leakage",
+      "role-boundaries",
+      "external-timestamp",
+      "tokenizer"
+    ],
+    "gates": {
+      "construction": true,
+      "external-timestamp": false,
+      "gemini-calibration-coverage": true,
+      "independent-prose": false,
+      "known-answer": false,
+      "leakage": false,
+      "lean-replay": true,
+      "packet-safety": false,
+      "review": false,
+      "role-boundaries": false,
+      "surface-soundness": false,
+      "tokenizer": false,
+      "tracked-blinding": true
+    },
+    "generation_calls": 0,
+    "passed": false
+  },
+  "regression": {
+    "baseline_commit": "97c2acf2e4e8269049d521c8ae42d42d383356f5",
+    "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run pytest -q tests/test_p1*.py tests/test_p5*.py",
+    "failed": 2,
+    "failures_reproduced_with_unmodified_HEAD_paid_and_p1_modules": true,
+    "passed": 278,
+    "pre_existing_failures": [
+      "tests/test_p1_amendment13.py::test_scored_gate_and_cap_reach_only_qwen_attacker_backends",
+      "tests/test_p1_amendment14.py::test_recover_and_reconstruct_every_retained_scored_call_without_dispatch"
+    ]
+  },
+  "v7_accounted_usd": "0.0112893440",
+  "v7_block_remaining_usd": "0.3887106560"
+}

@@ -1,11 +1,5 @@
 {
-  "adaptive_followups": 1,
-  "freeze_sha256": "b3fda3ed1edcf0095dbf2d862e46f5e18e1d1ac6de2312ed3a7eea762eccfe4b",
-  "fresh_context_fields": [
-    "packet",
-    "commitment",
-    "one_question"
-  ],
-  "judges_structured": true,
-  "passed": true
+  "error": "IndexError: list index out of range",
+  "freeze_sha256": "cfee8edf24db975d5ab24fb375cb2f629250e3d9f45206ce2837a4c810ff1681",
+  "passed": false
 }

@@ -289,3 +289,4 @@
 {"block_id":"gemini-config-calibration-v1","event":"block_complete","sample":false,"time":1790089991.3388002}
 {"block_id":"gemini-config-calibration-v1","event":"block_release","reason":"completed block","released_usd":"0.446218","time":1790089991.339007}
 {"cost_usd":"0.40","event":"allowance","identity":"v6-paraphrase-envelope","time":1790092235.218475}
+{"cost_usd":"0.40","event":"allowance","identity":"v7-paraphrase-envelope","time":1790096344.874905}

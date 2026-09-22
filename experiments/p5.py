@@ -397,7 +397,7 @@ class P5Ledger(Ledger):
                 reservations={r['identity']:r for r in rows if r['event']=='reserve'}
                 charged=Decimal(0);shared=Decimal(0)
                 for row in rows:
-                    if row['event'] not in ('complete','infrastructure_failure','panel_halt'):
+                    if row['event'] not in ('complete','interrupted','infrastructure_failure','panel_halt'):
                         continue
                     source=reservations.get(row.get('identity'),{}).get('metadata',{})
                     amount=Decimal(row.get('cost_usd',row.get('infrastructure_hold_usd','0')))
@@ -588,6 +588,33 @@ def paraphrase(cap, *, cached_only=False, revision=False):
         'paraphrase_failed':sum(r['excluded'] for r in output),'review_required':True,'refreeze_required':True}
 
 
+def reconcile(receipt=None):
+    """Offline settlement of interrupted study and separately capped revision calls."""
+    from experiments.p5_revision import LIMITS
+    books=[Ledger(HERE/'runs/study/costs.jsonl',CAP)]
+    books += [Ledger(path,LIMITS[path.name.removesuffix('-costs.jsonl')])
+              for path in sorted((HERE/'runs').glob('revision-*/*-costs.jsonl'))]
+    reports={}; charged=Decimal(0)
+    for book in books:
+        events=book.reconcile_interrupted()
+        amount=sum((Decimal(e['cost_usd']) for e in events),Decimal(0))
+        charged+=amount
+        if receipt and book==books[0]:
+            events+=book.reconcile(receipt.get('releases',{}),receipt.get('allowances',{}))
+        with book.locked() as (_,rows):
+            pending,spent,_,revisions,blocked=book.state(rows)
+        reports[str(book.path.relative_to(HERE))]={
+            'events':events,'interrupted_charge_usd':str(amount),
+            'interrupted_total_usd':str(sum((Decimal(r['cost_usd']) for r in rows if r['event']=='interrupted'),Decimal(0))),
+            'pending':{k:str(v) for k,v in pending.items()},'spent_usd':str(spent),
+            'cap_usd':str(book.cap),'uncommitted_usd':str(book.cap-spent-sum(pending.values(),Decimal(0))),
+            'blocked':blocked,'revisions':revisions}
+    result={'interrupted_charge_usd':str(charged),'ledgers':reports,'generation_calls':0,
+        'policy':'Interrupted calls charged at full ceiling; no trial or reply inferred. Identical requests may be re-issued within existing caps. Revision charges remain inside study envelopes, not added twice.'}
+    write_json(HERE/'checks/reconciliation.json',result)
+    return result
+
+
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('command',choices=['generate','paraphrase','review','inventory','freeze','probe','preflight',
@@ -620,15 +647,7 @@ def main(argv=None):
         elif args.command=='paraphrase':result=paraphrase(args.cap_usd,cached_only=args.offline,revision=args.revision=='v7')
         elif args.command in ('dev','scored','resume'):result=run(args.split if args.command=='resume' else args.command,args.cap_usd,args.command=='resume')
         elif args.command=='reconcile':
-            book=Ledger(HERE/'runs/study/costs.jsonl',CAP)
-            if args.receipt:
-                receipt=json.loads(args.receipt.read_text())
-                result={'events':book.reconcile(receipt.get('releases',{}),receipt.get('allowances',{}))}
-            else:
-                with book.locked() as (_,rows):
-                    pending,spent,_,revisions,blocked=book.state(rows)
-                result={'pending':{k:str(v) for k,v in pending.items()},'spent_usd':str(spent),'blocked':blocked,'revisions':revisions,
-                    'policy':'Unknown billing remains held. Reconcile requires audited receipt; never infer a timeout was free.'}
+            result=reconcile(json.loads(args.receipt.read_text()) if args.receipt else None)
         elif args.command=='explanations':
             from experiments.p5_preflight import explanations
             result=explanations(args.split,args.export,args.submit)

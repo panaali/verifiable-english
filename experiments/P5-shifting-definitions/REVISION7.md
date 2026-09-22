@@ -1,8 +1,13 @@
 # Revision 7 handoff — constrained rewrite
 
-Worker X prepared this amendment offline, with **$0 new spend**. No v7 Qwen,
-Gemini review, dev or scored calls have been made. v7 uses the unchanged v6
-source dossiers and construction layout.
+Worker X prepared this amendment offline, with **$0 new spend**. The orchestrator
+subsequently began v7 Qwen generation and was interrupted after nine completed
+calls and one unresolved reservation. Reconciliation charges that reservation
+at its full **$0.0020742144** ceiling, making v7 accounted cost **$0.0112893440**
+with **$0.3887106560** left in its $0.40 envelope. This is conservative accounting
+of an earlier call, not new provider spend or an audited invoice amount. No
+Gemini review, dev or scored call is performed in this recovery. v7 uses the
+unchanged v6 source dossiers and construction layout.
 
 The v6 run completed 168 attempts across 84 slots, accepting none. The retained
 ledger records $0.1597614352 in completed-call charges (about $0.16), plus its
@@ -32,7 +37,6 @@ Run from the repository root, with the operator's existing OpenRouter key:
 
 ```sh
 export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
-uv run python experiments/P5-shifting-definitions/run_p5.py freeze --scenario dual_judge
 uv run python experiments/P5-shifting-definitions/run_p5.py preflight-openrouter --offline
 uv run python experiments/P5-shifting-definitions/run_p5.py paraphrase --revision v7 --cap-usd .40
 ```
@@ -43,8 +47,14 @@ cumulative cap** includes failures and the single correction allowed per slot;
 it never resets on resume. The study ledger retains the old v6 envelope and
 reserves the additional v7 envelope under the unchanged $40 ceiling. Completed
 responses are revalidated from the ledger without another call; terminal slots
-are checkpointed individually. Uncertain billing continues to block dispatch
-until reconciled, as before. Do not regenerate sources between invocations.
+are checkpointed individually. After stopping an interrupted caller, run
+`uv run python experiments/P5-shifting-definitions/run_p5.py reconcile`.
+The dated interrupted-call amendment charges every outstanding reservation in
+the study and revision ledgers at its full ceiling, without inventing a response
+or counting a trial. It allows the identical request to be re-issued and charges
+the retry separately; the cumulative caps never reset. Completed-response
+validation halts still require their existing recovery. Do not regenerate
+sources between invocations.
 
 After generation, this check makes no provider calls:
 

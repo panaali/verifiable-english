@@ -1390,7 +1390,7 @@ def split_block_id(name, split, *, amended=True):
 
 
 def reconcile():
-    """Reconcile planning holds without dispatch, receipt edits, or gate changes."""
+    """Charge interrupted calls and reconcile planning holds without dispatch."""
     from decimal import Decimal
     probe_result = json.loads((HERE / 'results/probe.json').read_text())
     name = probe_result['schedule']
@@ -1400,15 +1400,19 @@ def reconcile():
     recovery = amendment15_receipt() if (HERE / 'checks/amendment15.json').exists() else None
     if recovery:
         validate_amendment15_sources(recovery)
+    interrupted_events = ledger.reconcile_interrupted()
     if not recovery and name in P1_AMENDMENT13_SCENARIOS:
         ledger.amend_attacker_billing(split_block_id(name, 'scored'), split_ceiling(name, 'scored'))
     sources = {}
     for label in ('probe', 'probe-attempt1', 'probe-attempt2', 'provider-preflight'):
         path = HERE / f'runs/{label}/costs.jsonl'
         entries = read_jsonl(path)  # Missing billing evidence must not imply zero spend.
+        interrupted_events += Ledger(path, STUDY_CAP_USD).reconcile_interrupted()
+        entries = read_jsonl(path)
         pending, _, _, _, _ = Ledger.state(entries)
         realised = sum((Decimal(r['cost_usd']) for r in entries if r['event'] == 'complete'), Decimal(0))
         held = sum((Decimal(r.get('infrastructure_hold_usd', '0')) for r in entries), Decimal(0))
+        held += sum((Decimal(r['cost_usd']) for r in entries if r['event'] == 'interrupted'), Decimal(0))
         held += sum((v for k, v in pending.items() if not k.startswith('block:')), Decimal(0))
         # Probe attempts are superseded/completed. Provider preflight may still
         # own a live block; retain that hold until its own completion is known.
@@ -1486,7 +1490,8 @@ def reconcile():
     if Decimal(caps['scored']) + local > Decimal(STUDY_CAP_USD):
         raise BudgetExceeded('reconciled schedule exceeds the unchanged $40 study cap')
     write_json(HERE / 'checks/reconciliation.json', report)
-    print(json.dumps({**report, 'release_events_appended': len(events)}, indent=2))
+    print(json.dumps({**report, 'release_events_appended': len(events),
+                      'interrupted_charge_usd': str(sum((Decimal(e['cost_usd']) for e in interrupted_events), Decimal(0)))}, indent=2))
     return 0
 
 

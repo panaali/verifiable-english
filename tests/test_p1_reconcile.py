@@ -54,6 +54,90 @@ def test_unknown_billing_cannot_be_released(tmp_path):
     assert ledger.path.read_bytes() == before
 
 
+@pytest.mark.parametrize('block', [None, 'interrupted-block'])
+@pytest.mark.parametrize('halt', [False, True])
+def test_interrupted_calls_charge_full_ceiling_and_retry_without_trial(tmp_path, block, halt):
+    req = paid.PaidRequest('dev/interrupted', 'pro', [], 100, 100,
+                           metadata={'block_id': block} if block else {})
+    ceiling = paid.cost('pro', 100, 100)
+    ledger = paid.Ledger(tmp_path / 'ledger', ceiling * 2)
+    if block:
+        ledger.reserve_block(block, ceiling * 2)
+    ledger.reserve(req)
+    if halt:
+        ledger.halt(req, 'process lost response')
+    before = ledger.path.read_bytes()
+    events = ledger.reconcile_interrupted()
+    assert ledger.path.read_bytes().startswith(before)
+    assert len(events) == 1 and events[0]['event'] == 'interrupted'
+    assert Decimal(events[0]['cost_usd']) == ceiling
+    assert events[0]['sample'] is False
+    pending, spent, _, revisions, blocked = ledger.state(rows(ledger))
+    assert spent == ceiling and not revisions and not blocked
+    assert pending == ({'block:' + block: ceiling} if block else {})
+    assert ledger.cached_reply(req) is None
+    assert not any(r['event'] == 'complete' for r in rows(ledger))
+    settled = ledger.path.read_bytes()
+    assert ledger.reconcile_interrupted() == []
+    assert ledger.path.read_bytes() == settled
+    with pytest.raises(paid.PreflightError, match='changed frozen request'):
+        ledger.reserve(replace(req, messages=[{'role': 'user', 'content': 'changed'}]))
+    if block:
+        ledger.reserve_block(block, ceiling * 2, resume=True)
+    ledger.reserve(req)
+    assert ledger.reconcile_interrupted()[0]['cost_usd'] == str(ceiling)
+    assert ledger.state(rows(ledger))[1] == ceiling * 2
+    with pytest.raises(paid.BudgetExceeded):
+        ledger.reserve(req)
+
+
+def test_interrupted_retry_reuses_only_subsequent_completed_reply(tmp_path):
+    ledger = paid.Ledger(tmp_path / 'ledger', 1)
+    req = paid.PaidRequest('dev/retry', 'pro', [], 100, 100)
+    ledger.reserve(req)
+    ledger.reconcile_interrupted()
+    client = paid.PaidClient(paid.OfflineBackend(lambda _: 'saved'), ledger, reuse_completed=True)
+    try:
+        reply = client.call(req)
+        evidence = ledger.path.read_bytes()
+        assert client.call(req).text == reply.text
+        assert ledger.path.read_bytes() == evidence
+    finally:
+        client.close()
+    assert ledger.reconcile_interrupted() == []
+    assert ledger.state(rows(ledger))[1] == paid.cost('pro', 100, 100) + paid.cost('pro', reply.input_tokens, reply.billed_output_tokens)
+    assert [r['event'] for r in rows(ledger)] == ['reserve', 'interrupted', 'reserve', 'complete']
+
+
+@pytest.mark.parametrize('panel_only', [False, True])
+def test_interrupted_reconciliation_preserves_completed_validation_halts(tmp_path, panel_only):
+    ledger = paid.Ledger(tmp_path / 'ledger', 1)
+    req = paid.PaidRequest('dev/completed', 'pro', [], 100, 100)
+    ledger.reserve(req)
+    ledger.complete(req, paid.PaidReply('bad', 1, 1, 0, 0, 'rev', {}, {}),
+                    error='served model revision changed', panel_only=panel_only)
+    before = ledger.path.read_bytes()
+    assert ledger.reconcile_interrupted() == []
+    assert ledger.path.read_bytes() == before
+    assert ledger.state(rows(ledger))[-1] is (not panel_only)
+    assert ledger.cached_reply(req) is None
+    with pytest.raises((paid.PreflightError, paid.InfrastructureError)):
+        ledger.reserve(replace(req, identity='dev/new'))
+
+
+def test_interrupted_charge_survives_released_block_resume(tmp_path):
+    ledger = paid.Ledger(tmp_path / 'ledger', 1)
+    ledger.reserve_block('old', 1)
+    req = paid.PaidRequest('dev/interrupted', 'pro', [], 100, 100, metadata={'block_id': 'old'})
+    ledger.reserve(req)
+    ledger.reconcile_interrupted()
+    ledger.reconcile({'old': 'superseded'}, {})
+    ledger.reserve_block('old', 1, resume=True)
+    pending, spent, *_ = ledger.state(rows(ledger))
+    assert pending == {'block:old': Decimal(1) - paid.cost('pro', 100, 100)}
+    assert spent + sum(pending.values()) == Decimal(1)
+
+
 def test_completed_amended_calls_reused_across_block_ids(tmp_path):
     ledger = paid.Ledger(tmp_path / 'ledger', 40)
     req = paid.PaidRequest('dev/x/pro/initial/0', 'pro', [], 100, 256, metadata={'split': 'dev'})

@@ -846,3 +846,20 @@ uv run python experiments/P1-deference/run_p1.py resume-pushback --cap-usd 14.15
 This is a post-observation infrastructure amendment. Pushback is being re-run
 under Amendment 15; no completed rerun or full-sample behavioral result is
 claimed until the new trajectories finish.
+
+## Amendment 16 — 2026-09-22: interrupted-call accounting (shared with P5)
+
+After stopping an interrupted caller, `reconcile` appends an `interrupted`
+event for every outstanding call reservation in the study and auxiliary
+ledgers. It charges the full original ceiling against the unchanged cap,
+retains the reservation hash/time and identity, and marks `sample=false`.
+No response, revision or trial is inferred, and missing billing is never free.
+The identical frozen request may be re-issued subject to the remaining call,
+block and study limits; the retry is charged separately. Reconciliation is
+idempotent until another call is dispatched. Already settled infrastructure
+events and completed-response validation halts retain their existing rules.
+Only a halt associated with the outstanding attempt is recovered. Original
+receipts are never edited, nor are budget envelopes reset. Auxiliary charges
+remain in their existing study allowances. Worker X changes the shared code
+and tests offline; this amendment does not dispatch P1 calls or refresh its
+execution gates. P1 must refresh its freeze/gates before its next paid run.

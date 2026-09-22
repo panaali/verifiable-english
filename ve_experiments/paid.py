@@ -180,6 +180,7 @@ class Ledger:
         reservations = {}
         blocked = False
         recovered = {r["halt_time"] for r in rows if r["event"] in ("smoke_recovery", "routing_recovery", "amendment8_halt_recovery", "amendment14_halt_recovery")}
+        recovered.update(t for r in rows if r['event'] == 'interrupted' for t in r['halt_times'])
         for row in rows:
             if row["event"] == "reserve":
                 pending[row["identity"]] = Decimal(row["ceiling_usd"])
@@ -196,6 +197,13 @@ class Ledger:
                 block = reservations[row["identity"]].get("metadata", {}).get("block_id")
                 if block:
                     pending["block:" + block] += ceiling - Decimal(row["cost_usd"])
+            elif row['event'] == 'interrupted':
+                ceiling = pending.pop(row['identity'])
+                if Decimal(row['cost_usd']) != ceiling:
+                    raise PreflightError('interrupted charge must equal the full reservation ceiling')
+                committed += ceiling
+                # reserve already deducted the full ceiling from its block.
+                # No refund, model revision, response, or trial is inferred.
             elif row["event"] in ("infrastructure_failure", "smoke_recovery", "routing_recovery", "panel_halt", "arm_unavailable"):
                 ceiling = pending.pop(row["identity"])
                 held = Decimal(row["infrastructure_hold_usd"])
@@ -217,6 +225,35 @@ class Ledger:
             elif row["event"] == "allowance_adjustment":
                 committed += Decimal(row["cost_usd"]) - Decimal(row["prior_usd"])
         return pending, committed, seen, revisions, blocked
+
+    def reconcile_interrupted(self):
+        """Settle outstanding calls at full ceiling after stopping the caller.
+
+        Append one atomic accounting event per unresolved reservation. Completed
+        calls and already settled infrastructure failures are never changed.
+        Only halts belonging to that outstanding attempt are recovered; token,
+        price and revision failures with completions remain blocking evidence.
+        """
+        with self.locked() as (f, rows):
+            pending, _, _, _, _ = self.state(rows)
+            reservations = {r['identity']: (i, r) for i, r in enumerate(rows) if r['event'] == 'reserve'}
+            events = []
+            for identity, ceiling in pending.items():
+                if identity.startswith('block:'):
+                    continue
+                index, reservation = reservations[identity]
+                event = {'event': 'interrupted', 'identity': identity,
+                         'reservation_time': reservation['time'],
+                         'reservation_sha256': digest(reservation),
+                         'model': reservation['model'], 'metadata': reservation.get('metadata', {}),
+                         'cost_usd': str(ceiling), 'ceiling_usd': str(ceiling),
+                         'sample': False, 'billing_basis': 'full reservation ceiling; actual billing unknown',
+                         'reason': '2026-09-22 interrupted-call reconciliation amendment',
+                         'halt_times': [r['time'] for r in rows[index + 1:]
+                                        if r['event'] == 'halt' and r.get('identity') == identity]}
+                self.append(f, event)
+                events.append(event)
+            return events
 
     def reconcile(self, releases, allowances):
         """Append audited releases; never erase calls or forgive unknown billing.
@@ -276,10 +313,10 @@ class Ledger:
                     identities = {r['identity'] for r in rows if r['event'] == 'reserve'
                                   and r.get('metadata', {}).get('block_id') == block_id}
                     latest = {r['identity']: r for r in rows if r.get('identity') in identities}
-                    if any(r['event'] == 'infrastructure_failure' for r in latest.values()):
+                    if any(r['event'] in ('infrastructure_failure', 'interrupted') for r in latest.values()):
                         consumed = sum((Decimal(r.get('cost_usd', r.get('infrastructure_hold_usd', '0')))
                                         for r in rows if r.get('identity') in identities
-                                        and r['event'] in ('complete', 'infrastructure_failure', 'panel_halt')), Decimal(0))
+                                        and r['event'] in ('complete', 'interrupted', 'infrastructure_failure', 'panel_halt')), Decimal(0))
                         remaining = Decimal(str(ceiling)) - consumed
                         if remaining < 0 or spent + remaining > self.cap:
                             raise BudgetExceeded('resumed commitments exceed --cap-usd')
@@ -330,7 +367,7 @@ class Ledger:
                 if row['event'] == 'arm_unavailable' and row['model'] == request.model and request.metadata.get('arm') == row['arm']:
                     raise ToolEndpointUnavailable(row['error'])
             # Infrastructure failures are evidence, never durable retry locks.
-            retry = history and history[-1]['event'] in ('routing_recovery', 'infrastructure_failure', 'paraphrase_routing_recovery')
+            retry = history and history[-1]['event'] in ('routing_recovery', 'infrastructure_failure', 'paraphrase_routing_recovery', 'interrupted')
             if request.identity in seen and not (smoke(request) or retry):
                 raise PreflightError("assignment already dispatched; paid retries are forbidden")
             if retry:
@@ -445,7 +482,7 @@ class Ledger:
                               and r['metadata'].get('block_id') == block_id}
                 consumed = sum((Decimal(r.get('cost_usd', '0')) + Decimal(r.get('infrastructure_hold_usd', '0'))
                                 for r in rows if r.get('identity') in identities
-                                and r['event'] in ('complete', 'infrastructure_failure', 'panel_halt')), Decimal(0))
+                                and r['event'] in ('complete', 'interrupted', 'infrastructure_failure', 'panel_halt')), Decimal(0))
                 remaining = Decimal(str(ceiling)) - consumed
                 other = sum((v for k, v in pending.items() if k != 'block:' + block_id), Decimal(0))
                 if remaining < 0 or spent + other + remaining > self.cap:
@@ -539,6 +576,7 @@ class Ledger:
         """Amendment 7: retry only the legacy weak R routing rejection once."""
         with self.locked() as (f, rows):
             recovered = {r['halt_time'] for r in rows if r['event'] == 'routing_recovery'}
+            recovered.update(t for r in rows if r['event'] == 'interrupted' for t in r['halt_times'])
             for row in list(rows):
                 if row['event'] != 'halt' or row['time'] in recovered or not no_tool_endpoint(row.get('error')):
                     continue
@@ -602,6 +640,7 @@ class Ledger:
             return
         with self.locked() as (f, rows):
             recovered = {r["halt_time"] for r in rows if r["event"] == "smoke_recovery"}
+            recovered.update(t for r in rows if r['event'] == 'interrupted' for t in r['halt_times'])
             for row in rows:
                 if row.get("identity") != request.identity or row["event"] != "halt" or row["time"] in recovered:
                     continue

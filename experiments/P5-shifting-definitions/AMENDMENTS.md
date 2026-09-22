@@ -603,3 +603,39 @@ responses. The unchanged $40 study cap contains both historical and new
 envelopes. No new paid calls are authorized for Worker X: prepare, test, commit
 and print the command only. No dev/scored call occurs under this amendment.
 See REVISION7.md for the exact command and RESULTS.md for the required disclosure.
+
+## Amendment (Worker X, 2026-09-22): conservative interrupted-call reconciliation
+
+The orchestrator restarted during `paraphrase --revision v7`, leaving one call
+reserved without a completion. After stopping the caller, `reconcile` now
+appends an `interrupted` event for each outstanding call reservation, charging
+its **full original ceiling** as worst-case accounting against the existing
+cap. The event records the original reservation time/hash, request identity,
+model, metadata, charge, and any unresolved halt belonging to that attempt.
+It is explicitly **not a trial** (`sample=false`), supplies no response, and
+does not establish a model revision. No unknown call is assumed free. Existing
+completed calls, settled infrastructure failures, and validation/revision/price
+halts on completed responses remain unchanged. Unused block planning envelopes
+are not calls and are not charged as interruptions.
+
+The same request may be re-issued with its exact frozen contract and a new
+full-ceiling reservation inside the remaining budget. Repeated reconciliation
+without another dispatch adds no charge; another interrupted dispatch incurs
+another full charge. Original ledger rows are never edited. Block resumption,
+per-item matched caps, and cost attribution retain interruption charges. P1
+uses this same shared ledger logic and its reconciliation command applies it
+to the study and auxiliary billing ledgers.
+
+P5 reconciliation includes separately capped revision ledgers. Their charges
+stay inside their already retained study envelopes, avoiding double counting
+or any reset/increase of the **$0.40 v7** or **$40 study** cap. The interrupted
+v7 correction request is charged **$0.0020742144**; nine completed calls retain
+**$0.0092151296**, for **$0.0112893440** accounted in v7 and **$0.3887106560**
+remaining in its block. The study's retained commitment is **$0.9694671176**,
+including the v7 envelope. This is an accounting upper bound, not a provider
+invoice. Audited releases/allowance adjustments still use `--receipt`.
+
+This recovery makes **zero paid calls / $0 new provider spend**. Refresh the
+execution freeze and offline gates without regenerating material. Incomplete
+rewriting, review, token coverage and timestamp gates remain explicit blockers
+to scoring; this amendment permits only resuming the authorized authoring run.

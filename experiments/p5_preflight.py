@@ -405,7 +405,7 @@ def cost_report(split):
     reservations={r['identity']:r for r in rows if r['event']=='reserve'}
     shared=defaultdict(Decimal); actual=defaultdict(Decimal); holds=Decimal(0)
     for row in rows:
-        if row['event'] not in ('complete','infrastructure_failure','panel_halt'):
+        if row['event'] not in ('complete','interrupted','infrastructure_failure','panel_halt'):
             continue
         meta=reservations.get(row.get('identity'),{}).get('metadata',{})
         value=Decimal(row.get('cost_usd',row.get('infrastructure_hold_usd','0')))
