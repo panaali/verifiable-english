@@ -898,3 +898,71 @@ with its retained commitments and CPU allowance unchanged. Existing v9 outputs
 remain resumable. Offline tests/refreeze and timestamp renewal are authorized;
 **no paid calls** are authorized by this repair. Dev completion and source-
 fidelity review remain required before scored execution.
+
+## Amendment (2026-09-22): retained-dev delivery diagnosis and scorer alignment
+
+The four-family scenario-(a) v9 dev snapshot contains 94/96 judgments. This
+amendment is an **offline harness/scorer repair only**, with no paid calls,
+new ratings, new judgments, or changes to the correctness rubric. Full evidence,
+per-arm × kind cause counts, every raw verdict/type/location and required set,
+and corrected assigned-denominator scores are in [DEV-DIAGNOSIS.md](DEV-DIAGNOSIS.md)
+and `checks/dev-diagnosis.json`. The original run analyses are retained;
+`runs/dev-v9/analysis-corrected.json` is the separately labeled offline rescore.
+
+All 12 X protocols stopped on complete Markdown-fenced JSON before isolated
+cross-examination. None of the 16 authored initial questions was sent to a
+copy, and no adaptive follow-up ran. All 23 observed X judges received the
+author/critic/failure transcript, not isolated answers. Nonjudge protocol
+decoding now accepts a single complete enclosing JSON or plain code fence;
+it does not extract substrings, repair malformed JSON, or alter content.
+Question entries accept text or an exact single-field `{"question": text}`
+object, resolving the unspecified item shape in the nonjudge critic prompt.
+The same parser handles VE author/repair/critic/defender and X follow-up JSON.
+Final verdict parsing remains strict. Question/commitment token bounds,
+at-most-three initial questions, one follow-up, and fresh-copy isolation are
+unchanged. These changes cannot manufacture the missing historical answers.
+
+VE authoring failed in all 12 protocols (23 observed judgments). Each of the
+36 author/repair/defender artifacts still fails the actual checker after
+presentation-fence removal: `environment` is a string, not an environment
+object. Six online checker calls returned UNKNOWN with
+`VEError: Expected a JSON object`; the remaining artifacts failed before the
+checker. No checkable authored graph or certificates were produced. All
+recorded diagnostics and raw histories were delivered to observed judges.
+No environment, source mapping, claim, proof, or prompt is repaired here.
+
+PREREG §7 already states: “A judge may still detect a flaw from common prose;
+tool failure alone does not force a false label, but report it.” The scorer
+incorrectly included `author_failure` in its final-decision failure flag.
+Remove that veto from flaw detection and final-decision safety accounting;
+continue reporting author failure separately. **Benign completion still
+requires no author failure or unresolved obligations.** Reject/approve
+requirements, issue type, exact acceptable localization sets, source-grounded
+explanations, two independent raters and disagreement resolution, malformed
+final-decision handling, and assigned denominators are unchanged. The old
+veto applied to 15 observed flawed VE judgments, including four that satisfy
+every deterministic detection criterion. Regression tests preserve all other
+requirements, including zero detection without approved explanation ratings.
+
+The rescore changes **zero credited accuracy cells**. No explanation ratings
+exist, so all 16 deterministic flaw candidates (including those four VE
+candidates) remain uncredited. These candidates are reported separately and
+are not relabeled as detections. The two absent Qwen decisions have four HTTP
+429 failures each and no accepted response; there is nothing to recover
+offline. Observed contract compliance is 48/48 Gemini and 46/46 Qwen, but
+94/96 assigned coverage, missing independent source-fidelity review, and the
+failed protocol delivery mean **dev does not pass**.
+
+The retained trial, local-event and paid ledgers are immutable inputs to this
+audit, bound by file hashes in the diagnosis. Run the audit without provider
+access using `uv run --offline python -m experiments.p5_diagnosis` and
+`UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex`. Changed source invalidates the
+old executable freeze; any future execution needs a reviewed/refrozen and
+timestamped configuration and explicit authorization. No changed protocol
+history may be represented as a replay of the retained paid judgments. No
+budget, completion, source-fidelity or scored-execution gate is waived.
+
+Validation: `uv run --offline pytest -q tests/test_p5*.py` passes **218 tests**.
+The offline audit verifies all 94 response/prompt/history joins and reruns the
+checker on all 36 authored/repaired/defended VE artifacts. Trial, local-event,
+material and paid-ledger hashes are unchanged across diagnosis and testing.

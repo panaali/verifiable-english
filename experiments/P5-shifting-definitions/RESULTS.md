@@ -1,5 +1,18 @@
 # P5 results — revision 8
 
+**2026-09-22 retained v9 dev diagnosis (supersedes the historical execution
+status below):** scenario (a) observed 94/96 judgments across four dev families.
+The [offline diagnosis](DEV-DIAGNOSIS.md) finds failed X cross-examination
+delivery, no checkable VE authored graphs, and an author-failure scorer veto
+inconsistent with the existing common-prose detection rule. The narrow repair
+and dated amendment preserve the correctness rubric. Offline rescoring credits
+zero flaw detections because independent explanation ratings are absent; 16
+decisions meet the deterministic verdict/type/location criteria and await
+review. Dev **fails** assigned coverage and outstanding review requirements.
+The corrected analysis is `runs/dev-v9/analysis-corrected.json`; the original
+analysis and all raw trial/ledger evidence remain intact. No paid calls were
+made for this diagnosis. Entries below describe earlier historical snapshots.
+
 **2026-09-22 schedule/calibration update:** no new dev or scored results.
 Six new 4,096-token Vertex config smokes cost $0.035710 (task cap $0.30).
 The first $40-compatible schedule has nine scored families, both judges and

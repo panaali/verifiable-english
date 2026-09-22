@@ -11,6 +11,7 @@ import argparse
 from collections import defaultdict
 import json
 import random
+import re
 import sys
 import time
 
@@ -183,6 +184,25 @@ def bounded_record(record):
     return summary
 
 
+def protocol_json(text):
+    """Decode nonjudge JSON, accepting only a complete enclosing code fence.
+
+    This removes presentation syntax, never repairs JSON or model content.
+    Final verdicts still use the strict response-contract parser.
+    """
+    fenced=re.fullmatch(r'```(?:json)?\s*\n(.*?)\n```',text.strip(),re.DOTALL)
+    return json.loads(fenced.group(1) if fenced else text)
+
+
+def question_text(value):
+    # Nonjudge prompts specify questions, without an item-level wire schema.
+    if isinstance(value,dict) and set(value)=={'question'}:
+        value=value['question']
+    if not isinstance(value,str):
+        raise ValueError('question must be text or a single question field')
+    return value
+
+
 def execute(item,arm,client,judge_clients,*,local_events=None,local_cache=(),event_sink=None):
     from experiments.p5_oracle import bounded
     history=[]; local_events=local_events if local_events is not None else []
@@ -235,7 +255,7 @@ def execute(item,arm,client,judge_clients,*,local_events=None,local_cache=(),eve
             author=call('author'); history.append({'item_id':item['id'],'stage':'author','text':author})
             if arm=='VE':
                 try:
-                    artifact=json.loads(author)
+                    artifact=protocol_json(author)
                     diagnostic=local('author',{'artifact':artifact,'packet':item['payload']},wall_remaining)
                 except (ValueError,KeyError,TypeError) as exc:
                     artifact={}; diagnostic={'ok':False,'error':str(exc)}
@@ -243,7 +263,7 @@ def execute(item,arm,client,judge_clients,*,local_events=None,local_cache=(),eve
                     repair=call('repair',history=[history[0],{'item_id':item['id'],'stage':'diagnostics','record':bounded_record(diagnostic)}])
                     history.append({'item_id':item['id'],'stage':'repair','text':repair})
                     try:
-                        artifact=json.loads(repair)
+                        artifact=protocol_json(repair)
                         diagnostic=local('author',{'artifact':artifact,'packet':item['payload']},wall_remaining)
                     except (ValueError,KeyError,TypeError) as exc:
                         artifact={};diagnostic={'ok':False,'error':str(exc)}
@@ -256,28 +276,29 @@ def execute(item,arm,client,judge_clients,*,local_events=None,local_cache=(),eve
                 critic_history=history[:]
             critic=call('critic',history=critic_history); history.append({'item_id':item['id'],'stage':'critic','text':critic})
             if arm=='X':
-                commitment=json.loads(author)['commitment']; exact_text_tokens(client,commitment,512)
-                questions=json.loads(critic)['questions']
+                commitment=protocol_json(author)['commitment']; exact_text_tokens(client,commitment,512)
+                questions=protocol_json(critic)['questions']
                 if not isinstance(questions,list) or len(questions)>3:
                     raise ValueError('at most three initial questions')
                 for n,q in enumerate(questions):
+                    q=question_text(q)
                     exact_text_tokens(client,q,256)
                     answer=call('answer',turn=n,commitment=commitment,question=q)
                     history.append({'item_id':item['id'],'stage':'isolated_answer','question':q,'text':answer})
                 followup=call('followup',history=history); history.append({'item_id':item['id'],'stage':'followup','text':followup})
-                q=json.loads(followup)['question']
+                q=question_text(protocol_json(followup)['question'])
                 if q:
                     exact_text_tokens(client,q,256)
                     answer=call('followup_answer',commitment=commitment,question=q)
                     history.append({'item_id':item['id'],'stage':'isolated_followup_answer','question':q,'text':answer})
             else:
                 if arm=='VE':
-                    try: queries(json.loads(critic),artifact)
+                    try: queries(protocol_json(critic),artifact)
                     except (ValueError,KeyError,TypeError) as exc: obligations.append(str(exc))
                 defender=call('defender',history=history);history.append({'item_id':item['id'],'stage':'defender','text':defender})
                 if arm=='VE':
                     try:
-                        revised=json.loads(defender)
+                        revised=protocol_json(defender)
                         changed=revised.get('environment')!=artifact.get('environment')
                         if changed:
                             emit({'operation':'environment_change','void_all_certificates':True})

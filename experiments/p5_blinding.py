@@ -9,6 +9,8 @@ from experiments.p5_materials import HERE
 # Exact paths, also named individually in REVIEW-CHECKLIST.md. These are
 # construction/scoring history, never model context or reviewer attachments.
 BARRED = (
+    'DEV-DIAGNOSIS.md',
+    'checks/dev-diagnosis.json',
     'labels.jsonl.gz',
     'materials/round5-reviewed-packets.jsonl.gz',
     'materials/rejected-v7-paraphrases.jsonl.gz',

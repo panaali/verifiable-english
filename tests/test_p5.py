@@ -253,10 +253,11 @@ def test_local_resume_reuses_durable_diagnostics(items,monkeypatch):
     assert [r.messages for r in first.requests]==[r.messages for r in second.requests]
 
 
-def test_author_failure_is_assigned_failure(labels):
+def test_author_failure_allows_source_grounded_prose_detection(labels):
     l=next(l for l in labels if l['kind']=='shift')
     r={'ok':True,'author_failure':True,'answer':{'verdict':'reject','issue_type':'shift','locations':l['acceptable_locations'][0]}}
-    assert endpoint(l,r,True)['score']==0
+    assert endpoint(l,r,True)['score']==1
+    assert endpoint(l,r,False)['score']==0
 
 
 

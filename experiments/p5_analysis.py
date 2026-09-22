@@ -40,7 +40,10 @@ def contract_report(rows, assigned_per_judge, judges):
 
 
 def endpoint(label, row, explanation_ok=False):
-    failed=not row or not row.get('ok') or bool(row.get('error')) or bool(row.get('author_failure'))
+    # PREREG section 7 allows detection from common prose after tool/author
+    # failure. Only a failed final decision forces zero detection. Benign
+    # completion retains its separate author-failure/unresolved veto below.
+    failed=not row or not row.get('ok') or bool(row.get('error'))
     answer=row.get('answer',{}) if row else {}
     approved=answer.get('verdict')=='approve'
     locations=answer.get('locations',[])

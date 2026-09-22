@@ -101,3 +101,10 @@ retroactively manufacture missing historical annotations or call round 6 blind.
 `checks/gemini-rendered-adjudication.json` contains the six authorized mechanical
 adjudications and complete sense-assignment witnesses. It is private review/scoring
 evidence and must never enter judge packets or reviewer attachments.
+
+## Retained-dev diagnosis (2026-09-22)
+
+`DEV-DIAGNOSIS.md` and `checks/dev-diagnosis.json` join raw decisions to hidden
+reference labels and exact localization sets. They are scoring audit artifacts,
+barred from model contexts and blinded reviewer attachments, like the existing
+construction/scoring history listed above.
