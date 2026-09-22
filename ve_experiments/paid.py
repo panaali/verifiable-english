@@ -30,6 +30,11 @@ VERDICT_SCHEMA = {"type": "object", "properties": {
     "verdict": {"type": "string", "enum": ["approve", "reject", "unknown"]}},
     "required": ["verdict"], "additionalProperties": False}
 JUDGE_OUTPUT_CAP = 1024
+INFRASTRUCTURE_BACKOFF_S = (5, 20, 60)
+# Authoring only; retained OpenRouter endpoint listing in P1 provider-preflight.
+PARAPHRASE_PROVIDER_RATES = {
+    "DeepInfra": RATES["replication"], "Novita": (".38", ".40", "1.055"),
+}
 
 
 def packed(value):
@@ -40,10 +45,14 @@ def digest(value):
     return hashlib.sha256(packed(value).encode()).hexdigest()
 
 
-def cost(model, inp, output, *, provider=None, arm=None):
+def cost(model, inp, output, *, provider=None, arm=None, role=None):
     if any(type(v) is not int or v < 0 for v in (inp, output)):
         raise ValueError("token counts must be nonnegative integers")
     rates = RATES[model]
+    if model == "replication" and role == "paraphrase":
+        if provider is not None and provider not in PARAPHRASE_PROVIDER_RATES:
+            raise PreflightError(f"provider absent from paraphrase price table: {provider}")
+        rates = PARAPHRASE_PROVIDER_RATES[provider or "Novita"]
     if model == "weak":
         if provider is not None:
             if provider not in WEAK_PROVIDER_RATES:
@@ -89,7 +98,9 @@ def smoke(request):
     return request.identity.startswith("provider-preflight/") or request.metadata.get("role") == "probe"
 
 
-def revision_key(model, response):
+def revision_key(model, response, metadata=None):
+    if model == "replication" and (metadata or {}).get("role") == "paraphrase":
+        return model + "/paraphrase/" + str(response.get("provider"))
     return model + "/" + str(response.get("provider")) if model == "weak" else model
 
 
@@ -180,7 +191,8 @@ class Ledger:
             elif row["event"] == "complete":
                 ceiling = pending.pop(row["identity"])
                 committed += Decimal(row["cost_usd"])
-                revisions.setdefault(revision_key(row["model"], row.get("response", {})), row["revision"])
+                revisions.setdefault(revision_key(row["model"], row.get("response", {}),
+                    reservations[row["identity"]].get("metadata")), row["revision"])
                 block = reservations[row["identity"]].get("metadata", {}).get("block_id")
                 if block:
                     pending["block:" + block] += ceiling - Decimal(row["cost_usd"])
@@ -196,7 +208,7 @@ class Ledger:
                     blocked = True
             elif row["event"] == "block_reserve":
                 pending["block:" + row["block_id"]] = Decimal(row["ceiling_usd"])
-            elif row["event"] == "amendment14_block":
+            elif row["event"] in ("amendment14_block", "block_resume"):
                 pending["block:" + row["block_id"]] = Decimal(row["remaining_usd"])
             elif row["event"] == "block_release":
                 pending.pop("block:" + row["block_id"])
@@ -258,7 +270,23 @@ class Ledger:
                     raise PreflightError('ledger halted or has unreconciled billing')
                 if spent + sum(pending.values()) > self.cap:
                     raise BudgetExceeded('resumed commitments exceed --cap-usd')
-                return  # A released block may only replay its already completed calls.
+                if not pending:
+                    # Older P1 invocations released blocks after transient
+                    # exhaustion. Restore only their unspent original envelope.
+                    identities = {r['identity'] for r in rows if r['event'] == 'reserve'
+                                  and r.get('metadata', {}).get('block_id') == block_id}
+                    latest = {r['identity']: r for r in rows if r.get('identity') in identities}
+                    if any(r['event'] == 'infrastructure_failure' for r in latest.values()):
+                        consumed = sum((Decimal(r.get('cost_usd', r.get('infrastructure_hold_usd', '0')))
+                                        for r in rows if r.get('identity') in identities
+                                        and r['event'] in ('complete', 'infrastructure_failure', 'panel_halt')), Decimal(0))
+                        remaining = Decimal(str(ceiling)) - consumed
+                        if remaining < 0 or spent + remaining > self.cap:
+                            raise BudgetExceeded('resumed commitments exceed --cap-usd')
+                        self.append(f, {'event': 'block_resume', 'block_id': block_id,
+                            'ceiling_usd': str(ceiling), 'remaining_usd': str(remaining),
+                            'sample': False, 'reason': 'resume legacy infrastructure failures; retain costs and holds'})
+                return  # Completed released blocks remain cache-only.
             if pending or blocked:
                 raise PreflightError("ledger halted or another block/billing reservation exists")
             if any(r.get("event") == "block_reserve" and r["block_id"] == block_id for r in rows):
@@ -290,7 +318,8 @@ class Ledger:
     def reserve(self, request):
         if request.max_input_tokens <= 0 or request.max_output_tokens <= 0:
             raise ValueError("request token ceilings must be positive")
-        ceiling = cost(request.model, request.max_input_tokens, request.billed_output_cap, arm=request.metadata.get('arm'))
+        ceiling = cost(request.model, request.max_input_tokens, request.billed_output_cap,
+                       arm=request.metadata.get('arm'), role=request.metadata.get('role'))
         with self.locked() as (f, rows):
             pending, spent, seen, revisions, blocked = self.state(rows)
             history = [r for r in rows if r.get("identity") == request.identity]
@@ -300,11 +329,8 @@ class Ledger:
                     raise InfrastructureError(row['error'])
                 if row['event'] == 'arm_unavailable' and row['model'] == request.model and request.metadata.get('arm') == row['arm']:
                     raise ToolEndpointUnavailable(row['error'])
-            failures = sum(r["event"] == "infrastructure_failure" for r in history)
-            retry = history and (history[-1]['event'] == 'routing_recovery' or
-                                history[-1]["event"] == "infrastructure_failure" and failures <= 3)
-            if failures > 3 and history[-1]["event"] == "infrastructure_failure":
-                raise InfrastructureError("infrastructure retry limit exhausted")
+            # Infrastructure failures are evidence, never durable retry locks.
+            retry = history and history[-1]['event'] in ('routing_recovery', 'infrastructure_failure')
             if request.identity in seen and not (smoke(request) or retry):
                 raise PreflightError("assignment already dispatched; paid retries are forbidden")
             if retry:
@@ -327,7 +353,7 @@ class Ledger:
     def complete(self, request, reply, error=None, *, panel_only=False):
         try:
             actual = cost(request.model, reply.input_tokens, reply.billed_output_tokens,
-                          provider=reply.response.get('provider'))
+                          provider=reply.response.get('provider'), role=request.metadata.get('role'))
         except PreflightError:
             actual = cost(request.model, reply.input_tokens, reply.billed_output_tokens)
         if reply.provider_cost_usd is not None:
@@ -552,13 +578,14 @@ class Ledger:
                 self.append(f, recovery)
                 rows.append(recovery)
 
-    def infrastructure_failure(self, request, error, status, latency_s):
+    def infrastructure_failure(self, request, error, status, latency_s, *, attempt=1):
         with self.locked() as (f, rows):
             pending, _, _, _, _ = self.state(rows)
-            attempt = 1 + sum(r["event"] == "infrastructure_failure" and r["identity"] == request.identity for r in rows)
+            lifetime_attempt = 1 + sum(r["event"] == "infrastructure_failure" and r["identity"] == request.identity for r in rows)
             self.append(f, {"event": "infrastructure_failure", "identity": request.identity,
                 "error": error, "status": status, "attempt": attempt, "sample": False,
-                "latency_s": latency_s, "backoff_s": 2 ** (attempt-1) if attempt <= 3 else None,
+                "lifetime_attempt": lifetime_attempt,
+                "latency_s": latency_s, "backoff_s": INFRASTRUCTURE_BACKOFF_S[attempt-1] if attempt <= len(INFRASTRUCTURE_BACKOFF_S) else None,
                 "served_provider": None,
                 "infrastructure_hold_usd": "0" if status == 429 else str(pending[request.identity]),
                 "billing": "no trial charge; 429 rejected" if status == 429 else "unknown; ceiling held as infrastructure overhead"})
@@ -675,6 +702,10 @@ class OpenRouterBackend:
         providers = ["deepinfra"] if request.model == "replication" else ["deepinfra", "novita", "groq"]
         provider = {"order": providers, "only": providers, "allow_fallbacks": False,
                     "require_parameters": True, "quantizations": ["fp8"]}
+        if request.model == 'replication' and request.metadata.get('role') == 'paraphrase':
+            # Novita is bf16; keep the judge's fp8/DeepInfra pin separate.
+            provider = {"order": ["deepinfra", "novita"], "only": ["deepinfra", "novita"],
+                        "allow_fallbacks": True, "require_parameters": True}
         if request.model == 'weak' and request.metadata.get('arm') == 'R':
             provider = {'require_parameters': True}
         return {"model": MODELS[request.model], "messages": request.messages,
@@ -762,6 +793,7 @@ class PaidClient:
         self.backend, self.ledger = backend, ledger
         self.block_id = block_id
         self.reuse_completed = reuse_completed
+        self._infrastructure_attempts = {}
         # SDK transports own async connection pools bound to their first loop.
         # Keep one loop for the entire serial client, never asyncio.run per call.
         self._runner = asyncio.Runner()
@@ -788,6 +820,8 @@ class PaidClient:
         self.ledger.recover_smoke(request)
         self.backend.record_fallback = self.ledger.format_fallback
         while True:
+            if self._infrastructure_attempts.get(request.identity, 0) > len(INFRASTRUCTURE_BACKOFF_S):
+                raise InfrastructureError("infrastructure retry limit exhausted for this invocation; rerun to resume")
             revisions = self.ledger.reserve(request)
             start = time.monotonic()
             self.backend.last_response = None
@@ -806,17 +840,19 @@ class PaidClient:
                     self.ledger.stop_panel(request, error, unavailable=True)
                     raise ToolEndpointUnavailable(error) from None
                 if status is not None:
-                    attempt = self.ledger.infrastructure_failure(request, error, status, time.monotonic()-start)
-                    if attempt <= 3:
-                        time.sleep(2 ** (attempt-1))
+                    attempt = self._infrastructure_attempts.get(request.identity, 0) + 1
+                    self._infrastructure_attempts[request.identity] = attempt
+                    self.ledger.infrastructure_failure(request, error, status, time.monotonic()-start, attempt=attempt)
+                    if attempt <= len(INFRASTRUCTURE_BACKOFF_S):
+                        time.sleep(INFRASTRUCTURE_BACKOFF_S[attempt-1])
                         continue
-                    raise InfrastructureError(error + "; infrastructure retry limit exhausted") from None
+                    raise InfrastructureError(error + "; infrastructure retry limit exhausted for this invocation; rerun to resume") from None
                 if isinstance(exc, InfrastructureError) and self.reuse_completed:
                     self.ledger.stop_panel(request, error)
                     raise InfrastructureError(error) from None
                 self.ledger.halt(request, error, self.backend.last_response, time.monotonic()-start)
                 raise PreflightError(error) from None
-        revision = revisions.get(revision_key(request.model, reply.response))
+        revision = revisions.get(revision_key(request.model, reply.response, request.metadata))
         reply.latency_s = time.monotonic() - start
         error = None
         if reply.input_tokens > request.max_input_tokens or reply.billed_output_tokens > request.billed_output_cap:
@@ -826,7 +862,7 @@ class PaidClient:
         else:
             try:
                 listed = cost(request.model, reply.input_tokens, reply.billed_output_tokens,
-                              provider=reply.response.get('provider'))
+                              provider=reply.response.get('provider'), role=request.metadata.get('role'))
                 if reply.provider_cost_usd is not None and Decimal(str(reply.provider_cost_usd)) * Decimal(RATES[request.model][2]) > listed + Decimal('.00000001'):
                     error = 'provider billing exceeds design price table; amendment required'
             except PreflightError as exc:

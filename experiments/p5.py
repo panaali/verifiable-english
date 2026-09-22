@@ -457,6 +457,9 @@ def paraphrase(cap):
     if provider.get('freeze_sha256')!=f['manifest_sha256'] or not provider.get('models',{}).get('replication',{}).get('passed'):
         raise PreflightError('Qwen provider-native smoke gate required before paraphrasing')
     block='shared-paraphrase'
+    # Keep the authorized aggregate envelope (and resumable legacy block).
+    # Each call reserves the higher fallback rate; stop if the remainder cannot
+    # fund it. Provider fallback does not authorize an aggregate budget increase.
     book.reserve_block(block,str(84*cost('replication',*STAGES['paraphrase'])),resume=True)
     client=PaidClient(OpenRouterBackend(native_counter()),book,block,reuse_completed=True)
     dossiers=read(HERE/'materials/dossiers.jsonl.gz'); output=[]
@@ -472,7 +475,8 @@ def paraphrase(cap):
             paraphrased={'argument':'\n\n'.join(f"[{n['id']}] {row['texts'][n['id']]}" for n in dossier['nodes'])}
             output.append({'id':dossier['id'],**paraphrased,'provenance':{'method':'one Qwen72 call in separate context',
                 'input_sha256':digest(dossier),'request_sha256':digest(req.messages),
-                'response_sha256':digest(reply.text),'revision':reply.revision,'independent_qwen_pass':True}})
+                'response_sha256':digest(reply.text),'revision':reply.revision,
+                'served_provider':reply.response.get('provider'),'independent_qwen_pass':True}})
     finally:client.close()
     archive(HERE/'materials/paraphrases.jsonl.gz',output)
     by_id={r['id']:r for r in output}

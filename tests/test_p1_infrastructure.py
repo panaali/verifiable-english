@@ -45,7 +45,7 @@ def test_retry_same_assignment_and_budget_holds(tmp_path, monkeypatch, exc, stat
     client.call(request())
     client.close()
     assert len(seen) == 4 and all(r == seen[0] for r in seen)
-    assert sleeps == [1, 2, 4]
+    assert sleeps == [5, 20, 60]
     failures = [r for r in rows(ledger) if r['event'] == 'infrastructure_failure']
     assert [r['attempt'] for r in failures] == [1, 2, 3]
     assert all(r['status'] == status and r['sample'] is False for r in failures)
@@ -58,8 +58,10 @@ def test_retry_same_assignment_and_budget_holds(tmp_path, monkeypatch, exc, stat
         ledger.reserve(seen[0])
 
 
-def test_retry_exhaustion_survives_restart_and_is_not_a_trial(tmp_path):
+def test_retry_exhaustion_resets_on_restart_and_is_not_a_trial(tmp_path, monkeypatch):
     calls = []
+    sleeps = []
+    monkeypatch.setattr(paid.time, 'sleep', sleeps.append)
     def fail(req):
         calls.append(req)
         raise InfrastructureError('busy', 429)
@@ -68,10 +70,23 @@ def test_retry_exhaustion_survives_restart_and_is_not_a_trial(tmp_path):
         client = PaidClient(OfflineBackend(fail), Ledger(ledger.path, 1))
         with pytest.raises(PreflightError, match='retry limit'):
             client.call(request())
+        with pytest.raises(PreflightError, match='retry limit'):
+            client.call(request())  # Same invocation cannot reset the counter.
         client.close()
-    assert len(calls) == 4
+    assert len(calls) == 8
+    assert sleeps == [5, 20, 60] * 2
+    failures = [r for r in rows(ledger) if r['event'] == 'infrastructure_failure']
+    assert [r['attempt'] for r in failures] == [1, 2, 3, 4] * 2
+    assert [r['lifetime_attempt'] for r in failures] == list(range(1, 9))
+    assert all(r['sample'] is False for r in failures)
     assert not any(r['event'] == 'complete' for r in rows(ledger))
     assert ledger.state(rows(ledger))[1] == 0
+    assert p1.infrastructure_state(ledger) == ({}, {})
+    evidence = ledger.path.read_bytes()
+    client = PaidClient(OfflineBackend(lambda _: 'recovered'), Ledger(ledger.path, 1))
+    assert client.call(request()).text == 'recovered'
+    client.close()
+    assert ledger.path.read_bytes().startswith(evidence)
 
 
 def test_unknown_billing_retry_cannot_exceed_cap(tmp_path):
@@ -86,6 +101,44 @@ def test_unknown_billing_retry_cannot_exceed_cap(tmp_path):
     client.close()
     assert len(calls) == 1
     assert ledger.state(rows(ledger))[1] == ledger.cap
+    resumed = PaidClient(OfflineBackend(fail), Ledger(ledger.path, ledger.cap))
+    try:
+        with pytest.raises(paid.BudgetExceeded):
+            resumed.call(request())
+    finally:
+        resumed.close()
+    assert len(calls) == 1  # Resetting retry allowance cannot forgive unknown billing.
+
+
+def test_legacy_released_block_resumes_only_unspent_envelope(tmp_path):
+    ledger = Ledger(tmp_path / 'ledger', 1)
+    ledger.reserve_block('dev', '.1')
+    req = replace(request(), metadata={'block_id': 'dev'})
+    for attempt in range(1, 5):
+        ledger.reserve(req)
+        ledger.infrastructure_failure(req, 'legacy failure', 'timeout', 0, attempt=attempt)
+    ledger.release_block('dev')  # Historical P1 behavior on exhaustion.
+    evidence = ledger.path.read_bytes()
+    held = 4 * cost('pro', 100, 100)
+    with pytest.raises(paid.BudgetExceeded):
+        Ledger(ledger.path, '.099').reserve_block('dev', '.1', resume=True)
+    ledger.reserve_block('dev', '.1', resume=True)
+    pending, spent, *_ = ledger.state(rows(ledger))
+    assert spent == held and pending == {'block:dev': Decimal('.1') - held}
+    resumed = ledger.path.read_bytes()
+    assert resumed.startswith(evidence)
+    ledger.reserve_block('dev', '.1', resume=True)
+    assert ledger.path.read_bytes() == resumed
+    client = PaidClient(OfflineBackend(lambda _: 'recovered'), ledger, 'dev')
+    try:
+        assert client.call(replace(req, metadata={})).text == 'recovered'
+    finally:
+        client.close()
+    ledger.release_block('dev')
+    completed = ledger.path.read_bytes()
+    ledger.reserve_block('dev', '.1', resume=True)
+    assert ledger.path.read_bytes() == completed
+    assert ledger.state(rows(ledger))[0] == {}
 
 
 def test_output_failure_scored_once_and_nonretryable_http_halts(tmp_path):

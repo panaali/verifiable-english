@@ -117,7 +117,12 @@ def test_judges_continue_and_restart_reuses_all_calls(split_env, monkeypatch, er
     trials = (path / 'runs/dev/trials.jsonl').read_bytes()
     count = len(calls)
     assert p1.run_split('dev', 2) == (0 if error == 'tools' else 2)
-    assert len(calls) == count and ledger.path.read_bytes() == before
+    if error == '429':
+        assert len(calls) == count + 4
+        assert ledger.path.read_bytes().startswith(before)
+        assert ledger.state(p1.read_jsonl(ledger.path))[0]['block:dev'] > 0
+    else:
+        assert len(calls) == count and ledger.path.read_bytes() == before
     assert (path / 'runs/dev/trials.jsonl').read_bytes() == trials
     report = json.loads((path / 'runs/dev/analysis.json').read_text())
     assert {'replication/E4', 'pro/E4'} <= report['families'].keys()
@@ -136,6 +141,13 @@ def test_judges_continue_and_restart_reuses_all_calls(split_env, monkeypatch, er
         assert gates['weak/E4']['numbers']['R']['completed'] == 0
         assert gates['weak/E4']['numbers']['R']['failures'] == 0
         assert gates['weak/E4']['halted']
+    if error == '429':
+        monkeypatch.setattr(p1, 'OpenRouterBackend', lambda *a: paid.OfflineBackend(
+            lambda req: '{"verdict":"approve"}'))
+        assert p1.run_split('dev', 2) == 0
+        assert not ledger.state(p1.read_jsonl(ledger.path))[0]
+        recovered = json.loads((path / 'checks/dev.json').read_text())['gates']
+        assert recovered['weak/E4']['complete'] and not recovered['weak/E4']['halted']
 
 
 def test_all_19_retained_calls_reuse_exact_original_responses(tmp_path):

@@ -223,6 +223,36 @@ receives the same wire object as generation and renders the full messages
 jointly. All 84 explicit-system paraphrase counts are unchanged by this fix.
 This amendment does not add structured-output enforcement to paraphrasing.
 
+## Revision 5 follow-up: resumable infrastructure and authoring routing (2026-09-22)
+
+P1 and P5 infrastructure retry limits now apply to each request within one
+client invocation: the initial dispatch may be retried three times after
+5, 20 and 60 seconds. Exhaustion stops that invocation but is never a durable
+panel halt. A new invocation resumes the identical assignment, including
+legacy ledgers with four or more failures. Every failed attempt remains in
+the append-only ledger with `sample=false`; it neither creates a trial nor
+uses the next invocation's retry allowance. HTTP 429 rejections cost zero.
+P1 retains unfinished block reservations. Legacy released blocks with an
+unresolved infrastructure failure reopen only their original unspent balance,
+after subtracting all completed costs and billing holds; completed blocks
+remain cache-only.
+Timeout/5xx billing holds remain charged as infrastructure overhead, and all
+dollar caps, frozen-request checks and nonretryable validation halts remain.
+
+Only the Qwen PARAPHRASE authoring role may route from DeepInfra to Novita.
+Routing is restricted to those two providers, allows fallback, and omits the
+judge-only fp8 restriction because the listed Novita endpoint is bf16.
+The retained P1 endpoint listing prices Novita input at $0.38/M and output
+at $0.40/M, with the existing 1.055 fee factor. Each paraphrase call reserves
+that maximum and reconciles to its served provider's price. The aggregate
+paraphrase envelope and explicit cap are unchanged; a call that cannot fit
+the remaining envelope still stops before dispatch. No budget top-up occurs.
+The served provider is retained in both billing and paraphrase provenance.
+Paraphrase revision checks are isolated by provider and authoring role;
+Qwen judges and provider smoke retain their pinned DeepInfra routing and
+revision checks. Completed authoring replies remain reusable without new
+samples. These changes were tested locally with no paid calls ($0).
+
 The execution freeze is renewed for this code change. Prior material and
 execution timestamp receipts remain historical; they do not certify this
 amendment or the renewed freeze. Offline preflight rechecks all fixture hashes

@@ -994,6 +994,7 @@ def probe(cap):
 
 
 def infrastructure_state(ledger):
+    """Durable routing/validation halts only; transient retries reset on invocation."""
     with ledger.locked() as (_, entries):
         unavailable, halted = {}, {}
         recovered = {r["halt_time"] for r in entries if r["event"] in ("amendment8_halt_recovery", "amendment14_halt_recovery")}
@@ -1004,9 +1005,6 @@ def infrastructure_state(ledger):
                 unavailable.setdefault(entry['model'], {})[entry['arm']] = entry['error']
             elif entry['event'] in ('panel_halt', 'panel_validation_halt'):
                 halted[entry['model']] = entry['error']
-            elif entry['event'] == 'infrastructure_failure' and entry['attempt'] > 3:
-                reservation = next(r for r in entries if r['event'] == 'reserve' and r['identity'] == entry['identity'])
-                halted[reservation['model']] = entry['error'] + '; infrastructure retry limit exhausted'
         return unavailable, halted
 
 
@@ -1381,7 +1379,10 @@ def run_split(split, cap, *, amendment15=False):
     report.update(stopped=stopped, schedule=name, dev_ineligible_judges=ineligible, unscheduled={"panels": sorted({"E4", "E5"}-set(plan["sources"])),
                                                            "judges": sorted(set(MODELS)-set(plan["judges"]))})
     write_json(HERE / f"runs/{split}/analysis.json", report)
-    if not stopped:
+    # Transient exhaustion is invocation-local: retain its unused block funds
+    # so the next invocation can resume, rather than only replay cached calls.
+    _, durable_halts = infrastructure_state(ledger)
+    if not stopped and not (set(halted) - set(durable_halts)):
         ledger.release_block(block_id)
     return 3 if budget_stop else (2 if stopped or halted else 0)
 
