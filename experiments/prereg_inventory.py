@@ -20,6 +20,14 @@ RATES = {"pro": (2.0, 12.0, 1.0), "replication": (.36, .40, 1.055),
 P1_PUSHBACK_INPUT_BOUNDS = {"V": (7500, 7500), "W": (7400, 7500),
                           "A": (9900, 9900), "F": (7800, 7900), "R": (11000, 11100)}
 
+# Amendment 11 priority order; all four retain both scientific panels.
+P1_PANEL_SCENARIOS = {
+    "pro_replication_3turn": (["pro", "replication"], 3),
+    "pro_3turn": (["pro"], 3),
+    "full_2turn": (list(RATES), 2),
+    "pro_replication_2turn": (["pro", "replication"], 2),
+}
+
 def p1_input_bound(arm, phase):
     """Amendments 3/9: joint pushback bounds; initial/replay/probe unchanged."""
     if phase in ("attacker", "pushback") and arm in P1_PUSHBACK_INPUT_BOUNDS:
@@ -98,28 +106,31 @@ def p1():
     assert sum(r["pushback"] for r in selected) == 28
     assert sum(r["forged_correct_control"] for r in selected) == 136
     scenarios = {}
-    for name, output, full in (("full_256", 256, True),
-                               ("primary_512", 512, False),
-                               ("primary_1024", 1024, False)):
+    specs = [("full_256", 256, ["E4", "E5"], list(RATES), 3),
+             ("primary_512", 512, ["E4"], ["pro"], 0),
+             ("primary_1024", 1024, ["E4"], ["pro"], 0)]
+    specs += [(name, 256, ["E4", "E5"], judges, turns)
+              for name, (judges, turns) in P1_PANEL_SCENARIOS.items()]
+    for name, output, panels, judges, turns in specs:
         budget = [price_row("probe", "billed_output_probe", "pro", 10, 3072, 4096)]
-        for model in (RATES if full else ("pro",)):
-            n = 200 if full else 136
+        for model in judges:
+            n = 200 if "E5" in panels else 136
             for arm in ("V", "W", "A", "F", "R", "U"):
                 budget.append(price_row(arm, "initial_judge", model, n, p1_input_bound(arm, "initial"), output))
                 if arm == "R":
                     budget.append(price_row(arm, "post_replay_judge", model, n, p1_input_bound(arm, "replay"), output))
-                # Preserve three-turn primary pushback; exploratory judges have initial cells only.
-                if full and model == "pro" and arm != "U":
-                    budget.append(price_row(arm, "pushback_judge", model, 28*3, p1_input_bound(arm, "pushback"), 256))
-                    budget.append(price_row(arm, "adaptive_proposer_against_pro", model, 28*3, p1_input_bound(arm, "attacker"), 256))
-                    budget.append(price_row(arm, "adaptive_proposer_truncation_retry", model, 28*3, p1_input_bound(arm, "attacker"), 256))
+                # Exploratory judges have initial/replay cells only.
+                if turns and model == "pro" and arm != "U":
+                    budget.append(price_row(arm, "pushback_judge", model, 28*turns, p1_input_bound(arm, "pushback"), 256))
+                    budget.append(price_row(arm, "adaptive_proposer_against_pro", model, 28*turns, p1_input_bound(arm, "attacker"), 256))
+                    budget.append(price_row(arm, "adaptive_proposer_truncation_retry", model, 28*turns, p1_input_bound(arm, "attacker"), 256))
             budget.append(price_row("F_correct", "initial_judge", model, 136, 3072, output))
         # Reserve a full $1 for the probe, including its explicit row ceiling.
         probe_buffer = round(1 - budget[0]["usd"], 8)
         total = round(sum(r["usd"] for r in budget) + probe_buffer, 8)
         scenarios[name] = dict(budget_rows=budget, probe_unused_allowance_usd=probe_buffer,
-            sources=["E4", "E5"] if full else ["E4"],
-            judges=list(RATES) if full else ["pro"], pushback=full,
+            sources=panels, judges=judges, pushback=bool(turns), pushback_turns=turns,
+            planning_output_mean=output,
             max_scheduled_api_usd=total, scheduled_calls=sum(r["calls"] for r in budget),
             local_accounting_allowance_usd=.25,
             unallocated_reserve_usd=round(40-total-.25-.5569, 8))

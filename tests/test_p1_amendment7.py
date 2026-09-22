@@ -255,6 +255,11 @@ def test_actual_dev_prefix_reconstructs_without_duplicate_trials(tmp_path, monke
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(original / relative, target)
     # Reconstruct the historical 19-completion prefix, independent of later dev runs.
+    # Amendment 11 changes today's selection; this fixture replays the original.
+    historical_probe_path = tmp_path / 'results/probe.json'
+    historical_probe = json.loads(historical_probe_path.read_text())
+    historical_probe['schedule'] = 'full_256'
+    p1.write_json(historical_probe_path, historical_probe)
     target = tmp_path / 'runs/study/costs.jsonl'
     prefix = entries(paid.Ledger(target, 36))
     prefix = prefix[:next(n for n, r in enumerate(prefix) if r['event'] == 'halt') + 1]

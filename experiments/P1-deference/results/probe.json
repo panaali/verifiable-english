@@ -388,8 +388,36 @@
       "prompt_sha256": "223c0b400dad7e8468b8ce1fd3ebe704fd808cf8cc468f8885a49090996e229a"
     }
   ],
-  "schedule": "full_256",
-  "selected_output_cap": 256,
+  "schedule": "primary_1024",
+  "schedule_before_amendment11": "full_256",
+  "schedule_selection": {
+    "accounting": "Existing ceilings retain 256-token judge planning means. Worst-case ceilings use unchanged 1024-token judge caps; both include unchanged input bounds, all attacker retries and existing allowances.",
+    "amendment": 11,
+    "authority": "orchestrator",
+    "cumulative_ceilings_usd": {
+      "full_2turn": "41.54871065770",
+      "pro_3turn": "46.61316926890",
+      "pro_replication_2turn": "40.78892430250",
+      "pro_replication_3turn": "49.42076430250"
+    },
+    "date_utc": "2026-09-22",
+    "priority": [
+      "pro_replication_3turn",
+      "pro_3turn",
+      "full_2turn",
+      "pro_replication_2turn"
+    ],
+    "reason": "No E4+E5 candidate fits the unchanged $40 cap with existing allowances; select primary_1024 as authorized.",
+    "reference": "PROPOSED-AMENDMENT.md#amendment-11",
+    "worst_case_cumulative_ceilings_usd": {
+      "full_2turn": "58.90010086570",
+      "pro_3turn": "64.63966526890",
+      "pro_replication_2turn": "58.02299175850",
+      "pro_replication_3turn": "67.94507175850"
+    }
+  },
+  "selected_output_cap": 1024,
+  "selected_output_cap_before_amendment11": 256,
   "settings": {
     "max_input_tokens": 3072,
     "max_output_tokens": 4096,
