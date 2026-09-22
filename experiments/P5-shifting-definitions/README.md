@@ -1,5 +1,9 @@
 # P5 materials and staged duel runner
 
+**Revision 9:** the initial dev attempt is superseded after an offline contract
+audit. See [DEV-CONTRACT-AUDIT.md](DEV-CONTRACT-AUDIT.md) for all 15 responses,
+the dated harness fixes, retained costs and blocked rerun prerequisites.
+
 **Revision 8:** judges use reviewed generator-rendered prose from the same VE
 graphs, with the tail-placement fix retained. Independent paraphrasing is
 dropped under the dated orchestrator amendment. See [REVISION8.md](REVISION8.md)

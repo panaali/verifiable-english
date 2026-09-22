@@ -1,0 +1,33 @@
+{
+  "ceilings": {
+    "all_in_usd": "69.8036611616",
+    "api_usd": "69.1562364192",
+    "attributed_item_arm_usd": {
+      "L": "0.0665397888",
+      "S": "0.1946997888",
+      "VE": "0.3664437888",
+      "X": "0.1813637888"
+    },
+    "combined_attributed_item_arm_usd": {
+      "L": "0.0698204168",
+      "S": "0.2000966624",
+      "VE": "0.3753408992",
+      "X": "0.1855939168"
+    },
+    "cpu_usd": "0.1344",
+    "gemini_calibration_ceiling_usd": "0.50",
+    "matched_ceiling_usd": ".16",
+    "max_calls_including_materials_and_smokes": 1946,
+    "primary": "Gemini min(VE_shift,VE_smuggle) - min(X_shift,X_smuggle)",
+    "provider_smoke_usd": "0.0130247424",
+    "replication_judge_overhead_usd": "1.8315981600",
+    "replication_policy": "same frozen Gemini role transcript; separate Qwen final judgment; Qwen lone floor",
+    "reserve_usd": "-29.8036611616",
+    "scenario": "dual_judge",
+    "within_cap": false,
+    "within_matched_ceiling": false
+  },
+  "freeze_sha256": "629cada8fd2a2b56fb2a4f113bf426b3583fdc9dacc7c0c2038fd3281777e7ef",
+  "generation_calls": 0,
+  "passed": false
+}

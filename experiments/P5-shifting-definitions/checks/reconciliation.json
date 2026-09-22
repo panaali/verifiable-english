@@ -38,8 +38,8 @@
       "revisions": {
         "pro": "gemini-3.1-pro-preview"
       },
-      "spent_usd": "0.144180",
-      "uncommitted_usd": "0.855820"
+      "spent_usd": "1.273964",
+      "uncommitted_usd": "-0.273964"
     },
     "runs/study/costs.jsonl": {
       "blocked": false,
@@ -53,8 +53,8 @@
         "replication": "{\"model\":\"qwen/qwen-2.5-72b-instruct\",\"provider\":\"DeepInfra\",\"system_fingerprint\":null}",
         "replication/paraphrase/DeepInfra": "{\"model\":\"qwen/qwen-2.5-72b-instruct\",\"provider\":\"DeepInfra\",\"system_fingerprint\":null}"
       },
-      "spent_usd": "1.9694671176",
-      "uncommitted_usd": "38.0305328824"
+      "spent_usd": "2.6136471176",
+      "uncommitted_usd": "37.3863528824"
     }
   },
   "policy": "Interrupted calls charged at full ceiling; no trial or reply inferred. Identical requests may be re-issued within existing caps. Revision charges remain inside study envelopes, not added twice."

@@ -1,9 +1,12 @@
 {
   "hashes": {
-    "AMENDMENTS.md": "8651a1686798bc2c979721791790a0f92f4505325655961b30e1791164624392",
+    "AMENDMENTS.md": "c7b9ea30dfbb31711169a4e862eaed81cd6a7f5215c6390b739c843d177d021b",
+    "DEV-CONTRACT-AUDIT.md": "4f5850830c04f469599029c0babec53d796aa2f7873ca5eb4fc1b27c539f38c0",
     "PREREG.md": "c36a63f5045631cd11218cab1b6445c44619a8dda0ff7227775e2cb96fb1ebe0",
     "RESULTS.md": "9c3ea915a746ee5281f452f496c489a2cb288bab852d82222b207933601d1b5d",
     "REVISION8.md": "ee6d6514998305b7c11655b406d83c4d7de63a1159df4e253fd54e7f84716fb8",
+    "checks/dev-contract-audit.json": "3e2b0d1df0b13c8d0d3e22abe5eb2383f39d82ec15392f75a099010767b1a482",
+    "checks/dev-superseded-v8.json": "56ddc9a8b138873280af9736030d23c26474fe8ba20d671c3336775c60867344",
     "checks/gemini-rendered-adjudication.json": "1f7488fa03c0325f15b911e4f24db92bffb3ce521f70551b5512d52b57be00cc",
     "checks/gemini-rendered-status.json": "41e2ae3469ebf4f6764037d1701a34b5fce2b1550f5b89137e6f9a1d2064827b",
     "checks/gemini-rendered-submission.json": "e6e7dc59f71395a5311b27d71585a9c5d79557d1606d803b6d2b98d93509407d",
@@ -26,11 +29,13 @@
     "materials/review-ledger.jsonl.gz": "27320d7c57305630c28a5359fe65d7e29d00f517c875fe5472cfb12eb756abc9",
     "materials/round5-reviewed-packets.jsonl.gz": "621f3e6a56c5fc1196724da01de4e0f63f722875bf2367aeee1e2f4f5e019842",
     "materials/scored.jsonl.gz": "8b5ddb7acfe7704f91554eb2c0a45a787d48b2133a1fba57e9c0e1067731e144",
+    "runs/dev/analysis.json": "6ae46d611d1b55dafd4a38d6e497f47817dffcbb3b70686f468776d3f10bfacd",
+    "runs/dev/trials.jsonl": "e9c05142d835a23b91487707c6f79969eee0892e80e47ff2d9377c98021ada83",
     "runs/revision-v6/paraphrase-costs.jsonl": "bec35903f6e7b5e003c974e91db13a30eda7c49602033830e9ae4a75c480e95a",
     "runs/revision-v7/paraphrase-costs.jsonl": "09a62041646c47815d17b544407b01da0dfd6a21f6f119d741be194aa65aa079",
     "runs/revision-v8/gemini-review-costs.jsonl": "54151107c9df52137d058f37f236aec4b014af80ec20eb6af5ff1fca8782ba99"
   },
-  "revision": 8,
+  "revision": 9,
   "schema": 1,
-  "status": "GENERATOR_RENDERED_REVIEW_ACCEPTED_AFTER_MECHANICAL_ADJUDICATION"
+  "status": "DEV_SUPERSEDED_HARNESS_REPAIR_BLOCKED"
 }

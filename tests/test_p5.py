@@ -71,7 +71,7 @@ def test_shared_packet_allowlist_and_isolation(items):
     for arm in p.ARMS:
         r=p.request(item,arm,'lone' if arm=='L' else 'judge')
         assert baseline in r.messages[1]['content']
-        assert r.response_schema==p.VERDICT_SCHEMA and r.max_output_tokens==1024
+        assert r.response_schema==p.VERDICT_SCHEMA and r.max_output_tokens==4096
     with pytest.raises(PreflightError):p.request(item,'X','answer',history=[{'text':'sibling'}])
     r=p.request(item,'X','followup_answer',commitment='COMMIT',question='QUESTION')
     assert 'COMMIT' in r.messages[-1]['content'] and 'QUESTION' in r.messages[-1]['content']
@@ -83,9 +83,9 @@ def test_caps_and_scenarios():
     assert max(o for _,o in p.STAGES.values())==1024
     for scenario in p.SCENARIOS:
         c=p.ceilings(scenario)
-        assert Decimal(c['all_in_usd'])<40
-        assert all(Decimal(v)<Decimal('.16') for v in c['attributed_item_arm_usd'].values())
-    assert Decimal(p.ceilings('dual_judge')['all_in_usd'])==Decimal('35.2512920096')
+        assert Decimal(c['all_in_usd'])>40 and not c['within_cap']
+        assert not c['within_matched_ceiling']
+    assert Decimal(p.ceilings('dual_judge')['all_in_usd'])==Decimal('69.8036611616')
     for cap in (0,-1,41):
         with pytest.raises(PreflightError):p.ledger(cap)
 
@@ -129,8 +129,10 @@ def test_parser_localization_and_failures(items,labels):
     assert endpoint(label,row,True)['detection']==1
     assert endpoint(label,row,False)['detection']==0
     assert endpoint(label,None,True)['unsafe_approval']==1
-    for locations in ([ids[0]]*2,ids[:3],['invented']):
+    for locations in ([ids[0]]*2,ids[:3]):
         with pytest.raises(ValueError):parse(packed({**answer,'locations':locations}),ids)
+    wrong=parse(packed({**answer,'locations':['invented']}),ids)
+    assert endpoint(label,{'ok':True,'answer':wrong},True)['score']==0
     assert len(menu(ids))==507
 
 

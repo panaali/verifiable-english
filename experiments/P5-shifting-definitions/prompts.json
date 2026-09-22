@@ -1,4 +1,158 @@
 {
+  "effective_stage_caps": {
+    "L": {
+      "pro": {
+        "lone": [
+          7500,
+          4096
+        ]
+      },
+      "replication": {
+        "lone": [
+          7500,
+          1024
+        ]
+      }
+    },
+    "S": {
+      "pro": {
+        "author": [
+          3000,
+          4096
+        ],
+        "critic": [
+          8572,
+          1024
+        ],
+        "defender": [
+          10072,
+          1024
+        ],
+        "judge": [
+          13072,
+          4096
+        ]
+      },
+      "replication": {
+        "author": [
+          3000,
+          1024
+        ],
+        "critic": [
+          8572,
+          1024
+        ],
+        "defender": [
+          10072,
+          1024
+        ],
+        "judge": [
+          13072,
+          1024
+        ]
+      }
+    },
+    "VE": {
+      "pro": {
+        "author": [
+          3000,
+          4096
+        ],
+        "critic": [
+          8572,
+          4096
+        ],
+        "defender": [
+          16216,
+          4096
+        ],
+        "judge": [
+          22288,
+          4096
+        ],
+        "repair": [
+          9072,
+          4096
+        ]
+      },
+      "replication": {
+        "author": [
+          3000,
+          1024
+        ],
+        "critic": [
+          8572,
+          1024
+        ],
+        "defender": [
+          16216,
+          1024
+        ],
+        "judge": [
+          22288,
+          1024
+        ],
+        "repair": [
+          9072,
+          1024
+        ]
+      }
+    },
+    "X": {
+      "pro": {
+        "answer": [
+          3200,
+          512
+        ],
+        "author": [
+          3000,
+          1024
+        ],
+        "critic": [
+          5500,
+          1024
+        ],
+        "followup": [
+          7500,
+          256
+        ],
+        "followup_answer": [
+          3200,
+          512
+        ],
+        "judge": [
+          10000,
+          4096
+        ]
+      },
+      "replication": {
+        "answer": [
+          3200,
+          512
+        ],
+        "author": [
+          3000,
+          1024
+        ],
+        "critic": [
+          5500,
+          1024
+        ],
+        "followup": [
+          7500,
+          256
+        ],
+        "followup_answer": [
+          3200,
+          512
+        ],
+        "judge": [
+          10000,
+          1024
+        ]
+      }
+    }
+  },
   "roles": {
     "S_author": "Seek errors. Produce a claim/premise/use table from the common packet.",
     "S_critic": "Independently audit the authored table against source records, seeking errors.",
@@ -10,7 +164,7 @@
     "X_critic": "Seek source-grounded flaws across branches. Return JSON {\"questions\":[up to three self-contained questions, each <=256 tokens]}.",
     "answer": "Answer only this question using the unchanged packet and frozen commitment. You are an isolated proposer copy.",
     "followup": "Inspect the initial questions and answers for inconsistency. Return JSON {\"question\":\"one self-contained adaptive question <=256 tokens, or empty\"}. Do not transmit other copies\u2019 full answers.",
-    "judge": "Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence.",
+    "judge": "Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence. Locations are zero to two distinct paragraph or declared-premise node IDs (nNN); rule/record IDs (rNN) belong in explanation only. Use a nonempty explanation. Return [] for an approval or when no location is identified. An unknown verdict is permitted and is not a successful detection or completion.",
     "paraphrase": "Perform a CONSTRAINED structural rewrite, not a free paraphrase. Keep EVERY atomic claim phrase verbatim: copy each complete \"unitN is <predicate>\" string exactly, including unit names, predicate words, case and every repeated occurrence. Do not replace predicates with synonyms or change atoms to passive voice. State premises by content. Freely restructure the surrounding prose within each step: reorder premise sentences, vary connectives, merge or split sentences, use active or passive discourse framing. Examples: \"From the fact that unit1 is ready and unit2 is clear, it follows that unit3 is active.\"; \"These facts are taken together: unit1 is ready. Also, unit2 is clear. Therefore, unit3 is active.\"; \"unit3 is active is inferred from the fact that unit1 is ready and unit2 is clear.\" These are syntax examples only; never insert their atoms into the supplied argument. Aim for normalized character Levenshtein distance >= 0.20 after every atomic phrase is replaced with the single character # in both source and rewrite; only surrounding restructuring earns distance. Keep every step in the same given topological order, one paragraph per step. Preserve immediately-preceding references, inference direction and all conditional alternatives without adding or repairing assumptions. Make inference direction explicit with it follows that/thus/therefore/so/hence/we conclude that, or conclusion because/on the grounds that/is inferred from the fact that. No negation, hedges, definitions or commentary may be added. Keep conditional alternatives at their supplied step, paired in the same way and explicitly conditional, never asserted as facts. You may move that sentence within its step or reframe it as \"If <checks>, then <outcomes> would follow, respectively.\" Keep all atomic phrases in both lists verbatim. No parenthetical glosses or sense labels in the prose. Do not disambiguate ambiguous terms. Return JSON {\"texts\":{\"node_id\":\"rewritten step\"}} with every existing node ID as a key only. No step-id markers, node IDs or rule IDs in prose. No additional fields.",
     "repair": "Repair only the diagnosed syntax/coverage failures. One repair is allowed; retain the original root. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total."
   },

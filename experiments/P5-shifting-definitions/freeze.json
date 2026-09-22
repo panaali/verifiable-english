@@ -1,18 +1,18 @@
 {
   "ceilings": {
-    "all_in_usd": "35.2512920096",
-    "api_usd": "34.6038672672",
+    "all_in_usd": "69.8036611616",
+    "api_usd": "69.1562364192",
     "attributed_item_arm_usd": {
-      "L": "0.0296757888",
-      "S": "0.1025397888",
-      "VE": "0.1268277888",
-      "X": "0.1444997888"
+      "L": "0.0665397888",
+      "S": "0.1946997888",
+      "VE": "0.3664437888",
+      "X": "0.1813637888"
     },
     "combined_attributed_item_arm_usd": {
-      "L": "0.0329564168",
-      "S": "0.1067699168",
-      "VE": "0.1310579168",
-      "X": "0.1487299168"
+      "L": "0.0698204168",
+      "S": "0.2000966624",
+      "VE": "0.3753408992",
+      "X": "0.1855939168"
     },
     "cpu_usd": "0.1344",
     "gemini_calibration_ceiling_usd": "0.50",
@@ -20,11 +20,12 @@
     "max_calls_including_materials_and_smokes": 1946,
     "primary": "Gemini min(VE_shift,VE_smuggle) - min(X_shift,X_smuggle)",
     "provider_smoke_usd": "0.0130247424",
-    "replication_judge_overhead_usd": "1.341565008",
+    "replication_judge_overhead_usd": "1.8315981600",
     "replication_policy": "same frozen Gemini role transcript; separate Qwen final judgment; Qwen lone floor",
-    "reserve_usd": "4.7487079904",
+    "reserve_usd": "-29.8036611616",
     "scenario": "dual_judge",
-    "within_cap": true
+    "within_cap": false,
+    "within_matched_ceiling": false
   },
   "commands": [
     "generate",
@@ -44,12 +45,9 @@
     "analyze --split scored"
   ],
   "external_timestamp": {
-    "freeze_sha256": "184bfb41d2f8eda223f9467c01975d68472f06f3c37e8749cc4aef753052c9cd",
-    "passed": true,
-    "policy": "bound calendar submission is pilot timestamp evidence; not a claim of verified Bitcoin confirmation",
-    "proof_sha256": "741f23016f9f52575c6664a956e720e584e35896f4f0d70ce5dfd52cb6fd9ec1",
-    "source_sha256": "df832204153d2adb44825fde72b7689bb677fde82dc17fb55831d9c0af533876",
-    "stdout": "File sha256 hash: df832204153d2adb44825fde72b7689bb677fde82dc17fb55831d9c0af533876\nTimestamp:\nappend e5b302aee2cca273b7aecb701a8b754f\nsha256\n -> append 4f47784edb5c9072\n    sha256\n    append 6ceb3494831cbf81bae5188c138abd769a55cfeaad2b47fa97e2b897f4663a13\n    sha256\n    prepend 936738b7b57ec8371d5d4474302d63baa597f6ce417e0694e01d5acd355b0edb\n    sha256\n    append 0da157657ada64060883b7818a130176\n    sha256\n    prepend c2069d9276340b7b8ab962f2ef4b2c4c6e721a62cbfefd1ded95fba8b9170a0b\n    sha256\n    prepend c00dadfa3e5ac760c022cd42d2d196c421242301c60c0e2205158106058f1408\n    sha256\n    append 3c95d4dac9061b11d8eb9c64cd4e59ae89c34deea05c843d14381a9a54ee4243\n    sha256\n    prepend 6ab2f600\n    append 9135b3403bb4848c\n    verify PendingAttestation('https://alice.btc.calendar.opentimestamps.org')\n -> append 758ce06c3f8ac85689a05f0dc16d6b9b\n    sha256\n    prepend a7532bf585076bbfdc490dea8f216e57fe8ba2b087e804f0ec350e3db501370e\n    sha256\n    append ef8852d195bdb143889310cee6ef0157481c016f55b826319981bd4d6fc6e63c\n    sha256\n    append 5e393f7f04409a5111a8ad71ef8407203a935ffa4fb21a81c1b34f96709a6cce\n    sha256\n    prepend 6ab2f600\n    append 9534cbaaac1ceb25\n    verify PendingAttestation('https://finney.calendar.eternitywall.com')\n -> append bec18375cedfb37c\n    sha256\n    prepend 91548362ea5fa81e4a2cb184da29ef81aa2bb8ffa86db4c1e18659cb3f5d4190\n    sha256\n    append 224391ecbbec6ad74c0f19b5a9c9e8b9cedf4fb29e854e6d69ebdf75070ff9da\n    sha256\n    append 39fea2ff42a5d15b1e6dc4175333a84e\n    sha256\n    prepend df8f2db8204e3bdc4e6e3c728a26c136264386ffa0651628c63d54f46abf9702\n    sha256\n    prepend 957c8333d488d960ccea50e5a6fa14228b91cc9c35ba25fa3da178c192a630c6\n    sha256\n    prepend 6ab2f5ff\n    append 2ff3d66a3888c10a\n    verify PendingAttestation('https://bob.btc.calendar.opentimestamps.org')\n -> append c86cc659ac2fb024db0553d7e4a9fbea\n    sha256\n    append cd60ce38acb3e19f21c6843b9a5bf04333214b4376cc4242c70d7d9cf7b8d59d\n    sha256\n    append 4dc0b6f804f93c98ce095f63b68b357aae6398127765edb6fdaf6d642950ef46\n    sha256\n    prepend 4b4021e0a4dc363f5df0735fd0aa4848ee395b186396e9362578a5541f56623b\n    sha256\n    prepend 6ab2f600\n    append 6cd6ef568c906446\n    verify PendingAttestation('https://btc.calendar.catallaxy.com')\n\n"
+    "freeze_sha256": "629cada8fd2a2b56fb2a4f113bf426b3583fdc9dacc7c0c2038fd3281777e7ef",
+    "passed": false,
+    "reason": "publish exact manifest hash and retain bound OpenTimestamps receipt"
   },
   "gemini_calibration": {
     "configs": {
@@ -576,13 +574,13 @@
     "experiments/P1-deference/tokenizers/llama_config.json": "177c7b61e616fecb84c17ce0591acb92c6c4d60e9ac5ababfb940ff23bbcd424",
     "experiments/P1-deference/tokenizers/qwen_config.json": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
     "experiments/P1-deference/tokenizers/sources.json": "e92eb8f4af7c766b8f5bd4d7827cb9d9b70b56c745df51836172cce9411a4294",
-    "experiments/P5-shifting-definitions/AMENDMENTS.md": "8651a1686798bc2c979721791790a0f92f4505325655961b30e1791164624392",
+    "experiments/P5-shifting-definitions/AMENDMENTS.md": "c7b9ea30dfbb31711169a4e862eaed81cd6a7f5215c6390b739c843d177d021b",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V3.md": "16a618e65989baa583fa33d5e0285f20259723289ba730202dae4c78f7dff68f",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V4.md": "d556d43ddd4d38ae3ecbabf2f5e48e501117fbe54a355b821148e66c8781fd7c",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V5.md": "272d583f9ca320370e10ef37272dab553911577ffc25f1ea6a14f9c9f0cdd1e3",
-    "experiments/P5-shifting-definitions/MATERIALS-HASHES.txt": "9d36bc12a0e3282568ed7abb2120665aaa7e99aefc64e33318fe7860f6604ba8",
-    "experiments/P5-shifting-definitions/MATERIALS-HASHES.txt.ots": "97a91c6a02540ed9ee4eab6ea61a95eea5c2b2eef15bdb7c0ec77b8d5d8b7af0",
-    "experiments/P5-shifting-definitions/MATERIALS-MANIFEST.json": "9c89b0cb04f91ce8efb8bd897c4ec80e376cd1b08ae20be56e543eaedf7602f9",
+    "experiments/P5-shifting-definitions/DEV-CONTRACT-AUDIT.md": "4f5850830c04f469599029c0babec53d796aa2f7873ca5eb4fc1b27c539f38c0",
+    "experiments/P5-shifting-definitions/MATERIALS-HASHES.txt": "46e79a379f3a8eeedb9fc21f70a86b5f9285ea493e0a3446c3bd0f5ec8b098e1",
+    "experiments/P5-shifting-definitions/MATERIALS-MANIFEST.json": "aa45040f877a49b3ba5822b97928adf97d52adf67257df21ed54b5ae148dd277",
     "experiments/P5-shifting-definitions/PARAPHRASE-REVIEW.md": "0006b0c189c74a9dd78d5d93ce6eecf104b49dc83409c55b6cc59e6bb8e1be6e",
     "experiments/P5-shifting-definitions/PREREG.md": "c36a63f5045631cd11218cab1b6445c44619a8dda0ff7227775e2cb96fb1ebe0",
     "experiments/P5-shifting-definitions/RESULTS.md": "9c3ea915a746ee5281f452f496c489a2cb288bab852d82222b207933601d1b5d",
@@ -590,6 +588,8 @@
     "experiments/P5-shifting-definitions/REVISION6.md": "69c5d8e0f8f0b9bd02a52e4ccf2848dbe4f85ae26e6e57bfbd2566144ef69fb5",
     "experiments/P5-shifting-definitions/REVISION7.md": "0b9886d058f926bc9df1daca7bfb028d7810ecc0f180bd46c5098e7c15dc3f32",
     "experiments/P5-shifting-definitions/REVISION8.md": "ee6d6514998305b7c11655b406d83c4d7de63a1159df4e253fd54e7f84716fb8",
+    "experiments/P5-shifting-definitions/checks/dev-contract-audit.json": "3e2b0d1df0b13c8d0d3e22abe5eb2383f39d82ec15392f75a099010767b1a482",
+    "experiments/P5-shifting-definitions/checks/dev-superseded-v8.json": "56ddc9a8b138873280af9736030d23c26474fe8ba20d671c3336775c60867344",
     "experiments/P5-shifting-definitions/checks/gemini-calibration.json": "068836dd48f88e3facf44eedd23c88f78fca7f492fe46693a88bdef8bdc8b0d2",
     "experiments/P5-shifting-definitions/checks/gemini-rendered-adjudication.json": "1f7488fa03c0325f15b911e4f24db92bffb3ce521f70551b5512d52b57be00cc",
     "experiments/P5-shifting-definitions/checks/gemini-rendered-status.json": "41e2ae3469ebf4f6764037d1701a34b5fce2b1550f5b89137e6f9a1d2064827b",
@@ -616,24 +616,27 @@
     "experiments/P5-shifting-definitions/materials/review-ledger.jsonl.gz": "27320d7c57305630c28a5359fe65d7e29d00f517c875fe5472cfb12eb756abc9",
     "experiments/P5-shifting-definitions/materials/round5-reviewed-packets.jsonl.gz": "621f3e6a56c5fc1196724da01de4e0f63f722875bf2367aeee1e2f4f5e019842",
     "experiments/P5-shifting-definitions/materials/scored.jsonl.gz": "8b5ddb7acfe7704f91554eb2c0a45a787d48b2133a1fba57e9c0e1067731e144",
-    "experiments/P5-shifting-definitions/prompts.json": "c2b799fe8c21626de6f5f29c058649401cae5bc8121ba3a8c042047d93e94d34",
+    "experiments/P5-shifting-definitions/prompts.json": "ce506fd1ac36ce60a0c79a68997af9eec8dc9c0c06115c0aece363e107f546bc",
     "experiments/P5-shifting-definitions/run_p5.py": "3179502de56f36242d25ac783334fb9ed565a6a5287e2f92aef28795b2f1d4fa",
+    "experiments/P5-shifting-definitions/runs/dev/analysis.json": "6ae46d611d1b55dafd4a38d6e497f47817dffcbb3b70686f468776d3f10bfacd",
+    "experiments/P5-shifting-definitions/runs/dev/trials.jsonl": "e9c05142d835a23b91487707c6f79969eee0892e80e47ff2d9377c98021ada83",
     "experiments/P5-shifting-definitions/runs/revision-v6/paraphrase-costs.jsonl": "bec35903f6e7b5e003c974e91db13a30eda7c49602033830e9ae4a75c480e95a",
     "experiments/P5-shifting-definitions/runs/revision-v7/paraphrase-costs.jsonl": "09a62041646c47815d17b544407b01da0dfd6a21f6f119d741be194aa65aa079",
     "experiments/P5-shifting-definitions/runs/revision-v8/gemini-review-costs.jsonl": "54151107c9df52137d058f37f236aec4b014af80ec20eb6af5ff1fca8782ba99",
     "experiments/PREREG-DESIGN.md": "dd7fd780c2ceb362f36f31b95a24fe71561f52bff604e3f391a77cd59107b579",
-    "experiments/p1.py": "94bce7b48d3445657404deb78d98c4230ca26269127468e57dede30621d3677a",
+    "experiments/p1.py": "7959b4117d6cde3c7234a1deb3a0b6fe5703582d87de6e2b12ccbaf3f714e42c",
     "experiments/p1_preflight.py": "6bda591a44581cb684801e5132c2840cc7cf70b5a26647aa815ea0c2835462b8",
-    "experiments/p5.py": "036acd89093597d4beda70aa930601b553cfdc7f0f7f1d437f4b3c2997f595d1",
-    "experiments/p5_analysis.py": "4984297d6314b79b6e3793cfbd4c947f3f418b7d4f36c2426486e4a5491f7c2d",
+    "experiments/p5.py": "87571d90ac245402a17808b55de85d8f9f91bd1f81e3485f518b8e98cc32d80c",
+    "experiments/p5_analysis.py": "310e5d4ea699f8438761dd32d804c0c2024471f4d585e2aa729b7347f759d445",
     "experiments/p5_blinding.py": "b0390010fc0d3decae1312da0e1087eb6a5ec5079e0fc77e385e966ecb66eb16",
+    "experiments/p5_contract.py": "4fd2a90addeb4769ddc84d5a5b109857311a751f9a799d5f3357f2473af493ad",
     "experiments/p5_isolation.py": "d8f9f22dfcfcaaff084c688f91e55de82cbce5b309280e036c226a2f7e55dbff",
     "experiments/p5_leakage.py": "3646d8bb9b858cd1a83665bfec6b20dc7076b3357df586deadee0c3cba3e214b",
     "experiments/p5_licensing.py": "c31495533fd5b6e12f3092508c76b7ead884f0f993c26e9d6ad69dee50af384d",
     "experiments/p5_materials.py": "9dcbc6a550fdcc8243bb8a8498f677fc251791e7818a19990d7efa564161057c",
     "experiments/p5_oracle.py": "7525d4e36b7b83a489169e124d08deca652cc45441884a22d81791d624adc0de",
     "experiments/p5_paraphrase.py": "13ea051733a46e7b15add956fa18562469ef5568f5e78eaa83e514a2683c31fd",
-    "experiments/p5_preflight.py": "2323a626c967554397e775ac1ab58cb98f8b13121b33fa13e36776576bedd05b",
+    "experiments/p5_preflight.py": "cc0949312af76d3a2eee7b4d92d9839c20e89213c58497278af8c0dbb6933255",
     "experiments/p5_rendered.py": "f14f3cd9e44efa88044c24153ae1c101687a8a9083a4ac99ee2606d5ad4b3d0e",
     "experiments/p5_review.py": "8f0932bdd4b2ebc0d915ad0bd3a965aacc0bc93b37bec79477c9040aa9fc146b",
     "experiments/p5_revision.py": "499ba05cbb1d9e8c9aff04d3d019e074ea2d179c06752a42c62fe94154845703",
@@ -646,15 +649,16 @@
     "pyproject.toml": "675b5239f1d51115896c768ef5139737882bad84dcc95f5d29984fa70ee94b76",
     "tests/fixtures/p5_deepinfra_smoke.json": "663a2dff283258ab51105a5b25d3e10559d77f849acde943fcdc38701ada417d",
     "tests/fixtures/p5_vertex_smoke.json": "586d9dccf8b8e767b092079e57322299c7205010b5d326b532926989be35edc0",
-    "tests/test_p5.py": "8754076b4ececd969086796832baa4a3dd9f441b3a00f5018b583062d1e9c9d8",
+    "tests/test_p5.py": "c123b8b7818480f890e1057c9ce458b9f96ecb2ba885915515a3bc5b0290b0ab",
+    "tests/test_p5_contract.py": "b28a965596ad96db50686eb2a7185409170f3de229b38f5fc30140afd571a958",
     "tests/test_p5_infrastructure.py": "1af6d00e27a3f877e56faffff78f63b72a96bb33374a775daab1a3afc2a98fde",
     "tests/test_p5_licensing.py": "444be515cb8b91f6017d5d09fb97b55f10c03bb898f3e631b1107c50cbf22db4",
     "tests/test_p5_paraphrase.py": "9862362fdaaf50a6e3be86a5d4635881d059cf54147fcc26763aa53a3b316764",
-    "tests/test_p5_preflight.py": "28820ec5ce593e20435651fe69bb33c1e28bc313928ef542ede9cc0541c517f9",
+    "tests/test_p5_preflight.py": "18dfc9133302a9a436660173ebe4b75e858b826e9622197172d38a5d1daefcb5",
     "tests/test_p5_reconcile.py": "4f1f5b2a0a21604236ee8ab67cc85c57cb70c8bd028bd8fa94ead63f1894cb6b",
     "tests/test_p5_rendered.py": "b52c74882332caf2ab3f8155b2566f63e36006e4479e2a1619a7bfff1849522a",
     "tests/test_p5_revision.py": "de305fb07fb5f0b35d819063746a2a4ec994e3fc1d136345f8ababa1f57dfdd3",
-    "tests/test_p5_tokens.py": "20eb5f6e1d4e6c94263be445599eee11985ba41f549149dd8f31fd34925c5866",
+    "tests/test_p5_tokens.py": "2de712d698c46ecfc8803c6874596d305d46bcf7518340c441054286cb970c6a",
     "uv.lock": "c00f64fd5b5b729747e3a2456dcb3338a4a9b3f3aa04fd4acf2895e295579238",
     "ve/__init__.py": "570d218a83d1d7d1037f837050f1f307cc93c24c5ca9fbcc72a4e0ef91b8abe4",
     "ve/__main__.py": "58d590ca8ae8efcbfc7f895e1232273df4596ff7a869e4c26f627593163deb96",
@@ -685,9 +689,9 @@
     "ve/search.py": "e45c5f0d22713158f0e1ad6f28023089fa5b3ed0013ead7a7930ffb2f37ddc00",
     "ve/wire.py": "fe12216e4f1cca4a8ecca2b0beea48a0bc2578b804cb664c16566cca74b49b07",
     "ve_experiments/json_response.py": "a74d9ccfecc5e2def09f10baf2b534d56c4297f4022b9183a8c784c6ba036f79",
-    "ve_experiments/paid.py": "65319a671ad6c7ec70aca5110b739faf88c18d1a75e590326dbcbdb00f6b6831"
+    "ve_experiments/paid.py": "00a1611160cf9aff01a9ec9311d8770fee0b08e114c4dadebbb0663fdbd65d19"
   },
-  "manifest_sha256": "184bfb41d2f8eda223f9467c01975d68472f06f3c37e8749cc4aef753052c9cd",
+  "manifest_sha256": "629cada8fd2a2b56fb2a4f113bf426b3583fdc9dacc7c0c2038fd3281777e7ef",
   "models": {
     "pro": "gemini-3.1-pro-preview",
     "replication": "qwen/qwen-2.5-72b-instruct",
@@ -718,7 +722,10 @@
   "scenario": "dual_judge",
   "status": "BLOCKED_NOT_SCORED_READY",
   "unresolved": [
-    "provider-preflight",
+    "budget",
+    "external-timestamp",
+    "gemini-calibration-coverage",
+    "tokenizer",
     "dev"
   ]
 }

@@ -13,16 +13,30 @@ ARMS=('X','S','VE','L')
 def parse(text, ids):
     import json
     row=json.loads(text)
-    if set(row)!= {'verdict','issue_type','locations','explanation'}:
+    if not isinstance(row,dict) or set(row)!= {'verdict','issue_type','locations','explanation'}:
         raise ValueError('verdict schema fields differ')
     if row['verdict'] not in ('approve','reject','unknown') or row['issue_type'] not in ('shift','smuggle','none','unknown'):
         raise ValueError('invalid verdict or issue type')
     locations=row['locations']
-    if not isinstance(locations,list) or len(locations)>2 or any(not isinstance(s,str) for s in locations) or len(set(locations))!=len(locations) or not set(locations)<=set(ids):
-        raise ValueError('at most two distinct existing node IDs required')
+    if not isinstance(locations,list) or len(locations)>2 or any(not isinstance(s,str) for s in locations) or len(set(locations))!=len(locations):
+        raise ValueError('at most two distinct location strings required')
+    # ID membership and the correct producer/consumer set are scored behavior.
+    # Never turn a wrong/missing localization into malformed output.
     if not isinstance(row['explanation'],str) or not row['explanation'].strip():
-        raise ValueError('source-grounded explanation required')
+        raise ValueError('nonempty explanation required')
     return row
+
+
+def contract_report(rows, assigned_per_judge, judges):
+    counts={j:{'assigned':assigned_per_judge,
+        'observed':sum(r['judge']==j for r in rows),
+        'valid':sum(r['judge']==j and r['ok'] for r in rows)} for j in judges}
+    compliance={j:c['valid']/c['observed'] if c['observed'] else None for j,c in counts.items()}
+    coverage=all(c['observed']==c['assigned'] for c in counts.values())
+    return {'contract_counts':counts,'contract_compliance':compliance,
+        'assigned_valid_fraction':{j:c['valid']/c['assigned'] for j,c in counts.items()},
+        'coverage_passed':coverage,
+        'contract_passed':coverage and all(v is not None and v>=.9 for v in compliance.values())}
 
 
 def endpoint(label, row, explanation_ok=False):

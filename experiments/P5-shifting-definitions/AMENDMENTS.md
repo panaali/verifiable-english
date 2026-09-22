@@ -778,3 +778,70 @@ Gemini responses themselves agree before refreezing. Review acceptance now rests
 on 78 direct agreements plus six documented mechanical adjudications. The
 original report remains 83 accepted / 1 reported defect / 0 incomplete.
 Refreeze and timestamp renewal are authorized; no paid calls are authorized.
+
+### Revision 9 — dev harness contract amendment (2026-09-22)
+
+Worker X is authorized to diagnose the failed dev attempt and change only
+harness/infrastructure, with **no paid calls / $0 new spending**. The 15 dev
+completions cost $0.1476830522 and are superseded as an incomplete infrastructure
+attempt. All raw requests, outputs, billing and historical trials remain intact.
+See [the per-response audit](DEV-CONTRACT-AUDIT.md) and its machine-readable
+`checks/dev-contract-audit.json`; neither is efficacy evidence.
+
+Only eight final judgments were observed. The old 0.041667/0.083333 rates divide
+2/4 and 4/4 valid observed responses by 48 assigned outcomes per judge. Six calls
+hit MAX_TOKENS: all four VE roles, one S author and one pro lone judge. The last
+VE defender billed 1,095 tokens against 1,024 and halted the primary panel,
+leaving 88 final judgments missing. One complete pro judgment cited record r02
+in locations. No complete judgment violated vocabulary, fields or explanation
+length; unknown is permitted and there is no maximum explanation length.
+
+The amended wire **and billed-output** limit is **4,096** for VE stages, the S
+author, and pro final/lone judges; Gemini LOW thinking remains enabled and billed.
+Other stage limits are unchanged. Prior-output reserves and downstream input
+limits grow by the corresponding maximum text increments; no transcript is
+truncated. `prompts.json` records effective per-arm/model stage limits separately
+from the historical base stage table. Both scenario and block ceilings use the
+actual amended request limits. No cap overrun is forgiven on the new requests.
+
+Both judge providers already attached the verdict schema. Transport regressions
+now verify Vertex's actual generate config and OpenRouter's HTTP JSON. P5 judge
+requests refuse OpenRouter's schema-less `json_object` fallback; P1's fallback
+policy is unchanged. Nonjudge free-text roles do not receive a verdict schema.
+VE artifact correctness remains an authoring outcome; this amendment supplies
+no reference environment, corrected source, proof or mapping.
+
+The prompt explicitly distinguishes paragraph/declared-premise nNN locations
+from rNN record evidence, requires distinct locations and nonempty explanation,
+and describes empty locations and the allowed unknown verdict. JSON shape,
+field set, vocabularies, at-most-two distinct strings and nonempty explanation
+remain contract rules. **Location membership and correctness are scored behavior**:
+wrong/unknown/record IDs and missing localization cannot produce detection credit,
+but no longer make a well-formed verdict a contract failure. Exact reference
+localization, issue-type correctness, benign empty-location completion and
+source-grounded explanation requirements are unchanged. No gold location enum
+is supplied to providers. MAX_TOKENS/LENGTH final judgments fail the completion
+contract even if their partial text happens to parse.
+
+Contract reports now show observed valid/observed counts, assigned coverage and
+the legacy assigned-valid fraction separately. The >=90% criterion is unchanged;
+full assigned coverage and source-fidelity review are still required to pass dev.
+Missing outcomes continue to score zero in assigned-denominator analysis.
+
+New request and block identities use `study-v9/`; new result directories are
+`runs/dev-v9` and `runs/scored-v9`, including explanation ratings and analyses.
+Old dev outputs cannot satisfy the new gate or be reused from the provider cache.
+A narrow append-only recovery acknowledges only the documented 1,095/1,024
+old VE defender halt and releases the unused old dev reservation. Costs stay
+charged to the same study/item/arm; no refund or completed block is inferred.
+
+The **$40 study and $0.16 item/arm ceilings are retained**. The larger request
+reservations yield a dual-judge worst-case schedule of $69.8036611616 and a
+maximum combined VE item/arm bound of $0.3753408992; the budget gate must fail
+rather than hide that incompatibility. Calibration and native-count receipts
+for changed configs remain invalid until genuinely renewed; no paid calibration
+or inferred replacement receipt is created in this task. Offline checks may
+inspect a budget-blocked freeze, while all paid execution still enforces it.
+Historical timestamps are archived; a new executable freeze needs a fresh
+external timestamp. This is a frozen, diagnosed repair with explicit blockers,
+not authorization to exceed budgets or a claim of scored readiness.

@@ -1,0 +1,10 @@
+{
+  "audit": "checks/dev-contract-audit.json",
+  "contract_passed": false,
+  "generation_calls": 0,
+  "new_run_directory": "runs/dev-v9",
+  "passed": false,
+  "reason": "Dated harness amendment; all old responses, costs and halts retained. No v9 trial exists.",
+  "status": "SUPERSEDED_REQUIRES_V9_DEV",
+  "superseded_report": "checks/dev-superseded-v8.json"
+}

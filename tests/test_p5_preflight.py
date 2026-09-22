@@ -22,7 +22,7 @@ def retained(tmp_path, monkeypatch):
     ledger.parent.mkdir(parents=True)
     ledger.write_text('\n'.join(packed(evidence[k]) for k in ('reservation','completion'))+'\n')
     monkeypatch.setattr(p,'HERE',tmp_path)
-    monkeypatch.setattr(p,'verify_freeze',lambda:{'manifest_sha256':'test-freeze'})
+    monkeypatch.setattr(p,'verify_freeze',lambda **_:{'manifest_sha256':'test-freeze'})
     monkeypatch.setattr(PaidClient,'call',lambda *a,**kw:pytest.fail('generation forbidden'))
     monkeypatch.setattr(httpx,'get',lambda *a,**kw:pytest.fail('downloads forbidden'))
     return ledger,evidence
@@ -115,7 +115,7 @@ def test_retained_fixture_recounts_native_and_rejects_uncalibrated_vertex(tmp_pa
     path.write_text(packed({'counts':rows,'common_packet_counts':[{'passed':True}],
                            'counter_sha256':'old','passed':True}))
     monkeypatch.setattr(p,'HERE',tmp_path)
-    monkeypatch.setattr(p,'verify_freeze',lambda:{'gemini_calibration':{'configs':{}}})
+    monkeypatch.setattr(p,'verify_freeze',lambda **_:{'gemini_calibration':{'configs':{}}})
     monkeypatch.setattr(p,'materials',lambda:[])
     monkeypatch.setattr(pf,'fixtures',lambda:iter([(req,0),(vertex,0)]))
     class Counter:

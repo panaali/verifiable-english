@@ -1,0 +1,56 @@
+{
+  "accounting": {
+    "all_charges_preserved": true,
+    "pending": {},
+    "study_committed_usd": "2.8957301698",
+    "superseded_dev_cost_usd": "0.1476830522"
+  },
+  "broader_suite": {
+    "baseline_failures": [
+      "test_p1_amendment13.py::test_scored_gate_and_cap_reach_only_qwen_attacker_backends",
+      "test_p1_amendment14.py::test_recover_and_reconstruct_every_retained_scored_call_without_dispatch"
+    ],
+    "baseline_method": "Unmodified HEAD p1.py and paid.py loaded from /private/tmp against identical retained P1 data; same two assertions fail.",
+    "baseline_reproduced": true,
+    "failed": 2,
+    "passed": 305
+  },
+  "date": "2026-09-22",
+  "final_budget_inventory_checks": {
+    "failed": 0,
+    "passed": 13
+  },
+  "freeze_sha256": "629cada8fd2a2b56fb2a4f113bf426b3583fdc9dacc7c0c2038fd3281777e7ef",
+  "generation_calls": 0,
+  "historical_evidence": "checks/pre-v9/",
+  "new_spend_usd": "0",
+  "offline_gates": {
+    "budget": false,
+    "construction": true,
+    "external-timestamp": false,
+    "gemini-calibration-coverage": false,
+    "known-answer": true,
+    "leakage": true,
+    "lean-replay": true,
+    "packet-safety": true,
+    "prose-provenance": true,
+    "provider-preflight": true,
+    "review": true,
+    "role-boundaries": true,
+    "surface-soundness": true,
+    "tokenizer": false,
+    "tracked-blinding": true
+  },
+  "regression_tests": {
+    "failed": 0,
+    "passed": 232,
+    "selection": "tests/test_p5*.py tests/test_p1.py tests/test_p1_infrastructure.py tests/test_p1_reconcile.py tests/test_p1_preflight.py"
+  },
+  "run_blockers": [
+    "budget",
+    "external-timestamp",
+    "gemini-calibration-coverage",
+    "tokenizer",
+    "dev"
+  ]
+}

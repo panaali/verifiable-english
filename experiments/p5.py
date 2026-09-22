@@ -16,7 +16,7 @@ import time
 
 from experiments.p5_materials import HERE, SEED, read, archive, write_json, generate
 from experiments.p5_isolation import single_context
-from experiments.p5_analysis import ARMS, parse, analyze, known_answer
+from experiments.p5_analysis import ARMS, parse, analyze, known_answer, contract_report
 from experiments.p5_paraphrase import SANITISER, validate_reply
 from experiments import p5_review as review
 from experiments.p1 import append, sha, infrastructure_state
@@ -27,6 +27,7 @@ from experiments.p5_tokens import P5VertexBackend as VertexBackend
 
 ROOT=HERE.parents[1]
 CAP=Decimal('40')
+STUDY_REVISION='study-v9'
 # Amendment P5-1 lowers author/repair to 1024 total billed tokens. The original
 # 2048 ceilings remain in the immutable design inventory for transparent audit.
 STAGES={'author':(3000,1024),'critic':(5500,1024),'defender':(7000,1024),
@@ -63,7 +64,11 @@ ROLES={
  'S_defender':'Independently revise the audit against the same records; seek errors.',
  'VE_defender':'Answer the critic, re-author affected uses and re-certify in a complete artifact. '+FORMAL,
  'repair':'Repair only the diagnosed syntax/coverage failures. One repair is allowed; retain the original root. '+FORMAL,
- 'judge':'Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence.',
+ 'judge':('Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence. '
+          'Locations are zero to two distinct paragraph or declared-premise node IDs (nNN); '
+          'rule/record IDs (rNN) belong in explanation only. Use a nonempty explanation. '
+          'Return [] for an approval or when no location is identified. '
+          'An unknown verdict is permitted and is not a successful detection or completion.'),
  'paraphrase':'Perform a CONSTRAINED structural rewrite, not a free paraphrase. Keep EVERY atomic claim phrase verbatim: copy each complete "unitN is <predicate>" string exactly, including unit names, predicate words, case and every repeated occurrence. Do not replace predicates with synonyms or change atoms to passive voice. State premises by content. Freely restructure the surrounding prose within each step: reorder premise sentences, vary connectives, merge or split sentences, use active or passive discourse framing. Examples: "From the fact that unit1 is ready and unit2 is clear, it follows that unit3 is active."; "These facts are taken together: unit1 is ready. Also, unit2 is clear. Therefore, unit3 is active."; "unit3 is active is inferred from the fact that unit1 is ready and unit2 is clear." These are syntax examples only; never insert their atoms into the supplied argument. Aim for normalized character Levenshtein distance >= 0.20 after every atomic phrase is replaced with the single character # in both source and rewrite; only surrounding restructuring earns distance. Keep every step in the same given topological order, one paragraph per step. Preserve immediately-preceding references, inference direction and all conditional alternatives without adding or repairing assumptions. Make inference direction explicit with it follows that/thus/therefore/so/hence/we conclude that, or conclusion because/on the grounds that/is inferred from the fact that. No negation, hedges, definitions or commentary may be added. Keep conditional alternatives at their supplied step, paired in the same way and explicitly conditional, never asserted as facts. You may move that sentence within its step or reframe it as "If <checks>, then <outcomes> would follow, respectively." Keep all atomic phrases in both lists verbatim. No parenthetical glosses or sense labels in the prose. Do not disambiguate ambiguous terms. Return JSON {"texts":{"node_id":"rewritten step"}} with every existing node ID as a key only. No step-id markers, node IDs or rule IDs in prose. No additional fields.' }
 
 
@@ -90,10 +95,29 @@ def stage_list(arm):
             *(['repair'] if arm=='VE' else []),'judge']
 
 
+def stage_limits(arm, stage, model='pro'):
+    """V9 fixes observed thinking truncation; budget ceilings remain enforced."""
+    inp,out=STAGES[stage]
+    if model=='pro' and (arm=='VE' or stage in ('judge','lone') or (arm=='S' and stage=='author')):
+        out=4096
+    # Preserve the old packet allowance plus the enlarged prior-output reserve.
+    extra_author=3072 if arm in ('S','VE') else 0
+    extra={'critic':extra_author,'repair':extra_author,
+        'defender':extra_author+(6144 if arm=='VE' else 0),
+        'judge':extra_author+(9216 if arm=='VE' else 0)}.get(stage,0)
+    return inp+extra,out
+
+
+def run_path(split, name):
+    return HERE/f'runs/{split}-v9'/name
+
+
 def ceilings(scenario):
     shared=cost('replication',*STAGES['paraphrase'])
-    arms={a:sum((cost('pro',*STAGES[s]) for s in stage_list(a)),Decimal(0)) for a in ARMS}
-    extra=sum((cost('replication',*STAGES['lone' if a=='L' else 'judge']) for a in ARMS),Decimal(0)) if scenario=='dual_judge' else Decimal(0)
+    arms={a:sum((cost('pro',*stage_limits(a,s)) for s in stage_list(a)),Decimal(0)) for a in ARMS}
+    extra=sum((cost('replication',*stage_limits(a,'lone' if a=='L' else 'judge','replication')) for a in ARMS),Decimal(0)) if scenario=='dual_judge' else Decimal(0)
+    combined={a:v+shared+Decimal('.0004')+(cost('replication',*stage_limits(a,
+        'lone' if a=='L' else 'judge','replication')) if scenario=='dual_judge' else 0) for a,v in arms.items()}
     api=(sum(arms.values())+shared+extra)*84
     cpu=Decimal('.0004')*336
     # Smoke calls are explicit separately budgeted overhead, not added dev samples.
@@ -103,10 +127,11 @@ def ceilings(scenario):
         'gemini_calibration_ceiling_usd':str(calibration),
         'all_in_usd':str(api+cpu+smoke+calibration),'reserve_usd':str(CAP-api-cpu-smoke-calibration),
         'within_cap':api+cpu+smoke+calibration<=CAP,'matched_ceiling_usd':'.16',
+        'within_matched_ceiling':all(v<=Decimal('.16') for v in combined.values()),
         'max_calls_including_materials_and_smokes':1610+(336 if scenario=='dual_judge' else 0),
         'attributed_item_arm_usd':{a:str(v+shared+Decimal('.0004')) for a,v in arms.items()},
         'replication_judge_overhead_usd':str(extra*84),
-        'combined_attributed_item_arm_usd':{a:str(v+shared+Decimal('.0004')+(cost('replication',*STAGES['lone' if a=='L' else 'judge']) if scenario=='dual_judge' else 0)) for a,v in arms.items()},
+        'combined_attributed_item_arm_usd':{a:str(v) for a,v in combined.items()},
         'primary': 'Gemini min(VE_shift,VE_smuggle) - min(X_shift,X_smuggle)',
         'replication_policy':'same frozen Gemini role transcript; separate Qwen final judgment; Qwen lone floor'}
 
@@ -131,15 +156,16 @@ def request(item,arm,stage,history=None,*,judge='pro',turn=0,commitment=None,que
         if history: content+='\nProtocol record:\n'+packed(history)
         instruction=ROLES.get(arm+'_'+role,ROLES.get(role,''))
     schema=VERDICT_SCHEMA if role=='judge' else None
-    # Keep the frozen instruction text. Its schema copy does not account for
+    # The prompt's schema copy does not account for
     # the separate provider response_schema overhead; p5_tokens handles that.
     system=(instruction if stage=='paraphrase' else SYSTEM+' '+instruction)+((' Response schema: '+packed(schema)) if schema else '')
-    inp,out=STAGES[stage]
-    prefix = "rewrite-v7/" if stage == "paraphrase" else ""
+    inp,out=stage_limits(arm,stage,model)
+    prefix = "rewrite-v7/" if stage == "paraphrase" else STUDY_REVISION+'/'
     return PaidRequest(prefix+f"{item['split']}/{item['id']}/{arm}/{model}/{stage}/{turn}",model,
         [{'role':'system','content':system},{'role':'user','content':content}],inp,out,
         response_schema=schema,metadata={'item_id':item['id'],'arm':arm,'role':stage,'turn':turn,
-            'packet_sha256':digest(item['payload']),'seed':SEED,'sample':0})
+            'packet_sha256':digest(item['payload']),'seed':SEED,'sample':0,
+            **({'require_response_schema':True} if schema else {})})
 
 
 def native_counter(*, cached_only=False):
@@ -294,6 +320,8 @@ def execute(item,arm,client,judge_clients,*,local_events=None,local_cache=(),eve
             if judge=='pro': raise
             continue  # P1 ledger retains the per-judge halt; Gemini can continue.
         try:
+            if getattr(reply,'finish_reason','').upper() in ('MAX_TOKENS','LENGTH'):
+                raise ValueError('truncated judgment: '+reply.finish_reason)
             answer=parse(reply.text,[n['id'] for n in item['payload']['nodes']+item['payload']['premises']]);parse_error=None
         except (ValueError,TypeError) as exc:
             answer={};parse_error=str(exc)
@@ -301,6 +329,9 @@ def execute(item,arm,client,judge_clients,*,local_events=None,local_cache=(),eve
             'condition':arm,'judge':judge,'sample':0,'seed':SEED,'packet_sha256':digest(item['payload']),
             'prompt_sha256':digest(req.messages),'response_sha256':digest(reply.text),'answer':answer,
             'ok':parse_error is None,'error':parse_error,'protocol_error':error,
+            'localization_invalid_ids':sorted(set(answer.get('locations',[]))-
+                {n['id'] for n in item['payload']['nodes']+item['payload']['premises']}),
+            'finish_reason':getattr(reply,'finish_reason',''),
             'author_failure':author_failure,'unresolved':obligations,'oracle_unknown':oracle_unknown,
             'local_wall_s':60-wall_remaining,'local_cpu_s':sum(e.get('cpu_s',0) for e in local_events),
             'tool_events':local_events,'history':history})
@@ -322,7 +353,8 @@ def labels(anchored=True):
 
 
 def freeze(scenario):
-    write_json(HERE/'prompts.json',{'system':SYSTEM,'roles':ROLES,'schema':VERDICT_SCHEMA,'stages':STAGES})
+    write_json(HERE/'prompts.json',{'system':SYSTEM,'roles':ROLES,'schema':VERDICT_SCHEMA,'stages':STAGES,
+        'effective_stage_caps':{a:{m:{s:stage_limits(a,s,m) for s in stage_list(a)} for m in ('pro','replication')} for a in ARMS}})
     paths=[ROOT/'ve_experiments/paid.py',ROOT/'ve_experiments/json_response.py',*ROOT.glob('experiments/p5*.py'),
            ROOT/'experiments/p1.py',ROOT/'experiments/p1_preflight.py',ROOT/'experiments/prereg_inventory.py',
            ROOT/'experiments/trial_analysis.py',*ROOT.glob('tests/test_p5*.py'),
@@ -334,6 +366,8 @@ def freeze(scenario):
            *ROOT.glob('ve/*.py'), ROOT/'lean/.lake/build/bin/ve_conformance']
     paths += list((HERE/'runs').glob('revision-*/paraphrase-costs.jsonl'))
     paths += [HERE/'checks/v7-final-acceptance.json', HERE/'checks/gemini-rendered-adjudication.json']
+    paths += [HERE/'DEV-CONTRACT-AUDIT.md',HERE/'checks/dev-contract-audit.json',
+        HERE/'checks/dev-superseded-v8.json',HERE/'runs/dev/trials.jsonl',HERE/'runs/dev/analysis.json']
     paths += [HERE/name for name in ('MATERIALS-MANIFEST.json','MATERIALS-HASHES.txt',
         'MATERIALS-HASHES.txt.ots','checks/round5-review-submission.json',
         'checks/round5-review-verification.txt','checks/round5-review-import.json',
@@ -355,7 +389,7 @@ def freeze(scenario):
     return result
 
 
-def verify_freeze(*, paraphrase_progress=False):
+def verify_freeze(*, paraphrase_progress=False, check_budget=True):
     f=json.loads((HERE/'freeze.json').read_text())
     # Only this pre-scoring construction stage may replace its own outputs.
     # Dossiers, code and every other frozen input must still match exactly.
@@ -369,8 +403,10 @@ def verify_freeze(*, paraphrase_progress=False):
     if 'gemini_calibration' in f and (not calibration_path.exists() or
             f['gemini_calibration']!=json.loads(calibration_path.read_text())):
         raise PreflightError('Gemini calibration changed; refreeze required')
-    if not f['ceilings']['within_cap']:
+    if check_budget and not f['ceilings']['within_cap']:
         raise BudgetExceeded('scenario exceeds $40')
+    if check_budget and not f['ceilings'].get('within_matched_ceiling',True):
+        raise BudgetExceeded('worst-case item-arm schedule exceeds matched .16 ceiling')
     return f
 
 
@@ -382,7 +418,7 @@ def gate_receipt(name,result,stamp):
 
 def require_gates(scored=False):
     f=verify_freeze(); blockers=[]
-    for name in ('tracked-blinding','surface-soundness','review','prose-provenance','construction','known-answer','gemini-calibration-coverage','tokenizer','lean-replay','packet-safety','leakage','role-boundaries','external-timestamp','provider-preflight',*(['dev'] if scored else [])):
+    for name in ('tracked-blinding','surface-soundness','review','prose-provenance','construction','known-answer','gemini-calibration-coverage','tokenizer','budget','lean-replay','packet-safety','leakage','role-boundaries','external-timestamp','provider-preflight',*(['dev'] if scored else [])):
         path=HERE/f'checks/{name}.json'
         r=json.loads(path.read_text()) if path.exists() else {}
         if r.get('passed') is not True or r.get('freeze_sha256')!=f['manifest_sha256']:
@@ -413,6 +449,34 @@ def revision_paraphrase_costs(base=HERE):
 
 class P5Ledger(Ledger):
     """Additional per-item matched ceiling, including retry holds and Qwen judge."""
+    def supersede_dev(self):
+        """Narrow v8 output-cap recovery; old requests/costs are never rewritten."""
+        with self.locked() as (f,rows):
+            recovered={r['halt_time'] for r in rows if r['event']=='p5_dev_cap_recovery'}
+            for halt in rows:
+                if (halt['event']!='panel_validation_halt' or halt['time'] in recovered or
+                    halt.get('identity')!='dev/ia16a766729f914abd691307ee67fec15/VE/pro/defender/0' or
+                    halt.get('error')!='provider exceeded per-call token cap' or halt.get('model')!='pro'):
+                    continue
+                history=[r for r in rows if r.get('identity')==halt['identity']]
+                req=next(r for r in reversed(history) if r['event']=='reserve')
+                reply=next(r for r in reversed(history) if r['event']=='complete')
+                if (req['max_output_tokens']!=1024 or reply['billed_output_tokens']!=1095 or
+                    reply['finish_reason']!='MAX_TOKENS' or reply['revision']!=MODELS['pro'] or
+                    reply['input_tokens']>req['max_input_tokens'] or
+                    req['metadata'].get('block_id')!='dual_judge/dev'):
+                    raise PreflightError('v8 dev halt evidence changed; no recovery')
+                self.append(f,{'event':'p5_dev_cap_recovery','halt_time':halt['time'],
+                    'identity':halt['identity'],'sample':False,
+                    'reason':'2026-09-22 v9 harness amendment: superseded dev; 4096 billed-output cap; retain costs'})
+            pending,_,_,_,blocked=self.state(rows)
+            if 'block:dual_judge/dev' in pending:
+                if blocked or set(pending)!={'block:dual_judge/dev'}:
+                    raise PreflightError('cannot supersede dev with unresolved billing')
+                self.append(f,{'event':'block_release','block_id':'dual_judge/dev',
+                    'released_usd':str(pending['block:dual_judge/dev']),
+                    'reason':'superseded incomplete v8 dev; unused reservation only; no refund or completed sample'})
+
     def reserve(self, request):
         meta=request.metadata
         if meta.get('arm') in ARMS:
@@ -446,16 +510,16 @@ def ledger(cap):
 def run(split,cap,resume=False):
     f=require_gates(split=='scored'); plan=SCENARIOS[f['scenario']]
     book=ledger(cap); book.allowance('p5-local-envelope','.1344')
-    block=f'{f["scenario"]}/{split}'
+    block=f'{STUDY_REVISION}/{f["scenario"]}/{split}'
     n=12 if split=='dev' else 72
-    online=sum((cost('pro',*STAGES[s]) for a in ARMS for s in stage_list(a)),Decimal(0))
+    online=sum((cost('pro',*stage_limits(a,s)) for a in ARMS for s in stage_list(a)),Decimal(0))
     if len(plan)>1:
-        online+=sum((cost('replication',*STAGES['lone' if a=='L' else 'judge']) for a in ARMS),Decimal(0))
+        online+=sum((cost('replication',*stage_limits(a,'lone' if a=='L' else 'judge','replication')) for a in ARMS),Decimal(0))
     book.reserve_block(block,str(n*online),resume=resume,schedule=f['scenario'],split=split)
     pro=PaidClient(VertexBackend(),book,block,reuse_completed=True)
     clients={'pro':pro}
     if 'replication' in plan: clients['replication']=PaidClient(OpenRouterBackend(native_counter()),book,block,reuse_completed=True)
-    trials_path=HERE/f'runs/{split}/trials.jsonl'; existing=read(trials_path)
+    trials_path=run_path(split,'trials.jsonl'); existing=read(trials_path)
     done={(r['item_id'],r['condition'],r['judge']) for r in existing}
     assignments=[(i,a) for i in materials(split) for a in ARMS];random.Random(SEED).shuffle(assignments)
     stopped=None
@@ -469,7 +533,7 @@ def run(split,cap,resume=False):
             if not active:break
             events=[]
             try:
-                local_path=HERE/f'runs/{split}/local-events.jsonl'
+                local_path=run_path(split,'local-events.jsonl')
                 cache=[r['event'] for r in read(local_path) if r['item_id']==item['id'] and r['arm']==arm]
                 rows=execute(item,arm,pro,active,local_events=events,local_cache=cache,
                     event_sink=lambda e:append(local_path,{'item_id':item['id'],'arm':arm,'event':e}))
@@ -487,12 +551,11 @@ def run(split,cap,resume=False):
     report=analyze(rows,materials(split),labels(),plan,allow_missing=True)
     report.update(stopped=stopped,halted_judges=halted)
     if split=='dev':
-        compliance={j:len([r for r in rows if r['judge']==j and r['ok']])/len(assignments) for j in plan}
         # Source-fidelity must be manually reviewed; contract alone never passes dev.
-        report.update(passed=False,contract_compliance=compliance,
-            contract_passed=all(v>=.9 for v in compliance.values()),source_fidelity_review_required=True)
+        report.update(passed=False,source_fidelity_review_required=True,
+            **contract_report(rows,len(assignments),plan))
         gate_receipt('dev',report,f['manifest_sha256'])
-    write_json(HERE/f'runs/{split}/analysis.json',report)
+    write_json(run_path(split,'analysis.json'),report)
     if not stopped and not halted and report['missing']==0:book.release_block(block)
     return report
 
@@ -654,7 +717,8 @@ def main(argv=None):
     args=parser.parse_args(argv)
     try:
         if args.command=='generate':
-            result=generate();write_json(HERE/'prompts.json',{'system':SYSTEM,'roles':ROLES,'schema':VERDICT_SCHEMA,'stages':STAGES})
+            result=generate();write_json(HERE/'prompts.json',{'system':SYSTEM,'roles':ROLES,'schema':VERDICT_SCHEMA,'stages':STAGES,
+        'effective_stage_caps':{a:{m:{s:stage_limits(a,s,m) for s in stage_list(a)} for m in ('pro','replication')} for a in ARMS}})
         elif args.command=='review':
             result=review.review_export(args.export) if args.export else review.submit(args.submit) if args.submit else review.adjudicate(args.adjudicate) if args.adjudicate else review.gate()
         elif args.command=='freeze':result=freeze(args.scenario)
@@ -677,14 +741,14 @@ def main(argv=None):
             from experiments.p5_preflight import explanations
             result=explanations(args.split,args.export,args.submit)
         else:
-            f=verify_freeze();result=analyze(read(HERE/f'runs/{args.split}/trials.jsonl'),materials(args.split),labels(),
-                SCENARIOS[f['scenario']],read(HERE/f'runs/{args.split}/ratings.jsonl'),allow_missing=True)
+            f=verify_freeze();result=analyze(read(run_path(args.split,'trials.jsonl')),materials(args.split),labels(),
+                SCENARIOS[f['scenario']],read(run_path(args.split,'ratings.jsonl')),allow_missing=True)
             from experiments.p5_preflight import cost_report
             result['costs']=cost_report(args.split)
             result['cost_accuracy_frontier']={j:{a:{'mean_cost_usd':result['costs']['mean_attributed_cost_by_arm'][a],
                 'worst_flaw_accuracy':r['worst_flaw'][a], 'benign_completion':r['accuracy'][a]['benign']} for a in ARMS}
                 for j,r in result['judges'].items()}
-            write_json(HERE/f'runs/{args.split}/analysis.json',result)
+            write_json(run_path(args.split,'analysis.json'),result)
         print(json.dumps(result,indent=2,default=str))
         return 2 if result.get('requested_models_passed',result.get('passed')) is False else 0
     except (PreflightError,ValueError,FileNotFoundError) as exc:

@@ -360,7 +360,7 @@ class Ledger:
         with self.locked() as (f, rows):
             pending, spent, seen, revisions, blocked = self.state(rows)
             history = [r for r in rows if r.get("identity") == request.identity]
-            recovered = {r['halt_time'] for r in rows if r['event'] in ('amendment8_halt_recovery', 'amendment14_halt_recovery', 'paraphrase_routing_recovery', 'material_review_cap_recovery')}
+            recovered = {r['halt_time'] for r in rows if r['event'] in ('amendment8_halt_recovery', 'amendment14_halt_recovery', 'paraphrase_routing_recovery', 'material_review_cap_recovery', 'p5_dev_cap_recovery')}
             for row in rows:
                 if row['event'] in ('panel_halt', 'panel_validation_halt') and row['model'] == request.model and row['time'] not in recovered:
                     raise InfrastructureError(row['error'])
@@ -822,6 +822,7 @@ class OpenRouterBackend:
                         break
             error = r.text.replace(key, '[REDACTED]') if r.status_code != 200 else ''
             if (request.response_schema and r.status_code in (400, 422)
+                    and not request.metadata.get('require_response_schema')
                     and any(s in error.lower() for s in ('json_schema', 'structured output', 'response_format'))
                     and any(s in error.lower() for s in ('not support', 'unsupported', 'not available'))):
                 # Only an explicit parameter rejection is free to retry in JSON mode.

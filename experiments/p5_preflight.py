@@ -18,17 +18,18 @@ def fixtures():
     """Exact base wire plus explicit generated-output reserves, counted again live."""
     for item in p.materials():
         for arm in p.ARMS:
-            author=p.STAGES['author'][1]; critic=p.STAGES['critic'][1]
+            author=p.stage_limits(arm,'author')[1]; critic=p.stage_limits(arm,'critic')[1]
+            repair=p.stage_limits(arm,'repair')[1];defender=p.stage_limits(arm,'defender')[1]
             for stage in dict.fromkeys(p.stage_list(arm)):
                 if stage in ('answer','followup_answer'):
                     req=p.request(item,arm,stage,commitment='',question='')
                     reserve=512+256
                 else:
                     reserve={'author':0,'lone':0,'repair':author+512,'critic':author+512 if arm=='VE' else author,
-                        'defender':author+critic+(p.STAGES['repair'][1]+512 if arm=='VE' else 0),
+                        'defender':author+critic+(repair+512 if arm=='VE' else 0),
                         'followup':author+critic+3*512,
-                        'judge':author+critic+(3*512+256+512 if arm=='X' else 1024)+
-                            (p.STAGES['repair'][1]+1024 if arm=='VE' else 0)}[stage]
+                        'judge':author+critic+(3*512+256+512 if arm=='X' else defender)+
+                            (repair+1024 if arm=='VE' else 0)}[stage]
                     req=p.request(item,arm,stage,history=[{'item_id':item['id'],'stage':'reserved_history','text':''}] if reserve else None)
                 yield req,reserve
                 if stage in ('judge','lone'):
@@ -73,7 +74,9 @@ def inventory(count_tokens=False):
         'scored_per_variant':24,'scored_families_per_predicate_count':{'20':8,'40':8,'60':8}},
         'scenario_ceilings':{s:p.ceilings(s) for s in p.SCENARIOS},
         'original_design_inventory':'inventory.json (UNBUILT aggregate design; slot labels removed in v5)',
-        'stage_caps':p.STAGES,'token_counts':None,
+        'stage_caps':p.STAGES,
+        'effective_stage_caps':{a:{m:{s:p.stage_limits(a,s,m) for s in p.stage_list(a)}
+            for m in ('pro','replication')} for a in p.ARMS},'token_counts':None,
         'material_status':('GENERATOR_RENDERED_REVIEW_REQUIRED' if (p.HERE/'materials/prose-policy.json').exists() else 'QWEN_PENDING_REVIEW' if len(read(p.HERE/'materials/paraphrases.jsonl.gz'))==84
             and all(r['provenance'].get('independent_qwen_pass') for r in read(p.HERE/'materials/paraphrases.jsonl.gz'))
             else 'OFFLINE_DRAFT_REQUIRES_QWEN_AND_REVIEW')}
@@ -141,9 +144,12 @@ def role_boundaries():
     forbidden=False
     try:p.request(item,'X','answer',history=[{'secret':'sibling answer'}],commitment='fixed',question='single')
     except PreflightError:forbidden=True
-    return {'passed':forbidden and 'sibling answer' not in content and 'fixed' in content and 'single' in content,
+    structured=all(p.request(item,a,'lone' if a=='L' else 'judge',judge=j).response_schema==p.VERDICT_SCHEMA
+        and p.request(item,a,'lone' if a=='L' else 'judge',judge=j).metadata.get('require_response_schema')
+        for a in p.ARMS for j in ('pro','replication'))
+    return {'passed':structured and forbidden and 'sibling answer' not in content and 'fixed' in content and 'single' in content,
         'fresh_context_fields':['packet','commitment','one_question'],'adaptive_followups':1,
-        'judges_structured':all(p.request(item,a,'lone' if a=='L' else 'judge').response_schema==p.VERDICT_SCHEMA for a in p.ARMS)}
+        'judges_structured':structured}
 
 
 
@@ -204,12 +210,14 @@ def external_timestamp(stamp):
 
 
 def preflight(offline=False):
-    f=p.verify_freeze();stamp=f['manifest_sha256'];reports={}
+    f=p.verify_freeze(check_budget=False);stamp=f['manifest_sha256'];reports={}
     from experiments.p5_surface import audit as surface_audit
     from experiments.p5_blinding import audit as blinding_audit
     from experiments.p5_tokens import coverage
     from experiments.p5_rendered import provenance
-    checks=[('tracked-blinding',blinding_audit),('surface-soundness',surface_audit),('review',lambda:p.review.gate()),
+    checks=[('budget',lambda:{'passed':f['ceilings']['within_cap'] and f['ceilings']['within_matched_ceiling'],
+        'ceilings':f['ceilings'],'generation_calls':0}),
+        ('tracked-blinding',blinding_audit),('surface-soundness',surface_audit),('review',lambda:p.review.gate()),
         ('prose-provenance',lambda:provenance(p.HERE)),
         ('construction',lambda:json.loads((p.HERE/'checks/construction.json').read_text())),
         ('known-answer',lambda:p.known_answer(p.materials(),p.check_labels())),
@@ -260,7 +268,7 @@ def retained_tokens():
     backend=OpenRouterBackend(counter)
     rows={r['identity']:r for r in receipt.get('counts',[])}
     native_recounts=0
-    calibration=p.verify_freeze().get('gemini_calibration',{})
+    calibration=p.verify_freeze(check_budget=False).get('gemini_calibration',{})
     for req,reserve in fixtures():
         r=rows.get(req.identity,{})
         if r.get('wire_sha256')!=digest([req.messages,req.response_schema]) or r.get('generated_reserve')!=reserve:
@@ -311,7 +319,7 @@ def provider_smoke(cap,only_openrouter=False,*,cached_only=False):
     # Separate infrastructure smoke, never an efficacy probe or replacement sample.
     # A read/recount of completed evidence needs no spending authorization. The
     # positive ledger ceiling here is never used to reserve or dispatch offline.
-    f=p.verify_freeze()
+    f=p.verify_freeze(check_budget=False) if cached_only else p.verify_freeze()
     book=Ledger(p.HERE/'runs/study/costs.jsonl',p.CAP) if cached_only else p.ledger(cap)
     results={};generation_calls=0
     for model in (('replication',) if only_openrouter else ('pro','replication')):
@@ -369,7 +377,7 @@ def provider_smoke(cap,only_openrouter=False,*,cached_only=False):
 
 
 def explanations(split,export=None,submit=None):
-    rows=read(p.HERE/f'runs/{split}/trials.jsonl');items={i['id']:i for i in p.materials(split)}
+    rows=read(p.run_path(split,'trials.jsonl'));items={i['id']:i for i in p.materials(split)}
     from experiments.p5_isolation import blind_packet, export_isolated, validate_exposure
     if export:
         records=[]
@@ -386,16 +394,16 @@ def explanations(split,export=None,submit=None):
         incoming=json.loads(submit.read_text());allowed={digest({k:r[k] for k in ('item_id','condition','judge','answer')}) for r in rows}
         response_items={digest({k:r[k] for k in ('item_id','condition','judge','answer')}):r['item_id'] for r in rows}
         incoming=[{**r, 'item_id':response_items.get(r.get('response_sha256'))} for r in incoming]
-        prior=read(p.HERE/f'runs/{split}/ratings.jsonl')
+        prior=read(p.run_path(split,'ratings.jsonl'))
         validate_exposure(incoming,prior,items,identity='rater_id')
         for r in incoming:
             if r.get('response_sha256') not in allowed or not r.get('rater_id') or type(r.get('source_grounded')) is not bool or not r.get('reason'):
                 raise PreflightError('complete identified, source-grounded ratings required')
             if r.get('event')=='adjudication' and not r.get('rating_digests'):
                 raise PreflightError('adjudication must bind ratings')
-            p.append(p.HERE/f'runs/{split}/ratings.jsonl',{k:v for k,v in r.items() if k not in ('packet','answer')})
+            p.append(p.run_path(split,'ratings.jsonl'),{k:v for k,v in r.items() if k not in ('packet','answer')})
         if split=='dev':
-            ratings=read(p.HERE/'runs/dev/ratings.jsonl');ok=p.analyze(rows,p.materials('dev'),p.labels(),p.SCENARIOS[p.verify_freeze()['scenario']],ratings)
+            ratings=read(p.run_path('dev','ratings.jsonl'));ok=p.analyze(rows,p.materials('dev'),p.labels(),p.SCENARIOS[p.verify_freeze()['scenario']],ratings)
             keys={digest({k:r[k] for k in ('item_id','condition','judge','answer')}) for r in rows}
             fidelity=all(len({r['rater_id'] for r in ratings if r['response_sha256']==key and r.get('source_fidelity') is True})>=2 for key in keys)
             report=json.loads((p.HERE/'checks/dev.json').read_text());report['source_fidelity_passed']=fidelity
@@ -417,7 +425,7 @@ def cost_report(split):
         value=Decimal(row.get('cost_usd',row.get('infrastructure_hold_usd','0')))
         if row['event']!='complete':holds+=value
         if meta.get('role')=='paraphrase':shared[meta['item_id']]+=value
-        elif row['identity'].startswith(split+'/'):
+        elif row['identity'].startswith((split+'/',p.STUDY_REVISION+'/'+split+'/')):
             actual[(meta['item_id'],meta['arm'])]+=value
     auxiliary, auxiliary_holds = p.revision_paraphrase_costs(p.HERE)
     for item_id, value in auxiliary.items():

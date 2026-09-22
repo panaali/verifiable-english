@@ -28,7 +28,7 @@ def calibrated(tmp_path, monkeypatch):
     calibration=tokens.calibrate()
     freeze={'manifest_sha256':'test-freeze','gemini_calibration':calibration}
     (tmp_path/'freeze.json').write_text(packed(freeze))
-    monkeypatch.setattr(p,'verify_freeze',lambda:freeze)
+    monkeypatch.setattr(p,'verify_freeze',lambda **_:freeze)
     return ledger,calibration,client,calls
 
 

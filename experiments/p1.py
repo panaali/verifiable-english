@@ -992,7 +992,7 @@ def infrastructure_state(ledger):
     """Durable routing/validation halts only; transient retries reset on invocation."""
     with ledger.locked() as (_, entries):
         unavailable, halted = {}, {}
-        recovered = {r["halt_time"] for r in entries if r["event"] in ("amendment8_halt_recovery", "amendment14_halt_recovery")}
+        recovered = {r["halt_time"] for r in entries if r["event"] in ("amendment8_halt_recovery", "amendment14_halt_recovery", "p5_dev_cap_recovery")}
         for entry in entries:
             if entry.get("time") in recovered:
                 continue
