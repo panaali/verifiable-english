@@ -1,0 +1,1096 @@
+{
+  "cli_binary_sha256": "387a5c5dcdbb815085edf0baf79591f9d8894efe922bceaf3d75b1b08055229d",
+  "created_at": "2026-09-22T23:45:56.420671+00:00",
+  "generation_calls": 0,
+  "limits": {
+    "haiku": 200000,
+    "opus": 1000000
+  },
+  "method": "ASCII/UTF8 byte upper bound for raw gate. Native authenticated count_tokens for actual longer full-study prompts before generation.",
+  "rows": [
+    {
+      "c_fixture_prompt_bytes": 108844,
+      "grants": 1500,
+      "item_id": "403ffc2968ff",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57385,
+      "raw_upper_bound_with_reserves": 67481,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 107956,
+      "grants": 1500,
+      "item_id": "c11750b9289e",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56181,
+      "raw_upper_bound_with_reserves": 66277,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 109851,
+      "grants": 1500,
+      "item_id": "32f4c84f554a",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 58115,
+      "raw_upper_bound_with_reserves": 68211,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 108318,
+      "grants": 1500,
+      "item_id": "621ea575bcb0",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56687,
+      "raw_upper_bound_with_reserves": 66783,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 107471,
+      "grants": 1500,
+      "item_id": "c8772b22158f",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 55865,
+      "raw_upper_bound_with_reserves": 65961,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 109204,
+      "grants": 1500,
+      "item_id": "852f1abcc8e5",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57775,
+      "raw_upper_bound_with_reserves": 67871,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 108392,
+      "grants": 1500,
+      "item_id": "1aae8d0523d4",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56786,
+      "raw_upper_bound_with_reserves": 66882,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 109023,
+      "grants": 1500,
+      "item_id": "5f81aff3646b",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57560,
+      "raw_upper_bound_with_reserves": 67656,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 108491,
+      "grants": 1500,
+      "item_id": "bfd7f9aacb15",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56564,
+      "raw_upper_bound_with_reserves": 66660,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 107504,
+      "grants": 1500,
+      "item_id": "565e533c8114",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56007,
+      "raw_upper_bound_with_reserves": 66103,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 108736,
+      "grants": 1500,
+      "item_id": "1d8493dd467f",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57325,
+      "raw_upper_bound_with_reserves": 67421,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 108229,
+      "grants": 1500,
+      "item_id": "9941382d2e59",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56748,
+      "raw_upper_bound_with_reserves": 66844,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 108227,
+      "grants": 1500,
+      "item_id": "4bfc2444f84d",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56931,
+      "raw_upper_bound_with_reserves": 67027,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 108107,
+      "grants": 1500,
+      "item_id": "c2a8821914ec",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56424,
+      "raw_upper_bound_with_reserves": 66520,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 107383,
+      "grants": 1500,
+      "item_id": "5b8f3a5c729f",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56050,
+      "raw_upper_bound_with_reserves": 66146,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 109574,
+      "grants": 1500,
+      "item_id": "453255ec5dc5",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57942,
+      "raw_upper_bound_with_reserves": 68038,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 107819,
+      "grants": 1500,
+      "item_id": "01664d0d29dd",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56421,
+      "raw_upper_bound_with_reserves": 66517,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 108347,
+      "grants": 1500,
+      "item_id": "15d68862154e",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56833,
+      "raw_upper_bound_with_reserves": 66929,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 108498,
+      "grants": 1500,
+      "item_id": "50162d034f0a",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57048,
+      "raw_upper_bound_with_reserves": 67144,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 107940,
+      "grants": 1500,
+      "item_id": "a0145ae4d33f",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56508,
+      "raw_upper_bound_with_reserves": 66604,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351904,
+      "grants": 5000,
+      "item_id": "a42c66f5b1f2",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 179090,
+      "raw_upper_bound_with_reserves": 189186,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351340,
+      "grants": 5000,
+      "item_id": "82a1e2fd54ec",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178418,
+      "raw_upper_bound_with_reserves": 188514,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351301,
+      "grants": 5000,
+      "item_id": "468b58118e5e",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178616,
+      "raw_upper_bound_with_reserves": 188712,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351517,
+      "grants": 5000,
+      "item_id": "9aed2e8c353d",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178601,
+      "raw_upper_bound_with_reserves": 188697,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351971,
+      "grants": 5000,
+      "item_id": "9c5d22df6a70",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 179059,
+      "raw_upper_bound_with_reserves": 189155,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351781,
+      "grants": 5000,
+      "item_id": "3e8ebb942deb",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178836,
+      "raw_upper_bound_with_reserves": 188932,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351754,
+      "grants": 5000,
+      "item_id": "c1a97d792b9f",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178812,
+      "raw_upper_bound_with_reserves": 188908,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351839,
+      "grants": 5000,
+      "item_id": "a10f9a0518ed",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 179208,
+      "raw_upper_bound_with_reserves": 189304,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351446,
+      "grants": 5000,
+      "item_id": "6a06d28b3428",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178843,
+      "raw_upper_bound_with_reserves": 188939,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 350827,
+      "grants": 5000,
+      "item_id": "841de9152549",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 177978,
+      "raw_upper_bound_with_reserves": 188074,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351638,
+      "grants": 5000,
+      "item_id": "627d8f66e4fa",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178728,
+      "raw_upper_bound_with_reserves": 188824,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351511,
+      "grants": 5000,
+      "item_id": "49640ca52b18",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178682,
+      "raw_upper_bound_with_reserves": 188778,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351775,
+      "grants": 5000,
+      "item_id": "2b20dd18ea03",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178908,
+      "raw_upper_bound_with_reserves": 189004,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351313,
+      "grants": 5000,
+      "item_id": "b2eacfa3e7c0",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178756,
+      "raw_upper_bound_with_reserves": 188852,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 350655,
+      "grants": 5000,
+      "item_id": "cb4133a20c04",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 177737,
+      "raw_upper_bound_with_reserves": 187833,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351683,
+      "grants": 5000,
+      "item_id": "a79933900011",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 179011,
+      "raw_upper_bound_with_reserves": 189107,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351338,
+      "grants": 5000,
+      "item_id": "dfb1f59008b6",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178671,
+      "raw_upper_bound_with_reserves": 188767,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351303,
+      "grants": 5000,
+      "item_id": "c064d4ce875e",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178727,
+      "raw_upper_bound_with_reserves": 188823,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351406,
+      "grants": 5000,
+      "item_id": "87f20b0f566c",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178554,
+      "raw_upper_bound_with_reserves": 188650,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 351011,
+      "grants": 5000,
+      "item_id": "e6c81c64f81d",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178056,
+      "raw_upper_bound_with_reserves": 188152,
+      "split": "gate"
+    },
+    {
+      "c_fixture_prompt_bytes": 107776,
+      "grants": 1500,
+      "item_id": "c62a4381fdc0",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56287,
+      "raw_upper_bound_with_reserves": 66383,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108387,
+      "grants": 1500,
+      "item_id": "97d4f61264f3",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56487,
+      "raw_upper_bound_with_reserves": 66583,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 109013,
+      "grants": 1500,
+      "item_id": "7372b8671dd8",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57486,
+      "raw_upper_bound_with_reserves": 67582,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108662,
+      "grants": 1500,
+      "item_id": "d287b77f0dd5",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57199,
+      "raw_upper_bound_with_reserves": 67295,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 109867,
+      "grants": 1500,
+      "item_id": "79627ce79023",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 58274,
+      "raw_upper_bound_with_reserves": 68370,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108619,
+      "grants": 1500,
+      "item_id": "09d3421a7b49",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57260,
+      "raw_upper_bound_with_reserves": 67356,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 107931,
+      "grants": 1500,
+      "item_id": "d67126fd132b",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56252,
+      "raw_upper_bound_with_reserves": 66348,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 107290,
+      "grants": 1500,
+      "item_id": "cb3ec61ce4bf",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 55695,
+      "raw_upper_bound_with_reserves": 65791,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108632,
+      "grants": 1500,
+      "item_id": "2facc3d7a7ed",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57174,
+      "raw_upper_bound_with_reserves": 67270,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 107926,
+      "grants": 1500,
+      "item_id": "95c3b8e23d72",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56319,
+      "raw_upper_bound_with_reserves": 66415,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108353,
+      "grants": 1500,
+      "item_id": "93f569cbe7c4",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56461,
+      "raw_upper_bound_with_reserves": 66557,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108459,
+      "grants": 1500,
+      "item_id": "68489579020a",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57001,
+      "raw_upper_bound_with_reserves": 67097,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108390,
+      "grants": 1500,
+      "item_id": "bbe990624cf1",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56940,
+      "raw_upper_bound_with_reserves": 67036,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 107857,
+      "grants": 1500,
+      "item_id": "a87eb1e8be92",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56288,
+      "raw_upper_bound_with_reserves": 66384,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 109671,
+      "grants": 1500,
+      "item_id": "9cf0a71d8c1c",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 58234,
+      "raw_upper_bound_with_reserves": 68330,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 107061,
+      "grants": 1500,
+      "item_id": "9910e0554374",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 55561,
+      "raw_upper_bound_with_reserves": 65657,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108135,
+      "grants": 1500,
+      "item_id": "455821536c73",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56360,
+      "raw_upper_bound_with_reserves": 66456,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108648,
+      "grants": 1500,
+      "item_id": "cdd0a93074d0",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57120,
+      "raw_upper_bound_with_reserves": 67216,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108020,
+      "grants": 1500,
+      "item_id": "09933d9bea08",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56401,
+      "raw_upper_bound_with_reserves": 66497,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108999,
+      "grants": 1500,
+      "item_id": "6b453e0db9b5",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57419,
+      "raw_upper_bound_with_reserves": 67515,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108464,
+      "grants": 1500,
+      "item_id": "1651d07c88cf",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56970,
+      "raw_upper_bound_with_reserves": 67066,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 107509,
+      "grants": 1500,
+      "item_id": "7bd81d609e00",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 55907,
+      "raw_upper_bound_with_reserves": 66003,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108353,
+      "grants": 1500,
+      "item_id": "e1e871dbf3cf",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56691,
+      "raw_upper_bound_with_reserves": 66787,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 107299,
+      "grants": 1500,
+      "item_id": "8574eb64bc85",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 55640,
+      "raw_upper_bound_with_reserves": 65736,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108036,
+      "grants": 1500,
+      "item_id": "a5aa4504caab",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56638,
+      "raw_upper_bound_with_reserves": 66734,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 109016,
+      "grants": 1500,
+      "item_id": "2e6a773db830",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57501,
+      "raw_upper_bound_with_reserves": 67597,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 107674,
+      "grants": 1500,
+      "item_id": "da281a613e5f",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56297,
+      "raw_upper_bound_with_reserves": 66393,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108455,
+      "grants": 1500,
+      "item_id": "0c11aef4c36a",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56758,
+      "raw_upper_bound_with_reserves": 66854,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 107072,
+      "grants": 1500,
+      "item_id": "e78ff2ab4969",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 55505,
+      "raw_upper_bound_with_reserves": 65601,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 109410,
+      "grants": 1500,
+      "item_id": "b44ae33fd345",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57869,
+      "raw_upper_bound_with_reserves": 67965,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108095,
+      "grants": 1500,
+      "item_id": "cceb6b22b917",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56567,
+      "raw_upper_bound_with_reserves": 66663,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108453,
+      "grants": 1500,
+      "item_id": "66bda85c7274",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56962,
+      "raw_upper_bound_with_reserves": 67058,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108490,
+      "grants": 1500,
+      "item_id": "2129a06ea286",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57110,
+      "raw_upper_bound_with_reserves": 67206,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 109357,
+      "grants": 1500,
+      "item_id": "4390159fb214",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57886,
+      "raw_upper_bound_with_reserves": 67982,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108494,
+      "grants": 1500,
+      "item_id": "2a6546eeb88e",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56771,
+      "raw_upper_bound_with_reserves": 66867,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108600,
+      "grants": 1500,
+      "item_id": "bfc4bea895ba",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56929,
+      "raw_upper_bound_with_reserves": 67025,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108238,
+      "grants": 1500,
+      "item_id": "395003249806",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56721,
+      "raw_upper_bound_with_reserves": 66817,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 107728,
+      "grants": 1500,
+      "item_id": "a6b8c722a9f8",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56136,
+      "raw_upper_bound_with_reserves": 66232,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108932,
+      "grants": 1500,
+      "item_id": "ef7f13bbb831",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 57591,
+      "raw_upper_bound_with_reserves": 67687,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 108248,
+      "grants": 1500,
+      "item_id": "add690dedc7d",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 56850,
+      "raw_upper_bound_with_reserves": 66946,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351777,
+      "grants": 5000,
+      "item_id": "5a47675a06cf",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 179153,
+      "raw_upper_bound_with_reserves": 189249,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 350774,
+      "grants": 5000,
+      "item_id": "0c23fe2710c5",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178079,
+      "raw_upper_bound_with_reserves": 188175,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351517,
+      "grants": 5000,
+      "item_id": "98878936319c",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178805,
+      "raw_upper_bound_with_reserves": 188901,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351209,
+      "grants": 5000,
+      "item_id": "7733fb6f6e64",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178280,
+      "raw_upper_bound_with_reserves": 188376,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351480,
+      "grants": 5000,
+      "item_id": "1ac0e082042e",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178667,
+      "raw_upper_bound_with_reserves": 188763,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351824,
+      "grants": 5000,
+      "item_id": "6b9b30b71ece",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 179145,
+      "raw_upper_bound_with_reserves": 189241,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351738,
+      "grants": 5000,
+      "item_id": "7305faad0e4d",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 179107,
+      "raw_upper_bound_with_reserves": 189203,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351726,
+      "grants": 5000,
+      "item_id": "7587bf32ed4d",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 179002,
+      "raw_upper_bound_with_reserves": 189098,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351683,
+      "grants": 5000,
+      "item_id": "6e9d797149b5",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178807,
+      "raw_upper_bound_with_reserves": 188903,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351686,
+      "grants": 5000,
+      "item_id": "2dfe3cafd86b",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178933,
+      "raw_upper_bound_with_reserves": 189029,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351648,
+      "grants": 5000,
+      "item_id": "8c5d7eac0997",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178737,
+      "raw_upper_bound_with_reserves": 188833,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351304,
+      "grants": 5000,
+      "item_id": "15194d9225f2",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178661,
+      "raw_upper_bound_with_reserves": 188757,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351617,
+      "grants": 5000,
+      "item_id": "9135801972f6",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178795,
+      "raw_upper_bound_with_reserves": 188891,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351665,
+      "grants": 5000,
+      "item_id": "861b1b100567",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178755,
+      "raw_upper_bound_with_reserves": 188851,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351030,
+      "grants": 5000,
+      "item_id": "740c1ffbb924",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178245,
+      "raw_upper_bound_with_reserves": 188341,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351654,
+      "grants": 5000,
+      "item_id": "07b06e955ad4",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178823,
+      "raw_upper_bound_with_reserves": 188919,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351419,
+      "grants": 5000,
+      "item_id": "dcfc4b7dab3d",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178583,
+      "raw_upper_bound_with_reserves": 188679,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351353,
+      "grants": 5000,
+      "item_id": "1ae7d06d4071",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178663,
+      "raw_upper_bound_with_reserves": 188759,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351368,
+      "grants": 5000,
+      "item_id": "da8ec3cc6300",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178525,
+      "raw_upper_bound_with_reserves": 188621,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 350757,
+      "grants": 5000,
+      "item_id": "28d5dca2c944",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178155,
+      "raw_upper_bound_with_reserves": 188251,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351738,
+      "grants": 5000,
+      "item_id": "e6b57bbc33a0",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178812,
+      "raw_upper_bound_with_reserves": 188908,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351701,
+      "grants": 5000,
+      "item_id": "b839587aae8e",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 179122,
+      "raw_upper_bound_with_reserves": 189218,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 350388,
+      "grants": 5000,
+      "item_id": "51bfaa9e6338",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 177465,
+      "raw_upper_bound_with_reserves": 187561,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351734,
+      "grants": 5000,
+      "item_id": "ff1b8144e644",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 179013,
+      "raw_upper_bound_with_reserves": 189109,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351245,
+      "grants": 5000,
+      "item_id": "7c7c13700e60",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178510,
+      "raw_upper_bound_with_reserves": 188606,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351023,
+      "grants": 5000,
+      "item_id": "5c1c1a254b91",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178134,
+      "raw_upper_bound_with_reserves": 188230,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 350580,
+      "grants": 5000,
+      "item_id": "3e2363eb507b",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 177604,
+      "raw_upper_bound_with_reserves": 187700,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351397,
+      "grants": 5000,
+      "item_id": "ffee4201e092",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178527,
+      "raw_upper_bound_with_reserves": 188623,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351177,
+      "grants": 5000,
+      "item_id": "4457fb55f698",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178301,
+      "raw_upper_bound_with_reserves": 188397,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 352007,
+      "grants": 5000,
+      "item_id": "79f4d6b3cfbf",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 179406,
+      "raw_upper_bound_with_reserves": 189502,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 350924,
+      "grants": 5000,
+      "item_id": "fb67bd5eae88",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178394,
+      "raw_upper_bound_with_reserves": 188490,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 352325,
+      "grants": 5000,
+      "item_id": "85b5020ed6d3",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 179442,
+      "raw_upper_bound_with_reserves": 189538,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351239,
+      "grants": 5000,
+      "item_id": "70a25921620b",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178628,
+      "raw_upper_bound_with_reserves": 188724,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351367,
+      "grants": 5000,
+      "item_id": "c1ee1547721d",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178736,
+      "raw_upper_bound_with_reserves": 188832,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 350199,
+      "grants": 5000,
+      "item_id": "4a7f350074e7",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 177393,
+      "raw_upper_bound_with_reserves": 187489,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351011,
+      "grants": 5000,
+      "item_id": "28d5677333a1",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178151,
+      "raw_upper_bound_with_reserves": 188247,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351217,
+      "grants": 5000,
+      "item_id": "320dd5eb3bd9",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178584,
+      "raw_upper_bound_with_reserves": 188680,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351574,
+      "grants": 5000,
+      "item_id": "d32f092d35f6",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178782,
+      "raw_upper_bound_with_reserves": 188878,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351723,
+      "grants": 5000,
+      "item_id": "a27da3c591bd",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178998,
+      "raw_upper_bound_with_reserves": 189094,
+      "split": "full"
+    },
+    {
+      "c_fixture_prompt_bytes": 351735,
+      "grants": 5000,
+      "item_id": "c5d5a36ecd7b",
+      "raw_fits_both": true,
+      "raw_prompt_bytes": 178958,
+      "raw_upper_bound_with_reserves": 189054,
+      "split": "full"
+    }
+  ],
+  "sources": [
+    "https://support.claude.com/en/articles/8606394-how-large-is-the-context-window-on-paid-claude-plans",
+    "https://platform.claude.com/docs/en/models/haiku-4-5/overview"
+  ]
+}
