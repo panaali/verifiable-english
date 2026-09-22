@@ -351,3 +351,76 @@ gates) is:
 ```sh
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py dev --cap-usd 7.0875964305
 ```
+
+## Amendment 9 — 2026-09-22 UTC (2026-09-21 Pacific; orchestrator, approved): $40 cap, joint-history bounds, bounded attacker retry
+
+Authorized by the orchestrator's Worker X instruction after dev exited 3 before
+any new dispatch: the prior $36.5960706577 schedule estimate exceeded $36, and
+206 Gemini joint-history fixtures exceeded their input bounds. Raise
+`STUDY_CAP_USD` from **$36 to $40**. The ledger's $40 hard stop remains the
+spending protection; input ceilings are worst-case bounds. P1's $40 allocation
+plus the P5 pilot's planned spend remain below $80 of the $293 available.
+No other cap, model, arm, assignment, initial/replay/probe bound, judge output
+allowance, or planning-output policy is changed.
+
+Compute each attacker and pushback-judge input bound from all dev and scored
+joint fixtures using retained real Vertex counts for identical messages/tools.
+Reserve **1,024 generated tokens per judge response** and **256 per attacker
+response**: three future pairs reserve 3,840 tokens, plus 1,024 for the initial
+judge output, or 2,048 for R's tool request and continuation. The total reserves
+are therefore 4,864 (V/W/A/F) and 5,888 (R). The retry replaces the truncated
+attacker reply; neither discarded text nor an extra role wrapper enters the
+history. For each arm/phase, round 110% of the maximum bounded fixture upward
+to the next **100 tokens**, the same round-value convention as Amendment 3.
+
+| Arm | Attacker maximum with reserve | 110% | Attacker input bound | Judge maximum with reserve | 110% | Judge input bound |
+|---|---:|---:|---:|---:|---:|---:|
+| V | 6,732 | 7,405.2 | 7,500 | 6,781 | 7,459.1 | 7,500 |
+| W | 6,724 | 7,396.4 | 7,400 | 6,773 | 7,450.3 | 7,500 |
+| A | 8,917 | 9,808.7 | 9,900 | 8,966 | 9,862.6 | 9,900 |
+| F | 7,082 | 7,790.2 | 7,800 | 7,131 | 7,844.1 | 7,900 |
+| R | 9,966 | 10,962.6 | 11,000 | 10,015 | 11,016.5 | 11,100 |
+
+Enforce the attacker's **max_tokens=256** at request construction even if a
+caller supplies another output allowance. A `MAX_TOKENS`/`length` attacker
+completion is retried exactly once with the same input and cap under a
+deterministic `/truncation-retry/1` identity. Both replies remain charged in
+the ledger and are reused on resume. If the retry also truncates, emit a
+`pushback_end` infrastructure-incomplete marker for that item/arm, discard the
+truncated text, and make no further judge call for that trajectory. Exclude
+that whole pushback trajectory from judge-behaviour metrics, including any
+prior partial flip; report its infrastructure coverage separately. Initial
+judge observations remain available for the initial-arm analysis.
+
+The inventory and execution accounting include one possible 256-token attacker
+retry for each of the 420 scheduled attacker turns. Judge planning means remain
+as approved in Amendment 8; actual dispatch reserves the full output cap.
+
+| Selected full_256 accounting | All-in amount |
+|---|---:|
+| Amendment 8, including retained costs/holds and local allowance | $36.5960706577 |
+| New input bounds alone (delta +$4.9694400000) | $41.5655106577 |
+| Including all authorized attacker retries (delta +$8.6150400000) | **$50.1805506577** |
+| Primary-only E4, no pushback, primary_1024 fallback | **$25.1843372689** |
+
+**Budget stop:** even before retry allowances the selected schedule exceeds
+$40. Do not raise anything else, change the selected schedule, or dispatch dev.
+Report the primary-only fallback ceiling and stop for the orchestrator's next
+decision. The selected schedule remains `full_256`; the fallback is only
+reported. Preflight prints both ceilings and returns exit 3 for this budget
+stop after completing the zero-generation gates. The selected dev call
+allocation is $7.1899631616; including existing envelopes and retained costs,
+the computed cumulative dev cap is $9.0282364305.
+
+Zero-generation validation commands:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py preflight --offline
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
+```
+
+Computed selected-schedule dev command (**still budget-blocked; not run**):
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py dev --cap-usd 9.0282364305
+```

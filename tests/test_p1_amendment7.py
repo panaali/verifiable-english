@@ -265,8 +265,17 @@ def test_actual_dev_prefix_reconstructs_without_duplicate_trials(tmp_path, monke
     current_request = p1.request
     def historical_request(*a, **kw):
         r = current_request(*a, **kw)
-        return replace(r, max_output_tokens=256, response_schema=None)
+        arm, phase = r.metadata['arm'], r.metadata['role']
+        bound = 6800 if arm in ('A', 'R') else {'initial': 3072, 'replay': 4096, 'attacker': 4096, 'pushback': 6144}[phase]
+        return replace(r, max_input_tokens=bound, max_output_tokens=256, response_schema=None)
     monkeypatch.setattr(p1, 'request', historical_request)
+    cached_reply = paid.Ledger.cached_reply
+    def historical_reply(ledger, req):
+        reply = cached_reply(ledger, req)
+        # Amendment 7 accepted truncated attackers. Reconstruct that historical
+        # behavior here; Amendment 9 tests enforce retry/exclusion separately.
+        return replace(reply, finish_reason='') if reply and req.metadata['role'] == 'attacker' else reply
+    monkeypatch.setattr(paid.Ledger, 'cached_reply', historical_reply)
     monkeypatch.setattr(p1, 'HERE', tmp_path)
     monkeypatch.setattr(p1, 'inventory', lambda: plan)
     monkeypatch.setattr(p1, 'materials', lambda _: items)

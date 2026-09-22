@@ -24,11 +24,14 @@ def test_full_inventory_joint_replay_and_pushback():
     assert len(list(gates.token_requests('weak'))) == 1536
 
 
-def test_amendment_three_bounds_and_inventory_agree():
+def test_amended_bounds_and_inventory_agree():
+    from experiments.prereg_inventory import P1_PUSHBACK_INPUT_BOUNDS
     for request, _ in gates.token_requests():
         arm, phase = request.metadata['arm'], request.metadata['role']
         original = {'initial': 3072, 'replay': 4096, 'attacker': 4096, 'pushback': 6144}[phase]
-        assert request.max_input_tokens == (6800 if arm in ('A', 'R') else original)
+        expected = (P1_PUSHBACK_INPUT_BOUNDS[arm][phase == 'pushback'] if phase in ('attacker', 'pushback')
+                    else 6800 if arm in ('A', 'R') else original)
+        assert request.max_input_tokens == expected
     for name, plan in p1.inventory()['budget_scenarios'].items():
         actual = p1.split_ceiling(name, 'dev') + p1.split_ceiling(name, 'scored') + Decimal(1)
         assert abs(actual - Decimal(str(plan['max_scheduled_api_usd']))) <= Decimal('.00000001')
