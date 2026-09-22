@@ -424,3 +424,70 @@ Computed selected-schedule dev command (**still budget-blocked; not run**):
 ```sh
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py dev --cap-usd 9.0282364305
 ```
+
+
+<a id="amendment-11"></a>
+## Amendment 11 — 2026-09-22 UTC (2026-09-21 Pacific; orchestrator, approved): retain-panel budget alternatives
+
+The orchestrator authorizes the following priority-ordered scenarios, retaining
+E4 and E5 in every candidate. `STUDY_CAP_USD` stays **$40**; this amendment
+neither changes it nor authorizes worker inference. Worker spend is **$0**.
+All input bounds, prices/provider fees, 1,024-token judge caps, 256-token
+attacker caps, the one possible attacker retry per turn, assignments, and
+existing allowances remain unchanged. Two-turn candidates shorten only the
+number of scheduled pushback turns; even their input/history bounds retain
+the conservative three-turn fixtures. Pushback remains pro-only.
+
+The earlier figures use the Amendment 8/9 **256-token judge planning mean**
+for schedules with pushback; they are not absolute output-token worst cases.
+The second numeric column below uses the same input bounds and the unchanged
+**1,024-token judge cap on every call**, including pushback, and both attacker
+attempts at 256 tokens. Both columns assume every initial/replay/pushback call
+runs, no concessions, and include the full existing allowances:
+$1 probe + $0.056900 prior probe attempt + $0.50 provider preflight +
+$0.28137326890 retained dev costs/holds + $0.25 local = **$2.08827326890**.
+This reconciles the old $49.8991773888 full-schedule figure (without retained
+dev costs/holds) to $50.1805506577 under the existing accounting.
+
+| Priority / scenario | Existing-accounting cumulative ceiling | Strict worst-case cumulative ceiling | Panels/judges omitted | Pushback turns |
+|---|---:|---:|---|---:|
+| (a) `pro_replication_3turn` | $49.42076430250 | $67.94507175850 | weak judge | 3 |
+| (b) `pro_3turn` | $46.61316926890 | $64.63966526890 | replication and weak judges | 3 |
+| (c) `full_2turn` | $41.54871065770 | $58.90010086570 | none | 2 |
+| (d) `pro_replication_2turn` | $40.78892430250 | $58.02299175850 | weak judge | 2 |
+| Fallback **`primary_1024`** | **$25.18433726890** | **$25.18433726890** | E5 panel; replication and weak judges | 0 |
+
+**None fits. Select `primary_1024` for both dev and scored**, as expressly
+authorized if no candidate fits. Even (d) exceeds $40 by $0.78892430250 under
+the more optimistic existing accounting. `results/probe.json` preserves the
+original probe selection as `schedule_before_amendment11` and records this
+amendment, ordered calculations, and the replacement selection. Probe samples,
+call receipts, prior trials, and ledgers are retained unchanged.
+
+Analysis disclosure (also added to the PREREG-referenced shared design): the
+selected fallback retains only the E4/pro panel (16 dev, 120 scored), with
+no pushback. E5 premise/harm, Qwen replication, and weak control are dropped.
+Report the weak control as **not run**, never failed or null; do not infer E5
+premise/harm or pushback results. Both the runner and standalone analysis
+report list unscheduled panels/judges. For a two-turn candidate the per-turn
+analysis has only turns 0, 1, and 2, and terminal outcomes stop at turn 2;
+no missing third judgment is manufactured. Existing capability, timestamp,
+provider, and running-output fallback gates remain in force.
+
+The selected dev calls cost at most $2.717184; the cumulative dev command
+includes $1.83827326890 of probe/provider/retained costs (local allowance is
+reserved separately in the all-in ceiling). The scored cumulative command cap
+is $24.93433726890, plus the separately reserved $0.25 local allowance.
+Commands for the orchestrator, **not dispatched by this worker**:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py dev --cap-usd 4.55545726890
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py scored --cap-usd 24.93433726890
+```
+
+Zero-generation validation:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py preflight --offline
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
+```

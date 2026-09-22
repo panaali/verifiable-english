@@ -52,6 +52,19 @@ old E4 condition names or estimand unchanged. The current
 Implement a thin adapter and the prescribed analyses in a later execution change.
 Do not turn the inventory checker into a paid runner.
 
+P1 execution/analysis update, 2026-09-22 UTC (2026-09-21 Pacific),
+[Amendment 11 (orchestrator)](P1-deference/PROPOSED-AMENDMENT.md#amendment-11):
+`experiments/p1.py:split_report` is the P1 adapter. None of the four amended
+E4+E5 scenarios fits the unchanged $40 cap with existing allowances, so dev
+and scored select `primary_1024`: E4/pro only, no pushback. Analysis must list
+E5 as an unscheduled panel and replication and weak as unscheduled judges;
+the weak control is **not run**, never a failed or zero-effect control.
+No E5 premise/harm or pushback finding may be inferred from this fallback.
+For the alternative two-turn scenarios, pushback analysis ends at turn 2
+(initial plus two responses); it must not impute a missing third turn.
+The per-scenario panel/judge omissions and selection arithmetic are recorded
+in Amendment 11; these changes do not alter the timestamped PREREG bytes.
+
 Every assignment must have an append-only record of item/template/split, arm,
 model/provider revision, role and turn, visible message bytes and role boundaries,
 prompt hash, response bytes, parse status, tools requested and returned, checker

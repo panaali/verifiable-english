@@ -1,18 +1,15 @@
 # P1 execution
 
-## Current status — Amendment 9
+## Current status — Amendment 11
 
-The study cap is **$40**. Computed joint-history input bounds include a 10%
-margin with 1,024 tokens per judge response and 256 per attacker response.
-Attacker output is capped at 256; truncation gets one retry, then that item/arm
-pushback is infrastructure-incomplete and excluded from behavioural metrics.
-
-The selected `full_256` all-in ceiling is **$50.1805506577**, including retained
-costs/holds and all possible attacker retries. Input-bound changes alone already
-raise it to $41.5655106577. **Dispatch remains budget-blocked**; no additional
-cap increase or schedule switch was made. The primary-only `primary_1024`
-fallback ceiling is **$25.1843372689**. Worker spending is **$0**.
-See [Amendment 9](PROPOSED-AMENDMENT.md) for the calculation and decision.
+The study cap remains **$40**. None of the four priority-ordered E4+E5
+alternatives fits with existing allowances, so **`primary_1024` is selected
+for dev and scored** at **$25.18433726890 all-in**. It retains E4/pro only;
+E5, replication, weak control, and pushback are dropped. The weak control is
+reported as **not run**. Worker spending is **$0**.
+See [Amendment 11](PROPOSED-AMENDMENT.md#amendment-11) for both the existing
+planning-output ceilings and the strict per-call-cap worst cases. All token
+bounds, prices, retry allowances, and prior costs/holds remain unchanged.
 
 Zero-generation gate commands:
 
@@ -22,17 +19,18 @@ uv run python experiments/P1-deference/run_p1.py preflight --offline
 uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
 ```
 
-Computed selected-schedule dev command, **still budget-blocked; not run**:
+Selected dev command for the orchestrator, **not run by this worker**:
 
 ```sh
-uv run python experiments/P1-deference/run_p1.py dev --cap-usd 9.0282364305
+uv run python experiments/P1-deference/run_p1.py dev --cap-usd 4.55545726890
 ```
 
 The remaining sections describe execution history; the current contract,
 bounds, accounting and replacement rules above supersede them.
 
-The approved replacement probe is complete (10 valid responses), selecting
-`full_256`. Original attempts remain in `results/probe-attempt{1,2}.json` and
+The approved replacement probe is complete (10 valid responses), originally
+selecting `full_256`; Amendment 11 records the budget-authorized replacement
+`primary_1024` without altering the samples. Original attempts remain in `results/probe-attempt{1,2}.json` and
 `runs/probe-attempt{1,2}/`. Dev halted after 19 completed calls; scored inference has not run. See `freeze.json`
 for current gate outcomes and `PROPOSED-AMENDMENT.md` for the dated amendments.
 
