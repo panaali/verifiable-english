@@ -1,0 +1,12 @@
+{
+  "command": [
+    "lean",
+    "+leanprover/lean4:v4.24.0",
+    "experiments/obfuscated-arguments/Feasibility.lean"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 3.115,
+  "measurement": "One local invocation including process startup, import loading, elaboration, tactics and kernel checking; not proof authoring time or a benchmark.",
+  "stdout": "'ObfuscationFeasibility.iceberg_balance' depends on axioms: [propext, Classical.choice, Quot.sound]\n'ObfuscationFeasibility.water_inclusion_no_change' depends on axioms: [propext, Classical.choice, Quot.sound]\n'ObfuscationFeasibility.ideal_air_no_change' depends on axioms: [propext, Classical.choice, Quot.sound]\n'ObfuscationFeasibility.dense_inclusion_level_drops' depends on axioms: [propext, Classical.choice, Quot.sound]\n'ObfuscationFeasibility.positive_air_mass_changes_answer' depends on axioms: [propext, Classical.choice, Quot.sound]\n'ObfuscationFeasibility.iceberg_sign_check' depends on axioms: [propext, Classical.choice, Quot.sound]\n'ObfuscationFeasibility.nonopposing_force_can_do_work' depends on axioms: [propext, Classical.choice, Quot.sound]\n'ObfuscationFeasibility.point_particle_energy' depends on axioms: [propext, Classical.choice, Quot.sound]\n'ObfuscationFeasibility.rigid_body_endpoint_witness' depends on axioms: [propext, Classical.choice, Quot.sound]\n'ObfuscationFeasibility.wrapping_ball_zero_power' depends on axioms: [propext, Classical.choice, Quot.sound]\n'ObfuscationFeasibility.wrapping_ball_torque' depends on axioms: [propext, Classical.choice, Quot.sound]\n",
+  "stderr": ""
+}
