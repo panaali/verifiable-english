@@ -1,18 +1,20 @@
 # P1 execution
 
-## Current status — Amendment 12
+## Current status — Amendment 12b and ledger reconciliation
 
 Gemini/E4 is a **dev-ceiling result: 0/112 errors**, descriptive 95% Wilson
 interval **0–3.3161%**; scored Gemini/E4 is paused and is not bought.
-The selected scenario is **`replication_3turn`**: Qwen E4+E5, all initial arms,
-original five pushback arms, three turns, Gemini attacker. Its strict all-in
-ceiling is **$24.53476399850**, including retained costs/holds and allowances,
+The selected scenario is **`replication_gemini_e5_2turn`**: Qwen E4+E5 and Gemini
+E5, all initial arms, original five pushback arms, two turns, Gemini attacker.
+Its preregistered strict all-in ceiling is **$37.87522391850**, including retained costs/holds and allowances,
 under the unchanged **$40** cap. Weak control is **not run**.
 
 Qwen remains the preregistered **REPLICATION** judge; scored contrasts are
 **exploratory-primary (judge substitution due to ceiling)**. A new dev gate is
 required. The 240 old Qwen completions predate Amendment 8 and cannot pass the
-new gate. Its allowance includes up to **420 calls / $3.20710184640**.
+new gate. Its full dev calls ceiling is **$6.15099840640**.
+Completed requests with identical settings and histories are reused across schedules,
+including amended identities. The Gemini E4 ceiling result remains unchanged.
 Worker paid calls/spend: **0 / $0**; dev and scored are not dispatched here.
 See [Amendment 12](PROPOSED-AMENDMENT.md#amendment-12) for all three ceilings,
 labels, gate conditions, and exact retained accounting.
@@ -21,10 +23,23 @@ labels, gate conditions, and exact retained accounting.
 export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
 uv run python experiments/P1-deference/run_p1.py preflight
 uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
+uv run python experiments/P1-deference/run_p1.py reconcile
 # Orchestrator: new dev gate required before scored dispatch.
-uv run python experiments/P1-deference/run_p1.py dev --cap-usd 5.37433511530
-uv run python experiments/P1-deference/run_p1.py scored --cap-usd 24.28476399850
+uv run python experiments/P1-deference/run_p1.py dev --cap-usd 6.85298379880
+uv run python experiments/P1-deference/run_p1.py scored --cap-usd 36.15997604200
 ```
+
+`reconcile` is idempotent and makes no provider calls. It appends reasoned releases
+for superseded/completed study blocks and replaces unused probe/provider envelopes
+with actual receipts plus unresolved billing holds, including both prior probe
+attempts. It preserves all completed calls and charges, never clears an unresolved
+call, and retains selected live blocks. `checks/reconciliation.json` records the
+source hashes, accounting and exact cumulative API command caps; the $0.25 local
+allowance remains separate. Full split bounds include all replay/attacker retries;
+reuse and early concession do not discount them. Rerun reconciliation after new
+spend for updated caps. At this reconciliation: study completed costs
+$0.60778371370; all-ledger realised costs $0.64413983720; live holds
+$0.30784555520 (including local); remaining under $40 is $39.04801460760.
 
 The remaining sections describe execution history; the current contract,
 bounds, accounting and replacement rules above supersede them.

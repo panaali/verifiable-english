@@ -983,7 +983,7 @@ def run_split(split, cap):
             raise PreflightError('dev capability gate failed or missing for an available judge')
     items = [i for i in materials(split) if i["assignment"]["source"] in plan["sources"]]
     output = JUDGE_OUTPUT_CAP
-    ledger = Ledger(HERE / "runs/study/costs.jsonl", min(cap, STUDY_CAP_USD))
+    ledger = Ledger(HERE / "runs/study/costs.jsonl", min(cap, Decimal(str(STUDY_CAP_USD)) - Decimal('.25')))
     # Reserve the complete split before any paid call; calls remain serial.
     ceiling = split_ceiling(name, split)
     # Probe's entire $1 envelope remains charged against the study boundary.
@@ -992,14 +992,14 @@ def run_split(split, cap):
     ledger.recover_tool_routing()
     with ledger.locked() as (_, ledger_entries):
         amended = any(r['event'] == 'amendment8' for r in ledger_entries)
-    block_id = split + '-amendment12' if plan.get('amendment') == 12 else (split + '-amendment8' if split == 'dev' and amended else split)
+    block_id = split_block_id(name, split, amended=amended)
     if name == 'primary_1024' and any(r['event'] == 'schedule_fallback' for r in ledger_entries):
         # A fallback may occur inside a reserved full split. Preserve its original
         # accounting on restart; it can never create a second spending envelope.
         prior = next((r for r in ledger_entries if r['event'] == 'block_reserve' and r['block_id'] == block_id), None)
         if prior:
             ceiling = Decimal(prior['ceiling_usd'])
-    ledger.reserve_block(block_id, ceiling, resume=True)
+    ledger.reserve_block(block_id, ceiling, resume=True, schedule=name, split=split)
     from experiments.p1_preflight import runtime_counter
     clients = {j: PaidClient(VertexBackend() if j == "pro" else OpenRouterBackend(runtime_counter()),
                             ledger, block_id, reuse_completed=True) for j in set(plan["judges"]) | ({"pro"} if plan["pushback"] else set())}
@@ -1083,13 +1083,102 @@ def run_split(split, cap):
     return 3 if budget_stop else (2 if stopped or halted else 0)
 
 
+def split_block_id(name, split, *, amended=True):
+    if inventory()['budget_scenarios'][name].get('amendment') == 12:
+        return f'{split}-amendment12-{name}'
+    return split + '-amendment8' if split == 'dev' and amended else split
+
+
+def reconcile():
+    """Reconcile planning holds without dispatch, receipt edits, or gate changes."""
+    from decimal import Decimal
+    probe_result = json.loads((HERE / 'results/probe.json').read_text())
+    name = probe_result['schedule']
+    if probe_result['status'] != 'complete' or name not in inventory()['budget_scenarios']:
+        raise PreflightError('reconciliation requires a completed probe and selected schedule')
+    ledger = Ledger(HERE / 'runs/study/costs.jsonl', STUDY_CAP_USD)
+    sources = {}
+    for label in ('probe', 'probe-attempt1', 'probe-attempt2', 'provider-preflight'):
+        path = HERE / f'runs/{label}/costs.jsonl'
+        entries = read_jsonl(path)  # Missing billing evidence must not imply zero spend.
+        pending, _, _, _, _ = Ledger.state(entries)
+        realised = sum((Decimal(r['cost_usd']) for r in entries if r['event'] == 'complete'), Decimal(0))
+        held = sum((Decimal(r.get('infrastructure_hold_usd', '0')) for r in entries), Decimal(0))
+        held += sum((v for k, v in pending.items() if not k.startswith('block:')), Decimal(0))
+        # Probe attempts are superseded/completed. Provider preflight may still
+        # own a live block; retain that hold until its own completion is known.
+        if label == 'provider-preflight':
+            held += sum((v for k, v in pending.items() if k.startswith('block:')), Decimal(0))
+        sources[label] = {'sha256': sha(path), 'realised_usd': str(realised), 'holds_usd': str(held)}
+    def allowance(labels):
+        evidence = {label: sources[label] for label in labels}
+        return {'cost_usd': str(sum((Decimal(sources[label]['realised_usd']) + Decimal(sources[label]['holds_usd'])
+                                    for label in labels), Decimal(0))),
+                'reason': 'release unused completed/superseded envelopes; retain all receipts and unresolved billing',
+                'sources': evidence}
+    with ledger.locked() as (_, entries):
+        completed = {r['block_id'] for r in entries if r['event'] == 'block_complete'}
+        releases = {}
+        for row in entries:
+            if row['event'] != 'block_reserve':
+                continue
+            block = row['block_id']
+            if block in completed:
+                releases[block] = 'completed block; retain all completed calls and costs'
+            elif row.get('schedule') and row['schedule'] != name:
+                releases[block] = f'schedule {row["schedule"]} superseded by {name}'
+            elif name in P1_AMENDMENT12_SCENARIOS and block in ('dev', 'dev-amendment8'):
+                releases[block] = f'legacy full_256/primary_1024 dev schedule superseded by {name}'
+            elif block in ('dev-amendment12', 'scored-amendment12'):
+                # These legacy block IDs predate schedule-specific identities.
+                # Safe to abandon their planning remainder; exact calls are reused.
+                releases[block] = f'legacy unscoped block replaced by schedule-specific reservation for {name}'
+    events = ledger.reconcile(releases, {
+        'probe-envelope': allowance(('probe',)),
+        'prior-attempt-and-provider-preflight': allowance(('probe-attempt1', 'probe-attempt2', 'provider-preflight'))})
+    with ledger.locked() as (_, entries):
+        pending, committed, _, _, blocked = ledger.state(entries)
+    study_realised = sum((Decimal(r['cost_usd']) for r in entries if r['event'] == 'complete'), Decimal(0))
+    realised = study_realised + sum((Decimal(s['realised_usd']) for s in sources.values()), Decimal(0))
+    local = Decimal('.25')
+    holds = committed + sum(pending.values(), Decimal(0)) - realised + local
+    # Complete conservative split bounds: no reuse or early-concession discount.
+    # An existing selected block has already consumed some of that bound.
+    caps = {}
+    cumulative = committed
+    for split in ('dev', 'scored'):
+        block = split_block_id(name, split)
+        prior = next((r for r in entries if r['event'] == 'block_reserve' and r['block_id'] == block), None)
+        bound = pending.get('block:' + block, Decimal(0)) if prior else split_ceiling(name, split, worst_case=True)
+        cumulative += bound
+        caps[split] = str(cumulative)
+    other_holds = sum((v for k, v in pending.items() if k not in
+                      {'block:' + split_block_id(name, s) for s in ('dev', 'scored')}), Decimal(0))
+    if blocked or other_holds:
+        raise PreflightError('unclassified live study holds remain; cannot quote dispatch caps')
+    report = {'schedule': name, 'study_cap_usd': str(STUDY_CAP_USD),
+              'study_realised_usd': str(study_realised), 'realised_usd': str(realised),
+              'live_holds_usd': str(holds), 'local_hold_usd': str(local),
+              'remaining_usd': str(Decimal(STUDY_CAP_USD) - realised - holds),
+              'cap_usd': caps, 'sources': sources,
+              'accounting': 'cumulative API command caps; local $0.25 held separately; full split ceilings without reuse discounts',
+              'commands': {s: f'UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py {s} --cap-usd {c}'
+                           for s, c in caps.items()}}
+    if Decimal(caps['scored']) + local > Decimal(STUDY_CAP_USD):
+        raise BudgetExceeded('reconciled schedule exceeds the unchanged $40 study cap')
+    write_json(HERE / 'checks/reconciliation.json', report)
+    print(json.dumps({**report, 'release_events_appended': len(events)}, indent=2))
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
-    for name in ("probe", "known-answer", "preflight", "preflight-openrouter", "dev", "scored", "analyze"):
+    for name in ("probe", "known-answer", "preflight", "preflight-openrouter", "reconcile", "dev", "scored", "analyze"):
         p = sub.add_parser(name)
         if name in ("probe", "dev", "scored", "preflight-openrouter"):
-            p.add_argument("--cap-usd", type=float, required=True)
+            from decimal import Decimal
+            p.add_argument("--cap-usd", type=Decimal, required=True)
         if name == "preflight-openrouter":
             p.add_argument('--cached-only', action='store_true', help='revalidate retained metadata/smokes locally; never generate')
             p.add_argument("--counter-command", type=Path, default=HERE / "native_counter.py",
@@ -1105,7 +1194,9 @@ def main():
             p.add_argument('--offline', action='store_true', help='reuse identical-wire Vertex counts; no provider API calls')
     args = parser.parse_args()
     try:
-        if args.command == "preflight":
+        if args.command == 'reconcile':
+            return reconcile()
+        elif args.command == "preflight":
             from experiments.p1_preflight import preflight
             return preflight(offline=args.offline)
         elif args.command == "preflight-openrouter":
