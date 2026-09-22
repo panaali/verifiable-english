@@ -772,12 +772,15 @@ class OpenRouterBackend:
                 headers={"Authorization": "Bearer " + key}, json=self.wire(request))
             if (r.status_code == 429 and request.model == 'replication'
                     and request.metadata.get('role') == 'paraphrase'):
+                # Novita rejected the paraphrase request shape (HTTP 400, 2026-09-22), so the
+                # authoring stage waits for DeepInfra instead of falling back to another provider.
                 self.record_provider_fallback(request, r.status_code)
-                wire = self.wire(request)
-                # Novita is bf16; the judge's DeepInfra/fp8 pin is unchanged.
-                wire['provider'] = {**wire['provider'], 'order': ['novita'], 'only': ['novita']}
-                r = await client.post('https://openrouter.ai/api/v1/chat/completions',
-                    headers={'Authorization': 'Bearer ' + key}, json=wire)
+                for pause in (20, 60, 120):
+                    await asyncio.sleep(pause)
+                    r = await client.post("https://openrouter.ai/api/v1/chat/completions",
+                        headers={"Authorization": "Bearer " + key}, json=self.wire(request))
+                    if r.status_code != 429:
+                        break
             error = r.text.replace(key, '[REDACTED]') if r.status_code != 200 else ''
             if (request.response_schema and r.status_code in (400, 422)
                     and any(s in error.lower() for s in ('json_schema', 'structured output', 'response_format'))
