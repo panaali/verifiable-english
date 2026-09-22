@@ -17,3 +17,15 @@ published metric) and false alarms on correct chains, per flaw class (D vs S-pre
 5.5 and Haiku 4.5 via CLI (one account). Anchor: BIG-Bench Mistake published mistake-finding accuracies. Success: (c)
 beats (a), (b) and (d) on S-premise + D flaws without more false alarms. Risks: F's own misformalisation (measure vs gold);
 contamination (public set) - add freshly generated chains of the same type.
+
+## After review (2026-09-22): both reviewers "do not run as designed"
+
+Common ground: BBM logical deduction is all ORDERING puzzles with a unique solution, so (i) an order-free filter leaves
+zero items and VE needs order@0's Python stage (not built); (ii) "entailed by correct premises" = "true in the solution",
+so the checker reduces to answer-key comparison and a 20-line solver (arm d) does the same; (iii) the ~80% is an
+optimistic category tally (BBM ceiling ~70% vs published gold, ProcessBench has no logic items); (iv) independence is not
+the lever - exposure to the chain is. Decision: run ONLY the day-1 headroom check (no VE): published BBM prompts
+(direct-trace, direct-step, CoT-step) on Opus 5.5 and Haiku 4.5; (d) model writes its own solver; gold-answer oracle;
+ablation judge + independently re-read premises in English; 100 flawed + 100 correct traces across 3/5/7 objects; BBM
+metrics. If (d) ~ oracle, formalise-then-check has no headroom beyond a solver on BBM and VE's specific value must be
+sought elsewhere (T1-style oversight of untrusted work, real artefacts). Queued after P3 on the saeedi.danial account.

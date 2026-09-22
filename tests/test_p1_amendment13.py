@@ -106,6 +106,10 @@ def test_scored_gate_and_cap_reach_only_qwen_attacker_backends(tmp_path, monkeyp
         shutil.copytree(source / name, tmp_path / name)
     # This test exercises the historical Amendment 13/14 block. Amendment 15
     # has a separate fixed restart population and envelope, covered separately.
+    receipt = p1.amendment15_receipt()
+    p1.validate_amendment15_sources(receipt)
+    ledger_path = tmp_path / 'runs/study/costs.jsonl'
+    ledger_path.write_bytes(ledger_path.read_bytes()[:receipt['sources']['runs/study/costs.jsonl']['bytes']])
     (tmp_path / 'checks/amendment15.json').unlink(missing_ok=True)
     monkeypatch.setattr(p1, 'HERE', tmp_path)
     monkeypatch.setattr(p1, 'inventory', lambda: plan)
