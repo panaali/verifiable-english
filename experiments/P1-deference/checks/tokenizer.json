@@ -1,5 +1,5 @@
 {
-  "completed_at": "2026-09-22T08:35:41.520102+00:00",
+  "completed_at": "2026-09-22T09:15:56.360493+00:00",
   "count_api_calls": 0,
   "count_source": "retained real Vertex countTokens; identical messages/tools",
   "counts": [
@@ -13,13 +13,13 @@
       "tokens": 242
     },
     {
-      "bounded_tokens": 5057,
+      "bounded_tokens": 5066,
       "generated_token_reserve": 4864,
       "identity": "dev/e4-086d3b59c2f1ac4d1d/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "cd6ab59435cbf80293bb9dabefe65bfd4d195683706e1f9ebede552d135228a8",
-      "tokens": 193
+      "request_sha256": "69b863e3dbb2d99c99791fefcc8a43e7175f59b9111adb5bc9a60b1e6dfaeef8",
+      "tokens": 202
     },
     {
       "bounded_tokens": 5106,
@@ -40,13 +40,13 @@
       "tokens": 295
     },
     {
-      "bounded_tokens": 5110,
+      "bounded_tokens": 5119,
       "generated_token_reserve": 4864,
       "identity": "dev/e4-086d3b59c2f1ac4d1d/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "642907d68f4b110d63510551d330f0def5886129329c9cfd12e301cb07d524fa",
-      "tokens": 246
+      "request_sha256": "8c03c5af6c2be91013df6d1c093545f1a4e7dda8ba44d73b697fe633938c2eb4",
+      "tokens": 255
     },
     {
       "bounded_tokens": 5159,
@@ -67,13 +67,13 @@
       "tokens": 1126
     },
     {
-      "bounded_tokens": 5941,
+      "bounded_tokens": 5950,
       "generated_token_reserve": 4864,
       "identity": "dev/e4-086d3b59c2f1ac4d1d/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "8701d28d0257cad153928ec14beca3bd9f559792e2441b4be4d61b3f108db908",
-      "tokens": 1077
+      "request_sha256": "12bc2e57f42a92f785076ef6da2f63cdadd4f0a79fbb0a25e4c7f96d0548ee62",
+      "tokens": 1086
     },
     {
       "bounded_tokens": 5990,
@@ -94,13 +94,13 @@
       "tokens": 589
     },
     {
-      "bounded_tokens": 5404,
+      "bounded_tokens": 5413,
       "generated_token_reserve": 4864,
       "identity": "dev/e4-086d3b59c2f1ac4d1d/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "7e0db8277c40ebb8c1fba831e5366d3e558d79a15fc6869e66dca376c7ad50f3",
-      "tokens": 540
+      "request_sha256": "1be59301213e9ec5959bc51f50ff119b513b73610deb635ec38b02b03c5a9a66",
+      "tokens": 549
     },
     {
       "bounded_tokens": 5453,
@@ -130,13 +130,13 @@
       "tokens": 1209
     },
     {
-      "bounded_tokens": 7048,
+      "bounded_tokens": 7057,
       "generated_token_reserve": 5888,
       "identity": "dev/e4-086d3b59c2f1ac4d1d/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "5487fde932311028f887860f43f9fd44f607d4f9933c52fa186422eb810b4453",
-      "tokens": 1160
+      "request_sha256": "4a836b7bedc8e3d44f7e1d63900b3bd76ad86e89386288cd94bddb8ea59e10bb",
+      "tokens": 1169
     },
     {
       "bounded_tokens": 7097,
@@ -1039,13 +1039,13 @@
       "tokens": 242
     },
     {
-      "bounded_tokens": 5057,
+      "bounded_tokens": 5066,
       "generated_token_reserve": 4864,
       "identity": "dev/e4-e593908907ba459975/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "34b8749aee78f6a31f10daf15672de9340aa5abd935ed8da86afaeed1abfb1c3",
-      "tokens": 193
+      "request_sha256": "d021474c60631b31c836208ee7260e52a40a4aee42b112f0a44425ebeff1dd3e",
+      "tokens": 202
     },
     {
       "bounded_tokens": 5106,
@@ -1066,13 +1066,13 @@
       "tokens": 295
     },
     {
-      "bounded_tokens": 5110,
+      "bounded_tokens": 5119,
       "generated_token_reserve": 4864,
       "identity": "dev/e4-e593908907ba459975/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "f904cdd716d65fb411ca17e54ebaea9fb78667e7fb72cfb88aeb5b9a45a62bc4",
-      "tokens": 246
+      "request_sha256": "6e364b0a5482298fda174ba63b148034eae97180a705ec22ddd717a7371741af",
+      "tokens": 255
     },
     {
       "bounded_tokens": 5159,
@@ -1093,13 +1093,13 @@
       "tokens": 1135
     },
     {
-      "bounded_tokens": 5950,
+      "bounded_tokens": 5959,
       "generated_token_reserve": 4864,
       "identity": "dev/e4-e593908907ba459975/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "d83b0fe12497ab556d6b8530dcc5a4ea8dcbd453b5efc35586e03b785debc145",
-      "tokens": 1086
+      "request_sha256": "7156e84b199024b25ac0ce099141c2e92804afbde1e07c5869f2542cf3bffbe2",
+      "tokens": 1095
     },
     {
       "bounded_tokens": 5999,
@@ -1120,13 +1120,13 @@
       "tokens": 592
     },
     {
-      "bounded_tokens": 5407,
+      "bounded_tokens": 5416,
       "generated_token_reserve": 4864,
       "identity": "dev/e4-e593908907ba459975/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "5e9b8eefba6c3a75bcc5fdc795b190e4c34419aff9ecc8d2e6085b755ce19aab",
-      "tokens": 543
+      "request_sha256": "4b85602e321498167664f204befe6b322a7b2780fc9c5744b58fb81ea2cf2192",
+      "tokens": 552
     },
     {
       "bounded_tokens": 5456,
@@ -1156,13 +1156,13 @@
       "tokens": 1218
     },
     {
-      "bounded_tokens": 7057,
+      "bounded_tokens": 7066,
       "generated_token_reserve": 5888,
       "identity": "dev/e4-e593908907ba459975/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "e51129be9631b1b375a3b23309437700b9979bd59b1242ce0952aba15e063685",
-      "tokens": 1169
+      "request_sha256": "5566c516675a74c861ef6bb6d9683fda068a2018bb75d62033932cc70b17b02a",
+      "tokens": 1178
     },
     {
       "bounded_tokens": 7106,
@@ -1345,13 +1345,13 @@
       "tokens": 1082
     },
     {
-      "bounded_tokens": 5897,
+      "bounded_tokens": 5906,
       "generated_token_reserve": 4864,
       "identity": "dev/e5-094dd92cb69b206c3a/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "40a23de866e1afdd12eb75e6696287f74b377f4b23c3491752767e405cf9971f",
-      "tokens": 1033
+      "request_sha256": "38c3f111792e4f9efc48e54707a2b1ea6196a406ce425db49bee4ff37e632f2c",
+      "tokens": 1042
     },
     {
       "bounded_tokens": 5946,
@@ -1372,13 +1372,13 @@
       "tokens": 1074
     },
     {
-      "bounded_tokens": 5889,
+      "bounded_tokens": 5898,
       "generated_token_reserve": 4864,
       "identity": "dev/e5-094dd92cb69b206c3a/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "e4b043d5bb7c213ce9384402f5b5fdfd37bebb1071ea494b6ea2394e9083ac17",
-      "tokens": 1025
+      "request_sha256": "50a31b33ff65545ef033d9f6acf23e35197583d4afe80162563768e50e646893",
+      "tokens": 1034
     },
     {
       "bounded_tokens": 5938,
@@ -1399,13 +1399,13 @@
       "tokens": 2001
     },
     {
-      "bounded_tokens": 6816,
+      "bounded_tokens": 6825,
       "generated_token_reserve": 4864,
       "identity": "dev/e5-094dd92cb69b206c3a/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "04a38e1d620087e74140af69d9c4f9fb123d1425eaa7e63eeca735589c6bbe8b",
-      "tokens": 1952
+      "request_sha256": "f5cb9e44b5b0a7aa3bac2d6f2c67ff6bd8634cdb18198a33fa09b8bdcbd780c4",
+      "tokens": 1961
     },
     {
       "bounded_tokens": 6865,
@@ -1426,13 +1426,13 @@
       "tokens": 1435
     },
     {
-      "bounded_tokens": 6250,
+      "bounded_tokens": 6259,
       "generated_token_reserve": 4864,
       "identity": "dev/e5-094dd92cb69b206c3a/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "26bcdd44250cd6c33d2eb33b0fa467249ff51ab94d083642873447844aeac0d5",
-      "tokens": 1386
+      "request_sha256": "488d63e603b405d2e66aa2dcbe339adbb4b59946c72aef6b19bbbb367c8cbc7b",
+      "tokens": 1395
     },
     {
       "bounded_tokens": 6299,
@@ -1462,13 +1462,13 @@
       "tokens": 2026
     },
     {
-      "bounded_tokens": 7865,
+      "bounded_tokens": 7874,
       "generated_token_reserve": 5888,
       "identity": "dev/e5-094dd92cb69b206c3a/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "7f509349dfb1dcc22b20e289db3920d56ac79147cb85b4b38839bd585172e9ae",
-      "tokens": 1977
+      "request_sha256": "198c00b404da2f53adb9e9ef4ebd5ae893c55aa8b7e048e7ccac5f18834a5bfc",
+      "tokens": 1986
     },
     {
       "bounded_tokens": 7914,
@@ -1687,13 +1687,13 @@
       "tokens": 1082
     },
     {
-      "bounded_tokens": 5897,
+      "bounded_tokens": 5906,
       "generated_token_reserve": 4864,
       "identity": "dev/e5-60578db1dbb684432c/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "4683f87fa299d66aaad04f8df427232c604e4030e51a428a71ee00a9a15b18fc",
-      "tokens": 1033
+      "request_sha256": "c02408a75674fb32b127d7fb610807b340c6fb6057c70365d052b3bc36db58a4",
+      "tokens": 1042
     },
     {
       "bounded_tokens": 5946,
@@ -1714,13 +1714,13 @@
       "tokens": 1074
     },
     {
-      "bounded_tokens": 5889,
+      "bounded_tokens": 5898,
       "generated_token_reserve": 4864,
       "identity": "dev/e5-60578db1dbb684432c/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "057f8c60746624773146368a03aa9219850ae185ba121798d17cb7111dde0e60",
-      "tokens": 1025
+      "request_sha256": "6822346a048d80ccbc80a0836955a4fa5087399043b054253e03af62136605cb",
+      "tokens": 1034
     },
     {
       "bounded_tokens": 5938,
@@ -1741,13 +1741,13 @@
       "tokens": 1996
     },
     {
-      "bounded_tokens": 6811,
+      "bounded_tokens": 6820,
       "generated_token_reserve": 4864,
       "identity": "dev/e5-60578db1dbb684432c/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "688f0264898177dc92f7c489043f309b60e19d84162d492da1ec146c3578a812",
-      "tokens": 1947
+      "request_sha256": "070ad51a2800b0bc1f2f5075380f6a83e27a34f425702e4a920682ebb417534b",
+      "tokens": 1956
     },
     {
       "bounded_tokens": 6860,
@@ -1768,13 +1768,13 @@
       "tokens": 1430
     },
     {
-      "bounded_tokens": 6245,
+      "bounded_tokens": 6254,
       "generated_token_reserve": 4864,
       "identity": "dev/e5-60578db1dbb684432c/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "ffc2aaef484cc2de3d2768952605dc442caf862bce1275eb6304c264013bfadf",
-      "tokens": 1381
+      "request_sha256": "7286edb9745b5656c52b7141825c17b16316b07a3f83b19e1f3ed41d0948ac67",
+      "tokens": 1390
     },
     {
       "bounded_tokens": 6294,
@@ -1804,13 +1804,13 @@
       "tokens": 2021
     },
     {
-      "bounded_tokens": 7860,
+      "bounded_tokens": 7869,
       "generated_token_reserve": 5888,
       "identity": "dev/e5-60578db1dbb684432c/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "08efab3e93b178762729aba7728ea9f2fed36058bbf2ad7344db58d8440e4852",
-      "tokens": 1972
+      "request_sha256": "f62153d7d0cdf360004998c7eae75dd78a2c25116b4169b9ad1df3d0e3ee488f",
+      "tokens": 1981
     },
     {
       "bounded_tokens": 7909,
@@ -3901,13 +3901,13 @@
       "tokens": 247
     },
     {
-      "bounded_tokens": 5062,
+      "bounded_tokens": 5071,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-384fe9ee732879fe0a/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "5c1f99fffca9c7d0add89d15103c9db86a7b9122f85dc05239bdf8931bdd0416",
-      "tokens": 198
+      "request_sha256": "913244afa066c3fe5d8dca3ef065fa636673f938ce0b8f1e17669bd7ea0255a4",
+      "tokens": 207
     },
     {
       "bounded_tokens": 5111,
@@ -3928,13 +3928,13 @@
       "tokens": 301
     },
     {
-      "bounded_tokens": 5116,
+      "bounded_tokens": 5125,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-384fe9ee732879fe0a/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "e84ce5bca5fa2666f7b65720727b2e735f9cc5f5de71d91ce26e7b86e19c3485",
-      "tokens": 252
+      "request_sha256": "338ebb3e69c0a76ef1e478b48092b3664cbf5386c75f2c22b184c587b7f15cb4",
+      "tokens": 261
     },
     {
       "bounded_tokens": 5165,
@@ -3955,13 +3955,13 @@
       "tokens": 1147
     },
     {
-      "bounded_tokens": 5962,
+      "bounded_tokens": 5971,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-384fe9ee732879fe0a/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "b1474072e0c5068309081f0500909a1a6cdaaa0fd6fbb6c64922ff018772ffb1",
-      "tokens": 1098
+      "request_sha256": "615caff4c9e3ac52302ce28980c6989b9b3f7df845a4352b2304684748edfe5a",
+      "tokens": 1107
     },
     {
       "bounded_tokens": 6011,
@@ -3982,13 +3982,13 @@
       "tokens": 598
     },
     {
-      "bounded_tokens": 5413,
+      "bounded_tokens": 5422,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-384fe9ee732879fe0a/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "2f7c2a4bab3dfd1a0267a751b8ae2db7688f4816e57837c40d05ef94c4c71b95",
-      "tokens": 549
+      "request_sha256": "fa4907fdebb5e292d793c796c20f175fa1b5f390c3bd036cf19b2ac65f9f73cf",
+      "tokens": 558
     },
     {
       "bounded_tokens": 5462,
@@ -4018,13 +4018,13 @@
       "tokens": 1229
     },
     {
-      "bounded_tokens": 7068,
+      "bounded_tokens": 7077,
       "generated_token_reserve": 5888,
       "identity": "scored/e4-384fe9ee732879fe0a/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "ab8908a144d6ed2a5f5a83dc7189dd2d2ecf2faccffdfa68c2db39447c16ad12",
-      "tokens": 1180
+      "request_sha256": "71cdb5d0370aaccbbbbf80052a882d16408d5e9718916bb1a80062744290bf33",
+      "tokens": 1189
     },
     {
       "bounded_tokens": 7117,
@@ -4855,13 +4855,13 @@
       "tokens": 249
     },
     {
-      "bounded_tokens": 5064,
+      "bounded_tokens": 5073,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-501b275cf468f7e547/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "bd5905dd5c35a9a1ff675c46a0a0a249fd54ea461da3b0ffab03284c3fe2367c",
-      "tokens": 200
+      "request_sha256": "d689472f69d051e0fe43e509aa4776c5cf72323a09e20e7c90700e4441496760",
+      "tokens": 209
     },
     {
       "bounded_tokens": 5113,
@@ -4882,13 +4882,13 @@
       "tokens": 303
     },
     {
-      "bounded_tokens": 5118,
+      "bounded_tokens": 5127,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-501b275cf468f7e547/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "35ed28043a08a6d6522b3ea90ed3e38ab693bdd1c31147b4bbed0baa5a2ff59c",
-      "tokens": 254
+      "request_sha256": "3391c7e67a9e442ec5f5b6d359ae4fb5067497787bb1c0b1ebad5d0cb4fed517",
+      "tokens": 263
     },
     {
       "bounded_tokens": 5167,
@@ -4909,13 +4909,13 @@
       "tokens": 1161
     },
     {
-      "bounded_tokens": 5976,
+      "bounded_tokens": 5985,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-501b275cf468f7e547/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "88b14ce613542c405b0abe8199b788b30b67f307e3cc723d0535e92d96bc00c9",
-      "tokens": 1112
+      "request_sha256": "bdebbadd0a454978081bd4e8993d1d7ba21837a08d6ffd464d860afd76198df0",
+      "tokens": 1121
     },
     {
       "bounded_tokens": 6025,
@@ -4936,13 +4936,13 @@
       "tokens": 604
     },
     {
-      "bounded_tokens": 5419,
+      "bounded_tokens": 5428,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-501b275cf468f7e547/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "6e7352ccb013f3d7535a98760f9361200806e96d854e295a80c5ea1214c5425f",
-      "tokens": 555
+      "request_sha256": "510f421ef4c4ebe53cba82675db4dc3c103b7e3ce7b2f6afdb5d79f1f6140b68",
+      "tokens": 564
     },
     {
       "bounded_tokens": 5468,
@@ -4972,13 +4972,13 @@
       "tokens": 1245
     },
     {
-      "bounded_tokens": 7084,
+      "bounded_tokens": 7093,
       "generated_token_reserve": 5888,
       "identity": "scored/e4-501b275cf468f7e547/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "0b43d4f77c31656b86b6240fc5b5f24380b6dd65a0f46cc0e7bef5a0e5196a7c",
-      "tokens": 1196
+      "request_sha256": "a05cc91aa1de0fa4374011fe93367e07ac10d56b307ffed65c9fe9dd55c58b3f",
+      "tokens": 1205
     },
     {
       "bounded_tokens": 7133,
@@ -5161,13 +5161,13 @@
       "tokens": 255
     },
     {
-      "bounded_tokens": 5070,
+      "bounded_tokens": 5079,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-556e48b9eca40fc53f/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "818bca3c6cd9a53968327c15b2a2106f94dab7413bc47de5ff5e7e1a4e101fbe",
-      "tokens": 206
+      "request_sha256": "7765ba548096f5cc960ab322fb31ce2ada349ec4d04d4ffb153c0a7c6cd1696e",
+      "tokens": 215
     },
     {
       "bounded_tokens": 5119,
@@ -5188,13 +5188,13 @@
       "tokens": 301
     },
     {
-      "bounded_tokens": 5116,
+      "bounded_tokens": 5125,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-556e48b9eca40fc53f/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "10d564984b88f14b20dfd804da5ae355a6b68b5a7cff26277578b45d24f4fa50",
-      "tokens": 252
+      "request_sha256": "2410215c69e291ad9be21ea88ed00d7b4cec7ad6cd03a19d030f57f8fb59043b",
+      "tokens": 261
     },
     {
       "bounded_tokens": 5165,
@@ -5215,13 +5215,13 @@
       "tokens": 1158
     },
     {
-      "bounded_tokens": 5973,
+      "bounded_tokens": 5982,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-556e48b9eca40fc53f/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "da6dad436a6e213696320e195764c5f054c84e93bf6d90ff56b09efd1ba43123",
-      "tokens": 1109
+      "request_sha256": "70f121ff1aa9018aa8c71a35a950ee24e978ff11009072488d22af2b6237e992",
+      "tokens": 1118
     },
     {
       "bounded_tokens": 6022,
@@ -5242,13 +5242,13 @@
       "tokens": 595
     },
     {
-      "bounded_tokens": 5410,
+      "bounded_tokens": 5419,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-556e48b9eca40fc53f/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "5f162751c7812d5ff2e6f700267cecd7368614d9cbdecdddef2830c4fb892534",
-      "tokens": 546
+      "request_sha256": "63b1aa7180c4512dcdf0edda5e1ab36188843f7b0de2787ea033859e320b68f8",
+      "tokens": 555
     },
     {
       "bounded_tokens": 5459,
@@ -5278,13 +5278,13 @@
       "tokens": 1232
     },
     {
-      "bounded_tokens": 7071,
+      "bounded_tokens": 7080,
       "generated_token_reserve": 5888,
       "identity": "scored/e4-556e48b9eca40fc53f/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "56449364fd7f5e1408c47891a26e2eb9835cbe8f32c8f45c794ed93fc31599f4",
-      "tokens": 1183
+      "request_sha256": "ff962c0ec62f3d02d4bd942426c0f172f30743c0f7b1d7e2351b7bb538a7dfa5",
+      "tokens": 1192
     },
     {
       "bounded_tokens": 7120,
@@ -5827,13 +5827,13 @@
       "tokens": 306
     },
     {
-      "bounded_tokens": 5121,
+      "bounded_tokens": 5130,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-663cd383e7de9393b4/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "2659631343bcea567c0d1279c332909a1929afd00204a3bca784daeb6fae2297",
-      "tokens": 257
+      "request_sha256": "eb574600ca36d1ca98cf922af25d6d15fc2acdf9ac5886be67456e692fe1fe0d",
+      "tokens": 266
     },
     {
       "bounded_tokens": 5170,
@@ -5854,13 +5854,13 @@
       "tokens": 362
     },
     {
-      "bounded_tokens": 5177,
+      "bounded_tokens": 5186,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-663cd383e7de9393b4/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "2930d4761a0599fd0d5e4234ed6235ee01b40b2d03fa67914ed5937d25516526",
-      "tokens": 313
+      "request_sha256": "7f6ee22e7136cd4a5829ae0fd8cad2ccad7ecefe0ba133b1331844c470919464",
+      "tokens": 322
     },
     {
       "bounded_tokens": 5226,
@@ -5881,13 +5881,13 @@
       "tokens": 1271
     },
     {
-      "bounded_tokens": 6086,
+      "bounded_tokens": 6095,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-663cd383e7de9393b4/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "eef4dc51c57dceb8610ac154b6de7669f6ec03290551443893ef0d2dbfcb9842",
-      "tokens": 1222
+      "request_sha256": "855a4feddcc724e46707206bb8e64fe9aa9f27202bd598b4c82df24ef20d9e24",
+      "tokens": 1231
     },
     {
       "bounded_tokens": 6135,
@@ -5908,13 +5908,13 @@
       "tokens": 651
     },
     {
-      "bounded_tokens": 5466,
+      "bounded_tokens": 5475,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-663cd383e7de9393b4/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "ea7b43b7e1e3f36c38196e892724b8fc95abfa604433c1ef59501385e08d2ec2",
-      "tokens": 602
+      "request_sha256": "7e6ab25317300ea1b84e46f8589fbe2ce5d619c9b175b9e9c6169346bdb3c6a3",
+      "tokens": 611
     },
     {
       "bounded_tokens": 5515,
@@ -5944,13 +5944,13 @@
       "tokens": 1356
     },
     {
-      "bounded_tokens": 7195,
+      "bounded_tokens": 7204,
       "generated_token_reserve": 5888,
       "identity": "scored/e4-663cd383e7de9393b4/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "d5d0d09d7478ea60460d7ec5c785010b9138a66d942a0e8976a695fc825757fa",
-      "tokens": 1307
+      "request_sha256": "d78f3dbb3139917d4630ac7ef9f44918c6f6984f1d3367e03707081d6b1fbbb2",
+      "tokens": 1316
     },
     {
       "bounded_tokens": 7244,
@@ -6853,13 +6853,13 @@
       "tokens": 253
     },
     {
-      "bounded_tokens": 5068,
+      "bounded_tokens": 5077,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-80e5bb1e64d57cfe87/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "45263facea809a0b35b71c053b830c115d5788f5c098146be888fb6569122dcd",
-      "tokens": 204
+      "request_sha256": "5f7e71f5b7adf3d3f2e1f6e00bc63e31960a7147c5c1805d29199f0bfc69af8f",
+      "tokens": 213
     },
     {
       "bounded_tokens": 5117,
@@ -6880,13 +6880,13 @@
       "tokens": 299
     },
     {
-      "bounded_tokens": 5114,
+      "bounded_tokens": 5123,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-80e5bb1e64d57cfe87/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "eb62c5d478ab9dceadd393c7c1d9b0228aa29627eeb8d6a541f640b80e4c179f",
-      "tokens": 250
+      "request_sha256": "865d1ac607d73a6b5589fb79cc552161156ff78472fe3f705bb7b640b0bd3f18",
+      "tokens": 259
     },
     {
       "bounded_tokens": 5163,
@@ -6907,13 +6907,13 @@
       "tokens": 1155
     },
     {
-      "bounded_tokens": 5970,
+      "bounded_tokens": 5979,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-80e5bb1e64d57cfe87/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "d339396be48d11b43cf2c0547e82a56daa2bd84450f7591f3d9678bf91b042fc",
-      "tokens": 1106
+      "request_sha256": "9220f823aeadbf93178ba3774b728413fb9465fe4e2e45684eb78e2384be27e8",
+      "tokens": 1115
     },
     {
       "bounded_tokens": 6019,
@@ -6934,13 +6934,13 @@
       "tokens": 593
     },
     {
-      "bounded_tokens": 5408,
+      "bounded_tokens": 5417,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-80e5bb1e64d57cfe87/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "ba7a7fc31c85b8eaee9e8b782c30a4b4e821821478d855dae4e50047f6682b02",
-      "tokens": 544
+      "request_sha256": "41d05ab99c4deb9491130426a15cfee794b5ccb13ab6348d0a08c40f8a19101d",
+      "tokens": 553
     },
     {
       "bounded_tokens": 5457,
@@ -6970,13 +6970,13 @@
       "tokens": 1229
     },
     {
-      "bounded_tokens": 7068,
+      "bounded_tokens": 7077,
       "generated_token_reserve": 5888,
       "identity": "scored/e4-80e5bb1e64d57cfe87/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "7b067b070f880bfb174f954d4e6d269b02b4fac3cc9b3002c9375514b103b395",
-      "tokens": 1180
+      "request_sha256": "a271b739de53dee2d7f0619b42b7f604317d8b4e1bcd60f34cda0a7ba04ba349",
+      "tokens": 1189
     },
     {
       "bounded_tokens": 7117,
@@ -7303,13 +7303,13 @@
       "tokens": 278
     },
     {
-      "bounded_tokens": 5093,
+      "bounded_tokens": 5102,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-8d3f186d859f1a0c37/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "9fa4c3c61f8b191760477f3071ba3cc7e554e2940f0bb2435b375b44630fa1a8",
-      "tokens": 229
+      "request_sha256": "83ebf047cc9a636ed83cd2192f7dd0a25660cce025f1e3cee86a53eacd6b995c",
+      "tokens": 238
     },
     {
       "bounded_tokens": 5142,
@@ -7330,13 +7330,13 @@
       "tokens": 347
     },
     {
-      "bounded_tokens": 5162,
+      "bounded_tokens": 5171,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-8d3f186d859f1a0c37/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "d6b42372ba85e5ef64def1013d6bb3515467c4af376e9b1a08a0bb19d1b73ea5",
-      "tokens": 298
+      "request_sha256": "7f45e709ccddfda93329eb99762fab693bf1758b06c451be6a8d9962e13be835",
+      "tokens": 307
     },
     {
       "bounded_tokens": 5211,
@@ -7357,13 +7357,13 @@
       "tokens": 1222
     },
     {
-      "bounded_tokens": 6037,
+      "bounded_tokens": 6046,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-8d3f186d859f1a0c37/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "cb998828b7713307f689c399453d816cc8fb0748a9f64e3ddf51cab3d38d345c",
-      "tokens": 1173
+      "request_sha256": "ab7f6bc54006bf4afa33883d8b63172c68822c2bcc62451437b700018c624d29",
+      "tokens": 1182
     },
     {
       "bounded_tokens": 6086,
@@ -7384,13 +7384,13 @@
       "tokens": 619
     },
     {
-      "bounded_tokens": 5434,
+      "bounded_tokens": 5443,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-8d3f186d859f1a0c37/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "653230653a92a1a4ed21a153b1ddb719cb2db5038de504e6d4b4caed9ee12b98",
-      "tokens": 570
+      "request_sha256": "9bd1529a3012f533e27b5ea77fd9d4c73d2f12c61072e4daf5ac9e073991a8f7",
+      "tokens": 579
     },
     {
       "bounded_tokens": 5483,
@@ -7420,13 +7420,13 @@
       "tokens": 1322
     },
     {
-      "bounded_tokens": 7161,
+      "bounded_tokens": 7170,
       "generated_token_reserve": 5888,
       "identity": "scored/e4-8d3f186d859f1a0c37/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "b4669b0c692e0231d0a7b9fec04cfb80762effccf8f5bf83cf74c2298c7a5a52",
-      "tokens": 1273
+      "request_sha256": "7821276bbe94af967f9c4508bf1d46558068cfd919262774d656e2ae76a2c2c0",
+      "tokens": 1282
     },
     {
       "bounded_tokens": 7210,
@@ -7681,13 +7681,13 @@
       "tokens": 244
     },
     {
-      "bounded_tokens": 5059,
+      "bounded_tokens": 5068,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-94554cbab09bed5c4c/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "ba2ad8d42c4883cd28985226a766a36bdba038dc1b88917e19f6273a993489b2",
-      "tokens": 195
+      "request_sha256": "a4896f82ed86125c307a7e14332f40ec3a2b14832e1a08027e39f8550f295cd0",
+      "tokens": 204
     },
     {
       "bounded_tokens": 5108,
@@ -7708,13 +7708,13 @@
       "tokens": 306
     },
     {
-      "bounded_tokens": 5121,
+      "bounded_tokens": 5130,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-94554cbab09bed5c4c/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "3f6a39390a6832fa7d01f3f2abc6f8dad2d5102028233d32ce9ad73d61329a53",
-      "tokens": 257
+      "request_sha256": "e8242d1b0fd397ad93afa7a0c0073710fb0a2874c70c5a929c3371bbcfb959cb",
+      "tokens": 266
     },
     {
       "bounded_tokens": 5170,
@@ -7735,13 +7735,13 @@
       "tokens": 1150
     },
     {
-      "bounded_tokens": 5965,
+      "bounded_tokens": 5974,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-94554cbab09bed5c4c/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "60d4661217ca5c94a394dfda401d65e55f9ba5438d394aa1777b47544a854881",
-      "tokens": 1101
+      "request_sha256": "1eccd94440b821f867a39610f4bb8cd962214f31847a9b2c34efdb672ba80469",
+      "tokens": 1110
     },
     {
       "bounded_tokens": 6014,
@@ -7762,13 +7762,13 @@
       "tokens": 584
     },
     {
-      "bounded_tokens": 5399,
+      "bounded_tokens": 5408,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-94554cbab09bed5c4c/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "3d662925c48fa291e6298b9a69447aefd8ffb66102c17640de85f8bec1563056",
-      "tokens": 535
+      "request_sha256": "1b2ae90872eefb62642131cb8773656d3eabdc026e6aacd5cb5032b367683865",
+      "tokens": 544
     },
     {
       "bounded_tokens": 5448,
@@ -7798,13 +7798,13 @@
       "tokens": 1239
     },
     {
-      "bounded_tokens": 7078,
+      "bounded_tokens": 7087,
       "generated_token_reserve": 5888,
       "identity": "scored/e4-94554cbab09bed5c4c/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "2d911ce2d59cf53db38fb32dabcca576b72788b3336bcdaaa7e793c6b245128d",
-      "tokens": 1190
+      "request_sha256": "423987205cb2f96381817038bd693bde4ad8f63f67ab6c0e7cc51723ea04affc",
+      "tokens": 1199
     },
     {
       "bounded_tokens": 7127,
@@ -8131,13 +8131,13 @@
       "tokens": 307
     },
     {
-      "bounded_tokens": 5122,
+      "bounded_tokens": 5131,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-9b547263eb7a4e6d66/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "ca25fe25eaeafde9de509bd6ec24efc9bb72ba5bd92231891fee10f66c2eb685",
-      "tokens": 258
+      "request_sha256": "497546690d500d2c845860f1e2b3944b1156d510a6de46ca687d9df2b3a3d90f",
+      "tokens": 267
     },
     {
       "bounded_tokens": 5171,
@@ -8158,13 +8158,13 @@
       "tokens": 363
     },
     {
-      "bounded_tokens": 5178,
+      "bounded_tokens": 5187,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-9b547263eb7a4e6d66/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "c370a604fce8301900572016b26a52b57d9e02600aae1c326095a303022cbb42",
-      "tokens": 314
+      "request_sha256": "da3a36129be6313bbf3c0236cbb084314a961f46ce4c7575c3fc780d6abf0633",
+      "tokens": 323
     },
     {
       "bounded_tokens": 5227,
@@ -8185,13 +8185,13 @@
       "tokens": 1272
     },
     {
-      "bounded_tokens": 6087,
+      "bounded_tokens": 6096,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-9b547263eb7a4e6d66/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "f3f2b7cd1e3968a91cae6b426b6ed65aefa4fba4b13ea436740f847d0ddd1f4e",
-      "tokens": 1223
+      "request_sha256": "657e1661a1e5118deaf659a9c2bc618be6b37243049e95ae725f9c1d892e9af4",
+      "tokens": 1232
     },
     {
       "bounded_tokens": 6136,
@@ -8212,13 +8212,13 @@
       "tokens": 652
     },
     {
-      "bounded_tokens": 5467,
+      "bounded_tokens": 5476,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-9b547263eb7a4e6d66/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "a376e599de35bc1323e13598da1b1dd54d90d9bb806ae6b283c07cfbba18d1b5",
-      "tokens": 603
+      "request_sha256": "b7335dff22aeae2fbc6f80adf605af3f96f56a07ab0c71a13bae1606646a09d2",
+      "tokens": 612
     },
     {
       "bounded_tokens": 5516,
@@ -8248,13 +8248,13 @@
       "tokens": 1358
     },
     {
-      "bounded_tokens": 7197,
+      "bounded_tokens": 7206,
       "generated_token_reserve": 5888,
       "identity": "scored/e4-9b547263eb7a4e6d66/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "c7a9981b9f5bcc1294643a6716100a9b5b2afbae4eeb4e3b50a1e7dbfc7b776a",
-      "tokens": 1309
+      "request_sha256": "bd8612869ad54e44d367515a80e6257a1e925cbacee2f2e199d1169fd486ee10",
+      "tokens": 1318
     },
     {
       "bounded_tokens": 7246,
@@ -9301,13 +9301,13 @@
       "tokens": 258
     },
     {
-      "bounded_tokens": 5073,
+      "bounded_tokens": 5082,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-b5c05a56e4f42ef6af/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "72d767fc6e79d8e59ccd43fdf31145237a4e360c5b27fb61722eb4a406d47191",
-      "tokens": 209
+      "request_sha256": "eb5a38ce0b8860d86a9199227c10504228b5ada820f7f8f280bec28f26b6dbad",
+      "tokens": 218
     },
     {
       "bounded_tokens": 5122,
@@ -9328,13 +9328,13 @@
       "tokens": 305
     },
     {
-      "bounded_tokens": 5120,
+      "bounded_tokens": 5129,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-b5c05a56e4f42ef6af/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "54ff84bd5351f3e0affe39f2c769eae174e5534bc98fb740fefe888c62babbc8",
-      "tokens": 256
+      "request_sha256": "a2f7b1f35c528a71cfcc69cf14df9024ac0965db7c49a681f1941cfbfa00b438",
+      "tokens": 265
     },
     {
       "bounded_tokens": 5169,
@@ -9355,13 +9355,13 @@
       "tokens": 1155
     },
     {
-      "bounded_tokens": 5970,
+      "bounded_tokens": 5979,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-b5c05a56e4f42ef6af/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "fd205b39c43394ff41ee4445cd531b0cf7f2a0bd1b1cff388638fd675179a21a",
-      "tokens": 1106
+      "request_sha256": "54c3a9741a68a74f69079795daac4a274a628f1228c11734d21d4ca60aa6636f",
+      "tokens": 1115
     },
     {
       "bounded_tokens": 6019,
@@ -9382,13 +9382,13 @@
       "tokens": 608
     },
     {
-      "bounded_tokens": 5423,
+      "bounded_tokens": 5432,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-b5c05a56e4f42ef6af/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "265b5b726a1b730b812848f3eff61927fce57aae5275ce1f00e1cd6ccf6b5f5f",
-      "tokens": 559
+      "request_sha256": "7a5bdc7001e2b6de1b9761ae169da8c9184821427766d71559d0863946c28867",
+      "tokens": 568
     },
     {
       "bounded_tokens": 5472,
@@ -9418,13 +9418,13 @@
       "tokens": 1231
     },
     {
-      "bounded_tokens": 7070,
+      "bounded_tokens": 7079,
       "generated_token_reserve": 5888,
       "identity": "scored/e4-b5c05a56e4f42ef6af/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "0fdf6daa327636562718e2be3bae523bf05d0fc4a02d37c50db96f8632bb1412",
-      "tokens": 1182
+      "request_sha256": "af8f97936dd586dd802767822a130e5eba77742bf11dcf885c216ceefe31067d",
+      "tokens": 1191
     },
     {
       "bounded_tokens": 7119,
@@ -10759,13 +10759,13 @@
       "tokens": 278
     },
     {
-      "bounded_tokens": 5093,
+      "bounded_tokens": 5102,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-d208a052033c4bbf88/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "b21ceb5e5487e376183c21d95f3b272e4d25a2c7c522001d697617414fe4cc30",
-      "tokens": 229
+      "request_sha256": "81ad0d6cd85ac9b087ed0b0d13b7381a4e0ce4ad9f1d67a79158fc1e84e3a57d",
+      "tokens": 238
     },
     {
       "bounded_tokens": 5142,
@@ -10786,13 +10786,13 @@
       "tokens": 347
     },
     {
-      "bounded_tokens": 5162,
+      "bounded_tokens": 5171,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-d208a052033c4bbf88/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "5fe32d1107956767ef1c7503f1d242bbf83ac056d810e05506c5f32044833a66",
-      "tokens": 298
+      "request_sha256": "86211552e5b39b3fe4b025ed91ced4d8771004fc0c1d93c7689c9784be91c1e8",
+      "tokens": 307
     },
     {
       "bounded_tokens": 5211,
@@ -10813,13 +10813,13 @@
       "tokens": 1240
     },
     {
-      "bounded_tokens": 6055,
+      "bounded_tokens": 6064,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-d208a052033c4bbf88/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "d11418ee46c72dfb83f43e51b1e7ee2f979dec98e253d8c22c3a46da8020b07b",
-      "tokens": 1191
+      "request_sha256": "20f1167fac8276378ee1a90ef8a0989da3ebda0c80318c4ce55a89e2d0a7b9dd",
+      "tokens": 1200
     },
     {
       "bounded_tokens": 6104,
@@ -10840,13 +10840,13 @@
       "tokens": 627
     },
     {
-      "bounded_tokens": 5442,
+      "bounded_tokens": 5451,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-d208a052033c4bbf88/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "ee8301d75e7f2ce5407cfbc3cfbb621c8dfbad74fd73c27e6ef8438cd508ef09",
-      "tokens": 578
+      "request_sha256": "7528755498860a1e373c46ef4399e0b7dba7d906298995f4deff95cd72c38425",
+      "tokens": 587
     },
     {
       "bounded_tokens": 5491,
@@ -10876,13 +10876,13 @@
       "tokens": 1339
     },
     {
-      "bounded_tokens": 7178,
+      "bounded_tokens": 7187,
       "generated_token_reserve": 5888,
       "identity": "scored/e4-d208a052033c4bbf88/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "6654baf0dfc20e999e0ebb925e8c3c2129506ed0230498cc4355b0522acd933c",
-      "tokens": 1290
+      "request_sha256": "3561420817e782c9c173990ee1c21f0acbb64649c9e472cc6d91b327e3b3e9c9",
+      "tokens": 1299
     },
     {
       "bounded_tokens": 7227,
@@ -11713,13 +11713,13 @@
       "tokens": 244
     },
     {
-      "bounded_tokens": 5059,
+      "bounded_tokens": 5068,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-eb78ada5a394ad3218/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "921de08df914f67bf2fe0bb789e0aa4e5d5b87dd5bca50c46d33d84365d0db32",
-      "tokens": 195
+      "request_sha256": "9964c0972e49546362ebe9940c85c2974013beadabfbfead3fbec51bfcf7f3cc",
+      "tokens": 204
     },
     {
       "bounded_tokens": 5108,
@@ -11740,13 +11740,13 @@
       "tokens": 306
     },
     {
-      "bounded_tokens": 5121,
+      "bounded_tokens": 5130,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-eb78ada5a394ad3218/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "4174c945115e242bc2ae88a71282db3be18960779887b684f8037997c2258913",
-      "tokens": 257
+      "request_sha256": "b00921ac5ff8249f0d2db3f1fe93a380badd61a7c7c2514ad75de535d56c4e91",
+      "tokens": 266
     },
     {
       "bounded_tokens": 5170,
@@ -11767,13 +11767,13 @@
       "tokens": 1146
     },
     {
-      "bounded_tokens": 5961,
+      "bounded_tokens": 5970,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-eb78ada5a394ad3218/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "0278b175f894b1e299687087a379ee64b921dc8f570c2da56f9b48abd54e0844",
-      "tokens": 1097
+      "request_sha256": "8161ea7604f623c5707107e8fc53ae9dd6f69814a1add2de02f325a4d6c943e8",
+      "tokens": 1106
     },
     {
       "bounded_tokens": 6010,
@@ -11794,13 +11794,13 @@
       "tokens": 580
     },
     {
-      "bounded_tokens": 5395,
+      "bounded_tokens": 5404,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-eb78ada5a394ad3218/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "0897930e284eb86762d5468583d60516e9d8a902d763e9f1950212b23eebfb4b",
-      "tokens": 531
+      "request_sha256": "323fca50d80de84ac3c4abefd50cd793c29d1d26b7585112548af6a91cb63d47",
+      "tokens": 540
     },
     {
       "bounded_tokens": 5444,
@@ -11830,13 +11830,13 @@
       "tokens": 1235
     },
     {
-      "bounded_tokens": 7074,
+      "bounded_tokens": 7083,
       "generated_token_reserve": 5888,
       "identity": "scored/e4-eb78ada5a394ad3218/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "835e211518ed1f66d7a528b1693f8d652bf0b078d8b41e27516f4dd81e50dd98",
-      "tokens": 1186
+      "request_sha256": "151f96973a24f1771cfb59c0fb0f6b902479069ff907c39b3860c33ad59f5186",
+      "tokens": 1195
     },
     {
       "bounded_tokens": 7123,
@@ -11947,13 +11947,13 @@
       "tokens": 256
     },
     {
-      "bounded_tokens": 5071,
+      "bounded_tokens": 5080,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-f4951c1bb99dc6bfbd/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "fe2c46a6df31acbdf67a65d402a5c1f39f72eab034db9d5c5436b25d2a797c34",
-      "tokens": 207
+      "request_sha256": "14e7587af70d9afbbfb949de8b10ba5bd24aff27f319a29c1ac01b1b28fd9a60",
+      "tokens": 216
     },
     {
       "bounded_tokens": 5120,
@@ -11974,13 +11974,13 @@
       "tokens": 303
     },
     {
-      "bounded_tokens": 5118,
+      "bounded_tokens": 5127,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-f4951c1bb99dc6bfbd/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "446c49997693241a2305511d748833a6832828675ceac52e666380cb5824510d",
-      "tokens": 254
+      "request_sha256": "a78549e7d5e45b32c2715c461fdb551a549a7519af49ff859cc692c9c61f9c93",
+      "tokens": 263
     },
     {
       "bounded_tokens": 5167,
@@ -12001,13 +12001,13 @@
       "tokens": 1138
     },
     {
-      "bounded_tokens": 5953,
+      "bounded_tokens": 5962,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-f4951c1bb99dc6bfbd/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "2cf671c1ab531c31d42f4908aa56cfd0e087aa3821a46933ea68cd8d19177ce1",
-      "tokens": 1089
+      "request_sha256": "6aaf30cc1ee9534b625f94da5b244cbc2f629f01011bf3ce2f9a4219e322b4e7",
+      "tokens": 1098
     },
     {
       "bounded_tokens": 6002,
@@ -12028,13 +12028,13 @@
       "tokens": 594
     },
     {
-      "bounded_tokens": 5409,
+      "bounded_tokens": 5418,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-f4951c1bb99dc6bfbd/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "1bcfd91c70130775a175fd2c2e64434fd672cc241df7319c5b156fbbe5c90e8f",
-      "tokens": 545
+      "request_sha256": "26de2faf1bd8acd23b43098ee79aedc6f7e878813968d67f4144ca7d92849db4",
+      "tokens": 554
     },
     {
       "bounded_tokens": 5458,
@@ -12064,13 +12064,13 @@
       "tokens": 1212
     },
     {
-      "bounded_tokens": 7051,
+      "bounded_tokens": 7060,
       "generated_token_reserve": 5888,
       "identity": "scored/e4-f4951c1bb99dc6bfbd/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "c15fb0aadbf877e84fe845ce2dd6925d3b767d3398ba0a763bc39b28c695e964",
-      "tokens": 1163
+      "request_sha256": "35d269a91ec3a8d284fda6c65b4acbf410ccd4d143074e762f994bfd5560ea88",
+      "tokens": 1172
     },
     {
       "bounded_tokens": 7100,
@@ -12568,13 +12568,13 @@
       "tokens": 1728
     },
     {
-      "bounded_tokens": 6543,
+      "bounded_tokens": 6552,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-168ed5f4f6400e70bb/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "dcf0d80cfc6019492497ffd9c1a5d39643cad7e551a01e005d1fadce43eb92f6",
-      "tokens": 1679
+      "request_sha256": "f208b6851e604184d51d5e0f1ef6df93c0790e73b5ff98c8cfa27660046f8bf6",
+      "tokens": 1688
     },
     {
       "bounded_tokens": 6592,
@@ -12595,13 +12595,13 @@
       "tokens": 1720
     },
     {
-      "bounded_tokens": 6535,
+      "bounded_tokens": 6544,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-168ed5f4f6400e70bb/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "fb31b03d65ed0a1b6ad9f5c70b079851bca44f15cd3078fcd66443eb80fc5b33",
-      "tokens": 1671
+      "request_sha256": "e14d6629e5f408260e18045133c78376f0a547882b245feab3e91f504b9dc170",
+      "tokens": 1680
     },
     {
       "bounded_tokens": 6584,
@@ -12622,13 +12622,13 @@
       "tokens": 3570
     },
     {
-      "bounded_tokens": 8385,
+      "bounded_tokens": 8394,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-168ed5f4f6400e70bb/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "7f0f06349f88d0f24bb1f2f0ea59ac00ce6e1bcb291043c549b621327ac83c67",
-      "tokens": 3521
+      "request_sha256": "c87abe11be15f75ff2188084ef3d69469fdbf98011928c8ca94590bd647dffe1",
+      "tokens": 3530
     },
     {
       "bounded_tokens": 8434,
@@ -12649,13 +12649,13 @@
       "tokens": 2063
     },
     {
-      "bounded_tokens": 6878,
+      "bounded_tokens": 6887,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-168ed5f4f6400e70bb/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "120423e94d6ed3cecb0a4dec79199def75cdaa91bdb5694d3f6363897dc74b81",
-      "tokens": 2014
+      "request_sha256": "cf5af9bbfc0aed0434f3593f06dcbedbc40bd65884c3fe83e6d6824077034b71",
+      "tokens": 2023
     },
     {
       "bounded_tokens": 6927,
@@ -12685,13 +12685,13 @@
       "tokens": 3595
     },
     {
-      "bounded_tokens": 9434,
+      "bounded_tokens": 9443,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-168ed5f4f6400e70bb/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "b1f34fb7a869cb12fe0469a4aecdc3928c0cdbe8d3eefbcb77e7584a13356f51",
-      "tokens": 3546
+      "request_sha256": "39340ffbd4dd16818a07118a3a9e7b7e811d87be4066cdc46d8b86d08ea1e950",
+      "tokens": 3555
     },
     {
       "bounded_tokens": 9483,
@@ -12910,13 +12910,13 @@
       "tokens": 1508
     },
     {
-      "bounded_tokens": 6323,
+      "bounded_tokens": 6332,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-35c1f1abb31047e39c/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "6a9c68daaa3d93fdb7a4a55b549a6f3ae018ea7adcd7bf935e85b35d3e877371",
-      "tokens": 1459
+      "request_sha256": "4cb5093b004c7c2d6d839f32e690dee644982a997a0493e3ca4161fcef83ce84",
+      "tokens": 1468
     },
     {
       "bounded_tokens": 6372,
@@ -12937,13 +12937,13 @@
       "tokens": 1500
     },
     {
-      "bounded_tokens": 6315,
+      "bounded_tokens": 6324,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-35c1f1abb31047e39c/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "869c72a66b858f0dcc4f0a11609547fe043db2c4400d781d9eed89209a3fe279",
-      "tokens": 1451
+      "request_sha256": "c54ba5455408df1bfd2734a4806b06ba7ce47ae91a8168c58e4f8bee71bb1f5b",
+      "tokens": 1460
     },
     {
       "bounded_tokens": 6364,
@@ -12964,13 +12964,13 @@
       "tokens": 3049
     },
     {
-      "bounded_tokens": 7864,
+      "bounded_tokens": 7873,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-35c1f1abb31047e39c/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "51743a99729cb6ad2f2dca5569835d8ae859fb6ae8a1c3e5fd79732c3da051df",
-      "tokens": 3000
+      "request_sha256": "7dfc4d1db6bb3a1abe8045936ed5c414ad1ffce21701093c56d45c5100c4c414",
+      "tokens": 3009
     },
     {
       "bounded_tokens": 7913,
@@ -12991,13 +12991,13 @@
       "tokens": 1856
     },
     {
-      "bounded_tokens": 6671,
+      "bounded_tokens": 6680,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-35c1f1abb31047e39c/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "9eb56e198bef97cb1f322909bb0139d519c9eade4b55723bd1d7683da23deefc",
-      "tokens": 1807
+      "request_sha256": "09a6f4b26cc104993410b552a84adc97527009319ae00de6c2ec8b371fdcfbd3",
+      "tokens": 1816
     },
     {
       "bounded_tokens": 6720,
@@ -13027,13 +13027,13 @@
       "tokens": 3074
     },
     {
-      "bounded_tokens": 8913,
+      "bounded_tokens": 8922,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-35c1f1abb31047e39c/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "b831abc8df1357c3a422c9842320167ef97aeccf3a7bf9c1b2812c99b9d72127",
-      "tokens": 3025
+      "request_sha256": "e352d79c15d5aa233fdf31082443060a12fc1ca8f71d068bdb302c882d622204",
+      "tokens": 3034
     },
     {
       "bounded_tokens": 8962,
@@ -13378,13 +13378,13 @@
       "tokens": 1866
     },
     {
-      "bounded_tokens": 6681,
+      "bounded_tokens": 6690,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-511e5dc6306123ea43/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "4955b6391249f5e566183eddec9e775570f41b8aea5c81acb55455ff4117b7be",
-      "tokens": 1817
+      "request_sha256": "c14e06fdb982da9f23b217f2866c8f9f6c2616a6426ea4435b8fdb0b4e718670",
+      "tokens": 1826
     },
     {
       "bounded_tokens": 6730,
@@ -13405,13 +13405,13 @@
       "tokens": 1858
     },
     {
-      "bounded_tokens": 6673,
+      "bounded_tokens": 6682,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-511e5dc6306123ea43/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "caab392c31b24827578aa62c76818a13cfd3c3f56ee5cc68159cdd72ca2fbb34",
-      "tokens": 1809
+      "request_sha256": "6f41b51aeeb9d93e852663fb13a9c323e2fd8e03d5066ad450d7f69cd3f30621",
+      "tokens": 1818
     },
     {
       "bounded_tokens": 6722,
@@ -13432,13 +13432,13 @@
       "tokens": 3934
     },
     {
-      "bounded_tokens": 8749,
+      "bounded_tokens": 8758,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-511e5dc6306123ea43/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "6f6aace258218f049bf5394ff6a8f657bffcf7d766e609cd73c74ac784a6abdf",
-      "tokens": 3885
+      "request_sha256": "37389ada3f08ac3fcf5572709680240981f337d5f21aea9aa8506819c53af56e",
+      "tokens": 3894
     },
     {
       "bounded_tokens": 8798,
@@ -13459,13 +13459,13 @@
       "tokens": 2207
     },
     {
-      "bounded_tokens": 7022,
+      "bounded_tokens": 7031,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-511e5dc6306123ea43/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "d235c4958bade5d77bec0a8a2937812d857a8216c6f259db6a32b809ebb8a033",
-      "tokens": 2158
+      "request_sha256": "1f03d57b2544cc0b61deea3d67ef609c3b288d3d3d1b55dc80591bced2906b41",
+      "tokens": 2167
     },
     {
       "bounded_tokens": 7071,
@@ -13495,13 +13495,13 @@
       "tokens": 3959
     },
     {
-      "bounded_tokens": 9798,
+      "bounded_tokens": 9807,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-511e5dc6306123ea43/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "70758ffd9f4e16f790162a6ff3fdab0a357d4b72e5410b3f64dd5e7e7f8576c7",
-      "tokens": 3910
+      "request_sha256": "d9829d34075dc238799e17116f07e8c22ccf23cde0fa0194de7bd9eb99ee38ca",
+      "tokens": 3919
     },
     {
       "bounded_tokens": 9847,
@@ -13657,13 +13657,13 @@
       "tokens": 1917
     },
     {
-      "bounded_tokens": 6732,
+      "bounded_tokens": 6741,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-66d2dad87f5750341e/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "d818f0a4e3f3b8e1f7e7c298d56279c5924600246bbe0e78c703bc920311d924",
-      "tokens": 1868
+      "request_sha256": "1a31b937c7d49beb46c45ef4e4c05ab508eaa459ae2d48e5d1599277c1354bf6",
+      "tokens": 1877
     },
     {
       "bounded_tokens": 6781,
@@ -13684,13 +13684,13 @@
       "tokens": 1909
     },
     {
-      "bounded_tokens": 6724,
+      "bounded_tokens": 6733,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-66d2dad87f5750341e/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "9f1ea3be77a19d1d553e05dc7104bfe8b3303083c0218475d92334810d7ebbdc",
-      "tokens": 1860
+      "request_sha256": "ab7f8fcd53f3f7a297fb30e168b5bc79fedde59facf82c397103bd22952922c3",
+      "tokens": 1869
     },
     {
       "bounded_tokens": 6773,
@@ -13711,13 +13711,13 @@
       "tokens": 4102
     },
     {
-      "bounded_tokens": 8917,
+      "bounded_tokens": 8926,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-66d2dad87f5750341e/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "9f443c1386178f7eea4d195e67a702b713652da0f7da07a203e722647d14bbfe",
-      "tokens": 4053
+      "request_sha256": "553bb016f96086ef3975fdc64584d3d6c63888f5d6c7616f1df670beca181175",
+      "tokens": 4062
     },
     {
       "bounded_tokens": 8966,
@@ -13738,13 +13738,13 @@
       "tokens": 2267
     },
     {
-      "bounded_tokens": 7082,
+      "bounded_tokens": 7091,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-66d2dad87f5750341e/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "aeccfc64710b1d47d0359bbf6f6597c3a220ae28b039bf4846942c0e4940a8c9",
-      "tokens": 2218
+      "request_sha256": "218396979e35fb8ba51fe50a90bd045a6a40fb0e86b54424c28a49e627d43df8",
+      "tokens": 2227
     },
     {
       "bounded_tokens": 7131,
@@ -13774,13 +13774,13 @@
       "tokens": 4127
     },
     {
-      "bounded_tokens": 9966,
+      "bounded_tokens": 9975,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-66d2dad87f5750341e/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "10d1cc938f02168b1f7b1d2cfa6e02115d2fed28f6aa9b2acdca3a389e36edc1",
-      "tokens": 4078
+      "request_sha256": "3e5909ee90727628206850513892522c93de6d302c5f1b4d5585f32637350f57",
+      "tokens": 4087
     },
     {
       "bounded_tokens": 10015,
@@ -13810,13 +13810,13 @@
       "tokens": 1729
     },
     {
-      "bounded_tokens": 6544,
+      "bounded_tokens": 6553,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-752c77f62a50fa7b88/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "6f7e6d6e5abb27c9587e0ea92ac01df62d743fb546e1bb858222e7ee66e4bcaa",
-      "tokens": 1680
+      "request_sha256": "ff38836866e77a1354185db4df1f047e26974d72b2dd4135589ff5efb9ab12ca",
+      "tokens": 1689
     },
     {
       "bounded_tokens": 6593,
@@ -13837,13 +13837,13 @@
       "tokens": 1721
     },
     {
-      "bounded_tokens": 6536,
+      "bounded_tokens": 6545,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-752c77f62a50fa7b88/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "6d19bf95d2586030fd6e33524022d8aacd7f5616cf523c573f9eb2ad611848be",
-      "tokens": 1672
+      "request_sha256": "73cde7b5ff363aa72274873e42cda4a692fca2be5935f7d29129322f09b6cb3c",
+      "tokens": 1681
     },
     {
       "bounded_tokens": 6585,
@@ -13864,13 +13864,13 @@
       "tokens": 3569
     },
     {
-      "bounded_tokens": 8384,
+      "bounded_tokens": 8393,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-752c77f62a50fa7b88/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "1987b26d5c35e417dfc564625984bf4415fe318dbc06406f8fda4428f9f4e705",
-      "tokens": 3520
+      "request_sha256": "9b727085db5e8f0fb72a67895a87f6948fb757dec218e690148bd9c1f8add1dc",
+      "tokens": 3529
     },
     {
       "bounded_tokens": 8433,
@@ -13891,13 +13891,13 @@
       "tokens": 2062
     },
     {
-      "bounded_tokens": 6877,
+      "bounded_tokens": 6886,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-752c77f62a50fa7b88/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "04ce05e208353034cf2b2916d143f43261f654cf4ff0d3814c067f795c5fadb0",
-      "tokens": 2013
+      "request_sha256": "bb10f8482c8fbe87024865e30eb73721e91315aca0475534237f29e98190b2a4",
+      "tokens": 2022
     },
     {
       "bounded_tokens": 6926,
@@ -13927,13 +13927,13 @@
       "tokens": 3595
     },
     {
-      "bounded_tokens": 9434,
+      "bounded_tokens": 9443,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-752c77f62a50fa7b88/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "9d79228991bd98f567e3e5dd948ac7443847429f7add927b6baf29386d05a2bf",
-      "tokens": 3546
+      "request_sha256": "43e21cc52388bfcb36f5f4000c463c541fbf6802b277eb5546eee5d3132c6ebd",
+      "tokens": 3555
     },
     {
       "bounded_tokens": 9483,
@@ -14026,13 +14026,13 @@
       "tokens": 1877
     },
     {
-      "bounded_tokens": 6692,
+      "bounded_tokens": 6701,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-76ee94cf60c31e9d97/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "58acf889ebf39066779fc563686d77b3f6d9b11bdcaf5a1db3061ed7dd8ff114",
-      "tokens": 1828
+      "request_sha256": "037023750e95be5f43ff5558f81675077c48a72f4fb2e3e097eff15ec9e5a7da",
+      "tokens": 1837
     },
     {
       "bounded_tokens": 6741,
@@ -14053,13 +14053,13 @@
       "tokens": 1869
     },
     {
-      "bounded_tokens": 6684,
+      "bounded_tokens": 6693,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-76ee94cf60c31e9d97/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "ac1c2f361ae3ce1176aec26fba2ce1ddc5b72b83a02ceeb26b81e88e387d9f5c",
-      "tokens": 1820
+      "request_sha256": "de1b467f9a95d2435a8f0d5d71ba441b63d618aaa1b43430f8ff11324131efa7",
+      "tokens": 1829
     },
     {
       "bounded_tokens": 6733,
@@ -14080,13 +14080,13 @@
       "tokens": 4058
     },
     {
-      "bounded_tokens": 8873,
+      "bounded_tokens": 8882,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-76ee94cf60c31e9d97/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "e1d1ee3c1bb2e083a131b245fef179850b7ad4d089b476ee8ff87196de7de3f9",
-      "tokens": 4009
+      "request_sha256": "ff117a79a723729b70797931a9f9e08fbabed69ca963a565697e11425e49630b",
+      "tokens": 4018
     },
     {
       "bounded_tokens": 8922,
@@ -14107,13 +14107,13 @@
       "tokens": 2223
     },
     {
-      "bounded_tokens": 7038,
+      "bounded_tokens": 7047,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-76ee94cf60c31e9d97/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "16638567e42ad951da2559cf8de0aaf277b109d29e1271ea406a192d6ae33e6b",
-      "tokens": 2174
+      "request_sha256": "f0f7ad57ed1911b0a76d332370f14d985a412678c6b5d39ecf91529e64cedfc6",
+      "tokens": 2183
     },
     {
       "bounded_tokens": 7087,
@@ -14143,13 +14143,13 @@
       "tokens": 4083
     },
     {
-      "bounded_tokens": 9922,
+      "bounded_tokens": 9931,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-76ee94cf60c31e9d97/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "203554caccf595c18cec5f75930052d73dc06d927c5a06837951b03ddc482ec4",
-      "tokens": 4034
+      "request_sha256": "946521ab60c8c0c47708a8a5994473cf2d8d7b11e94ef97e224bf2377f525924",
+      "tokens": 4043
     },
     {
       "bounded_tokens": 9971,
@@ -14305,13 +14305,13 @@
       "tokens": 1915
     },
     {
-      "bounded_tokens": 6730,
+      "bounded_tokens": 6739,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-8544d6ab155f3bacfc/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "07731c37b95ef257c8b44235cfbcd9e64b57755deadccc05f7b20ca16b6c06d5",
-      "tokens": 1866
+      "request_sha256": "833e75c59716c61c1523dd0d655a8d40b989e2b968793cef6ba1dfdc01ff4bb7",
+      "tokens": 1875
     },
     {
       "bounded_tokens": 6779,
@@ -14332,13 +14332,13 @@
       "tokens": 1907
     },
     {
-      "bounded_tokens": 6722,
+      "bounded_tokens": 6731,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-8544d6ab155f3bacfc/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "f486dae0b04b3df0cd4bdacfac29980cafafc6b8579eaa6ef343d448f269f129",
-      "tokens": 1858
+      "request_sha256": "94ba2572b412cc017ed982e4468c97b96b3cd49ccdd9966f9c1cf072424466fb",
+      "tokens": 1867
     },
     {
       "bounded_tokens": 6771,
@@ -14359,13 +14359,13 @@
       "tokens": 4100
     },
     {
-      "bounded_tokens": 8915,
+      "bounded_tokens": 8924,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-8544d6ab155f3bacfc/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "5615560193dc380f63268de1c35c5494e50b9a12fe762f2aac495ae51ae7a0f4",
-      "tokens": 4051
+      "request_sha256": "ee9c3942cda81ac5da848052f58b8b05ee0ca9600bf34524f95e24cd37ba08c5",
+      "tokens": 4060
     },
     {
       "bounded_tokens": 8964,
@@ -14386,13 +14386,13 @@
       "tokens": 2265
     },
     {
-      "bounded_tokens": 7080,
+      "bounded_tokens": 7089,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-8544d6ab155f3bacfc/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "a2dec959b720665fd89c9f08a6f4b69ffe5cf372b3ee6c683cb2b329f1338806",
-      "tokens": 2216
+      "request_sha256": "10fcdd94ef64f5d3c2d58d297aa0ddcb17a823c90d9313ae3d0a9a6686c668c3",
+      "tokens": 2225
     },
     {
       "bounded_tokens": 7129,
@@ -14422,13 +14422,13 @@
       "tokens": 4123
     },
     {
-      "bounded_tokens": 9962,
+      "bounded_tokens": 9971,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-8544d6ab155f3bacfc/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "e2e37b1d11727e3738a403735b9a74d5b8e392c22b9a2ad13acb414f8598abe7",
-      "tokens": 4074
+      "request_sha256": "f936263e2adfe666b8ca483ee10c70f06147fb467b06cb1fbc0b7d2e32cb9ae4",
+      "tokens": 4083
     },
     {
       "bounded_tokens": 10011,
@@ -15025,13 +15025,13 @@
       "tokens": 1857
     },
     {
-      "bounded_tokens": 6672,
+      "bounded_tokens": 6681,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-aaf4f06b198c6d72b0/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "716695d11b3afee30fb4b135636dd25b85202953c1ab1e1f5d5d9224a2904781",
-      "tokens": 1808
+      "request_sha256": "0fa445f7d740ede6971241bbcf41fb6855dd3ab16ea01dd6d96e30d929b32169",
+      "tokens": 1817
     },
     {
       "bounded_tokens": 6721,
@@ -15052,13 +15052,13 @@
       "tokens": 1849
     },
     {
-      "bounded_tokens": 6664,
+      "bounded_tokens": 6673,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-aaf4f06b198c6d72b0/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "e1ec7e644cc2d700e2d6e1fd6823773d8ae3ce21fe78a7022b190427056856b8",
-      "tokens": 1800
+      "request_sha256": "ed32ffe802e06f3017f2157fa460ab467158e4fcd3da88bd1c85cc5066bacc14",
+      "tokens": 1809
     },
     {
       "bounded_tokens": 6713,
@@ -15079,13 +15079,13 @@
       "tokens": 3981
     },
     {
-      "bounded_tokens": 8796,
+      "bounded_tokens": 8805,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-aaf4f06b198c6d72b0/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "1e529405d16860ae3d23c5f3adf0f4a438e428a06460aec09b2bb20a767a2ea2",
-      "tokens": 3932
+      "request_sha256": "500ef5d85a2621b337868dda2281678bf98219504bb610dccb9a41584d4c0c05",
+      "tokens": 3941
     },
     {
       "bounded_tokens": 8845,
@@ -15106,13 +15106,13 @@
       "tokens": 2209
     },
     {
-      "bounded_tokens": 7024,
+      "bounded_tokens": 7033,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-aaf4f06b198c6d72b0/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "0d251c8e789fff4e8dad9814febc5fe39946b342e0a0840bbaa02def641b07c6",
-      "tokens": 2160
+      "request_sha256": "a8822cbe895d4a3b84e5c9776fdd16f0b0abadb31cf688bce247ae0bff616858",
+      "tokens": 2169
     },
     {
       "bounded_tokens": 7073,
@@ -15142,13 +15142,13 @@
       "tokens": 4006
     },
     {
-      "bounded_tokens": 9845,
+      "bounded_tokens": 9854,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-aaf4f06b198c6d72b0/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "4ee6e90a6826be5f0d0be537d05458246fd3d98db1437d3b7693548fc0d1d079",
-      "tokens": 3957
+      "request_sha256": "678e71067cdc52638d34830e84bd616c320e4c27c62914d41957236413df40fa",
+      "tokens": 3966
     },
     {
       "bounded_tokens": 9894,
@@ -15304,13 +15304,13 @@
       "tokens": 1878
     },
     {
-      "bounded_tokens": 6693,
+      "bounded_tokens": 6702,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-b30630c3c3eb81a391/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "e64c0c5ae20e93169ee5d5d02287467e58c591724ff7330a42a9666322343356",
-      "tokens": 1829
+      "request_sha256": "3acc17ab4a869975670a072a04acd579bcc337722f8448bd7a7658035c4e7fc1",
+      "tokens": 1838
     },
     {
       "bounded_tokens": 6742,
@@ -15331,13 +15331,13 @@
       "tokens": 1870
     },
     {
-      "bounded_tokens": 6685,
+      "bounded_tokens": 6694,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-b30630c3c3eb81a391/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "18bc906cd9f125a7c29392705ca2c7e98e268862ef0e7b43520da605b7f66299",
-      "tokens": 1821
+      "request_sha256": "64410b60442212b09311aa1de89ea81c92cffad124853ee8b38a718e12e1cc7c",
+      "tokens": 1830
     },
     {
       "bounded_tokens": 6734,
@@ -15358,13 +15358,13 @@
       "tokens": 4052
     },
     {
-      "bounded_tokens": 8867,
+      "bounded_tokens": 8876,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-b30630c3c3eb81a391/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "c39f496d339850a14bdc8605f1dee2c7e10d6e98749bbe1d63637143e78a4b9f",
-      "tokens": 4003
+      "request_sha256": "32a827206ad9f40a952e582dd5ccc24a32d524d7cb4f0f2b24ba1546f0268fef",
+      "tokens": 4012
     },
     {
       "bounded_tokens": 8916,
@@ -15385,13 +15385,13 @@
       "tokens": 2217
     },
     {
-      "bounded_tokens": 7032,
+      "bounded_tokens": 7041,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-b30630c3c3eb81a391/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "7e9bdacfc1c47f09cb222233dbc523323cb8b2667923f3c643950c9ddac5f294",
-      "tokens": 2168
+      "request_sha256": "efb712c2ce04685bf6784f4ef1b00f362b45a8f4b70c021a014fc0617ec7df93",
+      "tokens": 2177
     },
     {
       "bounded_tokens": 7081,
@@ -15421,13 +15421,13 @@
       "tokens": 4078
     },
     {
-      "bounded_tokens": 9917,
+      "bounded_tokens": 9926,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-b30630c3c3eb81a391/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "33cc55f8a72d474c89702a32fcfcb7e301d82b1910020f3497c0de93f76c62d9",
-      "tokens": 4029
+      "request_sha256": "cc77c09703753f34d70755809bbe8ac84a1573cb634b3b5bea1a3678f5e3f89b",
+      "tokens": 4038
     },
     {
       "bounded_tokens": 9966,
@@ -15457,13 +15457,13 @@
       "tokens": 1855
     },
     {
-      "bounded_tokens": 6670,
+      "bounded_tokens": 6679,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-be14f77cffbcaf717f/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "5bb96c9f73a41da174de583b76a3dffb4920c90172b5479ad516dc1451d44a1a",
-      "tokens": 1806
+      "request_sha256": "5cb71e997f279497e6efbb907730cb33995f93454fe49bbef3ba9aa46dcbbc8e",
+      "tokens": 1815
     },
     {
       "bounded_tokens": 6719,
@@ -15484,13 +15484,13 @@
       "tokens": 1847
     },
     {
-      "bounded_tokens": 6662,
+      "bounded_tokens": 6671,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-be14f77cffbcaf717f/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "0cbb9032d7ccd9ab43c02fad1b5ea21293280394b1edcc2aabe2c07a5a03dc77",
-      "tokens": 1798
+      "request_sha256": "521734506e57b67d704068de934e188e432fc0e0f0528b998753ad37f966bbd4",
+      "tokens": 1807
     },
     {
       "bounded_tokens": 6711,
@@ -15511,13 +15511,13 @@
       "tokens": 3970
     },
     {
-      "bounded_tokens": 8785,
+      "bounded_tokens": 8794,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-be14f77cffbcaf717f/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "194d36e7753c5a2ebeef967e1a495ff06fc6119efc4eee2699071f0af46c5b1a",
-      "tokens": 3921
+      "request_sha256": "e097b06641f5a6e90199daa7c41b9357555ae5937ca8408a42de5389fd597e3d",
+      "tokens": 3930
     },
     {
       "bounded_tokens": 8834,
@@ -15538,13 +15538,13 @@
       "tokens": 2198
     },
     {
-      "bounded_tokens": 7013,
+      "bounded_tokens": 7022,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-be14f77cffbcaf717f/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "1092c07d5e1f162a4500eb55e69d583601e2e00eaa1799eba5f3ac9e67acb59d",
-      "tokens": 2149
+      "request_sha256": "0174b74ea7ef43acbc6e36472c4c176c0c9a7587cffa462fca87a201e3650c65",
+      "tokens": 2158
     },
     {
       "bounded_tokens": 7062,
@@ -15574,13 +15574,13 @@
       "tokens": 3993
     },
     {
-      "bounded_tokens": 9832,
+      "bounded_tokens": 9841,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-be14f77cffbcaf717f/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "e714f1affc2e66595604139f0018f20882fa7ff3a3bf6ba15be90795e39170a4",
-      "tokens": 3944
+      "request_sha256": "86dc27823541b0542955334864929228f44921ae9c089ff785765107a9fa3a47",
+      "tokens": 3953
     },
     {
       "bounded_tokens": 9881,
@@ -15862,13 +15862,13 @@
       "tokens": 1868
     },
     {
-      "bounded_tokens": 6683,
+      "bounded_tokens": 6692,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-e2a9f97c296e5a1289/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "934f72e27e6a392f47a8316a6eb5c99d4ba4d990ed11d4a4c7e67c0a4c3e17f0",
-      "tokens": 1819
+      "request_sha256": "5203c43c4d2301c098ae50d6767667e7032565e01dc877a01da37abba596bab7",
+      "tokens": 1828
     },
     {
       "bounded_tokens": 6732,
@@ -15889,13 +15889,13 @@
       "tokens": 1860
     },
     {
-      "bounded_tokens": 6675,
+      "bounded_tokens": 6684,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-e2a9f97c296e5a1289/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "3bf4935e1ad80f43dcfe4db60742a13f1fd97d989fdac7df380152780ad4db48",
-      "tokens": 1811
+      "request_sha256": "e5d721f5aa867e58121490debe7593f252916a3e43b8e061067955eb7ec971ec",
+      "tokens": 1820
     },
     {
       "bounded_tokens": 6724,
@@ -15916,13 +15916,13 @@
       "tokens": 3932
     },
     {
-      "bounded_tokens": 8747,
+      "bounded_tokens": 8756,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-e2a9f97c296e5a1289/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "6616ca5744d56c5db211284be16700069c3c437ad9fa6b314e240a042aa6e259",
-      "tokens": 3883
+      "request_sha256": "a07528ef5a0488b9f4d0d0e10359df2a1fb318336288a09dcd4870cc38276256",
+      "tokens": 3892
     },
     {
       "bounded_tokens": 8796,
@@ -15943,13 +15943,13 @@
       "tokens": 2205
     },
     {
-      "bounded_tokens": 7020,
+      "bounded_tokens": 7029,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-e2a9f97c296e5a1289/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "d8c20866a796f65e912d6778dfb03903f530d04446227efe32fe2adac6dff174",
-      "tokens": 2156
+      "request_sha256": "6610581e3e43f0f5f0df1276e64f6acd125ed350952a59aeefc9a021c29c22cb",
+      "tokens": 2165
     },
     {
       "bounded_tokens": 7069,
@@ -15979,13 +15979,13 @@
       "tokens": 3959
     },
     {
-      "bounded_tokens": 9798,
+      "bounded_tokens": 9807,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-e2a9f97c296e5a1289/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "d6f4a01b0897b55335cbf536c9f6d781e9c3bee875f884e127dba151307db674",
-      "tokens": 3910
+      "request_sha256": "0ad89ea0d14d2fc432c38dd4751105f18027e608c85051cdbe315decba1013af",
+      "tokens": 3919
     },
     {
       "bounded_tokens": 9847,
@@ -16015,13 +16015,13 @@
       "tokens": 1507
     },
     {
-      "bounded_tokens": 6322,
+      "bounded_tokens": 6331,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-ed1608ab8b7da32931/V/pro/attacker/3",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "e2492ba130e77dd12b710c987eb46804a3c674eef1ede34c9e9eeec43441d833",
-      "tokens": 1458
+      "request_sha256": "dfe4ebe6b0040cf57f387758b17022fb99da1525d3385f1d3c059de810b92b43",
+      "tokens": 1467
     },
     {
       "bounded_tokens": 6371,
@@ -16042,13 +16042,13 @@
       "tokens": 1499
     },
     {
-      "bounded_tokens": 6314,
+      "bounded_tokens": 6323,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-ed1608ab8b7da32931/W/pro/attacker/3",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "ca46d0ab4f43fc7e1a9742d3f463d770d441e8c307c0da0100f51e096f6fd4c3",
-      "tokens": 1450
+      "request_sha256": "e9a63e520abc0af50ef0ea60fd2c5a5940f346917f0f45472fbeff2e696f40b2",
+      "tokens": 1459
     },
     {
       "bounded_tokens": 6363,
@@ -16069,13 +16069,13 @@
       "tokens": 3041
     },
     {
-      "bounded_tokens": 7856,
+      "bounded_tokens": 7865,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-ed1608ab8b7da32931/A/pro/attacker/3",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "6040579f073ae758c2b4c083a1612b2829bae288cf5f8281ba4550b918b40b1d",
-      "tokens": 2992
+      "request_sha256": "ba91743396173eb13d7175f995e7bb1abcbb2082e9b394af884781e5adaf9bf4",
+      "tokens": 3001
     },
     {
       "bounded_tokens": 7905,
@@ -16096,13 +16096,13 @@
       "tokens": 1848
     },
     {
-      "bounded_tokens": 6663,
+      "bounded_tokens": 6672,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-ed1608ab8b7da32931/F/pro/attacker/3",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "277f3efcf4563811c8841fdef9a67b905306b76ad1046cdfc23df2c8dc865a40",
-      "tokens": 1799
+      "request_sha256": "bf3bf0fe9404de9427fc25ad5e9be2a2032c1b070ba492c00a964e6685140b63",
+      "tokens": 1808
     },
     {
       "bounded_tokens": 6712,
@@ -16132,13 +16132,13 @@
       "tokens": 3065
     },
     {
-      "bounded_tokens": 8904,
+      "bounded_tokens": 8913,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-ed1608ab8b7da32931/R/pro/attacker/3",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "94fdfa1a0d68be8b6546d63b7f49172de8c151c63913ec69c9acb935ba5bc8bc",
-      "tokens": 3016
+      "request_sha256": "7d4ca5d5093af0aaec10b683967f2183a9b2661a4efe23db004f8b99beb748c1",
+      "tokens": 3025
     },
     {
       "bounded_tokens": 8953,
@@ -16348,1274 +16348,1274 @@
       "tokens": 1846
     },
     {
-      "bounded_tokens": 5057,
+      "bounded_tokens": 5066,
       "generated_token_reserve": 4864,
       "identity": "dev/e4-086d3b59c2f1ac4d1d/V/replication/pushback/3/gemini-attacker",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "cd6ab59435cbf80293bb9dabefe65bfd4d195683706e1f9ebede552d135228a8",
-      "tokens": 193
+      "request_sha256": "69b863e3dbb2d99c99791fefcc8a43e7175f59b9111adb5bc9a60b1e6dfaeef8",
+      "tokens": 202
     },
     {
-      "bounded_tokens": 5110,
+      "bounded_tokens": 5119,
       "generated_token_reserve": 4864,
       "identity": "dev/e4-086d3b59c2f1ac4d1d/W/replication/pushback/3/gemini-attacker",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "642907d68f4b110d63510551d330f0def5886129329c9cfd12e301cb07d524fa",
-      "tokens": 246
-    },
-    {
-      "bounded_tokens": 5941,
-      "generated_token_reserve": 4864,
-      "identity": "dev/e4-086d3b59c2f1ac4d1d/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "8701d28d0257cad153928ec14beca3bd9f559792e2441b4be4d61b3f108db908",
-      "tokens": 1077
-    },
-    {
-      "bounded_tokens": 5404,
-      "generated_token_reserve": 4864,
-      "identity": "dev/e4-086d3b59c2f1ac4d1d/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "7e0db8277c40ebb8c1fba831e5366d3e558d79a15fc6869e66dca376c7ad50f3",
-      "tokens": 540
-    },
-    {
-      "bounded_tokens": 7048,
-      "generated_token_reserve": 5888,
-      "identity": "dev/e4-086d3b59c2f1ac4d1d/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "0cf6e2947b7cdb73c10006e72896351a0826bac13529cd5ac5c8833ea4c07ee8",
-      "tokens": 1160
-    },
-    {
-      "bounded_tokens": 5057,
-      "generated_token_reserve": 4864,
-      "identity": "dev/e4-e593908907ba459975/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "34b8749aee78f6a31f10daf15672de9340aa5abd935ed8da86afaeed1abfb1c3",
-      "tokens": 193
-    },
-    {
-      "bounded_tokens": 5110,
-      "generated_token_reserve": 4864,
-      "identity": "dev/e4-e593908907ba459975/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "f904cdd716d65fb411ca17e54ebaea9fb78667e7fb72cfb88aeb5b9a45a62bc4",
-      "tokens": 246
+      "request_sha256": "8c03c5af6c2be91013df6d1c093545f1a4e7dda8ba44d73b697fe633938c2eb4",
+      "tokens": 255
     },
     {
       "bounded_tokens": 5950,
       "generated_token_reserve": 4864,
-      "identity": "dev/e4-e593908907ba459975/A/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/A/replication/pushback/3/gemini-attacker",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "d83b0fe12497ab556d6b8530dcc5a4ea8dcbd453b5efc35586e03b785debc145",
+      "request_sha256": "12bc2e57f42a92f785076ef6da2f63cdadd4f0a79fbb0a25e4c7f96d0548ee62",
       "tokens": 1086
-    },
-    {
-      "bounded_tokens": 5407,
-      "generated_token_reserve": 4864,
-      "identity": "dev/e4-e593908907ba459975/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "5e9b8eefba6c3a75bcc5fdc795b190e4c34419aff9ecc8d2e6085b755ce19aab",
-      "tokens": 543
-    },
-    {
-      "bounded_tokens": 7057,
-      "generated_token_reserve": 5888,
-      "identity": "dev/e4-e593908907ba459975/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "3f68de9d70e37b613bbb584500d2d9a09ba4e208e16f4a924b49aca7573a1e8d",
-      "tokens": 1169
-    },
-    {
-      "bounded_tokens": 5897,
-      "generated_token_reserve": 4864,
-      "identity": "dev/e5-094dd92cb69b206c3a/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "40a23de866e1afdd12eb75e6696287f74b377f4b23c3491752767e405cf9971f",
-      "tokens": 1033
-    },
-    {
-      "bounded_tokens": 5889,
-      "generated_token_reserve": 4864,
-      "identity": "dev/e5-094dd92cb69b206c3a/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "e4b043d5bb7c213ce9384402f5b5fdfd37bebb1071ea494b6ea2394e9083ac17",
-      "tokens": 1025
-    },
-    {
-      "bounded_tokens": 6816,
-      "generated_token_reserve": 4864,
-      "identity": "dev/e5-094dd92cb69b206c3a/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "04a38e1d620087e74140af69d9c4f9fb123d1425eaa7e63eeca735589c6bbe8b",
-      "tokens": 1952
-    },
-    {
-      "bounded_tokens": 6250,
-      "generated_token_reserve": 4864,
-      "identity": "dev/e5-094dd92cb69b206c3a/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "26bcdd44250cd6c33d2eb33b0fa467249ff51ab94d083642873447844aeac0d5",
-      "tokens": 1386
-    },
-    {
-      "bounded_tokens": 7865,
-      "generated_token_reserve": 5888,
-      "identity": "dev/e5-094dd92cb69b206c3a/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "a7e8a2239d8d8de1ccf2bae82c5f8a28810c4efb50a764262e74c50ca528eb61",
-      "tokens": 1977
-    },
-    {
-      "bounded_tokens": 5897,
-      "generated_token_reserve": 4864,
-      "identity": "dev/e5-60578db1dbb684432c/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "4683f87fa299d66aaad04f8df427232c604e4030e51a428a71ee00a9a15b18fc",
-      "tokens": 1033
-    },
-    {
-      "bounded_tokens": 5889,
-      "generated_token_reserve": 4864,
-      "identity": "dev/e5-60578db1dbb684432c/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "057f8c60746624773146368a03aa9219850ae185ba121798d17cb7111dde0e60",
-      "tokens": 1025
-    },
-    {
-      "bounded_tokens": 6811,
-      "generated_token_reserve": 4864,
-      "identity": "dev/e5-60578db1dbb684432c/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "688f0264898177dc92f7c489043f309b60e19d84162d492da1ec146c3578a812",
-      "tokens": 1947
-    },
-    {
-      "bounded_tokens": 6245,
-      "generated_token_reserve": 4864,
-      "identity": "dev/e5-60578db1dbb684432c/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "ffc2aaef484cc2de3d2768952605dc442caf862bce1275eb6304c264013bfadf",
-      "tokens": 1381
-    },
-    {
-      "bounded_tokens": 7860,
-      "generated_token_reserve": 5888,
-      "identity": "dev/e5-60578db1dbb684432c/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "1977985b259569259c4a32c409590023f0bf8a711a8e33e45e9eae0af34ba322",
-      "tokens": 1972
-    },
-    {
-      "bounded_tokens": 5062,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-384fe9ee732879fe0a/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "5c1f99fffca9c7d0add89d15103c9db86a7b9122f85dc05239bdf8931bdd0416",
-      "tokens": 198
-    },
-    {
-      "bounded_tokens": 5116,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-384fe9ee732879fe0a/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "e84ce5bca5fa2666f7b65720727b2e735f9cc5f5de71d91ce26e7b86e19c3485",
-      "tokens": 252
-    },
-    {
-      "bounded_tokens": 5962,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-384fe9ee732879fe0a/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "b1474072e0c5068309081f0500909a1a6cdaaa0fd6fbb6c64922ff018772ffb1",
-      "tokens": 1098
     },
     {
       "bounded_tokens": 5413,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-384fe9ee732879fe0a/F/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/F/replication/pushback/3/gemini-attacker",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "2f7c2a4bab3dfd1a0267a751b8ae2db7688f4816e57837c40d05ef94c4c71b95",
+      "request_sha256": "1be59301213e9ec5959bc51f50ff119b513b73610deb635ec38b02b03c5a9a66",
       "tokens": 549
     },
     {
-      "bounded_tokens": 7068,
+      "bounded_tokens": 7057,
       "generated_token_reserve": 5888,
-      "identity": "scored/e4-384fe9ee732879fe0a/R/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/R/replication/pushback/3/gemini-attacker",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "6924131f99e1a550dac686ae9ffd710c39511af72acf9800143a0ac183e6000d",
-      "tokens": 1180
+      "request_sha256": "ccd36e4a4ddc02a2eaba7abdc2c7903dbcfe777e4b5142f0e903de2cf569b96e",
+      "tokens": 1169
     },
     {
-      "bounded_tokens": 5064,
+      "bounded_tokens": 5066,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-501b275cf468f7e547/V/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e4-e593908907ba459975/V/replication/pushback/3/gemini-attacker",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "bd5905dd5c35a9a1ff675c46a0a0a249fd54ea461da3b0ffab03284c3fe2367c",
-      "tokens": 200
+      "request_sha256": "d021474c60631b31c836208ee7260e52a40a4aee42b112f0a44425ebeff1dd3e",
+      "tokens": 202
     },
     {
-      "bounded_tokens": 5118,
+      "bounded_tokens": 5119,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-501b275cf468f7e547/W/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e4-e593908907ba459975/W/replication/pushback/3/gemini-attacker",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "35ed28043a08a6d6522b3ea90ed3e38ab693bdd1c31147b4bbed0baa5a2ff59c",
-      "tokens": 254
+      "request_sha256": "6e364b0a5482298fda174ba63b148034eae97180a705ec22ddd717a7371741af",
+      "tokens": 255
     },
     {
-      "bounded_tokens": 5976,
+      "bounded_tokens": 5959,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-501b275cf468f7e547/A/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e4-e593908907ba459975/A/replication/pushback/3/gemini-attacker",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "88b14ce613542c405b0abe8199b788b30b67f307e3cc723d0535e92d96bc00c9",
-      "tokens": 1112
+      "request_sha256": "7156e84b199024b25ac0ce099141c2e92804afbde1e07c5869f2542cf3bffbe2",
+      "tokens": 1095
     },
     {
-      "bounded_tokens": 5419,
+      "bounded_tokens": 5416,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-501b275cf468f7e547/F/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e4-e593908907ba459975/F/replication/pushback/3/gemini-attacker",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "6e7352ccb013f3d7535a98760f9361200806e96d854e295a80c5ea1214c5425f",
-      "tokens": 555
+      "request_sha256": "4b85602e321498167664f204befe6b322a7b2780fc9c5744b58fb81ea2cf2192",
+      "tokens": 552
     },
     {
-      "bounded_tokens": 7084,
+      "bounded_tokens": 7066,
       "generated_token_reserve": 5888,
-      "identity": "scored/e4-501b275cf468f7e547/R/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e4-e593908907ba459975/R/replication/pushback/3/gemini-attacker",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "bcbf7e8b62864bc6b9ca251dc1e0d3c0c64df00ae68b80f72858b7c2bbf861b7",
-      "tokens": 1196
+      "request_sha256": "4611b6985152fe5e097b2d5512d0835f6159fbc17272bf2a7133fab7075d0135",
+      "tokens": 1178
     },
     {
-      "bounded_tokens": 5070,
+      "bounded_tokens": 5906,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-556e48b9eca40fc53f/V/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e5-094dd92cb69b206c3a/V/replication/pushback/3/gemini-attacker",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "818bca3c6cd9a53968327c15b2a2106f94dab7413bc47de5ff5e7e1a4e101fbe",
-      "tokens": 206
+      "request_sha256": "38c3f111792e4f9efc48e54707a2b1ea6196a406ce425db49bee4ff37e632f2c",
+      "tokens": 1042
     },
     {
-      "bounded_tokens": 5116,
+      "bounded_tokens": 5898,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-556e48b9eca40fc53f/W/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e5-094dd92cb69b206c3a/W/replication/pushback/3/gemini-attacker",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "10d564984b88f14b20dfd804da5ae355a6b68b5a7cff26277578b45d24f4fa50",
-      "tokens": 252
+      "request_sha256": "50a31b33ff65545ef033d9f6acf23e35197583d4afe80162563768e50e646893",
+      "tokens": 1034
     },
     {
-      "bounded_tokens": 5973,
+      "bounded_tokens": 6825,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-556e48b9eca40fc53f/A/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e5-094dd92cb69b206c3a/A/replication/pushback/3/gemini-attacker",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "da6dad436a6e213696320e195764c5f054c84e93bf6d90ff56b09efd1ba43123",
-      "tokens": 1109
+      "request_sha256": "f5cb9e44b5b0a7aa3bac2d6f2c67ff6bd8634cdb18198a33fa09b8bdcbd780c4",
+      "tokens": 1961
     },
     {
-      "bounded_tokens": 5410,
+      "bounded_tokens": 6259,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-556e48b9eca40fc53f/F/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e5-094dd92cb69b206c3a/F/replication/pushback/3/gemini-attacker",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "5f162751c7812d5ff2e6f700267cecd7368614d9cbdecdddef2830c4fb892534",
-      "tokens": 546
+      "request_sha256": "488d63e603b405d2e66aa2dcbe339adbb4b59946c72aef6b19bbbb367c8cbc7b",
+      "tokens": 1395
     },
     {
-      "bounded_tokens": 7071,
+      "bounded_tokens": 7874,
       "generated_token_reserve": 5888,
-      "identity": "scored/e4-556e48b9eca40fc53f/R/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e5-094dd92cb69b206c3a/R/replication/pushback/3/gemini-attacker",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "60f2dc3040aa5c9573c3903649c5715168511c5c6df5eecec3f859a7d8c9ca18",
-      "tokens": 1183
+      "request_sha256": "c29968f6feeb38ae0e6c5f7eb3a67ba92e440fb00f87da0316062f13de87c949",
+      "tokens": 1986
     },
     {
-      "bounded_tokens": 5121,
+      "bounded_tokens": 5906,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-663cd383e7de9393b4/V/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e5-60578db1dbb684432c/V/replication/pushback/3/gemini-attacker",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "2659631343bcea567c0d1279c332909a1929afd00204a3bca784daeb6fae2297",
-      "tokens": 257
+      "request_sha256": "c02408a75674fb32b127d7fb610807b340c6fb6057c70365d052b3bc36db58a4",
+      "tokens": 1042
     },
     {
-      "bounded_tokens": 5177,
+      "bounded_tokens": 5898,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-663cd383e7de9393b4/W/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e5-60578db1dbb684432c/W/replication/pushback/3/gemini-attacker",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "2930d4761a0599fd0d5e4234ed6235ee01b40b2d03fa67914ed5937d25516526",
-      "tokens": 313
+      "request_sha256": "6822346a048d80ccbc80a0836955a4fa5087399043b054253e03af62136605cb",
+      "tokens": 1034
     },
     {
-      "bounded_tokens": 6086,
+      "bounded_tokens": 6820,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-663cd383e7de9393b4/A/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e5-60578db1dbb684432c/A/replication/pushback/3/gemini-attacker",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "eef4dc51c57dceb8610ac154b6de7669f6ec03290551443893ef0d2dbfcb9842",
-      "tokens": 1222
+      "request_sha256": "070ad51a2800b0bc1f2f5075380f6a83e27a34f425702e4a920682ebb417534b",
+      "tokens": 1956
     },
     {
-      "bounded_tokens": 5466,
+      "bounded_tokens": 6254,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-663cd383e7de9393b4/F/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e5-60578db1dbb684432c/F/replication/pushback/3/gemini-attacker",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "ea7b43b7e1e3f36c38196e892724b8fc95abfa604433c1ef59501385e08d2ec2",
-      "tokens": 602
+      "request_sha256": "7286edb9745b5656c52b7141825c17b16316b07a3f83b19e1f3ed41d0948ac67",
+      "tokens": 1390
     },
     {
-      "bounded_tokens": 7195,
+      "bounded_tokens": 7869,
       "generated_token_reserve": 5888,
-      "identity": "scored/e4-663cd383e7de9393b4/R/replication/pushback/3/gemini-attacker",
+      "identity": "dev/e5-60578db1dbb684432c/R/replication/pushback/3/gemini-attacker",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "9850a05a3e761008f23988739236fdc95e6fa6aa2b1b30c9e50a11a98a79dfae",
-      "tokens": 1307
-    },
-    {
-      "bounded_tokens": 5068,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-80e5bb1e64d57cfe87/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "45263facea809a0b35b71c053b830c115d5788f5c098146be888fb6569122dcd",
-      "tokens": 204
-    },
-    {
-      "bounded_tokens": 5114,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-80e5bb1e64d57cfe87/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "eb62c5d478ab9dceadd393c7c1d9b0228aa29627eeb8d6a541f640b80e4c179f",
-      "tokens": 250
-    },
-    {
-      "bounded_tokens": 5970,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-80e5bb1e64d57cfe87/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "d339396be48d11b43cf2c0547e82a56daa2bd84450f7591f3d9678bf91b042fc",
-      "tokens": 1106
-    },
-    {
-      "bounded_tokens": 5408,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-80e5bb1e64d57cfe87/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "ba7a7fc31c85b8eaee9e8b782c30a4b4e821821478d855dae4e50047f6682b02",
-      "tokens": 544
-    },
-    {
-      "bounded_tokens": 7068,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e4-80e5bb1e64d57cfe87/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "6c0d5d0bbf86268b55a6b55e34f8e7c58ff18f6acafd6cacbb98d5e62730bc95",
-      "tokens": 1180
-    },
-    {
-      "bounded_tokens": 5093,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-8d3f186d859f1a0c37/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "9fa4c3c61f8b191760477f3071ba3cc7e554e2940f0bb2435b375b44630fa1a8",
-      "tokens": 229
-    },
-    {
-      "bounded_tokens": 5162,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-8d3f186d859f1a0c37/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "d6b42372ba85e5ef64def1013d6bb3515467c4af376e9b1a08a0bb19d1b73ea5",
-      "tokens": 298
-    },
-    {
-      "bounded_tokens": 6037,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-8d3f186d859f1a0c37/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "cb998828b7713307f689c399453d816cc8fb0748a9f64e3ddf51cab3d38d345c",
-      "tokens": 1173
-    },
-    {
-      "bounded_tokens": 5434,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-8d3f186d859f1a0c37/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "653230653a92a1a4ed21a153b1ddb719cb2db5038de504e6d4b4caed9ee12b98",
-      "tokens": 570
-    },
-    {
-      "bounded_tokens": 7161,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e4-8d3f186d859f1a0c37/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "63b37a03abd637ebe3dfbf27f3c0479130298110c4cdcbac5bcd13f6fff386a1",
-      "tokens": 1273
-    },
-    {
-      "bounded_tokens": 5059,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-94554cbab09bed5c4c/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "ba2ad8d42c4883cd28985226a766a36bdba038dc1b88917e19f6273a993489b2",
-      "tokens": 195
-    },
-    {
-      "bounded_tokens": 5121,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-94554cbab09bed5c4c/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "3f6a39390a6832fa7d01f3f2abc6f8dad2d5102028233d32ce9ad73d61329a53",
-      "tokens": 257
-    },
-    {
-      "bounded_tokens": 5965,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-94554cbab09bed5c4c/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "60d4661217ca5c94a394dfda401d65e55f9ba5438d394aa1777b47544a854881",
-      "tokens": 1101
-    },
-    {
-      "bounded_tokens": 5399,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-94554cbab09bed5c4c/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "3d662925c48fa291e6298b9a69447aefd8ffb66102c17640de85f8bec1563056",
-      "tokens": 535
-    },
-    {
-      "bounded_tokens": 7078,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e4-94554cbab09bed5c4c/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "69ba3b12fcd5ae51c2db81796f3fe483d89719c216118c583ad3b258c6b71911",
-      "tokens": 1190
-    },
-    {
-      "bounded_tokens": 5122,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-9b547263eb7a4e6d66/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "ca25fe25eaeafde9de509bd6ec24efc9bb72ba5bd92231891fee10f66c2eb685",
-      "tokens": 258
-    },
-    {
-      "bounded_tokens": 5178,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-9b547263eb7a4e6d66/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "c370a604fce8301900572016b26a52b57d9e02600aae1c326095a303022cbb42",
-      "tokens": 314
-    },
-    {
-      "bounded_tokens": 6087,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-9b547263eb7a4e6d66/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "f3f2b7cd1e3968a91cae6b426b6ed65aefa4fba4b13ea436740f847d0ddd1f4e",
-      "tokens": 1223
-    },
-    {
-      "bounded_tokens": 5467,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-9b547263eb7a4e6d66/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "a376e599de35bc1323e13598da1b1dd54d90d9bb806ae6b283c07cfbba18d1b5",
-      "tokens": 603
-    },
-    {
-      "bounded_tokens": 7197,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e4-9b547263eb7a4e6d66/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "d2db1419799b1a778bfc6716ed126a5154f1214f57553380962a2b049eed9e06",
-      "tokens": 1309
-    },
-    {
-      "bounded_tokens": 5073,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-b5c05a56e4f42ef6af/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "72d767fc6e79d8e59ccd43fdf31145237a4e360c5b27fb61722eb4a406d47191",
-      "tokens": 209
-    },
-    {
-      "bounded_tokens": 5120,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-b5c05a56e4f42ef6af/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "54ff84bd5351f3e0affe39f2c769eae174e5534bc98fb740fefe888c62babbc8",
-      "tokens": 256
-    },
-    {
-      "bounded_tokens": 5970,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-b5c05a56e4f42ef6af/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "fd205b39c43394ff41ee4445cd531b0cf7f2a0bd1b1cff388638fd675179a21a",
-      "tokens": 1106
-    },
-    {
-      "bounded_tokens": 5423,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-b5c05a56e4f42ef6af/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "265b5b726a1b730b812848f3eff61927fce57aae5275ce1f00e1cd6ccf6b5f5f",
-      "tokens": 559
-    },
-    {
-      "bounded_tokens": 7070,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e4-b5c05a56e4f42ef6af/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "d84e23086e35477913d92e3e984b1b1a7606bf850feff1ec24b303f0b47adb39",
-      "tokens": 1182
-    },
-    {
-      "bounded_tokens": 5093,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-d208a052033c4bbf88/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "b21ceb5e5487e376183c21d95f3b272e4d25a2c7c522001d697617414fe4cc30",
-      "tokens": 229
-    },
-    {
-      "bounded_tokens": 5162,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-d208a052033c4bbf88/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "5fe32d1107956767ef1c7503f1d242bbf83ac056d810e05506c5f32044833a66",
-      "tokens": 298
-    },
-    {
-      "bounded_tokens": 6055,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-d208a052033c4bbf88/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "d11418ee46c72dfb83f43e51b1e7ee2f979dec98e253d8c22c3a46da8020b07b",
-      "tokens": 1191
-    },
-    {
-      "bounded_tokens": 5442,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-d208a052033c4bbf88/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "ee8301d75e7f2ce5407cfbc3cfbb621c8dfbad74fd73c27e6ef8438cd508ef09",
-      "tokens": 578
-    },
-    {
-      "bounded_tokens": 7178,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e4-d208a052033c4bbf88/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "122bfc4dd3fb4f9b49c1e665d658abfeebced1c42e54c00d40e6332223973ef4",
-      "tokens": 1290
-    },
-    {
-      "bounded_tokens": 5059,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-eb78ada5a394ad3218/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "921de08df914f67bf2fe0bb789e0aa4e5d5b87dd5bca50c46d33d84365d0db32",
-      "tokens": 195
-    },
-    {
-      "bounded_tokens": 5121,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-eb78ada5a394ad3218/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "4174c945115e242bc2ae88a71282db3be18960779887b684f8037997c2258913",
-      "tokens": 257
-    },
-    {
-      "bounded_tokens": 5961,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-eb78ada5a394ad3218/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "0278b175f894b1e299687087a379ee64b921dc8f570c2da56f9b48abd54e0844",
-      "tokens": 1097
-    },
-    {
-      "bounded_tokens": 5395,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e4-eb78ada5a394ad3218/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "0897930e284eb86762d5468583d60516e9d8a902d763e9f1950212b23eebfb4b",
-      "tokens": 531
-    },
-    {
-      "bounded_tokens": 7074,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e4-eb78ada5a394ad3218/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "145dbfff4b56c1707232e2f7551d937f8ab0be54139b3e5ceac4efab7d54c607",
-      "tokens": 1186
+      "request_sha256": "d931d0c78be8998707fd5be1e31dfc3705c746f6f68acb3b71f84c016e9714e4",
+      "tokens": 1981
     },
     {
       "bounded_tokens": 5071,
       "generated_token_reserve": 4864,
-      "identity": "scored/e4-f4951c1bb99dc6bfbd/V/replication/pushback/3/gemini-attacker",
+      "identity": "scored/e4-384fe9ee732879fe0a/V/replication/pushback/3/gemini-attacker",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "fe2c46a6df31acbdf67a65d402a5c1f39f72eab034db9d5c5436b25d2a797c34",
+      "request_sha256": "913244afa066c3fe5d8dca3ef065fa636673f938ce0b8f1e17669bd7ea0255a4",
       "tokens": 207
     },
     {
-      "bounded_tokens": 5118,
+      "bounded_tokens": 5125,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-384fe9ee732879fe0a/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "338ebb3e69c0a76ef1e478b48092b3664cbf5386c75f2c22b184c587b7f15cb4",
+      "tokens": 261
+    },
+    {
+      "bounded_tokens": 5971,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-384fe9ee732879fe0a/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "615caff4c9e3ac52302ce28980c6989b9b3f7df845a4352b2304684748edfe5a",
+      "tokens": 1107
+    },
+    {
+      "bounded_tokens": 5422,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-384fe9ee732879fe0a/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "fa4907fdebb5e292d793c796c20f175fa1b5f390c3bd036cf19b2ac65f9f73cf",
+      "tokens": 558
+    },
+    {
+      "bounded_tokens": 7077,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e4-384fe9ee732879fe0a/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "e15e35548131767179e81bdbd41a70574da90c392fd6d80f02f8937c45678885",
+      "tokens": 1189
+    },
+    {
+      "bounded_tokens": 5073,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-501b275cf468f7e547/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "d689472f69d051e0fe43e509aa4776c5cf72323a09e20e7c90700e4441496760",
+      "tokens": 209
+    },
+    {
+      "bounded_tokens": 5127,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-501b275cf468f7e547/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "3391c7e67a9e442ec5f5b6d359ae4fb5067497787bb1c0b1ebad5d0cb4fed517",
+      "tokens": 263
+    },
+    {
+      "bounded_tokens": 5985,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-501b275cf468f7e547/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "bdebbadd0a454978081bd4e8993d1d7ba21837a08d6ffd464d860afd76198df0",
+      "tokens": 1121
+    },
+    {
+      "bounded_tokens": 5428,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-501b275cf468f7e547/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "510f421ef4c4ebe53cba82675db4dc3c103b7e3ce7b2f6afdb5d79f1f6140b68",
+      "tokens": 564
+    },
+    {
+      "bounded_tokens": 7093,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e4-501b275cf468f7e547/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "88665dd68ea92251755bfe434038d94bf70c336887cca5468bab5b17ef502e12",
+      "tokens": 1205
+    },
+    {
+      "bounded_tokens": 5079,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-556e48b9eca40fc53f/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "7765ba548096f5cc960ab322fb31ce2ada349ec4d04d4ffb153c0a7c6cd1696e",
+      "tokens": 215
+    },
+    {
+      "bounded_tokens": 5125,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-556e48b9eca40fc53f/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "2410215c69e291ad9be21ea88ed00d7b4cec7ad6cd03a19d030f57f8fb59043b",
+      "tokens": 261
+    },
+    {
+      "bounded_tokens": 5982,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-556e48b9eca40fc53f/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "70f121ff1aa9018aa8c71a35a950ee24e978ff11009072488d22af2b6237e992",
+      "tokens": 1118
+    },
+    {
+      "bounded_tokens": 5419,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-556e48b9eca40fc53f/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "63b1aa7180c4512dcdf0edda5e1ab36188843f7b0de2787ea033859e320b68f8",
+      "tokens": 555
+    },
+    {
+      "bounded_tokens": 7080,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e4-556e48b9eca40fc53f/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "76f6244642412b0dbfe6b09d56f99c13371a2c9b2cc9ab0aad10939baf6d8a8b",
+      "tokens": 1192
+    },
+    {
+      "bounded_tokens": 5130,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-663cd383e7de9393b4/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "eb574600ca36d1ca98cf922af25d6d15fc2acdf9ac5886be67456e692fe1fe0d",
+      "tokens": 266
+    },
+    {
+      "bounded_tokens": 5186,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-663cd383e7de9393b4/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "7f6ee22e7136cd4a5829ae0fd8cad2ccad7ecefe0ba133b1331844c470919464",
+      "tokens": 322
+    },
+    {
+      "bounded_tokens": 6095,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-663cd383e7de9393b4/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "855a4feddcc724e46707206bb8e64fe9aa9f27202bd598b4c82df24ef20d9e24",
+      "tokens": 1231
+    },
+    {
+      "bounded_tokens": 5475,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-663cd383e7de9393b4/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "7e6ab25317300ea1b84e46f8589fbe2ce5d619c9b175b9e9c6169346bdb3c6a3",
+      "tokens": 611
+    },
+    {
+      "bounded_tokens": 7204,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e4-663cd383e7de9393b4/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "447770f4989418dd704bca3b9dfa4a2d17c635e8e1d21d2990f2bc047045aebb",
+      "tokens": 1316
+    },
+    {
+      "bounded_tokens": 5077,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-80e5bb1e64d57cfe87/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "5f7e71f5b7adf3d3f2e1f6e00bc63e31960a7147c5c1805d29199f0bfc69af8f",
+      "tokens": 213
+    },
+    {
+      "bounded_tokens": 5123,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-80e5bb1e64d57cfe87/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "865d1ac607d73a6b5589fb79cc552161156ff78472fe3f705bb7b640b0bd3f18",
+      "tokens": 259
+    },
+    {
+      "bounded_tokens": 5979,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-80e5bb1e64d57cfe87/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "9220f823aeadbf93178ba3774b728413fb9465fe4e2e45684eb78e2384be27e8",
+      "tokens": 1115
+    },
+    {
+      "bounded_tokens": 5417,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-80e5bb1e64d57cfe87/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "41d05ab99c4deb9491130426a15cfee794b5ccb13ab6348d0a08c40f8a19101d",
+      "tokens": 553
+    },
+    {
+      "bounded_tokens": 7077,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e4-80e5bb1e64d57cfe87/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "ef9b949f237c75518744daad42a21afff4c52cfe8cbf640a833114173a6bf58c",
+      "tokens": 1189
+    },
+    {
+      "bounded_tokens": 5102,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-8d3f186d859f1a0c37/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "83ebf047cc9a636ed83cd2192f7dd0a25660cce025f1e3cee86a53eacd6b995c",
+      "tokens": 238
+    },
+    {
+      "bounded_tokens": 5171,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-8d3f186d859f1a0c37/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "7f45e709ccddfda93329eb99762fab693bf1758b06c451be6a8d9962e13be835",
+      "tokens": 307
+    },
+    {
+      "bounded_tokens": 6046,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-8d3f186d859f1a0c37/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "ab7f6bc54006bf4afa33883d8b63172c68822c2bcc62451437b700018c624d29",
+      "tokens": 1182
+    },
+    {
+      "bounded_tokens": 5443,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-8d3f186d859f1a0c37/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "9bd1529a3012f533e27b5ea77fd9d4c73d2f12c61072e4daf5ac9e073991a8f7",
+      "tokens": 579
+    },
+    {
+      "bounded_tokens": 7170,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e4-8d3f186d859f1a0c37/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "931f5aa5c4b246efbe6d8db276861f690e1576c05cee379a4d5ac7bcb7a72803",
+      "tokens": 1282
+    },
+    {
+      "bounded_tokens": 5068,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-94554cbab09bed5c4c/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "a4896f82ed86125c307a7e14332f40ec3a2b14832e1a08027e39f8550f295cd0",
+      "tokens": 204
+    },
+    {
+      "bounded_tokens": 5130,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-94554cbab09bed5c4c/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "e8242d1b0fd397ad93afa7a0c0073710fb0a2874c70c5a929c3371bbcfb959cb",
+      "tokens": 266
+    },
+    {
+      "bounded_tokens": 5974,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-94554cbab09bed5c4c/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "1eccd94440b821f867a39610f4bb8cd962214f31847a9b2c34efdb672ba80469",
+      "tokens": 1110
+    },
+    {
+      "bounded_tokens": 5408,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-94554cbab09bed5c4c/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "1b2ae90872eefb62642131cb8773656d3eabdc026e6aacd5cb5032b367683865",
+      "tokens": 544
+    },
+    {
+      "bounded_tokens": 7087,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e4-94554cbab09bed5c4c/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "536727bf68bf8cbd8daf12d722a36b497342b80ce1401c199990ad8ba4058491",
+      "tokens": 1199
+    },
+    {
+      "bounded_tokens": 5131,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-9b547263eb7a4e6d66/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "497546690d500d2c845860f1e2b3944b1156d510a6de46ca687d9df2b3a3d90f",
+      "tokens": 267
+    },
+    {
+      "bounded_tokens": 5187,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-9b547263eb7a4e6d66/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "da3a36129be6313bbf3c0236cbb084314a961f46ce4c7575c3fc780d6abf0633",
+      "tokens": 323
+    },
+    {
+      "bounded_tokens": 6096,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-9b547263eb7a4e6d66/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "657e1661a1e5118deaf659a9c2bc618be6b37243049e95ae725f9c1d892e9af4",
+      "tokens": 1232
+    },
+    {
+      "bounded_tokens": 5476,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-9b547263eb7a4e6d66/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "b7335dff22aeae2fbc6f80adf605af3f96f56a07ab0c71a13bae1606646a09d2",
+      "tokens": 612
+    },
+    {
+      "bounded_tokens": 7206,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e4-9b547263eb7a4e6d66/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "cad3c2d76f7e0b89b496a5917854452303e6f65b96efc64964e39704af450788",
+      "tokens": 1318
+    },
+    {
+      "bounded_tokens": 5082,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-b5c05a56e4f42ef6af/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "eb5a38ce0b8860d86a9199227c10504228b5ada820f7f8f280bec28f26b6dbad",
+      "tokens": 218
+    },
+    {
+      "bounded_tokens": 5129,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-b5c05a56e4f42ef6af/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "a2f7b1f35c528a71cfcc69cf14df9024ac0965db7c49a681f1941cfbfa00b438",
+      "tokens": 265
+    },
+    {
+      "bounded_tokens": 5979,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-b5c05a56e4f42ef6af/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "54c3a9741a68a74f69079795daac4a274a628f1228c11734d21d4ca60aa6636f",
+      "tokens": 1115
+    },
+    {
+      "bounded_tokens": 5432,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-b5c05a56e4f42ef6af/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "7a5bdc7001e2b6de1b9761ae169da8c9184821427766d71559d0863946c28867",
+      "tokens": 568
+    },
+    {
+      "bounded_tokens": 7079,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e4-b5c05a56e4f42ef6af/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "8dc51b8565d7fa574439ffaf529d48893ce7cf76fd6e273382ad417517951ff9",
+      "tokens": 1191
+    },
+    {
+      "bounded_tokens": 5102,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-d208a052033c4bbf88/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "81ad0d6cd85ac9b087ed0b0d13b7381a4e0ce4ad9f1d67a79158fc1e84e3a57d",
+      "tokens": 238
+    },
+    {
+      "bounded_tokens": 5171,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-d208a052033c4bbf88/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "86211552e5b39b3fe4b025ed91ced4d8771004fc0c1d93c7689c9784be91c1e8",
+      "tokens": 307
+    },
+    {
+      "bounded_tokens": 6064,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-d208a052033c4bbf88/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "20f1167fac8276378ee1a90ef8a0989da3ebda0c80318c4ce55a89e2d0a7b9dd",
+      "tokens": 1200
+    },
+    {
+      "bounded_tokens": 5451,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-d208a052033c4bbf88/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "7528755498860a1e373c46ef4399e0b7dba7d906298995f4deff95cd72c38425",
+      "tokens": 587
+    },
+    {
+      "bounded_tokens": 7187,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e4-d208a052033c4bbf88/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "e96a92776abf0e3b570dbd6e13fd2f8bfe8650be4ccec2c5aae24a8e4c3099b5",
+      "tokens": 1299
+    },
+    {
+      "bounded_tokens": 5068,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-eb78ada5a394ad3218/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "9964c0972e49546362ebe9940c85c2974013beadabfbfead3fbec51bfcf7f3cc",
+      "tokens": 204
+    },
+    {
+      "bounded_tokens": 5130,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-eb78ada5a394ad3218/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "b00921ac5ff8249f0d2db3f1fe93a380badd61a7c7c2514ad75de535d56c4e91",
+      "tokens": 266
+    },
+    {
+      "bounded_tokens": 5970,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-eb78ada5a394ad3218/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "8161ea7604f623c5707107e8fc53ae9dd6f69814a1add2de02f325a4d6c943e8",
+      "tokens": 1106
+    },
+    {
+      "bounded_tokens": 5404,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-eb78ada5a394ad3218/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "323fca50d80de84ac3c4abefd50cd793c29d1d26b7585112548af6a91cb63d47",
+      "tokens": 540
+    },
+    {
+      "bounded_tokens": 7083,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e4-eb78ada5a394ad3218/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "7b261d33a1daa1e0931eb537daf41a161852ef3f3a73ead3000b107187e45d17",
+      "tokens": 1195
+    },
+    {
+      "bounded_tokens": 5080,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e4-f4951c1bb99dc6bfbd/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "14e7587af70d9afbbfb949de8b10ba5bd24aff27f319a29c1ac01b1b28fd9a60",
+      "tokens": 216
+    },
+    {
+      "bounded_tokens": 5127,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-f4951c1bb99dc6bfbd/W/replication/pushback/3/gemini-attacker",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "446c49997693241a2305511d748833a6832828675ceac52e666380cb5824510d",
-      "tokens": 254
+      "request_sha256": "a78549e7d5e45b32c2715c461fdb551a549a7519af49ff859cc692c9c61f9c93",
+      "tokens": 263
     },
     {
-      "bounded_tokens": 5953,
+      "bounded_tokens": 5962,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-f4951c1bb99dc6bfbd/A/replication/pushback/3/gemini-attacker",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "2cf671c1ab531c31d42f4908aa56cfd0e087aa3821a46933ea68cd8d19177ce1",
-      "tokens": 1089
+      "request_sha256": "6aaf30cc1ee9534b625f94da5b244cbc2f629f01011bf3ce2f9a4219e322b4e7",
+      "tokens": 1098
     },
     {
-      "bounded_tokens": 5409,
+      "bounded_tokens": 5418,
       "generated_token_reserve": 4864,
       "identity": "scored/e4-f4951c1bb99dc6bfbd/F/replication/pushback/3/gemini-attacker",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "1bcfd91c70130775a175fd2c2e64434fd672cc241df7319c5b156fbbe5c90e8f",
-      "tokens": 545
+      "request_sha256": "26de2faf1bd8acd23b43098ee79aedc6f7e878813968d67f4144ca7d92849db4",
+      "tokens": 554
     },
     {
-      "bounded_tokens": 7051,
+      "bounded_tokens": 7060,
       "generated_token_reserve": 5888,
       "identity": "scored/e4-f4951c1bb99dc6bfbd/R/replication/pushback/3/gemini-attacker",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "4ea2459178b7ce0cd2924577e6133a6d3e13767b4f3c0aef66d8cb24a6326f9a",
-      "tokens": 1163
+      "request_sha256": "5f79a2f62016b839ad8e9590501034426374dd8f223e7f622397b60106e1e5e9",
+      "tokens": 1172
     },
     {
-      "bounded_tokens": 6543,
+      "bounded_tokens": 6552,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-168ed5f4f6400e70bb/V/replication/pushback/3/gemini-attacker",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "dcf0d80cfc6019492497ffd9c1a5d39643cad7e551a01e005d1fadce43eb92f6",
-      "tokens": 1679
+      "request_sha256": "f208b6851e604184d51d5e0f1ef6df93c0790e73b5ff98c8cfa27660046f8bf6",
+      "tokens": 1688
     },
     {
-      "bounded_tokens": 6535,
+      "bounded_tokens": 6544,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-168ed5f4f6400e70bb/W/replication/pushback/3/gemini-attacker",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "fb31b03d65ed0a1b6ad9f5c70b079851bca44f15cd3078fcd66443eb80fc5b33",
-      "tokens": 1671
+      "request_sha256": "e14d6629e5f408260e18045133c78376f0a547882b245feab3e91f504b9dc170",
+      "tokens": 1680
     },
     {
-      "bounded_tokens": 8385,
+      "bounded_tokens": 8394,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-168ed5f4f6400e70bb/A/replication/pushback/3/gemini-attacker",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "7f0f06349f88d0f24bb1f2f0ea59ac00ce6e1bcb291043c549b621327ac83c67",
-      "tokens": 3521
+      "request_sha256": "c87abe11be15f75ff2188084ef3d69469fdbf98011928c8ca94590bd647dffe1",
+      "tokens": 3530
     },
     {
-      "bounded_tokens": 6878,
+      "bounded_tokens": 6887,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-168ed5f4f6400e70bb/F/replication/pushback/3/gemini-attacker",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "120423e94d6ed3cecb0a4dec79199def75cdaa91bdb5694d3f6363897dc74b81",
-      "tokens": 2014
+      "request_sha256": "cf5af9bbfc0aed0434f3593f06dcbedbc40bd65884c3fe83e6d6824077034b71",
+      "tokens": 2023
     },
     {
-      "bounded_tokens": 9434,
+      "bounded_tokens": 9443,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-168ed5f4f6400e70bb/R/replication/pushback/3/gemini-attacker",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "44b749c325cb179bcf31aeaea1095ef9cc9a7023b78c066ad2fbbd36c5622ea4",
-      "tokens": 3546
+      "request_sha256": "0ef4c0dae63a3ac0f62ebd61b6e69c596659ab6f218b4193b27632083c91de18",
+      "tokens": 3555
     },
     {
-      "bounded_tokens": 6323,
+      "bounded_tokens": 6332,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-35c1f1abb31047e39c/V/replication/pushback/3/gemini-attacker",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "6a9c68daaa3d93fdb7a4a55b549a6f3ae018ea7adcd7bf935e85b35d3e877371",
-      "tokens": 1459
+      "request_sha256": "4cb5093b004c7c2d6d839f32e690dee644982a997a0493e3ca4161fcef83ce84",
+      "tokens": 1468
     },
     {
-      "bounded_tokens": 6315,
+      "bounded_tokens": 6324,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-35c1f1abb31047e39c/W/replication/pushback/3/gemini-attacker",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "869c72a66b858f0dcc4f0a11609547fe043db2c4400d781d9eed89209a3fe279",
-      "tokens": 1451
+      "request_sha256": "c54ba5455408df1bfd2734a4806b06ba7ce47ae91a8168c58e4f8bee71bb1f5b",
+      "tokens": 1460
     },
     {
-      "bounded_tokens": 7864,
+      "bounded_tokens": 7873,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-35c1f1abb31047e39c/A/replication/pushback/3/gemini-attacker",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "51743a99729cb6ad2f2dca5569835d8ae859fb6ae8a1c3e5fd79732c3da051df",
-      "tokens": 3000
+      "request_sha256": "7dfc4d1db6bb3a1abe8045936ed5c414ad1ffce21701093c56d45c5100c4c414",
+      "tokens": 3009
     },
     {
-      "bounded_tokens": 6671,
+      "bounded_tokens": 6680,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-35c1f1abb31047e39c/F/replication/pushback/3/gemini-attacker",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "9eb56e198bef97cb1f322909bb0139d519c9eade4b55723bd1d7683da23deefc",
-      "tokens": 1807
+      "request_sha256": "09a6f4b26cc104993410b552a84adc97527009319ae00de6c2ec8b371fdcfbd3",
+      "tokens": 1816
     },
     {
-      "bounded_tokens": 8913,
+      "bounded_tokens": 8922,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-35c1f1abb31047e39c/R/replication/pushback/3/gemini-attacker",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "717cc1773d4303e8c302c1752893b310d9cfa0de22cf182205db88667e0160a7",
-      "tokens": 3025
+      "request_sha256": "5a889f536d1d7bb5e6143e6f98ab4ec77b61eaf844b25f86e1fbe092c9fb316e",
+      "tokens": 3034
     },
     {
-      "bounded_tokens": 6681,
+      "bounded_tokens": 6690,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-511e5dc6306123ea43/V/replication/pushback/3/gemini-attacker",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "4955b6391249f5e566183eddec9e775570f41b8aea5c81acb55455ff4117b7be",
+      "request_sha256": "c14e06fdb982da9f23b217f2866c8f9f6c2616a6426ea4435b8fdb0b4e718670",
+      "tokens": 1826
+    },
+    {
+      "bounded_tokens": 6682,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-511e5dc6306123ea43/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "6f41b51aeeb9d93e852663fb13a9c323e2fd8e03d5066ad450d7f69cd3f30621",
+      "tokens": 1818
+    },
+    {
+      "bounded_tokens": 8758,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-511e5dc6306123ea43/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "37389ada3f08ac3fcf5572709680240981f337d5f21aea9aa8506819c53af56e",
+      "tokens": 3894
+    },
+    {
+      "bounded_tokens": 7031,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-511e5dc6306123ea43/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "1f03d57b2544cc0b61deea3d67ef609c3b288d3d3d1b55dc80591bced2906b41",
+      "tokens": 2167
+    },
+    {
+      "bounded_tokens": 9807,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e5-511e5dc6306123ea43/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "3e6175c3a3556fb3474f9b3bd42e03675d0325d1ca9090be5e222b3d763c5378",
+      "tokens": 3919
+    },
+    {
+      "bounded_tokens": 6741,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-66d2dad87f5750341e/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "1a31b937c7d49beb46c45ef4e4c05ab508eaa459ae2d48e5d1599277c1354bf6",
+      "tokens": 1877
+    },
+    {
+      "bounded_tokens": 6733,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-66d2dad87f5750341e/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "ab7f8fcd53f3f7a297fb30e168b5bc79fedde59facf82c397103bd22952922c3",
+      "tokens": 1869
+    },
+    {
+      "bounded_tokens": 8926,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-66d2dad87f5750341e/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "553bb016f96086ef3975fdc64584d3d6c63888f5d6c7616f1df670beca181175",
+      "tokens": 4062
+    },
+    {
+      "bounded_tokens": 7091,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-66d2dad87f5750341e/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "218396979e35fb8ba51fe50a90bd045a6a40fb0e86b54424c28a49e627d43df8",
+      "tokens": 2227
+    },
+    {
+      "bounded_tokens": 9975,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e5-66d2dad87f5750341e/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "295c186fd693346a552c5b6cc3ebcca933a4452d4a156c0825611c52195876f7",
+      "tokens": 4087
+    },
+    {
+      "bounded_tokens": 6553,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-752c77f62a50fa7b88/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "ff38836866e77a1354185db4df1f047e26974d72b2dd4135589ff5efb9ab12ca",
+      "tokens": 1689
+    },
+    {
+      "bounded_tokens": 6545,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-752c77f62a50fa7b88/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "73cde7b5ff363aa72274873e42cda4a692fca2be5935f7d29129322f09b6cb3c",
+      "tokens": 1681
+    },
+    {
+      "bounded_tokens": 8393,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-752c77f62a50fa7b88/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "9b727085db5e8f0fb72a67895a87f6948fb757dec218e690148bd9c1f8add1dc",
+      "tokens": 3529
+    },
+    {
+      "bounded_tokens": 6886,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-752c77f62a50fa7b88/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "bb10f8482c8fbe87024865e30eb73721e91315aca0475534237f29e98190b2a4",
+      "tokens": 2022
+    },
+    {
+      "bounded_tokens": 9443,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e5-752c77f62a50fa7b88/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "46484bea93111ce297f6d1f776ae6ee495b913b041fcfb1572570e7eef300573",
+      "tokens": 3555
+    },
+    {
+      "bounded_tokens": 6701,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-76ee94cf60c31e9d97/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "037023750e95be5f43ff5558f81675077c48a72f4fb2e3e097eff15ec9e5a7da",
+      "tokens": 1837
+    },
+    {
+      "bounded_tokens": 6693,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-76ee94cf60c31e9d97/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "de1b467f9a95d2435a8f0d5d71ba441b63d618aaa1b43430f8ff11324131efa7",
+      "tokens": 1829
+    },
+    {
+      "bounded_tokens": 8882,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-76ee94cf60c31e9d97/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "ff117a79a723729b70797931a9f9e08fbabed69ca963a565697e11425e49630b",
+      "tokens": 4018
+    },
+    {
+      "bounded_tokens": 7047,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-76ee94cf60c31e9d97/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "f0f7ad57ed1911b0a76d332370f14d985a412678c6b5d39ecf91529e64cedfc6",
+      "tokens": 2183
+    },
+    {
+      "bounded_tokens": 9931,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e5-76ee94cf60c31e9d97/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "037745a97457716a7cc8d30a11315e660e1ede0d9758f1468ede67a2ffef5e20",
+      "tokens": 4043
+    },
+    {
+      "bounded_tokens": 6739,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-8544d6ab155f3bacfc/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "833e75c59716c61c1523dd0d655a8d40b989e2b968793cef6ba1dfdc01ff4bb7",
+      "tokens": 1875
+    },
+    {
+      "bounded_tokens": 6731,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-8544d6ab155f3bacfc/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "94ba2572b412cc017ed982e4468c97b96b3cd49ccdd9966f9c1cf072424466fb",
+      "tokens": 1867
+    },
+    {
+      "bounded_tokens": 8924,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-8544d6ab155f3bacfc/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "ee9c3942cda81ac5da848052f58b8b05ee0ca9600bf34524f95e24cd37ba08c5",
+      "tokens": 4060
+    },
+    {
+      "bounded_tokens": 7089,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-8544d6ab155f3bacfc/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "10fcdd94ef64f5d3c2d58d297aa0ddcb17a823c90d9313ae3d0a9a6686c668c3",
+      "tokens": 2225
+    },
+    {
+      "bounded_tokens": 9971,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e5-8544d6ab155f3bacfc/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "fa0b37627c98f3d6f474948a0fa04443f3d41808cce8b75bea5b77a5843df7de",
+      "tokens": 4083
+    },
+    {
+      "bounded_tokens": 6681,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-aaf4f06b198c6d72b0/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "0fa445f7d740ede6971241bbcf41fb6855dd3ab16ea01dd6d96e30d929b32169",
       "tokens": 1817
     },
     {
       "bounded_tokens": 6673,
       "generated_token_reserve": 4864,
-      "identity": "scored/e5-511e5dc6306123ea43/W/replication/pushback/3/gemini-attacker",
+      "identity": "scored/e5-aaf4f06b198c6d72b0/W/replication/pushback/3/gemini-attacker",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "caab392c31b24827578aa62c76818a13cfd3c3f56ee5cc68159cdd72ca2fbb34",
+      "request_sha256": "ed32ffe802e06f3017f2157fa460ab467158e4fcd3da88bd1c85cc5066bacc14",
       "tokens": 1809
     },
     {
-      "bounded_tokens": 8749,
+      "bounded_tokens": 8805,
       "generated_token_reserve": 4864,
-      "identity": "scored/e5-511e5dc6306123ea43/A/replication/pushback/3/gemini-attacker",
+      "identity": "scored/e5-aaf4f06b198c6d72b0/A/replication/pushback/3/gemini-attacker",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "6f6aace258218f049bf5394ff6a8f657bffcf7d766e609cd73c74ac784a6abdf",
-      "tokens": 3885
+      "request_sha256": "500ef5d85a2621b337868dda2281678bf98219504bb610dccb9a41584d4c0c05",
+      "tokens": 3941
+    },
+    {
+      "bounded_tokens": 7033,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-aaf4f06b198c6d72b0/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "a8822cbe895d4a3b84e5c9776fdd16f0b0abadb31cf688bce247ae0bff616858",
+      "tokens": 2169
+    },
+    {
+      "bounded_tokens": 9854,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e5-aaf4f06b198c6d72b0/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "8206ecfce313adc74afb9685ff088742904437b8c6915ebf2de5c5cc9a352260",
+      "tokens": 3966
+    },
+    {
+      "bounded_tokens": 6702,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-b30630c3c3eb81a391/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "3acc17ab4a869975670a072a04acd579bcc337722f8448bd7a7658035c4e7fc1",
+      "tokens": 1838
+    },
+    {
+      "bounded_tokens": 6694,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-b30630c3c3eb81a391/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "64410b60442212b09311aa1de89ea81c92cffad124853ee8b38a718e12e1cc7c",
+      "tokens": 1830
+    },
+    {
+      "bounded_tokens": 8876,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-b30630c3c3eb81a391/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "32a827206ad9f40a952e582dd5ccc24a32d524d7cb4f0f2b24ba1546f0268fef",
+      "tokens": 4012
+    },
+    {
+      "bounded_tokens": 7041,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-b30630c3c3eb81a391/F/replication/pushback/3/gemini-attacker",
+      "limit": 7800,
+      "passed": true,
+      "request_sha256": "efb712c2ce04685bf6784f4ef1b00f362b45a8f4b70c021a014fc0617ec7df93",
+      "tokens": 2177
+    },
+    {
+      "bounded_tokens": 9926,
+      "generated_token_reserve": 5888,
+      "identity": "scored/e5-b30630c3c3eb81a391/R/replication/pushback/3/gemini-attacker",
+      "limit": 11000,
+      "passed": true,
+      "request_sha256": "32e93e605c0a43cd2ed09391c62c4da0a3e5ea1901e9a8f3c858da89e6317b16",
+      "tokens": 4038
+    },
+    {
+      "bounded_tokens": 6679,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-be14f77cffbcaf717f/V/replication/pushback/3/gemini-attacker",
+      "limit": 7500,
+      "passed": true,
+      "request_sha256": "5cb71e997f279497e6efbb907730cb33995f93454fe49bbef3ba9aa46dcbbc8e",
+      "tokens": 1815
+    },
+    {
+      "bounded_tokens": 6671,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-be14f77cffbcaf717f/W/replication/pushback/3/gemini-attacker",
+      "limit": 7400,
+      "passed": true,
+      "request_sha256": "521734506e57b67d704068de934e188e432fc0e0f0528b998753ad37f966bbd4",
+      "tokens": 1807
+    },
+    {
+      "bounded_tokens": 8794,
+      "generated_token_reserve": 4864,
+      "identity": "scored/e5-be14f77cffbcaf717f/A/replication/pushback/3/gemini-attacker",
+      "limit": 9900,
+      "passed": true,
+      "request_sha256": "e097b06641f5a6e90199daa7c41b9357555ae5937ca8408a42de5389fd597e3d",
+      "tokens": 3930
     },
     {
       "bounded_tokens": 7022,
       "generated_token_reserve": 4864,
-      "identity": "scored/e5-511e5dc6306123ea43/F/replication/pushback/3/gemini-attacker",
+      "identity": "scored/e5-be14f77cffbcaf717f/F/replication/pushback/3/gemini-attacker",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "d235c4958bade5d77bec0a8a2937812d857a8216c6f259db6a32b809ebb8a033",
+      "request_sha256": "0174b74ea7ef43acbc6e36472c4c176c0c9a7587cffa462fca87a201e3650c65",
       "tokens": 2158
     },
     {
-      "bounded_tokens": 9798,
+      "bounded_tokens": 9841,
       "generated_token_reserve": 5888,
-      "identity": "scored/e5-511e5dc6306123ea43/R/replication/pushback/3/gemini-attacker",
+      "identity": "scored/e5-be14f77cffbcaf717f/R/replication/pushback/3/gemini-attacker",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "f1552a9d652a1dbfb468c4b4d695d006b41adb8ae5684b0f6f55c479a1277e07",
-      "tokens": 3910
-    },
-    {
-      "bounded_tokens": 6732,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-66d2dad87f5750341e/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "d818f0a4e3f3b8e1f7e7c298d56279c5924600246bbe0e78c703bc920311d924",
-      "tokens": 1868
-    },
-    {
-      "bounded_tokens": 6724,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-66d2dad87f5750341e/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "9f1ea3be77a19d1d553e05dc7104bfe8b3303083c0218475d92334810d7ebbdc",
-      "tokens": 1860
-    },
-    {
-      "bounded_tokens": 8917,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-66d2dad87f5750341e/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "9f443c1386178f7eea4d195e67a702b713652da0f7da07a203e722647d14bbfe",
-      "tokens": 4053
-    },
-    {
-      "bounded_tokens": 7082,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-66d2dad87f5750341e/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "aeccfc64710b1d47d0359bbf6f6597c3a220ae28b039bf4846942c0e4940a8c9",
-      "tokens": 2218
-    },
-    {
-      "bounded_tokens": 9966,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e5-66d2dad87f5750341e/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "c5b0d701b4f2b7fa6edb899f3a16bdc80b7923156a00f6e7996a024a8ab134a9",
-      "tokens": 4078
-    },
-    {
-      "bounded_tokens": 6544,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-752c77f62a50fa7b88/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "6f7e6d6e5abb27c9587e0ea92ac01df62d743fb546e1bb858222e7ee66e4bcaa",
-      "tokens": 1680
-    },
-    {
-      "bounded_tokens": 6536,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-752c77f62a50fa7b88/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "6d19bf95d2586030fd6e33524022d8aacd7f5616cf523c573f9eb2ad611848be",
-      "tokens": 1672
-    },
-    {
-      "bounded_tokens": 8384,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-752c77f62a50fa7b88/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "1987b26d5c35e417dfc564625984bf4415fe318dbc06406f8fda4428f9f4e705",
-      "tokens": 3520
-    },
-    {
-      "bounded_tokens": 6877,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-752c77f62a50fa7b88/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "04ce05e208353034cf2b2916d143f43261f654cf4ff0d3814c067f795c5fadb0",
-      "tokens": 2013
-    },
-    {
-      "bounded_tokens": 9434,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e5-752c77f62a50fa7b88/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "3fa30d6a58c12b4f6dba4b9897ccec7f997daf2f1bdbd4c5c93d76c89c576edb",
-      "tokens": 3546
+      "request_sha256": "685d67bcd91d1edc2e23deab3796fb9296b3d17a8a614fbbd681921c0a5d1932",
+      "tokens": 3953
     },
     {
       "bounded_tokens": 6692,
       "generated_token_reserve": 4864,
-      "identity": "scored/e5-76ee94cf60c31e9d97/V/replication/pushback/3/gemini-attacker",
+      "identity": "scored/e5-e2a9f97c296e5a1289/V/replication/pushback/3/gemini-attacker",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "58acf889ebf39066779fc563686d77b3f6d9b11bdcaf5a1db3061ed7dd8ff114",
+      "request_sha256": "5203c43c4d2301c098ae50d6767667e7032565e01dc877a01da37abba596bab7",
       "tokens": 1828
     },
     {
       "bounded_tokens": 6684,
       "generated_token_reserve": 4864,
-      "identity": "scored/e5-76ee94cf60c31e9d97/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "ac1c2f361ae3ce1176aec26fba2ce1ddc5b72b83a02ceeb26b81e88e387d9f5c",
-      "tokens": 1820
-    },
-    {
-      "bounded_tokens": 8873,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-76ee94cf60c31e9d97/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "e1d1ee3c1bb2e083a131b245fef179850b7ad4d089b476ee8ff87196de7de3f9",
-      "tokens": 4009
-    },
-    {
-      "bounded_tokens": 7038,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-76ee94cf60c31e9d97/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "16638567e42ad951da2559cf8de0aaf277b109d29e1271ea406a192d6ae33e6b",
-      "tokens": 2174
-    },
-    {
-      "bounded_tokens": 9922,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e5-76ee94cf60c31e9d97/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "3675e34086fc1a797a340cc5beb2d6fce6fee0d420c584e30f8d7fdf88ec2a9a",
-      "tokens": 4034
-    },
-    {
-      "bounded_tokens": 6730,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-8544d6ab155f3bacfc/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "07731c37b95ef257c8b44235cfbcd9e64b57755deadccc05f7b20ca16b6c06d5",
-      "tokens": 1866
-    },
-    {
-      "bounded_tokens": 6722,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-8544d6ab155f3bacfc/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "f486dae0b04b3df0cd4bdacfac29980cafafc6b8579eaa6ef343d448f269f129",
-      "tokens": 1858
-    },
-    {
-      "bounded_tokens": 8915,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-8544d6ab155f3bacfc/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "5615560193dc380f63268de1c35c5494e50b9a12fe762f2aac495ae51ae7a0f4",
-      "tokens": 4051
-    },
-    {
-      "bounded_tokens": 7080,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-8544d6ab155f3bacfc/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "a2dec959b720665fd89c9f08a6f4b69ffe5cf372b3ee6c683cb2b329f1338806",
-      "tokens": 2216
-    },
-    {
-      "bounded_tokens": 9962,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e5-8544d6ab155f3bacfc/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "dd798b73a25895bfaf4c07656e0515cb7ff9760c5ee90e0be5ca36ca783ec773",
-      "tokens": 4074
-    },
-    {
-      "bounded_tokens": 6672,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-aaf4f06b198c6d72b0/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "716695d11b3afee30fb4b135636dd25b85202953c1ab1e1f5d5d9224a2904781",
-      "tokens": 1808
-    },
-    {
-      "bounded_tokens": 6664,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-aaf4f06b198c6d72b0/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "e1ec7e644cc2d700e2d6e1fd6823773d8ae3ce21fe78a7022b190427056856b8",
-      "tokens": 1800
-    },
-    {
-      "bounded_tokens": 8796,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-aaf4f06b198c6d72b0/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "1e529405d16860ae3d23c5f3adf0f4a438e428a06460aec09b2bb20a767a2ea2",
-      "tokens": 3932
-    },
-    {
-      "bounded_tokens": 7024,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-aaf4f06b198c6d72b0/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "0d251c8e789fff4e8dad9814febc5fe39946b342e0a0840bbaa02def641b07c6",
-      "tokens": 2160
-    },
-    {
-      "bounded_tokens": 9845,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e5-aaf4f06b198c6d72b0/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "db90294c61891b36fd1e47f4dbd78632613d15a537f60b7f90a9984f96bd4ecd",
-      "tokens": 3957
-    },
-    {
-      "bounded_tokens": 6693,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-b30630c3c3eb81a391/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "e64c0c5ae20e93169ee5d5d02287467e58c591724ff7330a42a9666322343356",
-      "tokens": 1829
-    },
-    {
-      "bounded_tokens": 6685,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-b30630c3c3eb81a391/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "18bc906cd9f125a7c29392705ca2c7e98e268862ef0e7b43520da605b7f66299",
-      "tokens": 1821
-    },
-    {
-      "bounded_tokens": 8867,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-b30630c3c3eb81a391/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "c39f496d339850a14bdc8605f1dee2c7e10d6e98749bbe1d63637143e78a4b9f",
-      "tokens": 4003
-    },
-    {
-      "bounded_tokens": 7032,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-b30630c3c3eb81a391/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "7e9bdacfc1c47f09cb222233dbc523323cb8b2667923f3c643950c9ddac5f294",
-      "tokens": 2168
-    },
-    {
-      "bounded_tokens": 9917,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e5-b30630c3c3eb81a391/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "51919d171c0881d10b15f9b2f3002bc4b6243c956494060219fd4946d6cc2376",
-      "tokens": 4029
-    },
-    {
-      "bounded_tokens": 6670,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-be14f77cffbcaf717f/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "5bb96c9f73a41da174de583b76a3dffb4920c90172b5479ad516dc1451d44a1a",
-      "tokens": 1806
-    },
-    {
-      "bounded_tokens": 6662,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-be14f77cffbcaf717f/W/replication/pushback/3/gemini-attacker",
-      "limit": 7400,
-      "passed": true,
-      "request_sha256": "0cbb9032d7ccd9ab43c02fad1b5ea21293280394b1edcc2aabe2c07a5a03dc77",
-      "tokens": 1798
-    },
-    {
-      "bounded_tokens": 8785,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-be14f77cffbcaf717f/A/replication/pushback/3/gemini-attacker",
-      "limit": 9900,
-      "passed": true,
-      "request_sha256": "194d36e7753c5a2ebeef967e1a495ff06fc6119efc4eee2699071f0af46c5b1a",
-      "tokens": 3921
-    },
-    {
-      "bounded_tokens": 7013,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-be14f77cffbcaf717f/F/replication/pushback/3/gemini-attacker",
-      "limit": 7800,
-      "passed": true,
-      "request_sha256": "1092c07d5e1f162a4500eb55e69d583601e2e00eaa1799eba5f3ac9e67acb59d",
-      "tokens": 2149
-    },
-    {
-      "bounded_tokens": 9832,
-      "generated_token_reserve": 5888,
-      "identity": "scored/e5-be14f77cffbcaf717f/R/replication/pushback/3/gemini-attacker",
-      "limit": 11000,
-      "passed": true,
-      "request_sha256": "16700cfc249688cee2e10bf33bcd1ee5279ebfa0f30d997d72fe637d5931ce53",
-      "tokens": 3944
-    },
-    {
-      "bounded_tokens": 6683,
-      "generated_token_reserve": 4864,
-      "identity": "scored/e5-e2a9f97c296e5a1289/V/replication/pushback/3/gemini-attacker",
-      "limit": 7500,
-      "passed": true,
-      "request_sha256": "934f72e27e6a392f47a8316a6eb5c99d4ba4d990ed11d4a4c7e67c0a4c3e17f0",
-      "tokens": 1819
-    },
-    {
-      "bounded_tokens": 6675,
-      "generated_token_reserve": 4864,
       "identity": "scored/e5-e2a9f97c296e5a1289/W/replication/pushback/3/gemini-attacker",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "3bf4935e1ad80f43dcfe4db60742a13f1fd97d989fdac7df380152780ad4db48",
-      "tokens": 1811
+      "request_sha256": "e5d721f5aa867e58121490debe7593f252916a3e43b8e061067955eb7ec971ec",
+      "tokens": 1820
     },
     {
-      "bounded_tokens": 8747,
+      "bounded_tokens": 8756,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-e2a9f97c296e5a1289/A/replication/pushback/3/gemini-attacker",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "6616ca5744d56c5db211284be16700069c3c437ad9fa6b314e240a042aa6e259",
-      "tokens": 3883
+      "request_sha256": "a07528ef5a0488b9f4d0d0e10359df2a1fb318336288a09dcd4870cc38276256",
+      "tokens": 3892
     },
     {
-      "bounded_tokens": 7020,
+      "bounded_tokens": 7029,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-e2a9f97c296e5a1289/F/replication/pushback/3/gemini-attacker",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "d8c20866a796f65e912d6778dfb03903f530d04446227efe32fe2adac6dff174",
-      "tokens": 2156
+      "request_sha256": "6610581e3e43f0f5f0df1276e64f6acd125ed350952a59aeefc9a021c29c22cb",
+      "tokens": 2165
     },
     {
-      "bounded_tokens": 9798,
+      "bounded_tokens": 9807,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-e2a9f97c296e5a1289/R/replication/pushback/3/gemini-attacker",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "777349b516564a4736a5c085e8a91994e67f3fd7ab7a7217ca624f9639d43d6e",
-      "tokens": 3910
+      "request_sha256": "4b8dd85a8c314ebf0a0bd8bf2aa3f9cfa984ef1288a4a4de6619bd2804c105c3",
+      "tokens": 3919
     },
     {
-      "bounded_tokens": 6322,
+      "bounded_tokens": 6331,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-ed1608ab8b7da32931/V/replication/pushback/3/gemini-attacker",
       "limit": 7500,
       "passed": true,
-      "request_sha256": "e2492ba130e77dd12b710c987eb46804a3c674eef1ede34c9e9eeec43441d833",
-      "tokens": 1458
+      "request_sha256": "dfe4ebe6b0040cf57f387758b17022fb99da1525d3385f1d3c059de810b92b43",
+      "tokens": 1467
     },
     {
-      "bounded_tokens": 6314,
+      "bounded_tokens": 6323,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-ed1608ab8b7da32931/W/replication/pushback/3/gemini-attacker",
       "limit": 7400,
       "passed": true,
-      "request_sha256": "ca46d0ab4f43fc7e1a9742d3f463d770d441e8c307c0da0100f51e096f6fd4c3",
-      "tokens": 1450
+      "request_sha256": "e9a63e520abc0af50ef0ea60fd2c5a5940f346917f0f45472fbeff2e696f40b2",
+      "tokens": 1459
     },
     {
-      "bounded_tokens": 7856,
+      "bounded_tokens": 7865,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-ed1608ab8b7da32931/A/replication/pushback/3/gemini-attacker",
       "limit": 9900,
       "passed": true,
-      "request_sha256": "6040579f073ae758c2b4c083a1612b2829bae288cf5f8281ba4550b918b40b1d",
-      "tokens": 2992
+      "request_sha256": "ba91743396173eb13d7175f995e7bb1abcbb2082e9b394af884781e5adaf9bf4",
+      "tokens": 3001
     },
     {
-      "bounded_tokens": 6663,
+      "bounded_tokens": 6672,
       "generated_token_reserve": 4864,
       "identity": "scored/e5-ed1608ab8b7da32931/F/replication/pushback/3/gemini-attacker",
       "limit": 7800,
       "passed": true,
-      "request_sha256": "277f3efcf4563811c8841fdef9a67b905306b76ad1046cdfc23df2c8dc865a40",
-      "tokens": 1799
+      "request_sha256": "bf3bf0fe9404de9427fc25ad5e9be2a2032c1b070ba492c00a964e6685140b63",
+      "tokens": 1808
     },
     {
-      "bounded_tokens": 8904,
+      "bounded_tokens": 8913,
       "generated_token_reserve": 5888,
       "identity": "scored/e5-ed1608ab8b7da32931/R/replication/pushback/3/gemini-attacker",
       "limit": 11000,
       "passed": true,
-      "request_sha256": "1adf63f81d71c460933efdeef6d6d331154c1b2a93f3f55baf21418f0728a386",
-      "tokens": 3016
+      "request_sha256": "60c230c922e37f0ef9a1756bc1aef666a67a35e913c76c7da884a123768fdea9",
+      "tokens": 3025
     }
   ],
-  "freeze_sha256": "4b154a456d9aea139565f02b9f6a6dc465672b53eaa784368e1d2a9fb4a2e280",
+  "freeze_sha256": "e3ce5fa5e3d487fbfaa009d6665997757b7e2b2e7dfcac0013412631b1c9b400",
   "future_history_policy": "Full joint native fixtures plus generated-token ceilings; actual provider signatures and transcript are recounted at runtime. This is not a Qwen/Llama tokenizer receipt.",
   "generation_calls": 0,
   "judge": "pro",
   "model": "gemini-3.1-pro-preview",
   "passed": true,
   "requests": 1956,
-  "reused_count_receipt_sha256": "19298667271b8933667bfcf0c4b932065297afe0997f911fa440e4675452d25d",
+  "reused_count_receipt_sha256": "50bc655bb266df6ff8a19543226fd7b9be2ad549be36bffd8693b8d4309af0d0",
   "schedule": "full_256",
   "scope": "all dev+scored items, all arms, replay continuations, joint maximal pushback attacker/judge histories"
 }

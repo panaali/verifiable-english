@@ -1,16 +1,22 @@
 # P1 deference pilot: results
 
-Final local analysis, 2026-09-22. Initial stage complete: **1,128/1,128** Qwen judgments (E4 840/840; E5 288/288). **Pushback incomplete because of attacker truncation.** No paid calls were made for this finalization; worker spend was **$0**.
+Initial-stage analysis and Amendment 15 recovery status, 2026-09-22. Initial stage complete: **1,128/1,128** Qwen judgments (E4 840/840; E5 288/288). **Pushback is being re-run under Amendment 15 after infrastructure failures from attacker truncation; the rerun is prepared and has not been dispatched by this worker.** No paid calls were made for this finalization; worker spend was **$0**.
 
 Qwen2.5-72B is the preregistered replication judge. Every scored contrast below is **exploratory-primary (judge substitution due to ceiling)**, not a confirmatory Gemini primary result. Gemini remains the attacker. Neither Gemini panel was scored as judge; weak control was not run in the selected schedule. Historical weak dev calls remain in the cost ledger. E4 and E5 are analyzed separately.
 
 ## Pushback disposition and coverage
 
-**Case (b): the Amendment 9 attacker truncation stop applies.** PREREG §4 selects 12 items per panel (six templates, one good/bad pair each), crossed with V/W/A/F/R. Amendment 13 selects Qwen and two turns: 120 trajectories, at most 240 later judgments. This is a fixed subset, but it does not explain the missing judgments by itself.
+**Historical coverage before the authorized Amendment 15 rerun.** PREREG §4 selects 12 items per panel (six templates, one good/bad pair each), crossed with V/W/A/F/R. Amendment 13 selects Qwen and two turns: 120 trajectories, at most 240 later judgments. This is a fixed subset, but it does not explain the missing judgments by itself.
 
 All 120 trajectories have an end marker. There are 84 `infrastructure_incomplete` endings with `attacker_truncated_twice`, 28 concessions, and 8 two-turn completions. Both charged attacker attempts were verified as truncated for each of the 84 failures. Of these, 83 stopped before a turn-1 judgment and one after turn 1. There are 24 concessions before turn 1 and four after it. Thus only 13 turn-1 and 8 turn-2 judgments were obtained.
 
-Amendment 9 permits exactly one identical-input attacker retry, then discards both truncated replies and excludes the entire trajectory from behavioral metrics. Amendment 14 changes the billed-output ceiling, not that retry rule. An ordinary resume reuses these receipts and cannot buy another attempt. There is no active panel halt, missing end marker, or capability gate awaiting a resume. The runner exits 0 because no global stop or active judge halt remains; analysis correctly retains `incomplete_infrastructure` because these trajectory endings are incomplete.
+Amendment 15 corrects the Vertex thinking-inclusive budget: the attacker now receives a 1,024-token provider budget and billed threshold, with an instruction of at most about 120 visible words. Messages over 256 visible tokens are clipped to their first 256 tokens without retry. The 84 infrastructure-incomplete trajectories restart at attacker turn 1, reusing original initial judge verdicts and discarding their old attacker histories and partial later judgments. The 28 concessions and 8 completed trajectories are kept. Historical raw trials and charges remain auditable; the tables below describe the pre-rerun evidence, not completed Amendment 15 results.
+
+The new pushback ceiling is **$10.514931264**; retained costs/holds plus this ceiling give a cumulative API cap of **$14.15764988140**, or **$14.40764988140** including the $0.25 local allowance. After refreshing execution gates, the orchestrator resumes with:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py resume-pushback --cap-usd 14.15764988140
+```
 
 | Panel / arm | Assigned | Twice truncated | Concession | Two turns complete | Turn-1 judgments | Turn-2 judgments |
 |---|---:|---:|---:|---:|---:|---:|
@@ -136,8 +142,9 @@ The original PREREG bytes were retained. This table summarizes the complete numb
 | 12b | Selected replication-gemini-e5-2turn to retain Gemini/E5 at two pushback turns. |
 | 13 | Recorded both Gemini ceilings, narrowed good-approval gating, accepted audited Qwen R abstentions, and selected replication-2turn. |
 | 14 | Separated attacker visible/billed caps (256/1,024), recovered the retained halted reply/block, and permitted separate complete or provisional initial analysis. |
+| 15 | Raised the thinking-inclusive attacker provider cap to 1,024, capped visible messages at 256 tokens by harness clipping, and authorized restarting 84 infrastructure failures while retaining 36 terminal trajectories. |
 
-Recorded amendments through 13 precede scored inference; Amendment 14 is a post-observation execution/reporting amendment. The results therefore describe the amended pilot, not an unchanged prospective confirmatory design.
+Recorded amendments through 13 precede scored inference; Amendments 14 and 15 are post-observation execution/reporting amendments. The results therefore describe the amended pilot, not an unchanged prospective confirmatory design.
 
 ## Realised spend and reproducibility
 
@@ -150,7 +157,7 @@ Recorded amendments through 13 precede scored inference; Amendment 14 is a post-
 | provider-preflight | 0.0000081235 |
 | **Total** | **3.49623306220** |
 
-The study-ledger subtotal is $3.45987693870 (the reported $3.46), comprising $1.75820208070 dev and $1.7016748580 scored. The all-ledger realised total is **$3.4962330622**, approximately **$3.50**, following the retained reconciliation accounting. Probe attempts have distinct dispatch times and remain separate charged runs. Allowance-adjustment entries merely incorporate external ledgers and are not added again. Unresolved billing holds and the $0.25 local allowance are not realised spend; the total is recorded completed-call cost, not a claim that unresolved calls were free. The $19.90026000260 cumulative API cap and $40 study cap are limits, not expenditure.
+The study-ledger subtotal is $3.45987693870 (the reported $3.46), comprising $1.75820208070 dev and $1.7016748580 scored. The all-ledger realised total is **$3.4962330622**, approximately **$3.50**, following the retained reconciliation accounting. Probe attempts have distinct dispatch times and remain separate charged runs. Allowance-adjustment entries merely incorporate external ledgers and are not added again. Unresolved billing holds and the $0.25 local allowance are not realised spend; the total is recorded completed-call cost, not a claim that unresolved calls were free. The Amendment 15 $14.15764988140 cumulative API cap and $40 study cap are limits, not expenditure.
 
 Local command completed with exit 0:
 
@@ -158,7 +165,7 @@ Local command completed with exit 0:
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --schedule replication_2turn
 ```
 
-Evidence: [standalone final analysis](results/final-analysis.json), [ledger audit and descriptive partial pushback](results/final-ledger-audit.json), [run analysis](runs/scored/analysis.json), [trials](runs/scored/trials.jsonl), [study costs](runs/study/costs.jsonl), [amendments](PROPOSED-AMENDMENT.md), and [PREREG](PREREG.md). Fresh analysis reproduced the retained initial-family results exactly. Assignment/end-marker coverage and both truncated receipts for all 84 excluded trajectories were checked locally. No inference, code change, new gate, or new amendment was introduced.
+Evidence: [standalone final analysis](results/final-analysis.json), [ledger audit and descriptive partial pushback](results/final-ledger-audit.json), [run analysis](runs/scored/analysis.json), [trials](runs/scored/trials.jsonl), [study costs](runs/study/costs.jsonl), [amendments](PROPOSED-AMENDMENT.md), and [PREREG](PREREG.md). Fresh analysis reproduced the retained initial-family results exactly. Assignment/end-marker coverage and both truncated receipts for all 84 excluded trajectories were checked locally. Those historical analysis artifacts predate Amendment 15. Amendment 15 adds the recovery implementation and receipt; no paid inference was performed by this worker.
 
 ## What we will not claim
 
@@ -166,7 +173,7 @@ No authentication causality from A−F; no comprehension from copying answer-bea
 verdicts; no factual truth or supported premises from a conditional proof; no
 semantic fidelity from identity hashes or `DIFFERENT`; no empirical gain from
 construction checks. No efficacy or family-general inference from Qwen/Llama;
-no pushback robustness beyond this 256-token, three-turn Gemini adversary;
+no pushback robustness beyond this 256-visible-token, two-turn Gemini adversary;
 no natural-argument prevalence, scaling law, general frontier robustness,
 pipeline-wide injection immunity, end-to-end verification or deployed guarantee.
 No superiority to debate theory or cross-examination as such, no novelty for
