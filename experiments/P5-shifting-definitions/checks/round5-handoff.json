@@ -1,0 +1,50 @@
+{
+  "blockers": [
+    "review",
+    "independent-prose"
+  ],
+  "freeze_sha256": "319de2ba50492d2fd7ba02b340c1b1bf4991556a8f46a8d448d2a4c6b3821098",
+  "gates": {
+    "construction": true,
+    "external-timestamp": true,
+    "independent-prose": false,
+    "known-answer": true,
+    "leakage": true,
+    "lean-replay": true,
+    "packet-safety": true,
+    "review": false,
+    "role-boundaries": true,
+    "surface-soundness": true,
+    "tokenizer": true,
+    "tracked-blinding": true
+  },
+  "generation_calls": 0,
+  "generation_spend_usd": "0",
+  "known_answer": {
+    "model_calls": 0,
+    "oracle_detection_and_completion": 1.0,
+    "passed": true
+  },
+  "materials_timestamp": {
+    "passed": true,
+    "proof": "MATERIALS-HASHES.txt.ots",
+    "proof_sha256": "af4b1fc661814849ce1b7501e5f25f2d8d98e45d2b2a680deaa30b9ac3595c8b",
+    "source": "MATERIALS-HASHES.txt",
+    "source_sha256": "b987bd9dc6cf3f2c67baaa813298827d81699696f25871ec90b77f323fc59b0f",
+    "status": "CALENDAR_RECEIPT_PENDING_BITCOIN_CONFIRMATION"
+  },
+  "passed": false,
+  "scenario_all_in_ceiling_usd": "34.7512920096",
+  "status": "BLOCKED_NOT_SCORED_READY",
+  "study_cap_usd": "40",
+  "tests": {
+    "failed": 0,
+    "passed": 32
+  },
+  "unresolved": [
+    "review",
+    "independent-prose",
+    "provider-preflight",
+    "dev"
+  ]
+}

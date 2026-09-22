@@ -1,0 +1,730 @@
+[
+ {
+  "item_id": "i01a9ca3b522d52d65123bccda754d003",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "smuggle",
+   "acceptable_locations": [
+    [
+     "n06"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i0e03b71bf431d179be0530712161e8af",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "shift",
+   "acceptable_locations": [
+    [
+     "n14"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i11e21a96aa6260b7bafaaec82c8810b9",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "benign",
+   "acceptable_locations": []
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i12a8d84479b89e5c0fd0c06e21873c2a",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "smuggle",
+   "acceptable_locations": [
+    [
+     "n02"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i1789fdf8e853490fb1b6731e85d63b13",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "benign",
+   "acceptable_locations": []
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i17fe028fca21d694ebe499666730b759",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "benign",
+   "acceptable_locations": []
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i216fdf77036b4387a62a1f0b92d9f94b",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "smuggle",
+   "acceptable_locations": [
+    [
+     "n05"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i287fa8650140a48b5afb778385020865",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "benign",
+   "acceptable_locations": []
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i2c5633ccd1f2e8a9bb2add6091abefa8",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "shift",
+   "acceptable_locations": [
+    [
+     "n11"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i2e2c86f4cdc3bc257bbd62ae18da8f55",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "benign",
+   "acceptable_locations": []
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i3b0ad36332405c679ec27070eeb68292",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "smuggle",
+   "acceptable_locations": [
+    [
+     "n12"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i405d220e0c3e9d683d316caed080ff40",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "smuggle",
+   "acceptable_locations": [
+    [
+     "n21"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i40acae41e18c260c0cf1070ace6f47bb",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "smuggle",
+   "acceptable_locations": [
+    [
+     "n21"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i44d33fa459dd3320a8a17e264135a8d6",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "benign",
+   "acceptable_locations": []
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i4a0b0284ddb21205402e602e3c1f1ca8",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "benign",
+   "acceptable_locations": []
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i6e82bd7651109728d3d9e0892414c3e1",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "smuggle",
+   "acceptable_locations": [
+    [
+     "n20"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i90ebebee55a0725b19cf8bffcf81338f",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "smuggle",
+   "acceptable_locations": [
+    [
+     "n17"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "i9af8492c5aae07aa22ae6deeb7185eb6",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "benign",
+   "acceptable_locations": []
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "ia49f31b8fadfec19020a7787cb0d81a0",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "benign",
+   "acceptable_locations": []
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "ia649584c504f5deb3ba0b06a182026a9",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "benign",
+   "acceptable_locations": []
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "ib301f2aab289831d1ddf47088674e53c",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "smuggle",
+   "acceptable_locations": [
+    [
+     "n14"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "ib658d215bec2dd7bddd826c3f0b2ed66",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "shift",
+   "acceptable_locations": [
+    [
+     "n16"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "ic3df694d4d3e137a437000b48863583c",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "smuggle",
+   "acceptable_locations": [
+    [
+     "n01"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "id04a03067886e61fa6135fa4a5c395a6",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "shift",
+   "acceptable_locations": [
+    [
+     "n06"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "id496412628a03501ca307ac3a5445349",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "benign",
+   "acceptable_locations": []
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "id797ff1e0a7ba42f44ffbb5b78dd9282",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "shift",
+   "acceptable_locations": [
+    [
+     "n12"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "id918f9df8571df2bbe2c72944cf521bc",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "benign",
+   "acceptable_locations": []
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "ie3370895cf449198bf9a893291b613e5",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "benign",
+   "acceptable_locations": []
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "if489592afa5b0c74252f1b01fd882e38",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "shift",
+   "acceptable_locations": [
+    [
+     "n21"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ },
+ {
+  "item_id": "ifc83873ed260644497ecbdaf2ea51c85",
+  "reviewer_id": "claude-opus-5-blind-reviewer-r5-2026-09-22",
+  "reviewer_kind": "model",
+  "model_family": "anthropic-claude-opus-5",
+  "minutes": 6,
+  "checks": {
+   "source_fidelity": true,
+   "root_preserved": true,
+   "no_added_assumption": true,
+   "no_repaired_flaw": true,
+   "complete_sense_mapping": true,
+   "localization_anchored": true,
+   "no_answer_leakage": true
+  },
+  "annotation": {
+   "kind": "smuggle",
+   "acceptable_locations": [
+    [
+     "n00"
+    ]
+   ]
+  },
+  "corrections": [],
+  "notes": "Sense assignment inferred by constraint search over record branches; benign iff a zero-relaxation assignment exists."
+ }
+]

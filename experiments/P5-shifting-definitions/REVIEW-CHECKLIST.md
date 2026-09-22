@@ -17,6 +17,10 @@ reviewers, raters, adjudicators, judge pipelines and replication model contexts
 (paths relative to this directory):
 
 - `labels.jsonl.gz`
+- `materials/dossiers.jsonl.gz`
+- `materials/scored.jsonl.gz`
+- `materials/dev.jsonl.gz`
+- `materials/paraphrases.jsonl.gz`
 - `materials/graphs.jsonl.gz`
 - `materials/anchored-labels.jsonl.gz`
 - `materials/construction-ledger.jsonl.gz`
@@ -26,9 +30,14 @@ reviewers, raters, adjudicators, judge pipelines and replication model contexts
 - `checks/lean-replay-ledger.jsonl.gz`
 - `checks/rejected-v2-generator.jsonl.gz`
 - `checks/rejected-review-v1.json`
+- `checks/round5-review-submission.json`
+- `checks/round5-review-verification.txt`
 
 Historical review annotations and formal witnesses can reveal labels even
 without a planted kind field. These are offline audit/scoring inputs only.
+Bulk packet archives also expose siblings; the scored/dev `group` field enables
+family grouping and a transductive attack. Export one isolated packet through
+the allowlisted pipeline; never attach these archives to a model context.
 The private ID nonce is outside the repository and is never an attachment.
 
 For each packet, recover and record:

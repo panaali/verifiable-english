@@ -210,6 +210,7 @@ def preflight(offline=False):
         reports[name]=p.gate_receipt(name,result,stamp)
     blockers=[name for name,r in reports.items() if not r.get('passed')]
     f['unresolved']=blockers+['provider-preflight','dev'];f['status']='BLOCKED_NOT_SCORED_READY'
+    f['external_timestamp']=reports['external-timestamp']
     write_json(p.HERE/'freeze.json',f)
     return {'passed':not blockers,'gates':{name:r.get('passed') for name,r in reports.items()},'generation_calls':0,'blockers':blockers}
 

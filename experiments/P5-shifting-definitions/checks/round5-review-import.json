@@ -1,0 +1,23 @@
+{
+  "adjudication": "Not eligible: no two complete independent current-packet reviews, including a human/project lead. Do not invent annotations or isolated reviewer identities.",
+  "annotation_fields_missing": [
+    "sense_use_mapping",
+    "root_meaning",
+    "source_evidence"
+  ],
+  "generation_calls": 0,
+  "import_error": "reviewer/rater cannot see multiple siblings, including earlier submissions",
+  "import_exit_code": 2,
+  "missing_packet_hashes": 30,
+  "passed": false,
+  "reviewer": "Claude Opus 4.x subagent, cross-family, blind",
+  "reviewer_attribution_source": "Operator instruction; supplied files retained byte-for-byte with their original model metadata.",
+  "submission_records": 30,
+  "submission_sha256": "e2ab2a7b9d0962f8833183bb18994b5aae04a5ddd36c090c2e2eae7600dcaee9",
+  "verification_claim": {
+    "invalid": 0,
+    "localized": 84,
+    "materials_ready": true,
+    "total": 84
+  }
+}

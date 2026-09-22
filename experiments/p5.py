@@ -321,6 +321,9 @@ def freeze(scenario):
            HERE/'prompts.json',HERE/'CONSTRUCTION-V3.md',HERE/'CONSTRUCTION-V4.md',HERE/'CONSTRUCTION-V5.md',HERE/'REVIEW-CHECKLIST.md',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
            ROOT/'experiments/P1-deference/native_counter.py',*ROOT.glob('experiments/P1-deference/tokenizers/*.json'),
            *ROOT.glob('ve/*.py'), ROOT/'lean/.lake/build/bin/ve_conformance']
+    paths += [HERE/name for name in ('MATERIALS-MANIFEST.json','MATERIALS-HASHES.txt',
+        'MATERIALS-HASHES.txt.ots','checks/round5-review-submission.json',
+        'checks/round5-review-verification.txt','checks/round5-review-import.json')]
     hashes={str(p.relative_to(ROOT)):sha(p) for p in paths if p.exists()}
     result={'status':'BLOCKED_NOT_SCORED_READY','scenario':scenario,'hashes':hashes,'models':MODELS,
         'rates':RATES,'sampling':{'temperature':0,'seed':SEED,'samples':1},'ceilings':ceilings(scenario),

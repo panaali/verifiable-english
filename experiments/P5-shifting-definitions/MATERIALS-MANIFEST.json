@@ -1,0 +1,16 @@
+{
+  "hashes": {
+    "labels.jsonl.gz": "cd9f0f491492d9066bbcd3803968ca9f1bf50ac3dd48f47f0927d382148324c3",
+    "materials/anchored-labels.jsonl.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "materials/construction-ledger.jsonl.gz": "4853418bae87da83e8b41822c03bd0af2e6e872e5b18f1d5fdfc0292c3928193",
+    "materials/dev.jsonl.gz": "3f3caa1aac01b3037de37880e1ecd2b21363ea76fd34c733bfd45475ef54ee15",
+    "materials/dossiers.jsonl.gz": "621f3e6a56c5fc1196724da01de4e0f63f722875bf2367aeee1e2f4f5e019842",
+    "materials/graphs.jsonl.gz": "dee1afc569d57130fab13665e92cca9e91376bd087da1676b3c277b7bff321f2",
+    "materials/paraphrases.jsonl.gz": "5bb1329cce11b7c41473fed78b0509f0e73f758ffc2c8fbe6f51297eb138dbc1",
+    "materials/rejected-v1.jsonl.gz": "76f86d202123626c158873daeabed0b88386311b88775556f4615463494cc1ef",
+    "materials/rejected-v2-initial.jsonl.gz": "238cae63f1869902621afd2e94b8e76f0d1ef597d52c70dadb9b6fbaaaf8eebb",
+    "materials/review-ledger.jsonl.gz": "73586c2d447ac12adfa299ab64715f119551fc3ce31241e07abe4740ba762516",
+    "materials/scored.jsonl.gz": "fad842ea5537d2f98f06a1d278776c31c698356d1f6c60d1fe23e07cd28b9994"
+  },
+  "schema": 1
+}

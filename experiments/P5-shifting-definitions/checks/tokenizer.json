@@ -20332,7 +20332,7 @@
       "wire_sha256": "f7c6ceb4089de44d89a7175d8ad9fda39935a25fd2b0d635c3522887bfd362f0"
     }
   ],
-  "freeze_sha256": "eb7d6506a37b075eaa82d2395485557912bea5247785cd55dbe8226d9b117d78",
+  "freeze_sha256": "319de2ba50492d2fd7ba02b340c1b1bf4991556a8f46a8d448d2a4c6b3821098",
   "generation_calls": 0,
   "passed": true,
   "scope": "all slots/arms/stages, system/schema included; max prior-output reserves; exact runtime recount; no truncation"

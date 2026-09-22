@@ -173,3 +173,25 @@ back-reference profiles to (3 referents, 2 senses, 2 units) within every packet;
 expand to three active ambiguous decoys. Regenerate source/prose/formal artifacts
 and invalidate previous reviews. The 2,048 common-packet cap, 84 slots, 28 families,
 16 steps, six leaves, paid ceilings and $0 execution authorization are unchanged.
+
+
+## Revision 5 follow-up: archive isolation and timestamp evidence (2026-09-22)
+
+Explicitly bar the dossiers, scored, dev and paraphrase archives, including
+the sibling-group field used by the transductive attack. Preserve the supplied
+round-5 review JSON and verification report as barred audit evidence. Operator
+attribution: Claude Opus 4.x subagent, cross-family, blind. The verification
+report claims 84/84 localization and zero invalid packets; the supplied JSON
+contains only 30 partial records and its import was rejected for sibling
+exposure. Missing packet hashes, sense mappings, root meanings and evidence
+cannot be reconstructed as independent review. No review gate is overridden
+and no adjudication is eligible. Original submitted metadata is retained.
+
+MATERIALS-MANIFEST.json lists exact material/archive SHA-256 values.
+MATERIALS-HASHES.txt binds that manifest, PREREG.md, this amendment and the
+submitted review bytes. Retain its OpenTimestamps calendar receipt and bind
+these artifacts into the execution freeze; also stamp freeze-manifest.sha256
+for the existing preflight gate. Calendar submission is timestamp evidence,
+not verified Bitcoin confirmation. Rewritten paraphrases require fresh review,
+counts, material hashes, timestamps and a refreeze before dev/scoring.
+The inventory ceilings and $40 study cap are unchanged; this worker spends $0.

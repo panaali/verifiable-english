@@ -433,12 +433,30 @@ def test_best_of_k_permutation_comparison():
 
 
 def test_tracked_nonbarred_p5_files_have_no_labels():
-    from experiments.p5_blinding import audit, LABEL_PATTERN
+    from experiments.p5_blinding import audit, LABEL_PATTERN, BARRED
+    assert {f'materials/{name}.jsonl.gz' for name in
+            ('dossiers','scored','dev','paraphrases')} <= set(BARRED)
     assert LABEL_PATTERN.search('{"kind": "shift"}')
     assert LABEL_PATTERN.search('{"slot_id": "p5-dev-00-benign"}')
     assert LABEL_PATTERN.search('{"id": "p5-scored-01-smuggle"}')
     result = audit()
     assert result['passed'], result
+
+
+def test_tracked_blinding_scans_compressed_labels_and_binary_receipts(tmp_path, monkeypatch):
+    import gzip
+    from experiments.p5_blinding import audit, BARRED
+    base = tmp_path/'experiments'/'P5'
+    base.mkdir(parents=True)
+    (base/'REVIEW-CHECKLIST.md').write_text('\n'.join(f'`{name}`' for name in BARRED))
+    (base/'receipt.ots').write_bytes(b'\xff\x00OpenTimestamps\xfe')
+    (base/'leak.jsonl.gz').write_bytes(gzip.compress(b'{"kind":"shift"}'))
+    paths = [str(path.relative_to(tmp_path)) for path in base.iterdir()]
+    monkeypatch.setattr('experiments.p5_blinding.subprocess.check_output',
+                        lambda *args, **kwargs: '\n'.join(paths))
+    result = audit(base)
+    assert result['label_bearing_files'] == ['experiments/P5/leak.jsonl.gz']
+    assert not result['passed']
 
 
 def test_uniform_localisation_shape_and_grading(items, labels):

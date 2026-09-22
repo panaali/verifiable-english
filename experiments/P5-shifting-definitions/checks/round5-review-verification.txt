@@ -1,0 +1,50 @@
+ROUND-5 VERIFICATION OF THE FOUR ROUND-4 FINDINGS (blinded reviewer, Claude Opus 5)
+repo /Users/seyran/code/ve-codex @ e411495 (codex/p5), read-only, no paid commands
+
+B (committed id->label map) -- FIXED.
+  execution-inventory.json: "kind" and "slot_id" keys absent; rows are
+  {family,id,predicates,split}. IDs rotated: 0/84 round-4 ids survive.
+  Own scan of every tracked non-barred file: 8 contain packet ids
+  (checks/{prose-token-fit,review,tokenizer}.json, execution-inventory.json,
+  materials/{dev,dossiers,paraphrases,scored}.jsonl.gz); in none does a label word
+  occur within 400 chars of an id. tests/test_p5.py holds labelled slot ids but no
+  public packet id. Barred list present in REVIEW-CHECKLIST.md; tracked-blinding gate true.
+  RESIDUAL: materials/{dossiers,scored,dev,paraphrases}.jsonl.gz are unbarred and
+  scored.jsonl.gz carries a "group" (family) field grouping the three siblings ->
+  round-3 transductive attack B if a model is ever handed the repo. Covered only by
+  the blanket "never load the repository" sentence, not by the barred list.
+
+C (gold-set shape == kind) -- FIXED.
+  All 84 acceptable_locations now have shape (1,2), benign included (28/28/28).
+  p5_review.py enforces sorted(map(len,locs))==[1,2] and singleton subset pair for
+  every kind. p5_analysis.endpoint() gates `localized` on kind!='benign' and scores
+  benign via completion (approve/none/empty), so benign anchors are not response
+  requirements -- no scoring bug.
+  NOTE: my own 30-packet submission used [] for benign and would be rejected by the
+  importer; reviewers must supply benign anchors.
+
+F (max-referent localisation shortcut) -- FIXED.
+  Every back-reference in all 84 packets now has exactly 3 candidate referents
+  (profile (3,3,3,3) for benign/shift/smuggle alike). Unique argmax: 0/56.
+  Localisation by that structural rule is back to 1/4 chance.
+
+D (per-packet feature leak) -- NONE.
+  581 probes (153 structural + 428 sampled uni/bi/tri-grams), leave-one-family-out:
+  best 37/84 = 0.4405, top probe = id_b0 (a byte of the HMAC id, noise by construction).
+  Within-family label-permutation null, 200 draws: mean 35.8, p50 35, p95 41, max 47
+  -> selection-corrected p = 0.355. Codex's 32/84, p=0.95 is consistent.
+
+BLIND SCORING. Random 30-packet subset (seed 20260922): kind 30/30, localisation 30/30.
+All 84: kind 84/84, localisation 84/84. Kind is recoverable by exhaustive licensing
+search -- expected; no shortcut survives.
+
+SOUNDNESS (stronger than r4). Prose carries no sense tags, so senses must be inferred.
+Searching ALL sense assignments by backtracking over record branches:
+  28/28 benign admit a zero-relaxation reading; 56/56 flawed admit NONE.
+The flaw is therefore not an artifact of an uncharitable reading. 0/84 packets contain
+rule ids, node ids or sense tags in a prose body. Export: 3 assignments x 28 packets,
+28 distinct families each, max 1 per family. Tokens max 1309 <= 2048.
+
+VERDICT: READY (materials). Codex's own round5.json still reports
+BLOCKED_NOT_SCORED_READY pending fresh independent reviews, independent Qwen prose,
+external timestamp, provider smoke and dev -- study-level gates, not material defects.

@@ -10,6 +10,10 @@ from experiments.p5_materials import HERE
 # construction/scoring history, never model context or reviewer attachments.
 BARRED = (
     'labels.jsonl.gz',
+    'materials/dossiers.jsonl.gz',
+    'materials/scored.jsonl.gz',
+    'materials/dev.jsonl.gz',
+    'materials/paraphrases.jsonl.gz',
     'materials/graphs.jsonl.gz',
     'materials/anchored-labels.jsonl.gz',
     'materials/construction-ledger.jsonl.gz',
@@ -19,6 +23,8 @@ BARRED = (
     'checks/lean-replay-ledger.jsonl.gz',
     'checks/rejected-v2-generator.jsonl.gz',
     'checks/rejected-review-v1.json',
+    'checks/round5-review-submission.json',
+    'checks/round5-review-verification.txt',
 )
 LABEL_PATTERN = re.compile(
     r'"(?:kind|variant)"\s*:\s*"(?:shift|smuggle|benign)"'
@@ -39,7 +45,8 @@ def audit(base=HERE):
         if str(path.relative_to(base)) in BARRED:
             continue
         raw = path.read_bytes()
-        text = (gzip.decompress(raw) if path.suffix == '.gz' else raw).decode()
+        # Timestamp receipts are binary; still scan any embedded text for labels.
+        text = (gzip.decompress(raw) if path.suffix == '.gz' else raw).decode(errors='replace')
         checked += 1
         if LABEL_PATTERN.search(text):
             failures.append(name)
