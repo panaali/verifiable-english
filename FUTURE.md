@@ -166,3 +166,7 @@ experiment 2 (do humans catch a valid proof of the wrong model with VE vs a stru
 human study we have on the list and stays deferred with the other human studies; experiment 3 (mandatory proofs vs
 adversarial debate) folds into P5 and the long-argument study; experiment 4 (size scaling, PrOntoQA subset) into the
 grant-scale plan. Starting evidence: 11 checked rational-algebra lemmas in experiments/obfuscated-arguments/Feasibility.lean.
+
+Package 3b result (2026-09-22): [ICEBERG direct proof and measured ledger](experiments/obfuscated-arguments/iceberg/README.md).
+The ideal rational root is checked, including finite-history no-spill and an explicit air-mass tolerance;
+independent physical-model review and the matched VE-versus-interface/debate experiments remain open.
