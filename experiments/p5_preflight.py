@@ -64,10 +64,10 @@ def tokenize():
 
 
 def inventory(count_tokens=False):
-    result={'slot_count':84,'slots':[{k:r[k] for k in ('id','slot_id','family','split','kind','predicates')} for r in p.labels(False)],'composition':{'dev':12,'scored':72,'scored_families':24,
+    result={'slot_count':84,'slots':[{k:r[k] for k in ('id','family','split','predicates')} for r in p.labels(False)],'composition':{'dev':12,'scored':72,'scored_families':24,
         'scored_per_variant':24,'scored_families_per_predicate_count':{'20':8,'40':8,'60':8}},
         'scenario_ceilings':{s:p.ceilings(s) for s in p.SCENARIOS},
-        'original_design_inventory':'inventory.json (immutable UNBUILT design slots)',
+        'original_design_inventory':'inventory.json (UNBUILT aggregate design; slot labels removed in v5)',
         'stage_caps':p.STAGES,'token_counts':None,'material_status':'OFFLINE_DRAFT_REQUIRES_QWEN_AND_REVIEW'}
     if count_tokens:
         counts=tokenize();write_json(p.HERE/'checks/tokenizer.json',counts)
@@ -83,10 +83,11 @@ def lean_replay():
     exe=p.ROOT/'lean/.lake/build/bin/ve_conformance'
     if not exe.exists():raise PreflightError('lake build required')
     entries=[]
+    labels={r['id']:r for r in p.labels(False)}
     for row in read(p.HERE/'materials/graphs.jsonl.gz'):
         for role in ('merged','augmented','intended'):
             g=ArgumentGraph.from_dict(row[role]); by_id={c.name:c for c in g.claims};queries=[]
-            if role=='intended' and row['negative']:
+            if role=='intended' and labels[row['id']]['kind'] != 'benign':
                 premises=[c.ast for c in g.claims[:6]];root=by_id[g.root].ast
                 model=FiniteModel.from_dict(g.env,row['model'])
                 if not check_countermodel(g.env,premises,root,model).valid:
@@ -156,8 +157,9 @@ def packet_safety():
             refs=re.findall(r'the immediately preceding ([a-z-]+) result',para)
             references+=len(refs)
             for term in refs:
-                previous=q['nodes'][index-1]['text'].partition('. ')[0] if index else ''
-                if not re.search(r', unit\d+ is '+re.escape(term)+r'(?: \(|\.)',previous):
+                from experiments.p5_paraphrase import inference_parts
+                previous=inference_parts(q['nodes'][index-1]['text'])[1] if index else ''
+                if not re.fullmatch(r'unit\d+ is '+re.escape(term),previous):
                     bad.append(item['id'])
         if references!=4:
             bad.append(item['id'])
@@ -189,7 +191,9 @@ def external_timestamp(stamp):
 
 def preflight(offline=False):
     f=p.verify_freeze();stamp=f['manifest_sha256'];reports={}
-    checks=[('review',lambda:p.review.gate()),
+    from experiments.p5_surface import audit as surface_audit
+    from experiments.p5_blinding import audit as blinding_audit
+    checks=[('tracked-blinding',blinding_audit),('surface-soundness',surface_audit),('review',lambda:p.review.gate()),
         ('independent-prose',lambda:{'passed':len(read(p.HERE/'materials/paraphrases.jsonl.gz'))==84 and all(r['provenance'].get('independent_qwen_pass') for r in read(p.HERE/'materials/paraphrases.jsonl.gz'))}),
         ('construction',lambda:json.loads((p.HERE/'checks/construction.json').read_text())),
         ('known-answer',lambda:p.known_answer(p.materials(),p.check_labels())),

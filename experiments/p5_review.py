@@ -54,7 +54,9 @@ def submit(path, base=HERE):
         if not {n['id'] for n in items[row['item_id']]['payload']['nodes']}<=set(a['sense_use_mapping']):
             raise PreflightError('sense mapping must cover all proposed nodes')
         locs=a.get('acceptable_locations',[])
-        if not locs or any(not isinstance(s,list) or len(s)>2 or len(set(s))!=len(s) or not set(s)<=ids or (a['kind']=='shift' and len(s)!=2) or (not s and a['kind']!='benign') or (s and a['kind']=='benign') for s in locs):
+        if (not isinstance(locs,list) or any(not isinstance(s,list) or any(not isinstance(n,str) for n in s) or len(set(s))!=len(s) or not set(s)<=ids for s in locs)
+                or sorted(map(len,locs)) != [1,2]
+                or not set(min(locs,key=len)) < set(max(locs,key=len))):
             raise PreflightError('invalid localization sets')
         key=(row['item_id'],row['reviewer_id'],row['packet_sha256'])
         if key in prior:

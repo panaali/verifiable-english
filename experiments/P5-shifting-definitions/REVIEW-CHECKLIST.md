@@ -9,14 +9,38 @@ material into paraphrase, review, rating or adjudication contexts. Imports rejec
 repeated sibling exposure under the same reviewer/rater identity. Work
 separately before comparing annotations.
 Review packets contain no planted label, variant, split, formal witness or model
-outcome. Do not open labels.jsonl.gz or graphs.jsonl.gz while annotating.
+outcome. Review only the individually assigned exported packet files. Never
+load the repository, an archive of siblings, or Git history into a reviewer,
+judge or rater context. Replicators must keep construction/scoring artifacts
+outside inference contexts. The following files are explicitly barred from
+reviewers, raters, adjudicators, judge pipelines and replication model contexts
+(paths relative to this directory):
+
+- `labels.jsonl.gz`
+- `materials/graphs.jsonl.gz`
+- `materials/anchored-labels.jsonl.gz`
+- `materials/construction-ledger.jsonl.gz`
+- `materials/review-ledger.jsonl.gz`
+- `materials/rejected-v1.jsonl.gz`
+- `materials/rejected-v2-initial.jsonl.gz`
+- `checks/lean-replay-ledger.jsonl.gz`
+- `checks/rejected-v2-generator.jsonl.gz`
+- `checks/rejected-review-v1.json`
+
+Historical review annotations and formal witnesses can reveal labels even
+without a planted kind field. These are offline audit/scoring inputs only.
+The private ID nonce is outside the repository and is never an attachment.
 
 For each packet, recover and record:
 
 - The intended meaning of every relevant use, anchored in specific source records.
 - The original root, required assumptions, and which assumptions are declared.
 - Whether the justification shifts a definition, needs an undeclared bridge, or
-  is benign; acceptable one/two-node localization sets and supporting passages.
+  is benign; localization anchors and supporting passages. Record exactly a singleton
+  consumer and its producer/consumer pair for every kind, including benign
+  inspection anchors. Both flaw kinds accept either exact set under identical
+  grading. Benign answers are scored as approval/none/empty; their neutral gold
+  anchors are not response requirements.
 - Whether the prose preserves the proposal without repairing it, inserting a
   premise, changing the root or revealing the answer.
 - Whether harmless synonyms and consistently used ambiguous terms remain benign.
@@ -29,23 +53,21 @@ old packet hashes and require fresh independent reviews. A planted-label mismatc
 requires construction repair and an amendment; it is never silently relabeled.
 
 The previous 84-packet NOT READY review is retained against its old hashes and
-cannot approve these replacement packets. Revision 4 keeps records fixed across
-siblings and renders inferences as topologically ordered prose paragraphs.
-Step labels support localization; parent IDs are absent from prose. The four
-unqualified references per packet have unique immediately-preceding referents;
-three are harmless. Inspect the critical inference without silently qualifying
-or repairing it. Only VE-arm requests include the additional node block. Alternative checks in a
-sentence are conditional comparisons, not additional declared facts. In
-particular, naming a unit as a sample of a lot supplies no rule transporting its
-properties to the lot, or from the lot back to the sample.
+cannot approve these replacement packets. Revision 5 retains fixed records across
+siblings and uses four natural inference frames without parenthesised sense
+tags. Recover each sense by reading the glossary and its licensing record.
+Each of four immediate back-references has exactly three prior same-term
+conclusions, spanning two senses and two units. Three are harmless; inspect all
+four without silently repairing a sense or unit transfer. Only VE-arm requests
+include a node/parent block. Conditional alternatives are not declared facts;
+a sample relationship supplies no property-transfer rule in either direction.
 
-Open questions: Is each unqualified reuse actually read in the sense required by
-the downstream record? Is the cross-unit bridge plausible but genuinely
-unstated? Are both decoy senses used consistently? Are the conditional
-alternatives natural, or too cumbersome? Can the full prose meet the original
-context caps? The exact packet must pass the token/structural and node-relational leakage gates;
-that does not establish semantic readiness. These drafts are NOT the registered
-Qwen paraphrases and cannot pass the independent-paraphrase gate.
+The packet must pass tracked-artifact blinding, public-text soundness, reference
+profile, token, structural and permutation leakage gates. These checks do not
+establish semantic readiness. Are the senses recoverable and the prose natural?
+Does the proposed inference conceal a plausible unstated bridge? These offline
+drafts are NOT the registered independent Qwen paraphrases. Fresh independent
+reviews against the exact replacement hashes remain required.
 
 Explanation scoring is a separate post-inference task: two raters receive the
 packet and answer without arm/model fields, assess source-groundedness, record

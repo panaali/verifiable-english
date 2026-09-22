@@ -6,7 +6,6 @@ import gzip
 import os
 import hashlib
 import hmac
-import os
 import json
 from pathlib import Path
 import random
@@ -43,7 +42,7 @@ def private_nonce(path=NONCE_PATH):
 
 
 def packet_id(slot, nonce):
-    message = ('P5-construction-v4/' + slot['id']).encode()
+    message = ('P5-construction-v5/' + slot['id']).encode()
     return 'i' + hmac.new(nonce, message, hashlib.sha256).hexdigest()[:32]
 
 
@@ -171,27 +170,31 @@ def build(slot, parents, nonce=None):
     names = [f'p{i:02d}' for i in range(size)]
     rng.shuffle(names)
     main, primary, rival, selectors, dormant = names[:-8], names[-8], names[-7], names[-6:-2], names[-2:]
-    atoms = [(main[n % len(main)], f'lot{n // len(main)}') for n in range(CLAIMS)]
-    target = rng.randrange(16, CLAIMS-1)
+    # Four matched reference blocks: two comparison senses, a producer on
+    # another unit, and its consumer. Every reference has exactly 3 prior
+    # same-term conclusions, 2 senses and 2 units, independent of the label.
+    reference_steps = [9, 13, 17, 21]
+    target = rng.choice(reference_steps)
     parent = target - 1
-    _, entity = atoms[parent]
-    # In the source, this is a sample of the lot, not another name for it.
-    sample = 'sample0'
+    ordinary = main[6:]
+    atoms = [(ordinary[n % len(ordinary)], f'lot{n // len(ordinary)}') for n in range(CLAIMS)]
     entity_names = [f'unit{n}' for n in range(8)]
     rng.shuffle(entity_names)
-    entity_map = dict(zip(sorted({c for _, c in atoms} | {sample, 'comparison0'}), entity_names))
+    entity_map = dict(zip(sorted({c for _, c in atoms} | {'sample0', 'comparison0'}), entity_names))
     atoms = [(p, entity_map[c]) for p, c in atoms]
-    lot = entity_map[entity]
-    sample = entity_map[sample]
-    # Counterbalance unit role before labels, not via acceptance/seed search.
+    lot, sample = entity_map['lot0'], entity_map['sample0']
     sample_required = int(slot['cluster'].rsplit('-', 1)[1]) % 2 == 0
     entity, other_unit = (sample, lot) if sample_required else (lot, sample)
-    atoms[parent] = (primary, entity)
-    # Assert both critical senses on a separate lot in every variant. Thus
-    # neither sense is an orphan predicate or occurs only at the disputed
-    # step; facts about this comparison lot license no cross-lot transfer.
-    atoms[12] = (rival, entity_map['comparison0'])
-    atoms[13] = (primary, entity_map['comparison0'])
+    decoy_predicates = iter(zip(main[:6:2], main[1:6:2]))
+    block_pairs = [(primary, rival) if t == target else next(decoy_predicates) for t in reference_steps]
+    decoy_pairs = []
+    unit_rng = random.Random(slot['topology_seed'] + '/decoy-units-v5')
+    for t, (first, second) in zip(reference_steps, block_pairs):
+        atoms[t-3] = (second, entity_map['comparison0'])
+        atoms[t-2] = (first, entity_map['comparison0'])
+        atoms[t-1] = (first, entity if t == target else unit_rng.choice([lot, sample]))
+        if t != target:
+            decoy_pairs.extend([t-3, t-2])
     options = [(primary, entity), (rival, entity), (primary, other_unit), (rival, other_unit)]
     kind_index = ('benign', 'shift', 'smuggle').index(slot['variant'])
     chosen = options[kind_index]
@@ -212,19 +215,9 @@ def build(slot, parents, nonce=None):
         ('stable', 'temperature constant', 'shape retained'),
         ('dry', 'surface moisture absent', 'internal moisture low'),
     ]
-    ambiguities = [rng.choice(critical_senses), *rng.sample(AMBIGUITIES, 2)]
-    # Both decoy senses are asserted and consumed in every proposal, including
-    # benign controls. Choose distinct predicates before the critical step.
-    decoy_indices = [n for n in range(6, 12) if atoms[n][0] != primary]
-    used = set()
-    decoy_pairs = []
-    for n in decoy_indices:
-        if atoms[n][0] not in used:
-            used.add(atoms[n][0]); decoy_pairs.append(n)
-        if len(decoy_pairs) == 4:
-            break
+    ambiguities = [rng.choice(critical_senses), *rng.sample(AMBIGUITIES, 3)]
     for (a, b), (term, first, second) in zip(
-            [(primary, rival), *[(atoms[decoy_pairs[j]][0], atoms[decoy_pairs[j+1]][0]) for j in (0, 2)]], ambiguities):
+            [(primary, rival), *[pair for pair in block_pairs if pair != (primary, rival)]], ambiguities):
         senses = [first, second]; rng.shuffle(senses)
         surfaces[a] = (term, senses[0]); surfaces[b] = (term, senses[1])
     # Sense codes and glossary positions use separate per-packet random streams.
@@ -363,8 +356,6 @@ def build(slot, parents, nonce=None):
     for group in range(5):
         plain_leaves.append({'id': ids[group+1], 'text': 'Rules ' + ', '.join(r['id'] for r in records[group::5]) + ' are declared.'})
     nodes, record_uses = [], {}
-    reference_rng = random.Random(slot['topology_seed'] + '/unqualified-references-v4')
-    reference_steps = sorted([target, *reference_rng.sample([n for n in range(8, CLAIMS) if n != target], 3)])
     for n, ps in enumerate(parents, 6):
         cited = [proposed_atoms[p] for p in ps]
         # At the target the term is reused without its qualifier. The record's
@@ -374,24 +365,26 @@ def build(slot, parents, nonce=None):
         # stating a property-transfer bridge.
         contents = []
         for q, a in zip(ps, cited):
+            if atoms[q] not in inputs_by_node[n]:
+                continue
             # Refer to the earlier result by content, without silently
             # restating a lot fact when only a sample fact was established.
             if q == parent and n > target:
                 continue  # Redundant context is not needed to state this inference.
             if q == n - 1 and n in reference_steps:
-                contents.append(f'the immediately preceding {surfaces[a[0]][0]} result')
+                contents.append(f'the immediately preceding {surfaces[a[0]][0]} result holds')
             else:
-                contents.append(english(a))
+                contents.append(english(a, False))
         if n == parent:
-            contents.append(english(selector_atoms[kind_index]))
-        opening = rng.choice(['Given', 'From', 'Using'])
-        text = f'{opening} {" and ".join(contents)}, {english(proposed_atoms[n])}.'
+            contents.append(english(selector_atoms[kind_index], False))
+        from experiments.p5_paraphrase import render_inference
+        text = render_inference(' and '.join(contents), english(proposed_atoms[n], False), (n-6) % 4)
         if n == parent:
             # Record alternatives are genuine contextual comparisons, not
             # asserted premises. Permute which route is relied on while
             # preserving the complete lexical workload across siblings.
             text += ' The checks that ' + ' and '.join(english(selector_atoms[j]) for j in other_checks)
-            text += rng.choice([' would establish that ', ' would imply that ', ' would yield that ']) + ' and '.join(english(options[j]) for j in other_checks) + ', respectively.'
+            text += rng.choice([' would establish that ', ' would imply that ', ' would yield that ']) + ' and '.join(english(options[j], False) for j in other_checks) + ', respectively.'
         nodes.append({'id': ids[n], 'parents': list(dict.fromkeys(ids[p] if p >= 6 else ids[0] for p in ps)), 'text': text})
         record_uses[ids[n]] = {'conclusion': descriptions[proposed_atoms[n][0]],
             'entity': proposed_atoms[n][1], 'required_inputs': [english(a) for a in inputs_by_node[n]],
@@ -403,18 +396,17 @@ def build(slot, parents, nonce=None):
     dossier = {'id': public_id, 'glossary': glossary, 'premises': plain_leaves,
         'records': records, 'nodes': nodes, 'argument': prose_argument(nodes), 'root': ids[CLAIMS-1]}
     return dossier, {'id': public_id, 'slot_id': slot['id'], 'family': slot['cluster'], 'split': slot['split'],
-        'kind': slot['variant'], 'predicates': size, 'acceptable_locations': [[ids[parent], ids[target]]]
-        if slot['variant']=='shift' else [[ids[target]], [ids[parent], ids[target]]] if slot['variant']=='smuggle' else [[]],
+        'kind': slot['variant'], 'predicates': size, 'acceptable_locations': [[ids[target]], [ids[parent], ids[target]]],
         'sense_use_mapping': record_uses, 'root_meaning': english(atoms[CLAIMS-1]),
         'bridge': bridge.source, 'affected_uses': [ids[parent], ids[target]]}, {
-        'id': public_id, 'slot': slot, 'topology': parents, 'structural_signature': structural_signature(parents),
+        'id': public_id, 'family': slot['cluster'], 'predicates': size, 'topology': parents, 'structural_signature': structural_signature(parents),
         'intended': intended.to_dict(), 'merged': proposed.to_dict(), 'model': model.to_dict(),
-        'negative': negative, 'bridge': bridge.to_dict(env), 'augmented': augmented.to_dict(),
-        'construction': {'version': 4, 'target': ids[target], 'parent': ids[parent],
+        'bridge': bridge.to_dict(env), 'augmented': augmented.to_dict(),
+        'construction': {'version': 5, 'target': ids[target], 'parent': ids[parent],
             'unqualified_reference_nodes': [ids[n] for n in reference_steps],
             'redundant_edges': [[ids[n], ids[q]] for n, q in redundant],
             'decoy_nodes': [ids[n] for n in decoy_pairs],
-            'comparison_nodes': [ids[12], ids[13]],
+            'comparison_nodes': [ids[target-3], ids[target-2]],
             'dormant_predicates': dormant, 'selector_predicates': selectors},
         'predicate_identities': {p: digest({'environment_id': env.environment_id, 'symbol': p,
                                             'declaration': env.to_dict()['vocabulary']['predicates'][p]}) for p in names}}
@@ -457,7 +449,7 @@ def generate(base=HERE):
     for row in graphs:
         graph = ArgumentGraph.from_dict(row['intended'])
         signature = argument_signature(graph)
-        family = row['slot']['cluster']
+        family = row['family']
         if actual_signatures.setdefault(family, signature) != signature:
             raise ValueError('sibling formal topologies differ')
         row['formal_structural_signature'] = signature
@@ -487,7 +479,7 @@ def generate(base=HERE):
     report = {'passed': len(signatures)==28, 'slots': len(labels), 'families':28,
         'method':'pairwise distinct directed degree/depth invariants; sufficient non-isomorphism test',
         'failed_candidates': len(attempts), 'actual_formal_graph_families': len(set(actual_signatures.values())),
-        'generator_version': 4, 'deduction_steps': STEPS, 'source_records_fixed_within_family': True, 'independent_prose_ready': False,
+        'generator_version': 5, 'deduction_steps': STEPS, 'source_records_fixed_within_family': True, 'independent_prose_ready': False,
         'status':'BUILT_REFERENCE_AND_OFFLINE_DRAFT_REVIEW_BLOCKED', 'paid_calls':0}
     write_json(base/'checks/construction.json', report)
     return report

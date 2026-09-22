@@ -1,6 +1,6 @@
 {
-  "accuracy": 0.5,
-  "best_probe": "single/node_1_con_sense_order",
+  "accuracy": 0.38095238095238093,
+  "best_probe": "single/node_10_con_unit_in_ants",
   "chance_accuracy": 0.3333333333333333,
   "classes": [
     "benign",
@@ -513,7 +513,7 @@
       "probe": 2
     }
   ],
-  "export_order_sha256": "bb80990a45b2198e1e5f240721481313ba2d065512613b0efdf7a9854c35a9f4",
+  "export_order_sha256": "933e2f7337b266cb885238cd011732f10672e0d4ca5ae9d3f8e96ad8f5f54de2",
   "features": [
     "bytes",
     "words",
@@ -548,9 +548,10 @@
     "branch_con_unit_num",
     "branch_indegree",
     "branch_is_root",
-    "branch_marker_From",
-    "branch_marker_Given",
-    "branch_marker_Using",
+    "branch_marker_Because",
+    "branch_marker_Given that",
+    "branch_marker_It follows that",
+    "branch_marker_Since",
     "branch_marker_would establish",
     "branch_marker_would imply",
     "branch_marker_would yield",
@@ -575,9 +576,10 @@
     "max_con_unit_num",
     "max_indegree",
     "max_is_root",
-    "max_marker_From",
-    "max_marker_Given",
-    "max_marker_Using",
+    "max_marker_Because",
+    "max_marker_Given that",
+    "max_marker_It follows that",
+    "max_marker_Since",
     "max_marker_would establish",
     "max_marker_would imply",
     "max_marker_would yield",
@@ -602,9 +604,10 @@
     "mean_con_unit_num",
     "mean_indegree",
     "mean_is_root",
-    "mean_marker_From",
-    "mean_marker_Given",
-    "mean_marker_Using",
+    "mean_marker_Because",
+    "mean_marker_Given that",
+    "mean_marker_It follows that",
+    "mean_marker_Since",
     "mean_marker_would establish",
     "mean_marker_would imply",
     "mean_marker_would yield",
@@ -629,9 +632,10 @@
     "min_con_unit_num",
     "min_indegree",
     "min_is_root",
-    "min_marker_From",
-    "min_marker_Given",
-    "min_marker_Using",
+    "min_marker_Because",
+    "min_marker_Given that",
+    "min_marker_It follows that",
+    "min_marker_Since",
     "min_marker_would establish",
     "min_marker_would imply",
     "min_marker_would yield",
@@ -656,9 +660,10 @@
     "node_0_con_unit_num",
     "node_0_indegree",
     "node_0_is_root",
-    "node_0_marker_From",
-    "node_0_marker_Given",
-    "node_0_marker_Using",
+    "node_0_marker_Because",
+    "node_0_marker_Given that",
+    "node_0_marker_It follows that",
+    "node_0_marker_Since",
     "node_0_marker_would establish",
     "node_0_marker_would imply",
     "node_0_marker_would yield",
@@ -683,9 +688,10 @@
     "node_10_con_unit_num",
     "node_10_indegree",
     "node_10_is_root",
-    "node_10_marker_From",
-    "node_10_marker_Given",
-    "node_10_marker_Using",
+    "node_10_marker_Because",
+    "node_10_marker_Given that",
+    "node_10_marker_It follows that",
+    "node_10_marker_Since",
     "node_10_marker_would establish",
     "node_10_marker_would imply",
     "node_10_marker_would yield",
@@ -710,9 +716,10 @@
     "node_11_con_unit_num",
     "node_11_indegree",
     "node_11_is_root",
-    "node_11_marker_From",
-    "node_11_marker_Given",
-    "node_11_marker_Using",
+    "node_11_marker_Because",
+    "node_11_marker_Given that",
+    "node_11_marker_It follows that",
+    "node_11_marker_Since",
     "node_11_marker_would establish",
     "node_11_marker_would imply",
     "node_11_marker_would yield",
@@ -737,9 +744,10 @@
     "node_12_con_unit_num",
     "node_12_indegree",
     "node_12_is_root",
-    "node_12_marker_From",
-    "node_12_marker_Given",
-    "node_12_marker_Using",
+    "node_12_marker_Because",
+    "node_12_marker_Given that",
+    "node_12_marker_It follows that",
+    "node_12_marker_Since",
     "node_12_marker_would establish",
     "node_12_marker_would imply",
     "node_12_marker_would yield",
@@ -764,9 +772,10 @@
     "node_13_con_unit_num",
     "node_13_indegree",
     "node_13_is_root",
-    "node_13_marker_From",
-    "node_13_marker_Given",
-    "node_13_marker_Using",
+    "node_13_marker_Because",
+    "node_13_marker_Given that",
+    "node_13_marker_It follows that",
+    "node_13_marker_Since",
     "node_13_marker_would establish",
     "node_13_marker_would imply",
     "node_13_marker_would yield",
@@ -791,9 +800,10 @@
     "node_14_con_unit_num",
     "node_14_indegree",
     "node_14_is_root",
-    "node_14_marker_From",
-    "node_14_marker_Given",
-    "node_14_marker_Using",
+    "node_14_marker_Because",
+    "node_14_marker_Given that",
+    "node_14_marker_It follows that",
+    "node_14_marker_Since",
     "node_14_marker_would establish",
     "node_14_marker_would imply",
     "node_14_marker_would yield",
@@ -818,9 +828,10 @@
     "node_15_con_unit_num",
     "node_15_indegree",
     "node_15_is_root",
-    "node_15_marker_From",
-    "node_15_marker_Given",
-    "node_15_marker_Using",
+    "node_15_marker_Because",
+    "node_15_marker_Given that",
+    "node_15_marker_It follows that",
+    "node_15_marker_Since",
     "node_15_marker_would establish",
     "node_15_marker_would imply",
     "node_15_marker_would yield",
@@ -845,9 +856,10 @@
     "node_1_con_unit_num",
     "node_1_indegree",
     "node_1_is_root",
-    "node_1_marker_From",
-    "node_1_marker_Given",
-    "node_1_marker_Using",
+    "node_1_marker_Because",
+    "node_1_marker_Given that",
+    "node_1_marker_It follows that",
+    "node_1_marker_Since",
     "node_1_marker_would establish",
     "node_1_marker_would imply",
     "node_1_marker_would yield",
@@ -872,9 +884,10 @@
     "node_2_con_unit_num",
     "node_2_indegree",
     "node_2_is_root",
-    "node_2_marker_From",
-    "node_2_marker_Given",
-    "node_2_marker_Using",
+    "node_2_marker_Because",
+    "node_2_marker_Given that",
+    "node_2_marker_It follows that",
+    "node_2_marker_Since",
     "node_2_marker_would establish",
     "node_2_marker_would imply",
     "node_2_marker_would yield",
@@ -899,9 +912,10 @@
     "node_3_con_unit_num",
     "node_3_indegree",
     "node_3_is_root",
-    "node_3_marker_From",
-    "node_3_marker_Given",
-    "node_3_marker_Using",
+    "node_3_marker_Because",
+    "node_3_marker_Given that",
+    "node_3_marker_It follows that",
+    "node_3_marker_Since",
     "node_3_marker_would establish",
     "node_3_marker_would imply",
     "node_3_marker_would yield",
@@ -926,9 +940,10 @@
     "node_4_con_unit_num",
     "node_4_indegree",
     "node_4_is_root",
-    "node_4_marker_From",
-    "node_4_marker_Given",
-    "node_4_marker_Using",
+    "node_4_marker_Because",
+    "node_4_marker_Given that",
+    "node_4_marker_It follows that",
+    "node_4_marker_Since",
     "node_4_marker_would establish",
     "node_4_marker_would imply",
     "node_4_marker_would yield",
@@ -953,9 +968,10 @@
     "node_5_con_unit_num",
     "node_5_indegree",
     "node_5_is_root",
-    "node_5_marker_From",
-    "node_5_marker_Given",
-    "node_5_marker_Using",
+    "node_5_marker_Because",
+    "node_5_marker_Given that",
+    "node_5_marker_It follows that",
+    "node_5_marker_Since",
     "node_5_marker_would establish",
     "node_5_marker_would imply",
     "node_5_marker_would yield",
@@ -980,9 +996,10 @@
     "node_6_con_unit_num",
     "node_6_indegree",
     "node_6_is_root",
-    "node_6_marker_From",
-    "node_6_marker_Given",
-    "node_6_marker_Using",
+    "node_6_marker_Because",
+    "node_6_marker_Given that",
+    "node_6_marker_It follows that",
+    "node_6_marker_Since",
     "node_6_marker_would establish",
     "node_6_marker_would imply",
     "node_6_marker_would yield",
@@ -1007,9 +1024,10 @@
     "node_7_con_unit_num",
     "node_7_indegree",
     "node_7_is_root",
-    "node_7_marker_From",
-    "node_7_marker_Given",
-    "node_7_marker_Using",
+    "node_7_marker_Because",
+    "node_7_marker_Given that",
+    "node_7_marker_It follows that",
+    "node_7_marker_Since",
     "node_7_marker_would establish",
     "node_7_marker_would imply",
     "node_7_marker_would yield",
@@ -1034,9 +1052,10 @@
     "node_8_con_unit_num",
     "node_8_indegree",
     "node_8_is_root",
-    "node_8_marker_From",
-    "node_8_marker_Given",
-    "node_8_marker_Using",
+    "node_8_marker_Because",
+    "node_8_marker_Given that",
+    "node_8_marker_It follows that",
+    "node_8_marker_Since",
     "node_8_marker_would establish",
     "node_8_marker_would imply",
     "node_8_marker_would yield",
@@ -1061,9 +1080,10 @@
     "node_9_con_unit_num",
     "node_9_indegree",
     "node_9_is_root",
-    "node_9_marker_From",
-    "node_9_marker_Given",
-    "node_9_marker_Using",
+    "node_9_marker_Because",
+    "node_9_marker_Given that",
+    "node_9_marker_It follows that",
+    "node_9_marker_Since",
     "node_9_marker_would establish",
     "node_9_marker_would imply",
     "node_9_marker_would yield",
@@ -1074,236 +1094,236 @@
     "node_9_sample_alts",
     "node_9_sample_ants"
   ],
-  "freeze_sha256": "b5fd6dccd41b285cff3886e359198e881fd903211a89a52848123edae8aedfb4",
+  "freeze_sha256": "eb7d6506a37b075eaa82d2395485557912bea5247785cd55dbe8226d9b117d78",
   "generation_calls": 0,
-  "k": 561,
-  "label_sha256": "10036d8a37073a848dbd0575415ce1d9f3aee0fee79c8b30629e9afa23c0b076",
+  "k": 581,
+  "label_sha256": "42c3258b3f0849602d95d4575051e3497d4c36184330312cbc8f4efff0f5a0bb",
   "limitation": "Shortcut screen, not proof of semantic difficulty or source fidelity.",
   "minimum_p_value": 0.05,
   "order_mod3_counts": {
     "0": {
-      "benign": 9,
-      "shift": 8,
+      "benign": 8,
+      "shift": 9,
       "smuggle": 11
     },
     "1": {
-      "benign": 9,
-      "shift": 12,
-      "smuggle": 7
+      "benign": 6,
+      "shift": 13,
+      "smuggle": 9
     },
     "2": {
-      "benign": 10,
-      "shift": 8,
-      "smuggle": 10
+      "benign": 14,
+      "shift": 6,
+      "smuggle": 8
     }
   },
-  "packet_sha256": "44ee5418b7a9802a04d2850dfde43e86c9f7603dedfea0af082e7135f27d608c",
+  "packet_sha256": "614b0bfbfa009cf95c0b9048ec4205a99250a85f48c5929924e96aa8e435a353",
   "passed": true,
   "permutation_null": {
-    "null_max_mean": 0.45674802584350327,
-    "null_max_p95": 0.5119047619047619,
+    "null_max_mean": 0.4150514477147643,
+    "null_max_p95": 0.47619047619047616,
     "null_maxima": [
-      0.42857142857142855,
-      0.4166666666666667,
-      0.4642857142857143,
-      0.47619047619047616,
-      0.4642857142857143,
-      0.42857142857142855,
-      0.4642857142857143,
-      0.4523809523809524,
-      0.4523809523809524,
-      0.4642857142857143,
-      0.42857142857142855,
-      0.47619047619047616,
-      0.4523809523809524,
-      0.4523809523809524,
-      0.4523809523809524,
-      0.4166666666666667,
-      0.5119047619047619,
-      0.47619047619047616,
-      0.44047619047619047,
-      0.44047619047619047,
-      0.4880952380952381,
-      0.4642857142857143,
-      0.44047619047619047,
-      0.44047619047619047,
-      0.4642857142857143,
-      0.4523809523809524,
-      0.4523809523809524,
-      0.42857142857142855,
-      0.47619047619047616,
-      0.47619047619047616,
-      0.40476190476190477,
-      0.4642857142857143,
-      0.5595238095238095,
-      0.4523809523809524,
-      0.42857142857142855,
-      0.47619047619047616,
-      0.44047619047619047,
       0.4523809523809524,
       0.40476190476190477,
-      0.4642857142857143,
-      0.4880952380952381,
-      0.4523809523809524,
-      0.4523809523809524,
-      0.47619047619047616,
+      0.38095238095238093,
+      0.44047619047619047,
+      0.42857142857142855,
       0.4166666666666667,
-      0.4642857142857143,
-      0.47619047619047616,
-      0.42857142857142855,
-      0.42857142857142855,
-      0.4642857142857143,
-      0.5,
-      0.5476190476190477,
-      0.47619047619047616,
-      0.47619047619047616,
-      0.42857142857142855,
-      0.4880952380952381,
-      0.44047619047619047,
-      0.5,
-      0.5,
-      0.5476190476190477,
-      0.42857142857142855,
-      0.4523809523809524,
-      0.4642857142857143,
-      0.4880952380952381,
-      0.4642857142857143,
-      0.4523809523809524,
-      0.47619047619047616,
-      0.47619047619047616,
-      0.42857142857142855,
-      0.47619047619047616,
-      0.42857142857142855,
-      0.4880952380952381,
-      0.40476190476190477,
-      0.4523809523809524,
-      0.4642857142857143,
-      0.44047619047619047,
-      0.4642857142857143,
-      0.47619047619047616,
-      0.4880952380952381,
-      0.47619047619047616,
-      0.4880952380952381,
-      0.44047619047619047,
-      0.4166666666666667,
-      0.40476190476190477,
-      0.42857142857142855,
-      0.5,
       0.39285714285714285,
-      0.47619047619047616,
-      0.4523809523809524,
-      0.4880952380952381,
-      0.5119047619047619,
-      0.40476190476190477,
-      0.44047619047619047,
-      0.44047619047619047,
-      0.4642857142857143,
-      0.5357142857142857,
-      0.47619047619047616,
+      0.38095238095238093,
       0.42857142857142855,
-      0.4166666666666667,
-      0.5119047619047619,
-      0.4523809523809524,
-      0.4166666666666667,
-      0.4523809523809524,
-      0.40476190476190477,
-      0.4523809523809524,
-      0.4523809523809524,
-      0.44047619047619047,
-      0.4523809523809524,
-      0.4523809523809524,
-      0.5119047619047619,
-      0.4642857142857143,
-      0.4523809523809524,
-      0.42857142857142855,
-      0.47619047619047616,
-      0.44047619047619047,
-      0.4523809523809524,
-      0.4166666666666667,
-      0.47619047619047616,
-      0.4642857142857143,
-      0.44047619047619047,
-      0.42857142857142855,
-      0.42857142857142855,
-      0.42857142857142855,
-      0.4523809523809524,
-      0.47619047619047616,
-      0.44047619047619047,
-      0.39285714285714285,
-      0.4166666666666667,
-      0.42857142857142855,
-      0.4523809523809524,
-      0.47619047619047616,
-      0.4523809523809524,
-      0.42857142857142855,
-      0.4642857142857143,
-      0.4642857142857143,
-      0.42857142857142855,
-      0.42857142857142855,
-      0.4166666666666667,
       0.5238095238095238,
+      0.44047619047619047,
+      0.4523809523809524,
+      0.40476190476190477,
+      0.4523809523809524,
+      0.38095238095238093,
+      0.4166666666666667,
+      0.42857142857142855,
+      0.42857142857142855,
+      0.38095238095238093,
+      0.4166666666666667,
+      0.40476190476190477,
+      0.39285714285714285,
+      0.4166666666666667,
+      0.39285714285714285,
+      0.40476190476190477,
+      0.44047619047619047,
+      0.40476190476190477,
+      0.42857142857142855,
+      0.4523809523809524,
+      0.4880952380952381,
+      0.38095238095238093,
+      0.47619047619047616,
+      0.42857142857142855,
+      0.4642857142857143,
+      0.40476190476190477,
+      0.39285714285714285,
+      0.42857142857142855,
+      0.38095238095238093,
+      0.4642857142857143,
+      0.44047619047619047,
+      0.4642857142857143,
+      0.38095238095238093,
+      0.4523809523809524,
+      0.38095238095238093,
+      0.38095238095238093,
+      0.38095238095238093,
+      0.36904761904761907,
+      0.39285714285714285,
+      0.39285714285714285,
+      0.39285714285714285,
+      0.44047619047619047,
+      0.39285714285714285,
+      0.38095238095238093,
+      0.4523809523809524,
+      0.38095238095238093,
+      0.5,
+      0.39285714285714285,
+      0.36904761904761907,
+      0.4166666666666667,
+      0.36904761904761907,
+      0.38095238095238093,
+      0.39285714285714285,
+      0.4523809523809524,
+      0.44047619047619047,
+      0.44047619047619047,
+      0.42857142857142855,
+      0.40476190476190477,
+      0.40476190476190477,
+      0.38095238095238093,
+      0.40476190476190477,
+      0.42857142857142855,
+      0.4880952380952381,
+      0.4166666666666667,
+      0.42857142857142855,
+      0.44047619047619047,
+      0.44047619047619047,
+      0.40476190476190477,
+      0.4166666666666667,
+      0.39285714285714285,
+      0.4166666666666667,
+      0.4166666666666667,
+      0.40476190476190477,
+      0.40476190476190477,
+      0.40476190476190477,
+      0.38095238095238093,
+      0.4880952380952381,
+      0.42857142857142855,
+      0.36904761904761907,
+      0.39285714285714285,
+      0.4166666666666667,
+      0.40476190476190477,
+      0.40476190476190477,
       0.4166666666666667,
       0.4642857142857143,
-      0.4642857142857143,
+      0.36904761904761907,
+      0.5238095238095238,
+      0.44047619047619047,
+      0.4166666666666667,
+      0.40476190476190477,
+      0.39285714285714285,
+      0.42857142857142855,
+      0.39285714285714285,
+      0.36904761904761907,
+      0.38095238095238093,
+      0.42857142857142855,
+      0.42857142857142855,
+      0.39285714285714285,
+      0.38095238095238093,
+      0.40476190476190477,
+      0.44047619047619047,
       0.4880952380952381,
-      0.4523809523809524,
+      0.39285714285714285,
+      0.39285714285714285,
+      0.38095238095238093,
+      0.4166666666666667,
+      0.42857142857142855,
+      0.39285714285714285,
+      0.42857142857142855,
+      0.40476190476190477,
+      0.44047619047619047,
+      0.36904761904761907,
+      0.40476190476190477,
+      0.38095238095238093,
+      0.47619047619047616,
+      0.38095238095238093,
+      0.39285714285714285,
       0.4642857142857143,
       0.39285714285714285,
-      0.47619047619047616,
+      0.40476190476190477,
+      0.38095238095238093,
+      0.38095238095238093,
       0.4880952380952381,
-      0.47619047619047616,
-      0.47619047619047616,
+      0.36904761904761907,
       0.44047619047619047,
-      0.5357142857142857,
+      0.4166666666666667,
+      0.39285714285714285,
+      0.39285714285714285,
       0.42857142857142855,
+      0.40476190476190477,
+      0.4166666666666667,
+      0.40476190476190477,
+      0.42857142857142855,
+      0.40476190476190477,
+      0.42857142857142855,
+      0.44047619047619047,
+      0.40476190476190477,
+      0.42857142857142855,
+      0.39285714285714285,
       0.4166666666666667,
       0.44047619047619047,
-      0.47619047619047616,
       0.4166666666666667,
-      0.4642857142857143,
-      0.4642857142857143,
-      0.4523809523809524,
-      0.44047619047619047,
-      0.4523809523809524,
-      0.4523809523809524,
-      0.42857142857142855,
-      0.4642857142857143,
-      0.42857142857142855,
+      0.38095238095238093,
       0.5,
-      0.4642857142857143,
-      0.4523809523809524,
-      0.4523809523809524,
-      0.47619047619047616,
-      0.4523809523809524,
-      0.5,
-      0.5,
+      0.40476190476190477,
       0.42857142857142855,
-      0.4523809523809524,
-      0.4642857142857143,
-      0.5238095238095238,
-      0.4880952380952381,
+      0.42857142857142855,
+      0.39285714285714285,
       0.4166666666666667,
+      0.38095238095238093,
+      0.44047619047619047,
+      0.4166666666666667,
+      0.40476190476190477,
+      0.39285714285714285,
+      0.36904761904761907,
       0.47619047619047616,
-      0.4642857142857143,
+      0.44047619047619047,
+      0.39285714285714285,
+      0.40476190476190477,
+      0.38095238095238093,
+      0.44047619047619047,
+      0.40476190476190477,
+      0.4523809523809524,
+      0.39285714285714285,
       0.42857142857142855,
-      0.44047619047619047,
-      0.4642857142857143,
-      0.44047619047619047,
-      0.4523809523809524,
-      0.44047619047619047,
-      0.44047619047619047,
-      0.4880952380952381,
-      0.4523809523809524,
-      0.4523809523809524,
-      0.5119047619047619,
-      0.4642857142857143,
+      0.40476190476190477,
+      0.42857142857142855,
+      0.40476190476190477,
+      0.40476190476190477,
+      0.40476190476190477,
+      0.36904761904761907,
+      0.42857142857142855,
+      0.38095238095238093,
+      0.42857142857142855,
       0.42857142857142855,
       0.47619047619047616,
-      0.4642857142857143,
-      0.4642857142857143,
-      0.42857142857142855
+      0.40476190476190477,
+      0.4166666666666667,
+      0.39285714285714285,
+      0.42857142857142855,
+      0.4166666666666667,
+      0.40476190476190477,
+      0.42857142857142855,
+      0.39285714285714285,
+      0.40476190476190477,
+      0.44047619047619047,
+      0.39285714285714285,
+      0.38095238095238093,
+      0.39285714285714285,
+      0.39285714285714285
     ],
-    "p_value": 0.1,
+    "p_value": 0.95,
     "passed": true
   },
   "permutations": 199,
@@ -1316,15 +1336,15 @@
       "passed": true
     },
     "node_relations": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.19047619047619047,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 16,
       "passed": true
     },
     "node_relations_grouped": {
-      "accuracy": 0.2261904761904762,
+      "accuracy": 0.25,
       "adjusted_p_value": 1.0,
-      "correct": 19,
+      "correct": 21,
       "passed": true
     },
     "reviewer_unit_rank_rule": {
@@ -1340,15 +1360,15 @@
       "passed": true
     },
     "single/branch_alt0_is_sample": {
-      "accuracy": 0.2976190476190476,
+      "accuracy": 0.30952380952380953,
       "adjusted_p_value": 1.0,
-      "correct": 25,
+      "correct": 26,
       "passed": true
     },
     "single/branch_alt1_is_sample": {
-      "accuracy": 0.36904761904761907,
+      "accuracy": 0.35714285714285715,
       "adjusted_p_value": 1.0,
-      "correct": 31,
+      "correct": 30,
       "passed": true
     },
     "single/branch_alt2_is_sample": {
@@ -1358,21 +1378,21 @@
       "passed": true
     },
     "single/branch_con_order_rank": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/branch_con_sense_id": {
-      "accuracy": 0.2976190476190476,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 25,
+      "correct": 28,
       "passed": true
     },
     "single/branch_con_sense_lt_alt0": {
-      "accuracy": 0.38095238095238093,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 32,
+      "correct": 28,
       "passed": true
     },
     "single/branch_con_sense_lt_alt1": {
@@ -1382,21 +1402,21 @@
       "passed": true
     },
     "single/branch_con_sense_lt_alt2": {
-      "accuracy": 0.40476190476190477,
-      "adjusted_p_value": 0.985,
-      "correct": 34,
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
       "passed": true
     },
     "single/branch_con_sense_order": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/branch_con_sense_rank": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/branch_con_unit_in_ants": {
@@ -1412,9 +1432,9 @@
       "passed": true
     },
     "single/branch_con_unit_num": {
-      "accuracy": 0.30952380952380953,
+      "accuracy": 0.2857142857142857,
       "adjusted_p_value": 1.0,
-      "correct": 26,
+      "correct": 24,
       "passed": true
     },
     "single/branch_indegree": {
@@ -1429,19 +1449,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/branch_marker_From": {
+    "single/branch_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/branch_marker_Given": {
+    "single/branch_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/branch_marker_Using": {
+    "single/branch_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/branch_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -1520,15 +1546,15 @@
       "passed": true
     },
     "single/max_alt0_is_sample": {
-      "accuracy": 0.2976190476190476,
+      "accuracy": 0.30952380952380953,
       "adjusted_p_value": 1.0,
-      "correct": 25,
+      "correct": 26,
       "passed": true
     },
     "single/max_alt1_is_sample": {
-      "accuracy": 0.36904761904761907,
+      "accuracy": 0.35714285714285715,
       "adjusted_p_value": 1.0,
-      "correct": 31,
+      "correct": 30,
       "passed": true
     },
     "single/max_alt2_is_sample": {
@@ -1538,21 +1564,21 @@
       "passed": true
     },
     "single/max_con_order_rank": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/max_con_sense_id": {
-      "accuracy": 0.34523809523809523,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 29,
+      "correct": 28,
       "passed": true
     },
     "single/max_con_sense_lt_alt0": {
-      "accuracy": 0.38095238095238093,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 32,
+      "correct": 28,
       "passed": true
     },
     "single/max_con_sense_lt_alt1": {
@@ -1562,21 +1588,21 @@
       "passed": true
     },
     "single/max_con_sense_lt_alt2": {
-      "accuracy": 0.40476190476190477,
-      "adjusted_p_value": 0.985,
-      "correct": 34,
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
       "passed": true
     },
     "single/max_con_sense_order": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/max_con_sense_rank": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/max_con_unit_in_ants": {
@@ -1609,19 +1635,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/max_marker_From": {
+    "single/max_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/max_marker_Given": {
+    "single/max_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/max_marker_Using": {
+    "single/max_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/max_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -1682,15 +1714,15 @@
       "passed": true
     },
     "single/mean_alt0_is_sample": {
-      "accuracy": 0.2976190476190476,
+      "accuracy": 0.30952380952380953,
       "adjusted_p_value": 1.0,
-      "correct": 25,
+      "correct": 26,
       "passed": true
     },
     "single/mean_alt1_is_sample": {
-      "accuracy": 0.36904761904761907,
+      "accuracy": 0.35714285714285715,
       "adjusted_p_value": 1.0,
-      "correct": 31,
+      "correct": 30,
       "passed": true
     },
     "single/mean_alt2_is_sample": {
@@ -1700,21 +1732,21 @@
       "passed": true
     },
     "single/mean_con_order_rank": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/mean_con_sense_id": {
-      "accuracy": 0.30952380952380953,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 26,
+      "correct": 28,
       "passed": true
     },
     "single/mean_con_sense_lt_alt0": {
-      "accuracy": 0.38095238095238093,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 32,
+      "correct": 28,
       "passed": true
     },
     "single/mean_con_sense_lt_alt1": {
@@ -1724,39 +1756,39 @@
       "passed": true
     },
     "single/mean_con_sense_lt_alt2": {
-      "accuracy": 0.40476190476190477,
-      "adjusted_p_value": 0.985,
-      "correct": 34,
-      "passed": true
-    },
-    "single/mean_con_sense_order": {
-      "accuracy": 0.25,
-      "adjusted_p_value": 1.0,
-      "correct": 21,
-      "passed": true
-    },
-    "single/mean_con_sense_rank": {
-      "accuracy": 0.32142857142857145,
-      "adjusted_p_value": 1.0,
-      "correct": 27,
-      "passed": true
-    },
-    "single/mean_con_unit_in_ants": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/mean_con_unit_is_sample": {
+    "single/mean_con_sense_order": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/mean_con_sense_rank": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/mean_con_unit_in_ants": {
       "accuracy": 0.23809523809523808,
       "adjusted_p_value": 1.0,
       "correct": 20,
       "passed": true
     },
-    "single/mean_con_unit_num": {
-      "accuracy": 0.32142857142857145,
+    "single/mean_con_unit_is_sample": {
+      "accuracy": 0.2619047619047619,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 22,
+      "passed": true
+    },
+    "single/mean_con_unit_num": {
+      "accuracy": 0.35714285714285715,
+      "adjusted_p_value": 1.0,
+      "correct": 30,
       "passed": true
     },
     "single/mean_indegree": {
@@ -1771,19 +1803,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/mean_marker_From": {
+    "single/mean_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/mean_marker_Given": {
+    "single/mean_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/mean_marker_Using": {
+    "single/mean_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/mean_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -1916,9 +1954,9 @@
       "passed": true
     },
     "single/min_con_unit_num": {
-      "accuracy": 0.39285714285714285,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 33,
+      "correct": 28,
       "passed": true
     },
     "single/min_indegree": {
@@ -1933,19 +1971,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/min_marker_From": {
+    "single/min_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/min_marker_Given": {
+    "single/min_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/min_marker_Using": {
+    "single/min_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/min_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -2030,9 +2074,9 @@
       "passed": true
     },
     "single/node_0_con_sense_id": {
-      "accuracy": 0.39285714285714285,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 33,
+      "correct": 28,
       "passed": true
     },
     "single/node_0_con_sense_lt_alt0": {
@@ -2054,9 +2098,9 @@
       "passed": true
     },
     "single/node_0_con_sense_order": {
-      "accuracy": 0.2619047619047619,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 22,
+      "correct": 28,
       "passed": true
     },
     "single/node_0_con_sense_rank": {
@@ -2095,19 +2139,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_0_marker_From": {
+    "single/node_0_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_0_marker_Given": {
+    "single/node_0_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_0_marker_Using": {
+    "single/node_0_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_0_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -2168,27 +2218,27 @@
       "passed": true
     },
     "single/node_10_alt0_is_sample": {
-      "accuracy": 0.2857142857142857,
+      "accuracy": 0.35714285714285715,
       "adjusted_p_value": 1.0,
-      "correct": 24,
+      "correct": 30,
       "passed": true
     },
     "single/node_10_alt1_is_sample": {
-      "accuracy": 0.34523809523809523,
+      "accuracy": 0.27380952380952384,
       "adjusted_p_value": 1.0,
-      "correct": 29,
+      "correct": 23,
       "passed": true
     },
     "single/node_10_alt2_is_sample": {
-      "accuracy": 0.30952380952380953,
+      "accuracy": 0.35714285714285715,
       "adjusted_p_value": 1.0,
-      "correct": 26,
+      "correct": 30,
       "passed": true
     },
     "single/node_10_con_order_rank": {
-      "accuracy": 0.34523809523809523,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 29,
+      "correct": 28,
       "passed": true
     },
     "single/node_10_con_sense_id": {
@@ -2198,21 +2248,21 @@
       "passed": true
     },
     "single/node_10_con_sense_lt_alt0": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/node_10_con_sense_lt_alt1": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/node_10_con_sense_lt_alt2": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/node_10_con_sense_order": {
@@ -2222,27 +2272,27 @@
       "passed": true
     },
     "single/node_10_con_sense_rank": {
-      "accuracy": 0.36904761904761907,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 31,
+      "correct": 28,
       "passed": true
     },
     "single/node_10_con_unit_in_ants": {
-      "accuracy": 0.30952380952380953,
-      "adjusted_p_value": 1.0,
-      "correct": 26,
+      "accuracy": 0.38095238095238093,
+      "adjusted_p_value": 0.95,
+      "correct": 32,
       "passed": true
     },
     "single/node_10_con_unit_is_sample": {
-      "accuracy": 0.30952380952380953,
-      "adjusted_p_value": 1.0,
-      "correct": 26,
+      "accuracy": 0.38095238095238093,
+      "adjusted_p_value": 0.95,
+      "correct": 32,
       "passed": true
     },
     "single/node_10_con_unit_num": {
-      "accuracy": 0.2976190476190476,
+      "accuracy": 0.35714285714285715,
       "adjusted_p_value": 1.0,
-      "correct": 25,
+      "correct": 30,
       "passed": true
     },
     "single/node_10_indegree": {
@@ -2257,19 +2307,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_10_marker_From": {
+    "single/node_10_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_10_marker_Given": {
+    "single/node_10_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_10_marker_Using": {
+    "single/node_10_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_10_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -2318,9 +2374,9 @@
       "passed": true
     },
     "single/node_10_sample_alts": {
-      "accuracy": 0.30952380952380953,
-      "adjusted_p_value": 1.0,
-      "correct": 26,
+      "accuracy": 0.38095238095238093,
+      "adjusted_p_value": 0.95,
+      "correct": 32,
       "passed": true
     },
     "single/node_10_sample_ants": {
@@ -2330,33 +2386,33 @@
       "passed": true
     },
     "single/node_11_alt0_is_sample": {
-      "accuracy": 0.30952380952380953,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 26,
+      "correct": 28,
       "passed": true
     },
     "single/node_11_alt1_is_sample": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/node_11_alt2_is_sample": {
-      "accuracy": 0.2976190476190476,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 25,
+      "correct": 28,
       "passed": true
     },
     "single/node_11_con_order_rank": {
-      "accuracy": 0.2857142857142857,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 24,
+      "correct": 28,
       "passed": true
     },
     "single/node_11_con_sense_id": {
-      "accuracy": 0.34523809523809523,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 29,
+      "correct": 28,
       "passed": true
     },
     "single/node_11_con_sense_lt_alt0": {
@@ -2366,45 +2422,45 @@
       "passed": true
     },
     "single/node_11_con_sense_lt_alt1": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/node_11_con_sense_lt_alt2": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/node_11_con_sense_order": {
-      "accuracy": 0.2976190476190476,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 25,
+      "correct": 28,
       "passed": true
     },
     "single/node_11_con_sense_rank": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/node_11_con_unit_in_ants": {
-      "accuracy": 0.38095238095238093,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 32,
+      "correct": 28,
       "passed": true
     },
     "single/node_11_con_unit_is_sample": {
-      "accuracy": 0.38095238095238093,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 32,
+      "correct": 28,
       "passed": true
     },
     "single/node_11_con_unit_num": {
-      "accuracy": 0.39285714285714285,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 33,
+      "correct": 28,
       "passed": true
     },
     "single/node_11_indegree": {
@@ -2419,19 +2475,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_11_marker_From": {
+    "single/node_11_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_11_marker_Given": {
+    "single/node_11_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_11_marker_Using": {
+    "single/node_11_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_11_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -2480,9 +2542,9 @@
       "passed": true
     },
     "single/node_11_sample_alts": {
-      "accuracy": 0.38095238095238093,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 32,
+      "correct": 28,
       "passed": true
     },
     "single/node_11_sample_ants": {
@@ -2492,81 +2554,81 @@
       "passed": true
     },
     "single/node_12_alt0_is_sample": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_alt1_is_sample": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_alt2_is_sample": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_con_order_rank": {
-      "accuracy": 0.36904761904761907,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 31,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_con_sense_id": {
-      "accuracy": 0.36904761904761907,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 31,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_con_sense_lt_alt0": {
-      "accuracy": 0.38095238095238093,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 32,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_con_sense_lt_alt1": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_con_sense_lt_alt2": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_con_sense_order": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_con_sense_rank": {
-      "accuracy": 0.36904761904761907,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 31,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_con_unit_in_ants": {
-      "accuracy": 0.2857142857142857,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 24,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_con_unit_is_sample": {
-      "accuracy": 0.2857142857142857,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 24,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_con_unit_num": {
-      "accuracy": 0.34523809523809523,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 29,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_indegree": {
@@ -2581,19 +2643,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_12_marker_From": {
+    "single/node_12_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_12_marker_Given": {
+    "single/node_12_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_12_marker_Using": {
+    "single/node_12_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_12_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -2642,9 +2710,9 @@
       "passed": true
     },
     "single/node_12_sample_alts": {
-      "accuracy": 0.2857142857142857,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 24,
+      "correct": 28,
       "passed": true
     },
     "single/node_12_sample_ants": {
@@ -2654,9 +2722,9 @@
       "passed": true
     },
     "single/node_13_alt0_is_sample": {
-      "accuracy": 0.30952380952380953,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 26,
+      "correct": 28,
       "passed": true
     },
     "single/node_13_alt1_is_sample": {
@@ -2702,9 +2770,9 @@
       "passed": true
     },
     "single/node_13_con_sense_order": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/node_13_con_sense_rank": {
@@ -2714,15 +2782,15 @@
       "passed": true
     },
     "single/node_13_con_unit_in_ants": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/node_13_con_unit_is_sample": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/node_13_con_unit_num": {
@@ -2743,19 +2811,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_13_marker_From": {
+    "single/node_13_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_13_marker_Given": {
+    "single/node_13_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_13_marker_Using": {
+    "single/node_13_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_13_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -2804,9 +2878,9 @@
       "passed": true
     },
     "single/node_13_sample_alts": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/node_13_sample_ants": {
@@ -2816,21 +2890,21 @@
       "passed": true
     },
     "single/node_14_alt0_is_sample": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.36904761904761907,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 31,
       "passed": true
     },
     "single/node_14_alt1_is_sample": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.2976190476190476,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 25,
       "passed": true
     },
     "single/node_14_alt2_is_sample": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.34523809523809523,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 29,
       "passed": true
     },
     "single/node_14_con_order_rank": {
@@ -2864,9 +2938,9 @@
       "passed": true
     },
     "single/node_14_con_sense_order": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/node_14_con_sense_rank": {
@@ -2876,15 +2950,15 @@
       "passed": true
     },
     "single/node_14_con_unit_in_ants": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.30952380952380953,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 26,
       "passed": true
     },
     "single/node_14_con_unit_is_sample": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.30952380952380953,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 26,
       "passed": true
     },
     "single/node_14_con_unit_num": {
@@ -2905,19 +2979,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_14_marker_From": {
+    "single/node_14_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_14_marker_Given": {
+    "single/node_14_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_14_marker_Using": {
+    "single/node_14_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_14_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -2966,9 +3046,9 @@
       "passed": true
     },
     "single/node_14_sample_alts": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.30952380952380953,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 26,
       "passed": true
     },
     "single/node_14_sample_ants": {
@@ -3002,9 +3082,9 @@
       "passed": true
     },
     "single/node_15_con_sense_id": {
-      "accuracy": 0.36904761904761907,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 31,
+      "correct": 28,
       "passed": true
     },
     "single/node_15_con_sense_lt_alt0": {
@@ -3026,9 +3106,9 @@
       "passed": true
     },
     "single/node_15_con_sense_order": {
-      "accuracy": 0.30952380952380953,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 26,
+      "correct": 28,
       "passed": true
     },
     "single/node_15_con_sense_rank": {
@@ -3067,19 +3147,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_15_marker_From": {
+    "single/node_15_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_15_marker_Given": {
+    "single/node_15_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_15_marker_Using": {
+    "single/node_15_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_15_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -3164,9 +3250,9 @@
       "passed": true
     },
     "single/node_1_con_sense_id": {
-      "accuracy": 0.27380952380952384,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 23,
+      "correct": 28,
       "passed": true
     },
     "single/node_1_con_sense_lt_alt0": {
@@ -3188,9 +3274,9 @@
       "passed": true
     },
     "single/node_1_con_sense_order": {
-      "accuracy": 0.5,
-      "adjusted_p_value": 0.1,
-      "correct": 42,
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
       "passed": true
     },
     "single/node_1_con_sense_rank": {
@@ -3229,19 +3315,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_1_marker_From": {
+    "single/node_1_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_1_marker_Given": {
+    "single/node_1_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_1_marker_Using": {
+    "single/node_1_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_1_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -3302,21 +3394,21 @@
       "passed": true
     },
     "single/node_2_alt0_is_sample": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.2857142857142857,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 24,
       "passed": true
     },
     "single/node_2_alt1_is_sample": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.36904761904761907,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 31,
       "passed": true
     },
     "single/node_2_alt2_is_sample": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.32142857142857145,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 27,
       "passed": true
     },
     "single/node_2_con_order_rank": {
@@ -3326,9 +3418,9 @@
       "passed": true
     },
     "single/node_2_con_sense_id": {
-      "accuracy": 0.40476190476190477,
-      "adjusted_p_value": 0.985,
-      "correct": 34,
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
       "passed": true
     },
     "single/node_2_con_sense_lt_alt0": {
@@ -3350,9 +3442,9 @@
       "passed": true
     },
     "single/node_2_con_sense_order": {
-      "accuracy": 0.27380952380952384,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 23,
+      "correct": 28,
       "passed": true
     },
     "single/node_2_con_sense_rank": {
@@ -3374,9 +3466,9 @@
       "passed": true
     },
     "single/node_2_con_unit_num": {
-      "accuracy": 0.3333333333333333,
-      "adjusted_p_value": 1.0,
-      "correct": 28,
+      "accuracy": 0.38095238095238093,
+      "adjusted_p_value": 0.95,
+      "correct": 32,
       "passed": true
     },
     "single/node_2_indegree": {
@@ -3391,19 +3483,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_2_marker_From": {
+    "single/node_2_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_2_marker_Given": {
+    "single/node_2_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_2_marker_Using": {
+    "single/node_2_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_2_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -3488,9 +3586,9 @@
       "passed": true
     },
     "single/node_3_con_sense_id": {
-      "accuracy": 0.42857142857142855,
-      "adjusted_p_value": 0.89,
-      "correct": 36,
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
       "passed": true
     },
     "single/node_3_con_sense_lt_alt0": {
@@ -3553,19 +3651,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_3_marker_From": {
+    "single/node_3_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_3_marker_Given": {
+    "single/node_3_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_3_marker_Using": {
+    "single/node_3_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_3_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -3715,19 +3819,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_4_marker_From": {
+    "single/node_4_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_4_marker_Given": {
+    "single/node_4_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_4_marker_Using": {
+    "single/node_4_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_4_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -3877,19 +3987,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_5_marker_From": {
+    "single/node_5_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_5_marker_Given": {
+    "single/node_5_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_5_marker_Using": {
+    "single/node_5_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_5_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -3950,21 +4066,21 @@
       "passed": true
     },
     "single/node_6_alt0_is_sample": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.34523809523809523,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 29,
       "passed": true
     },
     "single/node_6_alt1_is_sample": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.34523809523809523,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 29,
       "passed": true
     },
     "single/node_6_alt2_is_sample": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.36904761904761907,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 31,
       "passed": true
     },
     "single/node_6_con_order_rank": {
@@ -3974,9 +4090,9 @@
       "passed": true
     },
     "single/node_6_con_sense_id": {
-      "accuracy": 0.36904761904761907,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 31,
+      "correct": 28,
       "passed": true
     },
     "single/node_6_con_sense_lt_alt0": {
@@ -3998,9 +4114,9 @@
       "passed": true
     },
     "single/node_6_con_sense_order": {
-      "accuracy": 0.36904761904761907,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 31,
+      "correct": 28,
       "passed": true
     },
     "single/node_6_con_sense_rank": {
@@ -4010,21 +4126,21 @@
       "passed": true
     },
     "single/node_6_con_unit_in_ants": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.30952380952380953,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 26,
       "passed": true
     },
     "single/node_6_con_unit_is_sample": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.30952380952380953,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 26,
       "passed": true
     },
     "single/node_6_con_unit_num": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.2976190476190476,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 25,
       "passed": true
     },
     "single/node_6_indegree": {
@@ -4039,19 +4155,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_6_marker_From": {
+    "single/node_6_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_6_marker_Given": {
+    "single/node_6_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_6_marker_Using": {
+    "single/node_6_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_6_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -4100,9 +4222,9 @@
       "passed": true
     },
     "single/node_6_sample_alts": {
-      "accuracy": 0.3333333333333333,
+      "accuracy": 0.30952380952380953,
       "adjusted_p_value": 1.0,
-      "correct": 28,
+      "correct": 26,
       "passed": true
     },
     "single/node_6_sample_ants": {
@@ -4136,9 +4258,9 @@
       "passed": true
     },
     "single/node_7_con_sense_id": {
-      "accuracy": 0.34523809523809523,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 29,
+      "correct": 28,
       "passed": true
     },
     "single/node_7_con_sense_lt_alt0": {
@@ -4160,9 +4282,9 @@
       "passed": true
     },
     "single/node_7_con_sense_order": {
-      "accuracy": 0.25,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 21,
+      "correct": 28,
       "passed": true
     },
     "single/node_7_con_sense_rank": {
@@ -4201,19 +4323,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_7_marker_From": {
+    "single/node_7_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_7_marker_Given": {
+    "single/node_7_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_7_marker_Using": {
+    "single/node_7_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_7_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -4363,19 +4491,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_8_marker_From": {
+    "single/node_8_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_8_marker_Given": {
+    "single/node_8_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_8_marker_Using": {
+    "single/node_8_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_8_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -4436,9 +4570,9 @@
       "passed": true
     },
     "single/node_9_alt0_is_sample": {
-      "accuracy": 0.30952380952380953,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 26,
+      "correct": 28,
       "passed": true
     },
     "single/node_9_alt1_is_sample": {
@@ -4448,69 +4582,69 @@
       "passed": true
     },
     "single/node_9_alt2_is_sample": {
-      "accuracy": 0.2976190476190476,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 25,
+      "correct": 28,
       "passed": true
     },
     "single/node_9_con_order_rank": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/node_9_con_sense_id": {
-      "accuracy": 0.35714285714285715,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 30,
+      "correct": 28,
       "passed": true
     },
     "single/node_9_con_sense_lt_alt0": {
-      "accuracy": 0.34523809523809523,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 29,
+      "correct": 28,
       "passed": true
     },
     "single/node_9_con_sense_lt_alt1": {
-      "accuracy": 0.30952380952380953,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 26,
+      "correct": 28,
       "passed": true
     },
     "single/node_9_con_sense_lt_alt2": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/node_9_con_sense_order": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/node_9_con_sense_rank": {
-      "accuracy": 0.34523809523809523,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 29,
+      "correct": 28,
       "passed": true
     },
     "single/node_9_con_unit_in_ants": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/node_9_con_unit_is_sample": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/node_9_con_unit_num": {
-      "accuracy": 0.34523809523809523,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 29,
+      "correct": 28,
       "passed": true
     },
     "single/node_9_indegree": {
@@ -4525,19 +4659,25 @@
       "correct": 28,
       "passed": true
     },
-    "single/node_9_marker_From": {
+    "single/node_9_marker_Because": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_9_marker_Given": {
+    "single/node_9_marker_Given that": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
       "passed": true
     },
-    "single/node_9_marker_Using": {
+    "single/node_9_marker_It follows that": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "single/node_9_marker_Since": {
       "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
       "correct": 28,
@@ -4586,9 +4726,9 @@
       "passed": true
     },
     "single/node_9_sample_alts": {
-      "accuracy": 0.32142857142857145,
+      "accuracy": 0.3333333333333333,
       "adjusted_p_value": 1.0,
-      "correct": 27,
+      "correct": 28,
       "passed": true
     },
     "single/node_9_sample_ants": {

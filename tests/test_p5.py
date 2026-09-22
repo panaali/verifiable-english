@@ -27,22 +27,22 @@ def test_inventory_graphs_and_witnesses(items,labels):
     graphs=read(p.HERE/'materials/graphs.jsonl.gz')
     signatures={};reference={};formal_signatures={}
     for row in graphs:
-        family=row['slot']['cluster'];sig=structural_signature(row['topology'])
+        family=row['family'];sig=structural_signature(row['topology'])
         assert signatures.setdefault(family,sig)==sig
         intended=ArgumentGraph.from_dict(row['intended'])
         assert formal_signatures.setdefault(family,argument_signature(intended))==argument_signature(intended)
         assert len(intended.deductions)==16 and len(intended.claims)==22
-        assert len(intended.env.predicates)==row['slot']['predicates']
+        assert len(intended.env.predicates)==row['predicates']
         assert len(row['predicate_identities'])==len(intended.env.predicates)
         model=FiniteModel.from_dict(intended.env,row['model'])
         leaves=intended.claims[:6];root=next(c for c in intended.claims if c.name==intended.root)
         assert all(evaluate(intended.env,c.ast,model) for c in leaves)
-        assert check_countermodel(intended.env,[c.ast for c in leaves],root.ast,model).valid==row['negative']
+        assert check_countermodel(intended.env,[c.ast for c in leaves],root.ast,model).valid==(next(l for l in labels if l['id']==row['id'])['kind']!='benign')
         # One full compositional replay per variant, not thousands of duplicate tests.
-        if row['slot']['variant'] not in reference:
+        if next(l for l in labels if l['id']==row['id'])['kind'] not in reference:
             g=ArgumentGraph.from_dict(row['augmented']);r=check_argument(g,search=False).to_dict()
             assert not r['errors'] and all(v==['follows'] for v in r['findings'].values())
-            reference[row['slot']['variant']]=True
+            reference[next(l for l in labels if l['id']==row['id'])['kind']]=True
     assert len(signatures)==len(set(signatures.values()))==28
     assert len(set(formal_signatures.values()))==28
 
@@ -117,7 +117,7 @@ def test_known_answers_actual_scorer(items,labels):
     r=known_answer(items,labels)
     json.dumps(r)  # Gate receipts must remain serializable native JSON.
     assert r['passed'] and r['oracle_detection_and_completion']==1
-    expected=sum(len(l['acceptable_locations']) for l in labels)/len(labels)/507
+    expected=sum(1 if l['kind']=='benign' else len(l['acceptable_locations']) for l in labels)/len(labels)/507
     assert r['random_exact']==pytest.approx(expected)
     assert abs(r['random_simulated']-expected)<.02
     for split in ('dev','scored'):
@@ -248,16 +248,17 @@ def test_rendered_prose_and_active_decoys(items):
     graphs={r['id']:r for r in read(p.HERE/'materials/graphs.jsonl.gz')}
     for item in items:
         q=item['payload']; g=graphs[item['id']]
-        assert g['construction']['version']==4
+        assert g['construction']['version']==5
         assert len(g['construction']['redundant_edges'])>=1
         for n in q['nodes']:
-            assert p.packet(item, 'VE').count(n['text']) == 1
-            assert n['text'].startswith(('Given ', 'From ', 'Using ')) and ', ' in n['text']
+            assert p.packet(item).count(n['text']) == 1
+            assert p.packet(item, 'VE').count(n['text']) == 2
+            assert n['text'].startswith(('Because ', 'Since ', 'Given that ', 'It follows that '))
         from ve import ArgumentGraph
         graph=ArgumentGraph.from_dict(g['intended'])
         claims={c.name:c for c in graph.claims}
         decoys=[claims[n].source for n in g['construction']['decoy_nodes']]
-        assert len(set(decoys))==4
+        assert len(set(decoys))==6
         # Both critical predicates are independently concluded on a comparison
         # lot in every variant, so predicate-orphan counts cannot identify it.
         comparisons=[claims[n].source for n in g['construction']['comparison_nodes']]
@@ -342,8 +343,8 @@ def test_node_relations_cover_balanced_units_and_independent_sense_orders(items,
     for item in items:
         f = node_features(item['payload'])
         assert f['branch_n_alts'] == 3
-        assert f['branch_con_sense_id'] > 0
-        assert f['branch_con_sense_rank'] in (0, 2)
+        assert f['branch_con_sense_id'] == -1  # Sense is recovered from records, not prose tags.
+        assert f['branch_con_sense_rank'] == 0
         counts[kinds[item['id']], f['branch_con_unit_is_sample']] += 1
     assert counts == Counter({(k, u): 14 for k in ('benign', 'shift', 'smuggle') for u in (0, 1)})
     for family in {i['group'] for i in items}:
@@ -385,13 +386,15 @@ def test_prose_topology_and_reference_content(items):
         for index,(n,para) in enumerate(zip(q['nodes'],paragraphs,strict=True)):
             assert set(n['parents']) <= seen
             seen.add(n['id'])
-            assert para.startswith(f"[{n['id']}] Taking ")
+            assert para.startswith(f"[{n['id']}] ")
+            assert not re.search(r"\([^)]*\)", para)
             assert not re.search(r'\bn\d+\b',para.split('] ',1)[1])
             m=re.search(r'the immediately preceding ([a-z-]+) result',para)
             if m:
                 assert index>0
-                previous=q['nodes'][index-1]['text'].partition('. ')[0]
-                assert re.search(r', unit\d+ is '+re.escape(m[1])+r'(?: \(|\.)',previous)
+                from experiments.p5_paraphrase import inference_parts
+                previous=inference_parts(q['nodes'][index-1]['text'])[1]
+                assert re.fullmatch(r'unit\d+ is '+re.escape(m[1]),previous)
                 refs.append(n['id'])
         assert q['nodes'][-1]['id']==q['root']
         assert len(refs)==4
@@ -399,7 +402,7 @@ def test_prose_topology_and_reference_content(items):
         assert set(refs)==set(graphs[item['id']]['construction']['unqualified_reference_nodes'])
         for arm in ('X','S','L','shared'):
             text=packed(p.request(item,arm,'paraphrase' if arm=='shared' else 'lone' if arm=='L' else 'author').messages)
-            assert 'VE node block' not in text and 'Taking ' in text
+            assert 'VE node block' not in text and 'Because ' in text
         assert 'VE node block' in packed(p.request(item,'VE','author').messages)
 
     assert len(critical_ranks)>1  # Never an exact first/last-reference shortcut.
@@ -427,3 +430,46 @@ def test_best_of_k_permutation_comparison():
     assert permutation_summary([.4,.45], [[.4,.5]]*199)['passed']
     assert not permutation_summary([1.,.45], [[.4,.5]]*199)['passed']
     assert permutation_summary([1.], [[.5]]*199)['p_value']==.005
+
+
+def test_tracked_nonbarred_p5_files_have_no_labels():
+    from experiments.p5_blinding import audit, LABEL_PATTERN
+    assert LABEL_PATTERN.search('{"kind": "shift"}')
+    assert LABEL_PATTERN.search('{"slot_id": "p5-dev-00-benign"}')
+    assert LABEL_PATTERN.search('{"id": "p5-scored-01-smuggle"}')
+    result = audit()
+    assert result['passed'], result
+
+
+def test_uniform_localisation_shape_and_grading(items, labels):
+    assert {tuple(map(len,l['acceptable_locations'])) for l in labels} == {(1,2)}
+    for label in labels:
+        single, pair = label['acceptable_locations']
+        assert set(single) < set(pair)
+        if label['kind'] == 'benign':
+            answer = dict(verdict='approve',issue_type='none',locations=[],explanation='source')
+            assert endpoint(label,dict(ok=True,answer=answer),True)['score'] == 1
+        else:
+            for loc in (single,pair,list(reversed(pair))):
+                answer = dict(verdict='reject',issue_type=label['kind'],locations=loc,explanation='source')
+                assert endpoint(label,dict(ok=True,answer=answer),True)['score'] == 1
+            answer['locations'] = list(set(pair)-set(single))
+            assert endpoint(label,dict(ok=True,answer=answer),True)['score'] == 0
+
+
+def test_surface_soundness_and_balanced_reference_profiles(items):
+    from experiments.p5_surface import audit, inspect
+    result = audit()
+    assert result['passed'], result
+    assert result['root_counts'] == {'derivable':28, 'underivable':56}
+    assert result['unique_maximum_localizations'] == 0
+    assert len(result['critical_ordinal_counts']) == 4
+    for item in items:
+        result = inspect(item['payload'])
+        assert len(result['profiles']) == 4
+        assert all(r['counts'] == [3,2,2] for r in result['profiles'])
+        assert result['frames'] == [0,1,2,3]
+    corrupt = deepcopy(items[0]['payload'])
+    corrupt['argument'] = corrupt['argument'].replace('Because ', 'Because (sense leak) ', 1)
+    with pytest.raises(ValueError, match='sense tag'):
+        inspect(corrupt)

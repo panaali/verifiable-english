@@ -161,7 +161,7 @@ def known_answer(items,labels):
                 'answer':parse(packed(answer),ids)}
         oracle={'verdict':'approve' if label['kind']=='benign' else 'reject',
             'issue_type':'none' if label['kind']=='benign' else label['kind'],
-            'locations':label['acceptable_locations'][0],'explanation':'source-grounded oracle fixture'}
+            'locations':[] if label['kind']=='benign' else label['acceptable_locations'][0],'explanation':'source-grounded oracle fixture'}
         for arm in ARMS:
             row=make(oracle,arm); rows.append(row)
             ratings.append({'response_sha256':digest({k:row[k] for k in ('item_id','condition','judge','answer')}),'source_grounded':True})

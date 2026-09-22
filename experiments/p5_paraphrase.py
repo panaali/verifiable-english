@@ -10,6 +10,34 @@ from ve_experiments.paid import digest
 ALLOWED = {'id','glossary','premises','records','nodes','root','argument'}
 
 
+FRAMES = (
+    'Because {premises}, {conclusion}.',
+    'Since {premises}, it follows that {conclusion}.',
+    'Given that {premises}, we infer that {conclusion}.',
+    'It follows that {conclusion} because {premises}.',
+)
+
+
+def render_inference(premises, conclusion, frame):
+    return FRAMES[frame].format(premises=premises, conclusion=conclusion)
+
+
+def inference_parts(text):
+    head, sep, tail = text.partition('. ')
+    patterns = (
+        r'Because (.*), (unit\d+ is .+?)\.?',
+        r'Since (.*), it follows that (unit\d+ is .+?)\.?',
+        r'Given that (.*), we infer that (unit\d+ is .+?)\.?',
+        r'It follows that (unit\d+ is .+?) because (.*?)\.?',
+    )
+    for frame, pattern in enumerate(patterns):
+        match = re.fullmatch(pattern, head)
+        if match:
+            premises, conclusion = match.groups()[::-1] if frame == 3 else match.groups()
+            return premises, conclusion.rstrip('.'), tail if sep else '', frame
+    raise ValueError('unparsed inference node')
+
+
 def offline_pass(dossiers):
     if len(dossiers) != 1:
         raise ValueError('paraphrase contexts must contain exactly one packet')
@@ -23,16 +51,13 @@ def offline_pass(dossiers):
             if not set(node['parents']) <= seen:
                 raise ValueError('prose must follow topological order')
             seen.add(node['id'])
-            head, sep, tail = node['text'].partition('. ')
-            match = re.fullmatch(r'(?:Given|From|Using) (.*), (unit\d+ is .+?)\.?', head)
-            if not match:
-                raise ValueError('unparsed source inference')
-            text = f"Taking {match[1]} as premises, we conclude that {match[2].rstrip('.')}."
-            if sep:
+            premises, conclusion, tail, frame = inference_parts(node['text'])
+            text = render_inference(premises, conclusion, frame)
+            if tail:
                 text += ' ' + tail
             paragraphs.append(f"[{node['id']}] {text}")
         result.append({'id':dossier['id'], 'argument':'\n\n'.join(paragraphs),
-            'provenance':{'method':'separate offline topological prose rendering pass v4',
+            'provenance':{'method':'separate offline topological prose rendering pass v5',
                 'input_sha256':digest(dossier), 'input_fields':sorted(ALLOWED),
                 'independent_qwen_pass':False, 'paid_calls':0,
                 'limitation':'Not independent semantic paraphrasing; must be replaced and reviewed before scoring.'}})

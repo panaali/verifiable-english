@@ -151,7 +151,7 @@ def audit(base=HERE):
             'generation_calls':0, 'limitation':'Shortcut screen, not proof of semantic difficulty or source fidelity.'}
 
 ATOM = re.compile(r'(unit\d+) is ([a-z-]+)(?: \(([a-z -]+)\))?')
-MARKERS = ('Given', 'From', 'Using', 'would establish', 'would imply', 'would yield')
+MARKERS = ('Because', 'Since', 'Given that', 'It follows that', 'would establish', 'would imply', 'would yield')
 
 
 def node_features(packet):
@@ -178,11 +178,9 @@ def node_features(packet):
             samples.update(m[group] for m in re.finditer(pattern, t))
     rows = []
     for pos, node in enumerate(packet['nodes']):
-        head, _, tail = node['text'].partition('. ')
-        m = re.fullmatch(r'(?:Given|From|Using) (.*), (unit\d+ is .+?)\.?', head)
-        if not m:
-            raise ValueError('unparsed inference node')
-        ants, con = ATOM.findall(m[1]), ATOM.findall(m[2])[0]
+        from experiments.p5_paraphrase import inference_parts
+        premises, conclusion, tail, _ = inference_parts(node['text'])
+        ants, con = ATOM.findall(premises), ATOM.findall(conclusion)[0]
         alt_tail = re.split(r'would (?:establish|imply|yield) that ', tail)
         alts = ATOM.findall(alt_tail[-1]) if len(alt_tail) > 1 else []
         key = con[1:]; sid = senses.get(key, -1); order = orders.get(key, -1)

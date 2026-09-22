@@ -158,3 +158,18 @@ one-sided p-value is (1 + null maxima >= observed maximum) / 200, and the gate
 passes at p >= 0.05. There is no classifier/seed/nonce search. Existing token,
 budget, formal-soundness, independent-author and independent-review gates remain
 binding. No paid generation was authorized or performed by this amendment.
+
+
+## Revision 5: fourth blinded review repair (2026-09-22)
+
+See [CONSTRUCTION-V5.md](CONSTRUCTION-V5.md). Remove label-bearing inventory
+rows and duplicate graph labels; preserve the original inventory's aggregate
+budgets but redact its slot manifest. This explicitly supersedes the previous
+claim that its bytes remain immutable. Rotate the HMAC namespace because v4
+ID/label mappings were published. Gold location sets now have one singleton and
+one pair for all three kinds, with identical defect grading and neutral benign
+anchors. Remove prose sense tags and use four natural frames. Match all four
+back-reference profiles to (3 referents, 2 senses, 2 units) within every packet;
+expand to three active ambiguous decoys. Regenerate source/prose/formal artifacts
+and invalidate previous reviews. The 2,048 common-packet cap, 84 slots, 28 families,
+16 steps, six leaves, paid ceilings and $0 execution authorization are unchanged.

@@ -1,7 +1,7 @@
 # P5 materials and staged duel runner
 
 This build spends **$0**. No probe, dev, scored or paid paraphrase was run.
-Original design bytes are retained. Read [AMENDMENTS.md](AMENDMENTS.md) for the
+Original design aggregate budgets are retained; revision 5 redacts slot labels. Read [AMENDMENTS.md](AMENDMENTS.md) for the
 explicit 1,024-billed-token author/repair change and optional Qwen judge-only
 replication. Neither is silently represented as the original preregistration.
 
@@ -43,7 +43,7 @@ export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
 uv run python experiments/P5-shifting-definitions/run_p5.py generate
 uv run python experiments/P5-shifting-definitions/run_p5.py inventory --count-tokens
 uv run python experiments/P5-shifting-definitions/run_p5.py known-answer
-uv run python experiments/P5-shifting-definitions/run_p5.py review --export /private/tmp/p5-review-v4.json
+uv run python experiments/P5-shifting-definitions/run_p5.py review --export /private/tmp/p5-review-v5.json
 uv run python experiments/P5-shifting-definitions/run_p5.py review --submit /path/to/completed-review.json
 uv run python experiments/P5-shifting-definitions/run_p5.py review --adjudicate /path/to/resolution.json
 uv run python experiments/P5-shifting-definitions/run_p5.py freeze --scenario dual_judge
@@ -55,8 +55,8 @@ uv run pytest -q tests/test_p5.py
 native Qwen counters. Receipts contain each wire digest, actual base count,
 reserved prior-output tokens and limit. Runtime counts the exact complete
 transcript again; it never truncates evidence. A failed gate is not overridden
-by a successful unit test. The original `inventory.json` remains the immutable
-UNBUILT design inventory; `execution-inventory.json` contains build/count status.
+by a successful unit test. The original `inventory.json` retains UNBUILT aggregate budgets;
+its slot labels are removed under revision 5; `execution-inventory.json` contains build/count status.
 
 Later, only under separate paid authorization, use these commands. The current
 task does **not** authorize executing them. Every paid command defaults to a $0
@@ -92,13 +92,13 @@ billing. A panel halt is retained, missing assigned outcomes score zero, and
 completed responses are reused on resume. Local oracle receipts are fsynced
 before subsequent paid stages so restart does not silently change history.
 
-Construction revision 4 addresses the third blinded review. IDs use HMAC-SHA256
-with a private random nonce outside the repository. All 84 IDs have changed.
-The argument is now topological prose, one paragraph per step, with premises
-stated by content. Four unqualified references in every packet (three harmless,
-one critical) point to the immediately preceding result. Only VE requests add
-the node/parent block. Source records and formal argument design are preserved.
-See [CONSTRUCTION-V4.md](CONSTRUCTION-V4.md).
+Construction revision 5 addresses the fourth blinded review. Inventories no
+longer publish label/slot mappings; the HMAC namespace changes to invalidate
+previously disclosed IDs. Gold location sets have the same singleton/pair shape
+for every kind. Four natural inference frames omit sense tags; meanings must be
+recovered from records. Four immediate references each have three same-term
+referents spanning two senses and two units, balanced within every packet.
+See [CONSTRUCTION-V5.md](CONSTRUCTION-V5.md) for grading and audit details.
 
 Every call/editor context contains exactly one dossier; few-shot pools are
 forbidden. Review and explanation exports are path-only manifests with three
@@ -108,9 +108,9 @@ Imports reject sibling exposure under the same reviewer/rater identity,
 including across earlier submissions. Never concatenate the assignments.
 
 The leakage gate refits every probe under 199 within-family label permutations
-and compares the observed best-of-561 accuracy to the permuted best-of-561 null.
+and compares the observed best-of-k accuracy to the permuted best-of-k null.
 It passes at **p >= 0.05**, correcting for feature/probe selection. Three logistic
-probes, two depth-3 trees, the prior reviewer's rule, and all 555 single-feature
+probes, two depth-3 trees, the prior reviewer's rule, and all single-feature
 majority lookups are fixed before the run; seeds, nonce and hyperparameters are
 not searched. This screen does not establish semantic readiness.
 

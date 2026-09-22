@@ -1,0 +1,107 @@
+{
+  "families": 28,
+  "freeze_sha256": "eb7d6506a37b075eaa82d2395485557912bea5247785cd55dbe8226d9b117d78",
+  "full_tests": {
+    "baseline_commit": "00c8189716246107c7c910205e88327d1a796f79",
+    "baseline_verification": "Both P1 failures reproduced using git archive HEAD in a clean temporary directory.",
+    "deselected": 1,
+    "failed": 2,
+    "passed": 1438,
+    "skipped": 2,
+    "unchanged_baseline_failures": [
+      "tests/test_p1_amendment13.py::test_scored_gate_and_cap_reach_only_qwen_attacker_backends",
+      "tests/test_p1_amendment14.py::test_recover_and_reconstruct_every_retained_scored_call_without_dispatch"
+    ]
+  },
+  "gates": {
+    "construction": true,
+    "external-timestamp": false,
+    "independent-prose": false,
+    "known-answer": true,
+    "leakage": true,
+    "lean-replay": true,
+    "packet-safety": true,
+    "review": false,
+    "role-boundaries": true,
+    "surface-soundness": true,
+    "tokenizer": true,
+    "tracked-blinding": true
+  },
+  "items": 84,
+  "known_answer_oracle": 1.0,
+  "leakage": {
+    "adjusted_p_value": 0.95,
+    "best_accuracy": 0.38095238095238093,
+    "best_correct": 32,
+    "candidates": 581,
+    "permutations": 199
+  },
+  "lean_build": "76 jobs successful",
+  "lean_queries": 3192,
+  "p5_tests": {
+    "failed": 0,
+    "passed": 31
+  },
+  "paid_calls": 0,
+  "paid_usd": "0",
+  "readiness": "BLOCKED_NOT_SCORED_READY: fresh independent reviews, independent Qwen prose, timestamp, provider smoke and dev remain required.",
+  "review_export": {
+    "assignments": 3,
+    "packets": 84,
+    "path": "/private/tmp/p5-review-v5.json"
+  },
+  "revision": 5,
+  "soundness": {
+    "flawed_packets": 56,
+    "invalid_packets": 0,
+    "profile": [
+      3,
+      2,
+      2
+    ],
+    "references_per_packet": 4,
+    "root_counts": {
+      "derivable": 28,
+      "underivable": 56
+    },
+    "unique_maximum_localizations": 0
+  },
+  "tokens": {
+    "common_cap": 2048,
+    "common_fixtures": 84,
+    "failures": 0,
+    "gemini_common_max": 1349,
+    "qwen_ranges": {
+      "common": {
+        "failures": 0,
+        "maximum": 1309,
+        "minimum": 1239
+      },
+      "paraphrase": {
+        "failures": 0,
+        "maximum": 1282,
+        "minimum": 1212
+      }
+    },
+    "stage_fixtures": 1764,
+    "stage_maximum_bounded_tokens_by_model_cap": {
+      "pro/10000": 7001,
+      "pro/3000": 1901,
+      "pro/3200": 2034,
+      "pro/5500": 3506,
+      "pro/6000": 3495,
+      "pro/7000": 5543,
+      "pro/7500": 4912,
+      "replication/10000": 6931,
+      "replication/4096": 1282,
+      "replication/7500": 1309
+    }
+  },
+  "tracked_blinding": {
+    "files_checked": 37,
+    "generation_calls": 0,
+    "label_bearing_files": [],
+    "passed": true,
+    "undocumented_barred_files": []
+  }
+}

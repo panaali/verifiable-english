@@ -1,6 +1,6 @@
 {
   "context_policy": "one packet; no examples; item-bound transcript; disjoint raters",
-  "freeze_sha256": "b5fd6dccd41b285cff3886e359198e881fd903211a89a52848123edae8aedfb4",
+  "freeze_sha256": "eb7d6506a37b075eaa82d2395485557912bea5247785cd55dbe8226d9b117d78",
   "generation_calls": 0,
   "items": 84,
   "passed": true,

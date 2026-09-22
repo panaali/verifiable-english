@@ -318,7 +318,7 @@ def freeze(scenario):
            ROOT/'experiments/p1.py',ROOT/'experiments/p1_preflight.py',ROOT/'experiments/prereg_inventory.py',
            ROOT/'experiments/trial_analysis.py',ROOT/'tests/test_p5.py',ROOT/'pyproject.toml',ROOT/'uv.lock',
            HERE/'PREREG.md',ROOT/'experiments/PREREG-DESIGN.md',HERE/'inventory.json',HERE/'AMENDMENTS.md',
-           HERE/'prompts.json',HERE/'CONSTRUCTION-V3.md',HERE/'CONSTRUCTION-V4.md',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
+           HERE/'prompts.json',HERE/'CONSTRUCTION-V3.md',HERE/'CONSTRUCTION-V4.md',HERE/'CONSTRUCTION-V5.md',HERE/'REVIEW-CHECKLIST.md',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
            ROOT/'experiments/P1-deference/native_counter.py',*ROOT.glob('experiments/P1-deference/tokenizers/*.json'),
            *ROOT.glob('ve/*.py'), ROOT/'lean/.lake/build/bin/ve_conformance']
     hashes={str(p.relative_to(ROOT)):sha(p) for p in paths if p.exists()}
@@ -351,7 +351,7 @@ def gate_receipt(name,result,stamp):
 
 def require_gates(scored=False):
     f=verify_freeze(); blockers=[]
-    for name in ('review','independent-prose','construction','known-answer','tokenizer','lean-replay','packet-safety','leakage','role-boundaries','external-timestamp','provider-preflight',*(['dev'] if scored else [])):
+    for name in ('tracked-blinding','surface-soundness','review','independent-prose','construction','known-answer','tokenizer','lean-replay','packet-safety','leakage','role-boundaries','external-timestamp','provider-preflight',*(['dev'] if scored else [])):
         path=HERE/f'checks/{name}.json'
         r=json.loads(path.read_text()) if path.exists() else {}
         if r.get('passed') is not True or r.get('freeze_sha256')!=f['manifest_sha256']:

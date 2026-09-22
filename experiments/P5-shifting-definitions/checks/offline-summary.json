@@ -11,9 +11,12 @@
     "known-answer": true,
     "leakage": true,
     "lean-replay": true,
+    "packet-safety": true,
     "review": false,
     "role-boundaries": true,
-    "tokenizer": true
+    "surface-soundness": true,
+    "tokenizer": true,
+    "tracked-blinding": true
   },
   "generation_calls": 0,
   "passed": false
