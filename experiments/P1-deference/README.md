@@ -1,27 +1,33 @@
 # P1 execution
 
-## Current status — Amendment 13
+## Current status — Amendment 14
 
-Gemini E4 and E5 are **dev-ceiling results**, respectively **0/112** errors
-(95% Wilson 0–3.3161%) and **0/96** (0–3.8476%). Neither is bought as a scored
-judge. Their harm contrasts are **“no harm observable at ceiling”**; these
-judgment-level intervals are descriptive because items repeat across arms.
+The scored Qwen run retains **1,010/1,128 initial trials** (E4 751/840,
+E5 259/288), 20 pushback judgments and 208 Gemini attacker calls.
+**Initial stage incomplete; pushback incomplete.** The supplied initial-stage
+completion claim does not match the frozen assignments. All completed calls
+are reused from the ledger; no samples are re-bought.
 
-Selected **`replication_2turn`**: Qwen E4+E5, all initial arms, two pushback turns
-in V/W/A/F/R; Gemini remains the attacker. Qwen contrasts retain the
-**exploratory-primary (judge substitution due to ceiling)** label. Weak control
-is **not run**. F and U are excluded from the good-approval gate by design.
+The Gemini attacker keeps provider `max_output_tokens=256`, with a **1,024
+billed-output cap** including thinking. The 304-token halted reply is retained
+and narrowly recovered; its existing truncation policy still applies.
+See [Amendment 14](PROPOSED-AMENDMENT.md#amendment-14) and
+[the audit receipt](checks/amendment14.json).
 
-The four Qwen/E4 R failures are model `unknown` abstentions: valid JSON, `stop`,
-no tool calls, no provider/harness error evidence. Keep all four as failures
-(**25%; contract 75%**) under the explicit audited dev-gate exception.
-The completed Qwen dev subset is revalidated locally; no dev rebuy is needed.
-See [Amendment 13](PROPOSED-AMENDMENT.md#amendment-13) and
-[the diagnosis receipt](checks/amendment13.json).
+Selected **`replication_2turn`**: Qwen E4+E5, all initial arms, two pushback
+turns in V/W/A/F/R; Gemini remains attacker. Weak control is **not run**.
+Both Gemini judge panels remain dev ceilings. Qwen contrasts are
+**exploratory-primary (judge substitution due to ceiling)**, never pooled.
+[Current initial analysis](runs/scored/analysis.json) includes provisional
+available-pair, label-balanced family contrasts and descriptive Wilson arm
+rates. It identifies missing observations and does not score infrastructure
+gaps as model failures. Complete panels use the original preregistered method.
 
-Strict scored calls ceiling **$13.53553624320**, including **$9.84576** for the
-retained Gemini attacker/retries. With retained costs/holds and $0.25 local,
-the **all-in ceiling is $15.72658000260**. Worker paid calls/spend: **0 / $0**.
+Strict pushback ceiling **$15.17346528000**; all scored calls
+**$17.95921624320**; cumulative API cap **$19.90026000260**;
+all-in ceiling with $0.25 local **$20.15026000260**, within $40.
+Completed scored charges consume the same envelope, not a second budget.
+Worker paid calls/spend: **0 / $0**.
 
 ```sh
 export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
@@ -29,13 +35,14 @@ uv run python experiments/P1-deference/run_p1.py preflight --offline
 uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
 uv run python experiments/P1-deference/run_p1.py refresh-dev
 uv run python experiments/P1-deference/run_p1.py reconcile
+uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --schedule replication_2turn
 # Orchestrator; not dispatched by this worker:
-uv run python experiments/P1-deference/run_p1.py scored --cap-usd 15.47658000260
+uv run python experiments/P1-deference/run_p1.py scored --cap-usd 19.90026000260
 ```
 
-`refresh-dev` verifies exact completed initial requests and reconstructed trials
-without a dispatch path. `reconcile` preserves receipts and unresolved billing
-holds and prints cumulative API command caps. Local allowance is separate.
+`refresh-dev` validates the identical retained Qwen dev subset locally.
+`reconcile` appends audited recovery and reopens the existing scored block,
+subtracting completed costs and retaining unresolved holds.
 
 The remaining sections describe execution history; the current contract,
 bounds, accounting and replacement rules above supersede them.

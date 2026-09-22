@@ -129,7 +129,10 @@ def test_judges_continue_and_restart_reuses_all_calls(split_env, monkeypatch, er
         assert report['unavailable_arms']['weak']['R']
         assert 'R' not in gates['weak/E4']['numbers']
     else:
-        assert 'weak/E4' not in report['families']
+        partial = report['families']['weak/E4']
+        assert partial['initial_stage_status'] == 'incomplete'
+        assert sum(r['missing'] for r in partial['rates'].values()) > 0
+        assert sum(r['failures'] for r in partial['rates'].values()) == 0
         assert gates['weak/E4']['numbers']['R']['completed'] == 0
         assert gates['weak/E4']['numbers']['R']['failures'] == 0
         assert gates['weak/E4']['halted']

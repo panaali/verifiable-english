@@ -11,7 +11,7 @@ from ve_experiments import paid
 
 
 def test_strict_scenarios_retained_costs_and_priority():
-    expected = ['24.53476399850', '49.10697199850', '37.87522391850']
+    expected = ['32.27620399850', '60.71913199850', '45.61666391850']
     for name, total in zip(p1.P1_AMENDMENT12_SCENARIOS, expected, strict=True):
         plan = p1.inventory()['budget_scenarios'][name]
         # Independent inventory call count, including every replay and retry.
@@ -21,7 +21,7 @@ def test_strict_scenarios_retained_costs_and_priority():
         assert calls + Decimal('2.41723326890') == Decimal(total)
         assert p1.cumulative_ceiling(name) == p1.cumulative_ceiling(name, worst_case=True) == Decimal(total)
     assert p1.amendment12_selection() == 'replication_3turn'
-    assert p1.split_ceiling('replication_3turn', 'dev') == Decimal('3.2071018464')
+    assert p1.split_ceiling('replication_3turn', 'dev') == Decimal('4.3130218464')
 
 
 def test_selection_fails_closed_and_keeps_priority(monkeypatch):

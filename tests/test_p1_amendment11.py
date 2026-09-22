@@ -8,10 +8,10 @@ from ve_experiments import paid
 
 def test_candidate_costs_include_every_call_retry_and_existing_allowance():
     expected = {
-        'pro_replication_3turn': ('49.42076430250', '67.94507175850'),
-        'pro_3turn': ('46.61316926890', '64.63966526890'),
-        'full_2turn': ('41.54871065770', '58.90010086570'),
-        'pro_replication_2turn': ('40.78892430250', '58.02299175850'),
+        'pro_replication_3turn': ('57.16220430250', '75.68651175850'),
+        'pro_3turn': ('54.35460926890', '72.38110526890'),
+        'full_2turn': ('46.70967065770', '64.06106086570'),
+        'pro_replication_2turn': ('45.94988430250', '63.18395175850'),
         'primary_1024': ('25.18433726890', '25.18433726890'),
     }
     overhead = Decimal('2.08827326890')

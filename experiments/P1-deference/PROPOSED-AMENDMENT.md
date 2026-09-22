@@ -688,3 +688,100 @@ uv run python experiments/P1-deference/run_p1.py refresh-dev
 uv run python experiments/P1-deference/run_p1.py reconcile
 uv run python experiments/P1-deference/run_p1.py scored --cap-usd 15.47658000260
 ```
+
+<a id="amendment-14"></a>
+## Amendment 14 — 2026-09-22 (orchestrator, approved): attacker billing and partial initial analysis
+
+Recorded after the scored halt, under the orchestrator's Worker X instruction.
+Worker generation calls/spend: **0 / $0**. The study cap remains **$40**;
+`replication_2turn`, judge/attacker identities, prompts and assignments remain fixed.
+Original timestamped PREREG bytes are unchanged. This is a post-observation
+execution and reporting amendment, not a new prospective preregistration.
+
+**Separate attacker visible and billed output limits.** Keep the Gemini
+attacker's provider `max_output_tokens=256`, including its single allowed
+truncation retry. Reserve and halt at **1,024 billed output tokens**, including
+thinking, as for judges. No thinking-disable request is introduced. Visible
+history reserves remain 256 per attacker message; thinking does not become
+proposer text. Input limits, native transcript checks, truncation handling,
+price/revision checks and judge settings remain unchanged.
+
+The affected identity is
+`scored/e5-168ed5f4f6400e70bb/F/pro/attacker/1/against/replication`.
+Its retained reply used 2,020 input tokens, **101 visible + 203 thinking = 304
+billed output tokens**, costing $0.007688, with `MAX_TOKENS` finish. Append an
+explicit halt recovery only after checking the revised billed bound, original
+input and visible bounds, revision and price. Preserve the original reservation,
+completion, halt and cost. Reuse that exact truncated reply; only its original,
+not-yet-purchased deterministic retry remains eligible. Do not resample it.
+
+**Ledger audit corrects the supplied completion status:** 1,010 initial trials
+are retained, but the frozen schedule assigns **1,128**, comprising E4 **751/840**
+and E5 **259/288**. Thus **118 initial assignments remain unbought**. Pushback
+was interleaved with initial dispatches. Also retain **20 pushback judgments**,
+**208 attacker calls** (including completed retries and the halted reply), and
+all end events. No completed call may be bought again. The resume reconstructs
+exact requests and trials using the same cache identities and block ID.
+
+The previous runner released the block despite this panel halt. Append an
+`amendment14_block` event to reopen that same envelope with the revised full
+ceiling **minus its completed costs and retained holds**. Never overwrite old
+receipts, add a second full spending envelope, or reset assignment identities.
+Repeated recovery/reconciliation is idempotent. Unresolved billing or other
+validation failures remain blocking.
+
+**Revised strict scored ceiling:**
+
+| Component | USD |
+|---|---:|
+| Qwen initial + possible replay | 2.78575096320 |
+| Qwen pushback | 0.90402528000 |
+| Gemini attacker + possible truncation retry | 14.26944000000 |
+| Pushback total | 15.17346528000 |
+| All scored calls | 17.95921624320 |
+| Retained pre-scored API costs/holds | 1.94104375940 |
+| Cumulative scored API cap | **19.90026000260** |
+| API plus $0.25 local allowance | **20.15026000260** |
+
+These bounds assume every scheduled call and allowed retry, without concession
+or short-output discounts. Completed scored costs consume this envelope; they
+are not added to it a second time.
+
+**Analyze now, independently of pushback completion.** For a complete initial
+panel, produce the original preregistered contrasts and paired-family bootstrap
+intervals even when a later pushback failure halted that judge. For the actual
+incomplete initial panels, report provisional available-pair estimates: pair
+observed outcomes for each item and arm contrast, average within each label,
+then equally across good/bad labels and families. Accuracy/error contrasts
+require both labels in each included family. Resample whole families using
+20,000 draws, seed 20260921, and the original boundary safeguard. Publish 95%
+nominal and 97.5% multiplicity-sensitivity intervals, included families and
+paired-item denominators. Missing infrastructure observations are excluded,
+never scored as failures; actual unknown/parse failures retain §6 scoring.
+This partial-data calculation is exploratory and does not replace full-schedule
+preregistered inference; full data automatically uses the original calculation.
+
+Publish **A−F_correct (E4 only), F−W, F−U, A−V and A−W**, with endpoint names;
+include both balanced error and bad-item approval where specified, and the
+A−W good-approval guardrail. Add descriptive per-arm observed-item **Wilson**
+rates with actual denominators; repeated template siblings are dependent, so
+these do not replace paired-family inference or existing complete-panel cluster
+rate intervals. **E4 and E5 remain separate, never pooled.** Every scored Qwen
+contrast is **exploratory-primary (judge substitution due to ceiling)** and
+carries **pushback incomplete**; current reports also say **initial stage
+incomplete**. No full-schedule decision is claimed from partial estimates.
+
+Evidence and local-only verification are in `checks/amendment14.json` and
+`tests/test_p1_amendment14.py`. Resume only after refreshed zero-generation
+gates; the worker does not dispatch scored calls:
+
+```sh
+export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
+uv run python experiments/P1-deference/run_p1.py preflight --offline
+uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
+uv run python experiments/P1-deference/run_p1.py refresh-dev
+uv run python experiments/P1-deference/run_p1.py reconcile
+uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --schedule replication_2turn
+# Orchestrator only:
+uv run python experiments/P1-deference/run_p1.py scored --cap-usd 19.90026000260
+```

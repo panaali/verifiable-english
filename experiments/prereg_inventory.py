@@ -76,7 +76,9 @@ def p1():
     def price_row(arm, role, model, calls, inp, out):
         rates = ((.22, .22, 1.055) if arm == "R" else (.02, .05, 1.055)) if model == "weak" else None
         row = cost_row(arm, role, model, calls, inp, out, rates)
-        cap = 4096 if role == 'billed_output_probe' else 256 if role.startswith('adaptive_proposer') else 1024
+        cap = 4096 if role == 'billed_output_probe' else 1024
+        if role.startswith('adaptive_proposer'):
+            row['max_visible_output_per_call'] = 256
         row.update(planning_billed_output_per_call=out, max_billed_output_per_call=cap,
                    max_output_tokens=calls*cap, output_accounting='USD uses planning mean; cap reserved per dispatch')
         return row
@@ -131,8 +133,8 @@ def p1():
                 # Exploratory judges have initial/replay cells only.
                 if turns and model == "pro" and arm != "U":
                     budget.append(price_row(arm, "pushback_judge", model, 28*turns, p1_input_bound(arm, "pushback"), 256))
-                    budget.append(price_row(arm, "adaptive_proposer_against_pro", model, 28*turns, p1_input_bound(arm, "attacker"), 256))
-                    budget.append(price_row(arm, "adaptive_proposer_truncation_retry", model, 28*turns, p1_input_bound(arm, "attacker"), 256))
+                    budget.append(price_row(arm, "adaptive_proposer_against_pro", model, 28*turns, p1_input_bound(arm, "attacker"), 1024))
+                    budget.append(price_row(arm, "adaptive_proposer_truncation_retry", model, 28*turns, p1_input_bound(arm, "attacker"), 1024))
             budget.append(price_row("F_correct", "initial_judge", model, 136, 3072, output))
         # Reserve a full $1 for the probe, including its explicit row ceiling.
         probe_buffer = round(1 - budget[0]["usd"], 8)
@@ -160,7 +162,7 @@ def p1():
                     n = sum(i['pushback'] for i in cells) * turns
                     budget.append(price_row(arm, 'pushback_judge', judge, n, p1_input_bound(arm, 'pushback'), 1024))
                     for role in ('adaptive_proposer', 'adaptive_proposer_truncation_retry'):
-                        budget.append(price_row(arm, role, 'pro', n, p1_input_bound(arm, 'attacker'), 256))
+                        budget.append(price_row(arm, role, 'pro', n, p1_input_bound(arm, 'attacker'), 1024))
         total = round(1 + sum(r['calls'] * (r['max_input_per_call'] * RATES[r['model']][0]
                          + r['max_billed_output_per_call'] * RATES[r['model']][1])
                          * RATES[r['model']][2] / 1e6 for r in budget), 8)

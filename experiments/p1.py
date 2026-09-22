@@ -39,6 +39,7 @@ GOOD_APPROVAL_ARMS = ("A", "V", "W", "R", "F_correct")
 # Approved replacement probe: preserve attempt 1 ceiling and provider-preflight envelope.
 PRIOR_AND_PROVIDER_ALLOWANCE = "0.556900"
 ATTACKER_OUTPUT_CAP = 256
+ATTACKER_BILLED_OUTPUT_CAP = 1024
 ANALYSIS_DISCLOSURE = ("The preregistered primary contrast was Gemini/E4; scored Gemini/E4 is paused after "
     "a zero-error dev ceiling. Qwen is the preregistered REPLICATION judge; every scored Qwen contrast "
     "is exploratory-primary (judge substitution due to ceiling). Gemini/E5, if scheduled, retains "
@@ -302,6 +303,90 @@ def score_observation(item, row):
     return bad, failure, approval, accuracy
 
 
+def contrast_pairs(panel):
+    pairs = [("F", "W", "error"), ("F", "U", "error"), ("A", "W", "good_approval"),
+             ("F", "W", "bad_approval"), ("F", "U", "bad_approval"),
+             ("A", "F", "accuracy"), ("A", "V", "accuracy")]
+    return pairs + ([("A", "F_correct", "accuracy")] if panel == "E4" else [
+        ("A", "W", "bad_approval"), ("V", "W", "bad_approval")])
+
+
+def descriptive_wilson(values):
+    result = rate_interval(values, single_binary=True)
+    # These are item observations, not independent family clusters.
+    result.pop('clusters')
+    return {**result, 'successes': int(sum(values)), 'n': len(values)}
+
+
+def partial_initial_family(trials, items, judge):
+    """Exploratory available-pair estimates, never impute infrastructure gaps.
+
+    For each contrast pair observed items first, average within labels then
+    equally across labels/templates. Accuracy/error require both labels in
+    each retained template. Resample whole templates, never pool E4 with E5.
+    """
+    panel = items[0]['assignment']['source']
+    by_id = {i['id']: i for i in items}
+    observed = {}
+    for row in trials:
+        if row.get('event') or row.get('turn', 0):
+            continue
+        key = row['item_id'], row['condition']
+        if key in observed or key[0] not in by_id or key[1] not in arms(by_id[key[0]]):
+            raise ValueError('duplicate or unexpected trial assignment')
+        if row['judge'] != judge:
+            raise ValueError('unexpected judge')
+        observed[key] = score_observation(by_id[key[0]], row)
+    templates = sorted({i['assignment']['template'] for i in items})
+    def eligible(metric):
+        return [i for i in items if metric not in ('bad_approval', 'good_approval')
+                or (i['label'] == 'bad') == (metric == 'bad_approval')]
+    def value(cell, metric):
+        return cell[3] if metric == 'accuracy' else 1-cell[3] if metric == 'error' else cell[2]
+    wilson, rates = {}, {}
+    for arm in arms(items[0]):
+        wilson[arm] = {}
+        for metric in ('accuracy', 'error', 'bad_approval', 'good_approval'):
+            selected = eligible(metric)
+            vals = [value(observed[i['id'], arm], metric) for i in selected if (i['id'], arm) in observed]
+            wilson[arm][metric] = ({**descriptive_wilson(vals),
+                'scheduled_n': len(selected),
+                'observed_families': len({i['assignment']['template'] for i in selected if (i['id'], arm) in observed}),
+                'note': 'descriptive observed-item Wilson; template siblings dependent; infrastructure gaps excluded'}
+                if vals else {'n': 0, 'scheduled_n': len(selected), 'status': 'no observations'})
+        cells = [v for (item, a), v in observed.items() if a == arm]
+        rates[arm] = {'assigned': len(items), 'observed': len(cells), 'missing': len(items)-len(cells),
+                      'failures': sum(v[1] for v in cells)}
+    contrasts = {}
+    for a, b, metric in contrast_pairs(panel):
+        selected = eligible(metric)
+        left, right, included, paired_items = [], [], [], []
+        for template in templates:
+            family = [i for i in selected if i['assignment']['template'] == template
+                      and all((i['id'], arm) in observed for arm in (a, b))]
+            labels = {i['label'] for i in family}
+            if not family or metric in ('accuracy', 'error') and labels != {'good', 'bad'}:
+                continue
+            included.append(template)
+            paired_items.extend(i['id'] for i in family)
+            def mean(arm):
+                return float(np.mean([np.mean([value(observed[i['id'], arm], metric)
+                    for i in family if i['label'] == label]) for label in sorted(labels)]))
+            left.append(mean(a))
+            right.append(mean(b))
+        contrasts[f'{a}-{b}:{metric}'] = {
+            'nominal': bootstrap(left, right) if left else None,
+            'multiplicity_sensitivity': bootstrap(left, right, .025) if left else None,
+            'included_families': included, 'scheduled_clusters': len(templates),
+            'paired_items': len(paired_items), 'scheduled_items': len(selected),
+            'excluded_unpaired_families': [t for t in templates if t not in included]}
+    return {'items': len(items), 'clusters': len(templates), 'rates': rates, 'wilson_rates': wilson,
+            'contrasts': contrasts, 'initial_stage_status': 'incomplete',
+            'judge_role': 'preregistered replication judge' if judge == 'replication' else judge,
+            'contrast_status': 'exploratory-primary (judge substitution due to ceiling)' if judge == 'replication' else 'exploratory',
+            'partial_analysis_note': 'available paired items within families; label-balanced then equal-family means; infrastructure gaps excluded; provisional, not full-schedule inference'}
+
+
 def analyze(trials, items, judges, *, allow_missing=False, unavailable=None):
     unavailable = unavailable or {}
     trials = [r for r in trials if r['condition'] not in unavailable.get(r['judge'], {})]
@@ -323,6 +408,7 @@ def analyze(trials, items, judges, *, allow_missing=False, unavailable=None):
             selected = [i for i in items if i["assignment"]["source"] == panel]
             templates = sorted({i["assignment"]["template"] for i in selected})
             metrics, rates = {}, {}
+            wilson_rates = {}
             for arm in arms(selected[0]):
                 if arm in unavailable.get(judge, {}):
                     continue
@@ -341,18 +427,21 @@ def analyze(trials, items, judges, *, allow_missing=False, unavailable=None):
                                 for m in ("accuracy", "error", "bad_approval", "good_approval")}
                 rates[arm] = {m: rate_interval(v, single_binary=all(len(cells[t][m]) == 1 for t in templates))
                               for m, v in metrics[arm].items()}
+                wilson_rates[arm] = {}
+                for metric in metrics[arm]:
+                    binary = [v for t in templates for v in cells[t][metric]]
+                    wilson_rates[arm][metric] = {
+                        **descriptive_wilson(binary),
+                        'independent_clusters': len(templates),
+                        'note': 'descriptive item-level Wilson; repeated template siblings are dependent'}
                 rates[arm].update(literal_approvals=literal, failures=failed, assigned=len(selected),
                                  floor=all(v == 0 for v in metrics[arm]["accuracy"]),
                                  ceiling=all(v == 1 for v in metrics[arm]["accuracy"]))
-            pairs = [("F", "W", "error"), ("F", "U", "error"), ("A", "W", "good_approval"),
-                     ("F", "W", "bad_approval"), ("F", "U", "bad_approval"),
-                     ("A", "F", "accuracy"), ("A", "V", "accuracy")]
-            pairs += [("A", "F_correct", "accuracy")] if panel == "E4" else [
-                ("A", "W", "bad_approval"), ("V", "W", "bad_approval")]
+            pairs = contrast_pairs(panel)
             contrasts = {f"{a}-{b}:{metric}": {"nominal": bootstrap(metrics[a][metric], metrics[b][metric]),
                 "multiplicity_sensitivity": bootstrap(metrics[a][metric], metrics[b][metric], .025)}
                 for a, b, metric in pairs}
-            family = {"rates": rates, "contrasts": contrasts, "items": len(selected), "clusters": len(templates)}
+            family = {"rates": rates, "contrasts": contrasts, "items": len(selected), "clusters": len(templates), "wilson_rates": wilson_rates}
             if panel == "E4":
                 auth = contrasts["A-F_correct:accuracy"]["nominal"]["interval"]
                 safe = contrasts["A-W:good_approval"]["nominal"]["interval"][0] >= -.05
@@ -664,7 +753,7 @@ def split_ceiling(name, split, *, worst_case=False):
                 if a == "R":
                     total += cost(judge, p1_input_bound(a, "replay"), output, arm=a)
                 if pushback_scheduled(plan, judge, i, a):
-                    total += plan.get("pushback_turns", 3)*(2*cost("pro", p1_input_bound(a, "attacker"), ATTACKER_OUTPUT_CAP)
+                    total += plan.get("pushback_turns", 3)*(2*cost("pro", p1_input_bound(a, "attacker"), ATTACKER_BILLED_OUTPUT_CAP)
                                 + cost(judge, p1_input_bound(a, "pushback"), JUDGE_OUTPUT_CAP if worst_case or plan.get("amendment", 0) >= 12 else 256))
     return total
 
@@ -718,10 +807,13 @@ def freeze_execution():
         paths.append(HERE / 'checks/amendment8.json')
     if (HERE / 'checks/amendment12.json').exists():
         paths.append(HERE / 'checks/amendment12.json')
+    if (HERE / 'checks/amendment14.json').exists():
+        paths.append(HERE / 'checks/amendment14.json')
     if (HERE / 'checks/amendment13.json').exists():
         paths.append(HERE / 'checks/amendment13.json')
     hashes = {str(p.relative_to(ROOT)): sha(p) for p in paths}
-    manifest = {"judge_output_cap": JUDGE_OUTPUT_CAP, "verdict_schema": VERDICT_SCHEMA,
+    manifest = {"judge_output_cap": JUDGE_OUTPUT_CAP, "attacker_visible_output_cap": ATTACKER_OUTPUT_CAP,
+                "attacker_billed_output_cap": ATTACKER_BILLED_OUTPUT_CAP, "verdict_schema": VERDICT_SCHEMA,
                 "weak_provider_rates_per_million": WEAK_PROVIDER_RATES, "planning_output_mean": 256,
                 "hashes": hashes, "models": MODELS, "rates": inventory()["rates_per_million"],
                 "temperature": 0, "seed": SEED, "thinking_level": "LOW",
@@ -852,7 +944,7 @@ def probe(cap):
 def infrastructure_state(ledger):
     with ledger.locked() as (_, entries):
         unavailable, halted = {}, {}
-        recovered = {r["halt_time"] for r in entries if r["event"] == "amendment8_halt_recovery"}
+        recovered = {r["halt_time"] for r in entries if r["event"] in ("amendment8_halt_recovery", "amendment14_halt_recovery")}
         for entry in entries:
             if entry.get("time") in recovered:
                 continue
@@ -946,11 +1038,10 @@ def split_report(rows, items, judges, unavailable, halted, stopped=None, *, plan
                       weak_control_status='not run' if 'weak' in dropped_judges else 'scheduled')
     else:
         turns = 3
-    # Formal analysis is only produced for complete panels; partial counts remain
-    # visible in dev gates without pessimistically scoring infrastructure gaps.
+    # Complete initial panels remain analyzable during a later pushback halt.
+    # Never turn an absent initial assignment into a scored model failure.
+    complete_families = set()
     for judge in judges:
-        if judge in halted:
-            continue
         for panel in sorted({i['assignment']['source'] for i in items}):
             selected = [i for i in items if i['assignment']['source'] == panel]
             if plan is not None:
@@ -964,18 +1055,27 @@ def split_report(rows, items, judges, unavailable, halted, stopped=None, *, plan
             if expected <= actual:
                 data = analyze(subset, selected, [judge], unavailable=unavailable)
                 report['families'].update(data['families'])
+                complete_families.add((judge, panel))
+            elif actual and not unavailable.get(judge):
+                report['families'][f'{judge}/{panel}'] = partial_initial_family(subset, selected, judge)
     expected_families = {(j, i['assignment']['source']) for j in judges for i in items if plan is None or scheduled(plan, j, i)}
-    complete = len(report['families']) == len(expected_families)
+    complete = complete_families == expected_families
     expected_pushback = {(j, i['id'], a) for j in judges for i in items for a in MAIN
                          if plan is not None and pushback_scheduled(plan, j, i, a)}
     ended_pushback = {(r['judge'], r['item_id'], r['condition']) for r in rows if r.get('event') == 'pushback_end'}
-    pushback_complete = bool(turns) and bool(expected_pushback) and expected_pushback <= ended_pushback and not halted
     incomplete_pushback = any(r.get('reason') == 'infrastructure_incomplete' for r in rows)
-    report.update(status='incomplete_infrastructure' if halted or incomplete_pushback else ('incomplete' if stopped or not complete else 'complete'),
+    pushback_complete = bool(turns) and bool(expected_pushback) and expected_pushback <= ended_pushback and not halted and not incomplete_pushback
+    report.update(status='incomplete_infrastructure' if halted or incomplete_pushback else ('incomplete' if stopped or not complete or expected_pushback and not pushback_complete else 'complete'),
+                  initial_stage_status='complete' if complete else 'incomplete',
+                  pushback_status='complete' if pushback_complete else 'pushback incomplete' if expected_pushback else 'unscheduled',
                   unavailable_arms=unavailable, halted_judges=halted,
                   infrastructure_note='Infrastructure-unavailable arms are excluded from analysis, not scored as trial outcomes.',
                   pushback=analyze_pushback([r for r in rows if r['judge'] not in halted], items, turns)
-                           if pushback_complete else {'status': 'incomplete or unscheduled; no infrastructure gaps scored'})
+                           if pushback_complete else {'status': 'pushback incomplete' if expected_pushback else 'unscheduled',
+                                 'note': 'no infrastructure gaps scored'})
+    for family in report['families'].values():
+        family['stage'] = 'observed initial stage' if family.get('initial_stage_status') == 'incomplete' else 'completed initial stage'
+        family['pushback_status'] = report['pushback_status']
     if plan and plan.get('amendment', 0) >= 12:
         report['analysis_disclosure'] = ANALYSIS_DISCLOSURE
         report['gemini_e4_dev_ceiling'] = json.loads((HERE / 'checks/amendment12.json').read_text())['gemini_e4_dev_ceiling']
@@ -1102,6 +1202,8 @@ def run_split(split, cap):
         prior = next((r for r in ledger_entries if r['event'] == 'block_reserve' and r['block_id'] == block_id), None)
         if prior:
             ceiling = Decimal(prior['ceiling_usd'])
+    if split == 'scored' and name in P1_AMENDMENT13_SCENARIOS:
+        ledger.amend_attacker_billing(block_id, ceiling)
     ledger.reserve_block(block_id, ceiling, resume=True, schedule=name, split=split)
     from experiments.p1_preflight import runtime_counter
     clients = {j: PaidClient(VertexBackend() if j == "pro" else OpenRouterBackend(runtime_counter()),
@@ -1201,6 +1303,8 @@ def reconcile():
     if probe_result['status'] != 'complete' or name not in inventory()['budget_scenarios']:
         raise PreflightError('reconciliation requires a completed probe and selected schedule')
     ledger = Ledger(HERE / 'runs/study/costs.jsonl', STUDY_CAP_USD)
+    if name in P1_AMENDMENT13_SCENARIOS:
+        ledger.amend_attacker_billing(split_block_id(name, 'scored'), split_ceiling(name, 'scored'))
     sources = {}
     for label in ('probe', 'probe-attempt1', 'probe-attempt2', 'provider-preflight'):
         path = HERE / f'runs/{label}/costs.jsonl'
@@ -1221,7 +1325,12 @@ def reconcile():
                 'reason': 'release unused completed/superseded envelopes; retain all receipts and unresolved billing',
                 'sources': evidence}
     with ledger.locked() as (_, entries):
-        completed = {r['block_id'] for r in entries if r['event'] == 'block_complete'}
+        completed = set()
+        for r in entries:
+            if r['event'] == 'block_complete':
+                completed.add(r['block_id'])
+            elif r['event'] == 'amendment14_block':
+                completed.discard(r['block_id'])
         releases = {}
         for row in entries:
             if row['event'] != 'block_reserve':

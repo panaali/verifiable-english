@@ -1,17 +1,17 @@
 {
   "accounting": "cumulative API command caps; local $0.25 held separately; full split ceilings without reuse discounts; completed identical dev subset requires no new budget",
   "cap_usd": {
-    "dev": "1.94104375940",
-    "scored": "15.47658000260"
+    "dev": "3.48883061300",
+    "scored": "19.90026000260"
   },
   "commands": {
     "dev": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py refresh-dev",
-    "scored": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py scored --cap-usd 15.47658000260"
+    "scored": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py scored --cap-usd 19.90026000260"
   },
-  "live_holds_usd": "0.39648555520",
+  "live_holds_usd": "16.80791494480",
   "local_hold_usd": "0.25",
-  "realised_usd": "1.79455820420",
-  "remaining_usd": "37.80895624060",
+  "realised_usd": "3.34234505780",
+  "remaining_usd": "19.84973999740",
   "schedule": "replication_2turn",
   "sources": {
     "probe": {
@@ -36,5 +36,5 @@
     }
   },
   "study_cap_usd": "40",
-  "study_realised_usd": "1.75820208070"
+  "study_realised_usd": "3.30598893430"
 }
