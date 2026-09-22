@@ -1,6 +1,20 @@
 # P1 execution
 
-## Current status — Amendment 14
+## Final status — 2026-09-22
+
+The initial stage is complete: **1,128/1,128** Qwen judgments. Pushback remains
+infrastructure-incomplete: all **120** trajectories ended, with **84** exhausted
+attacker truncation retries, **28** concessions and **8** two-turn completions.
+Amendment 9 prohibits another attempt on those exhausted trajectories; an
+ordinary resume cannot fill the gaps. No paid calls were made for finalization.
+
+See [RESULTS.md](RESULTS.md) for separate E4/E5 contrasts, Wilson rates, Gemini
+dev ceilings, pushback coverage, amendments and spending. Recorded realised
+cost is **$3.45987693870** in the study ledger and **$3.49623306220** across all
+retained billing ledgers. Historical Amendment 14 instructions below describe
+the pre-resume state and do not request another scored run.
+
+## Historical pre-resume status — Amendment 14
 
 The scored Qwen run retains **1,010/1,128 initial trials** (E4 751/840,
 E5 259/288), 20 pushback judgments and 208 Gemini attacker calls.
