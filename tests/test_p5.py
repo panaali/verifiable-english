@@ -79,7 +79,7 @@ def test_caps_and_scenarios():
         c=p.ceilings(scenario)
         assert Decimal(c['all_in_usd'])<40
         assert all(Decimal(v)<Decimal('.16') for v in c['attributed_item_arm_usd'].values())
-    assert Decimal(p.ceilings('dual_judge')['all_in_usd'])==Decimal('34.7512920096')
+    assert Decimal(p.ceilings('dual_judge')['all_in_usd'])==Decimal('35.2512920096')
     for cap in (0,-1,41):
         with pytest.raises(PreflightError):p.ledger(cap)
 
@@ -98,11 +98,15 @@ def test_review_blind_missing_and_hash_guard(tmp_path,items,labels,monkeypatch):
     monkeypatch.setattr(leakage, "audit", lambda base: {"passed":True})
     for split in ('dev','scored'):archive(tmp_path/f'materials/{split}.jsonl.gz',[i for i in items if i['split']==split])
     archive(tmp_path/'labels.jsonl.gz',labels)
+    archive(tmp_path/'materials/dossiers.jsonl.gz',read(p.HERE/'materials/dossiers.jsonl.gz'))
     out=tmp_path/'review.json';review.review_export(out,tmp_path)
     manifest=json.loads(out.read_text())
     paths=[out.parent/path for batch in manifest['assignments'] for path in batch]
     rows=[json.loads(path.read_text())[0] for path in paths]
     assert len(rows)==84 and all('kind' not in r['packet'] for r in rows)
+    assert all(r['version']=='sanitised-paraphrase' and r['source_argument'] for r in rows)
+    schema=json.loads(out.with_suffix('.submit-schema.json').read_text())
+    assert set(schema['items']['properties']['checks']['required'])==set(review.CHECKS)
     assert not review.gate(tmp_path)['passed']
     with pytest.raises(PreflightError):review.submit(paths[0],tmp_path)
     rows[0]['packet_sha256']='tampered';out.write_text(json.dumps(rows))
@@ -284,6 +288,7 @@ def test_rendered_prose_and_active_decoys(draft_items):
 
 
 def test_export_is_reproducible_and_not_variant_order(tmp_path,items,labels):
+    archive(tmp_path/'materials/dossiers.jsonl.gz',read(p.HERE/'materials/dossiers.jsonl.gz'))
     for split in ('dev','scored'):
         archive(tmp_path/f'materials/{split}.jsonl.gz',[i for i in items if i['split']==split])
     out=tmp_path/'review.json';review.review_export(out,tmp_path)

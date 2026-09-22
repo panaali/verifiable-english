@@ -22,6 +22,34 @@ def _unique_object(pairs):
 
 
 SANITISER = 'exact-parenthetical-glossary-sense-v1'
+REFERENCE_REPAIR = 'restore-exact-source-immediate-reference-v1'
+
+
+def restore_references(texts, dossier):
+    """Restore only a source back-reference expanded to its exact prior claim.
+
+    No labels or sense annotations are consulted. Preserve the paraphrase's
+    frame, conclusion and tail; leave all other differences for review/gates.
+    """
+    texts = dict(texts)
+    edits = []
+    for index, node in enumerate(dossier['nodes']):
+        if not index:
+            continue
+        try:
+            source, _, _, _ = inference_parts(node['text'])
+            premise, conclusion, tail, frame = inference_parts(texts[node['id']])
+            previous = inference_parts(dossier['nodes'][index-1]['text'])[1]
+        except ValueError:
+            continue
+        match = re.fullmatch(r'the immediately preceding ([a-z-]+) result holds', source)
+        if (match and premise == previous
+                and re.fullmatch(r'unit\d+ is ' + re.escape(match[1]), previous)):
+            before = texts[node['id']]
+            after = render_inference(source, conclusion, frame) + (' ' + tail if tail else '')
+            texts[node['id']] = after
+            edits.append({'node_id': node['id'], 'before': before, 'after': after})
+    return texts, edits
 
 
 def glossary_senses(dossier):

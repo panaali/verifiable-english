@@ -73,7 +73,10 @@ def inventory(count_tokens=False):
         'scored_per_variant':24,'scored_families_per_predicate_count':{'20':8,'40':8,'60':8}},
         'scenario_ceilings':{s:p.ceilings(s) for s in p.SCENARIOS},
         'original_design_inventory':'inventory.json (UNBUILT aggregate design; slot labels removed in v5)',
-        'stage_caps':p.STAGES,'token_counts':None,'material_status':'OFFLINE_DRAFT_REQUIRES_QWEN_AND_REVIEW'}
+        'stage_caps':p.STAGES,'token_counts':None,
+        'material_status':('QWEN_PENDING_REVIEW' if len(read(p.HERE/'materials/paraphrases.jsonl.gz'))==84
+            and all(r['provenance'].get('independent_qwen_pass') for r in read(p.HERE/'materials/paraphrases.jsonl.gz'))
+            else 'OFFLINE_DRAFT_REQUIRES_QWEN_AND_REVIEW')}
     if count_tokens:
         counts=tokenize();write_json(p.HERE/'checks/tokenizer.json',counts)
         result['token_counts']=counts

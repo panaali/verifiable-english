@@ -1,5 +1,8 @@
 {
-  "freeze_sha256": "17be98760e18e3f0d6f1d412a59a176574ef0e889d5b5aaf017a8eff3c6ad2b3",
-  "passed": false,
-  "reason": "publish exact manifest hash and retain bound OpenTimestamps receipt"
+  "freeze_sha256": "d06392379b863ad38be3c296caec0c6f00124dd0f5185309fe3c7e35999b1c3b",
+  "passed": true,
+  "policy": "bound calendar submission is pilot timestamp evidence; not a claim of verified Bitcoin confirmation",
+  "proof_sha256": "21f8a8e81cade3cda2ee5edec5aaca64548349cead89d0c99134227f92a584fc",
+  "source_sha256": "b34f0b5d7d9fa724ba8818882978416c0993b7903fe68e49f20a574de0b83b48",
+  "stdout": "File sha256 hash: b34f0b5d7d9fa724ba8818882978416c0993b7903fe68e49f20a574de0b83b48\nTimestamp:\nappend 9986204821a1e4934ea64b31b7ea0464\nsha256\n -> append 510bb7e08a631a20\n    sha256\n    append 54cf993a7fa70d21adfe84bcd74972a2\n    sha256\n    append e7d320d37606ffd30420390dc6f98ba812c3d12f8c8c6c6d1d9153a9f4a9624c\n    sha256\n    prepend 6ab29bdc\n    append d6af3555f0191b86\n    verify PendingAttestation('https://bob.btc.calendar.opentimestamps.org')\n -> append 9222bd98468e5cff\n    sha256\n    append fb1a6dcbb7f5ab78b2580fe780a7db58\n    sha256\n    append d55b4f7edfa5517aece01373e8da6bc1c51e623e6c5012f6b2d83a7043e8cd08\n    sha256\n    prepend 6ab29bdc\n    append 20c5a32c50a6bf36\n    verify PendingAttestation('https://alice.btc.calendar.opentimestamps.org')\n -> append bc31f550522fc0e460bbb01ecef7f398\n    sha256\n    append 39ec7462d93b70f0e4e21dc84d4719fd2efd74cf528f56390b11fb0a3f8fc005\n    sha256\n    prepend 6ab29bdc\n    append 9db52b59634ed49f\n    verify PendingAttestation('https://btc.calendar.catallaxy.com')\n -> append e537f52872bf230373f49ef50edf8484\n    sha256\n    prepend 6e23bb7c59c411eb926ac7fbdb8c2b8e510c0dfaa49cd27d1dc8075fa17a390c\n    sha256\n    prepend 6ab29bdc\n    append bbe7742939bbc231\n    verify PendingAttestation('https://finney.calendar.eternitywall.com')\n\n"
 }

@@ -5,9 +5,11 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from decimal import Decimal
 
 from experiments import p5 as p, p5_preflight as pf, p5_tokens as tokens
 from ve_experiments.paid import Ledger, PaidClient, PreflightError, VertexBackend, packed
+from ve_experiments.paid import PaidReply, MODELS
 
 
 @pytest.fixture
@@ -162,3 +164,40 @@ def test_calibrated_runtime_bound_stops_before_generation(calibrated,monkeypatch
     finally:
         paid.close()
     assert ledger.read_bytes()==before
+
+
+def test_smokes_one_per_config_durable_cap_and_no_rebuy(tmp_path,monkeypatch):
+    req=pf.smoke_request('pro')
+    other=replace(req,max_output_tokens=512)
+    monkeypatch.setattr(pf,'fixtures',lambda:iter([(req,0),(req,0),(other,0)]))
+    calls=[]
+    class Backend:
+        def native_count(self,r):return 17
+        async def generate(self,r):
+            calls.append(r)
+            return PaidReply('{}',64,5,0,0,MODELS['pro'],{}, {})
+    book=Ledger(tmp_path/'costs.jsonl',p.CAP)
+    assert tokens.calibration_smokes(book,Backend(),Decimal('.50'))==2
+    assert len(calls)==2
+    assert {tokens.config_key(r) for r in calls}=={tokens.config_key(req),tokens.config_key(other)}
+    assert tokens.calibration_smokes(book,Backend(),Decimal('.50'))==0
+    assert len(calls)==2
+    with pytest.raises(PreflightError,match='<='):
+        tokens.calibration_smokes(book,Backend(),Decimal('.51'))
+
+
+def test_smoke_failure_holds_billing_and_never_retries(tmp_path,monkeypatch):
+    req=pf.smoke_request('pro')
+    monkeypatch.setattr(pf,'fixtures',lambda:iter([(req,0)]))
+    calls=[]
+    class Backend:
+        def native_count(self,r):return 17
+        async def generate(self,r):
+            calls.append(r)
+            raise TimeoutError('unknown billing')
+    book=Ledger(tmp_path/'costs.jsonl',p.CAP)
+    with pytest.raises(PreflightError,match='no retry'):
+        tokens.calibration_smokes(book,Backend(),Decimal('.50'))
+    with pytest.raises(PreflightError):
+        tokens.calibration_smokes(book,Backend(),Decimal('.50'))
+    assert len(calls)==1

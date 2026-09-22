@@ -8,6 +8,7 @@ import pytest
 from experiments import p5
 from experiments.p5_materials import archive, read, write_json
 from experiments.p5_paraphrase import validate_reply
+from experiments.p5_paraphrase import restore_references, inference_parts, render_inference
 from ve_experiments import paid
 
 
@@ -18,6 +19,27 @@ def dossier():
 
 def response(dossier):
     return {'texts': {n['id']: n['text'] for n in dossier['nodes']}}
+
+
+def test_restore_only_exact_expansion_of_source_reference(dossier):
+    texts=response(dossier)['texts']
+    changed=[]
+    for i,n in enumerate(dossier['nodes']):
+        premise,conclusion,tail,frame=inference_parts(n['text'])
+        if premise.startswith('the immediately preceding '):
+            previous=inference_parts(dossier['nodes'][i-1]['text'])[1]
+            texts[n['id']]=render_inference(previous,conclusion,frame)+(' '+tail if tail else '')
+            changed.append(n['id'])
+    restored,edits=restore_references(texts,dossier)
+    assert restored==response(dossier)['texts']
+    assert [e['node_id'] for e in edits]==changed
+    assert restore_references(restored,dossier)==(restored,[])
+    # A substantive unit change is never silently repaired.
+    target=changed[0]
+    texts[target]=texts[target].replace('because unit','because unit999')
+    restored,edits=restore_references(texts,dossier)
+    assert restored[target]==texts[target]
+    assert target not in [e['node_id'] for e in edits]
 
 
 @pytest.mark.parametrize('fenced', [False, True])

@@ -12,20 +12,51 @@ CHECKS = ('source_fidelity', 'root_preserved', 'no_added_assumption', 'no_repair
           'complete_sense_mapping', 'localization_anchored', 'no_answer_leakage')
 
 
+def submit_schema():
+    """Submission shape; source/hash/exposure checks still run in submit()."""
+    text={'type':'string','minLength':1}
+    strings={'type':'array','items':text}
+    annotation={'type':'object','required':['kind','sense_use_mapping','required_assumptions',
+        'root_meaning','acceptable_locations','source_evidence'], 'properties':{
+        'kind':{'enum':['shift','smuggle','benign']},
+        'sense_use_mapping':{'type':'object','minProperties':1,'additionalProperties':text},
+        'required_assumptions':strings, 'root_meaning':text,
+        'acceptable_locations':{'type':'array','minItems':2,'maxItems':2,
+            'items':{'type':'array','minItems':1,'maxItems':2,'uniqueItems':True,'items':text}},
+        'source_evidence':{'type':'array','minItems':1,'items':text}}}
+    return {'$schema':'https://json-schema.org/draft/2020-12/schema',
+        'title':'P5 sanitised paraphrase review submission','type':'array','minItems':1,
+        'items':{'type':'object','required':['item_id','packet_sha256','reviewer_id',
+            'reviewer_kind','model_family','minutes','checks','annotation','corrections','notes'],
+            'properties':{'item_id':text,'packet_sha256':{'type':'string','pattern':'^[0-9a-f]{64}$'},
+                'reviewer_id':text,'reviewer_kind':{'enum':['human','project_lead','model']},
+                'model_family':{'type':'string'},'minutes':{'type':'number','exclusiveMinimum':0},
+                'checks':{'type':'object','required':list(CHECKS),'additionalProperties':False,
+                    'properties':{k:{'type':'boolean'} for k in CHECKS}},
+                'annotation':annotation,'corrections':strings,'notes':{'type':'string'}},
+            'allOf':[{'if':{'properties':{'reviewer_kind':{'const':'model'}}},
+                'then':{'properties':{'model_family':text}}}]}}
+
+
 def review_export(destination, base=HERE):
     items = read(base/'materials/dev.jsonl.gz') + read(base/'materials/scored.jsonl.gz')
+    sources={d['id']:d for d in read(base/'materials/dossiers.jsonl.gz')}
     # Sorting opaque IDs first prevents inventory/archive order from becoming
     # a label channel. The shuffle never inspects a label or family.
     items.sort(key=lambda item: item['id'])
     random.Random(f'{SEED}/packet-order-v3').shuffle(items)
     # No split/family/variant/formal artifact in review packets.
     rows = [{'item_id': i['id'], 'packet_sha256':digest(i['payload']), 'packet':blind_packet(i['payload']),
+             'version':'sanitised-paraphrase', 'source_argument':sources[i['id']]['argument'],
              'reviewer_id':'', 'reviewer_kind':'human|project_lead|model', 'model_family':'',
              'minutes':0, 'checks':{k:None for k in CHECKS},
              'annotation':{'kind':None, 'sense_use_mapping':{}, 'required_assumptions':[],
                  'root_meaning':'', 'acceptable_locations':[], 'source_evidence':[]},
              'corrections':[], 'notes':''} for i in items]
-    return export_isolated(destination, rows, {i['id']:i['group'] for i in items})
+    result=export_isolated(destination, rows, {i['id']:i['group'] for i in items})
+    schema_path=Path(destination).with_suffix('.submit-schema.json')
+    write_json(schema_path,submit_schema())
+    return {**result,'version':'sanitised-paraphrase','submit_schema':str(schema_path)}
 
 
 def submit(path, base=HERE):

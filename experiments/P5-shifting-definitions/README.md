@@ -1,16 +1,18 @@
 # P5 materials and staged duel runner
 
-Gemini accounting repair: the retained smoke now verifies offline at
-`17 native + 47 config overhead = 64 billed` (the legacy counter returned 9).
-The P5-only correction is frozen per exact config. Other study configs lack
-billed calibration evidence and block dev; the smoke's correction is not
-extrapolated to them. Stage caps and dollar ceilings are unchanged. See the
-latest accounting entry in [AMENDMENTS.md](AMENDMENTS.md). To recheck both cached
+All 12 distinct Gemini study configs now have one billed Vertex ADC calibration
+smoke, costing **$0.053782 total** under the separate $0.50 authorization.
+The exact-config correction is zero for 11 configs and 139 tokens for the
+verdict-schema config. The retained provider smoke separately verifies at
+`17 native + 47 config overhead = 64 billed`. See the latest entry in
+[AMENDMENTS.md](AMENDMENTS.md). To recheck both cached
 smokes with no provider calls, run `probe --offline`; `preflight-openrouter
---offline` checks Qwen only. This repair session adds $0 to existing ledger spend.
+--offline` checks Qwen only.
 
-This accounting repair spends **$0** and reuses previously billed provider
-smokes. No new generation ran in this repair session.
+The altered-reference paraphrase is repaired by a recorded source-only rule.
+The independent REVIEW gate remains open: see
+[PARAPHRASE-REVIEW.md](PARAPHRASE-REVIEW.md) for the exact checks and export.
+No dev or scored inference ran in this repair session.
 Original design aggregate budgets are retained; revision 5 redacts slot labels. Read [AMENDMENTS.md](AMENDMENTS.md) for the
 explicit 1,024-billed-token author/repair change and optional Qwen judge-only
 replication. Neither is silently represented as the original preregistration.
@@ -27,17 +29,16 @@ are independently permuted per packet.
 
 The reference generator is **not** the online VE author. Every X/S/VE author
 starts from the same final prose, and all authoring/search/repair work is charged.
-The English renderer produces every subclaim and the complete argument. A
-separate offline process preserves that rendering without replacing it with
-boilerplate. Its deterministic drafts are **not the independently
-paraphrased Qwen materials promised by the preregistration**. The latter cannot
-be purchased under this task’s $0 authorization. That gate remains blocked;
+The English renderer produces every subclaim and the complete argument.
+The 84 retained independent Qwen responses replace the original offline drafts.
+They undergo exact glossary-parenthetical sanitation and recorded source-only
+reference restoration. All final hashes still need independent semantic review;
 this delivery does not claim ready-to-score prose or scientific efficacy.
 
-| Scenario | Maximum API + CPU + provider smoke | Remaining inside $40 |
+| Scenario | Maximum API + CPU + provider/calibration smokes | Remaining inside $40 |
 |---|---:|---:|
-| `primary` | $33.4097270016 | $6.5902729984 |
-| `dual_judge` | $34.7512920096 | $5.2487079904 |
+| `primary` | $33.9097270016 | $6.0902729984 |
+| `dual_judge` | $35.2512920096 | $4.7487079904 |
 
 The original registered allowance was $37.5254702592 including CPU, before the
 new separately itemized smoke overhead. X/S/VE use a $0.16 matched **ceiling**,

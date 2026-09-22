@@ -97,10 +97,12 @@ def ceilings(scenario):
     cpu=Decimal('.0004')*336
     # Smoke calls are explicit separately budgeted overhead, not added dev samples.
     smoke=cost('replication',128,1024)+cost('pro',128,1024)
+    calibration=Decimal('.50')  # Separate one-time twelve-config authorization.
     return {'scenario':scenario,'api_usd':str(api),'cpu_usd':str(cpu),'provider_smoke_usd':str(smoke),
-        'all_in_usd':str(api+cpu+smoke),'reserve_usd':str(CAP-api-cpu-smoke),
-        'within_cap':api+cpu+smoke<=CAP,'matched_ceiling_usd':'.16',
-        'max_calls_including_materials_and_smokes':1598+(336 if scenario=='dual_judge' else 0),
+        'gemini_calibration_ceiling_usd':str(calibration),
+        'all_in_usd':str(api+cpu+smoke+calibration),'reserve_usd':str(CAP-api-cpu-smoke-calibration),
+        'within_cap':api+cpu+smoke+calibration<=CAP,'matched_ceiling_usd':'.16',
+        'max_calls_including_materials_and_smokes':1610+(336 if scenario=='dual_judge' else 0),
         'attributed_item_arm_usd':{a:str(v+shared+Decimal('.0004')) for a,v in arms.items()},
         'replication_judge_overhead_usd':str(extra*84),
         'combined_attributed_item_arm_usd':{a:str(v+shared+Decimal('.0004')+(cost('replication',*STAGES['lone' if a=='L' else 'judge']) if scenario=='dual_judge' else 0)) for a,v in arms.items()},
@@ -324,7 +326,7 @@ def freeze(scenario):
            ROOT/'experiments/trial_analysis.py',*ROOT.glob('tests/test_p5*.py'),
            ROOT/'tests/fixtures/p5_deepinfra_smoke.json',ROOT/'tests/fixtures/p5_vertex_smoke.json',ROOT/'pyproject.toml',ROOT/'uv.lock',
            HERE/'PREREG.md',ROOT/'experiments/PREREG-DESIGN.md',HERE/'inventory.json',HERE/'AMENDMENTS.md',
-           HERE/'prompts.json',HERE/'CONSTRUCTION-V3.md',HERE/'CONSTRUCTION-V4.md',HERE/'CONSTRUCTION-V5.md',HERE/'REVIEW-CHECKLIST.md',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
+           HERE/'prompts.json',HERE/'CONSTRUCTION-V3.md',HERE/'CONSTRUCTION-V4.md',HERE/'CONSTRUCTION-V5.md',HERE/'REVIEW-CHECKLIST.md',HERE/'PARAPHRASE-REVIEW.md',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
            ROOT/'experiments/P1-deference/native_counter.py',*ROOT.glob('experiments/P1-deference/tokenizers/*.json'),
            *ROOT.glob('ve/*.py'), ROOT/'lean/.lake/build/bin/ve_conformance']
     paths += [HERE/name for name in ('MATERIALS-MANIFEST.json','MATERIALS-HASHES.txt',
@@ -544,12 +546,17 @@ def paraphrase(cap, *, cached_only=False):
                     'served_provider':reply.response.get('provider'),'violation':violation})
                 if violation is None:
                     break
+            from experiments.p5_paraphrase import restore_references, REFERENCE_REPAIR
+            reference_edits=[]
+            if texts is not None:
+                texts,reference_edits=restore_references(texts,dossier)
             status='paraphrase-failed' if violation else 'QWEN_PENDING_REVIEW'
             result={'id':dossier['id'],'status':status,'excluded':bool(violation),
                 'provenance':{'method':'Qwen72 in separate context; at most one validation correction',
                     'input_sha256':digest(dossier),**attempts[-1],
                     'attempts':attempts,'sanitiser':SANITISER,
                     'sanitised_texts_sha256':digest(texts),
+                    'reference_repair':REFERENCE_REPAIR,'reference_edits':reference_edits,
                     'independent_qwen_pass':violation is None}}
             if texts is not None:
                 result['argument']='\n\n'.join(f"[{node_id}] {text}" for node_id,text in texts.items())
@@ -584,7 +591,7 @@ def main(argv=None):
         elif args.command=='calibrate-gemini':
             from experiments.p5_tokens import calibrate
             if args.offline:raise PreflightError('calibrate-gemini requires free Vertex countTokens')
-            result=calibrate()
+            result=calibrate(args.cap_usd)
         elif args.command=='known-answer':
             result=known_answer(materials(),check_labels());write_json(HERE/'checks/known-answer.json',result)
         elif args.command in ('preflight','inventory','preflight-openrouter','probe'):

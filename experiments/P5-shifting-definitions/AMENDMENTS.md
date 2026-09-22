@@ -456,3 +456,40 @@ order. This changes execution only: estimators, hyperparameters, seeds, folds,
 serial run was stopped before producing a gate result; the authoritative audit
 is rerun from the final freeze. No classifier, seed or gate threshold is selected
 from outcomes.
+## Revision 5 follow-up: reference restoration and exact-config calibration (2026-09-22)
+
+The retained Qwen paraphrase for one packet expanded four immediately preceding
+references into explicit unit claims. A deterministic source-only rule restores
+a reference only when the expanded premise exactly equals the preceding source
+conclusion and the source uses that immediate reference. It preserves the
+paraphrase's conclusion, inference frame and tail, and records before/after
+edits in provenance. The same rule is applied to all 84 retained responses;
+four edits in one packet result. No family, label, seed, source record or formal
+graph changes, and no paraphrase generation is purchased. Raw provider replies
+remain in the append-only ledger. This is an amended Qwen-derived packet, still
+requiring independent review; it is not represented as untouched model output.
+
+User authorization permits only Gemini calibration smokes, at most 12 calls and
+$0.50 total via Vertex ADC. Twelve distinct study configs receive one minimal
+user prompt each with the exact frozen system, schema, tools, thinking config,
+seed, temperature and output ceiling. There are no retries. The study ledger
+records 12 completions costing $0.053782, with no billing holds. Exact-config
+input residuals are zero for 11 configs and 139 tokens for the verdict schema
+config. The original provider smoke retains its separate 47-token residual.
+These are single-smoke calibrations, not evidence of semantic or dev quality.
+Every scheduled request is freely recounted using its own config's overhead;
+runtime exact recount and billing checks remain mandatory.
+
+The separately itemized $0.50 calibration ceiling raises maximum primary and
+dual-judge all-in ceilings to $33.9097270016 and $35.2512920096 respectively,
+both within the unchanged $40 study cap. Per-stage limits, matched arm ceilings
+and study sample sizes do not change. Actual calibration charges remain shared
+infrastructure overhead, not trial spend or new dev samples.
+
+PARAPHRASE-REVIEW.md specifies independent review of sense preservation,
+original root, step completeness and absence of answer-bearing text. The export
+contains each final sanitised argument plus the same dossier's original prose,
+with family-disjoint assignments and a generated submission schema. No reviews
+or approvals are fabricated. Materials and execution manifests receive renewed
+OpenTimestamps calendar receipts after the final code/material freeze. This
+worker does not run dev or scored inference.

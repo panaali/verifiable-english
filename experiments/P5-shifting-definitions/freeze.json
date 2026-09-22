@@ -1,6 +1,6 @@
 {
   "ceilings": {
-    "all_in_usd": "34.7512920096",
+    "all_in_usd": "35.2512920096",
     "api_usd": "34.6038672672",
     "attributed_item_arm_usd": {
       "L": "0.0296757888",
@@ -15,13 +15,14 @@
       "X": "0.1487299168"
     },
     "cpu_usd": "0.1344",
+    "gemini_calibration_ceiling_usd": "0.50",
     "matched_ceiling_usd": ".16",
-    "max_calls_including_materials_and_smokes": 1934,
+    "max_calls_including_materials_and_smokes": 1946,
     "primary": "Gemini min(VE_shift,VE_smuggle) - min(X_shift,X_smuggle)",
     "provider_smoke_usd": "0.0130247424",
     "replication_judge_overhead_usd": "1.341565008",
     "replication_policy": "same frozen Gemini role transcript; separate Qwen final judgment; Qwen lone floor",
-    "reserve_usd": "5.2487079904",
+    "reserve_usd": "4.7487079904",
     "scenario": "dual_judge",
     "within_cap": true
   },
@@ -43,12 +44,233 @@
     "analyze --split scored"
   ],
   "external_timestamp": {
-    "freeze_sha256": "17be98760e18e3f0d6f1d412a59a176574ef0e889d5b5aaf017a8eff3c6ad2b3",
-    "passed": false,
-    "reason": "publish exact manifest hash and retain bound OpenTimestamps receipt"
+    "freeze_sha256": "d06392379b863ad38be3c296caec0c6f00124dd0f5185309fe3c7e35999b1c3b",
+    "passed": true,
+    "policy": "bound calendar submission is pilot timestamp evidence; not a claim of verified Bitcoin confirmation",
+    "proof_sha256": "21f8a8e81cade3cda2ee5edec5aaca64548349cead89d0c99134227f92a584fc",
+    "source_sha256": "b34f0b5d7d9fa724ba8818882978416c0993b7903fe68e49f20a574de0b83b48",
+    "stdout": "File sha256 hash: b34f0b5d7d9fa724ba8818882978416c0993b7903fe68e49f20a574de0b83b48\nTimestamp:\nappend 9986204821a1e4934ea64b31b7ea0464\nsha256\n -> append 510bb7e08a631a20\n    sha256\n    append 54cf993a7fa70d21adfe84bcd74972a2\n    sha256\n    append e7d320d37606ffd30420390dc6f98ba812c3d12f8c8c6c6d1d9153a9f4a9624c\n    sha256\n    prepend 6ab29bdc\n    append d6af3555f0191b86\n    verify PendingAttestation('https://bob.btc.calendar.opentimestamps.org')\n -> append 9222bd98468e5cff\n    sha256\n    append fb1a6dcbb7f5ab78b2580fe780a7db58\n    sha256\n    append d55b4f7edfa5517aece01373e8da6bc1c51e623e6c5012f6b2d83a7043e8cd08\n    sha256\n    prepend 6ab29bdc\n    append 20c5a32c50a6bf36\n    verify PendingAttestation('https://alice.btc.calendar.opentimestamps.org')\n -> append bc31f550522fc0e460bbb01ecef7f398\n    sha256\n    append 39ec7462d93b70f0e4e21dc84d4719fd2efd74cf528f56390b11fb0a3f8fc005\n    sha256\n    prepend 6ab29bdc\n    append 9db52b59634ed49f\n    verify PendingAttestation('https://btc.calendar.catallaxy.com')\n -> append e537f52872bf230373f49ef50edf8484\n    sha256\n    prepend 6e23bb7c59c411eb926ac7fbdb8c2b8e510c0dfaa49cd27d1dc8075fa17a390c\n    sha256\n    prepend 6ab29bdc\n    append bbe7742939bbc231\n    verify PendingAttestation('https://finney.calendar.eternitywall.com')\n\n"
   },
   "gemini_calibration": {
     "configs": {
+      "0f5ae9c09c122840e00544555c13e18a2f86f1208db0e45ba59f073475b37773": {
+        "overhead_tokens": 139,
+        "samples": [
+          {
+            "billed_input": 365,
+            "native_tokens": 226,
+            "request": {
+              "identity": "calibration/p5/gemini/0f5ae9c09c122840e00544555c13e18a2f86f1208db0e45ba59f073475b37773",
+              "max_input_tokens": 2048,
+              "max_output_tokens": 1024,
+              "messages": [
+                {
+                  "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence. Response schema: {\"additionalProperties\":false,\"properties\":{\"explanation\":{\"type\":\"string\"},\"issue_type\":{\"enum\":[\"shift\",\"smuggle\",\"none\",\"unknown\"],\"type\":\"string\"},\"locations\":{\"items\":{\"type\":\"string\"},\"maxItems\":2,\"type\":\"array\"},\"verdict\":{\"enum\":[\"approve\",\"reject\",\"unknown\"],\"type\":\"string\"}},\"required\":[\"verdict\",\"issue_type\",\"locations\",\"explanation\"],\"type\":\"object\"}",
+                  "role": "system"
+                },
+                {
+                  "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                  "role": "user"
+                }
+              ],
+              "metadata": {
+                "block_id": "gemini-config-calibration-v1",
+                "config_sha256": "0f5ae9c09c122840e00544555c13e18a2f86f1208db0e45ba59f073475b37773",
+                "role": "calibration"
+              },
+              "model": "pro",
+              "response_schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "explanation": {
+                    "type": "string"
+                  },
+                  "issue_type": {
+                    "enum": [
+                      "shift",
+                      "smuggle",
+                      "none",
+                      "unknown"
+                    ],
+                    "type": "string"
+                  },
+                  "locations": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 2,
+                    "type": "array"
+                  },
+                  "verdict": {
+                    "enum": [
+                      "approve",
+                      "reject",
+                      "unknown"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "verdict",
+                  "issue_type",
+                  "locations",
+                  "explanation"
+                ],
+                "type": "object"
+              },
+              "timeout_s": 120,
+              "tools": []
+            },
+            "response_sha256": "8def70e67ea4c4f354c04c0fce3d880ab55c9287c6bbde29b04b38aa380970cc",
+            "revision": "gemini-3.1-pro-preview",
+            "wire_sha256": "0da94a280b36228b95c11513c5d44dfb040e019ce886e52f3c5ea92ab0a67892"
+          }
+        ]
+      },
+      "2853bd0ccb1b4368ee337254a83286ef91dd8f782d93819ce3f331717d26f896": {
+        "overhead_tokens": 0,
+        "samples": [
+          {
+            "billed_input": 123,
+            "native_tokens": 123,
+            "request": {
+              "identity": "calibration/p5/gemini/2853bd0ccb1b4368ee337254a83286ef91dd8f782d93819ce3f331717d26f896",
+              "max_input_tokens": 2048,
+              "max_output_tokens": 256,
+              "messages": [
+                {
+                  "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Inspect the initial questions and answers for inconsistency. Return JSON {\"question\":\"one self-contained adaptive question <=256 tokens, or empty\"}. Do not transmit other copies\u2019 full answers.",
+                  "role": "system"
+                },
+                {
+                  "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                  "role": "user"
+                }
+              ],
+              "metadata": {
+                "block_id": "gemini-config-calibration-v1",
+                "config_sha256": "2853bd0ccb1b4368ee337254a83286ef91dd8f782d93819ce3f331717d26f896",
+                "role": "calibration"
+              },
+              "model": "pro",
+              "response_schema": null,
+              "timeout_s": 120,
+              "tools": []
+            },
+            "response_sha256": "0fa0e87895ca947a3eecd7283eb46719f77a3066f0c6a2b364abceac682b7d59",
+            "revision": "gemini-3.1-pro-preview",
+            "wire_sha256": "66aa2d29815de1aa68d37cafcd60bb88d768a519a27a6833e0f3a2cc78812831"
+          }
+        ]
+      },
+      "335c4fe4487db197da93ea2d6d154e37a78640cc2558db50b2b7b091a74b0f58": {
+        "overhead_tokens": 0,
+        "samples": [
+          {
+            "billed_input": 113,
+            "native_tokens": 113,
+            "request": {
+              "identity": "calibration/p5/gemini/335c4fe4487db197da93ea2d6d154e37a78640cc2558db50b2b7b091a74b0f58",
+              "max_input_tokens": 2048,
+              "max_output_tokens": 1024,
+              "messages": [
+                {
+                  "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Seek source-grounded flaws across branches. Return JSON {\"questions\":[up to three self-contained questions, each <=256 tokens]}.",
+                  "role": "system"
+                },
+                {
+                  "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                  "role": "user"
+                }
+              ],
+              "metadata": {
+                "block_id": "gemini-config-calibration-v1",
+                "config_sha256": "335c4fe4487db197da93ea2d6d154e37a78640cc2558db50b2b7b091a74b0f58",
+                "role": "calibration"
+              },
+              "model": "pro",
+              "response_schema": null,
+              "timeout_s": 120,
+              "tools": []
+            },
+            "response_sha256": "af824e28f9b22cc957c654dbd010e48535a474220a932442bd1b23dd52f0ad54",
+            "revision": "gemini-3.1-pro-preview",
+            "wire_sha256": "f2b64216bb3fcbc62d5f4169d28dd2232c4308f507bbcf7496d2736fe30f1098"
+          }
+        ]
+      },
+      "399d77dfcc2eb847da513a64b6194d84bbcbecff00b9e4c19faa9cf52816d491": {
+        "overhead_tokens": 0,
+        "samples": [
+          {
+            "billed_input": 284,
+            "native_tokens": 284,
+            "request": {
+              "identity": "calibration/p5/gemini/399d77dfcc2eb847da513a64b6194d84bbcbecff00b9e4c19faa9cf52816d491",
+              "max_input_tokens": 2048,
+              "max_output_tokens": 1024,
+              "messages": [
+                {
+                  "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Challenge source alignment or an omitted leaf; propose splits if divergent uses are cited. Return JSON {\"audit\":\"...\",\"queries\":[],\"splits\":[]}. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+                  "role": "system"
+                },
+                {
+                  "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                  "role": "user"
+                }
+              ],
+              "metadata": {
+                "block_id": "gemini-config-calibration-v1",
+                "config_sha256": "399d77dfcc2eb847da513a64b6194d84bbcbecff00b9e4c19faa9cf52816d491",
+                "role": "calibration"
+              },
+              "model": "pro",
+              "response_schema": null,
+              "timeout_s": 120,
+              "tools": []
+            },
+            "response_sha256": "0ef568a6bc32c072cd109be18113853d84656efa7205c1f4519f8e398155579a",
+            "revision": "gemini-3.1-pro-preview",
+            "wire_sha256": "86b38689bd51b06e7e57fad1ef68d4eafd96c0376da29af1bf17f3824a63ce47"
+          }
+        ]
+      },
+      "3cb78e852757816cfc0b0840fa5bd7a2cecb634c6decbf8c4ed3bfccb3ebd130": {
+        "overhead_tokens": 0,
+        "samples": [
+          {
+            "billed_input": 97,
+            "native_tokens": 97,
+            "request": {
+              "identity": "calibration/p5/gemini/3cb78e852757816cfc0b0840fa5bd7a2cecb634c6decbf8c4ed3bfccb3ebd130",
+              "max_input_tokens": 2048,
+              "max_output_tokens": 1024,
+              "messages": [
+                {
+                  "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Independently revise the audit against the same records; seek errors.",
+                  "role": "system"
+                },
+                {
+                  "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                  "role": "user"
+                }
+              ],
+              "metadata": {
+                "block_id": "gemini-config-calibration-v1",
+                "config_sha256": "3cb78e852757816cfc0b0840fa5bd7a2cecb634c6decbf8c4ed3bfccb3ebd130",
+                "role": "calibration"
+              },
+              "model": "pro",
+              "response_schema": null,
+              "timeout_s": 120,
+              "tools": []
+            },
+            "response_sha256": "d5ced8e113ed04015c6edfbf80e96905216c449daaeb8e3b5d464dabf93c74f8",
+            "revision": "gemini-3.1-pro-preview",
+            "wire_sha256": "9430e6cb95c38837af61e7a80e52fef9d816a11ff3b43cadd56c633d0a63afe1"
+          }
+        ]
+      },
       "4b128aa76a93d4259d94eb5a212335665796632dbbdbf7aff8803c1823694a3a": {
         "overhead_tokens": 47,
         "samples": [
@@ -92,9 +314,261 @@
             "wire_sha256": "f9466fa7afa892ef57169067f3cba3972bd908c933d26ede513eb4b9eae0da1a"
           }
         ]
+      },
+      "4bf687ab333b2eae6ccf7ce7a3180c3ea97de0ce51ee289b1b1cf7050bd088a3": {
+        "overhead_tokens": 0,
+        "samples": [
+          {
+            "billed_input": 267,
+            "native_tokens": 267,
+            "request": {
+              "identity": "calibration/p5/gemini/4bf687ab333b2eae6ccf7ce7a3180c3ea97de0ce51ee289b1b1cf7050bd088a3",
+              "max_input_tokens": 2048,
+              "max_output_tokens": 1024,
+              "messages": [
+                {
+                  "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Defend the proposed argument, faithfully formalising uses and premises. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+                  "role": "system"
+                },
+                {
+                  "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                  "role": "user"
+                }
+              ],
+              "metadata": {
+                "block_id": "gemini-config-calibration-v1",
+                "config_sha256": "4bf687ab333b2eae6ccf7ce7a3180c3ea97de0ce51ee289b1b1cf7050bd088a3",
+                "role": "calibration"
+              },
+              "model": "pro",
+              "response_schema": null,
+              "timeout_s": 120,
+              "tools": []
+            },
+            "response_sha256": "c12315fb7d09bcb2860844613b4de5f3367f61c2ab5f682f7bc4885fd639d259",
+            "revision": "gemini-3.1-pro-preview",
+            "wire_sha256": "62984244dcedf505732db2ee5889a488f25fbf5e06e8e4a9b3fc7a5edc66a12c"
+          }
+        ]
+      },
+      "5a5d4b0ed7aa4f8f5393710396b11102c9effb5aa5a918af56dfdc16be0e85dd": {
+        "overhead_tokens": 0,
+        "samples": [
+          {
+            "billed_input": 103,
+            "native_tokens": 103,
+            "request": {
+              "identity": "calibration/p5/gemini/5a5d4b0ed7aa4f8f5393710396b11102c9effb5aa5a918af56dfdc16be0e85dd",
+              "max_input_tokens": 2048,
+              "max_output_tokens": 512,
+              "messages": [
+                {
+                  "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Answer only this question using the unchanged packet and frozen commitment. You are an isolated proposer copy.",
+                  "role": "system"
+                },
+                {
+                  "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                  "role": "user"
+                }
+              ],
+              "metadata": {
+                "block_id": "gemini-config-calibration-v1",
+                "config_sha256": "5a5d4b0ed7aa4f8f5393710396b11102c9effb5aa5a918af56dfdc16be0e85dd",
+                "role": "calibration"
+              },
+              "model": "pro",
+              "response_schema": null,
+              "timeout_s": 120,
+              "tools": []
+            },
+            "response_sha256": "0215463673c7fd8db4aaaa5223b446750d23ed51cd83bec0241ef5ed1a277837",
+            "revision": "gemini-3.1-pro-preview",
+            "wire_sha256": "9dff7bc9445b94868b2f7093c3d0bea88589a571cc253fb3df3bb80e299e60cb"
+          }
+        ]
+      },
+      "6687236382827a4c89b80a2f31f316bc4a915f5dc6c8d9fcddb109324badbf67": {
+        "overhead_tokens": 0,
+        "samples": [
+          {
+            "billed_input": 273,
+            "native_tokens": 273,
+            "request": {
+              "identity": "calibration/p5/gemini/6687236382827a4c89b80a2f31f316bc4a915f5dc6c8d9fcddb109324badbf67",
+              "max_input_tokens": 2048,
+              "max_output_tokens": 1024,
+              "messages": [
+                {
+                  "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Repair only the diagnosed syntax/coverage failures. One repair is allowed; retain the original root. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+                  "role": "system"
+                },
+                {
+                  "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                  "role": "user"
+                }
+              ],
+              "metadata": {
+                "block_id": "gemini-config-calibration-v1",
+                "config_sha256": "6687236382827a4c89b80a2f31f316bc4a915f5dc6c8d9fcddb109324badbf67",
+                "role": "calibration"
+              },
+              "model": "pro",
+              "response_schema": null,
+              "timeout_s": 120,
+              "tools": []
+            },
+            "response_sha256": "dd951b9040f2710649f4385055836f3932b88dea5255d53aa31d3acdf028495f",
+            "revision": "gemini-3.1-pro-preview",
+            "wire_sha256": "54a063ba54b2923672ba37a9a3e519acf486ff0d68d5c013e434b7bf12731751"
+          }
+        ]
+      },
+      "6891eebd498909df19f38f4289c107a099044f4e48337dc61d1e212513e89d4a": {
+        "overhead_tokens": 0,
+        "samples": [
+          {
+            "billed_input": 97,
+            "native_tokens": 97,
+            "request": {
+              "identity": "calibration/p5/gemini/6891eebd498909df19f38f4289c107a099044f4e48337dc61d1e212513e89d4a",
+              "max_input_tokens": 2048,
+              "max_output_tokens": 1024,
+              "messages": [
+                {
+                  "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Independently audit the authored table against source records, seeking errors.",
+                  "role": "system"
+                },
+                {
+                  "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                  "role": "user"
+                }
+              ],
+              "metadata": {
+                "block_id": "gemini-config-calibration-v1",
+                "config_sha256": "6891eebd498909df19f38f4289c107a099044f4e48337dc61d1e212513e89d4a",
+                "role": "calibration"
+              },
+              "model": "pro",
+              "response_schema": null,
+              "timeout_s": 120,
+              "tools": []
+            },
+            "response_sha256": "696e492aed283accea380d6c5934af1eee6b3ec61f01d5998643e71cbedef55a",
+            "revision": "gemini-3.1-pro-preview",
+            "wire_sha256": "732d8b0c9618598192e56bb258cea030a0bbc9ea8814fc8149e982c6099ba3b2"
+          }
+        ]
+      },
+      "c928de9b95722929e507a400bbe138b5c24ce5e8568ca6baf98891ebcfd02e58": {
+        "overhead_tokens": 0,
+        "samples": [
+          {
+            "billed_input": 273,
+            "native_tokens": 273,
+            "request": {
+              "identity": "calibration/p5/gemini/c928de9b95722929e507a400bbe138b5c24ce5e8568ca6baf98891ebcfd02e58",
+              "max_input_tokens": 2048,
+              "max_output_tokens": 1024,
+              "messages": [
+                {
+                  "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Answer the critic, re-author affected uses and re-certify in a complete artifact. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+                  "role": "system"
+                },
+                {
+                  "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                  "role": "user"
+                }
+              ],
+              "metadata": {
+                "block_id": "gemini-config-calibration-v1",
+                "config_sha256": "c928de9b95722929e507a400bbe138b5c24ce5e8568ca6baf98891ebcfd02e58",
+                "role": "calibration"
+              },
+              "model": "pro",
+              "response_schema": null,
+              "timeout_s": 120,
+              "tools": []
+            },
+            "response_sha256": "07f162fddff3cdf37f6d3bd4735c8da4e56de27a9b3a7a43db6dc70d0642f380",
+            "revision": "gemini-3.1-pro-preview",
+            "wire_sha256": "9dce39e8269c528406e91900832672c761191f82271a8dcf5486d9055baa3504"
+          }
+        ]
+      },
+      "d96af8ec5118b5b6471bcc3d75109477cbd36be67939873797f5f9a4a389e0a7": {
+        "overhead_tokens": 0,
+        "samples": [
+          {
+            "billed_input": 101,
+            "native_tokens": 101,
+            "request": {
+              "identity": "calibration/p5/gemini/d96af8ec5118b5b6471bcc3d75109477cbd36be67939873797f5f9a4a389e0a7",
+              "max_input_tokens": 2048,
+              "max_output_tokens": 1024,
+              "messages": [
+                {
+                  "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Seek errors. Produce a claim/premise/use table from the common packet.",
+                  "role": "system"
+                },
+                {
+                  "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                  "role": "user"
+                }
+              ],
+              "metadata": {
+                "block_id": "gemini-config-calibration-v1",
+                "config_sha256": "d96af8ec5118b5b6471bcc3d75109477cbd36be67939873797f5f9a4a389e0a7",
+                "role": "calibration"
+              },
+              "model": "pro",
+              "response_schema": null,
+              "timeout_s": 120,
+              "tools": []
+            },
+            "response_sha256": "45b283be7809e9754f27b77c72ff2edd25f21389a413dc805460e45ab13e0412",
+            "revision": "gemini-3.1-pro-preview",
+            "wire_sha256": "ef7f1dc63ecaf90710077c148dfe8bab47892670d7dc1feae524061af2bead79"
+          }
+        ]
+      },
+      "e92bc2e3fb65c2623864408855ae362cedc18586ec7572a5c0792b5627e393fc": {
+        "overhead_tokens": 0,
+        "samples": [
+          {
+            "billed_input": 111,
+            "native_tokens": 111,
+            "request": {
+              "identity": "calibration/p5/gemini/e92bc2e3fb65c2623864408855ae362cedc18586ec7572a5c0792b5627e393fc",
+              "max_input_tokens": 2048,
+              "max_output_tokens": 1024,
+              "messages": [
+                {
+                  "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Defend the proposed argument. Return JSON {\"commitment\":\"fixed meanings, at most 512 tokens\",\"argument\":\"defense\"}.",
+                  "role": "system"
+                },
+                {
+                  "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                  "role": "user"
+                }
+              ],
+              "metadata": {
+                "block_id": "gemini-config-calibration-v1",
+                "config_sha256": "e92bc2e3fb65c2623864408855ae362cedc18586ec7572a5c0792b5627e393fc",
+                "role": "calibration"
+              },
+              "model": "pro",
+              "response_schema": null,
+              "timeout_s": 120,
+              "tools": []
+            },
+            "response_sha256": "cb6b43f1249c180d41781177f7c8cb977faf4dad3ff1eb324e60edcb8cff29cb",
+            "revision": "gemini-3.1-pro-preview",
+            "wire_sha256": "d0c0eab4426de7a24c297aaed1e958305d26cad44045458cf55d55b5e80b2dea"
+          }
+        ]
       }
     },
-    "generation_calls": 0,
+    "generation_calls": 12,
     "method": "full GenerateContentConfig countTokens + per-config billed residual"
   },
   "hashes": {
@@ -102,16 +576,17 @@
     "experiments/P1-deference/tokenizers/llama_config.json": "177c7b61e616fecb84c17ce0591acb92c6c4d60e9ac5ababfb940ff23bbcd424",
     "experiments/P1-deference/tokenizers/qwen_config.json": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
     "experiments/P1-deference/tokenizers/sources.json": "e92eb8f4af7c766b8f5bd4d7827cb9d9b70b56c745df51836172cce9411a4294",
-    "experiments/P5-shifting-definitions/AMENDMENTS.md": "a795ef27c3ad94f39530b77920ddf38716736857cb760a7817404161e6c01608",
+    "experiments/P5-shifting-definitions/AMENDMENTS.md": "d9ca8df38afe9f3c5d1a15394d7e513cdad9a399e1d72bc03de5742c819a2d8b",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V3.md": "16a618e65989baa583fa33d5e0285f20259723289ba730202dae4c78f7dff68f",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V4.md": "d556d43ddd4d38ae3ecbabf2f5e48e501117fbe54a355b821148e66c8781fd7c",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V5.md": "272d583f9ca320370e10ef37272dab553911577ffc25f1ea6a14f9c9f0cdd1e3",
-    "experiments/P5-shifting-definitions/MATERIALS-HASHES.txt": "734acc166c517825b286bc4e4577efef8ca6ea15f342485793758fb445aae951",
-    "experiments/P5-shifting-definitions/MATERIALS-HASHES.txt.ots": "af4b1fc661814849ce1b7501e5f25f2d8d98e45d2b2a680deaa30b9ac3595c8b",
-    "experiments/P5-shifting-definitions/MATERIALS-MANIFEST.json": "a68ad11f6db96a4b886d1aad76dfc70b8ce89d653ea59d9aabf9cd1ba4dd0c12",
+    "experiments/P5-shifting-definitions/MATERIALS-HASHES.txt": "2efac7c2d7e18ae1ef0ef662f1fb00987ee1adb0a00c7f071d0bb866365b07aa",
+    "experiments/P5-shifting-definitions/MATERIALS-HASHES.txt.ots": "8857a922c13526793e84c428835dc339436332e3baa4685399f3b12dad805aac",
+    "experiments/P5-shifting-definitions/MATERIALS-MANIFEST.json": "8d1f8977349761200e37e57e61528d98a2d9abe2a334c77dc5a8056aadd42eed",
+    "experiments/P5-shifting-definitions/PARAPHRASE-REVIEW.md": "0006b0c189c74a9dd78d5d93ce6eecf104b49dc83409c55b6cc59e6bb8e1be6e",
     "experiments/P5-shifting-definitions/PREREG.md": "9afbde3261750f18c7e3fcfda0193dbc5d9707b851f0a4a4f54541b4fda4a4ef",
     "experiments/P5-shifting-definitions/REVIEW-CHECKLIST.md": "b38e6563f7c7a2f2dbe2d39340ec3d79014c97c02a3356b16dbe9aff3cee54a3",
-    "experiments/P5-shifting-definitions/checks/gemini-calibration.json": "c1e04548a5d26e911b5803542bb0246c0cfc44ad2f79b7b6c2c0e30958e4b0d7",
+    "experiments/P5-shifting-definitions/checks/gemini-calibration.json": "068836dd48f88e3facf44eedd23c88f78fca7f492fe46693a88bdef8bdc8b0d2",
     "experiments/P5-shifting-definitions/checks/round5-review-import.json": "ea8688c6c51255edf0ef1503dfee27e5d645e464e7456cb875c038842436e7c1",
     "experiments/P5-shifting-definitions/checks/round5-review-submission.json": "e2ab2a7b9d0962f8833183bb18994b5aae04a5ddd36c090c2e2eae7600dcaee9",
     "experiments/P5-shifting-definitions/checks/round5-review-verification.txt": "a36d6e2c0c84b94bbd3148f3de4dbed66b11092daa4ba4bd63754aebffbdbb0a",
@@ -122,39 +597,39 @@
     "experiments/P5-shifting-definitions/materials/dev.jsonl.gz": "b9e4f7e9a64a789003203edf06f670d059a115069db82570c55af78314552fa3",
     "experiments/P5-shifting-definitions/materials/dossiers.jsonl.gz": "621f3e6a56c5fc1196724da01de4e0f63f722875bf2367aeee1e2f4f5e019842",
     "experiments/P5-shifting-definitions/materials/graphs.jsonl.gz": "dee1afc569d57130fab13665e92cca9e91376bd087da1676b3c277b7bff321f2",
-    "experiments/P5-shifting-definitions/materials/paraphrases.jsonl.gz": "b63a46cd8d23fa67fbde6b2b3e2a4b8a72c73dd7057401e9586424b2ac8f1006",
+    "experiments/P5-shifting-definitions/materials/paraphrases.jsonl.gz": "3f7980ec134d63a3ae738ff325dd0db9ef692b46826b1f81553d726f85ce1f5d",
     "experiments/P5-shifting-definitions/materials/rejected-v1.jsonl.gz": "76f86d202123626c158873daeabed0b88386311b88775556f4615463494cc1ef",
     "experiments/P5-shifting-definitions/materials/rejected-v2-initial.jsonl.gz": "238cae63f1869902621afd2e94b8e76f0d1ef597d52c70dadb9b6fbaaaf8eebb",
     "experiments/P5-shifting-definitions/materials/review-ledger.jsonl.gz": "73586c2d447ac12adfa299ab64715f119551fc3ce31241e07abe4740ba762516",
-    "experiments/P5-shifting-definitions/materials/scored.jsonl.gz": "d89226c1f76c9906f39201a8618de39e7f809c91d05bdb05d6bb58f50d4fabed",
+    "experiments/P5-shifting-definitions/materials/scored.jsonl.gz": "124b489c66267fc37b1f6db3c32e030724fe191e51553e1645b9ce26b692de2f",
     "experiments/P5-shifting-definitions/prompts.json": "270aacfd96c546d20198b47e2460f50c0a4779f5ab29dd992a17e7567048edaa",
     "experiments/P5-shifting-definitions/run_p5.py": "3179502de56f36242d25ac783334fb9ed565a6a5287e2f92aef28795b2f1d4fa",
     "experiments/PREREG-DESIGN.md": "dd7fd780c2ceb362f36f31b95a24fe71561f52bff604e3f391a77cd59107b579",
     "experiments/p1.py": "8a6e7b7b4ed97cf91c2a71a3f108574d6c6fa6444d880e9fe22fa0a3763178b4",
     "experiments/p1_preflight.py": "6bda591a44581cb684801e5132c2840cc7cf70b5a26647aa815ea0c2835462b8",
-    "experiments/p5.py": "a780975035fa81cfce6d583cae2d0b97e4a8f426430a066ace71ec6084514ab0",
+    "experiments/p5.py": "6da1c9694eec7846b7da346379121caa5dfbb5d4d6cd99266f4a619fd93d77f5",
     "experiments/p5_analysis.py": "4984297d6314b79b6e3793cfbd4c947f3f418b7d4f36c2426486e4a5491f7c2d",
     "experiments/p5_blinding.py": "6523bdf0debe37b14b8539ddd61ab28f4a10c480e8a2bb746345041d8bde00ea",
     "experiments/p5_isolation.py": "ad2c8eee96620a6e383ac3eaebe2be8ca716c74b48b2963410e3306745fdcaf7",
     "experiments/p5_leakage.py": "d2410112de8891cbe12e4dde9069d65d08acfe30d84ac66d16bcb3822429e48b",
     "experiments/p5_materials.py": "56378aa68c58408d945a653f91fca7bf3bad1e6e95989153b642f29b993d2d3a",
     "experiments/p5_oracle.py": "7525d4e36b7b83a489169e124d08deca652cc45441884a22d81791d624adc0de",
-    "experiments/p5_paraphrase.py": "9caa262c052a74ab43416c39f74b635dc9a2bf459fec0df386f8422157850ed9",
-    "experiments/p5_preflight.py": "877984201440d71ff46b9d481e876e6d000708be807c8fe66dddaf57826a57bf",
-    "experiments/p5_review.py": "5a5628919b5bf46bc0bab6d0296ba8f4655c4430537ffa27149b2edf1402bcd9",
+    "experiments/p5_paraphrase.py": "13ea051733a46e7b15add956fa18562469ef5568f5e78eaa83e514a2683c31fd",
+    "experiments/p5_preflight.py": "c993353cf138ac3203471a982143dcd72c2488b13608a9bffab1429b81c8211b",
+    "experiments/p5_review.py": "e2633f15af984d26bd4539c0f9731c88a0633fd805a1926187ac18978231554b",
     "experiments/p5_surface.py": "983e737ab02b5bcf76fe789b37a788427b18886e92e1e38de8fbb51fba089f95",
-    "experiments/p5_tokens.py": "65736322b4372aae814b663c443dd916f47054de563aca19baf7385dd07102c2",
+    "experiments/p5_tokens.py": "1bf18f055c7ba6b220e457b46ed7fdd7f32228ed8b652c6c37dca0a2efbf4108",
     "experiments/prereg_inventory.py": "d8cd42e78fe70c04f064b92f2f0f8a9c80177074d470f0d184e7ab35b410c8c8",
     "experiments/trial_analysis.py": "ae8e909d89ab47c6276cbc95556481bb04d7470194c76cac0c5941ad05640171",
     "lean/.lake/build/bin/ve_conformance": "dd56738076cb2852caaa886a4d5abdd6a6024b96b52dd5ffae1d3585d7d1fe4b",
     "pyproject.toml": "675b5239f1d51115896c768ef5139737882bad84dcc95f5d29984fa70ee94b76",
     "tests/fixtures/p5_deepinfra_smoke.json": "663a2dff283258ab51105a5b25d3e10559d77f849acde943fcdc38701ada417d",
     "tests/fixtures/p5_vertex_smoke.json": "586d9dccf8b8e767b092079e57322299c7205010b5d326b532926989be35edc0",
-    "tests/test_p5.py": "060facf112f1dcdedac098b9096d0d471abcce90c60fbc385a002c864446bec9",
+    "tests/test_p5.py": "6cc94085042b06452834c9852e02e87746a699aee32709aa2b0a0dd0488e4b4b",
     "tests/test_p5_infrastructure.py": "fd2685050cf001e4f06756b6178a8781e0d86d8f0b0e2188145892700efc88ce",
-    "tests/test_p5_paraphrase.py": "0a94b345255b6a3bd10ebd61e14dd5caea22e8dbef85eecebe616ba97471b93f",
+    "tests/test_p5_paraphrase.py": "b734095793e055ff4cb7254d99c093ebb5b4f282e3abb778c30a9b2ae64b31d8",
     "tests/test_p5_preflight.py": "28820ec5ce593e20435651fe69bb33c1e28bc313928ef542ede9cc0541c517f9",
-    "tests/test_p5_tokens.py": "fcf381e77f866ed1762be8136d9e540e1a4d4c016fc8096920421255b99642fc",
+    "tests/test_p5_tokens.py": "20eb5f6e1d4e6c94263be445599eee11985ba41f549149dd8f31fd34925c5866",
     "uv.lock": "c00f64fd5b5b729747e3a2456dcb3338a4a9b3f3aa04fd4acf2895e295579238",
     "ve/__init__.py": "570d218a83d1d7d1037f837050f1f307cc93c24c5ca9fbcc72a4e0ef91b8abe4",
     "ve/__main__.py": "58d590ca8ae8efcbfc7f895e1232273df4596ff7a869e4c26f627593163deb96",
@@ -187,7 +662,7 @@
     "ve_experiments/json_response.py": "a74d9ccfecc5e2def09f10baf2b534d56c4297f4022b9183a8c784c6ba036f79",
     "ve_experiments/paid.py": "8c7718ae83fe3bf7476f17781f223ac5c7a51c87d239b7eca6f96e3a2e07d42e"
   },
-  "manifest_sha256": "17be98760e18e3f0d6f1d412a59a176574ef0e889d5b5aaf017a8eff3c6ad2b3",
+  "manifest_sha256": "d06392379b863ad38be3c296caec0c6f00124dd0f5185309fe3c7e35999b1c3b",
   "models": {
     "pro": "gemini-3.1-pro-preview",
     "replication": "qwen/qwen-2.5-72b-instruct",
@@ -218,12 +693,7 @@
   "scenario": "dual_judge",
   "status": "BLOCKED_NOT_SCORED_READY",
   "unresolved": [
-    "surface-soundness",
     "review",
-    "packet-safety",
-    "external-timestamp",
-    "gemini-calibration-coverage",
-    "tokenizer",
     "provider-preflight",
     "dev"
   ]

@@ -1,56 +1,56 @@
 {
   "configs": {
     "0f5ae9c09c122840e00544555c13e18a2f86f1208db0e45ba59f073475b37773": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/judge/0"
     },
     "2853bd0ccb1b4368ee337254a83286ef91dd8f782d93819ce3f331717d26f896": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/followup/0"
     },
     "335c4fe4487db197da93ea2d6d154e37a78640cc2558db50b2b7b091a74b0f58": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/critic/0"
     },
     "399d77dfcc2eb847da513a64b6194d84bbcbecff00b9e4c19faa9cf52816d491": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/critic/0"
     },
     "3cb78e852757816cfc0b0840fa5bd7a2cecb634c6decbf8c4ed3bfccb3ebd130": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "dev/i11e21a96aa6260b7bafaaec82c8810b9/S/pro/defender/0"
     },
     "4bf687ab333b2eae6ccf7ce7a3180c3ea97de0ce51ee289b1b1cf7050bd088a3": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/author/0"
     },
     "5a5d4b0ed7aa4f8f5393710396b11102c9effb5aa5a918af56dfdc16be0e85dd": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/answer/0"
     },
     "6687236382827a4c89b80a2f31f316bc4a915f5dc6c8d9fcddb109324badbf67": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/repair/0"
     },
     "6891eebd498909df19f38f4289c107a099044f4e48337dc61d1e212513e89d4a": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "dev/i11e21a96aa6260b7bafaaec82c8810b9/S/pro/critic/0"
     },
     "c928de9b95722929e507a400bbe138b5c24ce5e8568ca6baf98891ebcfd02e58": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/defender/0"
     },
     "d96af8ec5118b5b6471bcc3d75109477cbd36be67939873797f5f9a4a389e0a7": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "dev/i11e21a96aa6260b7bafaaec82c8810b9/S/pro/author/0"
     },
     "e92bc2e3fb65c2623864408855ae362cedc18586ec7572a5c0792b5627e393fc": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/author/0"
     }
   },
-  "freeze_sha256": "17be98760e18e3f0d6f1d412a59a176574ef0e889d5b5aaf017a8eff3c6ad2b3",
+  "freeze_sha256": "d06392379b863ad38be3c296caec0c6f00124dd0f5185309fe3c7e35999b1c3b",
   "generation_calls": 0,
-  "passed": false,
+  "passed": true,
   "policy": "Exact config calibration required; no smoke residual extrapolation."
 }

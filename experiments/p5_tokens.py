@@ -4,8 +4,11 @@ countTokens accepts generationConfig but still undercounts the retained smoke.
 Never transfer its residual to another system instruction, schema, or tool set.
 P1 continues to use the unmodified shared VertexBackend.
 """
-from dataclasses import asdict
+from dataclasses import asdict, replace
+from decimal import Decimal
+import asyncio
 import json
+import time
 
 from ve_experiments.paid import (MODELS, Ledger, PaidRequest, PreflightError,
                                  VertexBackend, digest, integer)
@@ -95,12 +98,79 @@ def cached_count(request, reply, calibration):
     return native + overhead, native, overhead
 
 
-def calibrate():
-    """Free counts of already completed P5 requests only; never generate."""
+def calibration_smokes(book, backend, cap):
+    """At most twelve single-dispatch Vertex calls, in one durable <=$0.50 block.
+
+    Keep every config field exact, including the stage output cap. Only the
+    user content is replaced. Unknown billing halts without any paid retry.
+    """
+    from experiments.p5_preflight import fixtures
+    from experiments.p5_materials import read
+    if not cap.is_finite() or not Decimal(0) < cap <= Decimal('.50'):
+        raise PreflightError('Gemini calibration cap must be positive and <= $0.50')
+    block = 'gemini-config-calibration-v1'
+    requests = {}
+    for req, _ in fixtures():
+        if req.model != 'pro':
+            continue
+        key = config_key(req)
+        requests.setdefault(key, replace(req,
+            identity='calibration/p5/gemini/'+key,
+            messages=[m for m in req.messages if m['role']=='system'] +
+                [{'role':'user','content':'Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.'}],
+            max_input_tokens=2048,
+            metadata={'role':'calibration','config_sha256':key,'block_id':block}))
+    if len(requests) > 12:
+        raise PreflightError('Gemini calibration exceeds twelve distinct configs')
+    # Count all requests before reserving or dispatching; configuration must
+    # survive the prompt replacement exactly. Billing residual is measured later.
+    for key, req in requests.items():
+        if config_key(req) != key or backend.native_count(req) + 512 > req.max_input_tokens:
+            raise PreflightError('calibration request/config exceeds conservative input bound')
+    book.reserve_block(block, str(cap), resume=True,
+                       schedule=[asdict(r) for r in requests.values()], split='calibration')
+    calls = 0
+    with asyncio.Runner() as runner:
+        for req in requests.values():
+            if book.cached_reply(req) is not None:
+                continue
+            rows = read(book.path)
+            prior = [r for r in rows if r['event']=='reserve'
+                     and r.get('metadata',{}).get('block_id')==block]
+            if len(prior) >= 12 or any(r['identity']==req.identity for r in prior):
+                raise PreflightError('calibration dispatch cap reached; no retries')
+            book.reserve(req)
+            start = time.monotonic()
+            backend.last_response = None
+            try:
+                reply = runner.run(asyncio.wait_for(backend.generate(req), req.timeout_s))
+            except Exception as exc:
+                book.halt(req, type(exc).__name__+': '+str(exc), backend.last_response,
+                          time.monotonic()-start)
+                raise PreflightError('calibration failed; billing held, no retry') from exc
+            reply.latency_s = time.monotonic()-start
+            error = ('calibration revision/token cap mismatch'
+                     if reply.revision != MODELS['pro'] or reply.input_tokens > req.max_input_tokens
+                     or reply.billed_output_tokens > req.billed_output_cap else None)
+            book.complete(req, reply, error)
+            calls += 1
+            if error:
+                raise PreflightError(error)
+            print(f'Gemini calibration {calls}/{len(requests)} complete', flush=True)
+    book.release_block(block)
+    return calls
+
+
+def calibrate(cap=Decimal(0)):
+    """Free retained counts by default; explicit <=$0.50 buys config smokes."""
     from experiments import p5 as p
     from experiments.p5_materials import read, write_json
     book = Ledger(p.HERE/'runs/study/costs.jsonl', p.CAP)
     backend = P5VertexBackend(calibration={})
+    cap = Decimal(str(cap))
+    if not cap.is_finite() or cap < 0 or cap > Decimal('.50'):
+        raise PreflightError('Gemini calibration cap must be between $0 and $0.50')
+    calls = calibration_smokes(book, backend, cap) if cap else 0
     configs = {}
     reservations = {r['identity']: r for r in read(book.path)
                     if r['event'] == 'reserve' and r['model'] == 'pro'}
@@ -123,6 +193,6 @@ def calibrate():
             'native_tokens': native, 'billed_input': reply.input_tokens,
             'response_sha256': digest(reply.response), 'revision': reply.revision})
     result = {'method': 'full GenerateContentConfig countTokens + per-config billed residual',
-              'configs': configs, 'generation_calls': 0}
+              'configs': configs, 'generation_calls': calls}
     write_json(p.HERE/'checks/gemini-calibration.json', result)
     return result

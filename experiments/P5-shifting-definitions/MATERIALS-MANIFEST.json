@@ -6,11 +6,11 @@
     "materials/dev.jsonl.gz": "b9e4f7e9a64a789003203edf06f670d059a115069db82570c55af78314552fa3",
     "materials/dossiers.jsonl.gz": "621f3e6a56c5fc1196724da01de4e0f63f722875bf2367aeee1e2f4f5e019842",
     "materials/graphs.jsonl.gz": "dee1afc569d57130fab13665e92cca9e91376bd087da1676b3c277b7bff321f2",
-    "materials/paraphrases.jsonl.gz": "b63a46cd8d23fa67fbde6b2b3e2a4b8a72c73dd7057401e9586424b2ac8f1006",
+    "materials/paraphrases.jsonl.gz": "3f7980ec134d63a3ae738ff325dd0db9ef692b46826b1f81553d726f85ce1f5d",
     "materials/rejected-v1.jsonl.gz": "76f86d202123626c158873daeabed0b88386311b88775556f4615463494cc1ef",
     "materials/rejected-v2-initial.jsonl.gz": "238cae63f1869902621afd2e94b8e76f0d1ef597d52c70dadb9b6fbaaaf8eebb",
     "materials/review-ledger.jsonl.gz": "73586c2d447ac12adfa299ab64715f119551fc3ce31241e07abe4740ba762516",
-    "materials/scored.jsonl.gz": "d89226c1f76c9906f39201a8618de39e7f809c91d05bdb05d6bb58f50d4fabed"
+    "materials/scored.jsonl.gz": "124b489c66267fc37b1f6db3c32e030724fe191e51553e1645b9ce26b692de2f"
   },
   "schema": 1
 }
