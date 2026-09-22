@@ -1,6 +1,16 @@
 # P5 materials and staged duel runner
 
-This build spends **$0**. No probe, dev, scored or paid paraphrase was run.
+Gemini accounting repair: the retained smoke now verifies offline at
+`17 native + 47 config overhead = 64 billed` (the legacy counter returned 9).
+The P5-only correction is frozen per exact config. Other study configs lack
+billed calibration evidence and block dev; the smoke's correction is not
+extrapolated to them. Stage caps and dollar ceilings are unchanged. See the
+latest accounting entry in [AMENDMENTS.md](AMENDMENTS.md). To recheck both cached
+smokes with no provider calls, run `probe --offline`; `preflight-openrouter
+--offline` checks Qwen only. This repair session adds $0 to existing ledger spend.
+
+This accounting repair spends **$0** and reuses previously billed provider
+smokes. No new generation ran in this repair session.
 Original design aggregate budgets are retained; revision 5 redacts slot labels. Read [AMENDMENTS.md](AMENDMENTS.md) for the
 explicit 1,024-billed-token author/repair change and optional Qwen judge-only
 replication. Neither is silently represented as the original preregistration.

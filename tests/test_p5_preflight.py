@@ -104,7 +104,7 @@ def test_cli_forwards_offline_without_spending_cap(monkeypatch):
     assert calls==[((0,),{'only_openrouter':True,'cached_only':True})]
 
 
-def test_retained_fixture_recounts_native_and_preserves_vertex(tmp_path,monkeypatch):
+def test_retained_fixture_recounts_native_and_rejects_uncalibrated_vertex(tmp_path,monkeypatch):
     from dataclasses import replace
     req=pf.smoke_request('replication')
     vertex=replace(req,identity='vertex-fixture',model='pro')
@@ -115,6 +115,8 @@ def test_retained_fixture_recounts_native_and_preserves_vertex(tmp_path,monkeypa
     path.write_text(packed({'counts':rows,'common_packet_counts':[{'passed':True}],
                            'counter_sha256':'old','passed':True}))
     monkeypatch.setattr(p,'HERE',tmp_path)
+    monkeypatch.setattr(p,'verify_freeze',lambda:{'gemini_calibration':{'configs':{}}})
+    monkeypatch.setattr(p,'materials',lambda:[])
     monkeypatch.setattr(pf,'fixtures',lambda:iter([(req,0),(vertex,0)]))
     class Counter:
         sha256='new'
@@ -123,10 +125,11 @@ def test_retained_fixture_recounts_native_and_preserves_vertex(tmp_path,monkeypa
             return 17
     monkeypatch.setattr(p,'native_counter',lambda **kw:Counter())
     result=pf.retained_tokens()
-    assert result['passed'] and result['counter_sha256']=='new'
+    assert not result['passed'] and result['counter_sha256']=='new'
     assert result['native_recounts']==1 and result['generation_calls']==0
     assert result['counts'][0]['tokens']==17
-    assert result['counts'][1]==rows[1]
+    assert not result['counts'][1]['passed']
+    assert 'no frozen billing calibration' in result['counts'][1]['error']
     rows[1]['wire_sha256']='stale';path.write_text(packed({'counts':rows}))
     monkeypatch.setattr(pf,'prose_token_fit',lambda:{'passed':True,'ranges':{}})
     assert not pf.retained_tokens()['passed']

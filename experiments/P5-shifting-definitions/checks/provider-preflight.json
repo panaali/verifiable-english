@@ -1,8 +1,22 @@
 {
   "cached_only": true,
-  "freeze_sha256": "14890bb5375b7bb83f001e64ca473b254910201f44588a7534fedef87934f804",
+  "freeze_sha256": "17be98760e18e3f0d6f1d412a59a176574ef0e889d5b5aaf017a8eff3c6ad2b3",
   "generation_calls": 0,
   "models": {
+    "pro": {
+      "billed_input": 64,
+      "billed_output": 12,
+      "config_sha256": "4b128aa76a93d4259d94eb5a212335665796632dbbdbf7aff8803c1823694a3a",
+      "count": 64,
+      "native_count": 17,
+      "overhead_tokens": 47,
+      "passed": true,
+      "request_sha256": "3f8c59a0e68023eb1c5bda8090fa898a1175f258ac1ec3da37a8a60ae61d0a0d",
+      "response_format": "application/json; response_schema",
+      "reused_smoke": true,
+      "revision": "gemini-3.1-pro-preview",
+      "wire_sha256": "f9466fa7afa892ef57169067f3cba3972bd908c933d26ede513eb4b9eae0da1a"
+    },
     "replication": {
       "billed_input": 17,
       "billed_output": 11,
@@ -16,6 +30,6 @@
       "wire_sha256": "e1498c99401e4bc2aa3f03bcc15bbef71f5bb806329569efb078a5c1303b3709"
     }
   },
-  "passed": false,
+  "passed": true,
   "requested_models_passed": true
 }

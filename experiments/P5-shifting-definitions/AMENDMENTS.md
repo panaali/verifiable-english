@@ -1,5 +1,57 @@
 # P5 execution amendments — 2026-09-22
 
+## P5 Gemini input accounting repair (2026-09-22)
+
+The retained Gemini infrastructure smoke has prompt digest `3f8c59a0...`
+and billed input 64. The shared Vertex counter supplied system instructions
+and tools, but omitted generationConfig (including response MIME and schema).
+Free countTokens checks returned 9 with that legacy config and 17 with the
+generation config included. Thus the original discrepancy is 55 tokens;
+the measured residual after fixing the config is **47 tokens**. This is an
+empirical per-config correction, not a claim about undocumented token internals.
+The smoke has no system text. A null `_p1_response_format` was an OpenRouter-only
+reporting field, not evidence that Vertex omitted the response schema.
+
+P5 now uses its own Vertex subclass; P1's backend, counters, probes, planning
+and freeze are unchanged. P5 sends the same contents, system instruction,
+tools and generation fields to countTokens that it supplies for generation.
+`calibrate-gemini` performs only free counts of already completed P5 ledger
+requests. It records native counts, exact wire and response hashes, served
+revision and additive residuals in `checks/gemini-calibration.json`. Refreeze
+binds that artifact and embeds the calibration table in `freeze.json`.
+Runtime and preflight add the residual to every counted input bound for its
+exact config. Visible answer-length checks remain plain native text counts.
+
+Only the smoke config currently has billed evidence. The correction is keyed
+by model and the full count config, including system instructions, response
+schema/MIME, tools, output limit and generation settings. A different config
+is blocked rather than assigned an invented correction. A dedicated coverage
+gate enumerates the uncalibrated study configs; independently authorized billing
+evidence for those configs is still required before dev. This repair makes no
+additional paid smoke or study calls. Repeated `probe --offline` reuses the
+retained billing and free-count evidence, verifying **17 + 47 = 64**, without
+generation or Vertex access. The billing ledger is not rewritten.
+
+Stage input limits, output caps and scenario dollar ceilings are unchanged:
+the calibrated total must fit the existing input cap. Gemini fixture receipts
+from the old counter are invalid until recounted with the full config and a
+matching calibration. The new freeze invalidates the previous execution
+timestamp; all existing material, review, timestamp and dev gates still apply.
+
+Reproduction after this repair (no paid calls):
+
+```sh
+export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
+uv run --offline python experiments/P5-shifting-definitions/run_p5.py preflight-openrouter --offline
+uv run --offline python experiments/P5-shifting-definitions/run_p5.py probe --offline
+uv run --offline python experiments/P5-shifting-definitions/run_p5.py preflight --offline
+```
+
+The calibration refresh, when needed, is `calibrate-gemini` followed by
+`freeze --scenario dual_judge`; refreshing requires free Vertex countTokens
+access but never dispatches generation. The API supports generationConfig:
+https://docs.cloud.google.com/vertex-ai/generative-ai/docs/reference/rest/v1/projects.locations.publishers.models/countTokens
+
 Original PREREG.md and PREREG-DESIGN.md remain byte-for-byte intact. This is a
 pre-inference implementation amendment, not externally timestamped. No probe,
 dev, scored or paid paraphrase has run in this implementation session.

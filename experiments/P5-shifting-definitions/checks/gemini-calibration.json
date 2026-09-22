@@ -1,0 +1,50 @@
+{
+  "configs": {
+    "4b128aa76a93d4259d94eb5a212335665796632dbbdbf7aff8803c1823694a3a": {
+      "overhead_tokens": 47,
+      "samples": [
+        {
+          "billed_input": 64,
+          "native_tokens": 17,
+          "request": {
+            "identity": "provider-preflight/p5/pro",
+            "max_input_tokens": 128,
+            "max_output_tokens": 1024,
+            "messages": [
+              {
+                "content": "Return JSON {\"verdict\":\"unknown\"}.",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "role": "probe"
+            },
+            "model": "pro",
+            "response_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "verdict": {
+                  "enum": [
+                    "unknown"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "verdict"
+              ],
+              "type": "object"
+            },
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "2e0b3644db033fc383fe8e95521ea9a22f5f0dec521b2d5ef182070ea739b644",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "f9466fa7afa892ef57169067f3cba3972bd908c933d26ede513eb4b9eae0da1a"
+        }
+      ]
+    }
+  },
+  "generation_calls": 0,
+  "method": "full GenerateContentConfig countTokens + per-config billed residual"
+}

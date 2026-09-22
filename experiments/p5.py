@@ -20,8 +20,9 @@ from experiments.p5_paraphrase import SANITISER, validate_reply
 from experiments import p5_review as review
 from experiments.p1 import append, sha, infrastructure_state
 from experiments.p1_preflight import CommandCounter
-from ve_experiments.paid import (MODELS, RATES, PaidRequest, PaidClient, Ledger, VertexBackend,
+from ve_experiments.paid import (MODELS, RATES, PaidRequest, PaidClient, Ledger,
     OpenRouterBackend, PreflightError, BudgetExceeded, InfrastructureError, digest, packed, cost)
+from experiments.p5_tokens import P5VertexBackend as VertexBackend
 
 ROOT=HERE.parents[1]
 CAP=Decimal('40')
@@ -127,8 +128,8 @@ def request(item,arm,stage,history=None,*,judge='pro',turn=0,commitment=None,que
         if history: content+='\nProtocol record:\n'+packed(history)
         instruction=ROLES.get(arm+'_'+role,ROLES.get(role,''))
     schema=VERDICT_SCHEMA if role=='judge' else None
-    # Include schema text in the system envelope so native countTokens counts it
-    # even on providers which omit response_schema from countTokens.
+    # Keep the frozen instruction text. Its schema copy does not account for
+    # the separate provider response_schema overhead; p5_tokens handles that.
     system=(instruction if stage=='paraphrase' else SYSTEM+' '+instruction)+((' Response schema: '+packed(schema)) if schema else '')
     inp,out=STAGES[stage]
     return PaidRequest(f"{item['split']}/{item['id']}/{arm}/{model}/{stage}/{turn}",model,
@@ -143,7 +144,9 @@ def native_counter(*, cached_only=False):
 
 def exact_text_tokens(client,text,limit):
     req=PaidRequest('count-only','pro',[{'role':'user','content':text}],100000,1)
-    count=client.backend.count(req)
+    # This measures visible text, not a dispatched prompt/config billing bound.
+    counter=client.backend.native_count if isinstance(client.backend,VertexBackend) else client.backend.count
+    count=counter(req)
     if count>limit:
         raise ValueError(f'visible text {count} exceeds {limit}; no truncation')
 
@@ -319,7 +322,7 @@ def freeze(scenario):
     paths=[ROOT/'ve_experiments/paid.py',ROOT/'ve_experiments/json_response.py',*ROOT.glob('experiments/p5*.py'),
            ROOT/'experiments/p1.py',ROOT/'experiments/p1_preflight.py',ROOT/'experiments/prereg_inventory.py',
            ROOT/'experiments/trial_analysis.py',*ROOT.glob('tests/test_p5*.py'),
-           ROOT/'tests/fixtures/p5_deepinfra_smoke.json',ROOT/'pyproject.toml',ROOT/'uv.lock',
+           ROOT/'tests/fixtures/p5_deepinfra_smoke.json',ROOT/'tests/fixtures/p5_vertex_smoke.json',ROOT/'pyproject.toml',ROOT/'uv.lock',
            HERE/'PREREG.md',ROOT/'experiments/PREREG-DESIGN.md',HERE/'inventory.json',HERE/'AMENDMENTS.md',
            HERE/'prompts.json',HERE/'CONSTRUCTION-V3.md',HERE/'CONSTRUCTION-V4.md',HERE/'CONSTRUCTION-V5.md',HERE/'REVIEW-CHECKLIST.md',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
            ROOT/'experiments/P1-deference/native_counter.py',*ROOT.glob('experiments/P1-deference/tokenizers/*.json'),
@@ -327,12 +330,17 @@ def freeze(scenario):
     paths += [HERE/name for name in ('MATERIALS-MANIFEST.json','MATERIALS-HASHES.txt',
         'MATERIALS-HASHES.txt.ots','checks/round5-review-submission.json',
         'checks/round5-review-verification.txt','checks/round5-review-import.json')]
+    calibration_path=HERE/'checks/gemini-calibration.json'
+    calibration=json.loads(calibration_path.read_text()) if calibration_path.exists() else {'configs':{}}
+    if not calibration_path.exists():write_json(calibration_path,calibration)
+    paths.append(calibration_path)
     hashes={str(p.relative_to(ROOT)):sha(p) for p in paths if p.exists()}
     result={'status':'BLOCKED_NOT_SCORED_READY','scenario':scenario,'hashes':hashes,'models':MODELS,
         'rates':RATES,'sampling':{'temperature':0,'seed':SEED,'samples':1},'ceilings':ceilings(scenario),
+        'gemini_calibration':calibration,
         'manifest_sha256':digest({'hashes':hashes,'scenario':scenario,'models':MODELS,'rates':RATES}),
         'commands':['generate','review --export PATH','review --submit PATH','inventory --count-tokens',
-                    'known-answer','freeze','preflight','preflight-openrouter --cap-usd N',
+                    'known-answer','calibrate-gemini','freeze','preflight','preflight-openrouter --cap-usd N',
                     'probe --cap-usd N','dev --cap-usd N','scored --cap-usd N',
                     'resume --split scored --cap-usd N','reconcile','analyze --split scored']}
     write_json(HERE/'freeze.json',result)
@@ -349,6 +357,10 @@ def verify_freeze(*, paraphrase_progress=False):
             continue
         if sha(ROOT/path)!=expected:
             raise PreflightError('freeze changed: '+path+'; amendment/refreeze required')
+    calibration_path=HERE/'checks/gemini-calibration.json'
+    if 'gemini_calibration' in f and (not calibration_path.exists() or
+            f['gemini_calibration']!=json.loads(calibration_path.read_text())):
+        raise PreflightError('Gemini calibration changed; refreeze required')
     if not f['ceilings']['within_cap']:
         raise BudgetExceeded('scenario exceeds $40')
     return f
@@ -362,7 +374,7 @@ def gate_receipt(name,result,stamp):
 
 def require_gates(scored=False):
     f=verify_freeze(); blockers=[]
-    for name in ('tracked-blinding','surface-soundness','review','independent-prose','construction','known-answer','tokenizer','lean-replay','packet-safety','leakage','role-boundaries','external-timestamp','provider-preflight',*(['dev'] if scored else [])):
+    for name in ('tracked-blinding','surface-soundness','review','independent-prose','construction','known-answer','gemini-calibration-coverage','tokenizer','lean-replay','packet-safety','leakage','role-boundaries','external-timestamp','provider-preflight',*(['dev'] if scored else [])):
         path=HERE/f'checks/{name}.json'
         r=json.loads(path.read_text()) if path.exists() else {}
         if r.get('passed') is not True or r.get('freeze_sha256')!=f['manifest_sha256']:
@@ -555,7 +567,7 @@ def paraphrase(cap, *, cached_only=False):
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('command',choices=['generate','paraphrase','review','inventory','freeze','probe','preflight',
-        'preflight-openrouter','known-answer','dev','scored','resume','reconcile','analyze','explanations'])
+        'preflight-openrouter','calibrate-gemini','known-answer','dev','scored','resume','reconcile','analyze','explanations'])
     parser.add_argument('--cap-usd',type=Decimal,default=Decimal(0))
     parser.add_argument('--scenario',choices=SCENARIOS,default='dual_judge')
     parser.add_argument('--split',choices=['dev','scored'],default='scored')
@@ -569,6 +581,10 @@ def main(argv=None):
         elif args.command=='review':
             result=review.review_export(args.export) if args.export else review.submit(args.submit) if args.submit else review.adjudicate(args.adjudicate) if args.adjudicate else review.gate()
         elif args.command=='freeze':result=freeze(args.scenario)
+        elif args.command=='calibrate-gemini':
+            from experiments.p5_tokens import calibrate
+            if args.offline:raise PreflightError('calibrate-gemini requires free Vertex countTokens')
+            result=calibrate()
         elif args.command=='known-answer':
             result=known_answer(materials(),check_labels());write_json(HERE/'checks/known-answer.json',result)
         elif args.command in ('preflight','inventory','preflight-openrouter','probe'):

@@ -9,7 +9,9 @@ import sys
 
 from experiments import p5 as p
 from experiments.p5_materials import read, write_json, archive
-from ve_experiments.paid import PaidRequest, PaidClient, Ledger, VertexBackend, OpenRouterBackend, digest, packed, PreflightError
+from ve_experiments.paid import PaidRequest, PaidClient, Ledger, OpenRouterBackend, digest, packed, PreflightError
+from experiments.p5_tokens import (P5VertexBackend as VertexBackend, config_key,
+    wire_key, correction, cached_count)
 
 
 def fixtures():
@@ -42,8 +44,11 @@ def tokenize():
         try:
             n=(vertex if req.model=='pro' else router).count(req)
             return {'identity':req.identity,'model':req.model,'wire_sha256':digest([req.messages,req.response_schema]),
+                **({'count_wire_sha256':wire_key(req),'config_sha256':config_key(req),
+                    'overhead_tokens':correction(req,vertex.calibration),
+                    'native_tokens':n-correction(req,vertex.calibration)} if req.model=='pro' else {}),
                 'tokens':n,'generated_reserve':reserve,'bounded_tokens':n+reserve,'limit':req.max_input_tokens,
-                'passed':n+reserve<=req.max_input_tokens,'source':'Vertex count_tokens (free)' if req.model=='pro' else 'pinned native Qwen chat template'}
+                'passed':n+reserve<=req.max_input_tokens,'source':'Vertex full-config count_tokens + frozen config overhead' if req.model=='pro' else 'pinned native Qwen chat template'}
         except Exception as exc:
             return {'identity':req.identity,'model':req.model,'passed':False,'error':str(exc)}
     pairs=list(fixtures())
@@ -193,6 +198,7 @@ def preflight(offline=False):
     f=p.verify_freeze();stamp=f['manifest_sha256'];reports={}
     from experiments.p5_surface import audit as surface_audit
     from experiments.p5_blinding import audit as blinding_audit
+    from experiments.p5_tokens import coverage
     checks=[('tracked-blinding',blinding_audit),('surface-soundness',surface_audit),('review',lambda:p.review.gate()),
         ('independent-prose',lambda:{'passed':len(read(p.HERE/'materials/paraphrases.jsonl.gz'))==84 and all(r['provenance'].get('independent_qwen_pass') for r in read(p.HERE/'materials/paraphrases.jsonl.gz'))}),
         ('construction',lambda:json.loads((p.HERE/'checks/construction.json').read_text())),
@@ -200,7 +206,8 @@ def preflight(offline=False):
         ('lean-replay',lean_replay),('packet-safety',packet_safety),
         ('leakage',lambda:json.loads((p.HERE/'checks/leakage.json').read_text())
             if 'leakage_passed' in reports['review'] else {'passed':False,'reason':'review leakage audit failed'}),('role-boundaries',role_boundaries),
-        ('external-timestamp',lambda:external_timestamp(stamp))]
+        ('external-timestamp',lambda:external_timestamp(stamp)),
+        ('gemini-calibration-coverage',coverage)]
     if not offline:checks.append(('tokenizer',tokenize))
     else:
         checks.append(('tokenizer',lambda:retained_tokens()))
@@ -243,6 +250,7 @@ def retained_tokens():
     backend=OpenRouterBackend(counter)
     rows={r['identity']:r for r in receipt.get('counts',[])}
     native_recounts=0
+    calibration=p.verify_freeze().get('gemini_calibration',{})
     for req,reserve in fixtures():
         r=rows.get(req.identity,{})
         if r.get('wire_sha256')!=digest([req.messages,req.response_schema]) or r.get('generated_reserve')!=reserve:
@@ -253,6 +261,29 @@ def retained_tokens():
             n=backend.count(req);native_recounts+=1
             r.update(tokens=n,bounded_tokens=n+reserve,limit=req.max_input_tokens,
                      passed=n+reserve<=req.max_input_tokens)
+        else:
+            try:
+                overhead=correction(req,calibration)
+                if r.get('count_wire_sha256')!=wire_key(req):
+                    raise PreflightError('full-config Vertex count missing; free recount required')
+                n=r['native_tokens']+overhead
+                r.update(tokens=n,overhead_tokens=overhead,bounded_tokens=n+reserve,
+                         limit=req.max_input_tokens,passed=n+reserve<=req.max_input_tokens)
+            except (PreflightError,KeyError) as exc:
+                r.update(passed=False,error=str(exc))
+    common={r.get('identity'):r for r in receipt.get('common_packet_counts',[])}
+    for item in p.materials():
+        req=p.request(item,'L','lone');r=common.get(req.identity)
+        if r is None:
+            return {'passed':False,'reason':'common packet Vertex count missing','generation_calls':0}
+        try:
+            overhead=correction(req,calibration)
+            if r.get('count_wire_sha256')!=wire_key(req):
+                raise PreflightError('common packet full-config Vertex count missing')
+            n=r['native_tokens']+overhead
+            r.update(tokens=n,overhead_tokens=overhead,bounded_tokens=n,limit=2048,passed=n<=2048)
+        except (PreflightError,KeyError) as exc:
+            r.update(passed=False,error=str(exc))
     receipt.update(counter_sha256=counter.sha256,native_recounts=native_recounts,
         passed=all(r['passed'] for r in receipt['counts']+receipt['common_packet_counts']),
         generation_calls=0)
@@ -277,11 +308,23 @@ def provider_smoke(cap,only_openrouter=False,*,cached_only=False):
         req=smoke_request(model)
         row=results[model]={'passed':False,'request_sha256':digest(req.messages)}
         try:
-            if cached_only and model=='pro':
-                raise PreflightError('Vertex native recount requires countTokens; unavailable offline')
+            reply=book.cached_reply(req)
+            row['reused_smoke']=reply is not None
             counter=p.native_counter(cached_only=cached_only) if model=='replication' else None
-            backend=VertexBackend() if model=='pro' else OpenRouterBackend(counter)
-            count=backend.count(req)
+            if model=='pro':
+                calibration=f.get('gemini_calibration',{})
+                if cached_only:
+                    if reply is None:raise PreflightError('cached smoke missing; generation forbidden')
+                    count,native,overhead=cached_count(req,reply,calibration)
+                else:
+                    backend=VertexBackend(calibration=calibration)
+                    overhead=correction(req,calibration)
+                    native=backend.native_count(req);count=native+overhead
+                row.update(native_count=native,overhead_tokens=overhead,
+                           config_sha256=config_key(req),wire_sha256=wire_key(req))
+            else:
+                backend=OpenRouterBackend(counter)
+                count=backend.count(req)
             row['count']=count
             if counter:
                 row['counter_sha256']=counter.sha256
@@ -289,8 +332,6 @@ def provider_smoke(cap,only_openrouter=False,*,cached_only=False):
             # Always reverify the original full request and current count, even
             # after a passed gate or refreeze. Never replace a billed smoke just
             # because its count or response fails validation.
-            reply=book.cached_reply(req)
-            row['reused_smoke']=reply is not None
             if reply is None:
                 if cached_only:
                     raise PreflightError('cached smoke missing; generation forbidden')
@@ -301,7 +342,7 @@ def provider_smoke(cap,only_openrouter=False,*,cached_only=False):
                 finally:client.close()
             row.update(revision=reply.revision,billed_input=reply.input_tokens,
                 billed_output=reply.billed_output_tokens,
-                response_format=reply.response.get('_p1_response_format'),
+                response_format='application/json; response_schema' if model=='pro' and req.response_schema else reply.response.get('_p1_response_format'),
                 passed=json.loads(reply.text)=={'verdict':'unknown'} and count==reply.input_tokens)
             if not row['passed']:
                 row['error']='cached/provider smoke response or native count disagrees'
