@@ -1,0 +1,29 @@
+{
+  "approve": 0.5,
+  "freeze_sha256": "92d5aaf773fd3835a7bea4829d4555f949ed03c57d7ac3a1237db21d225a4210",
+  "model_calls": 0,
+  "oracle": 1.0,
+  "passed": true,
+  "random": {
+    "E4/A": 0.50125,
+    "E4/F": 0.5029,
+    "E4/F_correct": 0.4915,
+    "E4/R": 0.5037,
+    "E4/U": 0.5003,
+    "E4/V": 0.50435,
+    "E4/W": 0.5005,
+    "E5/A": 0.50355,
+    "E5/F": 0.49995,
+    "E5/R": 0.49785,
+    "E5/U": 0.49835,
+    "E5/V": 0.50035,
+    "E5/W": 0.5003
+  },
+  "random_decisions_per_arm_panel": 20000,
+  "random_expected_accuracy": 0.5,
+  "random_expected_primary_contrasts": 0.0,
+  "reject": 0.5,
+  "reverse": 0.0,
+  "scope": "renderer -> offline backend -> strict parser -> item join -> separate family analysis",
+  "unknown": 0.0
+}
