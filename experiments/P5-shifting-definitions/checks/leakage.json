@@ -1,20 +1,1906 @@
 {
-  "action": "limited shortcut probe passed; no semantic-leakage guarantee",
-  "balanced_accuracy": 0.5,
+  "accuracy": 0.3333333333333333,
+  "chance_accuracy": 0.3333333333333333,
+  "classes": [
+    "benign",
+    "shift",
+    "smuggle"
+  ],
+  "convergence": [
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-00",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-00",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-00",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-01",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-01",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-01",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-02",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-02",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-02",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-03",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-03",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-03",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-00",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-00",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-00",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-01",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-01",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-01",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-02",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-02",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-02",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-03",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-03",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-03",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-04",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-04",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-04",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-05",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-05",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-05",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-06",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-06",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-06",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-07",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-07",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-07",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-08",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-08",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-08",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-09",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-09",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-09",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-10",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-10",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-10",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-11",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-11",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-11",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-12",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-12",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-12",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-13",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-13",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-13",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-14",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-14",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-14",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-15",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-15",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-15",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-16",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-16",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-16",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-17",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-17",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-17",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-18",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-18",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-18",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-19",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-19",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-19",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-20",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-20",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-20",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-21",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-21",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-21",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-22",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-22",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-22",
+      "iterations": 4,
+      "probe": "combined"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-23",
+      "iterations": 4,
+      "probe": "tokens"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-23",
+      "iterations": 0,
+      "probe": "structure"
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-23",
+      "iterations": 4,
+      "probe": "combined"
+    }
+  ],
+  "estimator": {
+    "C": 1.0,
+    "max_iter": 15000,
+    "model": "LogisticRegression",
+    "seed": 20260921,
+    "solver": "lbfgs"
+  },
+  "export_order_sha256": "676064cf7832dbd85a984bccf0574a5b4541916ffceb31c1bb13e748a5b16b37",
   "features": [
     "bytes",
-    "word_count",
-    "glossary_count",
-    "record_count",
-    "node_count",
-    "premise_count",
-    "argument_length",
-    "claim_length",
-    "record_length",
-    "root_position"
+    "words",
+    "glossary",
+    "records",
+    "nodes",
+    "premises",
+    "argument_bytes",
+    "node_bytes",
+    "record_bytes",
+    "root_index",
+    "edges",
+    "unique_parents",
+    "max_indegree",
+    "min_indegree",
+    "mean_indegree",
+    "sense_indices",
+    "unique_sense_indices",
+    "record_pointers"
   ],
-  "fit_scope": "dev only; leave-family-out; count/position/length features, no semantics",
-  "freeze_sha256": "7bf431eff3c307838e9ba8b479d084ac1c1900dc90871ec0944af64b02a346b2",
+  "fit_scope": "all 84 slots; 28 leave-family-out folds; no sibling crosses a fold",
+  "freeze_sha256": "0d0b6b4989fc9bd9c51c6f9ea45821a59e6f1f8aaac37f1ba69baad6153ff9de",
+  "generation_calls": 0,
+  "label_sha256": "c1a9eee5e145c60cea438603e97335ed5b5a9c4315af7a4837d70d38b39a6adc",
+  "limitation": "Shortcut screen, not proof of semantic difficulty or source fidelity.",
+  "order_mod3_counts": {
+    "0": {
+      "benign": 11,
+      "shift": 9,
+      "smuggle": 8
+    },
+    "1": {
+      "benign": 9,
+      "shift": 8,
+      "smuggle": 11
+    },
+    "2": {
+      "benign": 8,
+      "shift": 11,
+      "smuggle": 9
+    }
+  },
+  "packet_sha256": "8930f16d020844e70def8e26658918b1a5ecd30be9f8f1e8176e5b0f10ad21f1",
   "passed": true,
-  "threshold": 0.6
+  "policy": "Every fixed probe must score at or below three-class chance; no seed/hyperparameter selection.",
+  "probes": {
+    "combined": {
+      "accuracy": 0.3333333333333333,
+      "balanced_accuracy": 0.3333333333333333,
+      "confusion_matrix": [
+        [
+          12,
+          9,
+          7
+        ],
+        [
+          12,
+          9,
+          7
+        ],
+        [
+          12,
+          9,
+          7
+        ]
+      ],
+      "correct": 28,
+      "passed": true,
+      "predictions": [
+        {
+          "item_id": "id0c29599771e",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ide8e0bac5148",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i944ec9293759",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i4dd5e272e500",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i84f0dbedb385",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i43dc39b29763",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i33cff65bb1c6",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i1c49fa58634f",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "id7b763670ce8",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i6a7a135d581d",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ie9f9079587ef",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i04ad8dc8e7d0",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i6e223f797df5",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i5c7bcaa50294",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ie324ad64337a",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i420f4cf48c24",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ie91c992125d6",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i019191d17281",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "idfe4ef831b6b",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i5ff9beafefd0",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i1cd699655011",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ibff92a1bef43",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ic6db37a101b9",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i36c6db29d5e2",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i10372966b410",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i6709d1713209",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i003e73faa003",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i4657ceb4f232",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ie56e7abfc868",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i5700ca862164",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i3de1757dcbee",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ic8ebd06664a3",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "id45b01d47bef",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i972ed05962cc",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "id85fd1ff20a9",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i44540f7bd710",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "iea56f5cf8c44",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i20fae7525773",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i036d82cbdb65",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i8bac61ed164a",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i4a9a5c6b4293",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ida8b69c2a6b3",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i3f8cbefefdd9",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i053fba82504f",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "id7aa466a8a9d",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ie5cb8bfdd6b7",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ia421ef87c31e",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "if40c21abf0e8",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i45cad6845d7c",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i136f88ecf7fb",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "if98c01f39ef3",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "iec214bab4643",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i309c9486c702",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ia44857b0c704",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i49b8ba8ed56d",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i1ccb8b4dc602",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i813d6d9cb593",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ie0bbc8d44394",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i0475772b3ce6",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ia1f3f37599d0",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i89f933088bc4",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i6ce756e6c04d",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i2fa8a3580281",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i7b2cedcf5bd9",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ifdd96ce4567f",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i6c77fff11554",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ia8a90189268e",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i628c8fb458a2",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i79ad055d179a",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i6a530b75731e",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i23a90d479b8d",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i2c5ac14bda37",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i85158e7e0831",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i46f653c9ebf9",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i5931db220a00",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i62554daef82d",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i8d3108069e39",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ifa6320defaaf",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i8969f3c56c31",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i0017f199224b",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "icb6788a13bca",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ic46ca40d602c",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "id022529ac71a",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "id61aa747270b",
+          "predicted": "benign",
+          "truth": "benign"
+        }
+      ]
+    },
+    "structure": {
+      "accuracy": 0.3333333333333333,
+      "balanced_accuracy": 0.3333333333333333,
+      "confusion_matrix": [
+        [
+          28,
+          0,
+          0
+        ],
+        [
+          28,
+          0,
+          0
+        ],
+        [
+          28,
+          0,
+          0
+        ]
+      ],
+      "correct": 28,
+      "passed": true,
+      "predictions": [
+        {
+          "item_id": "id0c29599771e",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ide8e0bac5148",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i944ec9293759",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i4dd5e272e500",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i84f0dbedb385",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i43dc39b29763",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i33cff65bb1c6",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i1c49fa58634f",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "id7b763670ce8",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i6a7a135d581d",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ie9f9079587ef",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i04ad8dc8e7d0",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i6e223f797df5",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i5c7bcaa50294",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ie324ad64337a",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i420f4cf48c24",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ie91c992125d6",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i019191d17281",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "idfe4ef831b6b",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i5ff9beafefd0",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i1cd699655011",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ibff92a1bef43",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ic6db37a101b9",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i36c6db29d5e2",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i10372966b410",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i6709d1713209",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i003e73faa003",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i4657ceb4f232",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ie56e7abfc868",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i5700ca862164",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i3de1757dcbee",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ic8ebd06664a3",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "id45b01d47bef",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i972ed05962cc",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "id85fd1ff20a9",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i44540f7bd710",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "iea56f5cf8c44",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i20fae7525773",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i036d82cbdb65",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i8bac61ed164a",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i4a9a5c6b4293",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ida8b69c2a6b3",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i3f8cbefefdd9",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i053fba82504f",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "id7aa466a8a9d",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ie5cb8bfdd6b7",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ia421ef87c31e",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "if40c21abf0e8",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i45cad6845d7c",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i136f88ecf7fb",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "if98c01f39ef3",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "iec214bab4643",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i309c9486c702",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ia44857b0c704",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i49b8ba8ed56d",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i1ccb8b4dc602",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i813d6d9cb593",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ie0bbc8d44394",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i0475772b3ce6",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ia1f3f37599d0",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i89f933088bc4",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i6ce756e6c04d",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i2fa8a3580281",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i7b2cedcf5bd9",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ifdd96ce4567f",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i6c77fff11554",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ia8a90189268e",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i628c8fb458a2",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i79ad055d179a",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i6a530b75731e",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i23a90d479b8d",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i2c5ac14bda37",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i85158e7e0831",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i46f653c9ebf9",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i5931db220a00",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i62554daef82d",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i8d3108069e39",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ifa6320defaaf",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i8969f3c56c31",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i0017f199224b",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "icb6788a13bca",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ic46ca40d602c",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "id022529ac71a",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "id61aa747270b",
+          "predicted": "benign",
+          "truth": "benign"
+        }
+      ]
+    },
+    "tokens": {
+      "accuracy": 0.3333333333333333,
+      "balanced_accuracy": 0.3333333333333333,
+      "confusion_matrix": [
+        [
+          12,
+          9,
+          7
+        ],
+        [
+          12,
+          9,
+          7
+        ],
+        [
+          12,
+          9,
+          7
+        ]
+      ],
+      "correct": 28,
+      "passed": true,
+      "predictions": [
+        {
+          "item_id": "id0c29599771e",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ide8e0bac5148",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i944ec9293759",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i4dd5e272e500",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i84f0dbedb385",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i43dc39b29763",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i33cff65bb1c6",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i1c49fa58634f",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "id7b763670ce8",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i6a7a135d581d",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ie9f9079587ef",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i04ad8dc8e7d0",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i6e223f797df5",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i5c7bcaa50294",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ie324ad64337a",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i420f4cf48c24",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ie91c992125d6",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i019191d17281",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "idfe4ef831b6b",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i5ff9beafefd0",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i1cd699655011",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ibff92a1bef43",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ic6db37a101b9",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i36c6db29d5e2",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i10372966b410",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i6709d1713209",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i003e73faa003",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i4657ceb4f232",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ie56e7abfc868",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i5700ca862164",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i3de1757dcbee",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ic8ebd06664a3",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "id45b01d47bef",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i972ed05962cc",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "id85fd1ff20a9",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i44540f7bd710",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "iea56f5cf8c44",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i20fae7525773",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i036d82cbdb65",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i8bac61ed164a",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i4a9a5c6b4293",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ida8b69c2a6b3",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i3f8cbefefdd9",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i053fba82504f",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "id7aa466a8a9d",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ie5cb8bfdd6b7",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ia421ef87c31e",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "if40c21abf0e8",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i45cad6845d7c",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i136f88ecf7fb",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "if98c01f39ef3",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "iec214bab4643",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i309c9486c702",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ia44857b0c704",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i49b8ba8ed56d",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i1ccb8b4dc602",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i813d6d9cb593",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ie0bbc8d44394",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i0475772b3ce6",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ia1f3f37599d0",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i89f933088bc4",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i6ce756e6c04d",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i2fa8a3580281",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i7b2cedcf5bd9",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ifdd96ce4567f",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i6c77fff11554",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ia8a90189268e",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i628c8fb458a2",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i79ad055d179a",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i6a530b75731e",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i23a90d479b8d",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i2c5ac14bda37",
+          "predicted": "smuggle",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i85158e7e0831",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i46f653c9ebf9",
+          "predicted": "smuggle",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i5931db220a00",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i62554daef82d",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i8d3108069e39",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ifa6320defaaf",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i8969f3c56c31",
+          "predicted": "smuggle",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i0017f199224b",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "icb6788a13bca",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ic46ca40d602c",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "id022529ac71a",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "id61aa747270b",
+          "predicted": "benign",
+          "truth": "benign"
+        }
+      ]
+    }
+  },
+  "threshold": 0.3333333333333333
 }

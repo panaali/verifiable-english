@@ -2,8 +2,9 @@
 from collections import defaultdict
 from datetime import datetime, timezone
 import json
+import random
 from pathlib import Path
-from experiments.p5_materials import HERE, archive, read, write_json
+from experiments.p5_materials import HERE, SEED, archive, read, write_json
 from ve_experiments.paid import digest, PreflightError
 
 CHECKS = ('source_fidelity', 'root_preserved', 'no_added_assumption', 'no_repaired_flaw',
@@ -12,6 +13,10 @@ CHECKS = ('source_fidelity', 'root_preserved', 'no_added_assumption', 'no_repair
 
 def review_export(destination, base=HERE):
     items = read(base/'materials/dev.jsonl.gz') + read(base/'materials/scored.jsonl.gz')
+    # Sorting opaque IDs first prevents inventory/archive order from becoming
+    # a label channel. The shuffle never inspects a label or family.
+    items.sort(key=lambda item: item['id'])
+    random.Random(f'{SEED}/packet-order-v2').shuffle(items)
     # No split/family/variant/formal artifact in review packets.
     rows = [{'item_id': i['id'], 'packet_sha256':digest(i['payload']), 'packet':i['payload'],
              'reviewer_id':'', 'reviewer_kind':'human|project_lead|model', 'model_family':'',
@@ -64,7 +69,12 @@ def submit(path, base=HERE):
 def adjudicate(path, base=HERE):
     row=json.loads(Path(path).read_text())
     ledger=read(base/'materials/review-ledger.jsonl.gz')
-    matching=[r for r in ledger if r['event']=='review' and r['item_id']==row.get('item_id')]
+    items={i['id']:i for split in ('dev','scored') for i in read(base/f'materials/{split}.jsonl.gz')}
+    item=items.get(row.get('item_id'))
+    if item is None or row.get('packet_sha256') != digest(item['payload']):
+        raise PreflightError('adjudication must bind the current packet')
+    matching=[r for r in ledger if r['event']=='review' and r['item_id']==row.get('item_id')
+              and r['packet_sha256']==row['packet_sha256']]
     if len(matching)<2 or not row.get('adjudicator') or not row.get('reason') or not row.get('source_evidence'):
         raise PreflightError('adjudication requires two reviews, identity, reason and source evidence')
     if row.get('review_digests') != [digest(r) for r in matching]:
@@ -99,7 +109,13 @@ def gate(base=HERE):
             unresolved.append(item['id'])
         else:
             anchored.append({'id':item['id'], 'packet_sha256':digest(item['payload']), **annotation})
-    result={'passed':len(items)==84 and not unresolved, 'reviewed_slots':len(anchored),
+    # Review cannot open on a stale or failing shortcut audit. Recompute from
+    # exact packet bytes, including after the independent paraphrase pass.
+    from experiments.p5_leakage import audit
+    leakage = audit(base)
+    write_json(base/'checks/leakage.json', leakage)
+    result={'passed':len(items)==84 and not unresolved and leakage['passed'],
+            'leakage_passed':leakage['passed'], 'reviewed_slots':len(anchored),
             'unresolved':unresolved, 'ledger_sha256':digest(ledger)}
     archive(base/'materials/anchored-labels.jsonl.gz', anchored)
     write_json(base/'checks/review.json',result)

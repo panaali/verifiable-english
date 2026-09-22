@@ -16,11 +16,9 @@ def offline_pass(dossiers):
         if set(dossier) != ALLOWED:
             raise ValueError('paraphraser input must be the natural-language dossier allowlist')
         nodes = deepcopy(dossier['nodes'])
-        for node in nodes:
-            node['text'] = 'For ' + node['text'].replace(' is ', ': ', 1)
         result.append({'id':dossier['id'], 'nodes':nodes,
-            'argument':'Taken together, the stated facts and cited rules are offered as grounds for the final claim.',
-            'provenance':{'method':'separate deterministic offline draft editor v1',
+            'argument':dossier['argument'],
+            'provenance':{'method':'separate offline English-rendering preservation pass v2',
                 'input_sha256':digest(dossier), 'input_fields':sorted(ALLOWED),
                 'independent_qwen_pass':False, 'paid_calls':0,
                 'limitation':'Not independent semantic paraphrasing; must be replaced and reviewed before scoring.'}})

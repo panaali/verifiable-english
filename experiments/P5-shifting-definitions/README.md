@@ -16,8 +16,9 @@ senses, is identical across arms. All three siblings have the same glossary.
 
 The reference generator is **not** the online VE author. Every X/S/VE author
 starts from the same final prose, and all authoring/search/repair work is charged.
-The offline editor runs in a separate process receiving only natural-language
-dossiers. Its deterministic draft paraphrases are **not the independently
+The English renderer produces every subclaim and the complete argument. A
+separate offline process preserves that rendering without replacing it with
+boilerplate. Its deterministic drafts are **not the independently
 paraphrased Qwen materials promised by the preregistration**. The latter cannot
 be purchased under this task’s $0 authorization. That gate remains blocked;
 this delivery does not claim ready-to-score prose or scientific efficacy.
@@ -89,6 +90,14 @@ releases/allowance adjustments; it cannot fabricate a refund or erase unknown
 billing. A panel halt is retained, missing assigned outcomes score zero, and
 completed responses are reused on resume. Local oracle receipts are fsynced
 before subsequent paid stages so restart does not silently change history.
+
+Construction revision P5-2 fixes the rejected first corpus: source dossiers stay
+fixed across siblings, explicit record pointers are absent, and shifts and
+implicit sample-to-lot bridges occur in the proposed prose. Both decoy senses
+are active. The export is shuffled independently of labels. Token, structural
+and combined logistic classifiers must each score at most 33.33% in
+leave-family-out validation before the review gate passes. See
+[AMENDMENTS.md](AMENDMENTS.md) for the six-leaf packing change and token-cap issue.
 
 Independent review instructions and open questions are in
 [REVIEW-CHECKLIST.md](REVIEW-CHECKLIST.md). Explanation ratings are separately

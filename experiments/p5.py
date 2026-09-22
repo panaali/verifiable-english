@@ -70,10 +70,10 @@ def materials(split=None):
 def packet(item):
     p=item['payload']
     # Explicit allowlist; no label, reference environment, family or variant.
-    return '\n'.join(['Dossier '+p['id'],'Possible senses (R indexes a sense; records use R identifiers): '+ '; '.join(g['sense'] for g in p['glossary']),
+    return '\n'.join(['Dossier '+p['id'],'Possible senses (records describe their content): '+ '; '.join(g['sense'] for g in p['glossary']),
         'Declared premises:']+[f"{n['id']}: {n['text']}" for n in p['premises']]+['Authoritative records:']+
         [f"{r['id']}: {r['text']}" for r in p['records']]+['Proposed graph:']+
-        [f"{n['id']} ({','.join(n['parents'])}; {n['rule_record']}): {n['text']}" for n in p['nodes']]+
+        [f"{n['id']} ({','.join(n['parents'])}): {n['text']}" for n in p['nodes']]+
         [f"Original root {p['root']}. {p['argument']}"])
 
 
@@ -117,7 +117,7 @@ def request(item,arm,stage,history=None,*,judge='pro',turn=0,commitment=None,que
         visible.update(glossary=[{k:g[k] for k in ('term','sense')} for g in raw['glossary']],
             premises=[{k:n[k] for k in ('id','text')} for n in raw['premises']],
             records=[{k:r[k] for k in ('id','text')} for r in raw['records']],
-            nodes=[{k:n[k] for k in ('id','parents','rule_record','text')} for n in raw['nodes']])
+            nodes=[{k:n[k] for k in ('id','parents','text')} for n in raw['nodes']])
         content=packed(visible); instruction=ROLES['paraphrase']
     else:
         content=packet(item)

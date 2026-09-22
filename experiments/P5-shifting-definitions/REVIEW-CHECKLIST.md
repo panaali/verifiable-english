@@ -22,11 +22,19 @@ to the exact reviews; alternatively leave the slot unready. Corrections invalida
 old packet hashes and require fresh independent reviews. A planted-label mismatch
 requires construction repair and an amendment; it is never silently relabeled.
 
-Open questions: Are the compact registry rules natural and clear enough? Does
-“cleared” actually shift between the cited uses? Is the omitted bridge genuinely
-absent? Are any redundant paths licensing a purported flawed root? Do shorthand
-rule groups or the vocabulary workload create a shortcut? Is the draft prose a
-faithful argument rather than a label hint? Offline drafts are NOT the registered
+The previous 84-packet NOT READY review is retained against its old hashes and
+cannot approve these replacement packets. P5-2 keeps records fixed across
+siblings and renders the proposed inferences in full. Alternative checks in a
+sentence are conditional comparisons, not additional declared facts. In
+particular, naming a unit as a sample of a lot supplies no rule transporting its
+properties to the lot.
+
+Open questions: Is each unqualified reuse actually read in the sense required by
+the downstream record? Is the sample-to-lot bridge plausible but genuinely
+unstated? Are both decoy senses used consistently? Are the conditional
+alternatives natural, or too cumbersome? Can the full prose meet the original
+context caps? The exact packet must pass the unigram/structural leakage gate;
+that does not establish semantic readiness. These drafts are NOT the registered
 Qwen paraphrases and cannot pass the independent-paraphrase gate.
 
 Explanation scoring is a separate post-inference task: two raters receive the

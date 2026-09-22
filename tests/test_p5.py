@@ -8,7 +8,7 @@ from types import SimpleNamespace
 import pytest
 from experiments import p5 as p
 from experiments import p5_review as review
-from experiments.p5_materials import read, structural_signature, archive, build, topology
+from experiments.p5_materials import read, structural_signature, argument_signature, archive, build, topology
 from experiments.p5_analysis import endpoint, parse, known_answer, analyze, menu
 from ve_experiments.paid import PreflightError, PaidReply, OfflineBackend, Ledger, PaidClient, digest, packed
 
@@ -25,11 +25,12 @@ def test_inventory_graphs_and_witnesses(items,labels):
     assert Counter(i['split'] for i in items)=={'dev':12,'scored':72}
     assert Counter(l['predicates'] for l in labels if l['split']=='scored')=={20:24,40:24,60:24}
     graphs=read(p.HERE/'materials/graphs.jsonl.gz')
-    signatures={};reference={}
+    signatures={};reference={};formal_signatures={}
     for row in graphs:
         family=row['slot']['cluster'];sig=structural_signature(row['topology'])
         assert signatures.setdefault(family,sig)==sig
         intended=ArgumentGraph.from_dict(row['intended'])
+        assert formal_signatures.setdefault(family,argument_signature(intended))==argument_signature(intended)
         assert len(intended.deductions)==24 and len(intended.claims)==30
         assert len(intended.env.predicates)==row['slot']['predicates']
         assert len(row['predicate_identities'])==len(intended.env.predicates)
@@ -43,6 +44,7 @@ def test_inventory_graphs_and_witnesses(items,labels):
             assert not r['errors'] and all(v==['follows'] for v in r['findings'].values())
             reference[row['slot']['variant']]=True
     assert len(signatures)==len(set(signatures.values()))==28
+    assert len(set(formal_signatures.values()))==28
 
 
 def test_shared_packet_allowlist_and_isolation(items):
@@ -111,8 +113,9 @@ def test_known_answers_actual_scorer(items,labels):
     r=known_answer(items,labels)
     json.dumps(r)  # Gate receipts must remain serializable native JSON.
     assert r['passed'] and r['oracle_detection_and_completion']==1
-    assert r['random_exact']==pytest.approx(1/931)
-    assert abs(r['random_simulated']-1/931)<.02
+    expected=sum(len(l['acceptable_locations']) for l in labels)/len(labels)/931
+    assert r['random_exact']==pytest.approx(expected)
+    assert abs(r['random_simulated']-expected)<.02
     for split in ('dev','scored'):
         primary=r['oracle_reports'][split]['judges']['pro']['primary']
         assert primary['boundary_safeguard'] and primary['interval'][0]<0<primary['interval'][1]
@@ -190,7 +193,10 @@ def test_sibling_glossaries_and_workload_identical(items):
     for family in {i['group'] for i in items}:
         siblings=[i['payload'] for i in items if i['group']==family]
         assert siblings[0]['glossary']==siblings[1]['glossary']==siblings[2]['glossary']
-        assert len({digest([(n['id'],n['parents'],n['rule_record']) for n in s['nodes']]) for s in siblings})==1
+        assert len({digest([(n['id'],n['parents']) for n in s['nodes']]) for s in siblings})==1
+        assert len({digest(s['records']) for s in siblings})==1
+        assert len({s['argument'] for s in siblings})==3
+        assert all('rule_record' not in n for s in siblings for n in s['nodes'])
         assert all(len(s['nodes'])==24 and len(s['records'])==24 and len(s['premises'])==6 for s in siblings)
 
 
@@ -231,3 +237,89 @@ def test_item_arm_ceiling_includes_infrastructure_holds(tmp_path,items):
         book.append(f,{'event':'infrastructure_failure','identity':'prior','infrastructure_hold_usd':'.15'})
     from ve_experiments.paid import BudgetExceeded
     with pytest.raises(BudgetExceeded,match='item-arm'):book.reserve(req)
+
+
+def test_rendered_prose_and_active_decoys(items):
+    graphs={r['id']:r for r in read(p.HERE/'materials/graphs.jsonl.gz')}
+    for item in items:
+        q=item['payload']; g=graphs[item['id']]
+        assert g['construction']['version']==2
+        assert len(g['construction']['redundant_edges'])>=2
+        for n in q['nodes']:
+            assert n['text'] in q['argument']
+            assert n['text'].startswith('Given ') and ', ' in n['text']
+        from ve import ArgumentGraph
+        graph=ArgumentGraph.from_dict(g['intended'])
+        claims={c.name:c for c in graph.claims}
+        decoys=[claims[n].source for n in g['construction']['decoy_nodes']]
+        assert len(set(decoys))==4
+        # Both critical predicates are independently concluded on a comparison
+        # lot in every variant, so predicate-orphan counts cannot identify it.
+        comparisons=[claims[n].source for n in g['construction']['comparison_nodes']]
+        assert len(set(comparisons))==2
+        import re
+        assert set(re.findall(r'p\d+',g['bridge']['source'])) <= set(re.findall(r'p\d+',' '.join(comparisons)))
+        assert len(q['argument'])>1000
+        assert 'rule_record' not in p.packet(item)
+        assert 'rule_record' not in packed(p.request(item,'shared','paraphrase').messages)
+
+
+def test_export_is_reproducible_and_not_variant_order(tmp_path,items,labels):
+    for split in ('dev','scored'):
+        archive(tmp_path/f'materials/{split}.jsonl.gz',[i for i in items if i['split']==split])
+    out=tmp_path/'review.json';review.review_export(out,tmp_path)
+    rows=json.loads(out.read_text()); first=out.read_bytes()
+    kinds={l['id']:l['kind'] for l in labels}
+    assert all(len({kinds[r['item_id']] for r in rows[k::3]})==3 for k in range(3))
+    # Reversing the input archives cannot alter the seeded export.
+    for split in ('dev','scored'):
+        archive(tmp_path/f'materials/{split}.jsonl.gz',list(reversed([i for i in items if i['split']==split])))
+    review.review_export(out,tmp_path)
+    assert out.read_bytes()==first
+
+
+def test_review_cannot_bypass_failed_leakage(tmp_path,items,labels,monkeypatch):
+    import experiments.p5_leakage as leakage
+    for split in ('dev','scored'):
+        archive(tmp_path/f'materials/{split}.jsonl.gz',[i for i in items if i['split']==split])
+    archive(tmp_path/'labels.jsonl.gz',labels)
+    monkeypatch.setattr(leakage,'audit',lambda base:{'passed':False,'accuracy':1.0})
+    result=review.gate(tmp_path)
+    assert result['leakage_passed'] is False and result['passed'] is False
+    assert json.loads((tmp_path/'checks/leakage.json').read_text())['accuracy']==1.0
+
+
+def test_sibling_token_and_structure_workload(items):
+    import re
+    from experiments.p5_leakage import feature_row
+    for family in {i['group'] for i in items}:
+        siblings=[i for i in items if i['group']==family]
+        # Opaque item identity is the only unigram difference. Content-role
+        # assignment in the prose carries the label, not token frequency.
+        bags=[Counter(re.findall(r'(?u)\b\w+\b', packed({k:v for k,v in i['payload'].items() if k!='id'}).lower())) for i in siblings]
+        assert bags[0]==bags[1]==bags[2]
+        assert feature_row(siblings[0],0)==feature_row(siblings[1],1)==feature_row(siblings[2],2)
+
+
+def test_adjudication_excludes_superseded_packets(tmp_path,items,monkeypatch):
+    item=items[0]; annotation={'kind':'benign'}
+    archive(tmp_path/f"materials/{item['split']}.jsonl.gz",[item])
+    current=[{'event':'review','item_id':item['id'],'packet_sha256':digest(item['payload']),
+              'reviewer_id':r,'annotation':annotation} for r in ('test-a','test-b')]
+    old={**current[0],'packet_sha256':'superseded','reviewer_id':'historical'}
+    archive(tmp_path/'materials/review-ledger.jsonl.gz',[old,*current])
+    resolution={'item_id':item['id'],'packet_sha256':digest(item['payload']),
+                'adjudicator':'test-only','reason':'fixture','source_evidence':['fixture'],
+                'review_digests':[digest(r) for r in current],'annotation':annotation}
+    path=tmp_path/'resolution.json';path.write_text(json.dumps(resolution))
+    monkeypatch.setattr(review,'gate',lambda base:{'test_only':True})
+    assert review.adjudicate(path,tmp_path)=={'test_only':True}
+    resolution['packet_sha256']='superseded';path.write_text(json.dumps(resolution))
+    with pytest.raises(PreflightError,match='current packet'):
+        review.adjudicate(path,tmp_path)
+
+
+def test_replacement_ids_do_not_reuse_disclosed_labels(items):
+    rejected=read(p.HERE/'materials/rejected-v1.jsonl.gz')
+    assert len(rejected)==84
+    assert not {i['id'] for i in items} & {i['id'] for i in rejected}

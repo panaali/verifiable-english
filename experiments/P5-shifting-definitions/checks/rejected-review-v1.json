@@ -1,0 +1,18 @@
+{
+  "original_revision": "e6d2cf73071f2491fce68d1d23ecbc46478371cc",
+  "packets": 84,
+  "paid_calls": 0,
+  "passed": false,
+  "rejected_packets": "materials/rejected-v1.jsonl.gz",
+  "review_annotations": "materials/review-ledger.jsonl.gz (old hashes)",
+  "source_files": {
+    "analysis.json": "78a23f5011fa78a030ca34c146dd594b8362a8e22a6a3d9d1fdfc5da00fe4261",
+    "analyze.py": "5775b78b6cec1f9c2425ba547069421b900fc54fc2d56fe19f8f21e6e9b4d074",
+    "build_review.py": "f11f5c83daa9e364a06c3942597153243c0150bd3559310d0cb67a4c2874c8de",
+    "closure.json": "c249613e13e7077bbe1966511bc505743a5f4bbcd595b1dfd5816daad3a9741a",
+    "closure.py": "ca00f9a23ad3ac9bc95840bed47acb30a0dbfcc420494cb6fee8150e343d094c",
+    "completed-review.json": "91544d55331da4d5d7911daf29cc12e1599314cda2968a7850fb28d7a7669ac3",
+    "deep.py": "2907acfa0ca0bc2dac58a522b0cf7d96f734dbd2bc38287575c89acc7536ad83"
+  },
+  "verdict": "NOT READY"
+}

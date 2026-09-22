@@ -121,25 +121,8 @@ def lean_replay():
 
 
 def leakage():
-    import numpy as np
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.model_selection import LeaveOneGroupOut, cross_val_predict
-    from sklearn.metrics import balanced_accuracy_score
-    labels={l['id']:l for l in p.labels(False)}; items=p.materials('dev')
-    def features(i):
-        q=i['payload'];text=p.packet(i)
-        return [len(text),len(text.split()),len(q['glossary']),len(q['records']),len(q['nodes']),len(q['premises']),
-                len(q['argument']),sum(len(n['text']) for n in q['nodes']),
-                sum(len(r['text']) for r in q['records']),int(q['root'][1:])]
-    X=np.asarray([features(i) for i in items]);y=np.asarray([labels[i['id']]['kind']!='benign' for i in items]);groups=[i['group'] for i in items]
-    from sklearn.pipeline import make_pipeline
-    from sklearn.preprocessing import StandardScaler
-    predictions=cross_val_predict(make_pipeline(StandardScaler(),LogisticRegression(class_weight='balanced',random_state=p.SEED)),X,y,groups=groups,cv=LeaveOneGroupOut())
-    accuracy=float(balanced_accuracy_score(y,predictions))
-    return {'passed':accuracy<=.6,'balanced_accuracy':accuracy,'threshold':.6,
-            'fit_scope':'dev only; leave-family-out; count/position/length features, no semantics',
-            'features':['bytes','word_count','glossary_count','record_count','node_count','premise_count','argument_length','claim_length','record_length','root_position'],
-            'action':'inspect/amend before scoring' if accuracy>.6 else 'limited shortcut probe passed; no semantic-leakage guarantee'}
+    from experiments.p5_leakage import audit
+    return audit(p.HERE)
 
 
 def role_boundaries():
@@ -187,13 +170,37 @@ def preflight(offline=False):
     return {'passed':not blockers,'gates':{name:r.get('passed') for name,r in reports.items()},'generation_calls':0,'blockers':blockers}
 
 
+def prose_token_fit():
+    """Exact local Qwen counts; never substitute them for Gemini counts."""
+    backend=OpenRouterBackend(p.native_counter())
+    rows=[]
+    for item in p.materials():
+        dossier=next(d for d in read(p.HERE/'materials/dossiers.jsonl.gz') if d['id']==item['id'])
+        requests=[('paraphrase',p.request({'id':item['id'],'split':'materials','payload':dossier},'shared','paraphrase'),4096),
+                  ('common',p.request(item,'L','lone',judge='replication'),2048)]
+        for scope,req,limit in requests:
+            n=backend.count(req)
+            rows.append({'scope':scope,'identity':req.identity,'wire_sha256':digest([req.messages,req.response_schema]),
+                         'tokens':n,'limit':limit,'passed':n<=limit})
+    result={'passed':all(r['passed'] for r in rows),'counts':rows,'generation_calls':0,
+            'scope':'All 84 Qwen common-packet and paraphrase input requests; exact pinned native tokenizer and chat template; no provider calls.',
+            'ranges':{scope:{'minimum':min(r['tokens'] for r in rows if r['scope']==scope),
+                             'maximum':max(r['tokens'] for r in rows if r['scope']==scope),
+                             'failures':sum(not r['passed'] for r in rows if r['scope']==scope)}
+                      for scope in ('paraphrase','common')}}
+    write_json(p.HERE/'checks/prose-token-fit.json',result)
+    return result
+
+
 def retained_tokens():
     receipt=json.loads((p.HERE/'checks/tokenizer.json').read_text())
-    rows={r['identity']:r for r in receipt['counts']}
+    rows={r['identity']:r for r in receipt.get('counts',[])}
     for req,reserve in fixtures():
         r=rows.get(req.identity,{})
         if r.get('wire_sha256')!=digest([req.messages,req.response_schema]) or r.get('generated_reserve')!=reserve:
-            raise PreflightError('tokenizer fixture changed; free recount required')
+            local=prose_token_fit()
+            return {'passed':False,'reason':'Tokenizer fixtures changed; free Gemini recount required. Local Qwen counts do not replace Gemini counts.',
+                    'local_qwen_passed':local['passed'],'local_qwen_ranges':local['ranges'],'generation_calls':0}
     return receipt
 
 

@@ -1,32 +1,75 @@
 {
-  "broader_p1_regression": {
-    "failed": 1,
-    "failure": "tests/test_p1_amendment14.py::test_recover_and_reconstruct_every_retained_scored_call_without_dispatch",
-    "passed": 35,
-    "reason": "Existing retained-ledger fixture: spent 4.84262062420 differs from amendment15 receipt 3.64271861740; P1 sources and artifacts unchanged."
+  "generator_version": 2,
+  "leakage": {
+    "accuracy": {
+      "combined": 0.3333333333333333,
+      "structure": 0.3333333333333333,
+      "tokens": 0.3333333333333333
+    },
+    "chance_accuracy": 0.3333333333333333,
+    "passed": true
   },
-  "engineering_time": "Not timed independently; no human review time claimed. Future reviewer minutes are mandatory in review ledger.",
-  "material_status": "84 reference graphs plus separate-process offline drafts; not independently paraphrased or reviewed",
+  "lean_replay": {
+    "items": 84,
+    "passed": true,
+    "queries": 4760
+  },
+  "offline_preflight": {
+    "freeze_sha256": "0d0b6b4989fc9bd9c51c6f9ea45821a59e6f1f8aaac37f1ba69baad6153ff9de",
+    "gates": {
+      "construction": true,
+      "external-timestamp": false,
+      "independent-prose": false,
+      "known-answer": true,
+      "leakage": true,
+      "lean-replay": true,
+      "review": false,
+      "role-boundaries": true,
+      "tokenizer": false
+    },
+    "passed": false
+  },
   "p5_tests": {
     "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run pytest -q tests/test_p5.py",
     "failed": 0,
-    "passed": 17
+    "passed": 23
   },
   "paid_generation_calls": 0,
   "paid_usd": "0",
   "probe_dev_scored_run": false,
   "remaining": [
-    "paid Qwen independent paraphrases",
-    "two independent reviews of all 84 slots",
+    "paid independent Qwen paraphrases",
+    "fresh independent reviews of all 84 final packets",
+    "token feasibility",
     "aggregate external timestamp",
     "provider smoke gates",
     "scheduled dev feasibility and fidelity gate"
   ],
+  "retained_history": {
+    "rejected_v1_packets": 84,
+    "rejected_v2_initial_packets": 84,
+    "superseded_reviews": 84
+  },
+  "review_export": {
+    "order_sha256": "676064cf7832dbd85a984bccf0574a5b4541916ffceb31c1bb13e748a5b16b37",
+    "packet_sha256": "8930f16d020844e70def8e26658918b1a5ecd30be9f8f1e8176e5b0f10ad21f1",
+    "packets": 84
+  },
   "tokenizer": {
-    "common_fixtures": 84,
-    "common_packet_max": 2044,
-    "common_packet_min": 1651,
-    "passed": true,
-    "stage_fixtures": 1764
-  }
+    "gemini_recount_required": true,
+    "local_qwen_ranges": {
+      "common": {
+        "failures": 84,
+        "maximum": 3956,
+        "minimum": 3257
+      },
+      "paraphrase": {
+        "failures": 51,
+        "maximum": 4683,
+        "minimum": 3687
+      }
+    },
+    "passed": false
+  },
+  "unresolved_spec_question": "Full English inputs exceed the unchanged 2048 common-packet and 4096 paraphrase caps. Compact representation or an explicit input/cost amendment must be decided before inference."
 }

@@ -1,6 +1,6 @@
 {
   "adaptive_followups": 1,
-  "freeze_sha256": "7bf431eff3c307838e9ba8b479d084ac1c1900dc90871ec0944af64b02a346b2",
+  "freeze_sha256": "0d0b6b4989fc9bd9c51c6f9ea45821a59e6f1f8aaac37f1ba69baad6153ff9de",
   "fresh_context_fields": [
     "packet",
     "commitment",

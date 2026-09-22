@@ -53,3 +53,68 @@ The bridge remains hidden and is never a trusted online premise.
 Any tokenizer, leakage, independent review, source-label, replay, provider or dev
 failure is a real block. Publish this amendment and the exact aggregate freeze
 hash before scoring. A successful reference replay is no semantic-readiness claim.
+
+## P5-2: reconstruction after the blinded NOT READY review
+
+All 84 original packets failed the independent Claude Opus material review.
+The original annotations are retained, bound to their old packet hashes, in
+`materials/review-ledger.jsonl.gz`; none approves a regenerated packet. The
+original preregistration remains unchanged. This amendment changes construction,
+not the assigned slots, efficacy endpoints, paid authorization, or review bar.
+
+The generator now makes one fixed source dossier per family with three possible
+recorded checks. The declared facts and argument select one check. Its result
+establishes either the required property of a lot, a different sense of the same
+word for that lot, or the required property of a sample. The downstream rule
+requires the lot property in its original sense. In a shift, the argument reuses
+the word across those two source-anchored readings; in a smuggle, it uses the
+sample result without stating any sample-to-lot transfer assumption. Both
+missing bridges remain hidden diagnostic artifacts. The authoritative records
+are byte-identical across siblings. The sample/lot naming convention is recorded
+in the source and constant descriptions; it asserts no property transfer.
+
+Each item now has 24 full English inference sentences, also collected in
+`argument`, rendered from the graph. Claims cite premise content. No public node
+contains a `rule_record` pointer. Each proposal discusses the same alternatives,
+but only its selected check is declared: alternative checks remain unassumed.
+This balances the lexical workload through substantive alternatives rather than
+padding. Both senses of two other ambiguous terms are asserted consistently in
+every variant. Both critical senses are also established on a separate
+comparison lot, so neither is an orphan predicate. Dormant conditional routes and redundant context edges appear in
+benign and flawed proposals alike. Sense, predicate, record, entity and claim
+indices are seeded permutations independent of the item label. Opaque-ID sorted
+packets are shuffled with the fixed `20260921/packet-order-v2` seed for export;
+no seed is selected based on labels or model outcomes. A construction-version
+namespace gives replacement packets fresh opaque IDs, preventing reuse of the
+old review's public ID-to-label mapping; hidden slot identities remain fixed.
+
+There are still 28 distinct family shapes, 24 deductions, six declared premise
+claims, 24 source records, and 20/40/60 glossary entries. The first premise now
+contains seven facts (the six starting facts plus the selected recorded check);
+the other five are conjunctions of rules, as before. Source records may contain
+multiple conditional alternatives. The actual formal graph includes the fact
+premise at the selected-check deduction; its non-isomorphism is checked in
+addition to the original dependency skeleton. These are explicit changes to
+what is packed into the six leaves, not extra free bridges.
+
+`checks/leakage.json` reports three fixed logistic-regression probes: unigram
+counts, packet structural/length features, and their combination. All 84 slots
+are evaluated in 28 leave-family-out folds; vectorizers and scalers fit on the
+training fold only. Every probe must achieve **at most 1/3 accuracy** before the
+review gate can pass. All variants have the same token multiset (apart from
+opaque IDs) and the same structural features within their family. The check
+reruns on the exact review bytes, including after paid paraphrasing. Export
+position is an external randomization audit, not a packet feature; its three
+residue-class label counts are reported separately. Random finite-sample order
+imbalance is not repaired by label-aware shuffling. The first unsuccessful
+reconstruction audit is retained in `checks/leakage-attempts.jsonl.gz`; its
+structural probe included export-position indicators and scored 36/84, while
+token and combined probes scored 28/84. The revised construction removes lexical
+length differences; no corpus seed or trained hyperparameter was selected.
+
+Remaining specification issue: full English prose and substantive definitions
+may exceed the preregistered 2,048-token common-packet limit and the 4,096-token
+paraphraser input allowance. Token gates remain binding. No evidence is silently
+truncated, no cap is increased, and no paid call is authorized by this amendment.
+The paid independent paraphrase and fresh independent review of all 84 final
+packets still precede scoring.

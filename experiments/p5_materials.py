@@ -9,7 +9,7 @@ from pathlib import Path
 import random
 
 from ve import (Environment, Claim, Deduction, ArgumentGraph, FiniteModel, evaluate,
-                check_countermodel, prove_entailment, check_argument, formula_to_data)
+                check_countermodel, prove_entailment)
 from ve.argument import deduction_identity
 from ve.environment import LANGUAGE, PROFILE, SPEC_REVISION
 from ve_experiments.paid import digest, packed, PreflightError
@@ -62,6 +62,19 @@ def structural_signature(parents):
                           outgoing[n]) for n in range(30)))
 
 
+def argument_signature(graph):
+    """Sufficient non-isomorphism invariant of the actual certified graph."""
+    incoming = {e.conclusion: e.premises for e in graph.deductions}
+    outgoing = Counter(p for e in graph.deductions for p in e.premises)
+    depths = {}
+    def depth(n):
+        if n not in depths:
+            depths[n] = 0 if n not in incoming else 1 + max(depth(p) for p in incoming[n])
+        return depths[n]
+    return digest(sorted((depth(c.name), len(incoming.get(c.name, ())), outgoing[c.name])
+                         for c in graph.claims))
+
+
 def conjunction(parts):
     result = parts[0]
     for part in parts[1:]:
@@ -69,68 +82,199 @@ def conjunction(parts):
     return result
 
 
+# Compact, concrete sense descriptions: records and prose share this English
+# surface, but never a per-node record/sense pointer.
+SURFACES = [
+    ('sealed', 'packaging intact'), ('logged', 'entry recorded'),
+    ('weighed', 'mass measured'), ('coded', 'identifier assigned'),
+    ('counted', 'quantity tallied'), ('cooled', 'temperature reduced'),
+    ('sorted', 'contents ordered'), ('stored', 'location assigned'),
+    ('labelled', 'label attached'), ('booked', 'transport reserved'),
+    ('wrapped', 'cover fitted'), ('scanned', 'barcode read'),
+    ('rated', 'grade recorded'), ('tagged', 'tag attached'),
+    ('listed', 'catalogue entry made'), ('dated', 'date recorded'),
+    ('sized', 'dimensions measured'), ('dried', 'moisture removed'),
+    ('cleaned', 'surface washed'), ('marked', 'mark applied'),
+    ('packed', 'container filled'), ('queued', 'place assigned'),
+    ('routed', 'route assigned'), ('checked', 'check completed'),
+    ('stamped', 'stamp applied'), ('wrapped-up', 'handling completed'),
+    ('tracked', 'tracking enabled'), ('tested', 'test completed'),
+    ('filed', 'document stored'), ('signed', 'signature recorded'),
+    ('weighed-in', 'arrival mass recorded'), ('shelved', 'shelf assigned'),
+    ('clipped', 'clip attached'), ('tied', 'tie attached'),
+    ('folded', 'fold completed'), ('mounted', 'mount fitted'),
+    ('bundled', 'bundle formed'), ('stacked', 'stack formed'),
+    ('bagged', 'bag fitted'), ('boxed', 'box fitted'),
+    ('numbered', 'number assigned'), ('photographed', 'image recorded'),
+    ('loaded', 'loading completed'), ('unloaded', 'unloading completed'),
+    ('received', 'receipt recorded'), ('shipped', 'departure recorded'),
+    ('staged', 'staging completed'), ('scheduled', 'time assigned'),
+    ('balanced', 'balance checked'), ('calibrated', 'calibration recorded'),
+    ('secured', 'fastener fitted'), ('inspected', 'inspection completed'),
+    ('processed', 'processing completed'), ('registered', 'registration recorded'),
+    ('documented', 'documentation stored'), ('measured', 'measurement recorded'),
+    ('reviewed', 'review completed'), ('audited', 'audit completed'),
+    ('retained', 'retention recorded'), ('released', 'release recorded'),
+]
+AMBIGUITIES = [
+    ('cleared', 'inspection passed', 'payment settled'),
+    ('ready', 'packing completed', 'staffing arranged'),
+    ('active', 'power connected', 'registry current'),
+    ('open', 'seal removed', 'account enabled'),
+    ('sound', 'casing intact', 'signal audible'),
+    ('free', 'fee waived', 'space available'),
+]
+
+
 def build(slot, parents):
-    rng = random.Random(slot['topology_seed'])
+    """Fixed family dossier; change the proposed route, never a source rule.
+
+    One of three recorded checks is declared. Its output concerns the lot in
+    the required sense, the lot in a rival sense, or a sample in the required
+    sense. A proposal follows that output into the same downstream rule. The
+    latter two need, respectively, sense identification or sample-to-lot
+    transport. Neither bridge occurs in the dossier. All three possible
+    checks, dormant routes and redundant citations occur in EVERY sibling.
+    """
+    rng = random.Random(slot['topology_seed'] + '/content-v2')
     size = slot['predicates']
     names = [f'p{i:02d}' for i in range(size)]
     rng.shuffle(names)
-    main, alternatives = names[:-3], names[-3:]
-    atoms = [(main[n % len(main)], f'c{n // len(main)}') for n in range(30)]
-    # A critical edge on the mandatory chain, never a location encoded in IDs.
-    target = rng.randrange(10, 27)
+    main, rival, selectors, dormant = names[:-6], names[-6], names[-5:-2], names[-2:]
+    atoms = [(main[n % len(main)], f'lot{n // len(main)}') for n in range(30)]
+    target = rng.randrange(19, 27)
     parent = target - 1
-    old, entity = atoms[parent]
-    alternate = alternatives[1] if slot['variant']=='smuggle' else alternatives[0]
+    primary, entity = atoms[parent]
+    # In the source, this is a sample of the lot, not another name for it.
+    sample = 'sample0'
+    entity_names = [f'unit{n}' for n in range(8)]
+    rng.shuffle(entity_names)
+    entity_map = dict(zip(sorted({c for _, c in atoms} | {sample, 'comparison0'}), entity_names))
+    atoms = [(p, entity_map[c]) for p, c in atoms]
+    entity = entity_map[entity]
+    sample = entity_map[sample]
+    # Assert both critical senses on a separate lot in every variant. Thus
+    # neither sense is an orphan predicate or occurs only at the disputed
+    # step; facts about this comparison lot license no cross-lot transfer.
+    atoms[16] = (rival, entity_map['comparison0'])
+    atoms[17] = (primary, entity_map['comparison0'])
+    options = [(primary, entity), (rival, entity), (primary, sample)]
+    kind_index = ('benign', 'shift', 'smuggle').index(slot['variant'])
+    chosen = options[kind_index]
+    proposed_atoms = list(atoms)
+    proposed_atoms[parent] = chosen
     ids = [f'n{n:02d}' for n in range(30)]
     rng.shuffle(ids)
-    terms = {name: f'status{i+1}' for i, name in enumerate(names)}
-    terms[old] = terms[alternatives[0]] = 'cleared'
-    decoys = [a for a in main if a != old][:2]
-    for word, primary, rival in zip(('ready', 'active'), decoys, alternatives[1:]):
-        terms[primary] = terms[rival] = word
-    descriptions = {p: f'{terms[p]} (R{i+1})' for i, p in enumerate(names)}
+    record_ids = [f'r{n:02d}' for n in range(24)]
+    rng.shuffle(record_ids)
+    surface_bank = list(SURFACES)
+    rng.shuffle(surface_bank)
+    surfaces = dict(zip(names, surface_bank))
+    # Either critical sense is a property plausibly generalized from a
+    # physical sample to a lot. Account/staffing senses remain decoys only.
+    critical_senses = [
+        ('clear', 'optically transparent', 'contamination absent'),
+        ('light', 'density low', 'colour pale'),
+        ('stable', 'temperature constant', 'shape retained'),
+        ('dry', 'surface moisture absent', 'internal moisture low'),
+    ]
+    ambiguities = [rng.choice(critical_senses), *rng.sample(AMBIGUITIES, 2)]
+    # Both decoy senses are asserted and consumed in every proposal, including
+    # benign controls. Choose distinct predicates before the critical step.
+    decoy_indices = [n for n in range(6, 16) if atoms[n][0] != primary]
+    used = set()
+    decoy_pairs = []
+    for n in decoy_indices:
+        if atoms[n][0] not in used:
+            used.add(atoms[n][0]); decoy_pairs.append(n)
+        if len(decoy_pairs) == 4:
+            break
+    for (a, b), (term, first, second) in zip(
+            [(primary, rival), *[(atoms[decoy_pairs[j]][0], atoms[decoy_pairs[j+1]][0]) for j in (0, 2)]], ambiguities):
+        senses = [first, second]; rng.shuffle(senses)
+        surfaces[a] = (term, senses[0]); surfaces[b] = (term, senses[1])
+    # Selector and sense indices are a random family permutation, independent
+    # of variant. No N-2 / N-1 role allocation survives into visible indices.
+    codes = list(range(1, size + 1)); rng.shuffle(codes)
+    descriptions = {p: f'{surfaces[p][0]}: {surfaces[p][1]} (R{code:02d})'
+                    for p, code in zip(names, codes)}
+    constants = sorted({c for _, c in atoms} | {sample})
     env = Environment.from_dict({'language': LANGUAGE, 'profile': PROFILE, 'spec_revision': SPEC_REVISION,
-        'vocabulary': {'sorts': {'unit': {'description': 'A unit in the local dossier.'}},
+        'vocabulary': {'sorts': {'unit': {'description': 'A lot or its physical sample.'}},
             'predicates': {p: {'arguments': ['unit'], 'description': descriptions[p]} for p in names},
-            'constants': {c: {'sort': 'unit', 'description': f'Unit {c}.'} for _, c in atoms}}})
+            'constants': {c: {'sort': 'unit', 'description': f'Sample taken from lot {entity}.' if c == sample else f'Lot {c}.'} for c in constants}}})
+
     def atom(pair):
         p, c = pair
         return f'@{c} is {p}'
-    def clause(ps, out):
-        return f'if ({conjunction([atom(p) for p in ps])}), then ({atom(out)})'
-    intended_rules, merged_rules, rule_prose, records = [], [], [], []
-    record_uses = {}
+
+    def clause(inputs, out):
+        return f'if ({conjunction([atom(p) for p in inputs])}), then ({atom(out)})'
+
+    def english(pair, qualified=True):
+        p, c = pair
+        term, meaning = surfaces[p]
+        return f'{c} is {term}' + (f' ({meaning})' if qualified else '')
+
+    # Ignore several redundant cited parents in all variants. The selected
+    # critical predecessor is also just context in later shortcuts; only the
+    # next chain step transports it. Hence there is one localized defect.
+    inputs_by_node = {}
+    redundant = []
     for n, ps in enumerate(parents, 6):
-        inputs = [atoms[p] for p in ps]
-        if n == target and slot['variant'] != 'benign':
-            inputs[ps.index(parent)] = (alternate, entity)
-        intended_rules.append(clause(inputs, atoms[n]))
-        merged_rules.append(clause([atoms[p] for p in ps], atoms[n]))
-        # Same number and shape of records for every sibling. Intended grounding
-        # is evidence, never a verdict or a free missing bridge.
-        rec = {'id': f'r{n-6:02d}', 'text': 'If ' + ' and '.join(
-            f'{c} has R{names.index(p)+1}' for p, c in inputs) +
-            f', {atoms[n][1]} has R{names.index(atoms[n][0])+1}.'}
-        if len({c for _,c in inputs} | {atoms[n][1]}) == 1:
-            rec['text'] = f'For {atoms[n][1]}, ' + ' and '.join(
-                f'R{names.index(p)+1}' for p,_ in inputs) + f' imply R{names.index(atoms[n][0])+1}.'
-        records.append(rec)
-        rule_prose.append({'id': ids[n], 'parents': [ids[p] if p >= 6 else ids[0] for p in ps],
-            'rule_record': rec['id'], 'text': f'{atoms[n][1]} is {terms[atoms[n][0]]}.'})
-        record_uses[ids[n]] = {'conclusion': descriptions[atoms[n][0]],
-                              'required_inputs': [descriptions[p] for p, _ in inputs]}
-    # Shift silently identifies two cleared senses. Smuggle instead requires
-    # a bridge from cleared to the independently defined ready sense. The full
-    # glossary is identical across all three siblings; no variant-only word.
-    fact = conjunction([atom(a) for a in atoms[:6]])
-    def make_graph(rules, certify=False):
+        needed = [p for p in ps if not (n > target and p == parent)]
+        if n > 9:
+            extras = [p for p in needed if p != n-1]
+            if extras:
+                removed = rng.choice(extras)
+                needed.remove(removed)
+                redundant.append((n, removed))
+        inputs_by_node[n] = [atoms[p] for p in needed]
+    if len(redundant) < 2:
+        raise ValueError('insufficient harmless context edges')
+
+    # Three source routes share all upstream conditions. Their ordering is
+    # shuffled without consulting this slot's label.
+    branch_order = list(range(3)); rng.shuffle(branch_order)
+    selector_atoms = [(p, entity) for p in selectors]
+    rule_sets, merged_sets, records = [], [], []
+    for n in range(6, 30):
+        inputs = inputs_by_node[n]
+        if n == parent:
+            pairs = [(inputs + [selector_atoms[j]], options[j]) for j in branch_order]
+        else:
+            pairs = [(inputs, atoms[n])]
+        # Unused conditional antecedents are legitimate alternative support,
+        # identically present in benign and flawed dossiers. They cannot fire.
+        if n in (6, 7, target):
+            pairs.append(([(dormant[0], entity), (dormant[1], entity)], atoms[n]))
+        rule_sets.append([clause(ins, out) for ins, out in pairs])
+        merged_sets.append([clause([chosen if a == atoms[parent] and n == target else a for a in ins], out)
+                            for ins, out in pairs])
+        records.append({'id': record_ids[n-6], 'text': ' '.join(
+            'If ' + ' and '.join(english(a) for a in ins) + ', then ' + english(out) + '.'
+            for ins, out in pairs)})
+    # Relationship is context, not a representativeness or predicate-transfer
+    # premise. It appears in the same record in every sibling.
+    records[0]['text'] += f' Here {sample} names a sample taken from lot {entity}.'
+    fact_atoms = atoms[:6] + [selector_atoms[kind_index]]
+    fact = conjunction([atom(a) for a in fact_atoms])
+
+    def make_graph(rule_groups, certify=False, bridge=None):
         leaves = [Claim.create(env, ids[0], fact + '.\n')]
         for group in range(5):
-            leaves.append(Claim.create(env, ids[group+1], conjunction(rules[group::5]) + '.\n'))
-        claims = leaves + [Claim.create(env, ids[n], atom(atoms[n]) + '.\n') for n in range(6, 30)]
+            leaves.append(Claim.create(env, ids[group+1], conjunction(
+                [r for rules in rule_groups[group::5] for r in rules]) + '.\n'))
+        claims = leaves + [Claim.create(env, ids[n], atom(proposed_atoms[n]) + '.\n') for n in range(6, 30)]
+        if bridge is not None:
+            claims.append(bridge)
         edges = []
         for n, ps in enumerate(parents, 6):
             premises = list(dict.fromkeys([ids[0] if p < 6 else ids[p] for p in ps] + [ids[1+(n-6)%5]]))
+            if n == parent and ids[0] not in premises:
+                premises.append(ids[0])
+            if n == target and bridge is not None:
+                premises.append('bridge')
             edges.append(Deduction(f'e{ids[n][1:]}', tuple(premises), ids[n]))
         graph = ArgumentGraph(env, tuple(claims), tuple(edges), ids[29], target_scope='original dossier root')
         if certify:
@@ -139,23 +283,34 @@ def build(slot, parents):
             for edge in edges:
                 proof = prove_entailment(env, [by_id[n].ast for n in edge.premises], by_id[edge.conclusion].ast)
                 if proof.status != 'Found':
-                    raise ValueError(f'proof search: {proof.status}')
+                    raise ValueError(f'proof search {edge.name}: {proof.status}')
                 new.append(replace(edge, certificates=({'edge_id': deduction_identity(graph, edge),
                     'direction': 'follows', 'proof': proof.certificate},)))
             graph = replace(graph, deductions=tuple(new))
         return graph
-    proposed = make_graph(merged_rules, True)
-    intended = make_graph(intended_rules, slot['variant'] == 'benign')
-    # Least forward closure gives a finite model of ALL intended declared leaves.
-    true = set(atoms[:6])
-    for n, ps in enumerate(parents, 6):
-        inputs = [atoms[p] for p in ps]
-        if n == target and slot['variant'] != 'benign':
-            inputs[ps.index(parent)] = (alternate, entity)
-        if all(p in true for p in inputs):
-            true.add(atoms[n])
-    model = FiniteModel.from_dict(env, {'complete': True, 'domains': {'unit': sorted({c for _, c in atoms})},
-        'constants': {c: c for _, c in atoms}, 'relations': {p: [[c] for q, c in sorted(true) if q == p] for p in names}})
+
+    proposed = make_graph(merged_sets, True)
+    intended = make_graph(rule_sets, slot['variant'] == 'benign')
+    bridge = Claim.create(env, 'bridge', clause([chosen], atoms[parent]) + '.\n')
+    augmented = intended if slot['variant'] == 'benign' else make_graph(rule_sets, True, bridge)
+    # Least closure of every source rule, not just the cited proof path.
+    horn_rules = []
+    for n in range(6, 30):
+        ins = inputs_by_node[n]
+        if n == parent:
+            horn_rules.extend((ins + [selector_atoms[j]], options[j]) for j in range(3))
+        else:
+            horn_rules.append((ins, atoms[n]))
+        if n in (6, 7, target):
+            horn_rules.append(([(dormant[0], entity), (dormant[1], entity)], atoms[n]))
+    true = set(fact_atoms)
+    while True:
+        expanded = true | {out for ins, out in horn_rules if set(ins) <= true}
+        if expanded == true:
+            break
+        true = expanded
+    model = FiniteModel.from_dict(env, {'complete': True, 'domains': {'unit': constants},
+        'constants': {c: c for c in constants}, 'relations': {p: [[c] for q, c in sorted(true) if q == p] for p in names}})
     leaves = intended.claims[:6]
     root = next(c for c in intended.claims if c.name == intended.root)
     if not all(evaluate(env, c.ast, model) for c in leaves):
@@ -163,45 +318,60 @@ def build(slot, parents):
     negative = check_countermodel(env, [c.ast for c in leaves], root.ast, model).valid
     if negative != (slot['variant'] != 'benign'):
         raise ValueError('whole-premise root witness failure')
-    # A bridge is a hidden diagnostic artifact, never an added declared leaf.
-    bridge = Claim.create(env, 'bridge', clause([atoms[parent]], (alternate, entity)) + '.\n')
-    augmented = intended
-    if slot['variant'] != 'benign':
-        augmented = replace(intended, claims=(*intended.claims, bridge), deductions=tuple(
-            replace(e, premises=(*e.premises, 'bridge')) if e.conclusion == ids[target] else e
-            for e in intended.deductions))
-        by_id = {c.name:c for c in augmented.claims}
-        certified = []
-        for edge in augmented.deductions:
-            proof = prove_entailment(env, [by_id[n].ast for n in edge.premises], by_id[edge.conclusion].ast)
-            if proof.status != 'Found':
-                raise ValueError('bridge-augmented edge proof failure')
-            certified.append(replace(edge, certificates=({'edge_id':deduction_identity(augmented, edge),
-                'direction':'follows','proof':proof.certificate},)))
-        augmented = replace(augmented, deductions=tuple(certified))
-    plain_leaves = [{'id': ids[0], 'text': '; '.join(f'{c} has R{names.index(p)+1}' for p, c in atoms[:6]) + '.'}]
+
+    other_checks = [j for j in branch_order if j != kind_index]
+    plain_leaves = [{'id': ids[0], 'text': '; '.join(english(a) for a in fact_atoms) +
+        '. The checks that ' + ' and '.join(english(selector_atoms[j]) for j in other_checks) + ' remain unassumed.'}]
     for group in range(5):
         plain_leaves.append({'id': ids[group+1], 'text': 'Rules ' + ', '.join(r['id'] for r in records[group::5]) + ' are declared.'})
-    glossary = [{'term': terms[p], 'sense': descriptions[p]} for p in names]
-    rng.shuffle(glossary)
-    rng.shuffle(rule_prose)
-    rng.shuffle(plain_leaves)
-    rng.shuffle(records)
-    public_id = 'i' + hashlib.sha256((slot['cluster'] + '/' + str(('shift','smuggle','benign').index(slot['variant']))).encode()).hexdigest()[:12]
+    nodes, record_uses = [], {}
+    for n, ps in enumerate(parents, 6):
+        cited = [proposed_atoms[p] for p in ps]
+        # At the target the term is reused without its qualifier. The record's
+        # conditional fixes the relevant sense; the shift is in this claimed
+        # inference, not a change to that authoritative conditional. A sample
+        # result is likewise offered directly as grounds for the lot result,
+        # without stating a sample-to-lot bridge.
+        contents = []
+        for q, a in zip(ps, cited):
+            # Refer to the earlier result by content, without silently
+            # restating a lot fact when only a sample fact was established.
+            contents.append(f'the {surfaces[primary][0]} result' if q == parent
+                            else english(a, qualified=n != target))
+        if n == parent:
+            contents.append(english(selector_atoms[kind_index]))
+        text = f'Given {" and ".join(contents)}, {english(proposed_atoms[n])}.'
+        if n == parent:
+            # Record alternatives are genuine contextual comparisons, not
+            # asserted premises. Permute which route is relied on while
+            # preserving the complete lexical workload across siblings.
+            text += ' The checks that ' + ' and '.join(english(selector_atoms[j]) for j in other_checks)
+            text += ' would establish that ' + ' and '.join(english(options[j]) for j in other_checks) + ', respectively.'
+        nodes.append({'id': ids[n], 'parents': list(dict.fromkeys(ids[p] if p >= 6 else ids[0] for p in ps)), 'text': text})
+        record_uses[ids[n]] = {'conclusion': descriptions[proposed_atoms[n][0]],
+            'entity': proposed_atoms[n][1], 'required_inputs': [english(a) for a in inputs_by_node[n]],
+            'source_record': record_ids[n-6]}
+    glossary = [{'term': surfaces[p][0], 'sense': descriptions[p]} for p in names]
+    rng.shuffle(glossary); rng.shuffle(nodes); rng.shuffle(plain_leaves); rng.shuffle(records)
+    public_id = 'i' + hashlib.sha256(('P5-construction-v2/' + slot['cluster'] + '/' + str(('shift','smuggle','benign').index(slot['variant']))).encode()).hexdigest()[:12]
+    argument = '\n'.join(f"{n['id']}: {n['text']}" for n in nodes) + f'\nThus {english(atoms[29])} ({ids[29]}).'
     dossier = {'id': public_id, 'glossary': glossary, 'premises': plain_leaves,
-        'records': records, 'nodes': rule_prose, 'root': ids[29],
-        'argument': 'The declared facts and rules justify the listed steps and the final claim.'}
+        'records': records, 'nodes': nodes, 'root': ids[29], 'argument': argument}
     return dossier, {'id': public_id, 'slot_id': slot['id'], 'family': slot['cluster'], 'split': slot['split'],
         'kind': slot['variant'], 'predicates': size, 'acceptable_locations': [[ids[parent], ids[target]]]
-        if slot['variant']=='shift' else [[ids[target]]] if slot['variant']=='smuggle' else [[]],
-        'sense_use_mapping': record_uses, 'root_meaning': descriptions[atoms[29][0]],
+        if slot['variant']=='shift' else [[ids[target]], [ids[parent], ids[target]]] if slot['variant']=='smuggle' else [[]],
+        'sense_use_mapping': record_uses, 'root_meaning': english(atoms[29]),
         'bridge': bridge.source, 'affected_uses': [ids[parent], ids[target]]}, {
         'id': public_id, 'slot': slot, 'topology': parents, 'structural_signature': structural_signature(parents),
         'intended': intended.to_dict(), 'merged': proposed.to_dict(), 'model': model.to_dict(),
         'negative': negative, 'bridge': bridge.to_dict(env), 'augmented': augmented.to_dict(),
+        'construction': {'version': 2, 'target': ids[target], 'parent': ids[parent],
+            'redundant_edges': [[ids[n], ids[q]] for n, q in redundant],
+            'decoy_nodes': [ids[n] for n in decoy_pairs],
+            'comparison_nodes': [ids[16], ids[17]],
+            'dormant_predicates': dormant, 'selector_predicates': selectors},
         'predicate_identities': {p: digest({'environment_id': env.environment_id, 'symbol': p,
                                             'declaration': env.to_dict()['vocabulary']['predicates'][p]}) for p in names}}
-
 
 def generate(base=HERE):
     if any(r.get('identity','').startswith('scored/') for r in read(base/'runs/study/costs.jsonl')):
@@ -230,6 +400,22 @@ def generate(base=HERE):
             archive(base/'materials/construction-ledger.jsonl.gz', attempts)
             raise
         dossiers.append(dossier); labels.append(label); graphs.append(graph)
+    # Shuffle opaque IDs, not variant-ordered inventory positions. This exact
+    # permutation is shared by archive/export/leakage checks.
+    triples = list(zip(dossiers, labels, graphs))
+    triples.sort(key=lambda row: row[0]['id'])
+    random.Random(f'{SEED}/packet-order-v2').shuffle(triples)
+    dossiers, labels, graphs = map(list, zip(*triples))
+    actual_signatures = {}
+    for row in graphs:
+        graph = ArgumentGraph.from_dict(row['intended'])
+        signature = argument_signature(graph)
+        family = row['slot']['cluster']
+        if actual_signatures.setdefault(family, signature) != signature:
+            raise ValueError('sibling formal topologies differ')
+        row['formal_structural_signature'] = signature
+    if len(set(actual_signatures.values())) != 28:
+        raise ValueError('actual formal graph invariant collision')
     archive(base/'materials/dossiers.jsonl.gz', dossiers)
     archive(base/'labels.jsonl.gz', labels)
     archive(base/'materials/graphs.jsonl.gz', graphs)
@@ -250,7 +436,8 @@ def generate(base=HERE):
         archive(base/'materials/review-ledger.jsonl.gz', [])
     report = {'passed': len(signatures)==28, 'slots': len(labels), 'families':28,
         'method':'pairwise distinct directed degree/depth invariants; sufficient non-isomorphism test',
-        'failed_candidates': len(attempts), 'independent_prose_ready': False,
+        'failed_candidates': len(attempts), 'actual_formal_graph_families': len(set(actual_signatures.values())),
+        'generator_version': 2, 'source_records_fixed_within_family': True, 'independent_prose_ready': False,
         'status':'BUILT_REFERENCE_AND_OFFLINE_DRAFT_REVIEW_BLOCKED', 'paid_calls':0}
     write_json(base/'checks/construction.json', report)
     return report
