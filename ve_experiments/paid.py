@@ -21,6 +21,15 @@ MODELS = {"pro": "gemini-3.1-pro-preview",
           "weak": "meta-llama/llama-3.1-8b-instruct"}
 RATES = {"pro": ("2", "12", "1"), "replication": (".36", ".40", "1.055"),
          "weak": (".02", ".04", "1.055")}
+WEAK_PROVIDER_RATES = {  # Amendment 8: cached provider-preflight endpoint listing, USD/million.
+    "DeepInfra": (".02", ".04", "1.055"), "Novita": (".02", ".05", "1.055"),
+    "Groq": (".05", ".08", "1.055"), "CoreWeave": (".22", ".22", "1.055"),
+    "Cloudflare": (".152", ".287", "1.055"),
+}
+VERDICT_SCHEMA = {"type": "object", "properties": {
+    "verdict": {"type": "string", "enum": ["approve", "reject", "unknown"]}},
+    "required": ["verdict"], "additionalProperties": False}
+JUDGE_OUTPUT_CAP = 1024
 
 
 def packed(value):
@@ -31,10 +40,20 @@ def digest(value):
     return hashlib.sha256(packed(value).encode()).hexdigest()
 
 
-def cost(model, inp, output):
+def cost(model, inp, output, *, provider=None, arm=None):
     if any(type(v) is not int or v < 0 for v in (inp, output)):
         raise ValueError("token counts must be nonnegative integers")
-    ri, ro, fee = map(Decimal, RATES[model])
+    rates = RATES[model]
+    if model == "weak":
+        if provider is not None:
+            if provider not in WEAK_PROVIDER_RATES:
+                raise PreflightError(f"provider absent from design price table: {provider}")
+            rates = WEAK_PROVIDER_RATES[provider]
+        elif arm is not None:
+            # R is unrestricted; reserve the most expensive advertised tool endpoint.
+            # Other arms retain fp8 routing (DeepInfra/Novita).
+            rates = WEAK_PROVIDER_RATES["CoreWeave" if arm == "R" else "Novita"]
+    ri, ro, fee = map(Decimal, rates)
     return (Decimal(inp) * ri + Decimal(output) * ro) * fee / Decimal(1000000)
 
 
@@ -88,6 +107,7 @@ class PaidRequest:
     tools: list[dict] = field(default_factory=list)
     metadata: dict = field(default_factory=dict)
     timeout_s: float = 120
+    response_schema: dict | None = None
 
 
 @dataclass
@@ -141,7 +161,7 @@ class Ledger:
         pending, committed, seen, revisions = {}, Decimal(0), set(), {}
         reservations = {}
         blocked = False
-        recovered = {r["halt_time"] for r in rows if r["event"] in ("smoke_recovery", "routing_recovery")}
+        recovered = {r["halt_time"] for r in rows if r["event"] in ("smoke_recovery", "routing_recovery", "amendment8_halt_recovery")}
         for row in rows:
             if row["event"] == "reserve":
                 pending[row["identity"]] = Decimal(row["ceiling_usd"])
@@ -227,12 +247,13 @@ class Ledger:
     def reserve(self, request):
         if request.max_input_tokens <= 0 or request.max_output_tokens <= 0:
             raise ValueError("request token ceilings must be positive")
-        ceiling = cost(request.model, request.max_input_tokens, request.max_output_tokens)
+        ceiling = cost(request.model, request.max_input_tokens, request.max_output_tokens, arm=request.metadata.get('arm'))
         with self.locked() as (f, rows):
             pending, spent, seen, revisions, blocked = self.state(rows)
             history = [r for r in rows if r.get("identity") == request.identity]
+            recovered = {r['halt_time'] for r in rows if r['event'] == 'amendment8_halt_recovery'}
             for row in rows:
-                if row['event'] in ('panel_halt', 'panel_validation_halt') and row['model'] == request.model:
+                if row['event'] in ('panel_halt', 'panel_validation_halt') and row['model'] == request.model and row['time'] not in recovered:
                     raise InfrastructureError(row['error'])
                 if row['event'] == 'arm_unavailable' and row['model'] == request.model and request.metadata.get('arm') == row['arm']:
                     raise ToolEndpointUnavailable(row['error'])
@@ -245,7 +266,7 @@ class Ledger:
                 raise PreflightError("assignment already dispatched; paid retries are forbidden")
             if retry:
                 prior = next(r for r in reversed(history) if r["event"] == "reserve")
-                if any(prior[k] != asdict(request)[k] for k in asdict(request)):
+                if any(prior.get(k) != asdict(request)[k] for k in asdict(request)):
                     raise PreflightError("infrastructure retry changed frozen request")
             block = request.metadata.get("block_id")
             block_key = "block:" + block if block else None
@@ -261,7 +282,11 @@ class Ledger:
             return revisions
 
     def complete(self, request, reply, error=None, *, panel_only=False):
-        actual = cost(request.model, reply.input_tokens, reply.billed_output_tokens)
+        try:
+            actual = cost(request.model, reply.input_tokens, reply.billed_output_tokens,
+                          provider=reply.response.get('provider'))
+        except PreflightError:
+            actual = cost(request.model, reply.input_tokens, reply.billed_output_tokens)
         if reply.provider_cost_usd is not None:
             actual = max(actual, Decimal(str(reply.provider_cost_usd)) * Decimal(RATES[request.model][2]))
         # Design-table accounting charges cached input at full rate; provider billing
@@ -300,13 +325,84 @@ class Ledger:
                 elif row["event"] in ("halt", "panel_validation_halt"):
                     halted = True
             if reply is not None and not halted:
-                for key in ("model", "messages", "tools", "max_input_tokens", "max_output_tokens"):
-                    if reservation[key] != getattr(request, key):
+                for key in ("model", "messages", "tools", "max_input_tokens", "max_output_tokens", "response_schema"):
+                    if reservation.get(key) != getattr(request, key):
                         raise PreflightError("cached smoke request changed" if smoke(request) else "cached trial request changed")
                 if not smoke(request) and any(reservation[k] != getattr(request, k) for k in ('metadata', 'timeout_s')):
                     raise PreflightError('cached trial request changed')
                 return PaidReply(**{k: reply[k] for k in PaidReply.__dataclass_fields__})
         return None
+
+    def amended_dev_request(self, request):
+        """Only the approved dev exception may replace a changed request.
+
+        Identical attacker requests retain their original identity. Changed histories,
+        caps or schemas receive a deterministic new identity; old charges stay intact.
+        """
+        if request.metadata.get('split') != 'dev':
+            return request
+        with self.locked() as (_, rows):
+            if not any(r['event'] == 'amendment8' for r in rows):
+                return request
+            prior = next((r for r in rows if r['event'] == 'reserve' and r['identity'] == request.identity), None)
+            if prior:
+                values = asdict(request)
+                same = all(prior.get(k) == v for k, v in values.items() if k != 'metadata')
+                same &= {k: v for k, v in prior['metadata'].items() if k != 'block_id'} == {
+                    k: v for k, v in request.metadata.items() if k != 'block_id'}
+                if same:
+                    return replace(request, metadata=prior['metadata'])
+                return replace(request, identity=request.identity + '/amendment8/' + digest(values))
+        return request
+
+    def gemini_schedule(self):
+        with self.locked() as (f, rows):
+            calls = [r for r in rows if r['event'] == 'complete' and r['model'] == 'pro'][-50:]
+            mean = sum(r['billed_output_tokens'] for r in calls) / len(calls) if calls else 0
+            prior = any(r['event'] == 'schedule_fallback' for r in rows)
+            if mean > 512 and not prior:
+                self.append(f, {'event': 'schedule_fallback', 'schedule': 'primary_1024',
+                    'window': len(calls), 'mean_billed_output_tokens': mean, 'sample': False})
+            return 'primary_1024' if prior or mean > 512 else 'full_256'
+
+    def amend_dev(self, ceiling):
+        """Append-only Amendment 8 recovery; no generation or accounting erasure."""
+        with self.locked() as (f, rows):
+            if any(r['event'] == 'amendment8' for r in rows):
+                return
+            pending, spent, _, _, blocked = self.state(rows)
+            if blocked or pending:
+                raise PreflightError('Amendment 8 requires reconciled, released dev billing')
+            if any(r['event'] == 'reserve' and r.get('metadata', {}).get('split') == 'scored' for r in rows):
+                raise PreflightError('Amendment 8 is dev-only and must precede scored dispatch')
+            self.append(f, {'event': 'amendment8', 'split': 'dev', 'sample': False,
+                'prior_spend_usd': str(spent), 'planning_ceiling_usd': str(ceiling)})
+            for row in rows:
+                if row['event'] != 'panel_validation_halt' or not row['identity'].startswith('dev/'):
+                    continue
+                completion = next(r for r in reversed(rows) if r['event'] == 'complete' and r['identity'] == row['identity'])
+                if row['error'] == 'provider exceeded per-call token cap':
+                    reservation = next(r for r in reversed(rows) if r['event'] == 'reserve' and r['identity'] == row['identity'])
+                    safe = (completion['input_tokens'] <= reservation['max_input_tokens']
+                            and completion['billed_output_tokens'] <= JUDGE_OUTPUT_CAP)
+                elif row['error'] == 'provider billing exceeds design price table; amendment required':
+                    try:
+                        safe = Decimal(str(completion['provider_cost_usd'])) * Decimal('1.055') <= cost(
+                            completion['model'], completion['input_tokens'], completion['billed_output_tokens'],
+                            provider=completion['response'].get('provider')) + Decimal('.00000001')
+                    except (PreflightError, TypeError):
+                        safe = False
+                else:
+                    safe = False
+                if safe:
+                    self.append(f, {'event': 'amendment8_halt_recovery', 'halt_time': row['time'],
+                        'identity': row['identity'], 'model': row['model'], 'sample': False})
+
+    def format_fallback(self, request, status, error):
+        with self.locked() as (f, _):
+            self.append(f, {'event': 'structured_output_fallback', 'identity': request.identity,
+                'model': request.model, 'from': 'json_schema', 'to': 'json_object',
+                'status': status, 'error': error, 'sample': False, 'rejected_request_cost_usd': '0'})
 
     def recover_tool_routing(self):
         """Amendment 7: retry only the legacy weak R routing rejection once."""
@@ -400,6 +496,8 @@ class VertexBackend:
                 raise PreflightError("unsupported role")
         cfg = types.GenerateContentConfig(system_instruction=types.Content(parts=system),
             temperature=0, seed=20260921, max_output_tokens=request.max_output_tokens,
+            response_mime_type='application/json' if request.response_schema else None,
+            response_schema=request.response_schema,
             thinking_config=types.ThinkingConfig(thinking_level="LOW"),
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
             tools=[types.Tool(function_declarations=[types.FunctionDeclaration(**t) for t in request.tools])]
@@ -454,7 +552,7 @@ class OpenRouterBackend:
     def __init__(self, counter=None):
         self.counter = counter
 
-    def wire(self, request):
+    def wire(self, request, response_mode='json_schema'):
         if request.model not in ("replication", "weak"):
             raise PreflightError("invalid OpenRouter model")
         if any("vertex_content" in m for m in request.messages):
@@ -467,6 +565,9 @@ class OpenRouterBackend:
         return {"model": MODELS[request.model], "messages": request.messages,
                 "temperature": 0, "seed": 20260921, "max_tokens": request.max_output_tokens,
                 "provider": provider,
+                **({'response_format': {'type': response_mode, **({'json_schema': {
+                    'name': 'verdict', 'strict': True, 'schema': request.response_schema}}
+                    if response_mode == 'json_schema' else {})}} if request.response_schema else {}),
                 **({"tools": [{"type": "function", "function": t} for t in request.tools]}
                    if request.tools else {})}
 
@@ -482,11 +583,23 @@ class OpenRouterBackend:
             raise PreflightError("OPENROUTER_API_KEY is absent from process environment")
         async with httpx.AsyncClient(transport=httpx.AsyncHTTPTransport(retries=0),
                                     timeout=request.timeout_s) as client:
+            mode = 'json_schema'
             r = await client.post("https://openrouter.ai/api/v1/chat/completions",
                 headers={"Authorization": "Bearer " + key}, json=self.wire(request))
+            error = r.text.replace(key, '[REDACTED]') if r.status_code != 200 else ''
+            if (request.response_schema and r.status_code in (400, 422)
+                    and any(s in error.lower() for s in ('json_schema', 'structured output', 'response_format'))
+                    and any(s in error.lower() for s in ('not support', 'unsupported', 'not available'))):
+                # Only an explicit parameter rejection is free to retry in JSON mode.
+                self.record_fallback(request, r.status_code, error)
+                mode = 'json_object'
+                r = await client.post('https://openrouter.ai/api/v1/chat/completions',
+                    headers={'Authorization': 'Bearer ' + key}, json=self.wire(request, mode))
             if r.status_code != 200:
                 raise InfrastructureError(f"OpenRouter HTTP {r.status_code}: {r.text.replace(key, '[REDACTED]')}", r.status_code)
             data = r.json()
+            if request.response_schema:
+                data['_p1_response_format'] = mode
         self.last_response = data
         u = data.get("usage", {})
         inp = integer(u.get("prompt_tokens"), "prompt_tokens")
@@ -548,6 +661,7 @@ class PaidClient:
         if self.block_id:
             request = replace(request, metadata={**request.metadata, "block_id": self.block_id})
         if self.reuse_completed:
+            request = self.ledger.amended_dev_request(request)
             cached = self.ledger.cached_reply(request)
             if cached is not None:
                 return cached
@@ -557,6 +671,7 @@ class PaidClient:
         if count > request.max_input_tokens:
             raise PreflightError(f"joint input {count} exceeds {request.max_input_tokens}; no truncation")
         self.ledger.recover_smoke(request)
+        self.backend.record_fallback = self.ledger.format_fallback
         while True:
             revisions = self.ledger.reserve(request)
             start = time.monotonic()
@@ -593,8 +708,14 @@ class PaidClient:
             error = "provider exceeded per-call token cap"
         elif revision and revision != reply.revision:
             error = "served model revision changed; amendment required"
-        elif reply.provider_cost_usd is not None and Decimal(str(reply.provider_cost_usd)) * Decimal(RATES[request.model][2]) > cost(request.model, reply.input_tokens, reply.billed_output_tokens) + Decimal(".00000001"):
-            error = "provider billing exceeds design price table; amendment required"
+        else:
+            try:
+                listed = cost(request.model, reply.input_tokens, reply.billed_output_tokens,
+                              provider=reply.response.get('provider'))
+                if reply.provider_cost_usd is not None and Decimal(str(reply.provider_cost_usd)) * Decimal(RATES[request.model][2]) > listed + Decimal('.00000001'):
+                    error = 'provider billing exceeds design price table; amendment required'
+            except PreflightError as exc:
+                error = str(exc)
         self.ledger.complete(request, reply, error, panel_only=self.reuse_completed)
         if error:
             if self.reuse_completed:

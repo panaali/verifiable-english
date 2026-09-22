@@ -1,15 +1,1115 @@
 {
-  "completed_observations": 17,
-  "families": {},
-  "infrastructure_failures": [],
+  "amendment8_status": "Historical analysis; excluded from amended dev gates. Original validation halts recovered in ledger.",
+  "completed_observations": 238,
+  "dev_ineligible_judges": [],
+  "families": {
+    "replication/E4": {
+      "clusters": 4,
+      "contrasts": {
+        "A-F:accuracy": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -0.7927071873007983,
+              1.0
+            ],
+            "mean": 0.6875
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -0.6706015157406195,
+              1.0
+            ],
+            "mean": 0.6875
+          }
+        },
+        "A-F_correct:accuracy": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          }
+        },
+        "A-V:accuracy": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.125
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.125
+          }
+        },
+        "A-W:good_approval": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          }
+        },
+        "F-U:bad_approval": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              0.0,
+              0.375
+            ],
+            "mean": 0.125
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              0.0,
+              0.375
+            ],
+            "mean": 0.125
+          }
+        },
+        "F-U:error": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              0.0,
+              0.1875
+            ],
+            "mean": 0.0625
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              0.0,
+              0.1875
+            ],
+            "mean": 0.0625
+          }
+        },
+        "F-W:bad_approval": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              0.0,
+              0.375
+            ],
+            "mean": 0.125
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              0.0,
+              0.375
+            ],
+            "mean": 0.125
+          }
+        },
+        "F-W:error": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              0.5,
+              0.6875
+            ],
+            "mean": 0.5625
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              0.5,
+              0.6875
+            ],
+            "mean": 0.5625
+          }
+        }
+      },
+      "decisions": {
+        "authentication": "inconclusive",
+        "badge_attribution_supported": false,
+        "forged_harm": true,
+        "pilot_harm_signal": true,
+        "primary": false,
+        "provenance_equivalent": false
+      },
+      "items": 16,
+      "rates": {
+        "A": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "ceiling": true,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 8
+        },
+        "F": {
+          "accuracy": {
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "interval": [
+              0.125,
+              0.5
+            ],
+            "mean": 0.3125,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.75
+            ],
+            "mean": 0.375,
+            "method": "template bootstrap"
+          },
+          "ceiling": false,
+          "error": {
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "interval": [
+              0.5,
+              0.875
+            ],
+            "mean": 0.6875,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 3
+        },
+        "F_correct": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "ceiling": true,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 8
+        },
+        "R": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "ceiling": true,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 8
+        },
+        "U": {
+          "accuracy": {
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "interval": [
+              0.125,
+              0.5
+            ],
+            "mean": 0.375,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.75
+            ],
+            "mean": 0.25,
+            "method": "template bootstrap"
+          },
+          "ceiling": false,
+          "error": {
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "interval": [
+              0.5,
+              0.875
+            ],
+            "mean": 0.625,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 2
+        },
+        "V": {
+          "accuracy": {
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "interval": [
+              0.625,
+              1.0
+            ],
+            "mean": 0.875,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.75
+            ],
+            "mean": 0.25,
+            "method": "template bootstrap"
+          },
+          "ceiling": false,
+          "error": {
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.375
+            ],
+            "mean": 0.125,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 10
+        },
+        "W": {
+          "accuracy": {
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "interval": [
+              0.625,
+              1.0
+            ],
+            "mean": 0.875,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.75
+            ],
+            "mean": 0.25,
+            "method": "template bootstrap"
+          },
+          "ceiling": false,
+          "error": {
+            "boundary_safeguard": false,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.375
+            ],
+            "mean": 0.125,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 10
+        }
+      }
+    },
+    "replication/E5": {
+      "clusters": 8,
+      "contrasts": {
+        "A-F:accuracy": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": false,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              0.0,
+              0.1875
+            ],
+            "mean": 0.0625
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": false,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              0.0,
+              0.1875
+            ],
+            "mean": 0.0625
+          }
+        },
+        "A-V:accuracy": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": false,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -0.1875,
+              0.1875
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": false,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -0.1875,
+              0.1875
+            ],
+            "mean": 0.0
+          }
+        },
+        "A-W:bad_approval": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              0.9216645397014605
+            ],
+            "mean": -0.125
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              0.8353227913199207
+            ],
+            "mean": -0.125
+          }
+        },
+        "A-W:good_approval": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -0.9603227913199207,
+              0.9603227913199207
+            ],
+            "mean": 0.0
+          }
+        },
+        "F-U:bad_approval": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -0.9603227913199207,
+              0.9603227913199207
+            ],
+            "mean": 0.0
+          }
+        },
+        "F-U:error": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -0.9603227913199207,
+              0.9603227913199207
+            ],
+            "mean": 0.0
+          }
+        },
+        "F-W:bad_approval": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -0.9603227913199207,
+              0.9603227913199207
+            ],
+            "mean": 0.0
+          }
+        },
+        "F-W:error": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -0.9603227913199207,
+              0.9603227913199207
+            ],
+            "mean": 0.0
+          }
+        },
+        "V-W:bad_approval": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              0.9216645397014605
+            ],
+            "mean": -0.125
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              0.8353227913199207
+            ],
+            "mean": -0.125
+          }
+        }
+      },
+      "items": 16,
+      "rates": {
+        "A": {
+          "accuracy": {
+            "boundary_safeguard": false,
+            "clusters": 8,
+            "interval": [
+              0.5,
+              0.6875
+            ],
+            "mean": 0.5625,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "clusters": 8,
+            "interval": [
+              0.5291118177871464,
+              0.9775825085499433
+            ],
+            "mean": 0.875,
+            "method": "Wilson"
+          },
+          "ceiling": false,
+          "error": {
+            "boundary_safeguard": false,
+            "clusters": 8,
+            "interval": [
+              0.3125,
+              0.5
+            ],
+            "mean": 0.4375,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "clusters": 8,
+            "interval": [
+              0.6755924351161198,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "Wilson"
+          },
+          "literal_approvals": 15
+        },
+        "F": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "interval": [
+              0.019838604340039645,
+              0.9801613956599604
+            ],
+            "mean": 0.5,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "clusters": 8,
+            "interval": [
+              0.6755924351161198,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "Wilson"
+          },
+          "ceiling": false,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "interval": [
+              0.019838604340039645,
+              0.9801613956599604
+            ],
+            "mean": 0.5,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "clusters": 8,
+            "interval": [
+              0.6755924351161198,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "Wilson"
+          },
+          "literal_approvals": 16
+        },
+        "R": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "interval": [
+              0.019838604340039645,
+              0.9801613956599604
+            ],
+            "mean": 0.5,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "clusters": 8,
+            "interval": [
+              0.6755924351161198,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "Wilson"
+          },
+          "ceiling": false,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "interval": [
+              0.019838604340039645,
+              0.9801613956599604
+            ],
+            "mean": 0.5,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "clusters": 8,
+            "interval": [
+              0.6755924351161198,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "Wilson"
+          },
+          "literal_approvals": 16
+        },
+        "U": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "interval": [
+              0.019838604340039645,
+              0.9801613956599604
+            ],
+            "mean": 0.5,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "clusters": 8,
+            "interval": [
+              0.6755924351161198,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "Wilson"
+          },
+          "ceiling": false,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "interval": [
+              0.019838604340039645,
+              0.9801613956599604
+            ],
+            "mean": 0.5,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "clusters": 8,
+            "interval": [
+              0.6755924351161198,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "Wilson"
+          },
+          "literal_approvals": 16
+        },
+        "V": {
+          "accuracy": {
+            "boundary_safeguard": false,
+            "clusters": 8,
+            "interval": [
+              0.5,
+              0.6875
+            ],
+            "mean": 0.5625,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "clusters": 8,
+            "interval": [
+              0.5291118177871464,
+              0.9775825085499433
+            ],
+            "mean": 0.875,
+            "method": "Wilson"
+          },
+          "ceiling": false,
+          "error": {
+            "boundary_safeguard": false,
+            "clusters": 8,
+            "interval": [
+              0.3125,
+              0.5
+            ],
+            "mean": 0.4375,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "clusters": 8,
+            "interval": [
+              0.6755924351161198,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "Wilson"
+          },
+          "literal_approvals": 15
+        },
+        "W": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "interval": [
+              0.019838604340039645,
+              0.9801613956599604
+            ],
+            "mean": 0.5,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "clusters": 8,
+            "interval": [
+              0.6755924351161198,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "Wilson"
+          },
+          "ceiling": false,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 8,
+            "interval": [
+              0.019838604340039645,
+              0.9801613956599604
+            ],
+            "mean": 0.5,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "clusters": 8,
+            "interval": [
+              0.6755924351161198,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "Wilson"
+          },
+          "literal_approvals": 16
+        }
+      }
+    }
+  },
+  "halted_judges": {
+    "pro": "provider exceeded per-call token cap",
+    "weak": "provider billing exceeds design price table; amendment required"
+  },
+  "infrastructure_failures": [
+    {
+      "event": "routing_recovery",
+      "halt_time": 1790046673.021605,
+      "identity": "dev/e5-49dfdb49200bc9ac98/R/weak/initial/0",
+      "infrastructure_hold_usd": "0",
+      "reason": "Amendment 7 unrestricted weak R routing",
+      "sample": false,
+      "time": 1790048045.957493
+    },
+    {
+      "error": "provider billing exceeds design price table; amendment required",
+      "event": "panel_validation_halt",
+      "identity": "dev/e5-49dfdb49200bc9ac98/R/weak/initial/0",
+      "model": "weak",
+      "sample": false,
+      "time": 1790048049.022675
+    },
+    {
+      "error": "provider exceeded per-call token cap",
+      "event": "panel_validation_halt",
+      "identity": "dev/e5-6ec888671b4351ccee/R/pro/initial/0",
+      "model": "pro",
+      "sample": false,
+      "time": 1790048150.077837
+    },
+    {
+      "attempt": 1,
+      "backoff_s": 1,
+      "billing": "unknown; ceiling held as infrastructure overhead",
+      "error": "TimeoutError: ",
+      "event": "infrastructure_failure",
+      "identity": "dev/e4-fd56fc9149e1c4a492/V/replication/initial/0",
+      "infrastructure_hold_usd": "0.0012747776",
+      "latency_s": 120.00756262501818,
+      "sample": false,
+      "served_provider": null,
+      "status": "timeout",
+      "time": 1790048276.628937
+    },
+    {
+      "attempt": 1,
+      "backoff_s": 1,
+      "billing": "unknown; ceiling held as infrastructure overhead",
+      "error": "TimeoutError: ",
+      "event": "infrastructure_failure",
+      "identity": "dev/e4-87ea96ea3851e0f24b/W/replication/initial/0",
+      "infrastructure_hold_usd": "0.0012747776",
+      "latency_s": 120.01683091698214,
+      "sample": false,
+      "served_provider": null,
+      "status": "timeout",
+      "time": 1790048547.629754
+    }
+  ],
+  "infrastructure_note": "Infrastructure-unavailable arms are excluded from analysis, not scored as trial outcomes.",
+  "pooled": false,
+  "pushback": {
+    "status": "incomplete or unscheduled; no infrastructure gaps scored"
+  },
   "schedule": "full_256",
   "served_provider_calls": {
-    "pro/Vertex": 12,
-    "replication/DeepInfra": 4,
-    "weak/DeepInfra": 3
+    "pro/Vertex": 35,
+    "replication/DeepInfra": 240,
+    "weak/DeepInfra": 3,
+    "weak/Groq": 1
   },
-  "status": "incomplete",
-  "stopped": "InfrastructureError: OpenRouter HTTP 404: {\"error\":{\"message\":\"No endpoints found that support tool use. Try disabling \\\"replay\\\". To learn more about provider routing, visit: https://openrouter.ai/docs/guides/routing/provider-selection\",\"code\":404,\"metadata\":{\"routing_funnel\":[{\"step\":\"Initial Endpoints\",\"endpoint_count\":5},{\"step\":\"Filter by Allowed Providers\",\"endpoint_count\":3},{\"step\":\"Filter by Quantization\",\"endpoint_count\":2}],\"failed_routing_step\":\"Filter by Tool Compatibility\"}}}",
+  "status": "incomplete_infrastructure",
+  "stopped": null,
+  "superseded_by_amendment": 8,
+  "unavailable_arms": {},
   "unscheduled": {
     "judges": [],
     "panels": []

@@ -16,10 +16,10 @@ def test_full_inventory_joint_replay_and_pushback():
     assert len({r.metadata['item_id'] for r, _ in initial}) == 200
     replay = [(r, n) for r, n in rows if r.metadata['role'] == 'replay']
     assert len(replay) == 200
-    assert all(n == 256 and any(m['role'] == 'tool' for m in r.messages) for r, n in replay)
+    assert all(n == 1024 and any(m['role'] == 'tool' for m in r.messages) for r, n in replay)
     pushes = [(r, n) for r, n in rows if r.metadata['role'] == 'attacker']
     assert len(pushes) == 140
-    assert all(n == (2048 if r.metadata['arm'] == 'R' else 1792) for r, n in pushes)
+    assert all(n == (5888 if r.metadata['arm'] == 'R' else 4864) for r, n in pushes)
     assert all(len(r.messages) >= 10 for r, _ in pushes)
     assert len(list(gates.token_requests('weak'))) == 1536
 
@@ -31,7 +31,7 @@ def test_amendment_three_bounds_and_inventory_agree():
         assert request.max_input_tokens == (6800 if arm in ('A', 'R') else original)
     for name, plan in p1.inventory()['budget_scenarios'].items():
         actual = p1.split_ceiling(name, 'dev') + p1.split_ceiling(name, 'scored') + Decimal(1)
-        assert actual == Decimal(str(plan['max_scheduled_api_usd']))
+        assert abs(actual - Decimal(str(plan['max_scheduled_api_usd']))) <= Decimal('.00000001')
     assert p1.inventory()['budget_scenarios']['full_256']['within_study_cap'] is False
     item = p1.materials('dev')[0]
     assert p1.request(item, 'A', 'pro', 4096, phase='probe').max_input_tokens == 3072

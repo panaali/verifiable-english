@@ -132,7 +132,7 @@ def test_cli_defaults_to_bundled_counter(monkeypatch):
     import sys
     calls = []
     monkeypatch.setattr(sys, 'argv', ['run_p1.py', 'preflight-openrouter', '--cap-usd', '.5'])
-    monkeypatch.setattr(p1_preflight, 'preflight_openrouter', lambda cap, path: calls.append((cap, path)) or 0)
+    monkeypatch.setattr(p1_preflight, 'preflight_openrouter', lambda cap, path, **kw: calls.append((cap, path)) or 0)
     assert p1.main() == 0
     assert calls == [(.5, p1.HERE / 'native_counter.py')]
 

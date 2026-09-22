@@ -1,24 +1,26 @@
 {
   "accounting": {
     "local_allowance_usd": "0.25",
+    "output_policy": "planning mean 256 for full schedule; reserve actual request cap per dispatch",
     "prior_attempt_ceiling_usd": "0.056900",
     "provider_preflight_envelope_usd": "0.50",
-    "replacement_probe_envelope_usd": "1.00"
+    "replacement_probe_envelope_usd": "1.00",
+    "retained_dev_costs_and_holds_usd": "0.28137326890"
   },
   "block_shuffle_seed": 20260921,
   "commands": {
     "full_256/analyze": "uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --schedule full_256",
-    "full_256/dev": "uv run python experiments/P1-deference/run_p1.py dev --cap-usd 6.7108092992",
-    "full_256/scored": "uv run python experiments/P1-deference/run_p1.py scored --cap-usd 35.4682635200",
+    "full_256/dev": "uv run python experiments/P1-deference/run_p1.py dev --cap-usd 7.08759643050",
+    "full_256/scored": "uv run python experiments/P1-deference/run_p1.py scored --cap-usd 36.34607065770",
     "known-answer": "uv run python experiments/P1-deference/run_p1.py known-answer --lean-replay --freeze",
     "preflight": "uv run python experiments/P1-deference/run_p1.py preflight",
     "preflight-openrouter": "uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50",
     "primary_1024/analyze": "uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --schedule primary_1024",
-    "primary_1024/dev": "uv run python experiments/P1-deference/run_p1.py dev --cap-usd 4.274084",
-    "primary_1024/scored": "uv run python experiments/P1-deference/run_p1.py scored --cap-usd 24.652964",
+    "primary_1024/dev": "uv run python experiments/P1-deference/run_p1.py dev --cap-usd 4.55545726890",
+    "primary_1024/scored": "uv run python experiments/P1-deference/run_p1.py scored --cap-usd 24.93433726890",
     "primary_512/analyze": "uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --schedule primary_512",
-    "primary_512/dev": "uv run python experiments/P1-deference/run_p1.py dev --cap-usd 3.487652",
-    "primary_512/scored": "uv run python experiments/P1-deference/run_p1.py scored --cap-usd 17.968292",
+    "primary_512/dev": "uv run python experiments/P1-deference/run_p1.py dev --cap-usd 3.76902526890",
+    "primary_512/scored": "uv run python experiments/P1-deference/run_p1.py scored --cap-usd 18.24966526890",
     "probe": "uv run python experiments/P1-deference/run_p1.py probe --cap-usd 1.00"
   },
   "condition_order": [
@@ -32,31 +34,34 @@
   ],
   "cost_ceilings": {
     "full_256": {
-      "dev_calls_usd": "5.1539092992",
-      "dev_cumulative_with_probe_usd": "6.7108092992",
+      "dev_calls_usd": "5.2493231616",
+      "dev_cumulative_with_probe_usd": "7.08759643050",
       "local_allowance_usd": 0.25,
-      "scored_calls_usd": "28.7574542208",
-      "scored_cumulative_with_probe_usd": "35.4682635200",
-      "within_study_cap": true
+      "scored_calls_usd": "29.2584742272",
+      "scored_cumulative_with_probe_usd": "36.34607065770",
+      "within_study_cap": false
     },
     "primary_1024": {
       "dev_calls_usd": "2.717184",
-      "dev_cumulative_with_probe_usd": "4.274084",
+      "dev_cumulative_with_probe_usd": "4.55545726890",
       "local_allowance_usd": 0.25,
       "scored_calls_usd": "20.378880",
-      "scored_cumulative_with_probe_usd": "24.652964",
+      "scored_cumulative_with_probe_usd": "24.93433726890",
       "within_study_cap": true
     },
     "primary_512": {
       "dev_calls_usd": "1.930752",
-      "dev_cumulative_with_probe_usd": "3.487652",
+      "dev_cumulative_with_probe_usd": "3.76902526890",
       "local_allowance_usd": 0.25,
       "scored_calls_usd": "14.480640",
-      "scored_cumulative_with_probe_usd": "17.968292",
+      "scored_cumulative_with_probe_usd": "18.24966526890",
       "within_study_cap": true
     }
   },
-  "dev_blockers": [],
+  "dev_blockers": [
+    "selected schedule exceeds $36 study cap",
+    "tokenizer"
+  ],
   "external_timestamp": {
     "bitcoin_confirmed": false,
     "command": [
@@ -67,9 +72,9 @@
       "info",
       "/Users/seyran/code/ve-codex/experiments/PREREG-HASHES.txt.ots"
     ],
-    "completed_at": "2026-09-22T03:32:11.920722+00:00",
+    "completed_at": "2026-09-22T04:04:55.252681+00:00",
     "exit_code": 0,
-    "freeze_sha256": "b8e4000162a2798dcc94a001fab3ecec3cd1cd73b6366366ad2c853be97c1aa1",
+    "freeze_sha256": "cf4c3ea3b9870be6793afebc4bc4165165a2b950c85ed7abfb956dd089694133",
     "hash_file_sha256": "d9d0907811f4c9389415bde81538c944e72f5a567535adff41a27c0d7900782c",
     "passed": true,
     "pending_calendar_sufficient_for_pilot": true,
@@ -88,8 +93,9 @@
     "experiments/E5/dev.jsonl.gz": "34fc16fa63c3eb03baa3b9ac7c92e773a73c74656327f7bff81e603da621fa89",
     "experiments/E5/scored.jsonl.gz": "bb8ca9b53fcc3ece82e8438eaba22831b7bc69824d317dc720165d8f2751a766",
     "experiments/P1-deference/PREREG.md": "382bdc87ca651b962439294c1e1f4819c108ca7663e08c33db9d6444548f3145",
-    "experiments/P1-deference/PROPOSED-AMENDMENT.md": "68f3e1f6e32f5048583dfd4c363dc8f4a8947b4fb541ed811c3feb295d7a3ecf",
-    "experiments/P1-deference/inventory.json": "d6a83d3929973fcac5a80df0273649b6d5f87c2b31fdb25dd5f908e9f0de04c3",
+    "experiments/P1-deference/PROPOSED-AMENDMENT.md": "dd9701f346a069a6de25fea1e2015b1473b72c4152c9a2ce550895f3eeff1674",
+    "experiments/P1-deference/checks/amendment8.json": "a8bdc5b5aaaa6676c474b12c6abc9c5f968f8832d7f7899263e418cfa4a3b6d0",
+    "experiments/P1-deference/inventory.json": "0561f808e76b26b47b714bb882cc7502a9e2764c8c1040e3f6110d787c7858f6",
     "experiments/P1-deference/labels.jsonl.gz": "d7fd48edfbe6fa9bab5324c94d5773dd6b0639c945803dea6d61676c9632f8ee",
     "experiments/P1-deference/materials/dev.jsonl.gz": "d8ae29da2a00594465e302c333bf7aa0d6e622d8217ada1c9c534e742512cf85",
     "experiments/P1-deference/materials/scored.jsonl.gz": "b3a03dd33185196682542afab4c3a0aaa307680fc4f95b70b028279578cf6984",
@@ -106,9 +112,9 @@
     "experiments/PREREG-DESIGN.md": "0f2663058122bde90998f5bdd98b6e933d419315caaad026ff9ef60c45d1f0b5",
     "experiments/PREREG-HASHES.txt": "d9d0907811f4c9389415bde81538c944e72f5a567535adff41a27c0d7900782c",
     "experiments/PREREG-HASHES.txt.ots": "cbc690fe42ee666e6404799935b18356c3a467d7375fcceb7788a8b4b16241a0",
-    "experiments/p1.py": "6c51b84f71c447a39aac8728cf58a5262baa5e2f08e3341f781f4cf1c0bba432",
-    "experiments/p1_preflight.py": "ed8be94010b0371f3862dffe7ca42a24405ba70056df1742ccc2bdd6a7dd8cdf",
-    "experiments/prereg_inventory.py": "cc3402e20781635f2333df9c4f9fa7dc94b6f04ab688174533e799f6fe929a31",
+    "experiments/p1.py": "e956ef868df37f3083c24ceabdffdcb80280b5551c77af70496959f8158546c4",
+    "experiments/p1_preflight.py": "063f020093616554b4e64ae5caa898bd366589ce14b9270c5c19b86061cbc5d4",
+    "experiments/prereg_inventory.py": "7df87f3fba45cf8c046fcbeaee05f760eb3967c8378d40baedaaa7fe9070ba54",
     "lean/Main.lean": "9df9e7b5fddfa4d33081ed8b19548e0d35c40df2e1d364d7d4238fea5298edb4",
     "lean/VE.lean": "15bbf66aa01ecc2f24b903e15e16e705b0d9bdf76b36146a4dd323c262665527",
     "lean/VE/Audit.lean": "c38f56cebe31c803a3b52231f49920fdcc1561748d53815e655f7420352de050",
@@ -185,11 +191,12 @@
     "tests/test_legend.py": "d28735cbed04f6d05d9c493478d806db453ebdfdfcb7934468263efce8e40153",
     "tests/test_lexicon.py": "cd71e66087fa3e4ee134a4dc1d6c82903d63056028126db1bb1b841802212b5e",
     "tests/test_llm.py": "38595ec4bda056fba416b28aec0df8b449ac0bbc27a17f49df8ca4c554deac05",
-    "tests/test_p1.py": "a93ba38adb1b85e7ff69a8c222e9a9d94d535e0e1b38416e88ffd4ef47afb8a5",
-    "tests/test_p1_amendment7.py": "3059a38e88c76483e6986af00c01d2f692199b183c9a6657c73dad3f931c8791",
+    "tests/test_p1.py": "dd7d0f8450b22c35c72ef7a23fcce6e01b98bce1687c9a680f08c672584819ce",
+    "tests/test_p1_amendment7.py": "071eb0cfb82d0e625276876be71cff20b590bfd7254fdec2de4a19458c72c17d",
+    "tests/test_p1_amendment8.py": "e4f3d1926fee56b961ec87b6ea166ea211eb39f42499f307afe2acf05e681eb3",
     "tests/test_p1_infrastructure.py": "d8516b0e14e377e8347be689434527810b0cba07ccca64bf615ed36d3ad23842",
-    "tests/test_p1_native_counter.py": "cf1b2031588bc49b2542319cf1fb0c7276bb2e29fd80190d201473b0c48718b0",
-    "tests/test_p1_preflight.py": "418902b165bc46d9911205ff1ba108cb761900380491599c1deecbb0dc15b7c7",
+    "tests/test_p1_native_counter.py": "3fff9b06c8a19807ffb83703a8fc04ce198b53fbc7447756b09d9fc7f50f7079",
+    "tests/test_p1_preflight.py": "749c5d0eb5b6779b76ae81afc0fc39cbd20b0a63303af64bf8dddfe29778a56a",
     "tests/test_parser_renderer.py": "a6e15ce7daff0790d1b8b04c3e7f492d2809875bbd89579d530cbab2d5dd0736",
     "tests/test_properties.py": "a75861a0780074fff63a2c773852413689b215f82f0f6f5c65c5c5e2026ba26d",
     "tests/test_propose.py": "d1745981d1b5d0bbe241314bec35ba5728cc5b30c8da33ba62ebda1a527972f9",
@@ -203,14 +210,16 @@
     "tests/test_views_polish.py": "206d8460de93e594f87c0c8a31197e640b5a71bade77fd1a289908b1e19102ad",
     "uv.lock": "c00f64fd5b5b729747e3a2456dcb3338a4a9b3f3aa04fd4acf2895e295579238",
     "ve_experiments/llm.py": "103f68a84f83828fdc4e536f400f7a396ab5695e196a513401bc7da3ddab21c3",
-    "ve_experiments/paid.py": "6b312e17e63ac9bb7bf0f5b31dd053802cb0f3714b9bd6f81be7685f8a4c010a"
+    "ve_experiments/paid.py": "299d8bf6fc112d3bbbb4ecf6cab9b107f1c541a6e29151c3422436d5d05f753e"
   },
-  "manifest_sha256": "b8e4000162a2798dcc94a001fab3ecec3cd1cd73b6366366ad2c853be97c1aa1",
+  "judge_output_cap": 1024,
+  "manifest_sha256": "cf4c3ea3b9870be6793afebc4bc4165165a2b950c85ed7abfb956dd089694133",
   "models": {
     "pro": "gemini-3.1-pro-preview",
     "replication": "qwen/qwen-2.5-72b-instruct",
     "weak": "meta-llama/llama-3.1-8b-instruct"
   },
+  "planning_output_mean": 256,
   "rates": {
     "pro": [
       2.0,
@@ -230,10 +239,56 @@
   },
   "seed": 20260921,
   "selected_schedule": "full_256",
-  "status": "READY_FOR_DEV_NOT_SCORED",
+  "status": "BLOCKED_NOT_DEV_READY",
   "temperature": 0,
   "thinking_level": "LOW",
   "unresolved": [
+    "selected schedule exceeds $36 study cap",
+    "tokenizer",
     "dev capability gate (not run)"
-  ]
+  ],
+  "verdict_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "verdict": {
+        "enum": [
+          "approve",
+          "reject",
+          "unknown"
+        ],
+        "type": "string"
+      }
+    },
+    "required": [
+      "verdict"
+    ],
+    "type": "object"
+  },
+  "weak_provider_rates_per_million": {
+    "Cloudflare": [
+      ".152",
+      ".287",
+      "1.055"
+    ],
+    "CoreWeave": [
+      ".22",
+      ".22",
+      "1.055"
+    ],
+    "DeepInfra": [
+      ".02",
+      ".04",
+      "1.055"
+    ],
+    "Groq": [
+      ".05",
+      ".08",
+      "1.055"
+    ],
+    "Novita": [
+      ".02",
+      ".05",
+      "1.055"
+    ]
+  }
 }

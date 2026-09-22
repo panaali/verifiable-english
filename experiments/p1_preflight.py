@@ -95,7 +95,7 @@ def token_requests(judge='pro'):
                 req = p.request(item, arm, judge, 256)
                 yield req, 0
                 history = req.messages + [{'role': 'assistant', 'content': ''}]
-                generated = 256
+                generated = 1024
                 if arm == 'R':
                     call = {'id': 'preflight-replay', 'name': 'replay', 'arguments': {'item_id': item['id']}}
                     assistant = {'role': 'assistant', 'content': '', 'tool_calls': [{
@@ -104,15 +104,15 @@ def token_requests(judge='pro'):
                         assistant = {'role': 'assistant', 'vertex_content': {'role': 'model', 'parts': [{
                             'function_call': {'name': 'replay', 'id': call['id'], 'args': call['arguments']}}]}}
                     history = req.messages + [assistant] + p.replay_response(item, [call])[0]
-                    yield p.request(item, arm, judge, 256, phase='replay', messages=history, tools=[]), 256
+                    yield p.request(item, arm, judge, 256, phase='replay', messages=history, tools=[]), 1024
                     history += [{'role': 'assistant', 'content': ''}]
-                    generated = 512  # tool request and continuation each have a 256-token ceiling
+                    generated = 2048  # tool request and continuation each have a 1024-token ceiling
                 if judge == 'pro' and item['assignment']['pushback'] and arm in p.MAIN:
                     wrappers = history + [{'role': role, 'content': ''} for role in ('user', 'assistant') * 3]
                     attacker = [{'role': 'system', 'content': (p.HERE / 'prompts/attacker.txt').read_text()},
                                 *wrappers[1:], {'role': 'user', 'content': 'Provide the next proposer message.'}]
                     for phase, messages in (('attacker', attacker), ('pushback', wrappers)):
-                        yield p.request(item, arm, judge, 256, phase=phase, turn=3, messages=messages, tools=[]), generated + 1536
+                        yield p.request(item, arm, judge, 256, phase=phase, turn=3, messages=messages, tools=[]), generated + 3840
 
 
 def tokenize(backend, judge='pro'):
@@ -163,13 +163,31 @@ def refresh_status():
     return unresolved
 
 
-def preflight():
+def cached_vertex_tokens():
+    """Reevaluate retained real counts only when the counted wire is identical."""
+    path = p.HERE / 'checks/tokenizer.json'
+    old = json.loads(path.read_text())
+    prior_hash = p.sha(path)
+    by_identity = {r['identity']: r for r in old['counts']}
+    class RetainedCounter:
+        def count(self, request):
+            row = by_identity[request.identity]
+            if row['request_sha256'] != p.digest([request.messages, request.tools]):
+                raise PreflightError('counted Vertex wire changed; fresh countTokens required')
+            return row['tokens']
+    result = tokenize(RetainedCounter())
+    result.update(reused_count_receipt_sha256=prior_hash, count_source='retained real Vertex countTokens; identical messages/tools',
+                  count_api_calls=0)
+    return result
+
+
+def preflight(offline=False):
     p.export()
     stamp = p.freeze_execution()
     results = {}
     for name, fn in (('known-answer', p.known_answer), ('lean-replay', lean),
                      ('semantic-pairs', semantic_pairs), ('test-suite', test_suite),
-                     ('external-timestamp', timestamp), ('tokenizer', lambda: tokenize(p.VertexBackend()))):
+                     ('external-timestamp', timestamp), ('tokenizer', cached_vertex_tokens if offline else lambda: tokenize(p.VertexBackend()))):
         results[name] = receipt(name, stamp, fn)
     refresh_status()
     return 0 if all(r['passed'] for r in results.values()) else 2
@@ -217,7 +235,7 @@ def runtime_counter():
     return counter
 
 
-def preflight_openrouter(cap, counter_path=None):
+def preflight_openrouter(cap, counter_path=None, *, cached_only=False):
     """Resume infrastructure checks, reusing successful smoke calls durably."""
     import httpx
     freeze = json.loads((p.HERE / 'freeze.json').read_text())
@@ -238,7 +256,7 @@ def preflight_openrouter(cap, counter_path=None):
         ledger = Ledger(p.HERE / 'runs/provider-preflight/costs.jsonl', min(cap, .50))
         with httpx.Client(transport=httpx.HTTPTransport(retries=0), timeout=120) as http:
             models = {}
-            if todo:
+            if todo and not cached_only:
                 response = http.get('https://openrouter.ai/api/v1/models')
                 response.raise_for_status()
                 models = {x['id']: x for x in response.json()['data']}
@@ -249,12 +267,17 @@ def preflight_openrouter(cap, counter_path=None):
                 row.pop('endpoint_passed', None)
                 row.pop('reused_smoke', None)
                 try:
-                    if p.MODELS[judge] not in models:
-                        raise PreflightError('planned model is not served; substitution forbidden')
-                    row['catalog'] = models[p.MODELS[judge]]
-                    endpoints = http.get(f'https://openrouter.ai/api/v1/models/{p.MODELS[judge]}/endpoints')
-                    endpoints.raise_for_status()
-                    row['endpoints'] = endpoints.json()
+                    if cached_only:
+                        if row.get('catalog', {}).get('id') != p.MODELS[judge] or not row.get('endpoints'):
+                            raise PreflightError('cached endpoint evidence absent')
+                        row['endpoint_metadata_source'] = 'retained listing; no API calls'
+                    else:
+                        if p.MODELS[judge] not in models:
+                            raise PreflightError('planned model is not served; substitution forbidden')
+                        row['catalog'] = models[p.MODELS[judge]]
+                        endpoints = http.get(f'https://openrouter.ai/api/v1/models/{p.MODELS[judge]}/endpoints')
+                        endpoints.raise_for_status()
+                        row['endpoints'] = endpoints.json()
                     backend = OpenRouterBackend(counter=counter)
                     row['tokenizer'] = tokenize(backend, judge)
                     if not row['tokenizer']['passed']:
@@ -270,6 +293,8 @@ def preflight_openrouter(cap, counter_path=None):
                         # replace a smoke whose usage already agrees.
                         reply = ledger.cached_reply(req)
                         if reply is None or backend.count(req) != reply.input_tokens:
+                            if cached_only:
+                                raise PreflightError('cached smoke missing or mismatched; generation forbidden')
                             reply = client.call(req)
                         else:
                             row['reused_smoke'] = True

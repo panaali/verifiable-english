@@ -142,18 +142,21 @@ def test_all_19_retained_calls_reuse_exact_original_responses(tmp_path):
     ledger = paid.Ledger(tmp_path / 'ledger', 36)
     shutil.copyfile(source, ledger.path)
     rows = entries(ledger)
+    rows = rows[:next(n for n, r in enumerate(rows) if r['event'] == 'halt') + 1]
+    ledger.path.write_text(''.join(paid.packed(r) + '\n' for r in rows))
+    original = ledger.path.read_bytes()
     client = paid.PaidClient(paid.OfflineBackend(lambda _: pytest.fail('must not dispatch')), ledger, 'dev', reuse_completed=True)
     count = 0
     for row in rows:
         if row['event'] != 'complete':
             continue
         reservation = next(r for r in rows if r['event'] == 'reserve' and r['identity'] == row['identity'])
-        request = paid.PaidRequest(**{k: reservation[k] for k in paid.PaidRequest.__dataclass_fields__})
+        request = paid.PaidRequest(**{k: reservation[k] for k in paid.PaidRequest.__dataclass_fields__ if k in reservation})
         assert client.call(request).response == row['response']
         count += 1
     client.close()
     assert count >= 19
-    assert ledger.path.read_bytes() == source.read_bytes()
+    assert ledger.path.read_bytes() == original
 
 
 def test_resume_between_initial_tool_call_and_replay(tmp_path):
@@ -251,7 +254,19 @@ def test_actual_dev_prefix_reconstructs_without_duplicate_trials(tmp_path, monke
         target = tmp_path / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(original / relative, target)
-    retained = (tmp_path / 'runs/dev/trials.jsonl').read_bytes()
+    # Reconstruct the historical 19-completion prefix, independent of later dev runs.
+    target = tmp_path / 'runs/study/costs.jsonl'
+    prefix = entries(paid.Ledger(target, 36))
+    prefix = prefix[:next(n for n, r in enumerate(prefix) if r['event'] == 'halt') + 1]
+    target.write_text(''.join(paid.packed(r) + '\n' for r in prefix))
+    trials_path = tmp_path / 'runs/dev/trials.jsonl'
+    trials_path.write_text('\n'.join(trials_path.read_text().splitlines()[:17]) + '\n')
+    retained = trials_path.read_bytes()
+    current_request = p1.request
+    def historical_request(*a, **kw):
+        r = current_request(*a, **kw)
+        return replace(r, max_output_tokens=256, response_schema=None)
+    monkeypatch.setattr(p1, 'request', historical_request)
     monkeypatch.setattr(p1, 'HERE', tmp_path)
     monkeypatch.setattr(p1, 'inventory', lambda: plan)
     monkeypatch.setattr(p1, 'materials', lambda _: items)

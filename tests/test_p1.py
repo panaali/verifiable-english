@@ -100,8 +100,9 @@ def test_join_missing_duplicate_and_failure_denominators():
             assert arm["bad_approval"]["mean"] == 1
 
 
-@pytest.mark.parametrize("mean,name,cap", [(256,"full_256",256),(256.1,"primary_512",512),
-    (512,"primary_512",512),(512.1,"primary_1024",1024),(1024,"primary_1024",1024),(1024.1,"stop",None)])
+@pytest.mark.parametrize("mean,name,cap", [(256,"full_256",1024),(256.1,"full_256",1024),
+    (512,"full_256",1024),(512.1,"primary_1024",1024),(1024,"primary_1024",1024)])
+
 def test_fallback(mean, name, cap):
     assert p1.schedule(mean) == (name, cap)
 

@@ -28,7 +28,7 @@ from ve.ast import formula_to_data
 from ve.search import check_countermodel
 from ve_experiments.paid import (MODELS, Ledger, PaidClient, PaidRequest, OfflineBackend,
     VertexBackend, OpenRouterBackend, BudgetExceeded, PreflightError, InfrastructureError,
-    ToolEndpointUnavailable, cost, digest, packed)
+    ToolEndpointUnavailable, cost, digest, packed, VERDICT_SCHEMA, JUDGE_OUTPUT_CAP, WEAK_PROVIDER_RATES)
 
 ROOT = Path(__file__).resolve().parents[1]
 HERE = ROOT / "experiments/P1-deference"
@@ -179,10 +179,11 @@ def request(item, arm, judge, output, *, phase="initial", turn=0, messages=None,
     rendered, available = render(item, arm)
     inp = p1_input_bound(arm, phase)
     return PaidRequest(f"{item['split']}/{item['id']}/{arm}/{judge}/{phase}/{turn}", judge,
-        rendered if messages is None else messages, inp, output, available if tools is None else tools,
+        rendered if messages is None else messages, inp, output if phase == 'attacker' else JUDGE_OUTPUT_CAP, available if tools is None else tools,
         {"item_id": item["id"], "template": item["assignment"]["template"], "split": item["split"],
          "panel": item["assignment"]["source"], "arm": arm, "role": phase, "turn": turn,
-         "checker": {k: v for k, v in finding(item).items() if k.endswith("sha256") or k == "checker_build"}})
+         "checker": {k: v for k, v in finding(item).items() if k.endswith("sha256") or k == "checker_build"}},
+        response_schema=None if phase == 'attacker' else deepcopy(VERDICT_SCHEMA))
 
 
 STUDY_CAP_USD = 36  # Amendment 4 (2026-09-22): raised from 30; see PROPOSED-AMENDMENT.md
@@ -244,8 +245,7 @@ def initial(client, item, arm, judge, output):
 
 
 def schedule(mean):
-    return ("full_256", 256) if mean <= 256 else (("primary_512", 512) if mean <= 512 else
-           (("primary_1024", 1024) if mean <= 1024 else ("stop", None)))
+    return ("full_256" if mean <= 512 else "primary_1024", JUDGE_OUTPUT_CAP)
 
 
 def bootstrap(left, right=None, alpha=.05):
@@ -432,7 +432,7 @@ def pushback(client, item, arm, messages):
     req = request(item, arm, "pro", 256, phase="attacker", messages=attacker_messages(messages), tools=[])
     wrapper_history = messages + [{"role": role, "content": ""} for role in ("user", "assistant") * 3]
     joint_req = replace(req, messages=attacker_messages(wrapper_history))
-    if client.backend.count(joint_req) + 1536 > joint_req.max_input_tokens:
+    if client.backend.count(joint_req) + 3840 > joint_req.max_input_tokens:
         raise PreflightError(f"joint pushback history exceeds {joint_req.max_input_tokens}; no truncation")
     fixed = digest(finding(item))
     for turn in range(1, 4):
@@ -582,13 +582,19 @@ def split_ceiling(name, split):
             continue
         for a in arms(i):
             for judge in plan["judges"]:
-                total += cost(judge, p1_input_bound(a, "initial"), output)
+                total += cost(judge, p1_input_bound(a, "initial"), output, arm=a)
                 if a == "R":
-                    total += cost(judge, p1_input_bound(a, "replay"), output)
+                    total += cost(judge, p1_input_bound(a, "replay"), output, arm=a)
                 if plan["pushback"] and judge == "pro" and i["assignment"]["pushback"] and a in MAIN:
                     total += 3*(cost("pro", p1_input_bound(a, "attacker"), 256)
                                 + cost("pro", p1_input_bound(a, "pushback"), 256))
     return total
+
+
+def amendment8_overhead():
+    from decimal import Decimal
+    path = HERE / 'checks/amendment8.json'
+    return Decimal(json.loads(path.read_text())['prior_dev_cost_and_holds_usd']) if path.exists() else Decimal(0)
 
 
 def freeze_execution():
@@ -605,8 +611,12 @@ def freeze_execution():
              *sorted((HERE / "prompts").iterdir()),
              *sorted((HERE / "materials").iterdir())]
     paths += [ROOT / p for p in inventory()["source_sha256"]]
+    if (HERE / 'checks/amendment8.json').exists():
+        paths.append(HERE / 'checks/amendment8.json')
     hashes = {str(p.relative_to(ROOT)): sha(p) for p in paths}
-    manifest = {"hashes": hashes, "models": MODELS, "rates": inventory()["rates_per_million"],
+    manifest = {"judge_output_cap": JUDGE_OUTPUT_CAP, "verdict_schema": VERDICT_SCHEMA,
+                "weak_provider_rates_per_million": WEAK_PROVIDER_RATES, "planning_output_mean": 256,
+                "hashes": hashes, "models": MODELS, "rates": inventory()["rates_per_million"],
                 "temperature": 0, "seed": SEED, "thinking_level": "LOW",
                 "condition_order": list(ARMS), "block_shuffle_seed": SEED}
     stamp = digest(manifest)
@@ -617,7 +627,7 @@ def freeze_execution():
                 "preflight": "uv run python experiments/P1-deference/run_p1.py preflight",
                 "preflight-openrouter": "uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50"}
     from decimal import Decimal
-    overhead = Decimal(1) + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE)
+    overhead = Decimal(1) + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + amendment8_overhead()
     ceilings = {}
     for name, plan in inventory()["budget_scenarios"].items():
         dev, scored = split_ceiling(name, "dev"), split_ceiling(name, "scored")
@@ -633,6 +643,8 @@ def freeze_execution():
         "status": "BLOCKED_NOT_SCORING_READY", "selected_schedule": probe_result["schedule"],
         "external_timestamp": {"verified": False}, "commands": commands, "cost_ceilings": ceilings,
         "accounting": {"replacement_probe_envelope_usd": "1.00", "prior_attempt_ceiling_usd": "0.056900",
+                       "retained_dev_costs_and_holds_usd": str(amendment8_overhead()),
+                       "output_policy": "planning mean 256 for full schedule; reserve actual request cap per dispatch",
                        "provider_preflight_envelope_usd": "0.50", "local_allowance_usd": "0.25"},
         "unresolved": ["offline gates require current execution", "full schedule tokenizer and joint-history gates",
                        "OpenRouter native joint counter and served revision preflight", "external timestamp", "dev capability gate"]})
@@ -723,7 +735,10 @@ def probe(cap):
 def infrastructure_state(ledger):
     with ledger.locked() as (_, entries):
         unavailable, halted = {}, {}
+        recovered = {r["halt_time"] for r in entries if r["event"] == "amendment8_halt_recovery"}
         for entry in entries:
+            if entry.get("time") in recovered:
+                continue
             if entry['event'] == 'arm_unavailable':
                 unavailable.setdefault(entry['model'], {})[entry['arm']] = entry['error']
             elif entry['event'] in ('panel_halt', 'panel_validation_halt'):
@@ -807,10 +822,13 @@ def split_report(rows, items, judges, unavailable, halted, stopped=None):
 def run_split(split, cap):
     probe_result = json.loads((HERE / "results/probe.json").read_text())
     name = probe_result["schedule"]
+    ledger_path = HERE / 'runs/study/costs.jsonl'
+    if ledger_path.exists() and name == 'full_256':
+        name = Ledger(ledger_path, STUDY_CAP_USD).gemini_schedule()
     if name == "stop" or probe_result["status"] != "complete":
         raise PreflightError("probe selected stop; no dev/scored dispatch")
     from decimal import Decimal
-    all_in = split_ceiling(name, "dev") + split_ceiling(name, "scored") + Decimal(1) + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + Decimal(".25")
+    all_in = split_ceiling(name, "dev") + split_ceiling(name, "scored") + Decimal(1) + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + amendment8_overhead() + Decimal(".25")
     if all_in > Decimal(str(STUDY_CAP_USD)):
         raise BudgetExceeded(f"selected schedule ceiling exceeds ${STUDY_CAP_USD} including allowances")
     freeze = json.loads((HERE / "freeze.json").read_text())
@@ -829,6 +847,8 @@ def run_split(split, cap):
     ineligible = []
     if split == 'scored':
         dev = json.loads((HERE / 'checks/dev.json').read_text())
+        if dev.get('freeze_sha256') != freeze.get('manifest_sha256'):
+            raise PreflightError('dev gate belongs to an earlier execution freeze')
         if dev.get('stopped'):
             raise PreflightError('dev stopped for a study-wide failure; review required')
         ineligible = [j for j in plan['judges'] if dev.get('judges', {}).get(j, {}).get('infrastructure_halt')]
@@ -837,7 +857,7 @@ def run_split(split, cap):
                                     for j in plan['judges']):
             raise PreflightError('dev capability gate failed or missing for an available judge')
     items = [i for i in materials(split) if i["assignment"]["source"] in plan["sources"]]
-    output = probe_result["selected_output_cap"]
+    output = JUDGE_OUTPUT_CAP
     ledger = Ledger(HERE / "runs/study/costs.jsonl", min(cap, STUDY_CAP_USD))
     # Reserve the complete split before any paid call; calls remain serial.
     ceiling = split_ceiling(name, split)
@@ -845,20 +865,36 @@ def run_split(split, cap):
     ledger.allowance("probe-envelope", 1)
     ledger.allowance("prior-attempt-and-provider-preflight", PRIOR_AND_PROVIDER_ALLOWANCE)
     ledger.recover_tool_routing()
-    ledger.reserve_block(split, ceiling, resume=True)
+    with ledger.locked() as (_, ledger_entries):
+        amended = any(r['event'] == 'amendment8' for r in ledger_entries)
+    block_id = split + '-amendment8' if split == 'dev' and amended else split
+    if name == 'primary_1024' and any(r['event'] == 'schedule_fallback' for r in ledger_entries):
+        # A fallback may occur inside a reserved full split. Preserve its original
+        # accounting on restart; it can never create a second spending envelope.
+        prior = next((r for r in ledger_entries if r['event'] == 'block_reserve' and r['block_id'] == block_id), None)
+        if prior:
+            ceiling = Decimal(prior['ceiling_usd'])
+    ledger.reserve_block(block_id, ceiling, resume=True)
     from experiments.p1_preflight import runtime_counter
     clients = {j: PaidClient(VertexBackend() if j == "pro" else OpenRouterBackend(runtime_counter()),
-                            ledger, split, reuse_completed=True) for j in plan["judges"]}
+                            ledger, block_id, reuse_completed=True) for j in plan["judges"]}
     blocks = [(i, a, j) for i in items for a in arms(i) for j in plan["judges"]]
     random.Random(SEED).shuffle(blocks)
     path = HERE / f'runs/{split}/trials.jsonl'
     rows = read_jsonl(path) if path.exists() else []
+    if amended and split == 'dev':
+        rows = [r for r in rows if r.get('amendment') == 8]
+    included = {i['id'] for i in items}
+    rows = [r for r in rows if r['judge'] in plan['judges'] and r['item_id'] in included
+            and (plan['pushback'] or not r.get('turn', 0) and not r.get('event'))]
     def row_key(r):
         return (r['item_id'], r['condition'], r['judge'], r.get('turn', 0), r.get('event'))
     recorded = {row_key(r): r for r in rows}
     if len(recorded) != len(rows):
         raise PreflightError('duplicate existing trial records')
     def record(row):
+        if amended and split == 'dev':
+            row = {**row, 'amendment': 8}
         key = row_key(row)
         if key in recorded:
             if recorded[key] != row:
@@ -871,6 +907,14 @@ def run_split(split, cap):
     halted = {j: reason for j, reason in halted.items() if j in plan['judges']}
     stopped, budget_stop = None, False
     for i, a, j in blocks:
+        if name == 'full_256' and ledger.gemini_schedule() == 'primary_1024':
+            name = 'primary_1024'
+            plan = deepcopy(inventory()['budget_scenarios'][name])
+            items = [i for i in items if i['assignment']['source'] in plan['sources']]
+            halted = {j: reason for j, reason in halted.items() if j in plan['judges']}
+            rows = [r for r in rows if r['judge'] in plan['judges'] and r['item_id'] in {i['id'] for i in items} and not r.get('turn', 0) and not r.get('event')]
+        if j not in plan['judges'] or i['assignment']['source'] not in plan['sources']:
+            continue
         if j in halted or a in unavailable.get(j, {}):
             continue
         try:
@@ -893,6 +937,7 @@ def run_split(split, cap):
         gates = dev_gates(rows, items, plan['judges'], unavailable, halted)
         gates['passed'] = not stopped and gates['passed']
         gates['stopped'] = stopped
+        gates['freeze_sha256'] = freeze['manifest_sha256']
         write_json(HERE / "checks/dev.json", gates)
     report = split_report(rows, items, plan['judges'], unavailable, halted, stopped)
     with ledger.locked() as (_, ledger_rows):
@@ -907,7 +952,7 @@ def run_split(split, cap):
                                                            "judges": sorted(set(MODELS)-set(plan["judges"]))})
     write_json(HERE / f"runs/{split}/analysis.json", report)
     if not stopped:
-        ledger.release_block(split)
+        ledger.release_block(block_id)
     return 3 if budget_stop else (2 if stopped or halted else 0)
 
 
@@ -919,6 +964,7 @@ def main():
         if name in ("probe", "dev", "scored", "preflight-openrouter"):
             p.add_argument("--cap-usd", type=float, required=True)
         if name == "preflight-openrouter":
+            p.add_argument('--cached-only', action='store_true', help='revalidate retained metadata/smokes locally; never generate')
             p.add_argument("--counter-command", type=Path, default=HERE / "native_counter.py",
                            help="provider-native joint wire counter executable (default: bundled native_counter.py)")
         if name == "analyze":
@@ -928,14 +974,16 @@ def main():
         if name == "known-answer":
             p.add_argument("--lean-replay", action="store_true")
             p.add_argument("--freeze", action="store_true")
+        if name == 'preflight':
+            p.add_argument('--offline', action='store_true', help='reuse identical-wire Vertex counts; no provider API calls')
     args = parser.parse_args()
     try:
         if args.command == "preflight":
             from experiments.p1_preflight import preflight
-            return preflight()
+            return preflight(offline=args.offline)
         elif args.command == "preflight-openrouter":
             from experiments.p1_preflight import preflight_openrouter
-            return preflight_openrouter(args.cap_usd, args.counter_command)
+            return preflight_openrouter(args.cap_usd, args.counter_command, cached_only=args.cached_only)
         elif args.command == "known-answer":
             export()
             result = known_answer()
@@ -952,7 +1000,11 @@ def main():
         else:
             plan = inventory()["budget_scenarios"][args.schedule]
             unavailable, halted = infrastructure_state(Ledger(HERE / 'runs/study/costs.jsonl', STUDY_CAP_USD))
-            print(json.dumps(split_report(read_jsonl(args.trials), [i for i in materials(args.split)
+            trial_rows = read_jsonl(args.trials)
+            with Ledger(HERE / 'runs/study/costs.jsonl', STUDY_CAP_USD).locked() as (_, entries):
+                if args.split == 'dev' and any(r['event'] == 'amendment8' for r in entries):
+                    trial_rows = [r for r in trial_rows if r.get('amendment') == 8]
+            print(json.dumps(split_report(trial_rows, [i for i in materials(args.split)
                 if i["assignment"]["source"] in plan["sources"]], plan["judges"], unavailable, halted), indent=2))
     except BudgetExceeded as exc:
         print(str(exc), file=sys.stderr)
