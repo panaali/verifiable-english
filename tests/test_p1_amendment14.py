@@ -3,7 +3,6 @@ from contextlib import contextmanager
 from copy import deepcopy
 from decimal import Decimal
 import json
-import shutil
 
 import pytest
 
@@ -37,8 +36,14 @@ def test_visible_wire_and_billed_reserve_are_separate(tmp_path, billed, passes):
 
 
 def test_recover_and_reconstruct_every_retained_scored_call_without_dispatch(tmp_path, monkeypatch):
+    # Replay the retained Amendment 14 population, before Amendment 15 added
+    # restart calls, costs, and replacement trajectory rows to the final files.
+    receipt = p1.amendment15_receipt()
+    p1.validate_amendment15_sources(receipt)
+    def retained_bytes(relative):
+        return (p1.HERE / relative).read_bytes()[:receipt['sources'][relative]['bytes']]
     ledger = paid.Ledger(tmp_path/'costs.jsonl', Decimal('19.90026000260'))
-    shutil.copyfile(p1.HERE/'runs/study/costs.jsonl', ledger.path)
+    ledger.path.write_bytes(retained_bytes('runs/study/costs.jsonl'))
     before = ledger.path.read_bytes()
     block = p1.split_block_id('replication_2turn', 'scored')
     ceiling = p1.split_ceiling('replication_2turn', 'scored')
@@ -48,7 +53,7 @@ def test_recover_and_reconstruct_every_retained_scored_call_without_dispatch(tmp
     assert ledger.amend_attacker_billing(block, ceiling) == []
     entries = p1.read_jsonl(ledger.path)
     pending, spent, *_ = ledger.state(entries)
-    assert not pending and spent == Decimal(p1.amendment15_receipt()['retained_costs_and_holds_usd'])
+    assert not pending and spent == Decimal(receipt['retained_costs_and_holds_usd'])
     ledger.reserve_block(block, ceiling, resume=True)
     class MissingCache(Exception):
         pass
@@ -71,7 +76,7 @@ def test_recover_and_reconstruct_every_retained_scored_call_without_dispatch(tmp
         return reply
     monkeypatch.setattr(ledger, 'cached_reply', tracked_cache)
     client = paid.PaidClient(backend, ledger, block, reuse_completed=True)
-    source = p1.read_jsonl(p1.HERE/'runs/scored/trials.jsonl')
+    source = [json.loads(line) for line in retained_bytes('runs/scored/trials.jsonl').splitlines()]
     def key(r):
         return r['item_id'], r['condition'], r['judge'], r.get('turn', 0), r.get('event')
     retained = {key(r): r for r in source}
