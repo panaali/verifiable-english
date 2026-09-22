@@ -562,3 +562,44 @@ cannot run on the superseded prose merely to claim completion.
 ## Amendment (orchestrator, 2026-09-22): paraphrase stage waits for DeepInfra on 429
 
 Novita rejected the v6 paraphrase request (HTTP 400, "does not support endpoint: completions"). The paraphrase stage now retries DeepInfra after 20/60/120 s pauses instead of falling back to another provider. Authoring only; judges unchanged. Refreeze.
+
+## Revision 7 — Amendment (orchestrator), 2026-09-22: constrained rewriting
+
+The v6 re-buy accepted **0/84 slots after 168 completed attempts**, costing
+**$0.1597614352** in retained completed-call charges. The instruction to rewrite
+substantially and the string-level atomic licensing check were incompatible in
+practice. The failures were all at the semantic parsing/licensing gate: retained
+messages identify 89 unsupported conclusions, 77 unsupported inference syntaxes,
+and 2 unparsed substantive premise wordings. No attempt met acceptance. The
+v6 ledger, raw replies, infrastructure records and study envelope remain as
+cost/evidence; this amendment neither erases them nor relabels them accepted.
+
+Superseding v6's rewriting instruction and 0.35 raw-text distance threshold,
+v7 requires a **CONSTRAINED rewrite**. Every occurrence of each atomic claim
+phrase (`unitN is <predicate>`) and every unit name stays verbatim at its source
+step. Surrounding prose may be independently re-structured: sentence order
+within a step, connectives, merged/split premises, active/passive discourse
+framing, and conditional-alternative framing. This is **independently
+re-structured prose with atomic claims verbatim, not a free paraphrase**. The
+restriction limits claims about linguistic independence and generalization.
+
+Acceptance requires all steps in source order, no IDs/glosses in final prose,
+unchanged premise/conclusion/reference content and conditional alternatives,
+and the same complete zero-then-one-relaxation licensing readings (including
+kind and localization) as the source. The parser remains conservative about
+unparsed substantive wording. Each atomic phrase is replaced by the same
+single `#` character in both source and sanitized candidate. Normalized
+character Levenshtein distance on these masked ordered packet strings must be
+**at least 0.20**, divided by their maximum length. Step markers are excluded;
+all other characters, spacing and punctuation remain. Atomic multiplicities
+and unit names are checked independently, so masking cannot hide a synonym,
+omission, duplicate or changed unit. No generated rewrite is accepted solely
+because its distance passes.
+
+The re-buy retains a **$0.40 cumulative cap**, separate v7 ledger and request
+namespace, at most one correction per slot, durable checkpoints, and cached
+response revalidation on resume. Failed v6 attempts are never replayed as v7
+responses. The unchanged $40 study cap contains both historical and new
+envelopes. No new paid calls are authorized for Worker X: prepare, test, commit
+and print the command only. No dev/scored call occurs under this amendment.
+See REVISION7.md for the exact command and RESULTS.md for the required disclosure.

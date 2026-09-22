@@ -457,3 +457,33 @@ blinded semantic review and pass context/replay gates within this budget? The
 inventory does not answer that question. A later efficacy study needs a larger
 benign sample and its own preregistration; this pilot cannot establish absence
 of harm merely by reaching a task ceiling.
+
+## Amendment v7 (2026-09-22): constrained prose rewrite
+
+This amendment supersedes the v6 paraphrase instruction and acceptance-distance
+rule; historical protocol text and costs remain disclosed in AMENDMENTS.md.
+The v6 pass accepted 0/84 slots after 168 attempts ($0.1597614352 in completed-call
+charges retained in `runs/revision-v6/paraphrase-costs.jsonl`).
+
+The replacement prose is **independently re-structured with atomic claims
+verbatim, not a free paraphrase**. Each `unitN is <predicate>` phrase, every
+occurrence, and every unit name must remain verbatim at its source step.
+Surrounding prose may change sentence order within a step, connectives,
+merging/splitting and active/passive discourse framing. All steps remain in
+order; no IDs/glosses appear in the final prose. Premise/conclusion roles,
+immediate references, conditional alternatives and the complete licensing
+readings, including kind and localization, must agree exactly with source.
+
+After sanitation and removal of step markers, replace each atomic phrase with
+one `#` in source and candidate. Character Levenshtein distance divided by the
+maximum masked string length must be **>=0.20** across the ordered packet;
+other characters are unchanged. Atom and unit preservation are checked
+separately. This measures surrounding restructuring, not predicate synonyms.
+The public-record parser is conservative and fails closed on unsupported
+substantive syntax. Independent semantic review remains a separate gate.
+
+The re-buy cap remains **$0.40**, cumulative across resumptions in the separate
+v7 ledger. New `rewrite-v7/` identities prevent reuse of failed v6 responses;
+every old attempt stays billed. One correction per slot and durable ledger
+revalidation/checkpointing remain. Worker X makes no paid calls. RESULTS.md
+must carry the same constrained-rewrite disclosure and retained failure costs.

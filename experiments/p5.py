@@ -63,7 +63,7 @@ ROLES={
  'VE_defender':'Answer the critic, re-author affected uses and re-certify in a complete artifact. '+FORMAL,
  'repair':'Repair only the diagnosed syntax/coverage failures. One repair is allowed; retain the original root. '+FORMAL,
  'judge':'Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence.',
- 'paraphrase':'Rewrite the argument substantially, not by copying or merely removing glosses. Change sentence structures, vary connectives, and merge or split sentences within each step where meaning permits. Aim for normalized character Levenshtein distance >= 0.35 over the packet. Keep every step in the same given topological order, one paragraph per step. State premises by content. Preserve literal atom clauses (unitN is TERM), immediately-preceding references, their direction and all conditional alternatives, without adding or repairing assumptions. Express each inference clearly with premises before a conclusion introduced by thus/therefore/so/hence/we conclude that, or a conclusion followed by because/on the grounds that. You may split premises and conclusion into sentences. No negation, hedges, definitions or commentary may be added. Keep the conditional alternative sentence beginning "The checks that" and its contents intact at its supplied step; it is not an assertion of those checks. No parenthetical glosses or sense labels in the prose. Do not disambiguate ambiguous terms. Return JSON {"texts":{"node_id":"rewritten step"}} with every existing node ID as a key only. No step-id markers, node IDs or rule IDs in prose. No additional fields.' }
+ 'paraphrase':'Perform a CONSTRAINED structural rewrite, not a free paraphrase. Keep EVERY atomic claim phrase verbatim: copy each complete "unitN is <predicate>" string exactly, including unit names, predicate words, case and every repeated occurrence. Do not replace predicates with synonyms or change atoms to passive voice. State premises by content. Freely restructure the surrounding prose within each step: reorder premise sentences, vary connectives, merge or split sentences, use active or passive discourse framing. Examples: "From the fact that unit1 is ready and unit2 is clear, it follows that unit3 is active."; "These facts are taken together: unit1 is ready. Also, unit2 is clear. Therefore, unit3 is active."; "unit3 is active is inferred from the fact that unit1 is ready and unit2 is clear." These are syntax examples only; never insert their atoms into the supplied argument. Aim for normalized character Levenshtein distance >= 0.20 after every atomic phrase is replaced with the single character # in both source and rewrite; only surrounding restructuring earns distance. Keep every step in the same given topological order, one paragraph per step. Preserve immediately-preceding references, inference direction and all conditional alternatives without adding or repairing assumptions. Make inference direction explicit with it follows that/thus/therefore/so/hence/we conclude that, or conclusion because/on the grounds that/is inferred from the fact that. No negation, hedges, definitions or commentary may be added. Keep conditional alternatives at their supplied step, paired in the same way and explicitly conditional, never asserted as facts. You may move that sentence within its step or reframe it as "If <checks>, then <outcomes> would follow, respectively." Keep all atomic phrases in both lists verbatim. No parenthetical glosses or sense labels in the prose. Do not disambiguate ambiguous terms. Return JSON {"texts":{"node_id":"rewritten step"}} with every existing node ID as a key only. No step-id markers, node IDs or rule IDs in prose. No additional fields.' }
 
 
 def materials(split=None):
@@ -134,7 +134,7 @@ def request(item,arm,stage,history=None,*,judge='pro',turn=0,commitment=None,que
     # the separate provider response_schema overhead; p5_tokens handles that.
     system=(instruction if stage=='paraphrase' else SYSTEM+' '+instruction)+((' Response schema: '+packed(schema)) if schema else '')
     inp,out=STAGES[stage]
-    prefix = "rewrite-v6/" if stage == "paraphrase" else ""
+    prefix = "rewrite-v7/" if stage == "paraphrase" else ""
     return PaidRequest(prefix+f"{item['split']}/{item['id']}/{arm}/{model}/{stage}/{turn}",model,
         [{'role':'system','content':system},{'role':'user','content':content}],inp,out,
         response_schema=schema,metadata={'item_id':item['id'],'arm':arm,'role':stage,'turn':turn,
@@ -326,7 +326,7 @@ def freeze(scenario):
            ROOT/'experiments/p1.py',ROOT/'experiments/p1_preflight.py',ROOT/'experiments/prereg_inventory.py',
            ROOT/'experiments/trial_analysis.py',*ROOT.glob('tests/test_p5*.py'),
            ROOT/'tests/fixtures/p5_deepinfra_smoke.json',ROOT/'tests/fixtures/p5_vertex_smoke.json',ROOT/'pyproject.toml',ROOT/'uv.lock',
-           HERE/'PREREG.md',ROOT/'experiments/PREREG-DESIGN.md',HERE/'inventory.json',HERE/'AMENDMENTS.md',HERE/'REVISION6.md',
+           HERE/'PREREG.md',ROOT/'experiments/PREREG-DESIGN.md',HERE/'inventory.json',HERE/'AMENDMENTS.md',HERE/'REVISION6.md',HERE/'REVISION7.md',HERE/'RESULTS.md',
            HERE/'prompts.json',HERE/'CONSTRUCTION-V3.md',HERE/'CONSTRUCTION-V4.md',HERE/'CONSTRUCTION-V5.md',HERE/'REVIEW-CHECKLIST.md',HERE/'PARAPHRASE-REVIEW.md',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
            ROOT/'experiments/P1-deference/native_counter.py',*ROOT.glob('experiments/P1-deference/tokenizers/*.json'),
            *ROOT.glob('ve/*.py'), ROOT/'lean/.lake/build/bin/ve_conformance']
@@ -512,7 +512,7 @@ def paraphrase(cap, *, cached_only=False, revision=False):
         if not cached_only:
             import os
             if not os.environ.get('OPENROUTER_API_KEY'):
-                raise PreflightError('OPENROUTER_API_KEY absent; orchestrator must run the v6 paraphrase command')
+                raise PreflightError('OPENROUTER_API_KEY absent; orchestrator must run the v7 paraphrase command')
         book=revision_ledger('paraphrase', cap, cached_only=cached_only)
     else:
         book=Ledger(HERE/'runs/study/costs.jsonl',CAP) if cached_only else ledger(cap)
@@ -560,7 +560,7 @@ def paraphrase(cap, *, cached_only=False, revision=False):
                     if not acceptance['passed']:
                         # Never expose recovered kind/localization to the writer.
                         violation = ('Preserve every step and conditional while genuinely rewriting; '
-                                     'minimum normalized Levenshtein distance is 0.35. '
+                                     'keep atomic claim phrases verbatim; minimum normalized Levenshtein distance on atomic-masked text is 0.20. '
                                      + acceptance.get('error', 'Insufficient rewrite or changed licensing.'))
                 attempts.append({'identity':req.identity,'request_sha256':digest(req.messages),
                     'response_sha256':digest(reply.text),'revision':reply.revision,
@@ -569,7 +569,7 @@ def paraphrase(cap, *, cached_only=False, revision=False):
                     break
             status='paraphrase-failed' if violation else 'QWEN_PENDING_REVIEW'
             result={'id':dossier['id'],'status':status,'excluded':bool(violation),
-                'provenance':{'method':'Qwen72 in separate context; at most one validation correction',
+                'provenance':{'method':'Qwen72 independently re-structured prose with atomic claims verbatim; not a free paraphrase; at most one validation correction',
                     'input_sha256':digest(dossier),**attempts[-1],
                     'attempts':attempts,'sanitiser':SANITISER,
                     'sanitised_texts_sha256':digest(texts),
@@ -597,7 +597,7 @@ def main(argv=None):
     parser.add_argument('--split',choices=['dev','scored'],default='scored')
     parser.add_argument('--export',type=Path);parser.add_argument('--submit',type=Path)
     parser.add_argument('--adjudicate',type=Path);parser.add_argument('--count-tokens',action='store_true')
-    parser.add_argument('--revision', choices=['v6']);
+    parser.add_argument('--revision', choices=['v7']);
     parser.add_argument('--offline',action='store_true');parser.add_argument('--receipt',type=Path)
     args=parser.parse_args(argv)
     try:
@@ -617,7 +617,7 @@ def main(argv=None):
             if args.command=='inventory':result=pf.inventory(args.count_tokens)
             elif args.command=='preflight':result=pf.preflight(args.offline)
             else: result=pf.provider_smoke(args.cap_usd,only_openrouter=args.command=='preflight-openrouter',cached_only=args.offline)
-        elif args.command=='paraphrase':result=paraphrase(args.cap_usd,cached_only=args.offline,revision=args.revision=='v6')
+        elif args.command=='paraphrase':result=paraphrase(args.cap_usd,cached_only=args.offline,revision=args.revision=='v7')
         elif args.command in ('dev','scored','resume'):result=run(args.split if args.command=='resume' else args.command,args.cap_usd,args.command=='resume')
         elif args.command=='reconcile':
             book=Ledger(HERE/'runs/study/costs.jsonl',CAP)

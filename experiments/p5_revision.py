@@ -1,4 +1,4 @@
-"""Bounded v6 material regeneration/review; no dev/scored generation."""
+"""Bounded v7 material regeneration/review; no dev/scored generation."""
 import argparse
 from decimal import Decimal
 import json
@@ -20,8 +20,8 @@ def revision_ledger(stage, cap, *, cached_only=False):
     if not cached_only:
         # Conservative authorization envelope in the unchanged study-wide $40
         # ledger; actual bills live in the separately capped revision ledger.
-        Ledger(HERE/'runs/study/costs.jsonl', p5.CAP).allowance('v6-'+stage+'-envelope', str(cap))
-    return Ledger(HERE/f'runs/revision-v6/{stage}-costs.jsonl', limit if cached_only else cap)
+        Ledger(HERE/'runs/study/costs.jsonl', p5.CAP).allowance('v7-'+stage+'-envelope', str(cap))
+    return Ledger(HERE/f'runs/revision-v7/{stage}-costs.jsonl', limit if cached_only else cap)
 
 
 def independent_prose(base=HERE):
@@ -49,7 +49,7 @@ def gemini_review(cap):
     if not independent_prose()['passed']:
         raise PreflightError('all 84 regenerated semantic/distance-accepted Qwen paraphrases required before Gemini review')
     p5.verify_freeze()
-    destination = HERE/'runs/revision-v6/review-packets.json'
+    destination = HERE/'runs/revision-v7/review-packets.json'
     p5_review.review_export(destination)
     manifest = json.loads(destination.read_text())
     book = revision_ledger('gemini-review',cap)
@@ -62,7 +62,7 @@ def gemini_review(cap):
                 payload = {k:source[k] for k in ('packet','source_argument')}
                 # Single packet per fresh request. No source-label, previous
                 # annotation, previous reply or sibling context is included.
-                req = PaidRequest('review-v6/'+source['item_id'],'pro',
+                req = PaidRequest('review-v7/'+source['item_id'],'pro',
                     [{'role':'system','content':REVIEW_PROMPT},{'role':'user','content':packed(payload)}],
                     7000,1024,metadata={'role':'material-review','packet_sha256':source['packet_sha256']})
                 started = time.monotonic()
@@ -72,7 +72,7 @@ def gemini_review(cap):
                     if set(annotation) != {'checks','annotation','corrections','notes'}:
                         raise ValueError('review schema mismatch')
                     row = {**annotation,'item_id':source['item_id'],'packet_sha256':source['packet_sha256'],
-                           'reviewer_id':f'gemini-3.1-pro-v6-assignment-{assignment}',
+                           'reviewer_id':f'gemini-3.1-pro-v7-assignment-{assignment}',
                            'reviewer_kind':'model','model_family':'Google Gemini',
                            'minutes':max(reply.latency_s,time.monotonic()-started)/60,
                            'response_sha256':digest(reply.text),'blinding':'fresh context; public packet and source only',
@@ -80,14 +80,14 @@ def gemini_review(cap):
                     submitted.append(row)
                 except (ValueError, TypeError) as exc:
                     failures.append({'item_id':source['item_id'],'error':str(exc),'response_sha256':digest(reply.text)})
-                write_json(HERE/'runs/revision-v6/gemini-submission.json',submitted)
-                write_json(HERE/'checks/gemini-review-v6-status.json',{'completed':len(submitted)+len(failures),'valid':len(submitted),'failures':failures,'cap_usd':str(cap)})
+                write_json(HERE/'runs/revision-v7/gemini-submission.json',submitted)
+                write_json(HERE/'checks/gemini-review-v7-status.json',{'completed':len(submitted)+len(failures),'valid':len(submitted),'failures':failures,'cap_usd':str(cap)})
     finally:
         client.close()
     # Submit only once, preserving authentic model answers (never fill labels).
     prior = {(r.get('item_id'),r.get('reviewer_id'),r.get('packet_sha256')) for r in read(HERE/'materials/review-ledger.jsonl.gz')}
     fresh = [r for r in submitted if (r['item_id'],r['reviewer_id'],r['packet_sha256']) not in prior]
-    path = HERE/'runs/revision-v6/gemini-new-submission.json'
+    path = HERE/'runs/revision-v7/gemini-new-submission.json'
     write_json(path,fresh)
     if fresh:
         p5_review.submit(path,run_gate=False)

@@ -13,7 +13,13 @@ from experiments.p5_analysis import endpoint, parse, known_answer, analyze, menu
 from ve_experiments.paid import PreflightError, PaidReply, OfflineBackend, Ledger, PaidClient, digest, packed
 
 @pytest.fixture(scope='module')
-def items():return p.materials()
+def items():
+    # Construction fixtures must not depend on acceptance of paid paraphrases:
+    # v6 excluded all 84 slots, so its dev/scored archives are legitimately empty.
+    labels = {r['id']: r for r in p.labels(False)}
+    return [{'id': d['id'], 'group': labels[d['id']]['family'],
+             'split': labels[d['id']]['split'], 'payload': d}
+            for d in read(p.HERE/'materials/dossiers.jsonl.gz')]
 
 @pytest.fixture(scope='module')
 def labels():return p.labels(False)
@@ -141,7 +147,7 @@ def test_known_answers_actual_scorer(items,labels):
 
 
 def test_assignment_integrity(items,labels):
-    item=items[0]; row={'item_id':item['id'],'condition':'X','judge':'pro','group':item['group'],'split':item['split'],
+    item=next(i for i in items if i['split']=='dev'); row={'item_id':item['id'],'condition':'X','judge':'pro','group':item['group'],'split':item['split'],
         'sample':0,'packet_sha256':digest(item['payload']),'ok':False,'answer':{}}
     dev=[i for i in items if i['split']=='dev']
     with pytest.raises(PreflightError,match='missing'):analyze([row],dev,labels)

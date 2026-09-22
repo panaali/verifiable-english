@@ -131,10 +131,13 @@ def test_paraphrase_reserves_fallback_price_and_rejects_unlisted_provider(tmp_pa
 
 @pytest.mark.parametrize('status', [200, 429, 400, 422, 500, 504])
 @pytest.mark.parametrize('stage', ['paraphrase', 'judge'])
-def test_chat_wire_falls_back_only_for_rate_limited_paraphrase(tmp_path, monkeypatch, status, stage):
+def test_chat_wire_retries_same_provider_only_for_rate_limited_paraphrase(tmp_path, monkeypatch, status, stage):
     import httpx
     monkeypatch.setenv('OPENROUTER_API_KEY', 'offline-key')
     monkeypatch.setattr(paid, 'INFRASTRUCTURE_BACKOFF_S', ())
+    async def no_sleep(_):
+        pass
+    monkeypatch.setattr('asyncio.sleep', no_sleep)
     requests = []
     req = p5.request(source_item(), 'shared', stage, judge='replication')
 
@@ -143,7 +146,7 @@ def test_chat_wire_falls_back_only_for_rate_limited_paraphrase(tmp_path, monkeyp
         if len(requests) == 1 and status != 200:
             return httpx.Response(status, json={'error': {'message': 'provider rejected'}})
         return httpx.Response(200, json={
-            'provider': 'Novita' if len(requests) == 2 else 'DeepInfra',
+            'provider': 'DeepInfra',
             'model': paid.MODELS['replication'],
             'usage': {'prompt_tokens': 1, 'completion_tokens': 1, 'total_tokens': 2,
                       'completion_tokens_details': {'reasoning_tokens': 0},
@@ -170,7 +173,7 @@ def test_chat_wire_falls_back_only_for_rate_limited_paraphrase(tmp_path, monkeyp
         assert wire['messages'] == req.messages
         assert [m['role'] for m in wire['messages']] == ['system', 'user']
         assert 'prompt' not in wire
-        provider = 'novita' if index else 'deepinfra'
+        provider = 'deepinfra'
         assert wire['provider']['only'] == wire['provider']['order'] == [provider]
         assert wire['provider']['allow_fallbacks'] is False
     if fallback:
@@ -191,6 +194,7 @@ def endpoint_rejection(provider='Novita', raw=None):
 @pytest.mark.parametrize('change', ['none', 'provider', 'error', 'role', 'identity', 'model'])
 def test_endpoint_recovery_is_narrow_idempotent_and_keeps_hold(tmp_path, change):
     req = p5.request(source_item(), 'shared', 'paraphrase')
+    req = replace(req, identity=req.identity.replace('rewrite-v7/', 'rewrite-v6/'))
     error = endpoint_rejection()
     if change == 'provider': error = endpoint_rejection('DeepInfra')
     if change == 'error': error = endpoint_rejection(raw='some other 400')
@@ -231,7 +235,7 @@ def substantive_reply(dossier):
 
 
 @pytest.mark.parametrize('invalid_cached', [None, 'copy', 'meaning'])
-def test_v6_resumes_fourteen_completions_and_revalidates_semantics(tmp_path, monkeypatch, invalid_cached):
+def test_v7_resumes_fourteen_completions_and_revalidates_semantics(tmp_path, monkeypatch, invalid_cached):
     from experiments import p5_revision
     dossiers = read(p5.HERE / 'materials/dossiers.jsonl.gz')[:15]
     labels = p5.labels(False)
@@ -251,7 +255,7 @@ def test_v6_resumes_fourteen_completions_and_revalidates_semantics(tmp_path, mon
         req = replace(req, metadata={**req.metadata, 'block_id': 'shared-paraphrase'})
         book.reserve(req)
         if index == 14:
-            book.stop_panel(req, endpoint_rejection())
+            book.infrastructure_failure(req, 'HTTP 429: offline interruption fixture', 429, 0)
         else:
             reply = substantive_reply(dossier)
             if index == 0 and invalid_cached == 'copy':

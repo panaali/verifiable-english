@@ -5,14 +5,25 @@ material check, not a judge: hidden labels and formal graphs are never inputs.
 Unsupported prose is rejected for review, never silently rewritten.
 """
 import itertools
+import json
 import re
 from collections import Counter
-from experiments.p5_paraphrase import inference_parts
+from experiments.p5_paraphrase import inference_parts, validate_reply
 from ve_experiments.paid import digest
 
 ATOM = re.compile(r'(unit\d+) is ([a-z-]+)(?: \(([a-z -]+)\))?')
+CLAIM = re.compile(r'(?<!\w)unit\d+ is [a-z]+(?:-[a-z]+)*(?![\w-])')
 REF = re.compile(r'the immediately preceding ([a-z-]+) result(?: holds)?', re.I)
-MIN_DISTANCE = .35
+MIN_DISTANCE = .20
+
+
+def mask_claims(text):
+    """Replace each verbatim atomic phrase with one fixed character.
+
+    Preserve case, whitespace, punctuation and multiplicity elsewhere. Identity
+    and content preservation are checked separately, before accepting distance.
+    """
+    return CLAIM.sub('#', text)
 
 
 def edit_distance(a, b):
@@ -37,15 +48,27 @@ def edit_distance(a, b):
 
 def parts(text):
     text = re.sub(r'^\[n\d+\] ', '', text).strip()
-    head, sep, tail = text.partition(' The checks that ')
-    tail = 'The checks that ' + tail if sep else ''
-    try:
-        ant, con, old_tail, _ = inference_parts(text)
-        return ant, con, old_tail
-    except ValueError:
-        pass
+    # Conditional alternatives can move within the step or change discourse
+    # framing, but must remain conditional and preserve the paired alternatives.
+    sentences = re.findall(r'[^.]+(?:\.|$)', text)
+    tails = [s for s in sentences if 'would' in s.split()]
+    if len(tails) > 1:
+        raise ValueError('multiple conditional alternative sentences')
+    tail = tails[0].strip() if tails else ''
+    head = ' '.join(s.strip() for s in sentences if s not in tails)
     # Conclusion-first and premise-first structures, including split sentences.
     atom = r'unit\d+ is [a-z-]+'
+    # Match the whole inference before the legacy parser: its broad conclusion
+    # capture mistakes discourse framing after a comma for predicate wording.
+    m = re.fullmatch(r'(?:From (?:the fact|the facts) that |Given that |Since |Because )(.+?), '
+                     r'(?:it follows that |we infer that |we conclude that )?(' + atom + r')\.', head)
+    if m:
+        return m[1], m[2], tail
+    m = re.fullmatch(r'(?:It follows that |We infer that |We conclude that |The conclusion is that )?('
+                     + atom + r')[,;]? (?:because|on the grounds that|is inferred from the fact that|'
+                     r'follows from the fact that) (.+)\.', head)
+    if m:
+        return m[2], m[1], tail
     m = re.fullmatch(r'(?:We conclude that |The conclusion is that )?(' + atom +
                      r')[,;]? (?:because|on the grounds that) (.+)\.', head, re.I)
     if m:
@@ -53,7 +76,41 @@ def parts(text):
     m = re.fullmatch(r'(.+?)[.;,] (?:Thus|Therefore|So|Hence|We conclude that|It follows that)[,:]? (?:that )?(' + atom + r')\.', head, re.I)
     if m:
         return m[1], m[2], tail
+    try:
+        ant, con, old_tail, _ = inference_parts(head)
+        if old_tail:
+            raise ValueError('unparsed extra assertion')
+        return ant, con, tail
+    except ValueError:
+        pass
     raise ValueError('unsupported inference syntax; preserve literal atom clauses and explicit inference direction')
+
+
+def alternatives(text):
+    if not text:
+        return ()
+    patterns = (
+        r'The checks that (.+) would (?:yield|imply|establish) that (.+), respectively\.',
+        r'If (.+), then (.+) would follow, respectively\.',
+        r'Given the checks that (.+), (.+) would follow, respectively\.',
+        r'(.+) would follow from the checks that (.+), respectively\.',
+    )
+    for index, pattern in enumerate(patterns):
+        match = re.fullmatch(pattern, text)
+        if not match:
+            continue
+        ant, con = match.groups()[::-1] if index == 3 else match.groups()
+        sides = []
+        for side in (ant, con):
+            atoms = CLAIM.findall(side)
+            residue = CLAIM.sub('', side)
+            if not atoms or set(re.findall(r'\w+', residue)) - {'and'}:
+                raise ValueError('unparsed conditional alternatives')
+            sides.append(atoms)
+        if len(sides[0]) != len(sides[1]):
+            raise ValueError('conditional alternative pairing changed')
+        return tuple(sorted(zip(*sides)))
+    raise ValueError('unsupported conditional alternatives')
 
 
 def step(text):
@@ -73,12 +130,13 @@ def step(text):
                'with','the','result','holds','from','using','on','basis','of',
                'this','reasoning','rests','following','information','is','are',
                'established','provides','grounds','for','inference','here',
-               'first','also','now','both','a','pair','namely'}
+               'first','also','now','both','a','pair','namely','fact',
+               'consider','considered','taken','stated','given','have','been'}
     if set(re.findall(r'[a-z0-9-]+', residue)) - allowed:
         raise ValueError('unparsed substantive premise wording')
     if not slots:
         raise ValueError('missing premises')
-    return {'slots': slots, 'conclusion': conclusion.groups()[:2], 'tail': tail}
+    return {'slots': slots, 'conclusion': conclusion.groups()[:2], 'tail': alternatives(tail)}
 
 
 def parse(packet):
@@ -159,12 +217,23 @@ def licensing(packet):
 
 
 def acceptance_check(dossier, texts):
+    checked, violation = validate_reply(json.dumps({'texts': texts}), dossier)
+    if violation or checked != texts:
+        return {'passed': False, 'error': violation or 'unsanitised glossary sense in prose'}
     source = {**dossier, 'argument': '\n\n'.join(n['text'] for n in dossier['nodes'])}
     rewritten = {**dossier, 'argument': '\n\n'.join(texts[n['id']] for n in dossier['nodes'])}
-    distance = edit_distance(source['argument'], rewritten['argument'])
+    distance = edit_distance(mask_claims(source['argument']), mask_claims(rewritten['argument']))
     result = {'passed': False, 'normalized_levenshtein': distance, 'minimum': MIN_DISTANCE,
-              'method': 'public-record-zero-then-one-relaxation-v6'}
+              'distance_basis': 'atomic-phrases-masked-with-#; character-distance/max-length',
+              'method': 'constrained-atomic-verbatim-public-record-licensing-v7'}
     try:
+        if set(texts) != {n['id'] for n in dossier['nodes']}:
+            raise ValueError('step IDs changed')
+        for node in dossier['nodes']:
+            if (Counter(CLAIM.findall(node['text'])) != Counter(CLAIM.findall(texts[node['id']]))
+                    or Counter(re.findall(r'\bunit\d+\b', node['text'])) !=
+                    Counter(re.findall(r'\bunit\d+\b', texts[node['id']]))):
+                raise ValueError('atomic claim phrases or unit names changed; preserve them verbatim')
         before, after = parse(source), parse(rewritten)
         for a, b in zip(before, after):
             if (a['conclusion'] != b['conclusion'] or Counter(a['slots']) != Counter(b['slots'])
