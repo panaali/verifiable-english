@@ -74,7 +74,7 @@ def inventory(count_tokens=False):
         'scenario_ceilings':{s:p.ceilings(s) for s in p.SCENARIOS},
         'original_design_inventory':'inventory.json (UNBUILT aggregate design; slot labels removed in v5)',
         'stage_caps':p.STAGES,'token_counts':None,
-        'material_status':('QWEN_PENDING_REVIEW' if len(read(p.HERE/'materials/paraphrases.jsonl.gz'))==84
+        'material_status':('GENERATOR_RENDERED_REVIEW_REQUIRED' if (p.HERE/'materials/prose-policy.json').exists() else 'QWEN_PENDING_REVIEW' if len(read(p.HERE/'materials/paraphrases.jsonl.gz'))==84
             and all(r['provenance'].get('independent_qwen_pass') for r in read(p.HERE/'materials/paraphrases.jsonl.gz'))
             else 'OFFLINE_DRAFT_REQUIRES_QWEN_AND_REVIEW')}
     if count_tokens:
@@ -157,10 +157,16 @@ def packet_safety():
         if len(paragraphs)!=16 or q['nodes'][-1]['id']!=q['root']:
             bad.append(item['id']); continue
         for index,(n,para) in enumerate(zip(q['nodes'],paragraphs,strict=True)):
-            if not set(n['parents']) <= seen or re.search(r'\[n\d+\]', para):
+            # Reviewed generator prose uses a leading localization marker. It is
+            # an ordered step label, not a parent-ID premise inside the prose.
+            marker=re.match(r'^\[(n\d+)\] ',para)
+            body=para[marker.end():] if marker else para
+            if marker and marker[1]!=n['id']:
+                bad.append(item['id'])
+            if not set(n['parents']) <= seen or re.search(r'\[n\d+\]', body):
                 bad.append(item['id'])
             seen.add(n['id'])
-            if re.search(r'\bn\d+\b',para.split('] ',1)[-1]):
+            if re.search(r'\bn\d+\b',body):
                 bad.append(item['id'])
             refs=re.findall(r'the immediately preceding ([a-z-]+) result',para)
             references+=len(refs)
@@ -202,9 +208,9 @@ def preflight(offline=False):
     from experiments.p5_surface import audit as surface_audit
     from experiments.p5_blinding import audit as blinding_audit
     from experiments.p5_tokens import coverage
-    from experiments.p5_revision import independent_prose
+    from experiments.p5_rendered import provenance
     checks=[('tracked-blinding',blinding_audit),('surface-soundness',surface_audit),('review',lambda:p.review.gate()),
-        ('independent-prose',lambda:independent_prose(p.HERE)),
+        ('prose-provenance',lambda:provenance(p.HERE)),
         ('construction',lambda:json.loads((p.HERE/'checks/construction.json').read_text())),
         ('known-answer',lambda:p.known_answer(p.materials(),p.check_labels())),
         ('lean-replay',lean_replay),('packet-safety',packet_safety),
@@ -413,6 +419,10 @@ def cost_report(split):
         if meta.get('role')=='paraphrase':shared[meta['item_id']]+=value
         elif row['identity'].startswith(split+'/'):
             actual[(meta['item_id'],meta['arm'])]+=value
+    auxiliary, auxiliary_holds = p.revision_paraphrase_costs(p.HERE)
+    for item_id, value in auxiliary.items():
+        shared[item_id] += value
+    holds += auxiliary_holds
     attributed={(i['id'],a):actual[(i['id'],a)]+shared[i['id']]+Decimal('.0004')
                 for i in p.materials(split) for a in p.ARMS}
     families=sorted({i['group'] for i in p.materials(split)})

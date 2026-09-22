@@ -1,0 +1,124 @@
+[
+  {
+    "fresh_context": true,
+    "item_id": "i01a9ca3b522d52d65123bccda754d003",
+    "minutes": 0.23970889514991237,
+    "model_family": "Google Gemini",
+    "packet_sha256": "c2555eb498e7c73ff07d6348c9b8ebf51b78a239ee2eb8362cb76335725424a8",
+    "request_sha256": "d0aff43480449beea95e5305b48fb0903de35ffc2fa9de0dc93f928c0de45774",
+    "request_version": 2,
+    "response_sha256": "5c7fdd6cca9b58ff21f7f1a8029682d18ad2424f294870129b35ab191c176a8f",
+    "review": {
+      "evidence": "Step n16 concludes unit3 is clear (contamination absent), but step n06 uses this to satisfy rule r07 which requires unit4 to be clear (contamination absent), omitting the necessary sample-to-lot assumption.",
+      "issues": [],
+      "kind": "smuggle",
+      "locations": [
+        "n16",
+        "n06"
+      ],
+      "ready": true
+    },
+    "reviewer_id": "gemini-3.1-pro-v8/i01a9ca3b522d52d65123bccda754d003",
+    "revision": "gemini-3.1-pro-preview"
+  },
+  {
+    "fresh_context": true,
+    "item_id": "i04583256a917b122dbba470d951b08dc",
+    "minutes": 0.10818386874937763,
+    "model_family": "Google Gemini",
+    "packet_sha256": "3f45190c79132360c5401cd4c775db49bcde9327e6b64361aa80176eb14bb68f",
+    "request_sha256": "370ecc51a0864030b089d20fb73d24c57173b65be80519576d8d454b7325d55a",
+    "response_sha256": "bd36ecedf72f5e1c7a12f8b3e43ded702294165a78bbd7a6756c8be3d8ef5210",
+    "review": {
+      "evidence": "Step n08 concludes unit4 is dry (internal moisture low) based on r03, but step n01 uses this to satisfy r10 which requires unit4 is dry (surface moisture absent).",
+      "issues": [],
+      "kind": "shift",
+      "locations": [
+        "n08",
+        "n01"
+      ],
+      "ready": true
+    },
+    "reviewer_id": "gemini-3.1-pro-v8/i04583256a917b122dbba470d951b08dc",
+    "revision": "gemini-3.1-pro-preview"
+  },
+  {
+    "fresh_context": true,
+    "item_id": "i0aa39b8e28e1340a7ff4889bf0ebb1f3",
+    "minutes": 0.10582201180028884,
+    "model_family": "Google Gemini",
+    "packet_sha256": "b82cc2c1f24fac0d788398fea4907e802df2b9c0d44bfe89650fa02ac59ab21c",
+    "request_sha256": "d529dd4d83a34df6e9b28ab7d46d153be709fc46de2b56488125ce4fd6f75f0d",
+    "request_version": 2,
+    "response_sha256": "6871c68673d7c58ddcb8c9c4dbf89f48ddab92c13841479e1d44764a588b4f04",
+    "review": {
+      "evidence": "Step n05 derives unit0 is clear (optically transparent) using r02, but step n07 consumes it as unit0 is clear (contamination absent) to satisfy r11.",
+      "issues": [],
+      "kind": "shift",
+      "locations": [
+        "n05",
+        "n07"
+      ],
+      "ready": true
+    },
+    "reviewer_id": "gemini-3.1-pro-v8/i0aa39b8e28e1340a7ff4889bf0ebb1f3",
+    "revision": "gemini-3.1-pro-preview"
+  },
+  {
+    "fresh_context": true,
+    "item_id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+    "minutes": 0.15131507986613238,
+    "model_family": "Google Gemini",
+    "packet_sha256": "fe933974b6543b07797a9c35505aa52d517fdf25f30d7f0bec9ab2dce45c0ba9",
+    "request_sha256": "5a04edbc866434865725f26c1344d1d42d3aba57e494fe8704361e28e9da3426",
+    "request_version": 2,
+    "response_sha256": "09f97d637679e41e13743b12ff2429d18807a63d6ef65a9d950f019a1ed6e64d",
+    "review": {
+      "evidence": "Step n04 establishes that unit0 is clear (optically transparent), but step n02 applies rule r01 which requires the sample unit2 to be clear (optically transparent). The assumption that the lot's property transfers to the sample is missing.",
+      "issues": [],
+      "kind": "smuggle",
+      "locations": [
+        "n04",
+        "n02"
+      ],
+      "ready": true
+    },
+    "reviewer_id": "gemini-3.1-pro-v8/i0b251ba74b2be0d9f163e75c4b235c7d",
+    "revision": "gemini-3.1-pro-preview"
+  },
+  {
+    "fresh_context": true,
+    "item_id": "i0e03b71bf431d179be0530712161e8af",
+    "minutes": 0.12048973611672409,
+    "model_family": "Google Gemini",
+    "packet_sha256": "56d67e1df48ee185a78416ce4fd22195f9f4f62bbf5da7ec35533e6d6a42986c",
+    "request_sha256": "2a2d6a0a632d3f35ee82f0f9ccff8174484a255546cc6d5a674e77e393628d78",
+    "request_version": 2,
+    "response_sha256": "2c8b1ce76718473afdd77a7824ed8f9fc749a4a12774099cd45304b088f9722d",
+    "review": {
+      "evidence": "Step n15 produces 'unit5 is stable' with the meaning 'temperature constant' per rule r15, but step n14 consumes it with the meaning 'shape retained' per rule r05.",
+      "issues": [],
+      "kind": "shift",
+      "locations": [
+        "n15",
+        "n14"
+      ],
+      "ready": true
+    },
+    "reviewer_id": "gemini-3.1-pro-v8/i0e03b71bf431d179be0530712161e8af",
+    "revision": "gemini-3.1-pro-preview"
+  },
+  {
+    "error": "Unterminated string starting at: line 1 column 64 (char 63)",
+    "fresh_context": true,
+    "item_id": "i11ac78a9460c7960a10f976f1fcc7c37",
+    "minutes": 0.15890965625003445,
+    "model_family": "Google Gemini",
+    "packet_sha256": "80fc0cad596b70ccf754d98767a5394d3f7bd2c9635439a355fbcbe69314e30b",
+    "request_sha256": "26db99be920dd80f2a30f2c523b1344300da6708ab08590b4462ca32cebbeb01",
+    "request_version": 2,
+    "response_sha256": "2faaed16f3d0fdf47908d864cb9f704b3d381e1d7c9fba80effd86ff59a55893",
+    "reviewer_id": "gemini-3.1-pro-v8/i11ac78a9460c7960a10f976f1fcc7c37",
+    "revision": "gemini-3.1-pro-preview"
+  }
+]

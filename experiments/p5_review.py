@@ -123,6 +123,9 @@ def adjudicate(path, base=HERE):
 
 
 def gate(base=HERE):
+    if (base/'materials/prose-policy.json').exists():
+        from experiments.p5_rendered import review_gate
+        return review_gate(base)
     items = read(base/'materials/dev.jsonl.gz')+read(base/'materials/scored.jsonl.gz')
     labels={r['id']:r for r in read(base/'labels.jsonl.gz')}
     ledger=read(base/'materials/review-ledger.jsonl.gz')

@@ -639,3 +639,90 @@ This recovery makes **zero paid calls / $0 new provider spend**. Refresh the
 execution freeze and offline gates without regenerating material. Incomplete
 rewriting, review, token coverage and timestamp gates remain explicit blockers
 to scoring; this amendment permits only resuming the authorized authoring run.
+
+## Revision 8 — orchestrator amendment, 2026-09-22: generator-rendered prose
+
+The independent-paraphrase requirement is dropped before dev/scored inference.
+v6 accepted 0/84 after 168 completed calls ($0.1597614352); v7 accepted 2/84
+after 167 completed calls ($0.1770597638), with 165 acceptance violations:
+97 unsupported inference syntax, 38 changed atomic phrases, 26 insufficient
+rewrite/changed licensing, and 4 unparsed premises. Mechanical acceptance
+recognizes the generator's restricted sentence frames; the attempted genuine
+restructuring was incompatible with this acceptance scheme. All attempts, raw
+responses, exclusions, infrastructure charges and interruption holds remain
+in the ledgers; the final v7 acceptance archive is retained separately. v6
+holds total $0.0041484288 and v7 holds $0.0290390016. No refund or successful
+independent paraphrase is inferred.
+
+Judges will read **generator-rendered topological prose from the same VE
+graphs**. VE formalisation is therefore easier than on independently authored
+prose, a material limitation on the comparison and its generalization. The
+VE arm still authors its formalisation and pays for its diagnostic repair call
+when used. No generator proof or reference mapping is given to the VE model.
+The tail-placement fix is kept: the alternative sentence is placed on an
+independently chosen comparison step, never on a producer/consumer. All 84
+current public packets are checked against the retained round-5 packets: only
+the conditional-tail position may differ, with its exact content preserved.
+
+The review gate now accepts (a) the retained round-5 Claude Opus blind report
+whose material verdict is READY and (b) a new Gemini 3.1 Pro review, via Vertex
+ADC, of all 84 current packets in separate fresh contexts. This explicitly
+supersedes the old requirement for two complete per-packet annotation imports
+and independent prose. The round-5 partial submission originally failed the
+importer (missing fields/hashes and sibling exposure); those facts remain in
+the record. Round 6 supports fidelity and no kind leak, but explicitly consulted
+labels and is **unblinded**; its localisation finding motivates the retained fix.
+Neither historical report is relabelled as a new hash-bound independent review.
+Current Gemini reviews provide a material verdict, kind, producer/consumer pair
+(or empty benign location), record-grounded evidence and issues. Missing,
+malformed, negative, uncertain or disagreeing reviews keep the gate closed;
+no annotations are filled in from gold. Final mapping anchors retain their
+reference provenance, conditional on both material reviews and source checks.
+
+The only new paid authorization is **at most $1 cumulative** for Gemini material
+review, with a separate durable v8 ledger and a $1 envelope inside the unchanged
+$40 study cap. Each request uses one public packet only, at most 3,500 input
+and 768 total billed output tokens (including thinking), serial dispatch and
+existing bounded infrastructure recovery. Compact review output avoids the
+old redundant full-map format. No efficacy/dev/scored call is authorized.
+The old independent-prose gate is replaced by a generator-provenance and
+historical-transfer gate. Refreeze, rerun every offline gate including kind
+and localisation probes, exact tokenizer checks and Lean replay, and renew
+the external timestamp before the separately authorized dev command.
+
+### Revision 8 review output feasibility correction (same $1 cap)
+
+The first three Gemini reviews cost $0.042556. With a 768-billed-token
+ceiling, one was complete, one truncated, and one reported 824 billed tokens
+and triggered the per-call halt. All remain in the ledger. The bounded
+continuation uses the existing 1,024-billed-token ceiling and the exact
+judge-visible English packet (including every premise, authoritative record,
+step and original root), avoiding redundant JSON/glossary serialization.
+The complete prior review is retained, even if it disagrees; only incomplete
+reviews may be retried under a distinct request version. No substantive
+negative judgment is retried. The cumulative $1 limit is unchanged and missing
+reviews remain blockers if the review cannot finish within that limit.
+
+Cost attribution includes the physical v6/v7 rewrite charges and their holds
+in each arm's full shared-material cost and per-item ceiling check. Study
+envelopes reserve those same charges and are not added a second time as
+physical spending. Gemini material review is reported as separate overhead.
+
+### Revision 8 review outcome (2026-09-22)
+
+The continuation produced five valid current-packet reviews, all marked ready
+and agreeing with reference kind/localisation. Nine completed calls cost
+$0.124892, plus a $0.019288 infrastructure hold: **$0.144180 total**. The last
+call reported 1,068 billed output tokens against 1,024 and caused another
+provider validation halt. This second halt is **not** covered by the narrow
+768-to-1,024 recovery. No further calls are dispatched. The $1 cap remains
+intact and the review gate remains blocked on the 79 unapproved slots.
+This is a failed attempt to complete review, not an amended claim that five
+packets suffice. All other offline checks and timestamp renewal proceed.
+
+The final offline packet-safety audit exposed an implementation mismatch: it
+rejected every leading `[nNN]` localization label in generator-rendered prose.
+It now permits only a leading label matching that step's expected ID and order;
+IDs in the prose body, wrong markers, non-topological parents and invalid
+back-references remain rejected. This changes validation of the already
+reviewed format, not material bytes or any label/content restrictions.

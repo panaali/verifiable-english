@@ -1,0 +1,14 @@
+{
+  "cap_usd": "1",
+  "completed": 6,
+  "completed_call_cost_usd": "0.124892",
+  "completed_calls": 9,
+  "error": "provider exceeded per-call token cap",
+  "infrastructure_holds_usd": "0.019288",
+  "model": "gemini-3.1-pro-preview",
+  "passed": false,
+  "pending_usd": "0",
+  "provider": "Vertex ADC",
+  "spent_usd": "0.144180",
+  "valid": 5
+}

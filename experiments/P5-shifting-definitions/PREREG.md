@@ -1,7 +1,18 @@
 # P5: the merged-predicate / shifting-definition duel
 
-Status: FEASIBILITY PILOT DESIGN PREREGISTRATION — 2026-09-21; materials not yet generated or
-independently paraphrased; not externally timestamped; no API spend or scoring.
+Status: FEASIBILITY PILOT DESIGN PREREGISTRATION — 2026-09-21, amended
+2026-09-22 before dev/scored inference. **Revision 8 supersedes the independent
+paraphrase and full annotation requirements below.** Judges read generator-rendered
+topological prose from the same VE graphs. This makes VE formalisation easier
+than on independently authored prose and is a limitation of the comparison;
+the VE diagnostic repair call remains charged. Failed v6/v7 paraphrase attempts
+and all their costs remain in the ledger. The tail-placement fix is retained.
+The amended review gate accepts the historical round-5 Claude materials report
+and a fresh Vertex Gemini 3.1 Pro review of the current packets; round 6 is
+unblinded supporting evidence, not another blind approval. See
+[the dated amendment](AMENDMENTS.md#revision-8--orchestrator-amendment-2026-09-22-generator-rendered-prose)
+and [current execution notes](REVISION8.md). Historical design text below is
+retained to make the change explicit; no dev/scored results are reported.
 Hard cap **$40**. The [shared design](../PREREG-DESIGN.md) §§1–5 is normative.
 `P5` is the requested study name; substantively this is F2 / the duel component
 of PLAN-V3 **package 4**, not that plan's drift/evidence package 5.

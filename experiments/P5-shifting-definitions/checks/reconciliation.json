@@ -1,6 +1,6 @@
 {
   "generation_calls": 0,
-  "interrupted_charge_usd": "0.0020742144",
+  "interrupted_charge_usd": "0",
   "ledgers": {
     "runs/revision-v6/paraphrase-costs.jsonl": {
       "blocked": false,
@@ -18,41 +18,28 @@
     "runs/revision-v7/paraphrase-costs.jsonl": {
       "blocked": false,
       "cap_usd": "0.40",
-      "events": [
-        {
-          "billing_basis": "full reservation ceiling; actual billing unknown",
-          "ceiling_usd": "0.0020742144",
-          "cost_usd": "0.0020742144",
-          "event": "interrupted",
-          "halt_times": [],
-          "identity": "rewrite-v7/materials/i0e03b71bf431d179be0530712161e8af/shared/replication/paraphrase/1",
-          "metadata": {
-            "arm": "shared",
-            "block_id": "shared-paraphrase",
-            "item_id": "i0e03b71bf431d179be0530712161e8af",
-            "packet_sha256": "56d67e1df48ee185a78416ce4fd22195f9f4f62bbf5da7ec35533e6d6a42986c",
-            "role": "paraphrase",
-            "sample": 0,
-            "seed": 20260921,
-            "turn": 1
-          },
-          "model": "replication",
-          "reason": "2026-09-22 interrupted-call reconciliation amendment",
-          "reservation_sha256": "e982b9ada6500b36df7da3b1cfe34bdd582cdb66676b1aa645a12f32feae56a6",
-          "reservation_time": 1790096598.590164,
-          "sample": false
-        }
-      ],
-      "interrupted_charge_usd": "0.0020742144",
-      "interrupted_total_usd": "0.0020742144",
-      "pending": {
-        "block:shared-paraphrase": "0.3887106560"
-      },
+      "events": [],
+      "interrupted_charge_usd": "0",
+      "interrupted_total_usd": "0.0082968576",
+      "pending": {},
       "revisions": {
         "replication/paraphrase/DeepInfra": "{\"model\":\"qwen/qwen-2.5-72b-instruct\",\"provider\":\"DeepInfra\",\"system_fingerprint\":null}"
       },
-      "spent_usd": "0.0112893440",
-      "uncommitted_usd": "0E-10"
+      "spent_usd": "0.2060987654",
+      "uncommitted_usd": "0.1939012346"
+    },
+    "runs/revision-v8/gemini-review-costs.jsonl": {
+      "blocked": false,
+      "cap_usd": "1",
+      "events": [],
+      "interrupted_charge_usd": "0",
+      "interrupted_total_usd": "0",
+      "pending": {},
+      "revisions": {
+        "pro": "gemini-3.1-pro-preview"
+      },
+      "spent_usd": "0.144180",
+      "uncommitted_usd": "0.855820"
     },
     "runs/study/costs.jsonl": {
       "blocked": false,
@@ -66,8 +53,8 @@
         "replication": "{\"model\":\"qwen/qwen-2.5-72b-instruct\",\"provider\":\"DeepInfra\",\"system_fingerprint\":null}",
         "replication/paraphrase/DeepInfra": "{\"model\":\"qwen/qwen-2.5-72b-instruct\",\"provider\":\"DeepInfra\",\"system_fingerprint\":null}"
       },
-      "spent_usd": "0.9694671176",
-      "uncommitted_usd": "39.0305328824"
+      "spent_usd": "1.9694671176",
+      "uncommitted_usd": "38.0305328824"
     }
   },
   "policy": "Interrupted calls charged at full ceiling; no trial or reply inferred. Identical requests may be re-issued within existing caps. Revision charges remain inside study envelopes, not added twice."

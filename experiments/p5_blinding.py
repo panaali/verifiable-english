@@ -10,6 +10,10 @@ from experiments.p5_materials import HERE
 # construction/scoring history, never model context or reviewer attachments.
 BARRED = (
     'labels.jsonl.gz',
+    'materials/round5-reviewed-packets.jsonl.gz',
+    'materials/rejected-v7-paraphrases.jsonl.gz',
+    'checks/gemini-rendered-submission.json',
+    'runs/revision-v8/gemini-review-costs.jsonl',
     'materials/dossiers.jsonl.gz',
     'materials/scored.jsonl.gz',
     'materials/dev.jsonl.gz',

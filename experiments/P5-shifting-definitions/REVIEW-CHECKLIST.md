@@ -87,3 +87,12 @@ Revision 6 historical review attachments are barred from blind contexts:
 `checks/round6-review-submission.json`, `checks/round6-review-verification.txt`.
 The latter explicitly discloses unblinded repository/label access. Neither is
 attached to Gemini requests or transferred to regenerated packet hashes.
+
+Revision 8 audit evidence, barred from all blind contexts:
+`materials/round5-reviewed-packets.jsonl.gz`,
+`materials/rejected-v7-paraphrases.jsonl.gz`,
+`checks/gemini-rendered-submission.json`,
+`runs/revision-v8/gemini-review-costs.jsonl`.
+The dated orchestrator amendment accepts the round-5 Claude report at report
+level plus a fresh isolated Gemini review of each current packet. It does not
+retroactively manufacture missing historical annotations or call round 6 blind.

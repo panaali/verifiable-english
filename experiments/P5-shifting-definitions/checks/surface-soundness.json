@@ -1,19 +1,27 @@
 {
-  "critical_ordinal_counts": {},
+  "critical_ordinal_counts": {
+    "0": 18,
+    "1": 15,
+    "2": 30,
+    "3": 21
+  },
   "flawed_packets": 56,
   "frames_per_packet": 4,
-  "freeze_sha256": "cfee8edf24db975d5ab24fb375cb2f629250e3d9f45206ce2837a4c810ff1681",
+  "freeze_sha256": "866ceba5984c6e2b9a1540a0e41b408e752cfbfae864b2354eb7e40800dc9f3e",
   "generation_calls": 0,
   "invalid": [],
-  "items": 0,
-  "packet_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-  "passed": false,
+  "items": 84,
+  "packet_sha256": "236582c7e96ead02297df8b373568afee28169ff088ad32ecd7666fa94d25fd4",
+  "passed": true,
   "reference_profile": [
     3,
     2,
     2
   ],
   "references_per_packet": 4,
-  "root_counts": {},
+  "root_counts": {
+    "derivable": 28,
+    "underivable": 56
+  },
   "unique_maximum_localizations": 0
 }

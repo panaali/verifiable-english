@@ -360,7 +360,7 @@ class Ledger:
         with self.locked() as (f, rows):
             pending, spent, seen, revisions, blocked = self.state(rows)
             history = [r for r in rows if r.get("identity") == request.identity]
-            recovered = {r['halt_time'] for r in rows if r['event'] in ('amendment8_halt_recovery', 'amendment14_halt_recovery', 'paraphrase_routing_recovery')}
+            recovered = {r['halt_time'] for r in rows if r['event'] in ('amendment8_halt_recovery', 'amendment14_halt_recovery', 'paraphrase_routing_recovery', 'material_review_cap_recovery')}
             for row in rows:
                 if row['event'] in ('panel_halt', 'panel_validation_halt') and row['model'] == request.model and row['time'] not in recovered:
                     raise InfrastructureError(row['error'])

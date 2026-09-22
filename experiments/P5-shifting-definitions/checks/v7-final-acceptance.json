@@ -1,0 +1,11 @@
+{
+  "accepted": 2,
+  "slots": 84,
+  "violation_counts": {
+    "Preserve every step and conditional while genuinely rewriting; keep atomic claim phrases verbatim; minimum normalized Levenshtein distance on atomic-masked text is 0.20. Insufficient rewrite or changed licensing.": 26,
+    "Preserve every step and conditional while genuinely rewriting; keep atomic claim phrases verbatim; minimum normalized Levenshtein distance on atomic-masked text is 0.20. atomic claim phrases or unit names changed; preserve them verbatim": 38,
+    "Preserve every step and conditional while genuinely rewriting; keep atomic claim phrases verbatim; minimum normalized Levenshtein distance on atomic-masked text is 0.20. unparsed substantive premise wording": 4,
+    "Preserve every step and conditional while genuinely rewriting; keep atomic claim phrases verbatim; minimum normalized Levenshtein distance on atomic-masked text is 0.20. unsupported inference syntax; preserve literal atom clauses and explicit inference direction": 97
+  },
+  "violations": 165
+}

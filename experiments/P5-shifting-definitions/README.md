@@ -1,9 +1,9 @@
 # P5 materials and staged duel runner
 
-**Revision 6:** the earlier Qwen pass was a no-op. The regenerated source drafts
-are awaiting a new capped paraphrase purchase; review and dev remain blocked.
-Use [REVISION6.md](REVISION6.md) for current commands and provenance. The
-older execution notes below describe superseded v5 artifacts.
+**Revision 8:** judges use reviewed generator-rendered prose from the same VE
+graphs, with the tail-placement fix retained. Independent paraphrasing is
+dropped under the dated orchestrator amendment. See [REVISION8.md](REVISION8.md)
+for current commands, costs and review policy. Older notes below are historical.
 
 All 12 distinct Gemini study configs now have one billed Vertex ADC calibration
 smoke, costing **$0.053782 total** under the separate $0.50 authorization.

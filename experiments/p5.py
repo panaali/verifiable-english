@@ -8,6 +8,7 @@ from dataclasses import asdict, replace
 from decimal import Decimal
 from pathlib import Path
 import argparse
+from collections import defaultdict
 import json
 import random
 import sys
@@ -326,10 +327,13 @@ def freeze(scenario):
            ROOT/'experiments/p1.py',ROOT/'experiments/p1_preflight.py',ROOT/'experiments/prereg_inventory.py',
            ROOT/'experiments/trial_analysis.py',*ROOT.glob('tests/test_p5*.py'),
            ROOT/'tests/fixtures/p5_deepinfra_smoke.json',ROOT/'tests/fixtures/p5_vertex_smoke.json',ROOT/'pyproject.toml',ROOT/'uv.lock',
-           HERE/'PREREG.md',ROOT/'experiments/PREREG-DESIGN.md',HERE/'inventory.json',HERE/'AMENDMENTS.md',HERE/'REVISION6.md',HERE/'REVISION7.md',HERE/'RESULTS.md',
+           HERE/'PREREG.md',ROOT/'experiments/PREREG-DESIGN.md',HERE/'inventory.json',HERE/'AMENDMENTS.md',HERE/'REVISION6.md',HERE/'REVISION7.md',HERE/'REVISION8.md',HERE/'RESULTS.md',
+           HERE/'materials/prose-policy.json', HERE/'checks/gemini-rendered-submission.json', HERE/'checks/gemini-rendered-status.json', HERE/'runs/revision-v8/gemini-review-costs.jsonl',
            HERE/'prompts.json',HERE/'CONSTRUCTION-V3.md',HERE/'CONSTRUCTION-V4.md',HERE/'CONSTRUCTION-V5.md',HERE/'REVIEW-CHECKLIST.md',HERE/'PARAPHRASE-REVIEW.md',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
            ROOT/'experiments/P1-deference/native_counter.py',*ROOT.glob('experiments/P1-deference/tokenizers/*.json'),
            *ROOT.glob('ve/*.py'), ROOT/'lean/.lake/build/bin/ve_conformance']
+    paths += list((HERE/'runs').glob('revision-*/paraphrase-costs.jsonl'))
+    paths += [HERE/'checks/v7-final-acceptance.json']
     paths += [HERE/name for name in ('MATERIALS-MANIFEST.json','MATERIALS-HASHES.txt',
         'MATERIALS-HASHES.txt.ots','checks/round5-review-submission.json',
         'checks/round5-review-verification.txt','checks/round5-review-import.json',
@@ -378,7 +382,7 @@ def gate_receipt(name,result,stamp):
 
 def require_gates(scored=False):
     f=verify_freeze(); blockers=[]
-    for name in ('tracked-blinding','surface-soundness','review','independent-prose','construction','known-answer','gemini-calibration-coverage','tokenizer','lean-replay','packet-safety','leakage','role-boundaries','external-timestamp','provider-preflight',*(['dev'] if scored else [])):
+    for name in ('tracked-blinding','surface-soundness','review','prose-provenance','construction','known-answer','gemini-calibration-coverage','tokenizer','lean-replay','packet-safety','leakage','role-boundaries','external-timestamp','provider-preflight',*(['dev'] if scored else [])):
         path=HERE/f'checks/{name}.json'
         r=json.loads(path.read_text()) if path.exists() else {}
         if r.get('passed') is not True or r.get('freeze_sha256')!=f['manifest_sha256']:
@@ -386,6 +390,25 @@ def require_gates(scored=False):
     if blockers:
         raise PreflightError('unresolved gates: '+', '.join(blockers))
     return f
+
+
+def revision_paraphrase_costs(base=HERE):
+    """Physical historical rewrite charges, excluding study planning envelopes."""
+    shared = defaultdict(Decimal)
+    holds = Decimal(0)
+    for path in sorted((base/'runs').glob('revision-*/paraphrase-costs.jsonl')):
+        rows = read(path)
+        reservations = {r['identity']:r for r in rows if r['event']=='reserve'}
+        for row in rows:
+            if row['event'] not in ('complete','interrupted','infrastructure_failure','panel_halt'):
+                continue
+            meta = reservations.get(row.get('identity'),{}).get('metadata',{})
+            value = Decimal(row.get('cost_usd',row.get('infrastructure_hold_usd','0')))
+            if meta.get('role')=='paraphrase' and meta.get('item_id'):
+                shared[meta['item_id']] += value
+                if row['event']!='complete':
+                    holds += value
+    return shared, holds
 
 
 class P5Ledger(Ledger):
@@ -404,6 +427,8 @@ class P5Ledger(Ledger):
                     if source.get('item_id')==meta.get('item_id'):
                         if source.get('role')=='paraphrase':shared+=amount
                         elif source.get('arm')==meta['arm']:charged+=amount
+                auxiliary, _ = revision_paraphrase_costs(HERE)
+                shared += auxiliary.get(meta.get('item_id'), Decimal(0))
                 # Until a paraphrase is billed, reserve its full scheduled cost.
                 shared=max(shared,cost('replication',*STAGES['paraphrase']))
                 if charged+shared+Decimal('.0004')+cost(request.model,request.max_input_tokens,request.billed_output_cap)>Decimal('.16'):
