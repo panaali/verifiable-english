@@ -1,0 +1,25 @@
+{
+  "bitcoin_confirmed": false,
+  "command": [
+    "uvx",
+    "--from",
+    "opentimestamps-client",
+    "ots",
+    "info",
+    "/Users/seyran/code/ve-codex/experiments/PREREG-HASHES.txt.ots"
+  ],
+  "completed_at": "2026-09-22T02:14:17.183222+00:00",
+  "exit_code": 0,
+  "freeze_sha256": "c57820437af69eed238e39217a0a333ebd8d49d14b9dbdf29157d33ba22dac98",
+  "hash_file_sha256": "d9d0907811f4c9389415bde81538c944e72f5a567535adff41a27c0d7900782c",
+  "passed": true,
+  "pending_calendar_sufficient_for_pilot": true,
+  "policy": "Current PREREG hash and parseable bound OTS calendar submission suffice for this pilot; ots info does not verify Bitcoin confirmation.",
+  "prereg_sha256_matches": true,
+  "proof_binds_hash_file": true,
+  "proof_sha256": "cbc690fe42ee666e6404799935b18356c3a467d7375fcceb7788a8b4b16241a0",
+  "status": "pending_calendar",
+  "stderr": "",
+  "stdout": "File sha256 hash: d9d0907811f4c9389415bde81538c944e72f5a567535adff41a27c0d7900782c\nTimestamp:\nappend 4b4caf3b3544c9abbcb5972db9515ffd\nsha256\n -> append 60a29c84e313eb9a\n    sha256\n    append 24f25aaea1c9f7c9ff029ad939c58afc\n    sha256\n    append 38f3ee96fedd00eb62cc5769e6bdca31125ad4116e4383418964d8b8581d8901\n    sha256\n    prepend 8d416c06459bc303cde1e6fa00bcee191f0da8cbb4e73821b16b8dbb0bf707ad\n    sha256\n    append a2f48df91d4e138368866e318e627a1840eacebbd421e2ea5d9a2a76710e3a9d\n    sha256\n    prepend 6ab1da7e\n    append 8975d6605bb871b8\n    verify PendingAttestation('https://bob.btc.calendar.opentimestamps.org')\n -> append 68d9e24c26cd3481\n    sha256\n    prepend 3581fc0f3cddc40b2a7e1152289fcbfd6fcc680d2892e9b4422e73b59d496e52\n    sha256\n    append 76db7c5802eb674300a4d5ee62101eb2\n    sha256\n    prepend e0486cf0cf561e84fc7fed89aab5b8236b590e0392dbdb5e93ad3f6344d2f43f\n    sha256\n    prepend 3f83a7f8ef1a0d75e4bb8fcbe832684d0cadcb4db2ce6410d7fa4f1415f18fc7\n    sha256\n    append b952c8f6d021cce3f2450b0b12f27262d5cb10ccf54642934ed9850dd1130a25\n    sha256\n    prepend 6ab1da7e\n    append 1650292f31057439\n    verify PendingAttestation('https://alice.btc.calendar.opentimestamps.org')\n -> append 828e1a22d98ec164718aa1ca55a696d3\n    sha256\n    append d2dd86184bcfba1a64d29b14474ac04e9eb6091204b1f58a85629793f08d2f3e\n    sha256\n    append d99e7e976822d780f0581f3466aba4dca591a6051188923298f10885db4e8f56\n    sha256\n    prepend 6ab1da7f\n    append 0e5a2595d31e0db2\n    verify PendingAttestation('https://finney.calendar.eternitywall.com')\n -> append 8fae52a7bc8ff3dda6ba3e15f923596e\n    sha256\n    prepend ae69838b655aa1f4c44f5f43dc3e4b3687054a8d6d433c55735bff92e432232c\n    sha256\n    append 444429311e6e9a9ade2ba7b52a2fa7399430679abfe460900e3664d566ccde23\n    sha256\n    prepend 6ab1da7e\n    append d027f7c7544e4e04\n    verify PendingAttestation('https://btc.calendar.catallaxy.com')\n\n",
+  "verified": true
+}

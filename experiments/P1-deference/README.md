@@ -1,118 +1,103 @@
 # P1 execution
 
-Status: **stopped; not scoring-ready**. The preregistration and shared design
-are unchanged. No dev or scored inference has been run.
+The approved replacement probe is complete (10 valid responses), selecting
+`full_256`. Original attempts remain in `results/probe-attempt{1,2}.json` and
+`runs/probe-attempt{1,2}/`. No dev or scored inference has run. See `freeze.json`
+for current gate outcomes and `PROPOSED-AMENDMENT.md` for the two approvals.
 
-The authorized probe completed one response and failed during its second
-dispatch with `RuntimeError: Event loop is closed`. The async SDK connection
-pool was reused across separate `asyncio.run` event loops. The client now owns
-one persistent event loop; the fix has only been tested offline. The original
-append-only ledger and responses remain in `runs/probe/costs.jsonl`.
+## Preflight
 
-The completed response used 242 input, 6 candidate, 85 thinking, and 91 billed
-output tokens, with zero cached tokens. Latency was 3.014263 seconds and
-design-table cost was $0.001576. The second dispatch retains its $0.055296
-reservation; billing has not been reconciled. Known cost plus that ceiling is
-$0.056872, below this task's $1.50 cap. The mean and maximum over **one completed
-response** are both 91; they cannot select a schedule for a ten-call probe.
-The operational decision is **stop**, under the unknown-billing/incomplete-probe
-rule. `results/probe.json` records this distinction.
-
-## Commands
-
-Run from the repository root. Commands are serial and never invoke paid retries.
+Run from the repository root:
 
 ```sh
 export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
-uv run python experiments/P1-deference/run_p1.py known-answer --lean-replay --freeze
-uv run pytest -q
+uv run python experiments/P1-deference/run_p1.py preflight
 ```
 
-The following original probe command is recorded for reproducibility. It refuses
-to run again when `results/probe.json` exists or the ledger has a previous
-assignment. Do not remove those records to bypass the stop.
+This exports prompts, regenerates the manifest from current code/materials,
+and actually runs known-answer integration, Lean executable replay (building
+Lean once if missing), semantic pairs, the entire non-live pytest suite,
+external timestamp inspection, and Vertex countTokens under ADC. It performs
+no model generations. Each gate records its own outcome and freeze digest;
+exceptions produce failed receipts, never recycled passes. Independent gates
+continue after failure. Exit 0 means these six gates passed, not provider/dev
+readiness. `freeze.json.dev_blockers` also includes pending provider preflight.
+
+The Vertex gate covers all 200 dev+scored items in all arms: 1,336 initial
+prompts, 200 replay continuations, and 280 maximal joint pushback histories.
+The latter count the full attacker/judge wire including replay results and
+six role wrappers, reserving six times 256 generated tokens plus the initial
+response and (for R) replay-call output. Future native response signatures
+cannot be known offline; every actual transcript is counted again before
+runtime dispatch with no truncation. These counts are only for Gemini.
+
+The timestamp gate requires the current PREREG SHA-256 in
+`experiments/PREREG-HASHES.txt`, successful `uvx --from opentimestamps-client
+ots info`, and the proof's embedded hash matching that hash file. Pending
+calendar attestation suffices for this pilot as explicitly authorized by the
+orchestrator. The receipt distinguishes pending calendars from an included
+Bitcoin attestation; `ots info` is not blockchain confirmation. It does not
+claim the new aggregate freeze has been externally timestamped.
+
+## Orchestrator-only OpenRouter preflight
+
+With the key already in the process environment, the orchestrator runs:
 
 ```sh
-uv run python experiments/P1-deference/run_p1.py probe --cap-usd 1.00
+uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --counter-command "$P1_NATIVE_COUNTER"
 ```
 
-There is currently **no authorized dev/scored schedule**. After an approved
-amendment, a successful probe and all preflight gates, use only the row actually
-selected by that probe. These are cumulative API ceilings including the entire
-$1 probe envelope; dev and scored share `runs/study/costs.jsonl`.
-The separate $0.25 local accounting allowance remains inside the $30 study cap.
+`P1_NATIVE_COUNTER` must identify an executable provider-native joint chat
+counter: full OpenRouter wire JSON on stdin, one nonnegative integer on stdout.
+It must implement the served provider's chat template and tool serialization,
+not a text-length approximation. Its executable hash is pinned and checked
+again by the study adapter. No such counter is bundled here.
 
-| Schedule | Dev command's `--cap-usd` | Scored command's `--cap-usd` |
-|---|---:|---:|
-| full_256 | 5.2120486912 | 28.9037747200 |
-| primary_512 | 2.605632 | 14.647872 |
-| primary_1024 | 3.392064 | 21.332544 |
+The command checks served model IDs and endpoint metadata, then dispatches at
+most one output token per planned OpenRouter judge, serially, through the
+existing durable budget ledger. It checks native usage reconciliation and
+counter agreement on the smoke prompt, and counts all initial/replay fixtures
+for both judges. It never substitutes an endpoint/model or retries an assigned
+smoke call. Provider evidence is stored in `checks/provider-preflight.json`;
+paid reservations/responses go to `runs/provider-preflight/costs.jsonl`.
+Without `--counter-command`, endpoint/usage smoke checks can still execute but
+the provider gate fails explicitly for missing native joint counts. Do not
+use that diagnostic invocation before supplying the counter if a complete
+provider pass is wanted: smoke calls cannot be repeated. No OpenRouter
+preflight or key lookup was performed by the implementation worker.
 
-For example, the exact full-schedule commands would be:
+Provider metadata API: [models](https://openrouter.ai/docs/api/api-reference/models/get-models)
+and [endpoints](https://openrouter.ai/docs/api/api-reference/endpoints/list-endpoints).
+
+## After all preflight gates pass
+
+Only the orchestrator should advance the experiment. The full schedule's
+cumulative API ceilings now reserve the replacement probe's $1 envelope,
+$0.056900 for attempt 1 (including its unresolved dispatch), and a $0.50
+provider-preflight envelope. Attempt 2's completed calls are already included
+in the completed replacement probe, not counted twice. The separate $0.25
+local allowance leaves total maximum spending below $30.
 
 ```sh
-uv run python experiments/P1-deference/run_p1.py dev --cap-usd 5.2120486912
-uv run python experiments/P1-deference/run_p1.py scored --cap-usd 28.9037747200
-uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --split scored --schedule full_256
+uv run python experiments/P1-deference/run_p1.py dev --cap-usd 5.7689486912
+# Only after dev capability passes and the orchestrator authorizes scoring:
+uv run python experiments/P1-deference/run_p1.py scored --cap-usd 29.4606747200
 ```
 
-For either primary-only schedule substitute that row's two caps and use its
-schedule name for `analyze`. All exact variants also appear in `freeze.json`.
-Budget exhaustion exits 3; feasibility/preflight failure exits 2.
+The dev runner now requires current test-suite and external-timestamp receipts
+as well as the known-answer, tokenizer, Lean, semantic-pair and provider gates.
+All schedules and exact cumulative commands are recorded in `freeze.json`.
+Budget failure exits 3; gate failure exits 2. Never delete ledgers or substitute
+approximate counts to bypass a failure.
 
-## Implemented boundaries and remaining gates
+## Latest executed gates
 
-`ve_experiments.llm` exports the native-role `VertexBackend`,
-`OpenRouterBackend`, `PaidClient`, and `OfflineBackend`. The older CLI client's
-retry/cache behavior does not apply to these APIs. Vertex uses Google ADC and
-the exact planned project/global endpoint. OpenRouter reads its key exclusively
-from `os.environ`; it uses DeepInfra fp8 or DeepInfra Turbo fp8 with fallbacks
-disabled. A model/provider change stops dispatch.
-
-The API ledger records exact API usage and response data, prompt/role bytes,
-identity and checker hashes, served revision, timing, table-priced cost and
-remaining budget. Cached input is disclosed and conservatively priced at the
-table's full input rate. Vertex's usage response does not provide an invoice
-amount; invoice reconciliation remains explicitly pending. Unknown usage or a
-timeout leaves the call ceiling reserved and stops dispatch. The output ceiling
-includes candidates plus thoughts, not candidates alone. Reservations use a
-filesystem lock and fsync. Entire blocks are reserved before dispatch.
-
-The renderer uses native system messages for A/V and proposer/user messages for
-F/F-correct/U. F-correct copies the authentic finding bytes. F/U use the same
-substantive assertion function. E5 has no invented conditional countermodel.
-Only R has a replay declaration; only its pending native tool call receives the
-bound replay result. Gemini assistant parts/signatures survive continuation.
-Source records are never truncated. All returned verdicts pass the strict JSON
-parser, and failures stay in denominators. Analysis separates each judge/panel,
-uses template pairing and the specified bootstrap/boundary safeguard, and uses
-Wilson only for one binary observation per template.
-
-The offline gate includes oracle/random/constant/reversed-label outcomes,
-shuffled joins, missing/duplicate assignments, role injection, replay use/no-use/
-error, timeouts, budget reservations and repeated SDK calls on one event loop.
-`checks/lean-replay.json` retains 500 exact query envelopes and Python/Lean
-agreement across the 200 selected items. These are construction checks.
-
-Unresolved execution gates are explicit, not waived:
-
-- The interrupted probe and unknown second-dispatch billing.
-- Exact tokenization of the whole selected schedule, including replay
-  signatures, wrappers and joint pushback histories. The current tokenizer
-  receipt covers only the ten fixed probe prompts.
-- OpenRouter provides no native joint count endpoint here. Its adapter requires
-  an independently validated native provider/template counter; without one it
-  refuses dispatch. No approximate tokenizer is substituted. Provider role,
-  immutable revision and current pricing preflight are also pending.
-- Dev capability checks and the external timestamp receipt required for scoring.
-
-`freeze.json` is a local manifest marked blocked, not an external timestamp or a
-claim that the missing gates passed. The `known-answer --freeze` command exports
-the local manifest; it does not publish anything.
-
-Provider references checked during implementation:
-[Google thinking/output accounting](https://ai.google.dev/gemini-api/docs/generate-content/thinking),
-[Vertex thinking](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/thinking),
-[Vertex function calling and signatures](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling),
-[OpenRouter provider routing](https://openrouter.ai/docs/guides/routing/provider-selection),
-[OpenRouter usage accounting](https://openrouter.ai/docs/cookbook/administration/usage-accounting).
+The current `preflight` exited 2: known-answer, all 500 Lean queries, 200
+semantic pairs, 1,310 tests (two optional-backend skips), and the pending-calendar
+timestamp gate passed. Vertex returned real counts for all 1,816 fixtures;
+118 exceeded their bounds. Maximum totals including generated reserves were
+4,118 initial / 4,400 replay / 6,126 attacker / 6,175 pushback judge tokens.
+The full schedule therefore remains blocked by token limits as well as the
+unrun OpenRouter gate. The orchestrator must resolve the token overflows through
+an approved amendment before dev; this worker did not change prompt limits,
+truncate evidence, run dev/scored, or spend on generation.
