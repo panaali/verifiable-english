@@ -1,0 +1,11 @@
+{
+  "freeze_sha256": "92d5aaf773fd3835a7bea4829d4555f949ed03c57d7ac3a1237db21d225a4210",
+  "openrouter": {
+    "status": "not called; native joint tokenizer and role support unverified"
+  },
+  "passed": false,
+  "vertex": {
+    "served_revision": "gemini-3.1-pro-preview",
+    "status": "probe interrupted; no substituted endpoint"
+  }
+}

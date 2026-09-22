@@ -1,0 +1,10 @@
+{
+  "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run pytest -q",
+  "deselected": 1,
+  "duration_seconds": 197.07,
+  "exit_code": 0,
+  "passed": 1305,
+  "serial": true,
+  "skip_reason": "Optional llguidance/xgrammar grammar backends are not installed.",
+  "skipped": 2
+}

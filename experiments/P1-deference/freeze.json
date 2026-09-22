@@ -1,0 +1,109 @@
+{
+  "block_shuffle_seed": 20260921,
+  "commands": {
+    "full_256/analyze": "uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --schedule full_256",
+    "full_256/dev": "uv run python experiments/P1-deference/run_p1.py dev --cap-usd 5.2120486912",
+    "full_256/scored": "uv run python experiments/P1-deference/run_p1.py scored --cap-usd 28.9037747200",
+    "known-answer": "uv run python experiments/P1-deference/run_p1.py known-answer --lean-replay --freeze",
+    "primary_1024/analyze": "uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --schedule primary_1024",
+    "primary_1024/dev": "uv run python experiments/P1-deference/run_p1.py dev --cap-usd 3.392064",
+    "primary_1024/scored": "uv run python experiments/P1-deference/run_p1.py scored --cap-usd 21.332544",
+    "primary_512/analyze": "uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --schedule primary_512",
+    "primary_512/dev": "uv run python experiments/P1-deference/run_p1.py dev --cap-usd 2.605632",
+    "primary_512/scored": "uv run python experiments/P1-deference/run_p1.py scored --cap-usd 14.647872",
+    "probe": "uv run python experiments/P1-deference/run_p1.py probe --cap-usd 1.00"
+  },
+  "condition_order": [
+    "V",
+    "W",
+    "A",
+    "F",
+    "R",
+    "F_correct",
+    "U"
+  ],
+  "cost_ceilings": {
+    "full_256": {
+      "dev_calls_usd": "4.2120486912",
+      "dev_cumulative_with_probe_usd": "5.2120486912",
+      "local_allowance_usd": 0.25,
+      "scored_calls_usd": "23.6917260288",
+      "scored_cumulative_with_probe_usd": "28.9037747200"
+    },
+    "primary_1024": {
+      "dev_calls_usd": "2.392064",
+      "dev_cumulative_with_probe_usd": "3.392064",
+      "local_allowance_usd": 0.25,
+      "scored_calls_usd": "17.940480",
+      "scored_cumulative_with_probe_usd": "21.332544"
+    },
+    "primary_512": {
+      "dev_calls_usd": "1.605632",
+      "dev_cumulative_with_probe_usd": "2.605632",
+      "local_allowance_usd": 0.25,
+      "scored_calls_usd": "12.042240",
+      "scored_cumulative_with_probe_usd": "14.647872"
+    }
+  },
+  "external_timestamp": {
+    "verified": false
+  },
+  "hashes": {
+    "experiments/E2E4/e4-dev.jsonl.gz": "71e9f0bc3b459c7410e674d24a21dd50b202dccfa1a76e9952dc2b7c74da2893",
+    "experiments/E2E4/e4-scored.jsonl.gz": "a346292bfa74acf9d28dbc444db9d5b6c6a891fc71a148ea40aa6fb7354ba602",
+    "experiments/E5/dev.jsonl.gz": "34fc16fa63c3eb03baa3b9ac7c92e773a73c74656327f7bff81e603da621fa89",
+    "experiments/E5/scored.jsonl.gz": "bb8ca9b53fcc3ece82e8438eaba22831b7bc69824d317dc720165d8f2751a766",
+    "experiments/P1-deference/PREREG.md": "382bdc87ca651b962439294c1e1f4819c108ca7663e08c33db9d6444548f3145",
+    "experiments/P1-deference/inventory.json": "af48a96b801a26f856dea472ec5c518368570fb2ebfcf22a3e27f0770cdf6a58",
+    "experiments/P1-deference/labels.jsonl.gz": "d7fd48edfbe6fa9bab5324c94d5773dd6b0639c945803dea6d61676c9632f8ee",
+    "experiments/P1-deference/materials/dev.jsonl.gz": "d8ae29da2a00594465e302c333bf7aa0d6e622d8217ada1c9c534e742512cf85",
+    "experiments/P1-deference/materials/scored.jsonl.gz": "b3a03dd33185196682542afab4c3a0aaa307680fc4f95b70b028279578cf6984",
+    "experiments/P1-deference/prompts.json": "701dbd83cff8838800cf83135999af0d9e69a44bd83f1bca7bc7bda03a8419ea",
+    "experiments/P1-deference/prompts/attacker.txt": "475e6d5cb8197cc39bfa896ce935125ca088b8f9812506790625dee335427981",
+    "experiments/P1-deference/prompts/finding.txt": "ef67fb2fb5bf3d7bfad52baa842b1c20630067ae8dbdba95b99c50519c7f56d0",
+    "experiments/P1-deference/prompts/replay.json": "5188bb9fa56c5188955d4e69eaaf0a1524bb32debae5bcd4caf305682d20e04a",
+    "experiments/P1-deference/prompts/system.txt": "9a62a4143cadc5b10ff89a647c4d9c5c21abfe74bea703e7797722e2fa0c505c",
+    "experiments/P1-deference/run_p1.py": "8d0eed98625087247fb8043cd0d628dbff53c3e027a128dc98b3f587c84aa907",
+    "experiments/PREREG-DESIGN.md": "0f2663058122bde90998f5bdd98b6e933d419315caaad026ff9ef60c45d1f0b5",
+    "experiments/p1.py": "42e0df9fd5b65f68085282c55951623287ef549a787895e48c73bb707f2a8037",
+    "pyproject.toml": "caa95198c906999fdf3d9207c906f790e6b82e967cb19ebe7b1df1c0809485a7",
+    "uv.lock": "a3c969dcd59829ce59b1e5f7a7da38269ad1e964d7cfe79f62b9a62d2d2dd7d5",
+    "ve_experiments/llm.py": "103f68a84f83828fdc4e536f400f7a396ab5695e196a513401bc7da3ddab21c3",
+    "ve_experiments/paid.py": "bb6c4c764fa09a37aabb8a0462325d482bc272ece804c19c63423def937ba529"
+  },
+  "manifest_sha256": "92d5aaf773fd3835a7bea4829d4555f949ed03c57d7ac3a1237db21d225a4210",
+  "models": {
+    "pro": "gemini-3.1-pro-preview",
+    "replication": "qwen/qwen-2.5-72b-instruct",
+    "weak": "meta-llama/llama-3.1-8b-instruct"
+  },
+  "rates": {
+    "pro": [
+      2.0,
+      12.0,
+      1.0
+    ],
+    "replication": [
+      0.36,
+      0.4,
+      1.055
+    ],
+    "weak": [
+      0.02,
+      0.04,
+      1.055
+    ]
+  },
+  "seed": 20260921,
+  "selected_schedule": "stop",
+  "status": "BLOCKED_NOT_SCORING_READY",
+  "temperature": 0,
+  "thinking_level": "LOW",
+  "unresolved": [
+    "incomplete probe / unknown second-dispatch billing",
+    "full schedule tokenizer and joint-history gates",
+    "OpenRouter native joint counter and served revision preflight",
+    "external timestamp",
+    "dev capability gate"
+  ]
+}

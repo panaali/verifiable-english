@@ -1,0 +1,46 @@
+{
+  "counts": [
+    {
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/V/pro/probe/0",
+      "tokens": 242
+    },
+    {
+      "identity": "dev/e4-e593908907ba459975/V/pro/probe/0",
+      "tokens": 242
+    },
+    {
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/W/pro/probe/0",
+      "tokens": 295
+    },
+    {
+      "identity": "dev/e4-e593908907ba459975/W/pro/probe/0",
+      "tokens": 295
+    },
+    {
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/A/pro/probe/0",
+      "tokens": 1126
+    },
+    {
+      "identity": "dev/e4-e593908907ba459975/A/pro/probe/0",
+      "tokens": 1135
+    },
+    {
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/F/pro/probe/0",
+      "tokens": 589
+    },
+    {
+      "identity": "dev/e4-e593908907ba459975/F/pro/probe/0",
+      "tokens": 592
+    },
+    {
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/R/pro/probe/0",
+      "tokens": 327
+    },
+    {
+      "identity": "dev/e4-e593908907ba459975/R/pro/probe/0",
+      "tokens": 327
+    }
+  ],
+  "passed": true,
+  "scope": "ten probe prompts only"
+}

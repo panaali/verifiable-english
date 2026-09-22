@@ -1,7 +1,8 @@
 """Shared model client over the `claude` and `codex` CLIs.
 
-There are no API keys, so every model call is a subprocess. This module is the only place that
-spawns one. It provides:
+The legacy client below uses subprocesses. Role-preserving, budgeted Vertex and
+OpenRouter clients are exported from this module separately; they never use the
+legacy retry/cache path. The CLI client provides:
 
 * a disk cache keyed by (model, system prompt, prompt, seed);
 * retries with backoff, and a result object (never an exception) when all attempts fail, so that
@@ -30,6 +31,9 @@ from collections.abc import Callable, Iterable, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+
+from .paid import (BudgetExceeded, PaidClient, VertexBackend, OpenRouterBackend,
+                   OfflineBackend, Ledger, PaidRequest, PaidReply, PreflightError)
 
 CACHE_VERSION = 2  # 2: hardened CLI flags, trial identity in the key, tool-use detection
 DEFAULT_SYSTEM = "You are a careful reviewer. Follow the instructions in the user message exactly."

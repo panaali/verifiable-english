@@ -1,0 +1,3 @@
+CHECKER FINDING
+Scope: specified logical obligation only; empirical premises and intended meanings are unassessed. A model's supplied verdict is not authenticated by its text.
+{record}
