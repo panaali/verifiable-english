@@ -493,3 +493,68 @@ with family-disjoint assignments and a generated submission schema. No reviews
 or approvals are fabricated. Materials and execution manifests receive renewed
 OpenTimestamps calendar receipts after the final code/material freeze. This
 worker does not run dev or scored inference.
+
+## Revision 6 — Amendment (orchestrator), 2026-09-22
+
+Under the lead's delegation, material review may use two independent model
+families: Claude Opus (Anthropic) and Gemini 3.1 Pro (Google, Vertex ADC).
+The lead hand-check of a sample is **deferred**. Model reviews remain identified,
+family-disjoint by assignment, and bound to the exact reviewed packet hash.
+Family aliases do not count as separate families. Semantic disagreements still
+require explicit adjudication; this amendment does not approve material.
+
+The delegation described the completed Claude review as blind. Its retained
+verification file explicitly says **UNBLINDED (repository and labels consulted)**.
+We preserve that disclosure instead of relabeling the review blind. The 84
+Claude rows and verification file are imported as historical v5 evidence, with
+reviewer_kind=model. They cannot approve the subsequently changed v6 packets.
+A current-hash Claude re-review is consequently needed alongside Gemini before
+the two-review gate can pass. Gemini sees only one public packet and its source
+per fresh request; it never receives Claude's review or the hidden labels.
+
+The old Qwen pass was a no-op in all 84 packets. It is superseded, not counted
+as independent rewriting. The new prompt requests substantial structural
+rewriting, varied connectives, and sentence merging/splitting within each step.
+Step order and literal claim content remain fixed; prose has no step markers.
+Ordered IDs are supplied separately to every arm. Temperature remains the
+designed **0**, seed 20260921. Exact glossary-only sanitation remains, but the
+source-reference restoration is removed from acceptance. New revision-scoped
+request identities prevent replay of old paid no-op replies. There is at most
+one correction per packet, retaining every attempt and bill.
+
+Acceptance requires normalized character Levenshtein distance **>=0.35** after
+sanitation, measured against source text with step markers removed. An
+independent public-record licensing search tries zero relaxation, then all
+one-relaxation readings; kind, localization and sense assignments must be
+recoverable exactly as from the source. Step conclusions, premise atoms,
+immediate references and conditional alternatives must also be preserved.
+The parser supports explicit ordinary-English inference structures and rejects
+unparsed substantive wording; it is a conservative material check, not a claim
+to understand unrestricted English. Tests use rewritten fixtures only; they are
+never stored as paid paraphrases or represented as independent review.
+
+One conditional-alternative tail remains in every benign and flawed packet.
+The first independent random assignment over 16 steps produced 12/56 shortcut
+hits (conditional permutation expectation 5/56, p=.0197277). That failed result
+is retained in checks/rejected-localization-v6-random.json; no seed was searched.
+The final construction samples uniformly from the eight comparison positions
+shared by all four reference blocks. All possible producers AND consumers are
+excluded by structure, regardless of which block is critical. This is a
+construction constraint, not post-hoc selection of particular packet seeds.
+The rule "tail producer + following reference consumer" now abstains, so it
+adds no information beyond guessing among four reference blocks. The leakage
+gate includes its exact family-level null, preserving sibling dependence, in
+addition to all existing kind and paraphrase-text probes. Passing a draft
+screen does not stand in for auditing the future Qwen prose.
+
+Paid authority is limited to all 84 replacement Qwen paraphrases (at most
+**$0.40** including failures/corrections) and Gemini review (at most **$1**).
+Separate persistent v6 ledgers enforce these total caps across invocations;
+the study ledger conservatively reserves those envelopes inside its $40 cap.
+Gemini uses fresh contexts, compact JSON, 1,024 billed output tokens, serial
+calls and the existing durable paid-client accounting. A budget or provider
+failure stops without assuming missing reviews passed. No dev/scored call is
+authorized by this amendment. The OpenRouter key is absent in Worker X's
+environment: prepare and freeze v6 source material, then stop before dispatch.
+Gemini review is dependent on all 84 accepted new paraphrases and therefore
+cannot run on the superseded prose merely to claim completion.

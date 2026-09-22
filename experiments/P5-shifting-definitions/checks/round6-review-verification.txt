@@ -1,0 +1,77 @@
+ROUND-6 INDEPENDENT REVIEW OF THE SANITISED PARAPHRASES (Claude Opus 5, cross-family)
+repo /Users/seyran/code/ve-codex @ 83a5446 (codex/p5), read-only, no paid commands
+export /private/tmp/p5-paraphrase-review-20260922.json (84 packets, 3 x 28)
+
+VERDICT: FIX LISTED
+
+1. THE PARAPHRASE PASS IS A NO-OP.
+   packet.argument == source_argument byte-for-byte in 84/84 packets, and the 84
+   current arguments are byte-identical to the round-5 prose export already
+   reviewed (scratchpad/p5-review-v5-packets).
+   Reconstructed from runs/study/costs.jsonl by provenance.response_sha256
+   (84/84 replies found; validate_reply + restore_references reproduce the stored
+   argument exactly), Qwen-72B's raw step texts decompose as:
+       849/1344 (63.2%) byte-identical to the source step already
+       491/1344 (36.5%) differed only by an added parenthetical gloss, deleted by
+                        sanitiser exact-parenthetical-glossary-sense-v1
+         4/1344 ( 0.3%) expanded back-references, reverted by
+                        restore-exact-source-immediate-reference-v1 (1 packet,
+                        i2afbcc29; all four "after" strings == source node text)
+         0/1344         any other difference
+   materials/paraphrases.jsonl.gz argument == materials/dossiers.jsonl.gz argument
+   for 84/84. So "independent Qwen prose" holds as provenance only; the text the
+   judges read is the generator's own topological rendering, unchanged.
+
+2. FIDELITY CHECKS (trivially satisfied by the identity above, verified anyway)
+   16 steps, same ids, same order: 84/84. 6 premises, 16 records, 4 back-references,
+   1 conditional-alternative step: 84/84. Parentheses in final argument: 0/84.
+   Node/rule ids, Rnn sense tags, pnn codes, "note that", verdict/flaw words,
+   hedging adverbs: 0 packets.
+   preserved 84 / repaired-flaw 0 / new-flaw 0 / incomplete 0.
+
+3. LEAKAGE (kind from surface features), leave-one-family-out, best-of-probes vs
+   within-family label-permutation null, 200 draws.
+   Full sweep (argument + records + premises), 581 probes:
+       best 37/84 = 0.4405 (top probe id_b0, a byte of the HMAC id), null mean
+       35.77, p50 35, p95 41, max 47, selection-corrected p = 0.355.
+   Paraphrase-text-only sweep, 563 probes:
+       best 32/84 = 0.3810, null mean 32.99, p50 32, p95 38, max 45,
+       selection-corrected p = 0.640.
+   Chance = 28/84 = 0.3333. No kind leak.
+
+4. NEW: 100% SURFACE LOCALISATION SHORTCUT (carried over from the prose, missed by
+   round 5, which only audited referent counts and kind leakage).
+   The single "The checks that ... would ..." alternative tail sits on the flaw's
+   PRODUCER step in 56/56 flawed packets, and that step has exactly one later
+   back-referencing step in 56/56. The rule "producer = the alternative-bearing
+   step; consumer = the unique later step referring to it" recovers a gold
+   acceptable_locations pair in 56/56 with no reasoning.
+   The tail's position is balanced across kinds (index multiset {2:6, 6:5, 10:10,
+   14:7} identical for shift, smuggle and benign) and its verb is balanced
+   (establish/imply/yield 9/10/9 per kind), so kind is not leaked -- but
+   `localized`, a separately scored outcome, is.
+   Positional prior alone already pins the producer to index in {2,6,10,14}
+   (56/56); the tail resolves which of the four, taking localisation from 1/4 to 1/1.
+
+5. INDEPENDENT DIAGNOSIS from the paraphrase text alone (licensing search over
+   record branches, zero- then one-relaxation): kind 84/84, flawed localisation
+   56/56 exact match with labels.jsonl.gz. 28 benign admit a zero-relaxation
+   reading; 56 flawed admit none.
+
+6. PROTOCOL NOTE. submit's validate_exposure forbids one reviewer_id from seeing
+   two packets of the same family. 84 packets = 28 families x 3 kinds, so no single
+   reviewer can submit more than 28 rows; a 40+ row single-reviewer submission is
+   structurally impossible. completed-paraphrase-review.json therefore carries three
+   reviewer ids (one per assignment) and is also split into
+   completed-paraphrase-review-assignment-{1,2,3}.json for separate submission.
+   This review is UNBLINDED (repository and labels consulted) and reviewer_kind is
+   "model", so it cannot by itself satisfy the two-independent-review gate.
+
+FIX LIST
+  F1  Either run a paraphrase pass that is allowed to vary the wording (the current
+      role prompt plus the sanitiser and the reference repair leave no degrees of
+      freedom), or drop the claim that judges read independent prose and state that
+      Qwen-72B reproduced the topological rendering verbatim.
+  F2  Break the alternative-tail/producer coincidence, or stop scoring `localized`
+      as evidence of reasoning. Rebalance so the alternative tail falls on a
+      non-producer step in a preregistered fraction of flawed packets.

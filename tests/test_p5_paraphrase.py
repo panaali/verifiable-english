@@ -113,6 +113,7 @@ def test_paraphrase_prompt_is_isolated_from_judge_instructions(dossier):
 
 @pytest.fixture
 def stage(tmp_path, monkeypatch):
+    monkeypatch.setattr('experiments.p5_semantics.acceptance_check', lambda *_: {'passed': True})
     dossiers = read(p5.HERE / 'materials/dossiers.jsonl.gz')[:3]
     labels = p5.labels(False)
     monkeypatch.setattr(p5, 'HERE', tmp_path)

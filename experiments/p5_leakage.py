@@ -162,7 +162,8 @@ def audit(base=HERE, *, workers=8):
     probes = {name:{'accuracy':float(a),'correct':int(round(a*len(items))),
                    'adjusted_p_value':pv,'passed':pv >= .05}
               for name,a,pv in zip(probe_names,observed,comparison['p_values'])}
-    return {'passed':comparison['passed'], 'probes':probes, 'accuracy':float(max(observed)),
+    localization = localization_probe(items, labels)
+    return {'passed':comparison['passed'] and localization['passed'], 'localization':localization, 'probes':probes, 'accuracy':float(max(observed)),
             'best_probe':probe_names[int(observed.argmax())], 'convergence':convergence,
             'chance_accuracy':1/3, 'minimum_p_value':.05,
             'permutation_null':{k:v for k,v in comparison.items() if k != 'p_values'},
@@ -240,3 +241,53 @@ def node_features(packet):
         raise ValueError('expected one four-way branch node')
     features.update({f'branch_{k}':v for k, v in candidates[0].items()})
     return features
+
+
+def localization_probe(items, labels):
+    """Fixed reviewer shortcut; target permutations retain sibling dependence.
+
+    The attacker gets only the tail position and the four reference positions.
+    Permute the critical reference block within each family, never packet IDs
+    or semantic contents. A tail outside these blocks makes the rule abstain.
+    """
+    from scipy.stats import binom
+    families = {}
+    rows = []
+    for item in items:
+        q = item['payload']
+        paragraphs = q['argument'].split('\n\n')
+        tails = [i for i, t in enumerate(paragraphs) if 'The checks that ' in t]
+        refs = [i for i, t in enumerate(paragraphs) if 'the immediately preceding ' in t.lower()]
+        if len(tails) != 1 or len(refs) != 4:
+            return {'passed': False, 'reason': 'expected one tail and four references per packet'}
+        if labels[item['id']]['kind'] == 'benign':
+            continue
+        index = tails[0]
+        candidate = index+1 if index+1 in refs else None
+        prediction = {q['nodes'][index]['id'], q['nodes'][candidate]['id']} if candidate is not None else set()
+        hit = prediction in [set(v) for v in labels[item['id']]['acceptable_locations']]
+        next_ref = next((r for r in refs if r > index), None)
+        block_hit = next_ref is not None and [q['nodes'][next_ref]['id']] in labels[item['id']]['acceptable_locations']
+        row = {'item_id': item['id'], 'tail_index': index, 'eligible': candidate is not None, 'hit': hit,
+               'block_hit': block_hit}
+        rows.append(row)
+        families.setdefault(item['group'], []).append(row)
+    if any(len(v) != 2 or len({(r['tail_index'], r['eligible'], r['hit'], r['block_hit']) for r in v}) != 1 for v in families.values()):
+        return {'passed': False, 'reason': 'localization null requires matched siblings'}
+    eligible = sum(v[0]['eligible'] for v in families.values())
+    hits = sum(v[0]['hit'] for v in families.values())
+    pvalue = float(binom.sf(hits-1, eligible, .25))
+    block_hits = sum(v[0]['block_hit'] for v in families.values())
+    block_p = float(binom.sf(block_hits-1, len(families), .25))
+    adjusted_p = min(1., 2*min(pvalue, block_p))
+    return {'passed': bool(rows) and adjusted_p >= .05, 'adjusted_p_value':adjusted_p,
+            'multiplicity':'Bonferroni over two fixed localization rules',
+            'next_reference_block':{'correct':2*block_hits,'n':len(rows),
+                'accuracy':block_hits/max(1,len(families)), 'chance_accuracy':.25, 'p_value':block_p},
+            'correct': sum(r['hit'] for r in rows),
+            'n': len(rows), 'accuracy': sum(r['hit'] for r in rows)/max(1,len(rows)),
+            'chance_accuracy': eligible*.25/max(1,len(families)), 'p_value': pvalue,
+            'eligible_families': eligible, 'hit_families': hits,
+            'null': 'Exact within-family permutation of the four reference blocks; sibling pairs move together. Noncandidate tail abstains.',
+            'rule': 'tail producer plus unique immediately following back-reference consumer',
+            'rows': rows}

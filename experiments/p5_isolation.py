@@ -10,7 +10,8 @@ def single_context(items):
 
 
 def blind_packet(payload):
-    return {k: payload[k] for k in ('id', 'glossary', 'premises', 'records', 'argument', 'root')}
+    return {**{k: payload[k] for k in ('id', 'glossary', 'premises', 'records', 'argument', 'root')},
+            'step_ids': [n['id'] for n in payload['nodes']]}
 
 
 def export_isolated(destination, rows, families):

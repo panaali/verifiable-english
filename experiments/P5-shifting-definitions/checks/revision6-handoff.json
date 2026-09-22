@@ -1,0 +1,61 @@
+{
+  "additional_spend_usd": "0",
+  "claude_review": "84 historical v5 rows imported; original file says unblinded; current packet hashes need re-review",
+  "dev": "not run; not authorized",
+  "gemini_command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python -m experiments.p5_revision gemini-review --cap-usd 1",
+  "gemini_review": "runner implemented; blocked until 84 new paraphrases pass acceptance",
+  "kind_leakage": {
+    "best_accuracy": 0.40476190476190477,
+    "p_value": 0.61,
+    "passed": true,
+    "scope": "regenerated source drafts; final paid Qwen prose pending"
+  },
+  "lead_hand_check": "deferred",
+  "localization": {
+    "accuracy": 0.0,
+    "adjusted_p_value": 0.27690706985762614,
+    "chance_accuracy": 0.0,
+    "correct": 0,
+    "eligible_families": 0,
+    "hit_families": 0,
+    "multiplicity": "Bonferroni over two fixed localization rules",
+    "n": 56,
+    "next_reference_block": {
+      "accuracy": 0.35714285714285715,
+      "chance_accuracy": 0.25,
+      "correct": 20,
+      "n": 56,
+      "p_value": 0.13845353492881307
+    },
+    "null": "Exact within-family permutation of the four reference blocks; sibling pairs move together. Noncandidate tail abstains.",
+    "p_value": 1.0,
+    "passed": true,
+    "rule": "tail producer plus unique immediately following back-reference consumer"
+  },
+  "notes": "Packet-safety rejects step markers in offline drafts; final Qwen prose is marker-free. Tokenizer and timestamp must be renewed for final material. Historical OTS proof was moved with its original hash text.",
+  "paid_calls": 0,
+  "paraphrase": "blocked: OpenRouter environment key absent",
+  "paraphrase_command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P5-shifting-definitions/run_p5.py paraphrase --revision v6 --cap-usd .40",
+  "preflight_gates": {
+    "construction": true,
+    "external-timestamp": false,
+    "gemini-calibration-coverage": true,
+    "independent-prose": false,
+    "known-answer": true,
+    "leakage": true,
+    "lean-replay": true,
+    "packet-safety": false,
+    "provider-preflight": true,
+    "review": false,
+    "role-boundaries": true,
+    "surface-soundness": true,
+    "tokenizer": false,
+    "tracked-blinding": true
+  },
+  "revision": 6,
+  "source_packets": 84,
+  "tests": {
+    "note": "116 passed in final suite; tracked-file deletion staging resolved the scan failure; its targeted rerun passed",
+    "passed": 117
+  }
+}

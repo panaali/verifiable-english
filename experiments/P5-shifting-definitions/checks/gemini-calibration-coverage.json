@@ -49,7 +49,7 @@
       "example": "dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/author/0"
     }
   },
-  "freeze_sha256": "d06392379b863ad38be3c296caec0c6f00124dd0f5185309fe3c7e35999b1c3b",
+  "freeze_sha256": "b3fda3ed1edcf0095dbf2d862e46f5e18e1d1ac6de2312ed3a7eea762eccfe4b",
   "generation_calls": 0,
   "passed": true,
   "policy": "Exact config calibration required; no smoke residual extrapolation."

@@ -59,7 +59,7 @@ def review_export(destination, base=HERE):
     return {**result,'version':'sanitised-paraphrase','submit_schema':str(schema_path)}
 
 
-def submit(path, base=HERE):
+def submit(path, base=HERE, *, run_gate=True):
     submitted = json.loads(Path(path).read_text())
     items = {i['id']:i for split in ('dev','scored') for i in read(base/f'materials/{split}.jsonl.gz')}
     ledger_path = base/'materials/review-ledger.jsonl.gz'
@@ -97,7 +97,7 @@ def submit(path, base=HERE):
                     'time':datetime.now(timezone.utc).isoformat()})
     # Logical append only, deterministic archive; preserve every earlier event.
     archive(ledger_path, ledger+new)
-    return gate(base)
+    return gate(base) if run_gate else {'imported':len(new), 'gate_recomputed':False}
 
 
 def adjudicate(path, base=HERE):
@@ -131,7 +131,9 @@ def gate(base=HERE):
         reviews=[r for r in ledger if r['event']=='review' and r['item_id']==item['id']
                  and r['packet_sha256']==digest(item['payload'])]
         eligible=(len({r['reviewer_id'] for r in reviews})>=2 and
-                  any(r['reviewer_kind'] in ('human','project_lead') for r in reviews) and
+                  (any(r['reviewer_kind'] in ('human','project_lead') for r in reviews) or
+                   len({model_family(r.get('model_family','')) for r in reviews
+                        if r['reviewer_kind']=='model'} - {None}) >= 2) and
                   all(all(r['checks'].values()) for r in reviews))
         annotation=reviews[0]['annotation'] if eligible else None
         if eligible and any(r['annotation']!=annotation for r in reviews):
@@ -150,8 +152,22 @@ def gate(base=HERE):
     leakage = audit(base)
     write_json(base/'checks/leakage.json', leakage)
     result={'passed':len(items)==84 and not unresolved and leakage['passed'],
+            'lead_hand_check':'deferred under orchestrator amendment 2026-09-22',
+            'model_review_policy':'two different model families accepted; current packet hashes required',
             'leakage_passed':leakage['passed'], 'reviewed_slots':len(anchored),
             'unresolved':unresolved, 'ledger_sha256':digest(ledger)}
     archive(base/'materials/anchored-labels.jsonl.gz', anchored)
     write_json(base/'checks/review.json',result)
     return result
+
+
+def model_family(name):
+    """Canonical families: aliases of one provider are not independent reviews."""
+    name = name.casefold()
+    for family, aliases in (('anthropic', ('claude', 'anthropic')),
+                            ('google', ('gemini', 'google')),
+                            ('openai', ('gpt', 'openai')),
+                            ('qwen', ('qwen', 'alibaba'))):
+        if any(alias in name for alias in aliases):
+            return family
+    return None

@@ -82,3 +82,8 @@ Explanation scoring is a separate post-inference task: two raters receive the
 packet and answer without arm/model fields, assess source-groundedness, record
 protocol recognition, and resolve disagreements before analysis. Missing ratings
 remain failures; no paid automated grader is assumed.
+
+Revision 6 historical review attachments are barred from blind contexts:
+`checks/round6-review-submission.json`, `checks/round6-review-verification.txt`.
+The latter explicitly discloses unblinded repository/label access. Neither is
+attached to Gemini requests or transferred to regenerated packet hashes.

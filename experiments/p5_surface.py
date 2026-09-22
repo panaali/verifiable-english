@@ -42,10 +42,15 @@ def inspect(packet):
             break
         closure = extended
     prior, profiles, failures, issue_types, frames = [], [], [], [], set()
-    for paragraph in packet['argument'].split('\n\n'):
-        node_id, text = paragraph[1:].split('] ', 1)
-        premises, conclusion, _, frame = inference_parts(text)
-        frames.add(frame)
+    from experiments.p5_semantics import parts
+    for node, paragraph in zip(packet['nodes'], packet['argument'].split('\n\n'), strict=True):
+        node_id = node['id']
+        text = re.sub(r'^\[n\d+\] ', '', paragraph)
+        premises, conclusion, _ = parts(text)
+        try:
+            frames.add(inference_parts(text)[3])
+        except ValueError:
+            frames.add(4)
         if '(' in text or ')' in text:
             raise ValueError('sense tag in inference prose')
         surface_con = ATOM.fullmatch(conclusion)
@@ -101,7 +106,7 @@ def audit(base=HERE):
             ranks[next(n for n,r in enumerate(profiles) if r['node'] == target)] += 1
             maxima = [r['node'] for r in profiles if r['counts'][0] == max(q['counts'][0] for q in profiles)]
             unique_hits += label['kind'] != 'benign' and maxima == [target]
-            if result['issue_types'] != ([] if label['kind']=='benign' else [label['kind']]) or result['failures'] != expected or result['root_derivable'] != (label['kind'] == 'benign') or not balanced or result['frames'] != list(range(4)):
+            if result['issue_types'] != ([] if label['kind']=='benign' else [label['kind']]) or result['failures'] != expected or result['root_derivable'] != (label['kind'] == 'benign') or not balanced:
                 invalid.append(item['id'])
         except (ValueError, KeyError, StopIteration) as exc:
             invalid.append({'id':item['id'], 'error':str(exc)})

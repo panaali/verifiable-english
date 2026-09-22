@@ -27,6 +27,7 @@ def test_only_paraphrase_enables_qwen_provider_fallback():
 
 
 def test_paraphrase_resumes_legacy_failures_and_records_provider(tmp_path, monkeypatch):
+    monkeypatch.setattr('experiments.p5_semantics.acceptance_check', lambda *_: {'passed': True})
     dossiers = read(p5.HERE / 'materials/dossiers.jsonl.gz')[:2]
     labels = p5.labels(False)
     monkeypatch.setattr(p5, 'HERE', tmp_path)

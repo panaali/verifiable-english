@@ -157,7 +157,7 @@ def packet_safety():
         if len(paragraphs)!=16 or q['nodes'][-1]['id']!=q['root']:
             bad.append(item['id']); continue
         for index,(n,para) in enumerate(zip(q['nodes'],paragraphs,strict=True)):
-            if not set(n['parents']) <= seen or not para.startswith(f"[{n['id']}] "):
+            if not set(n['parents']) <= seen or re.search(r'\[n\d+\]', para):
                 bad.append(item['id'])
             seen.add(n['id'])
             if re.search(r'\bn\d+\b',para.split('] ',1)[-1]):
@@ -202,8 +202,9 @@ def preflight(offline=False):
     from experiments.p5_surface import audit as surface_audit
     from experiments.p5_blinding import audit as blinding_audit
     from experiments.p5_tokens import coverage
+    from experiments.p5_revision import independent_prose
     checks=[('tracked-blinding',blinding_audit),('surface-soundness',surface_audit),('review',lambda:p.review.gate()),
-        ('independent-prose',lambda:{'passed':len(read(p.HERE/'materials/paraphrases.jsonl.gz'))==84 and all(r['provenance'].get('independent_qwen_pass') for r in read(p.HERE/'materials/paraphrases.jsonl.gz'))}),
+        ('independent-prose',lambda:independent_prose(p.HERE)),
         ('construction',lambda:json.loads((p.HERE/'checks/construction.json').read_text())),
         ('known-answer',lambda:p.known_answer(p.materials(),p.check_labels())),
         ('lean-replay',lean_replay),('packet-safety',packet_safety),

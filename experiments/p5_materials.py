@@ -356,6 +356,11 @@ def build(slot, parents, nonce=None):
     for group in range(5):
         plain_leaves.append({'id': ids[group+1], 'text': 'Rules ' + ', '.join(r['id'] for r in records[group::5]) + ' are declared.'})
     nodes, record_uses = [], {}
+    # Independent of the selected critical route, with the same count in all kinds.
+    # All comparison positions are eligible, irrespective of which of the
+    # four reference blocks is critical. No producer or consumer is eligible.
+    tail_node = random.Random(slot['topology_seed'] + '/tail-position-v6').choice(
+        [t-offset for t in reference_steps for offset in (3, 2)])
     for n, ps in enumerate(parents, 6):
         cited = [proposed_atoms[p] for p in ps]
         # At the target the term is reused without its qualifier. The record's
@@ -379,7 +384,7 @@ def build(slot, parents, nonce=None):
             contents.append(english(selector_atoms[kind_index], False))
         from experiments.p5_paraphrase import render_inference
         text = render_inference(' and '.join(contents), english(proposed_atoms[n], False), (n-6) % 4)
-        if n == parent:
+        if n == tail_node:
             # Record alternatives are genuine contextual comparisons, not
             # asserted premises. Permute which route is relied on while
             # preserving the complete lexical workload across siblings.
@@ -402,7 +407,7 @@ def build(slot, parents, nonce=None):
         'id': public_id, 'family': slot['cluster'], 'predicates': size, 'topology': parents, 'structural_signature': structural_signature(parents),
         'intended': intended.to_dict(), 'merged': proposed.to_dict(), 'model': model.to_dict(),
         'bridge': bridge.to_dict(env), 'augmented': augmented.to_dict(),
-        'construction': {'version': 5, 'target': ids[target], 'parent': ids[parent],
+        'construction': {'version': 6, 'tail_node': ids[tail_node], 'target': ids[target], 'parent': ids[parent],
             'unqualified_reference_nodes': [ids[n] for n in reference_steps],
             'redundant_edges': [[ids[n], ids[q]] for n, q in redundant],
             'decoy_nodes': [ids[n] for n in decoy_pairs],
@@ -479,7 +484,7 @@ def generate(base=HERE):
     report = {'passed': len(signatures)==28, 'slots': len(labels), 'families':28,
         'method':'pairwise distinct directed degree/depth invariants; sufficient non-isomorphism test',
         'failed_candidates': len(attempts), 'actual_formal_graph_families': len(set(actual_signatures.values())),
-        'generator_version': 5, 'deduction_steps': STEPS, 'source_records_fixed_within_family': True, 'independent_prose_ready': False,
+        'generator_version': 6, 'deduction_steps': STEPS, 'source_records_fixed_within_family': True, 'independent_prose_ready': False,
         'status':'BUILT_REFERENCE_AND_OFFLINE_DRAFT_REVIEW_BLOCKED', 'paid_calls':0}
     write_json(base/'checks/construction.json', report)
     return report

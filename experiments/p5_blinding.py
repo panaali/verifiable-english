@@ -25,6 +25,8 @@ BARRED = (
     'checks/rejected-review-v1.json',
     'checks/round5-review-submission.json',
     'checks/round5-review-verification.txt',
+    'checks/round6-review-submission.json',
+    'checks/round6-review-verification.txt',
 )
 LABEL_PATTERN = re.compile(
     r'"(?:kind|variant)"\s*:\s*"(?:shift|smuggle|benign)"'
