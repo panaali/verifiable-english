@@ -1,0 +1,76 @@
+{
+  "completed_at": "2026-09-22T03:03:57.803738+00:00",
+  "conclusion": "Llama HF-injected dates account for the full 20-token discrepancy. No-date rendering with one BOS and assistant generation header matches retained DeepInfra usage exactly. This is a smoke-count reconciliation, not proof of every provider/tool template.",
+  "counter_sha256": "ab5bc368b3828dedaecc6daa19620fa4cbf75c2130a335066d62e51a7e7e58b7",
+  "generation_calls": 0,
+  "judges": {
+    "replication": {
+      "matches": true,
+      "messages": [
+        {
+          "content": "Reply with one word.",
+          "role": "system"
+        },
+        {
+          "content": "Hello",
+          "role": "user"
+        }
+      ],
+      "model": "qwen/qwen-2.5-72b-instruct",
+      "native_tokens": 19,
+      "observed_prompt_tokens": 19,
+      "served_provider": "DeepInfra",
+      "variants": {
+        "corrected": {
+          "text": "<|im_start|>system\nReply with one word.<|im_end|>\n<|im_start|>user\nHello<|im_end|>\n<|im_start|>assistant\n",
+          "tokens": 19
+        },
+        "pinned_hf": {
+          "text": "<|im_start|>system\nReply with one word.<|im_end|>\n<|im_start|>user\nHello<|im_end|>\n<|im_start|>assistant\n",
+          "tokens": 19
+        }
+      }
+    },
+    "weak": {
+      "matches": true,
+      "messages": [
+        {
+          "content": "Reply with one word.",
+          "role": "system"
+        },
+        {
+          "content": "Hello",
+          "role": "user"
+        }
+      ],
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "native_tokens": 21,
+      "observed_prompt_tokens": 21,
+      "served_provider": "DeepInfra",
+      "variants": {
+        "corrected": {
+          "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nReply with one word.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nHello<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n",
+          "tokens": 21
+        },
+        "no_assistant_header": {
+          "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nReply with one word.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nHello<|eot_id|>",
+          "tokens": 17
+        },
+        "no_bos": {
+          "text": "<|start_header_id|>system<|end_header_id|>\n\nReply with one word.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nHello<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n",
+          "tokens": 20
+        },
+        "pinned_hf": {
+          "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\nReply with one word.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nHello<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n",
+          "tokens": 41
+        },
+        "today_utc": {
+          "text": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nCutting Knowledge Date: December 2023\nToday Date: 22 Sep 2026\n\nReply with one word.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nHello<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n",
+          "tokens": 41
+        }
+      }
+    }
+  },
+  "ledger_sha256": "fe9c81ca578657c34c02ec327aa1626eb64eac72da1c98118f1e2d2ec5e83103",
+  "provider_evidence_sha256": "7f8379945e0e25f2d9d6117daba0884e25d92fd73a9a2ba128861961161854fc"
+}

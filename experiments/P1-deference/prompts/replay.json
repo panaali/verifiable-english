@@ -1,0 +1,1 @@
+{"name":"replay","description":"Replay the fixed logical obligation for the assigned immutable item ID once. No paths, code, or new premises.","parameters":{"type":"object","properties":{"item_id":{"type":"string"}},"required":["item_id"],"additionalProperties":false}}

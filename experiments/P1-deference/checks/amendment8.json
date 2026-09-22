@@ -1,0 +1,15 @@
+{
+  "approved_by": "orchestrator",
+  "attacker_sunk_cost_usd": "0.052306",
+  "changed_judge_requests": 267,
+  "changed_request_sunk_cost_usd": "0.22651771370",
+  "completed_dev_calls": 279,
+  "conditionally_reusable_attacker_requests": 12,
+  "date": "2026-09-22 UTC (2026-09-21 Pacific)",
+  "first_54_changed_judge_requests": 42,
+  "generation_calls": 0,
+  "ledger_prefix_lines": 571,
+  "ledger_prefix_sha256": "c16d92a982253796c85c475717af1c087e3728ffa1f98d9c4930da0c4bfe9777",
+  "prior_dev_cost_and_holds_usd": "0.28137326890",
+  "worker_spend_usd": "0"
+}

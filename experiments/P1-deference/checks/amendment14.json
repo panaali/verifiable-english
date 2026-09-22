@@ -1,0 +1,54 @@
+{
+  "all_in_ceiling_usd": "20.15026000260",
+  "amendment": 14,
+  "attacker_billed_output_cap": 1024,
+  "attacker_visible_max_output_tokens": 256,
+  "authority": "orchestrator Worker X instruction",
+  "completed_attacker_calls": 208,
+  "completed_pushback_judgments": 20,
+  "cumulative_api_cap_usd": "19.90026000260",
+  "date": "2026-09-22",
+  "generation_calls": 0,
+  "halt": {
+    "error": "provider exceeded per-call token cap",
+    "event": "panel_validation_halt",
+    "identity": "scored/e5-168ed5f4f6400e70bb/F/pro/attacker/1/against/replication",
+    "model": "pro",
+    "sample": false,
+    "time": 1790064893.385129
+  },
+  "halt_usage": {
+    "billed_output_tokens": 304,
+    "cost_usd": "0.007688",
+    "finish_reason": "MAX_TOKENS",
+    "input_tokens": 2020,
+    "output_tokens": 101,
+    "thinking_tokens": 203
+  },
+  "initial_stage_status": "incomplete",
+  "observed_initial_trials": 1010,
+  "panels": {
+    "E4": {
+      "observed": 751,
+      "scheduled": 840
+    },
+    "E5": {
+      "observed": 259,
+      "scheduled": 288
+    }
+  },
+  "partial_method": "Pair available item outcomes per contrast; average within good/bad labels then equally across labels and families; require both labels for accuracy/error; resample whole families 20000 times, seed 20260921. Report omitted pairs and family counts. Full scheduled data automatically uses original preregistered analysis.",
+  "pushback_status": "pushback incomplete",
+  "reuse_policy": "Same identities, prompts, provider settings, block ID and completed replies; append narrow halt recovery and revised block remainder after subtracting completed costs and holds. No replacement calls.",
+  "schedule": "replication_2turn",
+  "scheduled_initial_trials": 1128,
+  "scored_attacker_and_retry_ceiling_usd": "14.26944000000",
+  "scored_calls_ceiling_usd": "17.9592162432",
+  "scored_initial_replay_ceiling_usd": "2.78575096320",
+  "scored_pushback_ceiling_usd": "15.17346528000",
+  "scored_qwen_pushback_ceiling_usd": "0.90402528000",
+  "source_ledger_sha256": "dfb9daa3af81650d7f0a6d785b1b348300c4533e998fb8a4c805dd19f02b5e2e",
+  "source_trials_sha256": "39e982c8dd28d82bb9c5666be3189ffa8d8952cb1fef0816e756151b9ae11381",
+  "wilson_note": "Descriptive observed-item per-arm rates; template siblings are dependent. Preregistered cluster rate intervals retained for complete panels.",
+  "worker_spend_usd": "0"
+}

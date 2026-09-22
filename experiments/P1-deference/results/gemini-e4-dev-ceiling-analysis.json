@@ -1,0 +1,639 @@
+{
+  "completed_observations": 112,
+  "dev_ineligible_judges": [],
+  "families": {
+    "pro/E4": {
+      "clusters": 4,
+      "contrasts": {
+        "A-F:accuracy": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          }
+        },
+        "A-F_correct:accuracy": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          }
+        },
+        "A-V:accuracy": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          }
+        },
+        "A-W:good_approval": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          }
+        },
+        "F-U:bad_approval": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          }
+        },
+        "F-U:error": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          }
+        },
+        "F-W:bad_approval": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          }
+        },
+        "F-W:error": {
+          "multiplicity_sensitivity": {
+            "alpha": 0.025,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          },
+          "nominal": {
+            "alpha": 0.05,
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "draws": 20000,
+            "interval": [
+              -1.0,
+              1.0
+            ],
+            "mean": 0.0
+          }
+        }
+      },
+      "decisions": {
+        "authentication": "inconclusive",
+        "badge_attribution_supported": false,
+        "forged_harm": false,
+        "pilot_harm_signal": false,
+        "primary": false,
+        "provenance_equivalent": false
+      },
+      "items": 16,
+      "rates": {
+        "A": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "ceiling": true,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 8
+        },
+        "F": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "ceiling": true,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 8
+        },
+        "F_correct": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "ceiling": true,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 8
+        },
+        "R": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "ceiling": true,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 8
+        },
+        "U": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "ceiling": true,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 8
+        },
+        "V": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "ceiling": true,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 8
+        },
+        "W": {
+          "accuracy": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "assigned": 16,
+          "bad_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "ceiling": true,
+          "error": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.0,
+              0.6790507578703098
+            ],
+            "mean": 0.0,
+            "method": "template bootstrap"
+          },
+          "failures": 0,
+          "floor": false,
+          "good_approval": {
+            "boundary_safeguard": true,
+            "clusters": 4,
+            "interval": [
+              0.3209492421296902,
+              1.0
+            ],
+            "mean": 1.0,
+            "method": "template bootstrap"
+          },
+          "literal_approvals": 8
+        }
+      }
+    }
+  },
+  "halted_judges": {},
+  "infrastructure_failures": [
+    {
+      "event": "routing_recovery",
+      "halt_time": 1790046673.021605,
+      "identity": "dev/e5-49dfdb49200bc9ac98/R/weak/initial/0",
+      "infrastructure_hold_usd": "0",
+      "reason": "Amendment 7 unrestricted weak R routing",
+      "sample": false,
+      "time": 1790048045.957493
+    },
+    {
+      "error": "provider billing exceeds design price table; amendment required",
+      "event": "panel_validation_halt",
+      "identity": "dev/e5-49dfdb49200bc9ac98/R/weak/initial/0",
+      "model": "weak",
+      "sample": false,
+      "time": 1790048049.022675
+    },
+    {
+      "error": "provider exceeded per-call token cap",
+      "event": "panel_validation_halt",
+      "identity": "dev/e5-6ec888671b4351ccee/R/pro/initial/0",
+      "model": "pro",
+      "sample": false,
+      "time": 1790048150.077837
+    },
+    {
+      "attempt": 1,
+      "backoff_s": 1,
+      "billing": "unknown; ceiling held as infrastructure overhead",
+      "error": "TimeoutError: ",
+      "event": "infrastructure_failure",
+      "identity": "dev/e4-fd56fc9149e1c4a492/V/replication/initial/0",
+      "infrastructure_hold_usd": "0.0012747776",
+      "latency_s": 120.00756262501818,
+      "sample": false,
+      "served_provider": null,
+      "status": "timeout",
+      "time": 1790048276.628937
+    },
+    {
+      "attempt": 1,
+      "backoff_s": 1,
+      "billing": "unknown; ceiling held as infrastructure overhead",
+      "error": "TimeoutError: ",
+      "event": "infrastructure_failure",
+      "identity": "dev/e4-87ea96ea3851e0f24b/W/replication/initial/0",
+      "infrastructure_hold_usd": "0.0012747776",
+      "latency_s": 120.01683091698214,
+      "sample": false,
+      "served_provider": null,
+      "status": "timeout",
+      "time": 1790048547.629754
+    },
+    {
+      "attempt": 1,
+      "backoff_s": 1,
+      "billing": "no trial charge; 429 rejected",
+      "error": "ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}",
+      "event": "infrastructure_failure",
+      "identity": "dev/e4-fbdc56b961180ea23f/W/pro/initial/0",
+      "infrastructure_hold_usd": "0",
+      "latency_s": 0.43078970798524097,
+      "sample": false,
+      "served_provider": null,
+      "status": 429,
+      "time": 1790052016.917834
+    }
+  ],
+  "infrastructure_note": "Infrastructure-unavailable arms are excluded from analysis, not scored as trial outcomes.",
+  "pooled": false,
+  "pushback": {
+    "status": "incomplete or unscheduled; no infrastructure gaps scored"
+  },
+  "pushback_turns": 0,
+  "schedule": "primary_1024",
+  "served_provider_calls": {
+    "pro/Vertex": 147,
+    "replication/DeepInfra": 240,
+    "weak/DeepInfra": 3,
+    "weak/Groq": 1
+  },
+  "status": "complete",
+  "stopped": null,
+  "unavailable_arms": {},
+  "unscheduled": {
+    "judges": [
+      "replication",
+      "weak"
+    ],
+    "panels": [
+      "E5"
+    ]
+  },
+  "weak_control_status": "not run"
+}

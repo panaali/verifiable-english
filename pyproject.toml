@@ -7,7 +7,12 @@ name = "verifiable-english"
 version = "0.1.0"
 description = "Verifiable English: VE v0 language core (ve) and experiment harness (ve_experiments)"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "google-genai>=2.24.0",
+    "httpx>=0.28.1",
+    "jinja2>=3.1.6,<4",
+    "tokenizers>=0.22,<0.23",
+]
 
 [dependency-groups]
 dev = [

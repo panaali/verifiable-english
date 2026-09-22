@@ -15,6 +15,36 @@ ROOT = Path(__file__).resolve().parents[1]
 RATES = {"pro": (2.0, 12.0, 1.0), "replication": (.36, .40, 1.055),
          "weak": (.02, .04, 1.055)}
 
+# Amendment 9: ceil(1.10 * maximum bounded joint fixture / 100) * 100.
+# Each tuple is (attacker, pushback judge); see the dated calculation table.
+P1_PUSHBACK_INPUT_BOUNDS = {"V": (7500, 7500), "W": (7400, 7500),
+                          "A": (9900, 9900), "F": (7800, 7900), "R": (11000, 11100)}
+
+# Amendment 11 priority order; all four retain both scientific panels.
+P1_PANEL_SCENARIOS = {
+    "pro_replication_3turn": (["pro", "replication"], 3),
+    "pro_3turn": (["pro"], 3),
+    "full_2turn": (list(RATES), 2),
+    "pro_replication_2turn": (["pro", "replication"], 2),
+}
+
+# Amendment 12 priority order. Gemini remains the attacker in every scenario.
+P1_AMENDMENT12_SCENARIOS = {
+    "replication_3turn": ({"replication": ["E4", "E5"]}, 3),
+    "replication_gemini_e5_3turn": ({"replication": ["E4", "E5"], "pro": ["E5"]}, 3),
+    "replication_gemini_e5_2turn": ({"replication": ["E4", "E5"], "pro": ["E5"]}, 2),
+}
+
+P1_AMENDMENT13_SCENARIOS = {"replication_2turn": ({"replication": ["E4", "E5"]}, 2)}
+
+def p1_input_bound(arm, phase):
+    """Amendments 3/9: joint pushback bounds; initial/replay/probe unchanged."""
+    if phase in ("attacker", "pushback") and arm in P1_PUSHBACK_INPUT_BOUNDS:
+        return P1_PUSHBACK_INPUT_BOUNDS[arm][phase == "pushback"]
+    original = {"initial": 3072, "probe": 3072, "replay": 4096,
+                "attacker": 4096, "pushback": 6144}[phase]
+    return 6800 if arm in ("A", "R") and phase != "probe" else original
+
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -22,8 +52,8 @@ def rows(path):
     with gzip.open(ROOT / path, "rt") as f:
         return [json.loads(line) for line in f]
 
-def cost_row(arm, role, model, calls, inp, out):
-    ri, ro, fee = RATES[model]
+def cost_row(arm, role, model, calls, inp, out, rates=None):
+    ri, ro, fee = rates or RATES[model]
     return dict(arm=arm, role=role, model=model, calls=calls,
                 max_input_per_call=inp, max_billed_output_per_call=out,
                 max_input_tokens=calls*inp, max_output_tokens=calls*out,
@@ -43,6 +73,15 @@ def fixture_accuracy(items, replies):
     return correct / len(items)
 
 def p1():
+    def price_row(arm, role, model, calls, inp, out):
+        rates = ((.22, .22, 1.055) if arm == "R" else (.02, .05, 1.055)) if model == "weak" else None
+        row = cost_row(arm, role, model, calls, inp, out, rates)
+        cap = 4096 if role == 'billed_output_probe' else 1024
+        if role.startswith('adaptive_proposer'):
+            row['max_visible_output_per_call'] = 256
+        row.update(planning_billed_output_per_call=out, max_billed_output_per_call=cap,
+                   max_output_tokens=calls*cap, output_accounting='USD uses planning mean; cap reserved per dispatch')
+        return row
     selected = []
     sources = []
     for split in ("dev", "scored"):
@@ -78,31 +117,60 @@ def p1():
     assert sum(r["pushback"] for r in selected) == 28
     assert sum(r["forged_correct_control"] for r in selected) == 136
     scenarios = {}
-    for name, output, full in (("full_256", 256, True),
-                               ("primary_512", 512, False),
-                               ("primary_1024", 1024, False)):
-        budget = [cost_row("probe", "billed_output_probe", "pro", 10, 3072, 4096)]
-        for model in (RATES if full else ("pro",)):
-            n = 200 if full else 136
+    specs = [("full_256", 256, ["E4", "E5"], list(RATES), 3),
+             ("primary_512", 512, ["E4"], ["pro"], 0),
+             ("primary_1024", 1024, ["E4"], ["pro"], 0)]
+    specs += [(name, 256, ["E4", "E5"], judges, turns)
+              for name, (judges, turns) in P1_PANEL_SCENARIOS.items()]
+    for name, output, panels, judges, turns in specs:
+        budget = [price_row("probe", "billed_output_probe", "pro", 10, 3072, 4096)]
+        for model in judges:
+            n = 200 if "E5" in panels else 136
             for arm in ("V", "W", "A", "F", "R", "U"):
-                budget.append(cost_row(arm, "initial_judge", model, n, 3072, output))
+                budget.append(price_row(arm, "initial_judge", model, n, p1_input_bound(arm, "initial"), output))
                 if arm == "R":
-                    budget.append(cost_row(arm, "post_replay_judge", model, n, 4096, output))
-                # Preserve three-turn primary pushback; exploratory judges have initial cells only.
-                if full and model == "pro" and arm != "U":
-                    budget.append(cost_row(arm, "pushback_judge", model, 28*3, 6144, 256))
-                    budget.append(cost_row(arm, "adaptive_proposer_against_pro", model, 28*3, 4096, 256))
-            budget.append(cost_row("F_correct", "initial_judge", model, 136, 3072, output))
+                    budget.append(price_row(arm, "post_replay_judge", model, n, p1_input_bound(arm, "replay"), output))
+                # Exploratory judges have initial/replay cells only.
+                if turns and model == "pro" and arm != "U":
+                    budget.append(price_row(arm, "pushback_judge", model, 28*turns, p1_input_bound(arm, "pushback"), 256))
+                    budget.append(price_row(arm, "adaptive_proposer_against_pro", model, 28*turns, p1_input_bound(arm, "attacker"), 1024))
+                    budget.append(price_row(arm, "adaptive_proposer_truncation_retry", model, 28*turns, p1_input_bound(arm, "attacker"), 1024))
+            budget.append(price_row("F_correct", "initial_judge", model, 136, 3072, output))
         # Reserve a full $1 for the probe, including its explicit row ceiling.
         probe_buffer = round(1 - budget[0]["usd"], 8)
         total = round(sum(r["usd"] for r in budget) + probe_buffer, 8)
         scenarios[name] = dict(budget_rows=budget, probe_unused_allowance_usd=probe_buffer,
-            sources=["E4", "E5"] if full else ["E4"],
-            judges=list(RATES) if full else ["pro"], pushback=full,
+            sources=panels, judges=judges, pushback=bool(turns), pushback_turns=turns,
+            planning_output_mean=output,
             max_scheduled_api_usd=total, scheduled_calls=sum(r["calls"] for r in budget),
             local_accounting_allowance_usd=.25,
-            unallocated_reserve_usd=round(30-total-.25, 8))
-        assert total + .25 < 30
+            unallocated_reserve_usd=round(40-total-.25-.5569, 8))
+        scenarios[name]["within_study_cap"] = total + .25 + .5569 <= 40
+        scenarios[name]["cumulative_with_existing_allowances_usd"] = round(total + .25 + .5569, 8)
+    for name, (judge_sources, turns) in (P1_AMENDMENT12_SCENARIOS | P1_AMENDMENT13_SCENARIOS).items():
+        budget = []
+        for judge, panels in judge_sources.items():
+            assigned = [i for i in selected if i['source'] in panels]
+            for arm in ("V", "W", "A", "F", "R", "F_correct", "U"):
+                cells = [i for i in assigned if arm != 'F_correct' or i['source'] == 'E4']
+                if not cells:
+                    continue
+                budget.append(price_row(arm, 'initial_judge', judge, len(cells), p1_input_bound(arm, 'initial'), 1024))
+                if arm == 'R':
+                    budget.append(price_row(arm, 'post_replay_judge', judge, len(cells), p1_input_bound(arm, 'replay'), 1024))
+                if arm in ('V', 'W', 'A', 'F', 'R'):
+                    n = sum(i['pushback'] for i in cells) * turns
+                    budget.append(price_row(arm, 'pushback_judge', judge, n, p1_input_bound(arm, 'pushback'), 1024))
+                    for role in ('adaptive_proposer', 'adaptive_proposer_truncation_retry'):
+                        budget.append(price_row(arm, role, 'pro', n, p1_input_bound(arm, 'attacker'), 1024))
+        total = round(1 + sum(r['calls'] * (r['max_input_per_call'] * RATES[r['model']][0]
+                         + r['max_billed_output_per_call'] * RATES[r['model']][1])
+                         * RATES[r['model']][2] / 1e6 for r in budget), 8)
+        scenarios[name] = dict(budget_rows=budget, sources=['E4', 'E5'], judges=list(judge_sources),
+            judge_sources=judge_sources, pushback_judges=list(judge_sources), pushback=True,
+            pushback_turns=turns, planning_output_mean=1024, amendment=13 if name in P1_AMENDMENT13_SCENARIOS else 12,
+            max_scheduled_api_usd=total, scheduled_calls=sum(r['calls'] for r in budget),
+            within_study_cap=total + .8069 <= 40, unallocated_reserve_usd=round(40-total-.8069, 8))
     budget = scenarios["full_256"]["budget_rows"]
     # These are label-routing unit fixtures, not the eventual channel/harness tests.
     oracle_replies = [(r["id"], json.dumps({"verdict": "approve" if r["label"] == "good" else "reject"}))
@@ -122,11 +190,12 @@ def p1():
                     pushback_items=28, pushback_rounds=3, pushback_judge_panels=1),
         fixture_checks=dict(oracle_accuracy=oracle, random_accuracy=round(chance, 8), chance=.5,
                             scope="label-routing fixture only; provider/channel/scorer integration tests still required"),
-        rates_per_million=RATES, budget_rows=budget, hard_cap_usd=30,
+        rates_per_million=RATES, budget_rows=budget, hard_cap_usd=40,
         probe_ceiling_usd=1, probe_unused_allowance_usd=scenarios["full_256"]["probe_unused_allowance_usd"],
         budget_scenarios=scenarios,
-        output_probe_policy={"mean_le_256": "full_256", "mean_gt_256_le_512": "primary_512",
-                             "mean_gt_512_le_1024": "primary_1024", "mean_gt_1024": "STOP_REPORT"},
+        output_probe_policy={"running_window": 50, "mean_le_512": "full_256",
+                             "mean_gt_512": "primary_1024", "judge_billed_output_cap": 1024,
+                             "full_schedule_planning_mean": 256},
         primary_contrasts=["A-F_correct balanced accuracy", "F-W error rate"],
         badge_attribution_contrast="F-U error rate",
         request_policy=dict(sdk_retries=0, max_attempts=1, timeout_seconds=120))
@@ -186,8 +255,12 @@ def main():
         result["max_scheduled_api_usd"] = total
         local = .25 if directory == "P1-deference" else .0004 * result["counts"]["item_arms_including_dev"]
         result["local_accounting_allowance_usd"] = local
-        result["unallocated_reserve_usd"] = round(result["hard_cap_usd"]-total-local, 8)
-        assert total + local < result["hard_cap_usd"]
+        existing_allowances = .5569 if directory == "P1-deference" else 0
+        result["unallocated_reserve_usd"] = round(result["hard_cap_usd"]-total-local-existing_allowances, 8)
+        if directory == "P1-deference":
+            result["within_study_cap"] = total + local + existing_allowances <= result["hard_cap_usd"]
+        else:
+            assert total + local < result["hard_cap_usd"]
         if directory == "P5-shifting-definitions":
             shared = result["budget_rows"][0]["usd"] / 84
             result["max_attributed_item_arm_usd"] = {
