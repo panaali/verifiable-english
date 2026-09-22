@@ -1,5 +1,5 @@
 {
-  "completed_at": "2026-09-22T03:08:44.982885+00:00",
+  "completed_at": "2026-09-22T03:32:50.790023+00:00",
   "counts": [
     {
       "bounded_tokens": 242,
@@ -16346,7 +16346,7 @@
       "tokens": 1846
     }
   ],
-  "freeze_sha256": "4d361de1597e357cd772ce4bbed808d3e40612a63e0b611f9918fbe6aeea9708",
+  "freeze_sha256": "b8e4000162a2798dcc94a001fab3ecec3cd1cd73b6366366ad2c853be97c1aa1",
   "future_history_policy": "Full joint native fixtures plus generated-token ceilings; actual provider signatures and transcript are recounted at runtime. This is not a Qwen/Llama tokenizer receipt.",
   "generation_calls": 0,
   "judge": "pro",

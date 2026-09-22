@@ -48,6 +48,14 @@ class InfrastructureError(PreflightError):
         self.status_code = status_code
 
 
+class ToolEndpointUnavailable(InfrastructureError):
+    """Dispatch rejected before generation; not a scientific observation."""
+
+
+def no_tool_endpoint(error):
+    return "No endpoints found that support tool use" in str(error)
+
+
 def infrastructure_status(exc):
     import httpx
     status = getattr(exc, "status_code", None) or getattr(exc, "code", None)
@@ -133,7 +141,7 @@ class Ledger:
         pending, committed, seen, revisions = {}, Decimal(0), set(), {}
         reservations = {}
         blocked = False
-        recovered = {r["halt_time"] for r in rows if r["event"] == "smoke_recovery"}
+        recovered = {r["halt_time"] for r in rows if r["event"] in ("smoke_recovery", "routing_recovery")}
         for row in rows:
             if row["event"] == "reserve":
                 pending[row["identity"]] = Decimal(row["ceiling_usd"])
@@ -149,7 +157,7 @@ class Ledger:
                 block = reservations[row["identity"]].get("metadata", {}).get("block_id")
                 if block:
                     pending["block:" + block] += ceiling - Decimal(row["cost_usd"])
-            elif row["event"] in ("infrastructure_failure", "smoke_recovery"):
+            elif row["event"] in ("infrastructure_failure", "smoke_recovery", "routing_recovery", "panel_halt", "arm_unavailable"):
                 ceiling = pending.pop(row["identity"])
                 held = Decimal(row["infrastructure_hold_usd"])
                 committed += held
@@ -179,9 +187,18 @@ class Ledger:
                 raise BudgetExceeded("envelope exceeds --cap-usd")
             self.append(f, {"event": "allowance", "identity": identity, "cost_usd": str(amount)})
 
-    def reserve_block(self, block_id, ceiling):
+    def reserve_block(self, block_id, ceiling, *, resume=False):
         with self.locked() as (f, rows):
             pending, spent, _, _, blocked = self.state(rows)
+            prior = next((r for r in rows if r['event'] == 'block_reserve' and r['block_id'] == block_id), None)
+            if resume and prior:
+                if Decimal(prior['ceiling_usd']) != Decimal(str(ceiling)):
+                    raise PreflightError('resumed block ceiling changed')
+                if blocked or any(k != 'block:' + block_id for k in pending):
+                    raise PreflightError('ledger halted or has unreconciled billing')
+                if spent + sum(pending.values()) > self.cap:
+                    raise BudgetExceeded('resumed commitments exceed --cap-usd')
+                return  # A released block may only replay its already completed calls.
             if pending or blocked:
                 raise PreflightError("ledger halted or another block/billing reservation exists")
             if any(r.get("event") == "block_reserve" and r["block_id"] == block_id for r in rows):
@@ -195,6 +212,8 @@ class Ledger:
             pending, _, _, _, blocked = self.state(rows)
             if blocked or any(not k.startswith("block:") for k in pending):
                 raise PreflightError("cannot release block while billing unresolved")
+            if 'block:' + block_id not in pending:
+                return
             self.append(f, {"event": "block_release", "block_id": block_id})
 
     def require_block(self, ceiling):
@@ -212,8 +231,14 @@ class Ledger:
         with self.locked() as (f, rows):
             pending, spent, seen, revisions, blocked = self.state(rows)
             history = [r for r in rows if r.get("identity") == request.identity]
+            for row in rows:
+                if row['event'] in ('panel_halt', 'panel_validation_halt') and row['model'] == request.model:
+                    raise InfrastructureError(row['error'])
+                if row['event'] == 'arm_unavailable' and row['model'] == request.model and request.metadata.get('arm') == row['arm']:
+                    raise ToolEndpointUnavailable(row['error'])
             failures = sum(r["event"] == "infrastructure_failure" for r in history)
-            retry = history and history[-1]["event"] == "infrastructure_failure" and failures <= 3
+            retry = history and (history[-1]['event'] == 'routing_recovery' or
+                                history[-1]["event"] == "infrastructure_failure" and failures <= 3)
             if failures > 3 and history[-1]["event"] == "infrastructure_failure":
                 raise InfrastructureError("infrastructure retry limit exhausted")
             if request.identity in seen and not (smoke(request) or retry):
@@ -235,8 +260,10 @@ class Ledger:
                             "prompt_sha256": digest(request.messages), "planned_model": MODELS[request.model]})
             return revisions
 
-    def complete(self, request, reply, error=None):
+    def complete(self, request, reply, error=None, *, panel_only=False):
         actual = cost(request.model, reply.input_tokens, reply.billed_output_tokens)
+        if reply.provider_cost_usd is not None:
+            actual = max(actual, Decimal(str(reply.provider_cost_usd)) * Decimal(RATES[request.model][2]))
         # Design-table accounting charges cached input at full rate; provider billing
         # is a separate reconciliation field, never an assumed cache discount.
         with self.locked() as (f, rows):
@@ -246,9 +273,11 @@ class Ledger:
                             "served_provider": reply.response.get("provider"),
                             "billed_output_tokens": reply.billed_output_tokens,
                             "cost_usd": str(actual), "remaining_usd": str(self.cap - spent - actual),
-                            "billing_basis": "design table; cached input charged at full rate"})
+                            "billing_basis": "maximum of design table (cached input at full rate) and provider billing with fee"})
             if error:
-                self.append(f, {"event": "halt", "identity": request.identity, "error": error})
+                self.append(f, {"event": "panel_validation_halt" if panel_only else "halt",
+                                "identity": request.identity, "model": request.model, "error": error,
+                                "sample": False})
 
     def halt(self, request, error, response=None, latency_s=None):
         with self.locked() as (f, _):
@@ -257,9 +286,7 @@ class Ledger:
                             "billing": "unknown; ceiling remains reserved"})
 
     def cached_reply(self, request):
-        """Reuse matching smoke evidence; trial outputs are never replaceable."""
-        if not smoke(request):
-            raise PreflightError("only smoke requests may reuse cached replies")
+        """Reuse the original matching output, including malformed trial outputs."""
         with self.locked() as (_, rows):
             reservation = reply = None
             halted = False
@@ -270,14 +297,41 @@ class Ledger:
                     reservation, reply, halted = row, None, False
                 elif row["event"] == "complete":
                     reply = row
-                elif row["event"] == "halt":
+                elif row["event"] in ("halt", "panel_validation_halt"):
                     halted = True
             if reply is not None and not halted:
                 for key in ("model", "messages", "tools", "max_input_tokens", "max_output_tokens"):
                     if reservation[key] != getattr(request, key):
-                        raise PreflightError("cached smoke request changed")
+                        raise PreflightError("cached smoke request changed" if smoke(request) else "cached trial request changed")
+                if not smoke(request) and any(reservation[k] != getattr(request, k) for k in ('metadata', 'timeout_s')):
+                    raise PreflightError('cached trial request changed')
                 return PaidReply(**{k: reply[k] for k in PaidReply.__dataclass_fields__})
         return None
+
+    def recover_tool_routing(self):
+        """Amendment 7: retry only the legacy weak R routing rejection once."""
+        with self.locked() as (f, rows):
+            recovered = {r['halt_time'] for r in rows if r['event'] == 'routing_recovery'}
+            for row in list(rows):
+                if row['event'] != 'halt' or row['time'] in recovered or not no_tool_endpoint(row.get('error')):
+                    continue
+                reservation = next(r for r in reversed(rows) if r['event'] == 'reserve' and r['identity'] == row['identity'])
+                if reservation['model'] != 'weak' or reservation['metadata'].get('arm') != 'R' or row.get('response'):
+                    continue
+                if 'HTTP 404:' not in row['error']:
+                    continue
+                recovery = {'event': 'routing_recovery', 'identity': row['identity'], 'halt_time': row['time'],
+                            'infrastructure_hold_usd': '0', 'sample': False, 'reason': 'Amendment 7 unrestricted weak R routing'}
+                self.append(f, recovery)
+                rows.append(recovery)
+
+    def stop_panel(self, request, error, *, unavailable=False):
+        with self.locked() as (f, rows):
+            pending, _, _, _, _ = self.state(rows)
+            self.append(f, {'event': 'arm_unavailable' if unavailable else 'panel_halt',
+                'identity': request.identity, 'model': request.model, 'arm': request.metadata.get('arm'),
+                'error': error, 'sample': False,
+                'infrastructure_hold_usd': '0' if unavailable else str(pending[request.identity])})
 
     def recover_smoke(self, request):
         if not smoke(request):
@@ -406,10 +460,13 @@ class OpenRouterBackend:
         if any("vertex_content" in m for m in request.messages):
             raise PreflightError("cannot flatten Vertex thought signatures into OpenRouter messages")
         providers = ["deepinfra"] if request.model == "replication" else ["deepinfra", "novita", "groq"]
+        provider = {"order": providers, "only": providers, "allow_fallbacks": False,
+                    "require_parameters": True, "quantizations": ["fp8"]}
+        if request.model == 'weak' and request.metadata.get('arm') == 'R':
+            provider = {'require_parameters': True}
         return {"model": MODELS[request.model], "messages": request.messages,
                 "temperature": 0, "seed": 20260921, "max_tokens": request.max_output_tokens,
-                "provider": {"order": providers, "only": providers, "allow_fallbacks": False,
-                             "require_parameters": True, "quantizations": ["fp8"]},
+                "provider": provider,
                 **({"tools": [{"type": "function", "function": t} for t in request.tools]}
                    if request.tools else {})}
 
@@ -473,9 +530,10 @@ class OfflineBackend:
 
 
 class PaidClient:
-    def __init__(self, backend, ledger, block_id=None):
+    def __init__(self, backend, ledger, block_id=None, *, reuse_completed=False):
         self.backend, self.ledger = backend, ledger
         self.block_id = block_id
+        self.reuse_completed = reuse_completed
         # SDK transports own async connection pools bound to their first loop.
         # Keep one loop for the entire serial client, never asyncio.run per call.
         self._runner = asyncio.Runner()
@@ -489,6 +547,10 @@ class PaidClient:
     def call(self, request):
         if self.block_id:
             request = replace(request, metadata={**request.metadata, "block_id": self.block_id})
+        if self.reuse_completed:
+            cached = self.ledger.cached_reply(request)
+            if cached is not None:
+                return cached
         if not 0 < request.timeout_s <= 120:
             raise PreflightError("wall timeout must be in (0,120]")
         count = self.backend.count(request)
@@ -508,12 +570,20 @@ class PaidClient:
                 if key:
                     error = error.replace(key, "[REDACTED]")
                 status = infrastructure_status(exc)
+                if (isinstance(exc, InfrastructureError) and exc.status_code == 404
+                        and request.model == 'weak' and request.metadata.get('arm') == 'R'
+                        and no_tool_endpoint(exc)):
+                    self.ledger.stop_panel(request, error, unavailable=True)
+                    raise ToolEndpointUnavailable(error) from None
                 if status is not None:
                     attempt = self.ledger.infrastructure_failure(request, error, status, time.monotonic()-start)
                     if attempt <= 3:
                         time.sleep(2 ** (attempt-1))
                         continue
                     raise InfrastructureError(error + "; infrastructure retry limit exhausted") from None
+                if isinstance(exc, InfrastructureError) and self.reuse_completed:
+                    self.ledger.stop_panel(request, error)
+                    raise InfrastructureError(error) from None
                 self.ledger.halt(request, error, self.backend.last_response, time.monotonic()-start)
                 raise PreflightError(error) from None
         revision = revisions.get(revision_key(request.model, reply.response))
@@ -525,7 +595,9 @@ class PaidClient:
             error = "served model revision changed; amendment required"
         elif reply.provider_cost_usd is not None and Decimal(str(reply.provider_cost_usd)) * Decimal(RATES[request.model][2]) > cost(request.model, reply.input_tokens, reply.billed_output_tokens) + Decimal(".00000001"):
             error = "provider billing exceeds design price table; amendment required"
-        self.ledger.complete(request, reply, error)
+        self.ledger.complete(request, reply, error, panel_only=self.reuse_completed)
         if error:
+            if self.reuse_completed:
+                raise InfrastructureError(error)
             raise PreflightError(error)
         return reply

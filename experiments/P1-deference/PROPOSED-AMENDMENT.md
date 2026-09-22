@@ -153,3 +153,76 @@ no further generation is needed to reconcile this discrepancy. Preserve the
 original provider report and ledger until the orchestrator reruns its gate.
 No prompt, arm, model, input/output ceiling, budget, or analysis changes.
 Worker generation calls: **0**; worker inference cost: **$0**.
+
+## Amendment 7 — 2026-09-22 UTC (2026-09-21 Pacific; orchestrator, approved): replay routing and resumable judge panels
+
+APPROVED by the orchestrator's Worker X instruction after dev halted with **19
+completed calls ($0.066)**. The retained weak R rejection is OpenRouter HTTP
+404, `No endpoints found that support tool use`, before generation. Preserve
+all original calls, reservations, responses and the rejection; no completed
+call, including an invalid model output, may be bought again.
+
+For **weak-control R only**, remove the provider allowlist/order, disabled
+fallbacks, and fp8 quantization filter. Use `provider.require_parameters=true`
+with unchanged model, temperature 0, seed 20260921 and max_tokens. This applies
+to R's initial request and replay continuation. OpenRouter may select any
+provider supporting the required parameters; record the served provider in
+every completed call and retain within-provider revision checks. Other weak
+arms keep Amendment 5 routing. The primary Gemini is unchanged.
+
+The cached `checks/provider-preflight.json` endpoint listing establishes:
+
+| Model | Provider | Tools advertised | Quantization |
+| --- | --- | --- | --- |
+| Llama-3.1-8B | DeepInfra | No | fp8 |
+| Llama-3.1-8B | Novita | No | fp8 |
+| Llama-3.1-8B | Groq | Yes | unknown |
+| Llama-3.1-8B | Cloudflare | No | fp8 |
+| Llama-3.1-8B | CoreWeave | Yes | bf16 |
+| Qwen2.5-72B | DeepInfra | Yes | fp8 |
+| Qwen2.5-72B | Novita | Yes | bf16 |
+
+Thus the old weak routing excluded both advertised tool endpoints: Groq by
+quantization and CoreWeave by provider. Both advertise temperature, seed and
+max_tokens. Qwen's DeepInfra fp8 endpoint advertises tools and automatic tool
+choice, so **replication routing remains unchanged**; the conditional
+replication-R exception is not activated. These are cached capability claims,
+not a successful paid replay dispatch. Groq/CoreWeave list higher prices than
+the weak design table; this amendment does not increase the hard spending cap
+or waive billing validation. A provider price, revision or token-cap validation
+failure halts only the affected judge; charge at least the actual reported
+provider cost (including the existing fee), never undercount it at the design
+rate. In particular, a successful Groq/CoreWeave dispatch above the frozen
+price table will pause weak control for billing review, not stop other judges.
+
+On a new unrestricted weak R dispatch, an explicit no-tool-endpoint 404 marks
+weak R **infrastructure-unavailable**, durably, with zero inference charge and
+no trial outcome. Exclude the whole weak R arm from dev gates and scored
+analysis, including any earlier completed R observations; retain those records
+and costs. Continue weak's other arms and state the omission in the report.
+The legacy restricted-routing 404 instead receives a single append-only
+routing recovery, allowing its uncompleted assignment to use the new routing.
+
+A judge's infrastructure halt stops that judge's panel only. Continue other
+judges; retain unknown billing as conservative infrastructure overhead. Retry
+limits and 1/2/4-second backoff remain unchanged and survive restarts. A halted
+dev judge cannot dispatch scored calls, but does not block other judges whose
+dev gates passed. Ordinary capability failures still pause scoring for review;
+there is no new model-shopping or replacement-output exception.
+
+Dev and scored resume the existing reserved split and reuse exact matching
+ledger responses, including replay/attacker/pushback phases. Rebuild histories
+from those responses and append only new trial rows. A released split only
+replays evidence; it cannot fund new samples. Ambiguous in-flight reservations
+remain fail-closed. The retained 19 dev completions must be reused.
+
+`checks/dev.json` records each judge/panel's per-arm assigned and observed
+counts, output failures, contract rate, good-item approval numerators and
+denominators, and W error opportunity, even after a halt. Missing infrastructure
+observations are not model-output failures. Partial gates cannot pass. Formal
+contrasts use complete available panels only, and unavailable R is explicitly
+excluded. JSON reports serialize the existing NumPy boundary flags as native
+booleans; no interval or threshold changes.
+
+Worker implementation/testing: no paid calls; **$0**. Execution freeze and gates
+must be refreshed for amended code before orchestrator dispatch.
