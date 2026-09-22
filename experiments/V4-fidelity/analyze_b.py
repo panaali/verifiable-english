@@ -11,9 +11,11 @@ from run_b import CATEGORIES, taxonomy
 def main():
     items={i['id']:i for i in map(json.loads,(HERE/'items-b.jsonl').read_text().splitlines())}
     rows=[json.loads(x) for x in (HERE/'results/b/ledger.jsonl').read_text().splitlines()]
+    stop_path=HERE/'results/b/STOP.json'
+    excluded={tuple(k) for k in json.loads(stop_path.read_text())['post_stop_identities']} if stop_path.exists() else set()
     details=[]; counts=Counter({c:0 for c in CATEGORIES}); exact=total=0
     for row in rows:
-        if row['status']!='ok': continue
+        if row['status']!='ok' or (row['item_id'],row['sample_index']) in excluded: continue
         item=items[row['item_id']];env=ve.Environment.from_dict(item['environment'])
         expected={p['id']:p for p in item['premises']}
         expected['query']={'gold_ast':item['query']['gold_ast']}

@@ -1,0 +1,250 @@
+{
+  "scheduled_items": 60,
+  "scheduled_samples": 180,
+  "scored_samples": 142,
+  "by_type": {
+    "all": {
+      "n": 180,
+      "faithful_exact": 107,
+      "faithful_mechanical": 107,
+      "certified_answer": 107,
+      "answer_correct": 123,
+      "grounded_certificate": 90,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 35
+      }
+    },
+    "label:True": {
+      "n": 60,
+      "faithful_exact": 38,
+      "faithful_mechanical": 38,
+      "certified_answer": 38,
+      "answer_correct": 42,
+      "grounded_certificate": 29,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 10
+      }
+    },
+    "depth:6": {
+      "n": 48,
+      "faithful_exact": 27,
+      "faithful_mechanical": 27,
+      "certified_answer": 27,
+      "answer_correct": 33,
+      "grounded_certificate": 23,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 9
+      }
+    },
+    "query:binary": {
+      "n": 39,
+      "faithful_exact": 26,
+      "faithful_mechanical": 26,
+      "certified_answer": 26,
+      "answer_correct": 27,
+      "grounded_certificate": 24,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 7
+      }
+    },
+    "label:False": {
+      "n": 60,
+      "faithful_exact": 35,
+      "faithful_mechanical": 35,
+      "certified_answer": 35,
+      "answer_correct": 42,
+      "grounded_certificate": 27,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 13
+      }
+    },
+    "depth:7": {
+      "n": 54,
+      "faithful_exact": 33,
+      "faithful_mechanical": 33,
+      "certified_answer": 33,
+      "answer_correct": 36,
+      "grounded_certificate": 26,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 9
+      }
+    },
+    "query:exists": {
+      "n": 27,
+      "faithful_exact": 17,
+      "faithful_mechanical": 17,
+      "certified_answer": 17,
+      "answer_correct": 22,
+      "grounded_certificate": 14,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 7
+      }
+    },
+    "label:Uncertain": {
+      "n": 60,
+      "faithful_exact": 34,
+      "faithful_mechanical": 34,
+      "certified_answer": 34,
+      "answer_correct": 39,
+      "grounded_certificate": 34,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 12
+      }
+    },
+    "depth:9": {
+      "n": 36,
+      "faithful_exact": 19,
+      "faithful_mechanical": 19,
+      "certified_answer": 19,
+      "answer_correct": 24,
+      "grounded_certificate": 18,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 12
+      }
+    },
+    "depth:8": {
+      "n": 42,
+      "faithful_exact": 28,
+      "faithful_mechanical": 28,
+      "certified_answer": 28,
+      "answer_correct": 30,
+      "grounded_certificate": 23,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 5
+      }
+    },
+    "query:implies": {
+      "n": 36,
+      "faithful_exact": 18,
+      "faithful_mechanical": 18,
+      "certified_answer": 18,
+      "answer_correct": 24,
+      "grounded_certificate": 12,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 10
+      }
+    },
+    "query:unary": {
+      "n": 18,
+      "faithful_exact": 12,
+      "faithful_mechanical": 12,
+      "certified_answer": 12,
+      "answer_correct": 12,
+      "grounded_certificate": 9,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 0
+      }
+    },
+    "query:forall": {
+      "n": 36,
+      "faithful_exact": 17,
+      "faithful_mechanical": 17,
+      "certified_answer": 17,
+      "answer_correct": 21,
+      "grounded_certificate": 17,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 10
+      }
+    },
+    "query:and": {
+      "n": 24,
+      "faithful_exact": 17,
+      "faithful_mechanical": 17,
+      "certified_answer": 17,
+      "answer_correct": 17,
+      "grounded_certificate": 14,
+      "failure_taxonomy_samples_multilabel": {
+        "negation scope": 0,
+        "xor/or": 0,
+        "quantifier": 0,
+        "predicate conflation": 0,
+        "other": 1
+      }
+    }
+  },
+  "all_three_exact_items": 31,
+  "taxonomy_diagnostics_multilabel_including_unparsed_placeholders": {
+    "negation scope": 0,
+    "xor/or": 0,
+    "quantifier": 0,
+    "predicate conflation": 0,
+    "other": 35
+  },
+  "taxonomy_samples_multilabel": {
+    "negation scope": 0,
+    "xor/or": 0,
+    "quantifier": 0,
+    "predicate conflation": 0,
+    "other": 35
+  },
+  "errors": {
+    "SyntaxError: expected ') and (' or ') or ('": 5,
+    "CLI exit 1": 18,
+    "SyntaxError: expected ')'": 7,
+    "Served model mismatch: ['claude-opus-4-8', 'claude-opus-5-5']": 1,
+    "SyntaxError: expected '.\\n'": 4
+  },
+  "status": "STOPPED_MODEL_DRIFT",
+  "post_stop_exclusions": [
+    [
+      "v4b-047",
+      1
+    ],
+    [
+      "v4b-047",
+      2
+    ]
+  ]
+}

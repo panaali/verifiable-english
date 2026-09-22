@@ -1,0 +1,11 @@
+# C generator and calibration runner: offline verification only
+
+Built seven VE-expressible types: Uncertain, proof by cases, xor chains, modus-tollens chains, near-miss distractors, nested quantifiers over shared binary predicates, and belief-inconsistent vocabulary. Predetermined crossings add near-miss and belief vocabulary to other types. Neutral vocabulary, premise order, relation words and chain settings vary by split seed; independent filler keeps English content at 300–308 words. This is approximate word matching, not measured token or proof-depth matching.
+
+The final corpus contains **14 smoke items** (two/type), **84 Sonnet-dev items**, and **84 held-out items** (12/type/split). Every gold item passed VE parse/type roundtrips and either replayed entailment evidence with a satisfying model, or two checked query-polarity models. No model generated gold. Template families are shared across splits; fresh instances do not establish unseen-template generalization. English/gold human audit remains pending.
+
+The answer-alone runner supports pinned Opus 5.5, Sonnet 5 and Haiku 4.5 via the same isolated CLI controls, k=3, requested thinking setting 1024 and effort low. Type selection uses only Sonnet dev: the same wrong label must recur in at least two of three samples on at least 20% of a type's items. Opus dev is prohibited; held-out runs require the frozen Sonnet selection. Invalid responses are operational failures, not recurring reasoning errors. Empty selection is a ceiling result.
+
+**No C model calls were run.** The requested 42-call Haiku smoke was withheld after B's endpoint served Opus 4.8 instead of pinned Opus 5.5, triggering the user's stop condition. There is no live C accuracy, overhead, calibration, or capability-gap result. No C scale run occurred.
+
+Next: investigate and re-audit the CLI's fallback/continuation behavior with a fresh, separately recorded protocol, then run the 14-item Haiku smoke. After a timestamped C preregistration, run Sonnet dev, commit/timestamp the selected types, and evaluate untouched held-out items on Opus and Haiku. All live runs must use a declared fixed UTC date and finish before rollover. Commands and constraints are in README.md.

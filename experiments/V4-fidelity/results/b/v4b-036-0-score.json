@@ -1,0 +1,6172 @@
+{
+  "id": "v4b-036",
+  "faithful_mechanical": true,
+  "certified_answer": true,
+  "grounded_certificate": true,
+  "answer": "True",
+  "answer_correct": true,
+  "translations": {
+    "p0": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "implies",
+        [
+          "forall",
+          "person",
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "p10",
+              [
+                "var",
+                1
+              ],
+              [
+                "var",
+                0
+              ]
+            ]
+          ]
+        ],
+        [
+          "and",
+          [
+            "unary",
+            "p0",
+            [
+              "const",
+              "ada"
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "forall",
+              "person",
+              [
+                "binary",
+                "p11",
+                [
+                  "var",
+                  0
+                ],
+                [
+                  "var",
+                  1
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p10",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0
+          ],
+          "predicate": "p0",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p11",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p10",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0
+          ],
+          "predicate": "p0",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p11",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    "p1": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "not",
+        [
+          "unary",
+          "p16",
+          [
+            "const",
+            "ada"
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p16",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p16",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        }
+      ]
+    },
+    "p2": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "not",
+        [
+          "binary",
+          "p9",
+          [
+            "const",
+            "ada"
+          ],
+          [
+            "const",
+            "ben"
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p9",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p9",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ]
+    },
+    "p3": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "binary",
+        "p1",
+        [
+          "const",
+          "ada"
+        ],
+        [
+          "const",
+          "ben"
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "predicate": "p1",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "predicate": "p1",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ]
+    },
+    "p4": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "implies",
+        [
+          "and",
+          [
+            "or",
+            [
+              "unary",
+              "p0",
+              [
+                "const",
+                "ada"
+              ]
+            ],
+            [
+              "exists",
+              "person",
+              [
+                "forall",
+                "person",
+                [
+                  "binary",
+                  "p3",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            "not",
+            [
+              "and",
+              [
+                "unary",
+                "p0",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "exists",
+                "person",
+                [
+                  "forall",
+                  "person",
+                  [
+                    "binary",
+                    "p3",
+                    [
+                      "var",
+                      0
+                    ],
+                    [
+                      "var",
+                      1
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "binary",
+          "p13",
+          [
+            "const",
+            "ada"
+          ],
+          [
+            "const",
+            "ben"
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "predicate": "p0",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p3",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "predicate": "p0",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p3",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "predicate": "p13",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "predicate": "p0",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p3",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "predicate": "p0",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p3",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "predicate": "p13",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ]
+    },
+    "p5": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "and",
+        [
+          "or",
+          [
+            "forall",
+            "person",
+            [
+              "exists",
+              "person",
+              [
+                "binary",
+                "p6",
+                [
+                  "var",
+                  1
+                ],
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "forall",
+              "person",
+              [
+                "binary",
+                "p3",
+                [
+                  "var",
+                  0
+                ],
+                [
+                  "var",
+                  1
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "not",
+          [
+            "and",
+            [
+              "forall",
+              "person",
+              [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "p6",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            ],
+            [
+              "exists",
+              "person",
+              [
+                "forall",
+                "person",
+                [
+                  "binary",
+                  "p3",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p6",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p3",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p6",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p3",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p6",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p3",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p6",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p3",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    "p6": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "implies",
+        [
+          "or",
+          [
+            "unary",
+            "p20",
+            [
+              "const",
+              "ada"
+            ]
+          ],
+          [
+            "forall",
+            "person",
+            [
+              "exists",
+              "person",
+              [
+                "binary",
+                "p14",
+                [
+                  "var",
+                  1
+                ],
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "unary",
+          "p12",
+          [
+            "const",
+            "ada"
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            0
+          ],
+          "predicate": "p20",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            1,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            1,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p14",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "predicate": "p12",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            0
+          ],
+          "predicate": "p20",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            1,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            1,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p14",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "predicate": "p12",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        }
+      ]
+    },
+    "p7": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "not",
+        [
+          "unary",
+          "p8",
+          [
+            "const",
+            "ada"
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p8",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p8",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        }
+      ]
+    },
+    "p8": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "implies",
+        [
+          "and",
+          [
+            "or",
+            [
+              "binary",
+              "p17",
+              [
+                "const",
+                "ada"
+              ],
+              [
+                "const",
+                "ben"
+              ]
+            ],
+            [
+              "binary",
+              "p21",
+              [
+                "const",
+                "ada"
+              ],
+              [
+                "const",
+                "ben"
+              ]
+            ]
+          ],
+          [
+            "not",
+            [
+              "and",
+              [
+                "binary",
+                "p17",
+                [
+                  "const",
+                  "ada"
+                ],
+                [
+                  "const",
+                  "ben"
+                ]
+              ],
+              [
+                "binary",
+                "p21",
+                [
+                  "const",
+                  "ada"
+                ],
+                [
+                  "const",
+                  "ben"
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "unary",
+          "p0",
+          [
+            "const",
+            "ada"
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "predicate": "p17",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "predicate": "p21",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "predicate": "p17",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "predicate": "p21",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "predicate": "p0",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "predicate": "p17",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "predicate": "p21",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "predicate": "p17",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "predicate": "p21",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "predicate": "p0",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        }
+      ]
+    },
+    "p9": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "forall",
+        "person",
+        [
+          "exists",
+          "person",
+          [
+            "binary",
+            "p10",
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "forall",
+            "exists"
+          ],
+          "predicate": "p10",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "forall",
+            "exists"
+          ],
+          "predicate": "p10",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "p10": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "or",
+        [
+          "forall",
+          "person",
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "p18",
+              [
+                "var",
+                1
+              ],
+              [
+                "var",
+                0
+              ]
+            ]
+          ]
+        ],
+        [
+          "exists",
+          "person",
+          [
+            "forall",
+            "person",
+            [
+              "binary",
+              "p19",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "or",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "or",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "or",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p18",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p19",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "or",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "or",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "or",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p18",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p19",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    "p11": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "implies",
+        [
+          "unary",
+          "p8",
+          [
+            "const",
+            "ada"
+          ]
+        ],
+        [
+          "and",
+          [
+            "or",
+            [
+              "unary",
+              "p4",
+              [
+                "const",
+                "ada"
+              ]
+            ],
+            [
+              "exists",
+              "person",
+              [
+                "forall",
+                "person",
+                [
+                  "binary",
+                  "p3",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            "not",
+            [
+              "and",
+              [
+                "unary",
+                "p4",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "exists",
+                "person",
+                [
+                  "forall",
+                  "person",
+                  [
+                    "binary",
+                    "p3",
+                    [
+                      "var",
+                      0
+                    ],
+                    [
+                      "var",
+                      1
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "predicate": "p8",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "predicate": "p4",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p3",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "predicate": "p4",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p3",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "predicate": "p8",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "predicate": "p4",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p3",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "predicate": "p4",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p3",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    "p12": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "implies",
+        [
+          "and",
+          [
+            "or",
+            [
+              "binary",
+              "p5",
+              [
+                "const",
+                "ada"
+              ],
+              [
+                "const",
+                "ben"
+              ]
+            ],
+            [
+              "exists",
+              "person",
+              [
+                "forall",
+                "person",
+                [
+                  "binary",
+                  "p15",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            "not",
+            [
+              "and",
+              [
+                "binary",
+                "p5",
+                [
+                  "const",
+                  "ada"
+                ],
+                [
+                  "const",
+                  "ben"
+                ]
+              ],
+              [
+                "exists",
+                "person",
+                [
+                  "forall",
+                  "person",
+                  [
+                    "binary",
+                    "p15",
+                    [
+                      "var",
+                      0
+                    ],
+                    [
+                      "var",
+                      1
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "forall",
+          "person",
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "p14",
+              [
+                "var",
+                1
+              ],
+              [
+                "var",
+                0
+              ]
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "predicate": "p5",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p15",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "predicate": "p5",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p15",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p14",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "predicate": "p5",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            0,
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p15",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "predicate": "p5",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p15",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p14",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "p13": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "not",
+        [
+          "binary",
+          "p21",
+          [
+            "const",
+            "ada"
+          ],
+          [
+            "const",
+            "ben"
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p21",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p21",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ]
+    },
+    "p14": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "forall",
+        "person",
+        [
+          "exists",
+          "person",
+          [
+            "binary",
+            "p18",
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "forall",
+            "exists"
+          ],
+          "predicate": "p18",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "forall",
+            "exists"
+          ],
+          "predicate": "p18",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "p15": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "not",
+        [
+          "forall",
+          "person",
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "p2",
+              [
+                "var",
+                1
+              ],
+              [
+                "var",
+                0
+              ]
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "not",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "not",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p2",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "not",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "not",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p2",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "p16": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "binary",
+        "p13",
+        [
+          "const",
+          "ada"
+        ],
+        [
+          "const",
+          "ben"
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "predicate": "p13",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "predicate": "p13",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ]
+    },
+    "p17": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "forall",
+        "person",
+        [
+          "exists",
+          "person",
+          [
+            "binary",
+            "p6",
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "forall",
+            "exists"
+          ],
+          "predicate": "p6",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "forall",
+            "exists"
+          ],
+          "predicate": "p6",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "p18": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "implies",
+        [
+          "exists",
+          "person",
+          [
+            "forall",
+            "person",
+            [
+              "binary",
+              "p7",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ],
+        [
+          "and",
+          [
+            "binary",
+            "p9",
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "forall",
+              "person",
+              [
+                "binary",
+                "p11",
+                [
+                  "var",
+                  0
+                ],
+                [
+                  "var",
+                  1
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p7",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0
+          ],
+          "predicate": "p9",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p11",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p7",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0
+          ],
+          "predicate": "p9",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p11",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    "p19": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "not",
+        [
+          "exists",
+          "person",
+          [
+            "forall",
+            "person",
+            [
+              "binary",
+              "p7",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "not",
+            0,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "not",
+            0,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p7",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "not",
+            0,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "not",
+            0,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p7",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    "p20": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "and",
+        [
+          "or",
+          [
+            "forall",
+            "person",
+            [
+              "exists",
+              "person",
+              [
+                "binary",
+                "p22",
+                [
+                  "var",
+                  1
+                ],
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "forall",
+              "person",
+              [
+                "binary",
+                "p19",
+                [
+                  "var",
+                  0
+                ],
+                [
+                  "var",
+                  1
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "not",
+          [
+            "and",
+            [
+              "forall",
+              "person",
+              [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "p22",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            ],
+            [
+              "exists",
+              "person",
+              [
+                "forall",
+                "person",
+                [
+                  "binary",
+                  "p19",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p22",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p19",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p22",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p19",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p22",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            0,
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p19",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p22",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p19",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    "p21": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "not",
+        [
+          "binary",
+          "p17",
+          [
+            "const",
+            "ada"
+          ],
+          [
+            "const",
+            "ben"
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p17",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p17",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ]
+    },
+    "p22": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "not",
+        [
+          "exists",
+          "person",
+          [
+            "forall",
+            "person",
+            [
+              "binary",
+              "p15",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "not",
+            0,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "not",
+            0,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p15",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "not",
+            0,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "not",
+            0,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p15",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    "p23": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "not",
+        [
+          "unary",
+          "p12",
+          [
+            "const",
+            "ada"
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p12",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p12",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        }
+      ]
+    },
+    "p24": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "implies",
+        [
+          "exists",
+          "person",
+          [
+            "forall",
+            "person",
+            [
+              "binary",
+              "p11",
+              [
+                "var",
+                0
+              ],
+              [
+                "var",
+                1
+              ]
+            ]
+          ]
+        ],
+        [
+          "and",
+          [
+            "or",
+            [
+              "unary",
+              "p16",
+              [
+                "const",
+                "ada"
+              ]
+            ],
+            [
+              "forall",
+              "person",
+              [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "p22",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            "not",
+            [
+              "and",
+              [
+                "unary",
+                "p16",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "forall",
+                "person",
+                [
+                  "exists",
+                  "person",
+                  [
+                    "binary",
+                    "p22",
+                    [
+                      "var",
+                      1
+                    ],
+                    [
+                      "var",
+                      0
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p11",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "predicate": "p16",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            1,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            1,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p22",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "predicate": "p16",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p22",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p11",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            0
+          ],
+          "predicate": "p16",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            1,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            0,
+            "or",
+            1,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p22",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1
+          ],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0
+          ],
+          "operator": "and"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            0
+          ],
+          "predicate": "p16",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "and",
+            1,
+            "not",
+            0,
+            "and",
+            1,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p22",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "p25": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "implies",
+        [
+          "forall",
+          "person",
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "p2",
+              [
+                "var",
+                1
+              ],
+              [
+                "var",
+                0
+              ]
+            ]
+          ]
+        ],
+        [
+          "forall",
+          "person",
+          [
+            "exists",
+            "person",
+            [
+              "binary",
+              "p22",
+              [
+                "var",
+                1
+              ],
+              [
+                "var",
+                0
+              ]
+            ]
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p2",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p22",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p2",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            1,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p22",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "p26": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "not",
+        [
+          "binary",
+          "p5",
+          [
+            "const",
+            "ada"
+          ],
+          [
+            "const",
+            "ben"
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p5",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "not"
+        },
+        {
+          "path": [
+            "not",
+            0
+          ],
+          "predicate": "p5",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ]
+    },
+    "query": {
+      "exact_structure": true,
+      "relation": "EQUIVALENT",
+      "faithful_mechanical": true,
+      "submitted_ast": [
+        "implies",
+        [
+          "or",
+          [
+            "forall",
+            "person",
+            [
+              "exists",
+              "person",
+              [
+                "binary",
+                "p14",
+                [
+                  "var",
+                  1
+                ],
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ]
+          ],
+          [
+            "exists",
+            "person",
+            [
+              "forall",
+              "person",
+              [
+                "binary",
+                "p19",
+                [
+                  "var",
+                  0
+                ],
+                [
+                  "var",
+                  1
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "binary",
+          "p1",
+          [
+            "const",
+            "ada"
+          ],
+          [
+            "const",
+            "ben"
+          ]
+        ]
+      ],
+      "gold_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p14",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p19",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "predicate": "p1",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ],
+      "submitted_structure": [
+        {
+          "path": [],
+          "operator": "implies"
+        },
+        {
+          "path": [
+            "implies",
+            0
+          ],
+          "operator": "or"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            0
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            0,
+            "forall"
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            0,
+            "forall",
+            "exists"
+          ],
+          "predicate": "p14",
+          "arguments": [
+            [
+              "var",
+              1
+            ],
+            [
+              "var",
+              0
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            1
+          ],
+          "quantifier": "exists",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            1,
+            "exists"
+          ],
+          "quantifier": "forall",
+          "sort": "person"
+        },
+        {
+          "path": [
+            "implies",
+            0,
+            "or",
+            1,
+            "exists",
+            "forall"
+          ],
+          "predicate": "p19",
+          "arguments": [
+            [
+              "var",
+              0
+            ],
+            [
+              "var",
+              1
+            ]
+          ]
+        },
+        {
+          "path": [
+            "implies",
+            1
+          ],
+          "predicate": "p1",
+          "arguments": [
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "checker": {
+    "version": "ve-argument-tableau@1",
+    "assurance": "experimental",
+    "status": "Checked",
+    "graph_id": "8c79c25cdc8be6eb073e3891f5a5e970214508100d11d89fe009e28e7592a552",
+    "environment_id": "33aeb0b97f481e1eb0256e324e45e90abe92273ecf71d9fc18e914ab0963db8a",
+    "root": "goal",
+    "findings": {
+      "d0": [
+        "follows"
+      ]
+    },
+    "remaining_assumptions": [
+      "p3"
+    ],
+    "unresolved_obligations": [],
+    "composed": true,
+    "proof": "Python replay checked",
+    "intent": "unconfirmed",
+    "profiles": [
+      "relational-fol@0"
+    ],
+    "lean_checked": false,
+    "lean_status": "Lean-checked: no",
+    "lean_detail": "Lean replay not requested",
+    "approval": "unassessed",
+    "edges": [
+      {
+        "name": "d0",
+        "edge_id": "7074a0139bd3bde0d57ab00fefce1f5f0acc0416ca25f6a120e63303949e1a6a",
+        "premises": [
+          "p3"
+        ],
+        "conclusion": "goal",
+        "findings": [
+          "follows"
+        ],
+        "status": "established",
+        "contradictory_premises": false,
+        "checker_conflict": false,
+        "satisfying_premise_model_ids": [],
+        "artifacts": [
+          {
+            "kind": "follows",
+            "submitted": false,
+            "certificate": {
+              "edge_id": "7074a0139bd3bde0d57ab00fefce1f5f0acc0416ca25f6a120e63303949e1a6a",
+              "direction": "follows",
+              "proof": {
+                "checker_version": "ve-tableau-checker@2",
+                "environment_id": "33aeb0b97f481e1eb0256e324e45e90abe92273ecf71d9fc18e914ab0963db8a",
+                "premise_meaning_ids": [
+                  "dc9aa03fc6a6e68930d97575e38cde1461b87f63a3b32a5d965682056b013fe0"
+                ],
+                "conclusion_meaning_id": "de84091e252d40d715ad80a642e394d27902133567dbdf688e3e022552247a48",
+                "trace": {
+                  "rule": "expand",
+                  "at": 1,
+                  "children": [
+                    {
+                      "rule": "close"
+                    }
+                  ]
+                }
+              }
+            },
+            "check": {
+              "valid": true,
+              "status": "Valid",
+              "steps": 2,
+              "detail": ""
+            }
+          }
+        ],
+        "errors": [],
+        "search_attempts": [
+          {
+            "kind": "follows",
+            "status": "Found"
+          },
+          {
+            "kind": "refuted",
+            "status": "ResourceLimit"
+          },
+          {
+            "kind": "gap",
+            "status": "ResourceLimit",
+            "models_checked": 0,
+            "detail": "model-attempt budget exhausted"
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "composition": {
+      "rule": "acyclic-implication-composition",
+      "environment_id": "33aeb0b97f481e1eb0256e324e45e90abe92273ecf71d9fc18e914ab0963db8a",
+      "checker_build": "c2947eff5f1f0920475ccd57b2f5e8153cb0602998684e45f1558b41da3da470",
+      "root_claim_id": "da6ac886f40d76cde7aa1a427631640fa9cc8c1c8ab148c97281a907b3962c7d",
+      "assumption_claim_ids": [
+        "bc67a6bf9f7c99a6e5bf148e9531c4de02ae381a94965db212fccce7b0faf88f"
+      ],
+      "supporting_edge_ids": [
+        "7074a0139bd3bde0d57ab00fefce1f5f0acc0416ca25f6a120e63303949e1a6a"
+      ],
+      "assumptions": [
+        {
+          "name": "p3",
+          "source": "@ada p1 @ben.\n",
+          "ast": [
+            "binary",
+            "p1",
+            [
+              "const",
+              "ada"
+            ],
+            [
+              "const",
+              "ben"
+            ]
+          ],
+          "environment_id": "33aeb0b97f481e1eb0256e324e45e90abe92273ecf71d9fc18e914ab0963db8a",
+          "source_id": "093ed13f3118eb073cc130e202f6f735f222da001762b17ba633dc8d27206100",
+          "meaning_id": "dc9aa03fc6a6e68930d97575e38cde1461b87f63a3b32a5d965682056b013fe0",
+          "claim_id": "bc67a6bf9f7c99a6e5bf148e9531c4de02ae381a94965db212fccce7b0faf88f",
+          "evidence_ids": []
+        }
+      ],
+      "record_id": "35a28ca130c658258449244269a744aa7b9a3f64f8f0d2b1979894e614720b6b"
+    },
+    "checker_build": "c2947eff5f1f0920475ccd57b2f5e8153cb0602998684e45f1558b41da3da470",
+    "contradictory_premises": [],
+    "warnings": [
+      {
+        "edge": "d0",
+        "code": "ResourceLimit",
+        "message": "refuted search exhausted its budget"
+      },
+      {
+        "edge": "d0",
+        "code": "ResourceLimit",
+        "message": "gap search exhausted its budget"
+      }
+    ],
+    "record_id": "ad6f8720793d101b274cb4b37190154f5f94bcfc5618ecc014d2e277ad032f16"
+  },
+  "query_bound": true,
+  "premise_bound": true,
+  "faithful_exact": true,
+  "translation_failures": [],
+  "sample_index": 0
+}

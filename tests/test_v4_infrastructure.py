@@ -204,3 +204,24 @@ def test_equivalent_xor_reordering_is_accepted():
     equivalent="(not ((@ada is p0) and (@ada is p1))) and ((@ada is p0) or (@ada is p1))."
     result=compare_translation(env,equivalent,gold)
     assert not result["exact_structure"] and result["faithful_mechanical"]
+
+
+def test_allowed_rate_event_cannot_mask_fatal_model_or_control_drift():
+    spec=importlib.util.spec_from_file_location('v4_run_b',DIRECTORY/'run_b.py')
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    raw=json.dumps({'type':'rate_limit_event','rate_limit_info':{'status':'allowed'}})
+    assert module.endpoint_failure("Served model mismatch: ['claude-opus-4-8']",raw)==(True,False)
+    assert module.endpoint_failure('Input overhead drift for identical content',raw)==(True,False)
+    assert module.endpoint_failure('CLI exit 1',raw)==(False,False)
+    limited=raw+'\n'+json.dumps({'type':'result','is_error':True,'result':'rate_limit_error'})
+    assert module.endpoint_failure('CLI exit 1',limited)==(False,True)
+    # Fatal integrity errors retain priority even when a real rate failure co-occurs.
+    assert module.endpoint_failure('Served model mismatch',limited)==(True,True)
+
+
+def test_stopped_study_never_calls_backend():
+    spec=importlib.util.spec_from_file_location('v4_run_b_stopped',DIRECTORY/'run_b.py')
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    with patch.object(Path,'exists',return_value=True), patch.object(ClaudeCLI,'sample',side_effect=AssertionError('must not spend')):
+        with pytest.raises(EndpointError,match='permanently stopped'):
+            module.main()

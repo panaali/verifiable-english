@@ -1,0 +1,115 @@
+{
+  "recorded_at": "2026-09-22T19:51:47.870576+00:00",
+  "event": "Brief SIGSTOP/SIGCONT of parent runner after sustained DNS failures; same process and controls resumed after DNS/HTTPS and next Opus response recovered. No failed sample retried.",
+  "errors_so_far": [
+    {
+      "id": "v4b-017",
+      "sample_index": 2,
+      "timestamp": "2026-09-22T19:12:04.100940+00:00",
+      "reason": "ECONNRESET"
+    },
+    {
+      "id": "v4b-029",
+      "sample_index": 2,
+      "timestamp": "2026-09-22T19:43:07.427764+00:00",
+      "reason": "ECONNRESET"
+    },
+    {
+      "id": "v4b-030",
+      "sample_index": 0,
+      "timestamp": "2026-09-22T19:43:43.374196+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-030",
+      "sample_index": 1,
+      "timestamp": "2026-09-22T19:44:04.964743+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-030",
+      "sample_index": 2,
+      "timestamp": "2026-09-22T19:44:28.853851+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-031",
+      "sample_index": 0,
+      "timestamp": "2026-09-22T19:44:51.541352+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-031",
+      "sample_index": 1,
+      "timestamp": "2026-09-22T19:45:11.514643+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-031",
+      "sample_index": 2,
+      "timestamp": "2026-09-22T19:45:31.040108+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-032",
+      "sample_index": 0,
+      "timestamp": "2026-09-22T19:45:52.885813+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-032",
+      "sample_index": 1,
+      "timestamp": "2026-09-22T19:46:13.875615+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-032",
+      "sample_index": 2,
+      "timestamp": "2026-09-22T19:46:35.094165+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-033",
+      "sample_index": 0,
+      "timestamp": "2026-09-22T19:46:55.802409+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-033",
+      "sample_index": 1,
+      "timestamp": "2026-09-22T19:47:15.976368+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-033",
+      "sample_index": 2,
+      "timestamp": "2026-09-22T19:47:35.693472+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-034",
+      "sample_index": 0,
+      "timestamp": "2026-09-22T19:47:56.424493+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-034",
+      "sample_index": 1,
+      "timestamp": "2026-09-22T19:48:16.541247+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-034",
+      "sample_index": 2,
+      "timestamp": "2026-09-22T19:48:39.232036+00:00",
+      "reason": "DNS ENOTFOUND"
+    },
+    {
+      "id": "v4b-035",
+      "sample_index": 0,
+      "timestamp": "2026-09-22T19:49:04.165071+00:00",
+      "reason": "DNS ENOTFOUND"
+    }
+  ],
+  "subsequent_network_guard": "network_guard.py pauses the same runner after two consecutive DNS/connection errors; no change to prompts, model controls, identity order, or no-retry rule."
+}

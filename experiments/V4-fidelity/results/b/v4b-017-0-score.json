@@ -1,0 +1,20 @@
+{
+  "id": "v4b-017",
+  "faithful_mechanical": false,
+  "certified_answer": false,
+  "grounded_certificate": false,
+  "answer": "Uncertain",
+  "answer_correct": true,
+  "error": "SyntaxError: expected '.\\n'",
+  "faithful_exact": false,
+  "translation_failures": [
+    {
+      "row": null,
+      "categories": [
+        "other"
+      ],
+      "reason": "SyntaxError: expected '.\\n'"
+    }
+  ],
+  "sample_index": 0
+}

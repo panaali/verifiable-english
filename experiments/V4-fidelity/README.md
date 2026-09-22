@@ -1,9 +1,11 @@
 # V4 A/B study
 
+**B stopped on served-model drift at attempt 142.** `results/b/STOP.json` permanently blocks resumption. One follow-on response and one interrupted identity are preserved but excluded. The frozen runner confused an allowed quota event with a rate error; current `run_b.py` fixes that bug. Its original preregistered bytes are preserved as `run_b-preregistered.py` and in commit `6d8525e`. HASHES/OTS were not rewritten; `results/b/prereg-verification.json` validates every original hash against that pre-run commit. Current runner bytes intentionally differ, requiring a new preregistration for any future study. C live smoke was withheld.
+
 The full B study uses the fresh `items-b.jsonl` corpus and timestamped `PREREG-B.md`, frozen in commit `6d8525e` before any main-study calls. The previous infrastructure/smoke record is retained below for provenance. Its authorization and no-bulk-run statements describe the earlier task and are superseded by the current lead authorization and full B protocol.
 
 ```sh
-UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/V4-fidelity/run_b.py
+# run_b.py now refuses to resume this stopped study. Offline reporting:
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/V4-fidelity/analyze_b.py
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/V4-fidelity/report_b.py
 ```

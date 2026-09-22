@@ -1,0 +1,266 @@
+{
+  "scope": "independent per-row audit of successful endpoint responses; no scientific-score mutation",
+  "expected_translation_rows_in_successful_responses": 3846,
+  "exact_translation_rows": 3818,
+  "taxonomy_multilabel": {
+    "negation scope": 0,
+    "xor/or": 0,
+    "quantifier": 0,
+    "predicate conflation": 0,
+    "other": 28
+  },
+  "failures": [
+    {
+      "id": "v4b-001",
+      "sample_index": 1,
+      "row": "p0",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ')'"
+    },
+    {
+      "id": "v4b-003",
+      "sample_index": 1,
+      "row": "p3",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ')'"
+    },
+    {
+      "id": "v4b-008",
+      "sample_index": 2,
+      "row": "p2",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-008",
+      "sample_index": 2,
+      "row": "p16",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-008",
+      "sample_index": 2,
+      "row": "p22",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-008",
+      "sample_index": 2,
+      "row": "p29",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-010",
+      "sample_index": 0,
+      "row": "query",
+      "categories": [
+        "other"
+      ],
+      "error": "expected '.\\n'"
+    },
+    {
+      "id": "v4b-010",
+      "sample_index": 1,
+      "row": "query",
+      "categories": [
+        "other"
+      ],
+      "error": "expected '.\\n'"
+    },
+    {
+      "id": "v4b-014",
+      "sample_index": 1,
+      "row": "p0",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-014",
+      "sample_index": 1,
+      "row": "p1",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-014",
+      "sample_index": 1,
+      "row": "p2",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-014",
+      "sample_index": 1,
+      "row": "p3",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-014",
+      "sample_index": 1,
+      "row": "p9",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-014",
+      "sample_index": 1,
+      "row": "p11",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-014",
+      "sample_index": 1,
+      "row": "p18",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-014",
+      "sample_index": 1,
+      "row": "p20",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-014",
+      "sample_index": 1,
+      "row": "p21",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-017",
+      "sample_index": 0,
+      "row": "p2",
+      "categories": [
+        "other"
+      ],
+      "error": "expected '.\\n'"
+    },
+    {
+      "id": "v4b-017",
+      "sample_index": 1,
+      "row": "p2",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-027",
+      "sample_index": 0,
+      "row": "p0",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ')'"
+    },
+    {
+      "id": "v4b-027",
+      "sample_index": 1,
+      "row": "p0",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-027",
+      "sample_index": 2,
+      "row": "p0",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ')'"
+    },
+    {
+      "id": "v4b-029",
+      "sample_index": 1,
+      "row": "p9",
+      "categories": [
+        "other"
+      ],
+      "error": "expected '.\\n'"
+    },
+    {
+      "id": "v4b-037",
+      "sample_index": 0,
+      "row": "p0",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-037",
+      "sample_index": 0,
+      "row": "p15",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ') and (' or ') or ('"
+    },
+    {
+      "id": "v4b-046",
+      "sample_index": 0,
+      "row": "p5",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ')'"
+    },
+    {
+      "id": "v4b-046",
+      "sample_index": 1,
+      "row": "p5",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ')'"
+    },
+    {
+      "id": "v4b-046",
+      "sample_index": 2,
+      "row": "p5",
+      "categories": [
+        "other"
+      ],
+      "error": "expected ')'"
+    }
+  ]
+}

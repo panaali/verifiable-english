@@ -1,0 +1,34 @@
+{
+  "status": "STOPPED_MODEL_DRIFT",
+  "cutoff_attempt_1_based": 142,
+  "cutoff_key": "764a343158cc4389eda38686c23d9787483f997e3593c185707c20f0b40a57de",
+  "cutoff_item": "v4b-047",
+  "cutoff_sample_index": 0,
+  "timestamp": "2026-09-22T20:23:13.204435+00:00",
+  "served_models": [
+    "claude-opus-5-5",
+    "claude-opus-4-8"
+  ],
+  "pre_stop_attempts": 142,
+  "started_attempts": 144,
+  "post_stop_identities": [
+    [
+      "v4b-047",
+      1
+    ],
+    [
+      "v4b-047",
+      2
+    ]
+  ],
+  "deviation": "Backend rejected model drift. Frozen runner misclassified an allowed rate_limit_event as a rate error, permitting a follow-on response and another started identity before manual interrupt. Post-stop identities are excluded from confirmatory successes; original raw evidence and scores are retained.",
+  "further_live_calls": "stopped, including C smoke; new endpoint audit and preregistration required before further B study",
+  "assistant_models": [
+    "claude-opus-4-8",
+    "claude-opus-5-5"
+  ],
+  "result_num_turns": 3,
+  "ordinary_rate_event_statuses": [
+    "allowed"
+  ]
+}

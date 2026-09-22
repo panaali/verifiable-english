@@ -1,0 +1,54 @@
+{
+  "commit": "6d8525e",
+  "hashes_sha256": "9a96dcac98c0260a2ab6c6bfbbb9e14f826e7f11fad252e7545f8f2cc5c66a6d",
+  "checks": [
+    {
+      "path": "experiments/V4-fidelity/PREREG-B.md",
+      "sha256": "c84b508ea8edf7c41e619b72629d868ab8fd67547fc374ffa4a654c430ad4b5d",
+      "frozen_commit_match": true,
+      "current_worktree_match": true
+    },
+    {
+      "path": "experiments/V4-fidelity/items-b.jsonl",
+      "sha256": "dfe81cbd45c3a4677bd8be1f9e55e97c9d7e741201fe977e0a2ffa7b1e842c7c",
+      "frozen_commit_match": true,
+      "current_worktree_match": true
+    },
+    {
+      "path": "experiments/V4-fidelity/items-b-manifest.json",
+      "sha256": "f734ac4f0b9f770369eb30750c4fad9ee12b1c5793306c504fe27b7b7a220b1c",
+      "frozen_commit_match": true,
+      "current_worktree_match": true
+    },
+    {
+      "path": "experiments/V4-fidelity/PROMPT.md",
+      "sha256": "99c3de58b320b9f02e39072036f20b4012e0f96b375ed51d8b62257ca58859ce",
+      "frozen_commit_match": true,
+      "current_worktree_match": true
+    },
+    {
+      "path": "experiments/V4-fidelity/fidelity.py",
+      "sha256": "321c1deba7cc92a56010cfc552ba530f010eb124e0ffcb072bd4c4f9f61f917c",
+      "frozen_commit_match": true,
+      "current_worktree_match": true
+    },
+    {
+      "path": "experiments/V4-fidelity/generator.py",
+      "sha256": "adaccdf70f304d907181a1fbf4ab6b5b7d5994344b06b92e2dd58c072e023447",
+      "frozen_commit_match": true,
+      "current_worktree_match": true
+    },
+    {
+      "path": "experiments/V4-fidelity/run_b.py",
+      "sha256": "4fc5894b72061ba9ab9e2bd7105ab3980f993e24048e3202ba3b3e60f10c43a2",
+      "frozen_commit_match": true,
+      "current_worktree_match": false
+    },
+    {
+      "path": "ve_experiments/claude_cli.py",
+      "sha256": "ebccef95bbcd5d997411eb7ce4329396a5f1591619602482e2e746118acd3fc2",
+      "frozen_commit_match": true,
+      "current_worktree_match": true
+    }
+  ]
+}

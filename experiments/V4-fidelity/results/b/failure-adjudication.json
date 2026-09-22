@@ -1,0 +1,21 @@
+{
+  "observed_pre_stop_failures": 35,
+  "syntax_samples": 16,
+  "transport_samples": 18,
+  "transport_detail": {
+    "ECONNRESET": 2,
+    "ENOTFOUND": 16
+  },
+  "served_model_drift_samples": 1,
+  "actual_rate_limit_rejections": 0,
+  "rate_flag_correction": {
+    "item_id": "v4b-047",
+    "sample_index": 0,
+    "raw_score_rate_limit": true,
+    "adjudicated_rate_limit": false,
+    "basis": "stream event rate_limit_info.status is allowed; failure is served-model mismatch"
+  },
+  "post_stop_slots_counted_as_missing_in_scheduled_denominator": 38,
+  "post_stop_started_excluded": 2,
+  "unstarted": 36
+}

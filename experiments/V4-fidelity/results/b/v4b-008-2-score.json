@@ -1,0 +1,20 @@
+{
+  "id": "v4b-008",
+  "faithful_mechanical": false,
+  "certified_answer": false,
+  "grounded_certificate": false,
+  "answer": "Uncertain",
+  "answer_correct": true,
+  "error": "SyntaxError: expected ') and (' or ') or ('",
+  "faithful_exact": false,
+  "translation_failures": [
+    {
+      "row": null,
+      "categories": [
+        "other"
+      ],
+      "reason": "SyntaxError: expected ') and (' or ') or ('"
+    }
+  ],
+  "sample_index": 2
+}

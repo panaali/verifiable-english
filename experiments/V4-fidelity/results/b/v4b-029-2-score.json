@@ -1,0 +1,15 @@
+{
+  "id": "v4b-029",
+  "error": "CLI exit 1",
+  "endpoint_failure": true,
+  "rate_limit": false,
+  "translation_failures": [
+    {
+      "row": null,
+      "categories": [
+        "other"
+      ]
+    }
+  ],
+  "sample_index": 2
+}

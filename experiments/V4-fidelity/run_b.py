@@ -11,6 +11,25 @@ from ve_experiments.claude_cli import ClaudeCLI, Controls, EndpointError
 CATEGORIES = ('negation scope', 'xor/or', 'quantifier', 'predicate conflation', 'other')
 
 
+def endpoint_failure(message, raw):
+    """Model/control drift is always fatal; an allowed quota event is not an error."""
+    fatal=any(s in message.lower() for s in ('drift','model mismatch','date expired','previously started'))
+    errors=[message]
+    for line in raw.splitlines():
+        try: record=json.loads(line)
+        except json.JSONDecodeError: continue
+        if record.get('type')=='result' and record.get('is_error'):
+            errors.append(str(record.get('result','')))
+        if record.get('error'):
+            errors.append(str(record['error']))
+        info=record.get('rate_limit_info',{})
+        if record.get('type')=='rate_limit_event' and info.get('status') in ('rejected','rate_limited'):
+            errors.append('rate_limit')
+    error_text=' '.join(errors).lower()
+    rate=any(s in error_text for s in ('rate_limit','rate limit','usage limit','hit your limit','quota','overloaded'))
+    return fatal, rate
+
+
 def taxonomy(gold, candidate):
     """Multi-label structural diagnostics, not a semantic or human adjudication."""
     from fidelity import features
@@ -66,16 +85,24 @@ def summarize(items, results):
                 counts.update(failure['categories']); seen.update(failure['categories'])
             sample_counts.update(seen)
     metrics = ('faithful_exact', 'faithful_mechanical', 'certified_answer', 'answer_correct', 'grounded_certificate')
+    def group_summary(rs):
+        taxonomy_counts=Counter({c:0 for c in CATEGORIES})
+        for r in rs:
+            taxonomy_counts.update({c for f in r.get('translation_failures',[]) for c in f['categories']})
+        return {'n':len(rs),**{m:sum(bool(r.get(m)) for r in rs) for m in metrics},
+                'failure_taxonomy_samples_multilabel':dict(taxonomy_counts)}
     return {'scheduled_items': len(items), 'scheduled_samples': len(items)*3,
             'scored_samples': len(results),
-            'by_type': {g: {'n': len(rs), **{m: sum(bool(r.get(m)) for r in rs) for m in metrics}}
-                        for g, rs in groups.items()},
+            'by_type': {g:group_summary(rs) for g,rs in groups.items()},
             'all_three_exact_items': sum(all(results.get((i['id'],k),{}).get('faithful_exact') for k in range(3)) for i in items),
-            'taxonomy_translation_rows_multilabel': dict(counts), 'taxonomy_samples_multilabel': dict(sample_counts),
+            'taxonomy_diagnostics_multilabel_including_unparsed_placeholders': dict(counts),
+            'taxonomy_samples_multilabel': dict(sample_counts),
             'errors': dict(Counter(r.get('error') for r in results.values() if r.get('error')))}
 
 
 def main():
+    if (HERE/'results/b/STOP.json').exists():
+        raise EndpointError('Study permanently stopped; new endpoint audit and preregistration required')
     # Freeze check is local and occurs before spending; timestamp proof must exist.
     for line in (HERE/'HASHES').read_text().splitlines():
         expected, name = line.split('  ', 1)
@@ -100,13 +127,11 @@ def main():
                 # a second quota/rate-limit failure stops the entire study.
                 last=json.loads(client.ledger.read_text().splitlines()[-1]) if client.ledger.exists() else {}
                 message=str(exc)
-                raw=last.get('raw_stream','').lower()
-                rate=any(s in raw for s in ('rate_limit','rate limit','usage limit','hit your limit','quota','overloaded'))
+                fatal,rate=endpoint_failure(message,last.get('raw_stream',''))
                 limits += int(rate)
                 r={'id':item['id'],'error':message,'endpoint_failure':True,
                    'rate_limit':rate,'translation_failures':[{'row':None,'categories':['other']}]}
-                fatal=(not rate and ('drift' in message or 'model mismatch' in message or 'date expired' in message
-                                    or 'previously started' in message)) or limits>=2
+                fatal=fatal or limits>=2
                 if fatal:
                     r['sample_index']=k; results[item['id'],k]=r
                     dump(out/f"{item['id']}-{k}-score.json",r)

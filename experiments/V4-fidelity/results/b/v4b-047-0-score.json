@@ -1,0 +1,15 @@
+{
+  "id": "v4b-047",
+  "error": "Served model mismatch: ['claude-opus-4-8', 'claude-opus-5-5']",
+  "endpoint_failure": true,
+  "rate_limit": true,
+  "translation_failures": [
+    {
+      "row": null,
+      "categories": [
+        "other"
+      ]
+    }
+  ],
+  "sample_index": 0
+}
