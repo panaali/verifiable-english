@@ -74,3 +74,10 @@ chat templates (see `tokenizers/sources.json` and README provenance). Verified
 public mirrors supply the exact Llama tokenizer/configuration bytes. This is
 local counting evidence, not a claim that the served provider's template has
 passed the still-unrun OpenRouter preflight.
+
+## Amendment 4 — 2026-09-22 (orchestrator): study cap $30 -> $36
+
+Amendment 3 raised the worst-case ceiling (every call charged at its input bound) to $35.72. The ceiling is a bound, not
+an expectation: probe calls used 242-1,126 input tokens against bounds of 3,072-6,800. Rather than drop the replication
+or weak-control panels (the primary_512 fallback), the study cap is raised to $36 out of the $293 available; the P1+P5
+pilots then total at most $76. No item, arm, prompt or analysis changes.

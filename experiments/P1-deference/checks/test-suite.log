@@ -126,4 +126,4 @@ tests/test_propose.py::test_content_casing_in_declared_nouns_and_bound_reference
 =========================== short test summary info ============================
 SKIPPED [1] tests/test_grammar_backends.py:21: could not import 'llguidance': No module named 'llguidance'
 SKIPPED [1] tests/test_grammar_backends.py:49: could not import 'xgrammar': No module named 'xgrammar'
-1324 passed, 2 skipped, 1 deselected, 57 warnings in 195.22s (0:03:15)
+1324 passed, 2 skipped, 1 deselected, 57 warnings in 199.08s (0:03:19)
