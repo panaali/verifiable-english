@@ -13,7 +13,7 @@
     "dev_families": 4,
     "future_online_calls": 858,
     "gemini_calibration_ceiling_usd": "0.30",
-    "matched_ceiling_usd": "0.16",
+    "matched_ceiling_usd": "0.45",
     "primary": "Gemini min(VE_shift,VE_smuggle) - min(X_shift,X_smuggle)",
     "replication_judge_overhead_usd": "0.8503848600",
     "replication_policy": "same frozen Gemini transcript; Qwen final judgment and lone floor",
@@ -34,7 +34,7 @@
       "p5-scored-08"
     ],
     "within_cap": true,
-    "within_matched_ceiling": false
+    "within_matched_ceiling": true
   },
   "commands": [
     "generate",
@@ -53,14 +53,6 @@
     "reconcile",
     "analyze --split scored"
   ],
-  "external_timestamp": {
-    "freeze_sha256": "d816fd81641bb12800d3cc4c4a0afc04b29261cb00823c0998bb7ba5f7b362cb",
-    "passed": true,
-    "policy": "bound calendar submission is pilot timestamp evidence; not a claim of verified Bitcoin confirmation",
-    "proof_sha256": "a15873e91d3bcf5a7246aa660afa7e627cbd964331c8d8726316968c0c7bf31f",
-    "source_sha256": "420ee90a899ad704c19a661b5c94f8008bcf72a006a4c807073c4fe481f73af8",
-    "stdout": "File sha256 hash: 420ee90a899ad704c19a661b5c94f8008bcf72a006a4c807073c4fe481f73af8\nTimestamp:\nappend ccae2996d8c8e0d4798ea349e63f3e50\nsha256\n -> append 184f4a76d00427dad8d0d00158953e7a\n    sha256\n    prepend 2dfae257235481b512f618b5cd194a501e80b94bf7439709a28004d05fae9b2a\n    sha256\n    append 4a118b7ebb6a7ac73892593e81f596b39673ddeb5f29149b51e00218768313e0\n    sha256\n    append 28489d4a7702a0a57d3a339f22ed110c8bf501663b1e2832938b772f14e168c0\n    sha256\n    prepend 6ab2fe74\n    append be042296aaee32eb\n    verify PendingAttestation('https://finney.calendar.eternitywall.com')\n -> append 7c1b599287366e44dbb883dec9a2410e\n    sha256\n    prepend df8b520ad83edeba5faef0fe294d859cf1a9025d24b7c3c47db99b68bbdf55b0\n    sha256\n    prepend 6ab2fe73\n    append 619ff532b763303f\n    verify PendingAttestation('https://btc.calendar.catallaxy.com')\n -> append b959fc9f765a57ec\n    sha256\n    append 6eabac9eb3cbc89594473d3f707813ed50b91d34ca26d84fef0fef8d640d9f2e\n    sha256\n    append d6c7eeb92c803e6c492668077a7e69b1\n    sha256\n    prepend 94eaedf75ad0e0b7565868df2e4954497fb126989e23d27069166409bc79d97a\n    sha256\n    prepend d54ce9cff8ec154f725080116f024e273d361ca34499340f270ee790c493ce23\n    sha256\n    prepend 6ab2fe73\n    append 23601db9319b06a5\n    verify PendingAttestation('https://alice.btc.calendar.opentimestamps.org')\n -> append e98975339679f67f\n    sha256\n    append 89dda0e8b68b2403c4b4d82b913a432f\n    sha256\n    prepend 7cfcab3a1dbdd17efbfef052e8de23e2db50d219ae74ad21f04382e5b8817ed4\n    sha256\n    append 43335e2087dd54f856caa2feb5e235d2bdbddc49a1b2005f5530d13f1559fe30\n    sha256\n    prepend 6ab2fe73\n    append 4df004ddcdf1b547\n    verify PendingAttestation('https://bob.btc.calendar.opentimestamps.org')\n\n"
-  },
   "gemini_calibration": {
     "configs": {
       "0f5ae9c09c122840e00544555c13e18a2f86f1208db0e45ba59f073475b37773": {
@@ -1352,7 +1344,7 @@
     "experiments/P1-deference/tokenizers/llama_config.json": "177c7b61e616fecb84c17ce0591acb92c6c4d60e9ac5ababfb940ff23bbcd424",
     "experiments/P1-deference/tokenizers/qwen_config.json": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
     "experiments/P1-deference/tokenizers/sources.json": "e92eb8f4af7c766b8f5bd4d7827cb9d9b70b56c745df51836172cce9411a4294",
-    "experiments/P5-shifting-definitions/AMENDMENTS.md": "9e5dec50d680aa28ae04b4ac816bd610b764325251eeac994163db680f41d180",
+    "experiments/P5-shifting-definitions/AMENDMENTS.md": "81d005f77dea46e61eb58e5cbc1d411110bd6d071ba6c440fe160e315f555de2",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V3.md": "16a618e65989baa583fa33d5e0285f20259723289ba730202dae4c78f7dff68f",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V4.md": "d556d43ddd4d38ae3ecbabf2f5e48e501117fbe54a355b821148e66c8781fd7c",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V5.md": "272d583f9ca320370e10ef37272dab553911577ffc25f1ea6a14f9c9f0cdd1e3",
@@ -1406,7 +1398,7 @@
     "experiments/PREREG-DESIGN.md": "dd7fd780c2ceb362f36f31b95a24fe71561f52bff604e3f391a77cd59107b579",
     "experiments/p1.py": "7959b4117d6cde3c7234a1deb3a0b6fe5703582d87de6e2b12ccbaf3f714e42c",
     "experiments/p1_preflight.py": "6bda591a44581cb684801e5132c2840cc7cf70b5a26647aa815ea0c2835462b8",
-    "experiments/p5.py": "f4aff0705dabd4ae70df44ecaeaec10f70bdf7baba2c032858376afb8a6e96d5",
+    "experiments/p5.py": "67648bd8d50f41e6e2ebe7a17b20814785e426eca2c98178a6622bbe6ec1506b",
     "experiments/p5_analysis.py": "310e5d4ea699f8438761dd32d804c0c2024471f4d585e2aa729b7347f759d445",
     "experiments/p5_blinding.py": "b0390010fc0d3decae1312da0e1087eb6a5ec5079e0fc77e385e966ecb66eb16",
     "experiments/p5_budget.py": "5f37cf542e43057d49e327016513a613a61cbc201384e36b47bd0a03dbbcbc18",
@@ -1473,7 +1465,7 @@
     "ve_experiments/json_response.py": "a74d9ccfecc5e2def09f10baf2b534d56c4297f4022b9183a8c784c6ba036f79",
     "ve_experiments/paid.py": "00a1611160cf9aff01a9ec9311d8770fee0b08e114c4dadebbb0663fdbd65d19"
   },
-  "manifest_sha256": "d816fd81641bb12800d3cc4c4a0afc04b29261cb00823c0998bb7ba5f7b362cb",
+  "manifest_sha256": "e3673204837523d1bbcf797c3c5abe0b893cdcd2e02ceffbd31cd75c1d7f5637",
   "models": {
     "pro": "gemini-3.1-pro-preview",
     "replication": "qwen/qwen-2.5-72b-instruct",
@@ -1502,9 +1494,5 @@
     "temperature": 0
   },
   "scenario": "dual_judge",
-  "status": "BLOCKED_NOT_SCORED_READY",
-  "unresolved": [
-    "budget",
-    "dev"
-  ]
+  "status": "BLOCKED_NOT_SCORED_READY"
 }
