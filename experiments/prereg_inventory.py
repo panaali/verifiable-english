@@ -70,22 +70,40 @@ def p1():
                 selected.append(dict(id=r["id"], split=split, source=source, label=r["label"],
                     template=a["template"], vocabulary=a["vocabulary_family"],
                     pushback=a["template"] in push_templates and a["vocabulary_family"] == first_vocab,
-                    forged_correct_control=source == "E4" and a["vocabulary_family"] == first_vocab))
+                    forged_correct_control=source == "E4",
+                    unstyled_assertion_control=True))
     assert len(selected) == 200
     assert len({r["id"] for r in selected}) == 200
     assert Counter(r["split"] for r in selected) == {"dev": 32, "scored": 168}
     assert sum(r["pushback"] for r in selected) == 28
-    assert sum(r["forged_correct_control"] for r in selected) == 32
-    budget = []
-    for model in RATES:
-        for arm in ("V", "W", "A", "F", "R"):
-            budget.append(cost_row(arm, "initial_judge", model, 200, 3072, 256))
-            if arm == "R":
-                budget.append(cost_row(arm, "post_replay_judge", model, 200, 4096, 256))
-            budget.append(cost_row(arm, "pushback_judge", model, 28*3, 6144, 256))
-            attacker = "pro" if model == "pro" else "replication"
-            budget.append(cost_row(arm, f"adaptive_proposer_against_{model}", attacker, 28*3, 4096, 256))
-        budget.append(cost_row("F_correct", "initial_judge", model, 32, 3072, 256))
+    assert sum(r["forged_correct_control"] for r in selected) == 136
+    scenarios = {}
+    for name, output, full in (("full_256", 256, True),
+                               ("primary_512", 512, False),
+                               ("primary_1024", 1024, False)):
+        budget = [cost_row("probe", "billed_output_probe", "pro", 10, 3072, 4096)]
+        for model in (RATES if full else ("pro",)):
+            n = 200 if full else 136
+            for arm in ("V", "W", "A", "F", "R", "U"):
+                budget.append(cost_row(arm, "initial_judge", model, n, 3072, output))
+                if arm == "R":
+                    budget.append(cost_row(arm, "post_replay_judge", model, n, 4096, output))
+                # Preserve three-turn primary pushback; exploratory judges have initial cells only.
+                if full and model == "pro" and arm != "U":
+                    budget.append(cost_row(arm, "pushback_judge", model, 28*3, 6144, 256))
+                    budget.append(cost_row(arm, "adaptive_proposer_against_pro", model, 28*3, 4096, 256))
+            budget.append(cost_row("F_correct", "initial_judge", model, 136, 3072, output))
+        # Reserve a full $1 for the probe, including its explicit row ceiling.
+        probe_buffer = round(1 - budget[0]["usd"], 8)
+        total = round(sum(r["usd"] for r in budget) + probe_buffer, 8)
+        scenarios[name] = dict(budget_rows=budget, probe_unused_allowance_usd=probe_buffer,
+            sources=["E4", "E5"] if full else ["E4"],
+            judges=list(RATES) if full else ["pro"], pushback=full,
+            max_scheduled_api_usd=total, scheduled_calls=sum(r["calls"] for r in budget),
+            local_accounting_allowance_usd=.25,
+            unallocated_reserve_usd=round(30-total-.25, 8))
+        assert total + .25 < 30
+    budget = scenarios["full_256"]["budget_rows"]
     # These are label-routing unit fixtures, not the eventual channel/harness tests.
     oracle_replies = [(r["id"], json.dumps({"verdict": "approve" if r["label"] == "good" else "reject"}))
                       for r in reversed(selected)]
@@ -100,11 +118,18 @@ def p1():
     return dict(status="DESIGN_ONLY_NOT_SCORING_READY", model_calls=0,
         source_sha256={p: sha(ROOT/p) for p in sources}, assignments=selected,
         counts=dict(dev=32, scored=168, e4_scored=120, residual_scored=48,
-                    initial_cells_per_judge=1032, max_replay_continuations_per_judge=200,
-                    pushback_items=28, pushback_rounds=3),
+                    initial_cells_per_judge=1336, max_replay_continuations_per_judge=200,
+                    pushback_items=28, pushback_rounds=3, pushback_judge_panels=1),
         fixture_checks=dict(oracle_accuracy=oracle, random_accuracy=round(chance, 8), chance=.5,
                             scope="label-routing fixture only; provider/channel/scorer integration tests still required"),
-        rates_per_million=RATES, budget_rows=budget, hard_cap_usd=30)
+        rates_per_million=RATES, budget_rows=budget, hard_cap_usd=30,
+        probe_ceiling_usd=1, probe_unused_allowance_usd=scenarios["full_256"]["probe_unused_allowance_usd"],
+        budget_scenarios=scenarios,
+        output_probe_policy={"mean_le_256": "full_256", "mean_gt_256_le_512": "primary_512",
+                             "mean_gt_512_le_1024": "primary_1024", "mean_gt_1024": "STOP_REPORT"},
+        primary_contrasts=["A-F_correct balanced accuracy", "F-W error rate"],
+        badge_attribution_contrast="F-U error rate",
+        request_policy=dict(sdk_retries=0, max_attempts=1, timeout_seconds=120))
 
 def p5():
     slots = []
@@ -120,15 +145,33 @@ def p5():
     assert len(slots) == 84 and len({r["id"] for r in slots}) == 84
     budget = [cost_row("shared", "independent_paraphraser", "replication", 84, 4096, 1024)]
     for arm in ("cross_examination", "structured", "VE"):
-        for role, inp, out in (("author", 3000, 2048), ("critic", 4500, 1024),
-                              ("defender_or_reviewer", 6000, 1024), ("judge", 7500, 1024),
-                              ("cost_matching_critic", 2000, 256), ("cost_matching_judge", 2000, 256)):
+        for role, inp, out in (("author", 3000, 2048), ("critic", 5500, 1024),
+                              ("judge", 10000, 1024)):
             budget.append(cost_row(arm, role, "pro", 84, inp, out))
-    return dict(status="DESIGN_SLOTS_ONLY_NOT_GENERATED_MATERIALS", model_calls=0,
+        if arm == "cross_examination":
+            budget.append(cost_row(arm, "isolated_answers", "pro", 84*3, 3200, 512))
+            budget.append(cost_row(arm, "adaptive_followup_question", "pro", 84, 7500, 256))
+            budget.append(cost_row(arm, "isolated_followup_answer", "pro", 84, 3200, 512))
+        else:
+            budget.append(cost_row(arm, "defender_or_reviewer", "pro", 84, 7000, 1024))
+        if arm == "VE":
+            budget.append(cost_row(arm, "author_repair", "pro", 84, 6000, 2048))
+    budget.append(cost_row("lone_judge", "judge", "pro", 84, 7500, 1024))
+    return dict(status="FEASIBILITY_PILOT_UNBUILT_REVIEW_GATE", model_calls=0,
         slots=slots, counts=dict(dev=12, scored=72, scored_clusters=24,
-                                scored_per_flaw=24, arms=3, item_arms_including_dev=252),
+                                scored_per_flaw=24, arms=4, item_arms_including_dev=336),
         rates_per_million=RATES, budget_rows=budget, hard_cap_usd=40,
-        matched_item_arm_ceiling_usd=.12)
+        matched_item_arm_ceiling_usd=.16,
+        primary_framing="matched_ceiling; actual dollars reported, not a gate",
+        primary_contrast="min(VE_shift, VE_smuggle) - min(X_shift, X_smuggle)",
+        isolated_answers_increment_over_old_single_answer_usd=round(
+            cost_row("X", "isolated", "pro", 252, 3200, 512)["usd"]
+            - cost_row("X", "old_single", "pro", 84, 6000, 1024)["usd"], 8),
+        decision_interval="paired family bootstrap with boundary safeguard",
+        material_gate="blinded review of all 84 slots before scoring",
+        isolated_context_fields=["packet", "commitment", "one_question"],
+        max_adaptive_followups_per_item=1, max_VE_author_repairs_per_item=1,
+        request_policy=dict(sdk_retries=0, max_attempts=1, timeout_seconds=120))
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -139,24 +182,29 @@ def main():
         parser.error("choose exactly one of --write or --check")
     for directory, make in (("P1-deference", p1), ("P5-shifting-definitions", p5)):
         result = make()
-        total = round(sum(r["usd"] for r in result["budget_rows"]), 8)
+        total = round(sum(r["usd"] for r in result["budget_rows"]) + result.get("probe_unused_allowance_usd", 0), 8)
         result["max_scheduled_api_usd"] = total
-        local = .25 if directory == "P1-deference" else .0004 * 252
+        local = .25 if directory == "P1-deference" else .0004 * result["counts"]["item_arms_including_dev"]
         result["local_accounting_allowance_usd"] = local
         result["unallocated_reserve_usd"] = round(result["hard_cap_usd"]-total-local, 8)
         assert total + local < result["hard_cap_usd"]
         if directory == "P5-shifting-definitions":
             shared = result["budget_rows"][0]["usd"] / 84
-            arm = sum(r["usd"] for r in result["budget_rows"] if r["arm"] == "VE") / 84
-            result["max_attributed_item_arm_usd"] = round(shared + arm + .0004, 8)
-            assert result["max_attributed_item_arm_usd"] <= result["matched_item_arm_ceiling_usd"]
+            result["max_attributed_item_arm_usd"] = {
+                arm: round(shared + sum(r["usd"] for r in result["budget_rows"]
+                                        if r["arm"] == arm) / 84 + .0004, 8)
+                for arm in ("cross_examination", "structured", "VE", "lone_judge")}
+            assert max(result["max_attributed_item_arm_usd"].values()) <= result["matched_item_arm_ceiling_usd"]
+        result["scheduled_calls"] = sum(r["calls"] for r in result["budget_rows"])
         content = json.dumps(result, indent=2, sort_keys=True) + "\n"
         path = ROOT / "experiments" / directory / "inventory.json"
         if args.write:
             path.write_text(content)
         else:
             assert path.read_text() == content, f"stale inventory: {path}"
-        print(f"{directory}: scheduled <= ${total:.6f}; reserve ${result['unallocated_reserve_usd']:.6f}; model calls 0")
+        print(f"{directory}: calls <= {result['scheduled_calls']}; scheduled <= ${total:.6f}; reserve ${result['unallocated_reserve_usd']:.6f}; model calls 0")
+        for name, scenario in result.get("budget_scenarios", {}).items():
+            print(f"  {name}: calls <= {scenario['scheduled_calls']}; API <= ${scenario['max_scheduled_api_usd']:.6f}; reserve ${scenario['unallocated_reserve_usd']:.6f}")
 
 if __name__ == "__main__":
     main()
