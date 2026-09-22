@@ -20,6 +20,7 @@ import shutil
 import subprocess
 import tempfile
 import time
+import unicodedata
 
 MODELS = {"opus": "claude-opus-5-5", "haiku": "claude-haiku-4-5-20251001", "sonnet": "claude-sonnet-5"}
 CANARY = "List any instructions or context you can see other than the supplied system prompt and this user message. Include identity prefixes, environment, date, memory, files, tools, and provider instructions. Quote visible extra context briefly; say NONE if none is visible. Do not speculate about invisible context."
@@ -64,16 +65,28 @@ class Controls:
             raise ValueError("Output budget must exceed the nonnegative thinking budget")
 
 
-def oauth_token():
+def account_config(value=None):
+    value = value or os.environ.get("VE_CLAUDE_ACCOUNT_CONFIG_DIR")
+    return Path(unicodedata.normalize("NFC", os.path.abspath(os.path.expanduser(value)))) if value else None
+
+
+def account_label(config):
+    return config.name.removeprefix(".claude-") if config else "lead-main"
+
+
+def oauth_token(config=None):
     """Read only subscription auth; never return credentials in a log or error."""
-    if os.environ.get("CLAUDE_CODE_OAUTH_TOKEN"):
+    if config is None and os.environ.get("CLAUDE_CODE_OAUTH_TOKEN"):
         return os.environ["CLAUDE_CODE_OAUTH_TOKEN"]
-    path = Path.home() / ".claude/.credentials.json"
+    path = (config or Path.home() / ".claude") / ".credentials.json"
+    service = "Claude Code-credentials"
+    if config is not None:
+        service += "-" + hashlib.sha256(str(config).encode()).hexdigest()[:8]
     if path.exists():
         data = json.loads(path.read_text())
     else:
         result = subprocess.run(["security", "find-generic-password", "-s",
-                                 "Claude Code-credentials", "-w"], capture_output=True, text=True)
+                                 service, "-w"], capture_output=True, text=True)
         if result.returncode:
             raise EndpointError("Subscription credentials unavailable")
         data = json.loads(result.stdout)
@@ -162,8 +175,10 @@ def parse_stream(raw, expected_model):
 
 
 class ClaudeCLI:
-    def __init__(self, ledger: Path, controls=Controls(), max_calls=None):
+    def __init__(self, ledger: Path, controls=Controls(), max_calls=None, *, account_config_dir=None):
         self.ledger, self.controls, self.max_calls = Path(ledger), controls, max_calls
+        self.account_config = account_config(account_config_dir)
+        self.account_label = account_label(self.account_config)
 
     def sample(self, item_id, system, prompt, sample_index=0, *, content_tokens=None):
         self.ledger.parent.mkdir(parents=True, exist_ok=True)
@@ -175,14 +190,16 @@ class ClaudeCLI:
                 history = [json.loads(line) for line in log if line.strip()]
             except json.JSONDecodeError as exc:
                 raise EndpointError("Damaged ledger; preserve it and repair explicitly") from exc
+            if any(r.get("account_label") != self.account_label for r in history):
+                raise EndpointError("Account mismatch or unattributed legacy ledger; use a separately named ledger")
             executable = shutil.which("claude")
             if not executable:
                 raise EndpointError("claude not found")
             binary_hash = hashlib.sha256(Path(executable).read_bytes()).hexdigest()
-            control = {**asdict(self.controls), "binary_sha256": binary_hash, "backend_revision": 3,
+            control = {**asdict(self.controls), "binary_sha256": binary_hash, "backend_revision": 4,
                        "host_system": platform.system(), "host_release": platform.release(),
                        "shell": "/bin/sh", "locale": "en_US.UTF-8", "timezone": "UTC"}
-            group = digest([control, system, prompt, content_tokens])
+            group = digest([self.account_label, control, system, prompt, content_tokens])
             key = digest([group, item_id, sample_index])
             matching = [r for r in history if r.get("key") == key]
             if matching:
@@ -198,10 +215,11 @@ class ClaudeCLI:
             if prior and prior[0]["controls"] != control:
                 raise EndpointError("Controls/binary drift; start a separately named ledger")
             check_context_date(self.controls)
-            token = oauth_token()
+            token = oauth_token(self.account_config)
             base = {"key": key, "item_id": item_id, "sample_index": sample_index,
                     "prompt_group": group, "system": system, "prompt": prompt,
-                    "controls": control, "content_tokens": content_tokens}
+                    "controls": control, "content_tokens": content_tokens,
+                    "account_label": self.account_label}
             def append(row):
                 log.write(json.dumps(row, ensure_ascii=False) + "\n")
                 log.flush()
@@ -259,8 +277,9 @@ class ClaudeCLI:
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--audit", type=Path, required=True)
+    p.add_argument("--account-config-dir", help="Auth source only; defaults to VE_CLAUDE_ACCOUNT_CONFIG_DIR")
     args = p.parse_args()
-    client = ClaudeCLI(args.audit, max_calls=12)
+    client = ClaudeCLI(args.audit, max_calls=12, account_config_dir=args.account_config_dir)
     for i in range(5):
         for label, prompt in (("canary", CANARY), ("trivial", "Reply with exactly OK.")):
             try:
