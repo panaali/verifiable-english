@@ -41,11 +41,13 @@ def main(argv=None):
     proposal.add_argument("--english-vocabulary")
     proposal.add_argument("--acknowledge", action="append", default=[], metavar="SYMBOL",
                           help="acknowledge a flagged existing near-duplicate; repeat for each symbol")
+    proposal.add_argument("--adopt-to", help="explicitly adopt into a new directory after all acknowledgements")
     proposal.add_argument("--output", help="new directory for wrapped candidate files")
     proposal.add_argument("text", help="English sentence text, or '-' to read stdin")
     adoption = commands.add_parser("adopt", help="explicitly adopt a vocabulary proposal")
     adoption.add_argument("proposal", help="proposal.json from ve propose")
     adoption.add_argument("--output", required=True, help="new directory for adopted files")
+    adoption.add_argument("--acknowledge", action="append", default=[], metavar="SYMBOL")
     suggestions = commands.add_parser("suggest-vocabulary", help="emit unreviewed English vocabulary candidates")
     suggestions.add_argument("--env", required=True)
     grammar = commands.add_parser("grammar", help="export an environment-specific decoding grammar")
@@ -104,21 +106,23 @@ def main(argv=None):
     try:
         if args.command == "adopt":
             from .propose import adopt
-            _emit(adopt(loads_json(_read(args.proposal)), args.output))
+            _emit(adopt(loads_json(_read(args.proposal)), args.output, acknowledge=args.acknowledge))
             return 0
         env = Environment.from_json(_read(args.env))
         if args.command == "propose":
-            from .propose import propose, write_proposal
+            from .propose import adopt, propose, write_proposal
             vocabulary = loads_json(_read(args.english_vocabulary)) if args.english_vocabulary else None
             source = _read("-", MAX_SOURCE_BYTES) if args.text == "-" else args.text
             preview = propose(env, source, vocabulary, acknowledge=args.acknowledge)
             if preview['requires_acknowledgement']:
-                preview['message'] = 'Refused: repeat --acknowledge SYMBOL for each requires_acknowledgement entry.'
                 _emit(preview)
                 return 2
             if args.output:
                 write_proposal(preview, args.output)
-            _emit(preview)
+            if args.adopt_to:
+                _emit(adopt(preview, args.adopt_to, acknowledge=args.acknowledge))
+            else:
+                _emit(preview)
             return 0
         if args.command == "suggest-vocabulary":
             from . import suggest_vocabulary

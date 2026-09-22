@@ -18,44 +18,57 @@ that the author intended the parsed meaning.
 ## Writing a sentence with a new word
 
 Closed English errors name the unknown phrase, give its character span (zero-based,
-end-exclusive; line/column are one-based), and suggest declared wordings. To preview
-the lead's sentence without editing environment files, copy this one-liner from the
-repository root:
+end-exclusive; line/column are one-based), and suggest declared wordings. The
+shortest adoption workflow for the lead's sentence is one command from the
+repository root (after reviewing the `us_citizen` near-duplicate):
 
 ```sh
-UV_CACHE_DIR=/private/tmp/ve-uv-cache-propose uv run python -m ve propose --env usecases/birthright-citizenship-debate/environment.json --english-vocabulary usecases/birthright-citizenship-debate/environment.english.json 'Every person who is born in the United States and is subject to US jurisdiction is a UK citizen.'
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-propose uv run python -m ve propose --env usecases/birthright-citizenship-debate/environment.json --english-vocabulary usecases/birthright-citizenship-debate/environment.english.json --acknowledge us_citizen --adopt-to /private/tmp/uk-citizen-adopted 'Every person who is born in the United States and is subject to US jurisdiction is a UK citizen.'
 ```
 
-The preview shows `uk_citizen(person)`, its source span, machine-proposed
-description, nearest symbols, and English/strict paraphrases. It exits with an
-error because `us_citizen` is a near-duplicate. After inspecting it, acknowledge
-that symbol, write candidates, and explicitly adopt:
+Omit `--acknowledge us_citizen` to inspect the blocked preview first: it exits 2
+and writes no files. The preview shows `uk_citizen(person)`, its source span,
+machine-proposed description, nearest symbols (including `content_overlap`), and
+English/strict paraphrases. Every flagged symbol requires its own `--acknowledge`.
+Flags are required for edit distance at most two, a shared final token, or shared
+content tokens. Content comparison ignores articles and prepositions and token
+order; a terminal `s` is removed from words longer than three characters unless
+they end in `ss` (so `US` stays intact). This is a warning heuristic, not semantics.
 
-```sh
-UV_CACHE_DIR=/private/tmp/ve-uv-cache-propose uv run python -m ve propose --env usecases/birthright-citizenship-debate/environment.json --english-vocabulary usecases/birthright-citizenship-debate/environment.english.json --acknowledge us_citizen --output /private/tmp/uk-citizen-proposal 'Every person who is born in the United States and is subject to US jurisdiction is a UK citizen.'
-UV_CACHE_DIR=/private/tmp/ve-uv-cache-propose uv run python -m ve adopt /private/tmp/uk-citizen-proposal/proposal.json --output /private/tmp/uk-citizen-adopted
-printf '%s\n' 'Every person who is born in the United States and is subject to US jurisdiction is a UK citizen.' | UV_CACHE_DIR=/private/tmp/ve-uv-cache-propose uv run python -m ve parse --env /private/tmp/uk-citizen-adopted/environment.json --english-vocabulary /private/tmp/uk-citizen-adopted/environment.english.json --accept-suggested-vocabulary --surface english -
-```
-
-Output directories must be new. `propose` also accepts `-` for stdin; without
-`--output` it only previews. Edit distance at most two or a shared final content
-token requires `--acknowledge SYMBOL` for each flagged symbol. No morphology is
-used for this comparison. Adoption revalidates the preview and prints the new
-`environment_id`; it does **not** review the wording. All adopted overlay entries
-have `suggested: true`; the overlay and records remain **unreviewed**.
+Output directories must be new. `propose` accepts `-` for stdin. Without
+`--output` or `--adopt-to` it only previews. For separate review, use `--output DIR`
+to write wrapped candidates, then `python -m ve adopt DIR/proposal.json --output
+NEW_DIR --acknowledge us_citizen`. Adoption requires its **own** acknowledgement
+flags, verifies source/base-environment/base-overlay and proposal digests, and
+recomputes the candidate and near-duplicates from the recorded inputs. Edited or
+stale previews must be regenerated. These digests detect changes; they do not
+attest to an external author's approval. Adoption prints the new `environment_id`;
+it does **not** review wording. All adopted overlay entries have `suggested: true`
+and remain **unreviewed**. Parsing them requires `--accept-suggested-vocabulary`.
 
 Only unary `is a/an …`, `is …`, and `is not …` slots with an in-scope binder can
 introduce predicates. The binder's declared noun supplies the sort. Phrases stop
-at the [version 1 boundary tokens](../design/open-vocabulary-english.md#after-review-2026-09-21-both-reviewers-said-build-with-changes),
-including `and`, `or`, relative pronouns, and sentence punctuation. Existing
-template limits still apply; passive `by` phrases, declared references or their
-near typos, and known binary frames cannot be absorbed as new unary words.
+at `is`, `does`, `not`, `and`, `or`, `if`, `then`, `that`, `who`, `which`, `both`,
+`either`, `every`, `some`, `for`, commas, and periods. Templates must fit the finite
+unary word/hyphen grammar and the 80-character limit, then pass the template linter.
+Existing content wordings match regardless of case; printing retains stored casing.
+Case, whitespace, or hyphen-versus-space differences cannot create a second
+predicate, including in handwritten overlays. A prefix extension such as `is a
+US citizen of record` reports the existing wording and symbol.
 
-**Not inferred:** sorts, constants (including capitalized names), binary relations,
-plurals, passives/converses, verb morphology, synonyms, or new clause forms.
-Constant-subject sentences cannot introduce predicates. These restrictions
-prevent typos and ambiguous English from silently becoming unrelated symbols.
-A permitted prepositional nominal is one atomic unary phrase, not a relation.
+**Not inferred:** sorts, constants, binary relations, passive/converse argument
+structure, plural or verb inflections, synonyms, or new clause forms. Constant
+subjects cannot introduce predicates. Declared constants, sort identifiers,
+singular/plural sort nouns, reference typos, and known binary frames are rejected
+inside proposed unary content. `than`, `by`, `no`, `never`, `longer`, `neither`,
+`nor`, `without`, `true`, `false`, `equals`, and `equal` are blocked, including in
+hyphenated content. Hyphenated `un-`/`non-` content and joined `un`/`non` forms of
+declared predicate heads are rejected; use explicit `is not` for negation.
+A capitalized token immediately after a preposition is also rejected (for
+example, `of France`). Capitalization elsewhere can be part of an opaque lexical
+phrase, as in `UK citizen`; it never declares a constant. A permitted phrase such
+as `member of the guild` remains one opaque unary predicate. Plural-looking words
+can likewise be opaque content; the tool does not infer their singular meaning.
 
 Candidate files use proposal envelopes rejected by the ordinary environment
 loader, including proof, countermodel, and certificate workflows. Only adoption
@@ -91,7 +104,8 @@ original input, strict canonical text, and the deterministic English paraphrase.
 Acceptance JSON shows both input and paraphrase and a `changed` flag. The render
 and format commands report a differing paraphrase to stderr, leaving stdout
 usable as a document. Countermodel JSON includes paraphrases for each input file.
-Sentence-initial capitalization and inter-word whitespace may vary. Statements
+Sentence-initial capitalization, content-word casing, and inter-word whitespace may vary.
+Quoted identifiers and numbered variable labels retain exact casing. Statements
 end with a period. Diagnostics include a character offset, line, column, and a
 plain-language account of what was expected. Type and scope errors also reject.
 
@@ -358,20 +372,20 @@ of the citizenship dispute. Suggestions intentionally leave uncertain names unwo
 
 <!-- BEGIN GENERATED ENGLISH EVIDENCE -->
 
-**75,000 distinct well-typed environment/AST pairs** round-tripped through
-`render` and `parse_english`, across fifteen configurations (the original ten,
-four reviewed overlays, and explicitly accepted suggestions). Each configuration
+**80,000 distinct well-typed environment/AST pairs** round-tripped through
+`render` and `parse_english`, across sixteen configurations (the original ten,
+four reviewed overlays, accepted suggestions, and an adopted unary vocabulary). Each configuration
 contributed 5,000 distinct ASTs: directed boundary cases followed by seeded random
 draws. Directed cases cover every template, validated negatives, subject and object relatives, two-atom guards,
 both three-atom associations, deeper/mixed guards, nested implications, and the
 actual use-case claims. Duplicate draws are recorded, not counted twice.
-**7,500 environment/text pairs** (500 per configuration) had exactly one
+**8,000 environment/text pairs** (500 per configuration) had exactly one
 Earley dynamic-complete derivation, with zero ambiguity nodes. Every directed
 case is in that directed-heavy prefix of each configuration; it is **not a random sample**.
-A separate seeded random sample adds **3,750 texts**
+A separate seeded random sample adds **4,000 texts**
 (250 per configuration), all at measured AST depths 6–9, each with exactly one
 all-derivations parse and an exact AST round trip. It excludes the original corpus.
-Another **750 five-statement documents** round-trip
+Another **800 five-statement documents** round-trip
 and have exactly one all-derivations parse using the document grammar.
 This is finite evidence, not a universal unambiguity proof.
 The report records seeds, corpus/grammar hashes, overlay digests, constructor
