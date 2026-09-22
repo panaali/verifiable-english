@@ -43,3 +43,19 @@ parse without hand-written files.
   version -> same environment_id)? What must be hashed?
 - Licence and reproducibility of the lexicon build.
 - Smallest version worth building first.
+
+## After review (2026-09-21): Astra "build with changes", Fable "do not build as specified; build narrower"
+
+Reviews: `~/code/manage-agents/reviews/lexicon-review-astra.md`, `lexicon-review-fable.md`. Common ground, adopted:
+- Word classes do NOT fix phrase boundaries ("likes New York", "born in the United States", "member of Acme" are
+  unresolved by class; proper nouns such as UK, US, Claude are not in any common-word lexicon, so the motivating
+  sentence would still fail). No grammar change, no derived environments, no new binders, no `thing` universal sort.
+- Identity: derived-from-text environments would change identities of existing claims; keep proposal + explicit adoption.
+- Licence: OEWN CC-BY 4.0 with attribution file and pinned checksum; avoid frequency lists with non-commercial or
+  share-alike terms (use no frequency cutoff, or a permissively licensed list).
+
+Version 1 (approved to build): the lexicon as a classifier INSIDE `ve propose`: ship `ve/lexicon/oewn-*.json` with
+its reproducible build script and ATTRIBUTION; classify each token of a proposed unary phrase (noun/adjective/participle/
+unknown), name unknown tokens, emit a deterministic description carrying lexicon version and sense key; keep every gate.
+Also fix the capitalisation-dependent acceptance in `ve/propose.py` ("citizen of France" rejected, "citizen of france"
+accepted). Optional: a small curated starter environment of predicative adjectives as an example, marked unreviewed.
