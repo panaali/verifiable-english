@@ -83,9 +83,10 @@ def test_caps_and_scenarios():
     assert max(o for _,o in p.STAGES.values())==1024
     for scenario in p.SCENARIOS:
         c=p.ceilings(scenario)
-        assert Decimal(c['all_in_usd'])>40 and not c['within_cap']
-        assert not c['within_matched_ceiling']
-    assert Decimal(p.ceilings('dual_judge')['all_in_usd'])==Decimal('69.8036611616')
+        assert Decimal(c['all_in_usd'])<40 and c['within_cap']
+        assert c['within_matched_ceiling']==all(Decimal(v)<=p.MATCHED_CAP
+            for v in c['combined_attributed_item_arm_usd'].values())
+    assert Decimal(p.ceilings('dual_judge')['all_in_usd'])==Decimal('35.2264590298')
     for cap in (0,-1,41):
         with pytest.raises(PreflightError):p.ledger(cap)
 

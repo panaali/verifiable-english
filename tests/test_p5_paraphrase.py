@@ -239,6 +239,7 @@ def test_cached_request_cannot_cross_dossier_contract(stage):
 def test_resume_freeze_allows_only_paraphrase_outputs(tmp_path, monkeypatch):
     monkeypatch.setattr(p5, 'HERE', tmp_path)
     monkeypatch.setattr(p5, 'ROOT', tmp_path)
+    monkeypatch.setattr(p5, 'ceilings', lambda _: {'within_cap': True})
     files = ['materials/dossiers.jsonl.gz', 'materials/paraphrases.jsonl.gz',
              'materials/dev.jsonl.gz', 'materials/scored.jsonl.gz', 'implementation.py']
     for name in files:
@@ -246,6 +247,7 @@ def test_resume_freeze_allows_only_paraphrase_outputs(tmp_path, monkeypatch):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text('frozen')
     write_json(tmp_path / 'freeze.json', {
+        'scenario': 'dual_judge',
         'hashes': {name: p5.sha(tmp_path / name) for name in files},
         'ceilings': {'within_cap': True}})
     for name in files[1:4]:

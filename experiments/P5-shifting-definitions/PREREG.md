@@ -1,5 +1,12 @@
 # P5: the merged-predicate / shifting-definition duel
 
+**2026-09-22 schedule amendment:** the first $40 study-cap fit retains both
+judges and all four arms with nine scored families (three per vocabulary size),
+at $35.2264590298 including retained costs and calibration reserve. The separate
+$0.16 item/arm gate remains blocked pending a $0.45 common-ceiling amendment.
+See [SCHEDULE-AMENDMENT.md](SCHEDULE-AMENDMENT.md) for the current schedule and
+precision consequences; historical 24-family budgets below are superseded.
+
 Status: FEASIBILITY PILOT DESIGN PREREGISTRATION — 2026-09-21, amended
 2026-09-22 before dev/scored inference. **Revision 8 supersedes the independent
 paraphrase and full annotation requirements below.** Judges read generator-rendered

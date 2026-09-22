@@ -27,6 +27,7 @@ from experiments.p5_tokens import P5VertexBackend as VertexBackend
 
 ROOT=HERE.parents[1]
 CAP=Decimal('40')
+MATCHED_CAP=Decimal('.16')
 STUDY_REVISION='study-v9'
 # Amendment P5-1 lowers author/repair to 1024 total billed tokens. The original
 # 2048 ceilings remain in the immutable design inventory for transparent audit.
@@ -112,28 +113,14 @@ def run_path(split, name):
     return HERE/f'runs/{split}-v9'/name
 
 
-def ceilings(scenario):
-    shared=cost('replication',*STAGES['paraphrase'])
-    arms={a:sum((cost('pro',*stage_limits(a,s)) for s in stage_list(a)),Decimal(0)) for a in ARMS}
-    extra=sum((cost('replication',*stage_limits(a,'lone' if a=='L' else 'judge','replication')) for a in ARMS),Decimal(0)) if scenario=='dual_judge' else Decimal(0)
-    combined={a:v+shared+Decimal('.0004')+(cost('replication',*stage_limits(a,
-        'lone' if a=='L' else 'judge','replication')) if scenario=='dual_judge' else 0) for a,v in arms.items()}
-    api=(sum(arms.values())+shared+extra)*84
-    cpu=Decimal('.0004')*336
-    # Smoke calls are explicit separately budgeted overhead, not added dev samples.
-    smoke=cost('replication',128,1024)+cost('pro',128,1024)
-    calibration=Decimal('.50')  # Separate one-time twelve-config authorization.
-    return {'scenario':scenario,'api_usd':str(api),'cpu_usd':str(cpu),'provider_smoke_usd':str(smoke),
-        'gemini_calibration_ceiling_usd':str(calibration),
-        'all_in_usd':str(api+cpu+smoke+calibration),'reserve_usd':str(CAP-api-cpu-smoke-calibration),
-        'within_cap':api+cpu+smoke+calibration<=CAP,'matched_ceiling_usd':'.16',
-        'within_matched_ceiling':all(v<=Decimal('.16') for v in combined.values()),
-        'max_calls_including_materials_and_smokes':1610+(336 if scenario=='dual_judge' else 0),
-        'attributed_item_arm_usd':{a:str(v+shared+Decimal('.0004')) for a,v in arms.items()},
-        'replication_judge_overhead_usd':str(extra*84),
-        'combined_attributed_item_arm_usd':{a:str(v) for a,v in combined.items()},
-        'primary': 'Gemini min(VE_shift,VE_smuggle) - min(X_shift,X_smuggle)',
-        'replication_policy':'same frozen Gemini role transcript; separate Qwen final judgment; Qwen lone floor'}
+def ceilings(scenario, scored_families=None):
+    from experiments.p5_budget import ceilings as amended_ceilings
+    return amended_ceilings(scenario, scored_families)
+
+
+def scheduled_materials(split=None):
+    from experiments.p5_budget import selected_materials
+    return selected_materials(split)
 
 
 def request(item,arm,stage,history=None,*,judge='pro',turn=0,commitment=None,question=None,examples=()):
@@ -359,7 +346,7 @@ def freeze(scenario):
            ROOT/'experiments/p1.py',ROOT/'experiments/p1_preflight.py',ROOT/'experiments/prereg_inventory.py',
            ROOT/'experiments/trial_analysis.py',*ROOT.glob('tests/test_p5*.py'),
            ROOT/'tests/fixtures/p5_deepinfra_smoke.json',ROOT/'tests/fixtures/p5_vertex_smoke.json',ROOT/'pyproject.toml',ROOT/'uv.lock',
-           HERE/'PREREG.md',ROOT/'experiments/PREREG-DESIGN.md',HERE/'inventory.json',HERE/'AMENDMENTS.md',HERE/'REVISION6.md',HERE/'REVISION7.md',HERE/'REVISION8.md',HERE/'RESULTS.md',
+           HERE/'PREREG.md',HERE/'SCHEDULE-AMENDMENT.md',ROOT/'experiments/PREREG-DESIGN.md',HERE/'inventory.json',HERE/'AMENDMENTS.md',HERE/'REVISION6.md',HERE/'REVISION7.md',HERE/'REVISION8.md',HERE/'RESULTS.md',
            HERE/'materials/prose-policy.json', HERE/'checks/gemini-rendered-submission.json', HERE/'checks/gemini-rendered-status.json', HERE/'runs/revision-v8/gemini-review-costs.jsonl',
            HERE/'prompts.json',HERE/'CONSTRUCTION-V3.md',HERE/'CONSTRUCTION-V4.md',HERE/'CONSTRUCTION-V5.md',HERE/'REVIEW-CHECKLIST.md',HERE/'PARAPHRASE-REVIEW.md',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
            ROOT/'experiments/P1-deference/native_counter.py',*ROOT.glob('experiments/P1-deference/tokenizers/*.json'),
@@ -367,7 +354,7 @@ def freeze(scenario):
     paths += list((HERE/'runs').glob('revision-*/paraphrase-costs.jsonl'))
     paths += [HERE/'checks/v7-final-acceptance.json', HERE/'checks/gemini-rendered-adjudication.json']
     paths += [HERE/'DEV-CONTRACT-AUDIT.md',HERE/'checks/dev-contract-audit.json',
-        HERE/'checks/dev-superseded-v8.json',HERE/'runs/dev/trials.jsonl',HERE/'runs/dev/analysis.json']
+        HERE/'checks/dev-superseded-v8.json',HERE/'checks/budget-scenarios.json',HERE/'runs/dev/trials.jsonl',HERE/'runs/dev/analysis.json']
     paths += [HERE/name for name in ('MATERIALS-MANIFEST.json','MATERIALS-HASHES.txt',
         'MATERIALS-HASHES.txt.ots','checks/round5-review-submission.json',
         'checks/round5-review-verification.txt','checks/round5-review-import.json',
@@ -403,10 +390,12 @@ def verify_freeze(*, paraphrase_progress=False, check_budget=True):
     if 'gemini_calibration' in f and (not calibration_path.exists() or
             f['gemini_calibration']!=json.loads(calibration_path.read_text())):
         raise PreflightError('Gemini calibration changed; refreeze required')
+    if f['ceilings'] != ceilings(f['scenario']):
+        raise PreflightError('schedule accounting changed; refreeze required')
     if check_budget and not f['ceilings']['within_cap']:
         raise BudgetExceeded('scenario exceeds $40')
     if check_budget and not f['ceilings'].get('within_matched_ceiling',True):
-        raise BudgetExceeded('worst-case item-arm schedule exceeds matched .16 ceiling')
+        raise BudgetExceeded(f'worst-case item-arm schedule exceeds matched {MATCHED_CAP} ceiling')
     return f
 
 
@@ -495,8 +484,8 @@ class P5Ledger(Ledger):
                 shared += auxiliary.get(meta.get('item_id'), Decimal(0))
                 # Until a paraphrase is billed, reserve its full scheduled cost.
                 shared=max(shared,cost('replication',*STAGES['paraphrase']))
-                if charged+shared+Decimal('.0004')+cost(request.model,request.max_input_tokens,request.billed_output_cap)>Decimal('.16'):
-                    raise BudgetExceeded('matched item-arm .16 ceiling, including infrastructure holds')
+                if charged+shared+Decimal('.0004')+cost(request.model,request.max_input_tokens,request.billed_output_cap)>MATCHED_CAP:
+                    raise BudgetExceeded(f'matched item-arm {MATCHED_CAP} ceiling, including infrastructure holds')
         return super().reserve(request)
 
 
@@ -511,7 +500,7 @@ def run(split,cap,resume=False):
     f=require_gates(split=='scored'); plan=SCENARIOS[f['scenario']]
     book=ledger(cap); book.allowance('p5-local-envelope','.1344')
     block=f'{STUDY_REVISION}/{f["scenario"]}/{split}'
-    n=12 if split=='dev' else 72
+    n=len(scheduled_materials(split))
     online=sum((cost('pro',*stage_limits(a,s)) for a in ARMS for s in stage_list(a)),Decimal(0))
     if len(plan)>1:
         online+=sum((cost('replication',*stage_limits(a,'lone' if a=='L' else 'judge','replication')) for a in ARMS),Decimal(0))
@@ -521,7 +510,7 @@ def run(split,cap,resume=False):
     if 'replication' in plan: clients['replication']=PaidClient(OpenRouterBackend(native_counter()),book,block,reuse_completed=True)
     trials_path=run_path(split,'trials.jsonl'); existing=read(trials_path)
     done={(r['item_id'],r['condition'],r['judge']) for r in existing}
-    assignments=[(i,a) for i in materials(split) for a in ARMS];random.Random(SEED).shuffle(assignments)
+    assignments=[(i,a) for i in scheduled_materials(split) for a in ARMS];random.Random(SEED).shuffle(assignments)
     stopped=None
     try:
         for item,arm in assignments:
@@ -548,7 +537,7 @@ def run(split,cap,resume=False):
         for c in clients.values():c.close()
     rows=read(trials_path)
     _,halted=infrastructure_state(book)
-    report=analyze(rows,materials(split),labels(),plan,allow_missing=True)
+    report=analyze(rows,scheduled_materials(split),labels(),plan,allow_missing=True)
     report.update(stopped=stopped,halted_judges=halted)
     if split=='dev':
         # Source-fidelity must be manually reviewed; contract alone never passes dev.
@@ -741,7 +730,7 @@ def main(argv=None):
             from experiments.p5_preflight import explanations
             result=explanations(args.split,args.export,args.submit)
         else:
-            f=verify_freeze();result=analyze(read(run_path(args.split,'trials.jsonl')),materials(args.split),labels(),
+            f=verify_freeze();result=analyze(read(run_path(args.split,'trials.jsonl')),scheduled_materials(args.split),labels(),
                 SCENARIOS[f['scenario']],read(run_path(args.split,'ratings.jsonl')),allow_missing=True)
             from experiments.p5_preflight import cost_report
             result['costs']=cost_report(args.split)

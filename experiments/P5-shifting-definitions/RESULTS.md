@@ -1,5 +1,12 @@
 # P5 results — revision 8
 
+**2026-09-22 schedule/calibration update:** no new dev or scored results.
+Six new 4,096-token Vertex config smokes cost $0.035710 (task cap $0.30).
+The first $40-compatible schedule has nine scored families, both judges and
+all four arms; its retained-inclusive worst case is $35.2264590298. The
+existing $0.16 item/arm gate still blocks execution. See
+[SCHEDULE-AMENDMENT.md](SCHEDULE-AMENDMENT.md).
+
 **No dev or scored inference has run.** Material readiness is separate from
 empirical efficacy. The 2026-09-22 orchestrator amendment drops the independent
 paraphrase requirement after unsuccessful v6/v7 attempts.

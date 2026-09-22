@@ -1,33 +1,42 @@
 {
   "ceilings": {
-    "all_in_usd": "69.8036611616",
-    "api_usd": "69.1562364192",
-    "attributed_item_arm_usd": {
-      "L": "0.0665397888",
-      "S": "0.1946997888",
-      "VE": "0.3664437888",
-      "X": "0.1813637888"
-    },
+    "all_in_usd": "35.2264590298",
+    "api_usd": "32.0307288600",
     "combined_attributed_item_arm_usd": {
-      "L": "0.0698204168",
-      "S": "0.2000966624",
-      "VE": "0.3753408992",
-      "X": "0.1855939168"
+      "L": "0.0888021338",
+      "S": "0.2451122706",
+      "VE": "0.4465404776",
+      "X": "0.1926657928"
     },
-    "cpu_usd": "0.1344",
-    "gemini_calibration_ceiling_usd": "0.50",
-    "matched_ceiling_usd": ".16",
-    "max_calls_including_materials_and_smokes": 1946,
+    "cpu_accounting": "already included in retained commitment; no duplicate charge",
+    "cpu_usd": ".1344",
+    "dev_families": 4,
+    "future_online_calls": 858,
+    "gemini_calibration_ceiling_usd": "0.30",
+    "matched_ceiling_usd": "0.16",
     "primary": "Gemini min(VE_shift,VE_smuggle) - min(X_shift,X_smuggle)",
-    "provider_smoke_usd": "0.0130247424",
-    "replication_judge_overhead_usd": "1.8315981600",
-    "replication_policy": "same frozen Gemini role transcript; separate Qwen final judgment; Qwen lone floor",
-    "reserve_usd": "-29.8036611616",
+    "replication_judge_overhead_usd": "0.8503848600",
+    "replication_policy": "same frozen Gemini transcript; Qwen final judgment and lone floor",
+    "reserve_usd": "4.7735409702",
+    "retained_commitment_usd": "2.8957301698",
     "scenario": "dual_judge",
-    "within_cap": false,
+    "scheduled_items": 39,
+    "scored_families": 9,
+    "selected_scored_families": [
+      "p5-scored-00",
+      "p5-scored-01",
+      "p5-scored-02",
+      "p5-scored-03",
+      "p5-scored-04",
+      "p5-scored-05",
+      "p5-scored-06",
+      "p5-scored-07",
+      "p5-scored-08"
+    ],
+    "within_cap": true,
     "within_matched_ceiling": false
   },
-  "freeze_sha256": "629cada8fd2a2b56fb2a4f113bf426b3583fdc9dacc7c0c2038fd3281777e7ef",
+  "freeze_sha256": "d816fd81641bb12800d3cc4c4a0afc04b29261cb00823c0998bb7ba5f7b362cb",
   "generation_calls": 0,
   "passed": false
 }

@@ -73,6 +73,10 @@ def inventory(count_tokens=False):
     result={'slot_count':84,'slots':[{k:r[k] for k in ('id','family','split','predicates')} for r in p.labels(False)],'composition':{'dev':12,'scored':72,'scored_families':24,
         'scored_per_variant':24,'scored_families_per_predicate_count':{'20':8,'40':8,'60':8}},
         'scenario_ceilings':{s:p.ceilings(s) for s in p.SCENARIOS},
+        'execution_composition':{'dev':len(p.scheduled_materials('dev')),
+            'scored':len(p.scheduled_materials('scored')),
+            'scored_families':len(p.scheduled_materials('scored'))//3},
+        'archive_policy':'all 84 reviewed packets retained; only scheduled families may execute',
         'original_design_inventory':'inventory.json (UNBUILT aggregate design; slot labels removed in v5)',
         'stage_caps':p.STAGES,
         'effective_stage_caps':{a:{m:{s:p.stage_limits(a,s,m) for s in p.stage_list(a)}
@@ -377,7 +381,7 @@ def provider_smoke(cap,only_openrouter=False,*,cached_only=False):
 
 
 def explanations(split,export=None,submit=None):
-    rows=read(p.run_path(split,'trials.jsonl'));items={i['id']:i for i in p.materials(split)}
+    rows=read(p.run_path(split,'trials.jsonl'));items={i['id']:i for i in p.scheduled_materials(split)}
     from experiments.p5_isolation import blind_packet, export_isolated, validate_exposure
     if export:
         records=[]
@@ -432,9 +436,9 @@ def cost_report(split):
         shared[item_id] += value
     holds += auxiliary_holds
     attributed={(i['id'],a):actual[(i['id'],a)]+shared[i['id']]+Decimal('.0004')
-                for i in p.materials(split) for a in p.ARMS}
-    families=sorted({i['group'] for i in p.materials(split)})
-    family_costs={a:[float(sum(attributed[(i['id'],a)] for i in p.materials(split) if i['group']==f)/3)
+                for i in p.scheduled_materials(split) for a in p.ARMS}
+    families=sorted({i['group'] for i in p.scheduled_materials(split)})
+    family_costs={a:[float(sum(attributed[(i['id'],a)] for i in p.scheduled_materials(split) if i['group']==f)/3)
                     for f in families] for a in p.ARMS}
     draws=np.random.default_rng(p.SEED).integers(0,len(families),(20000,len(families)))
     numerator=np.asarray(family_costs['VE']);denominator=np.asarray(family_costs['X'])
@@ -443,10 +447,10 @@ def cost_report(split):
         'shared_full_attribution_per_item_usd':{k:str(v) for k,v in shared.items()},
         'charged_infrastructure_holds_usd':str(holds),
         'item_arm_attributed_usd':{item+'/'+arm:str(v) for (item,arm),v in attributed.items()},
-        'paired_cost_ratios_VE_over_X':{i['id']:str(attributed[(i['id'],'VE')]/attributed[(i['id'],'X')]) for i in p.materials(split)},
+        'paired_cost_ratios_VE_over_X':{i['id']:str(attributed[(i['id'],'VE')]/attributed[(i['id'],'X')]) for i in p.scheduled_materials(split)},
         'family_paired_ratio':{'estimate':float(numerator.mean()/denominator.mean()),
                               'bootstrap_interval':np.quantile(ratios,[.025,.975]).tolist()},
         'mean_attributed_cost_by_arm':{a:float(np.mean(v)) for a,v in family_costs.items()},
-        'matched_ceiling_passed':all(v<=Decimal('.16') for v in attributed.values()),
+        'matched_ceiling_passed':all(v<=p.MATCHED_CAP for v in attributed.values()),
         'engineering_manual_time':'review ledger; not included as free model work',
-        'framing':'matched .16 ceiling; no actual-dollar top-up or outcome-dependent allocation'}
+        'framing':f'matched {p.MATCHED_CAP} ceiling; no actual-dollar top-up or outcome-dependent allocation'}

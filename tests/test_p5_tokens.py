@@ -177,13 +177,13 @@ def test_smokes_one_per_config_durable_cap_and_no_rebuy(tmp_path,monkeypatch):
             calls.append(r)
             return PaidReply('{}',64,5,0,0,MODELS['pro'],{}, {})
     book=Ledger(tmp_path/'costs.jsonl',p.CAP)
-    assert tokens.calibration_smokes(book,Backend(),Decimal('.50'))==2
+    assert tokens.calibration_smokes(book,Backend(),Decimal('.30'))==2
     assert len(calls)==2
     assert {tokens.config_key(r) for r in calls}=={tokens.config_key(req),tokens.config_key(other)}
-    assert tokens.calibration_smokes(book,Backend(),Decimal('.50'))==0
+    assert tokens.calibration_smokes(book,Backend(),Decimal('.30'))==0
     assert len(calls)==2
     with pytest.raises(PreflightError,match='<='):
-        tokens.calibration_smokes(book,Backend(),Decimal('.51'))
+        tokens.calibration_smokes(book,Backend(),Decimal('.31'))
 
 
 def test_smoke_failure_holds_billing_and_never_retries(tmp_path,monkeypatch):
@@ -197,7 +197,7 @@ def test_smoke_failure_holds_billing_and_never_retries(tmp_path,monkeypatch):
             raise TimeoutError('unknown billing')
     book=Ledger(tmp_path/'costs.jsonl',p.CAP)
     with pytest.raises(PreflightError,match='no retry'):
-        tokens.calibration_smokes(book,Backend(),Decimal('.50'))
+        tokens.calibration_smokes(book,Backend(),Decimal('.30'))
     with pytest.raises(PreflightError):
-        tokens.calibration_smokes(book,Backend(),Decimal('.50'))
+        tokens.calibration_smokes(book,Backend(),Decimal('.30'))
     assert len(calls)==1

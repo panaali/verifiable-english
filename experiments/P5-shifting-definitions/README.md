@@ -1,5 +1,12 @@
 # P5 materials and staged duel runner
 
+**2026-09-22 schedule amendment:** the first $40 study-cap fit retains both
+judges and all four arms with nine scored families (three per vocabulary size),
+at $35.2264590298 including retained costs and calibration reserve. The separate
+$0.16 item/arm gate remains blocked pending a $0.45 common-ceiling amendment.
+See [SCHEDULE-AMENDMENT.md](SCHEDULE-AMENDMENT.md) for the current schedule and
+precision consequences; historical 24-family budgets below are superseded.
+
 **Revision 9:** the initial dev attempt is superseded after an offline contract
 audit. See [DEV-CONTRACT-AUDIT.md](DEV-CONTRACT-AUDIT.md) for all 15 responses,
 the dated harness fixes, retained costs and blocked rerun prerequisites.

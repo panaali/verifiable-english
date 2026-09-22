@@ -71,6 +71,338 @@
           "response_sha256": "8def70e67ea4c4f354c04c0fce3d880ab55c9287c6bbde29b04b38aa380970cc",
           "revision": "gemini-3.1-pro-preview",
           "wire_sha256": "0da94a280b36228b95c11513c5d44dfb040e019ce886e52f3c5ea92ab0a67892"
+        },
+        {
+          "billed_input": 1535,
+          "native_tokens": 1396,
+          "request": {
+            "identity": "dev/ie1d380d54c4e8787526c42f06324257e/L/pro/lone/0",
+            "max_input_tokens": 7500,
+            "max_output_tokens": 1024,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence. Response schema: {\"additionalProperties\":false,\"properties\":{\"explanation\":{\"type\":\"string\"},\"issue_type\":{\"enum\":[\"shift\",\"smuggle\",\"none\",\"unknown\"],\"type\":\"string\"},\"locations\":{\"items\":{\"type\":\"string\"},\"maxItems\":2,\"type\":\"array\"},\"verdict\":{\"enum\":[\"approve\",\"reject\",\"unknown\"],\"type\":\"string\"}},\"required\":[\"verdict\",\"issue_type\",\"locations\",\"explanation\"],\"type\":\"object\"}",
+                "role": "system"
+              },
+              {
+                "content": "Dossier ie1d380d54c4e8787526c42f06324257e\nDeclared premises:\nn08: Rules r06, r05, r15 are declared.\nn09: unit4 is clipped; unit4 is logged; unit4 is shipped; unit4 is dried; unit4 is scanned; unit4 is audited; unit4 is tracked. The checks that unit4 is numbered and unit4 is bagged and unit4 is wrapped remain unassumed.\nn12: Rules r08, r01, r10, r02 are declared.\nn10: Rules r12, r07, r04 are declared.\nn14: Rules r09, r11, r03 are declared.\nn16: Rules r14, r13, r00 are declared.\nAuthoritative records:\nr11: If unit0 is clear (contamination absent), then unit0 is clear (optically transparent).\nr00: If unit3 is audited, then unit0 is open (seal removed).\nr15: If unit0 is open (seal removed), then unit0 is open (account enabled).\nr12: If unit4 is dried and unit4 is scanned and unit4 is audited, then unit0 is sound (signal audible). If unit4 is staged and unit4 is inspected, then unit0 is sound (signal audible).\nr08: If unit4 is clipped and unit4 is logged and unit4 is shipped, then unit0 is sound (casing intact). If unit4 is staged and unit4 is inspected, then unit0 is sound (casing intact). The sample from lot unit4 is unit5.\nr10: If unit0 is clear (optically transparent) and unit4 is numbered, then unit4 is clear (optically transparent). If unit0 is clear (optically transparent) and unit4 is bagged, then unit5 is clear (contamination absent). If unit0 is clear (optically transparent) and unit4 is tracked, then unit4 is clear (contamination absent). If unit0 is clear (optically transparent) and unit4 is wrapped, then unit5 is clear (optically transparent).\nr05: If unit3 is logged, then unit0 is clear (contamination absent).\nr02: If unit5 is open (account enabled), then unit1 is dried.\nr14: If unit0 is sound (casing intact) and unit0 is sound (signal audible), then unit4 is sound (signal audible).\nr06: If unit4 is sound (signal audible), then unit7 is dried.\nr03: If unit0 is open (account enabled), then unit5 is open (account enabled).\nr07: If unit0 is active (registry current), then unit5 is active (registry current).\nr09: If unit7 is dried, then unit0 is active (power connected).\nr13: If unit5 is active (registry current), then unit3 is logged.\nr01: If unit0 is active (power connected), then unit0 is active (registry current).\nr04: If unit4 is clear (optically transparent), then unit3 is audited. If unit4 is staged and unit4 is inspected, then unit3 is audited.\nParagraph IDs in order: n07, n04, n20, n15, n18, n13, n17, n06, n11, n01, n19, n00, n21, n03, n05, n02\nProposed argument:\n[n07] Because unit4 is clipped and unit4 is logged and unit4 is shipped, unit0 is sound.\n\n[n04] Since unit4 is dried and unit4 is scanned and unit4 is audited, it follows that unit0 is sound.\n\n[n20] Given that unit0 is sound and unit0 is sound, we infer that unit4 is sound.\n\n[n15] It follows that unit7 is dried because the immediately preceding sound result holds.\n\n[n18] Because unit7 is dried, unit0 is active. The checks that unit4 is numbered and unit4 is bagged and unit4 is wrapped would imply that unit4 is clear and unit5 is clear and unit5 is clear, respectively.\n\n[n13] Since unit0 is active, it follows that unit0 is active.\n\n[n17] Given that unit0 is active, we infer that unit5 is active.\n\n[n06] It follows that unit3 is logged because the immediately preceding active result holds.\n\n[n11] Because unit3 is logged, unit0 is clear.\n\n[n01] Since unit0 is clear, it follows that unit0 is clear.\n\n[n19] Given that unit0 is clear and unit4 is tracked, we infer that unit4 is clear.\n\n[n00] It follows that unit3 is audited because the immediately preceding clear result holds.\n\n[n21] Because unit3 is audited, unit0 is open.\n\n[n03] Since unit0 is open, it follows that unit0 is open.\n\n[n05] Given that unit0 is open, we infer that unit5 is open.\n\n[n02] It follows that unit1 is dried because the immediately preceding open result holds.\nOriginal root n02.",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "arm": "L",
+              "block_id": "dual_judge/dev",
+              "item_id": "ie1d380d54c4e8787526c42f06324257e",
+              "packet_sha256": "94dfdb9c068e2557188865e6703200e95a104f1f37e94802d9678a0776164d0d",
+              "role": "lone",
+              "sample": 0,
+              "seed": 20260921,
+              "turn": 0
+            },
+            "model": "pro",
+            "response_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "explanation": {
+                  "type": "string"
+                },
+                "issue_type": {
+                  "enum": [
+                    "shift",
+                    "smuggle",
+                    "none",
+                    "unknown"
+                  ],
+                  "type": "string"
+                },
+                "locations": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 2,
+                  "type": "array"
+                },
+                "verdict": {
+                  "enum": [
+                    "approve",
+                    "reject",
+                    "unknown"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "verdict",
+                "issue_type",
+                "locations",
+                "explanation"
+              ],
+              "type": "object"
+            },
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "1a789e1691da2d06d156c357eb3321d7819d40abcf9da606730fb4b51a593aed",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "4beb5cb71f30e91ea327c83a7e758aa4b9e630f787da3e840a889ed5e9776b4c"
+        },
+        {
+          "billed_input": 1533,
+          "native_tokens": 1394,
+          "request": {
+            "identity": "dev/i206f6b8e68e5aabae8bf04e2857d1791/L/pro/lone/0",
+            "max_input_tokens": 7500,
+            "max_output_tokens": 1024,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence. Response schema: {\"additionalProperties\":false,\"properties\":{\"explanation\":{\"type\":\"string\"},\"issue_type\":{\"enum\":[\"shift\",\"smuggle\",\"none\",\"unknown\"],\"type\":\"string\"},\"locations\":{\"items\":{\"type\":\"string\"},\"maxItems\":2,\"type\":\"array\"},\"verdict\":{\"enum\":[\"approve\",\"reject\",\"unknown\"],\"type\":\"string\"}},\"required\":[\"verdict\",\"issue_type\",\"locations\",\"explanation\"],\"type\":\"object\"}",
+                "role": "system"
+              },
+              {
+                "content": "Dossier i206f6b8e68e5aabae8bf04e2857d1791\nDeclared premises:\nn08: Rules r06, r05, r15 are declared.\nn09: unit4 is clipped; unit4 is logged; unit4 is shipped; unit4 is dried; unit4 is scanned; unit4 is audited; unit4 is numbered. The checks that unit4 is bagged and unit4 is tracked and unit4 is wrapped remain unassumed.\nn12: Rules r08, r01, r10, r02 are declared.\nn10: Rules r12, r07, r04 are declared.\nn14: Rules r09, r11, r03 are declared.\nn16: Rules r14, r13, r00 are declared.\nAuthoritative records:\nr11: If unit0 is clear (contamination absent), then unit0 is clear (optically transparent).\nr00: If unit3 is audited, then unit0 is open (seal removed).\nr15: If unit0 is open (seal removed), then unit0 is open (account enabled).\nr12: If unit4 is dried and unit4 is scanned and unit4 is audited, then unit0 is sound (signal audible). If unit4 is staged and unit4 is inspected, then unit0 is sound (signal audible).\nr08: If unit4 is clipped and unit4 is logged and unit4 is shipped, then unit0 is sound (casing intact). If unit4 is staged and unit4 is inspected, then unit0 is sound (casing intact). The sample from lot unit4 is unit5.\nr10: If unit0 is clear (optically transparent) and unit4 is numbered, then unit4 is clear (optically transparent). If unit0 is clear (optically transparent) and unit4 is bagged, then unit5 is clear (contamination absent). If unit0 is clear (optically transparent) and unit4 is tracked, then unit4 is clear (contamination absent). If unit0 is clear (optically transparent) and unit4 is wrapped, then unit5 is clear (optically transparent).\nr05: If unit3 is logged, then unit0 is clear (contamination absent).\nr02: If unit5 is open (account enabled), then unit1 is dried.\nr14: If unit0 is sound (casing intact) and unit0 is sound (signal audible), then unit4 is sound (signal audible).\nr06: If unit4 is sound (signal audible), then unit7 is dried.\nr03: If unit0 is open (account enabled), then unit5 is open (account enabled).\nr07: If unit0 is active (registry current), then unit5 is active (registry current).\nr09: If unit7 is dried, then unit0 is active (power connected).\nr13: If unit5 is active (registry current), then unit3 is logged.\nr01: If unit0 is active (power connected), then unit0 is active (registry current).\nr04: If unit4 is clear (optically transparent), then unit3 is audited. If unit4 is staged and unit4 is inspected, then unit3 is audited.\nParagraph IDs in order: n07, n04, n20, n15, n18, n13, n17, n06, n11, n01, n19, n00, n21, n03, n05, n02\nProposed argument:\n[n07] Because unit4 is clipped and unit4 is logged and unit4 is shipped, unit0 is sound.\n\n[n04] Since unit4 is dried and unit4 is scanned and unit4 is audited, it follows that unit0 is sound.\n\n[n20] Given that unit0 is sound and unit0 is sound, we infer that unit4 is sound.\n\n[n15] It follows that unit7 is dried because the immediately preceding sound result holds.\n\n[n18] Because unit7 is dried, unit0 is active. The checks that unit4 is bagged and unit4 is tracked and unit4 is wrapped would imply that unit5 is clear and unit4 is clear and unit5 is clear, respectively.\n\n[n13] Since unit0 is active, it follows that unit0 is active.\n\n[n17] Given that unit0 is active, we infer that unit5 is active.\n\n[n06] It follows that unit3 is logged because the immediately preceding active result holds.\n\n[n11] Because unit3 is logged, unit0 is clear.\n\n[n01] Since unit0 is clear, it follows that unit0 is clear.\n\n[n19] Given that unit0 is clear and unit4 is numbered, we infer that unit4 is clear.\n\n[n00] It follows that unit3 is audited because the immediately preceding clear result holds.\n\n[n21] Because unit3 is audited, unit0 is open.\n\n[n03] Since unit0 is open, it follows that unit0 is open.\n\n[n05] Given that unit0 is open, we infer that unit5 is open.\n\n[n02] It follows that unit1 is dried because the immediately preceding open result holds.\nOriginal root n02.",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "arm": "L",
+              "block_id": "dual_judge/dev",
+              "item_id": "i206f6b8e68e5aabae8bf04e2857d1791",
+              "packet_sha256": "522c29e205b43aa114bb083ea7c59d77f35341a3a6423b504d65289bce88adc7",
+              "role": "lone",
+              "sample": 0,
+              "seed": 20260921,
+              "turn": 0
+            },
+            "model": "pro",
+            "response_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "explanation": {
+                  "type": "string"
+                },
+                "issue_type": {
+                  "enum": [
+                    "shift",
+                    "smuggle",
+                    "none",
+                    "unknown"
+                  ],
+                  "type": "string"
+                },
+                "locations": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 2,
+                  "type": "array"
+                },
+                "verdict": {
+                  "enum": [
+                    "approve",
+                    "reject",
+                    "unknown"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "verdict",
+                "issue_type",
+                "locations",
+                "explanation"
+              ],
+              "type": "object"
+            },
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "9822f07f2cfae17c1f07bc6568e81143f976457dd2515ce6ffd2b22641ea4e17",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "24b88b1350c4d09c107589fa8f2cd67fcd82b9b6a03da9f96043bb95b5e953f5"
+        },
+        {
+          "billed_input": 1548,
+          "native_tokens": 1409,
+          "request": {
+            "identity": "dev/ia16a766729f914abd691307ee67fec15/L/pro/lone/0",
+            "max_input_tokens": 7500,
+            "max_output_tokens": 1024,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence. Response schema: {\"additionalProperties\":false,\"properties\":{\"explanation\":{\"type\":\"string\"},\"issue_type\":{\"enum\":[\"shift\",\"smuggle\",\"none\",\"unknown\"],\"type\":\"string\"},\"locations\":{\"items\":{\"type\":\"string\"},\"maxItems\":2,\"type\":\"array\"},\"verdict\":{\"enum\":[\"approve\",\"reject\",\"unknown\"],\"type\":\"string\"}},\"required\":[\"verdict\",\"issue_type\",\"locations\",\"explanation\"],\"type\":\"object\"}",
+                "role": "system"
+              },
+              {
+                "content": "Dossier ia16a766729f914abd691307ee67fec15\nDeclared premises:\nn10: Rules r02, r11, r08 are declared.\nn12: Rules r01, r06, r14 are declared.\nn13: Rules r09, r10, r12 are declared.\nn09: Rules r05, r13, r07, r00 are declared.\nn17: unit2 is bagged; unit2 is logged; unit2 is listed; unit2 is stored; unit2 is routed; unit2 is shipped; unit2 is queued. The checks that unit2 is documented and unit2 is boxed and unit2 is retained remain unassumed.\nn11: Rules r15, r03, r04 are declared.\nAuthoritative records:\nr15: If unit4 is stored, then unit7 is active (power connected).\nr03: If unit7 is clear (contamination absent), then unit7 is clear (optically transparent).\nr01: If unit2 is stored and unit2 is routed and unit2 is shipped, then unit7 is ready (staffing arranged). If unit3 is audited and unit3 is scheduled, then unit7 is ready (staffing arranged).\nr14: If unit3 is clear (optically transparent), then unit6 is shipped. If unit3 is audited and unit3 is scheduled, then unit6 is shipped.\nr08: If unit6 is shipped, then unit7 is open (account enabled).\nr00: If unit2 is open (seal removed), then unit5 is stored.\nr12: If unit7 is open (account enabled), then unit7 is open (seal removed).\nr05: If unit2 is bagged and unit2 is logged and unit2 is listed, then unit7 is ready (packing completed). If unit3 is audited and unit3 is scheduled, then unit7 is ready (packing completed). The sample from lot unit2 is unit3.\nr06: If unit7 is active (registry current), then unit3 is active (registry current).\nr04: If unit7 is open (seal removed), then unit2 is open (seal removed).\nr11: If unit3 is active (registry current), then unit6 is logged.\nr13: If unit7 is active (power connected), then unit7 is active (registry current).\nr02: If unit7 is ready (packing completed) and unit7 is ready (staffing arranged), then unit2 is ready (staffing arranged).\nr10: If unit6 is logged, then unit7 is clear (contamination absent).\nr07: If unit7 is clear (optically transparent) and unit2 is documented, then unit3 is clear (contamination absent). If unit7 is clear (optically transparent) and unit2 is queued, then unit3 is clear (optically transparent). If unit7 is clear (optically transparent) and unit2 is boxed, then unit2 is clear (contamination absent). If unit7 is clear (optically transparent) and unit2 is retained, then unit2 is clear (optically transparent).\nr09: If unit7 is ready (staffing arranged) and unit2 is ready (staffing arranged), then unit4 is stored.\nParagraph IDs in order: n00, n02, n07, n16, n05, n20, n06, n03, n14, n21, n01, n15, n08, n18, n04, n19\nProposed argument:\n[n00] Because unit2 is bagged and unit2 is logged and unit2 is listed, unit7 is ready.\n\n[n02] Since unit2 is stored and unit2 is routed and unit2 is shipped, it follows that unit7 is ready.\n\n[n07] Given that unit7 is ready and unit7 is ready, we infer that unit2 is ready.\n\n[n16] It follows that unit4 is stored because unit7 is ready and the immediately preceding ready result holds.\n\n[n05] Because unit4 is stored, unit7 is active.\n\n[n20] Since unit7 is active, it follows that unit7 is active.\n\n[n06] Given that unit7 is active, we infer that unit3 is active.\n\n[n03] It follows that unit6 is logged because the immediately preceding active result holds.\n\n[n14] Because unit6 is logged, unit7 is clear.\n\n[n21] Since unit7 is clear, it follows that unit7 is clear. The checks that unit2 is documented and unit2 is boxed and unit2 is retained would establish that unit3 is clear and unit2 is clear and unit2 is clear, respectively.\n\n[n01] Given that unit7 is clear and unit2 is queued, we infer that unit3 is clear.\n\n[n15] It follows that unit6 is shipped because the immediately preceding clear result holds.\n\n[n08] Because unit6 is shipped, unit7 is open.\n\n[n18] Since unit7 is open, it follows that unit7 is open.\n\n[n04] Given that unit7 is open, we infer that unit2 is open.\n\n[n19] It follows that unit5 is stored because the immediately preceding open result holds.\nOriginal root n19.",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "arm": "L",
+              "block_id": "dual_judge/dev",
+              "item_id": "ia16a766729f914abd691307ee67fec15",
+              "packet_sha256": "e78e99e08b6940e606cf22dc89eb6c80d022183735f5d3d46cb97d45b0c174f0",
+              "role": "lone",
+              "sample": 0,
+              "seed": 20260921,
+              "turn": 0
+            },
+            "model": "pro",
+            "response_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "explanation": {
+                  "type": "string"
+                },
+                "issue_type": {
+                  "enum": [
+                    "shift",
+                    "smuggle",
+                    "none",
+                    "unknown"
+                  ],
+                  "type": "string"
+                },
+                "locations": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 2,
+                  "type": "array"
+                },
+                "verdict": {
+                  "enum": [
+                    "approve",
+                    "reject",
+                    "unknown"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "verdict",
+                "issue_type",
+                "locations",
+                "explanation"
+              ],
+              "type": "object"
+            },
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "85d8f79645df6c16634b3c977fabf79d51ab10d625d82fbcf0d4eb253f65ed40",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "5596cd22355eebe3abf6826f48ab256d8e8d5bb5fad715fabf7054cff00b5c82"
+        },
+        {
+          "billed_input": 2188,
+          "native_tokens": 2049,
+          "request": {
+            "identity": "dev/i0e03b71bf431d179be0530712161e8af/S/pro/judge/0",
+            "max_input_tokens": 10000,
+            "max_output_tokens": 1024,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence. Response schema: {\"additionalProperties\":false,\"properties\":{\"explanation\":{\"type\":\"string\"},\"issue_type\":{\"enum\":[\"shift\",\"smuggle\",\"none\",\"unknown\"],\"type\":\"string\"},\"locations\":{\"items\":{\"type\":\"string\"},\"maxItems\":2,\"type\":\"array\"},\"verdict\":{\"enum\":[\"approve\",\"reject\",\"unknown\"],\"type\":\"string\"}},\"required\":[\"verdict\",\"issue_type\",\"locations\",\"explanation\"],\"type\":\"object\"}",
+                "role": "system"
+              },
+              {
+                "content": "Dossier i0e03b71bf431d179be0530712161e8af\nDeclared premises:\nn05: Rules r00, r14, r12, r05 are declared.\nn06: Rules r03, r07, r08 are declared.\nn19: Rules r06, r10, r13 are declared.\nn09: unit5 is bundled; unit5 is retained; unit5 is packed; unit5 is mounted; unit5 is routed; unit5 is rated; unit5 is coded. The checks that unit5 is stacked and unit5 is checked and unit5 is scanned remain unassumed.\nn11: Rules r09, r04, r11 are declared.\nn21: Rules r01, r02, r15 are declared.\nAuthoritative records:\nr08: If unit1 is cleared (payment settled), then unit5 is balanced.\nr09: If unit3 is ready (packing completed) and unit5 is ready (packing completed), then unit5 is weighed-in.\nr03: If unit5 is mounted and unit5 is routed and unit5 is rated, then unit3 is ready (packing completed). If unit5 is tied and unit5 is boxed, then unit3 is ready (packing completed).\nr01: If unit5 is weighed-in, then unit3 is sound (casing intact).\nr15: If unit3 is stable (shape retained) and unit5 is stacked, then unit1 is stable (temperature constant). If unit3 is stable (shape retained) and unit5 is checked, then unit1 is stable (shape retained). If unit3 is stable (shape retained) and unit5 is coded, then unit5 is stable (temperature constant). If unit3 is stable (shape retained) and unit5 is scanned, then unit5 is stable (shape retained).\nr11: If unit3 is stable (temperature constant), then unit3 is stable (shape retained).\nr04: If unit5 is logged, then unit3 is cleared (inspection passed).\nr00: If unit5 is bundled and unit5 is retained and unit5 is packed, then unit3 is ready (staffing arranged). If unit5 is tied and unit5 is boxed, then unit3 is ready (staffing arranged). Lot unit5 supplied sample unit1.\nr12: If unit3 is cleared (payment settled), then unit1 is cleared (payment settled).\nr13: If unit5 is balanced, then unit3 is stable (temperature constant).\nr07: If unit3 is sound (signal audible), then unit5 is sound (signal audible).\nr05: If unit5 is stable (shape retained), then unit5 is calibrated. If unit5 is tied and unit5 is boxed, then unit5 is calibrated.\nr02: If unit3 is cleared (inspection passed), then unit3 is cleared (payment settled).\nr06: If unit3 is ready (staffing arranged) and unit3 is ready (packing completed), then unit5 is ready (packing completed).\nr14: If unit3 is sound (casing intact), then unit3 is sound (signal audible).\nr10: If unit5 is sound (signal audible), then unit5 is logged.\nParagraph IDs in order: n18, n07, n03, n08, n16, n12, n04, n20, n10, n02, n17, n00, n13, n01, n15, n14\nProposed argument:\n[n18] Because unit5 is bundled and unit5 is retained and unit5 is packed, unit3 is ready. The checks that unit5 is stacked and unit5 is checked and unit5 is scanned would imply that unit1 is stable and unit1 is stable and unit5 is stable, respectively.\n\n[n07] Since unit5 is mounted and unit5 is routed and unit5 is rated, it follows that unit3 is ready.\n\n[n03] Given that unit3 is ready and unit3 is ready, we infer that unit5 is ready.\n\n[n08] It follows that unit5 is weighed-in because unit3 is ready and the immediately preceding ready result holds.\n\n[n16] Because unit5 is weighed-in, unit3 is sound.\n\n[n12] Since unit3 is sound, it follows that unit3 is sound.\n\n[n04] Given that unit3 is sound, we infer that unit5 is sound.\n\n[n20] It follows that unit5 is logged because the immediately preceding sound result holds.\n\n[n10] Because unit5 is logged, unit3 is cleared.\n\n[n02] Since unit3 is cleared, it follows that unit3 is cleared.\n\n[n17] Given that unit3 is cleared, we infer that unit1 is cleared.\n\n[n00] It follows that unit5 is balanced because the immediately preceding cleared result holds.\n\n[n13] Because unit5 is balanced, unit3 is stable.\n\n[n01] Since unit3 is stable, it follows that unit3 is stable.\n\n[n15] Given that unit3 is stable and unit5 is coded, we infer that unit5 is stable.\n\n[n14] It follows that unit5 is calibrated because the immediately preceding stable result holds.\nOriginal root n14.\nProtocol record:\n[{\"item_id\":\"i0e03b71bf431d179be0530712161e8af\",\"stage\":\"author\",\"text\":\"The justification is flawed because it conflates two different senses of the word \\\"stable\\\". Node n15 establishes that unit5 is stable (temperature constant) according to rule r15. However, node n14 attempts to use this to satisfy the condition for rule r05, which explicitly requires unit5 to be stable (shape retained) in order to conclude that unit5 is calibrated. \\n\\n| Node | Claim | Premise | Rule |\\n|---|---|---|---|\\n| n18 | unit3 is ready (staffing arranged) | unit5 is bundled, unit5 is retained, unit5 is packed | r00 |\\n| n07 | unit3 is ready (packing completed) | unit5 is mounted, unit5 is routed, unit5 is rated | r03 |\\n| n03 | unit5 is ready (packing completed) | unit3 is ready (staffing arranged), unit3 is ready (packing completed) | r06 |\\n| n08 | unit5 is weighed-in | unit3 is ready (packing completed), unit5 is ready (packing completed) | r09 |\\n| n16 | unit3 is sound (casing intact) | unit5 is weighed-in | r01 |\\n| n12 | unit3 is sound (signal audible) | unit3 is sound (casing intact) | r14 |\\n| n04 | unit5 is sound (signal audible) | unit3 is sound (signal audible) | r07 |\\n| n20 | unit5 is logged |\"},{\"item_id\":\"i0e03b71bf431d179be0530712161e8af\",\"stage\":\"critic\",\"text\":\"The authored critique is correct. The justification incorrectly conflates two distinct senses of the word \\\"stable\\\". Node n15 establishes that unit5 is stable (temperature constant) using rule r15, but node n14 attempts to apply rule r05, which explicitly requires unit5 to be stable (shape retained) to conclude that unit5 is calibrated.\\n\\nApproved.\"},{\"item_id\":\"i0e03b71bf431d179be0530712161e8af\",\"stage\":\"defender\",\"text\":\"The original justification is flawed because it equivocates on the term \\\"stable\\\". Node n15 establishes that unit5 is stable (temperature constant) using rule r15. However, node n14 attempts to use this result to satisfy the condition for rule r05, which explicitly requires unit5 to be stable (shape retained) in order to conclude that unit5 is calibrated. This conflation of distinct senses renders the argument invalid.\\n\\nReject\"}]",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "arm": "S",
+              "block_id": "dual_judge/dev",
+              "item_id": "i0e03b71bf431d179be0530712161e8af",
+              "packet_sha256": "56d67e1df48ee185a78416ce4fd22195f9f4f62bbf5da7ec35533e6d6a42986c",
+              "role": "judge",
+              "sample": 0,
+              "seed": 20260921,
+              "turn": 0
+            },
+            "model": "pro",
+            "response_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "explanation": {
+                  "type": "string"
+                },
+                "issue_type": {
+                  "enum": [
+                    "shift",
+                    "smuggle",
+                    "none",
+                    "unknown"
+                  ],
+                  "type": "string"
+                },
+                "locations": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 2,
+                  "type": "array"
+                },
+                "verdict": {
+                  "enum": [
+                    "approve",
+                    "reject",
+                    "unknown"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "verdict",
+                "issue_type",
+                "locations",
+                "explanation"
+              ],
+              "type": "object"
+            },
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "e3a3f8392cea9f874c8b58e06f14d7dd41c6d64d92fe92bdca42d74a09b7776c",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "ec5a2dd823382f96d7970fa32a33653b83d0e77f8e243f36139134f1d1b053b7"
+        }
+      ]
+    },
+    "27646b0ac8a639fd293c516b1ad8953d7ba87f0076453ea7dae291a6728d38fc": {
+      "overhead_tokens": 0,
+      "samples": [
+        {
+          "billed_input": 284,
+          "native_tokens": 284,
+          "request": {
+            "identity": "calibration/p5/gemini/v9/27646b0ac8a639fd293c516b1ad8953d7ba87f0076453ea7dae291a6728d38fc",
+            "max_input_tokens": 2048,
+            "max_output_tokens": 4096,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Challenge source alignment or an omitted leaf; propose splits if divergent uses are cited. Return JSON {\"audit\":\"...\",\"queries\":[],\"splits\":[]}. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+                "role": "system"
+              },
+              {
+                "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "block_id": "gemini-config-calibration-v9",
+              "config_sha256": "27646b0ac8a639fd293c516b1ad8953d7ba87f0076453ea7dae291a6728d38fc",
+              "role": "calibration"
+            },
+            "model": "pro",
+            "response_schema": null,
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "9d21661ec54dc07d7f1664fbbc65b09d979074623cd19d36ca60172316577284",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "29795c8cd943bc1b8a7bca5fe6b0eeabe5083c9714fe71a72281797c22c91ab6"
         }
       ]
     },
@@ -179,6 +511,42 @@
           "response_sha256": "0ef568a6bc32c072cd109be18113853d84656efa7205c1f4519f8e398155579a",
           "revision": "gemini-3.1-pro-preview",
           "wire_sha256": "86b38689bd51b06e7e57fad1ef68d4eafd96c0376da29af1bf17f3824a63ce47"
+        },
+        {
+          "billed_input": 2285,
+          "native_tokens": 2285,
+          "request": {
+            "identity": "dev/ia16a766729f914abd691307ee67fec15/VE/pro/critic/0",
+            "max_input_tokens": 5500,
+            "max_output_tokens": 1024,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Challenge source alignment or an omitted leaf; propose splits if divergent uses are cited. Return JSON {\"audit\":\"...\",\"queries\":[],\"splits\":[]}. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+                "role": "system"
+              },
+              {
+                "content": "Dossier ia16a766729f914abd691307ee67fec15\nDeclared premises:\nn10: Rules r02, r11, r08 are declared.\nn12: Rules r01, r06, r14 are declared.\nn13: Rules r09, r10, r12 are declared.\nn09: Rules r05, r13, r07, r00 are declared.\nn17: unit2 is bagged; unit2 is logged; unit2 is listed; unit2 is stored; unit2 is routed; unit2 is shipped; unit2 is queued. The checks that unit2 is documented and unit2 is boxed and unit2 is retained remain unassumed.\nn11: Rules r15, r03, r04 are declared.\nAuthoritative records:\nr15: If unit4 is stored, then unit7 is active (power connected).\nr03: If unit7 is clear (contamination absent), then unit7 is clear (optically transparent).\nr01: If unit2 is stored and unit2 is routed and unit2 is shipped, then unit7 is ready (staffing arranged). If unit3 is audited and unit3 is scheduled, then unit7 is ready (staffing arranged).\nr14: If unit3 is clear (optically transparent), then unit6 is shipped. If unit3 is audited and unit3 is scheduled, then unit6 is shipped.\nr08: If unit6 is shipped, then unit7 is open (account enabled).\nr00: If unit2 is open (seal removed), then unit5 is stored.\nr12: If unit7 is open (account enabled), then unit7 is open (seal removed).\nr05: If unit2 is bagged and unit2 is logged and unit2 is listed, then unit7 is ready (packing completed). If unit3 is audited and unit3 is scheduled, then unit7 is ready (packing completed). The sample from lot unit2 is unit3.\nr06: If unit7 is active (registry current), then unit3 is active (registry current).\nr04: If unit7 is open (seal removed), then unit2 is open (seal removed).\nr11: If unit3 is active (registry current), then unit6 is logged.\nr13: If unit7 is active (power connected), then unit7 is active (registry current).\nr02: If unit7 is ready (packing completed) and unit7 is ready (staffing arranged), then unit2 is ready (staffing arranged).\nr10: If unit6 is logged, then unit7 is clear (contamination absent).\nr07: If unit7 is clear (optically transparent) and unit2 is documented, then unit3 is clear (contamination absent). If unit7 is clear (optically transparent) and unit2 is queued, then unit3 is clear (optically transparent). If unit7 is clear (optically transparent) and unit2 is boxed, then unit2 is clear (contamination absent). If unit7 is clear (optically transparent) and unit2 is retained, then unit2 is clear (optically transparent).\nr09: If unit7 is ready (staffing arranged) and unit2 is ready (staffing arranged), then unit4 is stored.\nParagraph IDs in order: n00, n02, n07, n16, n05, n20, n06, n03, n14, n21, n01, n15, n08, n18, n04, n19\nProposed argument:\n[n00] Because unit2 is bagged and unit2 is logged and unit2 is listed, unit7 is ready.\n\n[n02] Since unit2 is stored and unit2 is routed and unit2 is shipped, it follows that unit7 is ready.\n\n[n07] Given that unit7 is ready and unit7 is ready, we infer that unit2 is ready.\n\n[n16] It follows that unit4 is stored because unit7 is ready and the immediately preceding ready result holds.\n\n[n05] Because unit4 is stored, unit7 is active.\n\n[n20] Since unit7 is active, it follows that unit7 is active.\n\n[n06] Given that unit7 is active, we infer that unit3 is active.\n\n[n03] It follows that unit6 is logged because the immediately preceding active result holds.\n\n[n14] Because unit6 is logged, unit7 is clear.\n\n[n21] Since unit7 is clear, it follows that unit7 is clear. The checks that unit2 is documented and unit2 is boxed and unit2 is retained would establish that unit3 is clear and unit2 is clear and unit2 is clear, respectively.\n\n[n01] Given that unit7 is clear and unit2 is queued, we infer that unit3 is clear.\n\n[n15] It follows that unit6 is shipped because the immediately preceding clear result holds.\n\n[n08] Because unit6 is shipped, unit7 is open.\n\n[n18] Since unit7 is open, it follows that unit7 is open.\n\n[n04] Given that unit7 is open, we infer that unit2 is open.\n\n[n19] It follows that unit5 is stored because the immediately preceding open result holds.\nOriginal root n19.\nVE node block:\nn00 (n17): Because unit2 is bagged and unit2 is logged and unit2 is listed, unit7 is ready.\nn02 (n17): Since unit2 is stored and unit2 is routed and unit2 is shipped, it follows that unit7 is ready.\nn07 (n00,n02): Given that unit7 is ready and unit7 is ready, we infer that unit2 is ready.\nn16 (n02,n07): It follows that unit4 is stored because unit7 is ready and the immediately preceding ready result holds.\nn05 (n16): Because unit4 is stored, unit7 is active.\nn20 (n05): Since unit7 is active, it follows that unit7 is active.\nn06 (n20): Given that unit7 is active, we infer that unit3 is active.\nn03 (n00,n06): It follows that unit6 is logged because the immediately preceding active result holds.\nn14 (n05,n03): Because unit6 is logged, unit7 is clear.\nn21 (n14): Since unit7 is clear, it follows that unit7 is clear. The checks that unit2 is documented and unit2 is boxed and unit2 is retained would establish that unit3 is clear and unit2 is clear and unit2 is clear, respectively.\nn01 (n06,n21): Given that unit7 is clear and unit2 is queued, we infer that unit3 is clear.\nn15 (n14,n01): It follows that unit6 is shipped because the immediately preceding clear result holds.\nn08 (n15): Because unit6 is shipped, unit7 is open.\nn18 (n08): Since unit7 is open, it follows that unit7 is open.\nn04 (n18): Given that unit7 is open, we infer that unit2 is open.\nn19 (n04): It follows that unit5 is stored because the immediately preceding open result holds.\nProtocol record:\n[{\"item_id\":\"ia16a766729f914abd691307ee67fec15\",\"stage\":\"repair\",\"text\":\"```json\\n{\\n  \\\"environment\\\": \\\"VE core@0 environment\\\",\\n  \\\"claims\\\": [\\n    {\\n      \\\"id\\\": \\\"n10\\\",\\n      \\\"source\\\": \\\"Rules r02, r11, r08 are declared.\\\"\\n    },\\n    {\\n      \\\"id\\\": \\\"n12\\\",\\n      \\\"source\\\": \\\"Rules r01, r06, r14 are declared.\\\"\\n    },\\n    {\\n      \\\"id\\\": \\\"n13\\\",\\n      \\\"source\\\": \\\"Rules r09, r10, r12 are declared.\\\"\\n    },\\n    {\\n      \\\"id\\\": \\\"n09\\\",\\n      \\\"source\\\": \\\"Rules r05, r13, r07, r0\"},{\"item_id\":\"ia16a766729f914abd691307ee67fec15\",\"record\":{\"error\":\"Expecting value: line 1 column 1 (char 0)\",\"ok\":false,\"record_sha256\":\"13270b6f2c60e7e05218baafc325f24c1c668f59495408a880e3ddacc6f05b25\"},\"stage\":\"diagnostics\"}]",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "arm": "VE",
+              "block_id": "dual_judge/dev",
+              "item_id": "ia16a766729f914abd691307ee67fec15",
+              "packet_sha256": "e78e99e08b6940e606cf22dc89eb6c80d022183735f5d3d46cb97d45b0c174f0",
+              "role": "critic",
+              "sample": 0,
+              "seed": 20260921,
+              "turn": 0
+            },
+            "model": "pro",
+            "response_schema": null,
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "b723c97153b7e33db7c6746bdb01471f8d00c656de78438c40ec0b206f1f7d8f",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "bfc18fe9f9750df86f0ab11616a44b29be4f37bc975b0c87997dc99f0bcbf849"
         }
       ]
     },
@@ -215,6 +583,152 @@
           "response_sha256": "d5ced8e113ed04015c6edfbf80e96905216c449daaeb8e3b5d464dabf93c74f8",
           "revision": "gemini-3.1-pro-preview",
           "wire_sha256": "9430e6cb95c38837af61e7a80e52fef9d816a11ff3b43cadd56c633d0a63afe1"
+        },
+        {
+          "billed_input": 1784,
+          "native_tokens": 1784,
+          "request": {
+            "identity": "dev/i0e03b71bf431d179be0530712161e8af/S/pro/defender/0",
+            "max_input_tokens": 7000,
+            "max_output_tokens": 1024,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Independently revise the audit against the same records; seek errors.",
+                "role": "system"
+              },
+              {
+                "content": "Dossier i0e03b71bf431d179be0530712161e8af\nDeclared premises:\nn05: Rules r00, r14, r12, r05 are declared.\nn06: Rules r03, r07, r08 are declared.\nn19: Rules r06, r10, r13 are declared.\nn09: unit5 is bundled; unit5 is retained; unit5 is packed; unit5 is mounted; unit5 is routed; unit5 is rated; unit5 is coded. The checks that unit5 is stacked and unit5 is checked and unit5 is scanned remain unassumed.\nn11: Rules r09, r04, r11 are declared.\nn21: Rules r01, r02, r15 are declared.\nAuthoritative records:\nr08: If unit1 is cleared (payment settled), then unit5 is balanced.\nr09: If unit3 is ready (packing completed) and unit5 is ready (packing completed), then unit5 is weighed-in.\nr03: If unit5 is mounted and unit5 is routed and unit5 is rated, then unit3 is ready (packing completed). If unit5 is tied and unit5 is boxed, then unit3 is ready (packing completed).\nr01: If unit5 is weighed-in, then unit3 is sound (casing intact).\nr15: If unit3 is stable (shape retained) and unit5 is stacked, then unit1 is stable (temperature constant). If unit3 is stable (shape retained) and unit5 is checked, then unit1 is stable (shape retained). If unit3 is stable (shape retained) and unit5 is coded, then unit5 is stable (temperature constant). If unit3 is stable (shape retained) and unit5 is scanned, then unit5 is stable (shape retained).\nr11: If unit3 is stable (temperature constant), then unit3 is stable (shape retained).\nr04: If unit5 is logged, then unit3 is cleared (inspection passed).\nr00: If unit5 is bundled and unit5 is retained and unit5 is packed, then unit3 is ready (staffing arranged). If unit5 is tied and unit5 is boxed, then unit3 is ready (staffing arranged). Lot unit5 supplied sample unit1.\nr12: If unit3 is cleared (payment settled), then unit1 is cleared (payment settled).\nr13: If unit5 is balanced, then unit3 is stable (temperature constant).\nr07: If unit3 is sound (signal audible), then unit5 is sound (signal audible).\nr05: If unit5 is stable (shape retained), then unit5 is calibrated. If unit5 is tied and unit5 is boxed, then unit5 is calibrated.\nr02: If unit3 is cleared (inspection passed), then unit3 is cleared (payment settled).\nr06: If unit3 is ready (staffing arranged) and unit3 is ready (packing completed), then unit5 is ready (packing completed).\nr14: If unit3 is sound (casing intact), then unit3 is sound (signal audible).\nr10: If unit5 is sound (signal audible), then unit5 is logged.\nParagraph IDs in order: n18, n07, n03, n08, n16, n12, n04, n20, n10, n02, n17, n00, n13, n01, n15, n14\nProposed argument:\n[n18] Because unit5 is bundled and unit5 is retained and unit5 is packed, unit3 is ready. The checks that unit5 is stacked and unit5 is checked and unit5 is scanned would imply that unit1 is stable and unit1 is stable and unit5 is stable, respectively.\n\n[n07] Since unit5 is mounted and unit5 is routed and unit5 is rated, it follows that unit3 is ready.\n\n[n03] Given that unit3 is ready and unit3 is ready, we infer that unit5 is ready.\n\n[n08] It follows that unit5 is weighed-in because unit3 is ready and the immediately preceding ready result holds.\n\n[n16] Because unit5 is weighed-in, unit3 is sound.\n\n[n12] Since unit3 is sound, it follows that unit3 is sound.\n\n[n04] Given that unit3 is sound, we infer that unit5 is sound.\n\n[n20] It follows that unit5 is logged because the immediately preceding sound result holds.\n\n[n10] Because unit5 is logged, unit3 is cleared.\n\n[n02] Since unit3 is cleared, it follows that unit3 is cleared.\n\n[n17] Given that unit3 is cleared, we infer that unit1 is cleared.\n\n[n00] It follows that unit5 is balanced because the immediately preceding cleared result holds.\n\n[n13] Because unit5 is balanced, unit3 is stable.\n\n[n01] Since unit3 is stable, it follows that unit3 is stable.\n\n[n15] Given that unit3 is stable and unit5 is coded, we infer that unit5 is stable.\n\n[n14] It follows that unit5 is calibrated because the immediately preceding stable result holds.\nOriginal root n14.\nProtocol record:\n[{\"item_id\":\"i0e03b71bf431d179be0530712161e8af\",\"stage\":\"author\",\"text\":\"The justification is flawed because it conflates two different senses of the word \\\"stable\\\". Node n15 establishes that unit5 is stable (temperature constant) according to rule r15. However, node n14 attempts to use this to satisfy the condition for rule r05, which explicitly requires unit5 to be stable (shape retained) in order to conclude that unit5 is calibrated. \\n\\n| Node | Claim | Premise | Rule |\\n|---|---|---|---|\\n| n18 | unit3 is ready (staffing arranged) | unit5 is bundled, unit5 is retained, unit5 is packed | r00 |\\n| n07 | unit3 is ready (packing completed) | unit5 is mounted, unit5 is routed, unit5 is rated | r03 |\\n| n03 | unit5 is ready (packing completed) | unit3 is ready (staffing arranged), unit3 is ready (packing completed) | r06 |\\n| n08 | unit5 is weighed-in | unit3 is ready (packing completed), unit5 is ready (packing completed) | r09 |\\n| n16 | unit3 is sound (casing intact) | unit5 is weighed-in | r01 |\\n| n12 | unit3 is sound (signal audible) | unit3 is sound (casing intact) | r14 |\\n| n04 | unit5 is sound (signal audible) | unit3 is sound (signal audible) | r07 |\\n| n20 | unit5 is logged |\"},{\"item_id\":\"i0e03b71bf431d179be0530712161e8af\",\"stage\":\"critic\",\"text\":\"The authored critique is correct. The justification incorrectly conflates two distinct senses of the word \\\"stable\\\". Node n15 establishes that unit5 is stable (temperature constant) using rule r15, but node n14 attempts to apply rule r05, which explicitly requires unit5 to be stable (shape retained) to conclude that unit5 is calibrated.\\n\\nApproved.\"}]",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "arm": "S",
+              "block_id": "dual_judge/dev",
+              "item_id": "i0e03b71bf431d179be0530712161e8af",
+              "packet_sha256": "56d67e1df48ee185a78416ce4fd22195f9f4f62bbf5da7ec35533e6d6a42986c",
+              "role": "defender",
+              "sample": 0,
+              "seed": 20260921,
+              "turn": 0
+            },
+            "model": "pro",
+            "response_schema": null,
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "16541daa1d0a8affcb5633c4a16ce864dee166656408dd1ce143cdc8dbab4776",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "23e086dcfdcd3583e561d46d3580b734162ae1c42365ffc957e2e8057aa0abc0"
+        }
+      ]
+    },
+    "3f7690b66ac2901b129e3f06aaa30036a8a2fe6fea36097d569199e053a7e64a": {
+      "overhead_tokens": 0,
+      "samples": [
+        {
+          "billed_input": 101,
+          "native_tokens": 101,
+          "request": {
+            "identity": "calibration/p5/gemini/v9/3f7690b66ac2901b129e3f06aaa30036a8a2fe6fea36097d569199e053a7e64a",
+            "max_input_tokens": 2048,
+            "max_output_tokens": 4096,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Seek errors. Produce a claim/premise/use table from the common packet.",
+                "role": "system"
+              },
+              {
+                "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "block_id": "gemini-config-calibration-v9",
+              "config_sha256": "3f7690b66ac2901b129e3f06aaa30036a8a2fe6fea36097d569199e053a7e64a",
+              "role": "calibration"
+            },
+            "model": "pro",
+            "response_schema": null,
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "5260ebec531411336ded852bb1afc289e2350a7974f06e7ef48f49ca1403bdc0",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "cd25ce7b103254eca2861c0373a68640eb8f4781039ab55f7d6f88aeede17b2a"
+        }
+      ]
+    },
+    "44929d316920a67025f09a833bee09731d9c7a63f72ef60106e4febca5675dbe": {
+      "overhead_tokens": 139,
+      "samples": [
+        {
+          "billed_input": 427,
+          "native_tokens": 288,
+          "request": {
+            "identity": "calibration/p5/gemini/v9/44929d316920a67025f09a833bee09731d9c7a63f72ef60106e4febca5675dbe",
+            "max_input_tokens": 2048,
+            "max_output_tokens": 4096,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence. Locations are zero to two distinct paragraph or declared-premise node IDs (nNN); rule/record IDs (rNN) belong in explanation only. Use a nonempty explanation. Return [] for an approval or when no location is identified. An unknown verdict is permitted and is not a successful detection or completion. Response schema: {\"additionalProperties\":false,\"properties\":{\"explanation\":{\"type\":\"string\"},\"issue_type\":{\"enum\":[\"shift\",\"smuggle\",\"none\",\"unknown\"],\"type\":\"string\"},\"locations\":{\"items\":{\"type\":\"string\"},\"maxItems\":2,\"type\":\"array\"},\"verdict\":{\"enum\":[\"approve\",\"reject\",\"unknown\"],\"type\":\"string\"}},\"required\":[\"verdict\",\"issue_type\",\"locations\",\"explanation\"],\"type\":\"object\"}",
+                "role": "system"
+              },
+              {
+                "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "block_id": "gemini-config-calibration-v9",
+              "config_sha256": "44929d316920a67025f09a833bee09731d9c7a63f72ef60106e4febca5675dbe",
+              "role": "calibration"
+            },
+            "model": "pro",
+            "response_schema": {
+              "additionalProperties": false,
+              "properties": {
+                "explanation": {
+                  "type": "string"
+                },
+                "issue_type": {
+                  "enum": [
+                    "shift",
+                    "smuggle",
+                    "none",
+                    "unknown"
+                  ],
+                  "type": "string"
+                },
+                "locations": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 2,
+                  "type": "array"
+                },
+                "verdict": {
+                  "enum": [
+                    "approve",
+                    "reject",
+                    "unknown"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "verdict",
+                "issue_type",
+                "locations",
+                "explanation"
+              ],
+              "type": "object"
+            },
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "3719d3fa9d9952ab573668e0b0854756eb99588907d3a85cc1852c3da3beff58",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "d766fb1439a784bd00092797dfa267e4953b83327e759572f581ea8360ffb66b"
         }
       ]
     },
@@ -295,6 +809,78 @@
           "response_sha256": "c12315fb7d09bcb2860844613b4de5f3367f61c2ab5f682f7bc4885fd639d259",
           "revision": "gemini-3.1-pro-preview",
           "wire_sha256": "62984244dcedf505732db2ee5889a488f25fbf5e06e8e4a9b3fc7a5edc66a12c"
+        },
+        {
+          "billed_input": 1915,
+          "native_tokens": 1915,
+          "request": {
+            "identity": "dev/ia16a766729f914abd691307ee67fec15/VE/pro/author/0",
+            "max_input_tokens": 3000,
+            "max_output_tokens": 1024,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Defend the proposed argument, faithfully formalising uses and premises. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+                "role": "system"
+              },
+              {
+                "content": "Dossier ia16a766729f914abd691307ee67fec15\nDeclared premises:\nn10: Rules r02, r11, r08 are declared.\nn12: Rules r01, r06, r14 are declared.\nn13: Rules r09, r10, r12 are declared.\nn09: Rules r05, r13, r07, r00 are declared.\nn17: unit2 is bagged; unit2 is logged; unit2 is listed; unit2 is stored; unit2 is routed; unit2 is shipped; unit2 is queued. The checks that unit2 is documented and unit2 is boxed and unit2 is retained remain unassumed.\nn11: Rules r15, r03, r04 are declared.\nAuthoritative records:\nr15: If unit4 is stored, then unit7 is active (power connected).\nr03: If unit7 is clear (contamination absent), then unit7 is clear (optically transparent).\nr01: If unit2 is stored and unit2 is routed and unit2 is shipped, then unit7 is ready (staffing arranged). If unit3 is audited and unit3 is scheduled, then unit7 is ready (staffing arranged).\nr14: If unit3 is clear (optically transparent), then unit6 is shipped. If unit3 is audited and unit3 is scheduled, then unit6 is shipped.\nr08: If unit6 is shipped, then unit7 is open (account enabled).\nr00: If unit2 is open (seal removed), then unit5 is stored.\nr12: If unit7 is open (account enabled), then unit7 is open (seal removed).\nr05: If unit2 is bagged and unit2 is logged and unit2 is listed, then unit7 is ready (packing completed). If unit3 is audited and unit3 is scheduled, then unit7 is ready (packing completed). The sample from lot unit2 is unit3.\nr06: If unit7 is active (registry current), then unit3 is active (registry current).\nr04: If unit7 is open (seal removed), then unit2 is open (seal removed).\nr11: If unit3 is active (registry current), then unit6 is logged.\nr13: If unit7 is active (power connected), then unit7 is active (registry current).\nr02: If unit7 is ready (packing completed) and unit7 is ready (staffing arranged), then unit2 is ready (staffing arranged).\nr10: If unit6 is logged, then unit7 is clear (contamination absent).\nr07: If unit7 is clear (optically transparent) and unit2 is documented, then unit3 is clear (contamination absent). If unit7 is clear (optically transparent) and unit2 is queued, then unit3 is clear (optically transparent). If unit7 is clear (optically transparent) and unit2 is boxed, then unit2 is clear (contamination absent). If unit7 is clear (optically transparent) and unit2 is retained, then unit2 is clear (optically transparent).\nr09: If unit7 is ready (staffing arranged) and unit2 is ready (staffing arranged), then unit4 is stored.\nParagraph IDs in order: n00, n02, n07, n16, n05, n20, n06, n03, n14, n21, n01, n15, n08, n18, n04, n19\nProposed argument:\n[n00] Because unit2 is bagged and unit2 is logged and unit2 is listed, unit7 is ready.\n\n[n02] Since unit2 is stored and unit2 is routed and unit2 is shipped, it follows that unit7 is ready.\n\n[n07] Given that unit7 is ready and unit7 is ready, we infer that unit2 is ready.\n\n[n16] It follows that unit4 is stored because unit7 is ready and the immediately preceding ready result holds.\n\n[n05] Because unit4 is stored, unit7 is active.\n\n[n20] Since unit7 is active, it follows that unit7 is active.\n\n[n06] Given that unit7 is active, we infer that unit3 is active.\n\n[n03] It follows that unit6 is logged because the immediately preceding active result holds.\n\n[n14] Because unit6 is logged, unit7 is clear.\n\n[n21] Since unit7 is clear, it follows that unit7 is clear. The checks that unit2 is documented and unit2 is boxed and unit2 is retained would establish that unit3 is clear and unit2 is clear and unit2 is clear, respectively.\n\n[n01] Given that unit7 is clear and unit2 is queued, we infer that unit3 is clear.\n\n[n15] It follows that unit6 is shipped because the immediately preceding clear result holds.\n\n[n08] Because unit6 is shipped, unit7 is open.\n\n[n18] Since unit7 is open, it follows that unit7 is open.\n\n[n04] Given that unit7 is open, we infer that unit2 is open.\n\n[n19] It follows that unit5 is stored because the immediately preceding open result holds.\nOriginal root n19.\nVE node block:\nn00 (n17): Because unit2 is bagged and unit2 is logged and unit2 is listed, unit7 is ready.\nn02 (n17): Since unit2 is stored and unit2 is routed and unit2 is shipped, it follows that unit7 is ready.\nn07 (n00,n02): Given that unit7 is ready and unit7 is ready, we infer that unit2 is ready.\nn16 (n02,n07): It follows that unit4 is stored because unit7 is ready and the immediately preceding ready result holds.\nn05 (n16): Because unit4 is stored, unit7 is active.\nn20 (n05): Since unit7 is active, it follows that unit7 is active.\nn06 (n20): Given that unit7 is active, we infer that unit3 is active.\nn03 (n00,n06): It follows that unit6 is logged because the immediately preceding active result holds.\nn14 (n05,n03): Because unit6 is logged, unit7 is clear.\nn21 (n14): Since unit7 is clear, it follows that unit7 is clear. The checks that unit2 is documented and unit2 is boxed and unit2 is retained would establish that unit3 is clear and unit2 is clear and unit2 is clear, respectively.\nn01 (n06,n21): Given that unit7 is clear and unit2 is queued, we infer that unit3 is clear.\nn15 (n14,n01): It follows that unit6 is shipped because the immediately preceding clear result holds.\nn08 (n15): Because unit6 is shipped, unit7 is open.\nn18 (n08): Since unit7 is open, it follows that unit7 is open.\nn04 (n18): Given that unit7 is open, we infer that unit2 is open.\nn19 (n04): It follows that unit5 is stored because the immediately preceding open result holds.",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "arm": "VE",
+              "block_id": "dual_judge/dev",
+              "item_id": "ia16a766729f914abd691307ee67fec15",
+              "packet_sha256": "e78e99e08b6940e606cf22dc89eb6c80d022183735f5d3d46cb97d45b0c174f0",
+              "role": "author",
+              "sample": 0,
+              "seed": 20260921,
+              "turn": 0
+            },
+            "model": "pro",
+            "response_schema": null,
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "43c3c9c47925104828145f28bfea7adb3961a44702fdef28786a8f7f1a2b5a8c",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "d1a4662a422273574ecaec4a2a0f3029b56acb616e1a177401ef97cdd1d35cad"
+        }
+      ]
+    },
+    "56dfd336e0ff46fddd4ae738508bd088b2cd105a07e40b66533e902b08675c5a": {
+      "overhead_tokens": 0,
+      "samples": [
+        {
+          "billed_input": 273,
+          "native_tokens": 273,
+          "request": {
+            "identity": "calibration/p5/gemini/v9/56dfd336e0ff46fddd4ae738508bd088b2cd105a07e40b66533e902b08675c5a",
+            "max_input_tokens": 2048,
+            "max_output_tokens": 4096,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Answer the critic, re-author affected uses and re-certify in a complete artifact. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+                "role": "system"
+              },
+              {
+                "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "block_id": "gemini-config-calibration-v9",
+              "config_sha256": "56dfd336e0ff46fddd4ae738508bd088b2cd105a07e40b66533e902b08675c5a",
+              "role": "calibration"
+            },
+            "model": "pro",
+            "response_schema": null,
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "76f5c5552647adabd95763136839fda10ba2f0e6e64191ef93d74937aa6cc745",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "0e93d538695c88a29021fe2b18813b5c45bfdbf419c9679f25e4f884bf30f72b"
         }
       ]
     },
@@ -367,6 +953,42 @@
           "response_sha256": "dd951b9040f2710649f4385055836f3932b88dea5255d53aa31d3acdf028495f",
           "revision": "gemini-3.1-pro-preview",
           "wire_sha256": "54a063ba54b2923672ba37a9a3e519acf486ff0d68d5c013e434b7bf12731751"
+        },
+        {
+          "billed_input": 2142,
+          "native_tokens": 2142,
+          "request": {
+            "identity": "dev/ia16a766729f914abd691307ee67fec15/VE/pro/repair/0",
+            "max_input_tokens": 6000,
+            "max_output_tokens": 1024,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Repair only the diagnosed syntax/coverage failures. One repair is allowed; retain the original root. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+                "role": "system"
+              },
+              {
+                "content": "Dossier ia16a766729f914abd691307ee67fec15\nDeclared premises:\nn10: Rules r02, r11, r08 are declared.\nn12: Rules r01, r06, r14 are declared.\nn13: Rules r09, r10, r12 are declared.\nn09: Rules r05, r13, r07, r00 are declared.\nn17: unit2 is bagged; unit2 is logged; unit2 is listed; unit2 is stored; unit2 is routed; unit2 is shipped; unit2 is queued. The checks that unit2 is documented and unit2 is boxed and unit2 is retained remain unassumed.\nn11: Rules r15, r03, r04 are declared.\nAuthoritative records:\nr15: If unit4 is stored, then unit7 is active (power connected).\nr03: If unit7 is clear (contamination absent), then unit7 is clear (optically transparent).\nr01: If unit2 is stored and unit2 is routed and unit2 is shipped, then unit7 is ready (staffing arranged). If unit3 is audited and unit3 is scheduled, then unit7 is ready (staffing arranged).\nr14: If unit3 is clear (optically transparent), then unit6 is shipped. If unit3 is audited and unit3 is scheduled, then unit6 is shipped.\nr08: If unit6 is shipped, then unit7 is open (account enabled).\nr00: If unit2 is open (seal removed), then unit5 is stored.\nr12: If unit7 is open (account enabled), then unit7 is open (seal removed).\nr05: If unit2 is bagged and unit2 is logged and unit2 is listed, then unit7 is ready (packing completed). If unit3 is audited and unit3 is scheduled, then unit7 is ready (packing completed). The sample from lot unit2 is unit3.\nr06: If unit7 is active (registry current), then unit3 is active (registry current).\nr04: If unit7 is open (seal removed), then unit2 is open (seal removed).\nr11: If unit3 is active (registry current), then unit6 is logged.\nr13: If unit7 is active (power connected), then unit7 is active (registry current).\nr02: If unit7 is ready (packing completed) and unit7 is ready (staffing arranged), then unit2 is ready (staffing arranged).\nr10: If unit6 is logged, then unit7 is clear (contamination absent).\nr07: If unit7 is clear (optically transparent) and unit2 is documented, then unit3 is clear (contamination absent). If unit7 is clear (optically transparent) and unit2 is queued, then unit3 is clear (optically transparent). If unit7 is clear (optically transparent) and unit2 is boxed, then unit2 is clear (contamination absent). If unit7 is clear (optically transparent) and unit2 is retained, then unit2 is clear (optically transparent).\nr09: If unit7 is ready (staffing arranged) and unit2 is ready (staffing arranged), then unit4 is stored.\nParagraph IDs in order: n00, n02, n07, n16, n05, n20, n06, n03, n14, n21, n01, n15, n08, n18, n04, n19\nProposed argument:\n[n00] Because unit2 is bagged and unit2 is logged and unit2 is listed, unit7 is ready.\n\n[n02] Since unit2 is stored and unit2 is routed and unit2 is shipped, it follows that unit7 is ready.\n\n[n07] Given that unit7 is ready and unit7 is ready, we infer that unit2 is ready.\n\n[n16] It follows that unit4 is stored because unit7 is ready and the immediately preceding ready result holds.\n\n[n05] Because unit4 is stored, unit7 is active.\n\n[n20] Since unit7 is active, it follows that unit7 is active.\n\n[n06] Given that unit7 is active, we infer that unit3 is active.\n\n[n03] It follows that unit6 is logged because the immediately preceding active result holds.\n\n[n14] Because unit6 is logged, unit7 is clear.\n\n[n21] Since unit7 is clear, it follows that unit7 is clear. The checks that unit2 is documented and unit2 is boxed and unit2 is retained would establish that unit3 is clear and unit2 is clear and unit2 is clear, respectively.\n\n[n01] Given that unit7 is clear and unit2 is queued, we infer that unit3 is clear.\n\n[n15] It follows that unit6 is shipped because the immediately preceding clear result holds.\n\n[n08] Because unit6 is shipped, unit7 is open.\n\n[n18] Since unit7 is open, it follows that unit7 is open.\n\n[n04] Given that unit7 is open, we infer that unit2 is open.\n\n[n19] It follows that unit5 is stored because the immediately preceding open result holds.\nOriginal root n19.\nVE node block:\nn00 (n17): Because unit2 is bagged and unit2 is logged and unit2 is listed, unit7 is ready.\nn02 (n17): Since unit2 is stored and unit2 is routed and unit2 is shipped, it follows that unit7 is ready.\nn07 (n00,n02): Given that unit7 is ready and unit7 is ready, we infer that unit2 is ready.\nn16 (n02,n07): It follows that unit4 is stored because unit7 is ready and the immediately preceding ready result holds.\nn05 (n16): Because unit4 is stored, unit7 is active.\nn20 (n05): Since unit7 is active, it follows that unit7 is active.\nn06 (n20): Given that unit7 is active, we infer that unit3 is active.\nn03 (n00,n06): It follows that unit6 is logged because the immediately preceding active result holds.\nn14 (n05,n03): Because unit6 is logged, unit7 is clear.\nn21 (n14): Since unit7 is clear, it follows that unit7 is clear. The checks that unit2 is documented and unit2 is boxed and unit2 is retained would establish that unit3 is clear and unit2 is clear and unit2 is clear, respectively.\nn01 (n06,n21): Given that unit7 is clear and unit2 is queued, we infer that unit3 is clear.\nn15 (n14,n01): It follows that unit6 is shipped because the immediately preceding clear result holds.\nn08 (n15): Because unit6 is shipped, unit7 is open.\nn18 (n08): Since unit7 is open, it follows that unit7 is open.\nn04 (n18): Given that unit7 is open, we infer that unit2 is open.\nn19 (n04): It follows that unit5 is stored because the immediately preceding open result holds.\nProtocol record:\n[{\"item_id\":\"ia16a766729f914abd691307ee67fec15\",\"stage\":\"author\",\"text\":\"```json\\n{\\n  \\\"environment\\\": \\\"VE core@0 environment\\\",\\n  \\\"claims\\\": [\\n    {\\n      \\\"id\\\": \\\"n10\\\",\\n      \\\"source\\\": \\\"\"},{\"item_id\":\"ia16a766729f914abd691307ee67fec15\",\"record\":{\"error\":\"Expecting value: line 1 column 1 (char 0)\",\"ok\":false,\"record_sha256\":\"13270b6f2c60e7e05218baafc325f24c1c668f59495408a880e3ddacc6f05b25\"},\"stage\":\"diagnostics\"}]",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "arm": "VE",
+              "block_id": "dual_judge/dev",
+              "item_id": "ia16a766729f914abd691307ee67fec15",
+              "packet_sha256": "e78e99e08b6940e606cf22dc89eb6c80d022183735f5d3d46cb97d45b0c174f0",
+              "role": "repair",
+              "sample": 0,
+              "seed": 20260921,
+              "turn": 0
+            },
+            "model": "pro",
+            "response_schema": null,
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "19644204fef5f60e79e9c890fb55115b365c72a0ec66e4126d0ac7a4ab6063ef",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "a2c7d8a0b8283e2ff0f67f24eab80cae9516fe1eb08a8bcd0d2ef70fe96343b1"
         }
       ]
     },
@@ -403,6 +1025,78 @@
           "response_sha256": "696e492aed283accea380d6c5934af1eee6b3ec61f01d5998643e71cbedef55a",
           "revision": "gemini-3.1-pro-preview",
           "wire_sha256": "732d8b0c9618598192e56bb258cea030a0bbc9ea8814fc8149e982c6099ba3b2"
+        },
+        {
+          "billed_input": 1665,
+          "native_tokens": 1665,
+          "request": {
+            "identity": "dev/i0e03b71bf431d179be0530712161e8af/S/pro/critic/0",
+            "max_input_tokens": 5500,
+            "max_output_tokens": 1024,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Independently audit the authored table against source records, seeking errors.",
+                "role": "system"
+              },
+              {
+                "content": "Dossier i0e03b71bf431d179be0530712161e8af\nDeclared premises:\nn05: Rules r00, r14, r12, r05 are declared.\nn06: Rules r03, r07, r08 are declared.\nn19: Rules r06, r10, r13 are declared.\nn09: unit5 is bundled; unit5 is retained; unit5 is packed; unit5 is mounted; unit5 is routed; unit5 is rated; unit5 is coded. The checks that unit5 is stacked and unit5 is checked and unit5 is scanned remain unassumed.\nn11: Rules r09, r04, r11 are declared.\nn21: Rules r01, r02, r15 are declared.\nAuthoritative records:\nr08: If unit1 is cleared (payment settled), then unit5 is balanced.\nr09: If unit3 is ready (packing completed) and unit5 is ready (packing completed), then unit5 is weighed-in.\nr03: If unit5 is mounted and unit5 is routed and unit5 is rated, then unit3 is ready (packing completed). If unit5 is tied and unit5 is boxed, then unit3 is ready (packing completed).\nr01: If unit5 is weighed-in, then unit3 is sound (casing intact).\nr15: If unit3 is stable (shape retained) and unit5 is stacked, then unit1 is stable (temperature constant). If unit3 is stable (shape retained) and unit5 is checked, then unit1 is stable (shape retained). If unit3 is stable (shape retained) and unit5 is coded, then unit5 is stable (temperature constant). If unit3 is stable (shape retained) and unit5 is scanned, then unit5 is stable (shape retained).\nr11: If unit3 is stable (temperature constant), then unit3 is stable (shape retained).\nr04: If unit5 is logged, then unit3 is cleared (inspection passed).\nr00: If unit5 is bundled and unit5 is retained and unit5 is packed, then unit3 is ready (staffing arranged). If unit5 is tied and unit5 is boxed, then unit3 is ready (staffing arranged). Lot unit5 supplied sample unit1.\nr12: If unit3 is cleared (payment settled), then unit1 is cleared (payment settled).\nr13: If unit5 is balanced, then unit3 is stable (temperature constant).\nr07: If unit3 is sound (signal audible), then unit5 is sound (signal audible).\nr05: If unit5 is stable (shape retained), then unit5 is calibrated. If unit5 is tied and unit5 is boxed, then unit5 is calibrated.\nr02: If unit3 is cleared (inspection passed), then unit3 is cleared (payment settled).\nr06: If unit3 is ready (staffing arranged) and unit3 is ready (packing completed), then unit5 is ready (packing completed).\nr14: If unit3 is sound (casing intact), then unit3 is sound (signal audible).\nr10: If unit5 is sound (signal audible), then unit5 is logged.\nParagraph IDs in order: n18, n07, n03, n08, n16, n12, n04, n20, n10, n02, n17, n00, n13, n01, n15, n14\nProposed argument:\n[n18] Because unit5 is bundled and unit5 is retained and unit5 is packed, unit3 is ready. The checks that unit5 is stacked and unit5 is checked and unit5 is scanned would imply that unit1 is stable and unit1 is stable and unit5 is stable, respectively.\n\n[n07] Since unit5 is mounted and unit5 is routed and unit5 is rated, it follows that unit3 is ready.\n\n[n03] Given that unit3 is ready and unit3 is ready, we infer that unit5 is ready.\n\n[n08] It follows that unit5 is weighed-in because unit3 is ready and the immediately preceding ready result holds.\n\n[n16] Because unit5 is weighed-in, unit3 is sound.\n\n[n12] Since unit3 is sound, it follows that unit3 is sound.\n\n[n04] Given that unit3 is sound, we infer that unit5 is sound.\n\n[n20] It follows that unit5 is logged because the immediately preceding sound result holds.\n\n[n10] Because unit5 is logged, unit3 is cleared.\n\n[n02] Since unit3 is cleared, it follows that unit3 is cleared.\n\n[n17] Given that unit3 is cleared, we infer that unit1 is cleared.\n\n[n00] It follows that unit5 is balanced because the immediately preceding cleared result holds.\n\n[n13] Because unit5 is balanced, unit3 is stable.\n\n[n01] Since unit3 is stable, it follows that unit3 is stable.\n\n[n15] Given that unit3 is stable and unit5 is coded, we infer that unit5 is stable.\n\n[n14] It follows that unit5 is calibrated because the immediately preceding stable result holds.\nOriginal root n14.\nProtocol record:\n[{\"item_id\":\"i0e03b71bf431d179be0530712161e8af\",\"stage\":\"author\",\"text\":\"The justification is flawed because it conflates two different senses of the word \\\"stable\\\". Node n15 establishes that unit5 is stable (temperature constant) according to rule r15. However, node n14 attempts to use this to satisfy the condition for rule r05, which explicitly requires unit5 to be stable (shape retained) in order to conclude that unit5 is calibrated. \\n\\n| Node | Claim | Premise | Rule |\\n|---|---|---|---|\\n| n18 | unit3 is ready (staffing arranged) | unit5 is bundled, unit5 is retained, unit5 is packed | r00 |\\n| n07 | unit3 is ready (packing completed) | unit5 is mounted, unit5 is routed, unit5 is rated | r03 |\\n| n03 | unit5 is ready (packing completed) | unit3 is ready (staffing arranged), unit3 is ready (packing completed) | r06 |\\n| n08 | unit5 is weighed-in | unit3 is ready (packing completed), unit5 is ready (packing completed) | r09 |\\n| n16 | unit3 is sound (casing intact) | unit5 is weighed-in | r01 |\\n| n12 | unit3 is sound (signal audible) | unit3 is sound (casing intact) | r14 |\\n| n04 | unit5 is sound (signal audible) | unit3 is sound (signal audible) | r07 |\\n| n20 | unit5 is logged |\"}]",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "arm": "S",
+              "block_id": "dual_judge/dev",
+              "item_id": "i0e03b71bf431d179be0530712161e8af",
+              "packet_sha256": "56d67e1df48ee185a78416ce4fd22195f9f4f62bbf5da7ec35533e6d6a42986c",
+              "role": "critic",
+              "sample": 0,
+              "seed": 20260921,
+              "turn": 0
+            },
+            "model": "pro",
+            "response_schema": null,
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "850722cdea35ce800dbeb74ede2e0064c7045b54178eb00f6bea460093f49ebc",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "f4a4fc85f5b751bbbd94b4d58f788e921d7a7dedb58345196d4a8f537c6ca47c"
+        }
+      ]
+    },
+    "8eaa0e98463d6e3697adec3f863b10e6c0c9d645e18ba0b19cbaf5dc1d05facf": {
+      "overhead_tokens": 0,
+      "samples": [
+        {
+          "billed_input": 273,
+          "native_tokens": 273,
+          "request": {
+            "identity": "calibration/p5/gemini/v9/8eaa0e98463d6e3697adec3f863b10e6c0c9d645e18ba0b19cbaf5dc1d05facf",
+            "max_input_tokens": 2048,
+            "max_output_tokens": 4096,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Repair only the diagnosed syntax/coverage failures. One repair is allowed; retain the original root. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+                "role": "system"
+              },
+              {
+                "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "block_id": "gemini-config-calibration-v9",
+              "config_sha256": "8eaa0e98463d6e3697adec3f863b10e6c0c9d645e18ba0b19cbaf5dc1d05facf",
+              "role": "calibration"
+            },
+            "model": "pro",
+            "response_schema": null,
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "f51f9b4c6804677590f77c1e8b3c58bbcd4631576dcf7825a9f3fd35a511cafb",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "73513a3a865effd69ff757e8ffc1ebea0abee1570760a297e3e6def1db63b3bb"
         }
       ]
     },
@@ -475,6 +1169,42 @@
           "response_sha256": "45b283be7809e9754f27b77c72ff2edd25f21389a413dc805460e45ab13e0412",
           "revision": "gemini-3.1-pro-preview",
           "wire_sha256": "ef7f1dc63ecaf90710077c148dfe8bab47892670d7dc1feae524061af2bead79"
+        },
+        {
+          "billed_input": 1283,
+          "native_tokens": 1283,
+          "request": {
+            "identity": "dev/i0e03b71bf431d179be0530712161e8af/S/pro/author/0",
+            "max_input_tokens": 3000,
+            "max_output_tokens": 1024,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Seek errors. Produce a claim/premise/use table from the common packet.",
+                "role": "system"
+              },
+              {
+                "content": "Dossier i0e03b71bf431d179be0530712161e8af\nDeclared premises:\nn05: Rules r00, r14, r12, r05 are declared.\nn06: Rules r03, r07, r08 are declared.\nn19: Rules r06, r10, r13 are declared.\nn09: unit5 is bundled; unit5 is retained; unit5 is packed; unit5 is mounted; unit5 is routed; unit5 is rated; unit5 is coded. The checks that unit5 is stacked and unit5 is checked and unit5 is scanned remain unassumed.\nn11: Rules r09, r04, r11 are declared.\nn21: Rules r01, r02, r15 are declared.\nAuthoritative records:\nr08: If unit1 is cleared (payment settled), then unit5 is balanced.\nr09: If unit3 is ready (packing completed) and unit5 is ready (packing completed), then unit5 is weighed-in.\nr03: If unit5 is mounted and unit5 is routed and unit5 is rated, then unit3 is ready (packing completed). If unit5 is tied and unit5 is boxed, then unit3 is ready (packing completed).\nr01: If unit5 is weighed-in, then unit3 is sound (casing intact).\nr15: If unit3 is stable (shape retained) and unit5 is stacked, then unit1 is stable (temperature constant). If unit3 is stable (shape retained) and unit5 is checked, then unit1 is stable (shape retained). If unit3 is stable (shape retained) and unit5 is coded, then unit5 is stable (temperature constant). If unit3 is stable (shape retained) and unit5 is scanned, then unit5 is stable (shape retained).\nr11: If unit3 is stable (temperature constant), then unit3 is stable (shape retained).\nr04: If unit5 is logged, then unit3 is cleared (inspection passed).\nr00: If unit5 is bundled and unit5 is retained and unit5 is packed, then unit3 is ready (staffing arranged). If unit5 is tied and unit5 is boxed, then unit3 is ready (staffing arranged). Lot unit5 supplied sample unit1.\nr12: If unit3 is cleared (payment settled), then unit1 is cleared (payment settled).\nr13: If unit5 is balanced, then unit3 is stable (temperature constant).\nr07: If unit3 is sound (signal audible), then unit5 is sound (signal audible).\nr05: If unit5 is stable (shape retained), then unit5 is calibrated. If unit5 is tied and unit5 is boxed, then unit5 is calibrated.\nr02: If unit3 is cleared (inspection passed), then unit3 is cleared (payment settled).\nr06: If unit3 is ready (staffing arranged) and unit3 is ready (packing completed), then unit5 is ready (packing completed).\nr14: If unit3 is sound (casing intact), then unit3 is sound (signal audible).\nr10: If unit5 is sound (signal audible), then unit5 is logged.\nParagraph IDs in order: n18, n07, n03, n08, n16, n12, n04, n20, n10, n02, n17, n00, n13, n01, n15, n14\nProposed argument:\n[n18] Because unit5 is bundled and unit5 is retained and unit5 is packed, unit3 is ready. The checks that unit5 is stacked and unit5 is checked and unit5 is scanned would imply that unit1 is stable and unit1 is stable and unit5 is stable, respectively.\n\n[n07] Since unit5 is mounted and unit5 is routed and unit5 is rated, it follows that unit3 is ready.\n\n[n03] Given that unit3 is ready and unit3 is ready, we infer that unit5 is ready.\n\n[n08] It follows that unit5 is weighed-in because unit3 is ready and the immediately preceding ready result holds.\n\n[n16] Because unit5 is weighed-in, unit3 is sound.\n\n[n12] Since unit3 is sound, it follows that unit3 is sound.\n\n[n04] Given that unit3 is sound, we infer that unit5 is sound.\n\n[n20] It follows that unit5 is logged because the immediately preceding sound result holds.\n\n[n10] Because unit5 is logged, unit3 is cleared.\n\n[n02] Since unit3 is cleared, it follows that unit3 is cleared.\n\n[n17] Given that unit3 is cleared, we infer that unit1 is cleared.\n\n[n00] It follows that unit5 is balanced because the immediately preceding cleared result holds.\n\n[n13] Because unit5 is balanced, unit3 is stable.\n\n[n01] Since unit3 is stable, it follows that unit3 is stable.\n\n[n15] Given that unit3 is stable and unit5 is coded, we infer that unit5 is stable.\n\n[n14] It follows that unit5 is calibrated because the immediately preceding stable result holds.\nOriginal root n14.",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "arm": "S",
+              "block_id": "dual_judge/dev",
+              "item_id": "i0e03b71bf431d179be0530712161e8af",
+              "packet_sha256": "56d67e1df48ee185a78416ce4fd22195f9f4f62bbf5da7ec35533e6d6a42986c",
+              "role": "author",
+              "sample": 0,
+              "seed": 20260921,
+              "turn": 0
+            },
+            "model": "pro",
+            "response_schema": null,
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "27e324da7abd051afa9391425978434bc72a11c7a3b67b266d27d7e9a6be5d02",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "2d8d63a0d3ebdfe723239c4ecd90a96b8eb067122c91803ff3ad6ff18c1f928a"
         }
       ]
     },
@@ -513,8 +1243,44 @@
           "wire_sha256": "d0c0eab4426de7a24c297aaed1e958305d26cad44045458cf55d55b5e80b2dea"
         }
       ]
+    },
+    "eeaec373358ff31de0bd7a28fc878d341420dd7c9c7d08d1640b1aacbd6bc531": {
+      "overhead_tokens": 0,
+      "samples": [
+        {
+          "billed_input": 267,
+          "native_tokens": 267,
+          "request": {
+            "identity": "calibration/p5/gemini/v9/eeaec373358ff31de0bd7a28fc878d341420dd7c9c7d08d1640b1aacbd6bc531",
+            "max_input_tokens": 2048,
+            "max_output_tokens": 4096,
+            "messages": [
+              {
+                "content": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity. Defend the proposed argument, faithfully formalising uses and premises. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+                "role": "system"
+              },
+              {
+                "content": "Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.",
+                "role": "user"
+              }
+            ],
+            "metadata": {
+              "block_id": "gemini-config-calibration-v9",
+              "config_sha256": "eeaec373358ff31de0bd7a28fc878d341420dd7c9c7d08d1640b1aacbd6bc531",
+              "role": "calibration"
+            },
+            "model": "pro",
+            "response_schema": null,
+            "timeout_s": 120,
+            "tools": []
+          },
+          "response_sha256": "94be016b3005dca818b480c8845d30280f9e0d913e9601ed9df9af70382469d3",
+          "revision": "gemini-3.1-pro-preview",
+          "wire_sha256": "645d03065dec507071e124f34b5c7d0599da3b2bde59156b5e398aa0341cc58a"
+        }
+      ]
     }
   },
-  "generation_calls": 12,
+  "generation_calls": 6,
   "method": "full GenerateContentConfig countTokens + per-config billed residual"
 }

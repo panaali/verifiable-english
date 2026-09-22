@@ -6,7 +6,7 @@
     "scope": "historical report-level approval; tail relocation audited separately",
     "verdict": "READY (materials)"
   },
-  "freeze_sha256": "629cada8fd2a2b56fb2a4f113bf426b3583fdc9dacc7c0c2038fd3281777e7ef",
+  "freeze_sha256": "d816fd81641bb12800d3cc4c4a0afc04b29261cb00823c0998bb7ba5f7b362cb",
   "gemini_current": {
     "acceptance_basis": "authentic direct agreements or authorized mechanical adjudications",
     "accepted": true,

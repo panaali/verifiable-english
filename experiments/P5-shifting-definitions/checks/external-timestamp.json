@@ -1,5 +1,8 @@
 {
-  "freeze_sha256": "629cada8fd2a2b56fb2a4f113bf426b3583fdc9dacc7c0c2038fd3281777e7ef",
-  "passed": false,
-  "reason": "publish exact manifest hash and retain bound OpenTimestamps receipt"
+  "freeze_sha256": "d816fd81641bb12800d3cc4c4a0afc04b29261cb00823c0998bb7ba5f7b362cb",
+  "passed": true,
+  "policy": "bound calendar submission is pilot timestamp evidence; not a claim of verified Bitcoin confirmation",
+  "proof_sha256": "a15873e91d3bcf5a7246aa660afa7e627cbd964331c8d8726316968c0c7bf31f",
+  "source_sha256": "420ee90a899ad704c19a661b5c94f8008bcf72a006a4c807073c4fe481f73af8",
+  "stdout": "File sha256 hash: 420ee90a899ad704c19a661b5c94f8008bcf72a006a4c807073c4fe481f73af8\nTimestamp:\nappend ccae2996d8c8e0d4798ea349e63f3e50\nsha256\n -> append 184f4a76d00427dad8d0d00158953e7a\n    sha256\n    prepend 2dfae257235481b512f618b5cd194a501e80b94bf7439709a28004d05fae9b2a\n    sha256\n    append 4a118b7ebb6a7ac73892593e81f596b39673ddeb5f29149b51e00218768313e0\n    sha256\n    append 28489d4a7702a0a57d3a339f22ed110c8bf501663b1e2832938b772f14e168c0\n    sha256\n    prepend 6ab2fe74\n    append be042296aaee32eb\n    verify PendingAttestation('https://finney.calendar.eternitywall.com')\n -> append 7c1b599287366e44dbb883dec9a2410e\n    sha256\n    prepend df8b520ad83edeba5faef0fe294d859cf1a9025d24b7c3c47db99b68bbdf55b0\n    sha256\n    prepend 6ab2fe73\n    append 619ff532b763303f\n    verify PendingAttestation('https://btc.calendar.catallaxy.com')\n -> append b959fc9f765a57ec\n    sha256\n    append 6eabac9eb3cbc89594473d3f707813ed50b91d34ca26d84fef0fef8d640d9f2e\n    sha256\n    append d6c7eeb92c803e6c492668077a7e69b1\n    sha256\n    prepend 94eaedf75ad0e0b7565868df2e4954497fb126989e23d27069166409bc79d97a\n    sha256\n    prepend d54ce9cff8ec154f725080116f024e273d361ca34499340f270ee790c493ce23\n    sha256\n    prepend 6ab2fe73\n    append 23601db9319b06a5\n    verify PendingAttestation('https://alice.btc.calendar.opentimestamps.org')\n -> append e98975339679f67f\n    sha256\n    append 89dda0e8b68b2403c4b4d82b913a432f\n    sha256\n    prepend 7cfcab3a1dbdd17efbfef052e8de23e2db50d219ae74ad21f04382e5b8817ed4\n    sha256\n    append 43335e2087dd54f856caa2feb5e235d2bdbddc49a1b2005f5530d13f1559fe30\n    sha256\n    prepend 6ab2fe73\n    append 4df004ddcdf1b547\n    verify PendingAttestation('https://bob.btc.calendar.opentimestamps.org')\n\n"
 }

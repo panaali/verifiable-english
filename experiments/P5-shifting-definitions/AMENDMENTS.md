@@ -845,3 +845,16 @@ inspect a budget-blocked freeze, while all paid execution still enforces it.
 Historical timestamps are archived; a new executable freeze needs a fresh
 external timestamp. This is a frozen, diagnosed repair with explicit blockers,
 not authorization to exceed budgets or a claim of scored readiness.
+
+### Revision 9 — $40 schedule selection amendment (2026-09-22)
+
+The orchestrator retains the $40 study cap and orders alternatives (a) both
+judges/reduced scored families; (b) Gemini only/24 families; (c) Gemini
+only/reduced families. X/S/VE/L, cross-examination k and every v9 stage bound
+are unchanged. The first study-cap fit is (a), nine scored families, with a
+$35.2264590298 worst-case total including retained commitments and the full
+$0.30 calibration reserve. The unchanged $0.16 item/arm gate is separately
+infeasible; a $0.45 common ceiling is pending explicit amendment. See
+[SCHEDULE-AMENDMENT.md](SCHEDULE-AMENDMENT.md) for all scenarios, deterministic
+balanced selection, retained cost accounting and the reduced-power consequence.
+Six new Gemini config smokes cost $0.035710; no dev/scored calls were made.

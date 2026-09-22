@@ -99,29 +99,40 @@ def cached_count(request, reply, calibration):
 
 
 def calibration_smokes(book, backend, cap):
-    """At most twelve single-dispatch Vertex calls, in one durable <=$0.50 block.
+    """Renew missing configs in one durable <=$0.30 amendment block.
 
     Keep every config field exact, including the stage output cap. Only the
     user content is replaced. Unknown billing halts without any paid retry.
     """
     from experiments.p5_preflight import fixtures
     from experiments.p5_materials import read
-    if not cap.is_finite() or not Decimal(0) < cap <= Decimal('.50'):
-        raise PreflightError('Gemini calibration cap must be positive and <= $0.50')
-    block = 'gemini-config-calibration-v1'
+    if not cap.is_finite() or not Decimal(0) < cap <= Decimal('.30'):
+        raise PreflightError('Gemini calibration cap must be positive and <= $0.30')
+    block = 'gemini-config-calibration-v9'
+    retained = set()
+    for row in read(book.path):
+        if row['event'] != 'reserve' or row['model'] != 'pro':
+            continue
+        old = PaidRequest(**{k: row[k] for k in PaidRequest.__dataclass_fields__ if k in row})
+        if book.cached_reply(old) is not None:
+            retained.add(config_key(old))
     requests = {}
     for req, _ in fixtures():
         if req.model != 'pro':
             continue
         key = config_key(req)
+        if key in retained:
+            continue
         requests.setdefault(key, replace(req,
-            identity='calibration/p5/gemini/'+key,
+            identity='calibration/p5/gemini/v9/'+key,
             messages=[m for m in req.messages if m['role']=='system'] +
                 [{'role':'user','content':'Calibration only. No dossier is supplied. Return the shortest possible unknown or empty response permitted by the system and schema. Do not invent an argument.'}],
             max_input_tokens=2048,
             metadata={'role':'calibration','config_sha256':key,'block_id':block}))
     if len(requests) > 12:
         raise PreflightError('Gemini calibration exceeds twelve distinct configs')
+    if not requests:
+        return 0
     # Count all requests before reserving or dispatching; configuration must
     # survive the prompt replacement exactly. Billing residual is measured later.
     for key, req in requests.items():
@@ -162,14 +173,14 @@ def calibration_smokes(book, backend, cap):
 
 
 def calibrate(cap=Decimal(0)):
-    """Free retained counts by default; explicit <=$0.50 buys config smokes."""
+    """Free retained counts by default; explicit <=$0.30 renews missing configs."""
     from experiments import p5 as p
     from experiments.p5_materials import read, write_json
     book = Ledger(p.HERE/'runs/study/costs.jsonl', p.CAP)
     backend = P5VertexBackend(calibration={})
     cap = Decimal(str(cap))
-    if not cap.is_finite() or cap < 0 or cap > Decimal('.50'):
-        raise PreflightError('Gemini calibration cap must be between $0 and $0.50')
+    if not cap.is_finite() or cap < 0 or cap > Decimal('.30'):
+        raise PreflightError('Gemini calibration cap must be between $0 and $0.30')
     calls = calibration_smokes(book, backend, cap) if cap else 0
     configs = {}
     reservations = {r['identity']: r for r in read(book.path)

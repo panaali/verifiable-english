@@ -1,7 +1,7 @@
 {
   "configs": {
     "27646b0ac8a639fd293c516b1ad8953d7ba87f0076453ea7dae291a6728d38fc": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/critic/0"
     },
     "2853bd0ccb1b4368ee337254a83286ef91dd8f782d93819ce3f331717d26f896": {
@@ -17,15 +17,15 @@
       "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/S/pro/defender/0"
     },
     "3f7690b66ac2901b129e3f06aaa30036a8a2fe6fea36097d569199e053a7e64a": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/S/pro/author/0"
     },
     "44929d316920a67025f09a833bee09731d9c7a63f72ef60106e4febca5675dbe": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/judge/0"
     },
     "56dfd336e0ff46fddd4ae738508bd088b2cd105a07e40b66533e902b08675c5a": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/defender/0"
     },
     "5a5d4b0ed7aa4f8f5393710396b11102c9effb5aa5a918af56dfdc16be0e85dd": {
@@ -37,7 +37,7 @@
       "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/S/pro/critic/0"
     },
     "8eaa0e98463d6e3697adec3f863b10e6c0c9d645e18ba0b19cbaf5dc1d05facf": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/repair/0"
     },
     "e92bc2e3fb65c2623864408855ae362cedc18586ec7572a5c0792b5627e393fc": {
@@ -45,12 +45,12 @@
       "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/author/0"
     },
     "eeaec373358ff31de0bd7a28fc878d341420dd7c9c7d08d1640b1aacbd6bc531": {
-      "calibrated": false,
+      "calibrated": true,
       "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/author/0"
     }
   },
-  "freeze_sha256": "629cada8fd2a2b56fb2a4f113bf426b3583fdc9dacc7c0c2038fd3281777e7ef",
+  "freeze_sha256": "d816fd81641bb12800d3cc4c4a0afc04b29261cb00823c0998bb7ba5f7b362cb",
   "generation_calls": 0,
-  "passed": false,
+  "passed": true,
   "policy": "Exact config calibration required; no smoke residual extrapolation."
 }
