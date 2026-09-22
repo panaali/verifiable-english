@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import Counter
 from dataclasses import replace
 import gzip
+import os
 import hashlib
 import hmac
 import os
@@ -21,7 +22,7 @@ HERE = Path(__file__).resolve().parent / 'P5-shifting-definitions'
 SEED = 20260921
 STEPS = 16
 CLAIMS = STEPS + 6
-NONCE_PATH = Path('/private/tmp/ve-p5-id-nonce')
+NONCE_PATH = Path(os.environ.get('VE_P5_NONCE', str(Path.home() / 'code/manage-agents/p5-id-nonce')))
 
 
 def private_nonce(path=NONCE_PATH):
