@@ -12,6 +12,21 @@ import VE.EnvironmentProofs
 import VE.ParserContracts
 import VE.GraphChecks
 import VE.ModelProofs
+import Iceberg
+
+#print axioms Iceberg.mul_sub
+#print axioms Iceberg.initial_mass_balance
+#print axioms Iceberg.stage_within_capacity
+#print axioms Iceberg.no_spill
+#print axioms Iceberg.height_balance
+#print axioms Iceberg.water_unchanged
+#print axioms Iceberg.metal_lowers
+#print axioms Iceberg.residual_height_bound
+#print axioms Iceberg.air_approximately_unchanged
+#print axioms Iceberg.positive_air_strictly_lowers
+#print axioms Iceberg.iceberg_root
+#print axioms Iceberg.root_witness
+#print axioms Iceberg.air_one_millimetre
 
 #print axioms VE.term_defined
 #print axioms VE.typed_empty
