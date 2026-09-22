@@ -81,6 +81,7 @@ def test_ledger_resume_reject_drift_and_no_hidden_retry(tmp_path):
     with patch("ve_experiments.claude_cli.shutil.which",return_value=str(binary)), \
          patch("ve_experiments.claude_cli.subprocess.check_output",return_value=controls.cli_version), \
          patch("ve_experiments.claude_cli.oauth_token",return_value="private-token"), \
+         patch("ve_experiments.claude_cli.check_context_date"), \
          patch("ve_experiments.claude_cli.subprocess.run",return_value=process) as run:
         row=client.sample("i","s","p",0)
         assert client.sample("i","s","p",0)==row

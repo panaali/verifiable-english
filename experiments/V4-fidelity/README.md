@@ -1,3 +1,17 @@
+# V4 A/B study
+
+The full B study uses the fresh `items-b.jsonl` corpus and timestamped `PREREG-B.md`, frozen in commit `6d8525e` before any main-study calls. The previous infrastructure/smoke record is retained below for provenance. Its authorization and no-bulk-run statements describe the earlier task and are superseded by the current lead authorization and full B protocol.
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/V4-fidelity/run_b.py
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/V4-fidelity/analyze_b.py
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/V4-fidelity/report_b.py
+```
+
+The live command is capped at 180 started identities and resumes successes without resampling failures. Date/host/binary/model/content-count drift must stop the study. The original protocol and runner hashes remain frozen. Reports and complete raw evidence are in `results/b/`; the new ten-call fixed-context audit is `results/endpoint-controlled.jsonl`. Step C lives in `../V4-calibration/`; only the Haiku engineering smoke is part of this task.
+
+## Historical infrastructure notes (before main-study authorization)
+
 # V4 A/B infrastructure
 
 Scope: isolated `claude -p` backend, 60-item formalisation audit, scoring and preregistration. No calibration, debate, bulk inference, API replication, or frontier-benefit result.
