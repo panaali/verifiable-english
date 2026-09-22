@@ -519,7 +519,7 @@
     "seed": 20260921,
     "solver": "lbfgs"
   },
-  "export_order_sha256": "676064cf7832dbd85a984bccf0574a5b4541916ffceb31c1bb13e748a5b16b37",
+  "export_order_sha256": "e7938c5409813b906928c8340ea9ae34b14efa92a3d117e8f5719dd8022a6de6",
   "features": [
     "bytes",
     "words",
@@ -540,29 +540,29 @@
     "unique_sense_indices",
     "record_pointers"
   ],
-  "fit_scope": "all 84 slots; 28 leave-family-out folds; no sibling crosses a fold",
-  "freeze_sha256": "0d0b6b4989fc9bd9c51c6f9ea45821a59e6f1f8aaac37f1ba69baad6153ff9de",
+  "fit_scope": "All 84 slots. Logistic: 28 leave-family-out folds. Node trees: stratified and stratified-grouped 6-fold CV (reported separately).",
+  "freeze_sha256": "31ce5c4154d7659d4825c44b04d11891aef42e201abab39a11e2cfd911a44958",
   "generation_calls": 0,
-  "label_sha256": "c1a9eee5e145c60cea438603e97335ed5b5a9c4315af7a4837d70d38b39a6adc",
+  "label_sha256": "c1d8689d8222043b689fb2b51dd87670e97082e054344f489c67a25129beb8f1",
   "limitation": "Shortcut screen, not proof of semantic difficulty or source fidelity.",
   "order_mod3_counts": {
     "0": {
-      "benign": 11,
-      "shift": 9,
-      "smuggle": 8
-    },
-    "1": {
-      "benign": 9,
-      "shift": 8,
+      "benign": 10,
+      "shift": 7,
       "smuggle": 11
     },
-    "2": {
+    "1": {
       "benign": 8,
       "shift": 11,
       "smuggle": 9
+    },
+    "2": {
+      "benign": 10,
+      "shift": 10,
+      "smuggle": 8
     }
   },
-  "packet_sha256": "8930f16d020844e70def8e26658918b1a5ecd30be9f8f1e8176e5b0f10ad21f1",
+  "packet_sha256": "388b18886411bddac6d45340450fb56ba2df2057476ee2f5ff9f6b2056809a3a",
   "passed": true,
   "policy": "Every fixed probe must score at or below three-class chance; no seed/hyperparameter selection.",
   "probes": {
@@ -571,445 +571,2758 @@
       "balanced_accuracy": 0.3333333333333333,
       "confusion_matrix": [
         [
-          12,
-          9,
-          7
+          21,
+          7,
+          0
         ],
         [
-          12,
-          9,
-          7
+          21,
+          7,
+          0
         ],
         [
-          12,
-          9,
-          7
+          21,
+          7,
+          0
         ]
       ],
       "correct": 28,
       "passed": true,
       "predictions": [
         {
-          "item_id": "id0c29599771e",
+          "item_id": "i263fafa5aa75",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i0badb53da4c0",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "ide8e0bac5148",
+          "item_id": "i45b501e558fa",
           "predicted": "shift",
           "truth": "benign"
         },
         {
-          "item_id": "i944ec9293759",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i4dd5e272e500",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i84f0dbedb385",
-          "predicted": "shift",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i43dc39b29763",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i33cff65bb1c6",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i1c49fa58634f",
-          "predicted": "shift",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "id7b763670ce8",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i6a7a135d581d",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ie9f9079587ef",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i04ad8dc8e7d0",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i6e223f797df5",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i5c7bcaa50294",
+          "item_id": "iafa18d6b4770",
           "predicted": "shift",
           "truth": "shift"
         },
         {
-          "item_id": "ie324ad64337a",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i420f4cf48c24",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ie91c992125d6",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i019191d17281",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "idfe4ef831b6b",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i5ff9beafefd0",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i1cd699655011",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ibff92a1bef43",
+          "item_id": "i0722ebf388b1",
           "predicted": "shift",
           "truth": "smuggle"
         },
         {
-          "item_id": "ic6db37a101b9",
+          "item_id": "id11135c35dd0",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i36c6db29d5e2",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i10372966b410",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i6709d1713209",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i003e73faa003",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i4657ceb4f232",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ie56e7abfc868",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i5700ca862164",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i3de1757dcbee",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ic8ebd06664a3",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "id45b01d47bef",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i972ed05962cc",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "id85fd1ff20a9",
+          "item_id": "if0f2d8fe3d26",
           "predicted": "shift",
           "truth": "smuggle"
         },
         {
-          "item_id": "i44540f7bd710",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "iea56f5cf8c44",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i20fae7525773",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i036d82cbdb65",
+          "item_id": "ib2e8bedaa5db",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "i8bac61ed164a",
-          "predicted": "shift",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i4a9a5c6b4293",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ida8b69c2a6b3",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i3f8cbefefdd9",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i053fba82504f",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "id7aa466a8a9d",
+          "item_id": "i233c6510c578",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "ie5cb8bfdd6b7",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ia421ef87c31e",
-          "predicted": "shift",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "if40c21abf0e8",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i45cad6845d7c",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i136f88ecf7fb",
+          "item_id": "ie831e8bdd001",
           "predicted": "benign",
           "truth": "benign"
         },
         {
-          "item_id": "if98c01f39ef3",
+          "item_id": "i60e3f7ce5f2f",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "iec214bab4643",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i309c9486c702",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ia44857b0c704",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i49b8ba8ed56d",
+          "item_id": "i534051e35e39",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "i1ccb8b4dc602",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i813d6d9cb593",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ie0bbc8d44394",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i0475772b3ce6",
+          "item_id": "i1974bcb309a0",
           "predicted": "shift",
           "truth": "smuggle"
         },
         {
-          "item_id": "ia1f3f37599d0",
+          "item_id": "i3eee6e9d51da",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i89f933088bc4",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i6ce756e6c04d",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i2fa8a3580281",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i7b2cedcf5bd9",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ifdd96ce4567f",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i6c77fff11554",
-          "predicted": "shift",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "ia8a90189268e",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i628c8fb458a2",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i79ad055d179a",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i6a530b75731e",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i23a90d479b8d",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i2c5ac14bda37",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i85158e7e0831",
+          "item_id": "i8f5e8261b192",
           "predicted": "shift",
           "truth": "shift"
         },
         {
-          "item_id": "i46f653c9ebf9",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i5931db220a00",
+          "item_id": "ided9d4a49315",
           "predicted": "benign",
-          "truth": "benign"
+          "truth": "smuggle"
         },
         {
-          "item_id": "i62554daef82d",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i8d3108069e39",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ifa6320defaaf",
+          "item_id": "ib0fa356f5855",
           "predicted": "shift",
-          "truth": "smuggle"
+          "truth": "shift"
         },
         {
-          "item_id": "i8969f3c56c31",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i0017f199224b",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "icb6788a13bca",
+          "item_id": "i158832198b1f",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "ic46ca40d602c",
+          "item_id": "if0fac227c856",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "id022529ac71a",
+          "item_id": "ie80f3c5920df",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i9189460c5bc4",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "iedce38ddd00c",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i4022eaf25f2b",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i275835cfbcbb",
           "predicted": "shift",
           "truth": "benign"
         },
         {
-          "item_id": "id61aa747270b",
+          "item_id": "i93e6d304fcde",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ib70ee84f3e5d",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i0013b5d0433e",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ief9fbee0899c",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i0e2527ef361b",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i6e222699b018",
           "predicted": "benign",
           "truth": "benign"
+        },
+        {
+          "item_id": "ic2b08641d769",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ie61d2d90124e",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i0b359ec42076",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i0df82a1e3dd9",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i4defba4152b1",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "id809c25e5d22",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i64feeb264c5d",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ic2c1949f4e3d",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i256a8a47d38d",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i319fb9c851a7",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i05dcaf673445",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i7cde01d54585",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i514a1ef9414f",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ib91231f822a4",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i0e7710bf0468",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "iec716d518d1c",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i115d1725ce4d",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i11a53363bd43",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "if37d1d705495",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i20720cb7c92a",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i0444feb64f14",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i2ab3312ce2df",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i885d40cb1969",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i557a45e1caa6",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i0617bdab0ff9",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ieb9e879e4063",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i387013e737d5",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i7723ca5a9285",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ib54c06697962",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "if7d2c70f5dc9",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i270c915ebae5",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "iddc7de236fb4",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i89b4d8d39241",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i3c36ab2e7346",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "if96fa6af1ba9",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i498ab0babdb4",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "iefa4594ef6a5",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "icb2100c5340d",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ia7038754d045",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i2a4b805b4c9b",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i47ad98ac2456",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i3fb8dced351b",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i7d9d47153a8b",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i44fe1e5d7921",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i9b6a23d91d8d",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ifa9287083f98",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i5f630aff2f85",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i853a055dc2d2",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "if04aca039d55",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ifa64515122ea",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i5de3fd5e1081",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i365224876d56",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ied5ecee79baf",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ib0e9beb84849",
+          "predicted": "shift",
+          "truth": "smuggle"
         }
       ]
+    },
+    "node_relations": {
+      "accuracy": 0.21428571428571427,
+      "balanced_accuracy": 0.21428571428571427,
+      "confusion_matrix": [
+        [
+          7,
+          6,
+          15
+        ],
+        [
+          12,
+          5,
+          11
+        ],
+        [
+          10,
+          12,
+          6
+        ]
+      ],
+      "correct": 18,
+      "cv": "StratifiedKFold",
+      "estimator": {
+        "max_depth": 3,
+        "model": "DecisionTreeClassifier",
+        "random_state": 1
+      },
+      "features": [
+        "branch_alt0_is_sample",
+        "branch_alt1_is_sample",
+        "branch_alt2_is_sample",
+        "branch_con_order_rank",
+        "branch_con_sense_id",
+        "branch_con_sense_lt_alt0",
+        "branch_con_sense_lt_alt1",
+        "branch_con_sense_lt_alt2",
+        "branch_con_sense_order",
+        "branch_con_sense_rank",
+        "branch_con_unit_in_ants",
+        "branch_con_unit_is_sample",
+        "branch_con_unit_num",
+        "branch_indegree",
+        "branch_is_root",
+        "branch_marker_From",
+        "branch_marker_Given",
+        "branch_marker_Using",
+        "branch_marker_would establish",
+        "branch_marker_would imply",
+        "branch_marker_would yield",
+        "branch_n_alts",
+        "branch_n_ants",
+        "branch_outdegree",
+        "branch_position",
+        "branch_sample_alts",
+        "branch_sample_ants",
+        "max_alt0_is_sample",
+        "max_alt1_is_sample",
+        "max_alt2_is_sample",
+        "max_con_order_rank",
+        "max_con_sense_id",
+        "max_con_sense_lt_alt0",
+        "max_con_sense_lt_alt1",
+        "max_con_sense_lt_alt2",
+        "max_con_sense_order",
+        "max_con_sense_rank",
+        "max_con_unit_in_ants",
+        "max_con_unit_is_sample",
+        "max_con_unit_num",
+        "max_indegree",
+        "max_is_root",
+        "max_marker_From",
+        "max_marker_Given",
+        "max_marker_Using",
+        "max_marker_would establish",
+        "max_marker_would imply",
+        "max_marker_would yield",
+        "max_n_alts",
+        "max_n_ants",
+        "max_outdegree",
+        "max_position",
+        "max_sample_alts",
+        "max_sample_ants",
+        "mean_alt0_is_sample",
+        "mean_alt1_is_sample",
+        "mean_alt2_is_sample",
+        "mean_con_order_rank",
+        "mean_con_sense_id",
+        "mean_con_sense_lt_alt0",
+        "mean_con_sense_lt_alt1",
+        "mean_con_sense_lt_alt2",
+        "mean_con_sense_order",
+        "mean_con_sense_rank",
+        "mean_con_unit_in_ants",
+        "mean_con_unit_is_sample",
+        "mean_con_unit_num",
+        "mean_indegree",
+        "mean_is_root",
+        "mean_marker_From",
+        "mean_marker_Given",
+        "mean_marker_Using",
+        "mean_marker_would establish",
+        "mean_marker_would imply",
+        "mean_marker_would yield",
+        "mean_n_alts",
+        "mean_n_ants",
+        "mean_outdegree",
+        "mean_position",
+        "mean_sample_alts",
+        "mean_sample_ants",
+        "min_alt0_is_sample",
+        "min_alt1_is_sample",
+        "min_alt2_is_sample",
+        "min_con_order_rank",
+        "min_con_sense_id",
+        "min_con_sense_lt_alt0",
+        "min_con_sense_lt_alt1",
+        "min_con_sense_lt_alt2",
+        "min_con_sense_order",
+        "min_con_sense_rank",
+        "min_con_unit_in_ants",
+        "min_con_unit_is_sample",
+        "min_con_unit_num",
+        "min_indegree",
+        "min_is_root",
+        "min_marker_From",
+        "min_marker_Given",
+        "min_marker_Using",
+        "min_marker_would establish",
+        "min_marker_would imply",
+        "min_marker_would yield",
+        "min_n_alts",
+        "min_n_ants",
+        "min_outdegree",
+        "min_position",
+        "min_sample_alts",
+        "min_sample_ants",
+        "node_0_alt0_is_sample",
+        "node_0_alt1_is_sample",
+        "node_0_alt2_is_sample",
+        "node_0_con_order_rank",
+        "node_0_con_sense_id",
+        "node_0_con_sense_lt_alt0",
+        "node_0_con_sense_lt_alt1",
+        "node_0_con_sense_lt_alt2",
+        "node_0_con_sense_order",
+        "node_0_con_sense_rank",
+        "node_0_con_unit_in_ants",
+        "node_0_con_unit_is_sample",
+        "node_0_con_unit_num",
+        "node_0_indegree",
+        "node_0_is_root",
+        "node_0_marker_From",
+        "node_0_marker_Given",
+        "node_0_marker_Using",
+        "node_0_marker_would establish",
+        "node_0_marker_would imply",
+        "node_0_marker_would yield",
+        "node_0_n_alts",
+        "node_0_n_ants",
+        "node_0_outdegree",
+        "node_0_position",
+        "node_0_sample_alts",
+        "node_0_sample_ants",
+        "node_10_alt0_is_sample",
+        "node_10_alt1_is_sample",
+        "node_10_alt2_is_sample",
+        "node_10_con_order_rank",
+        "node_10_con_sense_id",
+        "node_10_con_sense_lt_alt0",
+        "node_10_con_sense_lt_alt1",
+        "node_10_con_sense_lt_alt2",
+        "node_10_con_sense_order",
+        "node_10_con_sense_rank",
+        "node_10_con_unit_in_ants",
+        "node_10_con_unit_is_sample",
+        "node_10_con_unit_num",
+        "node_10_indegree",
+        "node_10_is_root",
+        "node_10_marker_From",
+        "node_10_marker_Given",
+        "node_10_marker_Using",
+        "node_10_marker_would establish",
+        "node_10_marker_would imply",
+        "node_10_marker_would yield",
+        "node_10_n_alts",
+        "node_10_n_ants",
+        "node_10_outdegree",
+        "node_10_position",
+        "node_10_sample_alts",
+        "node_10_sample_ants",
+        "node_11_alt0_is_sample",
+        "node_11_alt1_is_sample",
+        "node_11_alt2_is_sample",
+        "node_11_con_order_rank",
+        "node_11_con_sense_id",
+        "node_11_con_sense_lt_alt0",
+        "node_11_con_sense_lt_alt1",
+        "node_11_con_sense_lt_alt2",
+        "node_11_con_sense_order",
+        "node_11_con_sense_rank",
+        "node_11_con_unit_in_ants",
+        "node_11_con_unit_is_sample",
+        "node_11_con_unit_num",
+        "node_11_indegree",
+        "node_11_is_root",
+        "node_11_marker_From",
+        "node_11_marker_Given",
+        "node_11_marker_Using",
+        "node_11_marker_would establish",
+        "node_11_marker_would imply",
+        "node_11_marker_would yield",
+        "node_11_n_alts",
+        "node_11_n_ants",
+        "node_11_outdegree",
+        "node_11_position",
+        "node_11_sample_alts",
+        "node_11_sample_ants",
+        "node_12_alt0_is_sample",
+        "node_12_alt1_is_sample",
+        "node_12_alt2_is_sample",
+        "node_12_con_order_rank",
+        "node_12_con_sense_id",
+        "node_12_con_sense_lt_alt0",
+        "node_12_con_sense_lt_alt1",
+        "node_12_con_sense_lt_alt2",
+        "node_12_con_sense_order",
+        "node_12_con_sense_rank",
+        "node_12_con_unit_in_ants",
+        "node_12_con_unit_is_sample",
+        "node_12_con_unit_num",
+        "node_12_indegree",
+        "node_12_is_root",
+        "node_12_marker_From",
+        "node_12_marker_Given",
+        "node_12_marker_Using",
+        "node_12_marker_would establish",
+        "node_12_marker_would imply",
+        "node_12_marker_would yield",
+        "node_12_n_alts",
+        "node_12_n_ants",
+        "node_12_outdegree",
+        "node_12_position",
+        "node_12_sample_alts",
+        "node_12_sample_ants",
+        "node_13_alt0_is_sample",
+        "node_13_alt1_is_sample",
+        "node_13_alt2_is_sample",
+        "node_13_con_order_rank",
+        "node_13_con_sense_id",
+        "node_13_con_sense_lt_alt0",
+        "node_13_con_sense_lt_alt1",
+        "node_13_con_sense_lt_alt2",
+        "node_13_con_sense_order",
+        "node_13_con_sense_rank",
+        "node_13_con_unit_in_ants",
+        "node_13_con_unit_is_sample",
+        "node_13_con_unit_num",
+        "node_13_indegree",
+        "node_13_is_root",
+        "node_13_marker_From",
+        "node_13_marker_Given",
+        "node_13_marker_Using",
+        "node_13_marker_would establish",
+        "node_13_marker_would imply",
+        "node_13_marker_would yield",
+        "node_13_n_alts",
+        "node_13_n_ants",
+        "node_13_outdegree",
+        "node_13_position",
+        "node_13_sample_alts",
+        "node_13_sample_ants",
+        "node_14_alt0_is_sample",
+        "node_14_alt1_is_sample",
+        "node_14_alt2_is_sample",
+        "node_14_con_order_rank",
+        "node_14_con_sense_id",
+        "node_14_con_sense_lt_alt0",
+        "node_14_con_sense_lt_alt1",
+        "node_14_con_sense_lt_alt2",
+        "node_14_con_sense_order",
+        "node_14_con_sense_rank",
+        "node_14_con_unit_in_ants",
+        "node_14_con_unit_is_sample",
+        "node_14_con_unit_num",
+        "node_14_indegree",
+        "node_14_is_root",
+        "node_14_marker_From",
+        "node_14_marker_Given",
+        "node_14_marker_Using",
+        "node_14_marker_would establish",
+        "node_14_marker_would imply",
+        "node_14_marker_would yield",
+        "node_14_n_alts",
+        "node_14_n_ants",
+        "node_14_outdegree",
+        "node_14_position",
+        "node_14_sample_alts",
+        "node_14_sample_ants",
+        "node_15_alt0_is_sample",
+        "node_15_alt1_is_sample",
+        "node_15_alt2_is_sample",
+        "node_15_con_order_rank",
+        "node_15_con_sense_id",
+        "node_15_con_sense_lt_alt0",
+        "node_15_con_sense_lt_alt1",
+        "node_15_con_sense_lt_alt2",
+        "node_15_con_sense_order",
+        "node_15_con_sense_rank",
+        "node_15_con_unit_in_ants",
+        "node_15_con_unit_is_sample",
+        "node_15_con_unit_num",
+        "node_15_indegree",
+        "node_15_is_root",
+        "node_15_marker_From",
+        "node_15_marker_Given",
+        "node_15_marker_Using",
+        "node_15_marker_would establish",
+        "node_15_marker_would imply",
+        "node_15_marker_would yield",
+        "node_15_n_alts",
+        "node_15_n_ants",
+        "node_15_outdegree",
+        "node_15_position",
+        "node_15_sample_alts",
+        "node_15_sample_ants",
+        "node_1_alt0_is_sample",
+        "node_1_alt1_is_sample",
+        "node_1_alt2_is_sample",
+        "node_1_con_order_rank",
+        "node_1_con_sense_id",
+        "node_1_con_sense_lt_alt0",
+        "node_1_con_sense_lt_alt1",
+        "node_1_con_sense_lt_alt2",
+        "node_1_con_sense_order",
+        "node_1_con_sense_rank",
+        "node_1_con_unit_in_ants",
+        "node_1_con_unit_is_sample",
+        "node_1_con_unit_num",
+        "node_1_indegree",
+        "node_1_is_root",
+        "node_1_marker_From",
+        "node_1_marker_Given",
+        "node_1_marker_Using",
+        "node_1_marker_would establish",
+        "node_1_marker_would imply",
+        "node_1_marker_would yield",
+        "node_1_n_alts",
+        "node_1_n_ants",
+        "node_1_outdegree",
+        "node_1_position",
+        "node_1_sample_alts",
+        "node_1_sample_ants",
+        "node_2_alt0_is_sample",
+        "node_2_alt1_is_sample",
+        "node_2_alt2_is_sample",
+        "node_2_con_order_rank",
+        "node_2_con_sense_id",
+        "node_2_con_sense_lt_alt0",
+        "node_2_con_sense_lt_alt1",
+        "node_2_con_sense_lt_alt2",
+        "node_2_con_sense_order",
+        "node_2_con_sense_rank",
+        "node_2_con_unit_in_ants",
+        "node_2_con_unit_is_sample",
+        "node_2_con_unit_num",
+        "node_2_indegree",
+        "node_2_is_root",
+        "node_2_marker_From",
+        "node_2_marker_Given",
+        "node_2_marker_Using",
+        "node_2_marker_would establish",
+        "node_2_marker_would imply",
+        "node_2_marker_would yield",
+        "node_2_n_alts",
+        "node_2_n_ants",
+        "node_2_outdegree",
+        "node_2_position",
+        "node_2_sample_alts",
+        "node_2_sample_ants",
+        "node_3_alt0_is_sample",
+        "node_3_alt1_is_sample",
+        "node_3_alt2_is_sample",
+        "node_3_con_order_rank",
+        "node_3_con_sense_id",
+        "node_3_con_sense_lt_alt0",
+        "node_3_con_sense_lt_alt1",
+        "node_3_con_sense_lt_alt2",
+        "node_3_con_sense_order",
+        "node_3_con_sense_rank",
+        "node_3_con_unit_in_ants",
+        "node_3_con_unit_is_sample",
+        "node_3_con_unit_num",
+        "node_3_indegree",
+        "node_3_is_root",
+        "node_3_marker_From",
+        "node_3_marker_Given",
+        "node_3_marker_Using",
+        "node_3_marker_would establish",
+        "node_3_marker_would imply",
+        "node_3_marker_would yield",
+        "node_3_n_alts",
+        "node_3_n_ants",
+        "node_3_outdegree",
+        "node_3_position",
+        "node_3_sample_alts",
+        "node_3_sample_ants",
+        "node_4_alt0_is_sample",
+        "node_4_alt1_is_sample",
+        "node_4_alt2_is_sample",
+        "node_4_con_order_rank",
+        "node_4_con_sense_id",
+        "node_4_con_sense_lt_alt0",
+        "node_4_con_sense_lt_alt1",
+        "node_4_con_sense_lt_alt2",
+        "node_4_con_sense_order",
+        "node_4_con_sense_rank",
+        "node_4_con_unit_in_ants",
+        "node_4_con_unit_is_sample",
+        "node_4_con_unit_num",
+        "node_4_indegree",
+        "node_4_is_root",
+        "node_4_marker_From",
+        "node_4_marker_Given",
+        "node_4_marker_Using",
+        "node_4_marker_would establish",
+        "node_4_marker_would imply",
+        "node_4_marker_would yield",
+        "node_4_n_alts",
+        "node_4_n_ants",
+        "node_4_outdegree",
+        "node_4_position",
+        "node_4_sample_alts",
+        "node_4_sample_ants",
+        "node_5_alt0_is_sample",
+        "node_5_alt1_is_sample",
+        "node_5_alt2_is_sample",
+        "node_5_con_order_rank",
+        "node_5_con_sense_id",
+        "node_5_con_sense_lt_alt0",
+        "node_5_con_sense_lt_alt1",
+        "node_5_con_sense_lt_alt2",
+        "node_5_con_sense_order",
+        "node_5_con_sense_rank",
+        "node_5_con_unit_in_ants",
+        "node_5_con_unit_is_sample",
+        "node_5_con_unit_num",
+        "node_5_indegree",
+        "node_5_is_root",
+        "node_5_marker_From",
+        "node_5_marker_Given",
+        "node_5_marker_Using",
+        "node_5_marker_would establish",
+        "node_5_marker_would imply",
+        "node_5_marker_would yield",
+        "node_5_n_alts",
+        "node_5_n_ants",
+        "node_5_outdegree",
+        "node_5_position",
+        "node_5_sample_alts",
+        "node_5_sample_ants",
+        "node_6_alt0_is_sample",
+        "node_6_alt1_is_sample",
+        "node_6_alt2_is_sample",
+        "node_6_con_order_rank",
+        "node_6_con_sense_id",
+        "node_6_con_sense_lt_alt0",
+        "node_6_con_sense_lt_alt1",
+        "node_6_con_sense_lt_alt2",
+        "node_6_con_sense_order",
+        "node_6_con_sense_rank",
+        "node_6_con_unit_in_ants",
+        "node_6_con_unit_is_sample",
+        "node_6_con_unit_num",
+        "node_6_indegree",
+        "node_6_is_root",
+        "node_6_marker_From",
+        "node_6_marker_Given",
+        "node_6_marker_Using",
+        "node_6_marker_would establish",
+        "node_6_marker_would imply",
+        "node_6_marker_would yield",
+        "node_6_n_alts",
+        "node_6_n_ants",
+        "node_6_outdegree",
+        "node_6_position",
+        "node_6_sample_alts",
+        "node_6_sample_ants",
+        "node_7_alt0_is_sample",
+        "node_7_alt1_is_sample",
+        "node_7_alt2_is_sample",
+        "node_7_con_order_rank",
+        "node_7_con_sense_id",
+        "node_7_con_sense_lt_alt0",
+        "node_7_con_sense_lt_alt1",
+        "node_7_con_sense_lt_alt2",
+        "node_7_con_sense_order",
+        "node_7_con_sense_rank",
+        "node_7_con_unit_in_ants",
+        "node_7_con_unit_is_sample",
+        "node_7_con_unit_num",
+        "node_7_indegree",
+        "node_7_is_root",
+        "node_7_marker_From",
+        "node_7_marker_Given",
+        "node_7_marker_Using",
+        "node_7_marker_would establish",
+        "node_7_marker_would imply",
+        "node_7_marker_would yield",
+        "node_7_n_alts",
+        "node_7_n_ants",
+        "node_7_outdegree",
+        "node_7_position",
+        "node_7_sample_alts",
+        "node_7_sample_ants",
+        "node_8_alt0_is_sample",
+        "node_8_alt1_is_sample",
+        "node_8_alt2_is_sample",
+        "node_8_con_order_rank",
+        "node_8_con_sense_id",
+        "node_8_con_sense_lt_alt0",
+        "node_8_con_sense_lt_alt1",
+        "node_8_con_sense_lt_alt2",
+        "node_8_con_sense_order",
+        "node_8_con_sense_rank",
+        "node_8_con_unit_in_ants",
+        "node_8_con_unit_is_sample",
+        "node_8_con_unit_num",
+        "node_8_indegree",
+        "node_8_is_root",
+        "node_8_marker_From",
+        "node_8_marker_Given",
+        "node_8_marker_Using",
+        "node_8_marker_would establish",
+        "node_8_marker_would imply",
+        "node_8_marker_would yield",
+        "node_8_n_alts",
+        "node_8_n_ants",
+        "node_8_outdegree",
+        "node_8_position",
+        "node_8_sample_alts",
+        "node_8_sample_ants",
+        "node_9_alt0_is_sample",
+        "node_9_alt1_is_sample",
+        "node_9_alt2_is_sample",
+        "node_9_con_order_rank",
+        "node_9_con_sense_id",
+        "node_9_con_sense_lt_alt0",
+        "node_9_con_sense_lt_alt1",
+        "node_9_con_sense_lt_alt2",
+        "node_9_con_sense_order",
+        "node_9_con_sense_rank",
+        "node_9_con_unit_in_ants",
+        "node_9_con_unit_is_sample",
+        "node_9_con_unit_num",
+        "node_9_indegree",
+        "node_9_is_root",
+        "node_9_marker_From",
+        "node_9_marker_Given",
+        "node_9_marker_Using",
+        "node_9_marker_would establish",
+        "node_9_marker_would imply",
+        "node_9_marker_would yield",
+        "node_9_n_alts",
+        "node_9_n_ants",
+        "node_9_outdegree",
+        "node_9_position",
+        "node_9_sample_alts",
+        "node_9_sample_ants"
+      ],
+      "folds": [
+        {
+          "split_features": [
+            "node_1_con_sense_id",
+            "branch_con_sense_order",
+            "node_10_con_sense_id",
+            "node_15_marker_Given"
+          ],
+          "test_ids": [
+            "i1974bcb309a0",
+            "i3eee6e9d51da",
+            "i8f5e8261b192",
+            "i0013b5d0433e",
+            "i6e222699b018",
+            "i256a8a47d38d",
+            "i514a1ef9414f",
+            "ib91231f822a4",
+            "i0e7710bf0468",
+            "i20720cb7c92a",
+            "i387013e737d5",
+            "i89b4d8d39241",
+            "ia7038754d045",
+            "ied5ecee79baf"
+          ]
+        },
+        {
+          "split_features": [
+            "node_8_con_sense_id",
+            "node_4_con_sense_id",
+            "node_5_con_sense_id",
+            "node_9_con_sense_id"
+          ],
+          "test_ids": [
+            "ib2e8bedaa5db",
+            "ib0fa356f5855",
+            "ie80f3c5920df",
+            "i0e2527ef361b",
+            "ic2c1949f4e3d",
+            "if37d1d705495",
+            "i557a45e1caa6",
+            "ieb9e879e4063",
+            "i47ad98ac2456",
+            "i44fe1e5d7921",
+            "i9b6a23d91d8d",
+            "i853a055dc2d2",
+            "i5de3fd5e1081",
+            "ib0e9beb84849"
+          ]
+        },
+        {
+          "split_features": [
+            "node_15_con_sense_id",
+            "node_1_con_sense_id",
+            "branch_con_sense_order",
+            "node_15_con_sense_id",
+            "node_2_sample_alts"
+          ],
+          "test_ids": [
+            "i233c6510c578",
+            "ided9d4a49315",
+            "i158832198b1f",
+            "if0fac227c856",
+            "i9189460c5bc4",
+            "i275835cfbcbb",
+            "i0df82a1e3dd9",
+            "i7cde01d54585",
+            "iec716d518d1c",
+            "i885d40cb1969",
+            "i3c36ab2e7346",
+            "if96fa6af1ba9",
+            "ifa9287083f98",
+            "if04aca039d55"
+          ]
+        },
+        {
+          "split_features": [
+            "node_1_con_sense_id",
+            "node_15_con_sense_id",
+            "branch_con_sense_order",
+            "node_9_outdegree"
+          ],
+          "test_ids": [
+            "i45b501e558fa",
+            "id11135c35dd0",
+            "if0f2d8fe3d26",
+            "ie831e8bdd001",
+            "i0b359ec42076",
+            "id809c25e5d22",
+            "i0444feb64f14",
+            "i2ab3312ce2df",
+            "i7723ca5a9285",
+            "if7d2c70f5dc9",
+            "iddc7de236fb4",
+            "i498ab0babdb4",
+            "i7d9d47153a8b",
+            "i365224876d56"
+          ]
+        },
+        {
+          "split_features": [
+            "node_1_con_sense_id",
+            "node_11_con_sense_id",
+            "node_10_con_sense_order",
+            "node_1_con_sense_id",
+            "branch_con_unit_num",
+            "node_12_con_sense_id"
+          ],
+          "test_ids": [
+            "i0722ebf388b1",
+            "i534051e35e39",
+            "iedce38ddd00c",
+            "i93e6d304fcde",
+            "ib70ee84f3e5d",
+            "ief9fbee0899c",
+            "ic2b08641d769",
+            "ie61d2d90124e",
+            "i4defba4152b1",
+            "i05dcaf673445",
+            "i115d1725ce4d",
+            "i11a53363bd43",
+            "i5f630aff2f85",
+            "ifa64515122ea"
+          ]
+        },
+        {
+          "split_features": [
+            "branch_con_sense_order",
+            "node_0_con_sense_id",
+            "node_8_con_sense_order",
+            "node_10_con_sense_id",
+            "max_con_sense_order",
+            "node_8_outdegree",
+            "node_3_con_sense_id"
+          ],
+          "test_ids": [
+            "i263fafa5aa75",
+            "i0badb53da4c0",
+            "iafa18d6b4770",
+            "i60e3f7ce5f2f",
+            "i4022eaf25f2b",
+            "i64feeb264c5d",
+            "i319fb9c851a7",
+            "i0617bdab0ff9",
+            "ib54c06697962",
+            "i270c915ebae5",
+            "iefa4594ef6a5",
+            "icb2100c5340d",
+            "i2a4b805b4c9b",
+            "i3fb8dced351b"
+          ]
+        }
+      ],
+      "n_splits": 6,
+      "passed": true,
+      "predictions": [
+        {
+          "item_id": "i263fafa5aa75",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i0badb53da4c0",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "i45b501e558fa",
+          "predicted": 1,
+          "truth": 0
+        },
+        {
+          "item_id": "iafa18d6b4770",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "i0722ebf388b1",
+          "predicted": 2,
+          "truth": 2
+        },
+        {
+          "item_id": "id11135c35dd0",
+          "predicted": 1,
+          "truth": 1
+        },
+        {
+          "item_id": "if0f2d8fe3d26",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "ib2e8bedaa5db",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "i233c6510c578",
+          "predicted": 1,
+          "truth": 1
+        },
+        {
+          "item_id": "ie831e8bdd001",
+          "predicted": 1,
+          "truth": 0
+        },
+        {
+          "item_id": "i60e3f7ce5f2f",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "i534051e35e39",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "i1974bcb309a0",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "i3eee6e9d51da",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "i8f5e8261b192",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "ided9d4a49315",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "ib0fa356f5855",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i158832198b1f",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "if0fac227c856",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "ie80f3c5920df",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i9189460c5bc4",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "iedce38ddd00c",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i4022eaf25f2b",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "i275835cfbcbb",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i93e6d304fcde",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "ib70ee84f3e5d",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "i0013b5d0433e",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "ief9fbee0899c",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "i0e2527ef361b",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "i6e222699b018",
+          "predicted": 1,
+          "truth": 0
+        },
+        {
+          "item_id": "ic2b08641d769",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "ie61d2d90124e",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i0b359ec42076",
+          "predicted": 2,
+          "truth": 2
+        },
+        {
+          "item_id": "i0df82a1e3dd9",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i4defba4152b1",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "id809c25e5d22",
+          "predicted": 1,
+          "truth": 1
+        },
+        {
+          "item_id": "i64feeb264c5d",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "ic2c1949f4e3d",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "i256a8a47d38d",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i319fb9c851a7",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "i05dcaf673445",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i7cde01d54585",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "i514a1ef9414f",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "ib91231f822a4",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i0e7710bf0468",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "iec716d518d1c",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "i115d1725ce4d",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i11a53363bd43",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "if37d1d705495",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i20720cb7c92a",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i0444feb64f14",
+          "predicted": 1,
+          "truth": 1
+        },
+        {
+          "item_id": "i2ab3312ce2df",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i885d40cb1969",
+          "predicted": 1,
+          "truth": 0
+        },
+        {
+          "item_id": "i557a45e1caa6",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i0617bdab0ff9",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "ieb9e879e4063",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i387013e737d5",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i7723ca5a9285",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "ib54c06697962",
+          "predicted": 1,
+          "truth": 1
+        },
+        {
+          "item_id": "if7d2c70f5dc9",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "i270c915ebae5",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "iddc7de236fb4",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i89b4d8d39241",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i3c36ab2e7346",
+          "predicted": 2,
+          "truth": 2
+        },
+        {
+          "item_id": "if96fa6af1ba9",
+          "predicted": 2,
+          "truth": 2
+        },
+        {
+          "item_id": "i498ab0babdb4",
+          "predicted": 1,
+          "truth": 0
+        },
+        {
+          "item_id": "iefa4594ef6a5",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "icb2100c5340d",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "ia7038754d045",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i2a4b805b4c9b",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i47ad98ac2456",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "i3fb8dced351b",
+          "predicted": 2,
+          "truth": 2
+        },
+        {
+          "item_id": "i7d9d47153a8b",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "i44fe1e5d7921",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i9b6a23d91d8d",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "ifa9287083f98",
+          "predicted": 1,
+          "truth": 0
+        },
+        {
+          "item_id": "i5f630aff2f85",
+          "predicted": 2,
+          "truth": 2
+        },
+        {
+          "item_id": "i853a055dc2d2",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "if04aca039d55",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "ifa64515122ea",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i5de3fd5e1081",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i365224876d56",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "ied5ecee79baf",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "ib0e9beb84849",
+          "predicted": 0,
+          "truth": 2
+        }
+      ]
+    },
+    "node_relations_grouped": {
+      "accuracy": 0.2857142857142857,
+      "balanced_accuracy": 0.2857142857142857,
+      "confusion_matrix": [
+        [
+          14,
+          6,
+          8
+        ],
+        [
+          17,
+          5,
+          6
+        ],
+        [
+          18,
+          5,
+          5
+        ]
+      ],
+      "correct": 24,
+      "cv": "StratifiedGroupKFold",
+      "estimator": {
+        "max_depth": 3,
+        "model": "DecisionTreeClassifier",
+        "random_state": 1
+      },
+      "features": [
+        "branch_alt0_is_sample",
+        "branch_alt1_is_sample",
+        "branch_alt2_is_sample",
+        "branch_con_order_rank",
+        "branch_con_sense_id",
+        "branch_con_sense_lt_alt0",
+        "branch_con_sense_lt_alt1",
+        "branch_con_sense_lt_alt2",
+        "branch_con_sense_order",
+        "branch_con_sense_rank",
+        "branch_con_unit_in_ants",
+        "branch_con_unit_is_sample",
+        "branch_con_unit_num",
+        "branch_indegree",
+        "branch_is_root",
+        "branch_marker_From",
+        "branch_marker_Given",
+        "branch_marker_Using",
+        "branch_marker_would establish",
+        "branch_marker_would imply",
+        "branch_marker_would yield",
+        "branch_n_alts",
+        "branch_n_ants",
+        "branch_outdegree",
+        "branch_position",
+        "branch_sample_alts",
+        "branch_sample_ants",
+        "max_alt0_is_sample",
+        "max_alt1_is_sample",
+        "max_alt2_is_sample",
+        "max_con_order_rank",
+        "max_con_sense_id",
+        "max_con_sense_lt_alt0",
+        "max_con_sense_lt_alt1",
+        "max_con_sense_lt_alt2",
+        "max_con_sense_order",
+        "max_con_sense_rank",
+        "max_con_unit_in_ants",
+        "max_con_unit_is_sample",
+        "max_con_unit_num",
+        "max_indegree",
+        "max_is_root",
+        "max_marker_From",
+        "max_marker_Given",
+        "max_marker_Using",
+        "max_marker_would establish",
+        "max_marker_would imply",
+        "max_marker_would yield",
+        "max_n_alts",
+        "max_n_ants",
+        "max_outdegree",
+        "max_position",
+        "max_sample_alts",
+        "max_sample_ants",
+        "mean_alt0_is_sample",
+        "mean_alt1_is_sample",
+        "mean_alt2_is_sample",
+        "mean_con_order_rank",
+        "mean_con_sense_id",
+        "mean_con_sense_lt_alt0",
+        "mean_con_sense_lt_alt1",
+        "mean_con_sense_lt_alt2",
+        "mean_con_sense_order",
+        "mean_con_sense_rank",
+        "mean_con_unit_in_ants",
+        "mean_con_unit_is_sample",
+        "mean_con_unit_num",
+        "mean_indegree",
+        "mean_is_root",
+        "mean_marker_From",
+        "mean_marker_Given",
+        "mean_marker_Using",
+        "mean_marker_would establish",
+        "mean_marker_would imply",
+        "mean_marker_would yield",
+        "mean_n_alts",
+        "mean_n_ants",
+        "mean_outdegree",
+        "mean_position",
+        "mean_sample_alts",
+        "mean_sample_ants",
+        "min_alt0_is_sample",
+        "min_alt1_is_sample",
+        "min_alt2_is_sample",
+        "min_con_order_rank",
+        "min_con_sense_id",
+        "min_con_sense_lt_alt0",
+        "min_con_sense_lt_alt1",
+        "min_con_sense_lt_alt2",
+        "min_con_sense_order",
+        "min_con_sense_rank",
+        "min_con_unit_in_ants",
+        "min_con_unit_is_sample",
+        "min_con_unit_num",
+        "min_indegree",
+        "min_is_root",
+        "min_marker_From",
+        "min_marker_Given",
+        "min_marker_Using",
+        "min_marker_would establish",
+        "min_marker_would imply",
+        "min_marker_would yield",
+        "min_n_alts",
+        "min_n_ants",
+        "min_outdegree",
+        "min_position",
+        "min_sample_alts",
+        "min_sample_ants",
+        "node_0_alt0_is_sample",
+        "node_0_alt1_is_sample",
+        "node_0_alt2_is_sample",
+        "node_0_con_order_rank",
+        "node_0_con_sense_id",
+        "node_0_con_sense_lt_alt0",
+        "node_0_con_sense_lt_alt1",
+        "node_0_con_sense_lt_alt2",
+        "node_0_con_sense_order",
+        "node_0_con_sense_rank",
+        "node_0_con_unit_in_ants",
+        "node_0_con_unit_is_sample",
+        "node_0_con_unit_num",
+        "node_0_indegree",
+        "node_0_is_root",
+        "node_0_marker_From",
+        "node_0_marker_Given",
+        "node_0_marker_Using",
+        "node_0_marker_would establish",
+        "node_0_marker_would imply",
+        "node_0_marker_would yield",
+        "node_0_n_alts",
+        "node_0_n_ants",
+        "node_0_outdegree",
+        "node_0_position",
+        "node_0_sample_alts",
+        "node_0_sample_ants",
+        "node_10_alt0_is_sample",
+        "node_10_alt1_is_sample",
+        "node_10_alt2_is_sample",
+        "node_10_con_order_rank",
+        "node_10_con_sense_id",
+        "node_10_con_sense_lt_alt0",
+        "node_10_con_sense_lt_alt1",
+        "node_10_con_sense_lt_alt2",
+        "node_10_con_sense_order",
+        "node_10_con_sense_rank",
+        "node_10_con_unit_in_ants",
+        "node_10_con_unit_is_sample",
+        "node_10_con_unit_num",
+        "node_10_indegree",
+        "node_10_is_root",
+        "node_10_marker_From",
+        "node_10_marker_Given",
+        "node_10_marker_Using",
+        "node_10_marker_would establish",
+        "node_10_marker_would imply",
+        "node_10_marker_would yield",
+        "node_10_n_alts",
+        "node_10_n_ants",
+        "node_10_outdegree",
+        "node_10_position",
+        "node_10_sample_alts",
+        "node_10_sample_ants",
+        "node_11_alt0_is_sample",
+        "node_11_alt1_is_sample",
+        "node_11_alt2_is_sample",
+        "node_11_con_order_rank",
+        "node_11_con_sense_id",
+        "node_11_con_sense_lt_alt0",
+        "node_11_con_sense_lt_alt1",
+        "node_11_con_sense_lt_alt2",
+        "node_11_con_sense_order",
+        "node_11_con_sense_rank",
+        "node_11_con_unit_in_ants",
+        "node_11_con_unit_is_sample",
+        "node_11_con_unit_num",
+        "node_11_indegree",
+        "node_11_is_root",
+        "node_11_marker_From",
+        "node_11_marker_Given",
+        "node_11_marker_Using",
+        "node_11_marker_would establish",
+        "node_11_marker_would imply",
+        "node_11_marker_would yield",
+        "node_11_n_alts",
+        "node_11_n_ants",
+        "node_11_outdegree",
+        "node_11_position",
+        "node_11_sample_alts",
+        "node_11_sample_ants",
+        "node_12_alt0_is_sample",
+        "node_12_alt1_is_sample",
+        "node_12_alt2_is_sample",
+        "node_12_con_order_rank",
+        "node_12_con_sense_id",
+        "node_12_con_sense_lt_alt0",
+        "node_12_con_sense_lt_alt1",
+        "node_12_con_sense_lt_alt2",
+        "node_12_con_sense_order",
+        "node_12_con_sense_rank",
+        "node_12_con_unit_in_ants",
+        "node_12_con_unit_is_sample",
+        "node_12_con_unit_num",
+        "node_12_indegree",
+        "node_12_is_root",
+        "node_12_marker_From",
+        "node_12_marker_Given",
+        "node_12_marker_Using",
+        "node_12_marker_would establish",
+        "node_12_marker_would imply",
+        "node_12_marker_would yield",
+        "node_12_n_alts",
+        "node_12_n_ants",
+        "node_12_outdegree",
+        "node_12_position",
+        "node_12_sample_alts",
+        "node_12_sample_ants",
+        "node_13_alt0_is_sample",
+        "node_13_alt1_is_sample",
+        "node_13_alt2_is_sample",
+        "node_13_con_order_rank",
+        "node_13_con_sense_id",
+        "node_13_con_sense_lt_alt0",
+        "node_13_con_sense_lt_alt1",
+        "node_13_con_sense_lt_alt2",
+        "node_13_con_sense_order",
+        "node_13_con_sense_rank",
+        "node_13_con_unit_in_ants",
+        "node_13_con_unit_is_sample",
+        "node_13_con_unit_num",
+        "node_13_indegree",
+        "node_13_is_root",
+        "node_13_marker_From",
+        "node_13_marker_Given",
+        "node_13_marker_Using",
+        "node_13_marker_would establish",
+        "node_13_marker_would imply",
+        "node_13_marker_would yield",
+        "node_13_n_alts",
+        "node_13_n_ants",
+        "node_13_outdegree",
+        "node_13_position",
+        "node_13_sample_alts",
+        "node_13_sample_ants",
+        "node_14_alt0_is_sample",
+        "node_14_alt1_is_sample",
+        "node_14_alt2_is_sample",
+        "node_14_con_order_rank",
+        "node_14_con_sense_id",
+        "node_14_con_sense_lt_alt0",
+        "node_14_con_sense_lt_alt1",
+        "node_14_con_sense_lt_alt2",
+        "node_14_con_sense_order",
+        "node_14_con_sense_rank",
+        "node_14_con_unit_in_ants",
+        "node_14_con_unit_is_sample",
+        "node_14_con_unit_num",
+        "node_14_indegree",
+        "node_14_is_root",
+        "node_14_marker_From",
+        "node_14_marker_Given",
+        "node_14_marker_Using",
+        "node_14_marker_would establish",
+        "node_14_marker_would imply",
+        "node_14_marker_would yield",
+        "node_14_n_alts",
+        "node_14_n_ants",
+        "node_14_outdegree",
+        "node_14_position",
+        "node_14_sample_alts",
+        "node_14_sample_ants",
+        "node_15_alt0_is_sample",
+        "node_15_alt1_is_sample",
+        "node_15_alt2_is_sample",
+        "node_15_con_order_rank",
+        "node_15_con_sense_id",
+        "node_15_con_sense_lt_alt0",
+        "node_15_con_sense_lt_alt1",
+        "node_15_con_sense_lt_alt2",
+        "node_15_con_sense_order",
+        "node_15_con_sense_rank",
+        "node_15_con_unit_in_ants",
+        "node_15_con_unit_is_sample",
+        "node_15_con_unit_num",
+        "node_15_indegree",
+        "node_15_is_root",
+        "node_15_marker_From",
+        "node_15_marker_Given",
+        "node_15_marker_Using",
+        "node_15_marker_would establish",
+        "node_15_marker_would imply",
+        "node_15_marker_would yield",
+        "node_15_n_alts",
+        "node_15_n_ants",
+        "node_15_outdegree",
+        "node_15_position",
+        "node_15_sample_alts",
+        "node_15_sample_ants",
+        "node_1_alt0_is_sample",
+        "node_1_alt1_is_sample",
+        "node_1_alt2_is_sample",
+        "node_1_con_order_rank",
+        "node_1_con_sense_id",
+        "node_1_con_sense_lt_alt0",
+        "node_1_con_sense_lt_alt1",
+        "node_1_con_sense_lt_alt2",
+        "node_1_con_sense_order",
+        "node_1_con_sense_rank",
+        "node_1_con_unit_in_ants",
+        "node_1_con_unit_is_sample",
+        "node_1_con_unit_num",
+        "node_1_indegree",
+        "node_1_is_root",
+        "node_1_marker_From",
+        "node_1_marker_Given",
+        "node_1_marker_Using",
+        "node_1_marker_would establish",
+        "node_1_marker_would imply",
+        "node_1_marker_would yield",
+        "node_1_n_alts",
+        "node_1_n_ants",
+        "node_1_outdegree",
+        "node_1_position",
+        "node_1_sample_alts",
+        "node_1_sample_ants",
+        "node_2_alt0_is_sample",
+        "node_2_alt1_is_sample",
+        "node_2_alt2_is_sample",
+        "node_2_con_order_rank",
+        "node_2_con_sense_id",
+        "node_2_con_sense_lt_alt0",
+        "node_2_con_sense_lt_alt1",
+        "node_2_con_sense_lt_alt2",
+        "node_2_con_sense_order",
+        "node_2_con_sense_rank",
+        "node_2_con_unit_in_ants",
+        "node_2_con_unit_is_sample",
+        "node_2_con_unit_num",
+        "node_2_indegree",
+        "node_2_is_root",
+        "node_2_marker_From",
+        "node_2_marker_Given",
+        "node_2_marker_Using",
+        "node_2_marker_would establish",
+        "node_2_marker_would imply",
+        "node_2_marker_would yield",
+        "node_2_n_alts",
+        "node_2_n_ants",
+        "node_2_outdegree",
+        "node_2_position",
+        "node_2_sample_alts",
+        "node_2_sample_ants",
+        "node_3_alt0_is_sample",
+        "node_3_alt1_is_sample",
+        "node_3_alt2_is_sample",
+        "node_3_con_order_rank",
+        "node_3_con_sense_id",
+        "node_3_con_sense_lt_alt0",
+        "node_3_con_sense_lt_alt1",
+        "node_3_con_sense_lt_alt2",
+        "node_3_con_sense_order",
+        "node_3_con_sense_rank",
+        "node_3_con_unit_in_ants",
+        "node_3_con_unit_is_sample",
+        "node_3_con_unit_num",
+        "node_3_indegree",
+        "node_3_is_root",
+        "node_3_marker_From",
+        "node_3_marker_Given",
+        "node_3_marker_Using",
+        "node_3_marker_would establish",
+        "node_3_marker_would imply",
+        "node_3_marker_would yield",
+        "node_3_n_alts",
+        "node_3_n_ants",
+        "node_3_outdegree",
+        "node_3_position",
+        "node_3_sample_alts",
+        "node_3_sample_ants",
+        "node_4_alt0_is_sample",
+        "node_4_alt1_is_sample",
+        "node_4_alt2_is_sample",
+        "node_4_con_order_rank",
+        "node_4_con_sense_id",
+        "node_4_con_sense_lt_alt0",
+        "node_4_con_sense_lt_alt1",
+        "node_4_con_sense_lt_alt2",
+        "node_4_con_sense_order",
+        "node_4_con_sense_rank",
+        "node_4_con_unit_in_ants",
+        "node_4_con_unit_is_sample",
+        "node_4_con_unit_num",
+        "node_4_indegree",
+        "node_4_is_root",
+        "node_4_marker_From",
+        "node_4_marker_Given",
+        "node_4_marker_Using",
+        "node_4_marker_would establish",
+        "node_4_marker_would imply",
+        "node_4_marker_would yield",
+        "node_4_n_alts",
+        "node_4_n_ants",
+        "node_4_outdegree",
+        "node_4_position",
+        "node_4_sample_alts",
+        "node_4_sample_ants",
+        "node_5_alt0_is_sample",
+        "node_5_alt1_is_sample",
+        "node_5_alt2_is_sample",
+        "node_5_con_order_rank",
+        "node_5_con_sense_id",
+        "node_5_con_sense_lt_alt0",
+        "node_5_con_sense_lt_alt1",
+        "node_5_con_sense_lt_alt2",
+        "node_5_con_sense_order",
+        "node_5_con_sense_rank",
+        "node_5_con_unit_in_ants",
+        "node_5_con_unit_is_sample",
+        "node_5_con_unit_num",
+        "node_5_indegree",
+        "node_5_is_root",
+        "node_5_marker_From",
+        "node_5_marker_Given",
+        "node_5_marker_Using",
+        "node_5_marker_would establish",
+        "node_5_marker_would imply",
+        "node_5_marker_would yield",
+        "node_5_n_alts",
+        "node_5_n_ants",
+        "node_5_outdegree",
+        "node_5_position",
+        "node_5_sample_alts",
+        "node_5_sample_ants",
+        "node_6_alt0_is_sample",
+        "node_6_alt1_is_sample",
+        "node_6_alt2_is_sample",
+        "node_6_con_order_rank",
+        "node_6_con_sense_id",
+        "node_6_con_sense_lt_alt0",
+        "node_6_con_sense_lt_alt1",
+        "node_6_con_sense_lt_alt2",
+        "node_6_con_sense_order",
+        "node_6_con_sense_rank",
+        "node_6_con_unit_in_ants",
+        "node_6_con_unit_is_sample",
+        "node_6_con_unit_num",
+        "node_6_indegree",
+        "node_6_is_root",
+        "node_6_marker_From",
+        "node_6_marker_Given",
+        "node_6_marker_Using",
+        "node_6_marker_would establish",
+        "node_6_marker_would imply",
+        "node_6_marker_would yield",
+        "node_6_n_alts",
+        "node_6_n_ants",
+        "node_6_outdegree",
+        "node_6_position",
+        "node_6_sample_alts",
+        "node_6_sample_ants",
+        "node_7_alt0_is_sample",
+        "node_7_alt1_is_sample",
+        "node_7_alt2_is_sample",
+        "node_7_con_order_rank",
+        "node_7_con_sense_id",
+        "node_7_con_sense_lt_alt0",
+        "node_7_con_sense_lt_alt1",
+        "node_7_con_sense_lt_alt2",
+        "node_7_con_sense_order",
+        "node_7_con_sense_rank",
+        "node_7_con_unit_in_ants",
+        "node_7_con_unit_is_sample",
+        "node_7_con_unit_num",
+        "node_7_indegree",
+        "node_7_is_root",
+        "node_7_marker_From",
+        "node_7_marker_Given",
+        "node_7_marker_Using",
+        "node_7_marker_would establish",
+        "node_7_marker_would imply",
+        "node_7_marker_would yield",
+        "node_7_n_alts",
+        "node_7_n_ants",
+        "node_7_outdegree",
+        "node_7_position",
+        "node_7_sample_alts",
+        "node_7_sample_ants",
+        "node_8_alt0_is_sample",
+        "node_8_alt1_is_sample",
+        "node_8_alt2_is_sample",
+        "node_8_con_order_rank",
+        "node_8_con_sense_id",
+        "node_8_con_sense_lt_alt0",
+        "node_8_con_sense_lt_alt1",
+        "node_8_con_sense_lt_alt2",
+        "node_8_con_sense_order",
+        "node_8_con_sense_rank",
+        "node_8_con_unit_in_ants",
+        "node_8_con_unit_is_sample",
+        "node_8_con_unit_num",
+        "node_8_indegree",
+        "node_8_is_root",
+        "node_8_marker_From",
+        "node_8_marker_Given",
+        "node_8_marker_Using",
+        "node_8_marker_would establish",
+        "node_8_marker_would imply",
+        "node_8_marker_would yield",
+        "node_8_n_alts",
+        "node_8_n_ants",
+        "node_8_outdegree",
+        "node_8_position",
+        "node_8_sample_alts",
+        "node_8_sample_ants",
+        "node_9_alt0_is_sample",
+        "node_9_alt1_is_sample",
+        "node_9_alt2_is_sample",
+        "node_9_con_order_rank",
+        "node_9_con_sense_id",
+        "node_9_con_sense_lt_alt0",
+        "node_9_con_sense_lt_alt1",
+        "node_9_con_sense_lt_alt2",
+        "node_9_con_sense_order",
+        "node_9_con_sense_rank",
+        "node_9_con_unit_in_ants",
+        "node_9_con_unit_is_sample",
+        "node_9_con_unit_num",
+        "node_9_indegree",
+        "node_9_is_root",
+        "node_9_marker_From",
+        "node_9_marker_Given",
+        "node_9_marker_Using",
+        "node_9_marker_would establish",
+        "node_9_marker_would imply",
+        "node_9_marker_would yield",
+        "node_9_n_alts",
+        "node_9_n_ants",
+        "node_9_outdegree",
+        "node_9_position",
+        "node_9_sample_alts",
+        "node_9_sample_ants"
+      ],
+      "folds": [
+        {
+          "split_features": [
+            "max_con_sense_order",
+            "node_8_con_sense_id",
+            "node_13_con_sense_lt_alt2"
+          ],
+          "test_ids": [
+            "i263fafa5aa75",
+            "id11135c35dd0",
+            "i233c6510c578",
+            "i534051e35e39",
+            "i4022eaf25f2b",
+            "i6e222699b018",
+            "ie61d2d90124e",
+            "i7cde01d54585",
+            "i0e7710bf0468",
+            "if37d1d705495",
+            "ieb9e879e4063",
+            "i387013e737d5",
+            "i270c915ebae5",
+            "i853a055dc2d2",
+            "ied5ecee79baf"
+          ]
+        },
+        {
+          "split_features": [
+            "branch_con_sense_order",
+            "node_8_con_sense_id",
+            "mean_con_sense_order",
+            "node_15_con_sense_order",
+            "branch_con_unit_num"
+          ],
+          "test_ids": [
+            "i0badb53da4c0",
+            "ided9d4a49315",
+            "iedce38ddd00c",
+            "i275835cfbcbb",
+            "ic2b08641d769",
+            "i0b359ec42076",
+            "id809c25e5d22",
+            "i64feeb264c5d",
+            "ic2c1949f4e3d",
+            "if7d2c70f5dc9",
+            "i89b4d8d39241",
+            "if96fa6af1ba9",
+            "icb2100c5340d",
+            "if04aca039d55",
+            "ifa64515122ea"
+          ]
+        },
+        {
+          "split_features": [
+            "node_1_con_sense_id",
+            "node_8_con_sense_id",
+            "node_4_con_sense_id",
+            "branch_sample_alts"
+          ],
+          "test_ids": [
+            "i60e3f7ce5f2f",
+            "ib70ee84f3e5d",
+            "ief9fbee0899c",
+            "i0e2527ef361b",
+            "i256a8a47d38d",
+            "i0444feb64f14",
+            "iddc7de236fb4",
+            "i498ab0babdb4",
+            "iefa4594ef6a5",
+            "ia7038754d045",
+            "i3fb8dced351b",
+            "i7d9d47153a8b",
+            "i44fe1e5d7921",
+            "i5de3fd5e1081",
+            "i365224876d56"
+          ]
+        },
+        {
+          "split_features": [
+            "node_1_con_sense_id",
+            "mean_con_sense_order",
+            "node_1_con_sense_order"
+          ],
+          "test_ids": [
+            "if0f2d8fe3d26",
+            "i1974bcb309a0",
+            "i8f5e8261b192",
+            "i158832198b1f",
+            "i9189460c5bc4",
+            "i4defba4152b1",
+            "i319fb9c851a7",
+            "i514a1ef9414f",
+            "iec716d518d1c",
+            "i115d1725ce4d",
+            "i11a53363bd43",
+            "i20720cb7c92a",
+            "i2ab3312ce2df",
+            "i557a45e1caa6",
+            "i2a4b805b4c9b"
+          ]
+        },
+        {
+          "split_features": [
+            "branch_con_sense_order",
+            "node_7_con_sense_order",
+            "node_10_alt0_is_sample",
+            "node_9_con_sense_order",
+            "node_15_con_sense_id",
+            "mean_con_sense_lt_alt2"
+          ],
+          "test_ids": [
+            "i0722ebf388b1",
+            "ie831e8bdd001",
+            "i3eee6e9d51da",
+            "ib0fa356f5855",
+            "if0fac227c856",
+            "ie80f3c5920df",
+            "i0013b5d0433e",
+            "i0df82a1e3dd9",
+            "i7723ca5a9285",
+            "i9b6a23d91d8d",
+            "ifa9287083f98",
+            "i5f630aff2f85"
+          ]
+        },
+        {
+          "split_features": [
+            "node_8_con_sense_id",
+            "node_4_con_sense_id",
+            "node_12_con_sense_id",
+            "branch_con_unit_num",
+            "node_3_con_order_rank"
+          ],
+          "test_ids": [
+            "i45b501e558fa",
+            "iafa18d6b4770",
+            "ib2e8bedaa5db",
+            "i93e6d304fcde",
+            "i05dcaf673445",
+            "ib91231f822a4",
+            "i885d40cb1969",
+            "i0617bdab0ff9",
+            "ib54c06697962",
+            "i3c36ab2e7346",
+            "i47ad98ac2456",
+            "ib0e9beb84849"
+          ]
+        }
+      ],
+      "n_splits": 6,
+      "passed": true,
+      "predictions": [
+        {
+          "item_id": "i263fafa5aa75",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i0badb53da4c0",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "i45b501e558fa",
+          "predicted": 1,
+          "truth": 0
+        },
+        {
+          "item_id": "iafa18d6b4770",
+          "predicted": 1,
+          "truth": 1
+        },
+        {
+          "item_id": "i0722ebf388b1",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "id11135c35dd0",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "if0f2d8fe3d26",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "ib2e8bedaa5db",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "i233c6510c578",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "ie831e8bdd001",
+          "predicted": 1,
+          "truth": 0
+        },
+        {
+          "item_id": "i60e3f7ce5f2f",
+          "predicted": 2,
+          "truth": 2
+        },
+        {
+          "item_id": "i534051e35e39",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "i1974bcb309a0",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "i3eee6e9d51da",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i8f5e8261b192",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "ided9d4a49315",
+          "predicted": 2,
+          "truth": 2
+        },
+        {
+          "item_id": "ib0fa356f5855",
+          "predicted": 1,
+          "truth": 1
+        },
+        {
+          "item_id": "i158832198b1f",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "if0fac227c856",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "ie80f3c5920df",
+          "predicted": 1,
+          "truth": 1
+        },
+        {
+          "item_id": "i9189460c5bc4",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "iedce38ddd00c",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i4022eaf25f2b",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "i275835cfbcbb",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i93e6d304fcde",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "ib70ee84f3e5d",
+          "predicted": 2,
+          "truth": 2
+        },
+        {
+          "item_id": "i0013b5d0433e",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "ief9fbee0899c",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "i0e2527ef361b",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "i6e222699b018",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "ic2b08641d769",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "ie61d2d90124e",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i0b359ec42076",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "i0df82a1e3dd9",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i4defba4152b1",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "id809c25e5d22",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "i64feeb264c5d",
+          "predicted": 2,
+          "truth": 2
+        },
+        {
+          "item_id": "ic2c1949f4e3d",
+          "predicted": 1,
+          "truth": 1
+        },
+        {
+          "item_id": "i256a8a47d38d",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i319fb9c851a7",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i05dcaf673445",
+          "predicted": 1,
+          "truth": 1
+        },
+        {
+          "item_id": "i7cde01d54585",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i514a1ef9414f",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "ib91231f822a4",
+          "predicted": 1,
+          "truth": 0
+        },
+        {
+          "item_id": "i0e7710bf0468",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "iec716d518d1c",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "i115d1725ce4d",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i11a53363bd43",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "if37d1d705495",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i20720cb7c92a",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i0444feb64f14",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i2ab3312ce2df",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i885d40cb1969",
+          "predicted": 1,
+          "truth": 0
+        },
+        {
+          "item_id": "i557a45e1caa6",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i0617bdab0ff9",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "ieb9e879e4063",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i387013e737d5",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i7723ca5a9285",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "ib54c06697962",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "if7d2c70f5dc9",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "i270c915ebae5",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "iddc7de236fb4",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i89b4d8d39241",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "i3c36ab2e7346",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "if96fa6af1ba9",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "i498ab0babdb4",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "iefa4594ef6a5",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "icb2100c5340d",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "ia7038754d045",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "i2a4b805b4c9b",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i47ad98ac2456",
+          "predicted": 2,
+          "truth": 2
+        },
+        {
+          "item_id": "i3fb8dced351b",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "i7d9d47153a8b",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "i44fe1e5d7921",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i9b6a23d91d8d",
+          "predicted": 1,
+          "truth": 0
+        },
+        {
+          "item_id": "ifa9287083f98",
+          "predicted": 1,
+          "truth": 0
+        },
+        {
+          "item_id": "i5f630aff2f85",
+          "predicted": 1,
+          "truth": 2
+        },
+        {
+          "item_id": "i853a055dc2d2",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "if04aca039d55",
+          "predicted": 2,
+          "truth": 0
+        },
+        {
+          "item_id": "ifa64515122ea",
+          "predicted": 2,
+          "truth": 1
+        },
+        {
+          "item_id": "i5de3fd5e1081",
+          "predicted": 0,
+          "truth": 0
+        },
+        {
+          "item_id": "i365224876d56",
+          "predicted": 0,
+          "truth": 1
+        },
+        {
+          "item_id": "ied5ecee79baf",
+          "predicted": 0,
+          "truth": 2
+        },
+        {
+          "item_id": "ib0e9beb84849",
+          "predicted": 0,
+          "truth": 2
+        }
+      ]
+    },
+    "reviewer_unit_rank_rule": {
+      "accuracy": 0.3333333333333333,
+      "balanced_accuracy": 0.3333333333333333,
+      "confusion_matrix": [
+        [
+          0,
+          14,
+          14
+        ],
+        [
+          0,
+          14,
+          14
+        ],
+        [
+          0,
+          14,
+          14
+        ]
+      ],
+      "correct": 28,
+      "coverage": 84,
+      "passed": true,
+      "rule": "branch conclusion is sample -> smuggle; else sense rank 1 -> benign; else shift"
     },
     "structure": {
       "accuracy": 0.3333333333333333,
@@ -1035,424 +3348,424 @@
       "passed": true,
       "predictions": [
         {
-          "item_id": "id0c29599771e",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ide8e0bac5148",
+          "item_id": "i263fafa5aa75",
           "predicted": "benign",
           "truth": "benign"
         },
         {
-          "item_id": "i944ec9293759",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i4dd5e272e500",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i84f0dbedb385",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i43dc39b29763",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i33cff65bb1c6",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i1c49fa58634f",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "id7b763670ce8",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i6a7a135d581d",
+          "item_id": "i0badb53da4c0",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "ie9f9079587ef",
+          "item_id": "i45b501e558fa",
           "predicted": "benign",
           "truth": "benign"
         },
         {
-          "item_id": "i04ad8dc8e7d0",
+          "item_id": "iafa18d6b4770",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i6e223f797df5",
+          "item_id": "i0722ebf388b1",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "i5c7bcaa50294",
+          "item_id": "id11135c35dd0",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "ie324ad64337a",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i420f4cf48c24",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ie91c992125d6",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i019191d17281",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "idfe4ef831b6b",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i5ff9beafefd0",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i1cd699655011",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ibff92a1bef43",
+          "item_id": "if0f2d8fe3d26",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "ic6db37a101b9",
+          "item_id": "ib2e8bedaa5db",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i233c6510c578",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i36c6db29d5e2",
+          "item_id": "ie831e8bdd001",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i60e3f7ce5f2f",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "i10372966b410",
+          "item_id": "i534051e35e39",
           "predicted": "benign",
-          "truth": "benign"
+          "truth": "smuggle"
         },
         {
-          "item_id": "i6709d1713209",
+          "item_id": "i1974bcb309a0",
           "predicted": "benign",
-          "truth": "benign"
+          "truth": "smuggle"
         },
         {
-          "item_id": "i003e73faa003",
+          "item_id": "i3eee6e9d51da",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i4657ceb4f232",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ie56e7abfc868",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i5700ca862164",
+          "item_id": "i8f5e8261b192",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i3de1757dcbee",
+          "item_id": "ided9d4a49315",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ib0fa356f5855",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "ic8ebd06664a3",
+          "item_id": "i158832198b1f",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "id45b01d47bef",
+          "item_id": "if0fac227c856",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ie80f3c5920df",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i972ed05962cc",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "id85fd1ff20a9",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i44540f7bd710",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "iea56f5cf8c44",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i20fae7525773",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i036d82cbdb65",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i8bac61ed164a",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i4a9a5c6b4293",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ida8b69c2a6b3",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i3f8cbefefdd9",
+          "item_id": "i9189460c5bc4",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i053fba82504f",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "id7aa466a8a9d",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ie5cb8bfdd6b7",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ia421ef87c31e",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "if40c21abf0e8",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i45cad6845d7c",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i136f88ecf7fb",
+          "item_id": "iedce38ddd00c",
           "predicted": "benign",
           "truth": "benign"
         },
         {
-          "item_id": "if98c01f39ef3",
+          "item_id": "i4022eaf25f2b",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "iec214bab4643",
+          "item_id": "i275835cfbcbb",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i93e6d304fcde",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i309c9486c702",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ia44857b0c704",
+          "item_id": "ib70ee84f3e5d",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "i49b8ba8ed56d",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i1ccb8b4dc602",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i813d6d9cb593",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ie0bbc8d44394",
+          "item_id": "i0013b5d0433e",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i0475772b3ce6",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "ia1f3f37599d0",
+          "item_id": "ief9fbee0899c",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i89f933088bc4",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i6ce756e6c04d",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i2fa8a3580281",
+          "item_id": "i0e2527ef361b",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i7b2cedcf5bd9",
+          "item_id": "i6e222699b018",
           "predicted": "benign",
           "truth": "benign"
         },
         {
-          "item_id": "ifdd96ce4567f",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i6c77fff11554",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "ia8a90189268e",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i628c8fb458a2",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i79ad055d179a",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i6a530b75731e",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i23a90d479b8d",
+          "item_id": "ic2b08641d769",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i2c5ac14bda37",
+          "item_id": "ie61d2d90124e",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i0b359ec42076",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "i85158e7e0831",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i46f653c9ebf9",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i5931db220a00",
+          "item_id": "i0df82a1e3dd9",
           "predicted": "benign",
           "truth": "benign"
         },
         {
-          "item_id": "i62554daef82d",
+          "item_id": "i4defba4152b1",
           "predicted": "benign",
           "truth": "benign"
         },
         {
-          "item_id": "i8d3108069e39",
+          "item_id": "id809c25e5d22",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "ifa6320defaaf",
+          "item_id": "i64feeb264c5d",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "i8969f3c56c31",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i0017f199224b",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "icb6788a13bca",
+          "item_id": "ic2c1949f4e3d",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "ic46ca40d602c",
+          "item_id": "i256a8a47d38d",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i319fb9c851a7",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i05dcaf673445",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i7cde01d54585",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i514a1ef9414f",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "id022529ac71a",
+          "item_id": "ib91231f822a4",
           "predicted": "benign",
           "truth": "benign"
         },
         {
-          "item_id": "id61aa747270b",
+          "item_id": "i0e7710bf0468",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "iec716d518d1c",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i115d1725ce4d",
           "predicted": "benign",
           "truth": "benign"
+        },
+        {
+          "item_id": "i11a53363bd43",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "if37d1d705495",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i20720cb7c92a",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i0444feb64f14",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i2ab3312ce2df",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i885d40cb1969",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i557a45e1caa6",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i0617bdab0ff9",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ieb9e879e4063",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i387013e737d5",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i7723ca5a9285",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ib54c06697962",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "if7d2c70f5dc9",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i270c915ebae5",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "iddc7de236fb4",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i89b4d8d39241",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i3c36ab2e7346",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "if96fa6af1ba9",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i498ab0babdb4",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "iefa4594ef6a5",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "icb2100c5340d",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ia7038754d045",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i2a4b805b4c9b",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i47ad98ac2456",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i3fb8dced351b",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i7d9d47153a8b",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i44fe1e5d7921",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i9b6a23d91d8d",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ifa9287083f98",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i5f630aff2f85",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i853a055dc2d2",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "if04aca039d55",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ifa64515122ea",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i5de3fd5e1081",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i365224876d56",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ied5ecee79baf",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ib0e9beb84849",
+          "predicted": "benign",
+          "truth": "smuggle"
         }
       ]
     },
@@ -1461,443 +3774,443 @@
       "balanced_accuracy": 0.3333333333333333,
       "confusion_matrix": [
         [
-          12,
-          9,
-          7
+          21,
+          7,
+          0
         ],
         [
-          12,
-          9,
-          7
+          21,
+          7,
+          0
         ],
         [
-          12,
-          9,
-          7
+          21,
+          7,
+          0
         ]
       ],
       "correct": 28,
       "passed": true,
       "predictions": [
         {
-          "item_id": "id0c29599771e",
+          "item_id": "i263fafa5aa75",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i0badb53da4c0",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "ide8e0bac5148",
+          "item_id": "i45b501e558fa",
           "predicted": "shift",
           "truth": "benign"
         },
         {
-          "item_id": "i944ec9293759",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i4dd5e272e500",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i84f0dbedb385",
-          "predicted": "shift",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i43dc39b29763",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i33cff65bb1c6",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i1c49fa58634f",
-          "predicted": "shift",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "id7b763670ce8",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i6a7a135d581d",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ie9f9079587ef",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i04ad8dc8e7d0",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i6e223f797df5",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i5c7bcaa50294",
+          "item_id": "iafa18d6b4770",
           "predicted": "shift",
           "truth": "shift"
         },
         {
-          "item_id": "ie324ad64337a",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i420f4cf48c24",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ie91c992125d6",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i019191d17281",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "idfe4ef831b6b",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i5ff9beafefd0",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i1cd699655011",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ibff92a1bef43",
+          "item_id": "i0722ebf388b1",
           "predicted": "shift",
           "truth": "smuggle"
         },
         {
-          "item_id": "ic6db37a101b9",
+          "item_id": "id11135c35dd0",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i36c6db29d5e2",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i10372966b410",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i6709d1713209",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i003e73faa003",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i4657ceb4f232",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ie56e7abfc868",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i5700ca862164",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i3de1757dcbee",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ic8ebd06664a3",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "id45b01d47bef",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i972ed05962cc",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "id85fd1ff20a9",
+          "item_id": "if0f2d8fe3d26",
           "predicted": "shift",
           "truth": "smuggle"
         },
         {
-          "item_id": "i44540f7bd710",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "iea56f5cf8c44",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i20fae7525773",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i036d82cbdb65",
+          "item_id": "ib2e8bedaa5db",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "i8bac61ed164a",
-          "predicted": "shift",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i4a9a5c6b4293",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ida8b69c2a6b3",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i3f8cbefefdd9",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i053fba82504f",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "id7aa466a8a9d",
+          "item_id": "i233c6510c578",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "ie5cb8bfdd6b7",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ia421ef87c31e",
-          "predicted": "shift",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "if40c21abf0e8",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i45cad6845d7c",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i136f88ecf7fb",
+          "item_id": "ie831e8bdd001",
           "predicted": "benign",
           "truth": "benign"
         },
         {
-          "item_id": "if98c01f39ef3",
+          "item_id": "i60e3f7ce5f2f",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "iec214bab4643",
-          "predicted": "shift",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i309c9486c702",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ia44857b0c704",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i49b8ba8ed56d",
+          "item_id": "i534051e35e39",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "i1ccb8b4dc602",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i813d6d9cb593",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ie0bbc8d44394",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i0475772b3ce6",
+          "item_id": "i1974bcb309a0",
           "predicted": "shift",
           "truth": "smuggle"
         },
         {
-          "item_id": "ia1f3f37599d0",
+          "item_id": "i3eee6e9d51da",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "i89f933088bc4",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i6ce756e6c04d",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i2fa8a3580281",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i7b2cedcf5bd9",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "ifdd96ce4567f",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i6c77fff11554",
-          "predicted": "shift",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "ia8a90189268e",
-          "predicted": "benign",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i628c8fb458a2",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i79ad055d179a",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i6a530b75731e",
-          "predicted": "shift",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i23a90d479b8d",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i2c5ac14bda37",
-          "predicted": "smuggle",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "i85158e7e0831",
+          "item_id": "i8f5e8261b192",
           "predicted": "shift",
           "truth": "shift"
         },
         {
-          "item_id": "i46f653c9ebf9",
-          "predicted": "smuggle",
-          "truth": "shift"
-        },
-        {
-          "item_id": "i5931db220a00",
+          "item_id": "ided9d4a49315",
           "predicted": "benign",
-          "truth": "benign"
+          "truth": "smuggle"
         },
         {
-          "item_id": "i62554daef82d",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i8d3108069e39",
-          "predicted": "benign",
-          "truth": "shift"
-        },
-        {
-          "item_id": "ifa6320defaaf",
+          "item_id": "ib0fa356f5855",
           "predicted": "shift",
-          "truth": "smuggle"
+          "truth": "shift"
         },
         {
-          "item_id": "i8969f3c56c31",
-          "predicted": "smuggle",
-          "truth": "benign"
-        },
-        {
-          "item_id": "i0017f199224b",
-          "predicted": "benign",
-          "truth": "smuggle"
-        },
-        {
-          "item_id": "icb6788a13bca",
+          "item_id": "i158832198b1f",
           "predicted": "benign",
           "truth": "shift"
         },
         {
-          "item_id": "ic46ca40d602c",
+          "item_id": "if0fac227c856",
           "predicted": "benign",
           "truth": "smuggle"
         },
         {
-          "item_id": "id022529ac71a",
+          "item_id": "ie80f3c5920df",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i9189460c5bc4",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "iedce38ddd00c",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i4022eaf25f2b",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i275835cfbcbb",
           "predicted": "shift",
           "truth": "benign"
         },
         {
-          "item_id": "id61aa747270b",
+          "item_id": "i93e6d304fcde",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ib70ee84f3e5d",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i0013b5d0433e",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ief9fbee0899c",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i0e2527ef361b",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i6e222699b018",
           "predicted": "benign",
           "truth": "benign"
+        },
+        {
+          "item_id": "ic2b08641d769",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ie61d2d90124e",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i0b359ec42076",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i0df82a1e3dd9",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i4defba4152b1",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "id809c25e5d22",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i64feeb264c5d",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ic2c1949f4e3d",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i256a8a47d38d",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i319fb9c851a7",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i05dcaf673445",
+          "predicted": "shift",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i7cde01d54585",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i514a1ef9414f",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ib91231f822a4",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i0e7710bf0468",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "iec716d518d1c",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i115d1725ce4d",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i11a53363bd43",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "if37d1d705495",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i20720cb7c92a",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i0444feb64f14",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i2ab3312ce2df",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i885d40cb1969",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i557a45e1caa6",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i0617bdab0ff9",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ieb9e879e4063",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i387013e737d5",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i7723ca5a9285",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ib54c06697962",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "if7d2c70f5dc9",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i270c915ebae5",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "iddc7de236fb4",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i89b4d8d39241",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i3c36ab2e7346",
+          "predicted": "shift",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "if96fa6af1ba9",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i498ab0babdb4",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "iefa4594ef6a5",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "icb2100c5340d",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ia7038754d045",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i2a4b805b4c9b",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i47ad98ac2456",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i3fb8dced351b",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i7d9d47153a8b",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i44fe1e5d7921",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i9b6a23d91d8d",
+          "predicted": "shift",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ifa9287083f98",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i5f630aff2f85",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "i853a055dc2d2",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "if04aca039d55",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "ifa64515122ea",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "i5de3fd5e1081",
+          "predicted": "benign",
+          "truth": "benign"
+        },
+        {
+          "item_id": "i365224876d56",
+          "predicted": "benign",
+          "truth": "shift"
+        },
+        {
+          "item_id": "ied5ecee79baf",
+          "predicted": "benign",
+          "truth": "smuggle"
+        },
+        {
+          "item_id": "ib0e9beb84849",
+          "predicted": "shift",
+          "truth": "smuggle"
         }
       ]
     }

@@ -28,7 +28,7 @@ def author_graph(artifact, packet):
         raise ValueError('alignment must cite exact shared record IDs')
     edges=tuple(Deduction(e['id'], tuple(e['premises']), e['conclusion']) for e in artifact['edges'])
     declared={p['id'] for p in packet['premises']}
-    if len(edges)!=24 or {c.name for c in claims}-{e.conclusion for e in edges}!=declared:
+    if len(edges)!=len(packet['nodes']) or {c.name for c in claims}-{e.conclusion for e in edges}!=declared:
         raise ValueError('declared premise coverage changed; bridges are not free leaves')
     graph=ArgumentGraph(env,claims,edges,artifact['root'])
     by_id={c.name:c for c in claims}

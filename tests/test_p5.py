@@ -31,7 +31,7 @@ def test_inventory_graphs_and_witnesses(items,labels):
         assert signatures.setdefault(family,sig)==sig
         intended=ArgumentGraph.from_dict(row['intended'])
         assert formal_signatures.setdefault(family,argument_signature(intended))==argument_signature(intended)
-        assert len(intended.deductions)==24 and len(intended.claims)==30
+        assert len(intended.deductions)==16 and len(intended.claims)==22
         assert len(intended.env.predicates)==row['slot']['predicates']
         assert len(row['predicate_identities'])==len(intended.env.predicates)
         model=FiniteModel.from_dict(intended.env,row['model'])
@@ -106,14 +106,14 @@ def test_parser_localization_and_failures(items,labels):
     assert endpoint(label,None,True)['unsafe_approval']==1
     for locations in ([ids[0]]*2,ids[:3],['invented']):
         with pytest.raises(ValueError):parse(packed({**answer,'locations':locations}),ids)
-    assert len(menu(ids))==931
+    assert len(menu(ids))==507
 
 
 def test_known_answers_actual_scorer(items,labels):
     r=known_answer(items,labels)
     json.dumps(r)  # Gate receipts must remain serializable native JSON.
     assert r['passed'] and r['oracle_detection_and_completion']==1
-    expected=sum(len(l['acceptable_locations']) for l in labels)/len(labels)/931
+    expected=sum(len(l['acceptable_locations']) for l in labels)/len(labels)/507
     assert r['random_exact']==pytest.approx(expected)
     assert abs(r['random_simulated']-expected)<.02
     for split in ('dev','scored'):
@@ -192,12 +192,13 @@ def test_oracle_requires_commitment_and_exact_record(items):
 def test_sibling_glossaries_and_workload_identical(items):
     for family in {i['group'] for i in items}:
         siblings=[i['payload'] for i in items if i['group']==family]
-        assert siblings[0]['glossary']==siblings[1]['glossary']==siblings[2]['glossary']
+        assert len({packed(sorted((g['term'], g['sense'].split(' (R')[0]) for g in s['glossary'])) for s in siblings}) == 1
         assert len({digest([(n['id'],n['parents']) for n in s['nodes']]) for s in siblings})==1
         assert len({digest(s['records']) for s in siblings})==1
-        assert len({s['argument'] for s in siblings})==3
+        assert len({packed(s['nodes']) for s in siblings})==3
+        assert all('argument' not in s for s in siblings)
         assert all('rule_record' not in n for s in siblings for n in s['nodes'])
-        assert all(len(s['nodes'])==24 and len(s['records'])==24 and len(s['premises'])==6 for s in siblings)
+        assert all(len(s['nodes'])==16 and len(s['records'])==16 and len(s['premises'])==6 for s in siblings)
 
 
 def test_replication_halt_does_not_erase_primary(items):
@@ -243,11 +244,11 @@ def test_rendered_prose_and_active_decoys(items):
     graphs={r['id']:r for r in read(p.HERE/'materials/graphs.jsonl.gz')}
     for item in items:
         q=item['payload']; g=graphs[item['id']]
-        assert g['construction']['version']==2
-        assert len(g['construction']['redundant_edges'])>=2
+        assert g['construction']['version']==3
+        assert len(g['construction']['redundant_edges'])>=1
         for n in q['nodes']:
-            assert n['text'] in q['argument']
-            assert n['text'].startswith('Given ') and ', ' in n['text']
+            assert p.packet(item).count(n['text']) == 1
+            assert n['text'].startswith(('Given ', 'From ', 'Using ')) and ', ' in n['text']
         from ve import ArgumentGraph
         graph=ArgumentGraph.from_dict(g['intended'])
         claims={c.name:c for c in graph.claims}
@@ -259,7 +260,8 @@ def test_rendered_prose_and_active_decoys(items):
         assert len(set(comparisons))==2
         import re
         assert set(re.findall(r'p\d+',g['bridge']['source'])) <= set(re.findall(r'p\d+',' '.join(comparisons)))
-        assert len(q['argument'])>1000
+        assert 'argument' not in q
+        assert 'Possible senses' not in p.packet(item)
         assert 'rule_record' not in p.packet(item)
         assert 'rule_record' not in packed(p.request(item,'shared','paraphrase').messages)
 
@@ -323,3 +325,24 @@ def test_replacement_ids_do_not_reuse_disclosed_labels(items):
     rejected=read(p.HERE/'materials/rejected-v1.jsonl.gz')
     assert len(rejected)==84
     assert not {i['id'] for i in items} & {i['id'] for i in rejected}
+
+
+def test_node_relations_cover_balanced_units_and_independent_sense_orders(items, labels):
+    from experiments.p5_leakage import node_features
+    kinds = {l['id']: l['kind'] for l in labels}
+    counts = Counter()
+    for item in items:
+        f = node_features(item['payload'])
+        assert f['branch_n_alts'] == 3
+        assert f['branch_con_sense_id'] > 0
+        assert f['branch_con_sense_rank'] in (0, 2)
+        counts[kinds[item['id']], f['branch_con_unit_is_sample']] += 1
+    assert counts == Counter({(k, u): 14 for k in ('benign', 'shift', 'smuggle') for u in (0, 1)})
+    for family in {i['group'] for i in items}:
+        glossaries = [i['payload']['glossary'] for i in items if i['group'] == family]
+        assert len({packed(sorted(g['sense'] for g in gs)) for gs in glossaries}) == 3
+        assert len({packed([g['sense'].split(' (R')[0] for g in gs]) for gs in glossaries}) == 3
+    corrupt = deepcopy(items[0]['payload'])
+    corrupt['nodes'][0]['text'] = 'Unparsed prose must block the gate, never silently lose a node.'
+    with pytest.raises(ValueError, match='unparsed inference'):
+        node_features(corrupt)

@@ -7,7 +7,7 @@ The paid runner can replace drafts with one durable Qwen call per slot later.
 from copy import deepcopy
 from ve_experiments.paid import digest
 
-ALLOWED = {'id','glossary','premises','records','nodes','root','argument'}
+ALLOWED = {'id','glossary','premises','records','nodes','root'}
 
 
 def offline_pass(dossiers):
@@ -17,8 +17,7 @@ def offline_pass(dossiers):
             raise ValueError('paraphraser input must be the natural-language dossier allowlist')
         nodes = deepcopy(dossier['nodes'])
         result.append({'id':dossier['id'], 'nodes':nodes,
-            'argument':dossier['argument'],
-            'provenance':{'method':'separate offline English-rendering preservation pass v2',
+            'provenance':{'method':'separate offline English-rendering preservation pass v3',
                 'input_sha256':digest(dossier), 'input_fields':sorted(ALLOWED),
                 'independent_qwen_pass':False, 'paid_calls':0,
                 'limitation':'Not independent semantic paraphrasing; must be replaced and reviewed before scoring.'}})

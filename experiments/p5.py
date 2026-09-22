@@ -60,7 +60,7 @@ ROLES={
  'VE_defender':'Answer the critic, re-author affected uses and re-certify in a complete artifact. '+FORMAL,
  'repair':'Repair only the diagnosed syntax/coverage failures. One repair is allowed; retain the original root. '+FORMAL,
  'judge':'Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence.',
- 'paraphrase':'Independently rewrite the proposed argument and node texts into ordinary prose. Preserve substantive content and any inconsistency; do not repair it. Return JSON {"texts":{"node_id":"rewritten node text"},"argument":"rewritten argument"}. Include every existing node ID exactly once. No additional fields.'}
+ 'paraphrase':'Independently rewrite the proposed argument as node texts into ordinary prose. Preserve substantive content and any inconsistency; do not repair it. Return JSON {"texts":{"node_id":"rewritten node text"}}. Include every existing node ID exactly once. No additional fields.'}
 
 
 def materials(split=None):
@@ -70,11 +70,11 @@ def materials(split=None):
 def packet(item):
     p=item['payload']
     # Explicit allowlist; no label, reference environment, family or variant.
-    return '\n'.join(['Dossier '+p['id'],'Possible senses (records describe their content): '+ '; '.join(g['sense'] for g in p['glossary']),
+    return '\n'.join(['Dossier '+p['id'],
         'Declared premises:']+[f"{n['id']}: {n['text']}" for n in p['premises']]+['Authoritative records:']+
         [f"{r['id']}: {r['text']}" for r in p['records']]+['Proposed graph:']+
         [f"{n['id']} ({','.join(n['parents'])}): {n['text']}" for n in p['nodes']]+
-        [f"Original root {p['root']}. {p['argument']}"])
+        [f"Original root {p['root']}."])
 
 
 def stage_list(arm):
@@ -112,13 +112,7 @@ def request(item,arm,stage,history=None,*,judge='pro',turn=0,commitment=None,que
         content=packet(item)+'\nFrozen commitment:\n'+(commitment or '')+'\nOne question:\n'+(question or '')
         instruction=ROLES['answer']
     elif stage=='paraphrase':
-        raw=item['payload']
-        visible={k:raw[k] for k in ('id','root','argument')}
-        visible.update(glossary=[{k:g[k] for k in ('term','sense')} for g in raw['glossary']],
-            premises=[{k:n[k] for k in ('id','text')} for n in raw['premises']],
-            records=[{k:r[k] for k in ('id','text')} for r in raw['records']],
-            nodes=[{k:n[k] for k in ('id','parents','text')} for n in raw['nodes']])
-        content=packed(visible); instruction=ROLES['paraphrase']
+        content=packet(item); instruction=ROLES['paraphrase']
     else:
         content=packet(item)
         if history: content+='\nProtocol record:\n'+packed(history)
@@ -317,7 +311,7 @@ def freeze(scenario):
            ROOT/'experiments/p1.py',ROOT/'experiments/p1_preflight.py',ROOT/'experiments/prereg_inventory.py',
            ROOT/'experiments/trial_analysis.py',ROOT/'tests/test_p5.py',ROOT/'pyproject.toml',ROOT/'uv.lock',
            HERE/'PREREG.md',ROOT/'experiments/PREREG-DESIGN.md',HERE/'inventory.json',HERE/'AMENDMENTS.md',
-           HERE/'prompts.json',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
+           HERE/'prompts.json',HERE/'CONSTRUCTION-V3.md',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
            ROOT/'experiments/P1-deference/native_counter.py',*ROOT.glob('experiments/P1-deference/tokenizers/*.json'),
            *ROOT.glob('ve/*.py'), ROOT/'lean/.lake/build/bin/ve_conformance']
     hashes={str(p.relative_to(ROOT)):sha(p) for p in paths if p.exists()}
@@ -462,9 +456,9 @@ def paraphrase(cap):
             req=request(item,'shared','paraphrase');reply=client.call(req)
             row=json.loads(reply.text)
             originals={n['id']:n for n in dossier['nodes']}
-            if set(row)!= {'texts','argument'} or set(row['texts'])!=set(originals) or any(not isinstance(t,str) or not t for t in row['texts'].values()):
+            if set(row)!= {'texts'} or set(row['texts'])!=set(originals) or any(not isinstance(t,str) or not t for t in row['texts'].values()):
                 raise PreflightError('paraphrase malformed; no replacement sample')
-            paraphrased={'nodes':[{**n,'text':row['texts'][n['id']]} for n in dossier['nodes']], 'argument':row['argument']}
+            paraphrased={'nodes':[{**n,'text':row['texts'][n['id']]} for n in dossier['nodes']]}
             output.append({'id':dossier['id'],**paraphrased,'provenance':{'method':'one Qwen72 call in separate context',
                 'input_sha256':digest(dossier),'request_sha256':digest(req.messages),
                 'response_sha256':digest(reply.text),'revision':reply.revision,'independent_qwen_pass':True}})
@@ -473,7 +467,7 @@ def paraphrase(cap):
     by_id={r['id']:r for r in output}
     for split in ('dev','scored'):
         archive(HERE/f'materials/{split}.jsonl.gz',[{'id':d['id'],'group':label_map[d['id']]['family'],
-            'split':split,'payload':{**d,'nodes':by_id[d['id']]['nodes'],'argument':by_id[d['id']]['argument']},
+            'split':split,'payload':{**d,'nodes':by_id[d['id']]['nodes']},
             'paraphrase_status':'QWEN_PENDING_REVIEW'} for d in dossiers if label_map[d['id']]['split']==split])
     book.release_block(block)
     return {'slots':len(output),'review_required':True,'refreeze_required':True}

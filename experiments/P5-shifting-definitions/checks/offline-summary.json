@@ -1,0 +1,20 @@
+{
+  "blockers": [
+    "review",
+    "independent-prose",
+    "external-timestamp"
+  ],
+  "gates": {
+    "construction": true,
+    "external-timestamp": false,
+    "independent-prose": false,
+    "known-answer": true,
+    "leakage": true,
+    "lean-replay": true,
+    "review": false,
+    "role-boundaries": true,
+    "tokenizer": true
+  },
+  "generation_calls": 0,
+  "passed": false
+}

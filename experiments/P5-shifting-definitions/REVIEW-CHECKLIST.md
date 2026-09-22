@@ -23,17 +23,17 @@ old packet hashes and require fresh independent reviews. A planted-label mismatc
 requires construction repair and an amendment; it is never silently relabeled.
 
 The previous 84-packet NOT READY review is retained against its old hashes and
-cannot approve these replacement packets. P5-2 keeps records fixed across
+cannot approve these replacement packets. Revision 3 keeps records fixed across
 siblings and renders the proposed inferences in full. Alternative checks in a
 sentence are conditional comparisons, not additional declared facts. In
 particular, naming a unit as a sample of a lot supplies no rule transporting its
-properties to the lot.
+properties to the lot, or from the lot back to the sample.
 
 Open questions: Is each unqualified reuse actually read in the sense required by
-the downstream record? Is the sample-to-lot bridge plausible but genuinely
+the downstream record? Is the cross-unit bridge plausible but genuinely
 unstated? Are both decoy senses used consistently? Are the conditional
 alternatives natural, or too cumbersome? Can the full prose meet the original
-context caps? The exact packet must pass the unigram/structural leakage gate;
+context caps? The exact packet must pass the token/structural and node-relational leakage gates;
 that does not establish semantic readiness. These drafts are NOT the registered
 Qwen paraphrases and cannot pass the independent-paraphrase gate.
 

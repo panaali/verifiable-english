@@ -16,7 +16,7 @@ def review_export(destination, base=HERE):
     # Sorting opaque IDs first prevents inventory/archive order from becoming
     # a label channel. The shuffle never inspects a label or family.
     items.sort(key=lambda item: item['id'])
-    random.Random(f'{SEED}/packet-order-v2').shuffle(items)
+    random.Random(f'{SEED}/packet-order-v3').shuffle(items)
     # No split/family/variant/formal artifact in review packets.
     rows = [{'item_id': i['id'], 'packet_sha256':digest(i['payload']), 'packet':i['payload'],
              'reviewer_id':'', 'reviewer_kind':'human|project_lead|model', 'model_family':'',
@@ -51,7 +51,7 @@ def submit(path, base=HERE):
         if a.get('kind') not in ('shift','smuggle','benign') or not a.get('sense_use_mapping') or not a.get('root_meaning') or not a.get('source_evidence'):
             raise PreflightError('recover meanings, evidence and label independently')
         if not {n['id'] for n in items[row['item_id']]['payload']['nodes']}<=set(a['sense_use_mapping']):
-            raise PreflightError('sense mapping must cover all 24 proposed nodes')
+            raise PreflightError('sense mapping must cover all proposed nodes')
         locs=a.get('acceptable_locations',[])
         if not locs or any(not isinstance(s,list) or len(s)>2 or len(set(s))!=len(s) or not set(s)<=ids or (a['kind']=='shift' and len(s)!=2) or (not s and a['kind']!='benign') or (s and a['kind']=='benign') for s in locs):
             raise PreflightError('invalid localization sets')

@@ -1,0 +1,11 @@
+{
+  "accuracies": {
+    "node_relations": 0.8928571428571429,
+    "node_relations_grouped": 0.9047619047619048,
+    "reviewer_unit_rank_rule": 0.8571428571428571
+  },
+  "generation_calls": 0,
+  "passed": true,
+  "purpose": "Positive control: same fixed node gates must detect the rejected round-2 corpus",
+  "source_commit": "4ef5bfe005ee8b4d38b98aed69062394e0130714"
+}

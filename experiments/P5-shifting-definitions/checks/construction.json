@@ -1,9 +1,10 @@
 {
   "actual_formal_graph_families": 28,
+  "deduction_steps": 16,
   "failed_candidates": 5,
   "families": 28,
-  "freeze_sha256": "0d0b6b4989fc9bd9c51c6f9ea45821a59e6f1f8aaac37f1ba69baad6153ff9de",
-  "generator_version": 2,
+  "freeze_sha256": "31ce5c4154d7659d4825c44b04d11891aef42e201abab39a11e2cfd911a44958",
+  "generator_version": 3,
   "independent_prose_ready": false,
   "method": "pairwise distinct directed degree/depth invariants; sufficient non-isomorphism test",
   "paid_calls": 0,

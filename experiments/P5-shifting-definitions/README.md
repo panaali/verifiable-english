@@ -7,12 +7,13 @@ replication. Neither is silently represented as the original preregistration.
 
 84 slots: four dev families × shift/smuggle/benign = 12; 24 disjoint scored
 families × three variants = 72. Eight scored families each declare 20, 40 or 60
-predicates; dev uses 20/40/60/20. Each has six declared leaves, 24 deductions,
+predicates; dev uses 20/40/60/20. Each has six declared leaves, 16 deductions,
 two branches and a join. Predicate environments and claims have identity
 bindings; hidden whole-premise countermodels falsify flawed original roots.
 Bridge-augmented reference proofs are hidden and never online trusted premises.
 The shared dossier, including node IDs, records, complete premises and possible
-senses, is identical across arms. All three siblings have the same glossary.
+senses, is identical across arms. Siblings share the same sense descriptions; sense IDs and glossary positions
+are independently permuted per packet.
 
 The reference generator is **not** the online VE author. Every X/S/VE author
 starts from the same final prose, and all authoring/search/repair work is charged.
@@ -91,13 +92,21 @@ billing. A panel halt is retained, missing assigned outcomes score zero, and
 completed responses are reused on resume. Local oracle receipts are fsynced
 before subsequent paid stages so restart does not silently change history.
 
-Construction revision P5-2 fixes the rejected first corpus: source dossiers stay
-fixed across siblings, explicit record pointers are absent, and shifts and
-implicit sample-to-lot bridges occur in the proposed prose. Both decoy senses
-are active. The export is shuffled independently of labels. Token, structural
-and combined logistic classifiers must each score at most 33.33% in
-leave-family-out validation before the review gate passes. See
-[AMENDMENTS.md](AMENDMENTS.md) for the six-leaf packing change and token-cap issue.
+Construction revision 3 addresses the second blinded NOT READY review. Four
+branches cover both senses on both lot and sample; the downstream unit is
+counterbalanced so every label uses a sample result in 14/28 packets. Critical
+predicates are reserved outside the ordinary chain. Both decoy senses remain
+active. Records stay fixed within each family, and no node has a rule pointer.
+The proposed prose appears once, in the nodes; ambiguous senses are glossed
+inline, without a duplicate glossary header in model requests. There are 16
+steps, with all existing token and budget caps unchanged. See
+[CONSTRUCTION-V3.md](CONSTRUCTION-V3.md) for checks and retained failed attempts.
+
+The original three logistic leakage probes and two depth-3 node-relation trees
+must each score at most 33.33%; the reviewer's adapted unit/rank rule must also
+stay at chance. Node trees use stratified six-fold CV, with a separate grouped
+six-fold check. IDs, sense ranks, unit types and marker phrases are public-text
+features; no reference locations or derivations enter these probes.
 
 Independent review instructions and open questions are in
 [REVIEW-CHECKLIST.md](REVIEW-CHECKLIST.md). Explanation ratings are separately

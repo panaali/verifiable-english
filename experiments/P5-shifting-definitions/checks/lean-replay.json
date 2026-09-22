@@ -1,9 +1,9 @@
 {
   "executable_sha256": "dd56738076cb2852caaa886a4d5abdd6a6024b96b52dd5ffae1d3585d7d1fe4b",
-  "freeze_sha256": "0d0b6b4989fc9bd9c51c6f9ea45821a59e6f1f8aaac37f1ba69baad6153ff9de",
+  "freeze_sha256": "31ce5c4154d7659d4825c44b04d11891aef42e201abab39a11e2cfd911a44958",
   "generation_calls": 0,
   "items": 84,
-  "ledger_sha256": "7dd1e3c8975e2dce6eb6668ef9f1817280f3a50fbdea62432c1261a658ab3c70",
+  "ledger_sha256": "318541c0b829a669c8e0bbcaca462a5b4c2b264a42999f5d6fa3b4238846d9d9",
   "passed": true,
-  "queries": 4760
+  "queries": 3192
 }
