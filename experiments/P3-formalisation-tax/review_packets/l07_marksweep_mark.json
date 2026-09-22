@@ -1,0 +1,326 @@
+{
+ "id": "l07_marksweep_mark",
+ "family": "alloy",
+ "task": "Does the target paragraph hold in each finite instance (or: do the facts entail the assertion)?",
+ "sources": {
+  "source.als": "/*\n * Model of mark and sweep garbage collection.\n */\n\n// a node in the heap\nsig Node {}\n\nsig HeapState {\n  left, right : Node -> lone Node,\n  marked : set Node,\n  freeList : lone Node\n}\n\npred clearMarks[hs, hs\" : HeapState] {\n  // clear marked set\n  no hs\".marked\n  // left and right fields are unchanged\n  hs\".left = hs.left\n  hs\".right = hs.right\n}\n\n/**\n * simulate the recursion of the mark() function using transitive closure\n */\nfun reachable[hs: HeapState, n: Node] : set Node {\n  n + n.^(hs.left + hs.right)\n}\n\npred mark[hs: HeapState, from : Node, hs\": HeapState] {\n  hs\".marked = hs.reachable[from]\n  hs\".left = hs.left\n  hs\".right = hs.right\n}\n\n/**\n * complete hack to simulate behavior of code to set freeList\n */\npred setFreeList[hs, hs\": HeapState] {\n  // especially hackish\n  hs\".freeList.*(hs\".left) in (Node - hs.marked)\n  all n: Node |\n    (n !in hs.marked) => {\n      no hs\".right[n]\n      hs\".left[n] in (hs\".freeList.*(hs\".left))\n      n in hs\".freeList.*(hs\".left)\n    } else {\n      hs\".left[n] = hs.left[n]\n      hs\".right[n] = hs.right[n]\n    }\n  hs\".marked = hs.marked\n}\n\npred GC[hs: HeapState, root : Node, hs\": HeapState] {\n  some hs1, hs2: HeapState |\n    hs.clearMarks[hs1] && hs1.mark[root, hs2] && hs2.setFreeList[hs\"]\n}\n\nassert Soundness1 {\n  all h, h\" : HeapState, root : Node |\n    h.GC[root, h\"] =>\n      (all live : h.reachable[root] | {\n        h\".left[live] = h.left[live]\n        h\".right[live] = h.right[live]\n      })\n}\n\nassert Soundness2 {\n  all h, h\" : HeapState, root : Node |\n    h.GC[root, h\"] =>\n      no h\".reachable[root] & h\".reachable[h\".freeList]\n}\n\nassert Completeness {\n  all h, h\" : HeapState, root : Node |\n    h.GC[root, h\"] =>\n      (Node - h\".reachable[root]) in h\".reachable[h\".freeList]\n}\n\ncheck Soundness1 for 3 expect 0\ncheck Soundness2 for 3 expect 0\ncheck Completeness for 3 expect 0\n"
+ },
+ "world": null,
+ "questions": [
+  {
+   "n": 0,
+   "target": {
+    "kind": "pred",
+    "name": "mark",
+    "args": [
+     "hs",
+     "from",
+     "hs\""
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "Node": [
+      "a",
+      "b",
+      "c",
+      "d"
+     ],
+     "HeapState": [
+      "h0",
+      "h1"
+     ]
+    },
+    "fields": {
+     "left": [
+      [
+       "h0",
+       "a",
+       "b"
+      ],
+      [
+       "h0",
+       "b",
+       "c"
+      ],
+      [
+       "h1",
+       "a",
+       "b"
+      ],
+      [
+       "h1",
+       "b",
+       "c"
+      ]
+     ],
+     "right": [],
+     "marked": [
+      [
+       "h1",
+       "a"
+      ],
+      [
+       "h1",
+       "b"
+      ],
+      [
+       "h1",
+       "c"
+      ]
+     ],
+     "freeList": []
+    },
+    "bindings": {
+     "hs": "h0",
+     "from": "a",
+     "hs\"": "h1"
+    }
+   }
+  },
+  {
+   "n": 1,
+   "target": {
+    "kind": "pred",
+    "name": "mark",
+    "args": [
+     "hs",
+     "from",
+     "hs\""
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "Node": [
+      "a",
+      "b",
+      "c",
+      "d"
+     ],
+     "HeapState": [
+      "h0",
+      "h1"
+     ]
+    },
+    "fields": {
+     "left": [
+      [
+       "h0",
+       "a",
+       "b"
+      ],
+      [
+       "h1",
+       "a",
+       "b"
+      ]
+     ],
+     "right": [],
+     "marked": [
+      [
+       "h1",
+       "b"
+      ]
+     ],
+     "freeList": []
+    },
+    "bindings": {
+     "hs": "h0",
+     "from": "a",
+     "hs\"": "h1"
+    }
+   }
+  },
+  {
+   "n": 2,
+   "target": {
+    "kind": "pred",
+    "name": "mark",
+    "args": [
+     "hs",
+     "from",
+     "hs\""
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "Node": [
+      "a",
+      "b",
+      "c",
+      "d"
+     ],
+     "HeapState": [
+      "h0",
+      "h1"
+     ]
+    },
+    "fields": {
+     "left": [
+      [
+       "h0",
+       "a",
+       "b"
+      ],
+      [
+       "h1",
+       "a",
+       "b"
+      ]
+     ],
+     "right": [],
+     "marked": [
+      [
+       "h1",
+       "a"
+      ],
+      [
+       "h1",
+       "b"
+      ],
+      [
+       "h1",
+       "d"
+      ]
+     ],
+     "freeList": []
+    },
+    "bindings": {
+     "hs": "h0",
+     "from": "a",
+     "hs\"": "h1"
+    }
+   }
+  },
+  {
+   "n": 3,
+   "target": {
+    "kind": "pred",
+    "name": "mark",
+    "args": [
+     "hs",
+     "from",
+     "hs\""
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "Node": [
+      "a",
+      "b",
+      "c",
+      "d"
+     ],
+     "HeapState": [
+      "h0",
+      "h1"
+     ]
+    },
+    "fields": {
+     "left": [
+      [
+       "h0",
+       "a",
+       "b"
+      ],
+      [
+       "h0",
+       "c",
+       "a"
+      ],
+      [
+       "h1",
+       "a",
+       "b"
+      ],
+      [
+       "h1",
+       "c",
+       "a"
+      ]
+     ],
+     "right": [
+      [
+       "h0",
+       "b",
+       "c"
+      ],
+      [
+       "h1",
+       "b",
+       "c"
+      ]
+     ],
+     "marked": [
+      [
+       "h1",
+       "a"
+      ],
+      [
+       "h1",
+       "b"
+      ],
+      [
+       "h1",
+       "c"
+      ]
+     ],
+     "freeList": []
+    },
+    "bindings": {
+     "hs": "h0",
+     "from": "a",
+     "hs\"": "h1"
+    }
+   }
+  },
+  {
+   "n": 4,
+   "target": {
+    "kind": "pred",
+    "name": "mark",
+    "args": [
+     "hs",
+     "from",
+     "hs\""
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "Node": [
+      "a",
+      "b",
+      "c",
+      "d"
+     ],
+     "HeapState": [
+      "h0",
+      "h1"
+     ]
+    },
+    "fields": {
+     "left": [
+      [
+       "h0",
+       "a",
+       "b"
+      ]
+     ],
+     "right": [],
+     "marked": [
+      [
+       "h1",
+       "a"
+      ]
+     ],
+     "freeList": []
+    },
+    "bindings": {
+     "hs": "h0",
+     "from": "a",
+     "hs\"": "h1"
+    }
+   }
+  }
+ ]
+}

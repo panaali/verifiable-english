@@ -1,0 +1,166 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "A Cedar entity UID, record node, or the request context node."
+   },
+   "value": {
+    "description": "A Cedar string, long or extension literal value."
+   }
+  },
+  "predicates": {
+   "parent": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Immediate hierarchy edge, child to parent."
+   },
+   "type_subscriber": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Entity type Subscriber."
+   },
+   "type_freemember": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Entity type FreeMember."
+   },
+   "type_show": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Entity type Show."
+   },
+   "type_movie": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Entity type Movie."
+   },
+   "bf_isearlyaccess": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "isEarlyAccess present and false."
+   },
+   "bt_isearlyaccess": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "isEarlyAccess present and true."
+   },
+   "bf_needsrentorbuy": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "needsRentOrBuy present and false."
+   },
+   "bt_isfree": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "isFree present and true."
+   },
+   "bt_isoscarnominated": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "isOscarNominated present and true."
+   },
+   "bt_iskid": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "isKid present and true."
+   },
+   "ea_subscription": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Record attribute subscription."
+   },
+   "ea_profile": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Record attribute profile."
+   },
+   "sa_tier": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "String attribute tier."
+   },
+   "now_ge_release": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "OPAQUE (adapter): context.now.datetime >= this.releaseDate, both present."
+   },
+   "now_ge_release_minus_24h": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "OPAQUE (adapter): context.now.datetime >= this.releaseDate.offset(-24h), both present."
+   },
+   "oscar_window": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "OPAQUE (adapter, on the context node): 2025-02-02T19:00-0500 <= now.datetime < 2025-03-02T19:00-0500."
+   },
+   "outside_waking_hours": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "OPAQUE (adapter, on the context node): now.datetime.offset(localTimeOffset).toTime() outside [6h, 21h], both present."
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "The request principal."
+   },
+   "action": {
+    "sort": "entity",
+    "description": "The request action."
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "The request resource."
+   },
+   "context": {
+    "sort": "entity",
+    "description": "The request context record node."
+   },
+   "watch": {
+    "sort": "entity",
+    "description": "Action::\"watch\""
+   },
+   "rent": {
+    "sort": "entity",
+    "description": "Action::\"rent\""
+   },
+   "buy": {
+    "sort": "entity",
+    "description": "Action::\"buy\""
+   },
+   "premium": {
+    "sort": "value",
+    "description": "\"premium\""
+   }
+  }
+ }
+}

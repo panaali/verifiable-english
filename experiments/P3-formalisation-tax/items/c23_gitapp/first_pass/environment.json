@@ -1,0 +1,107 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "A Cedar entity UID, record node, or the request context node."
+   }
+  },
+  "predicates": {
+   "parent": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Immediate hierarchy edge, child to parent."
+   },
+   "es_admins": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Member of entity-set attribute admins."
+   },
+   "es_reporters": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Member of entity-set attribute reporters."
+   },
+   "es_contributors": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Member of entity-set attribute contributors."
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "The request principal."
+   },
+   "action": {
+    "sort": "entity",
+    "description": "The request action."
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "The request resource."
+   },
+   "app": {
+    "sort": "entity",
+    "description": "GitApp::Application::\"GitApp\""
+   },
+   "pushrepo": {
+    "sort": "entity",
+    "description": "GitApp::Action::\"pushRepo\""
+   },
+   "pullrepo": {
+    "sort": "entity",
+    "description": "GitApp::Action::\"pullRepo\""
+   },
+   "forkrepo": {
+    "sort": "entity",
+    "description": "GitApp::Action::\"forkRepo\""
+   },
+   "addreporeporter": {
+    "sort": "entity",
+    "description": "GitApp::Action::\"addRepoReporter\""
+   },
+   "addrepocontributor": {
+    "sort": "entity",
+    "description": "GitApp::Action::\"addRepoContributor\""
+   },
+   "addrepoadmin": {
+    "sort": "entity",
+    "description": "GitApp::Action::\"addRepoAdmin\""
+   },
+   "addissue": {
+    "sort": "entity",
+    "description": "GitApp::Action::\"addIssue\""
+   },
+   "editissue": {
+    "sort": "entity",
+    "description": "GitApp::Action::\"editIssue\""
+   },
+   "assignissue": {
+    "sort": "entity",
+    "description": "GitApp::Action::\"assignIssue\""
+   },
+   "closeissue": {
+    "sort": "entity",
+    "description": "GitApp::Action::\"closeIssue\""
+   },
+   "deleteissue": {
+    "sort": "entity",
+    "description": "GitApp::Action::\"deleteIssue\""
+   }
+  }
+ }
+}

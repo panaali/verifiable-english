@@ -1,0 +1,1 @@
+for every atom x, (for every atom y, (if ((x is sig_node) and (y is sig_node)), then (rtc[atom a, b | ((a f_edges b) or (b f_edges a))](y, x)))).

@@ -1,0 +1,135 @@
+{
+ "family": "k8s",
+ "synthetic": false,
+ "question": "Does Kubernetes RBAC authorize each request given these RBAC objects?",
+ "provenance": {
+  "repository": "kubernetes/website",
+  "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+  "licence": "CC-BY-4.0",
+  "paths": [
+   "content/en/examples/access/simple-clusterrole.yaml",
+   "content/en/examples/access/simple-rolebinding-with-clusterrole.yaml"
+  ],
+  "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+ },
+ "world": {
+  "objects": [
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "secret-reader"
+    },
+    "rules": [
+     {
+      "apiGroups": [
+       ""
+      ],
+      "resources": [
+       "secrets"
+      ],
+      "verbs": [
+       "get",
+       "watch",
+       "list"
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "RoleBinding",
+    "metadata": {
+     "name": "read-secrets",
+     "namespace": "development"
+    },
+    "subjects": [
+     {
+      "kind": "User",
+      "name": "dave",
+      "apiGroup": "rbac.authorization.k8s.io"
+     }
+    ],
+    "roleRef": {
+     "kind": "ClusterRole",
+     "name": "secret-reader",
+     "apiGroup": "rbac.authorization.k8s.io"
+    }
+   }
+  ]
+ },
+ "questions": [
+  {
+   "description": "k02-0",
+   "request": {
+    "user": "dave",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "secrets",
+    "subresource": "",
+    "namespace": "development",
+    "name": "db-pass"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k02-1",
+   "request": {
+    "user": "dave",
+    "groups": [],
+    "verb": "list",
+    "apiGroup": "",
+    "resource": "secrets",
+    "subresource": "",
+    "namespace": "default",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k02-2",
+   "request": {
+    "user": "dave",
+    "groups": [],
+    "verb": "list",
+    "apiGroup": "",
+    "resource": "secrets",
+    "subresource": "",
+    "namespace": "",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k02-3",
+   "request": {
+    "user": "dave",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "",
+    "namespace": "development",
+    "name": "p"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k02-4",
+   "request": {
+    "user": "erin",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "secrets",
+    "subresource": "",
+    "namespace": "development",
+    "name": "db-pass"
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "k02_secret_reader_rolebinding",
+ "source_files": {
+  "source.yaml": "4a1856a6b46964eda44baa9dbccd891854939ee2e858bd7394baac29b9bd7004"
+ }
+}

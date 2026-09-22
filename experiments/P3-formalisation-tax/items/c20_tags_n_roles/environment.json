@@ -1,0 +1,128 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "A Cedar entity UID, record node, or the request context node."
+   },
+   "value": {
+    "description": "A Cedar string, long or extension literal value."
+   }
+  },
+  "predicates": {
+   "parent": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Immediate hierarchy edge, child to parent."
+   },
+   "ea_allowedtagsforrole": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Record attribute allowedTagsForRole."
+   },
+   "ea_role_a": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Record field \"Role-A\"."
+   },
+   "ea_role_b": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Record field \"Role-B\"."
+   },
+   "ea_tags": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Record attribute tags."
+   },
+   "has_production_status": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Field production_status present."
+   },
+   "has_country": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Field country present."
+   },
+   "has_stage": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Field stage present."
+   },
+   "ss_production_status": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Member of string-set field production_status."
+   },
+   "ss_country": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Member of string-set field country."
+   },
+   "ss_stage": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Member of string-set field stage."
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "The request principal."
+   },
+   "action": {
+    "sort": "entity",
+    "description": "The request action."
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "The request resource."
+   },
+   "role_a": {
+    "sort": "entity",
+    "description": "Role::\"Role-A\""
+   },
+   "role_b": {
+    "sort": "entity",
+    "description": "Role::\"Role-B\""
+   },
+   "role_a_actions": {
+    "sort": "entity",
+    "description": "Action::\"Role-A Actions\""
+   },
+   "role_b_actions": {
+    "sort": "entity",
+    "description": "Action::\"Role-B Actions\""
+   },
+   "all": {
+    "sort": "value",
+    "description": "\"ALL\""
+   }
+  }
+ }
+}

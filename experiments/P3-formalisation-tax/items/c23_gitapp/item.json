@@ -1,0 +1,190 @@
+{
+ "family": "cedar",
+ "synthetic": false,
+ "provenance": {
+  "repository": "cedar-policy/cedar-examples",
+  "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+  "licence": "Apache-2.0",
+  "policy_path": "cedar-policy-language-in-action/GitApp/gitapp.cedar",
+  "entities_path": "cedar-policy-language-in-action/GitApp/gitapp.cedarentities.json",
+  "schema_path": null,
+  "requests": "cedar-policy-language-in-action/GitApp/ALLOW, cedar-policy-language-in-action/GitApp/DENY",
+  "schema_used_for_action_hierarchy": false
+ },
+ "question": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "world": {
+  "entities": [
+   {
+    "uid": "GitApp::Application::\"GitApp\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "GitApp::User::\"JaneDoe\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "GitApp::User::\"JohnDoe\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "GitApp::User::\"RichardRoe\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "GitApp::User::\"JorgeSouza\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "GitApp::Repo::\"CodeRepo1\"",
+    "attrs": {
+     "admins": [
+      {
+       "__entity": "GitApp::User::\"JaneDoe\""
+      },
+      {
+       "__entity": "GitApp::User::\"JohnDoe\""
+      }
+     ],
+     "reporters": [
+      {
+       "__entity": "GitApp::User::\"RichardRoe\""
+      }
+     ]
+    },
+    "parents": [
+     "GitApp::Application::\"GitApp\""
+    ]
+   },
+   {
+    "uid": "GitApp::Repo::\"CodeRepo2\"",
+    "attrs": {
+     "admins": [
+      {
+       "__entity": "GitApp::User::\"RichardRoe\""
+      }
+     ],
+     "contributors": [
+      {
+       "__entity": "GitApp::User::\"JorgeSouza\""
+      }
+     ]
+    },
+    "parents": [
+     "GitApp::Application::\"GitApp\""
+    ]
+   }
+  ],
+  "linked": []
+ },
+ "questions": [
+  {
+   "description": "ALLOW/JaneDoe-addRepoAdmin-CodeRepo1.json",
+   "request": {
+    "principal": "GitApp::User::\"JaneDoe\"",
+    "action": "GitApp::Action::\"addRepoAdmin\"",
+    "resource": "GitApp::Repo::\"CodeRepo1\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/JohnDoe-addIssue-CodeRepo1.json",
+   "request": {
+    "principal": "GitApp::User::\"JohnDoe\"",
+    "action": "GitApp::Action::\"addIssue\"",
+    "resource": "GitApp::Repo::\"CodeRepo1\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/JohnDoe-addRepoAdmin-CodeRepo1.json",
+   "request": {
+    "principal": "GitApp::User::\"JohnDoe\"",
+    "action": "GitApp::Action::\"addRepoAdmin\"",
+    "resource": "GitApp::Repo::\"CodeRepo1\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/JohnDoe-editIssue-CodeRepo1.json",
+   "request": {
+    "principal": "GitApp::User::\"JohnDoe\"",
+    "action": "GitApp::Action::\"editIssue\"",
+    "resource": "GitApp::Repo::\"CodeRepo1\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/JorgeSouza-editIssue-CodeRepo2.json",
+   "request": {
+    "principal": "GitApp::User::\"JorgeSouza\"",
+    "action": "GitApp::Action::\"editIssue\"",
+    "resource": "GitApp::Repo::\"CodeRepo2\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/RichardRoe-addIssue-CodeRepo1.json",
+   "request": {
+    "principal": "GitApp::User::\"RichardRoe\"",
+    "action": "GitApp::Action::\"addIssue\"",
+    "resource": "GitApp::Repo::\"CodeRepo1\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/RichardRoe-addRepoAdmin-CodeRepo2.json",
+   "request": {
+    "principal": "GitApp::User::\"RichardRoe\"",
+    "action": "GitApp::Action::\"addRepoAdmin\"",
+    "resource": "GitApp::Repo::\"CodeRepo2\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/RichardRoe-editIssue-CodeRepo2.json",
+   "request": {
+    "principal": "GitApp::User::\"RichardRoe\"",
+    "action": "GitApp::Action::\"editIssue\"",
+    "resource": "GitApp::Repo::\"CodeRepo2\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "DENY/RichardRoe-addRepoAdmin-CodeRepo1.json",
+   "request": {
+    "principal": "GitApp::User::\"RichardRoe\"",
+    "action": "GitApp::Action::\"addRepoAdmin\"",
+    "resource": "GitApp::Repo::\"CodeRepo1\"",
+    "context": {}
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "DENY/RichardRoe-editIssue-CodeRepo1.json",
+   "request": {
+    "principal": "GitApp::User::\"RichardRoe\"",
+    "action": "GitApp::Action::\"editIssue\"",
+    "resource": "GitApp::Repo::\"CodeRepo1\"",
+    "context": {}
+   },
+   "recorded_decision": "deny"
+  }
+ ],
+ "id": "c23_gitapp",
+ "source_files": {
+  "source.cedar": "0766979997a78ac3bc0b72496b4fd5c736326912ed464495cf51cf5c0da12476"
+ }
+}

@@ -1,0 +1,14 @@
+{"answers": [
+ {"n": 0, "answer": true, "why": "lee bound in default to pod-and-pod-logs-reader, which lists pods/log with get"},
+ {"n": 1, "answer": true, "why": "list pods in core group in default granted by pod-and-pod-logs-reader"},
+ {"n": 2, "answer": false, "why": "pods/exec not listed; only pods and pods/log"},
+ {"n": 3, "answer": true, "why": "group platform bound in default to example.com-superuser; resources * and verbs * match widgets/delete"},
+ {"n": 4, "answer": false, "why": "RoleBinding only grants in namespace default, not other"},
+ {"n": 5, "answer": false, "why": "superuser role covers only apiGroup example.com, not core pods"},
+ {"n": 6, "answer": false, "why": "user named platform has no groups; binding is for Group platform, and no user binding"},
+ {"n": 7, "answer": false, "why": "namespace-less (cluster-scope) request not covered by a namespaced RoleBinding"},
+ {"n": 8, "answer": false, "why": "cluster-scope request (namespace empty) not covered by RoleBinding in default"},
+ {"n": 9, "answer": false, "why": "group platform only has example.com permissions; core pods not granted"}
+],
+"confidence": "high",
+"notes": "Assumed resource '*' matches any resource in example.com (including subresources) and RoleBindings apply only to requests whose namespace equals the binding namespace."}

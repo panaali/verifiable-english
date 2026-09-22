@@ -1,0 +1,363 @@
+{
+ "family": "cedar",
+ "synthetic": false,
+ "provenance": {
+  "repository": "cedar-policy/cedar-integration-tests",
+  "commit": "1999ea249229e26cabb398a279fea721854a471d",
+  "licence": "Apache-2.0",
+  "policy_path": "tests/example_use_cases/policies_5b.cedar",
+  "entities_path": "sample-data/sandbox_b/entities.json",
+  "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+  "test_path": "tests/example_use_cases/5b.json"
+ },
+ "question": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "world": {
+  "entities": [
+   {
+    "uid": "User::\"alice\"",
+    "attrs": {
+     "department": "HardwareEngineering",
+     "jobLevel": 5
+    },
+    "parents": [
+     "UserGroup::\"alice_friends\"",
+     "UserGroup::\"AVTeam\""
+    ]
+   },
+   {
+    "uid": "User::\"ahmad\"",
+    "attrs": {
+     "department": "HardwareEngineering",
+     "jobLevel": 4
+    },
+    "parents": []
+   },
+   {
+    "uid": "User::\"stacey\"",
+    "attrs": {
+     "department": "Sales",
+     "jobLevel": 6
+    },
+    "parents": [
+     "UserGroup::\"alice_friends\""
+    ]
+   },
+   {
+    "uid": "User::\"giuseppe\"",
+    "attrs": {
+     "department": "CustomerSupport",
+     "jobLevel": 7
+    },
+    "parents": [
+     "UserGroup::\"AVTeam\""
+    ]
+   },
+   {
+    "uid": "UserGroup::\"alice_friends\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Photo::\"prototype_v0.jpg\"",
+    "attrs": {
+     "private": false,
+     "account": {
+      "__entity": "Account::\"ahmad\""
+     },
+     "admins": []
+    },
+    "parents": [
+     "Album::\"device_prototypes\""
+    ]
+   },
+   {
+    "uid": "Photo::\"vacation.jpg\"",
+    "attrs": {
+     "private": false,
+     "account": {
+      "__entity": "Account::\"alice\""
+     },
+     "admins": []
+    },
+    "parents": [
+     "Album::\"alice_vacation\""
+    ]
+   },
+   {
+    "uid": "Photo::\"alice_w2.jpg\"",
+    "attrs": {
+     "private": true,
+     "account": {
+      "__entity": "Account::\"alice\""
+     },
+     "admins": []
+    },
+    "parents": [
+     "Account::\"alice\""
+    ]
+   },
+   {
+    "uid": "Photo::\"sales_projections.jpg\"",
+    "attrs": {
+     "private": false,
+     "account": {
+      "__entity": "Account::\"stacey\""
+     },
+     "admins": [
+      {
+       "__entity": "User::\"giuseppe\""
+      }
+     ]
+    },
+    "parents": [
+     "Account::\"stacey\""
+    ]
+   },
+   {
+    "uid": "Album::\"device_prototypes\"",
+    "attrs": {
+     "private": false,
+     "account": {
+      "__entity": "Account::\"alice\""
+     },
+     "admins": []
+    },
+    "parents": []
+   },
+   {
+    "uid": "Album::\"alice_vacation\"",
+    "attrs": {
+     "private": false,
+     "account": {
+      "__entity": "Account::\"alice\""
+     },
+     "admins": []
+    },
+    "parents": [
+     "Account::\"alice\""
+    ]
+   },
+   {
+    "uid": "Account::\"alice\"",
+    "attrs": {
+     "private": false,
+     "owner": {
+      "__entity": "User::\"alice\""
+     },
+     "admins": []
+    },
+    "parents": [
+     "AccountGroup::\"GeronimoTeam\""
+    ]
+   },
+   {
+    "uid": "Account::\"ahmad\"",
+    "attrs": {
+     "private": false,
+     "owner": {
+      "__entity": "User::\"ahmad\""
+     },
+     "admins": []
+    },
+    "parents": [
+     "AccountGroup::\"GeronimoTeam\""
+    ]
+   },
+   {
+    "uid": "Account::\"stacey\"",
+    "attrs": {
+     "private": false,
+     "owner": {
+      "__entity": "User::\"stacey\""
+     },
+     "admins": []
+    },
+    "parents": []
+   },
+   {
+    "uid": "UserGroup::\"AVTeam\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "AccountGroup::\"GeronimoTeam\"",
+    "attrs": {
+     "owner": {
+      "__entity": "User::\"alice\""
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "Action::\"view\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"addPhoto\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"comment\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"delete\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"edit\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"listAlbums\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"listPhotos\"",
+    "attrs": {},
+    "parents": []
+   }
+  ],
+  "linked": []
+ },
+ "questions": [
+  {
+   "description": "ahmad should be able upload a 1MB PNG",
+   "request": {
+    "principal": "User::\"ahmad\"",
+    "action": "Action::\"addPhoto\"",
+    "resource": "Album::\"alice_vacation\"",
+    "context": {
+     "authenticated": true,
+     "photo": {
+      "filetype": "PNG",
+      "filesize_mb": 1
+     }
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ahmad should not be able to upload a 2MB PNG",
+   "request": {
+    "principal": "User::\"ahmad\"",
+    "action": "Action::\"addPhoto\"",
+    "resource": "Album::\"alice_vacation\"",
+    "context": {
+     "authenticated": true,
+     "photo": {
+      "filetype": "PNG",
+      "filesize_mb": 2
+     }
+    }
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "ahmad should not be able to upload a 1MB GIF",
+   "request": {
+    "principal": "User::\"ahmad\"",
+    "action": "Action::\"addPhoto\"",
+    "resource": "Album::\"alice_vacation\"",
+    "context": {
+     "authenticated": true,
+     "photo": {
+      "filetype": "GIF",
+      "filesize_mb": 1
+     }
+    }
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "ahmad should not be able to upload an 80MB RAW",
+   "request": {
+    "principal": "User::\"ahmad\"",
+    "action": "Action::\"addPhoto\"",
+    "resource": "Album::\"alice_vacation\"",
+    "context": {
+     "authenticated": true,
+     "photo": {
+      "filetype": "RAW",
+      "filesize_mb": 80
+     }
+    }
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "giuseppe should be able upload a 1MB PNG",
+   "request": {
+    "principal": "User::\"giuseppe\"",
+    "action": "Action::\"addPhoto\"",
+    "resource": "Album::\"alice_vacation\"",
+    "context": {
+     "authenticated": true,
+     "photo": {
+      "filetype": "PNG",
+      "filesize_mb": 1
+     }
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "giuseppe should not be able to upload a 2MB PNG",
+   "request": {
+    "principal": "User::\"giuseppe\"",
+    "action": "Action::\"addPhoto\"",
+    "resource": "Album::\"alice_vacation\"",
+    "context": {
+     "authenticated": true,
+     "photo": {
+      "filetype": "PNG",
+      "filesize_mb": 2
+     }
+    }
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "giuseppe should not be able to upload a 1MB GIF",
+   "request": {
+    "principal": "User::\"giuseppe\"",
+    "action": "Action::\"addPhoto\"",
+    "resource": "Album::\"alice_vacation\"",
+    "context": {
+     "authenticated": true,
+     "photo": {
+      "filetype": "GIF",
+      "filesize_mb": 1
+     }
+    }
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "giuseppe should be able to upload an 80MB RAW",
+   "request": {
+    "principal": "User::\"giuseppe\"",
+    "action": "Action::\"addPhoto\"",
+    "resource": "Album::\"alice_vacation\"",
+    "context": {
+     "authenticated": true,
+     "photo": {
+      "filetype": "RAW",
+      "filesize_mb": 80
+     }
+    }
+   },
+   "recorded_decision": "allow"
+  }
+ ],
+ "id": "c12_cit_5b",
+ "source_files": {
+  "source.cedar": "c831c264db9c9dd0f726552b78dc607aaac1ae67c0f699c9c38a0878aae7e270"
+ }
+}

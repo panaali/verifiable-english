@@ -1,0 +1,7 @@
+[
+ {
+  "name": "aggregation-one-level",
+  "description": "Aggregation followed one level only (no transitive closure).",
+  "ve": "there exists binding b, (((b subject_user @user) or (there exists str g, ((b subject_group g) and (g is req_group)))) and (((b is is_clusterrolebinding) or ((b is is_rolebinding) and (b binding_ns @namespace))) and (there exists role x, ((((b is ref_clusterrole) and ((x is is_clusterrole) and (there exists str n, ((b ref_name n) and (x role_name n))))) or ((b is ref_role) and ((x is is_role) and ((there exists str n, ((b ref_name n) and (x role_name n))) and (there exists str ns, ((b binding_ns ns) and (x role_ns ns))))))) and (there exists role y, (((x equals y) or ((x is has_aggregation) and ((y is is_clusterrole) and (there exists sel q, ((x role_selector q) and (for every str l, (if (q sel_label l), then (y role_label l)))))))) and ((not (y is has_aggregation)) and (there exists rule u, ((y role_rule u) and (((u rule_verb @verb) or (u rule_verb @star)) and (((u rule_group @apigroup) or (u rule_group @star)) and (((u rule_resource @path) or (u rule_resource @star)) and ((not (there exists str k, (u rule_resname k))) or (u rule_resname @name)))))))))))))).\n"
+ }
+]

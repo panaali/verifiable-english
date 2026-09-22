@@ -1,0 +1,31 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "atom": {
+    "description": "An Alloy atom of the instance (one universe)."
+   }
+  },
+  "predicates": {
+   "sig_person": {
+    "arguments": [
+     "atom"
+    ],
+    "description": "Atom of sig Person."
+   },
+   "f_parents": {
+    "arguments": [
+     "atom",
+     "atom"
+    ],
+    "description": "Field parents: Person -> set Person."
+   }
+  },
+  "constants": {}
+ }
+}

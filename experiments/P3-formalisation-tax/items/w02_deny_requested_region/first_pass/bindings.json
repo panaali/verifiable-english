@@ -1,0 +1,16 @@
+{
+ "constants": {
+  "op_string_equals": {
+   "value": "StringEquals"
+  },
+  "op_string_not_equals": {
+   "value": "StringNotEquals"
+  },
+  "op_bool": {
+   "value": "Bool"
+  },
+  "op_bool_if_exists": {
+   "value": "BoolIfExists"
+  }
+ }
+}

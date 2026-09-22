@@ -1,0 +1,7 @@
+[
+ {
+  "name": "star-for-plus",
+  "description": "`p in p.^parents` written with reflexive closure (always true).",
+  "ve": "not (there exists atom p, ((p is sig_person) and (rtc[f_parents](p, p)))).\n"
+ }
+]

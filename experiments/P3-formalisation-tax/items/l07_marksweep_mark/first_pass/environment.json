@@ -1,0 +1,83 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "atom": {
+    "description": "An Alloy atom of the instance (one universe)."
+   },
+   "tuple": {
+    "description": "A reified tuple of a ternary field."
+   }
+  },
+  "predicates": {
+   "f_marked": {
+    "arguments": [
+     "atom",
+     "atom"
+    ],
+    "description": "Field marked: HeapState -> set Node."
+   },
+   "t_left_1": {
+    "arguments": [
+     "tuple",
+     "atom"
+    ],
+    "description": "Component 1 of a left tuple (HeapState, Node, Node)."
+   },
+   "t_left_2": {
+    "arguments": [
+     "tuple",
+     "atom"
+    ],
+    "description": "Component 2 of a left tuple (HeapState, Node, Node)."
+   },
+   "t_left_3": {
+    "arguments": [
+     "tuple",
+     "atom"
+    ],
+    "description": "Component 3 of a left tuple (HeapState, Node, Node)."
+   },
+   "t_right_1": {
+    "arguments": [
+     "tuple",
+     "atom"
+    ],
+    "description": "Component 1 of a right tuple (HeapState, Node, Node)."
+   },
+   "t_right_2": {
+    "arguments": [
+     "tuple",
+     "atom"
+    ],
+    "description": "Component 2 of a right tuple (HeapState, Node, Node)."
+   },
+   "t_right_3": {
+    "arguments": [
+     "tuple",
+     "atom"
+    ],
+    "description": "Component 3 of a right tuple (HeapState, Node, Node)."
+   }
+  },
+  "constants": {
+   "hs": {
+    "sort": "atom",
+    "description": "Parameter hs."
+   },
+   "from": {
+    "sort": "atom",
+    "description": "Parameter from."
+   },
+   "hs_p": {
+    "sort": "atom",
+    "description": "Parameter hs\" (post-state)."
+   }
+  }
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "constants": {
+  "view": {
+   "entity": "Action::\"view\""
+  },
+  "jane_vacation": {
+   "entity": "Album::\"jane_vacation\""
+  }
+ }
+}

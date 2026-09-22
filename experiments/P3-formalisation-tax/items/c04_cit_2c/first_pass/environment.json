@@ -1,0 +1,58 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "A Cedar entity UID (store entities, request entities, referenced UIDs)."
+   }
+  },
+  "predicates": {
+   "parent": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Immediate Cedar hierarchy edge, child to parent (entity store parents)."
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "The request principal."
+   },
+   "action": {
+    "sort": "entity",
+    "description": "The request action."
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "The request resource."
+   },
+   "alice": {
+    "sort": "entity",
+    "description": "User::\"alice\""
+   },
+   "view": {
+    "sort": "entity",
+    "description": "Action::\"view\""
+   },
+   "edit": {
+    "sort": "entity",
+    "description": "Action::\"edit\""
+   },
+   "comment": {
+    "sort": "entity",
+    "description": "Action::\"comment\""
+   },
+   "jane_vacation": {
+    "sort": "entity",
+    "description": "Album::\"jane_vacation\""
+   }
+  }
+ }
+}

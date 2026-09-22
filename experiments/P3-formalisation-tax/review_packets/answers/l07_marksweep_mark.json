@@ -1,0 +1,9 @@
+{"answers": [
+  {"n": 0, "answer": true, "why": "reachable(h0,a)={a,b,c} via left a->b->c equals h1.marked; left/right identical"},
+  {"n": 1, "answer": false, "why": "reachable(h0,a)={a,b} but h1.marked={b} (missing a)"},
+  {"n": 2, "answer": false, "why": "reachable(h0,a)={a,b} but h1.marked={a,b,d} (extra d)"},
+  {"n": 3, "answer": true, "why": "a-left->b-right->c(-left->a) gives reachable={a,b,c}=h1.marked; left/right identical"},
+  {"n": 4, "answer": false, "why": "h1.left is empty != h0.left {a->b}; also marked {a} != reachable {a,b}"}
+],
+"confidence": "high",
+"notes": "Straightforward evaluation of mark: hs\".marked = from + from.^(left+right), left/right frame conditions."}

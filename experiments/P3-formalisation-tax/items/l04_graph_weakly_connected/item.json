@@ -1,0 +1,176 @@
+{
+ "family": "alloy",
+ "synthetic": false,
+ "question": "Does the target paragraph hold in each finite instance (or: do the facts entail the assertion)?",
+ "provenance": {
+  "repository": "AlloyTools/models",
+  "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+  "licence": "Apache-2.0",
+  "path": "utilities/types/graph.als",
+  "note": "Model text verbatim; instances synthetic."
+ },
+ "questions": [
+  {
+   "description": "path",
+   "target": {
+    "kind": "pred",
+    "name": "weaklyConnected",
+    "args": [
+     "r"
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "node": [
+      "n0",
+      "n1",
+      "n2",
+      "n3"
+     ]
+    },
+    "fields": {
+     "edges": [
+      [
+       "n0",
+       "n1"
+      ],
+      [
+       "n2",
+       "n1"
+      ],
+      [
+       "n2",
+       "n3"
+      ]
+     ]
+    },
+    "bindings": {
+     "r": "edges"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "two components",
+   "target": {
+    "kind": "pred",
+    "name": "weaklyConnected",
+    "args": [
+     "r"
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "node": [
+      "n0",
+      "n1",
+      "n2",
+      "n3"
+     ]
+    },
+    "fields": {
+     "edges": [
+      [
+       "n0",
+       "n1"
+      ],
+      [
+       "n2",
+       "n3"
+      ]
+     ]
+    },
+    "bindings": {
+     "r": "edges"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "singleton",
+   "target": {
+    "kind": "pred",
+    "name": "weaklyConnected",
+    "args": [
+     "r"
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "node": [
+      "n0"
+     ]
+    },
+    "fields": {
+     "edges": []
+    },
+    "bindings": {
+     "r": "edges"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "isolated node",
+   "target": {
+    "kind": "pred",
+    "name": "weaklyConnected",
+    "args": [
+     "r"
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "node": [
+      "n0",
+      "n1",
+      "n2",
+      "n3"
+     ]
+    },
+    "fields": {
+     "edges": [
+      [
+       "n0",
+       "n1"
+      ],
+      [
+       "n1",
+       "n2"
+      ]
+     ]
+    },
+    "bindings": {
+     "r": "edges"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "empty graph",
+   "target": {
+    "kind": "pred",
+    "name": "weaklyConnected",
+    "args": [
+     "r"
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "node": []
+    },
+    "fields": {
+     "edges": []
+    },
+    "bindings": {
+     "r": "edges"
+    }
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "l04_graph_weakly_connected",
+ "source_files": {
+  "source.als": "a050d2bdbc49eebf40c6ff23689e5f6be933c8ca07face761c99b2772c6d9a59"
+ }
+}

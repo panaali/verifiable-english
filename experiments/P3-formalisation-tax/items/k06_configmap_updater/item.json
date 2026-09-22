@@ -1,0 +1,152 @@
+{
+ "family": "k8s",
+ "synthetic": false,
+ "question": "Does Kubernetes RBAC authorize each request given these RBAC objects?",
+ "provenance": {
+  "repository": "kubernetes/website",
+  "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+  "licence": "CC-BY-4.0",
+  "paths": [
+   "content/en/docs/reference/access-authn-authz/rbac.md#referring-to-resources"
+  ],
+  "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+ },
+ "world": {
+  "objects": [
+   {
+    "kind": "Role",
+    "metadata": {
+     "namespace": "default",
+     "name": "configmap-updater"
+    },
+    "rules": [
+     {
+      "apiGroups": [
+       ""
+      ],
+      "resources": [
+       "configmaps"
+      ],
+      "resourceNames": [
+       "my-configmap"
+      ],
+      "verbs": [
+       "update",
+       "get"
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "RoleBinding",
+    "metadata": {
+     "name": "ci-configmap",
+     "namespace": "default"
+    },
+    "subjects": [
+     {
+      "kind": "User",
+      "name": "ci-bot",
+      "apiGroup": "rbac.authorization.k8s.io"
+     }
+    ],
+    "roleRef": {
+     "kind": "Role",
+     "name": "configmap-updater",
+     "apiGroup": "rbac.authorization.k8s.io"
+    },
+    "synthetic": true
+   }
+  ]
+ },
+ "questions": [
+  {
+   "description": "k06-0",
+   "request": {
+    "user": "ci-bot",
+    "groups": [],
+    "verb": "update",
+    "apiGroup": "",
+    "resource": "configmaps",
+    "subresource": "",
+    "namespace": "default",
+    "name": "my-configmap"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k06-1",
+   "request": {
+    "user": "ci-bot",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "configmaps",
+    "subresource": "",
+    "namespace": "default",
+    "name": "my-configmap"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k06-2",
+   "request": {
+    "user": "ci-bot",
+    "groups": [],
+    "verb": "update",
+    "apiGroup": "",
+    "resource": "configmaps",
+    "subresource": "",
+    "namespace": "default",
+    "name": "other"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k06-3",
+   "request": {
+    "user": "ci-bot",
+    "groups": [],
+    "verb": "list",
+    "apiGroup": "",
+    "resource": "configmaps",
+    "subresource": "",
+    "namespace": "default",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k06-4",
+   "request": {
+    "user": "ci-bot",
+    "groups": [],
+    "verb": "delete",
+    "apiGroup": "",
+    "resource": "configmaps",
+    "subresource": "",
+    "namespace": "default",
+    "name": "my-configmap"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k06-5",
+   "request": {
+    "user": "ci-bot",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "configmaps",
+    "subresource": "",
+    "namespace": "staging",
+    "name": "my-configmap"
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "k06_configmap_updater",
+ "source_files": {
+  "source.yaml": "e6e847b1a5ef0d37386273a451f9070985a0597033a51821961203719c21ca21"
+ }
+}

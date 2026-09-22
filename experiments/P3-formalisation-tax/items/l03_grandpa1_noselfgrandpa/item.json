@@ -1,0 +1,121 @@
+{
+ "family": "alloy",
+ "synthetic": false,
+ "question": "Does the target paragraph hold in each finite instance (or: do the facts entail the assertion)?",
+ "provenance": {
+  "repository": "AlloyTools/models",
+  "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+  "licence": "Apache-2.0",
+  "path": "software-abstractions-book/chapter4/grandpa1.als",
+  "note": "Model text verbatim; instances synthetic. The check question uses the file's own scope (4 Person)."
+ },
+ "questions": [
+  {
+   "description": "own grandpa instance",
+   "target": {
+    "kind": "assert",
+    "name": "NoSelfGrandpa"
+   },
+   "instance": {
+    "sigs": {
+     "Person": [
+      "m1",
+      "m2",
+      "w1",
+      "w2"
+     ],
+     "Man": [
+      "m1",
+      "m2"
+     ],
+     "Woman": [
+      "w1",
+      "w2"
+     ]
+    },
+    "fields": {
+     "father": [
+      [
+       "w1",
+       "m1"
+      ],
+      [
+       "m1",
+       "m2"
+      ],
+      [
+       "m2",
+       "m1"
+      ]
+     ],
+     "mother": [],
+     "wife": [],
+     "husband": []
+    },
+    "bindings": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "normal family",
+   "target": {
+    "kind": "assert",
+    "name": "NoSelfGrandpa"
+   },
+   "instance": {
+    "sigs": {
+     "Person": [
+      "m1",
+      "m2",
+      "w1",
+      "w2"
+     ],
+     "Man": [
+      "m1",
+      "m2"
+     ],
+     "Woman": [
+      "w1",
+      "w2"
+     ]
+    },
+    "fields": {
+     "father": [
+      [
+       "m2",
+       "m1"
+      ],
+      [
+       "w2",
+       "m2"
+      ]
+     ],
+     "mother": [
+      [
+       "m2",
+       "w1"
+      ]
+     ],
+     "wife": [],
+     "husband": []
+    },
+    "bindings": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "check NoSelfGrandpa under facts",
+   "target": {
+    "kind": "check",
+    "name": "NoSelfGrandpa",
+    "scope": 3
+   },
+   "instance": null,
+   "recorded_decision": null
+  }
+ ],
+ "id": "l03_grandpa1_noselfgrandpa",
+ "source_files": {
+  "source.als": "2bbc4d5bb68fb766d5d732736684f54cace77b827fd86741412f05ffa493599e"
+ }
+}

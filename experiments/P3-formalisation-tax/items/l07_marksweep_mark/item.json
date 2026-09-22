@@ -1,0 +1,338 @@
+{
+ "family": "alloy",
+ "synthetic": false,
+ "question": "Does the target paragraph hold in each finite instance (or: do the facts entail the assertion)?",
+ "provenance": {
+  "repository": "AlloyTools/models",
+  "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+  "licence": "Apache-2.0",
+  "path": "algorithms/gc/marksweepgc.als",
+  "note": "Model text verbatim; instances synthetic. The file writes primes as hs\"; the target predicate is mark."
+ },
+ "questions": [
+  {
+   "description": "correct mark",
+   "target": {
+    "kind": "pred",
+    "name": "mark",
+    "args": [
+     "hs",
+     "from",
+     "hs\""
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "Node": [
+      "a",
+      "b",
+      "c",
+      "d"
+     ],
+     "HeapState": [
+      "h0",
+      "h1"
+     ]
+    },
+    "fields": {
+     "left": [
+      [
+       "h0",
+       "a",
+       "b"
+      ],
+      [
+       "h0",
+       "b",
+       "c"
+      ],
+      [
+       "h1",
+       "a",
+       "b"
+      ],
+      [
+       "h1",
+       "b",
+       "c"
+      ]
+     ],
+     "right": [],
+     "marked": [
+      [
+       "h1",
+       "a"
+      ],
+      [
+       "h1",
+       "b"
+      ],
+      [
+       "h1",
+       "c"
+      ]
+     ],
+     "freeList": []
+    },
+    "bindings": {
+     "hs": "h0",
+     "from": "a",
+     "hs\"": "h1"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "missed root",
+   "target": {
+    "kind": "pred",
+    "name": "mark",
+    "args": [
+     "hs",
+     "from",
+     "hs\""
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "Node": [
+      "a",
+      "b",
+      "c",
+      "d"
+     ],
+     "HeapState": [
+      "h0",
+      "h1"
+     ]
+    },
+    "fields": {
+     "left": [
+      [
+       "h0",
+       "a",
+       "b"
+      ],
+      [
+       "h1",
+       "a",
+       "b"
+      ]
+     ],
+     "right": [],
+     "marked": [
+      [
+       "h1",
+       "b"
+      ]
+     ],
+     "freeList": []
+    },
+    "bindings": {
+     "hs": "h0",
+     "from": "a",
+     "hs\"": "h1"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "over-marked",
+   "target": {
+    "kind": "pred",
+    "name": "mark",
+    "args": [
+     "hs",
+     "from",
+     "hs\""
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "Node": [
+      "a",
+      "b",
+      "c",
+      "d"
+     ],
+     "HeapState": [
+      "h0",
+      "h1"
+     ]
+    },
+    "fields": {
+     "left": [
+      [
+       "h0",
+       "a",
+       "b"
+      ],
+      [
+       "h1",
+       "a",
+       "b"
+      ]
+     ],
+     "right": [],
+     "marked": [
+      [
+       "h1",
+       "a"
+      ],
+      [
+       "h1",
+       "b"
+      ],
+      [
+       "h1",
+       "d"
+      ]
+     ],
+     "freeList": []
+    },
+    "bindings": {
+     "hs": "h0",
+     "from": "a",
+     "hs\"": "h1"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "via right+cycle",
+   "target": {
+    "kind": "pred",
+    "name": "mark",
+    "args": [
+     "hs",
+     "from",
+     "hs\""
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "Node": [
+      "a",
+      "b",
+      "c",
+      "d"
+     ],
+     "HeapState": [
+      "h0",
+      "h1"
+     ]
+    },
+    "fields": {
+     "left": [
+      [
+       "h0",
+       "a",
+       "b"
+      ],
+      [
+       "h0",
+       "c",
+       "a"
+      ],
+      [
+       "h1",
+       "a",
+       "b"
+      ],
+      [
+       "h1",
+       "c",
+       "a"
+      ]
+     ],
+     "right": [
+      [
+       "h0",
+       "b",
+       "c"
+      ],
+      [
+       "h1",
+       "b",
+       "c"
+      ]
+     ],
+     "marked": [
+      [
+       "h1",
+       "a"
+      ],
+      [
+       "h1",
+       "b"
+      ],
+      [
+       "h1",
+       "c"
+      ]
+     ],
+     "freeList": []
+    },
+    "bindings": {
+     "hs": "h0",
+     "from": "a",
+     "hs\"": "h1"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "left changed",
+   "target": {
+    "kind": "pred",
+    "name": "mark",
+    "args": [
+     "hs",
+     "from",
+     "hs\""
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "Node": [
+      "a",
+      "b",
+      "c",
+      "d"
+     ],
+     "HeapState": [
+      "h0",
+      "h1"
+     ]
+    },
+    "fields": {
+     "left": [
+      [
+       "h0",
+       "a",
+       "b"
+      ]
+     ],
+     "right": [],
+     "marked": [
+      [
+       "h1",
+       "a"
+      ]
+     ],
+     "freeList": []
+    },
+    "bindings": {
+     "hs": "h0",
+     "from": "a",
+     "hs\"": "h1"
+    }
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "l07_marksweep_mark",
+ "source_files": {
+  "source.als": "7cd940c40f312e4c181102a5621c8ac099c92014be35b05f50519f281a305cc7"
+ }
+}

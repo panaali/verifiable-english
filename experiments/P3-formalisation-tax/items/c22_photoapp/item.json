@@ -1,0 +1,309 @@
+{
+ "family": "cedar",
+ "synthetic": false,
+ "provenance": {
+  "repository": "cedar-policy/cedar-examples",
+  "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+  "licence": "Apache-2.0",
+  "policy_path": "cedar-policy-language-in-action/PhotoApp/photoapp.cedar",
+  "entities_path": "cedar-policy-language-in-action/PhotoApp/photoapp.cedarentities.json",
+  "schema_path": null,
+  "requests": "cedar-policy-language-in-action/PhotoApp/ALLOW, cedar-policy-language-in-action/PhotoApp/DENY",
+  "schema_used_for_action_hierarchy": false
+ },
+ "question": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "world": {
+  "entities": [
+   {
+    "uid": "PhotoApp::Application::\"PhotoApp\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "PhotoApp::User::\"JaneDoe\"",
+    "attrs": {},
+    "parents": [
+     "PhotoApp::UserGroup::\"DoeFamily\""
+    ]
+   },
+   {
+    "uid": "PhotoApp::User::\"JohnDoe\"",
+    "attrs": {},
+    "parents": [
+     "PhotoApp::UserGroup::\"DoeFamily\""
+    ]
+   },
+   {
+    "uid": "PhotoApp::User::\"JorgeSouza\"",
+    "attrs": {},
+    "parents": [
+     "PhotoApp::Role::\"PhotoJudge\""
+    ]
+   },
+   {
+    "uid": "PhotoApp::UserGroup::\"DoeFamily\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "PhotoApp::Role::\"PhotoJudge\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "PhotoApp::Photo::\"JaneDoe.jpg\"",
+    "attrs": {
+     "labels": [],
+     "owner": {
+      "__entity": "PhotoApp::User::\"JaneDoe\""
+     }
+    },
+    "parents": [
+     "PhotoApp::Application::\"PhotoApp\"",
+     "PhotoApp::Album::\"DoePhotos\""
+    ]
+   },
+   {
+    "uid": "PhotoApp::Photo::\"JohnDoe.jpg\"",
+    "attrs": {
+     "labels": [],
+     "owner": {
+      "__entity": "PhotoApp::User::\"JohnDoe\""
+     }
+    },
+    "parents": [
+     "PhotoApp::Application::\"PhotoApp\"",
+     "PhotoApp::Album::\"DoePhotos\""
+    ]
+   },
+   {
+    "uid": "PhotoApp::Photo::\"sunset.jpg\"",
+    "attrs": {
+     "labels": [
+      "contest"
+     ],
+     "owner": {
+      "__entity": "PhotoApp::User::\"JaneDoe\""
+     }
+    },
+    "parents": [
+     "PhotoApp::Application::\"PhotoApp\"",
+     "PhotoApp::Album::\"JaneVacation\""
+    ]
+   },
+   {
+    "uid": "PhotoApp::Photo::\"nightclub.jpg\"",
+    "attrs": {
+     "labels": [
+      "private"
+     ],
+     "owner": {
+      "__entity": "PhotoApp::User::\"JaneDoe\""
+     }
+    },
+    "parents": [
+     "PhotoApp::Application::\"PhotoApp\"",
+     "PhotoApp::Album::\"JaneVacation\""
+    ]
+   },
+   {
+    "uid": "PhotoApp::Photo::\"Judges.jpg\"",
+    "attrs": {
+     "labels": [],
+     "owner": {
+      "__entity": "PhotoApp::User::\"JohnDoe\""
+     },
+     "subjects": [
+      {
+       "__entity": "PhotoApp::User::\"JorgeSouza\""
+      }
+     ]
+    },
+    "parents": [
+     "PhotoApp::Application::\"PhotoApp\""
+    ]
+   },
+   {
+    "uid": "PhotoApp::Album::\"DoePhotos\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "PhotoApp::Album::\"JaneVacation\"",
+    "attrs": {},
+    "parents": []
+   }
+  ],
+  "linked": []
+ },
+ "questions": [
+  {
+   "description": "ALLOW/JaneDoe-delete-JaneDoe.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JaneDoe\"",
+    "action": "PhotoApp::Action::\"deletePhoto\"",
+    "resource": "PhotoApp::Photo::\"JaneDoe.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/JaneDoe-edit-JaneDoe.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JaneDoe\"",
+    "action": "PhotoApp::Action::\"editPhoto\"",
+    "resource": "PhotoApp::Photo::\"JaneDoe.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/JaneDoe-view-JaneDoe.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JaneDoe\"",
+    "action": "PhotoApp::Action::\"viewPhoto\"",
+    "resource": "PhotoApp::Photo::\"JaneDoe.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/JaneDoe-view-JohnDoe.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JaneDoe\"",
+    "action": "PhotoApp::Action::\"viewPhoto\"",
+    "resource": "PhotoApp::Photo::\"JohnDoe.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/JaneDoe-view-nightclub.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JaneDoe\"",
+    "action": "PhotoApp::Action::\"viewPhoto\"",
+    "resource": "PhotoApp::Photo::\"nightclub.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/JaneDoe-view-sunset.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JaneDoe\"",
+    "action": "PhotoApp::Action::\"viewPhoto\"",
+    "resource": "PhotoApp::Photo::\"sunset.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/JohnDoe-view-JaneDoe.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JohnDoe\"",
+    "action": "PhotoApp::Action::\"viewPhoto\"",
+    "resource": "PhotoApp::Photo::\"JaneDoe.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/JohnDoe-view-JohnDoe.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JohnDoe\"",
+    "action": "PhotoApp::Action::\"viewPhoto\"",
+    "resource": "PhotoApp::Photo::\"JohnDoe.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/JohnDoe-view-sunset.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JohnDoe\"",
+    "action": "PhotoApp::Action::\"viewPhoto\"",
+    "resource": "PhotoApp::Photo::\"sunset.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/JorgeSouza-view-Judges.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JorgeSouza\"",
+    "action": "PhotoApp::Action::\"viewPhoto\"",
+    "resource": "PhotoApp::Photo::\"Judges.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/PhotoJudge-view-sunset.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JorgeSouza\"",
+    "action": "PhotoApp::Action::\"viewPhoto\"",
+    "resource": "PhotoApp::Photo::\"sunset.jpg\"",
+    "context": {
+     "judgingSession": true
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "DENY/JohnDoe-delete-JaneDoe.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JohnDoe\"",
+    "action": "PhotoApp::Action::\"deletePhoto\"",
+    "resource": "PhotoApp::Photo::\"JaneDoe.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "DENY/JohnDoe-edit-JaneDoe.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JohnDoe\"",
+    "action": "PhotoApp::Action::\"editPhoto\"",
+    "resource": "PhotoApp::Photo::\"JaneDoe.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "DENY/JohnDoe-view-nightclub.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JohnDoe\"",
+    "action": "PhotoApp::Action::\"viewPhoto\"",
+    "resource": "PhotoApp::Photo::\"nightclub.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "DENY/JorgeSouza-view-JaneDoe.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JorgeSouza\"",
+    "action": "PhotoApp::Action::\"viewPhoto\"",
+    "resource": "PhotoApp::Photo::\"JaneDoe.jpg\"",
+    "context": {}
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "DENY/PhotoJudge-view-sunset.json",
+   "request": {
+    "principal": "PhotoApp::User::\"JorgeSouza\"",
+    "action": "PhotoApp::Action::\"viewPhoto\"",
+    "resource": "PhotoApp::Photo::\"sunset.jpg\"",
+    "context": {
+     "judgingSession": false
+    }
+   },
+   "recorded_decision": "deny"
+  }
+ ],
+ "id": "c22_photoapp",
+ "source_files": {
+  "source.cedar": "ee1a27fd9b95b0b4cbd72bb43ffc0ebf805cb0fcd39b5c6d087d8aa6b2b2de32"
+ }
+}

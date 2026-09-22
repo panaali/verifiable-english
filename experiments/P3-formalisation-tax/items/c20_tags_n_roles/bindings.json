@@ -1,0 +1,19 @@
+{
+ "constants": {
+  "role_a": {
+   "entity": "Role::\"Role-A\""
+  },
+  "role_b": {
+   "entity": "Role::\"Role-B\""
+  },
+  "role_a_actions": {
+   "entity": "Action::\"Role-A Actions\""
+  },
+  "role_b_actions": {
+   "entity": "Action::\"Role-B Actions\""
+  },
+  "all": {
+   "value": "ALL"
+  }
+ }
+}

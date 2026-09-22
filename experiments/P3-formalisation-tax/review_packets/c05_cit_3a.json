@@ -1,0 +1,251 @@
+{
+ "id": "c05_cit_3a",
+ "family": "cedar",
+ "task": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "sources": {
+  "source.cedar": "// Scenario 3A: Any Principal can view jane's \"Vacation\" album\npermit (\n  principal,\n  action == Action::\"view\",\n  resource in Album::\"jane_vacation\"\n);\n"
+ },
+ "world": {
+  "entities": [
+   {
+    "uid": "User::\"alice\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"jane_friends\""
+    ]
+   },
+   {
+    "uid": "User::\"bob\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "User::\"tim\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"jane_friends\""
+    ]
+   },
+   {
+    "uid": "UserGroup::\"jane_friends\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Administrator::\"ahmad\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"view\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"comment\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"edit\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"delete\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"listAlbums\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"listPhotos\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Photo::\"VacationPhoto94.jpg\"",
+    "attrs": {},
+    "parents": [
+     "Album::\"jane_vacation\""
+    ]
+   },
+   {
+    "uid": "Photo::\"passportscan.jpg\"",
+    "attrs": {},
+    "parents": [
+     "Account::\"jane\""
+    ]
+   },
+   {
+    "uid": "Video::\"surf.mp4\"",
+    "attrs": {},
+    "parents": [
+     "Album::\"jane_vacation\""
+    ]
+   },
+   {
+    "uid": "Photo::\"selfie.jpg\"",
+    "attrs": {},
+    "parents": [
+     "Account::\"bob\""
+    ]
+   },
+   {
+    "uid": "Album::\"jane_vacation\"",
+    "attrs": {},
+    "parents": [
+     "Account::\"jane\""
+    ]
+   },
+   {
+    "uid": "Account::\"jane\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Account::\"bob\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"addPhoto\"",
+    "attrs": {},
+    "parents": []
+   }
+  ],
+  "linked": []
+ },
+ "questions": [
+  {
+   "n": 0,
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"view\"",
+    "resource": "Photo::\"VacationPhoto94.jpg\"",
+    "context": {
+     "source_ip": "123.123.123.123",
+     "confidence_score": "0.6",
+     "authenticated": true
+    }
+   }
+  },
+  {
+   "n": 1,
+   "request": {
+    "principal": "User::\"bob\"",
+    "action": "Action::\"view\"",
+    "resource": "Photo::\"VacationPhoto94.jpg\"",
+    "context": {
+     "source_ip": "123.123.123.123",
+     "confidence_score": "0.6",
+     "authenticated": true
+    }
+   }
+  },
+  {
+   "n": 2,
+   "request": {
+    "principal": "Administrator::\"ahmad\"",
+    "action": "Action::\"view\"",
+    "resource": "Photo::\"VacationPhoto94.jpg\"",
+    "context": {
+     "source_ip": "123.123.123.123",
+     "confidence_score": "0.6",
+     "authenticated": true
+    }
+   }
+  },
+  {
+   "n": 3,
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"view\"",
+    "resource": "Photo::\"passportscan.jpg\"",
+    "context": {
+     "source_ip": "123.123.123.123",
+     "confidence_score": "0.6",
+     "authenticated": true
+    }
+   }
+  },
+  {
+   "n": 4,
+   "request": {
+    "principal": "Photo::\"VacationPhoto94.jpg\"",
+    "action": "Action::\"view\"",
+    "resource": "Photo::\"VacationPhoto94.jpg\"",
+    "context": {
+     "source_ip": "x",
+     "confidence_score": "0.6",
+     "authenticated": true
+    }
+   }
+  },
+  {
+   "n": 5,
+   "request": {
+    "principal": "User::\"bob\"",
+    "action": "Action::\"view\"",
+    "resource": "Photo::\"VacationPhoto94.jpg\"",
+    "context": {
+     "source_ip": "123.123.123.123",
+     "authenticated": true
+    }
+   }
+  },
+  {
+   "n": 6,
+   "request": {
+    "principal": "User::\"tim\"",
+    "action": "Action::\"view\"",
+    "resource": "Photo::\"VacationPhoto94.jpg\"",
+    "context": {
+     "source_ip": "123.123.123.123",
+     "confidence_score": "0.6",
+     "authenticated": true
+    }
+   }
+  },
+  {
+   "n": 7,
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"view\"",
+    "resource": "Photo::\"VacationPhoto94.jpg\"",
+    "context": {
+     "source_ip": "123.123.123.123",
+     "authenticated": false
+    }
+   }
+  },
+  {
+   "n": 8,
+   "request": {
+    "principal": "Action::\"comment\"",
+    "action": "Action::\"view\"",
+    "resource": "Photo::\"VacationPhoto94.jpg\"",
+    "context": {
+     "source_ip": "123.123.123.123",
+     "confidence_score": "0.6"
+    }
+   }
+  },
+  {
+   "n": 9,
+   "request": {
+    "principal": "Administrator::\"ahmad\"",
+    "action": "Action::\"edit\"",
+    "resource": "Photo::\"VacationPhoto94.jpg\"",
+    "context": {
+     "source_ip": "123.123.123.123",
+     "confidence_score": "0.6",
+     "authenticated": true
+    }
+   }
+  }
+ ]
+}

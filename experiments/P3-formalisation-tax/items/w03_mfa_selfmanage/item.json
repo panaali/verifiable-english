@@ -1,0 +1,192 @@
+{
+ "family": "iam",
+ "synthetic": false,
+ "question": "Is each request allowed by these identity-based policies (explicit deny > allow > implicit deny)?",
+ "provenance": {
+  "repository": "docs.aws.amazon.com IAM User Guide",
+  "commit": "fetched 2026-09-22",
+  "licence": "AWS documentation (example policy excerpt)",
+  "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_iam_mfa-selfmanage.html",
+  "note": "Policy JSON verbatim from the page; requests synthetic."
+ },
+ "world": {
+  "policies": [
+   {
+    "Version": "2012-10-17",
+    "Statement": [
+     {
+      "Sid": "AllowListActions",
+      "Effect": "Allow",
+      "Action": [
+       "iam:ListUsers",
+       "iam:ListVirtualMFADevices"
+      ],
+      "Resource": "*"
+     },
+     {
+      "Sid": "AllowUserToCreateVirtualMFADevice",
+      "Effect": "Allow",
+      "Action": [
+       "iam:CreateVirtualMFADevice"
+      ],
+      "Resource": "arn:aws:iam::*:mfa/*"
+     },
+     {
+      "Sid": "AllowUserToManageTheirOwnMFA",
+      "Effect": "Allow",
+      "Action": [
+       "iam:EnableMFADevice",
+       "iam:GetMFADevice",
+       "iam:ListMFADevices",
+       "iam:ResyncMFADevice"
+      ],
+      "Resource": "arn:aws:iam::*:user/${aws:username}"
+     },
+     {
+      "Sid": "AllowUserToDeactivateTheirOwnMFAOnlyWhenUsingMFA",
+      "Effect": "Allow",
+      "Action": [
+       "iam:DeactivateMFADevice"
+      ],
+      "Resource": [
+       "arn:aws:iam::*:user/${aws:username}"
+      ],
+      "Condition": {
+       "Bool": {
+        "aws:MultiFactorAuthPresent": "true"
+       }
+      }
+     },
+     {
+      "Sid": "BlockMostAccessUnlessSignedInWithMFA",
+      "Effect": "Deny",
+      "NotAction": [
+       "iam:CreateVirtualMFADevice",
+       "iam:EnableMFADevice",
+       "iam:ListMFADevices",
+       "iam:ListUsers",
+       "iam:ListVirtualMFADevices",
+       "iam:ResyncMFADevice"
+      ],
+      "Resource": "*",
+      "Condition": {
+       "BoolIfExists": {
+        "aws:MultiFactorAuthPresent": "false"
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "questions": [
+  {
+   "description": "w03-0",
+   "request": {
+    "action": "iam:EnableMFADevice",
+    "resource": "arn:aws:iam::123456789012:user/alice",
+    "context": {
+     "aws:username": "alice"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w03-1",
+   "request": {
+    "action": "iam:DeactivateMFADevice",
+    "resource": "arn:aws:iam::123456789012:user/alice",
+    "context": {
+     "aws:username": "alice",
+     "aws:MultiFactorAuthPresent": "true"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w03-2",
+   "request": {
+    "action": "iam:DeactivateMFADevice",
+    "resource": "arn:aws:iam::123456789012:user/alice",
+    "context": {
+     "aws:username": "alice",
+     "aws:MultiFactorAuthPresent": "false"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w03-3",
+   "request": {
+    "action": "iam:DeactivateMFADevice",
+    "resource": "arn:aws:iam::123456789012:user/alice",
+    "context": {
+     "aws:username": "alice"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w03-4",
+   "request": {
+    "action": "iam:ListUsers",
+    "resource": "*",
+    "context": {
+     "aws:username": "alice"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w03-5",
+   "request": {
+    "action": "iam:EnableMFADevice",
+    "resource": "arn:aws:iam::123456789012:user/bob",
+    "context": {
+     "aws:username": "alice",
+     "aws:MultiFactorAuthPresent": "true"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w03-6",
+   "request": {
+    "action": "iam:CreateVirtualMFADevice",
+    "resource": "arn:aws:iam::123456789012:mfa/alice",
+    "context": {
+     "aws:username": "alice"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w03-7",
+   "request": {
+    "action": "iam:GetMFADevice",
+    "resource": "arn:aws:iam::123456789012:user/alice",
+    "context": {
+     "aws:username": "alice",
+     "aws:MultiFactorAuthPresent": "false"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w03-8",
+   "request": {
+    "action": "iam:GetMFADevice",
+    "resource": "arn:aws:iam::123456789012:user/alice",
+    "context": {
+     "aws:username": "alice",
+     "aws:MultiFactorAuthPresent": "true"
+    }
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "w03_mfa_selfmanage",
+ "source_files": {
+  "source.json": "a11b7c9420c5f20027edaa246095f5d4356dbb8559c64f70c231db55039086ef"
+ }
+}

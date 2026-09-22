@@ -1,0 +1,1 @@
+(@t is sig_addr) and (tc[atom a, c | (there exists tuple u, ((u t_addr_1 @b) and ((u t_addr_2 a) and (u t_addr_3 c))))](@n, @t)).

@@ -1,0 +1,166 @@
+{
+ "family": "cedar",
+ "synthetic": false,
+ "provenance": {
+  "repository": "cedar-policy/cedar-examples",
+  "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+  "licence": "Apache-2.0",
+  "policy_path": "cedar-example-use-cases/tags_n_roles/policies.cedar",
+  "entities_path": "cedar-example-use-cases/tags_n_roles/entities.json",
+  "schema_path": "cedar-example-use-cases/tags_n_roles/policies.cedarschema",
+  "requests": "cedar-example-use-cases/tags_n_roles/ALLOW, cedar-example-use-cases/tags_n_roles/DENY",
+  "schema_used_for_action_hierarchy": true
+ },
+ "question": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "world": {
+  "entities": [
+   {
+    "uid": "Role::\"Role-A\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Role::\"Role-B\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "User::\"Joe\"",
+    "attrs": {
+     "allowedTagsForRole": {
+      "Role-A": {
+       "production_status": [
+        "production"
+       ],
+       "country": [
+        "germany"
+       ],
+       "stage": [
+        "reporting"
+       ]
+      },
+      "Role-B": {
+       "production_status": [
+        "test"
+       ],
+       "country": [
+        "italy"
+       ],
+       "stage": [
+        "valuation"
+       ]
+      }
+     }
+    },
+    "parents": [
+     "Role::\"Role-A\"",
+     "Role::\"Role-B\""
+    ]
+   },
+   {
+    "uid": "User::\"Alice\"",
+    "attrs": {
+     "allowedTagsForRole": {
+      "Role-B": {
+       "production_status": [
+        "production"
+       ],
+       "country": [
+        "ALL"
+       ],
+       "stage": [
+        "valuation"
+       ]
+      }
+     }
+    },
+    "parents": [
+     "Role::\"Role-B\""
+    ]
+   },
+   {
+    "uid": "Workspace::\"workspace-1\"",
+    "attrs": {
+     "tags": {
+      "production_status": [
+       "production"
+      ],
+      "country": [
+       "germany"
+      ]
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "Action::\"Role-A Actions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"Role-B Actions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"UpdateWorkspace\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"Role-A Actions\""
+    ]
+   },
+   {
+    "uid": "Action::\"DeleteWorkspace\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"Role-A Actions\""
+    ]
+   },
+   {
+    "uid": "Action::\"ReadWorkspace\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"Role-A Actions\"",
+     "Action::\"Role-B Actions\""
+    ]
+   }
+  ],
+  "linked": []
+ },
+ "questions": [
+  {
+   "description": "ALLOW/alice_read.json",
+   "request": {
+    "principal": "User::\"Alice\"",
+    "action": "Action::\"ReadWorkspace\"",
+    "resource": "Workspace::\"workspace-1\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/joe_read.json",
+   "request": {
+    "principal": "User::\"Joe\"",
+    "action": "Action::\"ReadWorkspace\"",
+    "resource": "Workspace::\"workspace-1\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "DENY/alice_update.json",
+   "request": {
+    "principal": "User::\"Alice\"",
+    "action": "Action::\"UpdateWorkspace\"",
+    "resource": "Workspace::\"workspace-1\"",
+    "context": {}
+   },
+   "recorded_decision": "deny"
+  }
+ ],
+ "id": "c20_tags_n_roles",
+ "source_files": {
+  "source.cedar": "471fdc35d0ad7a0dc51f71dc9550607e9c6591790635d7f8088a54155dd917ed"
+ }
+}

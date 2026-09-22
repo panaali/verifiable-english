@@ -1,0 +1,1 @@
+(@action equals @act_view) and (rtc[parent](@resource, @jane_vacation)).

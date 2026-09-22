@@ -1,0 +1,331 @@
+{
+ "family": "cedar",
+ "synthetic": false,
+ "provenance": {
+  "repository": "cedar-policy/cedar-examples",
+  "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+  "licence": "Apache-2.0",
+  "policy_path": "cedar-example-use-cases/streaming_service/policies.cedar",
+  "entities_path": "cedar-example-use-cases/streaming_service/entities.json",
+  "schema_path": "cedar-example-use-cases/streaming_service/policies.cedarschema",
+  "requests": "cedar-example-use-cases/streaming_service/ALLOW, cedar-example-use-cases/streaming_service/DENY",
+  "schema_used_for_action_hierarchy": true
+ },
+ "question": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "world": {
+  "entities": [
+   {
+    "uid": "Subscriber::\"Alice\"",
+    "attrs": {
+     "subscription": {
+      "tier": "standard"
+     },
+     "profile": {
+      "isKid": false
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "FreeMember::\"Bob\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Subscriber::\"Charlie\"",
+    "attrs": {
+     "subscription": {
+      "tier": "premium"
+     },
+     "profile": {
+      "isKid": false
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "Subscriber::\"Dave\"",
+    "attrs": {
+     "subscription": {
+      "tier": "standard"
+     },
+     "profile": {
+      "isKid": true
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "Movie::\"The Godparent\"",
+    "attrs": {
+     "isFree": true,
+     "needsRentOrBuy": false,
+     "isOscarNominated": true
+    },
+    "parents": []
+   },
+   {
+    "uid": "Movie::\"The Gleaming\"",
+    "attrs": {
+     "isFree": false,
+     "needsRentOrBuy": false,
+     "isOscarNominated": false
+    },
+    "parents": []
+   },
+   {
+    "uid": "Movie::\"Devilish\"",
+    "attrs": {
+     "isFree": false,
+     "needsRentOrBuy": true,
+     "isOscarNominated": true
+    },
+    "parents": []
+   },
+   {
+    "uid": "Show::\"Buddies\"",
+    "attrs": {
+     "isFree": false,
+     "releaseDate": {
+      "__extn": {
+       "fn": "datetime",
+       "arg": "2024-10-10"
+      }
+     },
+     "isEarlyAccess": false
+    },
+    "parents": []
+   },
+   {
+    "uid": "Show::\"Breach\"",
+    "attrs": {
+     "isFree": false,
+     "releaseDate": {
+      "__extn": {
+       "fn": "datetime",
+       "arg": "2025-02-21"
+      }
+     },
+     "isEarlyAccess": true
+    },
+    "parents": []
+   },
+   {
+    "uid": "Action::\"watch\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"rent\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"buy\"",
+    "attrs": {},
+    "parents": []
+   }
+  ],
+  "linked": []
+ },
+ "questions": [
+  {
+   "description": "ALLOW/alice_rent_oscar_movie.json",
+   "request": {
+    "principal": "Subscriber::\"Alice\"",
+    "action": "Action::\"rent\"",
+    "resource": "Movie::\"Devilish\"",
+    "context": {
+     "now": {
+      "datetime": {
+       "__extn": {
+        "fn": "datetime",
+        "arg": "2025-02-20T13:00:00-0500"
+       }
+      }
+     }
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/alice_watch_show.json",
+   "request": {
+    "principal": "Subscriber::\"Alice\"",
+    "action": "Action::\"watch\"",
+    "resource": "Show::\"Buddies\"",
+    "context": {
+     "now": {
+      "datetime": {
+       "__extn": {
+        "fn": "datetime",
+        "arg": "2025-02-20T13:00:00-0500"
+       }
+      },
+      "localTimeOffset": {
+       "__extn": {
+        "fn": "duration",
+        "arg": "-5h"
+       }
+      }
+     }
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/bob_watch_free_movie.json",
+   "request": {
+    "principal": "FreeMember::\"Bob\"",
+    "action": "Action::\"watch\"",
+    "resource": "Movie::\"The Godparent\"",
+    "context": {
+     "now": {
+      "datetime": {
+       "__extn": {
+        "fn": "datetime",
+        "arg": "2025-02-20T13:00:00-0500"
+       }
+      },
+      "localTimeOffset": {
+       "__extn": {
+        "fn": "duration",
+        "arg": "-5h"
+       }
+      }
+     }
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/charlie_watch_early_access_show.json",
+   "request": {
+    "principal": "Subscriber::\"Charlie\"",
+    "action": "Action::\"watch\"",
+    "resource": "Show::\"Breach\"",
+    "context": {
+     "now": {
+      "datetime": {
+       "__extn": {
+        "fn": "datetime",
+        "arg": "2025-02-20T13:00:00-0500"
+       }
+      },
+      "localTimeOffset": {
+       "__extn": {
+        "fn": "duration",
+        "arg": "-5h"
+       }
+      }
+     }
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/dave_watch_after_early_access.json",
+   "request": {
+    "principal": "Subscriber::\"Dave\"",
+    "action": "Action::\"watch\"",
+    "resource": "Show::\"Breach\"",
+    "context": {
+     "now": {
+      "datetime": {
+       "__extn": {
+        "fn": "datetime",
+        "arg": "2025-02-22T13:00:00-0500"
+       }
+      },
+      "localTimeOffset": {
+       "__extn": {
+        "fn": "duration",
+        "arg": "-5h"
+       }
+      }
+     }
+    }
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "DENY/alice_watch_early_access_show.json",
+   "request": {
+    "principal": "Subscriber::\"Alice\"",
+    "action": "Action::\"watch\"",
+    "resource": "Show::\"Breach\"",
+    "context": {
+     "now": {
+      "datetime": {
+       "__extn": {
+        "fn": "datetime",
+        "arg": "2025-02-20T13:00:00-0500"
+       }
+      },
+      "localTimeOffset": {
+       "__extn": {
+        "fn": "duration",
+        "arg": "-5h"
+       }
+      }
+     }
+    }
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "DENY/bob_watch_paid_movie.json",
+   "request": {
+    "principal": "FreeMember::\"Bob\"",
+    "action": "Action::\"watch\"",
+    "resource": "Movie::\"The Gleaming\"",
+    "context": {
+     "now": {
+      "datetime": {
+       "__extn": {
+        "fn": "datetime",
+        "arg": "2025-02-20T13:00:00-0500"
+       }
+      },
+      "localTimeOffset": {
+       "__extn": {
+        "fn": "duration",
+        "arg": "-5h"
+       }
+      }
+     }
+    }
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "DENY/dave_watch_bedtime_show.json",
+   "request": {
+    "principal": "Subscriber::\"Dave\"",
+    "action": "Action::\"watch\"",
+    "resource": "Show::\"Buddies\"",
+    "context": {
+     "now": {
+      "datetime": {
+       "__extn": {
+        "fn": "datetime",
+        "arg": "2025-02-20T22:00:00-0500"
+       }
+      },
+      "localTimeOffset": {
+       "__extn": {
+        "fn": "duration",
+        "arg": "-5h"
+       }
+      }
+     }
+    }
+   },
+   "recorded_decision": "deny"
+  }
+ ],
+ "id": "c19_streaming",
+ "source_files": {
+  "source.cedar": "af95e64c5a72a111d166423d3c8caaca14b91a6ada09bec31ae4fccd2952591e"
+ }
+}

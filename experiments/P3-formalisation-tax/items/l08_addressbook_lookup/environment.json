@@ -1,0 +1,61 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "atom": {
+    "description": "An Alloy atom of the instance (one universe)."
+   },
+   "tuple": {
+    "description": "A reified tuple of a ternary field."
+   }
+  },
+  "predicates": {
+   "sig_addr": {
+    "arguments": [
+     "atom"
+    ],
+    "description": "Atom of sig Addr."
+   },
+   "t_addr_1": {
+    "arguments": [
+     "tuple",
+     "atom"
+    ],
+    "description": "Component 1 of an addr tuple (Book, Name, Target)."
+   },
+   "t_addr_2": {
+    "arguments": [
+     "tuple",
+     "atom"
+    ],
+    "description": "Component 2 of an addr tuple (Book, Name, Target)."
+   },
+   "t_addr_3": {
+    "arguments": [
+     "tuple",
+     "atom"
+    ],
+    "description": "Component 3 of an addr tuple (Book, Name, Target)."
+   }
+  },
+  "constants": {
+   "b": {
+    "sort": "atom",
+    "description": "Parameter b (Book)."
+   },
+   "n": {
+    "sort": "atom",
+    "description": "Parameter n (Name)."
+   },
+   "t": {
+    "sort": "atom",
+    "description": "Queried target t."
+   }
+  }
+ }
+}

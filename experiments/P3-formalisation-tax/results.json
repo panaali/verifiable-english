@@ -1,0 +1,4835 @@
+{
+ "summary": {
+  "items": 40,
+  "by_family": {
+   "alloy": 8,
+   "cedar": 22,
+   "iam": 3,
+   "k8s": 7
+  },
+  "questions": 221,
+  "perturbations_per_item": 300,
+  "faithful_first_pass_author_me": "39/40",
+  "faithful_after_repair_author_me": "40/40",
+  "faithful_and_fully_expressible": "34/40",
+  "faithful_by_family": {
+   "alloy": "8/8",
+   "cedar": "22/22",
+   "iam": "3/3",
+   "k8s": "7/7"
+  },
+  "reference_vs_recorded_cedar_decisions": "115/115",
+  "independent_agent_authors": {
+   "faithful": "8/8",
+   "items": [
+    "c05_cit_3a",
+    "c11_cit_4f",
+    "c13_document_cloud",
+    "c17_sales_static",
+    "k05_crontab_default_roles",
+    "k07_subresource_wildcard",
+    "l07_marksweep_mark",
+    "w03_mfa_selfmanage"
+   ]
+  },
+  "coverage": {
+   "units": 126,
+   "a": 78,
+   "b": 34,
+   "c": 14,
+   "d": 0,
+   "fully_expressible_items": "34/40",
+   "mean_expressible_fraction": 0.858
+  },
+  "authoring_me": {
+   "repair_iterations_total": 2,
+   "checker_errors_before_first_pass": 0,
+   "wall_clock_seconds_total": 526.4,
+   "wall_clock_seconds_median_nonreuse": 13.5,
+   "artefact_tokens_median": 1026.5
+  },
+  "mutation_adequacy": {
+   "mutants": 813,
+   "killed": 539,
+   "kill_rate": 0.663,
+   "killed_by_item_questions_alone": 406,
+   "survivors_equivalent": 6,
+   "survivors_distinguishable": 59,
+   "survivors_unknown": 209
+  },
+  "naive_variants": {
+   "caught": "11/14",
+   "caught_by_item_questions_alone": "4/14"
+  },
+  "proof_tasks": [
+   {
+    "id": "c02-only-group-members",
+    "prove": "Found",
+    "prove_steps": 2,
+    "prove_seconds": 0.0,
+    "certificate_replayed": true,
+    "countermodel": null,
+    "ve_verdict": true,
+    "agrees": true,
+    "reference": true,
+    "reference_method": "sampled 300 perturbed worlds: no counterexample (68 allowed worlds met the antecedent)"
+   },
+   {
+    "id": "c03-only-photo94",
+    "prove": "NotFound",
+    "prove_steps": 5,
+    "prove_seconds": 0.0,
+    "certificate_replayed": null,
+    "countermodel": "Found",
+    "ve_verdict": false,
+    "agrees": true,
+    "reference": false,
+    "reference_method": "sampled 300 perturbed worlds: counterexample found"
+   },
+   {
+    "id": "c13-private-owner-only-raw",
+    "prove": "ResourceLimit",
+    "prove_steps": 50000,
+    "prove_seconds": 18.74,
+    "certificate_replayed": null,
+    "countermodel": "Found",
+    "ve_verdict": false,
+    "agrees": false,
+    "reference": true,
+    "reference_method": "400 perturbed worlds forced to the antecedent (arbitrary stores): no counterexample"
+   },
+   {
+    "id": "c13-private-owner-only-schema-axioms",
+    "prove": "Found",
+    "prove_steps": 146,
+    "prove_seconds": 0.12,
+    "certificate_replayed": true,
+    "countermodel": null,
+    "ve_verdict": true,
+    "agrees": true,
+    "reference": true,
+    "reference_method": "400 perturbed worlds forced to the antecedent (schema-valid): no counterexample"
+   },
+   {
+    "id": "c14-bob-push-by-chain",
+    "prove": "Found",
+    "prove_steps": 3194,
+    "prove_seconds": 3.83,
+    "certificate_replayed": true,
+    "countermodel": null,
+    "ve_verdict": true,
+    "agrees": true,
+    "reference": true,
+    "reference_method": "recorded Cedar decision ALLOW/query_bob_push_secret.json and the reference on the item store"
+   },
+   {
+    "id": "k05-admin-gets-view-rule-3-levels",
+    "prove": "ResourceLimit",
+    "prove_steps": 50000,
+    "prove_seconds": 43.46,
+    "certificate_replayed": null,
+    "countermodel": "ResourceLimit",
+    "ve_verdict": null,
+    "agrees": null,
+    "reference": true,
+    "reference_method": "reference_rbac on the item world with cron-tabs-edit's aggregate-to-admin/edit labels removed (view-only path)"
+   },
+   {
+    "id": "l03-noselfgrandpa",
+    "prove": "Found",
+    "prove_steps": 83,
+    "prove_seconds": 0.03,
+    "certificate_replayed": true,
+    "countermodel": null,
+    "ve_verdict": true,
+    "agrees": true,
+    "reference": true,
+    "reference_method": "reference bounded check, scope 3"
+   },
+   {
+    "id": "l-ring-implies-weakly-connected",
+    "prove": "ResourceLimit",
+    "prove_steps": 50000,
+    "prove_seconds": 14.49,
+    "certificate_replayed": null,
+    "countermodel": "NotFound",
+    "ve_verdict": null,
+    "agrees": null,
+    "reference": true,
+    "reference_method": "exhaustive, all 531 graphs with <= 3 nodes"
+   },
+   {
+    "id": "l-tree-implies-weakly-connected",
+    "prove": "ResourceLimit",
+    "prove_steps": 50000,
+    "prove_seconds": 1.29,
+    "certificate_replayed": null,
+    "countermodel": "Found",
+    "ve_verdict": false,
+    "agrees": false,
+    "reference": true,
+    "reference_method": "exhaustive, all 531 graphs with <= 3 nodes"
+   },
+   {
+    "id": "l-tree-implies-weakly-connected-typed",
+    "prove": "ResourceLimit",
+    "prove_steps": 50000,
+    "prove_seconds": 1.43,
+    "certificate_replayed": null,
+    "countermodel": "NotFound",
+    "ve_verdict": null,
+    "agrees": null,
+    "reference": true,
+    "reference_method": "exhaustive, all 531 graphs with <= 3 nodes"
+   },
+   {
+    "id": "l-ring-implies-weakly-connected-typed",
+    "prove": "ResourceLimit",
+    "prove_steps": 50000,
+    "prove_seconds": 14.69,
+    "certificate_replayed": null,
+    "countermodel": "NotFound",
+    "ve_verdict": null,
+    "agrees": null,
+    "reference": true,
+    "reference_method": "exhaustive, all 531 graphs with <= 3 nodes"
+   },
+   {
+    "id": "l-weakly-connected-implies-ring",
+    "prove": "NotFound",
+    "prove_steps": 14,
+    "prove_seconds": 0.0,
+    "certificate_replayed": null,
+    "countermodel": "Found",
+    "ve_verdict": false,
+    "agrees": true,
+    "reference": false,
+    "reference_method": "exhaustive, graphs with <= 3 nodes: counterexample []"
+   }
+  ],
+  "review_arm": {
+   "accuracy": "75/75",
+   "per_item": {
+    "c05_cit_3a": {
+     "correct": 10,
+     "total": 10
+    },
+    "c11_cit_4f": {
+     "correct": 10,
+     "total": 10
+    },
+    "c13_document_cloud": {
+     "correct": 10,
+     "total": 10
+    },
+    "c17_sales_static": {
+     "correct": 10,
+     "total": 10
+    },
+    "k05_crontab_default_roles": {
+     "correct": 10,
+     "total": 10
+    },
+    "k07_subresource_wildcard": {
+     "correct": 10,
+     "total": 10
+    },
+    "w03_mfa_selfmanage": {
+     "correct": 10,
+     "total": 10
+    },
+    "l07_marksweep_mark": {
+     "correct": 5,
+     "total": 5
+    }
+   }
+  },
+  "paired_cost": [
+   {
+    "item": "c05_cit_3a",
+    "review_tokens": 19880,
+    "review_seconds": 13.0,
+    "author_tokens": 23630,
+    "author_seconds": 15.5,
+    "author_check_runs": 1,
+    "author_error_runs": 0,
+    "author_faithful": true,
+    "review_correct": {
+     "correct": 10,
+     "total": 10
+    }
+   },
+   {
+    "item": "c11_cit_4f",
+    "review_tokens": 20868,
+    "review_seconds": 12.5,
+    "author_tokens": 27385,
+    "author_seconds": 37.4,
+    "author_check_runs": 1,
+    "author_error_runs": 0,
+    "author_faithful": true,
+    "review_correct": {
+     "correct": 10,
+     "total": 10
+    }
+   },
+   {
+    "item": "c13_document_cloud",
+    "review_tokens": 22328,
+    "review_seconds": 19.5,
+    "author_tokens": 33474,
+    "author_seconds": 93.8,
+    "author_check_runs": 1,
+    "author_error_runs": 0,
+    "author_faithful": true,
+    "review_correct": {
+     "correct": 10,
+     "total": 10
+    }
+   },
+   {
+    "item": "c17_sales_static",
+    "review_tokens": 22819,
+    "review_seconds": 18.7,
+    "author_tokens": 38071,
+    "author_seconds": 118.3,
+    "author_check_runs": 1,
+    "author_error_runs": 0,
+    "author_faithful": true,
+    "review_correct": {
+     "correct": 10,
+     "total": 10
+    }
+   },
+   {
+    "item": "k05_crontab_default_roles",
+    "review_tokens": 21387,
+    "review_seconds": 16.0,
+    "author_tokens": 31803,
+    "author_seconds": 74.5,
+    "author_check_runs": 2,
+    "author_error_runs": 1,
+    "author_faithful": true,
+    "review_correct": {
+     "correct": 10,
+     "total": 10
+    }
+   },
+   {
+    "item": "k07_subresource_wildcard",
+    "review_tokens": 19616,
+    "review_seconds": 13.7,
+    "author_tokens": 31890,
+    "author_seconds": 83.8,
+    "author_check_runs": 1,
+    "author_error_runs": 0,
+    "author_faithful": true,
+    "review_correct": {
+     "correct": 10,
+     "total": 10
+    }
+   },
+   {
+    "item": "w03_mfa_selfmanage",
+    "review_tokens": 21311,
+    "review_seconds": 20.2,
+    "author_tokens": 34210,
+    "author_seconds": 76.2,
+    "author_check_runs": 3,
+    "author_error_runs": 2,
+    "author_faithful": true,
+    "review_correct": {
+     "correct": 10,
+     "total": 10
+    }
+   },
+   {
+    "item": "l07_marksweep_mark",
+    "review_tokens": 20770,
+    "review_seconds": 13.3,
+    "author_tokens": 28430,
+    "author_seconds": 41.2,
+    "author_check_runs": 1,
+    "author_error_runs": 0,
+    "author_faithful": true,
+    "review_correct": {
+     "correct": 5,
+     "total": 5
+    }
+   }
+  ]
+ },
+ "items": [
+  {
+   "id": "c01_cit_1a",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-integration-tests",
+    "commit": "1999ea249229e26cabb398a279fea721854a471d",
+    "licence": "Apache-2.0",
+    "policy_path": "tests/example_use_cases/policies_1a.cedar",
+    "entities_path": "sample-data/sandbox_a/entities.json",
+    "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+    "test_path": "tests/example_use_cases/1a.json"
+   },
+   "questions": 4,
+   "differential": {
+    "item": "c01_cit_1a",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 4,
+     "total": 4
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 55
+    },
+    "reference_vs_recorded": {
+     "agree": 4,
+     "total": 4
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.22,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c01_cit_1a",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 4,
+     "total": 4
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 55
+    },
+    "reference_vs_recorded": {
+     "agree": 4,
+     "total": 4
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.21,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 1,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 23.5,
+    "reuse": false,
+    "artefact_chars": 988,
+    "artefact_tokens_est": 247,
+    "source_chars": 169,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 6,
+    "killed": 6,
+    "killed_by_item_questions_alone": 6,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c02_cit_2a",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-integration-tests",
+    "commit": "1999ea249229e26cabb398a279fea721854a471d",
+    "licence": "Apache-2.0",
+    "policy_path": "tests/example_use_cases/policies_2a.cedar",
+    "entities_path": "sample-data/sandbox_a/entities.json",
+    "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+    "test_path": "tests/example_use_cases/2a.json"
+   },
+   "questions": 3,
+   "differential": {
+    "item": "c02_cit_2a",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 68
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.26,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c02_cit_2a",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 68
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.26,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 1,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 7.2,
+    "reuse": false,
+    "artefact_chars": 1340,
+    "artefact_tokens_est": 335,
+    "source_chars": 188,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 9,
+    "killed": 9,
+    "killed_by_item_questions_alone": 6,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c03_cit_2b",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-integration-tests",
+    "commit": "1999ea249229e26cabb398a279fea721854a471d",
+    "licence": "Apache-2.0",
+    "policy_path": "tests/example_use_cases/policies_2b.cedar",
+    "entities_path": "sample-data/sandbox_a/entities.json",
+    "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+    "test_path": "tests/example_use_cases/2b.json"
+   },
+   "questions": 3,
+   "differential": {
+    "item": "c03_cit_2b",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 79
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.26,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c03_cit_2b",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 79
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.26,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 1,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 7.2,
+    "reuse": false,
+    "artefact_chars": 1301,
+    "artefact_tokens_est": 325,
+    "source_chars": 175,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 9,
+    "killed": 7,
+    "killed_by_item_questions_alone": 6,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 2,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c04_cit_2c",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-integration-tests",
+    "commit": "1999ea249229e26cabb398a279fea721854a471d",
+    "licence": "Apache-2.0",
+    "policy_path": "tests/example_use_cases/policies_2c.cedar",
+    "entities_path": "sample-data/sandbox_a/entities.json",
+    "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+    "test_path": "tests/example_use_cases/2c.json"
+   },
+   "questions": 4,
+   "differential": {
+    "item": "c04_cit_2c",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 4,
+     "total": 4
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 72
+    },
+    "reference_vs_recorded": {
+     "agree": 4,
+     "total": 4
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.28,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c04_cit_2c",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 4,
+     "total": 4
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 72
+    },
+    "reference_vs_recorded": {
+     "agree": 4,
+     "total": 4
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.28,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 1,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 7.2,
+    "reuse": false,
+    "artefact_chars": 1649,
+    "artefact_tokens_est": 412,
+    "source_chars": 233,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 24,
+    "killed": 22,
+    "killed_by_item_questions_alone": 13,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 2,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c05_cit_3a",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-integration-tests",
+    "commit": "1999ea249229e26cabb398a279fea721854a471d",
+    "licence": "Apache-2.0",
+    "policy_path": "tests/example_use_cases/policies_3a.cedar",
+    "entities_path": "sample-data/sandbox_a/entities.json",
+    "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+    "test_path": "tests/example_use_cases/3a.json"
+   },
+   "questions": 4,
+   "differential": {
+    "item": "c05_cit_3a",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 4,
+     "total": 4
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 175
+    },
+    "reference_vs_recorded": {
+     "agree": 4,
+     "total": 4
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.24,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c05_cit_3a",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 4,
+     "total": 4
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 175
+    },
+    "reference_vs_recorded": {
+     "agree": 4,
+     "total": 4
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.24,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 1,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 7.2,
+    "reuse": false,
+    "artefact_chars": 1050,
+    "artefact_tokens_est": 262,
+    "source_chars": 153,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 6,
+    "killed": 6,
+    "killed_by_item_questions_alone": 3,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 0
+   },
+   "agent_author": {
+    "item": "c05_cit_3a",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 4,
+     "total": 4
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 175
+    },
+    "reference_vs_recorded": {
+     "agree": 4,
+     "total": 4
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.25,
+    "mismatches": []
+   }
+  },
+  {
+   "id": "c06_cit_3b",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-integration-tests",
+    "commit": "1999ea249229e26cabb398a279fea721854a471d",
+    "licence": "Apache-2.0",
+    "policy_path": "tests/example_use_cases/policies_3b.cedar",
+    "entities_path": "sample-data/sandbox_a/entities.json",
+    "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+    "test_path": "tests/example_use_cases/3b.json"
+   },
+   "questions": 4,
+   "differential": {
+    "item": "c06_cit_3b",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 4,
+     "total": 4
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 170
+    },
+    "reference_vs_recorded": {
+     "agree": 4,
+     "total": 4
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.29,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c06_cit_3b",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 4,
+     "total": 4
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 170
+    },
+    "reference_vs_recorded": {
+     "agree": 4,
+     "total": 4
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.29,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 1,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 7.2,
+    "reuse": false,
+    "artefact_chars": 1659,
+    "artefact_tokens_est": 415,
+    "source_chars": 232,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 24,
+    "killed": 23,
+    "killed_by_item_questions_alone": 19,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 1,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c08_cit_4a",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-integration-tests",
+    "commit": "1999ea249229e26cabb398a279fea721854a471d",
+    "licence": "Apache-2.0",
+    "policy_path": "tests/example_use_cases/policies_4a.cedar",
+    "entities_path": "sample-data/sandbox_b/entities.json",
+    "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+    "test_path": "tests/example_use_cases/4a.json"
+   },
+   "questions": 3,
+   "differential": {
+    "item": "c08_cit_4a",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 86
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.41,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c08_cit_4a",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 86
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.41,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 0,
+    "b": 0,
+    "c": 1,
+    "d": 0,
+    "expressible_fraction": 0.0,
+    "fully_expressible": false,
+    "opaque": [
+     "jobLevel >= 5"
+    ]
+   },
+   "authoring": {
+    "seconds": 16.3,
+    "reuse": false,
+    "artefact_chars": 1900,
+    "artefact_tokens_est": 475,
+    "source_chars": 333,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 21,
+    "killed": 20,
+    "killed_by_item_questions_alone": 10,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 1
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c09_cit_4d",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-integration-tests",
+    "commit": "1999ea249229e26cabb398a279fea721854a471d",
+    "licence": "Apache-2.0",
+    "policy_path": "tests/example_use_cases/policies_4d.cedar",
+    "entities_path": "sample-data/sandbox_b/entities.json",
+    "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+    "test_path": "tests/example_use_cases/4d.json"
+   },
+   "questions": 3,
+   "differential": {
+    "item": "c09_cit_4d",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 165
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.3,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c09_cit_4d",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 165
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.31,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 1,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 16.3,
+    "reuse": false,
+    "artefact_chars": 846,
+    "artefact_tokens_est": 212,
+    "source_chars": 400,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 4,
+    "killed": 4,
+    "killed_by_item_questions_alone": 4,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c10_cit_4e",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-integration-tests",
+    "commit": "1999ea249229e26cabb398a279fea721854a471d",
+    "licence": "Apache-2.0",
+    "policy_path": "tests/example_use_cases/policies_4e.cedar",
+    "entities_path": "sample-data/sandbox_b/entities.json",
+    "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+    "test_path": "tests/example_use_cases/4e.json"
+   },
+   "questions": 4,
+   "differential": {
+    "item": "c10_cit_4e",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 4,
+     "total": 4
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 155
+    },
+    "reference_vs_recorded": {
+     "agree": 4,
+     "total": 4
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 1.09,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c10_cit_4e",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 4,
+     "total": 4
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 155
+    },
+    "reference_vs_recorded": {
+     "agree": 4,
+     "total": 4
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 1.11,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 1,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 16.3,
+    "reuse": false,
+    "artefact_chars": 1411,
+    "artefact_tokens_est": 353,
+    "source_chars": 398,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 15,
+    "killed": 15,
+    "killed_by_item_questions_alone": 14,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c11_cit_4f",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-integration-tests",
+    "commit": "1999ea249229e26cabb398a279fea721854a471d",
+    "licence": "Apache-2.0",
+    "policy_path": "tests/example_use_cases/policies_4f.cedar",
+    "entities_path": "sample-data/sandbox_b/entities.json",
+    "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+    "test_path": "tests/example_use_cases/4f.json"
+   },
+   "questions": 3,
+   "differential": {
+    "item": "c11_cit_4f",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 157
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.35,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c11_cit_4f",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 157
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.36,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 1,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "error_semantics": [
+     "|| with an erroring left operand"
+    ]
+   },
+   "authoring": {
+    "seconds": 16.3,
+    "reuse": false,
+    "artefact_chars": 1231,
+    "artefact_tokens_est": 308,
+    "source_chars": 469,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 16,
+    "killed": 14,
+    "killed_by_item_questions_alone": 14,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 2,
+    "survivors_unknown": 0
+   },
+   "agent_author": {
+    "item": "c11_cit_4f",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 157
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.37,
+    "mismatches": []
+   }
+  },
+  {
+   "id": "c12_cit_5b",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-integration-tests",
+    "commit": "1999ea249229e26cabb398a279fea721854a471d",
+    "licence": "Apache-2.0",
+    "policy_path": "tests/example_use_cases/policies_5b.cedar",
+    "entities_path": "sample-data/sandbox_b/entities.json",
+    "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+    "test_path": "tests/example_use_cases/5b.json"
+   },
+   "questions": 8,
+   "differential": {
+    "item": "c12_cit_5b",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 8,
+     "total": 8
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 72
+    },
+    "reference_vs_recorded": {
+     "agree": 8,
+     "total": 8
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.51,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c12_cit_5b",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 8,
+     "total": 8
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 72
+    },
+    "reference_vs_recorded": {
+     "agree": 8,
+     "total": 8
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.52,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 0,
+    "b": 0,
+    "c": 1,
+    "d": 0,
+    "expressible_fraction": 0.0,
+    "fully_expressible": false,
+    "opaque": [
+     "filesize_mb <= 1",
+     "filesize_mb <= 100"
+    ],
+    "reified": [
+     "context record"
+    ]
+   },
+   "authoring": {
+    "seconds": 16.3,
+    "reuse": false,
+    "artefact_chars": 2564,
+    "artefact_tokens_est": 641,
+    "source_chars": 528,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 22,
+    "killed_by_item_questions_alone": 18,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 3,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c13_document_cloud",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-examples",
+    "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+    "licence": "Apache-2.0",
+    "policy_path": "cedar-example-use-cases/document_cloud/policies.cedar",
+    "entities_path": "cedar-example-use-cases/document_cloud/entities.json",
+    "schema_path": "cedar-example-use-cases/document_cloud/policies.cedarschema",
+    "requests": "cedar-example-use-cases/document_cloud/ALLOW, cedar-example-use-cases/document_cloud/DENY",
+    "schema_used_for_action_hierarchy": true
+   },
+   "questions": 5,
+   "differential": {
+    "item": "c13_document_cloud",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 121
+    },
+    "reference_vs_recorded": {
+     "agree": 5,
+     "total": 5
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.86,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c13_document_cloud",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 121
+    },
+    "reference_vs_recorded": {
+     "agree": 5,
+     "total": 5
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.83,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 15,
+    "a": 14,
+    "b": 1,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "error_semantics": [
+     "unless {isPrivate} with missing attribute",
+     "owner.blocked on owner without blocked",
+     "!context.is_authenticated with missing key"
+    ]
+   },
+   "authoring": {
+    "seconds": 39.2,
+    "reuse": false,
+    "artefact_chars": 6572,
+    "artefact_tokens_est": 1643,
+    "source_chars": 2218,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 12,
+    "killed_by_item_questions_alone": 5,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 1,
+    "survivors_unknown": 12
+   },
+   "agent_author": {
+    "item": "c13_document_cloud",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 121
+    },
+    "reference_vs_recorded": {
+     "agree": 5,
+     "total": 5
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.96,
+    "mismatches": []
+   }
+  },
+  {
+   "id": "c14_github",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-examples",
+    "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+    "licence": "Apache-2.0",
+    "policy_path": "cedar-example-use-cases/github_example/policies.cedar",
+    "entities_path": "cedar-example-use-cases/github_example/entities.json",
+    "schema_path": "cedar-example-use-cases/github_example/policies.cedarschema",
+    "requests": "cedar-example-use-cases/github_example/ALLOW, cedar-example-use-cases/github_example/DENY",
+    "schema_used_for_action_hierarchy": true
+   },
+   "questions": 7,
+   "differential": {
+    "item": "c14_github",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 7,
+     "total": 7
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 162
+    },
+    "reference_vs_recorded": {
+     "agree": 7,
+     "total": 7
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.9,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c14_github",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 7,
+     "total": 7
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 162
+    },
+    "reference_vs_recorded": {
+     "agree": 7,
+     "total": 7
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.87,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 9,
+    "a": 9,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 9.9,
+    "reuse": false,
+    "artefact_chars": 4875,
+    "artefact_tokens_est": 1219,
+    "source_chars": 1547,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 11,
+    "killed_by_item_questions_alone": 3,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 5,
+    "survivors_unknown": 9
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c15_hotel_static",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-examples",
+    "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+    "licence": "Apache-2.0",
+    "policy_path": "cedar-example-use-cases/hotel_chains/static/policies.cedar",
+    "entities_path": "cedar-example-use-cases/hotel_chains/static/entities.json",
+    "schema_path": "cedar-example-use-cases/hotel_chains/static/policies.cedarschema",
+    "requests": "cedar-example-use-cases/hotel_chains/static/ALLOW, cedar-example-use-cases/hotel_chains/static/DENY",
+    "schema_used_for_action_hierarchy": true
+   },
+   "questions": 6,
+   "differential": {
+    "item": "c15_hotel_static",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 6,
+     "total": 6
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 152
+    },
+    "reference_vs_recorded": {
+     "agree": 6,
+     "total": 6
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 1.4,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c15_hotel_static",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 6,
+     "total": 6
+    },
+    "perturbed": {
+     "agree": 299,
+     "total": 300,
+     "ref_true": 152
+    },
+    "reference_vs_recorded": {
+     "agree": 6,
+     "total": 6
+    },
+    "faithful": false,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.83,
+    "mismatches": [
+     {
+      "ve": true,
+      "ve_status": "Satisfied",
+      "ref": false,
+      "ops": [
+       "action",
+       "attr"
+      ],
+      "question": null
+     }
+    ]
+   },
+   "coverage": {
+    "units": 6,
+    "a": 2,
+    "b": 4,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "reified": [
+     "record-valued permission attributes"
+    ],
+    "error_semantics": [
+     "|| over record fields"
+    ]
+   },
+   "authoring": {
+    "seconds": 24.2,
+    "reuse": false,
+    "artefact_chars": 18689,
+    "artefact_tokens_est": 4672,
+    "source_chars": 2395,
+    "first_pass_unchanged": false,
+    "repair_iterations": 1,
+    "repairs": [
+     "set-valued in: non-entity member is a type error (policy skipped); caught by differential test at N=300"
+    ]
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 9,
+    "killed_by_item_questions_alone": 6,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 16
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c16_hotel_templated",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-examples",
+    "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+    "licence": "Apache-2.0",
+    "policy_path": "cedar-example-use-cases/hotel_chains/templated/policies.cedar",
+    "entities_path": "cedar-example-use-cases/hotel_chains/templated/entities.json",
+    "schema_path": "cedar-example-use-cases/hotel_chains/templated/policies.cedarschema",
+    "requests": "cedar-example-use-cases/hotel_chains/templated/ALLOW, cedar-example-use-cases/hotel_chains/templated/DENY",
+    "schema_used_for_action_hierarchy": true
+   },
+   "questions": 6,
+   "differential": {
+    "item": "c16_hotel_templated",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 6,
+     "total": 6
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 156
+    },
+    "reference_vs_recorded": {
+     "agree": 6,
+     "total": 6
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.58,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c16_hotel_templated",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 6,
+     "total": 6
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 156
+    },
+    "reference_vs_recorded": {
+     "agree": 6,
+     "total": 6
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.58,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 6,
+    "a": 0,
+    "b": 6,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "reified": [
+     "template links instantiated as constants"
+    ]
+   },
+   "authoring": {
+    "seconds": 10.3,
+    "reuse": false,
+    "artefact_chars": 5229,
+    "artefact_tokens_est": 1307,
+    "source_chars": 2604,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 15,
+    "killed_by_item_questions_alone": 7,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 1,
+    "survivors_unknown": 9
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c17_sales_static",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-examples",
+    "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+    "licence": "Apache-2.0",
+    "policy_path": "cedar-example-use-cases/sales_orgs/static/policies.cedar",
+    "entities_path": "cedar-example-use-cases/sales_orgs/static/entities.json",
+    "schema_path": "cedar-example-use-cases/sales_orgs/static/policies.cedarschema",
+    "requests": "cedar-example-use-cases/sales_orgs/static/ALLOW, cedar-example-use-cases/sales_orgs/static/DENY",
+    "schema_used_for_action_hierarchy": true
+   },
+   "questions": 3,
+   "differential": {
+    "item": "c17_sales_static",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 144
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 1.35,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c17_sales_static",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 144
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 1.01,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 10,
+    "a": 6,
+    "b": 4,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "reified": [
+     "context.target / targetUser"
+    ],
+    "error_semantics": [
+     "unless {X || (Y && Z)} with missing context/job/customerId",
+     "|| chains over owner/editors"
+    ]
+   },
+   "authoring": {
+    "seconds": 45.0,
+    "reuse": false,
+    "artefact_chars": 13603,
+    "artefact_tokens_est": 3401,
+    "source_chars": 2480,
+    "first_pass_unchanged": false,
+    "repair_iterations": 1,
+    "repairs": [
+     "same bug class as c15 (in over a set with a non-entity member before a later || disjunct); found by review after the c15 catch, not by the test"
+    ]
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 5,
+    "killed_by_item_questions_alone": 2,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 3,
+    "survivors_unknown": 17
+   },
+   "agent_author": {
+    "item": "c17_sales_static",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 144
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 1.3,
+    "mismatches": []
+   }
+  },
+  {
+   "id": "c18_sales_templated",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-examples",
+    "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+    "licence": "Apache-2.0",
+    "policy_path": "cedar-example-use-cases/sales_orgs/templated/policies.cedar",
+    "entities_path": "cedar-example-use-cases/sales_orgs/templated/entities.json",
+    "schema_path": "cedar-example-use-cases/sales_orgs/templated/policies.cedarschema",
+    "requests": "cedar-example-use-cases/sales_orgs/templated/ALLOW, cedar-example-use-cases/sales_orgs/templated/DENY",
+    "schema_used_for_action_hierarchy": true
+   },
+   "questions": 3,
+   "differential": {
+    "item": "c18_sales_templated",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 159
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.92,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c18_sales_templated",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 159
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.95,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 12,
+    "a": 6,
+    "b": 6,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "error_semantics": [
+     "same forbid guards as c17",
+     "principal.job != internal with missing job"
+    ],
+    "reified": [
+     "2 linked templates instantiated; 4 unlinked templates contribute nothing"
+    ]
+   },
+   "authoring": {
+    "seconds": 22.0,
+    "reuse": false,
+    "artefact_chars": 5685,
+    "artefact_tokens_est": 1421,
+    "source_chars": 4080,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 10,
+    "killed_by_item_questions_alone": 3,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 12,
+    "survivors_unknown": 3
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c19_streaming",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-examples",
+    "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+    "licence": "Apache-2.0",
+    "policy_path": "cedar-example-use-cases/streaming_service/policies.cedar",
+    "entities_path": "cedar-example-use-cases/streaming_service/entities.json",
+    "schema_path": "cedar-example-use-cases/streaming_service/policies.cedarschema",
+    "requests": "cedar-example-use-cases/streaming_service/ALLOW, cedar-example-use-cases/streaming_service/DENY",
+    "schema_used_for_action_hierarchy": true
+   },
+   "questions": 8,
+   "differential": {
+    "item": "c19_streaming",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 8,
+     "total": 8
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 129
+    },
+    "reference_vs_recorded": {
+     "agree": 8,
+     "total": 8
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.69,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c19_streaming",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 8,
+     "total": 8
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 129
+    },
+    "reference_vs_recorded": {
+     "agree": 8,
+     "total": 8
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.7,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 6,
+    "a": 2,
+    "b": 0,
+    "c": 4,
+    "d": 0,
+    "expressible_fraction": 0.333,
+    "fully_expressible": false,
+    "error_semantics": [
+     "unless {isEarlyAccess && ...} with missing attribute"
+    ],
+    "opaque": [
+     "now < releaseDate",
+     "Oscar window",
+     "releaseDate.offset(-24h)",
+     "local time-of-day window"
+    ],
+    "reified": [
+     "subscription/profile records"
+    ]
+   },
+   "authoring": {
+    "seconds": 32.1,
+    "reuse": false,
+    "artefact_chars": 4853,
+    "artefact_tokens_est": 1213,
+    "source_chars": 1974,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 21,
+    "killed_by_item_questions_alone": 13,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 2,
+    "survivors_unknown": 2
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c20_tags_n_roles",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-examples",
+    "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+    "licence": "Apache-2.0",
+    "policy_path": "cedar-example-use-cases/tags_n_roles/policies.cedar",
+    "entities_path": "cedar-example-use-cases/tags_n_roles/entities.json",
+    "schema_path": "cedar-example-use-cases/tags_n_roles/policies.cedarschema",
+    "requests": "cedar-example-use-cases/tags_n_roles/ALLOW, cedar-example-use-cases/tags_n_roles/DENY",
+    "schema_used_for_action_hierarchy": true
+   },
+   "questions": 3,
+   "differential": {
+    "item": "c20_tags_n_roles",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 137
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.76,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c20_tags_n_roles",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 137
+    },
+    "reference_vs_recorded": {
+     "agree": 3,
+     "total": 3
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.77,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 2,
+    "a": 0,
+    "b": 2,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "reified": [
+     "record keyed by role name",
+     "containsAll as a universal"
+    ]
+   },
+   "authoring": {
+    "seconds": 20.0,
+    "reuse": false,
+    "artefact_chars": 5234,
+    "artefact_tokens_est": 1308,
+    "source_chars": 3620,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 19,
+    "killed_by_item_questions_alone": 8,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 4,
+    "survivors_unknown": 2
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c21_tax_preparer",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-examples",
+    "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+    "licence": "Apache-2.0",
+    "policy_path": "cedar-example-use-cases/tax_preparer/policies.cedar",
+    "entities_path": "cedar-example-use-cases/tax_preparer/entities.json",
+    "schema_path": "cedar-example-use-cases/tax_preparer/policies.cedarschema",
+    "requests": "cedar-example-use-cases/tax_preparer/ALLOW, cedar-example-use-cases/tax_preparer/DENY",
+    "schema_used_for_action_hierarchy": true
+   },
+   "questions": 5,
+   "differential": {
+    "item": "c21_tax_preparer",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 109
+    },
+    "reference_vs_recorded": {
+     "agree": 5,
+     "total": 5
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.56,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c21_tax_preparer",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 109
+    },
+    "reference_vs_recorded": {
+     "agree": 5,
+     "total": 5
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.55,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 3,
+    "a": 0,
+    "b": 3,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "error_semantics": [
+     "forbid unless {X && Y}: evaluates-without-error guards"
+    ],
+    "reified": [
+     "set of records",
+     "template link",
+     "context.consent record"
+    ],
+    "gaps": [
+     "record equality also requires no extra keys in the member record; not expressible over an open attribute vocabulary (never exercised: perturbations do not add keys to set members)"
+    ]
+   },
+   "authoring": {
+    "seconds": 26.4,
+    "reuse": false,
+    "artefact_chars": 3948,
+    "artefact_tokens_est": 987,
+    "source_chars": 1011,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 21,
+    "killed_by_item_questions_alone": 12,
+    "survivors_equivalent": 1,
+    "survivors_distinguishable": 1,
+    "survivors_unknown": 2
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c22_photoapp",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-examples",
+    "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+    "licence": "Apache-2.0",
+    "policy_path": "cedar-policy-language-in-action/PhotoApp/photoapp.cedar",
+    "entities_path": "cedar-policy-language-in-action/PhotoApp/photoapp.cedarentities.json",
+    "schema_path": null,
+    "requests": "cedar-policy-language-in-action/PhotoApp/ALLOW, cedar-policy-language-in-action/PhotoApp/DENY",
+    "schema_used_for_action_hierarchy": false
+   },
+   "questions": 16,
+   "differential": {
+    "item": "c22_photoapp",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 16,
+     "total": 16
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 158
+    },
+    "reference_vs_recorded": {
+     "agree": 16,
+     "total": 16
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.65,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c22_photoapp",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 16,
+     "total": 16
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 158
+    },
+    "reference_vs_recorded": {
+     "agree": 16,
+     "total": 16
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.67,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 6,
+    "a": 5,
+    "b": 1,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "error_semantics": [
+     "forbid unless {resource.owner == principal} with missing owner"
+    ],
+    "reified": [
+     "context.judgingSession"
+    ]
+   },
+   "authoring": {
+    "seconds": 10.5,
+    "reuse": false,
+    "artefact_chars": 4263,
+    "artefact_tokens_est": 1066,
+    "source_chars": 1531,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 20,
+    "killed_by_item_questions_alone": 17,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 1,
+    "survivors_unknown": 4
+   },
+   "agent_author": null
+  },
+  {
+   "id": "c23_gitapp",
+   "family": "cedar",
+   "synthetic_parts": null,
+   "provenance": {
+    "repository": "cedar-policy/cedar-examples",
+    "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+    "licence": "Apache-2.0",
+    "policy_path": "cedar-policy-language-in-action/GitApp/gitapp.cedar",
+    "entities_path": "cedar-policy-language-in-action/GitApp/gitapp.cedarentities.json",
+    "schema_path": null,
+    "requests": "cedar-policy-language-in-action/GitApp/ALLOW, cedar-policy-language-in-action/GitApp/DENY",
+    "schema_used_for_action_hierarchy": false
+   },
+   "questions": 10,
+   "differential": {
+    "item": "c23_gitapp",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 10,
+     "total": 10
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 168
+    },
+    "reference_vs_recorded": {
+     "agree": 10,
+     "total": 10
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.55,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "c23_gitapp",
+    "family": "cedar",
+    "stage": "ok",
+    "original": {
+     "agree": 10,
+     "total": 10
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 168
+    },
+    "reference_vs_recorded": {
+     "agree": 10,
+     "total": 10
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.57,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 5,
+    "a": 5,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 10.5,
+    "reuse": false,
+    "artefact_chars": 4712,
+    "artefact_tokens_est": 1178,
+    "source_chars": 1938,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 16,
+    "killed_by_item_questions_alone": 13,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 9
+   },
+   "agent_author": null
+  },
+  {
+   "id": "k01_pod_reader",
+   "family": "k8s",
+   "synthetic_parts": "requests",
+   "provenance": {
+    "repository": "kubernetes/website",
+    "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+    "licence": "CC-BY-4.0",
+    "paths": [
+     "content/en/examples/access/simple-role.yaml",
+     "content/en/examples/access/simple-rolebinding-with-role.yaml"
+    ],
+    "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+   },
+   "questions": 7,
+   "differential": {
+    "item": "k01_pod_reader",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 7,
+     "total": 7
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 47
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.49,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "k01_pod_reader",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 7,
+     "total": 7
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 47
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.5,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 2,
+    "a": 2,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 43.8,
+    "reuse": false,
+    "artefact_chars": 5213,
+    "artefact_tokens_est": 1303,
+    "source_chars": 866,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 15,
+    "killed_by_item_questions_alone": 14,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 10
+   },
+   "agent_author": null
+  },
+  {
+   "id": "k02_secret_reader_rolebinding",
+   "family": "k8s",
+   "synthetic_parts": "requests",
+   "provenance": {
+    "repository": "kubernetes/website",
+    "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+    "licence": "CC-BY-4.0",
+    "paths": [
+     "content/en/examples/access/simple-clusterrole.yaml",
+     "content/en/examples/access/simple-rolebinding-with-clusterrole.yaml"
+    ],
+    "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+   },
+   "questions": 5,
+   "differential": {
+    "item": "k02_secret_reader_rolebinding",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 52
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.48,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "k02_secret_reader_rolebinding",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 52
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.49,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 2,
+    "a": 2,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 0.0,
+    "reuse": true,
+    "artefact_chars": 5213,
+    "artefact_tokens_est": 1303,
+    "source_chars": 944,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 13,
+    "killed_by_item_questions_alone": 12,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 12
+   },
+   "agent_author": null
+  },
+  {
+   "id": "k03_secret_reader_global",
+   "family": "k8s",
+   "synthetic_parts": "requests",
+   "provenance": {
+    "repository": "kubernetes/website",
+    "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+    "licence": "CC-BY-4.0",
+    "paths": [
+     "content/en/examples/access/simple-clusterrole.yaml",
+     "content/en/examples/access/simple-clusterrolebinding.yaml"
+    ],
+    "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+   },
+   "questions": 5,
+   "differential": {
+    "item": "k03_secret_reader_global",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 88
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.49,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "k03_secret_reader_global",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 88
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.5,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 2,
+    "a": 2,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 0.0,
+    "reuse": true,
+    "artefact_chars": 5213,
+    "artefact_tokens_est": 1303,
+    "source_chars": 734,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 8,
+    "killed_by_item_questions_alone": 7,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 2,
+    "survivors_unknown": 15
+   },
+   "agent_author": null
+  },
+  {
+   "id": "k04_monitoring_aggregation",
+   "family": "k8s",
+   "synthetic_parts": "requests",
+   "provenance": {
+    "repository": "kubernetes/website",
+    "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+    "licence": "CC-BY-4.0",
+    "paths": [
+     "content/en/docs/reference/access-authn-authz/rbac.md#aggregated-clusterroles"
+    ],
+    "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+   },
+   "questions": 6,
+   "differential": {
+    "item": "k04_monitoring_aggregation",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 6,
+     "total": 6
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 95
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.6,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "k04_monitoring_aggregation",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 6,
+     "total": 6
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 95
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.6,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 2,
+    "a": 0,
+    "b": 2,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "reified": [
+     "labels as key=value strings"
+    ]
+   },
+   "authoring": {
+    "seconds": 0.0,
+    "reuse": true,
+    "artefact_chars": 5213,
+    "artefact_tokens_est": 1303,
+    "source_chars": 745,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 16,
+    "killed_by_item_questions_alone": 13,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 1,
+    "survivors_unknown": 8
+   },
+   "agent_author": null
+  },
+  {
+   "id": "k05_crontab_default_roles",
+   "family": "k8s",
+   "synthetic_parts": "requests",
+   "provenance": {
+    "repository": "kubernetes/website",
+    "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+    "licence": "CC-BY-4.0",
+    "paths": [
+     "content/en/docs/reference/access-authn-authz/rbac.md#aggregated-clusterroles",
+     "content/en/docs/reference/access-authn-authz/rbac.md#user-facing-roles"
+    ],
+    "note": "CronTab ClusterRoles verbatim; admin/edit/view aggregation skeleton from upstream bootstrap policy, rules omitted (synthetic); bindings synthetic."
+   },
+   "questions": 7,
+   "differential": {
+    "item": "k05_crontab_default_roles",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 7,
+     "total": 7
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 130
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 1.19,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "k05_crontab_default_roles",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 7,
+     "total": 7
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 130
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 1.18,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 0,
+    "b": 1,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "reified": [
+     "labels as key=value strings"
+    ]
+   },
+   "authoring": {
+    "seconds": 0.0,
+    "reuse": true,
+    "artefact_chars": 5213,
+    "artefact_tokens_est": 1303,
+    "source_chars": 767,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 17,
+    "killed_by_item_questions_alone": 15,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 8
+   },
+   "agent_author": {
+    "item": "k05_crontab_default_roles",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 7,
+     "total": 7
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 130
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 1.18,
+    "mismatches": []
+   }
+  },
+  {
+   "id": "k06_configmap_updater",
+   "family": "k8s",
+   "synthetic_parts": "requests",
+   "provenance": {
+    "repository": "kubernetes/website",
+    "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+    "licence": "CC-BY-4.0",
+    "paths": [
+     "content/en/docs/reference/access-authn-authz/rbac.md#referring-to-resources"
+    ],
+    "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+   },
+   "questions": 6,
+   "differential": {
+    "item": "k06_configmap_updater",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 6,
+     "total": 6
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 52
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.49,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "k06_configmap_updater",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 6,
+     "total": 6
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 52
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.5,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 1,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 0.0,
+    "reuse": true,
+    "artefact_chars": 5213,
+    "artefact_tokens_est": 1303,
+    "source_chars": 327,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 13,
+    "killed_by_item_questions_alone": 13,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 1,
+    "survivors_unknown": 11
+   },
+   "agent_author": null
+  },
+  {
+   "id": "k07_subresource_wildcard",
+   "family": "k8s",
+   "synthetic_parts": "requests",
+   "provenance": {
+    "repository": "kubernetes/website",
+    "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+    "licence": "CC-BY-4.0",
+    "paths": [
+     "content/en/docs/reference/access-authn-authz/rbac.md#referring-to-resources"
+    ],
+    "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+   },
+   "questions": 6,
+   "differential": {
+    "item": "k07_subresource_wildcard",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 6,
+     "total": 6
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 87
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.57,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "k07_subresource_wildcard",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 6,
+     "total": 6
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 87
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.58,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 2,
+    "a": 1,
+    "b": 1,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "reified": [
+     "resource/subresource path string joined by the adapter"
+    ],
+    "gaps": [
+     "'*/sub' resource forms (not in the item)",
+     "nonResourceURLs (not in the item)"
+    ]
+   },
+   "authoring": {
+    "seconds": 0.0,
+    "reuse": true,
+    "artefact_chars": 5213,
+    "artefact_tokens_est": 1303,
+    "source_chars": 432,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 16,
+    "killed_by_item_questions_alone": 14,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 9
+   },
+   "agent_author": {
+    "item": "k07_subresource_wildcard",
+    "family": "k8s",
+    "stage": "ok",
+    "original": {
+     "agree": 6,
+     "total": 6
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 87
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 1.11,
+    "mismatches": []
+   }
+  },
+  {
+   "id": "l01_genealogy_biology",
+   "family": "alloy",
+   "synthetic_parts": "instances",
+   "provenance": {
+    "repository": "AlloyTools/models",
+    "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+    "licence": "Apache-2.0",
+    "path": "simple-models/genealogy/genealogy.als",
+    "note": "Model text verbatim; instances synthetic."
+   },
+   "questions": 5,
+   "differential": {
+    "item": "l01_genealogy_biology",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 101
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.24,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "l01_genealogy_biology",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 101
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.24,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 1,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 13.5,
+    "reuse": false,
+    "artefact_chars": 612,
+    "artefact_tokens_est": 153,
+    "source_chars": 2463,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 8,
+    "killed": 6,
+    "killed_by_item_questions_alone": 6,
+    "survivors_equivalent": 1,
+    "survivors_distinguishable": 1,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "l02_grandpa1_fact",
+   "family": "alloy",
+   "synthetic_parts": "instances",
+   "provenance": {
+    "repository": "AlloyTools/models",
+    "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+    "licence": "Apache-2.0",
+    "path": "software-abstractions-book/chapter4/grandpa1.als",
+    "note": "Model text verbatim; instances synthetic."
+   },
+   "questions": 5,
+   "differential": {
+    "item": "l02_grandpa1_fact",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 30
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.26,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "l02_grandpa1_fact",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 30
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.26,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 2,
+    "a": 2,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 13.5,
+    "reuse": false,
+    "artefact_chars": 1162,
+    "artefact_tokens_est": 290,
+    "source_chars": 712,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 20,
+    "killed": 18,
+    "killed_by_item_questions_alone": 16,
+    "survivors_equivalent": 1,
+    "survivors_distinguishable": 1,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "l03_grandpa1_noselfgrandpa",
+   "family": "alloy",
+   "synthetic_parts": "instances",
+   "provenance": {
+    "repository": "AlloyTools/models",
+    "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+    "licence": "Apache-2.0",
+    "path": "software-abstractions-book/chapter4/grandpa1.als",
+    "note": "Model text verbatim; instances synthetic. The check question uses the file's own scope (4 Person)."
+   },
+   "questions": 3,
+   "differential": {
+    "item": "l03_grandpa1_noselfgrandpa",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 115
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Proved",
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.35,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "l03_grandpa1_noselfgrandpa",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 3,
+     "total": 3
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 115
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Proved",
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.36,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 2,
+    "a": 2,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "note": "assertion + fun grandpas; the check also uses the fact"
+   },
+   "authoring": {
+    "seconds": 13.5,
+    "reuse": false,
+    "artefact_chars": 1410,
+    "artefact_tokens_est": 352,
+    "source_chars": 712,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 12,
+    "killed": 11,
+    "killed_by_item_questions_alone": 10,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 1,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "l04_graph_weakly_connected",
+   "family": "alloy",
+   "synthetic_parts": "instances",
+   "provenance": {
+    "repository": "AlloyTools/models",
+    "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+    "licence": "Apache-2.0",
+    "path": "utilities/types/graph.als",
+    "note": "Model text verbatim; instances synthetic."
+   },
+   "questions": 5,
+   "differential": {
+    "item": "l04_graph_weakly_connected",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 215
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.37,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "l04_graph_weakly_connected",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 215
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.38,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 1,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true
+   },
+   "authoring": {
+    "seconds": 13.5,
+    "reuse": false,
+    "artefact_chars": 693,
+    "artefact_tokens_est": 173,
+    "source_chars": 1530,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 11,
+    "killed": 6,
+    "killed_by_item_questions_alone": 6,
+    "survivors_equivalent": 1,
+    "survivors_distinguishable": 4,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "l05_graph_ring",
+   "family": "alloy",
+   "synthetic_parts": "instances",
+   "provenance": {
+    "repository": "AlloyTools/models",
+    "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+    "licence": "Apache-2.0",
+    "path": "utilities/types/graph.als",
+    "note": "Model text verbatim; instances synthetic."
+   },
+   "questions": 5,
+   "differential": {
+    "item": "l05_graph_ring",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 18
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.29,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "l05_graph_ring",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 18
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.29,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 2,
+    "a": 2,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "note": "pred ring + pred rootedAt"
+   },
+   "authoring": {
+    "seconds": 3.6,
+    "reuse": false,
+    "artefact_chars": 768,
+    "artefact_tokens_est": 192,
+    "source_chars": 1530,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 16,
+    "killed": 12,
+    "killed_by_item_questions_alone": 11,
+    "survivors_equivalent": 1,
+    "survivors_distinguishable": 3,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "l06_graph_tree",
+   "family": "alloy",
+   "synthetic_parts": "instances",
+   "provenance": {
+    "repository": "AlloyTools/models",
+    "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+    "licence": "Apache-2.0",
+    "path": "utilities/types/graph.als",
+    "note": "Model text verbatim; instances synthetic.",
+    "also": "utilities/types/relation.als"
+   },
+   "questions": 6,
+   "differential": {
+    "item": "l06_graph_tree",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 6,
+     "total": 6
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 66
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.57,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "l06_graph_tree",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 6,
+     "total": 6
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 66
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.57,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 4,
+    "a": 4,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "note": "tree, forest, dag, acyclic (relation.als)"
+   },
+   "authoring": {
+    "seconds": 3.6,
+    "reuse": false,
+    "artefact_chars": 976,
+    "artefact_tokens_est": 244,
+    "source_chars": 4027,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 21,
+    "killed_by_item_questions_alone": 21,
+    "survivors_equivalent": 1,
+    "survivors_distinguishable": 3,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "l07_marksweep_mark",
+   "family": "alloy",
+   "synthetic_parts": "instances",
+   "provenance": {
+    "repository": "AlloyTools/models",
+    "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+    "licence": "Apache-2.0",
+    "path": "algorithms/gc/marksweepgc.als",
+    "note": "Model text verbatim; instances synthetic. The file writes primes as hs\"; the target predicate is mark."
+   },
+   "questions": 5,
+   "differential": {
+    "item": "l07_marksweep_mark",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 25
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 1.22,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "l07_marksweep_mark",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 25
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 1.24,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 2,
+    "a": 0,
+    "b": 2,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "reified": [
+     "ternary left/right as tuple nodes"
+    ],
+    "note": "pred mark + fun reachable"
+   },
+   "authoring": {
+    "seconds": 3.6,
+    "reuse": false,
+    "artefact_chars": 2932,
+    "artefact_tokens_est": 733,
+    "source_chars": 1850,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 25,
+    "killed_by_item_questions_alone": 12,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 0
+   },
+   "agent_author": {
+    "item": "l07_marksweep_mark",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 25
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 1.32,
+    "mismatches": []
+   }
+  },
+  {
+   "id": "l08_addressbook_lookup",
+   "family": "alloy",
+   "synthetic_parts": "instances",
+   "provenance": {
+    "repository": "AlloyTools/models",
+    "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+    "licence": "Apache-2.0",
+    "path": "software-abstractions-book/chapter2/addressBook3a.als",
+    "note": "Model text verbatim; instances synthetic. Question formula 't in lookup[b, n]' is written for this experiment over the source's fun lookup."
+   },
+   "questions": 5,
+   "differential": {
+    "item": "l08_addressbook_lookup",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 81
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.35,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "l08_addressbook_lookup",
+    "family": "alloy",
+    "stage": "ok",
+    "original": {
+     "agree": 5,
+     "total": 5
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 81
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.35,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 0,
+    "b": 1,
+    "c": 0,
+    "d": 0,
+    "expressible_fraction": 1.0,
+    "fully_expressible": true,
+    "reified": [
+     "ternary addr as tuple nodes; closure body captures parameter b"
+    ]
+   },
+   "authoring": {
+    "seconds": 3.6,
+    "reuse": false,
+    "artefact_chars": 1280,
+    "artefact_tokens_est": 320,
+    "source_chars": 859,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 12,
+    "killed": 10,
+    "killed_by_item_questions_alone": 10,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 2,
+    "survivors_unknown": 0
+   },
+   "agent_author": null
+  },
+  {
+   "id": "w01_s3_rw_bucket",
+   "family": "iam",
+   "synthetic_parts": "requests",
+   "provenance": {
+    "repository": "docs.aws.amazon.com IAM User Guide",
+    "commit": "fetched 2026-09-22",
+    "licence": "AWS documentation (example policy excerpt)",
+    "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_s3_rw-bucket.html",
+    "note": "Policy JSON verbatim from the page; requests synthetic."
+   },
+   "questions": 8,
+   "differential": {
+    "item": "w01_s3_rw_bucket",
+    "family": "iam",
+    "stage": "ok",
+    "original": {
+     "agree": 8,
+     "total": 8
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 80
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.37,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "w01_s3_rw_bucket",
+    "family": "iam",
+    "stage": "ok",
+    "original": {
+     "agree": 8,
+     "total": 8
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 80
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.39,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 2,
+    "a": 0,
+    "b": 0,
+    "c": 2,
+    "d": 0,
+    "expressible_fraction": 0.0,
+    "fully_expressible": false,
+    "opaque": [
+     "action glob",
+     "resource glob"
+    ]
+   },
+   "authoring": {
+    "seconds": 23.1,
+    "reuse": false,
+    "artefact_chars": 5283,
+    "artefact_tokens_est": 1321,
+    "source_chars": 517,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 3,
+    "killed_by_item_questions_alone": 3,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 22
+   },
+   "agent_author": null
+  },
+  {
+   "id": "w02_deny_requested_region",
+   "family": "iam",
+   "synthetic_parts": "requests",
+   "provenance": {
+    "repository": "docs.aws.amazon.com IAM User Guide",
+    "commit": "fetched 2026-09-22",
+    "licence": "AWS documentation (example policy excerpt)",
+    "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_aws_deny-requested-region.html",
+    "note": "Policy JSON verbatim from the page; requests synthetic. The Allow-all policy is the AWS managed AdministratorAccess document, added (synthetic pairing) so the deny is observable.",
+    "synthetic_parts": [
+     "AdministratorAccess pairing",
+     "requests"
+    ]
+   },
+   "questions": 8,
+   "differential": {
+    "item": "w02_deny_requested_region",
+    "family": "iam",
+    "stage": "ok",
+    "original": {
+     "agree": 8,
+     "total": 8
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 160
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.49,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "w02_deny_requested_region",
+    "family": "iam",
+    "stage": "ok",
+    "original": {
+     "agree": 8,
+     "total": 8
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 160
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.5,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 1,
+    "a": 0,
+    "b": 0,
+    "c": 1,
+    "d": 0,
+    "expressible_fraction": 0.0,
+    "fully_expressible": false,
+    "opaque": [
+     "action glob (NotAction)"
+    ]
+   },
+   "authoring": {
+    "seconds": 0.0,
+    "reuse": true,
+    "artefact_chars": 5283,
+    "artefact_tokens_est": 1321,
+    "source_chars": 694,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 6,
+    "killed_by_item_questions_alone": 6,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 19
+   },
+   "agent_author": null
+  },
+  {
+   "id": "w03_mfa_selfmanage",
+   "family": "iam",
+   "synthetic_parts": "requests",
+   "provenance": {
+    "repository": "docs.aws.amazon.com IAM User Guide",
+    "commit": "fetched 2026-09-22",
+    "licence": "AWS documentation (example policy excerpt)",
+    "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_iam_mfa-selfmanage.html",
+    "note": "Policy JSON verbatim from the page; requests synthetic."
+   },
+   "questions": 9,
+   "differential": {
+    "item": "w03_mfa_selfmanage",
+    "family": "iam",
+    "stage": "ok",
+    "original": {
+     "agree": 9,
+     "total": 9
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 60
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.65,
+    "mismatches": []
+   },
+   "differential_first_pass": {
+    "item": "w03_mfa_selfmanage",
+    "family": "iam",
+    "stage": "ok",
+    "original": {
+     "agree": 9,
+     "total": 9
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 60
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.67,
+    "mismatches": []
+   },
+   "coverage": {
+    "units": 5,
+    "a": 0,
+    "b": 0,
+    "c": 5,
+    "d": 0,
+    "expressible_fraction": 0.0,
+    "fully_expressible": false,
+    "opaque": [
+     "action glob",
+     "resource glob with ${aws:username}"
+    ],
+    "gaps": [
+     "Bool is case-insensitive in AWS; VE compares exact strings (perturbations use lower case)"
+    ]
+   },
+   "authoring": {
+    "seconds": 0.0,
+    "reuse": true,
+    "artefact_chars": 5283,
+    "artefact_tokens_est": 1321,
+    "source_chars": 1898,
+    "first_pass_unchanged": true,
+    "repair_iterations": 0,
+    "repairs": []
+   },
+   "mutation": {
+    "mutants": 25,
+    "killed": 16,
+    "killed_by_item_questions_alone": 15,
+    "survivors_equivalent": 0,
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 9
+   },
+   "agent_author": {
+    "item": "w03_mfa_selfmanage",
+    "family": "iam",
+    "stage": "ok",
+    "original": {
+     "agree": 9,
+     "total": 9
+    },
+    "perturbed": {
+     "agree": 300,
+     "total": 300,
+     "ref_true": 60
+    },
+    "reference_vs_recorded": {
+     "agree": 0,
+     "total": 0
+    },
+    "faithful": true,
+    "statuses": [
+     "Satisfied",
+     "Violated"
+    ],
+    "seconds": 0.66,
+    "mismatches": []
+   }
+  }
+ ],
+ "naive_variants": [
+  {
+   "item": "c02_cit_2a",
+   "variant": "in-as-direct-edge",
+   "description": "`principal in UserGroup` as a single parent edge (no transitive membership).",
+   "item_questions_wrong": 0,
+   "perturbations_wrong": 1,
+   "perturbations": 300,
+   "caught": true,
+   "caught_by_item_questions_alone": false
+  },
+  {
+   "item": "c04_cit_2c",
+   "variant": "action-in-as-equality",
+   "description": "Cedar `action in [A,B,C]` translated as equality (ignores the action hierarchy).",
+   "item_questions_wrong": 0,
+   "perturbations_wrong": 1,
+   "perturbations": 300,
+   "caught": true,
+   "caught_by_item_questions_alone": false
+  },
+  {
+   "item": "c11_cit_4f",
+   "variant": "ignore-error-semantics",
+   "description": "`A || B` as plain disjunction; an erroring left operand should skip the policy.",
+   "item_questions_wrong": 0,
+   "perturbations_wrong": 0,
+   "perturbations": 300,
+   "caught": false,
+   "caught_by_item_questions_alone": false
+  },
+  {
+   "item": "c13_document_cloud",
+   "variant": "naive-unless-and-negation",
+   "description": "`unless {isPrivate}` as `not (isPrivate = true)`, `!context.is_authenticated` as `not (is_authenticated = true)`, and no has-blocked guard on the owner: Cedar skips a policy whose condition errors on a missing attribute.",
+   "item_questions_wrong": 0,
+   "perturbations_wrong": 16,
+   "perturbations": 300,
+   "caught": true,
+   "caught_by_item_questions_alone": false
+  },
+  {
+   "item": "c17_sales_static",
+   "variant": "ignore-error-semantics",
+   "description": "Conditions translated as plain Boolean logic; Cedar skips a policy whose condition errors (missing context.target, job, owner).",
+   "item_questions_wrong": 0,
+   "perturbations_wrong": 3,
+   "perturbations": 300,
+   "caught": true,
+   "caught_by_item_questions_alone": false
+  },
+  {
+   "item": "k02_secret_reader_rolebinding",
+   "variant": "rolebinding-namespace-ignored",
+   "description": "A RoleBinding treated as granting in every namespace.",
+   "item_questions_wrong": 2,
+   "perturbations_wrong": 78,
+   "perturbations": 300,
+   "caught": true,
+   "caught_by_item_questions_alone": true
+  },
+  {
+   "item": "k05_crontab_default_roles",
+   "variant": "aggregation-one-level",
+   "description": "Aggregation followed one level only (no transitive closure).",
+   "item_questions_wrong": 0,
+   "perturbations_wrong": 1,
+   "perturbations": 300,
+   "caught": true,
+   "caught_by_item_questions_alone": false
+  },
+  {
+   "item": "k07_subresource_wildcard",
+   "variant": "wildcard-ignored",
+   "description": "The \"*\" wildcard treated as a literal string.",
+   "item_questions_wrong": 1,
+   "perturbations_wrong": 38,
+   "perturbations": 300,
+   "caught": true,
+   "caught_by_item_questions_alone": true
+  },
+  {
+   "item": "l01_genealogy_biology",
+   "variant": "star-for-plus",
+   "description": "`p in p.^parents` written with reflexive closure (always true).",
+   "item_questions_wrong": 3,
+   "perturbations_wrong": 101,
+   "perturbations": 300,
+   "caught": true,
+   "caught_by_item_questions_alone": true
+  },
+  {
+   "item": "l02_grandpa1_fact",
+   "variant": "one-direction-equality",
+   "description": "`wife = ~husband` as the inclusion wife in ~husband only.",
+   "item_questions_wrong": 0,
+   "perturbations_wrong": 28,
+   "perturbations": 300,
+   "caught": true,
+   "caught_by_item_questions_alone": false
+  },
+  {
+   "item": "l05_graph_ring",
+   "variant": "closure-direction-swapped",
+   "description": "rootedAt as `root in node.*r` instead of `node in root.*r`.",
+   "item_questions_wrong": 0,
+   "perturbations_wrong": 0,
+   "perturbations": 300,
+   "caught": false,
+   "caught_by_item_questions_alone": false
+  },
+  {
+   "item": "l08_addressbook_lookup",
+   "variant": "plus-as-star",
+   "description": "`n.^(b.addr)` written with reflexive closure.",
+   "item_questions_wrong": 0,
+   "perturbations_wrong": 0,
+   "perturbations": 300,
+   "caught": false,
+   "caught_by_item_questions_alone": false
+  },
+  {
+   "item": "w02_deny_requested_region",
+   "variant": "negated-operator-missing-key",
+   "description": "StringNotEquals with the key absent treated as not matching (AWS: it matches).",
+   "item_questions_wrong": 1,
+   "perturbations_wrong": 74,
+   "perturbations": 300,
+   "caught": true,
+   "caught_by_item_questions_alone": true
+  },
+  {
+   "item": "w03_mfa_selfmanage",
+   "variant": "ifexists-ignored",
+   "description": "BoolIfExists treated as Bool (missing key -> false).",
+   "item_questions_wrong": 0,
+   "perturbations_wrong": 9,
+   "perturbations": 300,
+   "caught": true,
+   "caught_by_item_questions_alone": false
+  }
+ ],
+ "proofs": [
+  {
+   "id": "c02-only-group-members",
+   "item": "c02_cit_2a",
+   "question": "Can anyone outside UserGroup jane_friends (transitively) be allowed?",
+   "prove": "Found",
+   "prove_steps": 2,
+   "prove_seconds": 0.0,
+   "certificate_replayed": true,
+   "ve_verdict": true,
+   "reference": {
+    "verdict": true,
+    "method": "sampled 300 perturbed worlds: no counterexample (68 allowed worlds met the antecedent)",
+    "support": 68
+   },
+   "agrees": true
+  },
+  {
+   "id": "c03-only-photo94",
+   "item": "c03_cit_2b",
+   "question": "Is VacationPhoto94.jpg the only resource Alice may view? (expected: no)",
+   "prove": "NotFound",
+   "prove_steps": 5,
+   "prove_seconds": 0.0,
+   "countermodel": "Found",
+   "countermodel_seconds": 0.0,
+   "ve_verdict": false,
+   "countermodel_model": {
+    "domains": {
+     "entity": [
+      "e0",
+      "e1"
+     ]
+    },
+    "constants": {
+     "action": "e0",
+     "alice": "e0",
+     "jane_vacation": "e0",
+     "photo94": "e1",
+     "principal": "e0",
+     "resource": "e0",
+     "view": "e0"
+    },
+    "relations": {}
+   },
+   "reference": {
+    "verdict": false,
+    "method": "sampled 300 perturbed worlds: counterexample found",
+    "support": 29
+   },
+   "agrees": true
+  },
+  {
+   "id": "c13-private-owner-only-raw",
+   "item": "c13_document_cloud",
+   "question": "Is a private document viewable only by its owner? (no background axioms)",
+   "prove": "ResourceLimit",
+   "prove_steps": 50000,
+   "prove_seconds": 18.74,
+   "countermodel": "Found",
+   "countermodel_seconds": 0.0,
+   "ve_verdict": false,
+   "countermodel_model": {
+    "domains": {
+     "entity": [
+      "e0"
+     ],
+     "value": [
+      "e0"
+     ]
+    },
+    "constants": {
+     "action": "e0",
+     "add_to_share_acl": "e0",
+     "context": "e0",
+     "create_document": "e0",
+     "create_group": "e0",
+     "delete_document": "e0",
+     "delete_group": "e0",
+     "drive": "e0",
+     "edit_is_private": "e0",
+     "edit_public_access": "e0",
+     "modify_document": "e0",
+     "modify_group": "e0",
+     "principal": "e0",
+     "public": "e0",
+     "resource": "e0",
+     "s_edit": "e0",
+     "s_view": "e0",
+     "view_document": "e0"
+    },
+    "relations": {
+     "bt_isprivate": [
+      [
+       "e0"
+      ]
+     ]
+    }
+   },
+   "reference": {
+    "verdict": true,
+    "method": "400 perturbed worlds forced to the antecedent (arbitrary stores): no counterexample",
+    "support": 131
+   },
+   "agrees": false
+  },
+  {
+   "id": "c13-private-owner-only-schema-axioms",
+   "item": "c13_document_cloud",
+   "question": "Is a private document viewable only by its owner? (with schema axioms: distinct action UIDs, actions have no parents, owner present and unique, Boolean exclusivity)",
+   "prove": "Found",
+   "prove_steps": 146,
+   "prove_seconds": 0.12,
+   "certificate_replayed": true,
+   "ve_verdict": true,
+   "reference": {
+    "verdict": true,
+    "method": "400 perturbed worlds forced to the antecedent (schema-valid): no counterexample",
+    "support": 131
+   },
+   "agrees": true
+  },
+  {
+   "id": "c14-bob-push-by-chain",
+   "item": "c14_github",
+   "question": "From the recorded group chain (4 parent edges), is the push allowed? (open-world proof, not evaluation)",
+   "prove": "Found",
+   "prove_steps": 3194,
+   "prove_seconds": 3.83,
+   "certificate_replayed": true,
+   "ve_verdict": true,
+   "reference": {
+    "verdict": true,
+    "method": "recorded Cedar decision ALLOW/query_bob_push_secret.json and the reference on the item store"
+   },
+   "agrees": true
+  },
+  {
+   "id": "k05-admin-gets-view-rule-3-levels",
+   "item": "k05_crontab_default_roles",
+   "question": "Does a user bound to admin get a rule aggregated only into view (view -> edit -> admin)?",
+   "prove": "ResourceLimit",
+   "prove_steps": 50000,
+   "prove_seconds": 43.46,
+   "countermodel": "ResourceLimit",
+   "countermodel_seconds": 128.24,
+   "ve_verdict": null,
+   "reference": {
+    "verdict": true,
+    "method": "reference_rbac on the item world with cron-tabs-edit's aggregate-to-admin/edit labels removed (view-only path)",
+    "reference_answer_view_only_world": true
+   },
+   "agrees": null
+  },
+  {
+   "id": "l03-noselfgrandpa",
+   "item": "l03_grandpa1_noselfgrandpa",
+   "question": "check NoSelfGrandpa (grandpa1.als): do the facts entail the assertion?",
+   "prove": "Found",
+   "prove_steps": 83,
+   "prove_seconds": 0.03,
+   "certificate_replayed": true,
+   "ve_verdict": true,
+   "reference": {
+    "verdict": true,
+    "method": "reference bounded check, scope 3"
+   },
+   "agrees": true
+  },
+  {
+   "id": "l-ring-implies-weakly-connected",
+   "item": "l05_graph_ring",
+   "question": "util/graph: does ring[r] imply weaklyConnected[r]? (valid in all structures; needs closure monotonicity)",
+   "prove": "ResourceLimit",
+   "prove_steps": 50000,
+   "prove_seconds": 14.49,
+   "countermodel": "NotFound",
+   "countermodel_seconds": 0.6,
+   "ve_verdict": null,
+   "reference": {
+    "verdict": true,
+    "method": "exhaustive, all 531 graphs with <= 3 nodes"
+   },
+   "agrees": null
+  },
+  {
+   "id": "l-tree-implies-weakly-connected",
+   "item": "l06_graph_tree",
+   "question": "util/graph: does tree[r] imply weaklyConnected[r]? (true for finite graphs only)",
+   "prove": "ResourceLimit",
+   "prove_steps": 50000,
+   "prove_seconds": 1.29,
+   "countermodel": "Found",
+   "countermodel_seconds": 0.04,
+   "ve_verdict": false,
+   "countermodel_model": {
+    "domains": {
+     "atom": [
+      "e0",
+      "e1",
+      "e2"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "f_edges": [
+      [
+       "e0",
+       "e1"
+      ]
+     ],
+     "sig_node": [
+      [
+       "e1"
+      ],
+      [
+       "e2"
+      ]
+     ]
+    }
+   },
+   "reference": {
+    "verdict": true,
+    "method": "exhaustive, all 531 graphs with <= 3 nodes"
+   },
+   "agrees": false
+  },
+  {
+   "id": "l-tree-implies-weakly-connected-typed",
+   "item": "l06_graph_tree",
+   "question": "Same, adding the Alloy typing r: node->node as a premise",
+   "prove": "ResourceLimit",
+   "prove_steps": 50000,
+   "prove_seconds": 1.43,
+   "countermodel": "NotFound",
+   "countermodel_seconds": 0.57,
+   "ve_verdict": null,
+   "reference": {
+    "verdict": true,
+    "method": "exhaustive, all 531 graphs with <= 3 nodes"
+   },
+   "agrees": null
+  },
+  {
+   "id": "l-ring-implies-weakly-connected-typed",
+   "item": "l05_graph_ring",
+   "question": "ring => weaklyConnected with the typing premise",
+   "prove": "ResourceLimit",
+   "prove_steps": 50000,
+   "prove_seconds": 14.69,
+   "countermodel": "NotFound",
+   "countermodel_seconds": 0.56,
+   "ve_verdict": null,
+   "reference": {
+    "verdict": true,
+    "method": "exhaustive, all 531 graphs with <= 3 nodes"
+   },
+   "agrees": null
+  },
+  {
+   "id": "l-weakly-connected-implies-ring",
+   "item": "l04_graph_weakly_connected",
+   "question": "util/graph: does weaklyConnected[r] imply ring[r]? (expected: no)",
+   "prove": "NotFound",
+   "prove_steps": 14,
+   "prove_seconds": 0.0,
+   "countermodel": "Found",
+   "countermodel_seconds": 0.0,
+   "ve_verdict": false,
+   "countermodel_model": {
+    "domains": {
+     "atom": [
+      "e0"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "sig_node": [
+      [
+       "e0"
+      ]
+     ]
+    }
+   },
+   "reference": {
+    "verdict": false,
+    "method": "exhaustive, graphs with <= 3 nodes: counterexample []"
+   },
+   "agrees": true
+  }
+ ]
+}

@@ -1,0 +1,1 @@
+((@principal sa_department @hw) and (@principal is joblevel_ge_5)) and (((rtc[parent](@action, @list_photos)) or (rtc[parent](@action, @view))) and (rtc[parent](@resource, @device_prototypes))).

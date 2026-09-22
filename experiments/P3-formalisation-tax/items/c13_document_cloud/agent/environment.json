@@ -1,0 +1,247 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "Cedar entities and record nodes"
+   },
+   "value": {
+    "description": "scalar values"
+   }
+  },
+  "predicates": {
+   "parent": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "immediate parent edge"
+   },
+   "type_record": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "anonymous record node"
+   },
+   "has_owner": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "owner attribute present"
+   },
+   "has_blocked": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "blocked attribute present"
+   },
+   "ea_owner": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "entity-valued owner attribute"
+   },
+   "ea_viewacl": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "entity-valued viewACL"
+   },
+   "ea_modifyacl": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "entity-valued modifyACL"
+   },
+   "ea_manageacl": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "entity-valued manageACL"
+   },
+   "es_viewacl": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "member of entity-set viewACL"
+   },
+   "es_modifyacl": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "member of entity-set modifyACL"
+   },
+   "es_manageacl": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "member of entity-set manageACL"
+   },
+   "ss_viewacl": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "member of string/long-set viewACL"
+   },
+   "ss_modifyacl": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "member of string/long-set modifyACL"
+   },
+   "ss_manageacl": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "member of string/long-set manageACL"
+   },
+   "bt_isprivate": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "isPrivate true"
+   },
+   "bf_isprivate": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "isPrivate false"
+   },
+   "sa_publicaccess": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "publicAccess scalar value"
+   },
+   "es_blocked": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "member of entity-set blocked"
+   },
+   "ea_blocked": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "entity/record-valued blocked"
+   },
+   "sa_blocked": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "scalar-valued blocked"
+   },
+   "bt_blocked": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "blocked is true"
+   },
+   "bf_blocked": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "blocked is false"
+   },
+   "bf_is_authenticated": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "is_authenticated present and false"
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "request principal"
+   },
+   "action": {
+    "sort": "entity",
+    "description": "request action"
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "request resource"
+   },
+   "context": {
+    "sort": "entity",
+    "description": "context record node"
+   },
+   "a_createdocument": {
+    "sort": "entity",
+    "description": "Action::\"CreateDocument\""
+   },
+   "a_viewdocument": {
+    "sort": "entity",
+    "description": "Action::\"ViewDocument\""
+   },
+   "a_modifydocument": {
+    "sort": "entity",
+    "description": "Action::\"ModifyDocument\""
+   },
+   "a_editisprivate": {
+    "sort": "entity",
+    "description": "Action::\"EditIsPrivate\""
+   },
+   "a_addtoshareacl": {
+    "sort": "entity",
+    "description": "Action::\"AddToShareACL\""
+   },
+   "a_editpublicaccess": {
+    "sort": "entity",
+    "description": "Action::\"EditPublicAccess\""
+   },
+   "a_deletedocument": {
+    "sort": "entity",
+    "description": "Action::\"DeleteDocument\""
+   },
+   "a_creategroup": {
+    "sort": "entity",
+    "description": "Action::\"CreateGroup\""
+   },
+   "a_modifygroup": {
+    "sort": "entity",
+    "description": "Action::\"ModifyGroup\""
+   },
+   "a_deletegroup": {
+    "sort": "entity",
+    "description": "Action::\"DeleteGroup\""
+   },
+   "drive": {
+    "sort": "entity",
+    "description": "Drive::\"drive\""
+   },
+   "public": {
+    "sort": "entity",
+    "description": "Public::\"public\""
+   },
+   "s_view": {
+    "sort": "value",
+    "description": "view"
+   },
+   "s_edit": {
+    "sort": "value",
+    "description": "edit"
+   }
+  }
+ }
+}
