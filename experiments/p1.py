@@ -33,6 +33,8 @@ HERE = ROOT / "experiments/P1-deference"
 SEED = 20260921
 MAIN = ("V", "W", "A", "F", "R")
 ARMS = (*MAIN, "F_correct", "U")
+# Approved replacement probe: preserve attempt 1 ceiling and provider-preflight envelope.
+PRIOR_AND_PROVIDER_ALLOWANCE = "0.556900"
 
 
 def write_json(path, data):
@@ -582,7 +584,11 @@ def freeze_execution():
     paths = [ROOT / "experiments/p1.py", ROOT / "ve_experiments/paid.py", ROOT / "ve_experiments/llm.py",
              ROOT / "pyproject.toml", ROOT / "uv.lock", ROOT / "experiments/PREREG-DESIGN.md",
              HERE / "PREREG.md", HERE / "inventory.json", HERE / "prompts.json", HERE / "run_p1.py",
-             HERE / "labels.jsonl.gz", *sorted((HERE / "prompts").iterdir()),
+             HERE / "labels.jsonl.gz", ROOT / "experiments/p1_preflight.py",
+             HERE / "PROPOSED-AMENDMENT.md", ROOT / "experiments/PREREG-HASHES.txt",
+             ROOT / "experiments/PREREG-HASHES.txt.ots",
+             *sorted((ROOT / "tests").rglob("*.py")), *sorted((ROOT / "lean").rglob("*.lean")),
+             *sorted((HERE / "prompts").iterdir()),
              *sorted((HERE / "materials").iterdir())]
     paths += [ROOT / p for p in inventory()["source_sha256"]]
     hashes = {str(p.relative_to(ROOT)): sha(p) for p in paths}
@@ -590,45 +596,34 @@ def freeze_execution():
                 "temperature": 0, "seed": SEED, "thinking_level": "LOW",
                 "condition_order": list(ARMS), "block_shuffle_seed": SEED}
     stamp = digest(manifest)
-    for gate in ("known-answer", "lean-replay"):
-        path = HERE / f"checks/{gate}.json"
-        if path.exists():
-            report = json.loads(path.read_text())
-            report["freeze_sha256"] = stamp
-            write_json(path, report)
-    semantic_pairs = []
-    for i in materials("dev") + materials("scored"):
-        f, _ = render(i, "F")
-        u, _ = render(i, "U")
-        claim = assertion(i)
-        assert claim in f[-1]["content"] and claim in u[-1]["content"]
-        semantic_pairs.append({"item_id": i["id"], "assertion": claim,
-                               "F_sha256": digest(f), "U_sha256": digest(u)})
-    write_json(HERE / "checks/semantic-pairs.json", {"passed": True, "freeze_sha256": stamp,
-        "method": "same assertion function supplies exact substantive bytes; source packets unchanged",
-        "pairs": semantic_pairs})
     probe_path = HERE / "results/probe.json"
     probe_result = json.loads(probe_path.read_text()) if probe_path.exists() else {"schedule": "not_run"}
     commands = {"known-answer": "uv run python experiments/P1-deference/run_p1.py known-answer --lean-replay --freeze",
-                "probe": "uv run python experiments/P1-deference/run_p1.py probe --cap-usd 1.00"}
+                "probe": "uv run python experiments/P1-deference/run_p1.py probe --cap-usd 1.00",
+                "preflight": "uv run python experiments/P1-deference/run_p1.py preflight",
+                "preflight-openrouter": "uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50"}
+    from decimal import Decimal
+    overhead = Decimal(1) + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE)
     ceilings = {}
     for name, plan in inventory()["budget_scenarios"].items():
         dev, scored = split_ceiling(name, "dev"), split_ceiling(name, "scored")
         ceilings[name] = {"dev_calls_usd": str(dev), "scored_calls_usd": str(scored),
-                          "dev_cumulative_with_probe_usd": str(dev+1),
-                          "scored_cumulative_with_probe_usd": str(dev+scored+1),
+                          "dev_cumulative_with_probe_usd": str(dev+overhead),
+                          "scored_cumulative_with_probe_usd": str(dev+scored+overhead),
                           "local_allowance_usd": .25}
-        for split, cap in (("dev", dev+1), ("scored", dev+scored+1)):
+        for split, cap in (("dev", dev+overhead), ("scored", dev+scored+overhead)):
             commands[f"{name}/{split}"] = f"uv run python experiments/P1-deference/run_p1.py {split} --cap-usd {cap}"
         commands[f"{name}/analyze"] = f"uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --schedule {name}"
     write_json(HERE / "freeze.json", {**manifest, "manifest_sha256": stamp,
         "status": "BLOCKED_NOT_SCORING_READY", "selected_schedule": probe_result["schedule"],
         "external_timestamp": {"verified": False}, "commands": commands, "cost_ceilings": ceilings,
-        "unresolved": ["incomplete probe / unknown second-dispatch billing", "full schedule tokenizer and joint-history gates",
+        "accounting": {"replacement_probe_envelope_usd": "1.00", "prior_attempt_ceiling_usd": "0.056900",
+                       "provider_preflight_envelope_usd": "0.50", "local_allowance_usd": "0.25"},
+        "unresolved": ["offline gates require current execution", "full schedule tokenizer and joint-history gates",
                        "OpenRouter native joint counter and served revision preflight", "external timestamp", "dev capability gate"]})
     write_json(HERE / "checks/provider-preflight.json", {"passed": False, "freeze_sha256": stamp,
         "vertex": {"served_revision": next((c["served_revision"] for c in probe_result.get("calls", [])), None),
-                   "status": "probe interrupted; no substituted endpoint"},
+                   "status": probe_result.get("status", "not_run")},
         "openrouter": {"status": "not called; native joint tokenizer and role support unverified"}})
     return stamp
 
@@ -701,7 +696,7 @@ def run_split(split, cap):
     if name == "stop" or probe_result["status"] != "complete":
         raise PreflightError("probe selected stop; no dev/scored dispatch")
     freeze = json.loads((HERE / "freeze.json").read_text())
-    required = ["known-answer", "tokenizer", "lean-replay", "semantic-pairs", "provider-preflight"]
+    required = ["known-answer", "tokenizer", "lean-replay", "semantic-pairs", "test-suite", "external-timestamp", "provider-preflight"]
     for gate in required:
         data = json.loads((HERE / f"checks/{gate}.json").read_text())
         if data.get("passed") is not True or data.get("freeze_sha256") != freeze.get("manifest_sha256"):
@@ -722,8 +717,10 @@ def run_split(split, cap):
     ceiling = split_ceiling(name, split)
     # Probe's entire $1 envelope remains charged against the study boundary.
     ledger.allowance("probe-envelope", 1)
+    ledger.allowance("prior-attempt-and-provider-preflight", PRIOR_AND_PROVIDER_ALLOWANCE)
     ledger.reserve_block(split, ceiling)
-    clients = {j: PaidClient(VertexBackend() if j == "pro" else OpenRouterBackend(), ledger, split) for j in plan["judges"]}
+    from experiments.p1_preflight import runtime_counter
+    clients = {j: PaidClient(VertexBackend() if j == "pro" else OpenRouterBackend(runtime_counter()), ledger, split) for j in plan["judges"]}
     blocks = [(i, a, j) for i in items for a in arms(i) for j in plan["judges"]]
     random.Random(SEED).shuffle(blocks)
     rows, stopped, budget_stop = [], None, False
@@ -760,10 +757,12 @@ def run_split(split, cap):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
-    for name in ("probe", "known-answer", "dev", "scored", "analyze"):
+    for name in ("probe", "known-answer", "preflight", "preflight-openrouter", "dev", "scored", "analyze"):
         p = sub.add_parser(name)
-        if name in ("probe", "dev", "scored"):
+        if name in ("probe", "dev", "scored", "preflight-openrouter"):
             p.add_argument("--cap-usd", type=float, required=True)
+        if name == "preflight-openrouter":
+            p.add_argument("--counter-command", type=Path, help="provider-native joint wire counter executable (JSON stdin, integer stdout)")
         if name == "analyze":
             p.add_argument("trials", type=Path)
             p.add_argument("--split", choices=("dev", "scored"), default="scored")
@@ -773,7 +772,13 @@ def main():
             p.add_argument("--freeze", action="store_true")
     args = parser.parse_args()
     try:
-        if args.command == "known-answer":
+        if args.command == "preflight":
+            from experiments.p1_preflight import preflight
+            return preflight()
+        elif args.command == "preflight-openrouter":
+            from experiments.p1_preflight import preflight_openrouter
+            return preflight_openrouter(args.cap_usd, args.counter_command)
+        elif args.command == "known-answer":
             export()
             result = known_answer()
             write_json(HERE / "checks/known-answer.json", result)

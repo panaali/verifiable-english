@@ -1,1206 +1,1407 @@
 {
-  "freeze_sha256": "92d5aaf773fd3835a7bea4829d4555f949ed03c57d7ac3a1237db21d225a4210",
-  "method": "same assertion function supplies exact substantive bytes; source packets unchanged",
+  "completed_at": "2026-09-22T02:10:59.106549+00:00",
+  "freeze_sha256": "c57820437af69eed238e39217a0a333ebd8d49d14b9dbdf29157d33ba22dac98",
+  "method": "exact assertion bytes, unchanged source packet, A/F_correct exact finding bytes",
   "pairs": [
     {
       "F_sha256": "19c8075209102aae7bdac6f93357a12dfb7bdcc4d621b3c833eac4637c6fb5dc",
       "U_sha256": "926af2685719c0648a40b524d952f47540eb2c3d208ad4d0a1fab1cdf06fb027",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-086d3b59c2f1ac4d1d"
+      "item_id": "e4-086d3b59c2f1ac4d1d",
+      "passed": true
     },
     {
       "F_sha256": "8c2f7117d9df749763471970200c3e67a9ef61aeb50166a7583e9511ab21b089",
       "U_sha256": "8c530bec4278d6a20cae93a3e1d150529f6d378441cd59b103c6d8e3fb7f7d8b",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-111d40b2b652acfcf4"
+      "item_id": "e4-111d40b2b652acfcf4",
+      "passed": true
     },
     {
       "F_sha256": "f3e2e4c600241738fd7d0eaf8907095d96575bea3beb1b911d27ca15dace0e5a",
       "U_sha256": "2449af22e30bf3b33e8673061f7a74d710d9ee0e662b5e7d15fafbd8778b205d",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-1ad7538c1d4963f898"
+      "item_id": "e4-1ad7538c1d4963f898",
+      "passed": true
     },
     {
       "F_sha256": "37bbd0c048ca21ccc9621141248626b491f39c75678c089732eeea7af71b9546",
       "U_sha256": "03597f50dea96d4f65b0eb6689fa7a767c30c927d16eec73d1dd7cb5595ba25e",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-2b5793137ea3522ca8"
+      "item_id": "e4-2b5793137ea3522ca8",
+      "passed": true
     },
     {
       "F_sha256": "7fa0c07eb0e1e335bdfa8511429b0f3aa35c7c280eb9322af984e3cbbbd84f63",
       "U_sha256": "b44dd900ebb1baa9a94ad91517c6c6dd3f3cdff397115d6818da6279c3d204ae",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-49c2af0d5e547c99e2"
+      "item_id": "e4-49c2af0d5e547c99e2",
+      "passed": true
     },
     {
       "F_sha256": "d90905f706d05cdfc3700c6661e91d9c9b55168808d013a5f9c077254b5b92ab",
       "U_sha256": "2ed940ffbb791a660fbdb7b6393aa926b65b4b00cf43f5737b3ae9810548137d",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-6a721e9a37f4ac3c28"
+      "item_id": "e4-6a721e9a37f4ac3c28",
+      "passed": true
     },
     {
       "F_sha256": "20942d95abc16513510cb943f9ce5430bebf2c24c906a56bd2a3c77f210aeb75",
       "U_sha256": "9b91dcb459e55121de0594f7afa7c2857eb46a458757043865acac017399b9fe",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-6d5008d103f6d3d98a"
+      "item_id": "e4-6d5008d103f6d3d98a",
+      "passed": true
     },
     {
       "F_sha256": "35763378ee8a865a404c6f17a16eb43b7201ded2760fedf40ba0ece2e6cec7f2",
       "U_sha256": "8554b5196b39f1423654ce78af4681fffa3e6c4473f62efba5fd9e7e78329795",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-87ea96ea3851e0f24b"
+      "item_id": "e4-87ea96ea3851e0f24b",
+      "passed": true
     },
     {
       "F_sha256": "196bb1a60ca664df769c38a748108c2392e01964552cd9671f28f61a5a92b5bb",
       "U_sha256": "564458289efb85aa1d6b00454067d9f1fc2ca7b59f71160026d08097333be106",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-9b6046f1f00afb1c57"
+      "item_id": "e4-9b6046f1f00afb1c57",
+      "passed": true
     },
     {
       "F_sha256": "87d940a68af91b3cf6c6422bb2ba642cb581635e8bd1611fb8cb51b6923e019b",
       "U_sha256": "6d73a71d553bae38e3c1b9f02603e201d17bc0ca01c66e2b64c3cf37de888252",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-ac9d1d485031a85d0f"
+      "item_id": "e4-ac9d1d485031a85d0f",
+      "passed": true
     },
     {
       "F_sha256": "71dd15f82b96be18a59d3038c363b3e067fcc82f4d56a4931a958f9b33df6369",
       "U_sha256": "60342393b9dc64ce0880098a585345f0d5a1dce06c6ad98b1ca47506e2fe18c1",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-b8d047ce9849ddd62d"
+      "item_id": "e4-b8d047ce9849ddd62d",
+      "passed": true
     },
     {
       "F_sha256": "460d6e08b2b92846492f805b28dbf30ff253e048269e4057968d1db5f3b00cf6",
       "U_sha256": "f0bc972cc399ceadacb05bd5adade9730b72e0260bb55daf89dee64bfa441758",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-d3e3b523e11ddc6047"
+      "item_id": "e4-d3e3b523e11ddc6047",
+      "passed": true
     },
     {
       "F_sha256": "55296f04da7ca6b50341efc4f69d15e553bfa5464c063f570ab83ed114fa4764",
       "U_sha256": "0883ba0122c684678517aa75373c0ee728b69801697acb32bd849cbda56c2006",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-e4bd9f80b7535cb580"
+      "item_id": "e4-e4bd9f80b7535cb580",
+      "passed": true
     },
     {
       "F_sha256": "b55fb715c2b54cfab200cd16f283fc12bc5a8255d1f77adbda02068616ba33c4",
       "U_sha256": "7585c772319d3a9d68e24ef517472abed0322e158606b289c3d251fb4bf1e5af",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-e593908907ba459975"
+      "item_id": "e4-e593908907ba459975",
+      "passed": true
     },
     {
       "F_sha256": "afacf88f0d9b5fb8d4154ffb1dbf2a7b773e7f357a59a4711e2443241d3a2aeb",
       "U_sha256": "10e7078e02042d016c1aba9939d910e16c5bb3276ef89e400e6278e221027458",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-fbdc56b961180ea23f"
+      "item_id": "e4-fbdc56b961180ea23f",
+      "passed": true
     },
     {
       "F_sha256": "7f65aca2b57a13a4a5dbf3df1498eee68915d51ff8799095b22cd01a87ed66e8",
       "U_sha256": "4bfc5ea80ad9868826e6e54fcfc7b69cf814f5e6eee2710aeca721df30624b21",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-fd56fc9149e1c4a492"
+      "item_id": "e4-fd56fc9149e1c4a492",
+      "passed": true
     },
     {
       "F_sha256": "122af83aa83c8adc6f758388a560eabef989dc52ce7f44744a3ec2c2ce91d3c5",
       "U_sha256": "0bccae2c6337c204da3a1e60b93e1bd40be0be84cc2c9f5dfe9230efb2facbdf",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-094dd92cb69b206c3a"
+      "item_id": "e5-094dd92cb69b206c3a",
+      "passed": true
     },
     {
       "F_sha256": "8bc00802fdfd37dd179032c12f3756ce237f915c0a1253ea077b0d3ecdaa50d7",
       "U_sha256": "f9d71b913d702aba965869536da764862ef04f655882568a94a45876f37e1b4e",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-44538b251a518b36a2"
+      "item_id": "e5-44538b251a518b36a2",
+      "passed": true
     },
     {
       "F_sha256": "6e2eedae2fad338e89c18d12c91556bcabd609e1cbac01988c1bd880450904af",
       "U_sha256": "b6a5323b2bbf6aafd022325a13170ca206a590c46773543069a5b3ae30823de5",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-49dfdb49200bc9ac98"
+      "item_id": "e5-49dfdb49200bc9ac98",
+      "passed": true
     },
     {
       "F_sha256": "902a624fbc8af59e31abfe2c98c6b9b2de401ad4d93a8cb5d36fcca01d0bd2a3",
       "U_sha256": "4795ccba4ec48c37911b59183d13824f80fa52eb28efba55bd3520e494d033b4",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-52e11f4e5e7e11e17d"
+      "item_id": "e5-52e11f4e5e7e11e17d",
+      "passed": true
     },
     {
       "F_sha256": "d2b8f812485c06b8669b3a07e5a62429539934e7128e19a7b6c4e593300f6bbd",
       "U_sha256": "01f928f55fb93a6203502e72e7e43f4ccde223c5c7594ca469fe28f41675c831",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-60578db1dbb684432c"
+      "item_id": "e5-60578db1dbb684432c",
+      "passed": true
     },
     {
       "F_sha256": "6efa95d7c7e74e38809ac6ec36e882c888ba3e41c3d72e534c01e5fdf90690b3",
       "U_sha256": "9bec29af540614c029b0a90d76a0759642817d7b1121d73a04a3b8cd322e1fbd",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-6222f24e588c7b4870"
+      "item_id": "e5-6222f24e588c7b4870",
+      "passed": true
     },
     {
       "F_sha256": "6a65fe3aa5ad4ff322af1d4acfb65c9ef0adb0dc256bdb62014fa154b5ea3efb",
       "U_sha256": "fee659a85237a57fc40440841767890005f980b89083a09daf63275d96d3e71a",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-68c1eb230d62be1e1f"
+      "item_id": "e5-68c1eb230d62be1e1f",
+      "passed": true
     },
     {
       "F_sha256": "e8dd7f562d3fe043fa7a420ad60b352614fdcd436b69bdf4496e202f61f9d28e",
       "U_sha256": "9801e9efb805b9de41ef0bceca985e179cce3f343c4a656ce9b76b3038aca77e",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-6ec888671b4351ccee"
+      "item_id": "e5-6ec888671b4351ccee",
+      "passed": true
     },
     {
       "F_sha256": "484b600301f9ed4b4453c0f5e45f5adc42580f6b0ec1a39565f524aa790fc417",
       "U_sha256": "0d16cdc86d1b225a9a01b92a4ad2d4c645cb59455ac4598b7a43d3e5560fa3d2",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-7f2e52e1a9d7c2121b"
+      "item_id": "e5-7f2e52e1a9d7c2121b",
+      "passed": true
     },
     {
       "F_sha256": "700cc05e35e86a810f4d772dc3c7491e7c8f4e9c2bd58ec05e6bf394dbe7427d",
       "U_sha256": "fef5a40937a5c36c0a944a989504381b4975b9523be26b480eea9bb3b36d6093",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-8dbe009f3785ba94f0"
+      "item_id": "e5-8dbe009f3785ba94f0",
+      "passed": true
     },
     {
       "F_sha256": "44eaa73daa3483030b5e525e77e830e7bfb9ea2ff5cbdef6243fffb3097311bf",
       "U_sha256": "1a9f9881dd7f53020bfd4cfafb55fe1537a68639769bff4b1208762ef64659e0",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-ad1d3b3509134be1f6"
+      "item_id": "e5-ad1d3b3509134be1f6",
+      "passed": true
     },
     {
       "F_sha256": "31453f0768a02920ee2b1c8a45a53f5ef3ca2a445cf9f70b1e64ede4d9e7f390",
       "U_sha256": "d50166b811dbb05bf37e0af339438dab673070e1873157f9c98467805590b8c1",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-bb542c7954618f6f29"
+      "item_id": "e5-bb542c7954618f6f29",
+      "passed": true
     },
     {
       "F_sha256": "71cbb0c9867764135f358b8ee3d41c7a4b8098efc9722a957f4eb807b69c8021",
       "U_sha256": "2a49d5a47805eebd557f40a720a069de45e3ffb3836ef986f0c5970792eb3852",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-d52d44f326efc57ec9"
+      "item_id": "e5-d52d44f326efc57ec9",
+      "passed": true
     },
     {
       "F_sha256": "db2e766176237e25410d9b8008c8a036c89da85233c01dd17c1ac157368faa75",
       "U_sha256": "ba0bc74178259911194601c532e558411807762056e830e7b218a174badb2fb6",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-e4273a5befe4e6dfad"
+      "item_id": "e5-e4273a5befe4e6dfad",
+      "passed": true
     },
     {
       "F_sha256": "f94ed2c2fd6397ce2e0f5bdedcb46e4746dbf28bb700d85e14201ae287a5d35a",
       "U_sha256": "1ddd829a910da45e67b2edbcb540e4e25dc9ce970807bdc13df06ce076931c6e",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-f6b3299df5ced7d9fb"
+      "item_id": "e5-f6b3299df5ced7d9fb",
+      "passed": true
     },
     {
       "F_sha256": "369678b87b53bfb7b727817151fd0e85b23c0eab7724e66cbc516da342882d2f",
       "U_sha256": "8c87791a91c4d0e12e9ef4cc6bbd5359a7ed177de555d67b24aa81908558fda2",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-f85b631cee10546307"
+      "item_id": "e5-f85b631cee10546307",
+      "passed": true
     },
     {
       "F_sha256": "9cc40a14617900ab31c11257241ea425f0f6c78bd540e3fbe0e470822b6720d9",
       "U_sha256": "5f57ed7487d73335b77fb0147ac9bd5e9d749f763bdd2c3ad50a6e548936b687",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-00477073ce7f464362"
+      "item_id": "e4-00477073ce7f464362",
+      "passed": true
     },
     {
       "F_sha256": "3adf1ecf2048b6be5d2c3172df78b9b3646e41febae03713bf620c905121a47b",
       "U_sha256": "63d642f02390ec504ac09975860067931a219fb571b8ce631646a4774e8dbc20",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-0249e408a0f5013896"
+      "item_id": "e4-0249e408a0f5013896",
+      "passed": true
     },
     {
       "F_sha256": "4d30e0f1f0b7d8393cb0dd77c50e38a79b9787d25be2b930410b9196ac50fe5c",
       "U_sha256": "3f51c6f445cffa15ad6ed114d42f60c04fd5dd98ab615d517e42d48858cdd224",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-074abde2e3f20420f7"
+      "item_id": "e4-074abde2e3f20420f7",
+      "passed": true
     },
     {
       "F_sha256": "292b4d7a5932f972ea25443475c748667e087591ff365c5956b02d314f336192",
       "U_sha256": "e571f0f8b28e24fc52eb3024567032a66077b75116ff9ba8714249b88eec75b2",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-09005a874fee6a0588"
+      "item_id": "e4-09005a874fee6a0588",
+      "passed": true
     },
     {
       "F_sha256": "419aa727ee9e4fd6ff8768d2958e7eb838e7496e7f4aff1a8fbfa9d34d165f2a",
       "U_sha256": "a1d15afe5484d908836132d09cdd8f04ed958950084548d9835361d2a6a84a6e",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-0ab4b708421b546b89"
+      "item_id": "e4-0ab4b708421b546b89",
+      "passed": true
     },
     {
       "F_sha256": "bc7698703dc067184f28ce127781cdfaf5f5a62eccc993e923596b2f3acc7103",
       "U_sha256": "353e82e640a13702d7c9cd1c12d30809846dd2f6302c4a23710e2a43a6ba3b6f",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-0d0a1fbb8f6eaa2fc3"
+      "item_id": "e4-0d0a1fbb8f6eaa2fc3",
+      "passed": true
     },
     {
       "F_sha256": "af78866fb3e30abfe8481b31ea775b2e5dbfc850b87751bf759a2d52c0d6fc18",
       "U_sha256": "9af4cf9d3fbbeb25d73547361da42789e2ccb726b79675ee3a1eab6a8bad6b55",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-0da622c05439a5b4c1"
+      "item_id": "e4-0da622c05439a5b4c1",
+      "passed": true
     },
     {
       "F_sha256": "38a9cc89a1f8ffe28464a0590839e9ad85082d22137ecda5fa9273d0469008ed",
       "U_sha256": "08a6b3281a6b5140435cd5d11aff798bffbe1cdaa72357757d07e62959cd4a2a",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-0dabe6a66d39e924f1"
+      "item_id": "e4-0dabe6a66d39e924f1",
+      "passed": true
     },
     {
       "F_sha256": "651961b9a1f4393235a8d482f7e189c77c7a8b49e91d609135c517a94d31c8be",
       "U_sha256": "c087571a6fb048838d7cdedbb534716022dc6d8cba7f6191eb360154ae604ff5",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-0fe0fbf790dab31371"
+      "item_id": "e4-0fe0fbf790dab31371",
+      "passed": true
     },
     {
       "F_sha256": "076d9d445e019c05dc4bb9e86771dfb7e08dea50811a346e2644b3d4a70d8d3a",
       "U_sha256": "bb8b1f76a716e7ab580038d05ca79b65d207b6b3da76382864f0692fa3ba099c",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-15f3f24b8b62278123"
+      "item_id": "e4-15f3f24b8b62278123",
+      "passed": true
     },
     {
       "F_sha256": "22bbfc7e473b2b898183149d66cfa5084fc62f32a0dfe78e75e2d9ce37c1d74c",
       "U_sha256": "e0d8ae94c87633168cb2dbf39dac8fb6d6fef0947b8b90dc80804277c66a1b27",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-1d1ebfdadd501c15c4"
+      "item_id": "e4-1d1ebfdadd501c15c4",
+      "passed": true
     },
     {
       "F_sha256": "3d4aa81b1803e617ecebca0512d4f28cbd6055fee7c2de276fd30e82a46c0238",
       "U_sha256": "b1970490d45372537a8f91a7aa9f3124e1e2a5beaa7f51009d125776059b27ae",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-1d9e5b29030e4dd9be"
+      "item_id": "e4-1d9e5b29030e4dd9be",
+      "passed": true
     },
     {
       "F_sha256": "8778beec9517b98eb2f9b75325d232f25167c0d9664e4c5523b16a0b4eeecf2b",
       "U_sha256": "36411a903b40ee11dc2db544a24e1ff7319829e44a1c695a5d10dd87dd2aa5bd",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-241dc4fb8f50b40146"
+      "item_id": "e4-241dc4fb8f50b40146",
+      "passed": true
     },
     {
       "F_sha256": "7915a58139387449c2ccc837f735f5df38670ab77fffe4507a03aec9d9ccfbf9",
       "U_sha256": "cbdbf553f71e7b148b2c06367022a4585979804583fe85317e09f7accba06eaf",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-2796ee71f8f5e8b92b"
+      "item_id": "e4-2796ee71f8f5e8b92b",
+      "passed": true
     },
     {
       "F_sha256": "dfeb29b5313082c15383faf3f16fe2e47428bd2f757f9242a6a43e38db80c5c8",
       "U_sha256": "3b46dcd4bcf9c2fab494bd8cb5940cd4746eb9aba55a3fa768fa9b14e5231101",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-2adc7fedc3d6c4aa26"
+      "item_id": "e4-2adc7fedc3d6c4aa26",
+      "passed": true
     },
     {
       "F_sha256": "b4b0c04eae65fcaaa0a28ab785dad9bb3cae33704862dc087ac31f9491e3b12e",
       "U_sha256": "b9aece9f448776a467843119900c8bfecc8abd0e673ea07d10679d13330c9d32",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-2dad696c498a2e4335"
+      "item_id": "e4-2dad696c498a2e4335",
+      "passed": true
     },
     {
       "F_sha256": "19fcd9da005429388846f7681e67f20e6e70a2a116e2cebcd385ff83cc221d9d",
       "U_sha256": "0a33a8556d7f320310117519783a9dd61d5394449a33aa3ce64581893c92bfd7",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-2e4f194772c0a25dc6"
+      "item_id": "e4-2e4f194772c0a25dc6",
+      "passed": true
     },
     {
       "F_sha256": "92bcca01358bab5fdb798a9fb130955f52eb36fb928c51fb065f9f3dec3b9ffe",
       "U_sha256": "539d587d6fcd2a057d1494711e0975c4ed9c8880a5c7c025704fa5e2b71c7886",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-32eab34b2b171b3b79"
+      "item_id": "e4-32eab34b2b171b3b79",
+      "passed": true
     },
     {
       "F_sha256": "13f3efcf138f5abcce188181017b3179c688d20b003f2a37770797bb1146be97",
       "U_sha256": "10c7032b59f426248c7b2f20d1153bf3214b10475969a5fa400300de806b0919",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-34e137569214863ba8"
+      "item_id": "e4-34e137569214863ba8",
+      "passed": true
     },
     {
       "F_sha256": "c7d39f663a873a4f9c399a159db1487363e181045c54f672edbd4da2726affc7",
       "U_sha256": "009e516b016413ae817630791ed4018a82964be49d5794c23fc113f74bf92c9f",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-384fe9ee732879fe0a"
+      "item_id": "e4-384fe9ee732879fe0a",
+      "passed": true
     },
     {
       "F_sha256": "8077aa64600ca584ddd409bf32912b735abc91c337df7907a597be9750075bac",
       "U_sha256": "e49ab5a5966efae1fa149e67de26938342a562880aadb1225bf2149ea2720740",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-3a7ff41412456f3090"
+      "item_id": "e4-3a7ff41412456f3090",
+      "passed": true
     },
     {
       "F_sha256": "cab538ff7e49b18382a0d2b5be5d77f5ca6b0b30b40982c3d97d41ed65101551",
       "U_sha256": "8882cbdf7a4d9ed5c4310dfcefeb088cb00621226c4bcb00df13aa983146ef02",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-42a71dfe22b9fa342c"
+      "item_id": "e4-42a71dfe22b9fa342c",
+      "passed": true
     },
     {
       "F_sha256": "0f3b977a5295af8e1c545d72826bbb2620a7d493e6e174e6a82791ed812a4a14",
       "U_sha256": "c4cdbdfe14fa3a766cf4e91ddc20bacf7f4f352fbc2a0626b28a4200d049cf2e",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-459b1bd64ecab3f9bb"
+      "item_id": "e4-459b1bd64ecab3f9bb",
+      "passed": true
     },
     {
       "F_sha256": "adc91a5da8de417308cf617bfa1ca907c509ff76d685782c5c38c864e3073296",
       "U_sha256": "6b7bee04d6476fdccb49221f30c7c7dd8b9b1bb34c6499977371c650558f43f4",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-468a9bd3a6364c6de1"
+      "item_id": "e4-468a9bd3a6364c6de1",
+      "passed": true
     },
     {
       "F_sha256": "f07c4230a384fd9c2e956e1ce58ae9d56ad61c004a58623bf0892f19dd2607d6",
       "U_sha256": "9e0e9f23ac091afb576239583274a64abb10f56b1cefcda689e3841ea9c111b8",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-470fba5df90b746666"
+      "item_id": "e4-470fba5df90b746666",
+      "passed": true
     },
     {
       "F_sha256": "a4dd251f8538926d97f8d75e767f70255a89bf3b9f902893c03842d744460114",
       "U_sha256": "de7af66b4df39b14f383da70bce99830fc06b195f38100cbb81083cc287d2df9",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-474b5c6e6c2eff81c8"
+      "item_id": "e4-474b5c6e6c2eff81c8",
+      "passed": true
     },
     {
       "F_sha256": "84473de4ffc841c454082aae1fc3f6d80c1705a7758909e2351d3c2ee2e0a190",
       "U_sha256": "7cba779ae2e2b656f8a66857a073698fa9d7ebb11d179c46eeb0e285f198946a",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-49424913a5662b2bd8"
+      "item_id": "e4-49424913a5662b2bd8",
+      "passed": true
     },
     {
       "F_sha256": "9610c6ea60c722c6eaa33214efd3200cb4ec84b85d03e79410c9c3b84a6d11c4",
       "U_sha256": "7cfe90fe6b878dc469803cdeffc41e06a1e1a8c89f7d83b5e7694c84a72a1d62",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-4a966db932d88e004f"
+      "item_id": "e4-4a966db932d88e004f",
+      "passed": true
     },
     {
       "F_sha256": "de57abfd7f2eafa1334af7bfc7fb24a630e70e3b15cd9aa16a169f9f8b9c5a36",
       "U_sha256": "8ea1e22b7a9dbf511fdffa62eb5668780483c3e8b15f6cefadb007e039cc97d9",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-4bcb86ea1bc0985d77"
+      "item_id": "e4-4bcb86ea1bc0985d77",
+      "passed": true
     },
     {
       "F_sha256": "1e006ba8f7a32934f9344da93d57e9f5c99c806dd55de60d4db4fdd0a69ce340",
       "U_sha256": "d69a2c4157e00285eff3578a1fae550b0f20cc439aee8438bb50b8c17bfaff9d",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-4c11f05ba81b0eefd6"
+      "item_id": "e4-4c11f05ba81b0eefd6",
+      "passed": true
     },
     {
       "F_sha256": "5c6c9caeed18a375e891b9695d1c4570079766c17198b07906434e7a5a6b0563",
       "U_sha256": "5985643921f3d9df29eb01c224f201de7dcfdb0fae80cd34ddccd865a8c7b18e",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-4cf8a6795b65cf1a9d"
+      "item_id": "e4-4cf8a6795b65cf1a9d",
+      "passed": true
     },
     {
       "F_sha256": "cc26aeb4e0ae1e4463d408b38db24bd1d8c4bfb2a07121533588baa7fd0f6ca8",
       "U_sha256": "1b1403442e6d07d34c63f863ae700225ebe73c3e94e593ca4ca9b849637f771f",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-501b275cf468f7e547"
+      "item_id": "e4-501b275cf468f7e547",
+      "passed": true
     },
     {
       "F_sha256": "d1b38a7fb6869c0c0c617247a2db425287dfef2aa7006bc4dc2e4623f47af1fd",
       "U_sha256": "8bf79b89a78e98e9c75563cd137a30dc3512d9bc3402ef8ca8001939fc4830cf",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-53eaeddc81536671a5"
+      "item_id": "e4-53eaeddc81536671a5",
+      "passed": true
     },
     {
       "F_sha256": "3d100ed6b90a38f44b58ab8da60965be6816175e942e3e2e6bafe5065daa6c79",
       "U_sha256": "d897507ecbb7a27174355ac44957fe8e35ae577b445436062b3694d45762f6e4",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-54ba1a48b73c244e9c"
+      "item_id": "e4-54ba1a48b73c244e9c",
+      "passed": true
     },
     {
       "F_sha256": "74deafcb9f44c8984fcaba4fed03152520726bad535560aef6a997c7cca4477b",
       "U_sha256": "a5a4307dd01823c82b55c68c8326de75ef977761c34d7d7fa37d31b827faeeb5",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-556e48b9eca40fc53f"
+      "item_id": "e4-556e48b9eca40fc53f",
+      "passed": true
     },
     {
       "F_sha256": "5d7dce7a25459d14b101675897e51d93d3670b4132e2dd1df70233041c92ca92",
       "U_sha256": "134efaa426f6a31f8eb07cdde49b4c2648450bbd9ba87492657fa65b7b419e25",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-5c2ce1f46496cc1fbe"
+      "item_id": "e4-5c2ce1f46496cc1fbe",
+      "passed": true
     },
     {
       "F_sha256": "cc27f2f78291d744596d50b14a294692d72f734bc0dcafbc6a9010b469397f43",
       "U_sha256": "3223e93871a205f2e8169bdbf889f898fe0a195883cec60db7b651685da22170",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-5e1dd0a2b1358ecb3c"
+      "item_id": "e4-5e1dd0a2b1358ecb3c",
+      "passed": true
     },
     {
       "F_sha256": "bf101850f7bb0903c2debcf7499e55d7f024ca1deeb33a69547e4241dad76bca",
       "U_sha256": "bc072cb7a7d75bd46f3a1cd66a06018912b9145da83bcb5050076d29475eb45a",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-5e252459833acdf83c"
+      "item_id": "e4-5e252459833acdf83c",
+      "passed": true
     },
     {
       "F_sha256": "a696632ea7be6e63078fc2c17e364cd809c61eba20a685baf154ec6a88419942",
       "U_sha256": "235b7edac86ec3e011d008eb2343e30d1ade3ce2a2e1f17f6123174dcc5fadd8",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-60fa636140e9328d98"
+      "item_id": "e4-60fa636140e9328d98",
+      "passed": true
     },
     {
       "F_sha256": "3b537cc299b45881dfc2f289244e895273acf6e5d81a0d626f972d3f8fedf376",
       "U_sha256": "31f07c5d42589eeb189eaf1685dff9fdfe3809ae9418e14d32e90ddedb7364c6",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-61ddd8bf25d30e946f"
+      "item_id": "e4-61ddd8bf25d30e946f",
+      "passed": true
     },
     {
       "F_sha256": "3675a80ea939d55fbae78bf666d1e7c11bce97598e7e15ccc3eea6f7c964d15e",
       "U_sha256": "0a20b77f65fe68a5aa2098fdc0e8259514d6b104fb2cc0ac63a71a28d8163aa0",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-658b646a0a4ee844b2"
+      "item_id": "e4-658b646a0a4ee844b2",
+      "passed": true
     },
     {
       "F_sha256": "02d8f71910da602fec010e26cb70fcedb671f52b189f60c0cbcb96017d18863a",
       "U_sha256": "7d91412bf001b21feab447ecfcdbe53dce1741a4b4e76e7351185168e3f3eee6",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-65d5f39198136e235e"
+      "item_id": "e4-65d5f39198136e235e",
+      "passed": true
     },
     {
       "F_sha256": "6534cb30a0aec1297bf2f7a83c8f850a780ed00bc18d292c4b5a61fd5f66e75b",
       "U_sha256": "f98413fcb930255235697a59c54a3327472f99b7bebd63b2de0c26c7de36ca02",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-663cd383e7de9393b4"
+      "item_id": "e4-663cd383e7de9393b4",
+      "passed": true
     },
     {
       "F_sha256": "4b26beed2e8e390607e5bd20bf1df35abd6d9daef332657df19c2a29f0f17023",
       "U_sha256": "3ba1559ec39f24d5050f0060ca8d290da919136ab8255a2708e6f3c87edc6c15",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-6ac045c0e8ef1053c9"
+      "item_id": "e4-6ac045c0e8ef1053c9",
+      "passed": true
     },
     {
       "F_sha256": "896e71e8a41f2597fd011cc95378143e0d9ee550186044445638cd2bd1f17d67",
       "U_sha256": "8b24c2e3485e3542510cdb098b3e42f5530c7c441bb3b87a56c664c479049230",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-6c3df411c3fab0aa93"
+      "item_id": "e4-6c3df411c3fab0aa93",
+      "passed": true
     },
     {
       "F_sha256": "08b7d7b5b3247b005c38089eb10d5ae5de463a989f3d3e996e0d3c8eb1fe1d1a",
       "U_sha256": "92c270f55cc4bdbd39abaccf22fc27a79f5d3c1bfb73a72f3b5d610447a89574",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-6ecd6a4927ea3c01f0"
+      "item_id": "e4-6ecd6a4927ea3c01f0",
+      "passed": true
     },
     {
       "F_sha256": "05bece93d91f9994a9dffd2b6242b30fc920d69253bf5abcfde1c2aab9449cfa",
       "U_sha256": "042739c346b7253d9a262189bba8edc31b3f1a77a6fc8b66cb5b60a1bfbb0017",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-735777cb7ae2c86b17"
+      "item_id": "e4-735777cb7ae2c86b17",
+      "passed": true
     },
     {
       "F_sha256": "c69041de2e08259a17d67b638bfd633c7dbef617205d89621c953fe7b8e3d2ce",
       "U_sha256": "2b2f811d214a4a024cbde9bb4292e4adee0f835aac567cdc70c93393767edbae",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-73fb8f1522ae99c217"
+      "item_id": "e4-73fb8f1522ae99c217",
+      "passed": true
     },
     {
       "F_sha256": "fc041a88d48d73e73a372981e9b39f2f2d3594edc3335a264aea25e5e1f654f0",
       "U_sha256": "b4800b1e207b9f52fb8f1ee4dd465428026be1adf4e6c76e1b8f985b3ed237f9",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-74056c3eba1c3af007"
+      "item_id": "e4-74056c3eba1c3af007",
+      "passed": true
     },
     {
       "F_sha256": "56fd1b5839b671a7d6e77a43f02a1afef996b020a9a7a696d7d7345092dcdd48",
       "U_sha256": "16516fa38b6ad362ac335845bfabf3f6d43898f0ce2de79458d14eae3a6243ea",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-7873173b74960f5677"
+      "item_id": "e4-7873173b74960f5677",
+      "passed": true
     },
     {
       "F_sha256": "31a999dd12593acdf25cc8b9adafab4ad0cab027c34cf73102f6d0c0e3ecefe0",
       "U_sha256": "b72619e9fea959fcf0f8a973cde9814fdfb861b390d4e9d46215846f865b3515",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-7b3967bbabdaead92f"
+      "item_id": "e4-7b3967bbabdaead92f",
+      "passed": true
     },
     {
       "F_sha256": "7209e5ac43dbed5c6381774983094b4e91a3a32416c29d7faa8d5090df13ce1d",
       "U_sha256": "8784d276e1319aec2554efc69a6cde71b086ab6321311ac32253e26695853e03",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-7bbed448c830d0f299"
+      "item_id": "e4-7bbed448c830d0f299",
+      "passed": true
     },
     {
       "F_sha256": "0048dc8cc978f89e7f5fd499cedc85beed22fcec4484952f107596cda0c89431",
       "U_sha256": "343fdd7c2279fdc090abd925900a1b072d57de43a4bbd64f938f3228abb6629e",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-7bee1d2a7b4cf24b7d"
+      "item_id": "e4-7bee1d2a7b4cf24b7d",
+      "passed": true
     },
     {
       "F_sha256": "2a6be5477ee47c8add23dc290e86144fb8270d8ecd383d1e5e66f21502304a36",
       "U_sha256": "8fae51bd0bd1713ec62c601ec37845c411037d0d6dacbe7e5eace5f3a89f5015",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-7f0698db391379517a"
+      "item_id": "e4-7f0698db391379517a",
+      "passed": true
     },
     {
       "F_sha256": "27f551cd9132efc8f18c738f6300eaa14004abdc4c706b12b2ca4e858eaa2d04",
       "U_sha256": "f977c15ae2463b3dca806f08a27aa55af64269ae0e8c56e97033cf4d30e96909",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-804aaf9054f0b2bfb0"
+      "item_id": "e4-804aaf9054f0b2bfb0",
+      "passed": true
     },
     {
       "F_sha256": "ed6ec99de6e20af11f9a3113c6e538e9e0744f1a5e115e1a1cfd32b5a0ded797",
       "U_sha256": "4c3bd713bf1edf85b6483b0755e9a8537094cecb517050838632f32f95ea1050",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-80e5bb1e64d57cfe87"
+      "item_id": "e4-80e5bb1e64d57cfe87",
+      "passed": true
     },
     {
       "F_sha256": "d8935af4dee572cb0d549d3c8345e1868ed3c75074ce3d9478ea1f3589bbeb88",
       "U_sha256": "d665b9fc7816bdc3d2f247704ae8cf93796481c181e25b182ac660742a9e552d",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-8137760ba4eee2b78b"
+      "item_id": "e4-8137760ba4eee2b78b",
+      "passed": true
     },
     {
       "F_sha256": "be21a438fbd3b7a3e4fe8ce03beff15262e9b0ee1f2c2605bff23d7407819e32",
       "U_sha256": "12e650a3a06d8051d52c94a71ffa86f82873e69d4670d12cc85eedca5ec464c2",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-87080c6b058759be90"
+      "item_id": "e4-87080c6b058759be90",
+      "passed": true
     },
     {
       "F_sha256": "9d50adcca279576739bbffdcb0eda65bfb1963227fe9bb3aa2e3ba546342f29e",
       "U_sha256": "d99b4b6733fa51504283540bf522ed8f1482c306a07af89e500b5217b9893a70",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-8a27fdee1f34c0cf5c"
+      "item_id": "e4-8a27fdee1f34c0cf5c",
+      "passed": true
     },
     {
       "F_sha256": "a94b4a1b8da2f6679edd2f2a6b8f7a27d7820cc11be8d7e8be17c2c068aa198a",
       "U_sha256": "099babb0021491a0d1612adf1a60aea5edb71af7676569c03586dc2a14c25e39",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-8c38873891e871d535"
+      "item_id": "e4-8c38873891e871d535",
+      "passed": true
     },
     {
       "F_sha256": "41ebe779e02e5a5cc182b82a0222861a29e48010b564cd38962f2061aa2c4f25",
       "U_sha256": "2b1b9e3ea3cd2d93f875bba7e23ab8389d086ed4b1c4687f9a09d457111dd6f6",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-8d3f186d859f1a0c37"
+      "item_id": "e4-8d3f186d859f1a0c37",
+      "passed": true
     },
     {
       "F_sha256": "0851ea1cec6ddb4c97d6e3e37639a1b510ece0bee81e5c25f43b59b2571efaa6",
       "U_sha256": "3ad2fda60947242c49903220d6513b4059c9da83f724a014c4faa3cc7c330d5e",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-8e99d6654ec1b6a568"
+      "item_id": "e4-8e99d6654ec1b6a568",
+      "passed": true
     },
     {
       "F_sha256": "78faf346447e107edbd71065e22653863e3e4d71b66fa2a675bb6f14e931d6ab",
       "U_sha256": "00ca268989fb933fe65a8fd4f24dc4fa30e0303b506316f509332d6aa2b4f2e1",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-8f9fedf978f097be75"
+      "item_id": "e4-8f9fedf978f097be75",
+      "passed": true
     },
     {
       "F_sha256": "4d5d4f12094773ff0908b1d5333241a74957f16e128a965ef685ff393efea5a3",
       "U_sha256": "ea73653b00293db2b55041d5e4fef02cec41260343fe5ff0a5dc638efc385592",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-90ae32b612913ff9f6"
+      "item_id": "e4-90ae32b612913ff9f6",
+      "passed": true
     },
     {
       "F_sha256": "b95f60242e49c040eb37bb9eeb8d657b68252299cc24ef60bfcd1db4125ed01c",
       "U_sha256": "9ba3c09f1736de93ac60509317a425292d50d6097d1dfba4e24c0476dd43ddaa",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-94554cbab09bed5c4c"
+      "item_id": "e4-94554cbab09bed5c4c",
+      "passed": true
     },
     {
       "F_sha256": "7fa94b33bfc0d9ad18f20db71a3d3146f4b3de197b8d252178df687c4ba72f22",
       "U_sha256": "db3e16bdc97128395b385d8413515328acd16778822d922b9343ca909cc49a5a",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-95198d279657c4ed9c"
+      "item_id": "e4-95198d279657c4ed9c",
+      "passed": true
     },
     {
       "F_sha256": "87a03f9552fceb8b2c11a13a1717595422845113537a1d9b03f179a78e10b4ed",
       "U_sha256": "63f063731b991700b247c81996204772731429dfa7698f69077863fbfdbd45f9",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-966646cce0801f0bce"
+      "item_id": "e4-966646cce0801f0bce",
+      "passed": true
     },
     {
       "F_sha256": "294148d2c455701c6cf570b62eb0454a8297179c3301d75167b81e5419dd5a7c",
       "U_sha256": "01673ad377a2288737bd3d507d6fbe58bf2ba4cd9b44ca957e87bda9beaac40e",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-971e06ebcf1a4850b8"
+      "item_id": "e4-971e06ebcf1a4850b8",
+      "passed": true
     },
     {
       "F_sha256": "aacb5f96e7b2cb966196bc63ffaa91e07d9bdd388637e9f5ed60009ef9fe3ab4",
       "U_sha256": "375050feccc835a2a91d9d8ea613838c90021f83c876d8af62ebca0e80a72c96",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-977664a68142d994e1"
+      "item_id": "e4-977664a68142d994e1",
+      "passed": true
     },
     {
       "F_sha256": "7a8bf8fae212f0a76f609277b54170c84d4eec538029734882485b637baae4ad",
       "U_sha256": "8a55937b96655811f0e1b0836bf33f0d4e073c410bc244689e3beea3260a180d",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-9b547263eb7a4e6d66"
+      "item_id": "e4-9b547263eb7a4e6d66",
+      "passed": true
     },
     {
       "F_sha256": "4de1760b85733fec6eb0ff5d89acf082041049c3106b3ed365992da7faac4466",
       "U_sha256": "fa2b8848a344f72043757d8106e8885832534568288efd0e88140776e200e6f7",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-9b9a63cae49adfcb0c"
+      "item_id": "e4-9b9a63cae49adfcb0c",
+      "passed": true
     },
     {
       "F_sha256": "bb95481f51e9d0289d453880e73ac68da7915c16af74271424757714b828866d",
       "U_sha256": "958a4d22eeca0c60bc1f57a77edf16c7e6082d81e137270993faf518888a0a7f",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-9e6a4c86f1d92c5773"
+      "item_id": "e4-9e6a4c86f1d92c5773",
+      "passed": true
     },
     {
       "F_sha256": "71536d75753d18ef087e9097b49051e6ea03794704bebdcc904aa3806c8ca918",
       "U_sha256": "11b691cdbac15ef37d96676c194de468c454d4c1057823410f724b1f207e47f1",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-9ed18fd080f21dc5df"
+      "item_id": "e4-9ed18fd080f21dc5df",
+      "passed": true
     },
     {
       "F_sha256": "2c16592e90fb56bc4d80dc64f4191948c8a7ee364302802c36022895bceef1de",
       "U_sha256": "a9de870e31c1606f4f8da9ae7268439812df8ff09db37b06bb29b8d87dea4237",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-a2d425f2252a14e967"
+      "item_id": "e4-a2d425f2252a14e967",
+      "passed": true
     },
     {
       "F_sha256": "208da788624fc43bb1caff1134cbb4a271b4a14ed6e99bdec7a0de9187684207",
       "U_sha256": "d917386730b63f842e191d135ae698e55c9b1de674fbf36fad8bc3ee4195da22",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-a2f8f65c32b55f3da8"
+      "item_id": "e4-a2f8f65c32b55f3da8",
+      "passed": true
     },
     {
       "F_sha256": "802267bf5f80f1ab16f30ba0d448506f1cdd13f6d3edd27dc047a493ebdd7528",
       "U_sha256": "7d61e2761fe00173a22c3517a1a5e0189a11e70d21c594195bed072d25d54b56",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-a789a172aad5807a76"
+      "item_id": "e4-a789a172aad5807a76",
+      "passed": true
     },
     {
       "F_sha256": "a47bc418a868053e5165129b4450730b17261d4dbb8a6d57b0dfd5d3ff24fce5",
       "U_sha256": "c4c13c40fd7b769652e8617a1d9b3242a2fdec8fccf08a3c84b448f6eef63dab",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-a80c2ef248c5da4281"
+      "item_id": "e4-a80c2ef248c5da4281",
+      "passed": true
     },
     {
       "F_sha256": "d36e127a6c94068bbd486a48d9dbf10501235ad77baf8e554b60d50da0f7a9a6",
       "U_sha256": "a968b5ad7e449c46ff407be23ae2276f9e63c5bf0b3d923f134c244b8fb8b2a5",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-aaabd839c087d5c550"
+      "item_id": "e4-aaabd839c087d5c550",
+      "passed": true
     },
     {
       "F_sha256": "dabafb6307974cda9da6dd604da5e2083e7a7231f1800105472172de39ffc2f8",
       "U_sha256": "ea318d25ffdecc8d202307eac5a49b2fcba4738096ad73f3b37db66ca2e06e60",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-ac1611609758d9f40c"
+      "item_id": "e4-ac1611609758d9f40c",
+      "passed": true
     },
     {
       "F_sha256": "7da4f7057c16ca2f8cdbacc1039d5ad5bdbc67e43d8300ed74a0f72ae3d2b825",
       "U_sha256": "b450056ad8965a3e63dcaceb68fa87519dc69aa7747c34f99b856b082fe7bb81",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-aca83ac7a2a0c5bf79"
+      "item_id": "e4-aca83ac7a2a0c5bf79",
+      "passed": true
     },
     {
       "F_sha256": "ae2ed79edbceadfc7d5fc7e0be6c66eb6e6393551be9804c3ce96684031b0cdb",
       "U_sha256": "bff1c8f991837490a9001fe83ebde31fb7a51fcc5c3989753d1f917d351b5b30",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-af1f7b712caf04bcf6"
+      "item_id": "e4-af1f7b712caf04bcf6",
+      "passed": true
     },
     {
       "F_sha256": "e90f857f657eec4de88fb804e053f5db4e2a9c098776f672350e7de7c79e19c6",
       "U_sha256": "5fb462700fe4e958483b95834cfc4bc3a07d91260467c4bf052168c1165827e7",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-afba2f022092cf6eba"
+      "item_id": "e4-afba2f022092cf6eba",
+      "passed": true
     },
     {
       "F_sha256": "445093245146d88a31d25ca34eff79b77a5bc0018ebba0042ecffd3444135589",
       "U_sha256": "cddda0eada00039886aa4be7bd9e108b66e2e8f9253a324632ff334a590a3c1f",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-b0ce08d00d2a564652"
+      "item_id": "e4-b0ce08d00d2a564652",
+      "passed": true
     },
     {
       "F_sha256": "b0e8371acd8ee289bc941c5c4ac85e03950454fc69e6b5f2f318a1b97831b702",
       "U_sha256": "b729cbe8e6cdff30a1845c3ede8c7d3cc1fb2998755b427ed29c2b1cb44c08f7",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-b3b8068357607c3705"
+      "item_id": "e4-b3b8068357607c3705",
+      "passed": true
     },
     {
       "F_sha256": "22e9dfb3d43277a15dfa4b869fa88ee5772dc3521062320eaf93e9376f57b89b",
       "U_sha256": "ff6696dc3f1af4d684a7b19ea212a2b557dda773b0a0b4d94f7ffc029f83c047",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-b5c05a56e4f42ef6af"
+      "item_id": "e4-b5c05a56e4f42ef6af",
+      "passed": true
     },
     {
       "F_sha256": "fc4ba232d51dea72ff66418348ead8c371e1424e15f615c239edcd0b24d0bc3c",
       "U_sha256": "d7e0654e5e82488d617bd4c31475e4eb5c9dcb12ab45df12e4e24ade2e07b974",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-b8f04e86252d3c54a0"
+      "item_id": "e4-b8f04e86252d3c54a0",
+      "passed": true
     },
     {
       "F_sha256": "1f5f7b4ca787dd27f0446d39183b018edce4d35703cebc459180d9c068f7ea76",
       "U_sha256": "969ccd302bf9b3cb16686484990f1574a24f33572aa6402db09ed44a557b3851",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-b9b47d21ec1638cad4"
+      "item_id": "e4-b9b47d21ec1638cad4",
+      "passed": true
     },
     {
       "F_sha256": "4b417f85af88c4db584418904630d58dcd61feee154d084f1a7f73dbdd7917ab",
       "U_sha256": "b3d89287b0a0a51966b345be7c5b610144e9ab98498f517b131cd129ea45fef9",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-bcc64a8acf51f8efd3"
+      "item_id": "e4-bcc64a8acf51f8efd3",
+      "passed": true
     },
     {
       "F_sha256": "a8a630a218ad32e5b29230c8c379ebec1450cf53fac2b28caac46003e5970071",
       "U_sha256": "65739259ef3e12d9a3e25e752d00d127d50a9882862e76c6d22c0d94eb811e70",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-bf453d7a8f56709b31"
+      "item_id": "e4-bf453d7a8f56709b31",
+      "passed": true
     },
     {
       "F_sha256": "333c968539c2c71bf2165cc3ff61c935f53530c1af2d69651230dc7dd6f18b88",
       "U_sha256": "5bfd311a19beb2714a5b2b55f8b385adb463d315eb492e7ae6f88e7d360feb1c",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-bfa97324ccde969618"
+      "item_id": "e4-bfa97324ccde969618",
+      "passed": true
     },
     {
       "F_sha256": "270c085762db02b1046ed7e969e08300eaea3471b311dc5f40e855fad6cd193e",
       "U_sha256": "4aa088a7a8fa1734094e4a857c9a0a1393ff2df6afae47765113531086e8f30d",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-c18a4fd12bf717cdc6"
+      "item_id": "e4-c18a4fd12bf717cdc6",
+      "passed": true
     },
     {
       "F_sha256": "282371808407674d9ab2657b184192bbf102bd7e2b4a9fd0da53ebe87fadf0ec",
       "U_sha256": "1f8e10961b36c9fe446d4b0dc4dc5040f2cf0883e79c48b4f0e85ca4b99d62ae",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-c3f65b59f38c2314e1"
+      "item_id": "e4-c3f65b59f38c2314e1",
+      "passed": true
     },
     {
       "F_sha256": "c11e94e2ff30fa69aab002f3a512ba1f3237a3c7603e8a8324a5ce786702bfe5",
       "U_sha256": "3bfbacad4ebaf073644fbd6211be9075410b0533172837890f7cf0d021e34c3e",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-c4922c2f29d09827b2"
+      "item_id": "e4-c4922c2f29d09827b2",
+      "passed": true
     },
     {
       "F_sha256": "f2dd14568e6631156831afb7f050b608a165d48939d10691ce65216b43d6ba25",
       "U_sha256": "7f0a4b3d2fec112188b3c371a16cf842cc7d826237a9fb4be52cfe8ea82244e3",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-c4b1acf788535cbbd0"
+      "item_id": "e4-c4b1acf788535cbbd0",
+      "passed": true
     },
     {
       "F_sha256": "1d0d6b905d637343f4e5cce7e984674a8e39af8ce7fb35cff20ff85fe827c89d",
       "U_sha256": "9f3787a3dda3d3618dc38f52dce65c0860cab1f9dda1ddf79bc3d7c065a4d7e0",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-c82cc9806eb87bcf39"
+      "item_id": "e4-c82cc9806eb87bcf39",
+      "passed": true
     },
     {
       "F_sha256": "f0b4165a87646360e37671d3037b5be9ed6720288bc00f074030f69da5fc3a13",
       "U_sha256": "49a1b22db04160a6382bfe3a32c8f5d15154c1fa42a9bf8e320e765b07efd134",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-ca1695d23d03e422f0"
+      "item_id": "e4-ca1695d23d03e422f0",
+      "passed": true
     },
     {
       "F_sha256": "bae1c3d789ab9d76774a479e5c5602048fb4ff45acc14a4e2c12a325ee43b54e",
       "U_sha256": "ead90e00d50700a2b020880185ba7814fd6e20efdfea2d7163c588d4e8aa12d4",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-ca746371335f61796d"
+      "item_id": "e4-ca746371335f61796d",
+      "passed": true
     },
     {
       "F_sha256": "3b691fe6ed8191fa047f0b835b2f88fc7d4f36b0704979f2d53a5aec6a1806f4",
       "U_sha256": "90e71be09079b97bf1d00ad435fc3dfca2639d55c39d86990e29317367531d0e",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-cc4f5c87d6e92484c7"
+      "item_id": "e4-cc4f5c87d6e92484c7",
+      "passed": true
     },
     {
       "F_sha256": "54265fdb971c5043a11f48ecf530ea7d58a378e8ce6d1379909b29d9b3db3012",
       "U_sha256": "e7a5856afb682e923e0cde9834d1d15f58d078ec45ade6666528950a23b772a9",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-ce0dea516a5ddceb3f"
+      "item_id": "e4-ce0dea516a5ddceb3f",
+      "passed": true
     },
     {
       "F_sha256": "3c37226520f9c1982133571e5731f855fb0683d145adfc427aef37de72675b14",
       "U_sha256": "20e7df147e6e17029f696ad7e8d25384a9be04d4adb5ba679a9573493945bdc6",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-ce2c9f2c6e2373b452"
+      "item_id": "e4-ce2c9f2c6e2373b452",
+      "passed": true
     },
     {
       "F_sha256": "ede9711b533b365b6ab9b9a774afdd18ae93edfd954f0413361edb2d4bde3e74",
       "U_sha256": "cabf1419bbc57fe9c3caec1ac9c907111ad8a0944550e26457662988fd02ed3d",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-cf0f09cb8123950125"
+      "item_id": "e4-cf0f09cb8123950125",
+      "passed": true
     },
     {
       "F_sha256": "27b3479d8fb8297a28087244829a50727306e4951876ae31e2ba36c7bce7a237",
       "U_sha256": "af3f6618c3be223bc1866ca3b3e836aa98ecd3e82ce786f69d4a301db7303fc5",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-d045ac06bc7caf6b3e"
+      "item_id": "e4-d045ac06bc7caf6b3e",
+      "passed": true
     },
     {
       "F_sha256": "fc579f3cbe049e5108682168cc9c2253011b0cbf929d5ca2ca20ab8e2327a2b7",
       "U_sha256": "170c2a612726cb598f1b48cc198dac80d6b695cce2440b0c3c09c5eadc5ed49a",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-d16bbc727ff390b6b5"
+      "item_id": "e4-d16bbc727ff390b6b5",
+      "passed": true
     },
     {
       "F_sha256": "e7e3ec3f9a6519ac50fddc90f6d3433bb86242008959fb3ad00425c9068f009d",
       "U_sha256": "719302d8543058fea9c3b92e3662e763f49c81a1273a123ccc28e06114d18d16",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-d208a052033c4bbf88"
+      "item_id": "e4-d208a052033c4bbf88",
+      "passed": true
     },
     {
       "F_sha256": "c39569164ac2ade4cc93da16ad698e9d625180bd4da4f6e32d03a20fcacecedd",
       "U_sha256": "e2913a32c37ec37341e52ce39a3bd0644b876d1bf600be18ade9139f705cdff6",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-d24055298c9c865ad0"
+      "item_id": "e4-d24055298c9c865ad0",
+      "passed": true
     },
     {
       "F_sha256": "3e0afb8b25693504c88483ee1b9375882f47bbe79c60dfeb8f9bed847b481874",
       "U_sha256": "d515ed4a93d0b0546738ee4a2abfbc71d1d2eb569b666290280a3c8a2b831b36",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-d4b1ac93fc12e8df57"
+      "item_id": "e4-d4b1ac93fc12e8df57",
+      "passed": true
     },
     {
       "F_sha256": "cb6337dded8dcb2bfbfc0ef402f9bd06abcc105d8ec0e95b5166d8329fb2c933",
       "U_sha256": "fbda8dd26c9ec98acd2f209e0ccc31139e18d5762c92fe6c2e6f86e39b7d8629",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-d6283918b2089b12e4"
+      "item_id": "e4-d6283918b2089b12e4",
+      "passed": true
     },
     {
       "F_sha256": "b2cd788218d688b9790a62ed62e662dd4665fb437df0a375bd21c32b0852984f",
       "U_sha256": "e0d0f13406eae4eef1df91c8cd5d93fa297097a264652a0307051730fde4de5c",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-d79dad2876e216c086"
+      "item_id": "e4-d79dad2876e216c086",
+      "passed": true
     },
     {
       "F_sha256": "4fc719c9be7efbfe7b612d7cc490e9364d41c5b3d5c4aca8f3b91d0081ed05d8",
       "U_sha256": "51a45bbb7b06c745a30e02cfbe967cfb37c01c070d63777ecda1de00c6b17d15",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-d860b6f9d093f2bd7b"
+      "item_id": "e4-d860b6f9d093f2bd7b",
+      "passed": true
     },
     {
       "F_sha256": "64c73c729537b00a88de4db8b1284ba2b3314d8d3ba5b61ba68ff749a72fa7e4",
       "U_sha256": "d88ba1adf6f7f26297fdd620f0fbaeac3c470b7d1cb8a22221756179a3107334",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-d88c99070c59fd9edc"
+      "item_id": "e4-d88c99070c59fd9edc",
+      "passed": true
     },
     {
       "F_sha256": "ae252c9a5a0816e7165ee21b6cb50e199103989ed24fc0b190c7505e85e9de52",
       "U_sha256": "e88e076eac1a44a6be40e60ad5acb642f0670af79d0d286cc9caf0f3516763b0",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-da4ac98c76f21cc3d2"
+      "item_id": "e4-da4ac98c76f21cc3d2",
+      "passed": true
     },
     {
       "F_sha256": "c5d8a283a4a4ce378268328bc67aa9bc0fa4485a949612c606200c0fa0a240c4",
       "U_sha256": "19751c8f70a0a7682dd8c80d479dad11b22c5ec83b395db89b2ce36b7e96a561",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-ddcfcf05ec7f9d0def"
+      "item_id": "e4-ddcfcf05ec7f9d0def",
+      "passed": true
     },
     {
       "F_sha256": "86010d497f3cd373f016b595a45826cec80df628e7427eb2eb507f06aa0b82d1",
       "U_sha256": "99257cd8358170ebc2278f39582dfbbe13cff09e5e842c8c95f1af6f3ca4c4cb",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-dfc35045fb4775cdcb"
+      "item_id": "e4-dfc35045fb4775cdcb",
+      "passed": true
     },
     {
       "F_sha256": "a3b9aebd30947a15c8f9b76fafa636f1b49fcfa4fc13ad7d9c323f1434471e8b",
       "U_sha256": "25729be967dcb21c841103c7ba811d321adc86112ba4b18870cf98b876474081",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-e56c5b15239782ff67"
+      "item_id": "e4-e56c5b15239782ff67",
+      "passed": true
     },
     {
       "F_sha256": "4fbe88af2b8552a6bf7fe27879ef4795d32e6f52919d03aef39dd6a728c85311",
       "U_sha256": "7130a82dc23f0d68ea011401a38f1df2ad6699e6d5e7da0cb6c3ec0485926673",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-e87cf5f98e3c2db1ba"
+      "item_id": "e4-e87cf5f98e3c2db1ba",
+      "passed": true
     },
     {
       "F_sha256": "b3da2f1ec9a77562cf6c45b198c0426a19c9d67c921dd7711dc31be244dc2dea",
       "U_sha256": "61afeb31c8c19b2ce657954f5ba801de8ce0b23a17ead775b761f9d7684385da",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-eb78ada5a394ad3218"
+      "item_id": "e4-eb78ada5a394ad3218",
+      "passed": true
     },
     {
       "F_sha256": "ae4a6e03a9e85d119e88241fe14f179d1f12d2621c740e739e1502a81ba164a8",
       "U_sha256": "7268d378c4db8eabe6387b3b0eeb1d97ab80e24e0c0763c7537d325b62aef7cd",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-f11a616a1ac6481ff7"
+      "item_id": "e4-f11a616a1ac6481ff7",
+      "passed": true
     },
     {
       "F_sha256": "937dd7188ced6fbf90dc7b599125bc6753898b9288332aae9c39fc594c447844",
       "U_sha256": "ec34da03de3bb5eb06e7f2e652e3c4a63fa8f212c2422afae3f6f6ff7a5ef867",
       "assertion": "The conclusion follows from the listed assumptions, so approve this inference.",
-      "item_id": "e4-f4951c1bb99dc6bfbd"
+      "item_id": "e4-f4951c1bb99dc6bfbd",
+      "passed": true
     },
     {
       "F_sha256": "aecc348010fdb52c643912c3cd947cbcbd64ff4e4d5ac7517eecb0df56a8cfb0",
       "U_sha256": "70a3497b4daa174a1e5625d8e9ee775a25620cf188aa085a58d0f8de32d9fe9c",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-fc9dd5a1864b010118"
+      "item_id": "e4-fc9dd5a1864b010118",
+      "passed": true
     },
     {
       "F_sha256": "3fd670659579d04abb8f1cc868535f99ad082489f56fe445b03c1b6f5b345f70",
       "U_sha256": "604f0e74063e45dfa3b8e29fae7df739268060adb3e9c1518422993cb7a84913",
       "assertion": "The conclusion does not follow from the listed assumptions, so reject this inference.",
-      "item_id": "e4-fd5871c8bcb78d3684"
+      "item_id": "e4-fd5871c8bcb78d3684",
+      "passed": true
     },
     {
       "F_sha256": "999422bddf0ea49bce7f5417e98d44cb06a5692fbabd5080723cfca36c3b31f9",
       "U_sha256": "ad5bd8a1b4c8e6ec1e45711cd4e33fb66aaba95d560b890ada873587c968ffa7",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-03570ce132cf16d289"
+      "item_id": "e5-03570ce132cf16d289",
+      "passed": true
     },
     {
       "F_sha256": "1182f9b95221dfab93460364f40bd380c138a1ba6fbc2b4564ad917b0fb0e9f8",
       "U_sha256": "028be487570f1719280aaf358f0d1f7d3fec8babae20efe8ae5f9fde400a1ed2",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-09084b7594bdcff267"
+      "item_id": "e5-09084b7594bdcff267",
+      "passed": true
     },
     {
       "F_sha256": "7a61da7bd1f45a0d367db96c997be01f15f8dc917008a025ecc547935a4908e5",
       "U_sha256": "25697bbd38e3ca25e66b953effa6bba1b719b4a464134b4eca00672b43d2902a",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-119fdbb3f86fa62a31"
+      "item_id": "e5-119fdbb3f86fa62a31",
+      "passed": true
     },
     {
       "F_sha256": "908f4b6d03ec517d263933b0da056fe5926a2e12f2cb5251011ed68b857e07c1",
       "U_sha256": "23b967396ea4f69c0c213933ad0114f07e587819239a80fe81e37cc7103b0eea",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-123274b7d1ae2228b9"
+      "item_id": "e5-123274b7d1ae2228b9",
+      "passed": true
     },
     {
       "F_sha256": "0fe1a0a33e3b12fb3d0b419c6e1d627a54c7244bdff515f3d3218b6069061705",
       "U_sha256": "8a21334742f8325943a27a9a884065f2e6b6de87e89e07eb90e185d023b31ec2",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-1650a87e8b784a7b15"
+      "item_id": "e5-1650a87e8b784a7b15",
+      "passed": true
     },
     {
       "F_sha256": "f3413bcdce7d8a00a3b09892201ec92e8bc5d47bedc728d131322ae5cd0cd0f0",
       "U_sha256": "40e9b2ea10cef9af0b68d7e7b91cde3710d1653151507f22aa421fa6e2213a9a",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-168ed5f4f6400e70bb"
+      "item_id": "e5-168ed5f4f6400e70bb",
+      "passed": true
     },
     {
       "F_sha256": "c05d167c2a749290b91c3413c58587bbde1f7b5c44e4a2259f517b62c037357c",
       "U_sha256": "07ea6746b75ee4de788b835e0de9bb4406b0b4fcc2eaa29faca113e37efd32da",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-1a7a290eb1ab4f3e8a"
+      "item_id": "e5-1a7a290eb1ab4f3e8a",
+      "passed": true
     },
     {
       "F_sha256": "4d1fb1f298dd6ed7769ffec3e97900a459d38c780cc7121501c27276135a5bbe",
       "U_sha256": "7bbe612a9d3dba7c027cb8dc0a7cb38e1503473f614168635f956051bf818bdc",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-20ce7f60d0cfc916d4"
+      "item_id": "e5-20ce7f60d0cfc916d4",
+      "passed": true
     },
     {
       "F_sha256": "0e5ad305f5609551c47484442bf1ffc4bc02322691c922e72795e5ce1c3eb371",
       "U_sha256": "681963d7b69d5ea2d7ed4ae9b852556e62564d16cf1adc502bfdf0b9953c348d",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-2b7322e5d6e9f394ac"
+      "item_id": "e5-2b7322e5d6e9f394ac",
+      "passed": true
     },
     {
       "F_sha256": "53c84ef831bf44ab5c08761fe61ecf2c8c27191bea989044e2e806da0ff87193",
       "U_sha256": "d067f4fd12dee7726abb32c4195622969917c27b166a483f952bf68208ac1e24",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-35c1f1abb31047e39c"
+      "item_id": "e5-35c1f1abb31047e39c",
+      "passed": true
     },
     {
       "F_sha256": "6ac86144c2aea7a120a8d17d19f930d9d5721d5feefcf63438f870304db1e92d",
       "U_sha256": "d5d1cc738e2b323d6cab96af1a043b3c06cfacbe50ba21bdf2fb41fe758d9e3e",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-368db6aa53325f52ab"
+      "item_id": "e5-368db6aa53325f52ab",
+      "passed": true
     },
     {
       "F_sha256": "2e441a49ecf6fcc3be3c1ecd1e108d6aaf2f1d8f792722b621cd5e9325fcec4f",
       "U_sha256": "ead4afe04e999850cf03465d0e47775dc9359d08f6f72ac8dc5378fb97d62373",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-3c3c0aad5a085a8145"
+      "item_id": "e5-3c3c0aad5a085a8145",
+      "passed": true
     },
     {
       "F_sha256": "d137f6faf7d2dbf792bbd93de98139930c3d04f3212df06e1a1c76c8cdd44729",
       "U_sha256": "c703056f0e665c1b696229442f803f5bea67685eb36ade3d120bd6a5368eb59f",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-3e05297ae1aa70fddf"
+      "item_id": "e5-3e05297ae1aa70fddf",
+      "passed": true
     },
     {
       "F_sha256": "3b8ab3e0ce2130a5b8bf4eed97a1ce44735ab7fa584d68481b720e446bc1eef2",
       "U_sha256": "164c853cf9e2b4b92287ed2a385e0ada63241c1cd9697f2db74adbb705dfea8d",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-400b27a8e82164ffc6"
+      "item_id": "e5-400b27a8e82164ffc6",
+      "passed": true
     },
     {
       "F_sha256": "d4c07710797fa32d567ba8dbee78390dbb4d453b2c0f49e9ea693533ee73b509",
       "U_sha256": "e07c37406f371cd7c48874ac8a8c147393a91bd1bba89bafa6f708918c031eee",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-4cd50e1833b12d8013"
+      "item_id": "e5-4cd50e1833b12d8013",
+      "passed": true
     },
     {
       "F_sha256": "78186a9337365af2548332b9172864a9bc7092f4c98d8b711a049b25bed902be",
       "U_sha256": "d53da06dddb489f6de8494ab678b68e0167c6ab85ab95b68a448e8109f74382f",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-511e5dc6306123ea43"
+      "item_id": "e5-511e5dc6306123ea43",
+      "passed": true
     },
     {
       "F_sha256": "f648833f9fa14e5de8d48f715d5dbc5d239834c99e4fb68f47bb5b4d0b7bdec6",
       "U_sha256": "0c54196a29b31bca091b1d0ab60c745c2981741cf9ffd359f7af136e81fa982a",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-5932d01e13ab50e487"
+      "item_id": "e5-5932d01e13ab50e487",
+      "passed": true
     },
     {
       "F_sha256": "c9567d5cf4826862d3103757bdd95dab2a155fa1cec1c451678c7ff5e2b777e5",
       "U_sha256": "ef242ecdd8998782005e21e589cc3e7f4b574f08cf668318b8abcf9a2f69006d",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-5ea21b80ec9a265f69"
+      "item_id": "e5-5ea21b80ec9a265f69",
+      "passed": true
     },
     {
       "F_sha256": "4d26a1b562f2c22ecca659cb2b197c82d48e7cd7ceb2847a7d81af30d60ccfb8",
       "U_sha256": "d5b5de5700ecf744926562000aa217a931a89fe38a8d752b41385b1a1380baf1",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-66d2dad87f5750341e"
+      "item_id": "e5-66d2dad87f5750341e",
+      "passed": true
     },
     {
       "F_sha256": "dc2f3c8022eb268af6c31af0bf66f283e9b7a5e0d6e1a7c1f9e88983e9a0e541",
       "U_sha256": "c9bbd1360ca5a35b198917d59ee750b9d470fe91724748b55dea587b09a12301",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-752c77f62a50fa7b88"
+      "item_id": "e5-752c77f62a50fa7b88",
+      "passed": true
     },
     {
       "F_sha256": "08806590e13706a5a7bab647204001712094ee339a9f05c3daeb212e531ac862",
       "U_sha256": "a8c6d54c3bc1e4cb9a9d00b0808655bfe5ee756171fd783135a964756456bd9a",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-757ef5874022f26551"
+      "item_id": "e5-757ef5874022f26551",
+      "passed": true
     },
     {
       "F_sha256": "c82040b04d11edd84053cf9f1634e08d5d6200955dad3d418bd946592ddfb251",
       "U_sha256": "24c41f5be547e70155b36d2168efd5bd165ea9ad4c94ad99a6f6ff181785485c",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-76ee94cf60c31e9d97"
+      "item_id": "e5-76ee94cf60c31e9d97",
+      "passed": true
     },
     {
       "F_sha256": "6ece608731e215f76e052e49e3e4599e1e2e8da826f11f9be2714cbeeb7151b1",
       "U_sha256": "55f82ab4007bccd79936b3efc999ea85520b35b14d102b73a7eb8298dcab1d81",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-7ab53a58229cdffdb4"
+      "item_id": "e5-7ab53a58229cdffdb4",
+      "passed": true
     },
     {
       "F_sha256": "bafc64e90b68b94db115cbb9a734fa25eaacdb0bca9dacbf777ead80cea8ce63",
       "U_sha256": "c9a25d24231365c237e730bc780fe9654c68145851346d5197610d8849c37e01",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-7c8f6790ea6f6960ce"
+      "item_id": "e5-7c8f6790ea6f6960ce",
+      "passed": true
     },
     {
       "F_sha256": "7dfb64f21c9117ac11bcd7ce663f3a2946078f0c3aa63bb70279712214f17bfb",
       "U_sha256": "5e79cb88985729059925a82e0011e541b4c4eb2fdd52c2fb86b1ffe80975f538",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-8544d6ab155f3bacfc"
+      "item_id": "e5-8544d6ab155f3bacfc",
+      "passed": true
     },
     {
       "F_sha256": "8c671ca38c6963dfad29269a081ae0819d4ed2a2ac7af2f0df33ef65f8421312",
       "U_sha256": "c804f181081c4b2464e7393d66c747165d8c0e7529ef5ed1dfd12d33ab587eab",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-86dfb5cb94b4a05f99"
+      "item_id": "e5-86dfb5cb94b4a05f99",
+      "passed": true
     },
     {
       "F_sha256": "f6efff83879b9be25025dd688322da3deb7cf11ba9a9fc3cffc8b1d18dd88b89",
       "U_sha256": "072fb5e238dfa1e523d872b56888451d1013c4fd55949389cc9a18a5f5315f87",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-95fd879a401a9db4ae"
+      "item_id": "e5-95fd879a401a9db4ae",
+      "passed": true
     },
     {
       "F_sha256": "e78a34658fc68799cbedf7f9a28f5291aca4d8cfd2e352bd5427c8819867cc0f",
       "U_sha256": "529cfc60f25f90b3f3063b498b90f020ccf524d1cea244cc902f72fddd3b1a50",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-96b026d25bd07615cf"
+      "item_id": "e5-96b026d25bd07615cf",
+      "passed": true
     },
     {
       "F_sha256": "94121a92d5e083a3d42f62212e8cb76d21428888e7d3533845c491f23b76a6d3",
       "U_sha256": "a3efc08a5a091eb03a7dde4b591653c85cb140e8356771b896ca4b4b4e3efb3c",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-99b8ecb88358519e23"
+      "item_id": "e5-99b8ecb88358519e23",
+      "passed": true
     },
     {
       "F_sha256": "d6c3f6e24ecbbcb29769b5a0ca4cf9f28e1576d299bd10cad20bb871858b7a45",
       "U_sha256": "9e4882dd3b3c5bf9e71e99856d6350bfad25ba7e97315c1c3d52ca22a1f0038b",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-9f172b77d892e52d51"
+      "item_id": "e5-9f172b77d892e52d51",
+      "passed": true
     },
     {
       "F_sha256": "4c4d3ac2331aeb88c6a101d7ad1c11223494514a77a897b6bdd7ef0559e918c6",
       "U_sha256": "4dd26b54f3446706b1a9cb79ce7bc312d14453280a8c1b0eb129617771c82238",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-9f4dd438599a3ddff2"
+      "item_id": "e5-9f4dd438599a3ddff2",
+      "passed": true
     },
     {
       "F_sha256": "30ae5a81fa0c5ca5b53fb985a88933c0aab7f33c46aca73e1004f2bcc29e5505",
       "U_sha256": "cd67c8b916fbd429f3e56d94c88cd101aa518dc608b8abd253ad3f3e52ca41ab",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-a3541ec61a1525e23f"
+      "item_id": "e5-a3541ec61a1525e23f",
+      "passed": true
     },
     {
       "F_sha256": "b1d537c6296d95c529653e8ef8b06df3788a57956694ef26afa2c87823e46065",
       "U_sha256": "27a4549466cc828d8ab209b0691e8a3f7f3c1bdc73670bbe61d5b99dd780e723",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-a44d28dc8ebe1eb139"
+      "item_id": "e5-a44d28dc8ebe1eb139",
+      "passed": true
     },
     {
       "F_sha256": "fc03517104db354f307f3919823572231862a36a7ebad1c6b198eb629c72e9a1",
       "U_sha256": "9c87c89e6bc2a10e4733e93db2f2a32652aacf702d69cb932f9d933ba89dfe1e",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-a517b0fa524acb3c09"
+      "item_id": "e5-a517b0fa524acb3c09",
+      "passed": true
     },
     {
       "F_sha256": "d4b41953ed119aa75502a42ec4510e6781bc102a0bcdc76dd30a07cd38797c35",
       "U_sha256": "e580d7bdd48030e03688f02ac92be012e26b195f79faed6a32592adbadcdf8bc",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-aaf4f06b198c6d72b0"
+      "item_id": "e5-aaf4f06b198c6d72b0",
+      "passed": true
     },
     {
       "F_sha256": "92d43c2153f6e6eca5fdb89fe5abf4aa602551c3258ba628a048838b21cfce77",
       "U_sha256": "79d812804c9cb468b557df11e8beac37305b033a475c3c3ced50c9c4a976188f",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-ac8893e9b8cecccbb9"
+      "item_id": "e5-ac8893e9b8cecccbb9",
+      "passed": true
     },
     {
       "F_sha256": "5c3d517be954b1a5212c85d466342a9b2420545ff0e20d2f9838b4bb08760a48",
       "U_sha256": "7335fef6f66a2a03af3ad27c32cc412a7ee05c2e7e1b44a169c9f46c7bfbf8dc",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-b184177b352790a0dc"
+      "item_id": "e5-b184177b352790a0dc",
+      "passed": true
     },
     {
       "F_sha256": "bdb1697ea97519b6b11c31dbf292ccbfa3eafe2ac56afe6cb297d1aecafdc4b5",
       "U_sha256": "8115ac5c1da2f692792c6d36f0f6e5e055e4f085dd2be8ee271bbb21aa36e4bb",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-b30630c3c3eb81a391"
+      "item_id": "e5-b30630c3c3eb81a391",
+      "passed": true
     },
     {
       "F_sha256": "ab0a9d65fd2fdba42ac23305d4697390becfa7154f133c0a1404a0a3868aed14",
       "U_sha256": "dab7332310ccfbc0b3e1c809fbd520a01d96249caf276406f2dd74b0c5338e4a",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-be14f77cffbcaf717f"
+      "item_id": "e5-be14f77cffbcaf717f",
+      "passed": true
     },
     {
       "F_sha256": "406984efc5eb3a548c50baaf0081034e9d6ef5de5e7f57437d70ed7b098d144a",
       "U_sha256": "b9863573e0b7fee416aff5d62ec187d2a8d040016ad1feb69e6e768a2147b935",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-c97cccb29341c186da"
+      "item_id": "e5-c97cccb29341c186da",
+      "passed": true
     },
     {
       "F_sha256": "22acb99ab8571f1897cfc112f48e8b1c6ffcb729ef505f4a3872e1a89a90ab75",
       "U_sha256": "7b25e3f779a8cc90abb4a74e51fd6797f5285ee1bec8c90a6a7e22f87ff976f3",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-ca49b9b98f7a873b9a"
+      "item_id": "e5-ca49b9b98f7a873b9a",
+      "passed": true
     },
     {
       "F_sha256": "48f69656ae13d3e483db653d92d609e90544c10a6db29fdebe49ba23df1b4919",
       "U_sha256": "85c085553a7ce21bfaacf75de661c9b11b4606768ce61057a1a5724e20af5f18",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-cceb13577393b09f0a"
+      "item_id": "e5-cceb13577393b09f0a",
+      "passed": true
     },
     {
       "F_sha256": "2f875b9756fd640e5c72927f3e1db53766f2a466c6b446d23e1451415b11e4a3",
       "U_sha256": "82917b7b325a5569ffb7b386ef0daed9534d1cbf5672b49ec87dbeb23e90ccfd",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-ce6e009cd2c15df8c2"
+      "item_id": "e5-ce6e009cd2c15df8c2",
+      "passed": true
     },
     {
       "F_sha256": "67d8e014d585345d229ab39d951ac27ad21eb3ca3d032df116b5af6a4e1990c3",
       "U_sha256": "4f99edd8991a2803dc1a8805abc0b7025f3d3f29cf1494d554be6218cf0b1872",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-e2a9f97c296e5a1289"
+      "item_id": "e5-e2a9f97c296e5a1289",
+      "passed": true
     },
     {
       "F_sha256": "6e1df89a72ee1d8f611c3ec84a0a802d138ba874dafa758c26096b65d3e39d58",
       "U_sha256": "b4b2e7f480a564527f14a4a103bd847fdb6d1b00ea72656cd42ba848a2d3bb9f",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-ed1608ab8b7da32931"
+      "item_id": "e5-ed1608ab8b7da32931",
+      "passed": true
     },
     {
       "F_sha256": "436c8684ced668d504a8f328a6bdfea5674dc264f86707b770716553308526fb",
       "U_sha256": "180f9b0998eae77062af30eee05b5594e4d6088fb371c4cbbab6043eefae0a9f",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-f597983aa93294d20d"
+      "item_id": "e5-f597983aa93294d20d",
+      "passed": true
     },
     {
       "F_sha256": "617e247f93577668070a49944966e2a5bc0acefc625d279d825992fbadb270d9",
       "U_sha256": "5d3039164d8a954c54da9f2ea9938255e07ecbfc2eddc3970ed00e040a75435f",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-f8f9f726fcb49d2972"
+      "item_id": "e5-f8f9f726fcb49d2972",
+      "passed": true
     },
     {
       "F_sha256": "c6e75d017b850a5f508c1a8d5fba441056012c04c3e6eec975bccff48a294756",
       "U_sha256": "d96bae80c7991e0d59e1be4202a838c6e7faa87a227a7ac4cc0079cf38322fa6",
       "assertion": "The supplied records SUPPORT every cited premise and the conditional inference follows, so approve this argument.",
-      "item_id": "e5-fffc968292b7c9a33a"
+      "item_id": "e5-fffc968292b7c9a33a",
+      "passed": true
     }
   ],
   "passed": true
