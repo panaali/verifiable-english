@@ -1,0 +1,20 @@
+{
+  "action": "limited shortcut probe passed; no semantic-leakage guarantee",
+  "balanced_accuracy": 0.5,
+  "features": [
+    "bytes",
+    "word_count",
+    "glossary_count",
+    "record_count",
+    "node_count",
+    "premise_count",
+    "argument_length",
+    "claim_length",
+    "record_length",
+    "root_position"
+  ],
+  "fit_scope": "dev only; leave-family-out; count/position/length features, no semantics",
+  "freeze_sha256": "7bf431eff3c307838e9ba8b479d084ac1c1900dc90871ec0944af64b02a346b2",
+  "passed": true,
+  "threshold": 0.6
+}

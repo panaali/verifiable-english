@@ -1,0 +1,9 @@
+{
+  "executable_sha256": "dd56738076cb2852caaa886a4d5abdd6a6024b96b52dd5ffae1d3585d7d1fe4b",
+  "freeze_sha256": "7bf431eff3c307838e9ba8b479d084ac1c1900dc90871ec0944af64b02a346b2",
+  "generation_calls": 0,
+  "items": 84,
+  "ledger_sha256": "ad1e21554b2d68bb4c3915c7c4a3026e11026be5c23c087a8d702a938c69172d",
+  "passed": true,
+  "queries": 4760
+}

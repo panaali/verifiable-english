@@ -1,0 +1,32 @@
+{
+  "broader_p1_regression": {
+    "failed": 1,
+    "failure": "tests/test_p1_amendment14.py::test_recover_and_reconstruct_every_retained_scored_call_without_dispatch",
+    "passed": 35,
+    "reason": "Existing retained-ledger fixture: spent 4.84262062420 differs from amendment15 receipt 3.64271861740; P1 sources and artifacts unchanged."
+  },
+  "engineering_time": "Not timed independently; no human review time claimed. Future reviewer minutes are mandatory in review ledger.",
+  "material_status": "84 reference graphs plus separate-process offline drafts; not independently paraphrased or reviewed",
+  "p5_tests": {
+    "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run pytest -q tests/test_p5.py",
+    "failed": 0,
+    "passed": 17
+  },
+  "paid_generation_calls": 0,
+  "paid_usd": "0",
+  "probe_dev_scored_run": false,
+  "remaining": [
+    "paid Qwen independent paraphrases",
+    "two independent reviews of all 84 slots",
+    "aggregate external timestamp",
+    "provider smoke gates",
+    "scheduled dev feasibility and fidelity gate"
+  ],
+  "tokenizer": {
+    "common_fixtures": 84,
+    "common_packet_max": 2044,
+    "common_packet_min": 1651,
+    "passed": true,
+    "stage_fixtures": 1764
+  }
+}

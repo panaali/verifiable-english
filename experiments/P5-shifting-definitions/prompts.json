@@ -1,0 +1,99 @@
+{
+  "roles": {
+    "S_author": "Seek errors. Produce a claim/premise/use table from the common packet.",
+    "S_critic": "Independently audit the authored table against source records, seeking errors.",
+    "S_defender": "Independently revise the audit against the same records; seek errors.",
+    "VE_author": "Defend the proposed argument, faithfully formalising uses and premises. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+    "VE_critic": "Challenge source alignment or an omitted leaf; propose splits if divergent uses are cited. Return JSON {\"audit\":\"...\",\"queries\":[],\"splits\":[]}. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+    "VE_defender": "Answer the critic, re-author affected uses and re-certify in a complete artifact. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total.",
+    "X_author": "Defend the proposed argument. Return JSON {\"commitment\":\"fixed meanings, at most 512 tokens\",\"argument\":\"defense\"}.",
+    "X_critic": "Seek source-grounded flaws across branches. Return JSON {\"questions\":[up to three self-contained questions, each <=256 tokens]}.",
+    "answer": "Answer only this question using the unchanged packet and frozen commitment. You are an isolated proposer copy.",
+    "followup": "Inspect the initial questions and answers for inconsistency. Return JSON {\"question\":\"one self-contained adaptive question <=256 tokens, or empty\"}. Do not transmit other copies\u2019 full answers.",
+    "judge": "Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence.",
+    "paraphrase": "Independently rewrite the proposed argument and node texts into ordinary prose. Preserve substantive content and any inconsistency; do not repair it. Return JSON {\"texts\":{\"node_id\":\"rewritten node text\"},\"argument\":\"rewritten argument\"}. Include every existing node ID exactly once. No additional fields.",
+    "repair": "Repair only the diagnosed syntax/coverage failures. One repair is allowed; retain the original root. Return JSON with environment (VE core@0 environment), claims [{id,source: strict VE}], edges [{id,premises,conclusion}], root, alignment {node_id:[record_ids]}, queries:[], splits:[]. Include every shared node and all six declared premises. Author your own formalisation; no undeclared bridge may become a free premise. Local certificate search is charged. For a split, return a complete new environment and all affected claims, and splits [{old_symbol,new_symbols,affected_ids,divergent_uses}]. All old certificates are voided. Queries may use compare or validate_attack with tool, claim_id, environment_id, committed_source, record_id, rival_source_text (exact record), rival_ve. At most four queries and four splits total."
+  },
+  "schema": {
+    "additionalProperties": false,
+    "properties": {
+      "explanation": {
+        "type": "string"
+      },
+      "issue_type": {
+        "enum": [
+          "shift",
+          "smuggle",
+          "none",
+          "unknown"
+        ],
+        "type": "string"
+      },
+      "locations": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 2,
+        "type": "array"
+      },
+      "verdict": {
+        "enum": [
+          "approve",
+          "reject",
+          "unknown"
+        ],
+        "type": "string"
+      }
+    },
+    "required": [
+      "verdict",
+      "issue_type",
+      "locations",
+      "explanation"
+    ],
+    "type": "object"
+  },
+  "stages": {
+    "answer": [
+      3200,
+      512
+    ],
+    "author": [
+      3000,
+      1024
+    ],
+    "critic": [
+      5500,
+      1024
+    ],
+    "defender": [
+      7000,
+      1024
+    ],
+    "followup": [
+      7500,
+      256
+    ],
+    "followup_answer": [
+      3200,
+      512
+    ],
+    "judge": [
+      10000,
+      1024
+    ],
+    "lone": [
+      7500,
+      1024
+    ],
+    "paraphrase": [
+      4096,
+      1024
+    ],
+    "repair": [
+      6000,
+      1024
+    ]
+  },
+  "system": "Audit the ORIGINAL justification from the dossier. Glossary senses are possibilities; records anchor uses. Approve only a supported original root. Reject unsupported justification without asserting the root false. Unknown is allowed. Cite at most two node IDs. A conditional proof or DIFFERENT does not establish source fidelity."
+}

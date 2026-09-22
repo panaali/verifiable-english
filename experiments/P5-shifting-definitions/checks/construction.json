@@ -1,0 +1,12 @@
+{
+  "construction_ledger_entries": 5,
+  "failed_candidates": 3,
+  "families": 28,
+  "freeze_sha256": "7bf431eff3c307838e9ba8b479d084ac1c1900dc90871ec0944af64b02a346b2",
+  "independent_prose_ready": false,
+  "method": "pairwise distinct directed degree/depth invariants; sufficient non-isomorphism test",
+  "paid_calls": 0,
+  "passed": true,
+  "slots": 84,
+  "status": "BUILT_REFERENCE_AND_OFFLINE_DRAFT_REVIEW_BLOCKED"
+}

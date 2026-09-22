@@ -1,0 +1,11 @@
+{
+  "adaptive_followups": 1,
+  "freeze_sha256": "7bf431eff3c307838e9ba8b479d084ac1c1900dc90871ec0944af64b02a346b2",
+  "fresh_context_fields": [
+    "packet",
+    "commitment",
+    "one_question"
+  ],
+  "judges_structured": true,
+  "passed": true
+}
