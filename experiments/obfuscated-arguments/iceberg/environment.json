@@ -1,0 +1,76 @@
+{
+  "language": "ve.core@0",
+  "profile": "relational-fol@0",
+  "spec_revision": "ve-v0-draft-2026-09-20",
+  "vocabulary": {
+    "sorts": {
+      "tub": {
+        "description": "A complete tub/process case with a fixed nonnegative tolerance."
+      }
+    },
+    "predicates": {
+      "admissible": {
+        "arguments": [
+          "tub"
+        ],
+        "description": "Satisfies the Tub and Process premises in SPEC.md; arithmetic opaque to VE."
+      },
+      "water": {
+        "arguments": [
+          "tub"
+        ],
+        "description": "Water material premise holds; arithmetic opaque to VE."
+      },
+      "air": {
+        "arguments": [
+          "tub"
+        ],
+        "description": "Air endpoint premise holds; arithmetic opaque to VE."
+      },
+      "metal": {
+        "arguments": [
+          "tub"
+        ],
+        "description": "Positive submerged metal volume and greater density premises hold; arithmetic opaque to VE."
+      },
+      "bounded": {
+        "arguments": [
+          "tub"
+        ],
+        "description": "Nonnegative tolerance and air-mass bound hold; arithmetic opaque to VE."
+      },
+      "stable": {
+        "arguments": [
+          "tub"
+        ],
+        "description": "Final height is Within the fixed nonnegative tolerance; arithmetic opaque to VE."
+      },
+      "lower": {
+        "arguments": [
+          "tub"
+        ],
+        "description": "Final height is strictly below the rim; comparison opaque to relational VE."
+      },
+      "dry": {
+        "arguments": [
+          "tub"
+        ],
+        "description": "Cumulative spill is zero (not that the tub contains no water)."
+      }
+    },
+    "constants": {
+      "w": {
+        "sort": "tub",
+        "description": "The W case."
+      },
+      "a": {
+        "sort": "tub",
+        "description": "The A case."
+      },
+      "m": {
+        "sort": "tub",
+        "description": "The M case."
+      }
+    }
+  }
+}

@@ -3,6 +3,13 @@
 Assessment date: 2026-09-22. This is a source inspection and a small Lean experiment,
 not a complete formalization or a measured estimate of full development cost.
 
+## Completed follow-up
+
+[Package 3b: ICEBERG](iceberg/README.md) now supplies a direct conditional root
+proof, explicit physical-model checklist, rational approximation contract, serial
+whole-project build, qualitative VE skeleton, and measured phase cost ledger.
+The feasibility-only assessment below is retained as the original starting point.
+
 ## Outcome
 
 The mathematical cores of the iceberg and wrapping-ball examples look suitable for

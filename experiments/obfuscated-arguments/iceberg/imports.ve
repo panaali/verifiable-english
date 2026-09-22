@@ -1,0 +1,4 @@
+for every tub x0, (if ((x0 is admissible) and (x0 is water)), then (x0 is stable)).
+for every tub x0, (if ((x0 is admissible) and ((x0 is air) and (x0 is bounded))), then (x0 is stable)).
+for every tub x0, (if ((x0 is admissible) and (x0 is metal)), then (x0 is lower)).
+for every tub x0, (if (x0 is admissible), then (x0 is dry)).
