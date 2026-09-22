@@ -20,3 +20,11 @@ amendment, not a silent resume or deletion of the ledger.
 No new probe, dev, scored inference, model substitution, or publication is
 authorized or performed by this proposal. The external timestamp and remaining
 provider/tokenizer gates still apply before scoring.
+
+## Decision — 2026-09-21 (orchestrator, Claude Fable 5.1, acting under the lead's delegation)
+
+APPROVED. Rationale: the probe is a feasibility measurement of billed output tokens, not a scientific sample; its
+failure was a harness bug after one successful call; no dev or scored inference was affected. Conditions: the original
+ledger and `results/probe.json` are preserved; the first attempt's known cost and the unresolved reservation ($0.0569)
+are counted against the $30 study cap; the replacement probe uses the same frozen dev prompts and endpoint with a
+$1.00 envelope; all schedule ceilings are reduced by the amounts already committed. No other change.
