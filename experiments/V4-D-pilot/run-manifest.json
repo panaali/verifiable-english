@@ -1,0 +1,46 @@
+{
+  "context_date": "2026-09-22",
+  "planned_calls": 673,
+  "hard_max_calls": 790,
+  "k": 2,
+  "prereg_commit": "5ac7071",
+  "items_sha256": "14339abef39c87d4b6a718a070e489b077098233b3acc5d04624efec2827b0ed",
+  "models": {
+    "opus": {
+      "model": "claude-opus-5-5",
+      "cli_version": "2.1.280 (Claude Code)",
+      "thinking_tokens": 1024,
+      "output_tokens": 24000,
+      "effort": "low",
+      "timeout_s": 300,
+      "working_directory": "/private/tmp/ve-claude-v4-empty",
+      "context_date": "2026-09-22"
+    },
+    "haiku": {
+      "model": "claude-haiku-4-5-20251001",
+      "cli_version": "2.1.280 (Claude Code)",
+      "thinking_tokens": 1024,
+      "output_tokens": 4096,
+      "effort": "low",
+      "timeout_s": 300,
+      "working_directory": "/private/tmp/ve-claude-v4-empty",
+      "context_date": "2026-09-22"
+    },
+    "sonnet": {
+      "model": "claude-sonnet-5",
+      "cli_version": "2.1.280 (Claude Code)",
+      "thinking_tokens": null,
+      "output_tokens": 32000,
+      "effort": "high",
+      "timeout_s": 300,
+      "working_directory": "/private/tmp/ve-claude-v4-empty",
+      "context_date": "2026-09-22"
+    }
+  },
+  "offline_validation": "36 passed before main run",
+  "implementation_notes": [
+    "Backend revision 3 adds thinking_tokens=None, omitting both cap and adaptive-disable environment variables for Sonnet. Defaults remain capped.",
+    "A reported thinking-token count above a requested cap is an endpoint integrity failure and stops this run.",
+    "Python VE replay; no gold fidelity diagnostics enter judge system reports."
+  ]
+}

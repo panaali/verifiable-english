@@ -1,0 +1,17 @@
+{
+  "prereg_commit": "5ac7071693959761f195c06ada04c67b18603442",
+  "prereg_sha256": "ec458f28081e7218cbbc7026ea2b8bc9ffa637d81ee3a1b67cb0e987f9a9acad",
+  "ots_sha256": "3b18b3024cd3fed25951d9d3ffa460a2b12d8baa5761d54113d0259ca8123de7",
+  "controls": {
+    "model": "claude-opus-5-5",
+    "cli_version": "2.1.280 (Claude Code)",
+    "thinking_tokens": 1024,
+    "output_tokens": 24000,
+    "effort": "low",
+    "timeout_s": 300,
+    "working_directory": "/private/tmp/ve-claude-v4-empty",
+    "context_date": "2026-09-22"
+  },
+  "planned_calls": 673,
+  "hard_max_calls": 790
+}

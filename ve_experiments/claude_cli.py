@@ -49,7 +49,7 @@ class EndpointError(RuntimeError):
 class Controls:
     model: str = MODELS["opus"]
     cli_version: str = "2.1.280 (Claude Code)"
-    thinking_tokens: int = 1024
+    thinking_tokens: int | None = 1024
     output_tokens: int = 6000
     effort: str = "low"
     timeout_s: float = 240
@@ -59,7 +59,8 @@ class Controls:
     def __post_init__(self):
         if self.model not in MODELS.values():
             raise ValueError("Use a pinned Opus 5.5, Haiku 4.5, or Sonnet 5 id")
-        if self.thinking_tokens < 0 or self.output_tokens <= self.thinking_tokens:
+        if self.output_tokens <= 0 or (self.thinking_tokens is not None and
+                (self.thinking_tokens < 0 or self.output_tokens <= self.thinking_tokens)):
             raise ValueError("Output budget must exceed the nonnegative thinking budget")
 
 
@@ -110,12 +111,15 @@ def isolated_env(base, config, home, token, controls):
     env = {k: base[k] for k in ("PATH", "SSL_CERT_FILE") if k in base}
     env.update(HOME=str(home), TMPDIR=str(home), CLAUDE_CONFIG_DIR=str(config),
                LANG="en_US.UTF-8", LC_ALL="en_US.UTF-8", TZ="UTC", SHELL="/bin/sh",
-               CLAUDE_CODE_OAUTH_TOKEN=token, MAX_THINKING_TOKENS=str(controls.thinking_tokens),
+               CLAUDE_CODE_OAUTH_TOKEN=token,
                CLAUDE_CODE_MAX_OUTPUT_TOKENS=str(controls.output_tokens),
                CLAUDE_CODE_MAX_RETRIES="0", DISABLE_AUTOUPDATER="1",
                CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1",
-               CLAUDE_CODE_DISABLE_AUTO_MEMORY="1", CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING="1",
+               CLAUDE_CODE_DISABLE_AUTO_MEMORY="1",
                CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK="1")
+    if controls.thinking_tokens is not None:
+        env.update(MAX_THINKING_TOKENS=str(controls.thinking_tokens),
+                   CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING="1")
     return env
 
 
@@ -175,7 +179,7 @@ class ClaudeCLI:
             if not executable:
                 raise EndpointError("claude not found")
             binary_hash = hashlib.sha256(Path(executable).read_bytes()).hexdigest()
-            control = {**asdict(self.controls), "binary_sha256": binary_hash, "backend_revision": 2,
+            control = {**asdict(self.controls), "binary_sha256": binary_hash, "backend_revision": 3,
                        "host_system": platform.system(), "host_release": platform.release(),
                        "shell": "/bin/sh", "locale": "en_US.UTF-8", "timezone": "UTC"}
             group = digest([control, system, prompt, content_tokens])

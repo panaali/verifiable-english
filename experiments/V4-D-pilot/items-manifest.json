@@ -1,0 +1,20 @@
+{
+  "seed": 2026092250,
+  "items": 24,
+  "labels": {
+    "True": 12,
+    "False": 12
+  },
+  "honest": 12,
+  "families": {
+    "near_miss": 4,
+    "modus_tollens": 4,
+    "nested_quantifiers": 4,
+    "cases": 4,
+    "belief_inconsistent": 4,
+    "xor": 4
+  },
+  "sha256": "14339abef39c87d4b6a718a070e489b077098233b3acc5d04624efec2827b0ed",
+  "gold_validation": "Satisfying finite-model evaluation plus replayed VE entailment certificate",
+  "freshness": "New C seed; no exact premise-set/query duplicate in smoke/dev/heldout or this pilot"
+}
