@@ -1,0 +1,49 @@
+{
+  "frozen_files": 316,
+  "effective_frozen_all_unchanged": true,
+  "original_manifest_changed_files": [
+    "experiments/V4-D-pilot/rerun.py",
+    "ve_experiments/claude_cli.py"
+  ],
+  "changes_limited_to_authorized_transport_code": true,
+  "pre_resume_ledger_prefixes_unchanged": true,
+  "preserved_completed_scores": 128,
+  "reused_successful_keys": 130,
+  "previous_successes_never_restarted": true,
+  "old_started": 210,
+  "new_started": 483,
+  "new_status_counts": {
+    "started": 483,
+    "ok": 482,
+    "error": 1,
+    "retry_scheduled": 1
+  },
+  "served_models": {
+    "claude-sonnet-5": 240,
+    "claude-haiku-4-5-20251001": 242
+  },
+  "all_new_rows_expected_account": true,
+  "all_served_models_match_request": true,
+  "all_success_streams_reparsed": true,
+  "all_judges_default_thinking": true,
+  "score_count": 480,
+  "complete_grid": true,
+  "score_keys_unique": true,
+  "successful_keys_unique": true,
+  "superseded_not_pooled": true,
+  "prompts_match_unchanged_arguments": true,
+  "scores_recomputed_match": true,
+  "thinking_usage_missing": 0,
+  "thinking_above_old_1024": 101,
+  "infrastructure_failures": 1,
+  "unclassified_failures": 0,
+  "retry_events": 1,
+  "retry_backoff_s": {
+    "30": 1
+  },
+  "historical_stop_preserved": true,
+  "endpoint_stop_exists": false,
+  "pause_exists": false,
+  "total_started": 693,
+  "within_global_ceiling": true
+}
