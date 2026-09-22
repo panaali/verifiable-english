@@ -1,0 +1,51 @@
+id	code	alt	sure	note
+gsm8k-184	S-premise		y	assumes two 2010 pennies
+gsm8k-172	S-goal		y	subtracts: answers a different question
+gsm8k-186	S-premise		y	"20 more dishes than Judy" read as 20 dishes
+gsm8k-92	O-arith		y	3/4+3/4+1 = 2 (should be 2.5)
+gsm8k-26	S-premise		y	formula drops the given $50 balance
+gsm8k-129	S-premise	D	n	nonsense "pumps per washing" from misread directions
+gsm8k-1	S-premise		y	invents 2 math and 2 science books
+gsm8k-130	D	O-arith	n	unit-conversion direction wrong (divides by 3600)
+gsm8k-19	P		y	false fact: 11 PM = 11 hours past midnight
+gsm8k-141	P		y	false fact: 5 nickels = $1
+gsm8k-165	S-premise		y	misreads the 8 months at the normal rate as 2
+gsm8k-132	S-premise	D	n	"overstated by 20%" encoded as x = 0.8*48
+math-369	D		y	invalid prime-factor distribution argument
+math-104	S-premise	D	n	side = CD/2 (three triangles, so CD/3); plus a sqrt slip
+math-567	D		y	lower bound goes to 0 but concludes "close to 2"
+math-7	P	D	n	false geometric principle about sum of radii
+math-579	O-arith		y	substitution slip (x vs x^2)
+math-77	O-ambig	D	n	incoherent trial-and-error text
+math-851	O-arith		y	wrong base-3 expansion
+math-624	S-premise		y	uses digits (2, repeated 8) that are not allowed
+math-39	P		y	invented polyhedron formula
+math-66	D		y	invalid slope/diagonal reasoning
+math-469	O-arith	D	n	segment endpoints within the square computed wrong
+math-424	P		y	false "theorem" about orthocentre ratios
+math-61	O-arith		y	algebra slip when clearing denominators
+olympiadbench-369	D		y	a_n-a_1 claimed to be the sum of all powers
+olympiadbench-104	D		y	invalid colouring constraints
+olympiadbench-561	D		y	invalid odd/even term-count relation
+olympiadbench-7	D	P	n	true perpendicularity with invalid justification (BP called a radius)
+olympiadbench-576	D		y	invalid counting argument
+olympiadbench-77	O-arith		y	drops the square; 0.4096 rounded to 0.41
+olympiadbench-688	D		y	self-contradictory parity argument
+olympiadbench-998	O-arith		y	evaluation slips (720 for 648, -68 for -78)
+olympiadbench-594	D		y	"average equals third term since it is the middle term"
+olympiadbench-39	O-arith	D	n	middle index after removing 4 terms miscounted
+olympiadbench-66	O-arith		y	linear equation expanded as quadratic
+olympiadbench-859	D		y	invalid pattern generalisation
+olympiadbench-469	D		y	"k+1 cannot be 1 because k>=0" is a non sequitur
+omnimath-956	O-arith		y	wrong partial fractions
+omnimath-864	P	S-premise	n	unjustified two-group model assumption
+omnimath-971	D	P	n	unjustified approximation leap for the volume
+omnimath-369	D		y	f(r)=0 does not imply f'(r)=0
+omnimath-104	D		y	inclusion-exclusion misapplied
+omnimath-533	D		y	containment condition "radius at least twice" does not follow
+omnimath-7	O-arith		y	divisor sum/list wrong (missing 999; sum is not 1998)
+omnimath-548	P	D	n	false claim that P(1)=0 is impossible for a polynomial
+omnimath-77	D		y	a factor of 101*N is not necessarily a factor of N
+omnimath-630	O-arith		y	9^d mod 3 computed as 1 (it is 0)
+omnimath-808	S-goal		n	problem as stated is defective; model answers a mod-10 variant
+omnimath-568	D	O-ambig	n	vague false claim about magnitudes

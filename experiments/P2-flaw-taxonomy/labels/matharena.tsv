@@ -1,0 +1,51 @@
+id	code	alt	sure	note
+imo_2025_p4_Grok 4_0	D		y	generalises from exhaustive checks of small cases
+imo_2025_p4_Grok 4 (Specific Prompt)_0	D		y	claims supported only by small cases
+imo_2025_p3_Grok 4_0	O-incomplete		y	all key steps missing; construction not verified
+usamo_2025_p4_QwQ-32B_0	P	S-goal	n	[assumption] essentially assumes an isosceles triangle
+usamo_2025_p4_DeepSeek-R1_3	P	D	n	[assumption] false claim CX*CY = CF^2
+imo_2025_p3_Gemini 2.5 Pro_1	D	O-incomplete	n	result obtained only for odd primes, then used generally
+usamo_2025_p2_Claude-3.7-Sonnet (Think)_3	D		y	[logic] corner case proved; general case hand-waved and wrong
+imo_2025_p6_Gemini 2.5 Pro_0	U		y	construction incorrect; flaw not localised
+usamo_2025_p5_DeepSeek-R1-0528_1	P	D	n	[assumption] even-k claim backed only by numerics
+imo_2025_p3_GPT-5 (high)_3	P		y	skips a crucial 2-adic lemma by assuming it
+imo_2025_p6_o4-mini (high)_2	U		y	construction incorrect; flaw not localised
+imo_2025_p5_Gemini 2.5 Pro_0	P		y	assumes values for opponent's moves (B)
+usamo_2025_p6_Claude-3.7-Sonnet (Think)_3	O-incomplete		y	[idea] fails to prove the reduction
+usamo_2025_p6_DeepSeek-R1-0528_0	S-premise	P	n	[assumption] mistranslates the problem into the Ky Fan setting
+imo_2025_p3_Grok 4_2	O-incomplete		y	key steps missing
+imo_2025_p3_Grok 4 (Specific Prompt)_3	O-incomplete		y	key steps missing
+imo_2025_p5_o3 (high)_1	D	O-arith	n	wrong inequality Q_N >= N+1
+imo_2025_p4_DeepSeek-R1-0528_3	D	P	n	examples in place of proof; divisibility-by-5 claim asserted
+imo_2025_p1_Grok 4 (Specific Prompt)_3	O-case		y	leftmost points not considered
+usamo_2025_p3_Grok 3 (Think)_1	U		y	[idea] wrong winner claimed; flaw not localised
+imo_2025_p6_Grok 4 (Specific Prompt)_0	U		y	construction incorrect
+usamo_2025_p3_DeepSeek-R1-0528_1	U		y	[idea] wrong winner claimed
+imo_2025_p6_Gemini 2.5 Pro_2	U		y	construction incorrect
+imo_2025_p6_o3 (high)_2	U		y	construction incorrect
+usamo_2025_p2_o4-mini (high)_2	O-case		y	[assumption] Case 2 misses n=k+1
+usamo_2025_p3_gemini-2.0-flash-thinking_0	U		y	[idea] wrong winner claimed
+imo_2025_p1_GPT-5 (high)_1	O-case		y	non-exhaustive case analysis ("worst case" arrangement only)
+imo_2025_p5_Gemini 2.5 Pro_2	P		y	assumes B's value and both players' strategy
+usamo_2025_p3_DeepSeek-R1_2	U		y	[idea] wrong winner claimed
+imo_2025_p4_GPT-5 (high)_0	D	O-incomplete	n	fails to derive divisibility by 3 correctly
+imo_2025_p1_Grok 4 (Specific Prompt)_2	O-case	O-incomplete	n	k=2 construction missing
+usamo_2025_p5_Gemini 2.5 Pro_0	O-incomplete	D	n	[logic] numerics only; no proof attempted
+usamo_2025_p5_QwQ-32B_2	P	O-incomplete	n	[assumption] "can be shown" for n+1 prime, never shown
+usamo_2025_p5_gemini-2.0-flash-thinking_2	P	D	n	[logic] false lemma: binom(n,i) = (-1)^i mod p
+usamo_2025_p5_o1-pro (high)_0	U		y	[assumption] "incorrect proof"; flaw not localised
+usamo_2025_p2_o1-pro (high)_3	D		y	[logic] invalid contradiction for k<n<=2(k-1)
+usamo_2025_p1_o3-mini (high)_3	D	O-arith	n	[assumption] incorrect digit bound
+usamo_2025_p4_DeepSeek-R1_2	S-premise		y	[logic] coordinate setup silently makes ABC isosceles
+usamo_2025_p2_Grok 3 (Think)_0	D	S-goal	y	[logic] proves k=1 and concludes the general case
+imo_2025_p3_o4-mini (high)_0	O-case	P	n	missing cases and wrong assumptions
+usamo_2025_p3_QwQ-32B_0	U		y	[assumption] construction incorrect
+usamo_2025_p3_DeepSeek-R1-0528_3	U		y	[idea] wrong winner claimed
+usamo_2025_p6_DeepSeek-R1_1	O-incomplete	P	n	[idea] hypergraph lacks the needed properties; fails
+usamo_2025_p6_DeepSeek-R1_3	D	S-premise	n	[logic] continuity/Borsuk-Ulam misapplied to a discrete setting
+usamo_2025_p4_Grok 3 (Think)_3	P		y	[assumption] assumes circumcentre position without proof
+imo_2025_p1_Gemini 2.5 Pro_3	U		y	wrong answer; rest missing
+usamo_2025_p5_Gemini 2.5 Pro_1	O-incomplete		y	[logic] numerics only
+usamo_2025_p5_o4-mini (high)_0	O-incomplete		y	[idea] missing
+usamo_2025_p6_DeepSeek-R1-0528_2	D		n	[logic] Hall's condition "proved" directly (flawed)
+usamo_2025_p4_o3-mini (high)_0	P	D	n	[assumption] tries to prove a false power-of-a-point property
