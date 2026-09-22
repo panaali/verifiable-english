@@ -154,3 +154,15 @@ relation parameters for schematic theorems. Euclid's theorem is writable but mea
 uninterpreted and `times` is ternary. This supports the working position above: keep VE small, make it the readable,
 checked STATEMENT layer over Lean, and do only lemma citation, closure induction and arity 3-4 in VE itself. All frozen
 under PLAN-V3 until a pilot or the grant.
+
+## From docs/formal-proof-experiments-handoff.md (cherry-picked 9fe83bc, 2026-09-22)
+
+Adopted into the plan as package 3b, after P5 and before the long-argument study, subscription quota only:
+**formalise one original Barnes-Christiano physics argument (the iceberg problem) end to end in Lean from accepted
+physical laws, with a separate cost ledger (model review, formalisation, proof repair, checking, compute) and an
+assumption checklist.** It measures the "mandatory proof" tax on the canonical example and is the honest companion to
+our finding that VE contributes nothing to obfuscation itself: the residue is the model/assumption review. The handoff's
+experiment 2 (do humans catch a valid proof of the wrong model with VE vs a structured formal interface) is the best
+human study we have on the list and stays deferred with the other human studies; experiment 3 (mandatory proofs vs
+adversarial debate) folds into P5 and the long-argument study; experiment 4 (size scaling, PrOntoQA subset) into the
+grant-scale plan. Starting evidence: 11 checked rational-algebra lemmas in experiments/obfuscated-arguments/Feasibility.lean.
