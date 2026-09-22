@@ -11,11 +11,11 @@ import re
 
 from . import ast
 from .environment import Environment, RESERVED, valid_identifier
-from .english import EnglishParser, EnglishVocabulary, _literal_pattern, parse_english_with_metadata
-from .english_phrases import distance, lexical, nearest, phrase_end, unary_phrase
+from .english import EnglishParser, EnglishVocabulary, parse_english_with_metadata
+from .english_phrases import distance, lexical, nearest, phrase_end, unary_phrase, wording_key, BLOCKED, PREPOSITIONS
 from .errors import ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_SOURCE_BYTES
-from .wire import canonical_json
+from .wire import canonical_json, digest
 
 
 class _ProposalParser(EnglishParser):
@@ -32,7 +32,7 @@ class _ProposalParser(EnglishParser):
         term = ast.Var(0) if relative and scope else None
         if not relative:
             for ref, value in sorted(self.term_options(scope).items(), key=lambda row: -len(row[0])):
-                match = re.compile(_literal_pattern(ref) + r'\s+').match(self.source, start)
+                match = re.compile(self.reference_pattern(ref, scope) + r'\s+').match(self.source, start)
                 if match:
                     term, start = value, match.end()
                     break
@@ -40,12 +40,35 @@ class _ProposalParser(EnglishParser):
         # proposals have no binder noun and are deliberately out of scope.
         if type(term) is not ast.Var:
             return super().unknown_atom(scope, relative, object_allowed)
-        head = re.compile(r'is\s+(not\s+)?').match(self.source, start)
+        head = re.compile(r'is\s+(not\s+)?', re.I).match(self.source, start)
         if not head:
             return super().unknown_atom(scope, relative, object_allowed)
         end = phrase_end(self.source, head.end())
         complement = ' '.join(self.source[head.end():end].split())
         template = '{0} is ' + complement
+        # Reject equivalence before inventing a suffixed symbol, including
+        # spellings whose hyphens differ from the stored display wording.
+        for symbol, wording in self.words.predicates.items():
+            if wording_key(template) == wording_key(wording):
+                raise SyntaxError(f'Phrase {template!r} is existing wording {wording!r} for {symbol!r}.',
+                                  span=self._span(start, end))
+        tokens = re.findall(r'[A-Za-z][A-Za-z0-9_]*', complement)
+        normalized_content = wording_key(complement)
+        nouns = set(self.env.sorts) | set(self.words.sorts.values())
+        for decl in self.words.env.sorts.values():
+            if decl.verbalisation:
+                nouns.update((decl.verbalisation.singular, decl.verbalisation.plural))
+        for reference in (*self.env.constants, *nouns):
+            if re.search(r'(?<![a-z0-9_])' + re.escape(wording_key(reference)) + r'(?![a-z0-9_])', normalized_content):
+                raise SyntaxError(f'Phrase {complement!r} contains declared constant or sort noun {reference!r}; '
+                                  'a relation must be declared by hand.', span=self._span(start, end))
+        if (set(re.findall(r'[a-z0-9_]+', complement.lower())) & BLOCKED
+                or re.search(r'\b(?:un|non)-', complement, re.I)
+                or any(t.lower() in PREPOSITIONS and tokens[i + 1][0].isupper()
+                       for i, t in enumerate(tokens[:-1]))):
+            raise SyntaxError(f'Phrase {complement!r} contains blocked relational or negative content; '
+                              'a relation must be declared by hand, and negation must use is not.',
+                              span=self._span(start, end))
         phrase = unary_phrase(template)
         if phrase is None:
             return super().unknown_atom(scope, relative, object_allowed)
@@ -61,7 +84,7 @@ class _ProposalParser(EnglishParser):
                         and abs(len(fragment) - len(reference)) <= 1
                         and distance(fragment, reference) <= (1 if min(len(fragment), len(reference)) <= 2 else 2))
                 if fragment == reference or near:
-                    raise SyntaxError('A declared reference (or its typo) cannot be inferred as a unary predicate.',
+                    raise SyntaxError('A declared reference (or its typo) cannot be inferred as a unary predicate; a relation must be declared by hand.',
                                       span=self._span(start, end))
         # A known binary frame with an unknown/misspelled object or wording
         # must remain an error. No flag can turn it into a unary declaration.
@@ -93,7 +116,7 @@ class _ProposalParser(EnglishParser):
         self.introduced.append({'symbol': name, 'source_span': asdict(self._span(start, end)),
                                 'source_text': self.source[start:end], 'signature': [sort],
                                 'description': description, 'verbalisation': template,
-                                'nearest_existing': neighbors[:3],
+                                'nearest_existing': [r for i, r in enumerate(neighbors) if i < 3 or r['near_duplicate']],
                                 'near_duplicates': [r['symbol'] for r in neighbors if r['near_duplicate']],
                                 'review_status': 'unreviewed'})
         data = self.env.to_dict()
@@ -103,7 +126,16 @@ class _ProposalParser(EnglishParser):
         self.overlay['predicates'][name] = {'verbalisation': template,
                                           'negative_verbalisation': template.replace(' is ', ' is not ', 1),
                                           'suggested': True}
-        self.words = EnglishVocabulary(self.env, vocabulary=self.overlay, accept_suggested_vocabulary=True)
+        previous_words = self.words
+        try:
+            self.words = EnglishVocabulary(self.env, vocabulary=self.overlay, accept_suggested_vocabulary=True)
+        except VEError as exc:
+            # Adding a lexical owner can invalidate an older template. Attribute
+            # that collision to both wordings, rather than blaming the old entry.
+            affected = [f'{n!r}: {w!r}' for n, w in previous_words.predicates.items()
+                        if f'predicates/{n}' in str(exc)]
+            detail = '; existing wording ' + '; '.join(affected) if affected else ''
+            raise VEError(f'Proposed phrase {template!r} ({name!r}) fails the template linter{detail}: {exc}') from exc
         self.i = end
         self.farthest = max(self.farthest, end)
         node = ast.Unary(name, term)
@@ -120,11 +152,17 @@ def propose(env, source, vocabulary=None, *, acknowledge=()):
         source = source.decode('utf-8')
     if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
         raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
+    # Materialize an absent overlay so proposal files stay within the existing
+    # null-free JSON wire envelope and work through the CLI loader too.
+    if vocabulary is None:
+        vocabulary = {'format': 've.english-vocabulary@1', 'environment_id': env.environment_id,
+                      'sorts': {}, 'predicates': {}}
     parser = _ProposalParser(env, source, vocabulary)
     document = parser.document()
     ast.check_document(parser.env, document)
     if not parser.introduced:
-        raise VEError('No new unary predicate to propose; use parse --surface english.')
+        names = ', '.join(sorted(env.predicates))
+        raise VEError('No new unary predicate to propose; wording resolves to existing vocabulary (' + names + '); use parse --surface english.')
     for category in ('sorts', 'predicates'):
         for entry in parser.overlay[category].values():
             entry['suggested'] = True
@@ -144,13 +182,18 @@ def propose(env, source, vocabulary=None, *, acknowledge=()):
     def candidate(kind, value):
         return {'format': f've.proposed-{kind}@1', 'status': 'proposed',
                 'review_status': 'unreviewed', 'candidate': value}
-    return {'format': 've.vocabulary-proposal@1', 'status': 'blocked' if missing else 'proposed',
+    preview = {'format': 've.vocabulary-proposal@1', 'status': 'blocked' if missing else 'proposed',
             'review_status': 'unreviewed', 'source': source,
-            'base_environment': env.to_dict(), 'base_overlay': vocabulary,
+            'base_environment': env.to_dict(), 'base_overlay': deepcopy(vocabulary),
+            'source_digest': digest('ve-proposal-source-v1\n', source),
+            'base_environment_digest': digest('ve-proposal-environment-v1\n', env.to_dict()),
+            'base_overlay_digest': digest('ve-proposal-overlay-v1\n', vocabulary),
             'acknowledged': sorted(acknowledgements), 'requires_acknowledgement': missing,
             'introduced': parser.introduced, 'paraphrase': parsed.paraphrase(),
             'candidate_environment': candidate('environment', parser.env.to_dict()),
             'candidate_overlay': candidate('english-vocabulary', parser.overlay)}
+    preview['proposal_digest'] = digest('ve-vocabulary-proposal-v1\n', preview)
+    return preview
 
 
 def write_proposal(preview, output):
@@ -161,18 +204,29 @@ def write_proposal(preview, output):
                                  'environment.english.proposed.json': preview['candidate_overlay']})
 
 
-def adopt(preview, output):
-    """Rebuild the preview, including its acknowledgements, before adoption."""
+def adopt(preview, output, *, acknowledge=()):
+    """Verify and rebuild the preview; adoption requires fresh acknowledgements."""
     canonical_json(preview)
     if type(preview) is not dict or preview.get('format') != 've.vocabulary-proposal@1':
         raise VEError('Expected a vocabulary proposal, not an environment.')
     try:
+        for key, domain in [('source', 'source'), ('base_environment', 'environment'), ('base_overlay', 'overlay')]:
+            if preview[key + '_digest'] != digest(f've-proposal-{domain}-v1\n', preview[key]):
+                raise VEError(f'Proposal {key} digest changed; generate it again.')
+        payload = {k: v for k, v in preview.items() if k != 'proposal_digest'}
+        if preview['proposal_digest'] != digest('ve-vocabulary-proposal-v1\n', payload):
+            raise VEError('Proposal digest changed; generate it again.')
         rebuilt = propose(Environment(preview['base_environment']), preview['source'],
                           preview['base_overlay'], acknowledge=preview['acknowledged'])
     except (KeyError, TypeError) as exc:
         raise VEError('Malformed vocabulary proposal.') from exc
-    if rebuilt != preview or rebuilt['status'] != 'proposed':
+    if rebuilt != preview:
         raise VEError('Proposal changed or lacks near-duplicate acknowledgements; generate it again.')
+    rebuilt = propose(Environment(preview['base_environment']), preview['source'],
+                      preview['base_overlay'], acknowledge=acknowledge)
+    if rebuilt['status'] != 'proposed':
+        raise VEError('Adoption requires its own explicit --acknowledge flags; missing acknowledgements: '
+                      + ', '.join(rebuilt['requires_acknowledgement']))
     data = rebuilt['candidate_environment']['candidate']
     overlay = rebuilt['candidate_overlay']['candidate']
     env = Environment(data)

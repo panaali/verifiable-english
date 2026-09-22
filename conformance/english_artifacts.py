@@ -55,8 +55,8 @@ def generated_documentation():
     report = json.loads((ROOT / 'conformance/english-surface-report.json').read_text())
     lines = [
         '', f"**{report['roundtrips']:,} distinct well-typed environment/AST pairs** round-tripped through",
-        '`render` and `parse_english`, across fifteen configurations (the original ten,',
-        'four reviewed overlays, and explicitly accepted suggestions). Each configuration',
+        '`render` and `parse_english`, across sixteen configurations (the original ten,',
+        'four reviewed overlays, accepted suggestions, and an adopted unary vocabulary). Each configuration',
         'contributed 5,000 distinct ASTs: directed boundary cases followed by seeded random',
         'draws. Directed cases cover every template, validated negatives, subject and object relatives, two-atom guards,',
         'both three-atom associations, deeper/mixed guards, nested implications, and the',

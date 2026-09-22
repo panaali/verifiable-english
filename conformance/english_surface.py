@@ -65,14 +65,16 @@ def vocabularies():
     precision['vocabulary']['predicates']['owns'].update(verbalisation='{0} contributes to {1}',
                                                        negative_verbalisation='{0} does not contribute to {1}')
     yield 'precision_templates', Environment(precision)
-    for path in sorted((ROOT / 'usecases').glob('*/environment.json')):
+    for path in sorted(p.with_name('environment.json')
+                       for p in (ROOT / 'usecases').glob('*/environment.english.json')):
         yield path.parent.name, Environment.from_json(path.read_bytes())
 
 
 def configurations():
     for name, env in vocabularies():
         yield name, env, {}
-    for path in sorted((ROOT / 'usecases').glob('*/environment.json')):
+    for path in sorted(p.with_name('environment.json')
+                       for p in (ROOT / 'usecases').glob('*/environment.english.json')):
         yield path.parent.name + '-reviewed', Environment.from_json(path.read_bytes()), {
             'vocabulary': json.loads(path.with_name('environment.english.json').read_text())}
     data = json.loads((ROOT / 'examples/fluent/environment.json').read_text())
@@ -94,7 +96,7 @@ def adopted_configurations():
     preview = propose(env, sentence, overlay, acknowledge=['us_citizen'])
     with TemporaryDirectory(prefix='ve-adopted-audit-') as directory:
         output = Path(directory) / 'adopted'
-        adopt(preview, output)
+        adopt(preview, output, acknowledge=['us_citizen'])
         yield 'adopted-unary', Environment.from_json((output / 'environment.json').read_bytes()), {
             'vocabulary': json.loads((output / 'environment.english.json').read_text()),
             'accept_suggested_vocabulary': True}
@@ -167,7 +169,8 @@ def random_formula(rng, env, depth, scope=()):
 
 def lint_report():
     result = []
-    for path in sorted((ROOT / 'usecases').glob('*/environment.json')):
+    for path in sorted(p.with_name('environment.json')
+                       for p in (ROOT / 'usecases').glob('*/environment.english.json')):
         env = Environment.from_json(path.read_bytes())
         old, new = _NaturalVocabulary(env), EnglishVocabulary(env)
         overlay = json.loads(path.with_name('environment.english.json').read_text())

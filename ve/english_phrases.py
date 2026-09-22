@@ -5,6 +5,9 @@ These do not parse formulas or infer argument structure.
 import re
 
 BOUNDARIES = frozenset('is does not and or if then that who which both either every some for'.split())
+BLOCKED = frozenset('than by no never longer neither nor without true false equals equal'.split())
+PREPOSITIONS = frozenset('of in on at to from with under over for into upon about against through between among'.split())
+CONTENT_STOP = PREPOSITIONS | frozenset('a an the is was are be been being not'.split())
 TOKEN = re.compile(r'[A-Za-z][A-Za-z0-9_]*|[^\s]')
 
 
@@ -18,12 +21,12 @@ def phrase_end(source, start):
 
 
 def unary_phrase(template):
-    match = re.fullmatch(r'\{0\} is (?:a |an )?([A-Za-z][A-Za-z0-9_]*(?: [A-Za-z][A-Za-z0-9_]*)*)', template)
+    match = re.fullmatch(r'\{0\} is (?:a |an )?([A-Za-z][A-Za-z0-9_]*(?:[ -][A-Za-z][A-Za-z0-9_]*)*)', template, re.I)
     if not match or len(template) > 80:
         return None
     phrase = match[1]
     # Passive inference is explicitly outside version 1.
-    if phrase.lower() in {'a', 'an'} or set(phrase.lower().split()) & (BOUNDARIES | {'by'}):
+    if phrase.lower() in {'a', 'an'} or set(phrase.lower().split()) & (BOUNDARIES | BLOCKED):
         return None
     return phrase
 
@@ -43,6 +46,19 @@ def lexical(text):
                     if w not in {'0', '1', 'is', 'not', 'a', 'an'})
 
 
+def wording_key(text):
+    """Display spelling has no lexical identity; quoted identifiers still do."""
+    return ''.join(part if part.startswith('"') else re.sub(r'[\s-]+', ' ', part.casefold())
+                   for part in re.split(r'("(?:[^"\\]|\\.)*")', text)).strip()
+
+
+def content_tokens(text):
+    # Deliberately tiny plural normalization; never stem the abbreviation US.
+    return {w[:-1] if len(w) > 3 and w.endswith('s') and not w.endswith('ss') else w
+            for w in re.findall(r'[a-z0-9]+', text.lower())
+            if w not in CONTENT_STOP and w not in {'0', '1'}}
+
+
 def nearest(phrase, words):
     target = lexical(phrase)
     rows = []
@@ -55,6 +71,9 @@ def nearest(phrase, words):
         edit = min(distance(target, other) for other in candidates)
         # "Stem" is a shared final content token, without morphology guessing.
         stem = any(target.split()[-1:] == other.split()[-1:] for other in candidates)
+        overlap = sorted(set().union(*(content_tokens(phrase) & content_tokens(other)
+                                      for other in (wording, name))))
         rows.append({'symbol': name, 'kind': kind, 'wording': wording, 'edit_distance': edit,
-                     'shared_stem': stem, 'near_duplicate': edit <= 2 or stem})
+                     'shared_stem': stem, 'content_overlap': overlap,
+                     'near_duplicate': edit <= 2 or stem or bool(overlap)})
     return sorted(rows, key=lambda r: (r['edit_distance'], not r['shared_stem'], r['symbol']))
