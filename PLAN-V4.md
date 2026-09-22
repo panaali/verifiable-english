@@ -48,3 +48,35 @@ same protocol as Phase 1, anchored by Phase 1's published-protocol results.
 Preregister each phase with external timestamp; P1 infrastructure (structured verdicts, ledgers, provenance, resumability);
 no arm contains the answer; blinded leakage gate on fresh items; Opus judge never sees items it generated; Claude calls via
 subscription with fixed prompt files and logged model id; Gemini via Vertex. Nothing about the English surface is claimed.
+
+## REVISION after review (2026-09-22): both reviewers "proceed with changes, large". Adopted; this section overrides the above.
+
+Reviews: `~/code/manage-agents/reviews/plan4-review-astra.md`, `plan4-review-opus.md`. Common ground: as written, the VE
+arms win by construction (closed-world items with given premises: "certified + every leaf among the facts" IS the
+label); Opus judging Opus has no capability gap; depth mostly adds tedium; the subscription CLI needs strict controls.
+
+Revised order:
+- **A. Endpoint audit (no science).** Claude CLI from an empty dir, clean CLAUDE_CONFIG_DIR, --strict-mcp-config empty,
+  no hooks/settings/memory, pinned CLI version, fixed MAX_THINKING_TOKENS; log stream-json init (model, tools) and input
+  tokens per call; assert constant overhead; canary probe for injected context; reject any call not served by the Opus 5.5
+  model id (silent fallback). ~10% replicated via API later. k>=3 samples per item (no temperature control).
+- **B. Formalisation-fidelity audit (was Phase 2, shrunk, moved first).** Items given in free English; Opus writes the
+  English->VE translation table + graph; measure faithful-translation rate (hand + independent-model audit, checked
+  against the generator's gold logic) and certified-answer rate. VE's Phase-C value depends on this rate.
+- **C. Calibration.** Fresh ProverGen items, VE-expressible, with difficulty levers crossed at roughly constant length:
+  Uncertain (non-entailed) items, proof by cases, xor, modus-tollens chains, near-miss distractors, nested quantifiers
+  over binary predicates, belief-inconsistent vocabulary. Calibrate each judge separately; count only errors that recur
+  across k=3 samples; select item TYPES on a Sonnet dev split, test on a held-out split (never select Opus failures).
+  A declared thinking-token cap on the judge is allowed as an explicit oversight gap and reported as such.
+- **D. Headline, Kenton-style binary, powered.** Premises shown in free English to everyone. Arms at matched TOTAL
+  reasoning/authoring budget: judge alone (majority-of-k); consultancy; debate; judge-formalises-and-checks (Logic-LM
+  style); VE-consultancy and VE-debate where the arguer supplies the English->VE translation table + graph, the checker
+  certifies deduction through the trusted channel, and THE JUDGE MUST DECIDE WHETHER THE TRANSLATION IS FAITHFUL (the
+  non-trivial residual). **Adaptive mistranslation attack:** the dishonest side gets the checker as a tool (best-of-n) so
+  it can only win via a certified graph built on a mistranslated premise; measure judge catch rate vs catching the flaw in
+  matched prose debate. **Factorial:** premise lookup on/off x proof checking on/off with graphs and presentation fixed.
+  Judges Opus 5.5 and Haiku 4.5; Gemini 3.1 Pro replication judge. Sample size from a power calculation; paired,
+  template-clustered intervals; multiplicity control; honest-completion noninferiority. PrOntoQA anchor for Haiku only.
+  Success requires beating BOTH debate and the strong direct baseline; an underpowered null is inconclusive.
+- **Cut:** long-context qa15 (strawman; 1-2 hops); FOLIO as a headline. Own-task RBAC extension after D.
+- Confirm bulk automated use of the subscription fits its terms before large runs; otherwise run D via API.
