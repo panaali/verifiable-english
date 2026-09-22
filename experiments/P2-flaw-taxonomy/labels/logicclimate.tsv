@@ -1,0 +1,51 @@
+id	corpus_label	code	alt	sure	note
+climate_all_row739	fallacy of logic	D		y	non sequitur from a study to "nothing we can do"
+climate_all_row209	faulty generalization	D		n	label noise: text is factual claims, no visible generalisation
+climate_all_row1036	equivocation	O-equiv		n	label noise: no equivocation visible
+climate_all_row15	appeal to emotion	O-ambig		y	slogan; no inference
+climate_all_row1047	intentional	P		n	unsupported attribution of motive
+climate_all_row154	fallacy of extension	S		n	overreaching extension of an "if true" premise
+climate_all_row1131	intentional	P		y	false factual claim (CO2 role "not shown")
+climate_all_row1063	faulty generalization	D		n	label noise: attributed projection
+climate_all_row79	fallacy of credibility	D	O-equiv	n	override: past variation does not show CO2 is not a pollutant
+climate_all_row133	faulty generalization	D	P	n	label noise: attributed projection
+climate_all_row1239	fallacy of logic	D		y	whataboutism: irrelevant comparison
+climate_all_row939	intentional	D		n	override: implied false causality (prices <- policy)
+climate_all_row849	fallacy of credibility	D		n	override: "climate always varied" => implied non sequitur
+climate_all_row123	false dilemma	P		n	label noise: no dilemma visible
+climate_all_row1055	intentional	O-ambig		y	rhetorical question
+climate_all_row1225	faulty generalization	D		n	label noise: hedged speculation
+climate_all_row442	appeal to emotion	O-ambig		n	emotive narrative
+climate_all_row311	fallacy of extension	D	O-equiv	n	"plant food, therefore not a pollutant"
+climate_all_row1093	intentional	O-ambig		n	quote; no argument
+climate_all_row1068	faulty generalization	D	P	n	one study => sweeping claim
+climate_all_row221	intentional	P	D	n	insinuation via omitted chart
+climate_all_row1106	intentional	O-ambig		n	no argument
+climate_all_row419	false causality	D		y	correlation => cause
+climate_all_row792	false causality	P		n	override: false factual claim
+climate_all_row351	fallacy of relevance	D		y	irrelevant contrast (climate vs terrorism)
+climate_all_row593	fallacy of logic	D		n	label noise: no clear flaw
+climate_all_row525	false dilemma	P		y	false dilemma
+climate_all_row636	fallacy of credibility	P		y	appeal to (unnamed) scientists
+climate_all_row207	false causality	D		n	hedged causal claim
+climate_all_row800	faulty generalization	D		y	one observation => overturns trend claim
+climate_all_row1296	ad hominem	D		y	motive attack (ad hominem)
+climate_all_row752	intentional	O-ambig		y	rhetorical question
+climate_all_row130	false dilemma	P		n	"point of no return" asserted
+climate_all_row235	equivocation	O-equiv		n	label noise: appeal to unnamed experts, not equivocation
+climate_all_row243	fallacy of logic	D		n	label noise
+climate_all_row842	ad populum	D	S	n	dismissal by reference to Al Gore
+climate_all_row638	ad populum	P		n	override: appeal to authority (scientists)
+climate_all_row1018	fallacy of extension	S		n	straw-man summary "Tornadoes increase - No"
+climate_all_row421	fallacy of credibility	P		y	appeal to many experts
+climate_all_row498	faulty generalization	D		n	causal overreach
+climate_all_row142	ad populum	P	D	n	override: unsupported cost/benefit figures
+climate_all_row640	faulty generalization	O-ambig		n	metaphor
+climate_all_row572	intentional	P		y	false factual claim (no correlation)
+climate_all_row1304	intentional	S	P	n	quote out of context
+climate_all_row36	appeal to emotion	O-ambig		n	conditional; emotive, not invalid
+climate_all_row372	appeal to emotion	O-ambig	D	n	emotive/ad hominem framing
+climate_all_row319	false dilemma	P	O-equiv	n	false dilemma (food vs pollutant)
+climate_all_row1230	faulty generalization	D		y	non sequitur to "need not endanger anyone"
+climate_all_row42	fallacy of credibility	P		y	appeal to own report / credibility
+climate_all_row367	ad populum	P	D	n	override: appeal to own research
