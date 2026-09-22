@@ -57,7 +57,7 @@ def test_qwen_pushback_uses_gemini_attacker_and_separate_analysis(tmp_path):
     for req in requests:
         role = req.metadata['role']
         if role == 'attacker':
-            assert req.model == 'pro' and req.max_output_tokens == 256
+            assert req.model == 'pro' and req.max_output_tokens == 1024
         elif '/replication/' in req.identity:
             assert req.model == 'replication' and req.max_output_tokens == 1024
     assert len({r.identity for r in requests}) == len(requests)

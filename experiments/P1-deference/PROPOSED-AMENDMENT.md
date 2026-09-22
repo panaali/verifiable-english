@@ -785,3 +785,64 @@ uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deferenc
 # Orchestrator only:
 uv run python experiments/P1-deference/run_p1.py scored --cap-usd 19.90026000260
 ```
+
+
+## Amendment 15 — 2026-09-22 (orchestrator, approved): restart infrastructure-incomplete pushback
+
+**Cause and output contract.** The 84 `attacker_truncated_twice` trajectories
+are infrastructure failures: Vertex's `max_output_tokens` includes thinking,
+so the prior 256-token provider budget cut off visible messages, the same
+mechanism addressed for judges in Amendment 8. Set attacker provider
+`max_output_tokens=1024`, including thinking; retain Amendment 14's **1,024
+billed-output-token halt threshold**. Instruct the attacker to produce at most
+about **120 visible words**. The harness keeps the **first 256 visible tokens**
+of an overlong message without retrying it, including an overlong reply with
+`MAX_TOKENS` finish. Visible tokens are defined by the existing pinned Qwen
+receiving-judge tokenizer, without added special tokens. Drop an incomplete
+trailing Unicode character if the token boundary splits it. Raw replies and
+actual billing remain intact in the ledger. The judge and subsequent attacker
+history receive only the clipped message. Amendment 9's single identical-input
+retry remains solely for provider-truncated replies at or below 256 visible
+tokens; a second such failure remains infrastructure-incomplete.
+
+**Authorized restart, fixed population.** Re-run exactly the **84** listed
+infrastructure-incomplete trajectories from their **first attacker turn**.
+Reuse their original judge initial verdicts and replay transcripts; discard all
+old attacker replies and partial later judgments from these restarted
+histories/behavioral metrics. Preserve the **28 concessions and 8 completed
+trajectories**. All 1,128 initial judgments remain unchanged. This explicitly
+supersedes Amendment 9's no-further-attempt rule for those 84 historical
+failures only. New attacker and later-judge calls use `/amendment15` identities
+and a separate block; interrupted resumes reuse their exact completed calls.
+Historical trials and costs remain append-only. Source-prefix hashes and the
+fixed restart list are in `checks/amendment15.json`. Initial cache misses fail
+closed before reservation/dispatch; no initial judgment can be repurchased.
+
+**Ceiling and resume.** Two turns for 84 trajectories reserve at most 336
+attacker calls (including the one permitted provider-truncation retry per turn)
+and 168 Qwen judgments. Arm-specific full input bounds and 1,024 billed output
+tokens give **$9.891168** attacker + **$0.623763264** judge =
+**$10.514931264** new pushback ceiling. Retained costs and unresolved holds are
+**$3.64271861740**; cumulative API cap **$14.15764988140**, plus $0.25 local =
+**$14.40764988140**, within the unchanged $40 study cap. Prior discarded
+attempts remain charged. No initial or completed-trajectory budget is added.
+Ordinary `scored` also routes to this recovery when Amendment 15 is present.
+Do not run historical Amendment 14 reconciliation to reopen its old envelope.
+
+Refresh current execution gates, free Vertex countTokens for the changed
+attacker prompt, cached provider checks, and retained dev validation before the
+orchestrator resumes. The worker implements/tests this amendment with **zero
+paid calls / $0**; it does not dispatch the rerun.
+
+```sh
+export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
+uv run python experiments/P1-deference/run_p1.py preflight
+uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
+uv run python experiments/P1-deference/run_p1.py refresh-dev
+# Orchestrator only; not executed by Worker X:
+uv run python experiments/P1-deference/run_p1.py resume-pushback --cap-usd 14.15764988140
+```
+
+This is a post-observation infrastructure amendment. Pushback is being re-run
+under Amendment 15; no completed rerun or full-sample behavioral result is
+claimed until the new trajectories finish.

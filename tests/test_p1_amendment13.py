@@ -104,6 +104,9 @@ def test_scored_gate_and_cap_reach_only_qwen_attacker_backends(tmp_path, monkeyp
     source, plan = p1.HERE, p1.inventory()
     for name in ('checks', 'results', 'runs'):
         shutil.copytree(source / name, tmp_path / name)
+    # This test exercises the historical Amendment 13/14 block. Amendment 15
+    # has a separate fixed restart population and envelope, covered separately.
+    (tmp_path / 'checks/amendment15.json').unlink(missing_ok=True)
     monkeypatch.setattr(p1, 'HERE', tmp_path)
     monkeypatch.setattr(p1, 'inventory', lambda: plan)
     p1.write_json(tmp_path / 'freeze.json', {'hashes': {}, 'manifest_sha256': 'test',

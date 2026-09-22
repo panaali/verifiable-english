@@ -10,7 +10,7 @@ from experiments import p1, p1_preflight
 from ve_experiments import paid
 
 
-def test_every_bound_is_smallest_hundred_with_ten_percent_margin():
+def test_joint_bounds_contain_current_histories_and_preserve_judge_margin():
     retained = json.loads((p1.HERE / 'checks/tokenizer.json').read_text())
     counts = {r['identity']: r for r in retained['counts']}
     maxima = defaultdict(int)
@@ -27,16 +27,22 @@ def test_every_bound_is_smallest_hundred_with_ten_percent_margin():
             maxima[key] = max(maxima[key], bounded)
     assert len(fixtures) == 1956 and len(maxima) == 10
     for (arm, phase), maximum in maxima.items():
-        assert p1.p1_input_bound(arm, phase) == ((maximum * 11 + 999) // 1000) * 100
+        # Amendment 15 adds the visible-word instruction to the attacker only.
+        # Keep the approved input bounds and verify containment; the original
+        # exact 10% rounding derivation still applies to unchanged judge wires.
+        assert maximum <= p1.p1_input_bound(arm, phase)
+        if phase != 'attacker':
+            assert p1.p1_input_bound(arm, phase) == ((maximum * 11 + 999) // 1000) * 100
 
 
 @pytest.mark.parametrize('second_finish', ['STOP', 'MAX_TOKENS', 'length'])
-def test_attacker_retry_is_bounded_reusable_and_never_scored(tmp_path, second_finish):
+@pytest.mark.parametrize('amendment', [14, 15])
+def test_attacker_retry_is_bounded_reusable_and_never_scored(tmp_path, second_finish, amendment):
     item = next(i for i in p1.materials('dev') if i['assignment']['pushback'])
     requests = []
     def respond(req):
         requests.append(req)
-        assert req.metadata['role'] == 'attacker' and req.max_output_tokens == 256
+        assert req.metadata['role'] == 'attacker' and req.max_output_tokens == (256 if amendment < 15 else 1024)
         finish = 'MAX_TOKENS' if len(requests) == 1 else second_finish
         text = '{"concede":true}'  # Even concession text is ignored when truncated.
         return paid.PaidReply(text, 1, 256, 0, 0, 'offline', {},
@@ -46,11 +52,11 @@ def test_attacker_retry_is_bounded_reusable_and_never_scored(tmp_path, second_fi
     messages = p1.render(item, 'A')[0] + [{'role': 'assistant', 'content': '{"verdict":"reject"}'}]
     original = deepcopy(messages)
     try:
-        events = list(p1.pushback(client, item, 'A', messages))
+        events = list(p1.pushback(client, item, 'A', messages, amendment=amendment))
         assert messages == original and len(requests) == 2
         assert requests[1].identity == requests[0].identity + '/truncation-retry/1'
         assert requests[1].messages == requests[0].messages
-        assert list(p1.pushback(client, item, 'A', messages)) == events
+        assert list(p1.pushback(client, item, 'A', messages, amendment=amendment)) == events
         assert len(requests) == 2  # Resume buys neither attempt again.
     finally:
         client.close()
@@ -71,9 +77,9 @@ def test_attacker_retry_is_bounded_reusable_and_never_scored(tmp_path, second_fi
 
 def test_attacker_cap_cannot_be_increased_by_caller():
     req = p1.request(p1.materials('dev')[0], 'A', 'pro', 1024, phase='attacker')
-    assert req.max_output_tokens == 256 and req.response_schema is None
+    assert req.max_output_tokens == 1024 and req.response_schema is None
     _, config = paid.VertexBackend.__new__(paid.VertexBackend).wire(req)
-    assert config.max_output_tokens == 256
+    assert config.max_output_tokens == 1024
 
 
 def test_selected_schedule_stops_and_fallback_fits():

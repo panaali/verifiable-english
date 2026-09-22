@@ -37,7 +37,7 @@ def test_identical_judge_contract_all_arms_and_phases():
                     wire = paid.OpenRouterBackend().wire(req)
                     assert wire['response_format']['json_schema']['schema'] == paid.VERDICT_SCHEMA
     attacker = p1.request(item, 'A', 'pro', 256, phase='attacker')
-    assert attacker.response_schema is None and attacker.max_output_tokens == 256
+    assert attacker.response_schema is None and attacker.max_output_tokens == 1024
     assert p1.parse('```json\n{"verdict":"approve"}\n```') == ('approve', None)
 
 

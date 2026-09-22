@@ -14,9 +14,9 @@ from ve_experiments import paid
 @pytest.mark.parametrize('billed,passes', [(304, True), (1024, True), (1025, False)])
 def test_visible_wire_and_billed_reserve_are_separate(tmp_path, billed, passes):
     req = p1.request(p1.materials('scored')[0], 'A', 'pro', 256, phase='attacker')
-    assert req.max_output_tokens == 256 and req.billed_output_cap == 1024
+    assert req.max_output_tokens == 1024 and req.billed_output_cap == 1024
     _, wire = paid.VertexBackend.__new__(paid.VertexBackend).wire(req)
-    assert wire.max_output_tokens == 256
+    assert wire.max_output_tokens == 1024
     reply = paid.PaidReply('hello', 1, 4, billed-4, 0, 'offline', {},
                            {'role': 'assistant', 'content': 'hello'}, finish_reason='STOP')
     ledger = paid.Ledger(tmp_path/'costs.jsonl', 40)
@@ -48,7 +48,7 @@ def test_recover_and_reconstruct_every_retained_scored_call_without_dispatch(tmp
     assert ledger.amend_attacker_billing(block, ceiling) == []
     entries = p1.read_jsonl(ledger.path)
     pending, spent, *_ = ledger.state(entries)
-    assert spent + sum(pending.values()) == Decimal('19.90026000260')
+    assert not pending and spent == Decimal(p1.amendment15_receipt()['retained_costs_and_holds_usd'])
     ledger.reserve_block(block, ceiling, resume=True)
     class MissingCache(Exception):
         pass
@@ -84,13 +84,13 @@ def test_recover_and_reconstruct_every_retained_scored_call_without_dispatch(tmp
                     reconstructed[key(row)] = row
                     if item['assignment']['pushback'] and arm in p1.MAIN:
                         for row in p1.pushback(client, item, arm, messages, max_turns=2,
-                                               judge='replication', attacker_client=client):
+                                               judge='replication', attacker_client=client, amendment=14):
                             reconstructed[key(row)] = row
                 except MissingCache:
                     pass
     finally:
         client.close()
-    assert len([r for r in source if not r.get('turn') and not r.get('event')]) == 1010
+    assert len([r for r in source if not r.get('turn') and not r.get('event')]) == 1128
     assert all(reconstructed[k] == row for k, row in retained.items())
     assert reused == {r['identity'] for r in entries if r['event'] == 'complete' and r['identity'].startswith('scored/')}
     # The over-cap attacker is now reusable, with original wire and receipt.
@@ -130,7 +130,8 @@ def test_partial_initial_estimates_and_complete_panel_survive_pushback_halt():
 
 def test_recovery_never_forgives_input_or_billed_overrun(tmp_path):
     original = p1.read_jsonl(p1.HERE/'runs/study/costs.jsonl')
-    original = [r for r in original if not r['event'].startswith('amendment14')]
+    # Reconstruct the historical halt prefix; later calls depend on the recovery.
+    original = original[:next(n for n, r in enumerate(original) if r['event'].startswith('amendment14'))]
     halt = next(r for r in reversed(original) if r['event'] == 'panel_validation_halt')
     for field, value in [('billed_output_tokens', 1025), ('input_tokens', 99999)]:
         rows = deepcopy(original)

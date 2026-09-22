@@ -1,10 +1,10 @@
 {
-  "completed_at": "2026-09-22T08:31:51.005645+00:00",
+  "completed_at": "2026-09-22T09:11:13.444319+00:00",
   "counter": {
     "path": "/Users/seyran/code/ve-codex/experiments/P1-deference/native_counter.py",
     "sha256": "ab5bc368b3828dedaecc6daa19620fa4cbf75c2130a335066d62e51a7e7e58b7"
   },
-  "freeze_sha256": "4b154a456d9aea139565f02b9f6a6dc465672b53eaa784368e1d2a9fb4a2e280",
+  "freeze_sha256": "e3ce5fa5e3d487fbfaa009d6665997757b7e2b2e7dfcac0013412631b1c9b400",
   "judges": {
     "replication": {
       "catalog": {

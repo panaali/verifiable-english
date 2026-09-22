@@ -122,7 +122,7 @@ def token_requests(judge='pro'):
             messages = [{'role': 'system', 'content': (p.HERE / 'prompts/attacker.txt').read_text()},
                         *req.messages[1:], {'role': 'user', 'content': 'Provide the next proposer message.'}]
             yield replace(req, identity=req.identity + '/gemini-attacker', model='pro',
-                          messages=messages, response_schema=None, max_output_tokens=256,
+                          messages=messages, response_schema=None, max_output_tokens=p.ATTACKER_PROVIDER_OUTPUT_CAP,
                           max_input_tokens=p.p1_input_bound(req.metadata['arm'], 'attacker'),
                           metadata={**req.metadata, 'role': 'attacker', 'target_judge': 'replication'}), reserve
 

@@ -1,18 +1,43 @@
 # P1 execution
 
-## Final status — 2026-09-22
+## Current status — Amendment 15, 2026-09-22
 
-The initial stage is complete: **1,128/1,128** Qwen judgments. Pushback remains
-infrastructure-incomplete: all **120** trajectories ended, with **84** exhausted
-attacker truncation retries, **28** concessions and **8** two-turn completions.
-Amendment 9 prohibits another attempt on those exhausted trajectories; an
-ordinary resume cannot fill the gaps. No paid calls were made for finalization.
+The initial stage is complete: **1,128/1,128** Qwen judgments. **Pushback is
+being re-run under Amendment 15**: restart the 84 infrastructure-incomplete
+trajectories at attacker turn 1, reuse their original initial verdicts, and
+retain the 28 concessions and 8 completed trajectories. The worker has prepared
+the rerun without dispatching it; paid calls/spend: **0 / $0**.
 
-See [RESULTS.md](RESULTS.md) for separate E4/E5 contrasts, Wilson rates, Gemini
-dev ceilings, pushback coverage, amendments and spending. Recorded realised
-cost is **$3.45987693870** in the study ledger and **$3.49623306220** across all
-retained billing ledgers. Historical Amendment 14 instructions below describe
-the pre-resume state and do not request another scored run.
+Execution status is **READY_FOR_SCORED**: all eight gates match the current
+freeze; 1,409 tests passed with two optional skips. Free Vertex token counts,
+cached provider validation, and all 208 retained dev requests passed.
+
+The Gemini provider output budget is **1,024 tokens including thinking**, with
+the same billed threshold. The prompt requests at most about **120 words**;
+the harness clips overlong replies to their first **256 visible tokens** using
+the pinned Qwen tokenizer, without retry. Only shorter provider-truncated
+replies remain subject to Amendment 9's single retry.
+
+New pushback ceiling **$10.514931264**; retained costs/holds **$3.64271861740**;
+cumulative API cap **$14.15764988140**; all-in ceiling with $0.25 local
+**$14.40764988140**. All historical costs remain charged. See
+[Amendment 15](PROPOSED-AMENDMENT.md#amendment-15--2026-09-22-orchestrator-approved-restart-infrastructure-incomplete-pushback),
+[the recovery receipt](checks/amendment15.json), and [RESULTS.md](RESULTS.md).
+
+```sh
+export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
+uv run python experiments/P1-deference/run_p1.py preflight
+uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
+uv run python experiments/P1-deference/run_p1.py refresh-dev
+# Orchestrator only; not dispatched by this worker:
+uv run python experiments/P1-deference/run_p1.py resume-pushback --cap-usd 14.15764988140
+```
+
+The changed attacker prompt requires fresh free Vertex countTokens; an old
+identical-wire receipt cannot validate it. All generation remains disabled in
+these preflight/refresh commands. Do not reopen the old Amendment 14 block.
+The resume appends new attempt identities and preserves historical evidence;
+analysis excludes superseded partial observations from the restarted histories.
 
 ## Historical pre-resume status — Amendment 14
 

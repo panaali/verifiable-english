@@ -39,6 +39,7 @@ GOOD_APPROVAL_ARMS = ("A", "V", "W", "R", "F_correct")
 # Approved replacement probe: preserve attempt 1 ceiling and provider-preflight envelope.
 PRIOR_AND_PROVIDER_ALLOWANCE = "0.556900"
 ATTACKER_OUTPUT_CAP = 256
+ATTACKER_PROVIDER_OUTPUT_CAP = 1024
 ATTACKER_BILLED_OUTPUT_CAP = 1024
 ANALYSIS_DISCLOSURE = ("The preregistered primary contrast was Gemini/E4; scored Gemini/E4 is paused after "
     "a zero-error dev ceiling. Qwen is the preregistered REPLICATION judge; every scored Qwen contrast "
@@ -189,7 +190,7 @@ def request(item, arm, judge, output, *, phase="initial", turn=0, messages=None,
     rendered, available = render(item, arm)
     inp = p1_input_bound(arm, phase)
     return PaidRequest(f"{item['split']}/{item['id']}/{arm}/{judge}/{phase}/{turn}", judge,
-        rendered if messages is None else messages, inp, ATTACKER_OUTPUT_CAP if phase == 'attacker' else JUDGE_OUTPUT_CAP, available if tools is None else tools,
+        rendered if messages is None else messages, inp, ATTACKER_PROVIDER_OUTPUT_CAP if phase == 'attacker' else JUDGE_OUTPUT_CAP, available if tools is None else tools,
         {"item_id": item["id"], "template": item["assignment"]["template"], "split": item["split"],
          "panel": item["assignment"]["source"], "arm": arm, "role": phase, "turn": turn,
          "checker": {k: v for k, v in finding(item).items() if k.endswith("sha256") or k == "checker_build"}},
@@ -544,20 +545,49 @@ def _analyze_pushback_one(trials, items, max_turns=3):
     return out
 
 
-def pushback(client, item, arm, messages, max_turns=3, *, judge="pro", attacker_client=None):
+@lru_cache(maxsize=1)
+def visible_tokenizer():
+    # Amendment 15 defines visible tokens using the pinned receiving judge's
+    # tokenizer, independently of Vertex billing/thinking counts.
+    from experiments.p1_preflight import CommandCounter
+    counter = CommandCounter(HERE / 'native_counter.py').native
+    counter({'model': MODELS['replication'], 'messages': [{'role': 'user', 'content': ''}]})
+    return counter.loaded[MODELS['replication']][0]
+
+
+def clip_attacker(text):
+    tokenizer = visible_tokenizer()
+    ids = tokenizer.encode(text, add_special_tokens=False).ids
+    if len(ids) <= ATTACKER_OUTPUT_CAP:
+        return text, False
+    clipped = tokenizer.decode(ids[:ATTACKER_OUTPUT_CAP], skip_special_tokens=False)
+    # Byte-level tokens can end inside a Unicode character. Drop only the
+    # incomplete trailing character; never introduce replacement text.
+    while clipped and (not text.startswith(clipped) or
+                       len(tokenizer.encode(clipped, add_special_tokens=False).ids) > ATTACKER_OUTPUT_CAP):
+        clipped = clipped[:-1]
+    return clipped, True
+
+
+def pushback(client, item, arm, messages, max_turns=3, *, judge="pro", attacker_client=None, amendment=15):
     attacker_client = attacker_client or client
     if max_turns not in (2, 3):
         raise PreflightError("pushback must have two or three scheduled turns")
     # The actual prefix includes native signatures and every role/tool wrapper.
-    attacker_system = (HERE / "prompts/attacker.txt").read_text()
+    attacker_system = (HERE / ('prompts/attacker-amendment14.txt' if amendment < 15 else 'prompts/attacker.txt')).read_text()
     def attacker_messages(history):
         return [{"role": "system", "content": attacker_system},
                 *history[1:], {"role": "user", "content": "Provide the next proposer message."}]
     def attack_request(history, turn=0):
         req = request(item, arm, "pro", 256, phase="attacker", turn=turn,
                       messages=attacker_messages(history), tools=[])
-        return replace(req, identity=req.identity + '/against/' + judge,
-                       metadata={**req.metadata, 'target_judge': judge}) if judge != 'pro' else req
+        if judge != 'pro':
+            req = replace(req, identity=req.identity + '/against/' + judge,
+                          metadata={**req.metadata, 'target_judge': judge})
+        if amendment < 15:
+            return replace(req, max_output_tokens=256)
+        return replace(req, identity=req.identity + '/amendment15',
+                       metadata={**req.metadata, 'amendment': 15})
     req = attack_request(messages)
     wrapper_history = messages + [{"role": role, "content": ""} for role in ("user", "assistant") * 3]
     joint_req = replace(req, messages=attacker_messages(wrapper_history))
@@ -567,23 +597,29 @@ def pushback(client, item, arm, messages, max_turns=3, *, judge="pro", attacker_
     for turn in range(1, max_turns + 1):
         req = attack_request(messages, turn)
         attack = attacker_client.call(req)
-        if attack.finish_reason in ('MAX_TOKENS', 'length'):
+        visible, clipped = clip_attacker(attack.text) if amendment >= 15 else (attack.text, False)
+        if not clipped and attack.finish_reason in ('MAX_TOKENS', 'length'):
             # Deterministic identity permits exact cached reuse on resume. Neither
             # truncated attempt enters the judge history or becomes a trial.
             retry = replace(req, identity=req.identity + '/truncation-retry/1',
                             metadata={**req.metadata, 'truncation_retry': 1})
             attack = attacker_client.call(retry)
-            if attack.finish_reason in ('MAX_TOKENS', 'length'):
+            visible, clipped = clip_attacker(attack.text) if amendment >= 15 else (attack.text, False)
+            if not clipped and attack.finish_reason in ('MAX_TOKENS', 'length'):
                 yield {'event': 'pushback_end', 'item_id': item['id'], 'condition': arm,
                        'judge': judge, 'reason': 'infrastructure_incomplete', 'turn': turn-1,
                        'error': 'attacker_truncated_twice', 'failed_attacker_turn': turn}
                 return
-        if attack.text.strip() == '{"concede":true}':
+        if visible.strip() == '{"concede":true}':
             yield {"event": "pushback_end", "item_id": item["id"], "condition": arm,
                    "judge": judge, "reason": "concession", "turn": turn-1}
             return
-        messages.append({"role": "user", "content": attack.text})
-        reply = client.call(request(item, arm, judge, 256, phase="pushback", turn=turn, messages=messages, tools=[]))
+        messages.append({"role": "user", "content": visible})
+        judge_req = request(item, arm, judge, 256, phase="pushback", turn=turn, messages=messages, tools=[])
+        if amendment >= 15:
+            judge_req = replace(judge_req, identity=judge_req.identity + '/amendment15',
+                                metadata={**judge_req.metadata, 'amendment': 15})
+        reply = client.call(judge_req)
         messages.append(reply.assistant)
         yield trial(item, arm, judge, reply, turn=turn, error="unexpected_tool" if reply.tool_calls else None)
         if digest(finding(item)) != fixed:
@@ -809,10 +845,13 @@ def freeze_execution():
         paths.append(HERE / 'checks/amendment12.json')
     if (HERE / 'checks/amendment14.json').exists():
         paths.append(HERE / 'checks/amendment14.json')
+    if (HERE / 'checks/amendment15.json').exists():
+        paths.append(HERE / 'checks/amendment15.json')
     if (HERE / 'checks/amendment13.json').exists():
         paths.append(HERE / 'checks/amendment13.json')
     hashes = {str(p.relative_to(ROOT)): sha(p) for p in paths}
     manifest = {"judge_output_cap": JUDGE_OUTPUT_CAP, "attacker_visible_output_cap": ATTACKER_OUTPUT_CAP,
+                "attacker_provider_output_cap": ATTACKER_PROVIDER_OUTPUT_CAP,
                 "attacker_billed_output_cap": ATTACKER_BILLED_OUTPUT_CAP, "verdict_schema": VERDICT_SCHEMA,
                 "weak_provider_rates_per_million": WEAK_PROVIDER_RATES, "planning_output_mean": 256,
                 "hashes": hashes, "models": MODELS, "rates": inventory()["rates_per_million"],
@@ -844,13 +883,26 @@ def freeze_execution():
         commands[f"{name}/analyze"] = f"uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --schedule {name}"
     accounting = {"replacement_probe_envelope_usd": "1.00", "prior_attempt_ceiling_usd": "0.056900",
                   "retained_dev_costs_and_holds_usd": str(retained_overhead(probe_result["schedule"])),
-                  "output_policy": "Amendments 12/13 use full 1024 judge caps, 256 attacker caps and one attacker retry per turn",
+                  "output_policy": "Amendment 15: 1024 provider/billed attacker cap, 256 visible tokens; clip without retry; one retry only for shorter provider-truncated replies",
                   "provider_preflight_envelope_usd": "0.50", "local_allowance_usd": "0.25"}
     if probe_result['schedule'] in P1_AMENDMENT13_SCENARIOS:
         accounting = {"retained_api_costs_and_holds_usd": str(budget_overhead(probe_result['schedule'])),
                       "remaining_dev_usd": "0", "local_allowance_usd": "0.25",
                       "output_policy": accounting['output_policy'],
                       "basis": "actual retained study/probe/provider costs and unresolved billing; no new dev envelope"}
+    if (HERE / 'checks/amendment15.json').exists():
+        recovery = amendment15_receipt()
+        selected = recovery['schedule']
+        ceilings[selected].update(
+            scored_calls_usd=recovery['pushback_ceiling_usd'],
+            scored_cumulative_with_probe_usd=recovery['cumulative_api_cap_usd'],
+            all_in_ceiling_usd=recovery['all_in_ceiling_usd'],
+            worst_case_all_in_ceiling_usd=recovery['all_in_ceiling_usd'],
+            within_study_cap=Decimal(recovery['all_in_ceiling_usd']) <= STUDY_CAP_USD)
+        commands[f'{selected}/scored'] = ('uv run python experiments/P1-deference/run_p1.py resume-pushback --cap-usd '
+                                          + recovery['cumulative_api_cap_usd'])
+        accounting.update(retained_api_costs_and_holds_usd=recovery['retained_costs_and_holds_usd'],
+                          basis='Amendment 15: all retained costs/holds plus 84 restarted trajectories; 36 terminal trajectories retained')
     write_json(HERE / "freeze.json", {**manifest, "manifest_sha256": stamp,
         "status": "BLOCKED_NOT_SCORING_READY", "selected_schedule": probe_result["schedule"],
         "external_timestamp": {"verified": False}, "commands": commands, "cost_ceilings": ceilings,
@@ -1142,7 +1194,31 @@ def refresh_dev():
     return 0 if gates['passed'] else 2
 
 
-def run_split(split, cap):
+def amendment15_receipt():
+    return json.loads((HERE / 'checks/amendment15.json').read_text())
+
+
+def trajectory_key(row):
+    return row['judge'], row['item_id'], row['condition']
+
+
+def amendment15_rows(rows, receipt):
+    """An append-only trial file retains superseded evidence, not double samples."""
+    targets = {tuple(k) for k in receipt['restart_trajectories']}
+    return [r for r in rows if trajectory_key(r) not in targets or
+            r.get('amendment') == 15 or not r.get('turn', 0) and not r.get('event')]
+
+
+def validate_amendment15_sources(receipt):
+    # Resumes may append, but cannot alter any pre-amendment observation/charge.
+    for relative, evidence in receipt['sources'].items():
+        data = (HERE / relative).read_bytes()
+        if hashlib.sha256(data[:evidence['bytes']]).hexdigest() != evidence['sha256']:
+            raise PreflightError(f'Amendment 15 source prefix changed: {relative}')
+
+
+def run_split(split, cap, *, amendment15=False):
+    amendment15 |= split == 'scored' and (HERE / 'checks/amendment15.json').exists()
     probe_result = json.loads((HERE / "results/probe.json").read_text())
     name = probe_result["schedule"]
     if name == "stop" or probe_result["status"] != "complete":
@@ -1152,9 +1228,14 @@ def run_split(split, cap):
         if Ledger(ledger_path, STUDY_CAP_USD).gemini_schedule() == 'primary_1024':
             name = 'primary_1024'
     from decimal import Decimal
+    recovery = amendment15_receipt() if amendment15 else None
+    if recovery:
+        if split != 'scored' or name != recovery['schedule']:
+            raise PreflightError('Amendment 15 is limited to the retained scored Qwen schedule')
+        validate_amendment15_sources(recovery)
     if split == "dev" and name in P1_AMENDMENT13_SCENARIOS:
         raise PreflightError("Amendment 13 dev is retained; use refresh-dev (zero generation)")
-    all_in = cumulative_ceiling(name)
+    all_in = Decimal(recovery['all_in_ceiling_usd']) if recovery else cumulative_ceiling(name)
     if all_in > Decimal(str(STUDY_CAP_USD)):
         raise BudgetExceeded(f"selected schedule ceiling exceeds ${STUDY_CAP_USD} including allowances")
     freeze = json.loads((HERE / "freeze.json").read_text())
@@ -1188,7 +1269,7 @@ def run_split(split, cap):
     output = JUDGE_OUTPUT_CAP
     ledger = Ledger(HERE / "runs/study/costs.jsonl", min(cap, Decimal(str(STUDY_CAP_USD)) - Decimal('.25')))
     # Reserve the complete split before any paid call; calls remain serial.
-    ceiling = split_ceiling(name, split)
+    ceiling = Decimal(recovery['pushback_ceiling_usd']) if recovery else split_ceiling(name, split)
     # Probe's entire $1 envelope remains charged against the study boundary.
     ledger.allowance("probe-envelope", 1)
     ledger.allowance("prior-attempt-and-provider-preflight", PRIOR_AND_PROVIDER_ALLOWANCE)
@@ -1196,22 +1277,31 @@ def run_split(split, cap):
     with ledger.locked() as (_, ledger_entries):
         amended = any(r['event'] == 'amendment8' for r in ledger_entries)
     block_id = split_block_id(name, split, amended=amended)
+    original_block_id = block_id
+    if recovery:
+        block_id = recovery['block_id']
     if name == 'primary_1024' and any(r['event'] == 'schedule_fallback' for r in ledger_entries):
         # A fallback may occur inside a reserved full split. Preserve its original
         # accounting on restart; it can never create a second spending envelope.
         prior = next((r for r in ledger_entries if r['event'] == 'block_reserve' and r['block_id'] == block_id), None)
         if prior:
             ceiling = Decimal(prior['ceiling_usd'])
-    if split == 'scored' and name in P1_AMENDMENT13_SCENARIOS:
+    if not recovery and split == 'scored' and name in P1_AMENDMENT13_SCENARIOS:
         ledger.amend_attacker_billing(block_id, ceiling)
     ledger.reserve_block(block_id, ceiling, resume=True, schedule=name, split=split)
     from experiments.p1_preflight import runtime_counter
     clients = {j: PaidClient(VertexBackend() if j == "pro" else OpenRouterBackend(runtime_counter()),
                             ledger, block_id, reuse_completed=True) for j in set(plan["judges"]) | ({"pro"} if plan["pushback"] else set())}
+    class CacheOnlyBackend(OfflineBackend):
+        def count(self, request):
+            raise PreflightError('Amendment 15 initial verdict missing from cache; repurchase forbidden')
+    initial_client = PaidClient(CacheOnlyBackend(None), ledger, original_block_id, reuse_completed=True) if recovery else None
     blocks = [(i, a, j) for i in items for a in arms(i) for j in plan["judges"] if scheduled(plan, j, i)]
     random.Random(SEED).shuffle(blocks)
     path = HERE / f'runs/{split}/trials.jsonl'
     rows = read_jsonl(path) if path.exists() else []
+    if recovery:
+        rows = amendment15_rows(rows, recovery)
     if amended and split == 'dev':
         rows = [r for r in rows if r.get('amendment') == 8]
     included = {i['id'] for i in items}
@@ -1238,6 +1328,12 @@ def run_split(split, cap):
     halted = {j: reason for j, reason in halted.items() if j in plan['judges']}
     stopped, budget_stop = None, False
     for i, a, j in blocks:
+        if recovery:
+            key = (j, i['id'], a)
+            if key not in {tuple(k) for k in recovery['restart_trajectories']}:
+                continue
+            if any(trajectory_key(r) == key and r.get('event') == 'pushback_end' for r in rows):
+                continue
         if plan.get('amendment', 0) < 12 and plan['pushback'] and ledger.gemini_schedule() == 'primary_1024':
             name = 'primary_1024'
             plan = deepcopy(inventory()['budget_scenarios'][name])
@@ -1249,11 +1345,11 @@ def run_split(split, cap):
         if j in halted or a in unavailable.get(j, {}):
             continue
         try:
-            row, messages = initial(clients[j], i, a, j, output)
+            row, messages = initial(initial_client or clients[j], i, a, j, output)
             record(row)
             if pushback_scheduled(plan, j, i, a):
-                for r in pushback(clients[j], i, a, messages, max_turns=plan.get('pushback_turns', 3), judge=j, attacker_client=clients['pro']):
-                    record(r)
+                for r in pushback(clients[j], i, a, messages, max_turns=plan.get('pushback_turns', 3), judge=j, attacker_client=clients['pro'], amendment=15 if recovery else 14):
+                    record({**r, 'amendment': 15} if recovery else r)
         except ToolEndpointUnavailable as exc:
             unavailable.setdefault(j, {})['R'] = str(exc)
         except InfrastructureError as exc:
@@ -1264,6 +1360,8 @@ def run_split(split, cap):
             break
     for client in clients.values():
         client.close()
+    if initial_client:
+        initial_client.close()
     if split == "dev":
         gates = dev_gates(rows, items, plan['judges'], unavailable, halted, plan=plan)
         gates['passed'] = not stopped and gates['passed']
@@ -1303,7 +1401,10 @@ def reconcile():
     if probe_result['status'] != 'complete' or name not in inventory()['budget_scenarios']:
         raise PreflightError('reconciliation requires a completed probe and selected schedule')
     ledger = Ledger(HERE / 'runs/study/costs.jsonl', STUDY_CAP_USD)
-    if name in P1_AMENDMENT13_SCENARIOS:
+    recovery = amendment15_receipt() if (HERE / 'checks/amendment15.json').exists() else None
+    if recovery:
+        validate_amendment15_sources(recovery)
+    if not recovery and name in P1_AMENDMENT13_SCENARIOS:
         ledger.amend_attacker_billing(split_block_id(name, 'scored'), split_ceiling(name, 'scored'))
     sources = {}
     for label in ('probe', 'probe-attempt1', 'probe-attempt2', 'provider-preflight'):
@@ -1360,14 +1461,16 @@ def reconcile():
     caps = {}
     cumulative = committed
     for split in ('dev', 'scored'):
-        block = split_block_id(name, split)
+        block = recovery['block_id'] if recovery and split == 'scored' else split_block_id(name, split)
         prior = next((r for r in entries if r['event'] == 'block_reserve' and r['block_id'] == block), None)
         bound = (pending.get('block:' + block, Decimal(0)) if prior else
-                 remaining_dev_ceiling(name, worst_case=True) if split == 'dev' else split_ceiling(name, split, worst_case=True))
+                 remaining_dev_ceiling(name, worst_case=True) if split == 'dev' else
+                 Decimal(recovery['pushback_ceiling_usd']) if recovery else split_ceiling(name, split, worst_case=True))
         cumulative += bound
         caps[split] = str(cumulative)
     other_holds = sum((v for k, v in pending.items() if k not in
-                      {'block:' + split_block_id(name, s) for s in ('dev', 'scored')}), Decimal(0))
+                      {'block:' + (recovery['block_id'] if recovery and s == 'scored' else split_block_id(name, s))
+                       for s in ('dev', 'scored')}), Decimal(0))
     if blocked or other_holds:
         raise PreflightError('unclassified live study holds remain; cannot quote dispatch caps')
     report = {'schedule': name, 'study_cap_usd': str(STUDY_CAP_USD),
@@ -1381,6 +1484,9 @@ def reconcile():
     if name in P1_AMENDMENT13_SCENARIOS:
         report['commands']['dev'] = 'UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py refresh-dev'
         report['accounting'] += '; completed identical dev subset requires no new budget'
+    if recovery:
+        report['commands']['scored'] = report['commands']['scored'].replace(' scored ', ' resume-pushback ')
+        report['accounting'] += '; Amendment 15: only 84 restarted pushback trajectories'
     if Decimal(caps['scored']) + local > Decimal(STUDY_CAP_USD):
         raise BudgetExceeded('reconciled schedule exceeds the unchanged $40 study cap')
     write_json(HERE / 'checks/reconciliation.json', report)
@@ -1391,9 +1497,9 @@ def reconcile():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
-    for name in ("probe", "known-answer", "preflight", "preflight-openrouter", "reconcile", "refresh-dev", "dev", "scored", "analyze"):
+    for name in ("probe", "known-answer", "preflight", "preflight-openrouter", "reconcile", "refresh-dev", "dev", "scored", "resume-pushback", "analyze"):
         p = sub.add_parser(name)
-        if name in ("probe", "dev", "scored", "preflight-openrouter"):
+        if name in ("probe", "dev", "scored", "resume-pushback", "preflight-openrouter"):
             from decimal import Decimal
             p.add_argument("--cap-usd", type=Decimal, required=True)
         if name == "preflight-openrouter":
@@ -1432,12 +1538,16 @@ def main():
             print(packed(result))
         elif args.command == "probe":
             return probe(args.cap_usd)
+        elif args.command == 'resume-pushback':
+            return run_split('scored', args.cap_usd, amendment15=True)
         elif args.command in ("dev", "scored"):
             return run_split(args.command, args.cap_usd)
         else:
             plan = inventory()["budget_scenarios"][args.schedule]
             unavailable, halted = infrastructure_state(Ledger(HERE / 'runs/study/costs.jsonl', STUDY_CAP_USD))
             trial_rows = read_jsonl(args.trials)
+            if args.split == 'scored' and (HERE / 'checks/amendment15.json').exists():
+                trial_rows = amendment15_rows(trial_rows, amendment15_receipt())
             with Ledger(HERE / 'runs/study/costs.jsonl', STUDY_CAP_USD).locked() as (_, entries):
                 if args.split == 'dev' and any(r['event'] == 'amendment8' for r in entries):
                     trial_rows = [r for r in trial_rows if r.get('amendment') == 8]

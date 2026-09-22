@@ -112,7 +112,8 @@ class PaidRequest:
     @property
     def billed_output_cap(self):
         # Amendment 14 changes accounting only; the provider wire and cache
-        # identity retain the attacker's 256-token visible-message request.
+        # identity retain historical requests; Amendment 15 also sends 1024
+        # to Vertex and clips visible attacker text separately in the harness.
         return JUDGE_OUTPUT_CAP if self.model == 'pro' and self.metadata.get('role') == 'attacker' else self.max_output_tokens
 
 
