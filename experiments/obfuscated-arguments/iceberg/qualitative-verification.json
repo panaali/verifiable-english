@@ -1,0 +1,13 @@
+{
+  "scope": "Relational implications only; Lean arithmetic theorem imports are trusted leaves here.",
+  "canonical_roundtrip": true,
+  "python_certificate_valid": true,
+  "lean": [
+    {
+      "id": "iceberg-qualitative-only",
+      "status": "ok",
+      "valid": true
+    }
+  ],
+  "seconds": 1.529803
+}
