@@ -388,7 +388,7 @@
    "prompt_sha256": "223c0b400dad7e8468b8ce1fd3ebe704fd808cf8cc468f8885a49090996e229a"
   }
  ],
- "schedule": "replication_gemini_e5_2turn",
+ "schedule": "replication_2turn",
  "schedule_before_amendment11": "full_256",
  "schedule_before_amendment12": "primary_1024",
  "schedule_selection": {
@@ -442,5 +442,11 @@
  "total_thinking_tokens": 1094,
  "unused_allowance_usd": 0.44704,
  "schedule_before_amendment12b": "replication_3turn",
- "amendment_12b": "2026-09-22 orchestrator: selected replication_gemini_e5_2turn (ceiling $37.88 <= $40) over replication_3turn to keep the Gemini E5 premise/harm panel; decided before any scored inference."
+ "amendment_12b": "2026-09-22 orchestrator: selected replication_gemini_e5_2turn (ceiling $37.88 <= $40) over replication_3turn to keep the Gemini E5 premise/harm panel; decided before any scored inference.",
+ "amendment13": {
+  "approved_by": "orchestrator",
+  "date": "2026-09-22",
+  "reason": "Gemini E4 (0/112) and E5 (0/96) are dev-ceiling results; neither is bought as a scored judge. Harm contrasts: no harm observable at ceiling. Qwen remains the preregistered REPLICATION judge; every scored Qwen contrast is exploratory-primary (judge substitution due to ceiling). Gemini remains the attacker. Weak control is not run. Good approval is gated only in A, V, W, R and E4 F_correct; F and U are excluded by design."
+ },
+ "schedule_before_amendment13": "replication_gemini_e5_2turn"
 }

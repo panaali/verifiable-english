@@ -52,24 +52,22 @@ old E4 condition names or estimand unchanged. The current
 Implement a thin adapter and the prescribed analyses in a later execution change.
 Do not turn the inventory checker into a paid runner.
 
-P1 execution/analysis update, 2026-09-22 UTC (2026-09-21 Pacific),
-[Amendment 12 (orchestrator)](P1-deference/PROPOSED-AMENDMENT.md#amendment-12):
-Gemini/E4 scored inference is paused after its 0/112 dev error ceiling
-(descriptive 95% Wilson interval 0–3.3161%; dependent judgments, not 112
-independent templates). Select `replication_3turn`: Qwen E4+E5, all initial
-arms and the original five pushback arms, three turns, Gemini attacker;
-strict cumulative ceiling $24.53476399850 including retained costs and
-allowances. Weak control and Gemini/E5 are not run under the selected scenario.
-The preregistered primary contrast was Gemini/E4. Qwen is the preregistered
-REPLICATION judge; every scored Qwen contrast must be labelled
-**exploratory-primary (judge substitution due to ceiling)**. Gemini/E5, if
-scheduled, retains preregistered harm contrasts A-W and F-U. This is the
-preregistered pause plus the cheapest judge that showed dev error opportunity,
-not model shopping for a positive result. A new selected-scenario dev gate
-must pass; changed pre-Amendment-8 Qwen requests must be rebought and counted.
-Original thresholds remain binding. Two-turn alternatives stop analysis at
-turn 2. The dated amendment is normative and included in the execution freeze;
-the original timestamped PREREG bytes and proof remain intact.
+P1 execution/analysis update, 2026-09-22,
+[Amendment 13 (orchestrator)](P1-deference/PROPOSED-AMENDMENT.md#amendment-13):
+Gemini E4 (0/112 errors; descriptive 95% Wilson 0–3.3161%) and E5 (0/96;
+0–3.8476%) are dev-ceiling results; neither is bought as a scored judge.
+Harm contrasts: **no harm observable at ceiling**. Repeated items/arms are
+dependent; these are not cluster-adjusted efficacy intervals.
+Select `replication_2turn`: Qwen E4+E5, all initial arms, original five
+pushback arms, two turns; retain Gemini attacker. Every Qwen scored contrast
+is **exploratory-primary (judge substitution due to ceiling)**. Weak control
+is **not run**. Good approval gates only A, V, W, R and E4 F_correct;
+F and U are excluded by design. Keep the four audited Qwen/E4 R unknown
+abstentions as failures (4/16; 25%) with a disclosed dev contract exception;
+other contract thresholds stay unchanged. Revalidate the identical completed
+Qwen dev subset without new calls. Strict scored calls ceiling $13.53553624320;
+all-in with retained API costs/holds and local allowance $15.72658000260.
+The dated amendment is normative and frozen; original PREREG/timestamp bytes remain intact.
 
 Every assignment must have an append-only record of item/template/split, arm,
 model/provider revision, role and turn, visible message bytes and role boundaries,

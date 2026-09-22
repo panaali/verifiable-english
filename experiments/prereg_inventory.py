@@ -35,6 +35,8 @@ P1_AMENDMENT12_SCENARIOS = {
     "replication_gemini_e5_2turn": ({"replication": ["E4", "E5"], "pro": ["E5"]}, 2),
 }
 
+P1_AMENDMENT13_SCENARIOS = {"replication_2turn": ({"replication": ["E4", "E5"]}, 2)}
+
 def p1_input_bound(arm, phase):
     """Amendments 3/9: joint pushback bounds; initial/replay/probe unchanged."""
     if phase in ("attacker", "pushback") and arm in P1_PUSHBACK_INPUT_BOUNDS:
@@ -143,7 +145,7 @@ def p1():
             unallocated_reserve_usd=round(40-total-.25-.5569, 8))
         scenarios[name]["within_study_cap"] = total + .25 + .5569 <= 40
         scenarios[name]["cumulative_with_existing_allowances_usd"] = round(total + .25 + .5569, 8)
-    for name, (judge_sources, turns) in P1_AMENDMENT12_SCENARIOS.items():
+    for name, (judge_sources, turns) in (P1_AMENDMENT12_SCENARIOS | P1_AMENDMENT13_SCENARIOS).items():
         budget = []
         for judge, panels in judge_sources.items():
             assigned = [i for i in selected if i['source'] in panels]
@@ -164,7 +166,7 @@ def p1():
                          * RATES[r['model']][2] / 1e6 for r in budget), 8)
         scenarios[name] = dict(budget_rows=budget, sources=['E4', 'E5'], judges=list(judge_sources),
             judge_sources=judge_sources, pushback_judges=list(judge_sources), pushback=True,
-            pushback_turns=turns, planning_output_mean=1024, amendment=12,
+            pushback_turns=turns, planning_output_mean=1024, amendment=13 if name in P1_AMENDMENT13_SCENARIOS else 12,
             max_scheduled_api_usd=total, scheduled_calls=sum(r['calls'] for r in budget),
             within_study_cap=total + .8069 <= 40, unallocated_reserve_usd=round(40-total-.8069, 8))
     budget = scenarios["full_256"]["budget_rows"]

@@ -86,7 +86,11 @@ def test_selected_dev_rebuys_changed_qwen_requests_and_blocks_scoring(tmp_path, 
     receipt = json.loads((original / 'checks/amendment12.json').read_text())
     shutil.copytree(original / 'prompts', tmp_path / 'prompts')
     shutil.copytree(original / 'runs/study', tmp_path / 'runs/study')
-    prefix = (tmp_path / 'runs/study/costs.jsonl').read_bytes()
+    ledger_path = tmp_path / 'runs/study/costs.jsonl'
+    # This regression exercises the historical pre-Amendment-12 dev state.
+    ledger_path.write_bytes(b''.join(ledger_path.read_bytes().splitlines(keepends=True)[:receipt['ledger_prefix_lines']]))
+    assert p1.sha(ledger_path) == receipt['ledger_prefix_sha256']
+    prefix = ledger_path.read_bytes()
     monkeypatch.setattr(p1, 'HERE', tmp_path)
     monkeypatch.setattr(p1, 'inventory', lambda: plan)
     monkeypatch.setattr(p1, 'materials', lambda _: items)
@@ -108,7 +112,7 @@ def test_selected_dev_rebuys_changed_qwen_requests_and_blocks_scoring(tmp_path, 
     monkeypatch.setattr(p1, 'OpenRouterBackend', lambda *a: paid.OfflineBackend(respond))
     monkeypatch.setattr(p1, 'VertexBackend', lambda: paid.OfflineBackend(respond))
     # Durable old Gemini fallback must not switch back to buying Gemini/E4.
-    assert p1.run_split('dev', 5.37433511530) == 0
+    assert p1.run_split('dev', 6.85298379880) == 0
     assert all(r.model == 'replication' or schedule == 'replication_gemini_e5_2turn' and r.metadata['panel'] == 'E5'
                for r in calls if r.metadata['role'] != 'attacker')
     if schedule == 'replication_gemini_e5_2turn':
@@ -116,7 +120,7 @@ def test_selected_dev_rebuys_changed_qwen_requests_and_blocks_scoring(tmp_path, 
     assert any('/amendment8/' in r.identity for r in calls if r.metadata['role'] == 'initial')
     assert (tmp_path / 'runs/study/costs.jsonl').read_bytes().startswith(prefix)
     before = len(calls)
-    assert p1.run_split('dev', 5.37433511530) == 0
+    assert p1.run_split('dev', 6.85298379880) == 0
     assert len(calls) == before
     report = json.loads((tmp_path / 'runs/dev/analysis.json').read_text())
     assert set(report['families']) == {'replication/E4', 'replication/E5'} | (

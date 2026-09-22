@@ -89,7 +89,7 @@ def split_env(tmp_path, monkeypatch):
     monkeypatch.setattr(p1, 'materials', lambda _: items)
     monkeypatch.setattr(p1, 'inventory', lambda: {'budget_scenarios': {
         'full_256': {'sources': ['E4'], 'judges': ['weak', 'replication', 'pro'], 'pushback': False}}})
-    monkeypatch.setattr(p1, 'split_ceiling', lambda *a: Decimal('.1'))
+    monkeypatch.setattr(p1, 'split_ceiling', lambda *a, **kw: Decimal('.1'))
     monkeypatch.setattr(p1_preflight, 'runtime_counter', lambda: None)
     monkeypatch.setattr(paid.time, 'sleep', lambda _: None)
     p1.write_json(tmp_path / 'results/probe.json', {'status': 'complete', 'schedule': 'full_256', 'selected_output_cap': 256})
@@ -287,7 +287,7 @@ def test_actual_dev_prefix_reconstructs_without_duplicate_trials(tmp_path, monke
     # The real original split ceiling is retained in the ledger.
     ledger_rows = [json.loads(line) for line in source.read_text().splitlines()]
     ceiling = Decimal(next(r['ceiling_usd'] for r in ledger_rows if r['event'] == 'block_reserve'))
-    monkeypatch.setattr(p1, 'split_ceiling', lambda *a: ceiling)
+    monkeypatch.setattr(p1, 'split_ceiling', lambda *a, **kw: ceiling)
     monkeypatch.setattr(p1_preflight, 'runtime_counter', lambda: None)
     class CacheOnly(paid.OfflineBackend):
         def __init__(self):

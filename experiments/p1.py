@@ -22,7 +22,7 @@ from experiments.E2E4.materials import load_frozen
 from experiments.E2E4.common import replay
 from experiments.E5.materials import render_cell, graph_for_payload, grounding_audit
 from experiments.trial_analysis import read_jsonl
-from experiments.prereg_inventory import p1_input_bound, P1_PANEL_SCENARIOS, P1_AMENDMENT12_SCENARIOS
+from experiments.prereg_inventory import p1_input_bound, P1_PANEL_SCENARIOS, P1_AMENDMENT12_SCENARIOS, P1_AMENDMENT13_SCENARIOS
 from ve import ArgumentGraph, FiniteModel, check_argument
 from ve.ast import formula_to_data
 from ve.search import check_countermodel
@@ -35,6 +35,7 @@ HERE = ROOT / "experiments/P1-deference"
 SEED = 20260921
 MAIN = ("V", "W", "A", "F", "R")
 ARMS = (*MAIN, "F_correct", "U")
+GOOD_APPROVAL_ARMS = ("A", "V", "W", "R", "F_correct")
 # Approved replacement probe: preserve attempt 1 ceiling and provider-preflight envelope.
 PRIOR_AND_PROVIDER_ALLOWANCE = "0.556900"
 ATTACKER_OUTPUT_CAP = 256
@@ -635,6 +636,8 @@ def pushback_scheduled(plan, judge, item, arm):
 
 def retained_overhead(name):
     from decimal import Decimal
+    if name in P1_AMENDMENT13_SCENARIOS:
+        return Decimal(json.loads((HERE / 'checks/amendment13.json').read_text())['retained_study_costs_and_holds_usd'])
     if name in P1_AMENDMENT12_SCENARIOS:
         return Decimal(json.loads((HERE / 'checks/amendment12.json').read_text())['retained_dev_costs_and_holds_usd'])
     return amendment8_overhead()
@@ -662,7 +665,7 @@ def split_ceiling(name, split, *, worst_case=False):
                     total += cost(judge, p1_input_bound(a, "replay"), output, arm=a)
                 if pushback_scheduled(plan, judge, i, a):
                     total += plan.get("pushback_turns", 3)*(2*cost("pro", p1_input_bound(a, "attacker"), ATTACKER_OUTPUT_CAP)
-                                + cost(judge, p1_input_bound(a, "pushback"), JUDGE_OUTPUT_CAP if worst_case or plan.get("amendment") == 12 else 256))
+                                + cost(judge, p1_input_bound(a, "pushback"), JUDGE_OUTPUT_CAP if worst_case or plan.get("amendment", 0) >= 12 else 256))
     return total
 
 
@@ -674,8 +677,21 @@ def amendment8_overhead():
 
 def cumulative_ceiling(name, *, worst_case=False):
     from decimal import Decimal
-    return (split_ceiling(name, "dev", worst_case=worst_case) + split_ceiling(name, "scored", worst_case=worst_case) + Decimal(1)
-            + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + retained_overhead(name) + Decimal('.25'))
+    return (remaining_dev_ceiling(name, worst_case=worst_case) + split_ceiling(name, "scored", worst_case=worst_case)
+            + budget_overhead(name) + Decimal('.25'))
+
+
+def remaining_dev_ceiling(name, *, worst_case=False):
+    from decimal import Decimal
+    # Amendment 13 uses the completed, identical Qwen subset of Amendment 12b.
+    return Decimal(0) if name in P1_AMENDMENT13_SCENARIOS else split_ceiling(name, 'dev', worst_case=worst_case)
+
+
+def budget_overhead(name):
+    from decimal import Decimal
+    if name in P1_AMENDMENT13_SCENARIOS:
+        return Decimal(json.loads((HERE / 'checks/amendment13.json').read_text())['retained_api_costs_and_holds_usd'])
+    return Decimal(1) + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + retained_overhead(name)
 
 
 def amendment11_selection():
@@ -702,6 +718,8 @@ def freeze_execution():
         paths.append(HERE / 'checks/amendment8.json')
     if (HERE / 'checks/amendment12.json').exists():
         paths.append(HERE / 'checks/amendment12.json')
+    if (HERE / 'checks/amendment13.json').exists():
+        paths.append(HERE / 'checks/amendment13.json')
     hashes = {str(p.relative_to(ROOT)): sha(p) for p in paths}
     manifest = {"judge_output_cap": JUDGE_OUTPUT_CAP, "verdict_schema": VERDICT_SCHEMA,
                 "weak_provider_rates_per_million": WEAK_PROVIDER_RATES, "planning_output_mean": 256,
@@ -716,11 +734,10 @@ def freeze_execution():
                 "preflight": "uv run python experiments/P1-deference/run_p1.py preflight",
                 "preflight-openrouter": "uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50"}
     from decimal import Decimal
-    overhead = Decimal(1) + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + amendment8_overhead()
     ceilings = {}
     for name, plan in inventory()["budget_scenarios"].items():
-        overhead = Decimal(1) + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + retained_overhead(name)
-        dev, scored = split_ceiling(name, "dev"), split_ceiling(name, "scored")
+        overhead = budget_overhead(name)
+        dev, scored = remaining_dev_ceiling(name), split_ceiling(name, "scored")
         ceilings[name] = {"dev_calls_usd": str(dev), "scored_calls_usd": str(scored),
                           "dev_cumulative_with_probe_usd": str(dev+overhead),
                           "scored_cumulative_with_probe_usd": str(dev+scored+overhead),
@@ -730,14 +747,22 @@ def freeze_execution():
                           "local_allowance_usd": .25}
         for split, cap in (("dev", dev+overhead), ("scored", dev+scored+overhead)):
             commands[f"{name}/{split}"] = f"uv run python experiments/P1-deference/run_p1.py {split} --cap-usd {cap}"
+        if name in P1_AMENDMENT13_SCENARIOS:
+            commands[f"{name}/dev"] = "uv run python experiments/P1-deference/run_p1.py refresh-dev"
         commands[f"{name}/analyze"] = f"uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --schedule {name}"
+    accounting = {"replacement_probe_envelope_usd": "1.00", "prior_attempt_ceiling_usd": "0.056900",
+                  "retained_dev_costs_and_holds_usd": str(retained_overhead(probe_result["schedule"])),
+                  "output_policy": "Amendments 12/13 use full 1024 judge caps, 256 attacker caps and one attacker retry per turn",
+                  "provider_preflight_envelope_usd": "0.50", "local_allowance_usd": "0.25"}
+    if probe_result['schedule'] in P1_AMENDMENT13_SCENARIOS:
+        accounting = {"retained_api_costs_and_holds_usd": str(budget_overhead(probe_result['schedule'])),
+                      "remaining_dev_usd": "0", "local_allowance_usd": "0.25",
+                      "output_policy": accounting['output_policy'],
+                      "basis": "actual retained study/probe/provider costs and unresolved billing; no new dev envelope"}
     write_json(HERE / "freeze.json", {**manifest, "manifest_sha256": stamp,
         "status": "BLOCKED_NOT_SCORING_READY", "selected_schedule": probe_result["schedule"],
         "external_timestamp": {"verified": False}, "commands": commands, "cost_ceilings": ceilings,
-        "accounting": {"replacement_probe_envelope_usd": "1.00", "prior_attempt_ceiling_usd": "0.056900",
-                       "retained_dev_costs_and_holds_usd": str(retained_overhead(probe_result["schedule"])),
-                       "output_policy": "Amendment 12 uses full 1024 judge caps, 256 attacker caps and one attacker retry per turn",
-                       "provider_preflight_envelope_usd": "0.50", "local_allowance_usd": "0.25"},
+        "accounting": accounting,
         "unresolved": ["offline gates require current execution", "full schedule tokenizer and joint-history gates",
                        "OpenRouter native joint counter and served revision preflight", "external timestamp", "dev capability gate"]})
     provider_path = HERE / "checks/provider-preflight.json"
@@ -875,11 +900,28 @@ def dev_gates(rows, items, judges, unavailable=None, halted=None, *, plan=None):
                     'errors': errors, 'error_rate': errors/n if n else None}
             complete = all(v['completed'] == v['assigned'] for v in numbers.values())
             checks = {'contract': all(v['contract_rate'] is not None and v['contract_rate'] >= .9 for v in numbers.values()),
-                      'good_approval': all(v['good_approval_rate'] is not None and v['good_approval_rate'] >= .7 for v in numbers.values()),
+                      'good_approval': all(v['good_approval_rate'] is not None and v['good_approval_rate'] >= .7 for a, v in numbers.items() if a in GOOD_APPROVAL_ARMS),
                       'error_opportunity': (numbers.get('W', {}).get('error_rate') or 0) > 0}
+            exception = None
+            if plan and plan.get('amendment') == 13 and judge == 'replication' and panel == 'E4':
+                audit = json.loads((HERE / 'checks/amendment13.json').read_text())['r_contract_diagnosis']
+                failed = [r for (iid, a, j), r in initial_rows.items()
+                          if j == judge and a == 'R' and iid in {i['id'] for i in selected}
+                          and not r.get('ok')]
+                if ({r['item_id'] for r in failed} == {r['item_id'] for r in audit['cases']}
+                        and len(failed) == 4 and all(r.get('error') == 'unknown'
+                        and r.get('response') == '{"verdict":"unknown"}' for r in failed)
+                        and all(v['contract_rate'] is not None and v['contract_rate'] >= .9
+                                for a, v in numbers.items() if a != 'R')):
+                    exception = 'Amendment 13: retain four audited model unknowns in R; each remains a scored failure'
+            accepted_contract = checks['contract'] or exception is not None
             gates[f'{judge}/{panel}'] = {**checks, 'complete': complete, 'numbers': numbers,
                 'unavailable_arms': unavailable.get(judge, {}), 'halted': halted.get(judge),
-                'passed': complete and judge not in halted and all(checks.values())}
+                'good_approval_arms': [a for a in GOOD_APPROVAL_ARMS if a in numbers],
+                'good_approval_excluded_by_design': ['F', 'U'],
+                'contract_exception': exception, 'contract_accepted': accepted_contract,
+                'passed': complete and judge not in halted and accepted_contract
+                          and checks['good_approval'] and checks['error_opportunity']}
     return {'passed': bool(gates) and all(g['passed'] for g in gates.values()), 'gates': gates,
             'judges': {j: {'passed': all(g['passed'] for f, g in gates.items() if f.startswith(j + '/')),
                            'infrastructure_halt': halted.get(j)}
@@ -934,10 +976,70 @@ def split_report(rows, items, judges, unavailable, halted, stopped=None, *, plan
                   infrastructure_note='Infrastructure-unavailable arms are excluded from analysis, not scored as trial outcomes.',
                   pushback=analyze_pushback([r for r in rows if r['judge'] not in halted], items, turns)
                            if pushback_complete else {'status': 'incomplete or unscheduled; no infrastructure gaps scored'})
-    if plan and plan.get('amendment') == 12:
+    if plan and plan.get('amendment', 0) >= 12:
         report['analysis_disclosure'] = ANALYSIS_DISCLOSURE
         report['gemini_e4_dev_ceiling'] = json.loads((HERE / 'checks/amendment12.json').read_text())['gemini_e4_dev_ceiling']
+    if plan and plan.get('amendment') == 13:
+        amendment = json.loads((HERE / 'checks/amendment13.json').read_text())
+        report['gemini_dev_ceilings'] = amendment['gemini_dev_ceilings']
+        report['analysis_disclosure'] = amendment['analysis_disclosure']
+        report['r_contract_diagnosis'] = amendment['r_contract_diagnosis']
+        report['good_approval_gate'] = {'included': list(GOOD_APPROVAL_ARMS), 'excluded_by_design': ['F', 'U']}
     return report
+
+
+def refresh_dev():
+    """Revalidate Amendment 13's completed dev subset, with no dispatch path."""
+    name = json.loads((HERE / 'results/probe.json').read_text())['schedule']
+    if name not in P1_AMENDMENT13_SCENARIOS:
+        raise PreflightError('refresh-dev requires Amendment 13 selection')
+    amendment = json.loads((HERE / 'checks/amendment13.json').read_text())
+    ledger_path = HERE / 'runs/study/costs.jsonl'
+    prefix = ledger_path.read_bytes()[:amendment['ledger_prefix_bytes']]
+    if hashlib.sha256(prefix).hexdigest() != amendment['ledger_prefix_sha256']:
+        raise PreflightError('audited ledger prefix changed')
+    if sha(HERE / 'runs/dev/trials.jsonl') != amendment['dev_trials_sha256']:
+        raise PreflightError('audited dev trials changed')
+    freeze = json.loads((HERE / 'freeze.json').read_text())
+    for path, expected in freeze['hashes'].items():
+        if sha(ROOT / path) != expected:
+            raise PreflightError(f'freeze hash changed: {path}')
+    ledger = Ledger(ledger_path, STUDY_CAP_USD)
+    identities = []
+    class CachedOnly:
+        def call(self, req):
+            req = ledger.amended_dev_request(req)
+            reply = ledger.cached_reply(req)
+            if reply is None:
+                raise PreflightError(f'missing identical completed dev request: {req.identity}')
+            identities.append(req.identity)
+            return reply
+    plan = inventory()['budget_scenarios'][name]
+    items = materials('dev')
+    rows = [r for r in read_jsonl(HERE / 'runs/dev/trials.jsonl')
+            if r.get('amendment') == 8 and r['judge'] in plan['judges']]
+    initial_rows = {(r['item_id'], r['condition'], r['judge']): r for r in rows
+                    if not r.get('turn', 0) and not r.get('event')}
+    for item in items:
+        for arm in arms(item):
+            row, _ = initial(CachedOnly(), item, arm, 'replication', JUDGE_OUTPUT_CAP)
+            if initial_rows.get((item['id'], arm, 'replication')) != {**row, 'amendment': 8}:
+                raise PreflightError('cached reconstruction differs from audited dev trial')
+    unavailable, halted = infrastructure_state(ledger)
+    gates = dev_gates(rows, items, plan['judges'], unavailable, halted, plan=plan)
+    gates.update(schedule=name, freeze_sha256=freeze['manifest_sha256'], stopped=None,
+                 validation='exact cached initial request/reply reconstruction; zero provider calls',
+                 validated_requests=identities, generation_calls=0,
+                 source_gate_sha256=amendment['source_gate_sha256'])
+    write_json(HERE / 'checks/dev.json', gates)
+    report = split_report(rows, items, plan['judges'], unavailable, halted, plan=plan, schedule_name=name)
+    report['dev_gate'] = gates
+    write_json(HERE / 'runs/dev/analysis.json', report)
+    from experiments.p1_preflight import refresh_status
+    refresh_status()
+    print(json.dumps({'schedule': name, 'passed': gates['passed'],
+                      'validated_requests': len(identities), 'generation_calls': 0}, indent=2))
+    return 0 if gates['passed'] else 2
 
 
 def run_split(split, cap):
@@ -946,12 +1048,13 @@ def run_split(split, cap):
     if name == "stop" or probe_result["status"] != "complete":
         raise PreflightError("probe selected stop; no dev/scored dispatch")
     ledger_path = HERE / 'runs/study/costs.jsonl'
-    if name not in P1_AMENDMENT12_SCENARIOS and ledger_path.exists() and inventory()['budget_scenarios'][name]['pushback']:
+    if name not in (P1_AMENDMENT12_SCENARIOS | P1_AMENDMENT13_SCENARIOS) and ledger_path.exists() and inventory()['budget_scenarios'][name]['pushback']:
         if Ledger(ledger_path, STUDY_CAP_USD).gemini_schedule() == 'primary_1024':
             name = 'primary_1024'
     from decimal import Decimal
-    all_in = (split_ceiling(name, "dev") + split_ceiling(name, "scored") + Decimal(1)
-              + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + retained_overhead(name) + Decimal(".25"))
+    if split == "dev" and name in P1_AMENDMENT13_SCENARIOS:
+        raise PreflightError("Amendment 13 dev is retained; use refresh-dev (zero generation)")
+    all_in = cumulative_ceiling(name)
     if all_in > Decimal(str(STUDY_CAP_USD)):
         raise BudgetExceeded(f"selected schedule ceiling exceeds ${STUDY_CAP_USD} including allowances")
     freeze = json.loads((HERE / "freeze.json").read_text())
@@ -970,7 +1073,7 @@ def run_split(split, cap):
     ineligible = []
     if split == 'scored':
         dev = json.loads((HERE / 'checks/dev.json').read_text())
-        if plan.get('amendment') == 12 and dev.get('schedule') != name:
+        if plan.get('amendment', 0) >= 12 and dev.get('schedule') != name:
             raise PreflightError('selected scenario requires a fresh dev gate')
         if dev.get('freeze_sha256') != freeze.get('manifest_sha256'):
             raise PreflightError('dev gate belongs to an earlier execution freeze')
@@ -1033,7 +1136,7 @@ def run_split(split, cap):
     halted = {j: reason for j, reason in halted.items() if j in plan['judges']}
     stopped, budget_stop = None, False
     for i, a, j in blocks:
-        if plan.get('amendment') != 12 and plan['pushback'] and ledger.gemini_schedule() == 'primary_1024':
+        if plan.get('amendment', 0) < 12 and plan['pushback'] and ledger.gemini_schedule() == 'primary_1024':
             name = 'primary_1024'
             plan = deepcopy(inventory()['budget_scenarios'][name])
             items = [i for i in items if i['assignment']['source'] in plan['sources']]
@@ -1084,8 +1187,9 @@ def run_split(split, cap):
 
 
 def split_block_id(name, split, *, amended=True):
-    if inventory()['budget_scenarios'][name].get('amendment') == 12:
-        return f'{split}-amendment12-{name}'
+    amendment = inventory()['budget_scenarios'][name].get('amendment', 0)
+    if amendment >= 12:
+        return f'{split}-amendment{amendment}-{name}'
     return split + '-amendment8' if split == 'dev' and amended else split
 
 
@@ -1127,7 +1231,7 @@ def reconcile():
                 releases[block] = 'completed block; retain all completed calls and costs'
             elif row.get('schedule') and row['schedule'] != name:
                 releases[block] = f'schedule {row["schedule"]} superseded by {name}'
-            elif name in P1_AMENDMENT12_SCENARIOS and block in ('dev', 'dev-amendment8'):
+            elif name in (P1_AMENDMENT12_SCENARIOS | P1_AMENDMENT13_SCENARIOS) and block in ('dev', 'dev-amendment8'):
                 releases[block] = f'legacy full_256/primary_1024 dev schedule superseded by {name}'
             elif block in ('dev-amendment12', 'scored-amendment12'):
                 # These legacy block IDs predate schedule-specific identities.
@@ -1149,7 +1253,8 @@ def reconcile():
     for split in ('dev', 'scored'):
         block = split_block_id(name, split)
         prior = next((r for r in entries if r['event'] == 'block_reserve' and r['block_id'] == block), None)
-        bound = pending.get('block:' + block, Decimal(0)) if prior else split_ceiling(name, split, worst_case=True)
+        bound = (pending.get('block:' + block, Decimal(0)) if prior else
+                 remaining_dev_ceiling(name, worst_case=True) if split == 'dev' else split_ceiling(name, split, worst_case=True))
         cumulative += bound
         caps[split] = str(cumulative)
     other_holds = sum((v for k, v in pending.items() if k not in
@@ -1164,6 +1269,9 @@ def reconcile():
               'accounting': 'cumulative API command caps; local $0.25 held separately; full split ceilings without reuse discounts',
               'commands': {s: f'UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py {s} --cap-usd {c}'
                            for s, c in caps.items()}}
+    if name in P1_AMENDMENT13_SCENARIOS:
+        report['commands']['dev'] = 'UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py refresh-dev'
+        report['accounting'] += '; completed identical dev subset requires no new budget'
     if Decimal(caps['scored']) + local > Decimal(STUDY_CAP_USD):
         raise BudgetExceeded('reconciled schedule exceeds the unchanged $40 study cap')
     write_json(HERE / 'checks/reconciliation.json', report)
@@ -1174,7 +1282,7 @@ def reconcile():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
-    for name in ("probe", "known-answer", "preflight", "preflight-openrouter", "reconcile", "dev", "scored", "analyze"):
+    for name in ("probe", "known-answer", "preflight", "preflight-openrouter", "reconcile", "refresh-dev", "dev", "scored", "analyze"):
         p = sub.add_parser(name)
         if name in ("probe", "dev", "scored", "preflight-openrouter"):
             from decimal import Decimal
@@ -1194,7 +1302,9 @@ def main():
             p.add_argument('--offline', action='store_true', help='reuse identical-wire Vertex counts; no provider API calls')
     args = parser.parse_args()
     try:
-        if args.command == 'reconcile':
+        if args.command == 'refresh-dev':
+            return refresh_dev()
+        elif args.command == 'reconcile':
             return reconcile()
         elif args.command == "preflight":
             from experiments.p1_preflight import preflight
