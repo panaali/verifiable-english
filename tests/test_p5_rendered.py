@@ -39,7 +39,8 @@ def test_review_contract_uses_one_complete_judge_packet():
     item=p5.materials()[0]
     req=r.review_request(item)
     assert req.messages[-1]['content']==p5.packet(item,'L')
-    assert req.max_output_tokens==1024
+    assert req.max_output_tokens==4096
+    assert req.billed_output_cap==4096
     assert req.metadata['packet_sha256']==digest(item['payload'])
     with pytest.raises(ValueError):
         r.validate_review({'ready':True},item)
@@ -61,11 +62,11 @@ def test_report_policy_requires_every_authentic_current_diagnosis(materials,monk
                 'evidence':'synthetic test evidence','issues':[]}
         text=json.dumps(review)
         reviews.append({'item_id':item['id'],'packet_sha256':digest(item['payload']),
-                        'request_version':2,'request_sha256':digest(req.messages),
+                        'request_version':3,'request_sha256':digest(req.messages),
                         'response_sha256':digest(text),'review':review})
         ledger.extend([{'event':'reserve','identity':req.identity,'messages':req.messages,'metadata':req.metadata},
                        {'event':'complete','identity':req.identity,'text':text,'input_tokens':100,
-                        'billed_output_tokens':100,'revision':'gemini-3.1-pro-preview'}])
+                        'billed_output_tokens':100,'finish_reason':'STOP','revision':'gemini-3.1-pro-preview'}])
     submission=materials/'checks/gemini-rendered-submission.json'
     write_json(submission,reviews)
     path=materials/'runs/revision-v8/gemini-review-costs.jsonl'
@@ -103,7 +104,7 @@ def test_narrow_cap_recovery_preserves_spend_and_new_limit(tmp_path):
 
 def test_review_cap_checked_before_dispatch(monkeypatch):
     monkeypatch.setattr(r,'provenance',lambda:{'passed':False})
-    for cap in (0,-1,'1.01','NaN'):
+    for cap in (0,-1,'1.644181','NaN'):
         with pytest.raises(PreflightError,match='cap'):
             r.gemini_review(cap)
     with pytest.raises(PreflightError,match='all 84'):
@@ -133,3 +134,91 @@ def test_packet_safety_accepts_only_correct_leading_step_markers(monkeypatch):
     assert not packet_safety()['passed']
     items[0]['payload']['argument']=original.replace(original.split(']')[0]+']','[n99]',1)
     assert not packet_safety()['passed']
+
+
+@pytest.mark.parametrize('version,billed',[(1,824),(2,1068)])
+def test_old_cap_recovery_is_idempotent_and_retains_cost(tmp_path,version,billed):
+    book=Ledger(tmp_path/'costs.jsonl',r.REVIEW_CUMULATIVE_CAP)
+    req=r.review_request(p5.materials()[0],version)
+    book.reserve(req)
+    book.complete(req,PaidReply('{}',2000,100,billed-100,0,'gemini-3.1-pro-preview',{},{}),
+                  'provider exceeded per-call token cap',panel_only=True)
+    original=book.path.read_bytes()
+    r.recover_review_cap(book); r.recover_review_cap(book)
+    assert book.path.read_bytes().startswith(original)
+    assert sum(x['event']=='material_review_cap_recovery' for x in read(book.path))==1
+    book.reserve(r.review_request(p5.materials()[1]))
+
+
+def test_ledger_resume_retains_negative_and_rejects_parseable_truncation(tmp_path):
+    items=p5.materials()[:3]
+    book=Ledger(tmp_path/'costs.jsonl',1)
+    review={'ready':False,'kind':'uncertain','locations':[],
+            'evidence':'ambiguous record','issues':['Ambiguous record']}
+    for item,finish in zip(items,('STOP','MAX_TOKENS','STOP')):
+        req=r.review_request(item,2)
+        book.reserve(req)
+        book.complete(req,PaidReply(json.dumps(review),2000,100,200,0,
+                                    'gemini-3.1-pro-preview',{},{},finish_reason=finish))
+    results,attempts=r.ledger_reviews(items,read(book.path))
+    assert 'review' in results[items[0]['id']]
+    assert 'review' not in results[items[1]['id']]
+    summary=r.review_summary(items,results)
+    assert (summary['accepted'],summary['flagged_defect'],summary['incomplete'])==(0,2,1)
+    assert summary['defect_groups']==[{'defect':'Ambiguous record',
+                                      'packet_ids':sorted([items[0]['id'],items[2]['id']])}]
+    req=r.review_request(items[1]); book.reserve(req)
+    book.complete(req,PaidReply(json.dumps({**review,'ready':True,'kind':'benign','issues':[]}),
+                               2000,100,200,0,'gemini-3.1-pro-preview',{},{},finish_reason='STOP'))
+    results,attempts=r.ledger_reviews(items,read(book.path))
+    assert attempts=={items[1]['id']:0}
+    assert r.review_summary(items,results)['accepted']==1
+    assert results[items[0]['id']]['review']==review
+    rows=read(book.path)
+    rows[0]['messages']=[{'role':'user','content':'changed packet'}]
+    assert 'review' not in r.ledger_reviews(items,rows)[0][items[0]['id']]
+
+
+def test_4096_overrun_does_not_get_recovered(tmp_path):
+    book=Ledger(tmp_path/'costs.jsonl',1)
+    req=r.review_request(p5.materials()[0]); book.reserve(req)
+    book.complete(req,PaidReply('{}',2000,100,4000,0,'gemini-3.1-pro-preview',{},{}),
+                  'provider exceeded per-call token cap',panel_only=True)
+    r.recover_review_cap(book)
+    assert not any(x['event']=='material_review_cap_recovery' for x in read(book.path))
+    with pytest.raises(PreflightError,match='token cap'):
+        book.reserve(r.review_request(p5.materials()[1]))
+
+
+def test_resume_dispatches_only_incomplete_and_uses_distinct_retry(tmp_path,monkeypatch):
+    items=p5.materials()[:2]
+    monkeypatch.setattr(r,'HERE',tmp_path)
+    monkeypatch.setattr(r,'provenance',lambda:{'passed':True})
+    monkeypatch.setattr(p5,'verify_freeze',lambda:None)
+    monkeypatch.setattr(p5,'materials',lambda:items)
+    book=Ledger(tmp_path/'runs/revision-v8/gemini-review-costs.jsonl',1)
+    negative={'ready':False,'kind':'uncertain','locations':[],
+              'evidence':'ambiguous record','issues':['Ambiguous record']}
+    for item,finish in zip(items,('STOP','MAX_TOKENS')):
+        req=r.review_request(item,2); book.reserve(req)
+        book.complete(req,PaidReply(json.dumps(negative),100,50,50,0,
+                                    'gemini-3.1-pro-preview',{},{},finish_reason=finish))
+    dispatched=[]
+    class Backend:
+        def count(self,request): return 0
+        async def generate(self,request):
+            dispatched.append(request)
+            # A parseable but truncated first attempt must be reissued on resume.
+            return PaidReply(json.dumps(negative),100,50,50,0,
+                             'gemini-3.1-pro-preview',{},{},
+                             finish_reason='MAX_TOKENS' if len(dispatched)==1 else 'STOP')
+    monkeypatch.setattr(r,'ReviewBackend',Backend)
+    first=r.gemini_review(1)
+    assert first['reused_complete_reviews']==1 and first['incomplete']==1
+    (tmp_path/'checks/gemini-rendered-submission.json').unlink()
+    second=r.gemini_review(1)
+    assert second['flagged_defect']==2 and second['incomplete']==0
+    assert [q.identity for q in dispatched]==[
+        r.review_request(items[1]).identity,r.review_request(items[1],attempt=1).identity]
+    third=r.gemini_review(1)
+    assert third['reused_complete_reviews']==2 and len(dispatched)==2

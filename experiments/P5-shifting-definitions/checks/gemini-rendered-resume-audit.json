@@ -1,0 +1,92 @@
+{
+  "complete_reviews_reused": 5,
+  "diagnosis_disagreements": [
+    {
+      "item_id": "i17fe028fca21d694ebe499666730b759",
+      "reference_kind": "benign",
+      "reference_locations": [],
+      "review": {
+        "evidence": "The argument drops the parenthetical attributes for 'sound', 'dry', and 'cleared', creating equivocation steps (e.g., n21 infers 'unit7 is sound' from 'unit7 is sound', masking the shift from 'signal audible' to 'casing intact').",
+        "issues": [],
+        "kind": "shift",
+        "locations": [
+          "n21",
+          "n16",
+          "n19"
+        ],
+        "ready": true
+      }
+    },
+    {
+      "item_id": "i2e2c86f4cdc3bc257bbd62ae18da8f55",
+      "reference_kind": "benign",
+      "reference_locations": [],
+      "review": {
+        "evidence": "Step n15 produces 'unit1 is cleared' (inspection passed) via r02. Step n08 consumes this to infer 'unit1 is cleared' (payment settled) via r06, exploiting the dropped parentheticals to equivocate on 'cleared'.",
+        "issues": [],
+        "kind": "shift",
+        "locations": [
+          "n15",
+          "n08"
+        ],
+        "ready": true
+      }
+    },
+    {
+      "item_id": "i55908f495028f09871bca06b09ab1c3c",
+      "reference_kind": "benign",
+      "reference_locations": [],
+      "review": {
+        "evidence": "Step n00 produces 'unit1 is active' meaning registry current, but step n05 consumes it as 'unit1 is active' meaning power connected to infer another active result.",
+        "issues": [],
+        "kind": "shift",
+        "locations": [
+          "n00",
+          "n05"
+        ],
+        "ready": true
+      }
+    },
+    {
+      "item_id": "i65def4f39ff74a9f99bff1cce8d7d954",
+      "reference_kind": "benign",
+      "reference_locations": [],
+      "review": {
+        "evidence": "Step n13 concludes unit6 is open (seal removed) based on r12. Step n02 uses this to infer unit6 is open (account enabled) via r00, but the text drops the parenthetical disambiguations, creating an equivocation on 'open'.",
+        "issues": [],
+        "kind": "shift",
+        "locations": [
+          "n13",
+          "n02"
+        ],
+        "ready": true
+      }
+    },
+    {
+      "item_id": "i9af8492c5aae07aa22ae6deeb7185eb6",
+      "reference_kind": "benign",
+      "reference_locations": [],
+      "review": {
+        "evidence": "The argument equivocates on 'unit6 is active', using it to represent both 'registry current' (from n14) and 'power connected' (from n19) to satisfy the condition in r14 at step n05.",
+        "issues": [],
+        "kind": "shift",
+        "locations": [
+          "n14",
+          "n19",
+          "n05"
+        ],
+        "ready": true
+      }
+    }
+  ],
+  "diagnosis_policy": "Separate from material acceptance; original kind/localisation gate retained.",
+  "new_calls": 79,
+  "new_calls_all_STOP": true,
+  "new_infrastructure_events": 0,
+  "new_max_billed_output_tokens": 1665,
+  "no_dev_or_scored_dispatch": true,
+  "passed": true,
+  "prior_ledger_bytes_preserved": true,
+  "prior_study_ledger_bytes_preserved": true,
+  "task_spent_usd": "1.129784"
+}

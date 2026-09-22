@@ -726,3 +726,39 @@ It now permits only a leading label matching that step's expected ID and order;
 IDs in the prose body, wrong markers, non-topological parents and invalid
 back-references remain rejected. This changes validation of the already
 reviewed format, not material bytes or any label/content restrictions.
+
+
+### Revision 8 review thinking-budget amendment (2026-09-22)
+
+Explicit Worker X authorization raises material-review `max_output_tokens` and
+its total billed-output halt threshold to **4,096**, including Gemini 3.1 Pro
+thinking. The 768/1,024 limits truncated reviews; thinking remains enabled at
+LOW and is billed as output. This changes only material review, not study calls.
+The task authorizes **$1.50 additional** Vertex ADC spending, including any
+infrastructure holds. Prior ledger spending is $0.144180, so the durable
+cumulative ceiling is **$1.644180**. A supplemental $0.644180 review envelope
+extends the old $1 envelope inside the unchanged $40 study budget.
+
+Resume reconstructs all reviews from hash-bound paid ledger evidence. Every
+schema-valid, normally completed (`STOP`), untruncated judgment is reused,
+including negative judgments. Only truncated/incomplete reviews may be reissued
+under version 3 (4,096) identities; subsequent incomplete attempts get distinct
+retry identities. Historical token-cap halts are acknowledged only for the old
+768/1,024 requests whose billed output fits 4,096 and whose input/revision checks
+pass. Raw responses, halts and every charge remain append-only; a new 4,096
+halt is not silently recovered. Reports separately count accepted packets,
+completed reviews flagging defects (grouped exact defect text and packet IDs),
+and incomplete/unreviewed packets. Any defect or incomplete review blocks dev.
+Only 84 accepted reviews permit review-gate evaluation and final refreeze;
+kind/localisation agreement and all other existing dev gates remain required.
+No dev/scored call is authorized or dispatched by this task.
+
+
+The authorized continuation finished with **83 accepted / 1 completed defect
+report / 0 incomplete**, reusing five complete reviews and making 79 new calls.
+Task spending is **$1.129784**; cumulative review accounting is **$1.273964**.
+The extra-meaning-shift defect on `ib9279ca87379a78c8da58ec68a9d4b42` is retained
+verbatim in RESULTS.md and the status report. Five other material-ready reviews
+disagree with reference diagnoses; they remain acceptance reports, with those
+disagreements separately retained. The existing gate remains blocked; no dev or
+scored call was dispatched and no negative judgment was retried.

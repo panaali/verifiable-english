@@ -19,6 +19,10 @@ from ve_experiments.paid import (Ledger, PaidClient, PaidRequest, VertexBackend,
                                  PreflightError, digest, packed)
 
 POLICY = 'generator-rendered-2026-09-22'
+REVIEW_OUTPUT_CAP = 4096
+REVIEW_PRIOR_SPEND = Decimal('0.144180')
+REVIEW_TASK_CAP = Decimal('1.50')
+REVIEW_CUMULATIVE_CAP = REVIEW_PRIOR_SPEND + REVIEW_TASK_CAP
 HISTORICAL_ARCHIVE_SHA256 = '621f3e6a56c5fc1196724da01de4e0f63f722875bf2367aeee1e2f4f5e019842'
 HISTORICAL_REPORT_SHA256 = 'a36d6e2c0c84b94bbd3148f3de4dbed66b11092daa4ba4bd63754aebffbdbb0a'
 HISTORICAL_COMMIT = 'e4114957a70985934a9dd85ba0b0a2f703827fed'
@@ -114,18 +118,23 @@ class ReviewBackend(VertexBackend):
             contents=contents,config=cfg).total_tokens
 
 
-def review_request(item, version=2):
+def review_request(item, version=3, attempt=0):
     from experiments import p5
-    if version == 2:
+    if version in (2, 3):
         # Exact judge-visible English packet: records contain all sense definitions.
         content = p5.packet(item, "L")
     elif version == 1:
         content = packed(blind_packet(item["payload"]))
     else:
         raise ValueError("unknown review request version")
-    return PaidRequest(('review-rendered-v8/' if version == 1 else 'review-rendered-v8-1024/')+item['id'],'pro',[
+    if attempt and (version != 3 or type(attempt) is not int or attempt < 0):
+        raise ValueError('only incomplete version-3 reviews may have retry identities')
+    prefix = {1:'review-rendered-v8/', 2:'review-rendered-v8-1024/',
+              3:'review-rendered-v8-4096/'}[version]
+    identity = prefix + item['id'] + (f'/retry-{attempt}' if attempt else '')
+    return PaidRequest(identity,'pro',[
         {'role':'system','content':PROMPT},
-        {'role':'user','content':content}],3500,768 if version == 1 else 1024,
+        {'role':'user','content':content}],3500,{1:768, 2:1024, 3:REVIEW_OUTPUT_CAP}[version],
         metadata={'role':'material-review','packet_sha256':digest(item['payload']),
                   'item_id':item['id'],'policy':POLICY})
 
@@ -144,77 +153,152 @@ def validate_review(row, item):
 
 
 def recover_review_cap(book):
-    """Retain and acknowledge only the initial 768-token review overrun <=1024."""
+    """Acknowledge only historical 768/1024 overruns within the amended 4096 cap."""
     with book.locked() as (f, rows):
         recovered = {r['halt_time'] for r in rows if r['event']=='material_review_cap_recovery'}
         for halt in rows:
             if (halt['event']!='panel_validation_halt' or halt['time'] in recovered or
-                halt.get('model')!='pro' or not halt['identity'].startswith('review-rendered-v8/') or
+                halt.get('model')!='pro' or not halt['identity'].startswith(
+                    ('review-rendered-v8/', 'review-rendered-v8-1024/')) or
                 halt['error']!='provider exceeded per-call token cap'):
                 continue
             history = [r for r in rows if r.get('identity')==halt['identity']]
-            req = next(r for r in history if r['event']=='reserve')
-            reply = next(r for r in history if r['event']=='complete')
-            if (req['max_output_tokens']==768 and req['metadata'].get('policy')==POLICY and
+            req = next(r for r in reversed(history) if r['event']=='reserve')
+            reply = next(r for r in reversed(history) if r['event']=='complete')
+            if (req['max_output_tokens'] in (768,1024) and req['metadata'].get('policy')==POLICY and
                 reply['input_tokens']<=req['max_input_tokens'] and
-                768 < reply['billed_output_tokens'] <= 1024 and reply['revision']=='gemini-3.1-pro-preview'):
+                req['max_output_tokens'] < reply['billed_output_tokens'] <= REVIEW_OUTPUT_CAP and
+                reply['revision']=='gemini-3.1-pro-preview'):
                 book.append(f,{'event':'material_review_cap_recovery','halt_time':halt['time'],
                     'identity':halt['identity'],'sample':False,
-                    'reason':'P5 revision 8 review feasibility correction; paid cost retained; incomplete reply remains invalid; subsequent calls cap 1024 within cumulative $1'})
+                    'reason':'2026-09-22 review amendment: 4096 wire and billed output cap; '
+                             'all costs retained; truncated replies remain incomplete; '
+                             '$1.50 additional task authorization'})
+
+
+def ledger_reviews(items, ledger_rows):
+    """Reconstruct from paid evidence, preserving the first complete judgment."""
+    items = {item['id']:item for item in items}
+    reservations = {}; results = {}; attempts = {}
+    prefixes = {1:'review-rendered-v8/', 2:'review-rendered-v8-1024/',
+                3:'review-rendered-v8-4096/'}
+    for event in ledger_rows:
+        identity = event.get('identity','')
+        if event['event']=='reserve':
+            reservations[identity] = event
+            continue
+        if event['event']!='complete' or identity not in reservations:
+            continue
+        reservation = reservations[identity]
+        item = items.get(reservation.get('metadata',{}).get('item_id'))
+        if item is None:
+            continue
+        version = next((v for v,prefix in prefixes.items() if identity.startswith(prefix)),None)
+        if version is None:
+            continue
+        suffix = identity.removeprefix(prefixes[version]+item['id'])
+        if suffix and not re.fullmatch(r'/retry-[1-9][0-9]*',suffix):
+            continue
+        attempt = int(suffix.removeprefix('/retry-')) if suffix else 0
+        if version == 3:
+            attempts[item['id']] = max(attempts.get(item['id'],-1),attempt)
+        if 'review' in results.get(item['id'],{}):
+            continue  # Never retry or replace a complete negative judgment.
+        req = review_request(item,version,attempt)
+        row = {'item_id':item['id'],'packet_sha256':digest(item['payload']),
+               'request_sha256':digest(req.messages),'response_sha256':digest(event['text']),
+               'reviewer_id':'gemini-3.1-pro-v8/'+item['id'],
+               'model_family':'Google Gemini','revision':event['revision'],
+               'minutes':event.get('latency_s',0)/60,'fresh_context':True,
+               'request_version':version,'request_attempt':attempt,
+               'finish_reason':event.get('finish_reason')}
+        try:
+            if (reservation.get('messages')!=req.messages or reservation.get('metadata')!=req.metadata or
+                reservation.get('max_output_tokens')!=req.max_output_tokens or
+                reservation.get('max_input_tokens')!=req.max_input_tokens or
+                event['input_tokens']>req.max_input_tokens or
+                event['billed_output_tokens']>REVIEW_OUTPUT_CAP or
+                event['revision']!='gemini-3.1-pro-preview'):
+                raise ValueError('review evidence does not match current packet/request/caps')
+            if event.get('finish_reason')!='STOP':
+                raise ValueError('incomplete provider finish: '+str(event.get('finish_reason')))
+            row['review'] = validate_review(json.loads(strip_json_fence(event['text'])),item)
+        except (ValueError,TypeError) as exc:
+            row['error'] = str(exc)
+        results[item['id']] = row
+    return results, attempts
+
+
+def review_summary(items, results):
+    accepted = []; defects = []; incomplete = []; groups = {}
+    for item in sorted(items,key=lambda i:i['id']):
+        row = results.get(item['id'],{}); review = row.get('review')
+        if review is None:
+            incomplete.append({'item_id':item['id'],'reason':row.get('error','not reviewed')})
+        elif review['ready'] and not review['issues'] and review['kind']!='uncertain':
+            accepted.append(item['id'])
+        else:
+            defects.append(item['id'])
+            for issue in review['issues'] or [review['evidence']]:
+                groups.setdefault(issue,[]).append(item['id'])
+    return {'accepted':len(accepted),'flagged_defect':len(defects),'incomplete':len(incomplete),
+            'accepted_packet_ids':accepted,'defect_packet_ids':defects,
+            'defect_groups':[{'defect':text,'packet_ids':ids} for text,ids in sorted(groups.items())],
+            'incomplete_packets':incomplete}
 
 
 def gemini_review(cap):
     from experiments import p5
     cap = Decimal(str(cap))
-    if not cap.is_finite() or not 0 < cap <= 1:
-        raise PreflightError('Gemini material review requires positive cumulative cap <= $1')
+    if not cap.is_finite() or not 0 < cap <= REVIEW_CUMULATIVE_CAP:
+        raise PreflightError('Gemini material review requires positive cumulative cap <= $1.644180 '
+                             '(prior $0.144180 plus $1.50 task cap)')
     if not provenance()['passed']:
         raise PreflightError('all 84 generator-rendered packets and historical transfer required')
     p5.verify_freeze()
-    Ledger(HERE/'runs/study/costs.jsonl',p5.CAP).allowance('v8-gemini-review-envelope',str(cap))
+    study = Ledger(HERE/'runs/study/costs.jsonl',p5.CAP)
+    study.allowance('v8-gemini-review-envelope',str(min(cap,Decimal(1))))
+    if cap > 1:
+        study.allowance('v8-gemini-review-4096-envelope',str(REVIEW_CUMULATIVE_CAP-1))
     book = Ledger(HERE/'runs/revision-v8/gemini-review-costs.jsonl',cap)
     recover_review_cap(book)
+    items = sorted(p5.materials(),key=lambda i:i['id'])
+    results, attempts = ledger_reviews(items,read(book.path))
+    reused = sum('review' in r for r in results.values())
     client = PaidClient(ReviewBackend(),book,reuse_completed=True)
-    path = HERE/'checks/gemini-rendered-submission.json'
-    prior = {r['item_id']:r for r in json.loads(path.read_text())} if path.exists() else {}
-    results = dict(prior); error = None
-    # Every call is one fresh context, even across siblings. No export annotations
-    # or reference labels enter this function or its provider requests.
+    error = None
+    # One isolated public packet per call. No reference labels enter requests.
     try:
-        for item in sorted(p5.materials(),key=lambda i:i['id']):
-            old = prior.get(item['id'],{})
-            # Keep valid reviews even when negative; never retry a substantive judgment.
-            if 'review' in old:
+        for item in items:
+            if 'review' in results.get(item['id'],{}):
                 continue
-            req = review_request(item)
-            reply = client.call(req)
-            row = {'item_id':item['id'],'packet_sha256':digest(item['payload']),
-                   'request_sha256':digest(req.messages),'response_sha256':digest(reply.text),
-                   'reviewer_id':'gemini-3.1-pro-v8/'+item['id'],
-                   'model_family':'Google Gemini','revision':reply.revision,
-                   'minutes':reply.latency_s/60,'fresh_context':True,'request_version':2}
-            try:
-                row['review'] = validate_review(json.loads(strip_json_fence(reply.text)),item)
-            except (ValueError,TypeError) as exc:
-                row['error'] = str(exc)
-            results[item['id']] = row
+            req = review_request(item,attempt=attempts.get(item['id'],-1)+1)
+            client.call(req)
+            results, attempts = ledger_reviews(items,read(book.path))
             write_json(HERE/'checks/gemini-rendered-submission.json',list(results.values()))
-            print(json.dumps({'completed':len(results),'valid':sum('review' in r for r in results.values())}),flush=True)
+            summary = review_summary(items,results)
+            print(json.dumps({k:summary[k] for k in ('accepted','flagged_defect','incomplete')}),flush=True)
     except PreflightError as exc:
         error = str(exc)
     finally:
         client.close()
     with book.locked() as (_,ledger_rows):
         pending,spent,*_ = book.state(ledger_rows)
-    rows = list(results.values())
+    results,_ = ledger_reviews(items,ledger_rows)
+    write_json(HERE/'checks/gemini-rendered-submission.json',list(results.values()))
+    rows = list(results.values()); summary = review_summary(items,results)
     status = {'completed_calls':sum(r['event']=='complete' for r in ledger_rows),
               'completed_call_cost_usd':str(sum((Decimal(r['cost_usd']) for r in ledger_rows if r['event']=='complete'),Decimal(0))),
               'infrastructure_holds_usd':str(sum((Decimal(r.get('infrastructure_hold_usd','0')) for r in ledger_rows if r['event'] in ('infrastructure_failure','panel_halt')),Decimal(0))),
-              'completed':len(rows),'valid':sum('review' in r for r in rows),
+              'completed':summary['accepted']+summary['flagged_defect'],
+              'valid':sum('review' in r for r in rows),'reused_complete_reviews':reused,
               'cap_usd':str(cap),'spent_usd':str(spent),
+              'prior_spent_usd':str(REVIEW_PRIOR_SPEND),
+              'task_spent_usd':str(spent-REVIEW_PRIOR_SPEND),'task_cap_usd':str(REVIEW_TASK_CAP),
+              'max_output_tokens':REVIEW_OUTPUT_CAP,'billed_output_halt_threshold':REVIEW_OUTPUT_CAP,
               'pending_usd':str(sum(pending.values(),Decimal(0))),'error':error,
-              'model':'gemini-3.1-pro-preview','provider':'Vertex ADC',
-              'passed':len(rows)==84 and all('review' in r and r['review']['ready'] and not r['review']['issues'] for r in rows)}
+              'model':'gemini-3.1-pro-preview','provider':'Vertex ADC', **summary,
+              'passed':summary['accepted']==84 and summary['incomplete']==summary['flagged_defect']==0}
     write_json(HERE/'checks/gemini-rendered-status.json',status)
     return status
 
@@ -238,14 +322,15 @@ def review_gate(base=HERE):
     reservations = {r['identity']:r for r in ledger if r['event']=='reserve'}
     for item in read(base/'materials/dev.jsonl.gz') + read(base/'materials/scored.jsonl.gz'):
         row = by_id.get(item['id'],{}); review = row.get('review',{}); label = labels[item['id']]
-        req = review_request(item,row.get('request_version',1)); billed = completed.get(req.identity,{})
+        req = review_request(item,row.get('request_version',1),row.get('request_attempt',0)); billed = completed.get(req.identity,{})
         try:
             validate_review(review,item)
             reservation = reservations.get(req.identity,{})
             authentic = (reservation.get('messages')==req.messages and
                          reservation.get('metadata')==req.metadata and
                          billed.get('input_tokens',10**9)<=req.max_input_tokens and
-                         billed.get('billed_output_tokens',10**9)<=req.max_output_tokens and
+                         billed.get('billed_output_tokens',10**9)<=REVIEW_OUTPUT_CAP and
+                         billed.get('finish_reason')=='STOP' and
                          billed.get('revision')=='gemini-3.1-pro-preview' and
                          digest(billed['text'])==row.get('response_sha256') and
                          json.loads(strip_json_fence(billed['text']))==review)

@@ -13,6 +13,7 @@ BARRED = (
     'materials/round5-reviewed-packets.jsonl.gz',
     'materials/rejected-v7-paraphrases.jsonl.gz',
     'checks/gemini-rendered-submission.json',
+    'checks/gemini-rendered-resume-audit.json',
     'runs/revision-v8/gemini-review-costs.jsonl',
     'materials/dossiers.jsonl.gz',
     'materials/scored.jsonl.gz',

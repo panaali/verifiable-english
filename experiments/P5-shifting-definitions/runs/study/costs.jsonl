@@ -291,3 +291,4 @@
 {"cost_usd":"0.40","event":"allowance","identity":"v6-paraphrase-envelope","time":1790092235.218475}
 {"cost_usd":"0.40","event":"allowance","identity":"v7-paraphrase-envelope","time":1790096344.874905}
 {"cost_usd":"1","event":"allowance","identity":"v8-gemini-review-envelope","time":1790110034.2175791}
+{"cost_usd":"0.644180","event":"allowance","identity":"v8-gemini-review-4096-envelope","time":1790111662.6046999}
