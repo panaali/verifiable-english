@@ -762,3 +762,19 @@ verbatim in RESULTS.md and the status report. Five other material-ready reviews
 disagree with reference diagnoses; they remain acceptance reports, with those
 disagreements separately retained. The existing gate remains blocked; no dev or
 scored call was dispatched and no negative judgment was retried.
+
+
+### Revision 8 mechanical dispute adjudication (2026-09-22)
+
+Explicit Worker X authorization permits offline exhaustive sense-assignment
+adjudication of the documented one defect claim and five diagnosis disagreements.
+The six original Gemini responses remain unchanged. Only these six packet IDs
+may use this route: evidence is bound to the current packet and original review,
+recomputed at the gate, and checked against the intended kind and localization.
+The defect claim is rejected: n03 is the sole unlicensed step (the intended
+clear shift); n20/free is licensed. The other five packets are benign under
+zero-relaxation readings. This supersedes the prior requirement that all 84
+Gemini responses themselves agree before refreezing. Review acceptance now rests
+on 78 direct agreements plus six documented mechanical adjudications. The
+original report remains 83 accepted / 1 reported defect / 0 incomplete.
+Refreeze and timestamp renewal are authorized; no paid calls are authorized.

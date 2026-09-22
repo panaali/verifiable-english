@@ -1,0 +1,6424 @@
+{
+  "adjudications": [
+    {
+      "adjudicator": "Worker X / GPT-6 Astra",
+      "evidence": {
+        "assignments": [
+          [
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "free",
+                "space available"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "stored",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "stored",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "filed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "filed",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "labelled",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "labelled",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r07",
+              "relaxations": 0,
+              "step_id": "n14"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "free",
+                "fee waived"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "signed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "signed",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "routed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "routed",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "tagged",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "tagged",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r15",
+              "relaxations": 0,
+              "step_id": "n05"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "free",
+                "fee waived"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "free",
+                    "fee waived"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "free",
+                    "fee waived"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "free",
+                    "space available"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "free",
+                    "space available"
+                  ]
+                }
+              ],
+              "record": "r09",
+              "relaxations": 0,
+              "step_id": "n13"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "signed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "free",
+                    "fee waived"
+                  ],
+                  "mismatch": null,
+                  "producer": "n13",
+                  "required": [
+                    "unit3",
+                    "free",
+                    "fee waived"
+                  ]
+                }
+              ],
+              "record": "r04",
+              "relaxations": 0,
+              "step_id": "n04"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "sound",
+                "signal audible"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "signed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "signed",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r12",
+              "relaxations": 0,
+              "step_id": "n09"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "sound",
+                "casing intact"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "sound",
+                    "signal audible"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "sound",
+                    "signal audible"
+                  ]
+                }
+              ],
+              "record": "r11",
+              "relaxations": 0,
+              "step_id": "n21"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "sound",
+                "casing intact"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "sound",
+                    "casing intact"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "sound",
+                    "casing intact"
+                  ]
+                }
+              ],
+              "record": "r03",
+              "relaxations": 0,
+              "step_id": "n20"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit5",
+                "filed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "sound",
+                    "casing intact"
+                  ],
+                  "mismatch": null,
+                  "producer": "n20",
+                  "required": [
+                    "unit4",
+                    "sound",
+                    "casing intact"
+                  ]
+                }
+              ],
+              "record": "r13",
+              "relaxations": 0,
+              "step_id": "n18"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "dry",
+                "surface moisture absent"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit5",
+                    "filed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit5",
+                    "filed",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r14",
+              "relaxations": 0,
+              "step_id": "n03"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "dry",
+                "internal moisture low"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "dry",
+                    "surface moisture absent"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "dry",
+                    "surface moisture absent"
+                  ]
+                }
+              ],
+              "record": "r08",
+              "relaxations": 0,
+              "step_id": "n16"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "dry",
+                "internal moisture low"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "dry",
+                    "internal moisture low"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "dry",
+                    "internal moisture low"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "dated",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "dated",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r05",
+              "relaxations": 0,
+              "step_id": "n00"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit5",
+                "tagged",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "dry",
+                    "internal moisture low"
+                  ],
+                  "mismatch": null,
+                  "producer": "n00",
+                  "required": [
+                    "unit4",
+                    "dry",
+                    "internal moisture low"
+                  ]
+                }
+              ],
+              "record": "r00",
+              "relaxations": 0,
+              "step_id": "n12"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "cleared",
+                "payment settled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit5",
+                    "tagged",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit5",
+                    "tagged",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r02",
+              "relaxations": 0,
+              "step_id": "n17"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "cleared",
+                "inspection passed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "cleared",
+                    "payment settled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "cleared",
+                    "payment settled"
+                  ]
+                }
+              ],
+              "record": "r06",
+              "relaxations": 0,
+              "step_id": "n19"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "cleared",
+                "inspection passed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "cleared",
+                    "inspection passed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "cleared",
+                    "inspection passed"
+                  ]
+                }
+              ],
+              "record": "r01",
+              "relaxations": 0,
+              "step_id": "n06"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "signed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "cleared",
+                    "inspection passed"
+                  ],
+                  "mismatch": null,
+                  "producer": "n06",
+                  "required": [
+                    "unit4",
+                    "cleared",
+                    "inspection passed"
+                  ]
+                }
+              ],
+              "record": "r10",
+              "relaxations": 0,
+              "step_id": "n01"
+            }
+          ],
+          [
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "free",
+                "space available"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "stored",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "stored",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "filed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "filed",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "labelled",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "labelled",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r07",
+              "relaxations": 0,
+              "step_id": "n14"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "free",
+                "fee waived"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "signed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "signed",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "routed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "routed",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "tagged",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "tagged",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r15",
+              "relaxations": 0,
+              "step_id": "n05"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "free",
+                "fee waived"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "free",
+                    "space available"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "free",
+                    "space available"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "free",
+                    "fee waived"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "free",
+                    "fee waived"
+                  ]
+                }
+              ],
+              "record": "r09",
+              "relaxations": 0,
+              "step_id": "n13"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "signed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "free",
+                    "fee waived"
+                  ],
+                  "mismatch": null,
+                  "producer": "n13",
+                  "required": [
+                    "unit3",
+                    "free",
+                    "fee waived"
+                  ]
+                }
+              ],
+              "record": "r04",
+              "relaxations": 0,
+              "step_id": "n04"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "sound",
+                "signal audible"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "signed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "signed",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r12",
+              "relaxations": 0,
+              "step_id": "n09"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "sound",
+                "casing intact"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "sound",
+                    "signal audible"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "sound",
+                    "signal audible"
+                  ]
+                }
+              ],
+              "record": "r11",
+              "relaxations": 0,
+              "step_id": "n21"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "sound",
+                "casing intact"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "sound",
+                    "casing intact"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "sound",
+                    "casing intact"
+                  ]
+                }
+              ],
+              "record": "r03",
+              "relaxations": 0,
+              "step_id": "n20"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit5",
+                "filed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "sound",
+                    "casing intact"
+                  ],
+                  "mismatch": null,
+                  "producer": "n20",
+                  "required": [
+                    "unit4",
+                    "sound",
+                    "casing intact"
+                  ]
+                }
+              ],
+              "record": "r13",
+              "relaxations": 0,
+              "step_id": "n18"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "dry",
+                "surface moisture absent"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit5",
+                    "filed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit5",
+                    "filed",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r14",
+              "relaxations": 0,
+              "step_id": "n03"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "dry",
+                "internal moisture low"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "dry",
+                    "surface moisture absent"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "dry",
+                    "surface moisture absent"
+                  ]
+                }
+              ],
+              "record": "r08",
+              "relaxations": 0,
+              "step_id": "n16"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "dry",
+                "internal moisture low"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "dry",
+                    "internal moisture low"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "dry",
+                    "internal moisture low"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "dated",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "dated",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r05",
+              "relaxations": 0,
+              "step_id": "n00"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit5",
+                "tagged",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "dry",
+                    "internal moisture low"
+                  ],
+                  "mismatch": null,
+                  "producer": "n00",
+                  "required": [
+                    "unit4",
+                    "dry",
+                    "internal moisture low"
+                  ]
+                }
+              ],
+              "record": "r00",
+              "relaxations": 0,
+              "step_id": "n12"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "cleared",
+                "payment settled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit5",
+                    "tagged",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit5",
+                    "tagged",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r02",
+              "relaxations": 0,
+              "step_id": "n17"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "cleared",
+                "inspection passed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "cleared",
+                    "payment settled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "cleared",
+                    "payment settled"
+                  ]
+                }
+              ],
+              "record": "r06",
+              "relaxations": 0,
+              "step_id": "n19"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "cleared",
+                "inspection passed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "cleared",
+                    "inspection passed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "cleared",
+                    "inspection passed"
+                  ]
+                }
+              ],
+              "record": "r01",
+              "relaxations": 0,
+              "step_id": "n06"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "signed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "cleared",
+                    "inspection passed"
+                  ],
+                  "mismatch": null,
+                  "producer": "n06",
+                  "required": [
+                    "unit4",
+                    "cleared",
+                    "inspection passed"
+                  ]
+                }
+              ],
+              "record": "r10",
+              "relaxations": 0,
+              "step_id": "n01"
+            }
+          ]
+        ],
+        "kind": "benign",
+        "minimum_assignment_count": 2,
+        "minimum_relaxations": 0,
+        "unavoidable_unlicensed_steps": [],
+        "unlicensed_step_count": 0,
+        "zero_relaxation_assignments": 2
+      },
+      "item_id": "i17fe028fca21d694ebe499666730b759",
+      "method": "exhaustive public-record sense assignment; total relaxation budgets 0 then 1",
+      "outcome": "diagnosis_rejected",
+      "packet_sha256": "6f1ade0d7b9f1c46a52288b31a22b49abf3ad32cf634f2bf43e0ad5decb743c9",
+      "reason": "A complete zero-relaxation assignment licenses every step; the proposed meaning-shift diagnosis is rejected.",
+      "review_sha256": "d83007895cd26740a9987e8c5c74c64d6c7031e18aad58cf0df8a13afaea2983"
+    },
+    {
+      "adjudicator": "Worker X / GPT-6 Astra",
+      "evidence": {
+        "assignments": [
+          [
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "open",
+                "account enabled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "queued",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "queued",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "wrapped-up",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "wrapped-up",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "photographed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "photographed",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r07",
+              "relaxations": 0,
+              "step_id": "n18"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "open",
+                "seal removed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "stored",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "stored",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "dated",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "dated",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "documented",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "documented",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r01",
+              "relaxations": 0,
+              "step_id": "n03"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "open",
+                "seal removed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "open",
+                    "account enabled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "open",
+                    "account enabled"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit1",
+                    "open",
+                    "seal removed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "open",
+                    "seal removed"
+                  ]
+                }
+              ],
+              "record": "r05",
+              "relaxations": 0,
+              "step_id": "n10"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "numbered",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "open",
+                    "seal removed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "open",
+                    "seal removed"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "open",
+                    "seal removed"
+                  ],
+                  "mismatch": null,
+                  "producer": "n10",
+                  "required": [
+                    "unit0",
+                    "open",
+                    "seal removed"
+                  ]
+                }
+              ],
+              "record": "r00",
+              "relaxations": 0,
+              "step_id": "n02"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "cleared",
+                "inspection passed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "numbered",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "numbered",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r02",
+              "relaxations": 0,
+              "step_id": "n15"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "cleared",
+                "payment settled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "cleared",
+                    "inspection passed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "cleared",
+                    "inspection passed"
+                  ]
+                }
+              ],
+              "record": "r06",
+              "relaxations": 0,
+              "step_id": "n08"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "cleared",
+                "payment settled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "cleared",
+                    "payment settled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "cleared",
+                    "payment settled"
+                  ]
+                }
+              ],
+              "record": "r12",
+              "relaxations": 0,
+              "step_id": "n13"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "sorted",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "cleared",
+                    "payment settled"
+                  ],
+                  "mismatch": null,
+                  "producer": "n13",
+                  "required": [
+                    "unit0",
+                    "cleared",
+                    "payment settled"
+                  ]
+                }
+              ],
+              "record": "r14",
+              "relaxations": 0,
+              "step_id": "n04"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "stable",
+                "temperature constant"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "sorted",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "sorted",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r08",
+              "relaxations": 0,
+              "step_id": "n14"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "stable",
+                "shape retained"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "stable",
+                    "temperature constant"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "stable",
+                    "temperature constant"
+                  ]
+                }
+              ],
+              "record": "r15",
+              "relaxations": 0,
+              "step_id": "n00"
+            },
+            {
+              "branch": 1,
+              "conclusion": [
+                "unit0",
+                "stable",
+                "shape retained"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "stable",
+                    "shape retained"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "sized",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "sized",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r10",
+              "relaxations": 0,
+              "step_id": "n09"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "sealed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": "n09",
+                  "required": [
+                    "unit0",
+                    "stable",
+                    "shape retained"
+                  ]
+                }
+              ],
+              "record": "r09",
+              "relaxations": 0,
+              "step_id": "n17"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "active",
+                "registry current"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "sealed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "sealed",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r11",
+              "relaxations": 0,
+              "step_id": "n06"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "active",
+                "power connected"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "active",
+                    "registry current"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "active",
+                    "registry current"
+                  ]
+                }
+              ],
+              "record": "r03",
+              "relaxations": 0,
+              "step_id": "n05"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "active",
+                "power connected"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "active",
+                    "power connected"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "active",
+                    "power connected"
+                  ]
+                }
+              ],
+              "record": "r13",
+              "relaxations": 0,
+              "step_id": "n20"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "registered",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "active",
+                    "power connected"
+                  ],
+                  "mismatch": null,
+                  "producer": "n20",
+                  "required": [
+                    "unit0",
+                    "active",
+                    "power connected"
+                  ]
+                }
+              ],
+              "record": "r04",
+              "relaxations": 0,
+              "step_id": "n07"
+            }
+          ],
+          [
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "open",
+                "account enabled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "queued",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "queued",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "wrapped-up",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "wrapped-up",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "photographed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "photographed",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r07",
+              "relaxations": 0,
+              "step_id": "n18"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "open",
+                "seal removed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "stored",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "stored",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "dated",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "dated",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "documented",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "documented",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r01",
+              "relaxations": 0,
+              "step_id": "n03"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "open",
+                "seal removed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "open",
+                    "seal removed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "open",
+                    "seal removed"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit1",
+                    "open",
+                    "account enabled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "open",
+                    "account enabled"
+                  ]
+                }
+              ],
+              "record": "r05",
+              "relaxations": 0,
+              "step_id": "n10"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "numbered",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "open",
+                    "seal removed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "open",
+                    "seal removed"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "open",
+                    "seal removed"
+                  ],
+                  "mismatch": null,
+                  "producer": "n10",
+                  "required": [
+                    "unit0",
+                    "open",
+                    "seal removed"
+                  ]
+                }
+              ],
+              "record": "r00",
+              "relaxations": 0,
+              "step_id": "n02"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "cleared",
+                "inspection passed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "numbered",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "numbered",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r02",
+              "relaxations": 0,
+              "step_id": "n15"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "cleared",
+                "payment settled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "cleared",
+                    "inspection passed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "cleared",
+                    "inspection passed"
+                  ]
+                }
+              ],
+              "record": "r06",
+              "relaxations": 0,
+              "step_id": "n08"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "cleared",
+                "payment settled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "cleared",
+                    "payment settled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "cleared",
+                    "payment settled"
+                  ]
+                }
+              ],
+              "record": "r12",
+              "relaxations": 0,
+              "step_id": "n13"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "sorted",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "cleared",
+                    "payment settled"
+                  ],
+                  "mismatch": null,
+                  "producer": "n13",
+                  "required": [
+                    "unit0",
+                    "cleared",
+                    "payment settled"
+                  ]
+                }
+              ],
+              "record": "r14",
+              "relaxations": 0,
+              "step_id": "n04"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "stable",
+                "temperature constant"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "sorted",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "sorted",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r08",
+              "relaxations": 0,
+              "step_id": "n14"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "stable",
+                "shape retained"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "stable",
+                    "temperature constant"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "stable",
+                    "temperature constant"
+                  ]
+                }
+              ],
+              "record": "r15",
+              "relaxations": 0,
+              "step_id": "n00"
+            },
+            {
+              "branch": 1,
+              "conclusion": [
+                "unit0",
+                "stable",
+                "shape retained"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "stable",
+                    "shape retained"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "sized",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "sized",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r10",
+              "relaxations": 0,
+              "step_id": "n09"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "sealed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": "n09",
+                  "required": [
+                    "unit0",
+                    "stable",
+                    "shape retained"
+                  ]
+                }
+              ],
+              "record": "r09",
+              "relaxations": 0,
+              "step_id": "n17"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "active",
+                "registry current"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "sealed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "sealed",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r11",
+              "relaxations": 0,
+              "step_id": "n06"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "active",
+                "power connected"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "active",
+                    "registry current"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "active",
+                    "registry current"
+                  ]
+                }
+              ],
+              "record": "r03",
+              "relaxations": 0,
+              "step_id": "n05"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "active",
+                "power connected"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "active",
+                    "power connected"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "active",
+                    "power connected"
+                  ]
+                }
+              ],
+              "record": "r13",
+              "relaxations": 0,
+              "step_id": "n20"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "registered",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "active",
+                    "power connected"
+                  ],
+                  "mismatch": null,
+                  "producer": "n20",
+                  "required": [
+                    "unit0",
+                    "active",
+                    "power connected"
+                  ]
+                }
+              ],
+              "record": "r04",
+              "relaxations": 0,
+              "step_id": "n07"
+            }
+          ]
+        ],
+        "kind": "benign",
+        "minimum_assignment_count": 2,
+        "minimum_relaxations": 0,
+        "unavoidable_unlicensed_steps": [],
+        "unlicensed_step_count": 0,
+        "zero_relaxation_assignments": 2
+      },
+      "item_id": "i2e2c86f4cdc3bc257bbd62ae18da8f55",
+      "method": "exhaustive public-record sense assignment; total relaxation budgets 0 then 1",
+      "outcome": "diagnosis_rejected",
+      "packet_sha256": "051bfceb22123efca96e72b69f7f0cb379e46c14dbc85457a934c3ac2ed62ad2",
+      "reason": "A complete zero-relaxation assignment licenses every step; the proposed meaning-shift diagnosis is rejected.",
+      "review_sha256": "fea8fb5709b5d78b06f4da07ecb6a81e3da45485bec676e7c32227d69e0d247c"
+    },
+    {
+      "adjudicator": "Worker X / GPT-6 Astra",
+      "evidence": {
+        "assignments": [
+          [
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "stable",
+                "temperature constant"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "photographed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "photographed",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit3",
+                    "cooled",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "cooled",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit3",
+                    "retained",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "retained",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r05",
+              "relaxations": 0,
+              "step_id": "n20"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "stable",
+                "shape retained"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "marked",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "marked",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit3",
+                    "dried",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "dried",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit3",
+                    "registered",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "registered",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r13",
+              "relaxations": 0,
+              "step_id": "n11"
+            },
+            {
+              "branch": 1,
+              "conclusion": [
+                "unit7",
+                "stable",
+                "shape retained"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "stable",
+                    "shape retained"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit1",
+                    "stable",
+                    "temperature constant"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "stable",
+                    "temperature constant"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit3",
+                    "tested",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "tested",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r00",
+              "relaxations": 0,
+              "step_id": "n10"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "queued",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "stable",
+                    "shape retained"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": "n10",
+                  "required": [
+                    "unit7",
+                    "stable",
+                    "shape retained"
+                  ]
+                }
+              ],
+              "record": "r03",
+              "relaxations": 0,
+              "step_id": "n01"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "active",
+                "registry current"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "queued",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "queued",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r09",
+              "relaxations": 0,
+              "step_id": "n00"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "active",
+                "power connected"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "active",
+                    "registry current"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "active",
+                    "registry current"
+                  ]
+                }
+              ],
+              "record": "r04",
+              "relaxations": 0,
+              "step_id": "n05"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "active",
+                "power connected"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "active",
+                    "power connected"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "active",
+                    "power connected"
+                  ]
+                }
+              ],
+              "record": "r08",
+              "relaxations": 0,
+              "step_id": "n07"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "labelled",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "active",
+                    "power connected"
+                  ],
+                  "mismatch": null,
+                  "producer": "n07",
+                  "required": [
+                    "unit3",
+                    "active",
+                    "power connected"
+                  ]
+                }
+              ],
+              "record": "r10",
+              "relaxations": 0,
+              "step_id": "n18"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "free",
+                "fee waived"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "labelled",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "labelled",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r01",
+              "relaxations": 0,
+              "step_id": "n21"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "free",
+                "space available"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "free",
+                    "fee waived"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "free",
+                    "fee waived"
+                  ]
+                }
+              ],
+              "record": "r06",
+              "relaxations": 0,
+              "step_id": "n15"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "free",
+                "space available"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "free",
+                    "space available"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "free",
+                    "space available"
+                  ]
+                }
+              ],
+              "record": "r15",
+              "relaxations": 0,
+              "step_id": "n17"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "stamped",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "free",
+                    "space available"
+                  ],
+                  "mismatch": null,
+                  "producer": "n17",
+                  "required": [
+                    "unit3",
+                    "free",
+                    "space available"
+                  ]
+                }
+              ],
+              "record": "r12",
+              "relaxations": 0,
+              "step_id": "n16"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "cleared",
+                "payment settled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "stamped",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "stamped",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r02",
+              "relaxations": 0,
+              "step_id": "n08"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "cleared",
+                "inspection passed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "cleared",
+                    "payment settled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "cleared",
+                    "payment settled"
+                  ]
+                }
+              ],
+              "record": "r11",
+              "relaxations": 0,
+              "step_id": "n14"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "cleared",
+                "inspection passed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "cleared",
+                    "inspection passed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "cleared",
+                    "inspection passed"
+                  ]
+                }
+              ],
+              "record": "r07",
+              "relaxations": 0,
+              "step_id": "n19"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "documented",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "cleared",
+                    "inspection passed"
+                  ],
+                  "mismatch": null,
+                  "producer": "n19",
+                  "required": [
+                    "unit3",
+                    "cleared",
+                    "inspection passed"
+                  ]
+                }
+              ],
+              "record": "r14",
+              "relaxations": 0,
+              "step_id": "n06"
+            }
+          ],
+          [
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "stable",
+                "temperature constant"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "photographed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "photographed",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit3",
+                    "cooled",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "cooled",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit3",
+                    "retained",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "retained",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r05",
+              "relaxations": 0,
+              "step_id": "n20"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "stable",
+                "shape retained"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "marked",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "marked",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit3",
+                    "dried",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "dried",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit3",
+                    "registered",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "registered",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r13",
+              "relaxations": 0,
+              "step_id": "n11"
+            },
+            {
+              "branch": 1,
+              "conclusion": [
+                "unit7",
+                "stable",
+                "shape retained"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "stable",
+                    "temperature constant"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "stable",
+                    "temperature constant"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit1",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "stable",
+                    "shape retained"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit3",
+                    "tested",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "tested",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r00",
+              "relaxations": 0,
+              "step_id": "n10"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "queued",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "stable",
+                    "shape retained"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": "n10",
+                  "required": [
+                    "unit7",
+                    "stable",
+                    "shape retained"
+                  ]
+                }
+              ],
+              "record": "r03",
+              "relaxations": 0,
+              "step_id": "n01"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "active",
+                "registry current"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "queued",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "queued",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r09",
+              "relaxations": 0,
+              "step_id": "n00"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "active",
+                "power connected"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "active",
+                    "registry current"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "active",
+                    "registry current"
+                  ]
+                }
+              ],
+              "record": "r04",
+              "relaxations": 0,
+              "step_id": "n05"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "active",
+                "power connected"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "active",
+                    "power connected"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "active",
+                    "power connected"
+                  ]
+                }
+              ],
+              "record": "r08",
+              "relaxations": 0,
+              "step_id": "n07"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "labelled",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "active",
+                    "power connected"
+                  ],
+                  "mismatch": null,
+                  "producer": "n07",
+                  "required": [
+                    "unit3",
+                    "active",
+                    "power connected"
+                  ]
+                }
+              ],
+              "record": "r10",
+              "relaxations": 0,
+              "step_id": "n18"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "free",
+                "fee waived"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "labelled",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "labelled",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r01",
+              "relaxations": 0,
+              "step_id": "n21"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "free",
+                "space available"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "free",
+                    "fee waived"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "free",
+                    "fee waived"
+                  ]
+                }
+              ],
+              "record": "r06",
+              "relaxations": 0,
+              "step_id": "n15"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "free",
+                "space available"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "free",
+                    "space available"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "free",
+                    "space available"
+                  ]
+                }
+              ],
+              "record": "r15",
+              "relaxations": 0,
+              "step_id": "n17"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "stamped",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "free",
+                    "space available"
+                  ],
+                  "mismatch": null,
+                  "producer": "n17",
+                  "required": [
+                    "unit3",
+                    "free",
+                    "space available"
+                  ]
+                }
+              ],
+              "record": "r12",
+              "relaxations": 0,
+              "step_id": "n16"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "cleared",
+                "payment settled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "stamped",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit3",
+                    "stamped",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r02",
+              "relaxations": 0,
+              "step_id": "n08"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit1",
+                "cleared",
+                "inspection passed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "cleared",
+                    "payment settled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "cleared",
+                    "payment settled"
+                  ]
+                }
+              ],
+              "record": "r11",
+              "relaxations": 0,
+              "step_id": "n14"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "cleared",
+                "inspection passed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit1",
+                    "cleared",
+                    "inspection passed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit1",
+                    "cleared",
+                    "inspection passed"
+                  ]
+                }
+              ],
+              "record": "r07",
+              "relaxations": 0,
+              "step_id": "n19"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit3",
+                "documented",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit3",
+                    "cleared",
+                    "inspection passed"
+                  ],
+                  "mismatch": null,
+                  "producer": "n19",
+                  "required": [
+                    "unit3",
+                    "cleared",
+                    "inspection passed"
+                  ]
+                }
+              ],
+              "record": "r14",
+              "relaxations": 0,
+              "step_id": "n06"
+            }
+          ]
+        ],
+        "kind": "benign",
+        "minimum_assignment_count": 2,
+        "minimum_relaxations": 0,
+        "unavoidable_unlicensed_steps": [],
+        "unlicensed_step_count": 0,
+        "zero_relaxation_assignments": 2
+      },
+      "item_id": "i55908f495028f09871bca06b09ab1c3c",
+      "method": "exhaustive public-record sense assignment; total relaxation budgets 0 then 1",
+      "outcome": "diagnosis_rejected",
+      "packet_sha256": "f4e7561004841db45fec405a79d03bfbe1570066065a8bb77b4df414448a545e",
+      "reason": "A complete zero-relaxation assignment licenses every step; the proposed meaning-shift diagnosis is rejected.",
+      "review_sha256": "a95cd351452565786cb1b8e1c86f3eb012e03ceaf8d761b70556484577fab079"
+    },
+    {
+      "adjudicator": "Worker X / GPT-6 Astra",
+      "evidence": {
+        "assignments": [
+          [
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "ready",
+                "staffing arranged"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "loaded",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "loaded",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "received",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "received",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "checked",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "checked",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r01",
+              "relaxations": 0,
+              "step_id": "n00"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "ready",
+                "packing completed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "bagged",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "bagged",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "mounted",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "mounted",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "rated",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "rated",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r14",
+              "relaxations": 0,
+              "step_id": "n10"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "ready",
+                "packing completed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "ready",
+                    "packing completed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "ready",
+                    "packing completed"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit6",
+                    "ready",
+                    "staffing arranged"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "ready",
+                    "staffing arranged"
+                  ]
+                }
+              ],
+              "record": "r04",
+              "relaxations": 0,
+              "step_id": "n05"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "numbered",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "ready",
+                    "packing completed"
+                  ],
+                  "mismatch": null,
+                  "producer": "n05",
+                  "required": [
+                    "unit4",
+                    "ready",
+                    "packing completed"
+                  ]
+                }
+              ],
+              "record": "r13",
+              "relaxations": 0,
+              "step_id": "n18"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "open",
+                "seal removed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "numbered",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "numbered",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r12",
+              "relaxations": 0,
+              "step_id": "n13"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "open",
+                "account enabled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "open",
+                    "seal removed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "open",
+                    "seal removed"
+                  ]
+                }
+              ],
+              "record": "r00",
+              "relaxations": 0,
+              "step_id": "n02"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "open",
+                "account enabled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "open",
+                    "account enabled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "open",
+                    "account enabled"
+                  ]
+                }
+              ],
+              "record": "r02",
+              "relaxations": 0,
+              "step_id": "n16"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "measured",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "open",
+                    "account enabled"
+                  ],
+                  "mismatch": null,
+                  "producer": "n16",
+                  "required": [
+                    "unit4",
+                    "open",
+                    "account enabled"
+                  ]
+                }
+              ],
+              "record": "r15",
+              "relaxations": 0,
+              "step_id": "n21"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "dry",
+                "internal moisture low"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "measured",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "measured",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r11",
+              "relaxations": 0,
+              "step_id": "n15"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "dry",
+                "surface moisture absent"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "dry",
+                    "internal moisture low"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "dry",
+                    "internal moisture low"
+                  ]
+                }
+              ],
+              "record": "r05",
+              "relaxations": 0,
+              "step_id": "n12"
+            },
+            {
+              "branch": 1,
+              "conclusion": [
+                "unit4",
+                "dry",
+                "surface moisture absent"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "dry",
+                    "surface moisture absent"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "dry",
+                    "surface moisture absent"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "wrapped",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "wrapped",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r03",
+              "relaxations": 0,
+              "step_id": "n08"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "coded",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "dry",
+                    "surface moisture absent"
+                  ],
+                  "mismatch": null,
+                  "producer": "n08",
+                  "required": [
+                    "unit4",
+                    "dry",
+                    "surface moisture absent"
+                  ]
+                }
+              ],
+              "record": "r10",
+              "relaxations": 0,
+              "step_id": "n01"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "sound",
+                "signal audible"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "coded",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "coded",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r07",
+              "relaxations": 0,
+              "step_id": "n11"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "sound",
+                "casing intact"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "sound",
+                    "signal audible"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "sound",
+                    "signal audible"
+                  ]
+                }
+              ],
+              "record": "r08",
+              "relaxations": 0,
+              "step_id": "n17"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "sound",
+                "casing intact"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "sound",
+                    "casing intact"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "sound",
+                    "casing intact"
+                  ]
+                }
+              ],
+              "record": "r09",
+              "relaxations": 0,
+              "step_id": "n20"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "labelled",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "sound",
+                    "casing intact"
+                  ],
+                  "mismatch": null,
+                  "producer": "n20",
+                  "required": [
+                    "unit4",
+                    "sound",
+                    "casing intact"
+                  ]
+                }
+              ],
+              "record": "r06",
+              "relaxations": 0,
+              "step_id": "n04"
+            }
+          ],
+          [
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "ready",
+                "staffing arranged"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "loaded",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "loaded",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "received",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "received",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "checked",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "checked",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r01",
+              "relaxations": 0,
+              "step_id": "n00"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "ready",
+                "packing completed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "bagged",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "bagged",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "mounted",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "mounted",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "rated",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "rated",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r14",
+              "relaxations": 0,
+              "step_id": "n10"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "ready",
+                "packing completed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "ready",
+                    "staffing arranged"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "ready",
+                    "staffing arranged"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit6",
+                    "ready",
+                    "packing completed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "ready",
+                    "packing completed"
+                  ]
+                }
+              ],
+              "record": "r04",
+              "relaxations": 0,
+              "step_id": "n05"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "numbered",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "ready",
+                    "packing completed"
+                  ],
+                  "mismatch": null,
+                  "producer": "n05",
+                  "required": [
+                    "unit4",
+                    "ready",
+                    "packing completed"
+                  ]
+                }
+              ],
+              "record": "r13",
+              "relaxations": 0,
+              "step_id": "n18"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "open",
+                "seal removed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "numbered",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "numbered",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r12",
+              "relaxations": 0,
+              "step_id": "n13"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "open",
+                "account enabled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "open",
+                    "seal removed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "open",
+                    "seal removed"
+                  ]
+                }
+              ],
+              "record": "r00",
+              "relaxations": 0,
+              "step_id": "n02"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "open",
+                "account enabled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "open",
+                    "account enabled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "open",
+                    "account enabled"
+                  ]
+                }
+              ],
+              "record": "r02",
+              "relaxations": 0,
+              "step_id": "n16"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "measured",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "open",
+                    "account enabled"
+                  ],
+                  "mismatch": null,
+                  "producer": "n16",
+                  "required": [
+                    "unit4",
+                    "open",
+                    "account enabled"
+                  ]
+                }
+              ],
+              "record": "r15",
+              "relaxations": 0,
+              "step_id": "n21"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "dry",
+                "internal moisture low"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "measured",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "measured",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r11",
+              "relaxations": 0,
+              "step_id": "n15"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "dry",
+                "surface moisture absent"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "dry",
+                    "internal moisture low"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "dry",
+                    "internal moisture low"
+                  ]
+                }
+              ],
+              "record": "r05",
+              "relaxations": 0,
+              "step_id": "n12"
+            },
+            {
+              "branch": 1,
+              "conclusion": [
+                "unit4",
+                "dry",
+                "surface moisture absent"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "dry",
+                    "surface moisture absent"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "dry",
+                    "surface moisture absent"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit4",
+                    "wrapped",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "wrapped",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r03",
+              "relaxations": 0,
+              "step_id": "n08"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "coded",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "dry",
+                    "surface moisture absent"
+                  ],
+                  "mismatch": null,
+                  "producer": "n08",
+                  "required": [
+                    "unit4",
+                    "dry",
+                    "surface moisture absent"
+                  ]
+                }
+              ],
+              "record": "r10",
+              "relaxations": 0,
+              "step_id": "n01"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "sound",
+                "signal audible"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "coded",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit4",
+                    "coded",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r07",
+              "relaxations": 0,
+              "step_id": "n11"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "sound",
+                "casing intact"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "sound",
+                    "signal audible"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "sound",
+                    "signal audible"
+                  ]
+                }
+              ],
+              "record": "r08",
+              "relaxations": 0,
+              "step_id": "n17"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "sound",
+                "casing intact"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "sound",
+                    "casing intact"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "sound",
+                    "casing intact"
+                  ]
+                }
+              ],
+              "record": "r09",
+              "relaxations": 0,
+              "step_id": "n20"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit4",
+                "labelled",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "sound",
+                    "casing intact"
+                  ],
+                  "mismatch": null,
+                  "producer": "n20",
+                  "required": [
+                    "unit4",
+                    "sound",
+                    "casing intact"
+                  ]
+                }
+              ],
+              "record": "r06",
+              "relaxations": 0,
+              "step_id": "n04"
+            }
+          ]
+        ],
+        "kind": "benign",
+        "minimum_assignment_count": 2,
+        "minimum_relaxations": 0,
+        "unavoidable_unlicensed_steps": [],
+        "unlicensed_step_count": 0,
+        "zero_relaxation_assignments": 2
+      },
+      "item_id": "i65def4f39ff74a9f99bff1cce8d7d954",
+      "method": "exhaustive public-record sense assignment; total relaxation budgets 0 then 1",
+      "outcome": "diagnosis_rejected",
+      "packet_sha256": "02f9e66b5dffe2a48ef77b2f2c19d538db7e3765b2a0579d91fd1532e8a3a916",
+      "reason": "A complete zero-relaxation assignment licenses every step; the proposed meaning-shift diagnosis is rejected.",
+      "review_sha256": "a9cb56b90bff19e77329d26483f9f0606e11396c143d06dfb47d2c1d3fd9fc11"
+    },
+    {
+      "adjudicator": "Worker X / GPT-6 Astra",
+      "evidence": {
+        "assignments": [
+          [
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "active",
+                "registry current"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "labelled",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "labelled",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit2",
+                    "coded",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "coded",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit2",
+                    "numbered",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "numbered",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r00",
+              "relaxations": 0,
+              "step_id": "n14"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "active",
+                "power connected"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "unloaded",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "unloaded",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit2",
+                    "shipped",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "shipped",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit2",
+                    "staged",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "staged",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r01",
+              "relaxations": 0,
+              "step_id": "n19"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "active",
+                "power connected"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "active",
+                    "power connected"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "active",
+                    "power connected"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit6",
+                    "active",
+                    "registry current"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "active",
+                    "registry current"
+                  ]
+                }
+              ],
+              "record": "r14",
+              "relaxations": 0,
+              "step_id": "n05"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "measured",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "active",
+                    "power connected"
+                  ],
+                  "mismatch": null,
+                  "producer": "n05",
+                  "required": [
+                    "unit7",
+                    "active",
+                    "power connected"
+                  ]
+                }
+              ],
+              "record": "r11",
+              "relaxations": 0,
+              "step_id": "n04"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "sound",
+                "signal audible"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "measured",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "measured",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r08",
+              "relaxations": 0,
+              "step_id": "n12"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "sound",
+                "casing intact"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "sound",
+                    "signal audible"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "sound",
+                    "signal audible"
+                  ]
+                }
+              ],
+              "record": "r05",
+              "relaxations": 0,
+              "step_id": "n17"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "sound",
+                "casing intact"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "sound",
+                    "casing intact"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "sound",
+                    "casing intact"
+                  ]
+                }
+              ],
+              "record": "r10",
+              "relaxations": 0,
+              "step_id": "n07"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "boxed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "sound",
+                    "casing intact"
+                  ],
+                  "mismatch": null,
+                  "producer": "n07",
+                  "required": [
+                    "unit2",
+                    "sound",
+                    "casing intact"
+                  ]
+                }
+              ],
+              "record": "r13",
+              "relaxations": 0,
+              "step_id": "n08"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "cleared",
+                "inspection passed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "boxed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "boxed",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r06",
+              "relaxations": 0,
+              "step_id": "n06"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "cleared",
+                "payment settled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "cleared",
+                    "inspection passed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "cleared",
+                    "inspection passed"
+                  ]
+                }
+              ],
+              "record": "r12",
+              "relaxations": 0,
+              "step_id": "n16"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "cleared",
+                "payment settled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "cleared",
+                    "payment settled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "cleared",
+                    "payment settled"
+                  ]
+                }
+              ],
+              "record": "r07",
+              "relaxations": 0,
+              "step_id": "n11"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "loaded",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "cleared",
+                    "payment settled"
+                  ],
+                  "mismatch": null,
+                  "producer": "n11",
+                  "required": [
+                    "unit2",
+                    "cleared",
+                    "payment settled"
+                  ]
+                }
+              ],
+              "record": "r04",
+              "relaxations": 0,
+              "step_id": "n15"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "stable",
+                "temperature constant"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "loaded",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "loaded",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r09",
+              "relaxations": 0,
+              "step_id": "n02"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "stable",
+                "shape retained"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "stable",
+                    "temperature constant"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "stable",
+                    "temperature constant"
+                  ]
+                }
+              ],
+              "record": "r03",
+              "relaxations": 0,
+              "step_id": "n03"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "stable",
+                "shape retained"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "stable",
+                    "shape retained"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit2",
+                    "scheduled",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "scheduled",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r02",
+              "relaxations": 0,
+              "step_id": "n10"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "booked",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": "n10",
+                  "required": [
+                    "unit2",
+                    "stable",
+                    "shape retained"
+                  ]
+                }
+              ],
+              "record": "r15",
+              "relaxations": 0,
+              "step_id": "n21"
+            }
+          ],
+          [
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "active",
+                "registry current"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "labelled",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "labelled",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit2",
+                    "coded",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "coded",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit2",
+                    "numbered",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "numbered",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r00",
+              "relaxations": 0,
+              "step_id": "n14"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "active",
+                "power connected"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "unloaded",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "unloaded",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit2",
+                    "shipped",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "shipped",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit2",
+                    "staged",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "staged",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r01",
+              "relaxations": 0,
+              "step_id": "n19"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "active",
+                "power connected"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "active",
+                    "registry current"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "active",
+                    "registry current"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit6",
+                    "active",
+                    "power connected"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "active",
+                    "power connected"
+                  ]
+                }
+              ],
+              "record": "r14",
+              "relaxations": 0,
+              "step_id": "n05"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "measured",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "active",
+                    "power connected"
+                  ],
+                  "mismatch": null,
+                  "producer": "n05",
+                  "required": [
+                    "unit7",
+                    "active",
+                    "power connected"
+                  ]
+                }
+              ],
+              "record": "r11",
+              "relaxations": 0,
+              "step_id": "n04"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "sound",
+                "signal audible"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "measured",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "measured",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r08",
+              "relaxations": 0,
+              "step_id": "n12"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "sound",
+                "casing intact"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "sound",
+                    "signal audible"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "sound",
+                    "signal audible"
+                  ]
+                }
+              ],
+              "record": "r05",
+              "relaxations": 0,
+              "step_id": "n17"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "sound",
+                "casing intact"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "sound",
+                    "casing intact"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "sound",
+                    "casing intact"
+                  ]
+                }
+              ],
+              "record": "r10",
+              "relaxations": 0,
+              "step_id": "n07"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "boxed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "sound",
+                    "casing intact"
+                  ],
+                  "mismatch": null,
+                  "producer": "n07",
+                  "required": [
+                    "unit2",
+                    "sound",
+                    "casing intact"
+                  ]
+                }
+              ],
+              "record": "r13",
+              "relaxations": 0,
+              "step_id": "n08"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "cleared",
+                "inspection passed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "boxed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "boxed",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r06",
+              "relaxations": 0,
+              "step_id": "n06"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "cleared",
+                "payment settled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "cleared",
+                    "inspection passed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "cleared",
+                    "inspection passed"
+                  ]
+                }
+              ],
+              "record": "r12",
+              "relaxations": 0,
+              "step_id": "n16"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "cleared",
+                "payment settled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "cleared",
+                    "payment settled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "cleared",
+                    "payment settled"
+                  ]
+                }
+              ],
+              "record": "r07",
+              "relaxations": 0,
+              "step_id": "n11"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "loaded",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "cleared",
+                    "payment settled"
+                  ],
+                  "mismatch": null,
+                  "producer": "n11",
+                  "required": [
+                    "unit2",
+                    "cleared",
+                    "payment settled"
+                  ]
+                }
+              ],
+              "record": "r04",
+              "relaxations": 0,
+              "step_id": "n15"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "stable",
+                "temperature constant"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "loaded",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "loaded",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r09",
+              "relaxations": 0,
+              "step_id": "n02"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit6",
+                "stable",
+                "shape retained"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "stable",
+                    "temperature constant"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "stable",
+                    "temperature constant"
+                  ]
+                }
+              ],
+              "record": "r03",
+              "relaxations": 0,
+              "step_id": "n03"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "stable",
+                "shape retained"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit6",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit6",
+                    "stable",
+                    "shape retained"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit2",
+                    "scheduled",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit2",
+                    "scheduled",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r02",
+              "relaxations": 0,
+              "step_id": "n10"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit2",
+                "booked",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit2",
+                    "stable",
+                    "shape retained"
+                  ],
+                  "mismatch": null,
+                  "producer": "n10",
+                  "required": [
+                    "unit2",
+                    "stable",
+                    "shape retained"
+                  ]
+                }
+              ],
+              "record": "r15",
+              "relaxations": 0,
+              "step_id": "n21"
+            }
+          ]
+        ],
+        "kind": "benign",
+        "minimum_assignment_count": 2,
+        "minimum_relaxations": 0,
+        "unavoidable_unlicensed_steps": [],
+        "unlicensed_step_count": 0,
+        "zero_relaxation_assignments": 2
+      },
+      "item_id": "i9af8492c5aae07aa22ae6deeb7185eb6",
+      "method": "exhaustive public-record sense assignment; total relaxation budgets 0 then 1",
+      "outcome": "diagnosis_rejected",
+      "packet_sha256": "97349b62422d7c522a9a4a522cf313140830aa4c867e7b0607d94f34d72e8b4a",
+      "reason": "A complete zero-relaxation assignment licenses every step; the proposed meaning-shift diagnosis is rejected.",
+      "review_sha256": "9e73ecfc1cbd1832bcfe044f8d0335df7236f8e5257e8f8df7b0f56414e9a8b0"
+    },
+    {
+      "adjudicator": "Worker X / GPT-6 Astra",
+      "evidence": {
+        "assignments": [
+          [
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "free",
+                "space available"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "balanced",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "balanced",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "cleaned",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "cleaned",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "stacked",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "stacked",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r05",
+              "relaxations": 0,
+              "step_id": "n16"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "free",
+                "fee waived"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "dated",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "dated",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "received",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "received",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "folded",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "folded",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r14",
+              "relaxations": 0,
+              "step_id": "n06"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "free",
+                "fee waived"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "free",
+                    "fee waived"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "free",
+                    "fee waived"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "free",
+                    "space available"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "free",
+                    "space available"
+                  ]
+                }
+              ],
+              "record": "r10",
+              "relaxations": 0,
+              "step_id": "n20"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "cooled",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "free",
+                    "fee waived"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "free",
+                    "fee waived"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "free",
+                    "fee waived"
+                  ],
+                  "mismatch": null,
+                  "producer": "n20",
+                  "required": [
+                    "unit7",
+                    "free",
+                    "fee waived"
+                  ]
+                }
+              ],
+              "record": "r04",
+              "relaxations": 0,
+              "step_id": "n13"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "clear",
+                "contamination absent"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "cooled",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "cooled",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r13",
+              "relaxations": 0,
+              "step_id": "n17"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "clear",
+                "optically transparent"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "clear",
+                    "contamination absent"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "clear",
+                    "contamination absent"
+                  ]
+                }
+              ],
+              "record": "r06",
+              "relaxations": 0,
+              "step_id": "n02"
+            },
+            {
+              "branch": 3,
+              "conclusion": [
+                "unit4",
+                "clear",
+                "contamination absent"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "clear",
+                    "optically transparent"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "clear",
+                    "optically transparent"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "stored",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "stored",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r15",
+              "relaxations": 0,
+              "step_id": "n05"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "signed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "clear",
+                    "contamination absent"
+                  ],
+                  "mismatch": "sense",
+                  "producer": "n05",
+                  "required": [
+                    "unit4",
+                    "clear",
+                    "optically transparent"
+                  ]
+                }
+              ],
+              "record": "r09",
+              "relaxations": 1,
+              "step_id": "n03"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "ready",
+                "staffing arranged"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "signed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "signed",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r01",
+              "relaxations": 0,
+              "step_id": "n01"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "ready",
+                "packing completed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "ready",
+                    "staffing arranged"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "ready",
+                    "staffing arranged"
+                  ]
+                }
+              ],
+              "record": "r00",
+              "relaxations": 0,
+              "step_id": "n19"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "ready",
+                "packing completed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "ready",
+                    "packing completed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "ready",
+                    "packing completed"
+                  ]
+                }
+              ],
+              "record": "r03",
+              "relaxations": 0,
+              "step_id": "n10"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "booked",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "ready",
+                    "packing completed"
+                  ],
+                  "mismatch": null,
+                  "producer": "n10",
+                  "required": [
+                    "unit7",
+                    "ready",
+                    "packing completed"
+                  ]
+                }
+              ],
+              "record": "r12",
+              "relaxations": 0,
+              "step_id": "n00"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "open",
+                "seal removed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "booked",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "booked",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r08",
+              "relaxations": 0,
+              "step_id": "n15"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "open",
+                "account enabled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "open",
+                    "seal removed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "open",
+                    "seal removed"
+                  ]
+                }
+              ],
+              "record": "r02",
+              "relaxations": 0,
+              "step_id": "n12"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "open",
+                "account enabled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "open",
+                    "account enabled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "open",
+                    "account enabled"
+                  ]
+                }
+              ],
+              "record": "r07",
+              "relaxations": 0,
+              "step_id": "n07"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "photographed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "open",
+                    "account enabled"
+                  ],
+                  "mismatch": null,
+                  "producer": "n07",
+                  "required": [
+                    "unit7",
+                    "open",
+                    "account enabled"
+                  ]
+                }
+              ],
+              "record": "r11",
+              "relaxations": 0,
+              "step_id": "n18"
+            }
+          ],
+          [
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "free",
+                "space available"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "balanced",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "balanced",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "cleaned",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "cleaned",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "stacked",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "stacked",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r05",
+              "relaxations": 0,
+              "step_id": "n16"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "free",
+                "fee waived"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "dated",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "dated",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "received",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "received",
+                    ""
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "folded",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "folded",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r14",
+              "relaxations": 0,
+              "step_id": "n06"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "free",
+                "fee waived"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "free",
+                    "space available"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "free",
+                    "space available"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit0",
+                    "free",
+                    "fee waived"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "free",
+                    "fee waived"
+                  ]
+                }
+              ],
+              "record": "r10",
+              "relaxations": 0,
+              "step_id": "n20"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "cooled",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "free",
+                    "fee waived"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "free",
+                    "fee waived"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "free",
+                    "fee waived"
+                  ],
+                  "mismatch": null,
+                  "producer": "n20",
+                  "required": [
+                    "unit7",
+                    "free",
+                    "fee waived"
+                  ]
+                }
+              ],
+              "record": "r04",
+              "relaxations": 0,
+              "step_id": "n13"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "clear",
+                "contamination absent"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "cooled",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "cooled",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r13",
+              "relaxations": 0,
+              "step_id": "n17"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "clear",
+                "optically transparent"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "clear",
+                    "contamination absent"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "clear",
+                    "contamination absent"
+                  ]
+                }
+              ],
+              "record": "r06",
+              "relaxations": 0,
+              "step_id": "n02"
+            },
+            {
+              "branch": 3,
+              "conclusion": [
+                "unit4",
+                "clear",
+                "contamination absent"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "clear",
+                    "optically transparent"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "clear",
+                    "optically transparent"
+                  ]
+                },
+                {
+                  "available": [
+                    "unit7",
+                    "stored",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "stored",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r15",
+              "relaxations": 0,
+              "step_id": "n05"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "signed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit4",
+                    "clear",
+                    "contamination absent"
+                  ],
+                  "mismatch": "sense",
+                  "producer": "n05",
+                  "required": [
+                    "unit4",
+                    "clear",
+                    "optically transparent"
+                  ]
+                }
+              ],
+              "record": "r09",
+              "relaxations": 1,
+              "step_id": "n03"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "ready",
+                "staffing arranged"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "signed",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "signed",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r01",
+              "relaxations": 0,
+              "step_id": "n01"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "ready",
+                "packing completed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "ready",
+                    "staffing arranged"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "ready",
+                    "staffing arranged"
+                  ]
+                }
+              ],
+              "record": "r00",
+              "relaxations": 0,
+              "step_id": "n19"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "ready",
+                "packing completed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "ready",
+                    "packing completed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "ready",
+                    "packing completed"
+                  ]
+                }
+              ],
+              "record": "r03",
+              "relaxations": 0,
+              "step_id": "n10"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "booked",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "ready",
+                    "packing completed"
+                  ],
+                  "mismatch": null,
+                  "producer": "n10",
+                  "required": [
+                    "unit7",
+                    "ready",
+                    "packing completed"
+                  ]
+                }
+              ],
+              "record": "r12",
+              "relaxations": 0,
+              "step_id": "n00"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "open",
+                "seal removed"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "booked",
+                    ""
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit7",
+                    "booked",
+                    ""
+                  ]
+                }
+              ],
+              "record": "r08",
+              "relaxations": 0,
+              "step_id": "n15"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit0",
+                "open",
+                "account enabled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "open",
+                    "seal removed"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "open",
+                    "seal removed"
+                  ]
+                }
+              ],
+              "record": "r02",
+              "relaxations": 0,
+              "step_id": "n12"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "open",
+                "account enabled"
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit0",
+                    "open",
+                    "account enabled"
+                  ],
+                  "mismatch": null,
+                  "producer": null,
+                  "required": [
+                    "unit0",
+                    "open",
+                    "account enabled"
+                  ]
+                }
+              ],
+              "record": "r07",
+              "relaxations": 0,
+              "step_id": "n07"
+            },
+            {
+              "branch": 0,
+              "conclusion": [
+                "unit7",
+                "photographed",
+                ""
+              ],
+              "inputs": [
+                {
+                  "available": [
+                    "unit7",
+                    "open",
+                    "account enabled"
+                  ],
+                  "mismatch": null,
+                  "producer": "n07",
+                  "required": [
+                    "unit7",
+                    "open",
+                    "account enabled"
+                  ]
+                }
+              ],
+              "record": "r11",
+              "relaxations": 0,
+              "step_id": "n18"
+            }
+          ]
+        ],
+        "kind": "shift",
+        "minimum_assignment_count": 2,
+        "minimum_relaxations": 1,
+        "unavoidable_unlicensed_steps": [
+          "n03"
+        ],
+        "unlicensed_step_count": 1,
+        "zero_relaxation_assignments": 0
+      },
+      "item_id": "ib9279ca87379a78c8da58ec68a9d4b42",
+      "method": "exhaustive public-record sense assignment; total relaxation budgets 0 then 1",
+      "outcome": "defect_claim_rejected",
+      "packet_sha256": "b09b42d54c7b5160e230224ab1d5b20dd5c5a262e54d7286004d44020a359ca1",
+      "reason": "Exactly one unavoidable unlicensed step, n03: n05 establishes unit4 clear (contamination absent) via r15 branch 3, whereas r09 requires optically transparent. This is the intended shift. The alleged additional free shift at n20 is licensed by r10: n16/r05 supplies space available and n06/r14 supplies fee waived.",
+      "review_sha256": "2a288379ea7539d2513a2ce5820ac94db2a8a1982a58e36c7e2bcf642069e71f"
+    }
+  ],
+  "authority": "Explicit Worker X instruction, 2026-09-22; six documented disputes only",
+  "generation_calls": 0,
+  "original_reviews_preserved": true,
+  "source_method": "round-5 Claude p5-review-v5/p5v5.py and solve2.py"
+}

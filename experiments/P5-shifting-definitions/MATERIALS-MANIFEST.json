@@ -1,18 +1,19 @@
 {
   "hashes": {
-    "AMENDMENTS.md": "4841d73262106749f6481abbb10f541f166d4322b0a39025cdfd09e93e13cb0b",
+    "AMENDMENTS.md": "8651a1686798bc2c979721791790a0f92f4505325655961b30e1791164624392",
     "PREREG.md": "c36a63f5045631cd11218cab1b6445c44619a8dda0ff7227775e2cb96fb1ebe0",
-    "RESULTS.md": "61463092facca4784f12ad215a0c0dd94eed0e873675469eac0b1335f89ab26a",
-    "REVISION8.md": "7de78fd59e7b5bf60edb7bf922ddbb6bd5b4776ae73a8381eb235d8b5a486760",
-    "checks/gemini-rendered-status.json": "4f520da8eabf256a599ca41b19ccd300a7fde7dd4fc79bc6372e6d928b41d7f9",
-    "checks/gemini-rendered-submission.json": "9eb86e7e63a4ed2d0ecf3100ff943874bcf236ac69b97762d1f8b9ce130140c1",
+    "RESULTS.md": "9c3ea915a746ee5281f452f496c489a2cb288bab852d82222b207933601d1b5d",
+    "REVISION8.md": "ee6d6514998305b7c11655b406d83c4d7de63a1159df4e253fd54e7f84716fb8",
+    "checks/gemini-rendered-adjudication.json": "1f7488fa03c0325f15b911e4f24db92bffb3ce521f70551b5512d52b57be00cc",
+    "checks/gemini-rendered-status.json": "41e2ae3469ebf4f6764037d1701a34b5fce2b1550f5b89137e6f9a1d2064827b",
+    "checks/gemini-rendered-submission.json": "e6e7dc59f71395a5311b27d71585a9c5d79557d1606d803b6d2b98d93509407d",
     "checks/round5-review-submission.json": "e2ab2a7b9d0962f8833183bb18994b5aae04a5ddd36c090c2e2eae7600dcaee9",
     "checks/round5-review-verification.txt": "a36d6e2c0c84b94bbd3148f3de4dbed66b11092daa4ba4bd63754aebffbdbb0a",
     "checks/round6-review-submission.json": "823a8f410ea7594f2fddbe28ddc4d0c8cf558e3725a70c62b1621ecf58221079",
     "checks/round6-review-verification.txt": "27a1b09aab90a804d009822f1a873597440be421ac38f5dfa53e335f91f19921",
     "checks/v7-final-acceptance.json": "9fc9c77a16c3f633c8950867295a86a2bffe775c56f152d65fdeaaa9c7713658",
     "labels.jsonl.gz": "cd9f0f491492d9066bbcd3803968ca9f1bf50ac3dd48f47f0927d382148324c3",
-    "materials/anchored-labels.jsonl.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "materials/anchored-labels.jsonl.gz": "9feeca7818da382645a498d534225580507cf211b38be62141a7bb0f8945cb32",
     "materials/construction-ledger.jsonl.gz": "4853418bae87da83e8b41822c03bd0af2e6e872e5b18f1d5fdfc0292c3928193",
     "materials/dev.jsonl.gz": "ed709b3b5f36c1ea109dfaf6e2ba6a436abbf3d49af242093aa74bda7d28f06a",
     "materials/dossiers.jsonl.gz": "95396106832feb78e72f380585dc12ca8f4464daaa9c4a0bdb36803958f8f18e",
@@ -27,9 +28,9 @@
     "materials/scored.jsonl.gz": "8b5ddb7acfe7704f91554eb2c0a45a787d48b2133a1fba57e9c0e1067731e144",
     "runs/revision-v6/paraphrase-costs.jsonl": "bec35903f6e7b5e003c974e91db13a30eda7c49602033830e9ae4a75c480e95a",
     "runs/revision-v7/paraphrase-costs.jsonl": "09a62041646c47815d17b544407b01da0dfd6a21f6f119d741be194aa65aa079",
-    "runs/revision-v8/gemini-review-costs.jsonl": "f0f1ad765003d16b9005508c42b46b43c913f47e6c4ac83a8b318eaa8adfd377"
+    "runs/revision-v8/gemini-review-costs.jsonl": "54151107c9df52137d058f37f236aec4b014af80ec20eb6af5ff1fca8782ba99"
   },
   "revision": 8,
   "schema": 1,
-  "status": "GENERATOR_RENDERED_GEMINI_REVIEW_INCOMPLETE"
+  "status": "GENERATOR_RENDERED_REVIEW_ACCEPTED_AFTER_MECHANICAL_ADJUDICATION"
 }

@@ -26044,7 +26044,7 @@
       "wire_sha256": "c2a11ba3a3bef1e50071bd678440957ab755b7d3e9d89c6c97fb77abb995a2b7"
     }
   ],
-  "freeze_sha256": "d6f933b070c4cdd2adab4a3364e52c9462d3b0d1f7f16d6732815b9adea2d46f",
+  "freeze_sha256": "184bfb41d2f8eda223f9467c01975d68472f06f3c37e8749cc4aef753052c9cd",
   "generation_calls": 0,
   "native_recounts": 420,
   "passed": true,

@@ -75,3 +75,35 @@ Registered dev feasibility, scored localized detection and VE−X interval,
 benign completion, harm criteria, other arms/judges, UNKNOWN/failure rates,
 actual per-arm costs and sensitivity intervals remain **unfilled**. Apply
 registered outcome rules only after all gates and separate scoring authorization.
+
+
+### Mechanical adjudication (2026-09-22; supersedes the blocked snapshot above)
+
+Worker X was explicitly authorized to adjudicate the one defect claim and five
+diagnosis disagreements without paid calls. The exhaustive public-record search
+from round-5 Claude's `p5v5.py`/`solve2.py` is reproduced in
+`experiments/p5_licensing.py`, with a global relaxation budget, all successful
+assignments retained, and safe immutable backtracking. The search uses public
+records, declared premises and prose, not hidden graphs or reference labels.
+Labels are consulted only after the search to check the recovered diagnosis.
+
+The defect claim on `ib9279ca87379a78c8da58ec68a9d4b42` is **rejected**. There are
+zero fully licensed assignments and two assignments with exactly one relaxation,
+both at **n03**, the intended shift. At n05, r15 branch 3 establishes unit4 clear
+(contamination absent); n03/r09 requires unit4 clear (optically transparent).
+Thus the clear transition has no licensing reading. The alleged extra shift on
+free at n20 is licensed: n16/r05 establishes unit0 free (space available), n06/r14
+establishes unit0 free (fee waived), and r10 consumes these two senses explicitly.
+
+All five documented reference-benign disputes have two complete zero-relaxation
+assignments each; all five Gemini shift diagnoses are rejected. No family, seed,
+packet, reference label or original Gemini judgment changes. The raw Gemini
+status remains 83 accepted / 1 defect claim / 0 incomplete. The resolved review
+gate has **84 accepted slots: 78 direct agreements and six adjudications**.
+
+`checks/gemini-rendered-adjudication.json` binds each resolution to the current
+packet and original review and includes every minimum-relaxation assignment.
+The gate recomputes this evidence and still requires authentic billed reviews;
+an edited review, stale witness, changed packet, or second flaw cannot pass.
+The adjudication is frozen and barred from model-visible material. No dev or
+scored call was executed; the dev command above requires paid authorization.

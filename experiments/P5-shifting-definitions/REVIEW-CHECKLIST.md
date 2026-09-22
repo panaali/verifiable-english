@@ -97,3 +97,7 @@ Revision 8 audit evidence, barred from all blind contexts:
 The dated orchestrator amendment accepts the round-5 Claude report at report
 level plus a fresh isolated Gemini review of each current packet. It does not
 retroactively manufacture missing historical annotations or call round 6 blind.
+
+`checks/gemini-rendered-adjudication.json` contains the six authorized mechanical
+adjudications and complete sense-assignment witnesses. It is private review/scoring
+evidence and must never enter judge packets or reviewer attachments.

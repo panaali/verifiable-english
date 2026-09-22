@@ -306,6 +306,7 @@ def gemini_review(cap):
 def review_gate(base=HERE):
     from experiments import p5
     from experiments.p5_leakage import audit
+    from experiments.p5_licensing import verified_resolutions
     prov = provenance(base)
     report = base/'checks/round5-review-verification.txt'
     historical = report.read_text()
@@ -316,11 +317,13 @@ def review_gate(base=HERE):
         if (base/'checks/gemini-rendered-submission.json').exists() else [])
     by_id = {r['item_id']:r for r in rows}
     labels = {r['id']:r for r in read(base/'labels.jsonl.gz')}
-    unresolved = []; anchored = []
+    unresolved = []; anchored = []; matching = 0; adjudicated = []
+    items = read(base/'materials/dev.jsonl.gz') + read(base/'materials/scored.jsonl.gz')
+    resolutions = verified_resolutions(base, {i['id']:i for i in items}, by_id, labels)
     ledger = read(base/'runs/revision-v8/gemini-review-costs.jsonl')
     completed = {r['identity']:r for r in ledger if r['event']=='complete'}
     reservations = {r['identity']:r for r in ledger if r['event']=='reserve'}
-    for item in read(base/'materials/dev.jsonl.gz') + read(base/'materials/scored.jsonl.gz'):
+    for item in items:
         row = by_id.get(item['id'],{}); review = row.get('review',{}); label = labels[item['id']]
         req = review_request(item,row.get('request_version',1),row.get('request_attempt',0)); billed = completed.get(req.identity,{})
         try:
@@ -336,17 +339,26 @@ def review_gate(base=HERE):
                          json.loads(strip_json_fence(billed['text']))==review)
         except (ValueError,KeyError,TypeError):
             authentic = False
-        passed = (authentic and row.get('packet_sha256')==digest(item['payload']) and
-            row.get('request_sha256')==digest(req.messages) and review.get('ready') is True and
+        bound = (authentic and row.get('packet_sha256')==digest(item['payload']) and
+                 row.get('request_sha256')==digest(req.messages))
+        agrees = (review.get('ready') is True and
             not review.get('issues') and review.get('kind')==label['kind'] and
             (review.get('locations')==[] if label['kind']=='benign' else
              set(review.get('locations',[]))==set(label['acceptable_locations'][1])))
+        resolved = item['id'] in resolutions
+        passed = bound and (agrees or resolved)
+        if bound and agrees:
+            matching += 1
+        if bound and resolved:
+            adjudicated.append(item['id'])
         if not passed:
             unresolved.append(item['id'])
         else:
             anchored.append({'id':item['id'],'packet_sha256':digest(item['payload']),
                 **{k:label[k] for k in ('kind','acceptable_locations','sense_use_mapping','root_meaning')},
-                'anchor_provenance':'reference mappings; round-5 report accepted by amendment; current Gemini diagnosis agrees',
+                'anchor_provenance':('reference mappings; round-5 report accepted by amendment; '
+                    + ('current Gemini dispute mechanically adjudicated' if resolved else 'current Gemini diagnosis agrees')),
+                **({'adjudication_sha256':digest(resolutions[item['id']])} if resolved else {}),
                 'gemini_evidence':review['evidence']})
     leakage = audit(base)
     write_json(base/'checks/leakage.json',leakage)
@@ -360,7 +372,9 @@ def review_gate(base=HERE):
             'limitation':'partial original submission failed old importer; not 84 complete hash-bound blind annotations'},
         'round6':'supporting fidelity/no-kind-leak evidence; explicitly unblinded; tail localisation defect fixed',
         'gemini_current':{'accepted':len(anchored)==84 and not unresolved,'completed':len(rows),
-                          'matching_current_diagnoses':len(anchored),'provider':'Vertex ADC'},
+                          'matching_current_diagnoses':matching,'provider':'Vertex ADC',
+                          'adjudicated_packet_ids':adjudicated,
+                          'acceptance_basis':'authentic direct agreements or authorized mechanical adjudications'},
         'lead_hand_check':'deferred by orchestrator amendment; no new human review asserted'}
     write_json(base/'checks/review.json',result)
     return result

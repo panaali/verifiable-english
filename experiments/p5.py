@@ -333,7 +333,7 @@ def freeze(scenario):
            ROOT/'experiments/P1-deference/native_counter.py',*ROOT.glob('experiments/P1-deference/tokenizers/*.json'),
            *ROOT.glob('ve/*.py'), ROOT/'lean/.lake/build/bin/ve_conformance']
     paths += list((HERE/'runs').glob('revision-*/paraphrase-costs.jsonl'))
-    paths += [HERE/'checks/v7-final-acceptance.json']
+    paths += [HERE/'checks/v7-final-acceptance.json', HERE/'checks/gemini-rendered-adjudication.json']
     paths += [HERE/name for name in ('MATERIALS-MANIFEST.json','MATERIALS-HASHES.txt',
         'MATERIALS-HASHES.txt.ots','checks/round5-review-submission.json',
         'checks/round5-review-verification.txt','checks/round5-review-import.json',
