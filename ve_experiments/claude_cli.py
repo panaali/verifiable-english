@@ -1,4 +1,4 @@
-"""Audited subscription endpoint. One fresh process per sample; no automatic retries.
+"""Audited subscription endpoint. One fresh process per attempt; infrastructure retries are opt-in.
 
 The ledger records intent before invoking Claude. Interrupted/failed samples are never
 silently replayed. Input invariance is tested for identical prompt pairs; absolute
@@ -44,6 +44,53 @@ def check_context_date(controls):
 
 class EndpointError(RuntimeError):
     pass
+
+
+class InfrastructureError(EndpointError):
+    """Transport failed; no experimental sample may be scored."""
+
+
+class InfrastructurePaused(InfrastructureError):
+    """Retry allowance exhausted; the same request remains resumable."""
+
+
+RETRY_BACKOFF = (30, 60, 120, 240, 480)
+
+
+def infrastructure_failure(raw, expected_model, diagnostic=""):
+    """Classify protocol errors without mistaking model prose for network errors.
+
+    A real alternate model always wins over a simultaneous transport failure.
+    Init is requested identity, not evidence that a model served a response.
+    """
+    if not raw.strip():
+        return "empty stream"
+    records = []
+    for line in raw.splitlines():
+        try:
+            records.append(json.loads(line))
+        except ValueError:
+            continue
+    assistants = [r.get("message", {}) for r in records if r.get("type") == "assistant"]
+    results = [r for r in records if r.get("type") == "result"]
+    real = {m.get("model") for m in assistants if m.get("model") not in (None, "<synthetic>")}
+    real.update(k for r in results for k in r.get("modelUsage", {}) if k != "<synthetic>")
+    init_models = {r.get("model") for r in records if r.get("subtype") == "init"}
+    if (real | init_models) - {None, expected_model}:
+        return None
+    synthetic = any(m.get("model") == "<synthetic>" for m in assistants)
+    if synthetic and not real:
+        return "synthetic placeholder without a served model"
+    errors = [diagnostic]
+    errors.extend(str(r.get("result", "")) for r in results if r.get("is_error"))
+    errors.extend(str(b.get("text", "")) for m in assistants if m.get("model") == "<synthetic>"
+                  for b in m.get("content", []))
+    message = " ".join(errors).lower()
+    if any(term in message for term in ("econnreset", "connection error", "connection dropped",
+                                       "connection reset", "connection refused", "econnrefused",
+                                       "enotfound", "eai_again", "network error", "fetch failed")):
+        return "connection error"
+    return None
 
 
 @dataclass(frozen=True)
@@ -137,6 +184,9 @@ def isolated_env(base, config, home, token, controls):
 
 
 def parse_stream(raw, expected_model):
+    reason = infrastructure_failure(raw, expected_model)
+    if reason:
+        raise InfrastructureError(reason)
     records = [json.loads(line) for line in raw.splitlines() if line.strip()]
     init = [r for r in records if r.get("type") == "system" and r.get("subtype") == "init"]
     results = [r for r in records if r.get("type") == "result"]
@@ -175,12 +225,24 @@ def parse_stream(raw, expected_model):
 
 
 class ClaudeCLI:
-    def __init__(self, ledger: Path, controls=Controls(), max_calls=None, *, account_config_dir=None):
+    def __init__(self, ledger: Path, controls=Controls(), max_calls=None, *, account_config_dir=None, infrastructure_retries=False):
         self.ledger, self.controls, self.max_calls = Path(ledger), controls, max_calls
+        self.infrastructure_retries = infrastructure_retries
         self.account_config = account_config(account_config_dir)
         self.account_label = account_label(self.account_config)
 
     def sample(self, item_id, system, prompt, sample_index=0, *, content_tokens=None):
+        for attempt in range(1 + (len(RETRY_BACKOFF) if self.infrastructure_retries else 0)):
+            try:
+                return self._sample_once(item_id, system, prompt, sample_index,
+                                         content_tokens=content_tokens, retry_number=attempt)
+            except InfrastructureError as exc:
+                if not self.infrastructure_retries:
+                    raise
+                if attempt == len(RETRY_BACKOFF):
+                    raise InfrastructurePaused("Infrastructure retries exhausted; resume the same request") from exc
+
+    def _sample_once(self, item_id, system, prompt, sample_index=0, *, content_tokens=None, retry_number=0):
         self.ledger.parent.mkdir(parents=True, exist_ok=True)
         # Lock covers read/check/intent/call/result, preventing concurrent duplicate spend.
         with self.ledger.open("a+", encoding="utf-8") as log:
@@ -201,11 +263,16 @@ class ClaudeCLI:
                        "shell": "/bin/sh", "locale": "en_US.UTF-8", "timezone": "UTC"}
             group = digest([self.account_label, control, system, prompt, content_tokens])
             key = digest([group, item_id, sample_index])
-            matching = [r for r in history if r.get("key") == key]
+            matching = [r for r in history if r.get("key") == key and r["status"] != "retry_scheduled"]
             if matching:
                 if matching[-1]["status"] == "ok":
                     return matching[-1]
-                raise EndpointError("Sample previously started or failed; explicit new sample id required")
+                last = matching[-1]
+                retryable = last["status"] == "infrastructure_error" or (
+                    last["status"] == "error" and infrastructure_failure(
+                        last.get("raw_stream", ""), self.controls.model, last.get("error", "")))
+                if not (self.infrastructure_retries and retryable):
+                    raise EndpointError("Sample previously started or failed; explicit new sample id required")
             if self.max_calls is not None and sum(r["status"] == "started" for r in history) >= self.max_calls:
                 raise EndpointError("Call budget exhausted")
             version = subprocess.check_output([executable, "--version"], text=True).strip()
@@ -224,7 +291,18 @@ class ClaudeCLI:
                 log.write(json.dumps(row, ensure_ascii=False) + "\n")
                 log.flush()
                 os.fsync(log.fileno())
-            append({**base, "status": "started", "timestamp": now()})
+            if matching:
+                delay = RETRY_BACKOFF[retry_number - 1] if retry_number else RETRY_BACKOFF[0]
+                append({**base, "status": "retry_scheduled", "timestamp": now(),
+                        "retry_number": retry_number, "backoff_s": delay,
+                        "resumed": retry_number == 0, "previous_status": matching[-1]["status"],
+                        "classification": "INFRASTRUCTURE", "counts_as_sample": False})
+                print(json.dumps({"event": "infrastructure_retry", "item_id": item_id,
+                                  "sample_index": sample_index, "retry_number": retry_number,
+                                  "backoff_s": delay}), flush=True)
+                time.sleep(delay)
+                check_context_date(self.controls)
+            append({**base, "status": "started", "timestamp": now(), "retry_number": retry_number})
             start = time.monotonic()
             raw = ""
             parsed = {}
@@ -243,6 +321,9 @@ class ClaudeCLI:
                                           input=prompt, text=True, capture_output=True, cwd=cwd,
                                           env=env, timeout=self.controls.timeout_s)
                     raw = proc.stdout
+                    reason = infrastructure_failure(raw, self.controls.model, proc.stderr if proc.returncode else "")
+                    if reason:
+                        raise InfrastructureError(reason)
                     if proc.returncode:
                         raise EndpointError(f"CLI exit {proc.returncode}")
                     parsed = parse_stream(raw, self.controls.model)
@@ -260,9 +341,18 @@ class ClaudeCLI:
             except Exception as exc:
                 # Never include environment/credentials; stdout is model protocol data only.
                 raw = raw.replace(token, "[REDACTED]")
-                append({**base, **parsed, "status": "error", "timestamp": now(), "error": str(exc).replace(token, "[REDACTED]"),
+                if isinstance(exc, (ConnectionError, subprocess.TimeoutExpired)):
+                    if isinstance(exc, subprocess.TimeoutExpired) and exc.stdout:
+                        raw = exc.stdout.decode(errors="replace") if isinstance(exc.stdout, bytes) else exc.stdout
+                        raw = raw.replace(token, "[REDACTED]")
+                    if infrastructure_failure(raw, self.controls.model, str(exc)) or isinstance(exc, ConnectionError):
+                        exc = InfrastructureError("connection error or empty timed-out stream")
+                append({**base, **parsed, "status": "infrastructure_error" if isinstance(exc, InfrastructureError) else "error",
+                        "classification": "INFRASTRUCTURE" if isinstance(exc, InfrastructureError) else "ENDPOINT",
+                        "counts_as_sample": False, "retry_number": retry_number,
+                        "timestamp": now(), "error": str(exc).replace(token, "[REDACTED]"),
                         "raw_stream": raw, "elapsed_s": time.monotonic()-start})
-                raise
+                raise exc
             # Defence in depth against accidental credential echo in model protocol data.
             row = json.loads(json.dumps(row).replace(token, "[REDACTED]"))
             append(row)

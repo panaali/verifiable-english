@@ -8,7 +8,7 @@ from pathlib import Path
 import subprocess
 
 import run as original
-from ve_experiments.claude_cli import ClaudeCLI, EndpointError, account_config, account_label
+from ve_experiments.claude_cli import ClaudeCLI, EndpointError, InfrastructurePaused, account_config, account_label
 
 HERE = original.HERE
 OLD = HERE / 'results'
@@ -17,12 +17,21 @@ ACCOUNT = 'danielsaeedi37'
 
 
 def verify():
-    manifest = json.loads((HERE / 'rerun-manifest.json').read_text())
+    manifest = json.loads((HERE / 'resume-manifest.json').read_text())
     for name, expected in manifest['sha256'].items():
         if original.sha(original.ROOT / name) != expected:
             raise EndpointError('Amended freeze drift: ' + name)
-    if (OUT / 'STOP.json').exists():
+    # Only the exact historical transport stop explicitly authorized for recovery
+    # is exempt. A new endpoint STOP can never inherit this exemption.
+    if (OUT / 'STOP.json').exists() and original.sha(OUT / 'STOP.json') != manifest['recovered_stop_sha256']:
         raise EndpointError('Amended run permanently stopped')
+    if (OUT / 'ENDPOINT_STOP.json').exists():
+        raise EndpointError('Amended run permanently stopped')
+    for name, frozen in manifest['preserved_prefixes'].items():
+        import hashlib
+        data = (original.ROOT / name).read_bytes()[:frozen['bytes']]
+        if len(data) != frozen['bytes'] or hashlib.sha256(data).hexdigest() != frozen['sha256']:
+            raise EndpointError('Pre-resume evidence changed: ' + name)
     return manifest
 
 
@@ -49,10 +58,18 @@ class Runner(original.Runner):
             raise EndpointError('Global call ceiling reached')
         ledger = OUT / 'ledgers' / f'{tag}-{model}-ledger.jsonl'
         controls = replace(original.controls(model, self.date), thinking_tokens=None)
-        client = ClaudeCLI(ledger, controls, account_config_dir=self.config)
         before = sum(json.loads(x)['status'] == 'started' for x in ledger.read_text().splitlines()) if ledger.exists() else 0
+        client = ClaudeCLI(ledger, controls, account_config_dir=self.config,
+                           infrastructure_retries=True, max_calls=before + 790 - self.spent)
         try:
             row = client.sample(item_id + ':' + tag, system, prompt, k)
+        except InfrastructurePaused as exc:
+            pause = {'status': 'paused', 'classification': 'INFRASTRUCTURE', 'error': str(exc),
+                     'item_id': item_id, 'arm': tag, 'judge': model, 'sample_index': k,
+                     'account_label': self.account, 'timestamp': datetime.now(timezone.utc).isoformat()}
+            original.dump(OUT / 'PAUSE.json', pause)
+            print(json.dumps(pause), flush=True)
+            raise
         except Exception as exc:
             rows = [json.loads(x) for x in ledger.read_text().splitlines()] if ledger.exists() else []
             last = rows[-1] if rows else {}
@@ -60,9 +77,11 @@ class Runner(original.Runner):
                     'expected_model': original.MODELS[model],
                     'observed_model_ids': original.identities(last.get('raw_stream', '')),
                     'account_label': self.account, 'timestamp': datetime.now(timezone.utc).isoformat()}
-            original.dump(OUT / 'STOP.json', stop)
+            original.dump(OUT / ('ENDPOINT_STOP.json' if (OUT / 'STOP.json').exists() else 'STOP.json'), stop)
             print(json.dumps(stop), flush=True)
             raise EndpointError('Amended run permanently stopped: ' + str(exc)) from exc
+        if (OUT / 'PAUSE.json').exists():
+            (OUT / 'PAUSE.json').unlink()
         after = sum(json.loads(x)['status'] == 'started' for x in ledger.read_text().splitlines())
         self.spent += after - before
         print(json.dumps({'calls_started_total': self.spent, 'item': item_id, 'arm': tag,
@@ -103,4 +122,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except InfrastructurePaused:
+        raise SystemExit(75)
