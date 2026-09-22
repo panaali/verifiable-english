@@ -568,7 +568,7 @@
     "experiments/P1-deference/tokenizers/llama_config.json": "177c7b61e616fecb84c17ce0591acb92c6c4d60e9ac5ababfb940ff23bbcd424",
     "experiments/P1-deference/tokenizers/qwen_config.json": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
     "experiments/P1-deference/tokenizers/sources.json": "e92eb8f4af7c766b8f5bd4d7827cb9d9b70b56c745df51836172cce9411a4294",
-    "experiments/P5-shifting-definitions/AMENDMENTS.md": "37423eb8788a0e419a4e69756a5c72d78f2b7b9f1e4490a582598aa18aced399",
+    "experiments/P5-shifting-definitions/AMENDMENTS.md": "affdef97ab03b3b6eb3a4d85110c4839e87893595ac205c97ee050066874651c",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V3.md": "16a618e65989baa583fa33d5e0285f20259723289ba730202dae4c78f7dff68f",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V4.md": "d556d43ddd4d38ae3ecbabf2f5e48e501117fbe54a355b821148e66c8781fd7c",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V5.md": "272d583f9ca320370e10ef37272dab553911577ffc25f1ea6a14f9c9f0cdd1e3",
@@ -592,7 +592,7 @@
     "experiments/P5-shifting-definitions/materials/dev.jsonl.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
     "experiments/P5-shifting-definitions/materials/dossiers.jsonl.gz": "95396106832feb78e72f380585dc12ca8f4464daaa9c4a0bdb36803958f8f18e",
     "experiments/P5-shifting-definitions/materials/graphs.jsonl.gz": "c66e24da03828525323f4cfa3fd1357df4d2cd09cf2dbe36a87036adbc6b14ba",
-    "experiments/P5-shifting-definitions/materials/paraphrases.jsonl.gz": "62c57fa5c75abd792dff6011f7bdbc8fc6263b2720843e4e7af942eeb4cbf798",
+    "experiments/P5-shifting-definitions/materials/paraphrases.jsonl.gz": "0dd621fadc586a803319f543fd666de980bfc975f836417dc90f8953fdeb6354",
     "experiments/P5-shifting-definitions/materials/rejected-v1.jsonl.gz": "76f86d202123626c158873daeabed0b88386311b88775556f4615463494cc1ef",
     "experiments/P5-shifting-definitions/materials/rejected-v2-initial.jsonl.gz": "238cae63f1869902621afd2e94b8e76f0d1ef597d52c70dadb9b6fbaaaf8eebb",
     "experiments/P5-shifting-definitions/materials/review-ledger.jsonl.gz": "27320d7c57305630c28a5359fe65d7e29d00f517c875fe5472cfb12eb756abc9",
@@ -658,9 +658,9 @@
     "ve/search.py": "e45c5f0d22713158f0e1ad6f28023089fa5b3ed0013ead7a7930ffb2f37ddc00",
     "ve/wire.py": "fe12216e4f1cca4a8ecca2b0beea48a0bc2578b804cb664c16566cca74b49b07",
     "ve_experiments/json_response.py": "a74d9ccfecc5e2def09f10baf2b534d56c4297f4022b9183a8c784c6ba036f79",
-    "ve_experiments/paid.py": "700bbff5916be31314467199e8d3e48c1b6e542cc89d6e3f49429b771cdfb97b"
+    "ve_experiments/paid.py": "2137c0da3cc1f88c736b282731015897a17455552f0c3454d897ff8e32f0129c"
   },
-  "manifest_sha256": "e0267c2e30810320b97377a1d41aa2945b8041010c327d7047ed786bfa7f3497",
+  "manifest_sha256": "c9f22d8119e545576bf35c1d24350b74e12641f0f3036cc690fad7a693432570",
   "models": {
     "pro": "gemini-3.1-pro-preview",
     "replication": "qwen/qwen-2.5-72b-instruct",
