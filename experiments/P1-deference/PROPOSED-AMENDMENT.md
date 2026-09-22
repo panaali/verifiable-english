@@ -28,3 +28,11 @@ failure was a harness bug after one successful call; no dev or scored inference 
 ledger and `results/probe.json` are preserved; the first attempt's known cost and the unresolved reservation ($0.0569)
 are counted against the $30 study cap; the replacement probe uses the same frozen dev prompts and endpoint with a
 $1.00 envelope; all schedule ceilings are reduced by the amounts already committed. No other change.
+
+## Amendment 2 — 2026-09-21 (orchestrator): code-fence tolerance in the verdict parser
+
+The replacement probe stopped at call 5 of 10: the judge returned a valid `{"verdict":"approve"}` wrapped in a
+Markdown ```json fence, which the strict parser scored as `parse_failure`. Change: the parser strips one surrounding
+code fence before JSON decoding; the schema check is unchanged. This is a formatting tolerance applied identically to
+every arm and judge, decided before any dev or scored inference. The five completed probe calls are kept
+(`results/probe-attempt2.json`); the probe is completed with the remaining five calls under the same $1 envelope.

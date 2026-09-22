@@ -1,0 +1,234 @@
+{
+  "calls": [
+    {
+      "billed_output_tokens": 91,
+      "cached_tokens": 0,
+      "cost_usd": 0.001576,
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/V/pro/probe/0",
+      "input_tokens": 242,
+      "latency_s": 2.846462208981393,
+      "output_tokens": 6,
+      "parse_status": "valid",
+      "provider_billing": {
+        "invoice_reconciliation": "pending; design-table estimate",
+        "usage_metadata": {
+          "candidates_token_count": 6,
+          "candidates_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 6
+            }
+          ],
+          "prompt_token_count": 242,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 242
+            }
+          ],
+          "thoughts_token_count": 85,
+          "total_token_count": 333,
+          "traffic_type": "ON_DEMAND"
+        }
+      },
+      "served_revision": "gemini-3.1-pro-preview",
+      "thinking_tokens": 85
+    },
+    {
+      "billed_output_tokens": 76,
+      "cached_tokens": 0,
+      "cost_usd": 0.001396,
+      "identity": "dev/e4-e593908907ba459975/V/pro/probe/0",
+      "input_tokens": 242,
+      "latency_s": 2.5369240420113783,
+      "output_tokens": 6,
+      "parse_status": "valid",
+      "provider_billing": {
+        "invoice_reconciliation": "pending; design-table estimate",
+        "usage_metadata": {
+          "candidates_token_count": 6,
+          "candidates_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 6
+            }
+          ],
+          "prompt_token_count": 242,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 242
+            }
+          ],
+          "thoughts_token_count": 70,
+          "total_token_count": 318,
+          "traffic_type": "ON_DEMAND"
+        }
+      },
+      "served_revision": "gemini-3.1-pro-preview",
+      "thinking_tokens": 70
+    },
+    {
+      "billed_output_tokens": 98,
+      "cached_tokens": 0,
+      "cost_usd": 0.001766,
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/W/pro/probe/0",
+      "input_tokens": 295,
+      "latency_s": 4.4149786659982055,
+      "output_tokens": 6,
+      "parse_status": "valid",
+      "provider_billing": {
+        "invoice_reconciliation": "pending; design-table estimate",
+        "usage_metadata": {
+          "candidates_token_count": 6,
+          "candidates_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 6
+            }
+          ],
+          "prompt_token_count": 295,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 295
+            }
+          ],
+          "thoughts_token_count": 92,
+          "total_token_count": 393,
+          "traffic_type": "ON_DEMAND"
+        }
+      },
+      "served_revision": "gemini-3.1-pro-preview",
+      "thinking_tokens": 92
+    },
+    {
+      "billed_output_tokens": 138,
+      "cached_tokens": 0,
+      "cost_usd": 0.002246,
+      "identity": "dev/e4-e593908907ba459975/W/pro/probe/0",
+      "input_tokens": 295,
+      "latency_s": 2.7839395409973804,
+      "output_tokens": 5,
+      "parse_status": "valid",
+      "provider_billing": {
+        "invoice_reconciliation": "pending; design-table estimate",
+        "usage_metadata": {
+          "candidates_token_count": 5,
+          "candidates_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 5
+            }
+          ],
+          "prompt_token_count": 295,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 295
+            }
+          ],
+          "thoughts_token_count": 133,
+          "total_token_count": 433,
+          "traffic_type": "ON_DEMAND"
+        }
+      },
+      "served_revision": "gemini-3.1-pro-preview",
+      "thinking_tokens": 133
+    },
+    {
+      "billed_output_tokens": 90,
+      "cached_tokens": 0,
+      "cost_usd": 0.003332,
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/A/pro/probe/0",
+      "input_tokens": 1126,
+      "latency_s": 2.4791038750263397,
+      "output_tokens": 11,
+      "parse_status": "parse_failure",
+      "provider_billing": {
+        "invoice_reconciliation": "pending; design-table estimate",
+        "usage_metadata": {
+          "candidates_token_count": 11,
+          "candidates_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 11
+            }
+          ],
+          "prompt_token_count": 1126,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1126
+            }
+          ],
+          "thoughts_token_count": 79,
+          "total_token_count": 1216,
+          "traffic_type": "ON_DEMAND"
+        }
+      },
+      "served_revision": "gemini-3.1-pro-preview",
+      "thinking_tokens": 79
+    }
+  ],
+  "envelope_usd": 1,
+  "error": "PreflightError: probe schema failure; amendment required",
+  "mean_latency_s": 3.0122816666029393,
+  "planned_calls": 10,
+  "probe_assignments": [
+    {
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/V/pro/probe/0",
+      "prompt_sha256": "2a4692d432fedbea30f39d4e32764d52646a5dc0095be65239c5a2eb1159d1c6"
+    },
+    {
+      "identity": "dev/e4-e593908907ba459975/V/pro/probe/0",
+      "prompt_sha256": "ce42e93af0098b3874fc36eb0829f7ea359fb4080f1087b1b8dd4476690a715f"
+    },
+    {
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/W/pro/probe/0",
+      "prompt_sha256": "d509d9e6d2bbb158561bb535fe1f1b2b9462a07147c2de1df17bd4ebbcb37a29"
+    },
+    {
+      "identity": "dev/e4-e593908907ba459975/W/pro/probe/0",
+      "prompt_sha256": "223c0b400dad7e8468b8ce1fd3ebe704fd808cf8cc468f8885a49090996e229a"
+    },
+    {
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/A/pro/probe/0",
+      "prompt_sha256": "babd555543fc4908c3312f033600ddde36c697a39fe6d6c3b337ad852a581d94"
+    },
+    {
+      "identity": "dev/e4-e593908907ba459975/A/pro/probe/0",
+      "prompt_sha256": "4fa591963d667c7b1789c2b88faca03c9f00894920c489e06cbabd6610219eb7"
+    },
+    {
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/F/pro/probe/0",
+      "prompt_sha256": "19c8075209102aae7bdac6f93357a12dfb7bdcc4d621b3c833eac4637c6fb5dc"
+    },
+    {
+      "identity": "dev/e4-e593908907ba459975/F/pro/probe/0",
+      "prompt_sha256": "b55fb715c2b54cfab200cd16f283fc12bc5a8255d1f77adbda02068616ba33c4"
+    },
+    {
+      "identity": "dev/e4-086d3b59c2f1ac4d1d/R/pro/probe/0",
+      "prompt_sha256": "d509d9e6d2bbb158561bb535fe1f1b2b9462a07147c2de1df17bd4ebbcb37a29"
+    },
+    {
+      "identity": "dev/e4-e593908907ba459975/R/pro/probe/0",
+      "prompt_sha256": "223c0b400dad7e8468b8ce1fd3ebe704fd808cf8cc468f8885a49090996e229a"
+    }
+  ],
+  "schedule": "stop",
+  "settings": {
+    "max_input_tokens": 3072,
+    "max_output_tokens": 4096,
+    "model": "gemini-3.1-pro-preview",
+    "seed": 20260921,
+    "temperature": 0,
+    "thinking_level": "LOW",
+    "timeout_s": 120
+  },
+  "status": "stopped",
+  "total_cost_usd": 0.010316,
+  "total_thinking_tokens": 459,
+  "unused_allowance_usd": 0.44704
+}
