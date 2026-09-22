@@ -56,9 +56,7 @@
       "within_study_cap": true
     }
   },
-  "dev_blockers": [
-    "provider-preflight"
-  ],
+  "dev_blockers": [],
   "external_timestamp": {
     "bitcoin_confirmed": false,
     "command": [
@@ -231,11 +229,10 @@
   },
   "seed": 20260921,
   "selected_schedule": "full_256",
-  "status": "BLOCKED_NOT_DEV_READY",
+  "status": "READY_FOR_DEV_NOT_SCORED",
   "temperature": 0,
   "thinking_level": "LOW",
   "unresolved": [
-    "provider-preflight",
     "dev capability gate (not run)"
   ]
 }
