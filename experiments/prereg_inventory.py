@@ -28,8 +28,8 @@ def rows(path):
     with gzip.open(ROOT / path, "rt") as f:
         return [json.loads(line) for line in f]
 
-def cost_row(arm, role, model, calls, inp, out):
-    ri, ro, fee = RATES[model]
+def cost_row(arm, role, model, calls, inp, out, rates=None):
+    ri, ro, fee = rates or RATES[model]
     return dict(arm=arm, role=role, model=model, calls=calls,
                 max_input_per_call=inp, max_billed_output_per_call=out,
                 max_input_tokens=calls*inp, max_output_tokens=calls*out,
@@ -49,6 +49,13 @@ def fixture_accuracy(items, replies):
     return correct / len(items)
 
 def p1():
+    def price_row(arm, role, model, calls, inp, out):
+        rates = ((.22, .22, 1.055) if arm == "R" else (.02, .05, 1.055)) if model == "weak" else None
+        row = cost_row(arm, role, model, calls, inp, out, rates)
+        cap = 4096 if role == 'billed_output_probe' else 256 if role == 'adaptive_proposer_against_pro' else 1024
+        row.update(planning_billed_output_per_call=out, max_billed_output_per_call=cap,
+                   max_output_tokens=calls*cap, output_accounting='USD uses planning mean; cap reserved per dispatch')
+        return row
     selected = []
     sources = []
     for split in ("dev", "scored"):
@@ -87,18 +94,18 @@ def p1():
     for name, output, full in (("full_256", 256, True),
                                ("primary_512", 512, False),
                                ("primary_1024", 1024, False)):
-        budget = [cost_row("probe", "billed_output_probe", "pro", 10, 3072, 4096)]
+        budget = [price_row("probe", "billed_output_probe", "pro", 10, 3072, 4096)]
         for model in (RATES if full else ("pro",)):
             n = 200 if full else 136
             for arm in ("V", "W", "A", "F", "R", "U"):
-                budget.append(cost_row(arm, "initial_judge", model, n, p1_input_bound(arm, "initial"), output))
+                budget.append(price_row(arm, "initial_judge", model, n, p1_input_bound(arm, "initial"), output))
                 if arm == "R":
-                    budget.append(cost_row(arm, "post_replay_judge", model, n, p1_input_bound(arm, "replay"), output))
+                    budget.append(price_row(arm, "post_replay_judge", model, n, p1_input_bound(arm, "replay"), output))
                 # Preserve three-turn primary pushback; exploratory judges have initial cells only.
                 if full and model == "pro" and arm != "U":
-                    budget.append(cost_row(arm, "pushback_judge", model, 28*3, p1_input_bound(arm, "pushback"), 256))
-                    budget.append(cost_row(arm, "adaptive_proposer_against_pro", model, 28*3, p1_input_bound(arm, "attacker"), 256))
-            budget.append(cost_row("F_correct", "initial_judge", model, 136, 3072, output))
+                    budget.append(price_row(arm, "pushback_judge", model, 28*3, p1_input_bound(arm, "pushback"), 256))
+                    budget.append(price_row(arm, "adaptive_proposer_against_pro", model, 28*3, p1_input_bound(arm, "attacker"), 256))
+            budget.append(price_row("F_correct", "initial_judge", model, 136, 3072, output))
         # Reserve a full $1 for the probe, including its explicit row ceiling.
         probe_buffer = round(1 - budget[0]["usd"], 8)
         total = round(sum(r["usd"] for r in budget) + probe_buffer, 8)
@@ -107,8 +114,8 @@ def p1():
             judges=list(RATES) if full else ["pro"], pushback=full,
             max_scheduled_api_usd=total, scheduled_calls=sum(r["calls"] for r in budget),
             local_accounting_allowance_usd=.25,
-            unallocated_reserve_usd=round(30-total-.25-.5569, 8))
-        scenarios[name]["within_study_cap"] = total + .25 + .5569 <= 30
+            unallocated_reserve_usd=round(36-total-.25-.5569, 8))
+        scenarios[name]["within_study_cap"] = total + .25 + .5569 <= 36
         scenarios[name]["cumulative_with_existing_allowances_usd"] = round(total + .25 + .5569, 8)
     budget = scenarios["full_256"]["budget_rows"]
     # These are label-routing unit fixtures, not the eventual channel/harness tests.
@@ -129,11 +136,12 @@ def p1():
                     pushback_items=28, pushback_rounds=3, pushback_judge_panels=1),
         fixture_checks=dict(oracle_accuracy=oracle, random_accuracy=round(chance, 8), chance=.5,
                             scope="label-routing fixture only; provider/channel/scorer integration tests still required"),
-        rates_per_million=RATES, budget_rows=budget, hard_cap_usd=30,
+        rates_per_million=RATES, budget_rows=budget, hard_cap_usd=36,
         probe_ceiling_usd=1, probe_unused_allowance_usd=scenarios["full_256"]["probe_unused_allowance_usd"],
         budget_scenarios=scenarios,
-        output_probe_policy={"mean_le_256": "full_256", "mean_gt_256_le_512": "primary_512",
-                             "mean_gt_512_le_1024": "primary_1024", "mean_gt_1024": "STOP_REPORT"},
+        output_probe_policy={"running_window": 50, "mean_le_512": "full_256",
+                             "mean_gt_512": "primary_1024", "judge_billed_output_cap": 1024,
+                             "full_schedule_planning_mean": 256},
         primary_contrasts=["A-F_correct balanced accuracy", "F-W error rate"],
         badge_attribution_contrast="F-U error rate",
         request_policy=dict(sdk_retries=0, max_attempts=1, timeout_seconds=120))

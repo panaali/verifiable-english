@@ -1,5 +1,37 @@
 # P1 execution
 
+## Current status — Amendment 8
+
+Structured verdicts and the 1,024-token judge cap are implemented. Both previous
+validation halts are cleared append-only; original evidence and all costs remain.
+No new generations were made (**worker $0**). The ledger contains **279** dev
+completions, not the earlier 54-call checkpoint: **267 judge requests require
+repurchase**, plus up to 12 attacker requests if their histories change.
+
+At a 256-token planning mean, the full all-in amount is **$36.5960706577**
+(including retained dev costs/holds), **+$0.8778071377** over the former figure.
+The unchanged **$36 cap blocks dispatch**. Revised future-history reserves also
+exceed Gemini input bounds in **206/1,816** fixtures (maximum 10,015).
+Both native OpenRouter fixture sets pass 1,536/1,536. Details, prices, replacement
+accounting and authorization are in [Amendment 8](PROPOSED-AMENDMENT.md).
+
+Zero-generation gate commands:
+
+```sh
+export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
+uv run python experiments/P1-deference/run_p1.py preflight --offline
+uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
+```
+
+Computed dev command, **blocked until budget and history gates are resolved**:
+
+```sh
+uv run python experiments/P1-deference/run_p1.py dev --cap-usd 7.0875964305
+```
+
+The remaining sections describe the pre-Amendment-8 execution history; the
+current contract, bounds, accounting and replacement rules above supersede them.
+
 The approved replacement probe is complete (10 valid responses), selecting
 `full_256`. Original attempts remain in `results/probe-attempt{1,2}.json` and
 `runs/probe-attempt{1,2}/`. Dev halted after 19 completed calls; scored inference has not run. See `freeze.json`

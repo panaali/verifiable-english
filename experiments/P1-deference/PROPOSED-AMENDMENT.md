@@ -226,3 +226,128 @@ booleans; no interval or threshold changes.
 
 Worker implementation/testing: no paid calls; **$0**. Execution freeze and gates
 must be refreshed for amended code before orchestrator dispatch.
+
+## Amendment 8 — 2026-09-22 UTC (2026-09-21 Pacific; orchestrator, approved): structured verdicts, output allowance, served prices
+
+APPROVED by the orchestrator's Worker X instruction. No paid calls are
+permitted in this implementation turn; worker generation spend is **$0**.
+The retained 35 Gemini completions include five `MAX_TOKENS` finishes at the
+256-token request limit, including truncated prose and fenced JSON. A separate
+442-billed-output completion triggered the token-cap halt. These are harness
+constraints that can contaminate comparisons across arms. Weak R also halted
+because its served tool endpoint bills above the former DeepInfra-only table.
+
+Every judge, arm and verdict phase now receives the same required object schema:
+`{"verdict": "approve" | "reject" | "unknown"}`, with no extra properties.
+Gemini uses `response_mime_type=application/json` and `response_schema`;
+OpenRouter uses strict `response_format.type=json_schema` for both Qwen and
+Llama. An explicit HTTP 400/422 rejection saying that schema/response-format
+support is unavailable permits one `json_object` fallback, recorded durably
+before dispatch; unrelated errors, truncations and malformed outputs do not.
+The served response records the actual format. Native replay tools and all
+prompts remain unchanged. Code-fence tolerance remains a normally unused safety
+net. See the [Gemini configuration documentation](https://ai.google.dev/gemini-api/docs/migrate-to-interactions)
+and [OpenRouter structured-output contract](https://openrouter.ai/docs/guides/features/structured-outputs).
+
+All judge requests now allow **1,024 billed output tokens**, including Gemini
+thinking (LOW remains enabled). A completion above 1,024 still halts; 442 no
+longer does. Attacker prose is not a verdict: its unchanged 256-token request
+and unstructured response contract remain eligible for exact-request reuse.
+The old feasibility probe and provider one-token smoke evidence are preserved;
+no replacement probe or smoke was bought. The full schedule uses **256** as its
+planning output mean, independent of the 1,024 request bound. The running mean
+over the most recent **50 Gemini completions** (all available calls until 50,
+including attacker calls) triggers the existing primary-only E4/no-pushback
+schedule when **>512**. It selects `primary_1024`, reserving the full output
+bound for that smaller panel. The fallback is durable and cannot switch back. The
+retained mean is **176.371429 across 35 calls**, so it has not triggered.
+Legacy schedule names are retained; `primary_512`/`primary_1024` budget rows
+use planning outputs of 512/1,024 respectively, both with the same 1,024
+judge request limit.
+
+The cached `checks/provider-preflight.json` listing supplies these weak-model
+prices in USD per million tokens; all retain the existing 1.055 fee:
+
+| Provider | Input | Output |
+| --- | ---: | ---: |
+| DeepInfra | $0.02 | $0.04 |
+| Novita | $0.02 | $0.05 |
+| Groq | $0.05 | $0.08 |
+| CoreWeave | $0.22 | $0.22 |
+| Cloudflare | $0.152 | $0.287 |
+
+Billing validation uses the actual served provider's listed rate, charging
+cached input at full price and at least the provider-reported bill plus fee.
+An unlisted provider or bill above its table rate still halts. R reserves the
+CoreWeave maximum among the listing's tool-capable endpoints; other weak arms
+retain the fp8 allowlist and reserve Novita's maximum. Cloudflare remains in
+the billing table but is not advertised as tool-capable and is outside the
+other arms' routing allowlist. The weak schedule's planning ceiling increases
+from **$0.1633524864 to $0.7597863552**, a **+$0.5964338688** correction.
+
+| Full schedule accounting | Previous | Amendment 8 | Delta |
+| --- | ---: | ---: | ---: |
+| API planning ceiling, including replacement-probe envelope | $34.9113635200 | $35.5077973888 | +$0.5964338688 |
+| All-in planning ceiling, including prior probe/provider/local allowances | $35.7182635200 | $36.3146973888 | +$0.5964338688 |
+| All-in including retained dev completions and timeout holds | $35.7182635200 | **$36.5960706577** | **+$0.8778071377** |
+
+The extra dev allowance conservatively retains all **$0.27882371370** already
+billed plus **$0.00254955520** in two unresolved timeout holds. Exact reused
+attacker calls can make this allowance conservative; it cannot undercount them.
+The full dev planning allocation is $5.2493231616 and the cumulative dev cap
+with existing allowances is **$7.0875964305**. These are calculations using a
+256-token mean, not guarantees at the maximum request output. Charging every
+judge request at 1,024 instead yields an all-in bound of **$55.2377008657**.
+The **$36 study cap and durable per-dispatch reservation stop are unchanged**.
+The full schedule consequently remains budget-blocked, even before the old dev
+allowance; this amendment does not silently drop panels or raise the cap.
+
+The user's 54-completion checkpoint is superseded by the retained ledger's
+**279 completions**: Gemini 35, Qwen 240, weak 4. Qwen continued after the other
+judges halted. Within the first 54, 42 judge requests change and 12 attacker
+requests may be reused. Across the complete retained ledger, **267 judge calls
+must be repurchased in dev** because their schema/output cap changed; their
+sunk cost is **$0.22651771370**. Another **12 attacker calls** (sunk cost
+$0.052306) are reused only if their complete request/history is unchanged.
+Changed predecessor responses can require those too: **267–279** repurchases,
+never silently reusing a changed history. At frozen input bounds, repurchasing
+the 267 judge calls plans $0.7812318144 at mean 256 (maximum $1.0712826432 at
+1,024); replacing all 12 attackers adds at most $0.183840. These repurchases
+are part of the new dev allocation, not an additional duplicate allowance.
+Actual new cost cannot be known without generation; **zero were bought here**.
+
+The recovery appends an Amendment 8 event and two specific validation-halt
+recoveries. All original reservations, replies, trials, costs, routing failure
+and timeout holds remain intact. Changed dev requests receive deterministic
+new identities; identical requests reuse exact stored replies. New dev trial
+rows are marked Amendment 8 and earlier rows remain historical evidence,
+excluded from amended gates/analysis. Scored requests have no replacement
+exception. Dev gates must belong to the current execution freeze before scoring.
+The historical 19-call Amendment 7 regression reconstructs its original ledger
+prefix, and tests cover the new request/recovery behavior separately.
+
+Offline validation also recomputes future-history reserves from the actual
+output bounds: 1,024 per judge response and 256 per attacker response. This
+exposes **206/1,816 Gemini fixture overflows**, with maximum **10,015** against
+unchanged input bounds (6,800 for A/R). The real retained Vertex counts are
+reused only for exactly matching messages/tools; no count is fabricated or
+represented as a fresh API call. Both native OpenRouter fixture sets pass
+**1,536/1,536**, maxima Qwen **5,316**, Llama **4,853**. Known-answer, Lean replay,
+semantic pairs, tests and timestamp inspection are rerun locally. Budget and
+Gemini history gates therefore still block dispatch; changing the input bounds
+or study allocation requires an orchestrator decision. No inference is used
+to work around either gate.
+
+Reproduce zero-generation validation with:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py preflight --offline
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
+```
+
+The computed dev command (currently refused by the unchanged budget/history
+gates) is:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py dev --cap-usd 7.0875964305
+```
