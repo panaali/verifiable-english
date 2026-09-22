@@ -77,7 +77,8 @@ def test_qwen_native_replay_is_preserved_for_gemini_attacker():
     assert calls[0].id == responses[0].id == 'preflight-replay'
 
 
-def test_selected_dev_rebuys_changed_qwen_requests_and_blocks_scoring(tmp_path, monkeypatch):
+@pytest.mark.parametrize('schedule', ['replication_3turn', 'replication_gemini_e5_2turn'])
+def test_selected_dev_rebuys_changed_qwen_requests_and_blocks_scoring(tmp_path, monkeypatch, schedule):
     original = p1.HERE
     source_items = p1.materials('dev')
     items = [i for i in source_items if i['assignment']['pushback']]
@@ -91,7 +92,7 @@ def test_selected_dev_rebuys_changed_qwen_requests_and_blocks_scoring(tmp_path, 
     monkeypatch.setattr(p1, 'materials', lambda _: items)
     monkeypatch.setattr(p1_preflight, 'runtime_counter', lambda: None)
     p1.write_json(tmp_path / 'checks/amendment12.json', receipt)
-    p1.write_json(tmp_path / 'results/probe.json', {'status': 'complete', 'schedule': 'replication_3turn'})
+    p1.write_json(tmp_path / 'results/probe.json', {'status': 'complete', 'schedule': schedule})
     p1.write_json(tmp_path / 'freeze.json', {'hashes': {}, 'manifest_sha256': 'test', 'external_timestamp': {'verified': True}})
     for gate in (*p1_preflight.GATES, 'provider-preflight'):
         p1.write_json(tmp_path / f'checks/{gate}.json', {'passed': True, 'freeze_sha256': 'test'})
@@ -108,16 +109,20 @@ def test_selected_dev_rebuys_changed_qwen_requests_and_blocks_scoring(tmp_path, 
     monkeypatch.setattr(p1, 'VertexBackend', lambda: paid.OfflineBackend(respond))
     # Durable old Gemini fallback must not switch back to buying Gemini/E4.
     assert p1.run_split('dev', 5.37433511530) == 0
-    assert all(r.model == 'replication' for r in calls if r.metadata['role'] != 'attacker')
+    assert all(r.model == 'replication' or schedule == 'replication_gemini_e5_2turn' and r.metadata['panel'] == 'E5'
+               for r in calls if r.metadata['role'] != 'attacker')
+    if schedule == 'replication_gemini_e5_2turn':
+        assert any(r.model == 'pro' and r.metadata['role'] == 'initial' for r in calls)
     assert any('/amendment8/' in r.identity for r in calls if r.metadata['role'] == 'initial')
     assert (tmp_path / 'runs/study/costs.jsonl').read_bytes().startswith(prefix)
     before = len(calls)
     assert p1.run_split('dev', 5.37433511530) == 0
     assert len(calls) == before
     report = json.loads((tmp_path / 'runs/dev/analysis.json').read_text())
-    assert set(report['families']) == {'replication/E4', 'replication/E5'}
+    assert set(report['families']) == {'replication/E4', 'replication/E5'} | (
+        {'pro/E5'} if schedule == 'replication_gemini_e5_2turn' else set())
     assert report['gemini_e4_dev_ceiling']['judgments'] == 112
-    assert all('exploratory-primary' in f['contrast_status'] for f in report['families'].values())
+    assert all('exploratory-primary' in f['contrast_status'] for k, f in report['families'].items() if k.startswith('replication/'))
     with pytest.raises(paid.PreflightError, match='dev capability gate failed'):
         p1.run_split('scored', 24.28476399850)
     assert len(calls) == before

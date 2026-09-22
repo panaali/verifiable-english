@@ -1,10 +1,10 @@
 {
-  "completed_at": "2026-09-22T04:59:04.104720+00:00",
+  "completed_at": "2026-09-22T06:54:14.191504+00:00",
   "counter": {
     "path": "/Users/seyran/code/ve-codex/experiments/P1-deference/native_counter.py",
     "sha256": "ab5bc368b3828dedaecc6daa19620fa4cbf75c2130a335066d62e51a7e7e58b7"
   },
-  "freeze_sha256": "3238548278e22b5984e554b171295656ca26bf367c330d8e6f211e4279725af9",
+  "freeze_sha256": "01c5541bbb621867a0dda23009566a698cdada76eb54fdb148a1a608174d4707",
   "judges": {
     "replication": {
       "catalog": {
@@ -122,7 +122,7 @@
               "supports_voice_cloning": false,
               "tag": "deepinfra/fp8",
               "throughput_last_30m": null,
-              "uptime_last_1d": 99.73232285774006,
+              "uptime_last_1d": 99.73533516192677,
               "uptime_last_30m": 100,
               "uptime_last_5m": 100
             },
@@ -165,7 +165,7 @@
               "supports_voice_cloning": false,
               "tag": "novita/bf16",
               "throughput_last_30m": null,
-              "uptime_last_1d": 97.07692307692307,
+              "uptime_last_1d": 97.6303317535545,
               "uptime_last_30m": null,
               "uptime_last_5m": null
             }
@@ -15424,9 +15424,9 @@
               "supports_voice_cloning": false,
               "tag": "deepinfra/fp8",
               "throughput_last_30m": null,
-              "uptime_last_1d": 99.91671180931743,
-              "uptime_last_30m": 99.9868394290705,
-              "uptime_last_5m": 99.97370911767798
+              "uptime_last_1d": 99.93377554691955,
+              "uptime_last_30m": 99.832652266978,
+              "uptime_last_5m": 99.23833703586163
             },
             {
               "context_length": 16384,
@@ -15468,9 +15468,9 @@
               "supports_voice_cloning": false,
               "tag": "novita/fp8",
               "throughput_last_30m": null,
-              "uptime_last_1d": 99.24478228409484,
-              "uptime_last_30m": 98.04940923737917,
-              "uptime_last_5m": 100
+              "uptime_last_1d": 99.25058050696839,
+              "uptime_last_30m": 99.5864956817587,
+              "uptime_last_5m": 99.94295493439817
             },
             {
               "context_length": 131072,
@@ -15509,9 +15509,9 @@
               "supports_voice_cloning": false,
               "tag": "groq",
               "throughput_last_30m": null,
-              "uptime_last_1d": 99.9365503392293,
-              "uptime_last_30m": 99.9864612156136,
-              "uptime_last_5m": 99.98916576381365
+              "uptime_last_1d": 99.93504554165985,
+              "uptime_last_30m": 99.77830832196453,
+              "uptime_last_5m": 99.77392614920875
             },
             {
               "context_length": 32000,
@@ -15553,9 +15553,9 @@
               "supports_voice_cloning": false,
               "tag": "cloudflare/fp8",
               "throughput_last_30m": null,
-              "uptime_last_1d": 96.45347340836238,
-              "uptime_last_30m": 99.7615472931202,
-              "uptime_last_5m": 99.87880012119987
+              "uptime_last_1d": 96.79103648569297,
+              "uptime_last_30m": 99.74358974358975,
+              "uptime_last_5m": 100
             },
             {
               "context_length": 131072,
@@ -15601,9 +15601,9 @@
               "supports_voice_cloning": false,
               "tag": "coreweave/bf16",
               "throughput_last_30m": null,
-              "uptime_last_1d": 99.98319146427434,
-              "uptime_last_30m": 99.64953271028037,
-              "uptime_last_5m": 99.57983193277312
+              "uptime_last_1d": 99.97831305110726,
+              "uptime_last_30m": 99.89407642793124,
+              "uptime_last_5m": 99.79370809695719
             }
           ],
           "id": "meta-llama/llama-3.1-8b-instruct",

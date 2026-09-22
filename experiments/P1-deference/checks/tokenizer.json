@@ -1,5 +1,5 @@
 {
-  "completed_at": "2026-09-22T04:58:29.930601+00:00",
+  "completed_at": "2026-09-22T06:53:23.337480+00:00",
   "count_api_calls": 0,
   "count_source": "retained real Vertex countTokens; identical messages/tools",
   "counts": [
@@ -17608,14 +17608,14 @@
       "tokens": 3016
     }
   ],
-  "freeze_sha256": "3238548278e22b5984e554b171295656ca26bf367c330d8e6f211e4279725af9",
+  "freeze_sha256": "01c5541bbb621867a0dda23009566a698cdada76eb54fdb148a1a608174d4707",
   "future_history_policy": "Full joint native fixtures plus generated-token ceilings; actual provider signatures and transcript are recounted at runtime. This is not a Qwen/Llama tokenizer receipt.",
   "generation_calls": 0,
   "judge": "pro",
   "model": "gemini-3.1-pro-preview",
   "passed": true,
   "requests": 1956,
-  "reused_count_receipt_sha256": "07cfc56c09f66cfa3b45d11425036e54046ed94a3b720104ce333c949c7fe64c",
+  "reused_count_receipt_sha256": "cb2acfef36114a2d9eef95d4290af26e5c91e1addf81097a51205e785d3dc8a5",
   "schedule": "full_256",
   "scope": "all dev+scored items, all arms, replay continuations, joint maximal pushback attacker/judge histories"
 }

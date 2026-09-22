@@ -193,12 +193,43 @@ class Ledger:
                 pending.pop("block:" + row["block_id"])
             elif row["event"] == "allowance":
                 committed += Decimal(row["cost_usd"])
+            elif row["event"] == "allowance_adjustment":
+                committed += Decimal(row["cost_usd"]) - Decimal(row["prior_usd"])
         return pending, committed, seen, revisions, blocked
+
+    def reconcile(self, releases, allowances):
+        """Append audited releases; never erase calls or forgive unknown billing.
+
+        Callers supply block reasons and replacement allowance amounts/evidence.
+        A live call in a block prevents its release, even if the schedule changed.
+        """
+        with self.locked() as (f, rows):
+            pending, _, _, _, blocked = self.state(rows)
+            if blocked or any(not k.startswith('block:') for k in pending):
+                raise PreflightError('cannot reconcile study holds while billing unresolved')
+            events = []
+            for block, reason in releases.items():
+                if 'block:' + block in pending:
+                    events.append({'event': 'block_release', 'block_id': block,
+                                   'released_usd': str(pending['block:' + block]), 'reason': reason})
+            current = {r['identity']: Decimal(r['cost_usd']) for r in rows
+                       if r['event'] in ('allowance', 'allowance_adjustment')}
+            for identity, details in allowances.items():
+                amount = Decimal(details['cost_usd'])
+                if not amount.is_finite() or amount < 0:
+                    raise ValueError('reconciled allowance must be finite and nonnegative')
+                prior = current.get(identity, Decimal(0))
+                if prior != amount:
+                    events.append({'event': 'allowance_adjustment', 'identity': identity,
+                                   'prior_usd': str(prior), 'released_usd': str(prior - amount), **details})
+            for event in events:
+                self.append(f, {**event, 'sample': False})
+            return events
 
     def allowance(self, identity, amount):
         """Persist reserved envelopes that cannot fund additional samples."""
         with self.locked() as (f, rows):
-            if any(r.get("event") == "allowance" and r["identity"] == identity for r in rows):
+            if any(r.get("event") in ("allowance", "allowance_adjustment") and r["identity"] == identity for r in rows):
                 return
             pending, spent, _, _, blocked = self.state(rows)
             if blocked or pending:
@@ -207,7 +238,7 @@ class Ledger:
                 raise BudgetExceeded("envelope exceeds --cap-usd")
             self.append(f, {"event": "allowance", "identity": identity, "cost_usd": str(amount)})
 
-    def reserve_block(self, block_id, ceiling, *, resume=False):
+    def reserve_block(self, block_id, ceiling, *, resume=False, schedule=None, split=None):
         with self.locked() as (f, rows):
             pending, spent, _, _, blocked = self.state(rows)
             prior = next((r for r in rows if r['event'] == 'block_reserve' and r['block_id'] == block_id), None)
@@ -225,7 +256,8 @@ class Ledger:
                 raise PreflightError("block already assigned; no replacement samples")
             if spent + Decimal(str(ceiling)) > self.cap:
                 raise BudgetExceeded("complete block ceiling would exceed --cap-usd")
-            self.append(f, {"event": "block_reserve", "block_id": block_id, "ceiling_usd": str(ceiling)})
+            self.append(f, {"event": "block_reserve", "block_id": block_id, "ceiling_usd": str(ceiling),
+                            "schedule": schedule, "split": split})
 
     def release_block(self, block_id):
         with self.locked() as (f, rows):
@@ -234,7 +266,9 @@ class Ledger:
                 raise PreflightError("cannot release block while billing unresolved")
             if 'block:' + block_id not in pending:
                 return
-            self.append(f, {"event": "block_release", "block_id": block_id})
+            self.append(f, {"event": "block_complete", "block_id": block_id, "sample": False})
+            self.append(f, {"event": "block_release", "block_id": block_id,
+                            "released_usd": str(pending['block:' + block_id]), "reason": "completed block"})
 
     def require_block(self, ceiling):
         with self.locked() as (_, rows):
@@ -344,14 +378,18 @@ class Ledger:
         with self.locked() as (_, rows):
             if not any(r['event'] == 'amendment8' for r in rows):
                 return request
-            prior = next((r for r in rows if r['event'] == 'reserve' and r['identity'] == request.identity), None)
-            if prior:
-                values = asdict(request)
-                same = all(prior.get(k) == v for k, v in values.items() if k != 'metadata')
+            candidates = [r for r in rows if r['event'] == 'reserve' and
+                          (r['identity'] == request.identity or r['identity'].startswith(request.identity + '/amendment8/'))]
+            values = asdict(request)
+            for prior in reversed(candidates):
+                same = all(prior.get(k) == v for k, v in values.items() if k not in ('metadata', 'identity'))
                 same &= {k: v for k, v in prior['metadata'].items() if k != 'block_id'} == {
                     k: v for k, v in request.metadata.items() if k != 'block_id'}
                 if same:
-                    return replace(request, metadata=prior['metadata'])
+                    return replace(request, identity=prior['identity'], metadata=prior['metadata'])
+            prior = next((r for r in candidates if r['identity'] == request.identity), None)
+            if prior:
+                values['metadata'].pop('block_id', None)
                 return replace(request, identity=request.identity + '/amendment8/' + digest(values))
         return request
 

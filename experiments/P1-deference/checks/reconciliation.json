@@ -1,0 +1,40 @@
+{
+  "accounting": "cumulative API command caps; local $0.25 held separately; full split ceilings without reuse discounts",
+  "cap_usd": {
+    "dev": "6.85298379880",
+    "scored": "36.15997604200"
+  },
+  "commands": {
+    "dev": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py dev --cap-usd 6.85298379880",
+    "scored": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py scored --cap-usd 36.15997604200"
+  },
+  "live_holds_usd": "0.30784555520",
+  "local_hold_usd": "0.25",
+  "realised_usd": "0.64413983720",
+  "remaining_usd": "39.04801460760",
+  "schedule": "replication_gemini_e5_2turn",
+  "sources": {
+    "probe": {
+      "holds_usd": "0",
+      "realised_usd": "0.024456",
+      "sha256": "c1f90df232bbaba728d54512b2b7dcc4c91bf1ebfbfb3bd87de8af77d470db92"
+    },
+    "probe-attempt1": {
+      "holds_usd": "0.055296",
+      "realised_usd": "0.001576",
+      "sha256": "7d897a786ea89d8d2a45c3237aad3796ea76d22f417a224412148cff0ca86195"
+    },
+    "probe-attempt2": {
+      "holds_usd": "0",
+      "realised_usd": "0.010316",
+      "sha256": "da202fe90e9f95087d9d5238df5d80fa95b15041c07c3ee9513a0774c544b129"
+    },
+    "provider-preflight": {
+      "holds_usd": "0",
+      "realised_usd": "0.0000081235",
+      "sha256": "fe9c81ca578657c34c02ec327aa1626eb64eac72da1c98118f1e2d2ec5e83103"
+    }
+  },
+  "study_cap_usd": "40",
+  "study_realised_usd": "0.60778371370"
+}
