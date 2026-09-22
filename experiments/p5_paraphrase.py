@@ -21,8 +21,40 @@ def _unique_object(pairs):
     return obj
 
 
+SANITISER = 'exact-parenthetical-glossary-sense-v1'
+
+
+def glossary_senses(dossier):
+    senses = set()
+    for entry in dossier['glossary']:
+        sense = re.sub(r'\s*\(R\d+\)\s*$', '', entry['sense'], flags=re.I)
+        sense = sense.partition(':')[2] if ':' in sense else sense
+        if sense.strip():
+            senses.add(' '.join(sense.casefold().split()))
+    return sorted(senses)
+
+
+def sanitise_prose(prose, senses):
+    """Remove only entire, unnested parentheticals equal to a glossary sense.
+
+    Case and whitespace are ignored for matching. No labels, synonyms or
+    substring deletions; surrounding whitespace and punctuation are tidied.
+    """
+    pattern = re.compile(r'(?<!\()\([^()]*\)(?!\))')
+    def replace(match):
+        prefix = prose[:match.start()]
+        if prefix.count('(') != prefix.count(')'):
+            return match[0]  # Do not edit a gloss nested inside other parentheses.
+        phrase = ' '.join(match[0][1:-1].casefold().split())
+        return ' ' if phrase in senses else match[0]
+    cleaned = pattern.sub(replace, prose)
+    if cleaned != prose:
+        cleaned = re.sub(r'\s+([,.;:!?])', r'\1', ' '.join(cleaned.split()))
+    return cleaned
+
+
 def validate_reply(text, dossier):
-    """Return ordered texts or a named violation; inspect prose, not JSON keys."""
+    """Return sanitised, ordered texts or a violation; inspect prose, not keys."""
     try:
         row = json.loads(strip_json_fence(text), object_pairs_hook=_unique_object)
     except (TypeError, ValueError):
@@ -34,12 +66,10 @@ def validate_reply(text, dossier):
         return None, 'schema_failure: texts must contain every existing node ID exactly once with nonempty string values and no additional fields'
     # Glossary entries are "term: sense phrase (Rnn)". The Rnn suffix is a
     # glossary label, not part of the phrase that must stay out of parentheses.
-    senses = []
-    for entry in dossier['glossary']:
-        sense = re.sub(r'\s*\(R\d+\)\s*$', '', entry['sense'], flags=re.I)
-        sense = sense.partition(':')[2].strip() if ':' in sense else sense.strip()
-        if sense:
-            senses.append(' '.join(sense.casefold().split()))
+    senses = glossary_senses(dossier)
+    row['texts'] = {key: sanitise_prose(prose, senses) for key, prose in row['texts'].items()}
+    if any(not prose.strip() for prose in row['texts'].values()):
+        return None, 'schema_failure: sanitised texts must remain nonempty'
     public_ids = {n['id'] for field in ('nodes', 'premises', 'records') for n in dossier[field]}
     id_pattern = re.compile(r'(?<!\w)(?:[nr]\d+|' + '|'.join(map(re.escape, sorted(public_ids))) + r')(?!\w)', re.I)
     for node_id in ids:

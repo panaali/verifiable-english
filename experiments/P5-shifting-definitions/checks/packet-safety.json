@@ -1,10 +1,12 @@
 {
   "context_policy": "one packet; no examples; item-bound transcript; disjoint raters",
-  "freeze_sha256": "2d358b7a7bc08a8abd958c4c19e711a7fc2d8a938f71f804a15d4d797692e57a",
+  "freeze_sha256": "14890bb5375b7bb83f001e64ca473b254910201f44588a7534fedef87934f804",
   "generation_calls": 0,
   "items": 84,
-  "passed": true,
-  "prose_failures": [],
+  "passed": false,
+  "prose_failures": [
+    "i2afbcc296df87f190ef25c465f52f9d1"
+  ],
   "references_per_packet": 4,
   "sibling_guards": [
     true,

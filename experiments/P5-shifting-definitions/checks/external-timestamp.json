@@ -1,5 +1,8 @@
 {
-  "freeze_sha256": "2d358b7a7bc08a8abd958c4c19e711a7fc2d8a938f71f804a15d4d797692e57a",
+  "freeze_sha256": "14890bb5375b7bb83f001e64ca473b254910201f44588a7534fedef87934f804",
   "passed": false,
-  "reason": "publish exact manifest hash and retain bound OpenTimestamps receipt"
+  "policy": "bound calendar submission is pilot timestamp evidence; not a claim of verified Bitcoin confirmation",
+  "proof_sha256": "0674da311ec9c5dfb5a012cba86aad1a11bfcb4f3f6e5a7979746ba1400ecfff",
+  "source_sha256": "f6e1290ccc59e468f75ff8e3b9abd3caf8ca3fbb54c009f119cf4011711c1b85",
+  "stdout": ""
 }

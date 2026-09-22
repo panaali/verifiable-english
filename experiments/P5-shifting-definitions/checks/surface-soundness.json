@@ -3,16 +3,21 @@
     "0": 18,
     "1": 15,
     "2": 30,
-    "3": 21
+    "3": 20
   },
   "flawed_packets": 56,
   "frames_per_packet": 4,
-  "freeze_sha256": "2d358b7a7bc08a8abd958c4c19e711a7fc2d8a938f71f804a15d4d797692e57a",
+  "freeze_sha256": "14890bb5375b7bb83f001e64ca473b254910201f44588a7534fedef87934f804",
   "generation_calls": 0,
-  "invalid": [],
+  "invalid": [
+    {
+      "error": "defect is not a single source-grounded bridge",
+      "id": "i2afbcc296df87f190ef25c465f52f9d1"
+    }
+  ],
   "items": 84,
-  "packet_sha256": "c0d465e61779e6246ce38037fca8500bb83077bfa9c60d046a2a9f1440ecf0d0",
-  "passed": true,
+  "packet_sha256": "2d05f29ebe943fc83875f33ae4d2f8a41173de4aefbc947cec92bf662b0106ca",
+  "passed": false,
   "reference_profile": [
     3,
     2,
@@ -21,7 +26,7 @@
   "references_per_packet": 4,
   "root_counts": {
     "derivable": 28,
-    "underivable": 56
+    "underivable": 55
   },
   "unique_maximum_localizations": 0
 }

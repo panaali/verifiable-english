@@ -11,128 +11,254 @@
     {
       "converged": true,
       "held_out_family": "p5-dev-00",
-      "iterations": 4,
+      "iterations": 1243,
       "probe": 0
     },
     {
       "converged": true,
       "held_out_family": "p5-dev-00",
-      "iterations": 0,
+      "iterations": 13,
       "probe": 1
     },
     {
       "converged": true,
       "held_out_family": "p5-dev-00",
-      "iterations": 4,
+      "iterations": 1026,
+      "probe": 2
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-00",
+      "iterations": 201,
+      "probe": 3
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-00",
+      "iterations": 19,
+      "probe": 4
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-00",
+      "iterations": 129,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-01",
+      "iterations": 1232,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-01",
+      "iterations": 13,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-01",
+      "iterations": 1098,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-dev-01",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 232,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-dev-01",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 20,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-dev-01",
-      "iterations": 4,
+      "iterations": 182,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-02",
+      "iterations": 1138,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-02",
+      "iterations": 14,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-02",
+      "iterations": 1184,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-dev-02",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 179,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-dev-02",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 18,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-dev-02",
-      "iterations": 4,
+      "iterations": 182,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-03",
+      "iterations": 1744,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-03",
+      "iterations": 13,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-dev-03",
+      "iterations": 1530,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-dev-03",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 170,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-dev-03",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 21,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-dev-03",
-      "iterations": 4,
-      "probe": 2
+      "iterations": 193,
+      "probe": 5
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-00",
-      "iterations": 4,
+      "iterations": 1043,
       "probe": 0
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-00",
-      "iterations": 0,
+      "iterations": 13,
       "probe": 1
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-00",
-      "iterations": 4,
+      "iterations": 1542,
       "probe": 2
     },
     {
       "converged": true,
+      "held_out_family": "p5-scored-00",
+      "iterations": 158,
+      "probe": 3
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-00",
+      "iterations": 20,
+      "probe": 4
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-00",
+      "iterations": 152,
+      "probe": 5
+    },
+    {
+      "converged": true,
       "held_out_family": "p5-scored-01",
-      "iterations": 4,
+      "iterations": 1395,
       "probe": 0
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-01",
-      "iterations": 0,
+      "iterations": 14,
       "probe": 1
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-01",
-      "iterations": 4,
+      "iterations": 1441,
       "probe": 2
     },
     {
       "converged": true,
+      "held_out_family": "p5-scored-01",
+      "iterations": 168,
+      "probe": 3
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-01",
+      "iterations": 20,
+      "probe": 4
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-01",
+      "iterations": 171,
+      "probe": 5
+    },
+    {
+      "converged": true,
       "held_out_family": "p5-scored-02",
-      "iterations": 4,
+      "iterations": 1167,
       "probe": 0
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-02",
-      "iterations": 0,
+      "iterations": 14,
       "probe": 1
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-02",
-      "iterations": 4,
+      "iterations": 765,
       "probe": 2
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-02",
+      "iterations": 189,
+      "probe": 3
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-02",
+      "iterations": 18,
+      "probe": 4
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-02",
+      "iterations": 130,
+      "probe": 5
     },
     {
       "converged": true,
@@ -154,363 +280,741 @@
     },
     {
       "converged": true,
+      "held_out_family": "p5-scored-03",
+      "iterations": 0,
+      "probe": 3
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-03",
+      "iterations": 0,
+      "probe": 4
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-03",
+      "iterations": 0,
+      "probe": 5
+    },
+    {
+      "converged": true,
       "held_out_family": "p5-scored-04",
-      "iterations": 4,
+      "iterations": 1167,
       "probe": 0
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-04",
-      "iterations": 0,
+      "iterations": 13,
       "probe": 1
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-04",
-      "iterations": 4,
+      "iterations": 1304,
+      "probe": 2
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-04",
+      "iterations": 161,
+      "probe": 3
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-04",
+      "iterations": 21,
+      "probe": 4
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-04",
+      "iterations": 211,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-05",
+      "iterations": 1353,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-05",
+      "iterations": 13,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-05",
+      "iterations": 825,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-05",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 206,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-05",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 20,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-05",
-      "iterations": 4,
+      "iterations": 139,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-06",
+      "iterations": 1230,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-06",
+      "iterations": 14,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-06",
+      "iterations": 1445,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-06",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 177,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-06",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 20,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-06",
-      "iterations": 4,
+      "iterations": 136,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-07",
+      "iterations": 1310,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-07",
+      "iterations": 13,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-07",
+      "iterations": 1332,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-07",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 211,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-07",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 20,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-07",
-      "iterations": 4,
+      "iterations": 133,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-08",
+      "iterations": 1334,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-08",
+      "iterations": 13,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-08",
+      "iterations": 2165,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-08",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 159,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-08",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 19,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-08",
-      "iterations": 4,
+      "iterations": 118,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-09",
+      "iterations": 1728,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-09",
+      "iterations": 14,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-09",
+      "iterations": 1451,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-09",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 185,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-09",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 17,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-09",
-      "iterations": 4,
+      "iterations": 213,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-10",
+      "iterations": 1797,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-10",
+      "iterations": 13,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-10",
+      "iterations": 1819,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-10",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 162,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-10",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 17,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-10",
-      "iterations": 4,
+      "iterations": 165,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-11",
+      "iterations": 1352,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-11",
+      "iterations": 13,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-11",
+      "iterations": 782,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-11",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 230,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-11",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 19,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-11",
-      "iterations": 4,
+      "iterations": 215,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-12",
+      "iterations": 1135,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-12",
+      "iterations": 13,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-12",
+      "iterations": 1590,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-12",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 160,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-12",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 19,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-12",
-      "iterations": 4,
+      "iterations": 213,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-13",
+      "iterations": 1049,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-13",
+      "iterations": 15,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-13",
+      "iterations": 1484,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-13",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 161,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-13",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 21,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-13",
-      "iterations": 4,
+      "iterations": 168,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-14",
+      "iterations": 954,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-14",
+      "iterations": 15,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-14",
+      "iterations": 1358,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-14",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 177,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-14",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 21,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-14",
-      "iterations": 4,
+      "iterations": 203,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-15",
+      "iterations": 1601,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-15",
+      "iterations": 14,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-15",
+      "iterations": 1844,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-15",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 138,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-15",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 19,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-15",
-      "iterations": 4,
+      "iterations": 160,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-16",
+      "iterations": 1254,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-16",
+      "iterations": 13,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-16",
+      "iterations": 1499,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-16",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 178,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-16",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 20,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-16",
-      "iterations": 4,
+      "iterations": 137,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-17",
+      "iterations": 1266,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-17",
+      "iterations": 13,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-17",
+      "iterations": 1062,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-17",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 172,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-17",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 20,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-17",
-      "iterations": 4,
+      "iterations": 141,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-18",
+      "iterations": 1179,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-18",
+      "iterations": 13,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-18",
+      "iterations": 943,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-18",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 220,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-18",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 20,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-18",
-      "iterations": 4,
+      "iterations": 145,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-19",
+      "iterations": 1239,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-19",
+      "iterations": 15,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-19",
+      "iterations": 1564,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-19",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 169,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-19",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 19,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-19",
-      "iterations": 4,
+      "iterations": 111,
+      "probe": 5
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-20",
+      "iterations": 1098,
+      "probe": 0
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-20",
+      "iterations": 14,
+      "probe": 1
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-20",
+      "iterations": 1738,
       "probe": 2
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-20",
-      "iterations": 4,
-      "probe": 0
+      "iterations": 156,
+      "probe": 3
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-20",
-      "iterations": 0,
-      "probe": 1
+      "iterations": 21,
+      "probe": 4
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-20",
-      "iterations": 4,
-      "probe": 2
+      "iterations": 172,
+      "probe": 5
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-21",
-      "iterations": 4,
+      "iterations": 2123,
       "probe": 0
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-21",
-      "iterations": 0,
+      "iterations": 13,
       "probe": 1
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-21",
-      "iterations": 4,
+      "iterations": 1519,
       "probe": 2
     },
     {
       "converged": true,
+      "held_out_family": "p5-scored-21",
+      "iterations": 172,
+      "probe": 3
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-21",
+      "iterations": 20,
+      "probe": 4
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-21",
+      "iterations": 140,
+      "probe": 5
+    },
+    {
+      "converged": true,
       "held_out_family": "p5-scored-22",
-      "iterations": 4,
+      "iterations": 1117,
       "probe": 0
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-22",
-      "iterations": 0,
+      "iterations": 13,
       "probe": 1
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-22",
-      "iterations": 4,
+      "iterations": 1270,
       "probe": 2
     },
     {
       "converged": true,
+      "held_out_family": "p5-scored-22",
+      "iterations": 155,
+      "probe": 3
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-22",
+      "iterations": 21,
+      "probe": 4
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-22",
+      "iterations": 142,
+      "probe": 5
+    },
+    {
+      "converged": true,
       "held_out_family": "p5-scored-23",
-      "iterations": 4,
+      "iterations": 1006,
       "probe": 0
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-23",
-      "iterations": 0,
+      "iterations": 13,
       "probe": 1
     },
     {
       "converged": true,
       "held_out_family": "p5-scored-23",
-      "iterations": 4,
+      "iterations": 1223,
       "probe": 2
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-23",
+      "iterations": 184,
+      "probe": 3
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-23",
+      "iterations": 18,
+      "probe": 4
+    },
+    {
+      "converged": true,
+      "held_out_family": "p5-scored-23",
+      "iterations": 153,
+      "probe": 5
     }
   ],
   "export_order_sha256": "933e2f7337b266cb885238cd011732f10672e0d4ca5ae9d3f8e96ad8f5f54de2",
@@ -1094,9 +1598,9 @@
     "node_9_sample_alts",
     "node_9_sample_ants"
   ],
-  "freeze_sha256": "2d358b7a7bc08a8abd958c4c19e711a7fc2d8a938f71f804a15d4d797692e57a",
+  "freeze_sha256": "14890bb5375b7bb83f001e64ca473b254910201f44588a7534fedef87934f804",
   "generation_calls": 0,
-  "k": 581,
+  "k": 584,
   "label_sha256": "42c3258b3f0849602d95d4575051e3497d4c36184330312cbc8f4efff0f5a0bb",
   "limitation": "Shortcut screen, not proof of semantic difficulty or source fidelity.",
   "minimum_p_value": 0.05,
@@ -1117,7 +1621,7 @@
       "smuggle": 8
     }
   },
-  "packet_sha256": "614b0bfbfa009cf95c0b9048ec4205a99250a85f48c5929924e96aa8e435a353",
+  "packet_sha256": "44138651a1bcaaf359a664818f74e41c95a23d4332add2a7ac3db2a4ea27671e",
   "passed": true,
   "permutation_null": {
     "null_max_mean": 0.4150514477147643,
@@ -1345,6 +1849,24 @@
       "accuracy": 0.25,
       "adjusted_p_value": 1.0,
       "correct": 21,
+      "passed": true
+    },
+    "prose_combined": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "prose_structure": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
+      "passed": true
+    },
+    "prose_tokens": {
+      "accuracy": 0.3333333333333333,
+      "adjusted_p_value": 1.0,
+      "correct": 28,
       "passed": true
     },
     "reviewer_unit_rank_rule": {
@@ -4816,5 +5338,7 @@
       "passed": true
     }
   },
+  "prose_scope": "Exact shared argument text; three prose-only probes included in every best-of-k null refit. Original node probes cover the additional VE node block.",
+  "prose_sha256": "d016235fd0c074121a75553e82952fee192a864534b1496903a3a1f0679d0389",
   "seed": 20260921
 }

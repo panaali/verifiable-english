@@ -1,5 +1,5 @@
 {
-  "freeze_sha256": "2d358b7a7bc08a8abd958c4c19e711a7fc2d8a938f71f804a15d4d797692e57a",
+  "freeze_sha256": "14890bb5375b7bb83f001e64ca473b254910201f44588a7534fedef87934f804",
   "leakage_passed": true,
   "ledger_sha256": "1cad095125157f404d4a8a1a9621fc67b0eff386379da35e12420c761f12fcb6",
   "passed": false,

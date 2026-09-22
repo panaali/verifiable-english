@@ -34,6 +34,14 @@ def feature_row(item, index):
 PERMUTATIONS = 199
 
 
+def prose_surface(item):
+    """The exact shared argument judged by all arms, never draft node texts."""
+    prose = item['payload']['argument']
+    paragraphs = prose.split('\n\n')
+    return prose, [len(prose), len(prose.split()), len(paragraphs),
+                   *[len(paragraph) for paragraph in paragraphs]]
+
+
 def permutation_summary(observed, null):
     """One-sided max statistic: repeat the entire best-of-k search under null."""
     import numpy as np
@@ -46,8 +54,9 @@ def permutation_summary(observed, null):
             'null_maxima':maximum.tolist()}
 
 
-def audit(base=HERE):
+def audit(base=HERE, *, workers=8):
     import numpy as np
+    from joblib import Parallel, delayed, parallel_config
     from scipy.sparse import csr_matrix, hstack
     from sklearn.feature_extraction import DictVectorizer
     from sklearn.feature_extraction.text import CountVectorizer
@@ -68,6 +77,8 @@ def audit(base=HERE):
     groups = np.asarray([i['group'] for i in items])
     X = np.asarray([feature_row(i, n) for n, i in enumerate(items)], dtype=float)
     texts = [packed(i['payload']) for i in items]
+    prose_texts, prose_rows = zip(*(prose_surface(i) for i in items))
+    prose_X = np.asarray(prose_rows, dtype=float)
     folds = list(LeaveOneGroupOut().split(X, y, groups))
     prepared = []
     for train, test in folds:
@@ -76,7 +87,14 @@ def audit(base=HERE):
         b = vectorizer.transform([texts[k] for k in test])
         scaler = StandardScaler()
         c = csr_matrix(scaler.fit_transform(X[train])); d = csr_matrix(scaler.transform(X[test]))
-        prepared.append((train, test, [(a,b), (c,d), (hstack([a,c]).tocsr(),hstack([b,d]).tocsr())]))
+        prose_vectorizer = CountVectorizer(token_pattern=r'(?u)\b\w+\b')
+        pa = prose_vectorizer.fit_transform([prose_texts[k] for k in train])
+        pb = prose_vectorizer.transform([prose_texts[k] for k in test])
+        prose_scaler = StandardScaler()
+        pc = csr_matrix(prose_scaler.fit_transform(prose_X[train]))
+        pd = csr_matrix(prose_scaler.transform(prose_X[test]))
+        prepared.append((train, test, [(a,b), (c,d), (hstack([a,c]).tocsr(),hstack([b,d]).tocsr()),
+            (pa,pb), (pc,pd), (hstack([pa,pc]).tocsr(),hstack([pb,pd]).tocsr())]))
     features = [node_features(i['payload']) for i in items]
     vectorizer = DictVectorizer(sparse=False)
     Z = vectorizer.fit_transform(features)
@@ -96,7 +114,7 @@ def audit(base=HERE):
                        0 if f['branch_con_sense_rank'] == 1 else 1 for f in features])
     convergence = []
     def scores(yy, retain=False):
-        pred = np.empty((6+len(names), len(yy)), dtype=int)
+        pred = np.empty((9+len(names), len(yy)), dtype=int)
         for train,test,matrices in prepared:
             for k,(a,b) in enumerate(matrices):
                 clf = LogisticRegression(C=1.0, solver='lbfgs', max_iter=15000, random_state=SEED)
@@ -107,17 +125,19 @@ def audit(base=HERE):
                     convergence.append({'probe':k,'held_out_family':str(groups[test[0]]),
                                         'iterations':int(max(clf.n_iter_)), 'converged':True})
         for k,splitter in enumerate((StratifiedKFold(6,shuffle=True,random_state=1),
-                                    StratifiedGroupKFold(6,shuffle=True,random_state=1)),3):
-            for train,test in splitter.split(Z,yy,groups if k == 4 else None):
+                                    StratifiedGroupKFold(6,shuffle=True,random_state=1)),6):
+            for train,test in splitter.split(Z,yy,groups if k == 7 else None):
                 clf = DecisionTreeClassifier(max_depth=3,random_state=1)
                 clf.fit(Z[train],yy[train]); pred[k,test] = clf.predict(Z[test])
-        pred[5] = rule
+        pred[8] = rule
         for train,test,equal in lookup_folds:
             counts = equal @ np.eye(3)[yy[train]]
             votes = counts.argmax(2)
             votes[counts.sum(2) == 0] = np.bincount(yy[train],minlength=3).argmax()
-            pred[6:,test] = votes
+            pred[9:,test] = votes
         return (pred == yy).mean(1), pred
+    def null_score(yy):
+        return scores(yy)[0]
     # Exchange labels within families, preserving one of each label in every
     # family. Refit every estimator, including label-dependent stratification.
     # The ID nonce is never regenerated based on these results.
@@ -125,14 +145,19 @@ def audit(base=HERE):
         observed, predictions = scores(y, True)
         rng = np.random.default_rng(SEED)
         members = [np.flatnonzero(groups == g) for g in sorted(set(groups))]
-        null = []
+        permuted_labels = []
         for _ in range(PERMUTATIONS):
             yy = y.copy()
             for members_in_family in members:
                 yy[members_in_family] = rng.permutation(yy[members_in_family])
-            null.append(scores(yy)[0])
+            permuted_labels.append(yy)
+        # Independent refits, in the original RNG/output order. Process-local
+        # numerical thread limits avoid oversubscription; no estimator or null
+        # statistic changes with worker count.
+        with parallel_config(backend='loky', inner_max_num_threads=1):
+            null = Parallel(n_jobs=workers, verbose=5)(delayed(null_score)(yy) for yy in permuted_labels)
     comparison = permutation_summary(observed, null)
-    probe_names = ['tokens','structure','combined','node_relations','node_relations_grouped',
+    probe_names = ['tokens','structure','combined','prose_tokens','prose_structure','prose_combined','node_relations','node_relations_grouped',
                    'reviewer_unit_rank_rule', *['single/'+n for n in names]]
     probes = {name:{'accuracy':float(a),'correct':int(round(a*len(items))),
                    'adjusted_p_value':pv,'passed':pv >= .05}
@@ -145,6 +170,8 @@ def audit(base=HERE):
             'policy':'Within-family label permutations; refit all probes and compare best-of-k to each permuted best-of-k. Pass p >= 0.05; no seed or nonce search.',
             'features':names, 'classes':classes,
             'packet_sha256':digest([i['payload'] for i in items]),
+            'prose_sha256':digest(list(prose_texts)),
+            'prose_scope':'Exact shared argument text; three prose-only probes included in every best-of-k null refit. Original node probes cover the additional VE node block.',
             'label_sha256':digest([labels[i['id']]['kind'] for i in items]),
             'export_order_sha256':digest([i['id'] for i in items]),
             'order_mod3_counts':{str(k):dict(Counter(labels[i['id']]['kind'] for n,i in enumerate(items) if n%3==k)) for k in range(3)},

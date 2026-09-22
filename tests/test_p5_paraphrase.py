@@ -57,9 +57,10 @@ def test_duplicate_and_missing_extra_keys_rejected(dossier):
 
 
 @pytest.mark.parametrize('prose, violation', [
-    ('unit2 is free (space available).', 'parenthetical glossary sense'),
+    ('unit2 is free (space available, for now).', 'parenthetical glossary sense'),
     ('unit2 is free (FREE: Space   Available).', 'parenthetical glossary sense'),
     ('unit2 is free ((space available)).', 'parenthetical glossary sense'),
+    ('unit2 is free (note (space available) here).', 'parenthetical glossary sense'),
     ('By n03, unit2 is free.', 'node/rule ID'),
     ('By [N99], unit2 is free.', 'node/rule ID'),
     ('Using r06, unit2 is free.', 'node/rule ID'),
@@ -115,7 +116,7 @@ def seed_completed(book, dossiers, bad_second=False):
         row = response(dossier)
         if bad_second and index == 1:
             sense = dossier['glossary'][0]['sense'].split(': ', 1)[1].split(' (R', 1)[0]
-            row['texts'][dossier['nodes'][0]['id']] += ' (' + sense + ')'
+            row['texts'][dossier['nodes'][0]['id']] += ' (gloss: ' + sense + ')'
         book.reserve(req)
         book.complete(req, reply('```json\n' + json.dumps(row) + '\n```'))
 
@@ -243,4 +244,60 @@ def test_validation_covers_every_glossary_phrase():
         for entry in dossier['glossary']:
             phrase = entry['sense'].split(': ', 1)[1].split(' (R', 1)[0]
             row['texts'][first] = 'The result holds (' + phrase.upper() + ').'
-            assert 'parenthetical glossary sense' in validate_reply(json.dumps(row), dossier)[1]
+            texts, error = validate_reply(json.dumps(row), dossier)
+            assert error is None and texts[first] == 'The result holds.'
+
+
+@pytest.mark.parametrize('prose, expected', [
+    ('unit2 is free ( SPACE   AVAILABLE ).', 'unit2 is free.'),
+    ('(space available) unit2 is free (space available), indeed.', 'unit2 is free, indeed.'),
+    ('unit2 (space available) is free.', 'unit2 is free.'),
+    ('unit2 is free (unrelated note).', 'unit2 is free (unrelated note).'),
+])
+def test_exact_sanitiser_and_idempotence(dossier, prose, expected):
+    row = response(dossier)
+    first = dossier['nodes'][0]['id']
+    row['texts'][first] = prose
+    texts, error = validate_reply(json.dumps(row), dossier)
+    assert error is None and texts[first] == expected
+    assert validate_reply(json.dumps({'texts': texts}), dossier) == (texts, None)
+
+
+@pytest.mark.parametrize('prose', ['(space available)', 'By n03 (space available).',
+                                    'unit2 (space available) (FREE: space available).'])
+def test_sanitising_does_not_bypass_remaining_validation(dossier, prose):
+    row = response(dossier)
+    row['texts'][dossier['nodes'][0]['id']] = prose
+    assert validate_reply(json.dumps(row), dossier)[0] is None
+
+
+def test_offline_revalidation_no_backend_or_ledger_writes(stage, monkeypatch):
+    dossiers, book = stage
+    seed_completed(book, dossiers)
+    req = p5.request({'id': dossiers[2]['id'], 'split': 'materials', 'payload': dossiers[2]}, 'shared', 'paraphrase')
+    req = replace(req, metadata={**req.metadata, 'block_id': 'shared-paraphrase'})
+    row = response(dossiers[2])
+    sense = dossiers[2]['glossary'][0]['sense'].split(': ', 1)[1].split(' (R', 1)[0]
+    row['texts'][dossiers[2]['nodes'][0]['id']] += ' (' + sense + ')'
+    book.reserve(req)
+    book.complete(req, reply(json.dumps(row)))
+    original = book.path.read_bytes()
+    def forbidden(*args, **kwargs):
+        pytest.fail('offline revalidation must not construct a provider or reserve funds')
+    monkeypatch.setattr(p5, 'OpenRouterBackend', forbidden)
+    monkeypatch.setattr(paid.Ledger, 'reserve_block', forbidden)
+    result = p5.paraphrase(0, cached_only=True)
+    assert result['accepted'] == 3 and result['paraphrase_failed'] == 0
+    assert book.path.read_bytes() == original
+    assert p5.paraphrase(0, cached_only=True) == result
+    assert book.path.read_bytes() == original
+
+
+def test_offline_invalid_cached_reply_stays_excluded(stage, monkeypatch):
+    dossiers, book = stage
+    seed_completed(book, dossiers, bad_second=True)
+    archive(p5.HERE / 'materials/dossiers.jsonl.gz', dossiers[:2])
+    original = book.path.read_bytes()
+    result = p5.paraphrase(0, cached_only=True)
+    assert result['accepted'] == 1 and result['paraphrase_failed'] == 1
+    assert book.path.read_bytes() == original

@@ -58,6 +58,13 @@ transcript again; it never truncates evidence. A failed gate is not overridden
 by a successful unit test. The original `inventory.json` retains UNBUILT aggregate budgets;
 its slot labels are removed under revision 5; `execution-inventory.json` contains build/count status.
 
+To rebuild all paraphrases from retained responses without dispatch or billing
+events, use `paraphrase --offline`. It applies the same exact glossary-sense
+parenthetical sanitiser to every slot and retains other validation failures as
+exclusions. Refreeze after rebuilding. The leakage gate includes three probes
+of the exact paraphrased argument as well as the original packet/VE node probes;
+independent review and source-soundness gates still apply to the resulting prose.
+
 Later, only under separate paid authorization, use these commands. The current
 task does **not** authorize executing them. Every paid command defaults to a $0
 cap and refuses dispatch without an explicit positive cap ≤40. The ledger is

@@ -16,7 +16,7 @@ import time
 from experiments.p5_materials import HERE, SEED, read, archive, write_json, generate
 from experiments.p5_isolation import single_context
 from experiments.p5_analysis import ARMS, parse, analyze, known_answer
-from experiments.p5_paraphrase import validate_reply
+from experiments.p5_paraphrase import SANITISER, validate_reply
 from experiments import p5_review as review
 from experiments.p1 import append, sha, infrastructure_state
 from experiments.p1_preflight import CommandCounter
@@ -488,19 +488,22 @@ def save_paraphrase_progress(dossiers, output, label_map):
         'excluded_ids':[r['id'] for r in output if r['excluded']]})
 
 
-def paraphrase(cap):
+def paraphrase(cap, *, cached_only=False):
     if any(r.get('identity','').startswith('scored/') for r in read(HERE/'runs/study/costs.jsonl')):
         raise PreflightError('scored material change requires an amendment and separately labeled run')
-    book=ledger(cap); f=verify_freeze(paraphrase_progress=True)
-    provider=json.loads((HERE/'checks/provider-preflight.json').read_text())
-    if provider.get('freeze_sha256')!=f['manifest_sha256'] or not provider.get('models',{}).get('replication',{}).get('passed'):
-        raise PreflightError('Qwen provider-native smoke gate required before paraphrasing')
+    book=Ledger(HERE/'runs/study/costs.jsonl',CAP) if cached_only else ledger(cap)
+    f=verify_freeze(paraphrase_progress=True)
     block='shared-paraphrase'
     # Keep the authorized aggregate envelope (and resumable legacy block).
     # Each call reserves the higher fallback rate; stop if the remainder cannot
     # fund it. Provider fallback does not authorize an aggregate budget increase.
-    book.reserve_block(block,str(84*cost('replication',*STAGES['paraphrase'])),resume=True)
-    client=PaidClient(OpenRouterBackend(native_counter()),book,block,reuse_completed=True)
+    client=None
+    if not cached_only:
+        provider=json.loads((HERE/'checks/provider-preflight.json').read_text())
+        if provider.get('freeze_sha256')!=f['manifest_sha256'] or not provider.get('models',{}).get('replication',{}).get('passed'):
+            raise PreflightError('Qwen provider-native smoke gate required before paraphrasing')
+        book.reserve_block(block,str(84*cost('replication',*STAGES['paraphrase'])),resume=True)
+        client=PaidClient(OpenRouterBackend(native_counter()),book,block,reuse_completed=True)
     dossiers=read(HERE/'materials/dossiers.jsonl.gz'); output=[]
     label_map={r['id']:r for r in labels(False)}
     try:
@@ -514,7 +517,15 @@ def paraphrase(cap):
                         'content':req.messages[1]['content']+'\nValidation violation in the first attempt: '+violation+
                         '\nThis is the single correction attempt. Rewrite all steps, fixing this violation and obeying every output constraint.'}])
                 req=retained_paraphrase_request(book,req)
-                reply=client.call(req)
+                if cached_only:
+                    req=replace(req,metadata={**req.metadata,'block_id':block})
+                    reply=book.cached_reply(req)
+                    if reply is None:
+                        if turn:
+                            break  # Retain the first failure; never buy a correction.
+                        raise PreflightError('cached paraphrase missing; generation forbidden: '+req.identity)
+                else:
+                    reply=client.call(req)
                 texts,violation=validate_reply(reply.text,dossier)
                 attempts.append({'identity':req.identity,'request_sha256':digest(req.messages),
                     'response_sha256':digest(reply.text),'revision':reply.revision,
@@ -525,15 +536,18 @@ def paraphrase(cap):
             result={'id':dossier['id'],'status':status,'excluded':bool(violation),
                 'provenance':{'method':'Qwen72 in separate context; at most one validation correction',
                     'input_sha256':digest(dossier),**attempts[-1],
-                    'attempts':attempts,'independent_qwen_pass':violation is None}}
+                    'attempts':attempts,'sanitiser':SANITISER,
+                    'sanitised_texts_sha256':digest(texts),
+                    'independent_qwen_pass':violation is None}}
             if texts is not None:
                 result['argument']='\n\n'.join(f"[{node_id}] {text}" for node_id,text in texts.items())
             output.append(result)
             # Checkpoint every terminal slot. The billing ledger remains the
             # source for revalidation after any interruption, including mid-retry.
             save_paraphrase_progress(dossiers,output,label_map)
-    finally:client.close()
-    book.release_block(block)
+    finally:
+        if client is not None:client.close()
+    if not cached_only:book.release_block(block)
     return {'slots':len(output),'accepted':sum(not r['excluded'] for r in output),
         'paraphrase_failed':sum(r['excluded'] for r in output),'review_required':True,'refreeze_required':True}
 
@@ -562,7 +576,7 @@ def main(argv=None):
             if args.command=='inventory':result=pf.inventory(args.count_tokens)
             elif args.command=='preflight':result=pf.preflight(args.offline)
             else: result=pf.provider_smoke(args.cap_usd,only_openrouter=args.command=='preflight-openrouter',cached_only=args.offline)
-        elif args.command=='paraphrase':result=paraphrase(args.cap_usd)
+        elif args.command=='paraphrase':result=paraphrase(args.cap_usd,cached_only=args.offline)
         elif args.command in ('dev','scored','resume'):result=run(args.split if args.command=='resume' else args.command,args.cap_usd,args.command=='resume')
         elif args.command=='reconcile':
             book=Ledger(HERE/'runs/study/costs.jsonl',CAP)

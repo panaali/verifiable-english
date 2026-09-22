@@ -1,0 +1,71 @@
+{
+  "accepted": 84,
+  "additional_cost_usd": "0",
+  "cached_rebuild_byte_identical": true,
+  "freeze_sha256": "14890bb5375b7bb83f001e64ca473b254910201f44588a7534fedef87934f804",
+  "generation_calls": 0,
+  "idempotence_verified": true,
+  "leakage": {
+    "adjusted_p_value": 0.95,
+    "passed": true,
+    "permutations": 199,
+    "prose_sha256": "d016235fd0c074121a75553e82952fee192a864534b1496903a3a1f0679d0389"
+  },
+  "ledger_sha256": "0c5e5f992b2de80e6b2c5c6de96db26375fbbae17d6dec2031d0ca1a60e77a3c",
+  "next_cumulative_caps_usd": {
+    "dev": "6",
+    "preflight-openrouter": "0.17",
+    "probe": "0.17"
+  },
+  "offline_preflight": {
+    "blockers": [
+      "surface-soundness",
+      "review",
+      "packet-safety",
+      "external-timestamp",
+      "tokenizer"
+    ],
+    "gates": {
+      "construction": true,
+      "external-timestamp": false,
+      "independent-prose": true,
+      "known-answer": true,
+      "leakage": true,
+      "lean-replay": true,
+      "packet-safety": false,
+      "review": false,
+      "role-boundaries": true,
+      "surface-soundness": false,
+      "tokenizer": false,
+      "tracked-blinding": true
+    },
+    "generation_calls": 0,
+    "passed": false
+  },
+  "paraphrase_failed": 0,
+  "passed": true,
+  "previously_accepted": 65,
+  "provider_openrouter_cached_passed": true,
+  "recovered_exclusions": 19,
+  "response_validation_and_output_hashes_verified": true,
+  "review_required": true,
+  "sanitiser": "exact-parenthetical-glossary-sense-v1",
+  "selected_replies_changed": 39,
+  "selection_policy": "First valid sanitised cached attempt, in original attempt order; same rule for all slots.",
+  "slots": 84,
+  "steps_changed": 495,
+  "tests": {
+    "all_p5_passed": 92,
+    "failures": [
+      "tests/test_p1_amendment13.py::test_scored_gate_and_cap_reach_only_qwen_attacker_backends",
+      "tests/test_p1_amendment14.py::test_recover_and_reconstruct_every_retained_scored_call_without_dispatch"
+    ],
+    "focused_p5_passed": 87,
+    "full_suite": {
+      "deselected": 1,
+      "failed": 2,
+      "passed": 1502,
+      "skipped": 2
+    }
+  }
+}

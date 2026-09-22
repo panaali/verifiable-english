@@ -338,3 +338,69 @@ UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run --offline python experiments/
 
 `uv --offline` disables dependency downloads; `paraphrase` itself makes paid model
 calls when a slot needs its first or correction response.
+
+## Revision 5 follow-up: mechanical glossary sanitisation (2026-09-22)
+
+Operator authorization is $0: revalidate all 84 slots from retained Qwen replies,
+including the 19 excluded slots whose 38 attempts failed the glossary-parenthesis
+check. Before remaining validation, apply `exact-parenthetical-glossary-sense-v1`
+to every response, independent of labels or prior acceptance. Remove only whole,
+unnested parenthesised phrases exactly equal to a dossier glossary sense after
+casefolding and whitespace normalisation; the glossary term prefix and Rnn label
+are not part of a sense. Collapse whitespace and remove spaces before punctuation
+when deletion occurs. Do not remove substrings, synonyms, compound glosses or
+nested glosses. Retain all steps, restore the original node order, require nonempty
+text, and reject node/rule IDs and any remaining parenthetical glossary phrases.
+This does not certify semantic fidelity; independent review remains binding.
+
+`paraphrase --offline` revalidates retained attempts in original attempt order,
+uses the first passing sanitised reply, and excludes/counts terminal failures.
+Missing corrections never trigger purchases. Missing initial completions block.
+All response/request hashes and original billing evidence remain intact; output
+provenance adds the sanitiser version and sanitised-text hash. The offline path
+constructs no provider and writes no billing events. All 84 outputs, including
+previously accepted slots, are regenerated through the same validator.
+
+The leakage audit retains the existing full-packet and VE node-block probes and
+adds three fixed probes over the exact shared paraphrased argument: unigrams,
+prose/paragraph lengths, and their combination. All three use the same
+leave-family-out folds, training-only vectorisation/scaling and existing fixed
+hyperparameters. Every one of the 199 within-family null permutations refits
+them and includes them in the best-of-k maximum. The report binds the exact
+paraphrased prose hash. No label-dependent editing or seed/probe search is allowed.
+
+Refreeze and rerun offline gates and tests. Prior reviews and timestamps do not
+approve the rewritten packets or renewed freeze. Token counts for changed Gemini
+requests require a fresh free countTokens run; local Qwen counts cannot substitute.
+Any failing gate remains a blocker. No generation or paid provider call is
+performed by this worker. Reproduce the revalidation with:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run --offline python experiments/P5-shifting-definitions/run_p5.py paraphrase --offline
+```
+
+The cached rebuild accepted **84/84**, recovered all 19 exclusions, and left
+0 paraphrase-format failures. The first valid cached attempt policy removed
+exact glosses from 39 selected replies (495 steps). A second pass is identical.
+The billing ledger remains byte-identical; additional spend is $0. Construction
+regressions now explicitly exercise the original dossiers/offline renderer;
+post-paraphrase semantic readiness is assessed by the real offline gates, with
+an added regression that altered references must fail source soundness.
+
+Validation: the final full offline suite reports 1,502 passed, two skipped,
+one deselected, and two unrelated P1 ledger-history failures
+(`test_p1_amendment13.py::test_scored_gate_and_cap_reach_only_qwen_attacker_backends`
+and `test_p1_amendment14.py::test_recover_and_reconstruct_every_retained_scored_call_without_dispatch`).
+All P5 tests pass. The real surface-soundness gate still rejects packet
+`i2afbcc296df87f190ef25c465f52f9d1`: its retained Qwen response replaced four
+immediately-preceding references with explicit unit claims. Format acceptance
+does not waive this gate or authorise a substantive repair.
+
+The fixed permutation audit executes independent null refits in eight local
+processes, each with numerical libraries limited to one thread. Permuted labels
+are generated serially with the original RNG, and results retain their original
+order. This changes execution only: estimators, hyperparameters, seeds, folds,
+199 permutations and the best-of-k statistic are unchanged. The slow preliminary
+serial run was stopped before producing a gate result; the authoritative audit
+is rerun from the final freeze. No classifier, seed or gate threshold is selected
+from outcomes.

@@ -19,6 +19,16 @@ def items():return p.materials()
 def labels():return p.labels(False)
 
 
+@pytest.fixture(scope='module')
+def draft_items(items):
+    """Construction invariants concern source drafts, before paid paraphrasing.
+
+    The actual paraphrased packets are checked independently by preflight gates.
+    """
+    dossiers = {d['id']: d for d in read(p.HERE/'materials/dossiers.jsonl.gz')}
+    return [{**i, 'payload': dossiers[i['id']]} for i in items]
+
+
 def test_inventory_graphs_and_witnesses(items,labels):
     from ve import ArgumentGraph,FiniteModel,check_countermodel,check_argument,evaluate
     assert len(items)==len(labels)==84
@@ -75,7 +85,8 @@ def test_caps_and_scenarios():
 
 
 def test_offline_prose_is_honest_and_no_gold():
-    rows=read(p.HERE/'materials/paraphrases.jsonl.gz')
+    from experiments.p5_paraphrase import offline_pass
+    rows=[offline_pass([d])[0] for d in read(p.HERE/'materials/dossiers.jsonl.gz')]
     assert len(rows)==84
     assert all(r['provenance']['independent_qwen_pass'] is False for r in rows)
     from experiments.p5_paraphrase import offline_pass
@@ -244,7 +255,8 @@ def test_item_arm_ceiling_includes_infrastructure_holds(tmp_path,items):
     with pytest.raises(BudgetExceeded,match='item-arm'):book.reserve(req)
 
 
-def test_rendered_prose_and_active_decoys(items):
+def test_rendered_prose_and_active_decoys(draft_items):
+    items = draft_items
     graphs={r['id']:r for r in read(p.HERE/'materials/graphs.jsonl.gz')}
     for item in items:
         q=item['payload']; g=graphs[item['id']]
@@ -300,7 +312,8 @@ def test_review_cannot_bypass_failed_leakage(tmp_path,items,labels,monkeypatch):
     assert json.loads((tmp_path/'checks/leakage.json').read_text())['accuracy']==1.0
 
 
-def test_sibling_token_and_structure_workload(items):
+def test_sibling_token_and_structure_workload(draft_items):
+    items = draft_items
     import re
     from experiments.p5_leakage import feature_row
     for family in {i['group'] for i in items}:
@@ -375,7 +388,8 @@ def test_private_ids_and_nonce_lifecycle(tmp_path, items):
     assert len({i['id'] for i in items}) == 84
 
 
-def test_prose_topology_and_reference_content(items):
+def test_prose_topology_and_reference_content(draft_items):
+    items = draft_items
     import re
     graphs={r['id']:r for r in read(p.HERE/'materials/graphs.jsonl.gz')}
     critical_ranks=set()
@@ -475,9 +489,13 @@ def test_uniform_localisation_shape_and_grading(items, labels):
             assert endpoint(label,dict(ok=True,answer=answer),True)['score'] == 0
 
 
-def test_surface_soundness_and_balanced_reference_profiles(items):
+def test_surface_soundness_and_balanced_reference_profiles(draft_items, labels, tmp_path):
     from experiments.p5_surface import audit, inspect
-    result = audit()
+    items = draft_items
+    for split in ('dev', 'scored'):
+        archive(tmp_path/f'materials/{split}.jsonl.gz', [i for i in items if i['split'] == split])
+    archive(tmp_path/'labels.jsonl.gz', labels)
+    result = audit(tmp_path)
     assert result['passed'], result
     assert result['root_counts'] == {'derivable':28, 'underivable':56}
     assert result['unique_maximum_localizations'] == 0
@@ -491,3 +509,23 @@ def test_surface_soundness_and_balanced_reference_profiles(items):
     corrupt['argument'] = corrupt['argument'].replace('Because ', 'Because (sense leak) ', 1)
     with pytest.raises(ValueError, match='sense tag'):
         inspect(corrupt)
+
+    # Format acceptance must not waive semantic gates after paraphrasing.
+    corrupt = deepcopy(next(i for i in items if next(l for l in labels if l['id'] == i['id'])['kind'] != 'benign'))
+    import re
+    corrupt['payload']['argument'] = re.sub(r'the immediately preceding ([a-z-]+) result holds',
+        r'unit999 is \1', corrupt['payload']['argument'])
+    archive(tmp_path/f"materials/{corrupt['split']}.jsonl.gz",
+            [corrupt if i['id'] == corrupt['id'] else i for i in items if i['split'] == corrupt['split']])
+    result = audit(tmp_path)
+    assert not result['passed'] and any(r['id'] == corrupt['id'] for r in result['invalid'])
+
+
+def test_leakage_prose_surface_uses_judged_paraphrase(items):
+    from experiments.p5_leakage import prose_surface
+    item = deepcopy(items[0])
+    original = prose_surface(item)
+    item['payload']['nodes'][0]['text'] = 'Unrelated draft change'
+    assert prose_surface(item) == original
+    item['payload']['argument'] += ' A changed paraphrase.'
+    assert prose_surface(item) != original
