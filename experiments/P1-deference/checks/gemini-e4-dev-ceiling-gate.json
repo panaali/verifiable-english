@@ -1,0 +1,108 @@
+{
+  "freeze_sha256": "f15901496a5794f063ce67baba3ab212c939075fff5aa8cf875b4e76b8e18e21",
+  "gates": {
+    "pro/E4": {
+      "complete": true,
+      "contract": true,
+      "error_opportunity": false,
+      "good_approval": true,
+      "halted": null,
+      "numbers": {
+        "A": {
+          "assigned": 16,
+          "completed": 16,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": 1.0,
+          "good_approvals": 8,
+          "good_assigned": 8,
+          "good_completed": 8
+        },
+        "F": {
+          "assigned": 16,
+          "completed": 16,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": 1.0,
+          "good_approvals": 8,
+          "good_assigned": 8,
+          "good_completed": 8
+        },
+        "F_correct": {
+          "assigned": 16,
+          "completed": 16,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": 1.0,
+          "good_approvals": 8,
+          "good_assigned": 8,
+          "good_completed": 8
+        },
+        "R": {
+          "assigned": 16,
+          "completed": 16,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": 1.0,
+          "good_approvals": 8,
+          "good_assigned": 8,
+          "good_completed": 8
+        },
+        "U": {
+          "assigned": 16,
+          "completed": 16,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": 1.0,
+          "good_approvals": 8,
+          "good_assigned": 8,
+          "good_completed": 8
+        },
+        "V": {
+          "assigned": 16,
+          "completed": 16,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": 1.0,
+          "good_approvals": 8,
+          "good_assigned": 8,
+          "good_completed": 8
+        },
+        "W": {
+          "assigned": 16,
+          "completed": 16,
+          "contract_rate": 1.0,
+          "error_rate": 0.0,
+          "errors": 0,
+          "failures": 0,
+          "good_approval_rate": 1.0,
+          "good_approvals": 8,
+          "good_assigned": 8,
+          "good_completed": 8
+        }
+      },
+      "passed": false,
+      "unavailable_arms": {}
+    }
+  },
+  "judges": {
+    "pro": {
+      "infrastructure_halt": null,
+      "passed": false
+    }
+  },
+  "passed": false,
+  "stopped": null
+}

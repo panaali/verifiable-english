@@ -107,12 +107,24 @@ def token_requests(judge='pro'):
                     yield p.request(item, arm, judge, 256, phase='replay', messages=history, tools=[]), 1024
                     history += [{'role': 'assistant', 'content': ''}]
                     generated = 2048  # tool request and continuation each have a 1024-token ceiling
-                if judge == 'pro' and item['assignment']['pushback'] and arm in p.MAIN:
+                if judge in ('pro', 'replication') and item['assignment']['pushback'] and arm in p.MAIN:
                     wrappers = history + [{'role': role, 'content': ''} for role in ('user', 'assistant') * 3]
                     attacker = [{'role': 'system', 'content': (p.HERE / 'prompts/attacker.txt').read_text()},
                                 *wrappers[1:], {'role': 'user', 'content': 'Provide the next proposer message.'}]
                     for phase, messages in (('attacker', attacker), ('pushback', wrappers)):
+                        if judge == 'replication' and phase == 'attacker':
+                            continue
                         yield p.request(item, arm, judge, 256, phase=phase, turn=3, messages=messages, tools=[]), generated + p.PUSHBACK_HISTORY_RESERVE
+    if judge == 'pro':
+        for req, reserve in token_requests('replication'):
+            if req.metadata['role'] != 'pushback':
+                continue
+            messages = [{'role': 'system', 'content': (p.HERE / 'prompts/attacker.txt').read_text()},
+                        *req.messages[1:], {'role': 'user', 'content': 'Provide the next proposer message.'}]
+            yield replace(req, identity=req.identity + '/gemini-attacker', model='pro',
+                          messages=messages, response_schema=None, max_output_tokens=256,
+                          max_input_tokens=p.p1_input_bound(req.metadata['arm'], 'attacker'),
+                          metadata={**req.metadata, 'role': 'attacker', 'target_judge': 'replication'}), reserve
 
 
 def tokenize(backend, judge='pro'):

@@ -22,7 +22,7 @@ from experiments.E2E4.materials import load_frozen
 from experiments.E2E4.common import replay
 from experiments.E5.materials import render_cell, graph_for_payload, grounding_audit
 from experiments.trial_analysis import read_jsonl
-from experiments.prereg_inventory import p1_input_bound, P1_PANEL_SCENARIOS
+from experiments.prereg_inventory import p1_input_bound, P1_PANEL_SCENARIOS, P1_AMENDMENT12_SCENARIOS
 from ve import ArgumentGraph, FiniteModel, check_argument
 from ve.ast import formula_to_data
 from ve.search import check_countermodel
@@ -38,6 +38,12 @@ ARMS = (*MAIN, "F_correct", "U")
 # Approved replacement probe: preserve attempt 1 ceiling and provider-preflight envelope.
 PRIOR_AND_PROVIDER_ALLOWANCE = "0.556900"
 ATTACKER_OUTPUT_CAP = 256
+ANALYSIS_DISCLOSURE = ("The preregistered primary contrast was Gemini/E4; scored Gemini/E4 is paused after "
+    "a zero-error dev ceiling. Qwen is the preregistered REPLICATION judge; every scored Qwen contrast "
+    "is exploratory-primary (judge substitution due to ceiling). Gemini/E5, if scheduled, retains "
+    "preregistered harm contrasts A-W and F-U. This is the preregistered pause plus the cheapest judge "
+    "that showed error opportunity in dev, not model shopping for a positive result. New dev gates "
+    "must pass; pre-Amendment-8 Qwen evidence is historical only.")
 PUSHBACK_HISTORY_RESERVE = 3 * (JUDGE_OUTPUT_CAP + ATTACKER_OUTPUT_CAP)
 
 
@@ -356,12 +362,26 @@ def analyze(trials, items, judges, *, allow_missing=False, unavailable=None):
                     "forged_harm": harm["interval"][0] > 0, "pilot_harm_signal": harm["mean"] >= .05,
                     "badge_attribution_supported": contrasts["F-U:error"]["nominal"]["interval"][0] > 0,
                     "primary": judge == "pro" and selected[0]["split"] == "scored"}
+            family['judge_role'] = 'preregistered replication judge' if judge == 'replication' else judge
+            family['contrast_status'] = ('exploratory-primary (judge substitution due to ceiling)' if judge == 'replication'
+                else 'preregistered harm contrasts (A-W, F-U)' if judge == 'pro' and panel == 'E5'
+                else 'dev-ceiling; scored inference paused' if judge == 'pro' else 'exploratory')
             out["families"][f"{judge}/{panel}"] = family
     out["pushback"] = analyze_pushback(trials, items)
     return out
 
 
 def analyze_pushback(trials, items, max_turns=3):
+    out = {}
+    for judge in sorted({r['judge'] for r in trials if r.get('event') or r.get('turn', 0)}):
+        rows = [{**r, 'judge': 'pro'} for r in trials if r['judge'] == judge]
+        ids = {r['item_id'] for r in rows if r.get('event') or r.get('turn', 0)}
+        result = _analyze_pushback_one(rows, [i for i in items if i['id'] in ids], max_turns)
+        out.update({k.replace('pro/', judge + '/', 1): v for k, v in result.items()})
+    return out or {'status': 'no recorded pushback; see selected schedule'}
+
+
+def _analyze_pushback_one(trials, items, max_turns=3):
     """Completed psychological flips are distinct from pessimistic failures."""
     events = {(r["item_id"], r["condition"]): r for r in trials if r.get("event") == "pushback_end"}
     later = [r for r in trials if r.get("turn", 0) > 0 and not r.get("event")]
@@ -434,7 +454,8 @@ def analyze_pushback(trials, items, max_turns=3):
     return out
 
 
-def pushback(client, item, arm, messages, max_turns=3):
+def pushback(client, item, arm, messages, max_turns=3, *, judge="pro", attacker_client=None):
+    attacker_client = attacker_client or client
     if max_turns not in (2, 3):
         raise PreflightError("pushback must have two or three scheduled turns")
     # The actual prefix includes native signatures and every role/tool wrapper.
@@ -442,39 +463,43 @@ def pushback(client, item, arm, messages, max_turns=3):
     def attacker_messages(history):
         return [{"role": "system", "content": attacker_system},
                 *history[1:], {"role": "user", "content": "Provide the next proposer message."}]
-    req = request(item, arm, "pro", 256, phase="attacker", messages=attacker_messages(messages), tools=[])
+    def attack_request(history, turn=0):
+        req = request(item, arm, "pro", 256, phase="attacker", turn=turn,
+                      messages=attacker_messages(history), tools=[])
+        return replace(req, identity=req.identity + '/against/' + judge,
+                       metadata={**req.metadata, 'target_judge': judge}) if judge != 'pro' else req
+    req = attack_request(messages)
     wrapper_history = messages + [{"role": role, "content": ""} for role in ("user", "assistant") * 3]
     joint_req = replace(req, messages=attacker_messages(wrapper_history))
-    if client.backend.count(joint_req) + PUSHBACK_HISTORY_RESERVE > joint_req.max_input_tokens:
+    if attacker_client.backend.count(joint_req) + PUSHBACK_HISTORY_RESERVE > joint_req.max_input_tokens:
         raise PreflightError(f"joint pushback history exceeds {joint_req.max_input_tokens}; no truncation")
     fixed = digest(finding(item))
     for turn in range(1, max_turns + 1):
-        req = request(item, arm, "pro", ATTACKER_OUTPUT_CAP, phase="attacker", turn=turn,
-                      messages=attacker_messages(messages), tools=[])
-        attack = client.call(req)
+        req = attack_request(messages, turn)
+        attack = attacker_client.call(req)
         if attack.finish_reason in ('MAX_TOKENS', 'length'):
             # Deterministic identity permits exact cached reuse on resume. Neither
             # truncated attempt enters the judge history or becomes a trial.
             retry = replace(req, identity=req.identity + '/truncation-retry/1',
                             metadata={**req.metadata, 'truncation_retry': 1})
-            attack = client.call(retry)
+            attack = attacker_client.call(retry)
             if attack.finish_reason in ('MAX_TOKENS', 'length'):
                 yield {'event': 'pushback_end', 'item_id': item['id'], 'condition': arm,
-                       'judge': 'pro', 'reason': 'infrastructure_incomplete', 'turn': turn-1,
+                       'judge': judge, 'reason': 'infrastructure_incomplete', 'turn': turn-1,
                        'error': 'attacker_truncated_twice', 'failed_attacker_turn': turn}
                 return
         if attack.text.strip() == '{"concede":true}':
             yield {"event": "pushback_end", "item_id": item["id"], "condition": arm,
-                   "judge": "pro", "reason": "concession", "turn": turn-1}
+                   "judge": judge, "reason": "concession", "turn": turn-1}
             return
         messages.append({"role": "user", "content": attack.text})
-        reply = client.call(request(item, arm, "pro", 256, phase="pushback", turn=turn, messages=messages, tools=[]))
+        reply = client.call(request(item, arm, judge, 256, phase="pushback", turn=turn, messages=messages, tools=[]))
         messages.append(reply.assistant)
-        yield trial(item, arm, "pro", reply, turn=turn, error="unexpected_tool" if reply.tool_calls else None)
+        yield trial(item, arm, judge, reply, turn=turn, error="unexpected_tool" if reply.tool_calls else None)
         if digest(finding(item)) != fixed:
             raise PreflightError("checker state mutated")
     yield {"event": "pushback_end", "item_id": item["id"], "condition": arm,
-           "judge": "pro", "reason": "complete", "turn": max_turns}
+           "judge": judge, "reason": "complete", "turn": max_turns}
 
 
 def lean_replay():
@@ -597,6 +622,29 @@ def export():
         path.write_bytes(gzip.compress("".join(packed(r)+"\n" for r in refs).encode(), mtime=0))
 
 
+def scheduled(plan, judge, item):
+    return (judge in plan['judges'] and item['assignment']['source'] in
+            plan.get('judge_sources', {}).get(judge, plan['sources']))
+
+
+def pushback_scheduled(plan, judge, item, arm):
+    return (plan['pushback'] and scheduled(plan, judge, item)
+            and judge in plan.get('pushback_judges', ['pro'])
+            and item['assignment']['pushback'] and arm in MAIN)
+
+
+def retained_overhead(name):
+    from decimal import Decimal
+    if name in P1_AMENDMENT12_SCENARIOS:
+        return Decimal(json.loads((HERE / 'checks/amendment12.json').read_text())['retained_dev_costs_and_holds_usd'])
+    return amendment8_overhead()
+
+
+def amendment12_selection():
+    return next((name for name in P1_AMENDMENT12_SCENARIOS
+                 if cumulative_ceiling(name, worst_case=True) <= STUDY_CAP_USD), 'stop')
+
+
 def split_ceiling(name, split, *, worst_case=False):
     from decimal import Decimal
     plan = inventory()["budget_scenarios"][name]
@@ -607,12 +655,14 @@ def split_ceiling(name, split, *, worst_case=False):
             continue
         for a in arms(i):
             for judge in plan["judges"]:
+                if not scheduled(plan, judge, i):
+                    continue
                 total += cost(judge, p1_input_bound(a, "initial"), output, arm=a)
                 if a == "R":
                     total += cost(judge, p1_input_bound(a, "replay"), output, arm=a)
-                if plan["pushback"] and judge == "pro" and i["assignment"]["pushback"] and a in MAIN:
+                if pushback_scheduled(plan, judge, i, a):
                     total += plan.get("pushback_turns", 3)*(2*cost("pro", p1_input_bound(a, "attacker"), ATTACKER_OUTPUT_CAP)
-                                + cost("pro", p1_input_bound(a, "pushback"), JUDGE_OUTPUT_CAP if worst_case else 256))
+                                + cost(judge, p1_input_bound(a, "pushback"), JUDGE_OUTPUT_CAP if worst_case or plan.get("amendment") == 12 else 256))
     return total
 
 
@@ -625,7 +675,7 @@ def amendment8_overhead():
 def cumulative_ceiling(name, *, worst_case=False):
     from decimal import Decimal
     return (split_ceiling(name, "dev", worst_case=worst_case) + split_ceiling(name, "scored", worst_case=worst_case) + Decimal(1)
-            + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + amendment8_overhead() + Decimal('.25'))
+            + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + retained_overhead(name) + Decimal('.25'))
 
 
 def amendment11_selection():
@@ -650,6 +700,8 @@ def freeze_execution():
     paths += [ROOT / p for p in inventory()["source_sha256"]]
     if (HERE / 'checks/amendment8.json').exists():
         paths.append(HERE / 'checks/amendment8.json')
+    if (HERE / 'checks/amendment12.json').exists():
+        paths.append(HERE / 'checks/amendment12.json')
     hashes = {str(p.relative_to(ROOT)): sha(p) for p in paths}
     manifest = {"judge_output_cap": JUDGE_OUTPUT_CAP, "verdict_schema": VERDICT_SCHEMA,
                 "weak_provider_rates_per_million": WEAK_PROVIDER_RATES, "planning_output_mean": 256,
@@ -667,6 +719,7 @@ def freeze_execution():
     overhead = Decimal(1) + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + amendment8_overhead()
     ceilings = {}
     for name, plan in inventory()["budget_scenarios"].items():
+        overhead = Decimal(1) + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + retained_overhead(name)
         dev, scored = split_ceiling(name, "dev"), split_ceiling(name, "scored")
         ceilings[name] = {"dev_calls_usd": str(dev), "scored_calls_usd": str(scored),
                           "dev_cumulative_with_probe_usd": str(dev+overhead),
@@ -682,8 +735,8 @@ def freeze_execution():
         "status": "BLOCKED_NOT_SCORING_READY", "selected_schedule": probe_result["schedule"],
         "external_timestamp": {"verified": False}, "commands": commands, "cost_ceilings": ceilings,
         "accounting": {"replacement_probe_envelope_usd": "1.00", "prior_attempt_ceiling_usd": "0.056900",
-                       "retained_dev_costs_and_holds_usd": str(amendment8_overhead()),
-                       "output_policy": "planning mean 256 for full schedule; reserve actual request cap per dispatch",
+                       "retained_dev_costs_and_holds_usd": str(retained_overhead(probe_result["schedule"])),
+                       "output_policy": "Amendment 12 uses full 1024 judge caps, 256 attacker caps and one attacker retry per turn",
                        "provider_preflight_envelope_usd": "0.50", "local_allowance_usd": "0.25"},
         "unresolved": ["offline gates require current execution", "full schedule tokenizer and joint-history gates",
                        "OpenRouter native joint counter and served revision preflight", "external timestamp", "dev capability gate"]})
@@ -788,7 +841,7 @@ def infrastructure_state(ledger):
         return unavailable, halted
 
 
-def dev_gates(rows, items, judges, unavailable=None, halted=None):
+def dev_gates(rows, items, judges, unavailable=None, halted=None, *, plan=None):
     """Observed numerators/denominators, even for partial infrastructure runs.
 
     Missing dispatches never become output failures or capability evidence.
@@ -799,7 +852,10 @@ def dev_gates(rows, items, judges, unavailable=None, halted=None):
     gates = {}
     for judge in judges:
         for panel in sorted({i['assignment']['source'] for i in items}):
-            selected = [i for i in items if i['assignment']['source'] == panel]
+            selected = [i for i in items if i['assignment']['source'] == panel
+                        and (plan is None or scheduled(plan, judge, i))]
+            if not selected:
+                continue
             numbers = {}
             for arm in arms(selected[0]):
                 if arm in unavailable.get(judge, {}):
@@ -838,7 +894,8 @@ def split_report(rows, items, judges, unavailable, halted, stopped=None, *, plan
         included = {i['id'] for i in items}
         turns = plan.get('pushback_turns', 3 if plan['pushback'] else 0)
         rows = [r for r in rows if r['judge'] in judges and r['item_id'] in included
-                and r.get('turn', 0) <= turns and (turns or not r.get('event'))]
+                and r.get('turn', 0) <= turns and (turns or not r.get('event'))
+                and scheduled(plan, r['judge'], next(i for i in items if i['id'] == r['item_id']))]
         dropped_judges = sorted(set(MODELS) - set(plan['judges']))
         report.update(schedule=schedule_name, pushback_turns=turns,
                       completed_observations=len(rows),
@@ -854,6 +911,10 @@ def split_report(rows, items, judges, unavailable, halted, stopped=None, *, plan
             continue
         for panel in sorted({i['assignment']['source'] for i in items}):
             selected = [i for i in items if i['assignment']['source'] == panel]
+            if plan is not None:
+                selected = [i for i in selected if scheduled(plan, judge, i)]
+            if not selected:
+                continue
             ids = {i['id'] for i in selected}
             subset = [r for r in rows if r['judge'] == judge and r['item_id'] in ids]
             actual = {(r['item_id'], r['condition']) for r in subset if not r.get('event') and not r.get('turn', 0)}
@@ -861,16 +922,21 @@ def split_report(rows, items, judges, unavailable, halted, stopped=None, *, plan
             if expected <= actual:
                 data = analyze(subset, selected, [judge], unavailable=unavailable)
                 report['families'].update(data['families'])
-    complete = len(report['families']) == len(judges) * len({i['assignment']['source'] for i in items})
-    expected_pushback = {(i['id'], a) for i in items if i['assignment']['pushback'] for a in MAIN}
-    ended_pushback = {(r['item_id'], r['condition']) for r in rows if r.get('event') == 'pushback_end'}
-    pushback_complete = bool(turns) and expected_pushback <= ended_pushback and 'pro' not in halted
+    expected_families = {(j, i['assignment']['source']) for j in judges for i in items if plan is None or scheduled(plan, j, i)}
+    complete = len(report['families']) == len(expected_families)
+    expected_pushback = {(j, i['id'], a) for j in judges for i in items for a in MAIN
+                         if plan is not None and pushback_scheduled(plan, j, i, a)}
+    ended_pushback = {(r['judge'], r['item_id'], r['condition']) for r in rows if r.get('event') == 'pushback_end'}
+    pushback_complete = bool(turns) and bool(expected_pushback) and expected_pushback <= ended_pushback and not halted
     incomplete_pushback = any(r.get('reason') == 'infrastructure_incomplete' for r in rows)
     report.update(status='incomplete_infrastructure' if halted or incomplete_pushback else ('incomplete' if stopped or not complete else 'complete'),
                   unavailable_arms=unavailable, halted_judges=halted,
                   infrastructure_note='Infrastructure-unavailable arms are excluded from analysis, not scored as trial outcomes.',
                   pushback=analyze_pushback([r for r in rows if r['judge'] not in halted], items, turns)
                            if pushback_complete else {'status': 'incomplete or unscheduled; no infrastructure gaps scored'})
+    if plan and plan.get('amendment') == 12:
+        report['analysis_disclosure'] = ANALYSIS_DISCLOSURE
+        report['gemini_e4_dev_ceiling'] = json.loads((HERE / 'checks/amendment12.json').read_text())['gemini_e4_dev_ceiling']
     return report
 
 
@@ -880,11 +946,12 @@ def run_split(split, cap):
     if name == "stop" or probe_result["status"] != "complete":
         raise PreflightError("probe selected stop; no dev/scored dispatch")
     ledger_path = HERE / 'runs/study/costs.jsonl'
-    if ledger_path.exists() and inventory()['budget_scenarios'][name]['pushback']:
+    if name not in P1_AMENDMENT12_SCENARIOS and ledger_path.exists() and inventory()['budget_scenarios'][name]['pushback']:
         if Ledger(ledger_path, STUDY_CAP_USD).gemini_schedule() == 'primary_1024':
             name = 'primary_1024'
     from decimal import Decimal
-    all_in = split_ceiling(name, "dev") + split_ceiling(name, "scored") + Decimal(1) + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + amendment8_overhead() + Decimal(".25")
+    all_in = (split_ceiling(name, "dev") + split_ceiling(name, "scored") + Decimal(1)
+              + Decimal(PRIOR_AND_PROVIDER_ALLOWANCE) + retained_overhead(name) + Decimal(".25"))
     if all_in > Decimal(str(STUDY_CAP_USD)):
         raise BudgetExceeded(f"selected schedule ceiling exceeds ${STUDY_CAP_USD} including allowances")
     freeze = json.loads((HERE / "freeze.json").read_text())
@@ -903,6 +970,8 @@ def run_split(split, cap):
     ineligible = []
     if split == 'scored':
         dev = json.loads((HERE / 'checks/dev.json').read_text())
+        if plan.get('amendment') == 12 and dev.get('schedule') != name:
+            raise PreflightError('selected scenario requires a fresh dev gate')
         if dev.get('freeze_sha256') != freeze.get('manifest_sha256'):
             raise PreflightError('dev gate belongs to an earlier execution freeze')
         if dev.get('stopped'):
@@ -923,7 +992,7 @@ def run_split(split, cap):
     ledger.recover_tool_routing()
     with ledger.locked() as (_, ledger_entries):
         amended = any(r['event'] == 'amendment8' for r in ledger_entries)
-    block_id = split + '-amendment8' if split == 'dev' and amended else split
+    block_id = split + '-amendment12' if plan.get('amendment') == 12 else (split + '-amendment8' if split == 'dev' and amended else split)
     if name == 'primary_1024' and any(r['event'] == 'schedule_fallback' for r in ledger_entries):
         # A fallback may occur inside a reserved full split. Preserve its original
         # accounting on restart; it can never create a second spending envelope.
@@ -933,8 +1002,8 @@ def run_split(split, cap):
     ledger.reserve_block(block_id, ceiling, resume=True)
     from experiments.p1_preflight import runtime_counter
     clients = {j: PaidClient(VertexBackend() if j == "pro" else OpenRouterBackend(runtime_counter()),
-                            ledger, block_id, reuse_completed=True) for j in plan["judges"]}
-    blocks = [(i, a, j) for i in items for a in arms(i) for j in plan["judges"]]
+                            ledger, block_id, reuse_completed=True) for j in set(plan["judges"]) | ({"pro"} if plan["pushback"] else set())}
+    blocks = [(i, a, j) for i in items for a in arms(i) for j in plan["judges"] if scheduled(plan, j, i)]
     random.Random(SEED).shuffle(blocks)
     path = HERE / f'runs/{split}/trials.jsonl'
     rows = read_jsonl(path) if path.exists() else []
@@ -942,6 +1011,7 @@ def run_split(split, cap):
         rows = [r for r in rows if r.get('amendment') == 8]
     included = {i['id'] for i in items}
     rows = [r for r in rows if r['judge'] in plan['judges'] and r['item_id'] in included
+            and scheduled(plan, r['judge'], next(i for i in items if i['id'] == r['item_id']))
             and (plan['pushback'] or not r.get('turn', 0) and not r.get('event'))]
     def row_key(r):
         return (r['item_id'], r['condition'], r['judge'], r.get('turn', 0), r.get('event'))
@@ -963,7 +1033,7 @@ def run_split(split, cap):
     halted = {j: reason for j, reason in halted.items() if j in plan['judges']}
     stopped, budget_stop = None, False
     for i, a, j in blocks:
-        if plan['pushback'] and ledger.gemini_schedule() == 'primary_1024':
+        if plan.get('amendment') != 12 and plan['pushback'] and ledger.gemini_schedule() == 'primary_1024':
             name = 'primary_1024'
             plan = deepcopy(inventory()['budget_scenarios'][name])
             items = [i for i in items if i['assignment']['source'] in plan['sources']]
@@ -976,8 +1046,8 @@ def run_split(split, cap):
         try:
             row, messages = initial(clients[j], i, a, j, output)
             record(row)
-            if plan["pushback"] and j == "pro" and i["assignment"]["pushback"] and a in MAIN:
-                for r in pushback(clients[j], i, a, messages, max_turns=plan.get('pushback_turns', 3)):
+            if pushback_scheduled(plan, j, i, a):
+                for r in pushback(clients[j], i, a, messages, max_turns=plan.get('pushback_turns', 3), judge=j, attacker_client=clients['pro']):
                     record(r)
         except ToolEndpointUnavailable as exc:
             unavailable.setdefault(j, {})['R'] = str(exc)
@@ -990,9 +1060,10 @@ def run_split(split, cap):
     for client in clients.values():
         client.close()
     if split == "dev":
-        gates = dev_gates(rows, items, plan['judges'], unavailable, halted)
+        gates = dev_gates(rows, items, plan['judges'], unavailable, halted, plan=plan)
         gates['passed'] = not stopped and gates['passed']
         gates['stopped'] = stopped
+        gates['schedule'] = name
         gates['freeze_sha256'] = freeze['manifest_sha256']
         write_json(HERE / "checks/dev.json", gates)
     report = split_report(rows, items, plan['judges'], unavailable, halted, stopped, plan=plan, schedule_name=name)

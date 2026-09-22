@@ -28,6 +28,13 @@ P1_PANEL_SCENARIOS = {
     "pro_replication_2turn": (["pro", "replication"], 2),
 }
 
+# Amendment 12 priority order. Gemini remains the attacker in every scenario.
+P1_AMENDMENT12_SCENARIOS = {
+    "replication_3turn": ({"replication": ["E4", "E5"]}, 3),
+    "replication_gemini_e5_3turn": ({"replication": ["E4", "E5"], "pro": ["E5"]}, 3),
+    "replication_gemini_e5_2turn": ({"replication": ["E4", "E5"], "pro": ["E5"]}, 2),
+}
+
 def p1_input_bound(arm, phase):
     """Amendments 3/9: joint pushback bounds; initial/replay/probe unchanged."""
     if phase in ("attacker", "pushback") and arm in P1_PUSHBACK_INPUT_BOUNDS:
@@ -136,6 +143,30 @@ def p1():
             unallocated_reserve_usd=round(40-total-.25-.5569, 8))
         scenarios[name]["within_study_cap"] = total + .25 + .5569 <= 40
         scenarios[name]["cumulative_with_existing_allowances_usd"] = round(total + .25 + .5569, 8)
+    for name, (judge_sources, turns) in P1_AMENDMENT12_SCENARIOS.items():
+        budget = []
+        for judge, panels in judge_sources.items():
+            assigned = [i for i in selected if i['source'] in panels]
+            for arm in ("V", "W", "A", "F", "R", "F_correct", "U"):
+                cells = [i for i in assigned if arm != 'F_correct' or i['source'] == 'E4']
+                if not cells:
+                    continue
+                budget.append(price_row(arm, 'initial_judge', judge, len(cells), p1_input_bound(arm, 'initial'), 1024))
+                if arm == 'R':
+                    budget.append(price_row(arm, 'post_replay_judge', judge, len(cells), p1_input_bound(arm, 'replay'), 1024))
+                if arm in ('V', 'W', 'A', 'F', 'R'):
+                    n = sum(i['pushback'] for i in cells) * turns
+                    budget.append(price_row(arm, 'pushback_judge', judge, n, p1_input_bound(arm, 'pushback'), 1024))
+                    for role in ('adaptive_proposer', 'adaptive_proposer_truncation_retry'):
+                        budget.append(price_row(arm, role, 'pro', n, p1_input_bound(arm, 'attacker'), 256))
+        total = round(1 + sum(r['calls'] * (r['max_input_per_call'] * RATES[r['model']][0]
+                         + r['max_billed_output_per_call'] * RATES[r['model']][1])
+                         * RATES[r['model']][2] / 1e6 for r in budget), 8)
+        scenarios[name] = dict(budget_rows=budget, sources=['E4', 'E5'], judges=list(judge_sources),
+            judge_sources=judge_sources, pushback_judges=list(judge_sources), pushback=True,
+            pushback_turns=turns, planning_output_mean=1024, amendment=12,
+            max_scheduled_api_usd=total, scheduled_calls=sum(r['calls'] for r in budget),
+            within_study_cap=total + .8069 <= 40, unallocated_reserve_usd=round(40-total-.8069, 8))
     budget = scenarios["full_256"]["budget_rows"]
     # These are label-routing unit fixtures, not the eventual channel/harness tests.
     oracle_replies = [(r["id"], json.dumps({"verdict": "approve" if r["label"] == "good" else "reject"}))

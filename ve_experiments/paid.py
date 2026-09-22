@@ -485,6 +485,16 @@ class VertexBackend:
                 system.append(types.Part(text=m["content"]))
             elif "vertex_content" in m:
                 contents.append(types.Content.model_validate(m["vertex_content"]))
+            elif m.get("tool_calls"):
+                # Amendment 12: Gemini attacker observes Qwen's native replay
+                # transcript without dropping function calls or their bindings.
+                parts = [types.Part(text=m['content'])] if m.get('content') else []
+                parts += [types.Part(function_call=types.FunctionCall(
+                    name=c['function']['name'], id=c['id'],
+                    args=json.loads(c['function']['arguments'])
+                    if isinstance(c['function']['arguments'], str) else c['function']['arguments']))
+                    for c in m['tool_calls']]
+                contents.append(types.Content(role='model', parts=parts))
             elif m["role"] == "tool":
                 contents.append(types.Content(role="user", parts=[types.Part(
                     function_response=types.FunctionResponse(name="replay", id=m["tool_call_id"],

@@ -491,3 +491,110 @@ Zero-generation validation:
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py preflight --offline
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
 ```
+
+<a id="amendment-12"></a>
+## Amendment 12 — 2026-09-22 UTC (2026-09-21 Pacific; orchestrator, approved): dev ceiling and replication-judge substitution
+
+Authorized by the orchestrator's Worker X instruction, before any scored
+inference. The cap remains **$40**. Worker generation calls and expenditure
+are **0 / $0**. This dated PREREG amendment supersedes Amendment 11's selected
+schedule and the original Gemini-only pushback restriction. Preserve the
+original timestamped PREREG bytes and proof; this amendment and the shared
+design are included in the new execution freeze.
+
+**Gemini/E4 scored inference is paused and is not bought.** The completed
+`primary_1024` dev panel has 16 E4 items × seven arms = **112 judgments**:
+100% response contract, 100% good approval in every arm, and **0 errors**, even
+in F and U. The preregistered W error-opportunity gate failed. Report this as a
+**dev-ceiling result**, with descriptive judgment-level 95% Wilson error-rate
+interval **[0, 0.0331613471]** (0–3.3161%). Judgments reuse items across arms;
+this binomial summary does not make them 112 independent templates and is not
+a cluster-adjusted efficacy interval. A zero-error judge establishes a ceiling,
+not a benefit. The original dev gate and analysis are retained separately in
+`checks/gemini-e4-dev-ceiling-gate.json` and
+`results/gemini-e4-dev-ceiling-analysis.json`.
+
+All candidate scenarios retain Qwen2.5-72B, the preregistered **REPLICATION**
+judge on E4+E5. Weak control is dropped and reported as **not run**. All initial
+arms remain: V/W/A/F/R/F-correct/U on E4 and V/W/A/F/R/U on E5; F-correct has
+always been E4-only. Pushback retains the frozen first-template dev pairs and
+first-six-template scored pairs, crossed with V/W/A/F/R (the original five
+pushback arms); U and F-correct remain initial controls. Qwen now judges its
+own pushback trajectories. In the Gemini/E5 candidates, Gemini also judges its
+E5 trajectories. Gemini remains the 256-token adversary in all candidates;
+its requests are independently identified by target judge and preserve the
+judge's native replay call/response history. Two-turn candidates retain the
+conservative three-turn input/history bounds; analysis ends at turn 2.
+
+The **same strict bounds** apply in all three calculations: unchanged arm
+input limits, full **1,024-token judge output cap on every initial, replay and
+pushback call**, 256-token attacker output cap, and one possible 256-token
+attacker retry per turn. Every possible replay/turn runs; no early concession
+or exact-request reuse discounts the ceiling. Model prices and fees are the
+frozen design rates. The ceiling includes $1 replacement-probe envelope,
+$0.056900 prior probe attempt, $0.50 provider-preflight envelope, **$0.61033326890
+retained dev costs/holds**, and $0.25 local allowance: **$2.41723326890** total
+existing allowances. Retained dev comprises $0.60778371370 paid plus
+$0.00254955520 infrastructure holds; this reconciles the reported ~$0.61.
+It replaces, rather than adds to, Amendment 8's $0.28137326890 retained amount.
+
+| Priority / scenario | Dev calls ceiling | Scored calls ceiling | Cumulative all-in ceiling | Fits $40 |
+|---|---:|---:|---:|---|
+| (i) `replication_3turn`: Qwen E4+E5, 3 turns | $3.20710184640 | $18.91042888320 | **$24.53476399850** | yes, selected |
+| (ii) `replication_gemini_e5_3turn`: (i) + Gemini E5, 3 turns | $7.75553384640 | $38.93420488320 | **$49.10697199850** | no |
+| (iii) `replication_gemini_e5_2turn`: (ii), 2 turns | $6.15099840640 | $29.30699224320 | **$37.87522391850** | yes |
+
+**Select (i), the first/highest-priority scenario with ceiling ≤$40**, retaining
+$15.46523600150 headroom. The original probe samples and prior selections are
+preserved; `results/probe.json` records this replacement. The old durable
+Gemini output-mean fallback must not reactivate Gemini/E4: Amendment 12 budgets
+full judge output caps already. Any new billing/cap violation still halts.
+No relaxation of capability, contract, provider, tokenizer or timestamp gates.
+
+**Analysis disclosure:** The preregistered primary contrast was Gemini/E4.
+Qwen remains the preregistered **REPLICATION judge**, but **every scored Qwen
+contrast is exploratory-primary (judge substitution due to ceiling)**, not a
+confirmatory primary contrast. Gemini/E5, if scheduled, retains its
+preregistered harm contrasts **A−W and F−U**. These labels must appear in
+analysis output and every family. This is **not model shopping for a positive
+result**: it is the preregistered pause plus the cheapest judge that showed
+error opportunity in dev. The earlier Qwen E4 dev evidence, before Amendment
+8, was F 0/8 good approved (11 errors), U 0/8 (10 errors), A 16/16 correct.
+Those observations motivate the authorized scenario, not a passed current gate
+or an assurance of a positive or even eligible scored result. Panels and model
+families are never pooled.
+
+**A new selected-scenario dev gate is mandatory before scoring.** All 240
+retained Qwen dev completions predate Amendment 8 (schema/output-cap changes)
+and cannot satisfy the current gate. Rebuy changed requests using the existing
+append-only Amendment 8 identity mechanism; keep old receipts and charges.
+The selected dev allowance covers 32 items, **208 initial judgments + up to 32
+replay continuations + 60 pushback judgments + 60 attacker calls + 60 possible
+attacker retries = 420 calls**, at most **$3.20710184640**. Scored adds at most
+2,376 calls. Exact matching completed amended requests are reused on resume;
+no duplicate scientific sample is permitted. A separate Amendment 12 split
+reservation retains the completed prior split's costs. The new gate must match
+the selected scenario and current freeze; old or missing gates fail closed.
+The original thresholds (including good approval ≥70% in every arm and W error
+opportunity) remain unchanged. If Qwen's adverse-arm good approval again fails,
+scored inference pauses; this amendment does not waive that failure.
+
+The dev gate is **required but not dispatched by this worker**, because the
+same instruction expressly limits worker paid calls to $0. Commands for the
+orchestrator (cumulative API caps, with $0.25 local reserved separately):
+
+```sh
+export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
+uv run python experiments/P1-deference/run_p1.py dev --cap-usd 5.37433511530
+# Only after the new selected-scenario dev gate passes:
+uv run python experiments/P1-deference/run_p1.py scored --cap-usd 24.28476399850
+```
+
+Zero-generation preflight includes fresh/free Vertex countTokens for the new
+cross-provider attacker histories, and locally revalidates retained OpenRouter
+smokes without buying replacements:
+
+```sh
+uv run python experiments/P1-deference/run_p1.py preflight
+uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
+```

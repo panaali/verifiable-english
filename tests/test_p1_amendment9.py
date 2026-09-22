@@ -16,6 +16,8 @@ def test_every_bound_is_smallest_hundred_with_ten_percent_margin():
     maxima = defaultdict(int)
     fixtures = list(p1_preflight.token_requests())
     for req, reserve in fixtures:
+        if req.metadata.get('target_judge'):
+            continue  # Amendment 9's original Gemini-only bound derivation.
         row = counts[req.identity]
         assert row['request_sha256'] == p1.digest([req.messages, req.tools])
         bounded = row['tokens'] + reserve
@@ -23,7 +25,7 @@ def test_every_bound_is_smallest_hundred_with_ten_percent_margin():
         if req.metadata['role'] in ('attacker', 'pushback'):
             key = req.metadata['arm'], req.metadata['role']
             maxima[key] = max(maxima[key], bounded)
-    assert len(fixtures) == 1816 and len(maxima) == 10
+    assert len(fixtures) == 1956 and len(maxima) == 10
     for (arm, phase), maximum in maxima.items():
         assert p1.p1_input_bound(arm, phase) == ((maximum * 11 + 999) // 1000) * 100
 

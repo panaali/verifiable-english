@@ -53,17 +53,23 @@ Implement a thin adapter and the prescribed analyses in a later execution change
 Do not turn the inventory checker into a paid runner.
 
 P1 execution/analysis update, 2026-09-22 UTC (2026-09-21 Pacific),
-[Amendment 11 (orchestrator)](P1-deference/PROPOSED-AMENDMENT.md#amendment-11):
-`experiments/p1.py:split_report` is the P1 adapter. None of the four amended
-E4+E5 scenarios fits the unchanged $40 cap with existing allowances, so dev
-and scored select `primary_1024`: E4/pro only, no pushback. Analysis must list
-E5 as an unscheduled panel and replication and weak as unscheduled judges;
-the weak control is **not run**, never a failed or zero-effect control.
-No E5 premise/harm or pushback finding may be inferred from this fallback.
-For the alternative two-turn scenarios, pushback analysis ends at turn 2
-(initial plus two responses); it must not impute a missing third turn.
-The per-scenario panel/judge omissions and selection arithmetic are recorded
-in Amendment 11; these changes do not alter the timestamped PREREG bytes.
+[Amendment 12 (orchestrator)](P1-deference/PROPOSED-AMENDMENT.md#amendment-12):
+Gemini/E4 scored inference is paused after its 0/112 dev error ceiling
+(descriptive 95% Wilson interval 0–3.3161%; dependent judgments, not 112
+independent templates). Select `replication_3turn`: Qwen E4+E5, all initial
+arms and the original five pushback arms, three turns, Gemini attacker;
+strict cumulative ceiling $24.53476399850 including retained costs and
+allowances. Weak control and Gemini/E5 are not run under the selected scenario.
+The preregistered primary contrast was Gemini/E4. Qwen is the preregistered
+REPLICATION judge; every scored Qwen contrast must be labelled
+**exploratory-primary (judge substitution due to ceiling)**. Gemini/E5, if
+scheduled, retains preregistered harm contrasts A-W and F-U. This is the
+preregistered pause plus the cheapest judge that showed dev error opportunity,
+not model shopping for a positive result. A new selected-scenario dev gate
+must pass; changed pre-Amendment-8 Qwen requests must be rebought and counted.
+Original thresholds remain binding. Two-turn alternatives stop analysis at
+turn 2. The dated amendment is normative and included in the execution freeze;
+the original timestamped PREREG bytes and proof remain intact.
 
 Every assignment must have an append-only record of item/template/split, arm,
 model/provider revision, role and turn, visible message bytes and role boundaries,
