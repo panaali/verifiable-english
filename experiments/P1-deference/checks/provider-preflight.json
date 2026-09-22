@@ -1,5 +1,5 @@
 {
-  "freeze_sha256": "c57820437af69eed238e39217a0a333ebd8d49d14b9dbdf29157d33ba22dac98",
+  "freeze_sha256": "60cc7aa5ff2915671dda1cd479d2e8047ed8dd46a23d55985aea91c0807d1044",
   "openrouter": {
     "status": "not called; native joint tokenizer and role support unverified"
   },

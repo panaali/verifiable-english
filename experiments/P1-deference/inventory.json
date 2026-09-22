@@ -2284,34 +2284,34 @@
       "arm": "A",
       "calls": 200,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 3072,
-      "max_input_tokens": 614400,
+      "max_input_per_call": 6800,
+      "max_input_tokens": 1360000,
       "max_output_tokens": 51200,
       "model": "pro",
       "role": "initial_judge",
-      "usd": 1.8432
+      "usd": 3.3344
     },
     {
       "arm": "A",
       "calls": 84,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 6144,
-      "max_input_tokens": 516096,
+      "max_input_per_call": 6800,
+      "max_input_tokens": 571200,
       "max_output_tokens": 21504,
       "model": "pro",
       "role": "pushback_judge",
-      "usd": 1.29024
+      "usd": 1.400448
     },
     {
       "arm": "A",
       "calls": 84,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 344064,
+      "max_input_per_call": 6800,
+      "max_input_tokens": 571200,
       "max_output_tokens": 21504,
       "model": "pro",
       "role": "adaptive_proposer_against_pro",
-      "usd": 0.946176
+      "usd": 1.400448
     },
     {
       "arm": "F",
@@ -2350,45 +2350,45 @@
       "arm": "R",
       "calls": 200,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 3072,
-      "max_input_tokens": 614400,
+      "max_input_per_call": 6800,
+      "max_input_tokens": 1360000,
       "max_output_tokens": 51200,
       "model": "pro",
       "role": "initial_judge",
-      "usd": 1.8432
+      "usd": 3.3344
     },
     {
       "arm": "R",
       "calls": 200,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 819200,
+      "max_input_per_call": 6800,
+      "max_input_tokens": 1360000,
       "max_output_tokens": 51200,
       "model": "pro",
       "role": "post_replay_judge",
-      "usd": 2.2528
+      "usd": 3.3344
     },
     {
       "arm": "R",
       "calls": 84,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 6144,
-      "max_input_tokens": 516096,
+      "max_input_per_call": 6800,
+      "max_input_tokens": 571200,
       "max_output_tokens": 21504,
       "model": "pro",
       "role": "pushback_judge",
-      "usd": 1.29024
+      "usd": 1.400448
     },
     {
       "arm": "R",
       "calls": 84,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 344064,
+      "max_input_per_call": 6800,
+      "max_input_tokens": 571200,
       "max_output_tokens": 21504,
       "model": "pro",
       "role": "adaptive_proposer_against_pro",
-      "usd": 0.946176
+      "usd": 1.400448
     },
     {
       "arm": "U",
@@ -2438,12 +2438,12 @@
       "arm": "A",
       "calls": 200,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 3072,
-      "max_input_tokens": 614400,
+      "max_input_per_call": 6800,
+      "max_input_tokens": 1360000,
       "max_output_tokens": 51200,
       "model": "replication",
       "role": "initial_judge",
-      "usd": 0.25495552
+      "usd": 0.5381344
     },
     {
       "arm": "F",
@@ -2460,23 +2460,23 @@
       "arm": "R",
       "calls": 200,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 3072,
-      "max_input_tokens": 614400,
+      "max_input_per_call": 6800,
+      "max_input_tokens": 1360000,
       "max_output_tokens": 51200,
       "model": "replication",
       "role": "initial_judge",
-      "usd": 0.25495552
+      "usd": 0.5381344
     },
     {
       "arm": "R",
       "calls": 200,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 819200,
+      "max_input_per_call": 6800,
+      "max_input_tokens": 1360000,
       "max_output_tokens": 51200,
       "model": "replication",
       "role": "post_replay_judge",
-      "usd": 0.33273856
+      "usd": 0.5381344
     },
     {
       "arm": "U",
@@ -2526,12 +2526,12 @@
       "arm": "A",
       "calls": 200,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 3072,
-      "max_input_tokens": 614400,
+      "max_input_per_call": 6800,
+      "max_input_tokens": 1360000,
       "max_output_tokens": 51200,
       "model": "weak",
       "role": "initial_judge",
-      "usd": 0.01512448
+      "usd": 0.03085664
     },
     {
       "arm": "F",
@@ -2548,23 +2548,23 @@
       "arm": "R",
       "calls": 200,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 3072,
-      "max_input_tokens": 614400,
+      "max_input_per_call": 6800,
+      "max_input_tokens": 1360000,
       "max_output_tokens": 51200,
       "model": "weak",
       "role": "initial_judge",
-      "usd": 0.01512448
+      "usd": 0.03085664
     },
     {
       "arm": "R",
       "calls": 200,
       "max_billed_output_per_call": 256,
-      "max_input_per_call": 4096,
-      "max_input_tokens": 819200,
+      "max_input_per_call": 6800,
+      "max_input_tokens": 1360000,
       "max_output_tokens": 51200,
       "model": "weak",
       "role": "post_replay_judge",
-      "usd": 0.01944576
+      "usd": 0.03085664
     },
     {
       "arm": "U",
@@ -2673,34 +2673,34 @@
           "arm": "A",
           "calls": 200,
           "max_billed_output_per_call": 256,
-          "max_input_per_call": 3072,
-          "max_input_tokens": 614400,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 1360000,
           "max_output_tokens": 51200,
           "model": "pro",
           "role": "initial_judge",
-          "usd": 1.8432
+          "usd": 3.3344
         },
         {
           "arm": "A",
           "calls": 84,
           "max_billed_output_per_call": 256,
-          "max_input_per_call": 6144,
-          "max_input_tokens": 516096,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 571200,
           "max_output_tokens": 21504,
           "model": "pro",
           "role": "pushback_judge",
-          "usd": 1.29024
+          "usd": 1.400448
         },
         {
           "arm": "A",
           "calls": 84,
           "max_billed_output_per_call": 256,
-          "max_input_per_call": 4096,
-          "max_input_tokens": 344064,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 571200,
           "max_output_tokens": 21504,
           "model": "pro",
           "role": "adaptive_proposer_against_pro",
-          "usd": 0.946176
+          "usd": 1.400448
         },
         {
           "arm": "F",
@@ -2739,45 +2739,45 @@
           "arm": "R",
           "calls": 200,
           "max_billed_output_per_call": 256,
-          "max_input_per_call": 3072,
-          "max_input_tokens": 614400,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 1360000,
           "max_output_tokens": 51200,
           "model": "pro",
           "role": "initial_judge",
-          "usd": 1.8432
+          "usd": 3.3344
         },
         {
           "arm": "R",
           "calls": 200,
           "max_billed_output_per_call": 256,
-          "max_input_per_call": 4096,
-          "max_input_tokens": 819200,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 1360000,
           "max_output_tokens": 51200,
           "model": "pro",
           "role": "post_replay_judge",
-          "usd": 2.2528
+          "usd": 3.3344
         },
         {
           "arm": "R",
           "calls": 84,
           "max_billed_output_per_call": 256,
-          "max_input_per_call": 6144,
-          "max_input_tokens": 516096,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 571200,
           "max_output_tokens": 21504,
           "model": "pro",
           "role": "pushback_judge",
-          "usd": 1.29024
+          "usd": 1.400448
         },
         {
           "arm": "R",
           "calls": 84,
           "max_billed_output_per_call": 256,
-          "max_input_per_call": 4096,
-          "max_input_tokens": 344064,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 571200,
           "max_output_tokens": 21504,
           "model": "pro",
           "role": "adaptive_proposer_against_pro",
-          "usd": 0.946176
+          "usd": 1.400448
         },
         {
           "arm": "U",
@@ -2827,12 +2827,12 @@
           "arm": "A",
           "calls": 200,
           "max_billed_output_per_call": 256,
-          "max_input_per_call": 3072,
-          "max_input_tokens": 614400,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 1360000,
           "max_output_tokens": 51200,
           "model": "replication",
           "role": "initial_judge",
-          "usd": 0.25495552
+          "usd": 0.5381344
         },
         {
           "arm": "F",
@@ -2849,23 +2849,23 @@
           "arm": "R",
           "calls": 200,
           "max_billed_output_per_call": 256,
-          "max_input_per_call": 3072,
-          "max_input_tokens": 614400,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 1360000,
           "max_output_tokens": 51200,
           "model": "replication",
           "role": "initial_judge",
-          "usd": 0.25495552
+          "usd": 0.5381344
         },
         {
           "arm": "R",
           "calls": 200,
           "max_billed_output_per_call": 256,
-          "max_input_per_call": 4096,
-          "max_input_tokens": 819200,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 1360000,
           "max_output_tokens": 51200,
           "model": "replication",
           "role": "post_replay_judge",
-          "usd": 0.33273856
+          "usd": 0.5381344
         },
         {
           "arm": "U",
@@ -2915,12 +2915,12 @@
           "arm": "A",
           "calls": 200,
           "max_billed_output_per_call": 256,
-          "max_input_per_call": 3072,
-          "max_input_tokens": 614400,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 1360000,
           "max_output_tokens": 51200,
           "model": "weak",
           "role": "initial_judge",
-          "usd": 0.01512448
+          "usd": 0.03085664
         },
         {
           "arm": "F",
@@ -2937,23 +2937,23 @@
           "arm": "R",
           "calls": 200,
           "max_billed_output_per_call": 256,
-          "max_input_per_call": 3072,
-          "max_input_tokens": 614400,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 1360000,
           "max_output_tokens": 51200,
           "model": "weak",
           "role": "initial_judge",
-          "usd": 0.01512448
+          "usd": 0.03085664
         },
         {
           "arm": "R",
           "calls": 200,
           "max_billed_output_per_call": 256,
-          "max_input_per_call": 4096,
-          "max_input_tokens": 819200,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 1360000,
           "max_output_tokens": 51200,
           "model": "weak",
           "role": "post_replay_judge",
-          "usd": 0.01944576
+          "usd": 0.03085664
         },
         {
           "arm": "U",
@@ -2978,13 +2978,14 @@
           "usd": 0.01028465
         }
       ],
+      "cumulative_with_existing_allowances_usd": 35.71826352,
       "judges": [
         "pro",
         "replication",
         "weak"
       ],
       "local_accounting_allowance_usd": 0.25,
-      "max_scheduled_api_usd": 28.90377472,
+      "max_scheduled_api_usd": 34.91136352,
       "probe_unused_allowance_usd": 0.44704,
       "pushback": true,
       "scheduled_calls": 5458,
@@ -2992,7 +2993,8 @@
         "E4",
         "E5"
       ],
-      "unallocated_reserve_usd": 0.84622528
+      "unallocated_reserve_usd": -5.71826352,
+      "within_study_cap": false
     },
     "primary_1024": {
       "budget_rows": [
@@ -3033,12 +3035,12 @@
           "arm": "A",
           "calls": 136,
           "max_billed_output_per_call": 1024,
-          "max_input_per_call": 3072,
-          "max_input_tokens": 417792,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 924800,
           "max_output_tokens": 139264,
           "model": "pro",
           "role": "initial_judge",
-          "usd": 2.506752
+          "usd": 3.520768
         },
         {
           "arm": "F",
@@ -3055,23 +3057,23 @@
           "arm": "R",
           "calls": 136,
           "max_billed_output_per_call": 1024,
-          "max_input_per_call": 3072,
-          "max_input_tokens": 417792,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 924800,
           "max_output_tokens": 139264,
           "model": "pro",
           "role": "initial_judge",
-          "usd": 2.506752
+          "usd": 3.520768
         },
         {
           "arm": "R",
           "calls": 136,
           "max_billed_output_per_call": 1024,
-          "max_input_per_call": 4096,
-          "max_input_tokens": 557056,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 924800,
           "max_output_tokens": 139264,
           "model": "pro",
           "role": "post_replay_judge",
-          "usd": 2.78528
+          "usd": 3.520768
         },
         {
           "arm": "U",
@@ -3096,18 +3098,20 @@
           "usd": 2.506752
         }
       ],
+      "cumulative_with_existing_allowances_usd": 24.902964,
       "judges": [
         "pro"
       ],
       "local_accounting_allowance_usd": 0.25,
-      "max_scheduled_api_usd": 21.332544,
+      "max_scheduled_api_usd": 24.096064,
       "probe_unused_allowance_usd": 0.44704,
       "pushback": false,
       "scheduled_calls": 1098,
       "sources": [
         "E4"
       ],
-      "unallocated_reserve_usd": 8.417456
+      "unallocated_reserve_usd": 5.097036,
+      "within_study_cap": true
     },
     "primary_512": {
       "budget_rows": [
@@ -3148,12 +3152,12 @@
           "arm": "A",
           "calls": 136,
           "max_billed_output_per_call": 512,
-          "max_input_per_call": 3072,
-          "max_input_tokens": 417792,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 924800,
           "max_output_tokens": 69632,
           "model": "pro",
           "role": "initial_judge",
-          "usd": 1.671168
+          "usd": 2.685184
         },
         {
           "arm": "F",
@@ -3170,23 +3174,23 @@
           "arm": "R",
           "calls": 136,
           "max_billed_output_per_call": 512,
-          "max_input_per_call": 3072,
-          "max_input_tokens": 417792,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 924800,
           "max_output_tokens": 69632,
           "model": "pro",
           "role": "initial_judge",
-          "usd": 1.671168
+          "usd": 2.685184
         },
         {
           "arm": "R",
           "calls": 136,
           "max_billed_output_per_call": 512,
-          "max_input_per_call": 4096,
-          "max_input_tokens": 557056,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 924800,
           "max_output_tokens": 69632,
           "model": "pro",
           "role": "post_replay_judge",
-          "usd": 1.949696
+          "usd": 2.685184
         },
         {
           "arm": "U",
@@ -3211,18 +3215,20 @@
           "usd": 1.671168
         }
       ],
+      "cumulative_with_existing_allowances_usd": 18.218292,
       "judges": [
         "pro"
       ],
       "local_accounting_allowance_usd": 0.25,
-      "max_scheduled_api_usd": 14.647872,
+      "max_scheduled_api_usd": 17.411392,
       "probe_unused_allowance_usd": 0.44704,
       "pushback": false,
       "scheduled_calls": 1098,
       "sources": [
         "E4"
       ],
-      "unallocated_reserve_usd": 15.102128
+      "unallocated_reserve_usd": 11.781708,
+      "within_study_cap": true
     }
   },
   "counts": {
@@ -3244,7 +3250,7 @@
   },
   "hard_cap_usd": 30,
   "local_accounting_allowance_usd": 0.25,
-  "max_scheduled_api_usd": 28.90377472,
+  "max_scheduled_api_usd": 34.91136352,
   "model_calls": 0,
   "output_probe_policy": {
     "mean_gt_1024": "STOP_REPORT",
@@ -3288,5 +3294,6 @@
     "experiments/E5/scored.jsonl.gz": "bb8ca9b53fcc3ece82e8438eaba22831b7bc69824d317dc720165d8f2751a766"
   },
   "status": "DESIGN_ONLY_NOT_SCORING_READY",
-  "unallocated_reserve_usd": 0.84622528
+  "unallocated_reserve_usd": -5.71826352,
+  "within_study_cap": false
 }

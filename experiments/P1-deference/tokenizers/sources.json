@@ -1,0 +1,36 @@
+{
+  "qwen/qwen-2.5-72b-instruct": {
+    "official_repo": "Qwen/Qwen2.5-72B-Instruct",
+    "official_revision": "495f39366efef23836d0cfae4fbe635880d2be31",
+    "files": {
+      "tokenizer.json": {
+        "repo": "Qwen/Qwen2.5-72B-Instruct",
+        "revision": "495f39366efef23836d0cfae4fbe635880d2be31",
+        "git_blob_sha1": "443909a61d429dff23010e5bddd28ff530edda00"
+      },
+      "tokenizer_config.json": {
+        "repo": "Qwen/Qwen2.5-72B-Instruct",
+        "revision": "495f39366efef23836d0cfae4fbe635880d2be31",
+        "git_blob_sha1": "07bfe0640cb5a0037f9322287fbfc682806cf672"
+      }
+    },
+    "config_file": "qwen_config.json"
+  },
+  "meta-llama/llama-3.1-8b-instruct": {
+    "official_repo": "meta-llama/Llama-3.1-8B-Instruct",
+    "official_revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+    "files": {
+      "tokenizer.json": {
+        "repo": "NousResearch/Meta-Llama-3.1-8B-Instruct",
+        "revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+        "git_blob_sha1": "5cc5f00a5b203e90a27a3bd60d1ec393b07971e8"
+      },
+      "tokenizer_config.json": {
+        "repo": "hugging-quants/Meta-Llama-3.1-8B-Instruct-AWQ-INT4",
+        "revision": "db1f81ad4b8c7e39777509fac66c652eb0a52f91",
+        "git_blob_sha1": "db88166e2bc4c799fd5d1ae643b75e84d03ee70e"
+      }
+    },
+    "config_file": "llama_config.json"
+  }
+}

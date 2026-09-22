@@ -22,6 +22,7 @@ from experiments.E2E4.materials import load_frozen
 from experiments.E2E4.common import replay
 from experiments.E5.materials import render_cell, graph_for_payload, grounding_audit
 from experiments.trial_analysis import read_jsonl
+from experiments.prereg_inventory import p1_input_bound
 from ve import ArgumentGraph, FiniteModel, check_argument
 from ve.ast import formula_to_data
 from ve.search import check_countermodel
@@ -175,7 +176,7 @@ def render(item, arm):
 
 def request(item, arm, judge, output, *, phase="initial", turn=0, messages=None, tools=None):
     rendered, available = render(item, arm)
-    inp = {"initial": 3072, "probe": 3072, "replay": 4096, "attacker": 4096, "pushback": 6144}[phase]
+    inp = p1_input_bound(arm, phase)
     return PaidRequest(f"{item['split']}/{item['id']}/{arm}/{judge}/{phase}/{turn}", judge,
         rendered if messages is None else messages, inp, output, available if tools is None else tools,
         {"item_id": item["id"], "template": item["assignment"]["template"], "split": item["split"],
@@ -421,8 +422,8 @@ def pushback(client, item, arm, messages):
     req = request(item, arm, "pro", 256, phase="attacker", messages=attacker_messages(messages), tools=[])
     wrapper_history = messages + [{"role": role, "content": ""} for role in ("user", "assistant") * 3]
     joint_req = replace(req, messages=attacker_messages(wrapper_history))
-    if client.backend.count(joint_req) + 1536 > 4096:
-        raise PreflightError("joint pushback prefix exceeds 2560; no truncation")
+    if client.backend.count(joint_req) + 1536 > joint_req.max_input_tokens:
+        raise PreflightError(f"joint pushback history exceeds {joint_req.max_input_tokens}; no truncation")
     fixed = digest(finding(item))
     for turn in range(1, 4):
         attack = client.call(request(item, arm, "pro", 256, phase="attacker", turn=turn,
@@ -571,20 +572,23 @@ def split_ceiling(name, split):
             continue
         for a in arms(i):
             for judge in plan["judges"]:
-                total += cost(judge, 3072, output)
+                total += cost(judge, p1_input_bound(a, "initial"), output)
                 if a == "R":
-                    total += cost(judge, 4096, output)
+                    total += cost(judge, p1_input_bound(a, "replay"), output)
                 if plan["pushback"] and judge == "pro" and i["assignment"]["pushback"] and a in MAIN:
-                    total += 3*(cost("pro", 4096, 256)+cost("pro", 6144, 256))
+                    total += 3*(cost("pro", p1_input_bound(a, "attacker"), 256)
+                                + cost("pro", p1_input_bound(a, "pushback"), 256))
     return total
 
 
 def freeze_execution():
     """Create an honest local manifest; never fabricate readiness/timestamp receipts."""
-    paths = [ROOT / "experiments/p1.py", ROOT / "ve_experiments/paid.py", ROOT / "ve_experiments/llm.py",
+    paths = [ROOT / "experiments/p1.py", ROOT / "experiments/prereg_inventory.py",
+             ROOT / "ve_experiments/paid.py", ROOT / "ve_experiments/llm.py",
              ROOT / "pyproject.toml", ROOT / "uv.lock", ROOT / "experiments/PREREG-DESIGN.md",
              HERE / "PREREG.md", HERE / "inventory.json", HERE / "prompts.json", HERE / "run_p1.py",
              HERE / "labels.jsonl.gz", ROOT / "experiments/p1_preflight.py",
+             HERE / "native_counter.py", *sorted((HERE / "tokenizers").glob("*.json")),
              HERE / "PROPOSED-AMENDMENT.md", ROOT / "experiments/PREREG-HASHES.txt",
              ROOT / "experiments/PREREG-HASHES.txt.ots",
              *sorted((ROOT / "tests").rglob("*.py")), *sorted((ROOT / "lean").rglob("*.lean")),
@@ -610,6 +614,7 @@ def freeze_execution():
         ceilings[name] = {"dev_calls_usd": str(dev), "scored_calls_usd": str(scored),
                           "dev_cumulative_with_probe_usd": str(dev+overhead),
                           "scored_cumulative_with_probe_usd": str(dev+scored+overhead),
+                          "within_study_cap": dev+scored+overhead+Decimal('.25') <= 30,
                           "local_allowance_usd": .25}
         for split, cap in (("dev", dev+overhead), ("scored", dev+scored+overhead)):
             commands[f"{name}/{split}"] = f"uv run python experiments/P1-deference/run_p1.py {split} --cap-usd {cap}"
@@ -695,6 +700,8 @@ def run_split(split, cap):
     name = probe_result["schedule"]
     if name == "stop" or probe_result["status"] != "complete":
         raise PreflightError("probe selected stop; no dev/scored dispatch")
+    if not inventory()["budget_scenarios"][name]["within_study_cap"]:
+        raise BudgetExceeded("selected schedule ceiling exceeds $30 including allowances; orchestrator budget decision required")
     freeze = json.loads((HERE / "freeze.json").read_text())
     required = ["known-answer", "tokenizer", "lean-replay", "semantic-pairs", "test-suite", "external-timestamp", "provider-preflight"]
     for gate in required:
@@ -762,7 +769,8 @@ def main():
         if name in ("probe", "dev", "scored", "preflight-openrouter"):
             p.add_argument("--cap-usd", type=float, required=True)
         if name == "preflight-openrouter":
-            p.add_argument("--counter-command", type=Path, help="provider-native joint wire counter executable (JSON stdin, integer stdout)")
+            p.add_argument("--counter-command", type=Path, default=HERE / "native_counter.py",
+                           help="provider-native joint wire counter executable (default: bundled native_counter.py)")
         if name == "analyze":
             p.add_argument("trials", type=Path)
             p.add_argument("--split", choices=("dev", "scored"), default="scored")

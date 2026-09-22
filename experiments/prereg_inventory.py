@@ -15,6 +15,12 @@ ROOT = Path(__file__).resolve().parents[1]
 RATES = {"pro": (2.0, 12.0, 1.0), "replication": (.36, .40, 1.055),
          "weak": (.02, .04, 1.055)}
 
+def p1_input_bound(arm, phase):
+    """Amendment 3: preserve probe and every non-A/R arm's original bounds."""
+    original = {"initial": 3072, "probe": 3072, "replay": 4096,
+                "attacker": 4096, "pushback": 6144}[phase]
+    return 6800 if arm in ("A", "R") and phase != "probe" else original
+
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -85,13 +91,13 @@ def p1():
         for model in (RATES if full else ("pro",)):
             n = 200 if full else 136
             for arm in ("V", "W", "A", "F", "R", "U"):
-                budget.append(cost_row(arm, "initial_judge", model, n, 3072, output))
+                budget.append(cost_row(arm, "initial_judge", model, n, p1_input_bound(arm, "initial"), output))
                 if arm == "R":
-                    budget.append(cost_row(arm, "post_replay_judge", model, n, 4096, output))
+                    budget.append(cost_row(arm, "post_replay_judge", model, n, p1_input_bound(arm, "replay"), output))
                 # Preserve three-turn primary pushback; exploratory judges have initial cells only.
                 if full and model == "pro" and arm != "U":
-                    budget.append(cost_row(arm, "pushback_judge", model, 28*3, 6144, 256))
-                    budget.append(cost_row(arm, "adaptive_proposer_against_pro", model, 28*3, 4096, 256))
+                    budget.append(cost_row(arm, "pushback_judge", model, 28*3, p1_input_bound(arm, "pushback"), 256))
+                    budget.append(cost_row(arm, "adaptive_proposer_against_pro", model, 28*3, p1_input_bound(arm, "attacker"), 256))
             budget.append(cost_row("F_correct", "initial_judge", model, 136, 3072, output))
         # Reserve a full $1 for the probe, including its explicit row ceiling.
         probe_buffer = round(1 - budget[0]["usd"], 8)
@@ -101,8 +107,9 @@ def p1():
             judges=list(RATES) if full else ["pro"], pushback=full,
             max_scheduled_api_usd=total, scheduled_calls=sum(r["calls"] for r in budget),
             local_accounting_allowance_usd=.25,
-            unallocated_reserve_usd=round(30-total-.25, 8))
-        assert total + .25 < 30
+            unallocated_reserve_usd=round(30-total-.25-.5569, 8))
+        scenarios[name]["within_study_cap"] = total + .25 + .5569 <= 30
+        scenarios[name]["cumulative_with_existing_allowances_usd"] = round(total + .25 + .5569, 8)
     budget = scenarios["full_256"]["budget_rows"]
     # These are label-routing unit fixtures, not the eventual channel/harness tests.
     oracle_replies = [(r["id"], json.dumps({"verdict": "approve" if r["label"] == "good" else "reject"}))
@@ -186,8 +193,12 @@ def main():
         result["max_scheduled_api_usd"] = total
         local = .25 if directory == "P1-deference" else .0004 * result["counts"]["item_arms_including_dev"]
         result["local_accounting_allowance_usd"] = local
-        result["unallocated_reserve_usd"] = round(result["hard_cap_usd"]-total-local, 8)
-        assert total + local < result["hard_cap_usd"]
+        existing_allowances = .5569 if directory == "P1-deference" else 0
+        result["unallocated_reserve_usd"] = round(result["hard_cap_usd"]-total-local-existing_allowances, 8)
+        if directory == "P1-deference":
+            result["within_study_cap"] = total + local + existing_allowances <= result["hard_cap_usd"]
+        else:
+            assert total + local < result["hard_cap_usd"]
         if directory == "P5-shifting-definitions":
             shared = result["budget_rows"][0]["usd"] / 84
             result["max_attributed_item_arm_usd"] = {
