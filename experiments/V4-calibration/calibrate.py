@@ -52,7 +52,7 @@ def summarize(items, rows):
     return {'scheduled_items':len(items),'scheduled_samples':3*len(items),'completed':len(rows),'by_type':types}
 
 
-def run(split,judge,selection=None):
+def run(split,judge,selection=None,context_date='2026-09-22'):
     if split=='smoke' and judge!='haiku': raise ValueError('Smoke is Haiku only')
     if split=='dev' and judge=='opus': raise ValueError('Never expose dev selection items to Opus')
     items=load_items(split)
@@ -66,7 +66,7 @@ def run(split,judge,selection=None):
         items=[i for i in items if i['type'] in selected['selected_types']]
         if not items: raise ValueError('No types selected; report calibration ceiling instead')
     out=HERE/'results'/f'{split}-{judge}';out.mkdir(parents=True,exist_ok=True)
-    controls=Controls(model=MODELS[judge],output_tokens=3000,timeout_s=180)
+    controls=Controls(model=MODELS[judge],output_tokens=3000,timeout_s=180,context_date=context_date)
     run_manifest={'split':split,'judge':judge,'model':MODELS[judge],'k':3,'controls':asdict(controls),
                   'corpus_sha256':digest(HERE/f'{split}.jsonl'),'selection_sha256':selection_hash,
                   'prompt_sha256':hashlib.sha256((SYSTEM+INSTRUCTIONS).encode()).hexdigest(),
@@ -134,5 +134,6 @@ if __name__=='__main__':
     p.add_argument('--split',choices=['smoke','dev','heldout'],default='smoke')
     p.add_argument('--judge',choices=['haiku','sonnet','opus'],default='haiku')
     p.add_argument('--selection',type=Path)
+    p.add_argument('--context-date',default='2026-09-22',help='Preregistered fixed UTC date; fails on rollover')
     a=p.parse_args()
-    select() if a.command=='select' else run(a.split,a.judge,a.selection)
+    select() if a.command=='select' else run(a.split,a.judge,a.selection,a.context_date)

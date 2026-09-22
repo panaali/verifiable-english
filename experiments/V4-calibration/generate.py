@@ -62,10 +62,19 @@ def generate_item(split,lever,index,target_words=300):
     if near and 'near_miss' not in active: active.append('near_miss')
     label=('True','False','Uncertain')[index%3]
     preds={}; mapping={}; texts={}
-    ids=list(range(6)); rng.shuffle(ids)
-    neutral=['is marked amber','is marked cobalt','is marked silver','is marked violet','is marked teal','is marked copper']
-    beliefs=['is a robin','is a fish','breathes underwater','is a mammal','is a mineral','is alive']
-    for i,name in enumerate('abcdef'):
+    names='abcdefghijklmnop'
+    ids=list(range(len(names))); rng.shuffle(ids)
+    colors=['amber','cobalt','silver','violet','teal','copper','ivory','scarlet']
+    objects=['badge','ribbon','hat','scarf','coat','pin','belt','card']
+    phrases=[f'wears a {c} {o}' for c in colors for o in objects]
+    rng.shuffle(phrases)
+    neutral=phrases[:len(names)]
+    beliefs=rng.choice([
+        ['is a robin','is a fish','breathes underwater','is a mammal','is a mineral','is alive'],
+        ['is a stone','is a living animal','breathes air','has feathers','is a metal','is warm blooded'],
+        ['is a salmon','is a bird','flies through air','has fur','is a plant','is an insect'],
+    ])+neutral[6:]
+    for i,name in enumerate(names):
         pred=f'p{ids[i]}'; phrase=(beliefs if belief else neutral)[i]
         preds[pred]={'arguments':['person'],'description':phrase}
         mapping[name]=['unary',pred,['const','ada']]; texts[name]='Ada '+phrase
@@ -81,9 +90,11 @@ def generate_item(split,lever,index,target_words=300):
         sk=[('∨','a','b'),imp('a','c'),imp('b','c'),imp('c','d')]
         query='e' if label=='Uncertain' else n('d') if label=='False' else 'd'
     elif lever=='xor':
-        sk=[('⊕','a','b'),imp('b','c'),imp('c','d')]
+        chain=list('abcd')+list('ghijk')[:rng.randrange(4)]
+        sk=[('⊕',a,b) for a,b in zip(chain,chain[1:])]
         if label!='Uncertain': sk.append('a')
-        query=n('b') if label=='True' else 'b'
+        entailed=chain[-1] if len(chain)%2 else n(chain[-1])
+        query=entailed if label=='True' else n(entailed) if label=='False' else chain[-1]
     elif lever=='modus_tollens':
         sk=[imp('a','b'),imp('b','c'),imp('c','d')]
         if label!='Uncertain': sk.append(n('d'))
@@ -91,6 +102,14 @@ def generate_item(split,lever,index,target_words=300):
     else:
         sk=['a',imp('a','b'),imp('b','c'),imp('c','d')]
         query='e' if label=='Uncertain' else n('d') if label=='False' else 'd'
+    chain_steps=rng.randint(3,7)
+    if lever!='xor':
+        # Vary the core inferential chain, compensating with fewer distractors.
+        bridge=['c']+list('ghijk')[:chain_steps-3]+['d']
+        expanded=[]
+        for f in sk:
+            expanded.extend([imp(a,b) for a,b in zip(bridge,bridge[1:])] if f==imp('c','d') else [f])
+        sk=expanded
     if near: sk.extend([imp('e','b'),imp('f','e')])
     premises=[{'english':english(f,texts)+'.','gold_ast':to_ast(f,mapping)} for f in sk]
     q={'english':english(query,texts)+'.','gold_ast':to_ast(query,mapping)}
@@ -106,8 +125,10 @@ def generate_item(split,lever,index,target_words=300):
         if belief:
             preds['r']['description']='is the parent of (first person to second person)'
             preds['s']['description']='is younger than (first person to second person)'
-        rphrase='is the parent of' if belief else 'admires'
-        sphrase='is younger than' if belief else 'follows'
+        rphrase,sphrase=(rng.choice([('is the parent of','is younger than'),('is an ancestor of','is younger than')])
+                        if belief else rng.sample(['admires','follows','helps','trusts','respects','knows'],2))
+        preds['r']['description']=rphrase+' (first person to second person)'
+        preds['s']['description']=sphrase+' (first person to second person)'
         r=['binary','r',['var',1],['var',0]]
         s=['binary','s',['var',0],['var',1]]
         premises=[{'english':f'For every person x, there is a person y such that x {rphrase} y (y may depend on x).',
@@ -144,6 +165,7 @@ def generate_item(split,lever,index,target_words=300):
     for j,p in enumerate(premises): p['id']=f'p{j}'
     item={'id':f'c-{split}-{lever}-{index:03d}','split':split,'seed':SEEDS[split],
           'type':lever,'active_levers':active,'label':label,'environment':environment(preds),
+          'chain_setting':len(chain)-1 if lever=='xor' else chain_steps,
           'premises':premises,'query':q,'content_words':sum(len(p['english'].split()) for p in premises)+len(q['english'].split())}
     validate(item,{p:model(item['environment'],rels) for p,rels in raw_witnesses.items()})
     return item
