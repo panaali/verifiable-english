@@ -136,7 +136,8 @@ def test_weak_provider_changes_allowed_but_within_provider_revision_pinned(tmp_p
     assert [r['served_provider'] for r in rows(client.ledger) if r['event'] == 'complete'] == ['DeepInfra', 'Groq', 'Groq']
 
 
-def test_provider_preflight_resumes_legacy_ledger_and_is_idempotent(tmp_path, monkeypatch):
+@pytest.mark.parametrize('cached_weak', [False, True])
+def test_provider_preflight_resumes_legacy_ledger_and_is_idempotent(tmp_path, monkeypatch, cached_weak):
     monkeypatch.setattr(p1, 'HERE', tmp_path)
     monkeypatch.setattr(gates, 'refresh_status', lambda: [])
     p1.write_json(tmp_path / 'freeze.json', {'hashes': {}, 'manifest_sha256': 'new'})
@@ -153,10 +154,10 @@ def test_provider_preflight_resumes_legacy_ledger_and_is_idempotent(tmp_path, mo
     called = []
     class Backend(OfflineBackend):
         def __init__(self, **kw): super().__init__(self.reply)
-        def count(self, req): return 19
+        def count(self, req): return 21 if req.model == 'weak' else 19
         def reply(self, req):
             called.append(req.model)
-            return PaidReply('Hi', 19, 1, 0, 0, 'rev', {'usage': {}, 'provider': 'DeepInfra'}, {})
+            return PaidReply('Hi', self.count(req), 1, 0, 0, 'rev', {'usage': {}, 'provider': 'DeepInfra'}, {})
     monkeypatch.setattr(gates, 'OpenRouterBackend', Backend)
     ledger = Ledger(tmp_path / 'runs/provider-preflight/costs.jsonl', .5)
     def req(model):
@@ -165,16 +166,24 @@ def test_provider_preflight_resumes_legacy_ledger_and_is_idempotent(tmp_path, mo
     ledger.reserve(req('replication'))
     ledger.complete(req('replication'), Backend().reply(req('replication')))
     ledger.reserve(req('weak'))
-    ledger.halt(req('weak'), 'OpenRouter HTTP 404: old slug')
+    if cached_weak:
+        # The old HF template failed agreement (41 vs 21), but the completed
+        # provider response remains reusable after the template correction.
+        ledger.complete(req('weak'), Backend().reply(req('weak')))
+    else:
+        ledger.halt(req('weak'), 'OpenRouter HTTP 404: old slug')
     called.clear()
     assert gates.preflight_openrouter(.5) == 0
-    assert called == ['weak']
+    assert called == ([] if cached_weak else ['weak'])
     original = ledger.path.read_bytes()
     assert gates.preflight_openrouter(.5) == 0
-    assert called == ['weak'] and ledger.path.read_bytes() == original
+    assert called == ([] if cached_weak else ['weak']) and ledger.path.read_bytes() == original
     report = json.loads((tmp_path / 'checks/provider-preflight.json').read_text())
     assert report['passed'] and report['freeze_sha256'] == 'new'
     assert report['judges']['replication']['reused_smoke']
+    assert report['judges']['weak']['native_smoke_tokens'] == 21
+    if cached_weak:
+        assert report['judges']['weak']['reused_smoke']
 
 
 def test_completed_probe_is_noop(monkeypatch):

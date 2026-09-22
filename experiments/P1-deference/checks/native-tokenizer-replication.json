@@ -1,5 +1,5 @@
 {
-  "completed_at": "2026-09-22T02:30:54.786492+00:00",
+  "completed_at": "2026-09-22T03:04:57.449312+00:00",
   "counts": [
     {
       "bounded_tokens": 257,
@@ -13826,7 +13826,7 @@
       "tokens": 1845
     }
   ],
-  "freeze_sha256": "60cc7aa5ff2915671dda1cd479d2e8047ed8dd46a23d55985aea91c0807d1044",
+  "freeze_sha256": "4d361de1597e357cd772ce4bbed808d3e40612a63e0b611f9918fbe6aeea9708",
   "future_history_policy": "Full joint native fixtures plus generated-token ceilings; actual provider signatures and transcript are recounted at runtime. Local model-native template counts; served provider agreement requires the separate OpenRouter smoke check.",
   "generation_calls": 0,
   "judge": "replication",

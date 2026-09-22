@@ -3,7 +3,7 @@
 
 Only tokenizer downloads use the network; no inference/provider APIs are used.
 Pinned public assets and upstream identity evidence live in tokenizers/sources.json.
-The served provider's template must still agree in the paid preflight smoke check.
+The served provider's template must still agree in the preflight smoke check.
 """
 from copy import deepcopy
 import hashlib
@@ -17,6 +17,9 @@ from tokenizers import Tokenizer
 
 HERE = Path(__file__).resolve().parent
 CACHE = HERE.parents[1] / ".cache/p1-tokenizers"
+LLAMA = "meta-llama/llama-3.1-8b-instruct"
+LLAMA_DATE_TEMPLATE = ('{{- "Cutting Knowledge Date: December 2023\\n" }}\n'
+                       '{{- "Today Date: " + date_string + "\\n\\n" }}')
 
 
 def verify_blob(data, expected):
@@ -49,10 +52,14 @@ def raise_exception(message):
 
 
 def chat_text(wire, config):
-    """Render the model's unchanged HF template, including tools and generation header.
+    """Render the native template, including tools and generation header.
 
     Match HF's tojson filter (no HTML escaping, Unicode preserved). OpenAI wire
     argument strings are parsed to objects as required by HF chat templates.
+    For Llama text-only requests, omit the HF-injected date header: this exactly
+    reconciles the retained DeepInfra smoke (21 tokens, versus HF's 41). Tool
+    requests retain the pinned upstream template; the smoke does not establish
+    their served formatting. Never remove date-like text from message content.
     """
     messages = deepcopy(wire["messages"])
     if not messages:
@@ -75,7 +82,12 @@ def chat_text(wire, config):
     env.filters["tojson"] = lambda value, **kw: json.dumps(value, ensure_ascii=False, **kw)
     env.globals["raise_exception"] = raise_exception
     special = {k: v for k, v in config.items() if k.endswith("_token") and isinstance(v, str)}
-    return env.from_string(config["chat_template"]).render(
+    template = config["chat_template"]
+    if wire.get("model") == LLAMA and not wire.get("tools"):
+        if template.count(LLAMA_DATE_TEMPLATE) != 1:
+            raise ValueError("unrecognized Llama date template; panel blocked")
+        template = template.replace(LLAMA_DATE_TEMPLATE, "")
+    return env.from_string(template).render(
         messages=messages, tools=wire.get("tools") or None,
         add_generation_prompt=True, **special)
 

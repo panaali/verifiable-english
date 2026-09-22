@@ -34,9 +34,32 @@ def test_qwen_exact_joint_chat_template():
 def test_llama_exact_joint_chat_template():
     assert native.chat_text(wire('weak'), config('llama')) == (
         '<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n'
-        'Cutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n'
         'Reply with one word.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n'
         'Hello<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n')
+
+
+def test_llama_date_adjustment_preserves_content_and_tool_template():
+    value = wire('weak')
+    dates = 'Cutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n'
+    value['messages'][1]['content'] = dates + 'Hello'
+    assert native.chat_text(value, config('llama')).count(dates) == 1
+    value['tools'] = [{'type': 'function', 'function': {'name': 'replay'}}]
+    text = native.chat_text(value, config('llama'))
+    assert text.count(dates) == 2
+    assert 'Environment: ipython' in text and '"name": "replay"' in text
+    changed = {**config('llama'), 'chat_template': '{{ messages }}'}
+    with pytest.raises(ValueError, match='unrecognized Llama date template'):
+        native.chat_text(wire('weak'), changed)
+
+
+@pytest.mark.parametrize('judge,expected', [('replication', 19), ('weak', 21)])
+def test_retained_deepinfra_smoke_native_count(judge, expected, monkeypatch):
+    counter = native.NativeCounter()
+    blob = counter.sources[p1.MODELS[judge]]['files']['tokenizer.json']['git_blob_sha1']
+    if not (counter.cache / (blob + '.json')).exists():
+        pytest.skip('pinned tokenizer not cached; test never downloads')
+    monkeypatch.setattr(native.httpx, 'get', lambda *a, **kw: pytest.fail('network forbidden'))
+    assert counter(wire(judge)) == expected
 
 
 @pytest.mark.parametrize('name', ['qwen', 'llama'])
