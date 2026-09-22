@@ -64,8 +64,9 @@ inside proposed unary content. `than`, `by`, `no`, `never`, `longer`, `neither`,
 `nor`, `without`, `true`, `false`, `equals`, and `equal` are blocked, including in
 hyphenated content. Hyphenated `un-`/`non-` content and joined `un`/`non` forms of
 declared predicate heads are rejected; use explicit `is not` for negation.
-A capitalized token immediately after a preposition is also rejected (for
-example, `of France`). Capitalization elsewhere can be part of an opaque lexical
+A bare object immediately after a preposition is also rejected regardless of
+case (for example, both `of France` and `of france`). Article-led opaque phrases
+remain permitted. Capitalization elsewhere can be part of an opaque lexical
 phrase, as in `UK citizen`; it never declares a constant. A permitted phrase such
 as `member of the guild` remains one opaque unary predicate. Plural-looking words
 can likewise be opaque content; the tool does not infer their singular meaning.
@@ -76,6 +77,18 @@ writes loadable files. It changes the environment identity and invalidates the
 old overlay's pinned review; identity algorithms and trusted checking stay
 unchanged. This checkout has no `check --prove` option. Unambiguity is audited
 only for the finite vocabulary after adoption, not for the proposal step.
+
+**Lexicon.** `ve propose` uses the bundled OEWN 2025 lexicon only to annotate
+each proposed phrase token as noun, adjective, participle, or unknown. The
+preview names unknown tokens and flags an entirely unknown, undeclared phrase
+without blocking it. All compatible sense keys appear in the machine-proposed
+description; none is chosen as the intended meaning. Bare verbs and third-person
+forms have no unary class, but count as known words for that warning. Inflection
+classification is conservative and incomplete. The lexicon does not let
+undeclared words parse, resolve phrase boundaries, infer argument structure,
+or bypass any proposal/adoption gate. Source, checksum, morphology rules and
+OEWN/Princeton notices are recorded in `ve/lexicon/ATTRIBUTION.md`; regenerate
+with `python tools/build_lexicon.py`.
 
 ## Reading and writing
 
