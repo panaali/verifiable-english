@@ -1,6 +1,9 @@
 import json
 from pathlib import Path
 from types import SimpleNamespace
+from decimal import Decimal
+
+import pytest
 
 from experiments import p1
 from experiments import p1_preflight as gates
@@ -19,6 +22,25 @@ def test_full_inventory_joint_replay_and_pushback():
     assert all(n == (2048 if r.metadata['arm'] == 'R' else 1792) for r, n in pushes)
     assert all(len(r.messages) >= 10 for r, _ in pushes)
     assert len(list(gates.token_requests('weak'))) == 1536
+
+
+def test_amendment_three_bounds_and_inventory_agree():
+    for request, _ in gates.token_requests():
+        arm, phase = request.metadata['arm'], request.metadata['role']
+        original = {'initial': 3072, 'replay': 4096, 'attacker': 4096, 'pushback': 6144}[phase]
+        assert request.max_input_tokens == (6800 if arm in ('A', 'R') else original)
+    for name, plan in p1.inventory()['budget_scenarios'].items():
+        actual = p1.split_ceiling(name, 'dev') + p1.split_ceiling(name, 'scored') + Decimal(1)
+        assert actual == Decimal(str(plan['max_scheduled_api_usd']))
+    assert p1.inventory()['budget_scenarios']['full_256']['within_study_cap'] is False
+    item = p1.materials('dev')[0]
+    assert p1.request(item, 'A', 'pro', 4096, phase='probe').max_input_tokens == 3072
+
+
+def test_overbudget_schedule_blocks_before_provider_calls(monkeypatch):
+    monkeypatch.setattr(p1, 'VertexBackend', lambda: pytest.fail('generation forbidden'))
+    with pytest.raises(p1.BudgetExceeded, match='selected schedule ceiling exceeds'):
+        p1.run_split('dev', 30)
 
 
 def test_tokenizer_counts_every_fixture_and_fails_on_overflow(monkeypatch):

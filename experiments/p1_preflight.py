@@ -136,7 +136,9 @@ def tokenize(backend, judge='pro'):
     return {'passed': bool(rows) and all(r['passed'] for r in rows), 'schedule': 'full_256',
             'scope': 'all dev+scored items, all arms, replay continuations, joint maximal pushback attacker/judge histories',
             'judge': judge, 'model': p.MODELS[judge], 'requests': len(rows), 'counts': rows,
-            'future_history_policy': 'Full joint native fixtures plus generated-token ceilings; actual provider signatures and transcript are recounted at runtime. This is not a Qwen/Llama tokenizer receipt.',
+            'future_history_policy': 'Full joint native fixtures plus generated-token ceilings; actual provider signatures and transcript are recounted at runtime. '
+                + ('This is not a Qwen/Llama tokenizer receipt.' if judge == 'pro' else
+                   'Local model-native template counts; served provider agreement requires the separate OpenRouter smoke check.'),
             'generation_calls': 0}
 
 
@@ -145,6 +147,8 @@ def refresh_status():
     freeze = json.loads(path.read_text())
     stamp = freeze['manifest_sha256']
     unresolved = []
+    if not freeze['cost_ceilings'].get(freeze['selected_schedule'], {}).get('within_study_cap', False):
+        unresolved.append('selected schedule exceeds $30 study cap')
     for name in (*GATES, 'provider-preflight'):
         gatepath = p.HERE / f'checks/{name}.json'
         report = json.loads(gatepath.read_text()) if gatepath.exists() else {}
@@ -176,10 +180,23 @@ class CommandCounter:
     def __init__(self, path):
         self.path = Path(path).resolve()
         self.sha256 = p.sha(self.path)
+        self.native = None
+        self.assets = {}
+        if self.path == (p.HERE / 'native_counter.py').resolve():
+            import importlib.util
+            spec = importlib.util.spec_from_file_location('p1_native_counter', self.path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            self.native = module.NativeCounter()
+            self.assets = {path: p.sha(path) for path in (p.HERE / 'tokenizers').glob('*.json')}
 
     def __call__(self, wire):
         if p.sha(self.path) != self.sha256:
             raise PreflightError('native counter changed after provider validation')
+        if any(p.sha(path) != stamp for path, stamp in self.assets.items()):
+            raise PreflightError('native tokenizer configuration changed after validation')
+        if self.native is not None:
+            return self.native(wire)
         proc = subprocess.run([str(self.path)], input=p.packed(wire), capture_output=True, text=True, timeout=120)
         if proc.returncode:
             raise PreflightError('native joint counter failed')
@@ -209,7 +226,7 @@ def preflight_openrouter(cap, counter_path=None):
             raise PreflightError(f'freeze hash changed: {path}; rerun preflight')
     def run():
         report = {'passed': False, 'judges': {}, 'counter': None}
-        counter = CommandCounter(counter_path) if counter_path else None
+        counter = CommandCounter(counter_path or p.HERE / 'native_counter.py')
         if counter:
             report['counter'] = {'path': str(counter.path), 'sha256': counter.sha256}
         ledger = Ledger(p.HERE / 'runs/provider-preflight/costs.jsonl', min(cap, .50))
@@ -226,23 +243,21 @@ def preflight_openrouter(cap, counter_path=None):
                     endpoints = http.get(f'https://openrouter.ai/api/v1/models/{p.MODELS[judge]}/endpoints')
                     endpoints.raise_for_status()
                     row['endpoints'] = endpoints.json()
+                    backend = OpenRouterBackend(counter=counter)
+                    row['tokenizer'] = tokenize(backend, judge)
+                    if not row['tokenizer']['passed']:
+                        raise PreflightError('native tokenizer panel blocked; no smoke generation dispatched')
                     # Fixed tiny smoke prompt; conservative reservation, never a study verdict.
                     req = PaidRequest(f'provider-preflight/{judge}', judge,
                         [{'role': 'system', 'content': 'Reply with one word.'}, {'role': 'user', 'content': 'Hello'}], 3072, 1)
-                    # Without a native counter, this tiny smoke-only ceiling is not
-                    # a tokenizer gate. It cannot be reused for study dispatch.
-                    backend = OpenRouterBackend(counter=counter or (lambda wire: 3072))
                     client = PaidClient(backend, ledger)
                     try:
                         reply = client.call(req)
                     finally:
                         client.close()
                     row.update(served_revision=reply.revision, usage=reply.response.get('usage'), endpoint_passed=True)
-                    if counter is None:
-                        raise PreflightError('native joint counter unavailable; supply --counter-command (no approximate fallback)')
                     if backend.count(req) != reply.input_tokens:
                         raise PreflightError('native counter disagrees with smoke prompt usage')
-                    row['tokenizer'] = tokenize(backend, judge)
                     row['passed'] = row['tokenizer']['passed']
                 except Exception as exc:
                     # Backend already redacts credentials; never dump environment.
