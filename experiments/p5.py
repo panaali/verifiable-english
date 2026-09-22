@@ -4,7 +4,7 @@ Uses P1's native providers, routing, durable billing reservations, retryable
 infrastructure handling, revision checks and per-model validation halts.
 """
 from __future__ import annotations
-from dataclasses import replace
+from dataclasses import asdict, replace
 from decimal import Decimal
 from pathlib import Path
 import argparse
@@ -16,6 +16,7 @@ import time
 from experiments.p5_materials import HERE, SEED, read, archive, write_json, generate
 from experiments.p5_isolation import single_context
 from experiments.p5_analysis import ARMS, parse, analyze, known_answer
+from experiments.p5_paraphrase import validate_reply
 from experiments import p5_review as review
 from experiments.p1 import append, sha, infrastructure_state
 from experiments.p1_preflight import CommandCounter
@@ -61,7 +62,7 @@ ROLES={
  'VE_defender':'Answer the critic, re-author affected uses and re-certify in a complete artifact. '+FORMAL,
  'repair':'Repair only the diagnosed syntax/coverage failures. One repair is allowed; retain the original root. '+FORMAL,
  'judge':'Return exactly a JSON verdict conforming to the response schema. Assess original justification, cite source evidence.',
- 'paraphrase':'Independently rewrite the proposed argument into one ordinary-prose paragraph per step in the given topological order. State premises by content, never parent IDs, and preserve the immediately-preceding back-references. Preserve substantive content and any inconsistency; do not repair it. Return JSON {"texts":{"node_id":"rewritten node text"}}. Include every existing node ID exactly once. No additional fields.'}
+ 'paraphrase':'Independently rewrite the proposed argument into one ordinary-prose paragraph per step. Keep every step in the same given topological order. State premises by content, never by node or rule IDs, and preserve the immediately-preceding back-references. No parenthetical glosses or sense labels in the prose: the glossary is supplied separately, and its definitions must not be inserted into the argument. Preserve substantive content and any inconsistency; do not repair it or disambiguate uses. Return JSON {"texts":{"node_id":"rewritten node text"}}. Use every existing node ID exactly once as a JSON key only; no node or rule IDs in text values. No additional fields.'}
 
 
 def materials(split=None):
@@ -119,7 +120,8 @@ def request(item,arm,stage,history=None,*,judge='pro',turn=0,commitment=None,que
         content=packet(item,arm)+'\nFrozen commitment:\n'+(commitment or '')+'\nOne question:\n'+(question or '')
         instruction=ROLES['answer']
     elif stage=='paraphrase':
-        content=packet(item,arm); instruction=ROLES['paraphrase']
+        content=packet(item,arm)+'\nSeparate glossary:\n'+packed(item['payload']['glossary'])
+        instruction=ROLES['paraphrase']
     else:
         content=packet(item,arm)
         if history: content+='\nProtocol record:\n'+packed(history)
@@ -127,7 +129,7 @@ def request(item,arm,stage,history=None,*,judge='pro',turn=0,commitment=None,que
     schema=VERDICT_SCHEMA if role=='judge' else None
     # Include schema text in the system envelope so native countTokens counts it
     # even on providers which omit response_schema from countTokens.
-    system=SYSTEM+' '+instruction+((' Response schema: '+packed(schema)) if schema else '')
+    system=(instruction if stage=='paraphrase' else SYSTEM+' '+instruction)+((' Response schema: '+packed(schema)) if schema else '')
     inp,out=STAGES[stage]
     return PaidRequest(f"{item['split']}/{item['id']}/{arm}/{model}/{stage}/{turn}",model,
         [{'role':'system','content':system},{'role':'user','content':content}],inp,out,
@@ -314,7 +316,7 @@ def labels(anchored=True):
 
 def freeze(scenario):
     write_json(HERE/'prompts.json',{'system':SYSTEM,'roles':ROLES,'schema':VERDICT_SCHEMA,'stages':STAGES})
-    paths=[ROOT/'ve_experiments/paid.py',*ROOT.glob('experiments/p5*.py'),
+    paths=[ROOT/'ve_experiments/paid.py',ROOT/'ve_experiments/json_response.py',*ROOT.glob('experiments/p5*.py'),
            ROOT/'experiments/p1.py',ROOT/'experiments/p1_preflight.py',ROOT/'experiments/prereg_inventory.py',
            ROOT/'experiments/trial_analysis.py',*ROOT.glob('tests/test_p5*.py'),
            ROOT/'tests/fixtures/p5_deepinfra_smoke.json',ROOT/'pyproject.toml',ROOT/'uv.lock',
@@ -337,9 +339,14 @@ def freeze(scenario):
     return result
 
 
-def verify_freeze():
+def verify_freeze(*, paraphrase_progress=False):
     f=json.loads((HERE/'freeze.json').read_text())
+    # Only this pre-scoring construction stage may replace its own outputs.
+    # Dossiers, code and every other frozen input must still match exactly.
+    progress={HERE/f'materials/{name}.jsonl.gz' for name in ('paraphrases','dev','scored')} if paraphrase_progress else set()
     for path,expected in f['hashes'].items():
+        if ROOT/path in progress:
+            continue
         if sha(ROOT/path)!=expected:
             raise PreflightError('freeze changed: '+path+'; amendment/refreeze required')
     if not f['ceilings']['within_cap']:
@@ -449,10 +456,42 @@ def run(split,cap,resume=False):
     return report
 
 
+def retained_paraphrase_request(book, req):
+    """Resume original request bytes, allowing only the authoring prompt to age.
+
+    PaidClient still enforces the full cached/frozen-request contract. Bind the
+    original reservation to this exact dossier, role, attempt and call ceiling
+    before restoring its messages. This also preserves infrastructure retries.
+    """
+    with book.locked() as (_, rows):
+        prior=next((r for r in reversed(rows) if r.get('identity')==req.identity and r['event']=='reserve'),None)
+    if prior is None:
+        return req
+    expected=asdict(req)
+    expected['metadata']={**expected['metadata'],'block_id':'shared-paraphrase'}
+    if any(prior.get(k)!=v for k,v in expected.items() if k!='messages'):
+        raise PreflightError('retained paraphrase dossier or request contract changed')
+    return replace(req,messages=prior['messages'])
+
+
+def save_paraphrase_progress(dossiers, output, label_map):
+    archive(HERE/'materials/paraphrases.jsonl.gz',output)
+    by_id={r['id']:r for r in output if not r['excluded']}
+    for split in ('dev','scored'):
+        archive(HERE/f'materials/{split}.jsonl.gz',[{'id':d['id'],'group':label_map[d['id']]['family'],
+            'split':split,'payload':{**d,'argument':by_id[d['id']]['argument']},
+            'paraphrase_status':'QWEN_PENDING_REVIEW'} for d in dossiers
+            if label_map[d['id']]['split']==split and d['id'] in by_id])
+    write_json(HERE/'runs/study/paraphrase-status.json',{
+        'slots':len(dossiers),'completed':len(output),'accepted':len(by_id),
+        'paraphrase_failed':sum(r['excluded'] for r in output),
+        'excluded_ids':[r['id'] for r in output if r['excluded']]})
+
+
 def paraphrase(cap):
     if any(r.get('identity','').startswith('scored/') for r in read(HERE/'runs/study/costs.jsonl')):
         raise PreflightError('scored material change requires an amendment and separately labeled run')
-    book=ledger(cap); f=verify_freeze()
+    book=ledger(cap); f=verify_freeze(paraphrase_progress=True)
     provider=json.loads((HERE/'checks/provider-preflight.json').read_text())
     if provider.get('freeze_sha256')!=f['manifest_sha256'] or not provider.get('models',{}).get('replication',{}).get('passed'):
         raise PreflightError('Qwen provider-native smoke gate required before paraphrasing')
@@ -467,25 +506,36 @@ def paraphrase(cap):
     try:
         for dossier in dossiers:
             item={'id':dossier['id'],'split':'materials','payload':dossier}
-            req=request(item,'shared','paraphrase');reply=client.call(req)
-            row=json.loads(reply.text)
-            originals={n['id']:n for n in dossier['nodes']}
-            if set(row)!= {'texts'} or set(row['texts'])!=set(originals) or any(not isinstance(t,str) or not t for t in row['texts'].values()):
-                raise PreflightError('paraphrase malformed; no replacement sample')
-            paraphrased={'argument':'\n\n'.join(f"[{n['id']}] {row['texts'][n['id']]}" for n in dossier['nodes'])}
-            output.append({'id':dossier['id'],**paraphrased,'provenance':{'method':'one Qwen72 call in separate context',
-                'input_sha256':digest(dossier),'request_sha256':digest(req.messages),
-                'response_sha256':digest(reply.text),'revision':reply.revision,
-                'served_provider':reply.response.get('provider'),'independent_qwen_pass':True}})
+            attempts=[];violation=None
+            for turn in range(2):
+                req=request(item,'shared','paraphrase',turn=turn)
+                if turn:
+                    req=replace(req,messages=[req.messages[0],{**req.messages[1],
+                        'content':req.messages[1]['content']+'\nValidation violation in the first attempt: '+violation+
+                        '\nThis is the single correction attempt. Rewrite all steps, fixing this violation and obeying every output constraint.'}])
+                req=retained_paraphrase_request(book,req)
+                reply=client.call(req)
+                texts,violation=validate_reply(reply.text,dossier)
+                attempts.append({'identity':req.identity,'request_sha256':digest(req.messages),
+                    'response_sha256':digest(reply.text),'revision':reply.revision,
+                    'served_provider':reply.response.get('provider'),'violation':violation})
+                if violation is None:
+                    break
+            status='paraphrase-failed' if violation else 'QWEN_PENDING_REVIEW'
+            result={'id':dossier['id'],'status':status,'excluded':bool(violation),
+                'provenance':{'method':'Qwen72 in separate context; at most one validation correction',
+                    'input_sha256':digest(dossier),**attempts[-1],
+                    'attempts':attempts,'independent_qwen_pass':violation is None}}
+            if texts is not None:
+                result['argument']='\n\n'.join(f"[{node_id}] {text}" for node_id,text in texts.items())
+            output.append(result)
+            # Checkpoint every terminal slot. The billing ledger remains the
+            # source for revalidation after any interruption, including mid-retry.
+            save_paraphrase_progress(dossiers,output,label_map)
     finally:client.close()
-    archive(HERE/'materials/paraphrases.jsonl.gz',output)
-    by_id={r['id']:r for r in output}
-    for split in ('dev','scored'):
-        archive(HERE/f'materials/{split}.jsonl.gz',[{'id':d['id'],'group':label_map[d['id']]['family'],
-            'split':split,'payload':{**d,'argument':by_id[d['id']]['argument']},
-            'paraphrase_status':'QWEN_PENDING_REVIEW'} for d in dossiers if label_map[d['id']]['split']==split])
     book.release_block(block)
-    return {'slots':len(output),'review_required':True,'refreeze_required':True}
+    return {'slots':len(output),'accepted':sum(not r['excluded'] for r in output),
+        'paraphrase_failed':sum(r['excluded'] for r in output),'review_required':True,'refreeze_required':True}
 
 
 def main(argv=None):

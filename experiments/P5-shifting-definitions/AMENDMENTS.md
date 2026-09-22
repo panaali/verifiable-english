@@ -275,3 +275,66 @@ uv run --offline python experiments/P5-shifting-definitions/run_p5.py preflight 
 The last command reports the remaining study blockers and exits 2; a passing
 Qwen recount does not make P5 ready for paid paraphrases or scoring without
 separate spending authorization and the applicable gates.
+
+## Revision 5 follow-up: paraphrase format, leakage validation and resume (2026-09-22)
+
+The operator requested this repair under a $0 authorization after a completed
+Qwen authoring response wrapped its JSON in a Markdown fence and copied glossary
+sense glosses into inference prose. P5 now shares P1's single-fence formatting
+tolerance. Its own schema remains strict: exactly `texts`, every existing node
+key exactly once, no other keys, and nonempty string values. Duplicate JSON
+keys are rejected. Paragraphs are assembled in the original node order.
+
+The paraphraser receives its own authoring instruction and a separate glossary.
+It must keep every step, premise content, order, immediately-preceding references
+and any inconsistency. It must not insert parenthetical glosses, sense labels,
+or node/rule IDs into prose. Validation rejects glossary sense phrases inside
+parentheses (case/whitespace insensitive, excluding the glossary's Rnn suffix)
+and node/rule IDs in text values; JSON node keys are required and permitted.
+This mechanical check does not certify preservation of meaning or back-references;
+the independent source-fidelity review remains required.
+
+At the operator's explicit direction, a failed validation permits exactly one
+correction request naming the violation, using the same dossier and constraints,
+with turn 1 distinct from initial turn 0. This is a narrow change to §3's original
+one-call authoring rule, not a search for persuasive prose. It is still charged
+to the existing shared-paraphrase block and the explicit cap: no larger envelope,
+call ceiling or automatic top-up. If the remainder cannot fund a correction,
+execution stops resumably before dispatch. Infrastructure retries remain separate.
+
+Every terminal slot is checkpointed with request/response hashes, both attempt
+identities, violations, revisions and served providers. Two invalid responses
+mark a slot `paraphrase-failed`; it has no accepted argument, is excluded from
+usable dev/scored packet archives, and is counted with its ID in
+`runs/study/paraphrase-status.json`. This implements the requested construction
+failure treatment under §3's unready-slot gate. All slot records and paid ledger
+entries remain retained. The all-84 review gate and complete-family analysis
+requirements stay binding; exclusions do not silently authorize reduced scoring
+or post-treatment exclusions prohibited by §7.
+
+Resume revalidates the original billed responses. For an existing identity, only
+its original message bytes are restored after exact checks of dossier hash,
+metadata, model, ceilings, schema, tools and timeout. The shared paid client's
+strict request/cache checks still apply. A valid old response is never repurchased;
+a failed one gets only its one correction, which is itself reused on restart.
+Original request hashes, costs and infrastructure evidence are not rewritten.
+Unattempted slots use the corrected prompt. Checkpoints can be rebuilt from the
+ledger after interruption; they are not trusted instead of response validation.
+Paraphrase resume permits changes only to its three generated material archives
+inside the freeze check. Dossier/code hashes remain mandatory, and ordinary
+dev/scored freeze verification permits no such exception.
+
+The execution freeze and retained OpenRouter smoke receipt are refreshed locally
+for this change. Original preregistration and material archives remain intact in
+this $0 repair session. Existing timestamp receipts remain historical. Independent
+review and the remaining study gates must be satisfied before scoring.
+
+After separate spending authorization, resume from the repository root with the
+existing aggregate cap (the command below was not run by this worker):
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run --offline python experiments/P5-shifting-definitions/run_p5.py paraphrase --cap-usd 0.17
+```
+
+`uv --offline` disables dependency downloads; `paraphrase` itself makes paid model
+calls when a slot needs its first or correction response.

@@ -30,7 +30,7 @@ def test_paraphrase_resumes_legacy_failures_and_records_provider(tmp_path, monke
     dossiers = read(p5.HERE / 'materials/dossiers.jsonl.gz')[:2]
     labels = p5.labels(False)
     monkeypatch.setattr(p5, 'HERE', tmp_path)
-    monkeypatch.setattr(p5, 'verify_freeze', lambda: {'manifest_sha256': 'frozen'})
+    monkeypatch.setattr(p5, 'verify_freeze', lambda **_: {'manifest_sha256': 'frozen'})
     monkeypatch.setattr(p5, 'labels', lambda _: labels)
     monkeypatch.setattr(p5, 'native_counter', lambda: None)
     archive(tmp_path / 'materials/dossiers.jsonl.gz', dossiers)

@@ -202,13 +202,8 @@ STUDY_CAP_USD = 40  # Amendment 9 (2026-09-22 UTC); see PROPOSED-AMENDMENT.md
 
 def parse(text):
     # Formatting tolerance only: strip one Markdown code fence around the JSON object. The schema check stays strict.
-    if isinstance(text, str):
-        stripped = text.strip()
-        if stripped.startswith("```"):
-            stripped = stripped.split("\n", 1)[1] if "\n" in stripped else ""
-            if stripped.rstrip().endswith("```"):
-                stripped = stripped.rstrip()[:-3]
-        text = stripped.strip()
+    from ve_experiments.json_response import strip_json_fence
+    text = strip_json_fence(text)
     try:
         obj = json.loads(text)
     except (TypeError, ValueError):
@@ -827,7 +822,7 @@ def amendment11_selection():
 def freeze_execution():
     """Create an honest local manifest; never fabricate readiness/timestamp receipts."""
     paths = [ROOT / "experiments/p1.py", ROOT / "experiments/prereg_inventory.py",
-             ROOT / "ve_experiments/paid.py", ROOT / "ve_experiments/llm.py",
+             ROOT / "ve_experiments/paid.py", ROOT / "ve_experiments/llm.py", ROOT / "ve_experiments/json_response.py",
              ROOT / "pyproject.toml", ROOT / "uv.lock", ROOT / "experiments/PREREG-DESIGN.md",
              HERE / "PREREG.md", HERE / "inventory.json", HERE / "prompts.json", HERE / "run_p1.py",
              HERE / "labels.jsonl.gz", ROOT / "experiments/p1_preflight.py",

@@ -2,12 +2,57 @@
 
 No VE imports, labels, formulas, witnesses or solver calls. This deterministic
 editor is a draft for inspection, NOT the registered independent Qwen72 pass.
-The paid runner can replace drafts with one durable Qwen call per slot later.
+The paid runner replaces drafts with validated, ledger-backed Qwen responses.
 """
+import json
 import re
+from ve_experiments.json_response import strip_json_fence
 from ve_experiments.paid import digest
 
 ALLOWED = {'id','glossary','premises','records','nodes','root','argument'}
+
+
+def _unique_object(pairs):
+    obj = {}
+    for key, value in pairs:
+        if key in obj:
+            raise ValueError(f'duplicate JSON key: {key}')
+        obj[key] = value
+    return obj
+
+
+def validate_reply(text, dossier):
+    """Return ordered texts or a named violation; inspect prose, not JSON keys."""
+    try:
+        row = json.loads(strip_json_fence(text), object_pairs_hook=_unique_object)
+    except (TypeError, ValueError):
+        return None, 'parse_failure: expected one JSON object (optionally fenced), without duplicate keys'
+    ids = [n['id'] for n in dossier['nodes']]
+    if (not isinstance(row, dict) or set(row) != {'texts'}
+            or not isinstance(row['texts'], dict) or set(row['texts']) != set(ids)
+            or any(not isinstance(t, str) or not t.strip() for t in row['texts'].values())):
+        return None, 'schema_failure: texts must contain every existing node ID exactly once with nonempty string values and no additional fields'
+    # Glossary entries are "term: sense phrase (Rnn)". The Rnn suffix is a
+    # glossary label, not part of the phrase that must stay out of parentheses.
+    senses = []
+    for entry in dossier['glossary']:
+        sense = re.sub(r'\s*\(R\d+\)\s*$', '', entry['sense'], flags=re.I)
+        sense = sense.partition(':')[2].strip() if ':' in sense else sense.strip()
+        if sense:
+            senses.append(' '.join(sense.casefold().split()))
+    public_ids = {n['id'] for field in ('nodes', 'premises', 'records') for n in dossier[field]}
+    id_pattern = re.compile(r'(?<!\w)(?:[nr]\d+|' + '|'.join(map(re.escape, sorted(public_ids))) + r')(?!\w)', re.I)
+    for node_id in ids:
+        prose = row['texts'][node_id]
+        match = id_pattern.search(prose)
+        if match:
+            return None, f'node/rule ID in prose at {node_id}: {match.group()}'
+        for parenthetical in re.findall(r'\(([^()]*)\)', prose):
+            normalized = ' '.join(parenthetical.casefold().split())
+            for sense in senses:
+                if re.search(r'(?<!\w)' + re.escape(sense) + r'(?!\w)', normalized):
+                    return None, f'parenthetical glossary sense at {node_id}: {sense}'
+    return {node_id: row['texts'][node_id] for node_id in ids}, None
 
 
 FRAMES = (
