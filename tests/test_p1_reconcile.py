@@ -84,9 +84,9 @@ def test_real_reconciliation_preserves_every_call_and_quotes_exact_caps(tmp_path
     shutil.copytree(source / 'runs', tmp_path / 'runs')
     shutil.copytree(source / 'results', tmp_path / 'results')
     historical_ledger(tmp_path / 'runs/study/costs.jsonl')
-    p1.write_json(tmp_path / 'results/probe.json', {'status': 'complete', 'schedule': 'replication_gemini_e5_2turn'})
+    p1.write_json(tmp_path / 'results/probe.json', {'status': 'complete', 'schedule': 'replication_3turn'})
     inventory = p1.inventory()
-    ceilings = {s: p1.split_ceiling('replication_gemini_e5_2turn', s, worst_case=True) for s in ('dev', 'scored')}
+    ceilings = {s: p1.split_ceiling('replication_3turn', s, worst_case=True) for s in ('dev', 'scored')}
     monkeypatch.setattr(p1, 'HERE', tmp_path)
     monkeypatch.setattr(p1, 'inventory', lambda: inventory)
     monkeypatch.setattr(p1, 'split_ceiling', lambda name, split, **kwargs: ceilings[split])
@@ -95,7 +95,7 @@ def test_real_reconciliation_preserves_every_call_and_quotes_exact_caps(tmp_path
     ledger.reserve_block('obsolete', 20, schedule='full_256', split='dev')
     with ledger.locked() as (f, _):
         ledger.append(f, {'event': 'block_reserve', 'block_id': 'completed', 'ceiling_usd': '1',
-                          'schedule': 'replication_gemini_e5_2turn'})
+                          'schedule': 'replication_3turn'})
         ledger.append(f, {'event': 'block_complete', 'block_id': 'completed'})
     original = ledger.path.read_bytes()
     completions = [r for r in rows(ledger) if r['event'] == 'complete']

@@ -58,12 +58,12 @@ def test_schedule_and_strict_ceiling():
     plan = p1.inventory()['budget_scenarios'][name]
     assert plan['judges'] == ['replication'] and plan['sources'] == ['E4', 'E5']
     assert plan['pushback_turns'] == 2
-    assert p1.split_ceiling(name, 'scored') == p1.split_ceiling(name, 'scored', worst_case=True) == Decimal('13.5355362432')
+    assert p1.split_ceiling(name, 'scored') == p1.split_ceiling(name, 'scored', worst_case=True) == Decimal('17.9592162432')
     assert p1.remaining_dev_ceiling(name) == 0
-    assert p1.cumulative_ceiling(name, worst_case=True) == Decimal('15.72658000260')
+    assert p1.cumulative_ceiling(name, worst_case=True) == Decimal('20.15026000260')
     pending, committed, *_ = paid.Ledger.state(p1.read_jsonl(p1.HERE / 'runs/study/costs.jsonl'))
-    assert not pending
-    assert committed + p1.split_ceiling(name, 'scored') == Decimal('15.47658000260')
+    # Scored receipts now exist; compare retained pre-scored overhead only.
+    assert p1.budget_overhead(name) + p1.split_ceiling(name, 'scored') == Decimal('19.90026000260')
     assert sum(r['calls'] for r in plan['budget_rows'] if r['role'] == 'initial_judge') == 1336
     for item in p1.materials('scored'):
         assert not p1.scheduled(plan, 'pro', item)
@@ -114,7 +114,7 @@ def test_scored_gate_and_cap_reach_only_qwen_attacker_backends(tmp_path, monkeyp
            'judges': {'replication': {'passed': True}}}
     p1.write_json(tmp_path / 'checks/dev.json', dev)
     with pytest.raises(paid.PreflightError, match='earlier execution freeze'):
-        p1.run_split('scored', Decimal('15.47658000260'))
+        p1.run_split('scored', Decimal('19.90026000260'))
     dev['freeze_sha256'] = 'test'
     p1.write_json(tmp_path / 'checks/dev.json', dev)
     class DispatchBoundary(Exception):
@@ -126,9 +126,8 @@ def test_scored_gate_and_cap_reach_only_qwen_attacker_backends(tmp_path, monkeyp
     monkeypatch.setattr(p1_preflight, 'runtime_counter', lambda: None)
     # Exact quoted cap must admit the full block before constructing providers.
     with pytest.raises(DispatchBoundary):
-        p1.run_split('scored', Decimal('15.47658000260'))
+        p1.run_split('scored', Decimal('19.90026000260'))
     entries = p1.read_jsonl(tmp_path / 'runs/study/costs.jsonl')
-    block = entries[-1]
-    assert block['event'] == 'block_reserve'
-    assert block['schedule'] == 'replication_2turn'
-    assert Decimal(block['ceiling_usd']) == Decimal('13.5355362432')
+    block = next(r for r in reversed(entries) if r['event'] in ('block_reserve', 'amendment14_block'))
+    assert block['block_id'] == 'scored-amendment13-replication_2turn'
+    assert Decimal(block['ceiling_usd']) == Decimal('17.9592162432')

@@ -109,6 +109,12 @@ class PaidRequest:
     timeout_s: float = 120
     response_schema: dict | None = None
 
+    @property
+    def billed_output_cap(self):
+        # Amendment 14 changes accounting only; the provider wire and cache
+        # identity retain the attacker's 256-token visible-message request.
+        return JUDGE_OUTPUT_CAP if self.model == 'pro' and self.metadata.get('role') == 'attacker' else self.max_output_tokens
+
 
 @dataclass
 class PaidReply:
@@ -161,7 +167,7 @@ class Ledger:
         pending, committed, seen, revisions = {}, Decimal(0), set(), {}
         reservations = {}
         blocked = False
-        recovered = {r["halt_time"] for r in rows if r["event"] in ("smoke_recovery", "routing_recovery", "amendment8_halt_recovery")}
+        recovered = {r["halt_time"] for r in rows if r["event"] in ("smoke_recovery", "routing_recovery", "amendment8_halt_recovery", "amendment14_halt_recovery")}
         for row in rows:
             if row["event"] == "reserve":
                 pending[row["identity"]] = Decimal(row["ceiling_usd"])
@@ -189,6 +195,8 @@ class Ledger:
                     blocked = True
             elif row["event"] == "block_reserve":
                 pending["block:" + row["block_id"]] = Decimal(row["ceiling_usd"])
+            elif row["event"] == "amendment14_block":
+                pending["block:" + row["block_id"]] = Decimal(row["remaining_usd"])
             elif row["event"] == "block_release":
                 pending.pop("block:" + row["block_id"])
             elif row["event"] == "allowance":
@@ -241,7 +249,7 @@ class Ledger:
     def reserve_block(self, block_id, ceiling, *, resume=False, schedule=None, split=None):
         with self.locked() as (f, rows):
             pending, spent, _, _, blocked = self.state(rows)
-            prior = next((r for r in rows if r['event'] == 'block_reserve' and r['block_id'] == block_id), None)
+            prior = next((r for r in reversed(rows) if r['event'] in ('block_reserve', 'amendment14_block') and r['block_id'] == block_id), None)
             if resume and prior:
                 if Decimal(prior['ceiling_usd']) != Decimal(str(ceiling)):
                     raise PreflightError('resumed block ceiling changed')
@@ -281,11 +289,11 @@ class Ledger:
     def reserve(self, request):
         if request.max_input_tokens <= 0 or request.max_output_tokens <= 0:
             raise ValueError("request token ceilings must be positive")
-        ceiling = cost(request.model, request.max_input_tokens, request.max_output_tokens, arm=request.metadata.get('arm'))
+        ceiling = cost(request.model, request.max_input_tokens, request.billed_output_cap, arm=request.metadata.get('arm'))
         with self.locked() as (f, rows):
             pending, spent, seen, revisions, blocked = self.state(rows)
             history = [r for r in rows if r.get("identity") == request.identity]
-            recovered = {r['halt_time'] for r in rows if r['event'] == 'amendment8_halt_recovery'}
+            recovered = {r['halt_time'] for r in rows if r['event'] in ('amendment8_halt_recovery', 'amendment14_halt_recovery')}
             for row in rows:
                 if row['event'] in ('panel_halt', 'panel_validation_halt') and row['model'] == request.model and row['time'] not in recovered:
                     raise InfrastructureError(row['error'])
@@ -347,6 +355,8 @@ class Ledger:
     def cached_reply(self, request):
         """Reuse the original matching output, including malformed trial outputs."""
         with self.locked() as (_, rows):
+            recovered = {r['halt_time'] for r in rows if r['event'] in
+                         ('amendment8_halt_recovery', 'amendment14_halt_recovery')}
             reservation = reply = None
             halted = False
             for row in rows:
@@ -357,7 +367,7 @@ class Ledger:
                 elif row["event"] == "complete":
                     reply = row
                 elif row["event"] in ("halt", "panel_validation_halt"):
-                    halted = True
+                    halted |= row['time'] not in recovered
             if reply is not None and not halted:
                 for key in ("model", "messages", "tools", "max_input_tokens", "max_output_tokens", "response_schema"):
                     if reservation.get(key) != getattr(request, key):
@@ -366,6 +376,62 @@ class Ledger:
                     raise PreflightError('cached trial request changed')
                 return PaidReply(**{k: reply[k] for k in PaidReply.__dataclass_fields__})
         return None
+
+    def amend_attacker_billing(self, block_id, ceiling):
+        """Amendment 14: append recovery and reopen the same scored envelope.
+
+        Only a reconciled Gemini attacker output overrun within 1,024 is
+        recoverable. Keep request IDs, responses, receipts and costs untouched.
+        """
+        with self.locked() as (f, rows):
+            pending, spent, _, _, blocked = self.state(rows)
+            if blocked or any(not k.startswith('block:') for k in pending):
+                raise PreflightError('Amendment 14 requires reconciled billing')
+            recovered = {r['halt_time'] for r in rows if r['event'] == 'amendment14_halt_recovery'}
+            events = []
+            for halt in rows:
+                if (halt['event'] != 'panel_validation_halt' or halt['time'] in recovered
+                        or halt.get('model') != 'pro' or not halt['identity'].startswith('scored/')
+                        or halt['error'] != 'provider exceeded per-call token cap'):
+                    continue
+                history = [r for r in rows if r.get('identity') == halt['identity']]
+                req = next(r for r in history if r['event'] == 'reserve')
+                reply = next(r for r in history if r['event'] == 'complete')
+                if (req['metadata'].get('role') != 'attacker' or req['max_output_tokens'] != 256
+                        or req['metadata'].get('block_id') != block_id
+                        or reply['input_tokens'] > req['max_input_tokens']
+                        or not 256 < reply['billed_output_tokens'] <= JUDGE_OUTPUT_CAP
+                        or reply['output_tokens'] > 256):
+                    continue
+                prior_revisions = {r['revision'] for r in rows if r['event'] == 'complete'
+                                   and r.get('model') == 'pro' and r['time'] < halt['time']}
+                listed = cost('pro', reply['input_tokens'], reply['billed_output_tokens'])
+                if prior_revisions != {reply['revision']} or Decimal(reply['cost_usd']) > listed:
+                    raise PreflightError('Amendment 14 cannot recover revision or price mismatch')
+                events.append({'event': 'amendment14_halt_recovery', 'halt_time': halt['time'],
+                               'identity': halt['identity'], 'sample': False,
+                               'reason': 'attacker visible cap 256; billed-output cap 1024; reuse completed reply'})
+            prior = next((r for r in rows if r['event'] == 'block_reserve' and r['block_id'] == block_id), None)
+            amended = next((r for r in rows if r['event'] == 'amendment14_block' and r['block_id'] == block_id), None)
+            if prior and not amended:
+                identities = {r['identity'] for r in rows if r['event'] == 'reserve'
+                              and r['metadata'].get('block_id') == block_id}
+                consumed = sum((Decimal(r.get('cost_usd', '0')) + Decimal(r.get('infrastructure_hold_usd', '0'))
+                                for r in rows if r.get('identity') in identities
+                                and r['event'] in ('complete', 'infrastructure_failure', 'panel_halt')), Decimal(0))
+                remaining = Decimal(str(ceiling)) - consumed
+                other = sum((v for k, v in pending.items() if k != 'block:' + block_id), Decimal(0))
+                if remaining < 0 or spent + other + remaining > self.cap:
+                    raise BudgetExceeded('Amendment 14 commitments exceed --cap-usd')
+                events.append({'event': 'amendment14_block', 'block_id': block_id,
+                               'ceiling_usd': str(ceiling), 'consumed_usd': str(consumed),
+                               'remaining_usd': str(remaining), 'sample': False,
+                               'reason': 'resume same assignments; subtract all completed costs and retain holds'})
+            elif amended and Decimal(amended['ceiling_usd']) != Decimal(str(ceiling)):
+                raise PreflightError('Amendment 14 ceiling changed')
+            for event in events:
+                self.append(f, event)
+            return events
 
     def amended_dev_request(self, request):
         """Only the approved dev exception may replace a changed request.
@@ -752,7 +818,7 @@ class PaidClient:
         revision = revisions.get(revision_key(request.model, reply.response))
         reply.latency_s = time.monotonic() - start
         error = None
-        if reply.input_tokens > request.max_input_tokens or reply.billed_output_tokens > request.max_output_tokens:
+        if reply.input_tokens > request.max_input_tokens or reply.billed_output_tokens > request.billed_output_cap:
             error = "provider exceeded per-call token cap"
         elif revision and revision != reply.revision:
             error = "served model revision changed; amendment required"
