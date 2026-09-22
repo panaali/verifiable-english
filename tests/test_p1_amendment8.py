@@ -150,8 +150,8 @@ def test_1024_billed_cap_including_thinking(tmp_path):
 
 def test_running_mean_planning_is_not_a_worst_case_ceiling():
     total = sum((p1.split_ceiling('full_256', split) for split in ('dev', 'scored')), Decimal(0)) + Decimal('1.8069')
-    assert total == Decimal('36.3146973888')
-    assert p1.STUDY_CAP_USD == 36
+    assert total == Decimal('49.8991773888')  # Amendment 9 inputs and one attacker retry.
+    assert p1.STUDY_CAP_USD == 40
 
 
 def test_real_dev_evidence_is_retained_and_recovery_spends_nothing(tmp_path):

@@ -95,7 +95,7 @@ def token_requests(judge='pro'):
                 req = p.request(item, arm, judge, 256)
                 yield req, 0
                 history = req.messages + [{'role': 'assistant', 'content': ''}]
-                generated = 1024
+                generated = p.JUDGE_OUTPUT_CAP
                 if arm == 'R':
                     call = {'id': 'preflight-replay', 'name': 'replay', 'arguments': {'item_id': item['id']}}
                     assistant = {'role': 'assistant', 'content': '', 'tool_calls': [{
@@ -112,7 +112,7 @@ def token_requests(judge='pro'):
                     attacker = [{'role': 'system', 'content': (p.HERE / 'prompts/attacker.txt').read_text()},
                                 *wrappers[1:], {'role': 'user', 'content': 'Provide the next proposer message.'}]
                     for phase, messages in (('attacker', attacker), ('pushback', wrappers)):
-                        yield p.request(item, arm, judge, 256, phase=phase, turn=3, messages=messages, tools=[]), generated + 3840
+                        yield p.request(item, arm, judge, 256, phase=phase, turn=3, messages=messages, tools=[]), generated + p.PUSHBACK_HISTORY_RESERVE
 
 
 def tokenize(backend, judge='pro'):
@@ -184,13 +184,22 @@ def cached_vertex_tokens():
 def preflight(offline=False):
     p.export()
     stamp = p.freeze_execution()
+    freeze = json.loads((p.HERE / 'freeze.json').read_text())
+    selected = freeze['selected_schedule']
+    budget = freeze['cost_ceilings'].get(selected, {})
+    print(f"Selected {selected} all-in ceiling: ${budget.get('all_in_ceiling_usd', 'unavailable')}; study cap: ${p.STUDY_CAP_USD}", flush=True)
+    if not budget.get('within_study_cap', False):
+        fallback = freeze['cost_ceilings']['primary_1024']['all_in_ceiling_usd']
+        print(f'Budget stop; primary-only primary_1024 fallback all-in ceiling: ${fallback}; no schedule switch or dispatch', flush=True)
     results = {}
     for name, fn in (('known-answer', p.known_answer), ('lean-replay', lean),
                      ('semantic-pairs', semantic_pairs), ('test-suite', test_suite),
                      ('external-timestamp', timestamp), ('tokenizer', cached_vertex_tokens if offline else lambda: tokenize(p.VertexBackend()))):
         results[name] = receipt(name, stamp, fn)
     refresh_status()
-    return 0 if all(r['passed'] for r in results.values()) else 2
+    if not all(r['passed'] for r in results.values()):
+        return 2
+    return 0 if budget.get('within_study_cap', False) else 3
 
 
 class CommandCounter:

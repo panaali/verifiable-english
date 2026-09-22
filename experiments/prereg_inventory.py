@@ -15,8 +15,15 @@ ROOT = Path(__file__).resolve().parents[1]
 RATES = {"pro": (2.0, 12.0, 1.0), "replication": (.36, .40, 1.055),
          "weak": (.02, .04, 1.055)}
 
+# Amendment 9: ceil(1.10 * maximum bounded joint fixture / 100) * 100.
+# Each tuple is (attacker, pushback judge); see the dated calculation table.
+P1_PUSHBACK_INPUT_BOUNDS = {"V": (7500, 7500), "W": (7400, 7500),
+                          "A": (9900, 9900), "F": (7800, 7900), "R": (11000, 11100)}
+
 def p1_input_bound(arm, phase):
-    """Amendment 3: preserve probe and every non-A/R arm's original bounds."""
+    """Amendments 3/9: joint pushback bounds; initial/replay/probe unchanged."""
+    if phase in ("attacker", "pushback") and arm in P1_PUSHBACK_INPUT_BOUNDS:
+        return P1_PUSHBACK_INPUT_BOUNDS[arm][phase == "pushback"]
     original = {"initial": 3072, "probe": 3072, "replay": 4096,
                 "attacker": 4096, "pushback": 6144}[phase]
     return 6800 if arm in ("A", "R") and phase != "probe" else original
@@ -52,7 +59,7 @@ def p1():
     def price_row(arm, role, model, calls, inp, out):
         rates = ((.22, .22, 1.055) if arm == "R" else (.02, .05, 1.055)) if model == "weak" else None
         row = cost_row(arm, role, model, calls, inp, out, rates)
-        cap = 4096 if role == 'billed_output_probe' else 256 if role == 'adaptive_proposer_against_pro' else 1024
+        cap = 4096 if role == 'billed_output_probe' else 256 if role.startswith('adaptive_proposer') else 1024
         row.update(planning_billed_output_per_call=out, max_billed_output_per_call=cap,
                    max_output_tokens=calls*cap, output_accounting='USD uses planning mean; cap reserved per dispatch')
         return row
@@ -105,6 +112,7 @@ def p1():
                 if full and model == "pro" and arm != "U":
                     budget.append(price_row(arm, "pushback_judge", model, 28*3, p1_input_bound(arm, "pushback"), 256))
                     budget.append(price_row(arm, "adaptive_proposer_against_pro", model, 28*3, p1_input_bound(arm, "attacker"), 256))
+                    budget.append(price_row(arm, "adaptive_proposer_truncation_retry", model, 28*3, p1_input_bound(arm, "attacker"), 256))
             budget.append(price_row("F_correct", "initial_judge", model, 136, 3072, output))
         # Reserve a full $1 for the probe, including its explicit row ceiling.
         probe_buffer = round(1 - budget[0]["usd"], 8)
@@ -114,8 +122,8 @@ def p1():
             judges=list(RATES) if full else ["pro"], pushback=full,
             max_scheduled_api_usd=total, scheduled_calls=sum(r["calls"] for r in budget),
             local_accounting_allowance_usd=.25,
-            unallocated_reserve_usd=round(36-total-.25-.5569, 8))
-        scenarios[name]["within_study_cap"] = total + .25 + .5569 <= 36
+            unallocated_reserve_usd=round(40-total-.25-.5569, 8))
+        scenarios[name]["within_study_cap"] = total + .25 + .5569 <= 40
         scenarios[name]["cumulative_with_existing_allowances_usd"] = round(total + .25 + .5569, 8)
     budget = scenarios["full_256"]["budget_rows"]
     # These are label-routing unit fixtures, not the eventual channel/harness tests.
@@ -136,7 +144,7 @@ def p1():
                     pushback_items=28, pushback_rounds=3, pushback_judge_panels=1),
         fixture_checks=dict(oracle_accuracy=oracle, random_accuracy=round(chance, 8), chance=.5,
                             scope="label-routing fixture only; provider/channel/scorer integration tests still required"),
-        rates_per_million=RATES, budget_rows=budget, hard_cap_usd=36,
+        rates_per_million=RATES, budget_rows=budget, hard_cap_usd=40,
         probe_ceiling_usd=1, probe_unused_allowance_usd=scenarios["full_256"]["probe_unused_allowance_usd"],
         budget_scenarios=scenarios,
         output_probe_policy={"running_window": 50, "mean_le_512": "full_256",

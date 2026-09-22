@@ -1,19 +1,18 @@
 # P1 execution
 
-## Current status — Amendment 8
+## Current status — Amendment 9
 
-Structured verdicts and the 1,024-token judge cap are implemented. Both previous
-validation halts are cleared append-only; original evidence and all costs remain.
-No new generations were made (**worker $0**). The ledger contains **279** dev
-completions, not the earlier 54-call checkpoint: **267 judge requests require
-repurchase**, plus up to 12 attacker requests if their histories change.
+The study cap is **$40**. Computed joint-history input bounds include a 10%
+margin with 1,024 tokens per judge response and 256 per attacker response.
+Attacker output is capped at 256; truncation gets one retry, then that item/arm
+pushback is infrastructure-incomplete and excluded from behavioural metrics.
 
-At a 256-token planning mean, the full all-in amount is **$36.5960706577**
-(including retained dev costs/holds), **+$0.8778071377** over the former figure.
-The unchanged **$36 cap blocks dispatch**. Revised future-history reserves also
-exceed Gemini input bounds in **206/1,816** fixtures (maximum 10,015).
-Both native OpenRouter fixture sets pass 1,536/1,536. Details, prices, replacement
-accounting and authorization are in [Amendment 8](PROPOSED-AMENDMENT.md).
+The selected `full_256` all-in ceiling is **$50.1805506577**, including retained
+costs/holds and all possible attacker retries. Input-bound changes alone already
+raise it to $41.5655106577. **Dispatch remains budget-blocked**; no additional
+cap increase or schedule switch was made. The primary-only `primary_1024`
+fallback ceiling is **$25.1843372689**. Worker spending is **$0**.
+See [Amendment 9](PROPOSED-AMENDMENT.md) for the calculation and decision.
 
 Zero-generation gate commands:
 
@@ -23,14 +22,14 @@ uv run python experiments/P1-deference/run_p1.py preflight --offline
 uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
 ```
 
-Computed dev command, **blocked until budget and history gates are resolved**:
+Computed selected-schedule dev command, **still budget-blocked; not run**:
 
 ```sh
-uv run python experiments/P1-deference/run_p1.py dev --cap-usd 7.0875964305
+uv run python experiments/P1-deference/run_p1.py dev --cap-usd 9.0282364305
 ```
 
-The remaining sections describe the pre-Amendment-8 execution history; the
-current contract, bounds, accounting and replacement rules above supersede them.
+The remaining sections describe execution history; the current contract,
+bounds, accounting and replacement rules above supersede them.
 
 The approved replacement probe is complete (10 valid responses), selecting
 `full_256`. Original attempts remain in `results/probe-attempt{1,2}.json` and
@@ -52,14 +51,14 @@ Lean once if missing), semantic pairs, the entire non-live pytest suite,
 external timestamp inspection, and Vertex countTokens under ADC. It performs
 no model generations. Each gate records its own outcome and freeze digest;
 exceptions produce failed receipts, never recycled passes. Independent gates
-continue after failure. Exit 0 means these six gates passed, not provider/dev
-readiness. `freeze.json.dev_blockers` also includes pending provider preflight.
+continue after failure. Exit 0 means these six gates and the schedule budget passed, not provider/dev
+readiness. Exit 3 means the schedule exceeds the study cap. `freeze.json.dev_blockers` also includes pending provider preflight.
 
 The Vertex gate covers all 200 dev+scored items in all arms: 1,336 initial
 prompts, 200 replay continuations, and 280 maximal joint pushback histories.
 The latter count the full attacker/judge wire including replay results and
-six role wrappers, reserving six times 256 generated tokens plus the initial
-response and (for R) replay-call output. Future native response signatures
+six role wrappers, reserving three times (1,024 judge + 256 attacker) generated tokens plus the initial
+1,024-token response and (for R) 1,024-token replay-call output. Future native response signatures
 cannot be known offline; every actual transcript is counted again before
 runtime dispatch with no truncation. These counts are only for Gemini.
 

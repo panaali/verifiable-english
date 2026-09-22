@@ -10,8 +10,8 @@
   "block_shuffle_seed": 20260921,
   "commands": {
     "full_256/analyze": "uv run python experiments/P1-deference/run_p1.py analyze experiments/P1-deference/runs/scored/trials.jsonl --schedule full_256",
-    "full_256/dev": "uv run python experiments/P1-deference/run_p1.py dev --cap-usd 7.08759643050",
-    "full_256/scored": "uv run python experiments/P1-deference/run_p1.py scored --cap-usd 36.34607065770",
+    "full_256/dev": "uv run python experiments/P1-deference/run_p1.py dev --cap-usd 9.02823643050",
+    "full_256/scored": "uv run python experiments/P1-deference/run_p1.py scored --cap-usd 49.93055065770",
     "known-answer": "uv run python experiments/P1-deference/run_p1.py known-answer --lean-replay --freeze",
     "preflight": "uv run python experiments/P1-deference/run_p1.py preflight",
     "preflight-openrouter": "uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50",
@@ -34,14 +34,16 @@
   ],
   "cost_ceilings": {
     "full_256": {
-      "dev_calls_usd": "5.2493231616",
-      "dev_cumulative_with_probe_usd": "7.08759643050",
+      "all_in_ceiling_usd": "50.18055065770",
+      "dev_calls_usd": "7.1899631616",
+      "dev_cumulative_with_probe_usd": "9.02823643050",
       "local_allowance_usd": 0.25,
-      "scored_calls_usd": "29.2584742272",
-      "scored_cumulative_with_probe_usd": "36.34607065770",
+      "scored_calls_usd": "40.9023142272",
+      "scored_cumulative_with_probe_usd": "49.93055065770",
       "within_study_cap": false
     },
     "primary_1024": {
+      "all_in_ceiling_usd": "25.18433726890",
       "dev_calls_usd": "2.717184",
       "dev_cumulative_with_probe_usd": "4.55545726890",
       "local_allowance_usd": 0.25,
@@ -50,6 +52,7 @@
       "within_study_cap": true
     },
     "primary_512": {
+      "all_in_ceiling_usd": "18.49966526890",
       "dev_calls_usd": "1.930752",
       "dev_cumulative_with_probe_usd": "3.76902526890",
       "local_allowance_usd": 0.25,
@@ -59,8 +62,7 @@
     }
   },
   "dev_blockers": [
-    "selected schedule exceeds $36 study cap",
-    "tokenizer"
+    "selected schedule exceeds $40 study cap"
   ],
   "external_timestamp": {
     "bitcoin_confirmed": false,
@@ -72,9 +74,9 @@
       "info",
       "/Users/seyran/code/ve-codex/experiments/PREREG-HASHES.txt.ots"
     ],
-    "completed_at": "2026-09-22T04:04:55.252681+00:00",
+    "completed_at": "2026-09-22T04:18:25.404037+00:00",
     "exit_code": 0,
-    "freeze_sha256": "cf4c3ea3b9870be6793afebc4bc4165165a2b950c85ed7abfb956dd089694133",
+    "freeze_sha256": "cc7ff44753f222d2c1840be50f0f3de27601725a73d5bee8b917c900afbae8c1",
     "hash_file_sha256": "d9d0907811f4c9389415bde81538c944e72f5a567535adff41a27c0d7900782c",
     "passed": true,
     "pending_calendar_sufficient_for_pilot": true,
@@ -93,9 +95,9 @@
     "experiments/E5/dev.jsonl.gz": "34fc16fa63c3eb03baa3b9ac7c92e773a73c74656327f7bff81e603da621fa89",
     "experiments/E5/scored.jsonl.gz": "bb8ca9b53fcc3ece82e8438eaba22831b7bc69824d317dc720165d8f2751a766",
     "experiments/P1-deference/PREREG.md": "382bdc87ca651b962439294c1e1f4819c108ca7663e08c33db9d6444548f3145",
-    "experiments/P1-deference/PROPOSED-AMENDMENT.md": "dd9701f346a069a6de25fea1e2015b1473b72c4152c9a2ce550895f3eeff1674",
+    "experiments/P1-deference/PROPOSED-AMENDMENT.md": "3c599033bbb1fcdd71a1936701b8a753f24152065da6aca44546b23461aaf650",
     "experiments/P1-deference/checks/amendment8.json": "a8bdc5b5aaaa6676c474b12c6abc9c5f968f8832d7f7899263e418cfa4a3b6d0",
-    "experiments/P1-deference/inventory.json": "0561f808e76b26b47b714bb882cc7502a9e2764c8c1040e3f6110d787c7858f6",
+    "experiments/P1-deference/inventory.json": "8daec03fb9a353aea0a770ed682a8ae49310bf6b2b8d753f5280553df9704916",
     "experiments/P1-deference/labels.jsonl.gz": "d7fd48edfbe6fa9bab5324c94d5773dd6b0639c945803dea6d61676c9632f8ee",
     "experiments/P1-deference/materials/dev.jsonl.gz": "d8ae29da2a00594465e302c333bf7aa0d6e622d8217ada1c9c534e742512cf85",
     "experiments/P1-deference/materials/scored.jsonl.gz": "b3a03dd33185196682542afab4c3a0aaa307680fc4f95b70b028279578cf6984",
@@ -112,9 +114,9 @@
     "experiments/PREREG-DESIGN.md": "0f2663058122bde90998f5bdd98b6e933d419315caaad026ff9ef60c45d1f0b5",
     "experiments/PREREG-HASHES.txt": "d9d0907811f4c9389415bde81538c944e72f5a567535adff41a27c0d7900782c",
     "experiments/PREREG-HASHES.txt.ots": "cbc690fe42ee666e6404799935b18356c3a467d7375fcceb7788a8b4b16241a0",
-    "experiments/p1.py": "e956ef868df37f3083c24ceabdffdcb80280b5551c77af70496959f8158546c4",
-    "experiments/p1_preflight.py": "063f020093616554b4e64ae5caa898bd366589ce14b9270c5c19b86061cbc5d4",
-    "experiments/prereg_inventory.py": "7df87f3fba45cf8c046fcbeaee05f760eb3967c8378d40baedaaa7fe9070ba54",
+    "experiments/p1.py": "dc04c5e244b882409b193ec188bd1ba74d67ff9b1a25d65bc83880921fb659d3",
+    "experiments/p1_preflight.py": "6c64a514b6398dc41dcb1cf14e57110a1078c63f956273e20c03bb332d2a6455",
+    "experiments/prereg_inventory.py": "43ebaaed8a4c77ce877816ad794b8d2b0c0721737fb2c16124c1ec47f87c33c7",
     "lean/Main.lean": "9df9e7b5fddfa4d33081ed8b19548e0d35c40df2e1d364d7d4238fea5298edb4",
     "lean/VE.lean": "15bbf66aa01ecc2f24b903e15e16e705b0d9bdf76b36146a4dd323c262665527",
     "lean/VE/Audit.lean": "c38f56cebe31c803a3b52231f49920fdcc1561748d53815e655f7420352de050",
@@ -192,11 +194,12 @@
     "tests/test_lexicon.py": "cd71e66087fa3e4ee134a4dc1d6c82903d63056028126db1bb1b841802212b5e",
     "tests/test_llm.py": "38595ec4bda056fba416b28aec0df8b449ac0bbc27a17f49df8ca4c554deac05",
     "tests/test_p1.py": "dd7d0f8450b22c35c72ef7a23fcce6e01b98bce1687c9a680f08c672584819ce",
-    "tests/test_p1_amendment7.py": "071eb0cfb82d0e625276876be71cff20b590bfd7254fdec2de4a19458c72c17d",
-    "tests/test_p1_amendment8.py": "e4f3d1926fee56b961ec87b6ea166ea211eb39f42499f307afe2acf05e681eb3",
+    "tests/test_p1_amendment7.py": "9cf0cafec79cdb17406ca64005e7339b7daefaaeeb8cc8d2d2b28bbd96a3a8a1",
+    "tests/test_p1_amendment8.py": "1fcdaef2a96829f1d3a92c334c2a9ee12eda4b3a900c4deaea068d9723064135",
+    "tests/test_p1_amendment9.py": "9e5db2d339addde2572b2d92d3c97ca298d9fce71dc433f4e2d0370af452d178",
     "tests/test_p1_infrastructure.py": "d8516b0e14e377e8347be689434527810b0cba07ccca64bf615ed36d3ad23842",
     "tests/test_p1_native_counter.py": "3fff9b06c8a19807ffb83703a8fc04ce198b53fbc7447756b09d9fc7f50f7079",
-    "tests/test_p1_preflight.py": "749c5d0eb5b6779b76ae81afc0fc39cbd20b0a63303af64bf8dddfe29778a56a",
+    "tests/test_p1_preflight.py": "d7475331814049102835444cc512bdfc50ed2fe0a9593b7bf479dccd50d2fde4",
     "tests/test_parser_renderer.py": "a6e15ce7daff0790d1b8b04c3e7f492d2809875bbd89579d530cbab2d5dd0736",
     "tests/test_properties.py": "a75861a0780074fff63a2c773852413689b215f82f0f6f5c65c5c5e2026ba26d",
     "tests/test_propose.py": "d1745981d1b5d0bbe241314bec35ba5728cc5b30c8da33ba62ebda1a527972f9",
@@ -213,7 +216,7 @@
     "ve_experiments/paid.py": "299d8bf6fc112d3bbbb4ecf6cab9b107f1c541a6e29151c3422436d5d05f753e"
   },
   "judge_output_cap": 1024,
-  "manifest_sha256": "cf4c3ea3b9870be6793afebc4bc4165165a2b950c85ed7abfb956dd089694133",
+  "manifest_sha256": "cc7ff44753f222d2c1840be50f0f3de27601725a73d5bee8b917c900afbae8c1",
   "models": {
     "pro": "gemini-3.1-pro-preview",
     "replication": "qwen/qwen-2.5-72b-instruct",
@@ -243,8 +246,7 @@
   "temperature": 0,
   "thinking_level": "LOW",
   "unresolved": [
-    "selected schedule exceeds $36 study cap",
-    "tokenizer",
+    "selected schedule exceeds $40 study cap",
     "dev capability gate (not run)"
   ],
   "verdict_schema": {
