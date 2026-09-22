@@ -255,7 +255,7 @@ def test_stopped_split_does_not_score_infrastructure_as_output(tmp_path, monkeyp
     monkeypatch.setattr(p1, 'arms', lambda _: ['V'])
     monkeypatch.setattr(p1, 'inventory', lambda: {'budget_scenarios': {
         'full_256': {'sources': ['E4'], 'judges': ['pro'], 'pushback': False}}})
-    monkeypatch.setattr(p1, 'split_ceiling', lambda *a: Decimal('.01'))
+    monkeypatch.setattr(p1, 'split_ceiling', lambda *a, **kw: Decimal('.01'))
     monkeypatch.setattr(p1, 'VertexBackend', lambda: OfflineBackend(lambda _: pytest.fail('dispatch')))
     monkeypatch.setattr(p1, 'analyze', lambda *a, **kw: pytest.fail('incomplete run must not score missing samples'))
     def fail(*a): raise failure

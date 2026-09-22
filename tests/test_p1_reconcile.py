@@ -10,6 +10,13 @@ from experiments import p1
 from ve_experiments import paid
 
 
+def historical_ledger(path):
+    receipt = json.loads((p1.HERE / 'checks/amendment12.json').read_text())
+    data = (p1.HERE / 'runs/study/costs.jsonl').read_bytes()
+    path.write_bytes(b''.join(data.splitlines(keepends=True)[:receipt['ledger_prefix_lines']]))
+    assert p1.sha(path) == receipt['ledger_prefix_sha256']
+
+
 def rows(ledger):
     return p1.read_jsonl(ledger.path)
 
@@ -76,6 +83,8 @@ def test_real_reconciliation_preserves_every_call_and_quotes_exact_caps(tmp_path
     source = p1.HERE
     shutil.copytree(source / 'runs', tmp_path / 'runs')
     shutil.copytree(source / 'results', tmp_path / 'results')
+    historical_ledger(tmp_path / 'runs/study/costs.jsonl')
+    p1.write_json(tmp_path / 'results/probe.json', {'status': 'complete', 'schedule': 'replication_gemini_e5_2turn'})
     inventory = p1.inventory()
     ceilings = {s: p1.split_ceiling('replication_gemini_e5_2turn', s, worst_case=True) for s in ('dev', 'scored')}
     monkeypatch.setattr(p1, 'HERE', tmp_path)
@@ -112,7 +121,7 @@ def test_real_reconciliation_preserves_every_call_and_quotes_exact_caps(tmp_path
 
 def test_all_real_gemini_e4_calls_reused_and_old_qwen_calls_stale(tmp_path):
     ledger = paid.Ledger(tmp_path / 'ledger', 40)
-    ledger.path.write_bytes((p1.HERE / 'runs/study/costs.jsonl').read_bytes())
+    historical_ledger(ledger.path)
     items = [i for i in p1.materials('dev') if i['assignment']['source'] == 'E4']
     def fail(_):
         pytest.fail('completed Gemini E4 call must not be dispatched')

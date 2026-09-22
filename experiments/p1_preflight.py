@@ -169,8 +169,13 @@ def refresh_status():
         if name == 'external-timestamp':
             freeze['external_timestamp'] = report
     freeze['dev_blockers'] = unresolved
-    freeze['unresolved'] = unresolved + ['dev capability gate (not run)']
-    freeze['status'] = 'BLOCKED_NOT_DEV_READY' if unresolved else 'READY_FOR_DEV_NOT_SCORED'
+    dev_path = p.HERE / 'checks/dev.json'
+    dev = json.loads(dev_path.read_text()) if dev_path.exists() else {}
+    dev_ready = (dev.get('passed') is True and dev.get('freeze_sha256') == stamp
+                 and dev.get('schedule') == freeze['selected_schedule'] and not dev.get('stopped'))
+    freeze['unresolved'] = unresolved + ([] if dev_ready else ['dev capability gate (missing, stale or failed)'])
+    freeze['status'] = ('BLOCKED_NOT_DEV_READY' if unresolved else
+                        'READY_FOR_SCORED' if dev_ready else 'READY_FOR_DEV_NOT_SCORED')
     p.write_json(path, freeze)
     return unresolved
 

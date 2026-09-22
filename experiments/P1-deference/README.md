@@ -1,45 +1,41 @@
 # P1 execution
 
-## Current status — Amendment 12b and ledger reconciliation
+## Current status — Amendment 13
 
-Gemini/E4 is a **dev-ceiling result: 0/112 errors**, descriptive 95% Wilson
-interval **0–3.3161%**; scored Gemini/E4 is paused and is not bought.
-The selected scenario is **`replication_gemini_e5_2turn`**: Qwen E4+E5 and Gemini
-E5, all initial arms, original five pushback arms, two turns, Gemini attacker.
-Its preregistered strict all-in ceiling is **$37.87522391850**, including retained costs/holds and allowances,
-under the unchanged **$40** cap. Weak control is **not run**.
+Gemini E4 and E5 are **dev-ceiling results**, respectively **0/112** errors
+(95% Wilson 0–3.3161%) and **0/96** (0–3.8476%). Neither is bought as a scored
+judge. Their harm contrasts are **“no harm observable at ceiling”**; these
+judgment-level intervals are descriptive because items repeat across arms.
 
-Qwen remains the preregistered **REPLICATION** judge; scored contrasts are
-**exploratory-primary (judge substitution due to ceiling)**. A new dev gate is
-required. The 240 old Qwen completions predate Amendment 8 and cannot pass the
-new gate. Its full dev calls ceiling is **$6.15099840640**.
-Completed requests with identical settings and histories are reused across schedules,
-including amended identities. The Gemini E4 ceiling result remains unchanged.
-Worker paid calls/spend: **0 / $0**; dev and scored are not dispatched here.
-See [Amendment 12](PROPOSED-AMENDMENT.md#amendment-12) for all three ceilings,
-labels, gate conditions, and exact retained accounting.
+Selected **`replication_2turn`**: Qwen E4+E5, all initial arms, two pushback turns
+in V/W/A/F/R; Gemini remains the attacker. Qwen contrasts retain the
+**exploratory-primary (judge substitution due to ceiling)** label. Weak control
+is **not run**. F and U are excluded from the good-approval gate by design.
+
+The four Qwen/E4 R failures are model `unknown` abstentions: valid JSON, `stop`,
+no tool calls, no provider/harness error evidence. Keep all four as failures
+(**25%; contract 75%**) under the explicit audited dev-gate exception.
+The completed Qwen dev subset is revalidated locally; no dev rebuy is needed.
+See [Amendment 13](PROPOSED-AMENDMENT.md#amendment-13) and
+[the diagnosis receipt](checks/amendment13.json).
+
+Strict scored calls ceiling **$13.53553624320**, including **$9.84576** for the
+retained Gemini attacker/retries. With retained costs/holds and $0.25 local,
+the **all-in ceiling is $15.72658000260**. Worker paid calls/spend: **0 / $0**.
 
 ```sh
 export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
-uv run python experiments/P1-deference/run_p1.py preflight
+uv run python experiments/P1-deference/run_p1.py preflight --offline
 uv run python experiments/P1-deference/run_p1.py preflight-openrouter --cap-usd 0.50 --cached-only
+uv run python experiments/P1-deference/run_p1.py refresh-dev
 uv run python experiments/P1-deference/run_p1.py reconcile
-# Orchestrator: new dev gate required before scored dispatch.
-uv run python experiments/P1-deference/run_p1.py dev --cap-usd 6.85298379880
-uv run python experiments/P1-deference/run_p1.py scored --cap-usd 36.15997604200
+# Orchestrator; not dispatched by this worker:
+uv run python experiments/P1-deference/run_p1.py scored --cap-usd 15.47658000260
 ```
 
-`reconcile` is idempotent and makes no provider calls. It appends reasoned releases
-for superseded/completed study blocks and replaces unused probe/provider envelopes
-with actual receipts plus unresolved billing holds, including both prior probe
-attempts. It preserves all completed calls and charges, never clears an unresolved
-call, and retains selected live blocks. `checks/reconciliation.json` records the
-source hashes, accounting and exact cumulative API command caps; the $0.25 local
-allowance remains separate. Full split bounds include all replay/attacker retries;
-reuse and early concession do not discount them. Rerun reconciliation after new
-spend for updated caps. At this reconciliation: study completed costs
-$0.60778371370; all-ledger realised costs $0.64413983720; live holds
-$0.30784555520 (including local); remaining under $40 is $39.04801460760.
+`refresh-dev` verifies exact completed initial requests and reconstructed trials
+without a dispatch path. `reconcile` preserves receipts and unresolved billing
+holds and prints cumulative API command caps. Local allowance is separate.
 
 The remaining sections describe execution history; the current contract,
 bounds, accounting and replacement rules above supersede them.

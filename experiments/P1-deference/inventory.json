@@ -5294,6 +5294,333 @@
       "unallocated_reserve_usd": -9.13939103,
       "within_study_cap": false
     },
+    "replication_2turn": {
+      "amendment": 13,
+      "budget_rows": [
+        {
+          "arm": "V",
+          "calls": 200,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 204800,
+          "model": "replication",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 1024,
+          "role": "initial_judge",
+          "usd": 0.31977472
+        },
+        {
+          "arm": "V",
+          "calls": 56,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 7500,
+          "max_input_tokens": 420000,
+          "max_output_tokens": 57344,
+          "model": "replication",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 1024,
+          "role": "pushback_judge",
+          "usd": 0.18371517
+        },
+        {
+          "arm": "V",
+          "calls": 56,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 7500,
+          "max_input_tokens": 420000,
+          "max_output_tokens": 14336,
+          "model": "pro",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 256,
+          "role": "adaptive_proposer",
+          "usd": 1.012032
+        },
+        {
+          "arm": "V",
+          "calls": 56,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 7500,
+          "max_input_tokens": 420000,
+          "max_output_tokens": 14336,
+          "model": "pro",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 256,
+          "role": "adaptive_proposer_truncation_retry",
+          "usd": 1.012032
+        },
+        {
+          "arm": "W",
+          "calls": 200,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 204800,
+          "model": "replication",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 1024,
+          "role": "initial_judge",
+          "usd": 0.31977472
+        },
+        {
+          "arm": "W",
+          "calls": 56,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 7500,
+          "max_input_tokens": 420000,
+          "max_output_tokens": 57344,
+          "model": "replication",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 1024,
+          "role": "pushback_judge",
+          "usd": 0.18371517
+        },
+        {
+          "arm": "W",
+          "calls": 56,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 7400,
+          "max_input_tokens": 414400,
+          "max_output_tokens": 14336,
+          "model": "pro",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 256,
+          "role": "adaptive_proposer",
+          "usd": 1.000832
+        },
+        {
+          "arm": "W",
+          "calls": 56,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 7400,
+          "max_input_tokens": 414400,
+          "max_output_tokens": 14336,
+          "model": "pro",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 256,
+          "role": "adaptive_proposer_truncation_retry",
+          "usd": 1.000832
+        },
+        {
+          "arm": "A",
+          "calls": 200,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 1360000,
+          "max_output_tokens": 204800,
+          "model": "replication",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 1024,
+          "role": "initial_judge",
+          "usd": 0.6029536
+        },
+        {
+          "arm": "A",
+          "calls": 56,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 9900,
+          "max_input_tokens": 554400,
+          "max_output_tokens": 57344,
+          "model": "replication",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 1024,
+          "role": "pushback_judge",
+          "usd": 0.23476029
+        },
+        {
+          "arm": "A",
+          "calls": 56,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 9900,
+          "max_input_tokens": 554400,
+          "max_output_tokens": 14336,
+          "model": "pro",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 256,
+          "role": "adaptive_proposer",
+          "usd": 1.280832
+        },
+        {
+          "arm": "A",
+          "calls": 56,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 9900,
+          "max_input_tokens": 554400,
+          "max_output_tokens": 14336,
+          "model": "pro",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 256,
+          "role": "adaptive_proposer_truncation_retry",
+          "usd": 1.280832
+        },
+        {
+          "arm": "F",
+          "calls": 200,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 204800,
+          "model": "replication",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 1024,
+          "role": "initial_judge",
+          "usd": 0.31977472
+        },
+        {
+          "arm": "F",
+          "calls": 56,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 7900,
+          "max_input_tokens": 442400,
+          "max_output_tokens": 57344,
+          "model": "replication",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 1024,
+          "role": "pushback_judge",
+          "usd": 0.19222269
+        },
+        {
+          "arm": "F",
+          "calls": 56,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 7800,
+          "max_input_tokens": 436800,
+          "max_output_tokens": 14336,
+          "model": "pro",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 256,
+          "role": "adaptive_proposer",
+          "usd": 1.045632
+        },
+        {
+          "arm": "F",
+          "calls": 56,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 7800,
+          "max_input_tokens": 436800,
+          "max_output_tokens": 14336,
+          "model": "pro",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 256,
+          "role": "adaptive_proposer_truncation_retry",
+          "usd": 1.045632
+        },
+        {
+          "arm": "R",
+          "calls": 200,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 1360000,
+          "max_output_tokens": 204800,
+          "model": "replication",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 1024,
+          "role": "initial_judge",
+          "usd": 0.6029536
+        },
+        {
+          "arm": "R",
+          "calls": 200,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 6800,
+          "max_input_tokens": 1360000,
+          "max_output_tokens": 204800,
+          "model": "replication",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 1024,
+          "role": "post_replay_judge",
+          "usd": 0.6029536
+        },
+        {
+          "arm": "R",
+          "calls": 56,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 11100,
+          "max_input_tokens": 621600,
+          "max_output_tokens": 57344,
+          "model": "replication",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 1024,
+          "role": "pushback_judge",
+          "usd": 0.26028285
+        },
+        {
+          "arm": "R",
+          "calls": 56,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 11000,
+          "max_input_tokens": 616000,
+          "max_output_tokens": 14336,
+          "model": "pro",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 256,
+          "role": "adaptive_proposer",
+          "usd": 1.404032
+        },
+        {
+          "arm": "R",
+          "calls": 56,
+          "max_billed_output_per_call": 256,
+          "max_input_per_call": 11000,
+          "max_input_tokens": 616000,
+          "max_output_tokens": 14336,
+          "model": "pro",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 256,
+          "role": "adaptive_proposer_truncation_retry",
+          "usd": 1.404032
+        },
+        {
+          "arm": "F_correct",
+          "calls": 136,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 417792,
+          "max_output_tokens": 139264,
+          "model": "replication",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 1024,
+          "role": "initial_judge",
+          "usd": 0.21744681
+        },
+        {
+          "arm": "U",
+          "calls": 200,
+          "max_billed_output_per_call": 1024,
+          "max_input_per_call": 3072,
+          "max_input_tokens": 614400,
+          "max_output_tokens": 204800,
+          "model": "replication",
+          "output_accounting": "USD uses planning mean; cap reserved per dispatch",
+          "planning_billed_output_per_call": 1024,
+          "role": "initial_judge",
+          "usd": 0.31977472
+        }
+      ],
+      "judge_sources": {
+        "replication": [
+          "E4",
+          "E5"
+        ]
+      },
+      "judges": [
+        "replication"
+      ],
+      "max_scheduled_api_usd": 16.84682265,
+      "planning_output_mean": 1024,
+      "pushback": true,
+      "pushback_judges": [
+        "replication"
+      ],
+      "pushback_turns": 2,
+      "scheduled_calls": 2376,
+      "sources": [
+        "E4",
+        "E5"
+      ],
+      "unallocated_reserve_usd": 22.34627735,
+      "within_study_cap": true
+    },
     "replication_3turn": {
       "amendment": 12,
       "budget_rows": [
@@ -6876,8 +7203,6 @@
     "scope": "label-routing fixture only; provider/channel/scorer integration tests still required"
   },
   "hard_cap_usd": 40,
-  "local_accounting_allowance_usd": 0.25,
-  "max_scheduled_api_usd": 49.09227739,
   "model_calls": 0,
   "output_probe_policy": {
     "full_schedule_planning_mean": 256,
@@ -6914,14 +7239,11 @@
     "sdk_retries": 0,
     "timeout_seconds": 120
   },
-  "scheduled_calls": 5878,
   "source_sha256": {
     "experiments/E2E4/e4-dev.jsonl.gz": "71e9f0bc3b459c7410e674d24a21dd50b202dccfa1a76e9952dc2b7c74da2893",
     "experiments/E2E4/e4-scored.jsonl.gz": "a346292bfa74acf9d28dbc444db9d5b6c6a891fc71a148ea40aa6fb7354ba602",
     "experiments/E5/dev.jsonl.gz": "34fc16fa63c3eb03baa3b9ac7c92e773a73c74656327f7bff81e603da621fa89",
     "experiments/E5/scored.jsonl.gz": "bb8ca9b53fcc3ece82e8438eaba22831b7bc69824d317dc720165d8f2751a766"
   },
-  "status": "DESIGN_ONLY_NOT_SCORING_READY",
-  "unallocated_reserve_usd": -9.89917739,
-  "within_study_cap": false
+  "status": "DESIGN_ONLY_NOT_SCORING_READY"
 }
