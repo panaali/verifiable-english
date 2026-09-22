@@ -6,10 +6,12 @@ families and **nine scored families** (27 scored packets). Cross-examination
 retains three isolated initial answers and one adaptive follow-up. All v9
 stage input/output limits and LOW thinking remain unchanged.
 
-**Execution remains blocked by the separate $0.16 item/arm gate.** The largest
-retained-plus-future VE item/arm bound is **$0.4465404776**, even after reducing
-families. A common **$0.45** X/S/VE ceiling has been requested; it is not yet
-adopted. Under the existing $0.16 requirement, none of (a)–(c) passes all gates.
+**2026-09-22 orchestrator amendments adopted:** the common matched ceiling is
+**$0.45** for every arm. Only accepted provider responses count toward it;
+infrastructure failures/holds and reconciled interrupted calls count against
+the $40 study cap only. The amended largest retained-plus-future VE bound is
+**$0.4275424776**. The former $0.4465404776 bound included infrastructure and
+CPU attribution. See [AMENDMENTS.md](AMENDMENTS.md) for acceptance semantics.
 
 | Priority | Judges | Scored families | Worst-case study total | $40 gate |
 |---|---|---:|---:|---|
@@ -51,12 +53,12 @@ counts cover all **1,764 stage fixtures plus 84 common packets**, a superset of
 the selected schedule, with the exact config correction and enlarged history
 reserves. All counts pass; the largest common packet is 1,650 of 2,048 tokens.
 
-After resolving the item/arm amendment and passing the renewed freeze gates,
-the separate-authorisation dev command is:
+After passing the renewed freeze gates, the separate-authorisation dev resume
+command is:
 
 ```sh
 UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python \
-  experiments/P5-shifting-definitions/run_p5.py dev --cap-usd 40
+  experiments/P5-shifting-definitions/run_p5.py resume --split dev --cap-usd 40
 ```
 
 The cap is cumulative study spending, not an additional $40. The dev online

@@ -3,16 +3,17 @@
     "all_in_usd": "35.2264590298",
     "api_usd": "32.0307288600",
     "combined_attributed_item_arm_usd": {
-      "L": "0.0888021338",
-      "S": "0.2451122706",
-      "VE": "0.4465404776",
-      "X": "0.1926657928"
+      "L": "0.0884021338",
+      "S": "0.2405638418",
+      "VE": "0.4275424776",
+      "X": "0.1899184600"
     },
     "cpu_accounting": "already included in retained commitment; no duplicate charge",
     "cpu_usd": ".1344",
     "dev_families": 4,
     "future_online_calls": 858,
     "gemini_calibration_ceiling_usd": "0.30",
+    "matched_accounting": "accepted provider completions only; infrastructure and CPU are study-only",
     "matched_ceiling_usd": "0.45",
     "primary": "Gemini min(VE_shift,VE_smuggle) - min(X_shift,X_smuggle)",
     "replication_judge_overhead_usd": "0.8503848600",
@@ -54,12 +55,12 @@
     "analyze --split scored"
   ],
   "external_timestamp": {
-    "freeze_sha256": "e3673204837523d1bbcf797c3c5abe0b893cdcd2e02ceffbd31cd75c1d7f5637",
+    "freeze_sha256": "aeef711e96d33d7e23dfaaccb1c9e35ac96ec9e20ef0853b524334d69f232394",
     "passed": true,
     "policy": "bound calendar submission is pilot timestamp evidence; not a claim of verified Bitcoin confirmation",
-    "proof_sha256": "ffb5c03bfba0d4aefd80ee09ccaaa7dc6ed778a697034deb42775feb7506f1b3",
-    "source_sha256": "b48fabf73ae126932bee526161507640e1a63265578e31792de921f548b1a5a7",
-    "stdout": "File sha256 hash: b48fabf73ae126932bee526161507640e1a63265578e31792de921f548b1a5a7\nTimestamp:\nappend a6ce6979066aa72206a6ebe3d878444c\nsha256\n -> append 1e5c1be07ed9650d\n    sha256\n    append aa60f7580ba552e70be65cc61055f78ff10e6c2b43f7ede3c18b4e32db33f4f1\n    sha256\n    append 198ad65c5fd1cf1bc3355cf9727b2163\n    sha256\n    prepend ebab775a7360ed1aa13f0dad03040de4883600755c6b7338e21c48afd18a1102\n    sha256\n    append 8c4e725ab5fa392888c0dfc653ef87715cd39bd5d6fedafffb69a02a3ceb9c0b\n    sha256\n    append 927ae0049cbbb5ecaf58575b4ac7e3ba90d743a2486ea8b5f191c4da9f072872\n    sha256\n    prepend 6ab30023\n    append 1f0975f9e4bbc483\n    verify PendingAttestation('https://alice.btc.calendar.opentimestamps.org')\n -> append 3ae87db733ecc1256a87ba989110198e\n    sha256\n    append 1c064c91440930d210ea10ffba1caea942dd84ee48e7af1376471a5533b11987\n    sha256\n    append 18cf3d6594d489f14e603ca0f5c5c61592ec186c0e2aa181872d31e65a48120a\n    sha256\n    append 3a700965ac1a4ba9912f4b7fbf6058c4642fee61e50d6f6fa85a6812d7105480\n    sha256\n    prepend 6ab30024\n    append f6d3052511768d48\n    verify PendingAttestation('https://finney.calendar.eternitywall.com')\n -> append 8c209844dceb8ac3\n    sha256\n    append 3485c0fd6da4c1c47a464bd6d44ce80f\n    sha256\n    append b48a1f2af54e0f383fdc32b364dd147d59be486e744108159e2b4139df4b0af1\n    sha256\n    append b511297c683a4f3e075d934554cdecdf4979f6b8bb1482cc50f425d9903dc56b\n    sha256\n    append 65ae03ccd9951c551daeb84d420817299faba1da0b7127fd792f292bff5b4013\n    sha256\n    prepend 6ab30023\n    append 9bb804f29c33e0ba\n    verify PendingAttestation('https://bob.btc.calendar.opentimestamps.org')\n -> append abec65cb4ffa4812ebbbf8132aa4c628\n    sha256\n    append 2e3ac22c65005c6984e26ed6f6a3dcdc217b9ae0de7a23684ae7fc6ecd8bb000\n    sha256\n    append c9934b8698cf89098c61b85bf76a144f9421469fe0fd9a3cfa70d7399e0c8476\n    sha256\n    prepend 6ab30023\n    append f415457ac0ab5610\n    verify PendingAttestation('https://btc.calendar.catallaxy.com')\n\n"
+    "proof_sha256": "6f901957dd234a9d8b3580e01d3f886eca88be8faddb550197828e88cb3be4ca",
+    "source_sha256": "0140923fbf855aec0d635618619151dd9de2cca58de4b3c64b69ae750604b93d",
+    "stdout": "File sha256 hash: 0140923fbf855aec0d635618619151dd9de2cca58de4b3c64b69ae750604b93d\nTimestamp:\nappend 964a425c5586f43895da251e470f5515\nsha256\n -> append 28d36c0ffef2fed3\n    sha256\n    append 2568238cf021281b45b06cc1b787424b\n    sha256\n    append 177c687600500d931dad535f1e79f028bdf6c45aed4e920c9b115e9e40c4186d\n    sha256\n    prepend 092f9321078ba2236297d8455eaf0c31822502e005f1f1997326adf66aa57ba6\n    sha256\n    prepend 6ab3071d\n    append 7a91151b1bc1d7be\n    verify PendingAttestation('https://alice.btc.calendar.opentimestamps.org')\n -> append 3e3178aadb8f5e99\n    sha256\n    append f2bffdc052f5174c596eb9ff43fcac09\n    sha256\n    append fff4493d48e465d666c0644d15b8f920fe74aaf3319410ee9458cd27b849cad0\n    sha256\n    append cac9bfce0292cbea2634efdc4f35972c62ba3161aee37e734bd68242663b33a3\n    sha256\n    append 539b2d41f24eeb5bf8d3204bea39cff199be69bc8d40f7b9483941ed94d69f76\n    sha256\n    prepend 6ab3071d\n    append 84239939b29862f6\n    verify PendingAttestation('https://bob.btc.calendar.opentimestamps.org')\n -> append acfd9107f4b54bb3c816ae1ae5864992\n    sha256\n    append b2bb3abfef9bcabc507401309fa94bc4fb83e0637520549b4fa33b9508f66218\n    sha256\n    prepend 4ec07f999a5b110a4733422256c4998ba9cdd48ba88671a69f37760614078175\n    sha256\n    append 7d3f58d6dd48ba10ab33cd7bab8e0c2ad4e9eac474dfa10fab9dd48afd22e756\n    sha256\n    prepend 6ab3071e\n    append 9cf0a667a5ab840d\n    verify PendingAttestation('https://finney.calendar.eternitywall.com')\n -> append c6e3f726088e8cf2660b54143f9c8658\n    sha256\n    prepend df933b4a7169af4c6ed99e403e6556390f4cabff93e69ab2287b3a5855d9287e\n    sha256\n    prepend 6ab3071d\n    append d94f68fae2b05e22\n    verify PendingAttestation('https://btc.calendar.catallaxy.com')\n\n"
   },
   "gemini_calibration": {
     "configs": {
@@ -1352,7 +1353,7 @@
     "experiments/P1-deference/tokenizers/llama_config.json": "177c7b61e616fecb84c17ce0591acb92c6c4d60e9ac5ababfb940ff23bbcd424",
     "experiments/P1-deference/tokenizers/qwen_config.json": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583",
     "experiments/P1-deference/tokenizers/sources.json": "e92eb8f4af7c766b8f5bd4d7827cb9d9b70b56c745df51836172cce9411a4294",
-    "experiments/P5-shifting-definitions/AMENDMENTS.md": "81d005f77dea46e61eb58e5cbc1d411110bd6d071ba6c440fe160e315f555de2",
+    "experiments/P5-shifting-definitions/AMENDMENTS.md": "7da773d3df745865e420be1cc68f32f2cf3fe8f9daf09f0c684acde315753574",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V3.md": "16a618e65989baa583fa33d5e0285f20259723289ba730202dae4c78f7dff68f",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V4.md": "d556d43ddd4d38ae3ecbabf2f5e48e501117fbe54a355b821148e66c8781fd7c",
     "experiments/P5-shifting-definitions/CONSTRUCTION-V5.md": "272d583f9ca320370e10ef37272dab553911577ffc25f1ea6a14f9c9f0cdd1e3",
@@ -1366,8 +1367,8 @@
     "experiments/P5-shifting-definitions/REVISION6.md": "69c5d8e0f8f0b9bd02a52e4ccf2848dbe4f85ae26e6e57bfbd2566144ef69fb5",
     "experiments/P5-shifting-definitions/REVISION7.md": "0b9886d058f926bc9df1daca7bfb028d7810ecc0f180bd46c5098e7c15dc3f32",
     "experiments/P5-shifting-definitions/REVISION8.md": "ee6d6514998305b7c11655b406d83c4d7de63a1159df4e253fd54e7f84716fb8",
-    "experiments/P5-shifting-definitions/SCHEDULE-AMENDMENT.md": "9907f5b241b717de103426d160b48bb9eac9c020f23fd512b43080fd333acd33",
-    "experiments/P5-shifting-definitions/checks/budget-scenarios.json": "b204c4d3275e75baf0a4214111d70cd87105d46e9b27e08cd59d52beddba6fa4",
+    "experiments/P5-shifting-definitions/SCHEDULE-AMENDMENT.md": "5ea856a4b85820e6b282457c4ef351608ba1eaa15ec40c258283923c5b4e8efd",
+    "experiments/P5-shifting-definitions/checks/budget-scenarios.json": "2609df27fc111d0f5722107a6f52fd497d969615b6959f71672088653a07ce66",
     "experiments/P5-shifting-definitions/checks/dev-contract-audit.json": "3e2b0d1df0b13c8d0d3e22abe5eb2383f39d82ec15392f75a099010767b1a482",
     "experiments/P5-shifting-definitions/checks/dev-superseded-v8.json": "56ddc9a8b138873280af9736030d23c26474fe8ba20d671c3336775c60867344",
     "experiments/P5-shifting-definitions/checks/gemini-calibration.json": "0e6416ef2bc2a0045735611966615e64fa5fe906e2f22c199c61eea5ecd3a756",
@@ -1406,10 +1407,10 @@
     "experiments/PREREG-DESIGN.md": "dd7fd780c2ceb362f36f31b95a24fe71561f52bff604e3f391a77cd59107b579",
     "experiments/p1.py": "7959b4117d6cde3c7234a1deb3a0b6fe5703582d87de6e2b12ccbaf3f714e42c",
     "experiments/p1_preflight.py": "6bda591a44581cb684801e5132c2840cc7cf70b5a26647aa815ea0c2835462b8",
-    "experiments/p5.py": "67648bd8d50f41e6e2ebe7a17b20814785e426eca2c98178a6622bbe6ec1506b",
+    "experiments/p5.py": "da1c886680dd8839ba25ae4a0762749ef117c53f1af8e8586cc24f73b3ed588a",
     "experiments/p5_analysis.py": "310e5d4ea699f8438761dd32d804c0c2024471f4d585e2aa729b7347f759d445",
     "experiments/p5_blinding.py": "b0390010fc0d3decae1312da0e1087eb6a5ec5079e0fc77e385e966ecb66eb16",
-    "experiments/p5_budget.py": "5f37cf542e43057d49e327016513a613a61cbc201384e36b47bd0a03dbbcbc18",
+    "experiments/p5_budget.py": "5a58ee2d1e377958f8044f04db3436d84f084b390e8bb517d7618cf0f33ff936",
     "experiments/p5_contract.py": "4fd2a90addeb4769ddc84d5a5b109857311a751f9a799d5f3357f2473af493ad",
     "experiments/p5_isolation.py": "d8f9f22dfcfcaaff084c688f91e55de82cbce5b309280e036c226a2f7e55dbff",
     "experiments/p5_leakage.py": "3646d8bb9b858cd1a83665bfec6b20dc7076b3357df586deadee0c3cba3e214b",
@@ -1417,7 +1418,7 @@
     "experiments/p5_materials.py": "9dcbc6a550fdcc8243bb8a8498f677fc251791e7818a19990d7efa564161057c",
     "experiments/p5_oracle.py": "7525d4e36b7b83a489169e124d08deca652cc45441884a22d81791d624adc0de",
     "experiments/p5_paraphrase.py": "13ea051733a46e7b15add956fa18562469ef5568f5e78eaa83e514a2683c31fd",
-    "experiments/p5_preflight.py": "ab4bb63b34ca653541bca5667baf63ba09dac03d0c210d37c18708242c8a3912",
+    "experiments/p5_preflight.py": "8f60ff8e269ce4482f9b19c1435a0db2c4df5918b372eafeae221fc58ee6b0c9",
     "experiments/p5_rendered.py": "f14f3cd9e44efa88044c24153ae1c101687a8a9083a4ac99ee2606d5ad4b3d0e",
     "experiments/p5_review.py": "8f0932bdd4b2ebc0d915ad0bd3a965aacc0bc93b37bec79477c9040aa9fc146b",
     "experiments/p5_revision.py": "499ba05cbb1d9e8c9aff04d3d019e074ea2d179c06752a42c62fe94154845703",
@@ -1430,9 +1431,9 @@
     "pyproject.toml": "675b5239f1d51115896c768ef5139737882bad84dcc95f5d29984fa70ee94b76",
     "tests/fixtures/p5_deepinfra_smoke.json": "663a2dff283258ab51105a5b25d3e10559d77f849acde943fcdc38701ada417d",
     "tests/fixtures/p5_vertex_smoke.json": "586d9dccf8b8e767b092079e57322299c7205010b5d326b532926989be35edc0",
-    "tests/test_p5.py": "9cbb402f90adda8ed354d324c515ea4a3c2e23cf00ebd099eaca3fe653a4abab",
-    "tests/test_p5_budget.py": "8d3d05714dff67aaa5858bad713849f8fb9396ba6a664e379556897a2df09e8f",
-    "tests/test_p5_contract.py": "b28a965596ad96db50686eb2a7185409170f3de229b38f5fc30140afd571a958",
+    "tests/test_p5.py": "dceea9b0c99e3d62d99a39079e4ea9a00b8c500b0661338338bc18e184b78f1f",
+    "tests/test_p5_budget.py": "4f8c6a42f9af469c363c9a134749d2b67e61001dff700f8dea528cf41cdfd17a",
+    "tests/test_p5_contract.py": "bee8d2c9b4345dd65fae04a2ea1a5168d86e6d591fb1b0bf78fee8f2083dc3d0",
     "tests/test_p5_infrastructure.py": "1af6d00e27a3f877e56faffff78f63b72a96bb33374a775daab1a3afc2a98fde",
     "tests/test_p5_licensing.py": "444be515cb8b91f6017d5d09fb97b55f10c03bb898f3e631b1107c50cbf22db4",
     "tests/test_p5_paraphrase.py": "f8ec4a11b47e735015cb455aa9330185799d03b82c7ad6e2c241a24026e98ecd",
@@ -1473,7 +1474,7 @@
     "ve_experiments/json_response.py": "a74d9ccfecc5e2def09f10baf2b534d56c4297f4022b9183a8c784c6ba036f79",
     "ve_experiments/paid.py": "00a1611160cf9aff01a9ec9311d8770fee0b08e114c4dadebbb0663fdbd65d19"
   },
-  "manifest_sha256": "e3673204837523d1bbcf797c3c5abe0b893cdcd2e02ceffbd31cd75c1d7f5637",
+  "manifest_sha256": "aeef711e96d33d7e23dfaaccb1c9e35ac96ec9e20ef0853b524334d69f232394",
   "models": {
     "pro": "gemini-3.1-pro-preview",
     "replication": "qwen/qwen-2.5-72b-instruct",
@@ -1504,6 +1505,7 @@
   "scenario": "dual_judge",
   "status": "BLOCKED_NOT_SCORED_READY",
   "unresolved": [
+    "provider-preflight",
     "dev"
   ]
 }

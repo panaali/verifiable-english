@@ -117,9 +117,10 @@ def test_v9_caps_history_reserves_and_no_legacy_cache_reuse():
 
 def test_supersession_is_narrow_append_only_and_preserves_spend(tmp_path):
     rows=read(p.HERE/'runs/study/costs.jsonl')
-    # Recreate pre-amendment ledger, even after the real recovery has run.
-    rows=[r for r in rows if r['event']!='p5_dev_cap_recovery' and not
-          (r['event']=='block_release' and r['block_id']=='dual_judge/dev')]
+    # Snapshot the actual pre-amendment prefix. Later v9 reservations must
+    # not be mixed into a reconstructed v8 recovery state.
+    boundary=next((i for i,r in enumerate(rows) if r['event']=='p5_dev_cap_recovery'),len(rows))
+    rows=rows[:boundary]
     path=tmp_path/'costs.jsonl';path.write_text(''.join(paid.packed(r)+'\n' for r in rows))
     book=p.P5Ledger(path,p.CAP);before=path.read_bytes();spent=book.state(rows)[1]
     book.supersede_dev()

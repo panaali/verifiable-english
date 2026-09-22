@@ -29,26 +29,49 @@ def selected_materials(split=None):
     return [i for i in p.materials(split) if i['split'] == 'dev' or i['group'] in selected]
 
 
-def item_charges():
+def accepted_calls(rows):
+    """Provider completions accepted by PaidClient, independent of scored quality.
+
+    A completion followed by a validation halt was billed but never accepted.
+    Recovery does not retroactively accept it. Infrastructure attempts without
+    a response (including reconciled interruptions) never enter this view.
+    """
+    reservations, latest, accepted = {}, {}, {}
+    for index, row in enumerate(rows):
+        identity = row.get('identity')
+        if row['event'] == 'reserve':
+            reservations[identity] = row
+            latest.pop(identity, None)
+        elif row['event'] == 'complete':
+            latest[identity] = index
+            accepted[index] = (reservations.get(identity, {}).get('metadata', {}), row)
+        elif row['event'] in ('halt', 'panel_validation_halt'):
+            accepted.pop(latest.get(identity), None)
+    return accepted.values()
+
+
+def matched_charges(rows):
     from experiments import p5 as p
-    shared, _ = p.revision_paraphrase_costs(p.HERE)
-    charged = defaultdict(Decimal)
-    # Freeze accounting at the pre-calibration amendment boundary. Subsequent
-    # study spend consumes these reservations; it is not a new planning cost.
-    prefix = (p.HERE/'runs/study/costs.jsonl').read_bytes()[:plan()['ledger_prefix_bytes']]
-    if sha256(prefix).hexdigest() != plan()['ledger_prefix_sha256']:
-        raise PreflightError('retained budget ledger prefix changed')
-    rows = [json.loads(line) for line in prefix.splitlines()]
-    requests = {r['identity']: r for r in rows if r['event'] == 'reserve'}
-    for row in rows:
-        if row['event'] not in ('complete', 'interrupted', 'infrastructure_failure', 'panel_halt'):
-            continue
-        meta = requests.get(row.get('identity'), {}).get('metadata', {})
-        amount = Decimal(row.get('cost_usd', row.get('infrastructure_hold_usd', '0')))
+    shared, charged = defaultdict(Decimal), defaultdict(Decimal)
+    for meta, row in accepted_calls(rows):
+        amount = Decimal(row['cost_usd'])
         if meta.get('role') == 'paraphrase':
             shared[meta['item_id']] += amount
         elif meta.get('arm') in p.ARMS:
             charged[meta['item_id'], meta['arm']] += amount
+    return shared, charged
+
+
+def item_charges():
+    from experiments import p5 as p
+    # Freeze the planning boundary; later spend consumes these reservations.
+    prefix = (p.HERE/'runs/study/costs.jsonl').read_bytes()[:plan()['ledger_prefix_bytes']]
+    if sha256(prefix).hexdigest() != plan()['ledger_prefix_sha256']:
+        raise PreflightError('retained budget ledger prefix changed')
+    shared, charged = matched_charges([json.loads(line) for line in prefix.splitlines()])
+    auxiliary, _ = p.revision_paraphrase_costs(p.HERE, matched_only=True)
+    for item_id, value in auxiliary.items():
+        shared[item_id] += value
     return shared, charged
 
 
@@ -64,8 +87,7 @@ def ceilings(scenario, scored_families=None):
     extra = {a: cost('replication', *p.stage_limits(a, 'lone' if a == 'L' else 'judge', 'replication'))
              if scenario == 'dual_judge' else Decimal(0) for a in p.ARMS}
     shared, charged = item_charges()
-    attributed = {a: max(arms[a]+extra[a]+max(shared[i['id']], cost('replication', *p.STAGES['paraphrase']))
-                        +charged[i['id'], a]+Decimal('.0004') for i in items) for a in p.ARMS}
+    attributed = {a: max(arms[a]+extra[a]+shared[i['id']]+charged[i['id'], a] for i in items) for a in p.ARMS}
     online = sum(arms.values())+sum(extra.values())
     retained = Decimal(data['retained_commitment_usd'])
     calibration = Decimal(data['calibration_task_cap_usd'])
@@ -78,6 +100,7 @@ def ceilings(scenario, scored_families=None):
             'api_usd': str(len(items)*online), 'all_in_usd': str(total),
             'reserve_usd': str(p.CAP-total), 'within_cap': total <= p.CAP,
             'matched_ceiling_usd': str(p.MATCHED_CAP),
+            'matched_accounting': 'accepted provider completions only; infrastructure and CPU are study-only',
             'within_matched_ceiling': all(v <= p.MATCHED_CAP for v in attributed.values()),
             'combined_attributed_item_arm_usd': {a: str(v) for a, v in attributed.items()},
             'replication_judge_overhead_usd': str(len(items)*sum(extra.values())),

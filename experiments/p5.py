@@ -417,12 +417,18 @@ def require_gates(scored=False):
     return f
 
 
-def revision_paraphrase_costs(base=HERE):
+def revision_paraphrase_costs(base=HERE, *, matched_only=False):
     """Physical historical rewrite charges, excluding study planning envelopes."""
     shared = defaultdict(Decimal)
     holds = Decimal(0)
     for path in sorted((base/'runs').glob('revision-*/paraphrase-costs.jsonl')):
         rows = read(path)
+        if matched_only:
+            from experiments.p5_budget import matched_charges
+            accepted, _ = matched_charges(rows)
+            for item_id, value in accepted.items():
+                shared[item_id] += value
+            continue
         reservations = {r['identity']:r for r in rows if r['event']=='reserve'}
         for row in rows:
             if row['event'] not in ('complete','interrupted','infrastructure_failure','panel_halt'):
@@ -437,7 +443,7 @@ def revision_paraphrase_costs(base=HERE):
 
 
 class P5Ledger(Ledger):
-    """Additional per-item matched ceiling, including retry holds and Qwen judge."""
+    """Accepted-response item/arm ceiling; infrastructure consumes only study cap."""
     def supersede_dev(self):
         """Narrow v8 output-cap recovery; old requests/costs are never rewritten."""
         with self.locked() as (f,rows):
@@ -470,22 +476,15 @@ class P5Ledger(Ledger):
         meta=request.metadata
         if meta.get('arm') in ARMS:
             with self.locked() as (_,rows):
-                reservations={r['identity']:r for r in rows if r['event']=='reserve'}
-                charged=Decimal(0);shared=Decimal(0)
-                for row in rows:
-                    if row['event'] not in ('complete','interrupted','infrastructure_failure','panel_halt'):
-                        continue
-                    source=reservations.get(row.get('identity'),{}).get('metadata',{})
-                    amount=Decimal(row.get('cost_usd',row.get('infrastructure_hold_usd','0')))
-                    if source.get('item_id')==meta.get('item_id'):
-                        if source.get('role')=='paraphrase':shared+=amount
-                        elif source.get('arm')==meta['arm']:charged+=amount
-                auxiliary, _ = revision_paraphrase_costs(HERE)
-                shared += auxiliary.get(meta.get('item_id'), Decimal(0))
-                # Until a paraphrase is billed, reserve its full scheduled cost.
-                shared=max(shared,cost('replication',*STAGES['paraphrase']))
-                if charged+shared+Decimal('.0004')+cost(request.model,request.max_input_tokens,request.billed_output_cap)>MATCHED_CAP:
-                    raise BudgetExceeded(f'matched item-arm {MATCHED_CAP} ceiling, including infrastructure holds')
+                from experiments.p5_budget import matched_charges
+                shared, charged = matched_charges(rows)
+                auxiliary, _ = revision_paraphrase_costs(HERE, matched_only=True)
+                item_id = meta.get('item_id')
+                accepted = charged[item_id, meta['arm']]+shared[item_id]+auxiliary[item_id]
+                # Reserve room for one accepted response, identically for every
+                # arm. Failed attempts retain their full study-cap charges.
+                if accepted+cost(request.model,request.max_input_tokens,request.billed_output_cap)>MATCHED_CAP:
+                    raise BudgetExceeded(f'matched item-arm {MATCHED_CAP} ceiling (accepted responses only)')
         return super().reserve(request)
 
 

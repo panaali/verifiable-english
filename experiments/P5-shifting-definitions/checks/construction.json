@@ -3,7 +3,7 @@
   "deduction_steps": 16,
   "failed_candidates": 5,
   "families": 28,
-  "freeze_sha256": "e3673204837523d1bbcf797c3c5abe0b893cdcd2e02ceffbd31cd75c1d7f5637",
+  "freeze_sha256": "aeef711e96d33d7e23dfaaccb1c9e35ac96ec9e20ef0853b524334d69f232394",
   "generator_version": 6,
   "independent_prose_ready": false,
   "method": "pairwise distinct directed degree/depth invariants; sufficient non-isomorphism test",

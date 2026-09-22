@@ -259,16 +259,6 @@ def test_author_failure_is_assigned_failure(labels):
     assert endpoint(l,r,True)['score']==0
 
 
-@pytest.mark.parametrize('event', ['infrastructure_failure', 'interrupted'])
-def test_item_arm_ceiling_includes_infrastructure_holds(tmp_path,items,event):
-    book=p.P5Ledger(tmp_path/'costs.jsonl',40);req=p.request(items[0],'L','lone')
-    with book.locked() as (f,_):
-        book.append(f,{'event':'reserve','identity':'prior','metadata':req.metadata,'ceiling_usd':'.15','model':'pro'})
-        book.append(f,{'event':event,'identity':'prior','infrastructure_hold_usd':'.15'} if event=='infrastructure_failure'
-                    else {'event':event,'identity':'prior','cost_usd':'.15','halt_times':[],'sample':False})
-    from ve_experiments.paid import BudgetExceeded
-    with pytest.raises(BudgetExceeded,match='item-arm'):book.reserve(req)
-
 
 def test_rendered_prose_and_active_decoys(draft_items):
     items = draft_items

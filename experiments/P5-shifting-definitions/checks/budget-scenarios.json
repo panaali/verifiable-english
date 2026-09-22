@@ -13,9 +13,9 @@
   "cpu_already_in_retained_usd": ".1344",
   "cross_examination_initial_questions": 3,
   "date": "2026-09-22",
-  "executable_selection": null,
+  "executable_selection": "a",
   "historical_revision_envelopes_retained": true,
-  "item_arm_ceiling_status": "Existing $0.16 gate retained pending explicit $0.45 amendment",
+  "item_arm_ceiling_status": "Adopted $0.45 for every arm; accepted provider responses only; infrastructure and CPU study-only",
   "ledger_prefix_bytes": 2195608,
   "ledger_prefix_sha256": "51b3803db615ec89cbc8be501b2473342cfe725f283984e9239ddb3a18b16d87",
   "power": {
@@ -69,7 +69,7 @@
       ],
       "dev_families": 4,
       "future_online_usd": "32.0307288600",
-      "max_retained_item_arm_usd": "0.4465404776",
+      "max_retained_item_arm_usd": "0.4275424776",
       "online_per_item_usd": "0.8213007400",
       "priority": "a",
       "reserve_usd": "4.7735409702",
@@ -86,7 +86,7 @@
         "p5-scored-07",
         "p5-scored-08"
       ],
-      "within_existing_item_arm_cap": false,
+      "within_existing_item_arm_cap": true,
       "within_study_cap": true
     },
     {
@@ -127,7 +127,7 @@
       ],
       "dev_families": 4,
       "future_online_usd": "67.157664",
-      "max_retained_item_arm_usd": "0.4376433672",
+      "max_retained_item_arm_usd": "0.4186453672",
       "online_per_item_usd": "0.799496",
       "priority": "b",
       "reserve_usd": "-30.3533941698",
@@ -159,7 +159,7 @@
         "p5-scored-22",
         "p5-scored-23"
       ],
-      "within_existing_item_arm_cap": false,
+      "within_existing_item_arm_cap": true,
       "within_study_cap": false
     },
     {
@@ -200,7 +200,7 @@
       ],
       "dev_families": 4,
       "future_online_usd": "31.180344",
-      "max_retained_item_arm_usd": "0.4376433672",
+      "max_retained_item_arm_usd": "0.4186453672",
       "online_per_item_usd": "0.799496",
       "priority": "c",
       "reserve_usd": "5.6239258302",
@@ -217,11 +217,11 @@
         "p5-scored-07",
         "p5-scored-08"
       ],
-      "within_existing_item_arm_cap": false,
+      "within_existing_item_arm_cap": true,
       "within_study_cap": true
     }
   ],
   "selected_for_study_cap": "a",
-  "selection_rule": "First study-cap-fitting priority; item/arm amendment still required before executable selection.",
+  "selection_rule": "First study-cap-fitting priority; common $0.45 accepted-response ceiling also passes.",
   "study_cap_usd": "40"
 }

@@ -3,16 +3,17 @@
     "all_in_usd": "35.2264590298",
     "api_usd": "32.0307288600",
     "combined_attributed_item_arm_usd": {
-      "L": "0.0888021338",
-      "S": "0.2451122706",
-      "VE": "0.4465404776",
-      "X": "0.1926657928"
+      "L": "0.0884021338",
+      "S": "0.2405638418",
+      "VE": "0.4275424776",
+      "X": "0.1899184600"
     },
     "cpu_accounting": "already included in retained commitment; no duplicate charge",
     "cpu_usd": ".1344",
     "dev_families": 4,
     "future_online_calls": 858,
     "gemini_calibration_ceiling_usd": "0.30",
+    "matched_accounting": "accepted provider completions only; infrastructure and CPU are study-only",
     "matched_ceiling_usd": "0.45",
     "primary": "Gemini min(VE_shift,VE_smuggle) - min(X_shift,X_smuggle)",
     "replication_judge_overhead_usd": "0.8503848600",
@@ -36,7 +37,7 @@
     "within_cap": true,
     "within_matched_ceiling": true
   },
-  "freeze_sha256": "e3673204837523d1bbcf797c3c5abe0b893cdcd2e02ceffbd31cd75c1d7f5637",
+  "freeze_sha256": "aeef711e96d33d7e23dfaaccb1c9e35ac96ec9e20ef0853b524334d69f232394",
   "generation_calls": 0,
   "passed": true
 }

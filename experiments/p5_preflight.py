@@ -421,7 +421,7 @@ def cost_report(split):
     import numpy as np
     rows=read(p.HERE/'runs/study/costs.jsonl')
     reservations={r['identity']:r for r in rows if r['event']=='reserve'}
-    shared=defaultdict(Decimal); actual=defaultdict(Decimal); holds=Decimal(0)
+    shared=defaultdict(Decimal); holds=Decimal(0)
     for row in rows:
         if row['event'] not in ('complete','interrupted','infrastructure_failure','panel_halt'):
             continue
@@ -429,28 +429,36 @@ def cost_report(split):
         value=Decimal(row.get('cost_usd',row.get('infrastructure_hold_usd','0')))
         if row['event']!='complete':holds+=value
         if meta.get('role')=='paraphrase':shared[meta['item_id']]+=value
-        elif row['identity'].startswith((split+'/',p.STUDY_REVISION+'/'+split+'/')):
-            actual[(meta['item_id'],meta['arm'])]+=value
     auxiliary, auxiliary_holds = p.revision_paraphrase_costs(p.HERE)
     for item_id, value in auxiliary.items():
         shared[item_id] += value
     holds += auxiliary_holds
-    attributed={(i['id'],a):actual[(i['id'],a)]+shared[i['id']]+Decimal('.0004')
+    physical_shared = sum(shared.values())
+    from experiments.p5_budget import matched_charges
+    shared, actual = matched_charges(rows)
+    auxiliary, _ = p.revision_paraphrase_costs(p.HERE, matched_only=True)
+    for item_id, value in auxiliary.items():
+        shared[item_id] += value
+    attributed={(i['id'],a):actual[(i['id'],a)]+shared[i['id']]
                 for i in p.scheduled_materials(split) for a in p.ARMS}
     families=sorted({i['group'] for i in p.scheduled_materials(split)})
     family_costs={a:[float(sum(attributed[(i['id'],a)] for i in p.scheduled_materials(split) if i['group']==f)/3)
                     for f in families] for a in p.ARMS}
     draws=np.random.default_rng(p.SEED).integers(0,len(families),(20000,len(families)))
     numerator=np.asarray(family_costs['VE']);denominator=np.asarray(family_costs['X'])
-    ratios=numerator[draws].mean(1)/denominator[draws].mean(1)
-    return {'physical_shared_paraphrase_usd':str(sum(shared.values())),
+    drawn_denominator=denominator[draws].mean(1)
+    ratios=np.divide(numerator[draws].mean(1),drawn_denominator,
+        out=np.full(len(draws),np.nan),where=drawn_denominator>0)
+    return {'physical_shared_paraphrase_usd':str(physical_shared),
         'shared_full_attribution_per_item_usd':{k:str(v) for k,v in shared.items()},
         'charged_infrastructure_holds_usd':str(holds),
         'item_arm_attributed_usd':{item+'/'+arm:str(v) for (item,arm),v in attributed.items()},
-        'paired_cost_ratios_VE_over_X':{i['id']:str(attributed[(i['id'],'VE')]/attributed[(i['id'],'X')]) for i in p.scheduled_materials(split)},
-        'family_paired_ratio':{'estimate':float(numerator.mean()/denominator.mean()),
-                              'bootstrap_interval':np.quantile(ratios,[.025,.975]).tolist()},
+        'paired_cost_ratios_VE_over_X':{i['id']:(str(attributed[(i['id'],'VE')]/attributed[(i['id'],'X')])
+            if attributed[(i['id'],'X')] else None) for i in p.scheduled_materials(split)},
+        'family_paired_ratio':{'estimate':float(numerator.mean()/denominator.mean()) if denominator.mean() else None,
+                              'bootstrap_interval':np.quantile(ratios,[.025,.975]).tolist() if np.isfinite(ratios).all() else None},
         'mean_attributed_cost_by_arm':{a:float(np.mean(v)) for a,v in family_costs.items()},
         'matched_ceiling_passed':all(v<=p.MATCHED_CAP for v in attributed.values()),
         'engineering_manual_time':'review ledger; not included as free model work',
+        'matched_accounting':'accepted provider completions only; infrastructure and CPU are study-only',
         'framing':f'matched {p.MATCHED_CAP} ceiling; no actual-dollar top-up or outcome-dependent allocation'}

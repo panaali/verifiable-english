@@ -862,3 +862,39 @@ Six new Gemini config smokes cost $0.035710; no dev/scored calls were made.
 ## Amendment (orchestrator, 2026-09-22): common item/arm ceiling $0.16 -> $0.45; scenario (a) with 9 scored families
 
 After the 4,096-token Gemini caps (Gemini thinking is billed output), VE retained-plus-future cost per item reaches $0.4465, above the $0.16 matched ceiling. The ceiling is raised to $0.45 for EVERY arm (matched-ceiling framing unchanged). Budget: scenario (a) selected (Gemini + Qwen judges, all arms, preregistered k, 9 scored families; worst case $35.23 of the $40 cap). With 9 families the primary-contrast half-width is about +/-0.49: P5 is explicitly a FEASIBILITY pilot; no efficacy claim will be made from it.
+
+
+## Amendment (orchestrator, 2026-09-22): infrastructure is study-only spending
+
+The resumed v9 dev observed 13/48 assignments per judge with 100% contract
+compliance on observed judgments, then stopped at the matched $0.45 item/arm
+ceiling because provider failures and infrastructure holds were attributed to
+reasoning. This is an accounting failure, not evidence about arm efficacy.
+
+The common **$0.45 ceiling counts only successful calls producing an accepted
+provider response**, identically for X/S/VE/L and both judges. HTTP 500s,
+connection resets, failed/retried attempts, panel infrastructure holds, and
+interrupted calls reconciled at their full reservation ceiling consume the
+**$40 cumulative study cap only**. A successful retry counts its accepted
+response once; its failed attempts do not consume matched reasoning budget.
+A billed completion rejected by provider token/price/revision validation is
+also study-only, even if a later amendment recovers its halt. Accepted means
+accepted by the provider-validation layer, never a correct or favorable scored
+answer: malformed, truncated, unknown, or semantically wrong responses that
+pass that layer still consume reasoning budget and retain existing scoring.
+
+Accepted shared paraphrase calls remain fully attributed to every arm.
+There are no future paraphrase calls in this schedule, so no phantom paraphrase
+minimum is charged. The local CPU allowance remains in the study ledger; it is
+not an accepted provider call. Before dispatch, the matched check reserves
+room for one successful response at its full call ceiling. Planning, runtime,
+and cost-report views use the same accepted-completion rule. Physical costs,
+failed attempts, reservations, raw outputs, request identities and retry locks
+remain intact; no study charge is refunded and no efficacy retry is enabled.
+
+The retained-plus-future maximum matched bound is now **$0.4275424776** (VE).
+The selected dual-judge/nine-scored-family schedule stays **$35.2264590298**,
+with its retained commitments and CPU allowance unchanged. Existing v9 outputs
+remain resumable. Offline tests/refreeze and timestamp renewal are authorized;
+**no paid calls** are authorized by this repair. Dev completion and source-
+fidelity review remain required before scored execution.
