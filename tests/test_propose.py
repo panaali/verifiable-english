@@ -40,7 +40,7 @@ def test_preview_requires_named_acknowledgement_and_never_writes_when_blocked(tm
     row, = preview['introduced']
     assert row['symbol'] == 'uk_citizen' and row['signature'] == ['person']
     assert row['review_status'] == 'unreviewed'
-    assert 'Machine-proposed' in row['description']
+    assert 'machine-proposed; lexicon oewn-2025; tokens:' in row['description']
     assert row['nearest_existing'][0]['edit_distance'] == 1
     assert row['nearest_existing'][0]['shared_stem']
     with pytest.raises(VEError, match='acknowledge'):
