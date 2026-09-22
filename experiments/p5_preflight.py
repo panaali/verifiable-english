@@ -217,7 +217,7 @@ def preflight(offline=False):
 
 def prose_token_fit():
     """Exact local Qwen counts; never substitute them for Gemini counts."""
-    backend=OpenRouterBackend(p.native_counter())
+    backend=OpenRouterBackend(p.native_counter(cached_only=True))
     rows=[]
     for item in p.materials():
         dossier=next(d for d in read(p.HERE/'materials/dossiers.jsonl.gz') if d['id']==item['id'])
@@ -239,36 +239,81 @@ def prose_token_fit():
 
 def retained_tokens():
     receipt=json.loads((p.HERE/'checks/tokenizer.json').read_text())
+    counter=p.native_counter(cached_only=True)
+    backend=OpenRouterBackend(counter)
     rows={r['identity']:r for r in receipt.get('counts',[])}
+    native_recounts=0
     for req,reserve in fixtures():
         r=rows.get(req.identity,{})
         if r.get('wire_sha256')!=digest([req.messages,req.response_schema]) or r.get('generated_reserve')!=reserve:
             local=prose_token_fit()
             return {'passed':False,'reason':'Tokenizer fixtures changed; free Gemini recount required. Local Qwen counts do not replace Gemini counts.',
                     'local_qwen_passed':local['passed'],'local_qwen_ranges':local['ranges'],'generation_calls':0}
+        if req.model!='pro':
+            n=backend.count(req);native_recounts+=1
+            r.update(tokens=n,bounded_tokens=n+reserve,limit=req.max_input_tokens,
+                     passed=n+reserve<=req.max_input_tokens)
+    receipt.update(counter_sha256=counter.sha256,native_recounts=native_recounts,
+        passed=all(r['passed'] for r in receipt['counts']+receipt['common_packet_counts']),
+        generation_calls=0)
     return receipt
 
 
-def provider_smoke(cap,only_openrouter=False):
+def smoke_request(model):
+    return PaidRequest('provider-preflight/p5/'+model,model,
+        [{'role':'user','content':'Return JSON {"verdict":"unknown"}.'}],128,1024,
+        response_schema={'type':'object','properties':{'verdict':{'type':'string','enum':['unknown']}},'required':['verdict'],'additionalProperties':False},
+        metadata={'role':'probe'})
+
+
+def provider_smoke(cap,only_openrouter=False,*,cached_only=False):
     # Separate infrastructure smoke, never an efficacy probe or replacement sample.
-    book=p.ledger(cap);f=p.verify_freeze();results={}
+    # A read/recount of completed evidence needs no spending authorization. The
+    # positive ledger ceiling here is never used to reserve or dispatch offline.
+    f=p.verify_freeze()
+    book=Ledger(p.HERE/'runs/study/costs.jsonl',p.CAP) if cached_only else p.ledger(cap)
+    results={};generation_calls=0
     for model in (('replication',) if only_openrouter else ('pro','replication')):
-        backend=VertexBackend() if model=='pro' else OpenRouterBackend(p.native_counter())
-        client=PaidClient(backend,book,reuse_completed=True)
-        req=PaidRequest('provider-preflight/p5/'+model,model,
-            [{'role':'user','content':'Return JSON {"verdict":"unknown"}.'}],128,1024,
-            response_schema={'type':'object','properties':{'verdict':{'type':'string','enum':['unknown']}},'required':['verdict'],'additionalProperties':False},
-            metadata={'role':'probe'})
+        req=smoke_request(model)
+        row=results[model]={'passed':False,'request_sha256':digest(req.messages)}
         try:
-            count=backend.count(req);reply=client.call(req)
-            results[model]={'passed':json.loads(reply.text)=={'verdict':'unknown'} and count==reply.input_tokens,
-                'revision':reply.revision,'count':count,'billed_input':reply.input_tokens,
-                'billed_output':reply.billed_output_tokens,'request_sha256':digest(req.messages)}
-        finally:client.close()
+            if cached_only and model=='pro':
+                raise PreflightError('Vertex native recount requires countTokens; unavailable offline')
+            counter=p.native_counter(cached_only=cached_only) if model=='replication' else None
+            backend=VertexBackend() if model=='pro' else OpenRouterBackend(counter)
+            count=backend.count(req)
+            row['count']=count
+            if counter:
+                row['counter_sha256']=counter.sha256
+                row['wire_sha256']=digest(backend.wire(req))
+            # Always reverify the original full request and current count, even
+            # after a passed gate or refreeze. Never replace a billed smoke just
+            # because its count or response fails validation.
+            reply=book.cached_reply(req)
+            row['reused_smoke']=reply is not None
+            if reply is None:
+                if cached_only:
+                    raise PreflightError('cached smoke missing; generation forbidden')
+                client=PaidClient(backend,book,reuse_completed=True)
+                try:
+                    generation_calls+=1
+                    reply=client.call(req)
+                finally:client.close()
+            row.update(revision=reply.revision,billed_input=reply.input_tokens,
+                billed_output=reply.billed_output_tokens,
+                response_format=reply.response.get('_p1_response_format'),
+                passed=json.loads(reply.text)=={'verdict':'unknown'} and count==reply.input_tokens)
+            if not row['passed']:
+                row['error']='cached/provider smoke response or native count disagrees'
+        except Exception as exc:
+            row['error']=f'{type(exc).__name__}: {exc}'
+    requested_models_passed=all(r['passed'] for r in results.values())
     path=p.HERE/'checks/provider-preflight.json'
     old=json.loads(path.read_text()) if path.exists() else {}
     if old.get('freeze_sha256')==f['manifest_sha256']:results={**old.get('models',{}),**results}
-    result={'passed':set(results)=={'pro','replication'} and all(r['passed'] for r in results.values()),'models':results}
+    result={'passed':set(results)=={'pro','replication'} and all(r['passed'] for r in results.values()),
+        'models':results,'generation_calls':generation_calls,'cached_only':cached_only,
+        'requested_models_passed':requested_models_passed}
     return p.gate_receipt('provider-preflight',result,f['manifest_sha256'])
 
 

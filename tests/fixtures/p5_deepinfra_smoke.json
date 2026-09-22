@@ -1,0 +1,114 @@
+{
+  "completion": {
+    "assistant": {
+      "content": "{\n  \"verdict\": \"unknown\"\n}",
+      "reasoning": null,
+      "refusal": null,
+      "role": "assistant"
+    },
+    "billed_output_tokens": 11,
+    "billing_basis": "maximum of design table (cached input at full rate) and provider billing with fee",
+    "cached_tokens": 0,
+    "cost_usd": "0.0000110986",
+    "event": "complete",
+    "finish_reason": "stop",
+    "identity": "provider-preflight/p5/replication",
+    "input_tokens": 17,
+    "latency_s": 7.283070292032789,
+    "model": "replication",
+    "output_tokens": 11,
+    "provider_cost_usd": 1.052e-05,
+    "remaining_usd": "0.0099889014",
+    "response": {
+      "_p1_response_format": "json_schema",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"verdict\": \"unknown\"\n}",
+            "reasoning": null,
+            "refusal": null,
+            "role": "assistant"
+          },
+          "native_finish_reason": "stop"
+        }
+      ],
+      "created": 1790081663,
+      "id": "gen-1790081663-86oYBEbLmm8EmWRP67qo",
+      "model": "qwen/qwen-2.5-72b-instruct",
+      "object": "chat.completion",
+      "provider": "DeepInfra",
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": {
+        "completion_tokens": 11,
+        "completion_tokens_details": {
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "reasoning_tokens": 0
+        },
+        "cost": 1.052e-05,
+        "cost_details": {
+          "upstream_inference_completions_cost": 4.4e-06,
+          "upstream_inference_cost": 1.052e-05,
+          "upstream_inference_prompt_cost": 6.12e-06
+        },
+        "is_byok": false,
+        "prompt_tokens": 17,
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "video_tokens": 0
+        },
+        "total_tokens": 28
+      }
+    },
+    "revision": "{\"model\":\"qwen/qwen-2.5-72b-instruct\",\"provider\":\"DeepInfra\",\"system_fingerprint\":null}",
+    "served_provider": "DeepInfra",
+    "text": "{\n  \"verdict\": \"unknown\"\n}",
+    "thinking_tokens": 0,
+    "time": 1790081670.762064,
+    "tool_calls": []
+  },
+  "reservation": {
+    "ceiling_usd": "0.0004807424",
+    "event": "reserve",
+    "identity": "provider-preflight/p5/replication",
+    "max_input_tokens": 128,
+    "max_output_tokens": 1024,
+    "messages": [
+      {
+        "content": "Return JSON {\"verdict\":\"unknown\"}.",
+        "role": "user"
+      }
+    ],
+    "metadata": {
+      "role": "probe"
+    },
+    "model": "replication",
+    "planned_model": "qwen/qwen-2.5-72b-instruct",
+    "prompt_sha256": "3f8c59a0e68023eb1c5bda8090fa898a1175f258ac1ec3da37a8a60ae61d0a0d",
+    "remaining_usd": "0.0095192576",
+    "response_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "verdict": {
+          "enum": [
+            "unknown"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "verdict"
+      ],
+      "type": "object"
+    },
+    "time": 1790081663.4767082,
+    "timeout_s": 120,
+    "tools": []
+  }
+}

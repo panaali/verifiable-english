@@ -221,7 +221,7 @@ def preflight(offline=False):
 
 class CommandCounter:
     """Operator-supplied provider-native counter: JSON wire stdin, integer stdout."""
-    def __init__(self, path):
+    def __init__(self, path, *, cached_only=False):
         self.path = Path(path).resolve()
         self.sha256 = p.sha(self.path)
         self.native = None
@@ -231,7 +231,7 @@ class CommandCounter:
             spec = importlib.util.spec_from_file_location('p1_native_counter', self.path)
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
-            self.native = module.NativeCounter()
+            self.native = module.NativeCounter(cached_only=cached_only)
             self.assets = {path: p.sha(path) for path in (p.HERE / 'tokenizers').glob('*.json')}
 
     def __call__(self, wire):

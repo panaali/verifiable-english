@@ -925,7 +925,7 @@
       "wire_sha256": "f7c6ceb4089de44d89a7175d8ad9fda39935a25fd2b0d635c3522887bfd362f0"
     }
   ],
-  "counter_sha256": "ab5bc368b3828dedaecc6daa19620fa4cbf75c2130a335066d62e51a7e7e58b7",
+  "counter_sha256": "aff63357af09529f8acd387f3b723e4efae228df06a71bff75745c497a7f5ded",
   "counts": [
     {
       "bounded_tokens": 5657,
@@ -20332,8 +20332,9 @@
       "wire_sha256": "f7c6ceb4089de44d89a7175d8ad9fda39935a25fd2b0d635c3522887bfd362f0"
     }
   ],
-  "freeze_sha256": "319de2ba50492d2fd7ba02b340c1b1bf4991556a8f46a8d448d2a4c6b3821098",
+  "freeze_sha256": "2d358b7a7bc08a8abd958c4c19e711a7fc2d8a938f71f804a15d4d797692e57a",
   "generation_calls": 0,
+  "native_recounts": 420,
   "passed": true,
   "scope": "all slots/arms/stages, system/schema included; max prior-output reserves; exact runtime recount; no truncation"
 }

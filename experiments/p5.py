@@ -135,8 +135,8 @@ def request(item,arm,stage,history=None,*,judge='pro',turn=0,commitment=None,que
             'packet_sha256':digest(item['payload']),'seed':SEED,'sample':0})
 
 
-def native_counter():
-    return CommandCounter(ROOT/'experiments/P1-deference/native_counter.py')
+def native_counter(*, cached_only=False):
+    return CommandCounter(ROOT/'experiments/P1-deference/native_counter.py', cached_only=cached_only)
 
 
 def exact_text_tokens(client,text,limit):
@@ -316,7 +316,8 @@ def freeze(scenario):
     write_json(HERE/'prompts.json',{'system':SYSTEM,'roles':ROLES,'schema':VERDICT_SCHEMA,'stages':STAGES})
     paths=[ROOT/'ve_experiments/paid.py',*ROOT.glob('experiments/p5*.py'),
            ROOT/'experiments/p1.py',ROOT/'experiments/p1_preflight.py',ROOT/'experiments/prereg_inventory.py',
-           ROOT/'experiments/trial_analysis.py',ROOT/'tests/test_p5.py',ROOT/'pyproject.toml',ROOT/'uv.lock',
+           ROOT/'experiments/trial_analysis.py',*ROOT.glob('tests/test_p5*.py'),
+           ROOT/'tests/fixtures/p5_deepinfra_smoke.json',ROOT/'pyproject.toml',ROOT/'uv.lock',
            HERE/'PREREG.md',ROOT/'experiments/PREREG-DESIGN.md',HERE/'inventory.json',HERE/'AMENDMENTS.md',
            HERE/'prompts.json',HERE/'CONSTRUCTION-V3.md',HERE/'CONSTRUCTION-V4.md',HERE/'CONSTRUCTION-V5.md',HERE/'REVIEW-CHECKLIST.md',HERE/'run_p5.py',*HERE.glob('materials/*.gz'),HERE/'labels.jsonl.gz',
            ROOT/'experiments/P1-deference/native_counter.py',*ROOT.glob('experiments/P1-deference/tokenizers/*.json'),
@@ -506,7 +507,7 @@ def main(argv=None):
             from experiments import p5_preflight as pf
             if args.command=='inventory':result=pf.inventory(args.count_tokens)
             elif args.command=='preflight':result=pf.preflight(args.offline)
-            else: result=pf.provider_smoke(args.cap_usd,only_openrouter=args.command=='preflight-openrouter')
+            else: result=pf.provider_smoke(args.cap_usd,only_openrouter=args.command=='preflight-openrouter',cached_only=args.offline)
         elif args.command=='paraphrase':result=paraphrase(args.cap_usd)
         elif args.command in ('dev','scored','resume'):result=run(args.split if args.command=='resume' else args.command,args.cap_usd,args.command=='resume')
         elif args.command=='reconcile':
@@ -532,7 +533,7 @@ def main(argv=None):
                 for j,r in result['judges'].items()}
             write_json(HERE/f'runs/{args.split}/analysis.json',result)
         print(json.dumps(result,indent=2,default=str))
-        return 2 if result.get('passed') is False else 0
+        return 2 if result.get('requested_models_passed',result.get('passed')) is False else 0
     except (PreflightError,ValueError,FileNotFoundError) as exc:
         print(f'P5 blocked: {exc}',file=sys.stderr);return 3 if isinstance(exc,BudgetExceeded) else 2
 

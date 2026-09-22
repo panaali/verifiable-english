@@ -1,0 +1,21 @@
+{
+  "cached_only": true,
+  "freeze_sha256": "2d358b7a7bc08a8abd958c4c19e711a7fc2d8a938f71f804a15d4d797692e57a",
+  "generation_calls": 0,
+  "models": {
+    "replication": {
+      "billed_input": 17,
+      "billed_output": 11,
+      "count": 17,
+      "counter_sha256": "aff63357af09529f8acd387f3b723e4efae228df06a71bff75745c497a7f5ded",
+      "passed": true,
+      "request_sha256": "3f8c59a0e68023eb1c5bda8090fa898a1175f258ac1ec3da37a8a60ae61d0a0d",
+      "response_format": "json_schema",
+      "reused_smoke": true,
+      "revision": "{\"model\":\"qwen/qwen-2.5-72b-instruct\",\"provider\":\"DeepInfra\",\"system_fingerprint\":null}",
+      "wire_sha256": "e1498c99401e4bc2aa3f03bcc15bbef71f5bb806329569efb078a5c1303b3709"
+    }
+  },
+  "passed": false,
+  "requested_models_passed": true
+}

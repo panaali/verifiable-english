@@ -18,6 +18,8 @@ from tokenizers import Tokenizer
 HERE = Path(__file__).resolve().parent
 CACHE = HERE.parents[1] / ".cache/p1-tokenizers"
 LLAMA = "meta-llama/llama-3.1-8b-instruct"
+QWEN = "qwen/qwen-2.5-72b-instruct"
+QWEN_DEFAULT_SYSTEM = "{{- '<|im_start|>system\\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\\n' }}"
 LLAMA_DATE_TEMPLATE = ('{{- "Cutting Knowledge Date: December 2023\\n" }}\n'
                        '{{- "Today Date: " + date_string + "\\n\\n" }}')
 
@@ -29,10 +31,12 @@ def verify_blob(data, expected):
     return data
 
 
-def tokenizer_bytes(spec, cache):
+def tokenizer_bytes(spec, cache, *, cached_only=False):
     path = cache / (spec["git_blob_sha1"] + ".json")
     if path.exists():
         return verify_blob(path.read_bytes(), spec["git_blob_sha1"])
+    if cached_only:
+        raise ValueError("pinned native tokenizer not cached; downloads forbidden")
     url = f'https://huggingface.co/{spec["repo"]}/resolve/{spec["revision"]}/tokenizer.json'
     response = httpx.get(url, follow_redirects=True, timeout=120)
     response.raise_for_status()
@@ -60,6 +64,10 @@ def chat_text(wire, config):
     reconciles the retained DeepInfra smoke (21 tokens, versus HF's 41). Tool
     requests retain the pinned upstream template; the smoke does not establish
     their served formatting. Never remove date-like text from message content.
+    For Qwen text-only requests without a system message, omit HF's default
+    system message: retained P5 DeepInfra usage is 17, versus HF's 38. Explicit
+    system messages and tool templates remain intact. response_format and
+    max_tokens are generation controls, not text added to the chat template.
     """
     messages = deepcopy(wire["messages"])
     if not messages:
@@ -83,6 +91,10 @@ def chat_text(wire, config):
     env.globals["raise_exception"] = raise_exception
     special = {k: v for k, v in config.items() if k.endswith("_token") and isinstance(v, str)}
     template = config["chat_template"]
+    if wire.get("model") == QWEN and not wire.get("tools") and messages[0]["role"] != "system":
+        if template.count(QWEN_DEFAULT_SYSTEM) != 1:
+            raise ValueError("unrecognized Qwen default system template; panel blocked")
+        template = template.replace(QWEN_DEFAULT_SYSTEM, "")
     if wire.get("model") == LLAMA and not wire.get("tools"):
         if template.count(LLAMA_DATE_TEMPLATE) != 1:
             raise ValueError("unrecognized Llama date template; panel blocked")
@@ -93,8 +105,9 @@ def chat_text(wire, config):
 
 
 class NativeCounter:
-    def __init__(self, cache=CACHE):
+    def __init__(self, cache=CACHE, *, cached_only=False):
         self.cache = Path(cache)
+        self.cached_only = cached_only
         self.sources = json.loads((HERE / "tokenizers/sources.json").read_text())
         self.loaded = {}
 
@@ -106,7 +119,8 @@ class NativeCounter:
             spec = self.sources[model]
             config = verify_blob((HERE / "tokenizers" / spec["config_file"]).read_bytes(),
                                  spec["files"]["tokenizer_config.json"]["git_blob_sha1"])
-            tokenizer = Tokenizer.from_str(tokenizer_bytes(spec["files"]["tokenizer.json"], self.cache).decode())
+            tokenizer = Tokenizer.from_str(tokenizer_bytes(spec["files"]["tokenizer.json"], self.cache,
+                                                          cached_only=self.cached_only).decode())
             tokenizer.no_truncation()
             tokenizer.no_padding()
             self.loaded[model] = tokenizer, json.loads(config)

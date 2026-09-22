@@ -1,8 +1,5 @@
 {
-  "freeze_sha256": "319de2ba50492d2fd7ba02b340c1b1bf4991556a8f46a8d448d2a4c6b3821098",
-  "passed": true,
-  "policy": "bound calendar submission is pilot timestamp evidence; not a claim of verified Bitcoin confirmation",
-  "proof_sha256": "0674da311ec9c5dfb5a012cba86aad1a11bfcb4f3f6e5a7979746ba1400ecfff",
-  "source_sha256": "9d39181acc22a9e33228a5e0b08291bdeaebeb8a27a6cccc6b05b2f61f729977",
-  "stdout": "File sha256 hash: 9d39181acc22a9e33228a5e0b08291bdeaebeb8a27a6cccc6b05b2f61f729977\nTimestamp:\nappend 73c3510ad0833fa8da346ca2d3ad8fc4\nsha256\n -> append 01cc43b433981fec7da0904cbc7788fa\n    sha256\n    prepend bf62eac66354a853c5a456302cfdc73d763044723af1c846e587a894fd29de0c\n    sha256\n    append abd00455b8779aed0993f9fe037df1e945dd0fef8ad39029e796e9e9d47ded93\n    sha256\n    prepend 6ab279bc\n    append 80ed2e9cb739d417\n    verify PendingAttestation('https://btc.calendar.catallaxy.com')\n -> append 25fed6d59bf57e94\n    sha256\n    append c9955091cf94d638ba429f8f3fb01ad2\n    sha256\n    prepend 89bb2356849938fa9f31a5c125771a0151d34031ba1d40151375bcb562491ad4\n    sha256\n    append 402658cbbae1f801259b6c99662ea01c622f0e99578c5fbe0a393245e3d52607\n    sha256\n    prepend 6ab279bc\n    append cc6d62b4db9fa210\n    verify PendingAttestation('https://bob.btc.calendar.opentimestamps.org')\n -> append 28504dfcf21e351e3a26edadb6c8cbcc\n    sha256\n    prepend 8a66218cf940935917e98aa501cb630222cb00246f0cd56919a25bdeff25a113\n    sha256\n    prepend fa035e9f8de01b5e5d8265fa5d45a47af509325fae7b0d7bec7297d147ad9261\n    sha256\n    prepend 6ab279bc\n    append 2defe4349335e169\n    verify PendingAttestation('https://finney.calendar.eternitywall.com')\n -> append b32a79867f48089d\n    sha256\n    append f9c475cd843bb9eeb139988477d4d0ec\n    sha256\n    append b1a6536a220c280b9b5798541373116a21e55dd5ca039886c6afe21308cb82dc\n    sha256\n    append 9b9980768a29689a6f03d7aeb65706ee1d16bfd8980803d88ac173d79322a0e3\n    sha256\n    prepend 6ab279bd\n    append de20113f28cbca7b\n    verify PendingAttestation('https://alice.btc.calendar.opentimestamps.org')\n\n"
+  "freeze_sha256": "2d358b7a7bc08a8abd958c4c19e711a7fc2d8a938f71f804a15d4d797692e57a",
+  "passed": false,
+  "reason": "publish exact manifest hash and retain bound OpenTimestamps receipt"
 }

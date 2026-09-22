@@ -195,3 +195,53 @@ for the existing preflight gate. Calendar submission is timestamp evidence,
 not verified Bitcoin confirmation. Rewritten paraphrases require fresh review,
 counts, material hashes, timestamps and a refreeze before dev/scoring.
 The inventory ceilings and $40 study cap are unchanged; this worker spends $0.
+
+## Revision 5 follow-up: shared Qwen smoke counter (2026-09-22)
+
+The retained DeepInfra smoke request with message SHA-256
+`3f8c59a0e68023eb1c5bda8090fa898a1175f258ac1ec3da37a8a60ae61d0a0d`
+billed 17 input and 11 output tokens. P5 already imported P1's native counter.
+The pinned upstream Qwen template inserted an absent system message, adding
+21 tokens (38 locally). The shared P1 counter now omits only that template
+branch for Qwen requests without tools or an explicit initial system message.
+It leaves explicit system content, tools, special-token encoding and tokenizer
+assets unchanged. P1's explicit-system Qwen smoke remains 19 tokens and Llama
+remains 21. The retained request's JSON-schema response format adds no prompt
+text; the correction does not subtract schema or tool tokens.
+
+`preflight-openrouter --offline` reuses the original matching ledger completion
+and recounts it, even after a previous passing receipt or refreeze. It permits
+no generation or tokenizer downloads, needs no positive spending cap, and fails
+closed on missing or changed cached requests. Online reruns also preserve the
+original completion when its count disagrees. The command's exit status covers
+the requested OpenRouter check; the full provider receipt still requires both
+Gemini and Qwen. The original billing ledger is never rewritten by a recount.
+
+Paraphrasing uses one system and one user message, `max_tokens=1024`, no tools,
+and no `response_format`; its system instruction asks for JSON. The counter
+receives the same wire object as generation and renders the full messages
+jointly. All 84 explicit-system paraphrase counts are unchanged by this fix.
+This amendment does not add structured-output enforcement to paraphrasing.
+
+The execution freeze is renewed for this code change. Prior material and
+execution timestamp receipts remain historical; they do not certify this
+amendment or the renewed freeze. Offline preflight rechecks all fixture hashes
+and recounts all Qwen requests locally; it retains Gemini counts only for
+matching fixtures. Changed fixtures remain blocked for a free API recount.
+Independent prose, review, timestamp, full provider and dev gates
+remain binding. No generation, token-count API, or timestamp submission is
+authorized or performed by this worker; additional spend is $0.
+
+Offline reproduction from the repository root (with pinned tokenizer assets
+already cached):
+
+```sh
+export UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex
+uv run --offline pytest -q tests/test_p1_native_counter.py tests/test_p5_preflight.py
+uv run --offline python experiments/P5-shifting-definitions/run_p5.py preflight-openrouter --offline
+uv run --offline python experiments/P5-shifting-definitions/run_p5.py preflight --offline
+```
+
+The last command reports the remaining study blockers and exits 2; a passing
+Qwen recount does not make P5 ready for paid paraphrases or scoring without
+separate spending authorization and the applicable gates.

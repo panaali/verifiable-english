@@ -31,6 +31,28 @@ def test_qwen_exact_joint_chat_template():
         '<|im_start|>user\nHello<|im_end|>\n<|im_start|>assistant\n')
 
 
+def test_qwen_omits_only_implicit_system_in_text_requests():
+    value = wire()
+    default = 'You are Qwen, created by Alibaba Cloud. You are a helpful assistant.'
+    value['messages'] = [{'role': 'user', 'content': default}]
+    assert native.chat_text(value, config('qwen')) == (
+        '<|im_start|>user\n' + default + '<|im_end|>\n<|im_start|>assistant\n')
+    value['messages'].insert(0, {'role': 'system', 'content': default})
+    assert native.chat_text(value, config('qwen')).count(default) == 2
+    value['messages'].pop(0)
+    value['tools'] = [{'type': 'function', 'function': {'name': 'replay'}}]
+    assert native.chat_text(value, config('qwen')).count(default) == 2
+    del value['tools']
+    with pytest.raises(ValueError, match='unrecognized Qwen default system template'):
+        native.chat_text(value, {'chat_template': '{{ messages }}'})
+
+
+def test_cached_only_missing_asset_never_downloads(tmp_path, monkeypatch):
+    monkeypatch.setattr(native.httpx, 'get', lambda *a, **kw: pytest.fail('network forbidden'))
+    with pytest.raises(ValueError, match='downloads forbidden'):
+        native.NativeCounter(tmp_path, cached_only=True)(wire())
+
+
 def test_llama_exact_joint_chat_template():
     assert native.chat_text(wire('weak'), config('llama')) == (
         '<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n'
