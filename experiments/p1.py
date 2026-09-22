@@ -184,6 +184,9 @@ def request(item, arm, judge, output, *, phase="initial", turn=0, messages=None,
          "checker": {k: v for k, v in finding(item).items() if k.endswith("sha256") or k == "checker_build"}})
 
 
+STUDY_CAP_USD = 36  # Amendment 4 (2026-09-22): raised from 30; see PROPOSED-AMENDMENT.md
+
+
 def parse(text):
     # Formatting tolerance only: strip one Markdown code fence around the JSON object. The schema check stays strict.
     if isinstance(text, str):
@@ -614,7 +617,7 @@ def freeze_execution():
         ceilings[name] = {"dev_calls_usd": str(dev), "scored_calls_usd": str(scored),
                           "dev_cumulative_with_probe_usd": str(dev+overhead),
                           "scored_cumulative_with_probe_usd": str(dev+scored+overhead),
-                          "within_study_cap": dev+scored+overhead+Decimal('.25') <= 30,
+                          "within_study_cap": dev+scored+overhead+Decimal('.25') <= STUDY_CAP_USD,
                           "local_allowance_usd": .25}
         for split, cap in (("dev", dev+overhead), ("scored", dev+scored+overhead)):
             commands[f"{name}/{split}"] = f"uv run python experiments/P1-deference/run_p1.py {split} --cap-usd {cap}"
@@ -719,7 +722,7 @@ def run_split(split, cap):
     plan = inventory()["budget_scenarios"][name]
     items = [i for i in materials(split) if i["assignment"]["source"] in plan["sources"]]
     output = probe_result["selected_output_cap"]
-    ledger = Ledger(HERE / "runs/study/costs.jsonl", min(cap, 30))
+    ledger = Ledger(HERE / "runs/study/costs.jsonl", min(cap, STUDY_CAP_USD))
     # Reserve the complete split before any paid call; calls remain serial.
     ceiling = split_ceiling(name, split)
     # Probe's entire $1 envelope remains charged against the study boundary.

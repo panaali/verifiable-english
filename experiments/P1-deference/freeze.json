@@ -37,7 +37,7 @@
       "local_allowance_usd": 0.25,
       "scored_calls_usd": "28.7574542208",
       "scored_cumulative_with_probe_usd": "35.4682635200",
-      "within_study_cap": false
+      "within_study_cap": true
     },
     "primary_1024": {
       "dev_calls_usd": "2.717184",
@@ -57,7 +57,6 @@
     }
   },
   "dev_blockers": [
-    "selected schedule exceeds $30 study cap",
     "provider-preflight"
   ],
   "external_timestamp": {
@@ -70,9 +69,9 @@
       "info",
       "/Users/seyran/code/ve-codex/experiments/PREREG-HASHES.txt.ots"
     ],
-    "completed_at": "2026-09-22T02:33:42.167979+00:00",
+    "completed_at": "2026-09-22T02:39:34.414426+00:00",
     "exit_code": 0,
-    "freeze_sha256": "60cc7aa5ff2915671dda1cd479d2e8047ed8dd46a23d55985aea91c0807d1044",
+    "freeze_sha256": "160b5dfa73e0a8f8ad435b0d7a007b138a1443eedd0a90f8d9ed5d89d7afef3a",
     "hash_file_sha256": "d9d0907811f4c9389415bde81538c944e72f5a567535adff41a27c0d7900782c",
     "passed": true,
     "pending_calendar_sufficient_for_pilot": true,
@@ -91,7 +90,7 @@
     "experiments/E5/dev.jsonl.gz": "34fc16fa63c3eb03baa3b9ac7c92e773a73c74656327f7bff81e603da621fa89",
     "experiments/E5/scored.jsonl.gz": "bb8ca9b53fcc3ece82e8438eaba22831b7bc69824d317dc720165d8f2751a766",
     "experiments/P1-deference/PREREG.md": "382bdc87ca651b962439294c1e1f4819c108ca7663e08c33db9d6444548f3145",
-    "experiments/P1-deference/PROPOSED-AMENDMENT.md": "8b8dd6c9cb99fe14418a7c5fb4ad02bd32b19db254bda000047d09d54199b43e",
+    "experiments/P1-deference/PROPOSED-AMENDMENT.md": "15447241668a4f5364b8c768ff21e927e6a092fce462dd9b71748220d3211200",
     "experiments/P1-deference/inventory.json": "d6a83d3929973fcac5a80df0273649b6d5f87c2b31fdb25dd5f908e9f0de04c3",
     "experiments/P1-deference/labels.jsonl.gz": "d7fd48edfbe6fa9bab5324c94d5773dd6b0639c945803dea6d61676c9632f8ee",
     "experiments/P1-deference/materials/dev.jsonl.gz": "d8ae29da2a00594465e302c333bf7aa0d6e622d8217ada1c9c534e742512cf85",
@@ -109,7 +108,7 @@
     "experiments/PREREG-DESIGN.md": "0f2663058122bde90998f5bdd98b6e933d419315caaad026ff9ef60c45d1f0b5",
     "experiments/PREREG-HASHES.txt": "d9d0907811f4c9389415bde81538c944e72f5a567535adff41a27c0d7900782c",
     "experiments/PREREG-HASHES.txt.ots": "cbc690fe42ee666e6404799935b18356c3a467d7375fcceb7788a8b4b16241a0",
-    "experiments/p1.py": "76c292e41427cfd8004cb409564bbb8ce007b06af56a7a9aa51ed86c9f5ab52b",
+    "experiments/p1.py": "8612d39855525e7f0611247bd33f2021d34f0ec3d1b8c6f39768636a10512d1f",
     "experiments/p1_preflight.py": "9970792019e5fc0908fee8662fc457224665f7dce822a6dede7d32800668a65c",
     "experiments/prereg_inventory.py": "cc3402e20781635f2333df9c4f9fa7dc94b6f04ab688174533e799f6fe929a31",
     "lean/Main.lean": "9df9e7b5fddfa4d33081ed8b19548e0d35c40df2e1d364d7d4238fea5298edb4",
@@ -206,7 +205,7 @@
     "ve_experiments/llm.py": "103f68a84f83828fdc4e536f400f7a396ab5695e196a513401bc7da3ddab21c3",
     "ve_experiments/paid.py": "bb6c4c764fa09a37aabb8a0462325d482bc272ece804c19c63423def937ba529"
   },
-  "manifest_sha256": "60cc7aa5ff2915671dda1cd479d2e8047ed8dd46a23d55985aea91c0807d1044",
+  "manifest_sha256": "160b5dfa73e0a8f8ad435b0d7a007b138a1443eedd0a90f8d9ed5d89d7afef3a",
   "models": {
     "pro": "gemini-3.1-pro-preview",
     "replication": "qwen/qwen-2.5-72b-instruct",
@@ -235,7 +234,6 @@
   "temperature": 0,
   "thinking_level": "LOW",
   "unresolved": [
-    "selected schedule exceeds $30 study cap",
     "provider-preflight",
     "dev capability gate (not run)"
   ]
