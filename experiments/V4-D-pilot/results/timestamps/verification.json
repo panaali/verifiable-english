@@ -1,0 +1,14 @@
+[
+  {
+    "file": "experiments/V4-D-pilot/results/timestamps/PREREG-D-pilot.md.ots",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Assuming target filename is 'experiments/V4-D-pilot/results/timestamps/PREREG-D-pilot.md'\nCould not connect to Bitcoin node: Cookie file unusable ([Errno 2] No such file or directory: '/Users/seyran/Library/Application Support/Bitcoin/.cookie') and rpcpassword not specified in the configuration file: '/Users/seyran/Library/Application Support/Bitcoin/bitcoin.conf'\n"
+  },
+  {
+    "file": "experiments/V4-D-pilot/results/timestamps/HASHES.ots",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Assuming target filename is 'experiments/V4-D-pilot/results/timestamps/HASHES'\nCould not connect to Bitcoin node: Cookie file unusable ([Errno 2] No such file or directory: '/Users/seyran/Library/Application Support/Bitcoin/.cookie') and rpcpassword not specified in the configuration file: '/Users/seyran/Library/Application Support/Bitcoin/bitcoin.conf'\n"
+  }
+]

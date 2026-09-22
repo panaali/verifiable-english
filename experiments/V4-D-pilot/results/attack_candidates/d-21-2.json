@@ -1,0 +1,1761 @@
+{
+  "display": {
+    "prose": "Only two premises bear on the query; the rest are irrelevant. The register entries (p0–p3, p5–p11, p13–p28) are unary facts about Ben and say nothing about trust. Ada almost following Ben (p12) is also irrelevant. Premise p29 concerns respect. As formalized here, it says there is a person who respects no one. Call that person x0. Premise p4 links respect and trust. As formalized here, whenever a person y trusts x, x respects y. So each trust link from a truster to a trusted person carries a respect link in the opposite direction. Now apply p4 to x0. Suppose some person y trusted x0. Then by p4, x0 would respect y. But p29 says x0 respects no one. So no person trusts x0. It follows that there is a person whom nobody trusts. That is exactly the query: it is not the case that everyone is trusted by someone. The deduction uses only p4 and p29, and it contains no gaps. The answer is True.",
+    "answer": "True",
+    "translations": [
+      {
+        "premise_id": "p0",
+        "english": "Ben records the amber entry in numbered register 16.",
+        "ve": "@ben is d16."
+      },
+      {
+        "premise_id": "p1",
+        "english": "Ben records the silver entry in numbered register 10.",
+        "ve": "@ben is d10."
+      },
+      {
+        "premise_id": "p2",
+        "english": "Ben records the amber entry in numbered register 0.",
+        "ve": "@ben is d0."
+      },
+      {
+        "premise_id": "p3",
+        "english": "Ben records the ivory entry in numbered register 22.",
+        "ve": "@ben is d22."
+      },
+      {
+        "premise_id": "p4",
+        "english": "For every person x and every person y, if x respects y, then y trusts x.",
+        "ve": "for every person x0, (for every person x1, (if (x1 s x0), then (x0 r x1)))."
+      },
+      {
+        "premise_id": "p5",
+        "english": "Ben records the scarlet entry in numbered register 15.",
+        "ve": "@ben is d15."
+      },
+      {
+        "premise_id": "p6",
+        "english": "Ben records the teal entry in numbered register 20.",
+        "ve": "@ben is d20."
+      },
+      {
+        "premise_id": "p7",
+        "english": "Ben records the teal entry in numbered register 4.",
+        "ve": "@ben is d4."
+      },
+      {
+        "premise_id": "p8",
+        "english": "Ben records the copper entry in numbered register 13.",
+        "ve": "@ben is d13."
+      },
+      {
+        "premise_id": "p9",
+        "english": "Ben records the silver entry in numbered register 26.",
+        "ve": "@ben is d26."
+      },
+      {
+        "premise_id": "p10",
+        "english": "Ben records the copper entry in numbered register 21.",
+        "ve": "@ben is d21."
+      },
+      {
+        "premise_id": "p11",
+        "english": "Ben records the teal entry in numbered register 12.",
+        "ve": "@ben is d12."
+      },
+      {
+        "premise_id": "p12",
+        "english": "Ada almost follows Ben.",
+        "ve": "@ada t @ben."
+      },
+      {
+        "premise_id": "p13",
+        "english": "Ben records the silver entry in numbered register 2.",
+        "ve": "@ben is d2."
+      },
+      {
+        "premise_id": "p14",
+        "english": "Ben records the ivory entry in numbered register 14.",
+        "ve": "@ben is d14."
+      },
+      {
+        "premise_id": "p15",
+        "english": "Ben records the cobalt entry in numbered register 17.",
+        "ve": "@ben is d17."
+      },
+      {
+        "premise_id": "p16",
+        "english": "Ben records the cobalt entry in numbered register 25.",
+        "ve": "@ben is d25."
+      },
+      {
+        "premise_id": "p17",
+        "english": "Ben records the violet entry in numbered register 3.",
+        "ve": "@ben is d3."
+      },
+      {
+        "premise_id": "p18",
+        "english": "Ben records the violet entry in numbered register 11.",
+        "ve": "@ben is d11."
+      },
+      {
+        "premise_id": "p19",
+        "english": "Ben records the amber entry in numbered register 24.",
+        "ve": "@ben is d24."
+      },
+      {
+        "premise_id": "p20",
+        "english": "Ben records the ivory entry in numbered register 6.",
+        "ve": "@ben is d6."
+      },
+      {
+        "premise_id": "p21",
+        "english": "Ben records the copper entry in numbered register 5.",
+        "ve": "@ben is d5."
+      },
+      {
+        "premise_id": "p22",
+        "english": "Ben records the violet entry in numbered register 19.",
+        "ve": "@ben is d19."
+      },
+      {
+        "premise_id": "p23",
+        "english": "Ben records the silver entry in numbered register 18.",
+        "ve": "@ben is d18."
+      },
+      {
+        "premise_id": "p24",
+        "english": "Ben records the amber entry in numbered register 8.",
+        "ve": "@ben is d8."
+      },
+      {
+        "premise_id": "p25",
+        "english": "Ben records the scarlet entry in numbered register 7.",
+        "ve": "@ben is d7."
+      },
+      {
+        "premise_id": "p26",
+        "english": "Ben records the cobalt entry in numbered register 1.",
+        "ve": "@ben is d1."
+      },
+      {
+        "premise_id": "p27",
+        "english": "Ben records the scarlet entry in numbered register 23.",
+        "ve": "@ben is d23."
+      },
+      {
+        "premise_id": "p28",
+        "english": "Ben records the cobalt entry in numbered register 9.",
+        "ve": "@ben is d9."
+      },
+      {
+        "premise_id": "p29",
+        "english": "For every person x, there is a person y such that x respects y (y may depend on x).",
+        "ve": "there exists person x0, (for every person x1, (not (x0 r x1)))."
+      }
+    ],
+    "query_ve": "not (for every person x0, (there exists person x1, (x1 s x0))).",
+    "graph": {
+      "claims": [
+        {
+          "id": "p0",
+          "ve": "@ben is d16."
+        },
+        {
+          "id": "p1",
+          "ve": "@ben is d10."
+        },
+        {
+          "id": "p2",
+          "ve": "@ben is d0."
+        },
+        {
+          "id": "p3",
+          "ve": "@ben is d22."
+        },
+        {
+          "id": "p4",
+          "ve": "for every person x0, (for every person x1, (if (x1 s x0), then (x0 r x1)))."
+        },
+        {
+          "id": "p5",
+          "ve": "@ben is d15."
+        },
+        {
+          "id": "p6",
+          "ve": "@ben is d20."
+        },
+        {
+          "id": "p7",
+          "ve": "@ben is d4."
+        },
+        {
+          "id": "p8",
+          "ve": "@ben is d13."
+        },
+        {
+          "id": "p9",
+          "ve": "@ben is d26."
+        },
+        {
+          "id": "p10",
+          "ve": "@ben is d21."
+        },
+        {
+          "id": "p11",
+          "ve": "@ben is d12."
+        },
+        {
+          "id": "p12",
+          "ve": "@ada t @ben."
+        },
+        {
+          "id": "p13",
+          "ve": "@ben is d2."
+        },
+        {
+          "id": "p14",
+          "ve": "@ben is d14."
+        },
+        {
+          "id": "p15",
+          "ve": "@ben is d17."
+        },
+        {
+          "id": "p16",
+          "ve": "@ben is d25."
+        },
+        {
+          "id": "p17",
+          "ve": "@ben is d3."
+        },
+        {
+          "id": "p18",
+          "ve": "@ben is d11."
+        },
+        {
+          "id": "p19",
+          "ve": "@ben is d24."
+        },
+        {
+          "id": "p20",
+          "ve": "@ben is d6."
+        },
+        {
+          "id": "p21",
+          "ve": "@ben is d5."
+        },
+        {
+          "id": "p22",
+          "ve": "@ben is d19."
+        },
+        {
+          "id": "p23",
+          "ve": "@ben is d18."
+        },
+        {
+          "id": "p24",
+          "ve": "@ben is d8."
+        },
+        {
+          "id": "p25",
+          "ve": "@ben is d7."
+        },
+        {
+          "id": "p26",
+          "ve": "@ben is d1."
+        },
+        {
+          "id": "p27",
+          "ve": "@ben is d23."
+        },
+        {
+          "id": "p28",
+          "ve": "@ben is d9."
+        },
+        {
+          "id": "p29",
+          "ve": "there exists person x0, (for every person x1, (not (x0 r x1)))."
+        },
+        {
+          "id": "goal",
+          "ve": "not (for every person x0, (there exists person x1, (x1 s x0)))."
+        }
+      ],
+      "deductions": [
+        {
+          "id": "d0",
+          "premises": [
+            "p4",
+            "p29"
+          ],
+          "conclusion": "goal"
+        }
+      ],
+      "root": "goal"
+    }
+  },
+  "submission": {
+    "prose": "Only two premises bear on the query; the rest are irrelevant. The register entries (p0–p3, p5–p11, p13–p28) are unary facts about Ben and say nothing about trust. Ada almost following Ben (p12) is also irrelevant. Premise p29 concerns respect. As formalized here, it says there is a person who respects no one. Call that person x0. Premise p4 links respect and trust. As formalized here, whenever a person y trusts x, x respects y. So each trust link from a truster to a trusted person carries a respect link in the opposite direction. Now apply p4 to x0. Suppose some person y trusted x0. Then by p4, x0 would respect y. But p29 says x0 respects no one. So no person trusts x0. It follows that there is a person whom nobody trusts. That is exactly the query: it is not the case that everyone is trusted by someone. The deduction uses only p4 and p29, and it contains no gaps. The answer is True.",
+    "answer": "True",
+    "translations": [
+      {
+        "premise_id": "p0",
+        "english": "Ben records the amber entry in numbered register 16.",
+        "ve": "@ben is d16."
+      },
+      {
+        "premise_id": "p1",
+        "english": "Ben records the silver entry in numbered register 10.",
+        "ve": "@ben is d10."
+      },
+      {
+        "premise_id": "p2",
+        "english": "Ben records the amber entry in numbered register 0.",
+        "ve": "@ben is d0."
+      },
+      {
+        "premise_id": "p3",
+        "english": "Ben records the ivory entry in numbered register 22.",
+        "ve": "@ben is d22."
+      },
+      {
+        "premise_id": "p4",
+        "english": "For every person x and every person y, if x respects y, then y trusts x.",
+        "ve": "for every person x0, (for every person x1, (if (x1 s x0), then (x0 r x1)))."
+      },
+      {
+        "premise_id": "p5",
+        "english": "Ben records the scarlet entry in numbered register 15.",
+        "ve": "@ben is d15."
+      },
+      {
+        "premise_id": "p6",
+        "english": "Ben records the teal entry in numbered register 20.",
+        "ve": "@ben is d20."
+      },
+      {
+        "premise_id": "p7",
+        "english": "Ben records the teal entry in numbered register 4.",
+        "ve": "@ben is d4."
+      },
+      {
+        "premise_id": "p8",
+        "english": "Ben records the copper entry in numbered register 13.",
+        "ve": "@ben is d13."
+      },
+      {
+        "premise_id": "p9",
+        "english": "Ben records the silver entry in numbered register 26.",
+        "ve": "@ben is d26."
+      },
+      {
+        "premise_id": "p10",
+        "english": "Ben records the copper entry in numbered register 21.",
+        "ve": "@ben is d21."
+      },
+      {
+        "premise_id": "p11",
+        "english": "Ben records the teal entry in numbered register 12.",
+        "ve": "@ben is d12."
+      },
+      {
+        "premise_id": "p12",
+        "english": "Ada almost follows Ben.",
+        "ve": "@ada t @ben."
+      },
+      {
+        "premise_id": "p13",
+        "english": "Ben records the silver entry in numbered register 2.",
+        "ve": "@ben is d2."
+      },
+      {
+        "premise_id": "p14",
+        "english": "Ben records the ivory entry in numbered register 14.",
+        "ve": "@ben is d14."
+      },
+      {
+        "premise_id": "p15",
+        "english": "Ben records the cobalt entry in numbered register 17.",
+        "ve": "@ben is d17."
+      },
+      {
+        "premise_id": "p16",
+        "english": "Ben records the cobalt entry in numbered register 25.",
+        "ve": "@ben is d25."
+      },
+      {
+        "premise_id": "p17",
+        "english": "Ben records the violet entry in numbered register 3.",
+        "ve": "@ben is d3."
+      },
+      {
+        "premise_id": "p18",
+        "english": "Ben records the violet entry in numbered register 11.",
+        "ve": "@ben is d11."
+      },
+      {
+        "premise_id": "p19",
+        "english": "Ben records the amber entry in numbered register 24.",
+        "ve": "@ben is d24."
+      },
+      {
+        "premise_id": "p20",
+        "english": "Ben records the ivory entry in numbered register 6.",
+        "ve": "@ben is d6."
+      },
+      {
+        "premise_id": "p21",
+        "english": "Ben records the copper entry in numbered register 5.",
+        "ve": "@ben is d5."
+      },
+      {
+        "premise_id": "p22",
+        "english": "Ben records the violet entry in numbered register 19.",
+        "ve": "@ben is d19."
+      },
+      {
+        "premise_id": "p23",
+        "english": "Ben records the silver entry in numbered register 18.",
+        "ve": "@ben is d18."
+      },
+      {
+        "premise_id": "p24",
+        "english": "Ben records the amber entry in numbered register 8.",
+        "ve": "@ben is d8."
+      },
+      {
+        "premise_id": "p25",
+        "english": "Ben records the scarlet entry in numbered register 7.",
+        "ve": "@ben is d7."
+      },
+      {
+        "premise_id": "p26",
+        "english": "Ben records the cobalt entry in numbered register 1.",
+        "ve": "@ben is d1."
+      },
+      {
+        "premise_id": "p27",
+        "english": "Ben records the scarlet entry in numbered register 23.",
+        "ve": "@ben is d23."
+      },
+      {
+        "premise_id": "p28",
+        "english": "Ben records the cobalt entry in numbered register 9.",
+        "ve": "@ben is d9."
+      },
+      {
+        "premise_id": "p29",
+        "english": "For every person x, there is a person y such that x respects y (y may depend on x).",
+        "ve": "there exists person x0, (for every person x1, (not (x0 r x1)))."
+      }
+    ],
+    "query_ve": "not (for every person x0, (there exists person x1, (x1 s x0))).",
+    "graph": {
+      "claims": [
+        {
+          "id": "p0",
+          "ve": "@ben is d16."
+        },
+        {
+          "id": "p1",
+          "ve": "@ben is d10."
+        },
+        {
+          "id": "p2",
+          "ve": "@ben is d0."
+        },
+        {
+          "id": "p3",
+          "ve": "@ben is d22."
+        },
+        {
+          "id": "p4",
+          "ve": "for every person x0, (for every person x1, (if (x1 s x0), then (x0 r x1)))."
+        },
+        {
+          "id": "p5",
+          "ve": "@ben is d15."
+        },
+        {
+          "id": "p6",
+          "ve": "@ben is d20."
+        },
+        {
+          "id": "p7",
+          "ve": "@ben is d4."
+        },
+        {
+          "id": "p8",
+          "ve": "@ben is d13."
+        },
+        {
+          "id": "p9",
+          "ve": "@ben is d26."
+        },
+        {
+          "id": "p10",
+          "ve": "@ben is d21."
+        },
+        {
+          "id": "p11",
+          "ve": "@ben is d12."
+        },
+        {
+          "id": "p12",
+          "ve": "@ada t @ben."
+        },
+        {
+          "id": "p13",
+          "ve": "@ben is d2."
+        },
+        {
+          "id": "p14",
+          "ve": "@ben is d14."
+        },
+        {
+          "id": "p15",
+          "ve": "@ben is d17."
+        },
+        {
+          "id": "p16",
+          "ve": "@ben is d25."
+        },
+        {
+          "id": "p17",
+          "ve": "@ben is d3."
+        },
+        {
+          "id": "p18",
+          "ve": "@ben is d11."
+        },
+        {
+          "id": "p19",
+          "ve": "@ben is d24."
+        },
+        {
+          "id": "p20",
+          "ve": "@ben is d6."
+        },
+        {
+          "id": "p21",
+          "ve": "@ben is d5."
+        },
+        {
+          "id": "p22",
+          "ve": "@ben is d19."
+        },
+        {
+          "id": "p23",
+          "ve": "@ben is d18."
+        },
+        {
+          "id": "p24",
+          "ve": "@ben is d8."
+        },
+        {
+          "id": "p25",
+          "ve": "@ben is d7."
+        },
+        {
+          "id": "p26",
+          "ve": "@ben is d1."
+        },
+        {
+          "id": "p27",
+          "ve": "@ben is d23."
+        },
+        {
+          "id": "p28",
+          "ve": "@ben is d9."
+        },
+        {
+          "id": "p29",
+          "ve": "there exists person x0, (for every person x1, (not (x0 r x1)))."
+        },
+        {
+          "id": "goal",
+          "ve": "not (for every person x0, (there exists person x1, (x1 s x0)))."
+        }
+      ],
+      "deductions": [
+        {
+          "id": "d0",
+          "premises": [
+            "p4",
+            "p29"
+          ],
+          "conclusion": "goal"
+        }
+      ],
+      "root": "goal"
+    },
+    "plausibility": 35
+  },
+  "checker": {
+    "deduction_certified": true,
+    "root_matches_submitted_answer": true,
+    "unbound_leaves": [],
+    "table_complete_and_source_preserved": true,
+    "translation_faithfulness": "NOT_CHECKED: judge must assess original English",
+    "errors": [],
+    "formal_status": "Checked"
+  },
+  "checker_evidence": {
+    "version": "ve-argument-tableau@1",
+    "assurance": "experimental",
+    "status": "Checked",
+    "graph_id": "2f8bbce4c60db9bd60c1003214a91eebe25db8d2b631ba9a41528e13e026193a",
+    "environment_id": "a4645e9f2b103aaa9dbcc3498de50fb92ba43ae5ac806c70d1781995a49d9bcc",
+    "root": "goal",
+    "findings": {
+      "d0": [
+        "follows"
+      ]
+    },
+    "remaining_assumptions": [
+      "p4",
+      "p29"
+    ],
+    "unresolved_obligations": [],
+    "composed": true,
+    "proof": "Python replay checked",
+    "intent": "unconfirmed",
+    "profiles": [
+      "relational-fol@0"
+    ],
+    "lean_checked": false,
+    "lean_status": "Lean-checked: no",
+    "lean_detail": "Lean replay not requested",
+    "approval": "unassessed",
+    "edges": [
+      {
+        "name": "d0",
+        "edge_id": "fbcef418683a6d32374e1b7e5bd009d481fc8c40c52cb677533e56d13c3a3b73",
+        "premises": [
+          "p4",
+          "p29"
+        ],
+        "conclusion": "goal",
+        "findings": [
+          "follows"
+        ],
+        "status": "established",
+        "contradictory_premises": false,
+        "checker_conflict": false,
+        "satisfying_premise_model_ids": [],
+        "artifacts": [
+          {
+            "kind": "follows",
+            "submitted": false,
+            "certificate": {
+              "edge_id": "fbcef418683a6d32374e1b7e5bd009d481fc8c40c52cb677533e56d13c3a3b73",
+              "direction": "follows",
+              "proof": {
+                "checker_version": "ve-tableau-checker@2",
+                "environment_id": "a4645e9f2b103aaa9dbcc3498de50fb92ba43ae5ac806c70d1781995a49d9bcc",
+                "premise_meaning_ids": [
+                  "686dd1b7eeb27a0d64f0bd4c47d0c528e589426d05e374a1211856b31baa311c",
+                  "e221f4c347cffe031fd581e1d8c5f6d970c12e94068a85a5df99a2a654965199"
+                ],
+                "conclusion_meaning_id": "8c514a66113e549230b4c075408adf65aea674cf8e8ec3279ec7d620b6a08033",
+                "trace": {
+                  "rule": "expand",
+                  "at": 2,
+                  "children": [
+                    {
+                      "rule": "expand",
+                      "at": 1,
+                      "children": [
+                        {
+                          "rule": "expand",
+                          "at": 0,
+                          "children": [
+                            {
+                              "rule": "expand",
+                              "at": 3,
+                              "children": [
+                                {
+                                  "rule": "expand",
+                                  "at": 6,
+                                  "children": [
+                                    {
+                                      "rule": "expand",
+                                      "at": 4,
+                                      "children": [
+                                        {
+                                          "rule": "expand",
+                                          "at": 8,
+                                          "children": [
+                                            {
+                                              "rule": "expand",
+                                              "at": 5,
+                                              "children": [
+                                                {
+                                                  "rule": "expand",
+                                                  "at": 10,
+                                                  "children": [
+                                                    {
+                                                      "rule": "close"
+                                                    },
+                                                    {
+                                                      "rule": "expand",
+                                                      "at": 0,
+                                                      "children": [
+                                                        {
+                                                          "rule": "expand",
+                                                          "at": 12,
+                                                          "children": [
+                                                            {
+                                                              "rule": "expand",
+                                                              "at": 3,
+                                                              "children": [
+                                                                {
+                                                                  "rule": "expand",
+                                                                  "at": 14,
+                                                                  "children": [
+                                                                    {
+                                                                      "rule": "expand",
+                                                                      "at": 4,
+                                                                      "children": [
+                                                                        {
+                                                                          "rule": "expand",
+                                                                          "at": 16,
+                                                                          "children": [
+                                                                            {
+                                                                              "rule": "expand",
+                                                                              "at": 5,
+                                                                              "children": [
+                                                                                {
+                                                                                  "rule": "expand",
+                                                                                  "at": 12,
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "rule": "expand",
+                                                                                      "at": 19,
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "rule": "close"
+                                                                                        },
+                                                                                        {
+                                                                                          "rule": "expand",
+                                                                                          "at": 0,
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "rule": "expand",
+                                                                                              "at": 21,
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "rule": "expand",
+                                                                                                  "at": 22,
+                                                                                                  "children": [
+                                                                                                    {
+                                                                                                      "rule": "expand",
+                                                                                                      "at": 21,
+                                                                                                      "children": [
+                                                                                                        {
+                                                                                                          "rule": "expand",
+                                                                                                          "at": 24,
+                                                                                                          "children": [
+                                                                                                            {
+                                                                                                              "rule": "expand",
+                                                                                                              "at": 3,
+                                                                                                              "children": [
+                                                                                                                {
+                                                                                                                  "rule": "expand",
+                                                                                                                  "at": 26,
+                                                                                                                  "children": [
+                                                                                                                    {
+                                                                                                                      "rule": "expand",
+                                                                                                                      "at": 4,
+                                                                                                                      "children": [
+                                                                                                                        {
+                                                                                                                          "rule": "expand",
+                                                                                                                          "at": 28,
+                                                                                                                          "children": [
+                                                                                                                            {
+                                                                                                                              "rule": "expand",
+                                                                                                                              "at": 5,
+                                                                                                                              "children": [
+                                                                                                                                {
+                                                                                                                                  "rule": "expand",
+                                                                                                                                  "at": 12,
+                                                                                                                                  "children": [
+                                                                                                                                    {
+                                                                                                                                      "rule": "expand",
+                                                                                                                                      "at": 21,
+                                                                                                                                      "children": [
+                                                                                                                                        {
+                                                                                                                                          "rule": "expand",
+                                                                                                                                          "at": 32,
+                                                                                                                                          "children": [
+                                                                                                                                            {
+                                                                                                                                              "rule": "expand",
+                                                                                                                                              "at": 0,
+                                                                                                                                              "children": [
+                                                                                                                                                {
+                                                                                                                                                  "rule": "expand",
+                                                                                                                                                  "at": 34,
+                                                                                                                                                  "children": [
+                                                                                                                                                    {
+                                                                                                                                                      "rule": "expand",
+                                                                                                                                                      "at": 34,
+                                                                                                                                                      "children": [
+                                                                                                                                                        {
+                                                                                                                                                          "rule": "expand",
+                                                                                                                                                          "at": 34,
+                                                                                                                                                          "children": [
+                                                                                                                                                            {
+                                                                                                                                                              "rule": "expand",
+                                                                                                                                                              "at": 3,
+                                                                                                                                                              "children": [
+                                                                                                                                                                {
+                                                                                                                                                                  "rule": "expand",
+                                                                                                                                                                  "at": 38,
+                                                                                                                                                                  "children": [
+                                                                                                                                                                    {
+                                                                                                                                                                      "rule": "expand",
+                                                                                                                                                                      "at": 4,
+                                                                                                                                                                      "children": [
+                                                                                                                                                                        {
+                                                                                                                                                                          "rule": "expand",
+                                                                                                                                                                          "at": 40,
+                                                                                                                                                                          "children": [
+                                                                                                                                                                            {
+                                                                                                                                                                              "rule": "expand",
+                                                                                                                                                                              "at": 5,
+                                                                                                                                                                              "children": [
+                                                                                                                                                                                {
+                                                                                                                                                                                  "rule": "expand",
+                                                                                                                                                                                  "at": 12,
+                                                                                                                                                                                  "children": [
+                                                                                                                                                                                    {
+                                                                                                                                                                                      "rule": "expand",
+                                                                                                                                                                                      "at": 21,
+                                                                                                                                                                                      "children": [
+                                                                                                                                                                                        {
+                                                                                                                                                                                          "rule": "expand",
+                                                                                                                                                                                          "at": 44,
+                                                                                                                                                                                          "children": [
+                                                                                                                                                                                            {
+                                                                                                                                                                                              "rule": "expand",
+                                                                                                                                                                                              "at": 34,
+                                                                                                                                                                                              "children": [
+                                                                                                                                                                                                {
+                                                                                                                                                                                                  "rule": "expand",
+                                                                                                                                                                                                  "at": 46,
+                                                                                                                                                                                                  "children": [
+                                                                                                                                                                                                    {
+                                                                                                                                                                                                      "rule": "close"
+                                                                                                                                                                                                    },
+                                                                                                                                                                                                    {
+                                                                                                                                                                                                      "rule": "expand",
+                                                                                                                                                                                                      "at": 0,
+                                                                                                                                                                                                      "children": [
+                                                                                                                                                                                                        {
+                                                                                                                                                                                                          "rule": "expand",
+                                                                                                                                                                                                          "at": 48,
+                                                                                                                                                                                                          "children": [
+                                                                                                                                                                                                            {
+                                                                                                                                                                                                              "rule": "expand",
+                                                                                                                                                                                                              "at": 48,
+                                                                                                                                                                                                              "children": [
+                                                                                                                                                                                                                {
+                                                                                                                                                                                                                  "rule": "expand",
+                                                                                                                                                                                                                  "at": 48,
+                                                                                                                                                                                                                  "children": [
+                                                                                                                                                                                                                    {
+                                                                                                                                                                                                                      "rule": "expand",
+                                                                                                                                                                                                                      "at": 48,
+                                                                                                                                                                                                                      "children": [
+                                                                                                                                                                                                                        {
+                                                                                                                                                                                                                          "rule": "expand",
+                                                                                                                                                                                                                          "at": 3,
+                                                                                                                                                                                                                          "children": [
+                                                                                                                                                                                                                            {
+                                                                                                                                                                                                                              "rule": "expand",
+                                                                                                                                                                                                                              "at": 53,
+                                                                                                                                                                                                                              "children": [
+                                                                                                                                                                                                                                {
+                                                                                                                                                                                                                                  "rule": "expand",
+                                                                                                                                                                                                                                  "at": 4,
+                                                                                                                                                                                                                                  "children": [
+                                                                                                                                                                                                                                    {
+                                                                                                                                                                                                                                      "rule": "expand",
+                                                                                                                                                                                                                                      "at": 55,
+                                                                                                                                                                                                                                      "children": [
+                                                                                                                                                                                                                                        {
+                                                                                                                                                                                                                                          "rule": "expand",
+                                                                                                                                                                                                                                          "at": 5,
+                                                                                                                                                                                                                                          "children": [
+                                                                                                                                                                                                                                            {
+                                                                                                                                                                                                                                              "rule": "expand",
+                                                                                                                                                                                                                                              "at": 12,
+                                                                                                                                                                                                                                              "children": [
+                                                                                                                                                                                                                                                {
+                                                                                                                                                                                                                                                  "rule": "expand",
+                                                                                                                                                                                                                                                  "at": 21,
+                                                                                                                                                                                                                                                  "children": [
+                                                                                                                                                                                                                                                    {
+                                                                                                                                                                                                                                                      "rule": "expand",
+                                                                                                                                                                                                                                                      "at": 59,
+                                                                                                                                                                                                                                                      "children": [
+                                                                                                                                                                                                                                                        {
+                                                                                                                                                                                                                                                          "rule": "expand",
+                                                                                                                                                                                                                                                          "at": 34,
+                                                                                                                                                                                                                                                          "children": [
+                                                                                                                                                                                                                                                            {
+                                                                                                                                                                                                                                                              "rule": "expand",
+                                                                                                                                                                                                                                                              "at": 48,
+                                                                                                                                                                                                                                                              "children": [
+                                                                                                                                                                                                                                                                {
+                                                                                                                                                                                                                                                                  "rule": "expand",
+                                                                                                                                                                                                                                                                  "at": 62,
+                                                                                                                                                                                                                                                                  "children": [
+                                                                                                                                                                                                                                                                    {
+                                                                                                                                                                                                                                                                      "rule": "close"
+                                                                                                                                                                                                                                                                    },
+                                                                                                                                                                                                                                                                    {
+                                                                                                                                                                                                                                                                      "rule": "expand",
+                                                                                                                                                                                                                                                                      "at": 0,
+                                                                                                                                                                                                                                                                      "children": [
+                                                                                                                                                                                                                                                                        {
+                                                                                                                                                                                                                                                                          "rule": "expand",
+                                                                                                                                                                                                                                                                          "at": 64,
+                                                                                                                                                                                                                                                                          "children": [
+                                                                                                                                                                                                                                                                            {
+                                                                                                                                                                                                                                                                              "rule": "expand",
+                                                                                                                                                                                                                                                                              "at": 64,
+                                                                                                                                                                                                                                                                              "children": [
+                                                                                                                                                                                                                                                                                {
+                                                                                                                                                                                                                                                                                  "rule": "expand",
+                                                                                                                                                                                                                                                                                  "at": 64,
+                                                                                                                                                                                                                                                                                  "children": [
+                                                                                                                                                                                                                                                                                    {
+                                                                                                                                                                                                                                                                                      "rule": "expand",
+                                                                                                                                                                                                                                                                                      "at": 64,
+                                                                                                                                                                                                                                                                                      "children": [
+                                                                                                                                                                                                                                                                                        {
+                                                                                                                                                                                                                                                                                          "rule": "expand",
+                                                                                                                                                                                                                                                                                          "at": 64,
+                                                                                                                                                                                                                                                                                          "children": [
+                                                                                                                                                                                                                                                                                            {
+                                                                                                                                                                                                                                                                                              "rule": "expand",
+                                                                                                                                                                                                                                                                                              "at": 3,
+                                                                                                                                                                                                                                                                                              "children": [
+                                                                                                                                                                                                                                                                                                {
+                                                                                                                                                                                                                                                                                                  "rule": "expand",
+                                                                                                                                                                                                                                                                                                  "at": 70,
+                                                                                                                                                                                                                                                                                                  "children": [
+                                                                                                                                                                                                                                                                                                    {
+                                                                                                                                                                                                                                                                                                      "rule": "expand",
+                                                                                                                                                                                                                                                                                                      "at": 4,
+                                                                                                                                                                                                                                                                                                      "children": [
+                                                                                                                                                                                                                                                                                                        {
+                                                                                                                                                                                                                                                                                                          "rule": "expand",
+                                                                                                                                                                                                                                                                                                          "at": 72,
+                                                                                                                                                                                                                                                                                                          "children": [
+                                                                                                                                                                                                                                                                                                            {
+                                                                                                                                                                                                                                                                                                              "rule": "expand",
+                                                                                                                                                                                                                                                                                                              "at": 5,
+                                                                                                                                                                                                                                                                                                              "children": [
+                                                                                                                                                                                                                                                                                                                {
+                                                                                                                                                                                                                                                                                                                  "rule": "expand",
+                                                                                                                                                                                                                                                                                                                  "at": 12,
+                                                                                                                                                                                                                                                                                                                  "children": [
+                                                                                                                                                                                                                                                                                                                    {
+                                                                                                                                                                                                                                                                                                                      "rule": "expand",
+                                                                                                                                                                                                                                                                                                                      "at": 21,
+                                                                                                                                                                                                                                                                                                                      "children": [
+                                                                                                                                                                                                                                                                                                                        {
+                                                                                                                                                                                                                                                                                                                          "rule": "expand",
+                                                                                                                                                                                                                                                                                                                          "at": 76,
+                                                                                                                                                                                                                                                                                                                          "children": [
+                                                                                                                                                                                                                                                                                                                            {
+                                                                                                                                                                                                                                                                                                                              "rule": "close"
+                                                                                                                                                                                                                                                                                                                            },
+                                                                                                                                                                                                                                                                                                                            {
+                                                                                                                                                                                                                                                                                                                              "rule": "close"
+                                                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                                                          ]
+                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                      ],
+                                                                                                                                                                                                                                                                                                                      "parameter": "w:3"
+                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                  ],
+                                                                                                                                                                                                                                                                                                                  "parameter": "w:3"
+                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                              ],
+                                                                                                                                                                                                                                                                                                              "parameter": "w:3"
+                                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                                          ]
+                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                      ],
+                                                                                                                                                                                                                                                                                                      "parameter": "w:3"
+                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                  ]
+                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                              ],
+                                                                                                                                                                                                                                                                                              "parameter": "w:3"
+                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                          ],
+                                                                                                                                                                                                                                                                                          "parameter": "w:2"
+                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                      ],
+                                                                                                                                                                                                                                                                                      "parameter": "w:1"
+                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                  ],
+                                                                                                                                                                                                                                                                                  "parameter": "w:0"
+                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                              ],
+                                                                                                                                                                                                                                                                              "parameter": "c:ben"
+                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                          ],
+                                                                                                                                                                                                                                                                          "parameter": "c:ada"
+                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                      ],
+                                                                                                                                                                                                                                                                      "parameter": "w:3"
+                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                  ]
+                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                              ],
+                                                                                                                                                                                                                                                              "parameter": "w:5"
+                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                          ],
+                                                                                                                                                                                                                                                          "parameter": "w:1"
+                                                                                                                                                                                                                                                        },
+                                                                                                                                                                                                                                                        {
+                                                                                                                                                                                                                                                          "rule": "close"
+                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                      ]
+                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                  ],
+                                                                                                                                                                                                                                                  "parameter": "w:2"
+                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                              ],
+                                                                                                                                                                                                                                              "parameter": "w:1"
+                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                          ],
+                                                                                                                                                                                                                                          "parameter": "w:2"
+                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                      ]
+                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                  ],
+                                                                                                                                                                                                                                  "parameter": "w:2"
+                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                              ]
+                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                          ],
+                                                                                                                                                                                                                          "parameter": "w:2"
+                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                      ],
+                                                                                                                                                                                                                      "parameter": "w:1"
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                  ],
+                                                                                                                                                                                                                  "parameter": "w:0"
+                                                                                                                                                                                                                }
+                                                                                                                                                                                                              ],
+                                                                                                                                                                                                              "parameter": "c:ben"
+                                                                                                                                                                                                            }
+                                                                                                                                                                                                          ],
+                                                                                                                                                                                                          "parameter": "c:ada"
+                                                                                                                                                                                                        }
+                                                                                                                                                                                                      ],
+                                                                                                                                                                                                      "parameter": "w:2"
+                                                                                                                                                                                                    }
+                                                                                                                                                                                                  ]
+                                                                                                                                                                                                }
+                                                                                                                                                                                              ],
+                                                                                                                                                                                              "parameter": "w:4"
+                                                                                                                                                                                            },
+                                                                                                                                                                                            {
+                                                                                                                                                                                              "rule": "close"
+                                                                                                                                                                                            }
+                                                                                                                                                                                          ]
+                                                                                                                                                                                        }
+                                                                                                                                                                                      ],
+                                                                                                                                                                                      "parameter": "w:1"
+                                                                                                                                                                                    }
+                                                                                                                                                                                  ],
+                                                                                                                                                                                  "parameter": "w:0"
+                                                                                                                                                                                }
+                                                                                                                                                                              ],
+                                                                                                                                                                              "parameter": "w:0"
+                                                                                                                                                                            }
+                                                                                                                                                                          ]
+                                                                                                                                                                        }
+                                                                                                                                                                      ],
+                                                                                                                                                                      "parameter": "w:1"
+                                                                                                                                                                    }
+                                                                                                                                                                  ]
+                                                                                                                                                                }
+                                                                                                                                                              ],
+                                                                                                                                                              "parameter": "w:1"
+                                                                                                                                                            }
+                                                                                                                                                          ],
+                                                                                                                                                          "parameter": "w:0"
+                                                                                                                                                        }
+                                                                                                                                                      ],
+                                                                                                                                                      "parameter": "c:ben"
+                                                                                                                                                    }
+                                                                                                                                                  ],
+                                                                                                                                                  "parameter": "c:ada"
+                                                                                                                                                }
+                                                                                                                                              ],
+                                                                                                                                              "parameter": "w:1"
+                                                                                                                                            },
+                                                                                                                                            {
+                                                                                                                                              "rule": "close"
+                                                                                                                                            }
+                                                                                                                                          ]
+                                                                                                                                        }
+                                                                                                                                      ],
+                                                                                                                                      "parameter": "w:0"
+                                                                                                                                    }
+                                                                                                                                  ],
+                                                                                                                                  "parameter": "c:ben"
+                                                                                                                                }
+                                                                                                                              ],
+                                                                                                                              "parameter": "c:ben"
+                                                                                                                            }
+                                                                                                                          ]
+                                                                                                                        }
+                                                                                                                      ],
+                                                                                                                      "parameter": "w:0"
+                                                                                                                    }
+                                                                                                                  ]
+                                                                                                                }
+                                                                                                              ],
+                                                                                                              "parameter": "w:0"
+                                                                                                            },
+                                                                                                            {
+                                                                                                              "rule": "close"
+                                                                                                            }
+                                                                                                          ]
+                                                                                                        }
+                                                                                                      ],
+                                                                                                      "parameter": "c:ben"
+                                                                                                    },
+                                                                                                    {
+                                                                                                      "rule": "close"
+                                                                                                    }
+                                                                                                  ]
+                                                                                                }
+                                                                                              ],
+                                                                                              "parameter": "c:ada"
+                                                                                            }
+                                                                                          ],
+                                                                                          "parameter": "w:0"
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ],
+                                                                                  "parameter": "w:2"
+                                                                                }
+                                                                              ],
+                                                                              "parameter": "c:ada"
+                                                                            }
+                                                                          ]
+                                                                        }
+                                                                      ],
+                                                                      "parameter": "c:ben"
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ],
+                                                              "parameter": "c:ben"
+                                                            }
+                                                          ],
+                                                          "parameter": "c:ada"
+                                                        }
+                                                      ],
+                                                      "parameter": "c:ben"
+                                                    }
+                                                  ]
+                                                }
+                                              ],
+                                              "parameter": "w:1"
+                                            }
+                                          ]
+                                        }
+                                      ],
+                                      "parameter": "c:ada"
+                                    }
+                                  ]
+                                }
+                              ],
+                              "parameter": "c:ada"
+                            }
+                          ],
+                          "parameter": "c:ada"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            "check": {
+              "valid": true,
+              "status": "Valid",
+              "steps": 86,
+              "detail": ""
+            }
+          }
+        ],
+        "errors": [],
+        "search_attempts": [
+          {
+            "kind": "follows",
+            "status": "Found"
+          },
+          {
+            "kind": "refuted",
+            "status": "NotFound"
+          },
+          {
+            "kind": "gap",
+            "status": "ResourceLimit",
+            "models_checked": 0,
+            "detail": "model-attempt budget exhausted"
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "composition": {
+      "rule": "acyclic-implication-composition",
+      "environment_id": "a4645e9f2b103aaa9dbcc3498de50fb92ba43ae5ac806c70d1781995a49d9bcc",
+      "checker_build": "c2947eff5f1f0920475ccd57b2f5e8153cb0602998684e45f1558b41da3da470",
+      "root_claim_id": "91518247a29203f7b97824b8395d32a6aa0e484d1e9d3f20bea67241b660c70c",
+      "assumption_claim_ids": [
+        "de33ca053c75a3887d768100840ec17c1dd7b6fd0d20423f428b2c3bd430d268",
+        "69ee225cfdef4bd261c3d6291af972708cf3af9883c025dd0c24e3254fb425c1"
+      ],
+      "supporting_edge_ids": [
+        "fbcef418683a6d32374e1b7e5bd009d481fc8c40c52cb677533e56d13c3a3b73"
+      ],
+      "assumptions": [
+        {
+          "name": "p4",
+          "source": "for every person x0, (for every person x1, (if (x1 s x0), then (x0 r x1))).\n",
+          "ast": [
+            "forall",
+            "person",
+            [
+              "forall",
+              "person",
+              [
+                "implies",
+                [
+                  "binary",
+                  "s",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ],
+                [
+                  "binary",
+                  "r",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            ]
+          ],
+          "environment_id": "a4645e9f2b103aaa9dbcc3498de50fb92ba43ae5ac806c70d1781995a49d9bcc",
+          "source_id": "67c01e2ba506f31281fc5d20dce7ff8ab88a6be712bdd124409b2f6cea798e98",
+          "meaning_id": "686dd1b7eeb27a0d64f0bd4c47d0c528e589426d05e374a1211856b31baa311c",
+          "claim_id": "de33ca053c75a3887d768100840ec17c1dd7b6fd0d20423f428b2c3bd430d268",
+          "evidence_ids": []
+        },
+        {
+          "name": "p29",
+          "source": "there exists person x0, (for every person x1, (not (x0 r x1))).\n",
+          "ast": [
+            "exists",
+            "person",
+            [
+              "forall",
+              "person",
+              [
+                "not",
+                [
+                  "binary",
+                  "r",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            ]
+          ],
+          "environment_id": "a4645e9f2b103aaa9dbcc3498de50fb92ba43ae5ac806c70d1781995a49d9bcc",
+          "source_id": "b28741ae027eb1aef4ea98a9998bd8883d3bbdfb49d3f944a5105420b4b34777",
+          "meaning_id": "e221f4c347cffe031fd581e1d8c5f6d970c12e94068a85a5df99a2a654965199",
+          "claim_id": "69ee225cfdef4bd261c3d6291af972708cf3af9883c025dd0c24e3254fb425c1",
+          "evidence_ids": []
+        }
+      ],
+      "record_id": "5da787634cc155c90a8b093ef759f79c50e14453bef6aa908309d04155cdcc96"
+    },
+    "checker_build": "c2947eff5f1f0920475ccd57b2f5e8153cb0602998684e45f1558b41da3da470",
+    "contradictory_premises": [],
+    "warnings": [
+      {
+        "edge": "d0",
+        "code": "ResourceLimit",
+        "message": "gap search exhausted its budget"
+      }
+    ],
+    "record_id": "62538615a5724173642a1ef869b1242ef8a54d3fe2394ba0da1148055253b984"
+  },
+  "keys": [
+    "0ad6e85c22d49274c6fcb3e68443feceec30fca23e5dfa465d641ccd1817a2fa"
+  ],
+  "attack_eligible": true,
+  "private_fidelity": {
+    "query_faithful": true,
+    "premise_relations": {
+      "p0": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p1": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p2": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p3": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p4": {
+        "status": "DIFFERENT",
+        "exact": false,
+        "evidence": {
+          "status": "DIFFERENT",
+          "relation": "incomparable",
+          "relation_detail": null,
+          "nonempty_equivalence": null,
+          "failed_directions": [
+            "a_not_implies_b",
+            "b_not_implies_a"
+          ],
+          "reason": "",
+          "environment_id": "a4645e9f2b103aaa9dbcc3498de50fb92ba43ae5ac806c70d1781995a49d9bcc",
+          "a_meaning_id": "060c4e6dd3814b41dc033af06d54a0c3358e4dd06da753a292e16692d1988ae7",
+          "b_meaning_id": "686dd1b7eeb27a0d64f0bd4c47d0c528e589426d05e374a1211856b31baa311c",
+          "a_implies_b": {
+            "status": "COUNTERMODEL",
+            "certificate": null,
+            "model": {
+              "complete": true,
+              "domains": {
+                "person": [
+                  "e0"
+                ]
+              },
+              "constants": {
+                "ada": "e0",
+                "ben": "e0"
+              },
+              "relations": {
+                "d0": [],
+                "d1": [],
+                "d10": [],
+                "d11": [],
+                "d12": [],
+                "d13": [],
+                "d14": [],
+                "d15": [],
+                "d16": [],
+                "d17": [],
+                "d18": [],
+                "d19": [],
+                "d2": [],
+                "d20": [],
+                "d21": [],
+                "d22": [],
+                "d23": [],
+                "d24": [],
+                "d25": [],
+                "d26": [],
+                "d3": [],
+                "d4": [],
+                "d5": [],
+                "d6": [],
+                "d7": [],
+                "d8": [],
+                "d9": [],
+                "r": [],
+                "s": [
+                  [
+                    "e0",
+                    "e0"
+                  ]
+                ],
+                "t": []
+              }
+            },
+            "reason": "",
+            "attempts": [
+              {
+                "kind": "proof",
+                "status": "NotFound",
+                "steps": 61,
+                "detail": "saturated open branch; no entailment certificate found"
+              },
+              {
+                "kind": "search",
+                "status": "Found",
+                "models_checked": 3,
+                "detail": ""
+              }
+            ]
+          },
+          "b_implies_a": {
+            "status": "COUNTERMODEL",
+            "certificate": null,
+            "model": {
+              "complete": true,
+              "domains": {
+                "person": [
+                  "e0"
+                ]
+              },
+              "constants": {
+                "ada": "e0",
+                "ben": "e0"
+              },
+              "relations": {
+                "d0": [],
+                "d1": [],
+                "d10": [],
+                "d11": [],
+                "d12": [],
+                "d13": [],
+                "d14": [],
+                "d15": [],
+                "d16": [],
+                "d17": [],
+                "d18": [],
+                "d19": [],
+                "d2": [],
+                "d20": [],
+                "d21": [],
+                "d22": [],
+                "d23": [],
+                "d24": [],
+                "d25": [],
+                "d26": [],
+                "d3": [],
+                "d4": [],
+                "d5": [],
+                "d6": [],
+                "d7": [],
+                "d8": [],
+                "d9": [],
+                "r": [
+                  [
+                    "e0",
+                    "e0"
+                  ]
+                ],
+                "s": [],
+                "t": []
+              }
+            },
+            "reason": "",
+            "attempts": [
+              {
+                "kind": "proof",
+                "status": "NotFound",
+                "steps": 61,
+                "detail": "saturated open branch; no entailment certificate found"
+              },
+              {
+                "kind": "search",
+                "status": "Found",
+                "models_checked": 2,
+                "detail": ""
+              }
+            ]
+          }
+        }
+      },
+      "p5": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p6": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p7": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p8": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p9": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p10": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p11": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p12": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p13": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p14": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p15": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p16": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p17": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p18": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p19": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p20": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p21": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p22": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p23": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p24": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p25": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p26": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p27": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p28": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p29": {
+        "status": "DIFFERENT",
+        "exact": false,
+        "evidence": {
+          "status": "DIFFERENT",
+          "relation": "incomparable",
+          "relation_detail": null,
+          "nonempty_equivalence": null,
+          "failed_directions": [
+            "a_not_implies_b",
+            "b_not_implies_a"
+          ],
+          "reason": "",
+          "environment_id": "a4645e9f2b103aaa9dbcc3498de50fb92ba43ae5ac806c70d1781995a49d9bcc",
+          "a_meaning_id": "327258d4664e52368fa6dda1101c091095d9bc96702eae96963f456d66fbeec0",
+          "b_meaning_id": "e221f4c347cffe031fd581e1d8c5f6d970c12e94068a85a5df99a2a654965199",
+          "a_implies_b": {
+            "status": "COUNTERMODEL",
+            "certificate": null,
+            "model": {
+              "complete": true,
+              "domains": {
+                "person": [
+                  "e0"
+                ]
+              },
+              "constants": {
+                "ada": "e0",
+                "ben": "e0"
+              },
+              "relations": {
+                "d0": [],
+                "d1": [],
+                "d10": [],
+                "d11": [],
+                "d12": [],
+                "d13": [],
+                "d14": [],
+                "d15": [],
+                "d16": [],
+                "d17": [],
+                "d18": [],
+                "d19": [],
+                "d2": [],
+                "d20": [],
+                "d21": [],
+                "d22": [],
+                "d23": [],
+                "d24": [],
+                "d25": [],
+                "d26": [],
+                "d3": [],
+                "d4": [],
+                "d5": [],
+                "d6": [],
+                "d7": [],
+                "d8": [],
+                "d9": [],
+                "r": [
+                  [
+                    "e0",
+                    "e0"
+                  ]
+                ],
+                "s": [],
+                "t": []
+              }
+            },
+            "reason": "",
+            "attempts": [
+              {
+                "kind": "proof",
+                "status": "ResourceLimit",
+                "steps": 128,
+                "detail": "tableau step or certificate nesting budget exhausted"
+              },
+              {
+                "kind": "search",
+                "status": "Found",
+                "models_checked": 2,
+                "detail": ""
+              }
+            ]
+          },
+          "b_implies_a": {
+            "status": "COUNTERMODEL",
+            "certificate": null,
+            "model": {
+              "complete": true,
+              "domains": {
+                "person": [
+                  "e0"
+                ]
+              },
+              "constants": {
+                "ada": "e0",
+                "ben": "e0"
+              },
+              "relations": {
+                "d0": [],
+                "d1": [],
+                "d10": [],
+                "d11": [],
+                "d12": [],
+                "d13": [],
+                "d14": [],
+                "d15": [],
+                "d16": [],
+                "d17": [],
+                "d18": [],
+                "d19": [],
+                "d2": [],
+                "d20": [],
+                "d21": [],
+                "d22": [],
+                "d23": [],
+                "d24": [],
+                "d25": [],
+                "d26": [],
+                "d3": [],
+                "d4": [],
+                "d5": [],
+                "d6": [],
+                "d7": [],
+                "d8": [],
+                "d9": [],
+                "r": [],
+                "s": [],
+                "t": []
+              }
+            },
+            "reason": "",
+            "attempts": [
+              {
+                "kind": "proof",
+                "status": "NotFound",
+                "steps": 30,
+                "detail": "saturated open branch; no entailment certificate found"
+              },
+              {
+                "kind": "search",
+                "status": "Found",
+                "models_checked": 1,
+                "detail": ""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "mistranslated_premises": [
+      "p4",
+      "p29"
+    ],
+    "query_relation": {
+      "status": "EQUIVALENT",
+      "exact": true
+    }
+  }
+}

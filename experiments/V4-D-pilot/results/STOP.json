@@ -1,0 +1,14 @@
+{
+  "status": "stopped",
+  "stage": "mistranslation",
+  "item_id": "d-00",
+  "judge_or_arguer": "haiku",
+  "error": "Reported thinking tokens 1188 exceed declared cap 1024",
+  "expected_model": "claude-haiku-4-5-20251001",
+  "observed_model_ids": [
+    "claude-haiku-4-5-20251001"
+  ],
+  "timestamp": "2026-09-22T21:58:40.293928+00:00",
+  "started_calls": 210,
+  "substituted_models": false
+}

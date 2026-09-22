@@ -1,0 +1,246 @@
+{
+  "frozen_hash_checks": [
+    {
+      "path": "experiments/V4-D-pilot/PREREG-D-pilot.md",
+      "matches": true
+    },
+    {
+      "path": "experiments/V4-D-pilot/README.md",
+      "matches": true
+    },
+    {
+      "path": "experiments/V4-D-pilot/checker.py",
+      "matches": true
+    },
+    {
+      "path": "experiments/V4-D-pilot/gate.py",
+      "matches": true
+    },
+    {
+      "path": "experiments/V4-D-pilot/generate_items.py",
+      "matches": true
+    },
+    {
+      "path": "experiments/V4-D-pilot/items-manifest.json",
+      "matches": true
+    },
+    {
+      "path": "experiments/V4-D-pilot/items.jsonl",
+      "matches": true
+    },
+    {
+      "path": "experiments/V4-D-pilot/prompts.py",
+      "matches": true
+    },
+    {
+      "path": "experiments/V4-D-pilot/run-manifest.json",
+      "matches": true
+    },
+    {
+      "path": "experiments/V4-D-pilot/run.py",
+      "matches": true
+    },
+    {
+      "path": "experiments/V4-calibration/generate.py",
+      "matches": true
+    },
+    {
+      "path": "experiments/V4-fidelity/fidelity.py",
+      "matches": true
+    },
+    {
+      "path": "experiments/V4-fidelity/generator.py",
+      "matches": true
+    },
+    {
+      "path": "experiments/V4-fidelity/provergen_rules.json",
+      "matches": true
+    },
+    {
+      "path": "pyproject.toml",
+      "matches": true
+    },
+    {
+      "path": "tests/test_v4_d_gate.py",
+      "matches": true
+    },
+    {
+      "path": "tests/test_v4_d_pilot.py",
+      "matches": true
+    },
+    {
+      "path": "uv.lock",
+      "matches": true
+    },
+    {
+      "path": "ve/__init__.py",
+      "matches": true
+    },
+    {
+      "path": "ve/__main__.py",
+      "matches": true
+    },
+    {
+      "path": "ve/argument.py",
+      "matches": true
+    },
+    {
+      "path": "ve/argument_fixtures.py",
+      "matches": true
+    },
+    {
+      "path": "ve/ast.py",
+      "matches": true
+    },
+    {
+      "path": "ve/attacks.py",
+      "matches": true
+    },
+    {
+      "path": "ve/authoring.py",
+      "matches": true
+    },
+    {
+      "path": "ve/check.py",
+      "matches": true
+    },
+    {
+      "path": "ve/closure.py",
+      "matches": true
+    },
+    {
+      "path": "ve/english.py",
+      "matches": true
+    },
+    {
+      "path": "ve/english_phrases.py",
+      "matches": true
+    },
+    {
+      "path": "ve/english_vocabulary.py",
+      "matches": true
+    },
+    {
+      "path": "ve/entailment.py",
+      "matches": true
+    },
+    {
+      "path": "ve/environment.py",
+      "matches": true
+    },
+    {
+      "path": "ve/equivalence.py",
+      "matches": true
+    },
+    {
+      "path": "ve/errors.py",
+      "matches": true
+    },
+    {
+      "path": "ve/evaluate.py",
+      "matches": true
+    },
+    {
+      "path": "ve/fluent.py",
+      "matches": true
+    },
+    {
+      "path": "ve/fol.py",
+      "matches": true
+    },
+    {
+      "path": "ve/grammar.py",
+      "matches": true
+    },
+    {
+      "path": "ve/identity.py",
+      "matches": true
+    },
+    {
+      "path": "ve/limits.py",
+      "matches": true
+    },
+    {
+      "path": "ve/model.py",
+      "matches": true
+    },
+    {
+      "path": "ve/parser.py",
+      "matches": true
+    },
+    {
+      "path": "ve/printer.py",
+      "matches": true
+    },
+    {
+      "path": "ve/propose.py",
+      "matches": true
+    },
+    {
+      "path": "ve/search.py",
+      "matches": true
+    },
+    {
+      "path": "ve/wire.py",
+      "matches": true
+    },
+    {
+      "path": "ve_experiments/__init__.py",
+      "matches": true
+    },
+    {
+      "path": "ve_experiments/claude_cli.py",
+      "matches": true
+    },
+    {
+      "path": "ve_experiments/colab.py",
+      "matches": true
+    },
+    {
+      "path": "ve_experiments/llm.py",
+      "matches": true
+    },
+    {
+      "path": "ve_experiments/paid.py",
+      "matches": true
+    },
+    {
+      "path": "ve_experiments/runner.py",
+      "matches": true
+    },
+    {
+      "path": "ve_experiments/smoke.py",
+      "matches": true
+    },
+    {
+      "path": "ve_experiments/stats.py",
+      "matches": true
+    },
+    {
+      "path": "ve_experiments/ve_iface.py",
+      "matches": true
+    }
+  ],
+  "frozen_all_unchanged": true,
+  "started_calls": 210,
+  "post_stop_started_calls": 0,
+  "opus_arguer_calls": 192,
+  "opus_arguer_ids": [
+    "claude-opus-5-5"
+  ],
+  "arguer_input_tokens": 755933,
+  "arguer_output_tokens": 336145,
+  "arguer_thinking_tokens": 41605,
+  "accepted_judgments": 16,
+  "accepted_judgment_items": [
+    "d-00"
+  ],
+  "accepted_dishonest_judgments": 0,
+  "cap_rejected_keys": [
+    "032c7bbb78a8c4eeec5597a995470c396b96e277b94f3f6393196522c3da2dde"
+  ],
+  "cap_rejected_key_in_scores": false,
+  "complete_argument_sets": 24,
+  "eligible_selected_attacks": 12,
+  "all_arguer_calls_precede_first_judge": true
+}

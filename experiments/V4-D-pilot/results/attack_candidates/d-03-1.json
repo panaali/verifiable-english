@@ -1,0 +1,1311 @@
+{
+  "display": {
+    "prose": "The register premises (p0–p2, p4–p6, p8–p11, p13–p20, p22–p30) concern only Ben's entries. They never mention Ada's clothing, so the argument rests on p21, p7, p12 and p3. Step 1 (constructive dilemma). p21 says Ada wears a cobalt belt or a copper coat, possibly both. - If she wears a cobalt belt, p7 gives her an ivory pin. - If she wears a copper coat, p12 gives her an ivory pin. Either way, Ada wears an ivory pin. Step 2 (the pin and the badge, p3). In the formalization, p3 links the ivory pin to the violet badge as an exclusion: if (@ada is p0), then (not (@ada is p3)). Step 1 establishes the ivory pin, so modus ponens yields not (@ada is p3). Conclusion. Every branch of p21 leads to the ivory pin, and the pin rules out the violet badge. The negation of the query therefore follows, and the answer is False. The possible identity of Ada and Ben does not matter, because every premise used concerns Ada alone.",
+    "answer": "False",
+    "translations": [
+      {
+        "premise_id": "p0",
+        "english": "Ben records the silver entry in numbered register 2.",
+        "ve": "@ben is d2."
+      },
+      {
+        "premise_id": "p1",
+        "english": "Ben records the silver entry in numbered register 26.",
+        "ve": "@ben is d26."
+      },
+      {
+        "premise_id": "p2",
+        "english": "Ben records the cobalt entry in numbered register 9.",
+        "ve": "@ben is d9."
+      },
+      {
+        "premise_id": "p3",
+        "english": "if (Ada wears a ivory pin), then (Ada wears a violet badge).",
+        "ve": "if (@ada is p0), then (not (@ada is p3))."
+      },
+      {
+        "premise_id": "p4",
+        "english": "Ben records the ivory entry in numbered register 14.",
+        "ve": "@ben is d14."
+      },
+      {
+        "premise_id": "p5",
+        "english": "Ben records the teal entry in numbered register 4.",
+        "ve": "@ben is d4."
+      },
+      {
+        "premise_id": "p6",
+        "english": "Ben records the teal entry in numbered register 12.",
+        "ve": "@ben is d12."
+      },
+      {
+        "premise_id": "p7",
+        "english": "if (Ada wears a cobalt belt), then (Ada wears a ivory pin).",
+        "ve": "if (@ada is p2), then (@ada is p0)."
+      },
+      {
+        "premise_id": "p8",
+        "english": "Ben records the amber entry in numbered register 24.",
+        "ve": "@ben is d24."
+      },
+      {
+        "premise_id": "p9",
+        "english": "Ben records the cobalt entry in numbered register 1.",
+        "ve": "@ben is d1."
+      },
+      {
+        "premise_id": "p10",
+        "english": "Ben records the silver entry in numbered register 18.",
+        "ve": "@ben is d18."
+      },
+      {
+        "premise_id": "p11",
+        "english": "Ben records the amber entry in numbered register 8.",
+        "ve": "@ben is d8."
+      },
+      {
+        "premise_id": "p12",
+        "english": "if (Ada wears a copper coat), then (Ada wears a ivory pin).",
+        "ve": "if (@ada is p8), then (@ada is p0)."
+      },
+      {
+        "premise_id": "p13",
+        "english": "Ben records the copper entry in numbered register 13.",
+        "ve": "@ben is d13."
+      },
+      {
+        "premise_id": "p14",
+        "english": "Ben records the ivory entry in numbered register 22.",
+        "ve": "@ben is d22."
+      },
+      {
+        "premise_id": "p15",
+        "english": "Ben records the cobalt entry in numbered register 25.",
+        "ve": "@ben is d25."
+      },
+      {
+        "premise_id": "p16",
+        "english": "Ben records the copper entry in numbered register 21.",
+        "ve": "@ben is d21."
+      },
+      {
+        "premise_id": "p17",
+        "english": "Ben records the copper entry in numbered register 5.",
+        "ve": "@ben is d5."
+      },
+      {
+        "premise_id": "p18",
+        "english": "Ben records the scarlet entry in numbered register 15.",
+        "ve": "@ben is d15."
+      },
+      {
+        "premise_id": "p19",
+        "english": "Ben records the silver entry in numbered register 10.",
+        "ve": "@ben is d10."
+      },
+      {
+        "premise_id": "p20",
+        "english": "Ben records the violet entry in numbered register 11.",
+        "ve": "@ben is d11."
+      },
+      {
+        "premise_id": "p21",
+        "english": "at least one of (Ada wears a cobalt belt) and (Ada wears a copper coat) is true, possibly both.",
+        "ve": "(@ada is p2) or (@ada is p8)."
+      },
+      {
+        "premise_id": "p22",
+        "english": "Ben records the amber entry in numbered register 16.",
+        "ve": "@ben is d16."
+      },
+      {
+        "premise_id": "p23",
+        "english": "Ben records the teal entry in numbered register 20.",
+        "ve": "@ben is d20."
+      },
+      {
+        "premise_id": "p24",
+        "english": "Ben records the violet entry in numbered register 3.",
+        "ve": "@ben is d3."
+      },
+      {
+        "premise_id": "p25",
+        "english": "Ben records the cobalt entry in numbered register 17.",
+        "ve": "@ben is d17."
+      },
+      {
+        "premise_id": "p26",
+        "english": "Ben records the scarlet entry in numbered register 23.",
+        "ve": "@ben is d23."
+      },
+      {
+        "premise_id": "p27",
+        "english": "Ben records the ivory entry in numbered register 6.",
+        "ve": "@ben is d6."
+      },
+      {
+        "premise_id": "p28",
+        "english": "Ben records the violet entry in numbered register 19.",
+        "ve": "@ben is d19."
+      },
+      {
+        "premise_id": "p29",
+        "english": "Ben records the amber entry in numbered register 0.",
+        "ve": "@ben is d0."
+      },
+      {
+        "premise_id": "p30",
+        "english": "Ben records the scarlet entry in numbered register 7.",
+        "ve": "@ben is d7."
+      }
+    ],
+    "query_ve": "@ada is p3.",
+    "graph": {
+      "claims": [
+        {
+          "id": "p0",
+          "ve": "@ben is d2."
+        },
+        {
+          "id": "p1",
+          "ve": "@ben is d26."
+        },
+        {
+          "id": "p2",
+          "ve": "@ben is d9."
+        },
+        {
+          "id": "p3",
+          "ve": "if (@ada is p0), then (not (@ada is p3))."
+        },
+        {
+          "id": "p4",
+          "ve": "@ben is d14."
+        },
+        {
+          "id": "p5",
+          "ve": "@ben is d4."
+        },
+        {
+          "id": "p6",
+          "ve": "@ben is d12."
+        },
+        {
+          "id": "p7",
+          "ve": "if (@ada is p2), then (@ada is p0)."
+        },
+        {
+          "id": "p8",
+          "ve": "@ben is d24."
+        },
+        {
+          "id": "p9",
+          "ve": "@ben is d1."
+        },
+        {
+          "id": "p10",
+          "ve": "@ben is d18."
+        },
+        {
+          "id": "p11",
+          "ve": "@ben is d8."
+        },
+        {
+          "id": "p12",
+          "ve": "if (@ada is p8), then (@ada is p0)."
+        },
+        {
+          "id": "p13",
+          "ve": "@ben is d13."
+        },
+        {
+          "id": "p14",
+          "ve": "@ben is d22."
+        },
+        {
+          "id": "p15",
+          "ve": "@ben is d25."
+        },
+        {
+          "id": "p16",
+          "ve": "@ben is d21."
+        },
+        {
+          "id": "p17",
+          "ve": "@ben is d5."
+        },
+        {
+          "id": "p18",
+          "ve": "@ben is d15."
+        },
+        {
+          "id": "p19",
+          "ve": "@ben is d10."
+        },
+        {
+          "id": "p20",
+          "ve": "@ben is d11."
+        },
+        {
+          "id": "p21",
+          "ve": "(@ada is p2) or (@ada is p8)."
+        },
+        {
+          "id": "p22",
+          "ve": "@ben is d16."
+        },
+        {
+          "id": "p23",
+          "ve": "@ben is d20."
+        },
+        {
+          "id": "p24",
+          "ve": "@ben is d3."
+        },
+        {
+          "id": "p25",
+          "ve": "@ben is d17."
+        },
+        {
+          "id": "p26",
+          "ve": "@ben is d23."
+        },
+        {
+          "id": "p27",
+          "ve": "@ben is d6."
+        },
+        {
+          "id": "p28",
+          "ve": "@ben is d19."
+        },
+        {
+          "id": "p29",
+          "ve": "@ben is d0."
+        },
+        {
+          "id": "p30",
+          "ve": "@ben is d7."
+        },
+        {
+          "id": "c1",
+          "ve": "@ada is p0."
+        },
+        {
+          "id": "goal",
+          "ve": "not (@ada is p3)."
+        }
+      ],
+      "deductions": [
+        {
+          "id": "d0",
+          "premises": [
+            "p21",
+            "p7",
+            "p12"
+          ],
+          "conclusion": "c1"
+        },
+        {
+          "id": "d1",
+          "premises": [
+            "c1",
+            "p3"
+          ],
+          "conclusion": "goal"
+        }
+      ],
+      "root": "goal"
+    }
+  },
+  "submission": {
+    "prose": "The register premises (p0–p2, p4–p6, p8–p11, p13–p20, p22–p30) concern only Ben's entries. They never mention Ada's clothing, so the argument rests on p21, p7, p12 and p3. Step 1 (constructive dilemma). p21 says Ada wears a cobalt belt or a copper coat, possibly both. - If she wears a cobalt belt, p7 gives her an ivory pin. - If she wears a copper coat, p12 gives her an ivory pin. Either way, Ada wears an ivory pin. Step 2 (the pin and the badge, p3). In the formalization, p3 links the ivory pin to the violet badge as an exclusion: if (@ada is p0), then (not (@ada is p3)). Step 1 establishes the ivory pin, so modus ponens yields not (@ada is p3). Conclusion. Every branch of p21 leads to the ivory pin, and the pin rules out the violet badge. The negation of the query therefore follows, and the answer is False. The possible identity of Ada and Ben does not matter, because every premise used concerns Ada alone.",
+    "answer": "False",
+    "translations": [
+      {
+        "premise_id": "p0",
+        "english": "Ben records the silver entry in numbered register 2.",
+        "ve": "@ben is d2."
+      },
+      {
+        "premise_id": "p1",
+        "english": "Ben records the silver entry in numbered register 26.",
+        "ve": "@ben is d26."
+      },
+      {
+        "premise_id": "p2",
+        "english": "Ben records the cobalt entry in numbered register 9.",
+        "ve": "@ben is d9."
+      },
+      {
+        "premise_id": "p3",
+        "english": "if (Ada wears a ivory pin), then (Ada wears a violet badge).",
+        "ve": "if (@ada is p0), then (not (@ada is p3))."
+      },
+      {
+        "premise_id": "p4",
+        "english": "Ben records the ivory entry in numbered register 14.",
+        "ve": "@ben is d14."
+      },
+      {
+        "premise_id": "p5",
+        "english": "Ben records the teal entry in numbered register 4.",
+        "ve": "@ben is d4."
+      },
+      {
+        "premise_id": "p6",
+        "english": "Ben records the teal entry in numbered register 12.",
+        "ve": "@ben is d12."
+      },
+      {
+        "premise_id": "p7",
+        "english": "if (Ada wears a cobalt belt), then (Ada wears a ivory pin).",
+        "ve": "if (@ada is p2), then (@ada is p0)."
+      },
+      {
+        "premise_id": "p8",
+        "english": "Ben records the amber entry in numbered register 24.",
+        "ve": "@ben is d24."
+      },
+      {
+        "premise_id": "p9",
+        "english": "Ben records the cobalt entry in numbered register 1.",
+        "ve": "@ben is d1."
+      },
+      {
+        "premise_id": "p10",
+        "english": "Ben records the silver entry in numbered register 18.",
+        "ve": "@ben is d18."
+      },
+      {
+        "premise_id": "p11",
+        "english": "Ben records the amber entry in numbered register 8.",
+        "ve": "@ben is d8."
+      },
+      {
+        "premise_id": "p12",
+        "english": "if (Ada wears a copper coat), then (Ada wears a ivory pin).",
+        "ve": "if (@ada is p8), then (@ada is p0)."
+      },
+      {
+        "premise_id": "p13",
+        "english": "Ben records the copper entry in numbered register 13.",
+        "ve": "@ben is d13."
+      },
+      {
+        "premise_id": "p14",
+        "english": "Ben records the ivory entry in numbered register 22.",
+        "ve": "@ben is d22."
+      },
+      {
+        "premise_id": "p15",
+        "english": "Ben records the cobalt entry in numbered register 25.",
+        "ve": "@ben is d25."
+      },
+      {
+        "premise_id": "p16",
+        "english": "Ben records the copper entry in numbered register 21.",
+        "ve": "@ben is d21."
+      },
+      {
+        "premise_id": "p17",
+        "english": "Ben records the copper entry in numbered register 5.",
+        "ve": "@ben is d5."
+      },
+      {
+        "premise_id": "p18",
+        "english": "Ben records the scarlet entry in numbered register 15.",
+        "ve": "@ben is d15."
+      },
+      {
+        "premise_id": "p19",
+        "english": "Ben records the silver entry in numbered register 10.",
+        "ve": "@ben is d10."
+      },
+      {
+        "premise_id": "p20",
+        "english": "Ben records the violet entry in numbered register 11.",
+        "ve": "@ben is d11."
+      },
+      {
+        "premise_id": "p21",
+        "english": "at least one of (Ada wears a cobalt belt) and (Ada wears a copper coat) is true, possibly both.",
+        "ve": "(@ada is p2) or (@ada is p8)."
+      },
+      {
+        "premise_id": "p22",
+        "english": "Ben records the amber entry in numbered register 16.",
+        "ve": "@ben is d16."
+      },
+      {
+        "premise_id": "p23",
+        "english": "Ben records the teal entry in numbered register 20.",
+        "ve": "@ben is d20."
+      },
+      {
+        "premise_id": "p24",
+        "english": "Ben records the violet entry in numbered register 3.",
+        "ve": "@ben is d3."
+      },
+      {
+        "premise_id": "p25",
+        "english": "Ben records the cobalt entry in numbered register 17.",
+        "ve": "@ben is d17."
+      },
+      {
+        "premise_id": "p26",
+        "english": "Ben records the scarlet entry in numbered register 23.",
+        "ve": "@ben is d23."
+      },
+      {
+        "premise_id": "p27",
+        "english": "Ben records the ivory entry in numbered register 6.",
+        "ve": "@ben is d6."
+      },
+      {
+        "premise_id": "p28",
+        "english": "Ben records the violet entry in numbered register 19.",
+        "ve": "@ben is d19."
+      },
+      {
+        "premise_id": "p29",
+        "english": "Ben records the amber entry in numbered register 0.",
+        "ve": "@ben is d0."
+      },
+      {
+        "premise_id": "p30",
+        "english": "Ben records the scarlet entry in numbered register 7.",
+        "ve": "@ben is d7."
+      }
+    ],
+    "query_ve": "@ada is p3.",
+    "graph": {
+      "claims": [
+        {
+          "id": "p0",
+          "ve": "@ben is d2."
+        },
+        {
+          "id": "p1",
+          "ve": "@ben is d26."
+        },
+        {
+          "id": "p2",
+          "ve": "@ben is d9."
+        },
+        {
+          "id": "p3",
+          "ve": "if (@ada is p0), then (not (@ada is p3))."
+        },
+        {
+          "id": "p4",
+          "ve": "@ben is d14."
+        },
+        {
+          "id": "p5",
+          "ve": "@ben is d4."
+        },
+        {
+          "id": "p6",
+          "ve": "@ben is d12."
+        },
+        {
+          "id": "p7",
+          "ve": "if (@ada is p2), then (@ada is p0)."
+        },
+        {
+          "id": "p8",
+          "ve": "@ben is d24."
+        },
+        {
+          "id": "p9",
+          "ve": "@ben is d1."
+        },
+        {
+          "id": "p10",
+          "ve": "@ben is d18."
+        },
+        {
+          "id": "p11",
+          "ve": "@ben is d8."
+        },
+        {
+          "id": "p12",
+          "ve": "if (@ada is p8), then (@ada is p0)."
+        },
+        {
+          "id": "p13",
+          "ve": "@ben is d13."
+        },
+        {
+          "id": "p14",
+          "ve": "@ben is d22."
+        },
+        {
+          "id": "p15",
+          "ve": "@ben is d25."
+        },
+        {
+          "id": "p16",
+          "ve": "@ben is d21."
+        },
+        {
+          "id": "p17",
+          "ve": "@ben is d5."
+        },
+        {
+          "id": "p18",
+          "ve": "@ben is d15."
+        },
+        {
+          "id": "p19",
+          "ve": "@ben is d10."
+        },
+        {
+          "id": "p20",
+          "ve": "@ben is d11."
+        },
+        {
+          "id": "p21",
+          "ve": "(@ada is p2) or (@ada is p8)."
+        },
+        {
+          "id": "p22",
+          "ve": "@ben is d16."
+        },
+        {
+          "id": "p23",
+          "ve": "@ben is d20."
+        },
+        {
+          "id": "p24",
+          "ve": "@ben is d3."
+        },
+        {
+          "id": "p25",
+          "ve": "@ben is d17."
+        },
+        {
+          "id": "p26",
+          "ve": "@ben is d23."
+        },
+        {
+          "id": "p27",
+          "ve": "@ben is d6."
+        },
+        {
+          "id": "p28",
+          "ve": "@ben is d19."
+        },
+        {
+          "id": "p29",
+          "ve": "@ben is d0."
+        },
+        {
+          "id": "p30",
+          "ve": "@ben is d7."
+        },
+        {
+          "id": "c1",
+          "ve": "@ada is p0."
+        },
+        {
+          "id": "goal",
+          "ve": "not (@ada is p3)."
+        }
+      ],
+      "deductions": [
+        {
+          "id": "d0",
+          "premises": [
+            "p21",
+            "p7",
+            "p12"
+          ],
+          "conclusion": "c1"
+        },
+        {
+          "id": "d1",
+          "premises": [
+            "c1",
+            "p3"
+          ],
+          "conclusion": "goal"
+        }
+      ],
+      "root": "goal"
+    },
+    "plausibility": 30
+  },
+  "checker": {
+    "deduction_certified": true,
+    "root_matches_submitted_answer": true,
+    "unbound_leaves": [],
+    "table_complete_and_source_preserved": true,
+    "translation_faithfulness": "NOT_CHECKED: judge must assess original English",
+    "errors": [],
+    "formal_status": "Checked"
+  },
+  "checker_evidence": {
+    "version": "ve-argument-tableau@1",
+    "assurance": "experimental",
+    "status": "Checked",
+    "graph_id": "70bb7138ee80d901c0471535d3191e40cd1474c785ba1b3dd3a633cc809b2f76",
+    "environment_id": "9a95631b00a42a8fb6c11654eecffa4d9062fb696964973b7b4ac1c555bda275",
+    "root": "goal",
+    "findings": {
+      "d0": [
+        "follows"
+      ],
+      "d1": [
+        "follows"
+      ]
+    },
+    "remaining_assumptions": [
+      "p3",
+      "p7",
+      "p12",
+      "p21"
+    ],
+    "unresolved_obligations": [],
+    "composed": true,
+    "proof": "Python replay checked",
+    "intent": "unconfirmed",
+    "profiles": [
+      "relational-fol@0"
+    ],
+    "lean_checked": false,
+    "lean_status": "Lean-checked: no",
+    "lean_detail": "Lean replay not requested",
+    "approval": "unassessed",
+    "edges": [
+      {
+        "name": "d0",
+        "edge_id": "5df796f0bc2f486687c9af051be802946382b9ddec2c05634508c494e0bf9b3b",
+        "premises": [
+          "p21",
+          "p7",
+          "p12"
+        ],
+        "conclusion": "c1",
+        "findings": [
+          "follows"
+        ],
+        "status": "established",
+        "contradictory_premises": false,
+        "checker_conflict": false,
+        "satisfying_premise_model_ids": [],
+        "artifacts": [
+          {
+            "kind": "follows",
+            "submitted": false,
+            "certificate": {
+              "edge_id": "5df796f0bc2f486687c9af051be802946382b9ddec2c05634508c494e0bf9b3b",
+              "direction": "follows",
+              "proof": {
+                "checker_version": "ve-tableau-checker@2",
+                "environment_id": "9a95631b00a42a8fb6c11654eecffa4d9062fb696964973b7b4ac1c555bda275",
+                "premise_meaning_ids": [
+                  "5c9c10368ad9d090a7c61edcb9f819aa5f5735735ccbccd3a99b8fe692b84b47",
+                  "8049adb68174a6632e2ffa0b509693898dbd63a8d9324a1dc828fc5b72dbfd7d",
+                  "a9bb268c21f213d072dbd2a9fe30444bb4cb7c203258853957c0d8db76ed248c"
+                ],
+                "conclusion_meaning_id": "4753ca81b41f8a6da27980d2f5cbecb90fbcf00cf54a287bdf885df3adb46d48",
+                "trace": {
+                  "rule": "expand",
+                  "at": 1,
+                  "children": [
+                    {
+                      "rule": "expand",
+                      "at": 0,
+                      "children": [
+                        {
+                          "rule": "close"
+                        },
+                        {
+                          "rule": "expand",
+                          "at": 2,
+                          "children": [
+                            {
+                              "rule": "close"
+                            },
+                            {
+                              "rule": "close"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "rule": "close"
+                    }
+                  ]
+                }
+              }
+            },
+            "check": {
+              "valid": true,
+              "status": "Valid",
+              "steps": 7,
+              "detail": ""
+            }
+          }
+        ],
+        "errors": [],
+        "search_attempts": [
+          {
+            "kind": "follows",
+            "status": "Found"
+          },
+          {
+            "kind": "refuted",
+            "status": "NotFound"
+          },
+          {
+            "kind": "gap",
+            "status": "ResourceLimit",
+            "models_checked": 0,
+            "detail": "model-attempt budget exhausted"
+          }
+        ]
+      },
+      {
+        "name": "d1",
+        "edge_id": "0439edf28bf3153bfedf3b3acc83777a202bdfeade8e0c9a1ff64e86e7419b62",
+        "premises": [
+          "c1",
+          "p3"
+        ],
+        "conclusion": "goal",
+        "findings": [
+          "follows"
+        ],
+        "status": "established",
+        "contradictory_premises": false,
+        "checker_conflict": false,
+        "satisfying_premise_model_ids": [],
+        "artifacts": [
+          {
+            "kind": "follows",
+            "submitted": false,
+            "certificate": {
+              "edge_id": "0439edf28bf3153bfedf3b3acc83777a202bdfeade8e0c9a1ff64e86e7419b62",
+              "direction": "follows",
+              "proof": {
+                "checker_version": "ve-tableau-checker@2",
+                "environment_id": "9a95631b00a42a8fb6c11654eecffa4d9062fb696964973b7b4ac1c555bda275",
+                "premise_meaning_ids": [
+                  "4753ca81b41f8a6da27980d2f5cbecb90fbcf00cf54a287bdf885df3adb46d48",
+                  "2783dc42e943f4bf301c52cd0ad87943ad33d55c16453598375d78c33e4046ce"
+                ],
+                "conclusion_meaning_id": "dc2438035e6d0539ed3484442a82bab5f0be2383f169c8cdfbdb77afbadaf472",
+                "trace": {
+                  "rule": "expand",
+                  "at": 1,
+                  "children": [
+                    {
+                      "rule": "close"
+                    },
+                    {
+                      "rule": "close"
+                    }
+                  ]
+                }
+              }
+            },
+            "check": {
+              "valid": true,
+              "status": "Valid",
+              "steps": 3,
+              "detail": ""
+            }
+          }
+        ],
+        "errors": [],
+        "search_attempts": [
+          {
+            "kind": "follows",
+            "status": "Found"
+          },
+          {
+            "kind": "refuted",
+            "status": "NotFound"
+          },
+          {
+            "kind": "gap",
+            "status": "ResourceLimit",
+            "models_checked": 0,
+            "detail": "model-attempt budget exhausted"
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "composition": {
+      "rule": "acyclic-implication-composition",
+      "environment_id": "9a95631b00a42a8fb6c11654eecffa4d9062fb696964973b7b4ac1c555bda275",
+      "checker_build": "c2947eff5f1f0920475ccd57b2f5e8153cb0602998684e45f1558b41da3da470",
+      "root_claim_id": "b72397b13b0ddb539e2a7a973d46dfa60f501b7487bb3c6890ee658facbd6206",
+      "assumption_claim_ids": [
+        "ba470abbddbb18a45876e6e33afe3576eef1963c78435e852d9f05d6dbf2b174",
+        "88b69e7ac58e1e3dfba79085ef8fc19b013d749be745a8ef837a1b4d11eca3ea",
+        "3b6b3e80c92286223941b06f16cf1f8de4b6a8bafea35c83f0087b14a95e65e2",
+        "708e63ef672e8d8b984b7f655f97e467f7adb64cf91af10f75aff6d0f0a8f4bc"
+      ],
+      "supporting_edge_ids": [
+        "5df796f0bc2f486687c9af051be802946382b9ddec2c05634508c494e0bf9b3b",
+        "0439edf28bf3153bfedf3b3acc83777a202bdfeade8e0c9a1ff64e86e7419b62"
+      ],
+      "assumptions": [
+        {
+          "name": "p3",
+          "source": "if (@ada is p0), then (not (@ada is p3)).\n",
+          "ast": [
+            "implies",
+            [
+              "unary",
+              "p0",
+              [
+                "const",
+                "ada"
+              ]
+            ],
+            [
+              "not",
+              [
+                "unary",
+                "p3",
+                [
+                  "const",
+                  "ada"
+                ]
+              ]
+            ]
+          ],
+          "environment_id": "9a95631b00a42a8fb6c11654eecffa4d9062fb696964973b7b4ac1c555bda275",
+          "source_id": "ec30b3ee55295965aca17470287048e694f81e20cb23a20731ac88bdaf5c5e68",
+          "meaning_id": "2783dc42e943f4bf301c52cd0ad87943ad33d55c16453598375d78c33e4046ce",
+          "claim_id": "ba470abbddbb18a45876e6e33afe3576eef1963c78435e852d9f05d6dbf2b174",
+          "evidence_ids": []
+        },
+        {
+          "name": "p7",
+          "source": "if (@ada is p2), then (@ada is p0).\n",
+          "ast": [
+            "implies",
+            [
+              "unary",
+              "p2",
+              [
+                "const",
+                "ada"
+              ]
+            ],
+            [
+              "unary",
+              "p0",
+              [
+                "const",
+                "ada"
+              ]
+            ]
+          ],
+          "environment_id": "9a95631b00a42a8fb6c11654eecffa4d9062fb696964973b7b4ac1c555bda275",
+          "source_id": "a5063729b33f70b6f9502f3e5897c15996add583bb57999d76ac2ee0e3f6b8ba",
+          "meaning_id": "8049adb68174a6632e2ffa0b509693898dbd63a8d9324a1dc828fc5b72dbfd7d",
+          "claim_id": "88b69e7ac58e1e3dfba79085ef8fc19b013d749be745a8ef837a1b4d11eca3ea",
+          "evidence_ids": []
+        },
+        {
+          "name": "p12",
+          "source": "if (@ada is p8), then (@ada is p0).\n",
+          "ast": [
+            "implies",
+            [
+              "unary",
+              "p8",
+              [
+                "const",
+                "ada"
+              ]
+            ],
+            [
+              "unary",
+              "p0",
+              [
+                "const",
+                "ada"
+              ]
+            ]
+          ],
+          "environment_id": "9a95631b00a42a8fb6c11654eecffa4d9062fb696964973b7b4ac1c555bda275",
+          "source_id": "60328fa0eb9b59134ad30600ddbffd3a0cbcd063c6a13cf89b722a3551e3ca75",
+          "meaning_id": "a9bb268c21f213d072dbd2a9fe30444bb4cb7c203258853957c0d8db76ed248c",
+          "claim_id": "3b6b3e80c92286223941b06f16cf1f8de4b6a8bafea35c83f0087b14a95e65e2",
+          "evidence_ids": []
+        },
+        {
+          "name": "p21",
+          "source": "(@ada is p2) or (@ada is p8).\n",
+          "ast": [
+            "or",
+            [
+              "unary",
+              "p2",
+              [
+                "const",
+                "ada"
+              ]
+            ],
+            [
+              "unary",
+              "p8",
+              [
+                "const",
+                "ada"
+              ]
+            ]
+          ],
+          "environment_id": "9a95631b00a42a8fb6c11654eecffa4d9062fb696964973b7b4ac1c555bda275",
+          "source_id": "52e1394c85bc3571c289c444b12103a2fb2335b1e1ace86d8f64822ee3fc9038",
+          "meaning_id": "5c9c10368ad9d090a7c61edcb9f819aa5f5735735ccbccd3a99b8fe692b84b47",
+          "claim_id": "708e63ef672e8d8b984b7f655f97e467f7adb64cf91af10f75aff6d0f0a8f4bc",
+          "evidence_ids": []
+        }
+      ],
+      "record_id": "4aee6b3a4452777018864fa43f2c66afb632ceea8aeace5b6960904978aa885f"
+    },
+    "checker_build": "c2947eff5f1f0920475ccd57b2f5e8153cb0602998684e45f1558b41da3da470",
+    "contradictory_premises": [],
+    "warnings": [
+      {
+        "edge": "d0",
+        "code": "ResourceLimit",
+        "message": "gap search exhausted its budget"
+      },
+      {
+        "edge": "d1",
+        "code": "ResourceLimit",
+        "message": "gap search exhausted its budget"
+      }
+    ],
+    "record_id": "4402d6e4dcc68bc49b64fb4763fbbb3510fe8b472042623ffc32385a7ccc5399"
+  },
+  "keys": [
+    "4aa77dc75238e438f655333d4c6e55411905015689bb2813792e46c82e06a7b5"
+  ],
+  "attack_eligible": true,
+  "private_fidelity": {
+    "query_faithful": true,
+    "premise_relations": {
+      "p0": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p1": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p2": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p3": {
+        "status": "DIFFERENT",
+        "exact": false,
+        "evidence": {
+          "status": "DIFFERENT",
+          "relation": "incomparable",
+          "relation_detail": null,
+          "nonempty_equivalence": null,
+          "failed_directions": [
+            "a_not_implies_b",
+            "b_not_implies_a"
+          ],
+          "reason": "",
+          "environment_id": "9a95631b00a42a8fb6c11654eecffa4d9062fb696964973b7b4ac1c555bda275",
+          "a_meaning_id": "a1c774bc1d4021a20731159925af533fb7bd1017fa02ea3d5f7962e4ed5a6a52",
+          "b_meaning_id": "2783dc42e943f4bf301c52cd0ad87943ad33d55c16453598375d78c33e4046ce",
+          "a_implies_b": {
+            "status": "COUNTERMODEL",
+            "certificate": null,
+            "model": {
+              "complete": true,
+              "domains": {
+                "person": [
+                  "e0"
+                ]
+              },
+              "constants": {
+                "ada": "e0",
+                "ben": "e0"
+              },
+              "relations": {
+                "d0": [],
+                "d1": [],
+                "d10": [],
+                "d11": [],
+                "d12": [],
+                "d13": [],
+                "d14": [],
+                "d15": [],
+                "d16": [],
+                "d17": [],
+                "d18": [],
+                "d19": [],
+                "d2": [],
+                "d20": [],
+                "d21": [],
+                "d22": [],
+                "d23": [],
+                "d24": [],
+                "d25": [],
+                "d26": [],
+                "d3": [],
+                "d4": [],
+                "d5": [],
+                "d6": [],
+                "d7": [],
+                "d8": [],
+                "d9": [],
+                "p0": [
+                  [
+                    "e0"
+                  ]
+                ],
+                "p1": [],
+                "p10": [],
+                "p11": [],
+                "p12": [],
+                "p13": [],
+                "p14": [],
+                "p15": [],
+                "p2": [],
+                "p3": [
+                  [
+                    "e0"
+                  ]
+                ],
+                "p4": [],
+                "p5": [],
+                "p6": [],
+                "p7": [],
+                "p8": [],
+                "p9": []
+              }
+            },
+            "reason": "",
+            "attempts": [
+              {
+                "kind": "proof",
+                "status": "NotFound",
+                "steps": 5,
+                "detail": "saturated open branch; no entailment certificate found"
+              },
+              {
+                "kind": "search",
+                "status": "Found",
+                "models_checked": 4,
+                "detail": ""
+              }
+            ]
+          },
+          "b_implies_a": {
+            "status": "COUNTERMODEL",
+            "certificate": null,
+            "model": {
+              "complete": true,
+              "domains": {
+                "person": [
+                  "e0"
+                ]
+              },
+              "constants": {
+                "ada": "e0",
+                "ben": "e0"
+              },
+              "relations": {
+                "d0": [],
+                "d1": [],
+                "d10": [],
+                "d11": [],
+                "d12": [],
+                "d13": [],
+                "d14": [],
+                "d15": [],
+                "d16": [],
+                "d17": [],
+                "d18": [],
+                "d19": [],
+                "d2": [],
+                "d20": [],
+                "d21": [],
+                "d22": [],
+                "d23": [],
+                "d24": [],
+                "d25": [],
+                "d26": [],
+                "d3": [],
+                "d4": [],
+                "d5": [],
+                "d6": [],
+                "d7": [],
+                "d8": [],
+                "d9": [],
+                "p0": [
+                  [
+                    "e0"
+                  ]
+                ],
+                "p1": [],
+                "p10": [],
+                "p11": [],
+                "p12": [],
+                "p13": [],
+                "p14": [],
+                "p15": [],
+                "p2": [],
+                "p3": [],
+                "p4": [],
+                "p5": [],
+                "p6": [],
+                "p7": [],
+                "p8": [],
+                "p9": []
+              }
+            },
+            "reason": "",
+            "attempts": [
+              {
+                "kind": "proof",
+                "status": "NotFound",
+                "steps": 5,
+                "detail": "saturated open branch; no entailment certificate found"
+              },
+              {
+                "kind": "search",
+                "status": "Found",
+                "models_checked": 2,
+                "detail": ""
+              }
+            ]
+          }
+        }
+      },
+      "p4": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p5": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p6": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p7": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p8": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p9": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p10": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p11": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p12": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p13": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p14": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p15": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p16": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p17": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p18": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p19": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p20": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p21": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p22": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p23": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p24": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p25": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p26": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p27": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p28": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p29": {
+        "status": "EQUIVALENT",
+        "exact": true
+      },
+      "p30": {
+        "status": "EQUIVALENT",
+        "exact": true
+      }
+    },
+    "mistranslated_premises": [
+      "p3"
+    ],
+    "query_relation": {
+      "status": "EQUIVALENT",
+      "exact": true
+    }
+  }
+}

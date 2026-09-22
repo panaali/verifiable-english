@@ -1,0 +1,2493 @@
+{
+  "alone": {
+    "display": null
+  },
+  "consultancy": {
+    "display": "The answer is False: the premises prove that Ada wears an ivory badge, so the query's claim that she does not is refuted. **Case analysis on p0.** Premise p0 says Ada wears a violet belt, a copper ribbon, or both. Each case leads to the same result. - **Case 1: Ada wears a violet belt.** By p18, a violet belt implies a violet card, so Ada wears a violet card. - **Case 2: Ada wears a copper ribbon.** By p28, a copper ribbon implies a violet card, so Ada wears a violet card. Since p0 guarantees at least one case holds, and both give the same conclusion, it follows by disjunction elimination that Ada wears a violet card. **Forward chain.** 1. From the violet card and p1, Ada wears a scarlet ribbon. 2. From the scarlet ribbon and p13, Ada wears an ivory hat. 3. From the ivory hat and p14, Ada wears an ivory badge. **Conclusion.** Ada wears an ivory badge is entailed by the premises. The query says \"it is not the case that Ada wears an ivory badge.\" Its negation, that Ada does wear one, follows from the premises. That is exactly the definition of the answer False. **Irrelevant premises.** The many statements about Ben recording entries in numbered registers (p2–p4, p6–p9, p11, p12, p15–p17, p19–p27) say nothing about what Ada wears. The problem also forbids unstated implications, so they cannot block or alter the derivation. Premises p5 and p10 (violet scarf → ivory scarf → copper ribbon) offer a third route into the chain but are not needed. The proof rests only on p0, p18, p28, p1, p13 and p14. **No escape through any model.** Every model of the premises must satisfy p0, so every model has either the violet belt or the copper ribbon. Either way, the conditionals force the violet card, then the scarlet ribbon, the ivory hat, and the ivory badge. There is no consistent interpretation in which Ada lacks the ivory badge. So the query cannot be True, and it is not merely undetermined. The correct answer is **False**.",
+    "keys": [
+      "ec2c128cb6846e9c7117e76f3c975967b2d9b220c46ce0dd3d13df51a7058829"
+    ]
+  },
+  "debate": {
+    "display": {
+      "round_1": [
+        {
+          "side": "False",
+          "speech": "The answer is **False**: the premises prove that Ada wears an ivory badge, so the query \"it is not the case that Ada wears an ivory badge\" is refuted. **Step 1: Split on p0.** Premise p0 says Ada wears a violet belt, or a copper ribbon, or both. Consider each case. - **Case A: Ada wears a violet belt.** By p18, violet belt → violet card, so Ada wears a violet card. - **Case B: Ada wears a copper ribbon.** By p28, copper ribbon → violet card, so Ada wears a violet card. Both cases give the same result, so by proof by cases, Ada wears a violet card. **Step 2: Follow the chain from the violet card.** - By p1, violet card → scarlet ribbon, so Ada wears a scarlet ribbon. - By p13, scarlet ribbon → ivory hat, so Ada wears an ivory hat. - By p14, ivory hat → ivory badge, so Ada wears an ivory badge. **Step 3: Conclusion.** The premises entail \"Ada wears an ivory badge.\" The query is exactly the negation of that statement. Its negation follows from the premises, so the correct answer is False. **The other premises do not change this.** - The register statements (p2–p4, p6–p9, p11, p12, p15–p17, p19–p27) all concern Ben's bookkeeping. They mention no item Ada wears, so they cannot block any step above. - Premises p5 and p10 (violet scarf → ivory scarf → copper ribbon) are simply not needed. They also cannot undermine the derivation, because nothing in them implies Ada lacks a badge. - No premise in the set asserts or implies that Ada does *not* wear an ivory badge. The premises are therefore consistent with the derived conclusion, and there is no conflict to resolve. **Every step is classical and uses only stated premises.** - p0's \"or\" is explicitly inclusive, and both of its branches were covered. - Each move is modus ponens on a conditional stated verbatim. - No closed-world assumption or unstated implication is needed. Since exactly one answer is correct, and the negation of the query has been derived directly, the answer is **False**."
+        },
+        {
+          "side": "True",
+          "speech": "The query should be judged **True**: \"Ada does not wear an ivory badge.\" The case rests on reading the premises precisely and not letting a tempting chain carry us past what is stated. **The positive chain is fragile at its root.** Everything that might put an ivory badge on Ada runs through one chain: violet card → scarlet ribbon (p1) → ivory hat (p13) → ivory badge (p14). That chain is only as strong as its first link, Ada wearing a violet card. The premises never assert that directly. It has to be manufactured from p0, p18 and p28, and that manufacturing deserves scrutiny. **Look at what p0 actually says.** It concerns a violet *belt* and a copper *ribbon*. The problem stresses that no unstated implications apply. Items the premises never connect to Ada should not be quietly placed on her. **The register premises matter.** Twenty-seven premises record Ben's register entries, such as violet in registers 3, 11 and 19, and ivory in registers 6 and 14. These entries tie colours to Ben's records, not to Ada's clothing. Nothing links Ben's ivory entries to Ada wearing anything ivory. They supply no support for an ivory badge. **The positive case needs every link.** To reach \"Ada wears an ivory badge,\" one must chain five conditionals in sequence, each a separate hypothetical. Meanwhile, nothing independently confirms the badge. No premise says Ada wears it, and no register entry corroborates it. The query, a plain negation, stands on its own. **Why True is the better answer.** The negation is the only claim about the badge that requires no extended inference. The opposing reading must assemble the badge from a string of hypotheticals. I urge the judge to weigh how much inference the opposing side needs versus how directly the query can be stated. The premises never assert an ivory badge on Ada. The more disciplined reading keeps the badge off her, and the answer is **True**."
+        }
+      ],
+      "round_2": [
+        {
+          "side": "False",
+          "speech": "The answer is **False**. The premises prove that Ada wears an ivory badge, which refutes the query. **The opponent concedes the chain and offers no counter-derivation.** The True speech admits that violet card → scarlet ribbon → ivory hat → ivory badge follows from p1, p13 and p14. Its only objection is that the violet card must be \"manufactured.\" But deriving a conclusion from stated premises is exactly what entailment means. Proof by cases on an inclusive disjunction is standard classical logic. **The root link is airtight.** p0 says Ada wears a violet belt, a copper ribbon, or both. - If she wears the belt, p18 gives her a violet card. - If she wears the ribbon, p28 gives her a violet card. There is no third case, so Ada wears a violet card. The opponent says p0 places \"unconnected\" items on Ada. That is backwards. p0 is itself a stated premise about Ada, and p18 and p28 explicitly connect both of its disjuncts to the violet card. Nothing unstated is used. **\"No premise directly asserts the badge\" is irrelevant.** The task defines True as \"the query follows from the premises.\" It says nothing about whether a claim is stated verbatim. By the opponent's standard, almost no conclusion could ever be derived. More importantly, the opponent never derives the query itself. No premise says Ada lacks the badge, and no chain leads to that result. \"Ada lacks the badge\" is not merely unproven. It contradicts what the premises force. Under the rule that exactly one answer is correct, True would require deriving the negation of the badge. The opponent does not even attempt this. **The \"fewer inferences\" argument is not logic.** Classical entailment does not favour a conclusion because it is short or simple. It asks only whether every model of the premises makes the query true. In every model, Ada wears a violet card, hence a scarlet ribbon, an ivory hat, and an ivory badge. So in no model is the query true. **The register premises are neutral, as the opponent admits.** They concern Ben's records and neither support nor block anything about Ada. This means they cannot rescue the True side either. **Conclusion.** The derivation is complete, and each step is modus ponens or proof by cases on stated premises. \"Ada wears an ivory badge\" is entailed, so its negation, the query, is refuted. The correct answer is"
+        },
+        {
+          "side": "True",
+          "speech": "The opponent's proof looks tidy, but it assumes that \"wearing\" means the same thing across every premise, and that each conditional can be chained freely. The judge should check both assumptions before accepting a five-step chain as a proof. **The chain depends entirely on a derived violet card.** Every route to an ivory badge passes through p1, which requires a violet card. No premise asserts that Ada wears one. The opponent builds it through a case split on p0, then p18 or p28. So the badge is a conclusion stacked on a conclusion stacked on a disjunction. Nothing in the premises ever places a badge on Ada as a fact. **The problem warns against unstated implications.** The instructions say no unstated implications apply. The opponent treats a violet belt, a copper ribbon, a violet card, a scarlet ribbon, an ivory hat and an ivory badge as items that pass through one another. That transfer is exactly the kind of connection the rubric tells us not to supply beyond what the text literally says. A belt is not a card, and a hat is not a badge. **The opponent calls the register premises irrelevant, which proves too much.** Twenty-some premises tie colours such as ivory, violet and scarlet to Ben's records, never to Ada. The ivory entries sit in registers 6 and 14, attached to Ben. The premise set consistently locates these colours in Ben's bookkeeping. Dismissing all of that as noise, while treating Ada's hypotheticals as bedrock, is a selective reading. **Hypotheticals are not assertions.** p1, p13, p14, p18 and p28 are all \"if\" statements. They describe what would follow, not what Ada actually wears. The only categorical claim about Ada is p0, and p0 mentions neither a badge nor a hat. The opponent needs every conditional to fire in sequence. If the judge declines to treat any one link as triggered, the badge never appears. **The query stands directly.** The query does not need to be manufactured. It simply records that no stated fact puts an ivory badge on Ada. The opposing answer requires the judge to accept a long derivation built entirely from conditionals as though it were a stated fact. The reading that stays closer to what the premises actually assert leaves Ada without the badge. For these reasons, the answer is **True**."
+        }
+      ]
+    },
+    "keys": [
+      "42a1eab1528e0bbc239866970b1476eaf448b8ce1b988dd92344e56cf0621f51",
+      "9c875b9975a5f00a3065f99bd699bc571ed3c8fddd8986cd4c1ed6361b167d81",
+      "86c4f236df81b3fd6d1f450ef7b5f9da22115b8320ab9d9f5f739402cbb861fe",
+      "f5277d521ea31ad6140fb81e787429d443fd095c5eecca72b183fe787f1c6093"
+    ]
+  },
+  "ve_consultancy": {
+    "display": {
+      "prose": "The query claims Ada does not wear an ivory badge. The premises actually prove the opposite, so the answer is False. Step 1, case split on p0: Ada wears a violet belt or a copper ribbon, possibly both. - If she wears the violet belt, p18 gives her a violet card. - If she wears the copper ribbon, p28 gives her a violet card. Either way, Ada wears a violet card. Step 2, forward chaining: - The violet card gives her a scarlet ribbon (p1). - The scarlet ribbon gives her an ivory hat (p13). - The ivory hat gives her an ivory badge (p14). So Ada wears an ivory badge, which directly contradicts the query. The query's negation follows from the premises, so the answer is False. The other premises do not affect this. The register facts about Ben are irrelevant. The scarf chain (p10, p5) only leads to a copper ribbon, which feeds into the same conclusion anyway.",
+      "answer": "False",
+      "translations": [
+        {
+          "premise_id": "p0",
+          "english": "at least one of (Ada wears a violet belt) and (Ada wears a copper ribbon) is true, possibly both.",
+          "ve": "(@ada is p0) or (@ada is p1)."
+        },
+        {
+          "premise_id": "p1",
+          "english": "if (Ada wears a violet card), then (Ada wears a scarlet ribbon).",
+          "ve": "if (@ada is p4), then (@ada is p10)."
+        },
+        {
+          "premise_id": "p2",
+          "english": "Ben records the scarlet entry in numbered register 7.",
+          "ve": "@ben is d7."
+        },
+        {
+          "premise_id": "p3",
+          "english": "Ben records the teal entry in numbered register 12.",
+          "ve": "@ben is d12."
+        },
+        {
+          "premise_id": "p4",
+          "english": "Ben records the teal entry in numbered register 4.",
+          "ve": "@ben is d4."
+        },
+        {
+          "premise_id": "p5",
+          "english": "if (Ada wears a ivory scarf), then (Ada wears a copper ribbon).",
+          "ve": "if (@ada is p11), then (@ada is p1)."
+        },
+        {
+          "premise_id": "p6",
+          "english": "Ben records the amber entry in numbered register 8.",
+          "ve": "@ben is d8."
+        },
+        {
+          "premise_id": "p7",
+          "english": "Ben records the ivory entry in numbered register 6.",
+          "ve": "@ben is d6."
+        },
+        {
+          "premise_id": "p8",
+          "english": "Ben records the cobalt entry in numbered register 9.",
+          "ve": "@ben is d9."
+        },
+        {
+          "premise_id": "p9",
+          "english": "Ben records the scarlet entry in numbered register 15.",
+          "ve": "@ben is d15."
+        },
+        {
+          "premise_id": "p10",
+          "english": "if (Ada wears a violet scarf), then (Ada wears a ivory scarf).",
+          "ve": "if (@ada is p5), then (@ada is p11)."
+        },
+        {
+          "premise_id": "p11",
+          "english": "Ben records the copper entry in numbered register 5.",
+          "ve": "@ben is d5."
+        },
+        {
+          "premise_id": "p12",
+          "english": "Ben records the amber entry in numbered register 16.",
+          "ve": "@ben is d16."
+        },
+        {
+          "premise_id": "p13",
+          "english": "if (Ada wears a scarlet ribbon), then (Ada wears a ivory hat).",
+          "ve": "if (@ada is p10), then (@ada is p8)."
+        },
+        {
+          "premise_id": "p14",
+          "english": "if (Ada wears a ivory hat), then (Ada wears a ivory badge).",
+          "ve": "if (@ada is p8), then (@ada is p7)."
+        },
+        {
+          "premise_id": "p15",
+          "english": "Ben records the silver entry in numbered register 18.",
+          "ve": "@ben is d18."
+        },
+        {
+          "premise_id": "p16",
+          "english": "Ben records the cobalt entry in numbered register 1.",
+          "ve": "@ben is d1."
+        },
+        {
+          "premise_id": "p17",
+          "english": "Ben records the silver entry in numbered register 10.",
+          "ve": "@ben is d10."
+        },
+        {
+          "premise_id": "p18",
+          "english": "if (Ada wears a violet belt), then (Ada wears a violet card).",
+          "ve": "if (@ada is p0), then (@ada is p4)."
+        },
+        {
+          "premise_id": "p19",
+          "english": "Ben records the cobalt entry in numbered register 17.",
+          "ve": "@ben is d17."
+        },
+        {
+          "premise_id": "p20",
+          "english": "Ben records the violet entry in numbered register 11.",
+          "ve": "@ben is d11."
+        },
+        {
+          "premise_id": "p21",
+          "english": "Ben records the ivory entry in numbered register 14.",
+          "ve": "@ben is d14."
+        },
+        {
+          "premise_id": "p22",
+          "english": "Ben records the violet entry in numbered register 3.",
+          "ve": "@ben is d3."
+        },
+        {
+          "premise_id": "p23",
+          "english": "Ben records the silver entry in numbered register 2.",
+          "ve": "@ben is d2."
+        },
+        {
+          "premise_id": "p24",
+          "english": "Ben records the teal entry in numbered register 20.",
+          "ve": "@ben is d20."
+        },
+        {
+          "premise_id": "p25",
+          "english": "Ben records the amber entry in numbered register 0.",
+          "ve": "@ben is d0."
+        },
+        {
+          "premise_id": "p26",
+          "english": "Ben records the violet entry in numbered register 19.",
+          "ve": "@ben is d19."
+        },
+        {
+          "premise_id": "p27",
+          "english": "Ben records the copper entry in numbered register 13.",
+          "ve": "@ben is d13."
+        },
+        {
+          "premise_id": "p28",
+          "english": "if (Ada wears a copper ribbon), then (Ada wears a violet card).",
+          "ve": "if (@ada is p1), then (@ada is p4)."
+        }
+      ],
+      "query_ve": "not (@ada is p7).",
+      "graph": {
+        "claims": [
+          {
+            "id": "p0",
+            "ve": "(@ada is p0) or (@ada is p1)."
+          },
+          {
+            "id": "p1",
+            "ve": "if (@ada is p4), then (@ada is p10)."
+          },
+          {
+            "id": "p2",
+            "ve": "@ben is d7."
+          },
+          {
+            "id": "p3",
+            "ve": "@ben is d12."
+          },
+          {
+            "id": "p4",
+            "ve": "@ben is d4."
+          },
+          {
+            "id": "p5",
+            "ve": "if (@ada is p11), then (@ada is p1)."
+          },
+          {
+            "id": "p6",
+            "ve": "@ben is d8."
+          },
+          {
+            "id": "p7",
+            "ve": "@ben is d6."
+          },
+          {
+            "id": "p8",
+            "ve": "@ben is d9."
+          },
+          {
+            "id": "p9",
+            "ve": "@ben is d15."
+          },
+          {
+            "id": "p10",
+            "ve": "if (@ada is p5), then (@ada is p11)."
+          },
+          {
+            "id": "p11",
+            "ve": "@ben is d5."
+          },
+          {
+            "id": "p12",
+            "ve": "@ben is d16."
+          },
+          {
+            "id": "p13",
+            "ve": "if (@ada is p10), then (@ada is p8)."
+          },
+          {
+            "id": "p14",
+            "ve": "if (@ada is p8), then (@ada is p7)."
+          },
+          {
+            "id": "p15",
+            "ve": "@ben is d18."
+          },
+          {
+            "id": "p16",
+            "ve": "@ben is d1."
+          },
+          {
+            "id": "p17",
+            "ve": "@ben is d10."
+          },
+          {
+            "id": "p18",
+            "ve": "if (@ada is p0), then (@ada is p4)."
+          },
+          {
+            "id": "p19",
+            "ve": "@ben is d17."
+          },
+          {
+            "id": "p20",
+            "ve": "@ben is d11."
+          },
+          {
+            "id": "p21",
+            "ve": "@ben is d14."
+          },
+          {
+            "id": "p22",
+            "ve": "@ben is d3."
+          },
+          {
+            "id": "p23",
+            "ve": "@ben is d2."
+          },
+          {
+            "id": "p24",
+            "ve": "@ben is d20."
+          },
+          {
+            "id": "p25",
+            "ve": "@ben is d0."
+          },
+          {
+            "id": "p26",
+            "ve": "@ben is d19."
+          },
+          {
+            "id": "p27",
+            "ve": "@ben is d13."
+          },
+          {
+            "id": "p28",
+            "ve": "if (@ada is p1), then (@ada is p4)."
+          },
+          {
+            "id": "c1",
+            "ve": "@ada is p4."
+          },
+          {
+            "id": "c2",
+            "ve": "@ada is p10."
+          },
+          {
+            "id": "c3",
+            "ve": "@ada is p8."
+          },
+          {
+            "id": "goal",
+            "ve": "@ada is p7."
+          }
+        ],
+        "deductions": [
+          {
+            "id": "d0",
+            "premises": [
+              "p0",
+              "p18",
+              "p28"
+            ],
+            "conclusion": "c1"
+          },
+          {
+            "id": "d1",
+            "premises": [
+              "c1",
+              "p1"
+            ],
+            "conclusion": "c2"
+          },
+          {
+            "id": "d2",
+            "premises": [
+              "c2",
+              "p13"
+            ],
+            "conclusion": "c3"
+          },
+          {
+            "id": "d3",
+            "premises": [
+              "c3",
+              "p14"
+            ],
+            "conclusion": "goal"
+          }
+        ],
+        "root": "goal"
+      }
+    },
+    "submission": {
+      "prose": "The query claims Ada does not wear an ivory badge. The premises actually prove the opposite, so the answer is False. Step 1, case split on p0: Ada wears a violet belt or a copper ribbon, possibly both. - If she wears the violet belt, p18 gives her a violet card. - If she wears the copper ribbon, p28 gives her a violet card. Either way, Ada wears a violet card. Step 2, forward chaining: - The violet card gives her a scarlet ribbon (p1). - The scarlet ribbon gives her an ivory hat (p13). - The ivory hat gives her an ivory badge (p14). So Ada wears an ivory badge, which directly contradicts the query. The query's negation follows from the premises, so the answer is False. The other premises do not affect this. The register facts about Ben are irrelevant. The scarf chain (p10, p5) only leads to a copper ribbon, which feeds into the same conclusion anyway.",
+      "answer": "False",
+      "translations": [
+        {
+          "premise_id": "p0",
+          "english": "at least one of (Ada wears a violet belt) and (Ada wears a copper ribbon) is true, possibly both.",
+          "ve": "(@ada is p0) or (@ada is p1)."
+        },
+        {
+          "premise_id": "p1",
+          "english": "if (Ada wears a violet card), then (Ada wears a scarlet ribbon).",
+          "ve": "if (@ada is p4), then (@ada is p10)."
+        },
+        {
+          "premise_id": "p2",
+          "english": "Ben records the scarlet entry in numbered register 7.",
+          "ve": "@ben is d7."
+        },
+        {
+          "premise_id": "p3",
+          "english": "Ben records the teal entry in numbered register 12.",
+          "ve": "@ben is d12."
+        },
+        {
+          "premise_id": "p4",
+          "english": "Ben records the teal entry in numbered register 4.",
+          "ve": "@ben is d4."
+        },
+        {
+          "premise_id": "p5",
+          "english": "if (Ada wears a ivory scarf), then (Ada wears a copper ribbon).",
+          "ve": "if (@ada is p11), then (@ada is p1)."
+        },
+        {
+          "premise_id": "p6",
+          "english": "Ben records the amber entry in numbered register 8.",
+          "ve": "@ben is d8."
+        },
+        {
+          "premise_id": "p7",
+          "english": "Ben records the ivory entry in numbered register 6.",
+          "ve": "@ben is d6."
+        },
+        {
+          "premise_id": "p8",
+          "english": "Ben records the cobalt entry in numbered register 9.",
+          "ve": "@ben is d9."
+        },
+        {
+          "premise_id": "p9",
+          "english": "Ben records the scarlet entry in numbered register 15.",
+          "ve": "@ben is d15."
+        },
+        {
+          "premise_id": "p10",
+          "english": "if (Ada wears a violet scarf), then (Ada wears a ivory scarf).",
+          "ve": "if (@ada is p5), then (@ada is p11)."
+        },
+        {
+          "premise_id": "p11",
+          "english": "Ben records the copper entry in numbered register 5.",
+          "ve": "@ben is d5."
+        },
+        {
+          "premise_id": "p12",
+          "english": "Ben records the amber entry in numbered register 16.",
+          "ve": "@ben is d16."
+        },
+        {
+          "premise_id": "p13",
+          "english": "if (Ada wears a scarlet ribbon), then (Ada wears a ivory hat).",
+          "ve": "if (@ada is p10), then (@ada is p8)."
+        },
+        {
+          "premise_id": "p14",
+          "english": "if (Ada wears a ivory hat), then (Ada wears a ivory badge).",
+          "ve": "if (@ada is p8), then (@ada is p7)."
+        },
+        {
+          "premise_id": "p15",
+          "english": "Ben records the silver entry in numbered register 18.",
+          "ve": "@ben is d18."
+        },
+        {
+          "premise_id": "p16",
+          "english": "Ben records the cobalt entry in numbered register 1.",
+          "ve": "@ben is d1."
+        },
+        {
+          "premise_id": "p17",
+          "english": "Ben records the silver entry in numbered register 10.",
+          "ve": "@ben is d10."
+        },
+        {
+          "premise_id": "p18",
+          "english": "if (Ada wears a violet belt), then (Ada wears a violet card).",
+          "ve": "if (@ada is p0), then (@ada is p4)."
+        },
+        {
+          "premise_id": "p19",
+          "english": "Ben records the cobalt entry in numbered register 17.",
+          "ve": "@ben is d17."
+        },
+        {
+          "premise_id": "p20",
+          "english": "Ben records the violet entry in numbered register 11.",
+          "ve": "@ben is d11."
+        },
+        {
+          "premise_id": "p21",
+          "english": "Ben records the ivory entry in numbered register 14.",
+          "ve": "@ben is d14."
+        },
+        {
+          "premise_id": "p22",
+          "english": "Ben records the violet entry in numbered register 3.",
+          "ve": "@ben is d3."
+        },
+        {
+          "premise_id": "p23",
+          "english": "Ben records the silver entry in numbered register 2.",
+          "ve": "@ben is d2."
+        },
+        {
+          "premise_id": "p24",
+          "english": "Ben records the teal entry in numbered register 20.",
+          "ve": "@ben is d20."
+        },
+        {
+          "premise_id": "p25",
+          "english": "Ben records the amber entry in numbered register 0.",
+          "ve": "@ben is d0."
+        },
+        {
+          "premise_id": "p26",
+          "english": "Ben records the violet entry in numbered register 19.",
+          "ve": "@ben is d19."
+        },
+        {
+          "premise_id": "p27",
+          "english": "Ben records the copper entry in numbered register 13.",
+          "ve": "@ben is d13."
+        },
+        {
+          "premise_id": "p28",
+          "english": "if (Ada wears a copper ribbon), then (Ada wears a violet card).",
+          "ve": "if (@ada is p1), then (@ada is p4)."
+        }
+      ],
+      "query_ve": "not (@ada is p7).",
+      "graph": {
+        "claims": [
+          {
+            "id": "p0",
+            "ve": "(@ada is p0) or (@ada is p1)."
+          },
+          {
+            "id": "p1",
+            "ve": "if (@ada is p4), then (@ada is p10)."
+          },
+          {
+            "id": "p2",
+            "ve": "@ben is d7."
+          },
+          {
+            "id": "p3",
+            "ve": "@ben is d12."
+          },
+          {
+            "id": "p4",
+            "ve": "@ben is d4."
+          },
+          {
+            "id": "p5",
+            "ve": "if (@ada is p11), then (@ada is p1)."
+          },
+          {
+            "id": "p6",
+            "ve": "@ben is d8."
+          },
+          {
+            "id": "p7",
+            "ve": "@ben is d6."
+          },
+          {
+            "id": "p8",
+            "ve": "@ben is d9."
+          },
+          {
+            "id": "p9",
+            "ve": "@ben is d15."
+          },
+          {
+            "id": "p10",
+            "ve": "if (@ada is p5), then (@ada is p11)."
+          },
+          {
+            "id": "p11",
+            "ve": "@ben is d5."
+          },
+          {
+            "id": "p12",
+            "ve": "@ben is d16."
+          },
+          {
+            "id": "p13",
+            "ve": "if (@ada is p10), then (@ada is p8)."
+          },
+          {
+            "id": "p14",
+            "ve": "if (@ada is p8), then (@ada is p7)."
+          },
+          {
+            "id": "p15",
+            "ve": "@ben is d18."
+          },
+          {
+            "id": "p16",
+            "ve": "@ben is d1."
+          },
+          {
+            "id": "p17",
+            "ve": "@ben is d10."
+          },
+          {
+            "id": "p18",
+            "ve": "if (@ada is p0), then (@ada is p4)."
+          },
+          {
+            "id": "p19",
+            "ve": "@ben is d17."
+          },
+          {
+            "id": "p20",
+            "ve": "@ben is d11."
+          },
+          {
+            "id": "p21",
+            "ve": "@ben is d14."
+          },
+          {
+            "id": "p22",
+            "ve": "@ben is d3."
+          },
+          {
+            "id": "p23",
+            "ve": "@ben is d2."
+          },
+          {
+            "id": "p24",
+            "ve": "@ben is d20."
+          },
+          {
+            "id": "p25",
+            "ve": "@ben is d0."
+          },
+          {
+            "id": "p26",
+            "ve": "@ben is d19."
+          },
+          {
+            "id": "p27",
+            "ve": "@ben is d13."
+          },
+          {
+            "id": "p28",
+            "ve": "if (@ada is p1), then (@ada is p4)."
+          },
+          {
+            "id": "c1",
+            "ve": "@ada is p4."
+          },
+          {
+            "id": "c2",
+            "ve": "@ada is p10."
+          },
+          {
+            "id": "c3",
+            "ve": "@ada is p8."
+          },
+          {
+            "id": "goal",
+            "ve": "@ada is p7."
+          }
+        ],
+        "deductions": [
+          {
+            "id": "d0",
+            "premises": [
+              "p0",
+              "p18",
+              "p28"
+            ],
+            "conclusion": "c1"
+          },
+          {
+            "id": "d1",
+            "premises": [
+              "c1",
+              "p1"
+            ],
+            "conclusion": "c2"
+          },
+          {
+            "id": "d2",
+            "premises": [
+              "c2",
+              "p13"
+            ],
+            "conclusion": "c3"
+          },
+          {
+            "id": "d3",
+            "premises": [
+              "c3",
+              "p14"
+            ],
+            "conclusion": "goal"
+          }
+        ],
+        "root": "goal"
+      },
+      "plausibility": 95
+    },
+    "checker": {
+      "deduction_certified": false,
+      "root_matches_submitted_answer": false,
+      "unbound_leaves": [],
+      "table_complete_and_source_preserved": true,
+      "translation_faithfulness": "NOT_CHECKED: judge must assess original English",
+      "errors": [
+        "Graph root does not match submitted query and answer polarity"
+      ],
+      "formal_status": "Checked"
+    },
+    "checker_evidence": {
+      "version": "ve-argument-tableau@1",
+      "assurance": "experimental",
+      "status": "Checked",
+      "graph_id": "331f61a55354a59079b210b3d59f21ad3395696a6801c93eef97889e384b9e88",
+      "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+      "root": "goal",
+      "findings": {
+        "d0": [
+          "follows"
+        ],
+        "d1": [
+          "follows"
+        ],
+        "d2": [
+          "follows"
+        ],
+        "d3": [
+          "follows"
+        ]
+      },
+      "remaining_assumptions": [
+        "p0",
+        "p1",
+        "p13",
+        "p14",
+        "p18",
+        "p28"
+      ],
+      "unresolved_obligations": [],
+      "composed": true,
+      "proof": "Python replay checked",
+      "intent": "unconfirmed",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "lean_checked": false,
+      "lean_status": "Lean-checked: no",
+      "lean_detail": "Lean replay not requested",
+      "approval": "unassessed",
+      "edges": [
+        {
+          "name": "d0",
+          "edge_id": "47904a189ea927d402fa26f299b7607b9c018d6ec777ccbc371642f5748e9bec",
+          "premises": [
+            "p0",
+            "p18",
+            "p28"
+          ],
+          "conclusion": "c1",
+          "findings": [
+            "follows"
+          ],
+          "status": "established",
+          "contradictory_premises": false,
+          "checker_conflict": false,
+          "satisfying_premise_model_ids": [],
+          "artifacts": [
+            {
+              "kind": "follows",
+              "submitted": false,
+              "certificate": {
+                "edge_id": "47904a189ea927d402fa26f299b7607b9c018d6ec777ccbc371642f5748e9bec",
+                "direction": "follows",
+                "proof": {
+                  "checker_version": "ve-tableau-checker@2",
+                  "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+                  "premise_meaning_ids": [
+                    "3a5df28d055dd881515817056dfb2e1f38038d4428b48955231a23f9bcea0ba8",
+                    "9cb3bdee936b5023baec430b30ed7bf5a09be6a252ed6621b931e1295167f253",
+                    "0e9ce1c3153dded864f5b28a7bca23e6a27cb033b6abcc65e2cc9ef128e75194"
+                  ],
+                  "conclusion_meaning_id": "2b30638663d67775f99ce33e31dae1449e6475dddfc619dcdd49bc18ee448431",
+                  "trace": {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "expand",
+                        "at": 0,
+                        "children": [
+                          {
+                            "rule": "close"
+                          },
+                          {
+                            "rule": "expand",
+                            "at": 2,
+                            "children": [
+                              {
+                                "rule": "close"
+                              },
+                              {
+                                "rule": "close"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  }
+                }
+              },
+              "check": {
+                "valid": true,
+                "status": "Valid",
+                "steps": 7,
+                "detail": ""
+              }
+            }
+          ],
+          "errors": [],
+          "search_attempts": [
+            {
+              "kind": "follows",
+              "status": "Found"
+            },
+            {
+              "kind": "refuted",
+              "status": "NotFound"
+            },
+            {
+              "kind": "gap",
+              "status": "ResourceLimit",
+              "models_checked": 0,
+              "detail": "model-attempt budget exhausted"
+            }
+          ]
+        },
+        {
+          "name": "d1",
+          "edge_id": "2cf3e4929dfdbcb165df7c2591fa195db91a85cabbc05333756f21b06b31e8b1",
+          "premises": [
+            "c1",
+            "p1"
+          ],
+          "conclusion": "c2",
+          "findings": [
+            "follows"
+          ],
+          "status": "established",
+          "contradictory_premises": false,
+          "checker_conflict": false,
+          "satisfying_premise_model_ids": [],
+          "artifacts": [
+            {
+              "kind": "follows",
+              "submitted": false,
+              "certificate": {
+                "edge_id": "2cf3e4929dfdbcb165df7c2591fa195db91a85cabbc05333756f21b06b31e8b1",
+                "direction": "follows",
+                "proof": {
+                  "checker_version": "ve-tableau-checker@2",
+                  "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+                  "premise_meaning_ids": [
+                    "2b30638663d67775f99ce33e31dae1449e6475dddfc619dcdd49bc18ee448431",
+                    "bd6de19d1ed82f989966d99a4a6fa6bceb0daf9c68c261cb52c930f90c368c8c"
+                  ],
+                  "conclusion_meaning_id": "d873c739b44e18b77f7cdd2be4ffbf90c7cd71ba1de98ffa741eaa067e148561",
+                  "trace": {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      },
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  }
+                }
+              },
+              "check": {
+                "valid": true,
+                "status": "Valid",
+                "steps": 3,
+                "detail": ""
+              }
+            }
+          ],
+          "errors": [],
+          "search_attempts": [
+            {
+              "kind": "follows",
+              "status": "Found"
+            },
+            {
+              "kind": "refuted",
+              "status": "NotFound"
+            },
+            {
+              "kind": "gap",
+              "status": "ResourceLimit",
+              "models_checked": 0,
+              "detail": "model-attempt budget exhausted"
+            }
+          ]
+        },
+        {
+          "name": "d2",
+          "edge_id": "ee04b0366ac1ea6c6d0d75570eb83b7bca04bd744da1755ac098a8e98efdfe6f",
+          "premises": [
+            "c2",
+            "p13"
+          ],
+          "conclusion": "c3",
+          "findings": [
+            "follows"
+          ],
+          "status": "established",
+          "contradictory_premises": false,
+          "checker_conflict": false,
+          "satisfying_premise_model_ids": [],
+          "artifacts": [
+            {
+              "kind": "follows",
+              "submitted": false,
+              "certificate": {
+                "edge_id": "ee04b0366ac1ea6c6d0d75570eb83b7bca04bd744da1755ac098a8e98efdfe6f",
+                "direction": "follows",
+                "proof": {
+                  "checker_version": "ve-tableau-checker@2",
+                  "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+                  "premise_meaning_ids": [
+                    "d873c739b44e18b77f7cdd2be4ffbf90c7cd71ba1de98ffa741eaa067e148561",
+                    "6bc3c8fef8344b81ab8a7cb1664990ba3ccdc8c05733c443a2e0afebd24f78a9"
+                  ],
+                  "conclusion_meaning_id": "92529bfd7b1d42e4ce755b93007469eb59479aaf8a4821297723d7501e3d08c0",
+                  "trace": {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      },
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  }
+                }
+              },
+              "check": {
+                "valid": true,
+                "status": "Valid",
+                "steps": 3,
+                "detail": ""
+              }
+            }
+          ],
+          "errors": [],
+          "search_attempts": [
+            {
+              "kind": "follows",
+              "status": "Found"
+            },
+            {
+              "kind": "refuted",
+              "status": "NotFound"
+            },
+            {
+              "kind": "gap",
+              "status": "ResourceLimit",
+              "models_checked": 0,
+              "detail": "model-attempt budget exhausted"
+            }
+          ]
+        },
+        {
+          "name": "d3",
+          "edge_id": "6652b53a3e0be180869acb7d81828fec90c0a96690ce38a87bd36546e516d032",
+          "premises": [
+            "c3",
+            "p14"
+          ],
+          "conclusion": "goal",
+          "findings": [
+            "follows"
+          ],
+          "status": "established",
+          "contradictory_premises": false,
+          "checker_conflict": false,
+          "satisfying_premise_model_ids": [],
+          "artifacts": [
+            {
+              "kind": "follows",
+              "submitted": false,
+              "certificate": {
+                "edge_id": "6652b53a3e0be180869acb7d81828fec90c0a96690ce38a87bd36546e516d032",
+                "direction": "follows",
+                "proof": {
+                  "checker_version": "ve-tableau-checker@2",
+                  "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+                  "premise_meaning_ids": [
+                    "92529bfd7b1d42e4ce755b93007469eb59479aaf8a4821297723d7501e3d08c0",
+                    "4ed9869864f7ce2db984469dd16b572ee6cbb17999387da052d4821d3363d43f"
+                  ],
+                  "conclusion_meaning_id": "4950c2b2c32bf6449e47ca3f17f8d1e77aa512f732aa5bcd3d3815e996d2645c",
+                  "trace": {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      },
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  }
+                }
+              },
+              "check": {
+                "valid": true,
+                "status": "Valid",
+                "steps": 3,
+                "detail": ""
+              }
+            }
+          ],
+          "errors": [],
+          "search_attempts": [
+            {
+              "kind": "follows",
+              "status": "Found"
+            },
+            {
+              "kind": "refuted",
+              "status": "NotFound"
+            },
+            {
+              "kind": "gap",
+              "status": "ResourceLimit",
+              "models_checked": 0,
+              "detail": "model-attempt budget exhausted"
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "composition": {
+        "rule": "acyclic-implication-composition",
+        "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+        "checker_build": "c2947eff5f1f0920475ccd57b2f5e8153cb0602998684e45f1558b41da3da470",
+        "root_claim_id": "2243601f6fdc7ba6d675b41a007e8c6a2ab3cf728cbc04bbc50897f6234bbfdf",
+        "assumption_claim_ids": [
+          "45de9ded951b0864abadd670cb42a9d18a76affa7489c36442a15b249aae9d94",
+          "6c998fe1883a344a213b52649eed38131f80469137549f6cbc227d09c6b6b743",
+          "728f44cbe95f2cddc98c7fd7bfd32f15a0c5264b4c2856e9571abc8399a681a9",
+          "9cd5806724a7d5a96b4e1140bd5b97a191c6f8c8029316eb2c71e8191ceef55a",
+          "d9dc5ff339ccd75f069d750a29fdb42b07a7da2b0a652b65123b97964b35c022",
+          "b2184f90a9770f05e7327216edd37167f3f0e374757673135f1f34015fc53d49"
+        ],
+        "supporting_edge_ids": [
+          "47904a189ea927d402fa26f299b7607b9c018d6ec777ccbc371642f5748e9bec",
+          "2cf3e4929dfdbcb165df7c2591fa195db91a85cabbc05333756f21b06b31e8b1",
+          "ee04b0366ac1ea6c6d0d75570eb83b7bca04bd744da1755ac098a8e98efdfe6f",
+          "6652b53a3e0be180869acb7d81828fec90c0a96690ce38a87bd36546e516d032"
+        ],
+        "assumptions": [
+          {
+            "name": "p0",
+            "source": "(@ada is p0) or (@ada is p1).\n",
+            "ast": [
+              "or",
+              [
+                "unary",
+                "p0",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "unary",
+                "p1",
+                [
+                  "const",
+                  "ada"
+                ]
+              ]
+            ],
+            "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+            "source_id": "0b9bc108e1eda9745b2684b249805e8575726fc2b38d9e1daa37f7f987e3bd4e",
+            "meaning_id": "3a5df28d055dd881515817056dfb2e1f38038d4428b48955231a23f9bcea0ba8",
+            "claim_id": "45de9ded951b0864abadd670cb42a9d18a76affa7489c36442a15b249aae9d94",
+            "evidence_ids": []
+          },
+          {
+            "name": "p1",
+            "source": "if (@ada is p4), then (@ada is p10).\n",
+            "ast": [
+              "implies",
+              [
+                "unary",
+                "p4",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "unary",
+                "p10",
+                [
+                  "const",
+                  "ada"
+                ]
+              ]
+            ],
+            "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+            "source_id": "e11f9d105c86152f80e56c4c031a99e1fa36f503a6d2a218cd2b534850826fe1",
+            "meaning_id": "bd6de19d1ed82f989966d99a4a6fa6bceb0daf9c68c261cb52c930f90c368c8c",
+            "claim_id": "6c998fe1883a344a213b52649eed38131f80469137549f6cbc227d09c6b6b743",
+            "evidence_ids": []
+          },
+          {
+            "name": "p13",
+            "source": "if (@ada is p10), then (@ada is p8).\n",
+            "ast": [
+              "implies",
+              [
+                "unary",
+                "p10",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "unary",
+                "p8",
+                [
+                  "const",
+                  "ada"
+                ]
+              ]
+            ],
+            "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+            "source_id": "7b7a48d52a30577c2d7bb0e25f8df3537295476f79047ce320001e03dd1228ab",
+            "meaning_id": "6bc3c8fef8344b81ab8a7cb1664990ba3ccdc8c05733c443a2e0afebd24f78a9",
+            "claim_id": "728f44cbe95f2cddc98c7fd7bfd32f15a0c5264b4c2856e9571abc8399a681a9",
+            "evidence_ids": []
+          },
+          {
+            "name": "p14",
+            "source": "if (@ada is p8), then (@ada is p7).\n",
+            "ast": [
+              "implies",
+              [
+                "unary",
+                "p8",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "unary",
+                "p7",
+                [
+                  "const",
+                  "ada"
+                ]
+              ]
+            ],
+            "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+            "source_id": "ecef6fcecdeb3608203ac78419230542b796ef5ea67549caa5b47399f5fb3f2a",
+            "meaning_id": "4ed9869864f7ce2db984469dd16b572ee6cbb17999387da052d4821d3363d43f",
+            "claim_id": "9cd5806724a7d5a96b4e1140bd5b97a191c6f8c8029316eb2c71e8191ceef55a",
+            "evidence_ids": []
+          },
+          {
+            "name": "p18",
+            "source": "if (@ada is p0), then (@ada is p4).\n",
+            "ast": [
+              "implies",
+              [
+                "unary",
+                "p0",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "unary",
+                "p4",
+                [
+                  "const",
+                  "ada"
+                ]
+              ]
+            ],
+            "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+            "source_id": "7c4332d291587fa36e91a25cac907687b985d891ea3ed902f024873d94cb098e",
+            "meaning_id": "9cb3bdee936b5023baec430b30ed7bf5a09be6a252ed6621b931e1295167f253",
+            "claim_id": "d9dc5ff339ccd75f069d750a29fdb42b07a7da2b0a652b65123b97964b35c022",
+            "evidence_ids": []
+          },
+          {
+            "name": "p28",
+            "source": "if (@ada is p1), then (@ada is p4).\n",
+            "ast": [
+              "implies",
+              [
+                "unary",
+                "p1",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "unary",
+                "p4",
+                [
+                  "const",
+                  "ada"
+                ]
+              ]
+            ],
+            "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+            "source_id": "2ddd20b186c601639197f24b79d4c8061241a83440d78bad0fc0af18e06c4636",
+            "meaning_id": "0e9ce1c3153dded864f5b28a7bca23e6a27cb033b6abcc65e2cc9ef128e75194",
+            "claim_id": "b2184f90a9770f05e7327216edd37167f3f0e374757673135f1f34015fc53d49",
+            "evidence_ids": []
+          }
+        ],
+        "record_id": "e0895d5ebab8e86233d2587dd66423413ed258f3cc790347ac03e49cdc190b80"
+      },
+      "checker_build": "c2947eff5f1f0920475ccd57b2f5e8153cb0602998684e45f1558b41da3da470",
+      "contradictory_premises": [],
+      "warnings": [
+        {
+          "edge": "d0",
+          "code": "ResourceLimit",
+          "message": "gap search exhausted its budget"
+        },
+        {
+          "edge": "d1",
+          "code": "ResourceLimit",
+          "message": "gap search exhausted its budget"
+        },
+        {
+          "edge": "d2",
+          "code": "ResourceLimit",
+          "message": "gap search exhausted its budget"
+        },
+        {
+          "edge": "d3",
+          "code": "ResourceLimit",
+          "message": "gap search exhausted its budget"
+        }
+      ],
+      "record_id": "bdb0351be421bd73d5a5f7e404e4bded374b2033ae5b98f45245f76f3d17a9e8"
+    },
+    "keys": [
+      "da7897e9568e94e809a72314c828d675a5fc12d8da0fb0b385a21cd0e97fe79f"
+    ]
+  },
+  "mistranslation": {
+    "display": {
+      "prose": "The query claims Ada does not wear an ivory badge. The premises actually prove the opposite, so the answer is False. Step 1, case split on p0: Ada wears a violet belt or a copper ribbon, possibly both. - If she wears the violet belt, p18 gives her a violet card. - If she wears the copper ribbon, p28 gives her a violet card. Either way, Ada wears a violet card. Step 2, forward chaining: - The violet card gives her a scarlet ribbon (p1). - The scarlet ribbon gives her an ivory hat (p13). - The ivory hat gives her an ivory badge (p14). So Ada wears an ivory badge, which directly contradicts the query. The query's negation follows from the premises, so the answer is False. The other premises do not affect this. The register facts about Ben are irrelevant. The scarf chain (p10, p5) only leads to a copper ribbon, which feeds into the same conclusion anyway.",
+      "answer": "False",
+      "translations": [
+        {
+          "premise_id": "p0",
+          "english": "at least one of (Ada wears a violet belt) and (Ada wears a copper ribbon) is true, possibly both.",
+          "ve": "(@ada is p0) or (@ada is p1)."
+        },
+        {
+          "premise_id": "p1",
+          "english": "if (Ada wears a violet card), then (Ada wears a scarlet ribbon).",
+          "ve": "if (@ada is p4), then (@ada is p10)."
+        },
+        {
+          "premise_id": "p2",
+          "english": "Ben records the scarlet entry in numbered register 7.",
+          "ve": "@ben is d7."
+        },
+        {
+          "premise_id": "p3",
+          "english": "Ben records the teal entry in numbered register 12.",
+          "ve": "@ben is d12."
+        },
+        {
+          "premise_id": "p4",
+          "english": "Ben records the teal entry in numbered register 4.",
+          "ve": "@ben is d4."
+        },
+        {
+          "premise_id": "p5",
+          "english": "if (Ada wears a ivory scarf), then (Ada wears a copper ribbon).",
+          "ve": "if (@ada is p11), then (@ada is p1)."
+        },
+        {
+          "premise_id": "p6",
+          "english": "Ben records the amber entry in numbered register 8.",
+          "ve": "@ben is d8."
+        },
+        {
+          "premise_id": "p7",
+          "english": "Ben records the ivory entry in numbered register 6.",
+          "ve": "@ben is d6."
+        },
+        {
+          "premise_id": "p8",
+          "english": "Ben records the cobalt entry in numbered register 9.",
+          "ve": "@ben is d9."
+        },
+        {
+          "premise_id": "p9",
+          "english": "Ben records the scarlet entry in numbered register 15.",
+          "ve": "@ben is d15."
+        },
+        {
+          "premise_id": "p10",
+          "english": "if (Ada wears a violet scarf), then (Ada wears a ivory scarf).",
+          "ve": "if (@ada is p5), then (@ada is p11)."
+        },
+        {
+          "premise_id": "p11",
+          "english": "Ben records the copper entry in numbered register 5.",
+          "ve": "@ben is d5."
+        },
+        {
+          "premise_id": "p12",
+          "english": "Ben records the amber entry in numbered register 16.",
+          "ve": "@ben is d16."
+        },
+        {
+          "premise_id": "p13",
+          "english": "if (Ada wears a scarlet ribbon), then (Ada wears a ivory hat).",
+          "ve": "if (@ada is p10), then (@ada is p8)."
+        },
+        {
+          "premise_id": "p14",
+          "english": "if (Ada wears a ivory hat), then (Ada wears a ivory badge).",
+          "ve": "if (@ada is p8), then (@ada is p7)."
+        },
+        {
+          "premise_id": "p15",
+          "english": "Ben records the silver entry in numbered register 18.",
+          "ve": "@ben is d18."
+        },
+        {
+          "premise_id": "p16",
+          "english": "Ben records the cobalt entry in numbered register 1.",
+          "ve": "@ben is d1."
+        },
+        {
+          "premise_id": "p17",
+          "english": "Ben records the silver entry in numbered register 10.",
+          "ve": "@ben is d10."
+        },
+        {
+          "premise_id": "p18",
+          "english": "if (Ada wears a violet belt), then (Ada wears a violet card).",
+          "ve": "if (@ada is p0), then (@ada is p4)."
+        },
+        {
+          "premise_id": "p19",
+          "english": "Ben records the cobalt entry in numbered register 17.",
+          "ve": "@ben is d17."
+        },
+        {
+          "premise_id": "p20",
+          "english": "Ben records the violet entry in numbered register 11.",
+          "ve": "@ben is d11."
+        },
+        {
+          "premise_id": "p21",
+          "english": "Ben records the ivory entry in numbered register 14.",
+          "ve": "@ben is d14."
+        },
+        {
+          "premise_id": "p22",
+          "english": "Ben records the violet entry in numbered register 3.",
+          "ve": "@ben is d3."
+        },
+        {
+          "premise_id": "p23",
+          "english": "Ben records the silver entry in numbered register 2.",
+          "ve": "@ben is d2."
+        },
+        {
+          "premise_id": "p24",
+          "english": "Ben records the teal entry in numbered register 20.",
+          "ve": "@ben is d20."
+        },
+        {
+          "premise_id": "p25",
+          "english": "Ben records the amber entry in numbered register 0.",
+          "ve": "@ben is d0."
+        },
+        {
+          "premise_id": "p26",
+          "english": "Ben records the violet entry in numbered register 19.",
+          "ve": "@ben is d19."
+        },
+        {
+          "premise_id": "p27",
+          "english": "Ben records the copper entry in numbered register 13.",
+          "ve": "@ben is d13."
+        },
+        {
+          "premise_id": "p28",
+          "english": "if (Ada wears a copper ribbon), then (Ada wears a violet card).",
+          "ve": "if (@ada is p1), then (@ada is p4)."
+        }
+      ],
+      "query_ve": "not (@ada is p7).",
+      "graph": {
+        "claims": [
+          {
+            "id": "p0",
+            "ve": "(@ada is p0) or (@ada is p1)."
+          },
+          {
+            "id": "p1",
+            "ve": "if (@ada is p4), then (@ada is p10)."
+          },
+          {
+            "id": "p2",
+            "ve": "@ben is d7."
+          },
+          {
+            "id": "p3",
+            "ve": "@ben is d12."
+          },
+          {
+            "id": "p4",
+            "ve": "@ben is d4."
+          },
+          {
+            "id": "p5",
+            "ve": "if (@ada is p11), then (@ada is p1)."
+          },
+          {
+            "id": "p6",
+            "ve": "@ben is d8."
+          },
+          {
+            "id": "p7",
+            "ve": "@ben is d6."
+          },
+          {
+            "id": "p8",
+            "ve": "@ben is d9."
+          },
+          {
+            "id": "p9",
+            "ve": "@ben is d15."
+          },
+          {
+            "id": "p10",
+            "ve": "if (@ada is p5), then (@ada is p11)."
+          },
+          {
+            "id": "p11",
+            "ve": "@ben is d5."
+          },
+          {
+            "id": "p12",
+            "ve": "@ben is d16."
+          },
+          {
+            "id": "p13",
+            "ve": "if (@ada is p10), then (@ada is p8)."
+          },
+          {
+            "id": "p14",
+            "ve": "if (@ada is p8), then (@ada is p7)."
+          },
+          {
+            "id": "p15",
+            "ve": "@ben is d18."
+          },
+          {
+            "id": "p16",
+            "ve": "@ben is d1."
+          },
+          {
+            "id": "p17",
+            "ve": "@ben is d10."
+          },
+          {
+            "id": "p18",
+            "ve": "if (@ada is p0), then (@ada is p4)."
+          },
+          {
+            "id": "p19",
+            "ve": "@ben is d17."
+          },
+          {
+            "id": "p20",
+            "ve": "@ben is d11."
+          },
+          {
+            "id": "p21",
+            "ve": "@ben is d14."
+          },
+          {
+            "id": "p22",
+            "ve": "@ben is d3."
+          },
+          {
+            "id": "p23",
+            "ve": "@ben is d2."
+          },
+          {
+            "id": "p24",
+            "ve": "@ben is d20."
+          },
+          {
+            "id": "p25",
+            "ve": "@ben is d0."
+          },
+          {
+            "id": "p26",
+            "ve": "@ben is d19."
+          },
+          {
+            "id": "p27",
+            "ve": "@ben is d13."
+          },
+          {
+            "id": "p28",
+            "ve": "if (@ada is p1), then (@ada is p4)."
+          },
+          {
+            "id": "c1",
+            "ve": "@ada is p4."
+          },
+          {
+            "id": "c2",
+            "ve": "@ada is p10."
+          },
+          {
+            "id": "c3",
+            "ve": "@ada is p8."
+          },
+          {
+            "id": "goal",
+            "ve": "@ada is p7."
+          }
+        ],
+        "deductions": [
+          {
+            "id": "d0",
+            "premises": [
+              "p0",
+              "p18",
+              "p28"
+            ],
+            "conclusion": "c1"
+          },
+          {
+            "id": "d1",
+            "premises": [
+              "c1",
+              "p1"
+            ],
+            "conclusion": "c2"
+          },
+          {
+            "id": "d2",
+            "premises": [
+              "c2",
+              "p13"
+            ],
+            "conclusion": "c3"
+          },
+          {
+            "id": "d3",
+            "premises": [
+              "c3",
+              "p14"
+            ],
+            "conclusion": "goal"
+          }
+        ],
+        "root": "goal"
+      }
+    },
+    "submission": {
+      "prose": "The query claims Ada does not wear an ivory badge. The premises actually prove the opposite, so the answer is False. Step 1, case split on p0: Ada wears a violet belt or a copper ribbon, possibly both. - If she wears the violet belt, p18 gives her a violet card. - If she wears the copper ribbon, p28 gives her a violet card. Either way, Ada wears a violet card. Step 2, forward chaining: - The violet card gives her a scarlet ribbon (p1). - The scarlet ribbon gives her an ivory hat (p13). - The ivory hat gives her an ivory badge (p14). So Ada wears an ivory badge, which directly contradicts the query. The query's negation follows from the premises, so the answer is False. The other premises do not affect this. The register facts about Ben are irrelevant. The scarf chain (p10, p5) only leads to a copper ribbon, which feeds into the same conclusion anyway.",
+      "answer": "False",
+      "translations": [
+        {
+          "premise_id": "p0",
+          "english": "at least one of (Ada wears a violet belt) and (Ada wears a copper ribbon) is true, possibly both.",
+          "ve": "(@ada is p0) or (@ada is p1)."
+        },
+        {
+          "premise_id": "p1",
+          "english": "if (Ada wears a violet card), then (Ada wears a scarlet ribbon).",
+          "ve": "if (@ada is p4), then (@ada is p10)."
+        },
+        {
+          "premise_id": "p2",
+          "english": "Ben records the scarlet entry in numbered register 7.",
+          "ve": "@ben is d7."
+        },
+        {
+          "premise_id": "p3",
+          "english": "Ben records the teal entry in numbered register 12.",
+          "ve": "@ben is d12."
+        },
+        {
+          "premise_id": "p4",
+          "english": "Ben records the teal entry in numbered register 4.",
+          "ve": "@ben is d4."
+        },
+        {
+          "premise_id": "p5",
+          "english": "if (Ada wears a ivory scarf), then (Ada wears a copper ribbon).",
+          "ve": "if (@ada is p11), then (@ada is p1)."
+        },
+        {
+          "premise_id": "p6",
+          "english": "Ben records the amber entry in numbered register 8.",
+          "ve": "@ben is d8."
+        },
+        {
+          "premise_id": "p7",
+          "english": "Ben records the ivory entry in numbered register 6.",
+          "ve": "@ben is d6."
+        },
+        {
+          "premise_id": "p8",
+          "english": "Ben records the cobalt entry in numbered register 9.",
+          "ve": "@ben is d9."
+        },
+        {
+          "premise_id": "p9",
+          "english": "Ben records the scarlet entry in numbered register 15.",
+          "ve": "@ben is d15."
+        },
+        {
+          "premise_id": "p10",
+          "english": "if (Ada wears a violet scarf), then (Ada wears a ivory scarf).",
+          "ve": "if (@ada is p5), then (@ada is p11)."
+        },
+        {
+          "premise_id": "p11",
+          "english": "Ben records the copper entry in numbered register 5.",
+          "ve": "@ben is d5."
+        },
+        {
+          "premise_id": "p12",
+          "english": "Ben records the amber entry in numbered register 16.",
+          "ve": "@ben is d16."
+        },
+        {
+          "premise_id": "p13",
+          "english": "if (Ada wears a scarlet ribbon), then (Ada wears a ivory hat).",
+          "ve": "if (@ada is p10), then (@ada is p8)."
+        },
+        {
+          "premise_id": "p14",
+          "english": "if (Ada wears a ivory hat), then (Ada wears a ivory badge).",
+          "ve": "if (@ada is p8), then (@ada is p7)."
+        },
+        {
+          "premise_id": "p15",
+          "english": "Ben records the silver entry in numbered register 18.",
+          "ve": "@ben is d18."
+        },
+        {
+          "premise_id": "p16",
+          "english": "Ben records the cobalt entry in numbered register 1.",
+          "ve": "@ben is d1."
+        },
+        {
+          "premise_id": "p17",
+          "english": "Ben records the silver entry in numbered register 10.",
+          "ve": "@ben is d10."
+        },
+        {
+          "premise_id": "p18",
+          "english": "if (Ada wears a violet belt), then (Ada wears a violet card).",
+          "ve": "if (@ada is p0), then (@ada is p4)."
+        },
+        {
+          "premise_id": "p19",
+          "english": "Ben records the cobalt entry in numbered register 17.",
+          "ve": "@ben is d17."
+        },
+        {
+          "premise_id": "p20",
+          "english": "Ben records the violet entry in numbered register 11.",
+          "ve": "@ben is d11."
+        },
+        {
+          "premise_id": "p21",
+          "english": "Ben records the ivory entry in numbered register 14.",
+          "ve": "@ben is d14."
+        },
+        {
+          "premise_id": "p22",
+          "english": "Ben records the violet entry in numbered register 3.",
+          "ve": "@ben is d3."
+        },
+        {
+          "premise_id": "p23",
+          "english": "Ben records the silver entry in numbered register 2.",
+          "ve": "@ben is d2."
+        },
+        {
+          "premise_id": "p24",
+          "english": "Ben records the teal entry in numbered register 20.",
+          "ve": "@ben is d20."
+        },
+        {
+          "premise_id": "p25",
+          "english": "Ben records the amber entry in numbered register 0.",
+          "ve": "@ben is d0."
+        },
+        {
+          "premise_id": "p26",
+          "english": "Ben records the violet entry in numbered register 19.",
+          "ve": "@ben is d19."
+        },
+        {
+          "premise_id": "p27",
+          "english": "Ben records the copper entry in numbered register 13.",
+          "ve": "@ben is d13."
+        },
+        {
+          "premise_id": "p28",
+          "english": "if (Ada wears a copper ribbon), then (Ada wears a violet card).",
+          "ve": "if (@ada is p1), then (@ada is p4)."
+        }
+      ],
+      "query_ve": "not (@ada is p7).",
+      "graph": {
+        "claims": [
+          {
+            "id": "p0",
+            "ve": "(@ada is p0) or (@ada is p1)."
+          },
+          {
+            "id": "p1",
+            "ve": "if (@ada is p4), then (@ada is p10)."
+          },
+          {
+            "id": "p2",
+            "ve": "@ben is d7."
+          },
+          {
+            "id": "p3",
+            "ve": "@ben is d12."
+          },
+          {
+            "id": "p4",
+            "ve": "@ben is d4."
+          },
+          {
+            "id": "p5",
+            "ve": "if (@ada is p11), then (@ada is p1)."
+          },
+          {
+            "id": "p6",
+            "ve": "@ben is d8."
+          },
+          {
+            "id": "p7",
+            "ve": "@ben is d6."
+          },
+          {
+            "id": "p8",
+            "ve": "@ben is d9."
+          },
+          {
+            "id": "p9",
+            "ve": "@ben is d15."
+          },
+          {
+            "id": "p10",
+            "ve": "if (@ada is p5), then (@ada is p11)."
+          },
+          {
+            "id": "p11",
+            "ve": "@ben is d5."
+          },
+          {
+            "id": "p12",
+            "ve": "@ben is d16."
+          },
+          {
+            "id": "p13",
+            "ve": "if (@ada is p10), then (@ada is p8)."
+          },
+          {
+            "id": "p14",
+            "ve": "if (@ada is p8), then (@ada is p7)."
+          },
+          {
+            "id": "p15",
+            "ve": "@ben is d18."
+          },
+          {
+            "id": "p16",
+            "ve": "@ben is d1."
+          },
+          {
+            "id": "p17",
+            "ve": "@ben is d10."
+          },
+          {
+            "id": "p18",
+            "ve": "if (@ada is p0), then (@ada is p4)."
+          },
+          {
+            "id": "p19",
+            "ve": "@ben is d17."
+          },
+          {
+            "id": "p20",
+            "ve": "@ben is d11."
+          },
+          {
+            "id": "p21",
+            "ve": "@ben is d14."
+          },
+          {
+            "id": "p22",
+            "ve": "@ben is d3."
+          },
+          {
+            "id": "p23",
+            "ve": "@ben is d2."
+          },
+          {
+            "id": "p24",
+            "ve": "@ben is d20."
+          },
+          {
+            "id": "p25",
+            "ve": "@ben is d0."
+          },
+          {
+            "id": "p26",
+            "ve": "@ben is d19."
+          },
+          {
+            "id": "p27",
+            "ve": "@ben is d13."
+          },
+          {
+            "id": "p28",
+            "ve": "if (@ada is p1), then (@ada is p4)."
+          },
+          {
+            "id": "c1",
+            "ve": "@ada is p4."
+          },
+          {
+            "id": "c2",
+            "ve": "@ada is p10."
+          },
+          {
+            "id": "c3",
+            "ve": "@ada is p8."
+          },
+          {
+            "id": "goal",
+            "ve": "@ada is p7."
+          }
+        ],
+        "deductions": [
+          {
+            "id": "d0",
+            "premises": [
+              "p0",
+              "p18",
+              "p28"
+            ],
+            "conclusion": "c1"
+          },
+          {
+            "id": "d1",
+            "premises": [
+              "c1",
+              "p1"
+            ],
+            "conclusion": "c2"
+          },
+          {
+            "id": "d2",
+            "premises": [
+              "c2",
+              "p13"
+            ],
+            "conclusion": "c3"
+          },
+          {
+            "id": "d3",
+            "premises": [
+              "c3",
+              "p14"
+            ],
+            "conclusion": "goal"
+          }
+        ],
+        "root": "goal"
+      },
+      "plausibility": 95
+    },
+    "checker": {
+      "deduction_certified": false,
+      "root_matches_submitted_answer": false,
+      "unbound_leaves": [],
+      "table_complete_and_source_preserved": true,
+      "translation_faithfulness": "NOT_CHECKED: judge must assess original English",
+      "errors": [
+        "Graph root does not match submitted query and answer polarity"
+      ],
+      "formal_status": "Checked"
+    },
+    "checker_evidence": {
+      "version": "ve-argument-tableau@1",
+      "assurance": "experimental",
+      "status": "Checked",
+      "graph_id": "331f61a55354a59079b210b3d59f21ad3395696a6801c93eef97889e384b9e88",
+      "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+      "root": "goal",
+      "findings": {
+        "d0": [
+          "follows"
+        ],
+        "d1": [
+          "follows"
+        ],
+        "d2": [
+          "follows"
+        ],
+        "d3": [
+          "follows"
+        ]
+      },
+      "remaining_assumptions": [
+        "p0",
+        "p1",
+        "p13",
+        "p14",
+        "p18",
+        "p28"
+      ],
+      "unresolved_obligations": [],
+      "composed": true,
+      "proof": "Python replay checked",
+      "intent": "unconfirmed",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "lean_checked": false,
+      "lean_status": "Lean-checked: no",
+      "lean_detail": "Lean replay not requested",
+      "approval": "unassessed",
+      "edges": [
+        {
+          "name": "d0",
+          "edge_id": "47904a189ea927d402fa26f299b7607b9c018d6ec777ccbc371642f5748e9bec",
+          "premises": [
+            "p0",
+            "p18",
+            "p28"
+          ],
+          "conclusion": "c1",
+          "findings": [
+            "follows"
+          ],
+          "status": "established",
+          "contradictory_premises": false,
+          "checker_conflict": false,
+          "satisfying_premise_model_ids": [],
+          "artifacts": [
+            {
+              "kind": "follows",
+              "submitted": false,
+              "certificate": {
+                "edge_id": "47904a189ea927d402fa26f299b7607b9c018d6ec777ccbc371642f5748e9bec",
+                "direction": "follows",
+                "proof": {
+                  "checker_version": "ve-tableau-checker@2",
+                  "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+                  "premise_meaning_ids": [
+                    "3a5df28d055dd881515817056dfb2e1f38038d4428b48955231a23f9bcea0ba8",
+                    "9cb3bdee936b5023baec430b30ed7bf5a09be6a252ed6621b931e1295167f253",
+                    "0e9ce1c3153dded864f5b28a7bca23e6a27cb033b6abcc65e2cc9ef128e75194"
+                  ],
+                  "conclusion_meaning_id": "2b30638663d67775f99ce33e31dae1449e6475dddfc619dcdd49bc18ee448431",
+                  "trace": {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "expand",
+                        "at": 0,
+                        "children": [
+                          {
+                            "rule": "close"
+                          },
+                          {
+                            "rule": "expand",
+                            "at": 2,
+                            "children": [
+                              {
+                                "rule": "close"
+                              },
+                              {
+                                "rule": "close"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  }
+                }
+              },
+              "check": {
+                "valid": true,
+                "status": "Valid",
+                "steps": 7,
+                "detail": ""
+              }
+            }
+          ],
+          "errors": [],
+          "search_attempts": [
+            {
+              "kind": "follows",
+              "status": "Found"
+            },
+            {
+              "kind": "refuted",
+              "status": "NotFound"
+            },
+            {
+              "kind": "gap",
+              "status": "ResourceLimit",
+              "models_checked": 0,
+              "detail": "model-attempt budget exhausted"
+            }
+          ]
+        },
+        {
+          "name": "d1",
+          "edge_id": "2cf3e4929dfdbcb165df7c2591fa195db91a85cabbc05333756f21b06b31e8b1",
+          "premises": [
+            "c1",
+            "p1"
+          ],
+          "conclusion": "c2",
+          "findings": [
+            "follows"
+          ],
+          "status": "established",
+          "contradictory_premises": false,
+          "checker_conflict": false,
+          "satisfying_premise_model_ids": [],
+          "artifacts": [
+            {
+              "kind": "follows",
+              "submitted": false,
+              "certificate": {
+                "edge_id": "2cf3e4929dfdbcb165df7c2591fa195db91a85cabbc05333756f21b06b31e8b1",
+                "direction": "follows",
+                "proof": {
+                  "checker_version": "ve-tableau-checker@2",
+                  "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+                  "premise_meaning_ids": [
+                    "2b30638663d67775f99ce33e31dae1449e6475dddfc619dcdd49bc18ee448431",
+                    "bd6de19d1ed82f989966d99a4a6fa6bceb0daf9c68c261cb52c930f90c368c8c"
+                  ],
+                  "conclusion_meaning_id": "d873c739b44e18b77f7cdd2be4ffbf90c7cd71ba1de98ffa741eaa067e148561",
+                  "trace": {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      },
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  }
+                }
+              },
+              "check": {
+                "valid": true,
+                "status": "Valid",
+                "steps": 3,
+                "detail": ""
+              }
+            }
+          ],
+          "errors": [],
+          "search_attempts": [
+            {
+              "kind": "follows",
+              "status": "Found"
+            },
+            {
+              "kind": "refuted",
+              "status": "NotFound"
+            },
+            {
+              "kind": "gap",
+              "status": "ResourceLimit",
+              "models_checked": 0,
+              "detail": "model-attempt budget exhausted"
+            }
+          ]
+        },
+        {
+          "name": "d2",
+          "edge_id": "ee04b0366ac1ea6c6d0d75570eb83b7bca04bd744da1755ac098a8e98efdfe6f",
+          "premises": [
+            "c2",
+            "p13"
+          ],
+          "conclusion": "c3",
+          "findings": [
+            "follows"
+          ],
+          "status": "established",
+          "contradictory_premises": false,
+          "checker_conflict": false,
+          "satisfying_premise_model_ids": [],
+          "artifacts": [
+            {
+              "kind": "follows",
+              "submitted": false,
+              "certificate": {
+                "edge_id": "ee04b0366ac1ea6c6d0d75570eb83b7bca04bd744da1755ac098a8e98efdfe6f",
+                "direction": "follows",
+                "proof": {
+                  "checker_version": "ve-tableau-checker@2",
+                  "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+                  "premise_meaning_ids": [
+                    "d873c739b44e18b77f7cdd2be4ffbf90c7cd71ba1de98ffa741eaa067e148561",
+                    "6bc3c8fef8344b81ab8a7cb1664990ba3ccdc8c05733c443a2e0afebd24f78a9"
+                  ],
+                  "conclusion_meaning_id": "92529bfd7b1d42e4ce755b93007469eb59479aaf8a4821297723d7501e3d08c0",
+                  "trace": {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      },
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  }
+                }
+              },
+              "check": {
+                "valid": true,
+                "status": "Valid",
+                "steps": 3,
+                "detail": ""
+              }
+            }
+          ],
+          "errors": [],
+          "search_attempts": [
+            {
+              "kind": "follows",
+              "status": "Found"
+            },
+            {
+              "kind": "refuted",
+              "status": "NotFound"
+            },
+            {
+              "kind": "gap",
+              "status": "ResourceLimit",
+              "models_checked": 0,
+              "detail": "model-attempt budget exhausted"
+            }
+          ]
+        },
+        {
+          "name": "d3",
+          "edge_id": "6652b53a3e0be180869acb7d81828fec90c0a96690ce38a87bd36546e516d032",
+          "premises": [
+            "c3",
+            "p14"
+          ],
+          "conclusion": "goal",
+          "findings": [
+            "follows"
+          ],
+          "status": "established",
+          "contradictory_premises": false,
+          "checker_conflict": false,
+          "satisfying_premise_model_ids": [],
+          "artifacts": [
+            {
+              "kind": "follows",
+              "submitted": false,
+              "certificate": {
+                "edge_id": "6652b53a3e0be180869acb7d81828fec90c0a96690ce38a87bd36546e516d032",
+                "direction": "follows",
+                "proof": {
+                  "checker_version": "ve-tableau-checker@2",
+                  "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+                  "premise_meaning_ids": [
+                    "92529bfd7b1d42e4ce755b93007469eb59479aaf8a4821297723d7501e3d08c0",
+                    "4ed9869864f7ce2db984469dd16b572ee6cbb17999387da052d4821d3363d43f"
+                  ],
+                  "conclusion_meaning_id": "4950c2b2c32bf6449e47ca3f17f8d1e77aa512f732aa5bcd3d3815e996d2645c",
+                  "trace": {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      },
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  }
+                }
+              },
+              "check": {
+                "valid": true,
+                "status": "Valid",
+                "steps": 3,
+                "detail": ""
+              }
+            }
+          ],
+          "errors": [],
+          "search_attempts": [
+            {
+              "kind": "follows",
+              "status": "Found"
+            },
+            {
+              "kind": "refuted",
+              "status": "NotFound"
+            },
+            {
+              "kind": "gap",
+              "status": "ResourceLimit",
+              "models_checked": 0,
+              "detail": "model-attempt budget exhausted"
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "composition": {
+        "rule": "acyclic-implication-composition",
+        "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+        "checker_build": "c2947eff5f1f0920475ccd57b2f5e8153cb0602998684e45f1558b41da3da470",
+        "root_claim_id": "2243601f6fdc7ba6d675b41a007e8c6a2ab3cf728cbc04bbc50897f6234bbfdf",
+        "assumption_claim_ids": [
+          "45de9ded951b0864abadd670cb42a9d18a76affa7489c36442a15b249aae9d94",
+          "6c998fe1883a344a213b52649eed38131f80469137549f6cbc227d09c6b6b743",
+          "728f44cbe95f2cddc98c7fd7bfd32f15a0c5264b4c2856e9571abc8399a681a9",
+          "9cd5806724a7d5a96b4e1140bd5b97a191c6f8c8029316eb2c71e8191ceef55a",
+          "d9dc5ff339ccd75f069d750a29fdb42b07a7da2b0a652b65123b97964b35c022",
+          "b2184f90a9770f05e7327216edd37167f3f0e374757673135f1f34015fc53d49"
+        ],
+        "supporting_edge_ids": [
+          "47904a189ea927d402fa26f299b7607b9c018d6ec777ccbc371642f5748e9bec",
+          "2cf3e4929dfdbcb165df7c2591fa195db91a85cabbc05333756f21b06b31e8b1",
+          "ee04b0366ac1ea6c6d0d75570eb83b7bca04bd744da1755ac098a8e98efdfe6f",
+          "6652b53a3e0be180869acb7d81828fec90c0a96690ce38a87bd36546e516d032"
+        ],
+        "assumptions": [
+          {
+            "name": "p0",
+            "source": "(@ada is p0) or (@ada is p1).\n",
+            "ast": [
+              "or",
+              [
+                "unary",
+                "p0",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "unary",
+                "p1",
+                [
+                  "const",
+                  "ada"
+                ]
+              ]
+            ],
+            "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+            "source_id": "0b9bc108e1eda9745b2684b249805e8575726fc2b38d9e1daa37f7f987e3bd4e",
+            "meaning_id": "3a5df28d055dd881515817056dfb2e1f38038d4428b48955231a23f9bcea0ba8",
+            "claim_id": "45de9ded951b0864abadd670cb42a9d18a76affa7489c36442a15b249aae9d94",
+            "evidence_ids": []
+          },
+          {
+            "name": "p1",
+            "source": "if (@ada is p4), then (@ada is p10).\n",
+            "ast": [
+              "implies",
+              [
+                "unary",
+                "p4",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "unary",
+                "p10",
+                [
+                  "const",
+                  "ada"
+                ]
+              ]
+            ],
+            "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+            "source_id": "e11f9d105c86152f80e56c4c031a99e1fa36f503a6d2a218cd2b534850826fe1",
+            "meaning_id": "bd6de19d1ed82f989966d99a4a6fa6bceb0daf9c68c261cb52c930f90c368c8c",
+            "claim_id": "6c998fe1883a344a213b52649eed38131f80469137549f6cbc227d09c6b6b743",
+            "evidence_ids": []
+          },
+          {
+            "name": "p13",
+            "source": "if (@ada is p10), then (@ada is p8).\n",
+            "ast": [
+              "implies",
+              [
+                "unary",
+                "p10",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "unary",
+                "p8",
+                [
+                  "const",
+                  "ada"
+                ]
+              ]
+            ],
+            "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+            "source_id": "7b7a48d52a30577c2d7bb0e25f8df3537295476f79047ce320001e03dd1228ab",
+            "meaning_id": "6bc3c8fef8344b81ab8a7cb1664990ba3ccdc8c05733c443a2e0afebd24f78a9",
+            "claim_id": "728f44cbe95f2cddc98c7fd7bfd32f15a0c5264b4c2856e9571abc8399a681a9",
+            "evidence_ids": []
+          },
+          {
+            "name": "p14",
+            "source": "if (@ada is p8), then (@ada is p7).\n",
+            "ast": [
+              "implies",
+              [
+                "unary",
+                "p8",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "unary",
+                "p7",
+                [
+                  "const",
+                  "ada"
+                ]
+              ]
+            ],
+            "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+            "source_id": "ecef6fcecdeb3608203ac78419230542b796ef5ea67549caa5b47399f5fb3f2a",
+            "meaning_id": "4ed9869864f7ce2db984469dd16b572ee6cbb17999387da052d4821d3363d43f",
+            "claim_id": "9cd5806724a7d5a96b4e1140bd5b97a191c6f8c8029316eb2c71e8191ceef55a",
+            "evidence_ids": []
+          },
+          {
+            "name": "p18",
+            "source": "if (@ada is p0), then (@ada is p4).\n",
+            "ast": [
+              "implies",
+              [
+                "unary",
+                "p0",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "unary",
+                "p4",
+                [
+                  "const",
+                  "ada"
+                ]
+              ]
+            ],
+            "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+            "source_id": "7c4332d291587fa36e91a25cac907687b985d891ea3ed902f024873d94cb098e",
+            "meaning_id": "9cb3bdee936b5023baec430b30ed7bf5a09be6a252ed6621b931e1295167f253",
+            "claim_id": "d9dc5ff339ccd75f069d750a29fdb42b07a7da2b0a652b65123b97964b35c022",
+            "evidence_ids": []
+          },
+          {
+            "name": "p28",
+            "source": "if (@ada is p1), then (@ada is p4).\n",
+            "ast": [
+              "implies",
+              [
+                "unary",
+                "p1",
+                [
+                  "const",
+                  "ada"
+                ]
+              ],
+              [
+                "unary",
+                "p4",
+                [
+                  "const",
+                  "ada"
+                ]
+              ]
+            ],
+            "environment_id": "9fc61e72196ccf898e99d810ca0f6fe1c9eb69b246310b435d10167d0cde9d20",
+            "source_id": "2ddd20b186c601639197f24b79d4c8061241a83440d78bad0fc0af18e06c4636",
+            "meaning_id": "0e9ce1c3153dded864f5b28a7bca23e6a27cb033b6abcc65e2cc9ef128e75194",
+            "claim_id": "b2184f90a9770f05e7327216edd37167f3f0e374757673135f1f34015fc53d49",
+            "evidence_ids": []
+          }
+        ],
+        "record_id": "e0895d5ebab8e86233d2587dd66423413ed258f3cc790347ac03e49cdc190b80"
+      },
+      "checker_build": "c2947eff5f1f0920475ccd57b2f5e8153cb0602998684e45f1558b41da3da470",
+      "contradictory_premises": [],
+      "warnings": [
+        {
+          "edge": "d0",
+          "code": "ResourceLimit",
+          "message": "gap search exhausted its budget"
+        },
+        {
+          "edge": "d1",
+          "code": "ResourceLimit",
+          "message": "gap search exhausted its budget"
+        },
+        {
+          "edge": "d2",
+          "code": "ResourceLimit",
+          "message": "gap search exhausted its budget"
+        },
+        {
+          "edge": "d3",
+          "code": "ResourceLimit",
+          "message": "gap search exhausted its budget"
+        }
+      ],
+      "record_id": "bdb0351be421bd73d5a5f7e404e4bded374b2033ae5b98f45245f76f3d17a9e8"
+    },
+    "keys": [
+      "da7897e9568e94e809a72314c828d675a5fc12d8da0fb0b385a21cd0e97fe79f"
+    ],
+    "reused_from": "ve_consultancy",
+    "attack_eligible": false
+  }
+}
