@@ -21,6 +21,13 @@ def rewritten(dossier):
     return texts
 
 
+def source_items():
+    labels = {r['id']: r for r in p5.labels(False)}
+    return [{'id': d['id'], 'group': labels[d['id']]['family'],
+             'split': labels[d['id']]['split'], 'payload': d}
+            for d in read(HERE/'materials/dossiers.jsonl.gz')]
+
+
 def test_distance_matches_dynamic_programming():
     rng=random.Random(19)
     for _ in range(100):
@@ -61,7 +68,7 @@ def test_repairs_new_flaws_and_unparsed_assertions_rejected():
 
 def test_localization_detects_original_shortcut_and_accepts_independent_tails():
     labels={r['id']:r for r in read(HERE/'labels.jsonl.gz')}
-    items=read(HERE/'materials/dev.jsonl.gz')+read(HERE/'materials/scored.jsonl.gz')
+    items=source_items()
     assert localization_probe(items,labels)['passed']
     leaky=deepcopy(items)
     for item in leaky:
@@ -107,7 +114,7 @@ def test_two_model_families_open_review_gate_but_aliases_do_not(tmp_path,monkeyp
     from ve_experiments.paid import digest
     import experiments.p5_leakage
     monkeypatch.setattr(experiments.p5_leakage,'audit',lambda base:{'passed':True})
-    items=p5.materials(); labels=p5.labels(False)
+    items=source_items(); labels=p5.labels(False)
     for split in ('dev','scored'):
         archive(tmp_path/f'materials/{split}.jsonl.gz',[r for r in items if r['split']==split])
     archive(tmp_path/'labels.jsonl.gz',labels)

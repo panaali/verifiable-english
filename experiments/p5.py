@@ -526,6 +526,8 @@ def paraphrase(cap, *, cached_only=False, revision=False):
         provider=json.loads((HERE/'checks/provider-preflight.json').read_text())
         if provider.get('freeze_sha256')!=f['manifest_sha256'] or not provider.get('models',{}).get('replication',{}).get('passed'):
             raise PreflightError('Qwen provider-native smoke gate required before paraphrasing')
+        if revision:
+            book.recover_paraphrase_routing()
         book.reserve_block(block,str(Decimal(str(cap)) if revision else 84*cost('replication',*STAGES['paraphrase'])),resume=True)
         client=PaidClient(OpenRouterBackend(native_counter()),book,block,reuse_completed=True)
     dossiers=read(HERE/'materials/dossiers.jsonl.gz'); output=[]

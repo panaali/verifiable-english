@@ -43,11 +43,6 @@
     "reconcile",
     "analyze --split scored"
   ],
-  "external_timestamp": {
-    "freeze_sha256": "b3fda3ed1edcf0095dbf2d862e46f5e18e1d1ac6de2312ed3a7eea762eccfe4b",
-    "passed": false,
-    "reason": "publish exact manifest hash and retain bound OpenTimestamps receipt"
-  },
   "gemini_calibration": {
     "configs": {
       "0f5ae9c09c122840e00544555c13e18a2f86f1208db0e45ba59f073475b37773": {
@@ -582,7 +577,7 @@
     "experiments/P5-shifting-definitions/PARAPHRASE-REVIEW.md": "0006b0c189c74a9dd78d5d93ce6eecf104b49dc83409c55b6cc59e6bb8e1be6e",
     "experiments/P5-shifting-definitions/PREREG.md": "9afbde3261750f18c7e3fcfda0193dbc5d9707b851f0a4a4f54541b4fda4a4ef",
     "experiments/P5-shifting-definitions/REVIEW-CHECKLIST.md": "4fe72c4552b32c4b91d40b712f20b40d1a7ba19e8c6120e4b8cb1280e018b2b3",
-    "experiments/P5-shifting-definitions/REVISION6.md": "f90e864fe1208c20db04d3502b58acb8f15865cb49ee0f4bd2e3012b9383d402",
+    "experiments/P5-shifting-definitions/REVISION6.md": "69c5d8e0f8f0b9bd02a52e4ccf2848dbe4f85ae26e6e57bfbd2566144ef69fb5",
     "experiments/P5-shifting-definitions/checks/gemini-calibration.json": "068836dd48f88e3facf44eedd23c88f78fca7f492fe46693a88bdef8bdc8b0d2",
     "experiments/P5-shifting-definitions/checks/round5-review-import.json": "ea8688c6c51255edf0ef1503dfee27e5d645e464e7456cb875c038842436e7c1",
     "experiments/P5-shifting-definitions/checks/round5-review-submission.json": "e2ab2a7b9d0962f8833183bb18994b5aae04a5ddd36c090c2e2eae7600dcaee9",
@@ -594,20 +589,20 @@
     "experiments/P5-shifting-definitions/labels.jsonl.gz": "cd9f0f491492d9066bbcd3803968ca9f1bf50ac3dd48f47f0927d382148324c3",
     "experiments/P5-shifting-definitions/materials/anchored-labels.jsonl.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
     "experiments/P5-shifting-definitions/materials/construction-ledger.jsonl.gz": "4853418bae87da83e8b41822c03bd0af2e6e872e5b18f1d5fdfc0292c3928193",
-    "experiments/P5-shifting-definitions/materials/dev.jsonl.gz": "9434da3c1f4167978e90ea58721ee33ca7cbbceeee6df2e9bde64dfe4b87add4",
+    "experiments/P5-shifting-definitions/materials/dev.jsonl.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
     "experiments/P5-shifting-definitions/materials/dossiers.jsonl.gz": "95396106832feb78e72f380585dc12ca8f4464daaa9c4a0bdb36803958f8f18e",
     "experiments/P5-shifting-definitions/materials/graphs.jsonl.gz": "c66e24da03828525323f4cfa3fd1357df4d2cd09cf2dbe36a87036adbc6b14ba",
-    "experiments/P5-shifting-definitions/materials/paraphrases.jsonl.gz": "6e020fbb33d507884ef49deef5971767da8999522482eee8226e5330fde0273e",
+    "experiments/P5-shifting-definitions/materials/paraphrases.jsonl.gz": "62c57fa5c75abd792dff6011f7bdbc8fc6263b2720843e4e7af942eeb4cbf798",
     "experiments/P5-shifting-definitions/materials/rejected-v1.jsonl.gz": "76f86d202123626c158873daeabed0b88386311b88775556f4615463494cc1ef",
     "experiments/P5-shifting-definitions/materials/rejected-v2-initial.jsonl.gz": "238cae63f1869902621afd2e94b8e76f0d1ef597d52c70dadb9b6fbaaaf8eebb",
     "experiments/P5-shifting-definitions/materials/review-ledger.jsonl.gz": "27320d7c57305630c28a5359fe65d7e29d00f517c875fe5472cfb12eb756abc9",
-    "experiments/P5-shifting-definitions/materials/scored.jsonl.gz": "eaa4983786cec934639ee78d055313e3eefef5b9ab97768a71581341c762e195",
+    "experiments/P5-shifting-definitions/materials/scored.jsonl.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
     "experiments/P5-shifting-definitions/prompts.json": "a2cad059b361557ee516044f87961a1e8c3339bcfe1041e6313e886efa3f990b",
     "experiments/P5-shifting-definitions/run_p5.py": "3179502de56f36242d25ac783334fb9ed565a6a5287e2f92aef28795b2f1d4fa",
     "experiments/PREREG-DESIGN.md": "dd7fd780c2ceb362f36f31b95a24fe71561f52bff604e3f391a77cd59107b579",
     "experiments/p1.py": "8a6e7b7b4ed97cf91c2a71a3f108574d6c6fa6444d880e9fe22fa0a3763178b4",
     "experiments/p1_preflight.py": "6bda591a44581cb684801e5132c2840cc7cf70b5a26647aa815ea0c2835462b8",
-    "experiments/p5.py": "f4371b36fc66b45bf14f9c264257d333a9ba0297bbcfada9218e3180f840bd50",
+    "experiments/p5.py": "9285d617184401b084814db94f2267aa14b5f68acb82a2474df53c30ba9ea9b1",
     "experiments/p5_analysis.py": "4984297d6314b79b6e3793cfbd4c947f3f418b7d4f36c2426486e4a5491f7c2d",
     "experiments/p5_blinding.py": "0d5960c8105acc0200564bc1ce1e0b48ab022019a537703b6eb1060b30a5ec38",
     "experiments/p5_isolation.py": "d8f9f22dfcfcaaff084c688f91e55de82cbce5b309280e036c226a2f7e55dbff",
@@ -628,10 +623,10 @@
     "tests/fixtures/p5_deepinfra_smoke.json": "663a2dff283258ab51105a5b25d3e10559d77f849acde943fcdc38701ada417d",
     "tests/fixtures/p5_vertex_smoke.json": "586d9dccf8b8e767b092079e57322299c7205010b5d326b532926989be35edc0",
     "tests/test_p5.py": "76bb4e78c6ab4af90ee87d0ede73f838e6c1ee0a555d396ff03104a8092d68a9",
-    "tests/test_p5_infrastructure.py": "317f99a0395827843267ee7b189961fa8f36b7eea30d1ab1f709f0cbf382f998",
+    "tests/test_p5_infrastructure.py": "fc9f7099820301413cb4d18ac833be2aeb3b3ce28aec5ace01d269c6ac4fee1b",
     "tests/test_p5_paraphrase.py": "9862362fdaaf50a6e3be86a5d4635881d059cf54147fcc26763aa53a3b316764",
     "tests/test_p5_preflight.py": "28820ec5ce593e20435651fe69bb33c1e28bc313928ef542ede9cc0541c517f9",
-    "tests/test_p5_revision.py": "d73cd3e1f4f23256bec40f2b668fa1301b2ee868187ac4cd6e6577c28dd6349b",
+    "tests/test_p5_revision.py": "865741f968a82401887482f215d4b7db64e8bcf35107eb21fb4415ac61300153",
     "tests/test_p5_tokens.py": "20eb5f6e1d4e6c94263be445599eee11985ba41f549149dd8f31fd34925c5866",
     "uv.lock": "c00f64fd5b5b729747e3a2456dcb3338a4a9b3f3aa04fd4acf2895e295579238",
     "ve/__init__.py": "570d218a83d1d7d1037f837050f1f307cc93c24c5ca9fbcc72a4e0ef91b8abe4",
@@ -663,9 +658,9 @@
     "ve/search.py": "e45c5f0d22713158f0e1ad6f28023089fa5b3ed0013ead7a7930ffb2f37ddc00",
     "ve/wire.py": "fe12216e4f1cca4a8ecca2b0beea48a0bc2578b804cb664c16566cca74b49b07",
     "ve_experiments/json_response.py": "a74d9ccfecc5e2def09f10baf2b534d56c4297f4022b9183a8c784c6ba036f79",
-    "ve_experiments/paid.py": "8c7718ae83fe3bf7476f17781f223ac5c7a51c87d239b7eca6f96e3a2e07d42e"
+    "ve_experiments/paid.py": "700bbff5916be31314467199e8d3e48c1b6e542cc89d6e3f49429b771cdfb97b"
   },
-  "manifest_sha256": "b3fda3ed1edcf0095dbf2d862e46f5e18e1d1ac6de2312ed3a7eea762eccfe4b",
+  "manifest_sha256": "e0267c2e30810320b97377a1d41aa2945b8041010c327d7047ed786bfa7f3497",
   "models": {
     "pro": "gemini-3.1-pro-preview",
     "replication": "qwen/qwen-2.5-72b-instruct",
@@ -694,13 +689,5 @@
     "temperature": 0
   },
   "scenario": "dual_judge",
-  "status": "BLOCKED_NOT_SCORED_READY",
-  "unresolved": [
-    "review",
-    "independent-prose",
-    "packet-safety",
-    "external-timestamp",
-    "tokenizer",
-    "dev"
-  ]
+  "status": "BLOCKED_NOT_SCORED_READY"
 }

@@ -323,14 +323,14 @@ class Ledger:
         with self.locked() as (f, rows):
             pending, spent, seen, revisions, blocked = self.state(rows)
             history = [r for r in rows if r.get("identity") == request.identity]
-            recovered = {r['halt_time'] for r in rows if r['event'] in ('amendment8_halt_recovery', 'amendment14_halt_recovery')}
+            recovered = {r['halt_time'] for r in rows if r['event'] in ('amendment8_halt_recovery', 'amendment14_halt_recovery', 'paraphrase_routing_recovery')}
             for row in rows:
                 if row['event'] in ('panel_halt', 'panel_validation_halt') and row['model'] == request.model and row['time'] not in recovered:
                     raise InfrastructureError(row['error'])
                 if row['event'] == 'arm_unavailable' and row['model'] == request.model and request.metadata.get('arm') == row['arm']:
                     raise ToolEndpointUnavailable(row['error'])
             # Infrastructure failures are evidence, never durable retry locks.
-            retry = history and history[-1]['event'] in ('routing_recovery', 'infrastructure_failure')
+            retry = history and history[-1]['event'] in ('routing_recovery', 'infrastructure_failure', 'paraphrase_routing_recovery')
             if request.identity in seen and not (smoke(request) or retry):
                 raise PreflightError("assignment already dispatched; paid retries are forbidden")
             if retry:
@@ -560,6 +560,43 @@ class Ledger:
                 'error': error, 'sample': False,
                 'infrastructure_hold_usd': '0' if unavailable else str(pending[request.identity])})
 
+    def recover_paraphrase_routing(self):
+        """Retry the v6 Novita endpoint rejection; retain its full billing hold."""
+        with self.locked() as (f, rows):
+            recovered = {r['halt_time'] for r in rows if r['event'] == 'paraphrase_routing_recovery'}
+            for row in rows:
+                if row['event'] != 'panel_halt' or row['time'] in recovered:
+                    continue
+                identity = row['identity']
+                if not identity.startswith('rewrite-v6/materials/') or row['model'] != 'replication':
+                    continue
+                history = [r for r in rows if r.get('identity') == identity]
+                if history[-1] != row:
+                    continue
+                reservation = next(r for r in reversed(history) if r['event'] == 'reserve')
+                if reservation['metadata'].get('role') != 'paraphrase':
+                    continue
+                try:
+                    error = json.loads(row['error'].split('OpenRouter HTTP 400: ', 1)[1])['error']
+                    metadata = error['metadata']
+                    raw = metadata['raw']
+                    matches = (error['code'] == 400 and metadata['provider_name'] == 'Novita'
+                               and 'INVALID_REQUEST_BODY' in raw
+                               and f"model: {MODELS['replication']} does not support endpoint: completions" in raw)
+                except (IndexError, KeyError, TypeError, ValueError):
+                    matches = False
+                if matches:
+                    self.append(f, {'event': 'paraphrase_routing_recovery', 'identity': identity,
+                        'halt_time': row['time'], 'sample': False,
+                        'retained_infrastructure_hold_usd': row['infrastructure_hold_usd'],
+                        'reason': 'v6 chat routing fix; DeepInfra primary, Novita only after HTTP 429'})
+
+    def provider_fallback(self, request, status):
+        with self.locked() as (f, _):
+            self.append(f, {'event': 'provider_fallback', 'identity': request.identity,
+                'from': 'DeepInfra', 'to': 'Novita', 'status': status, 'sample': False,
+                'rejected_request_cost_usd': '0'})
+
     def recover_smoke(self, request):
         if not smoke(request):
             return
@@ -703,9 +740,10 @@ class OpenRouterBackend:
         provider = {"order": providers, "only": providers, "allow_fallbacks": False,
                     "require_parameters": True, "quantizations": ["fp8"]}
         if request.model == 'replication' and request.metadata.get('role') == 'paraphrase':
-            # Novita is bf16; keep the judge's fp8/DeepInfra pin separate.
-            provider = {"order": ["deepinfra", "novita"], "only": ["deepinfra", "novita"],
-                        "allow_fallbacks": True, "require_parameters": True}
+            # Automatic fallback can send a DeepInfra 504 to Novita's broken
+            # completions adapter. Dispatch chat to one provider at a time.
+            provider = {"order": ["deepinfra"], "only": ["deepinfra"],
+                        "allow_fallbacks": False, "require_parameters": True}
         if request.model == 'weak' and request.metadata.get('arm') == 'R':
             provider = {'require_parameters': True}
         return {"model": MODELS[request.model], "messages": request.messages,
@@ -732,6 +770,14 @@ class OpenRouterBackend:
             mode = 'json_schema'
             r = await client.post("https://openrouter.ai/api/v1/chat/completions",
                 headers={"Authorization": "Bearer " + key}, json=self.wire(request))
+            if (r.status_code == 429 and request.model == 'replication'
+                    and request.metadata.get('role') == 'paraphrase'):
+                self.record_provider_fallback(request, r.status_code)
+                wire = self.wire(request)
+                # Novita is bf16; the judge's DeepInfra/fp8 pin is unchanged.
+                wire['provider'] = {**wire['provider'], 'order': ['novita'], 'only': ['novita']}
+                r = await client.post('https://openrouter.ai/api/v1/chat/completions',
+                    headers={'Authorization': 'Bearer ' + key}, json=wire)
             error = r.text.replace(key, '[REDACTED]') if r.status_code != 200 else ''
             if (request.response_schema and r.status_code in (400, 422)
                     and any(s in error.lower() for s in ('json_schema', 'structured output', 'response_format'))
@@ -819,6 +865,7 @@ class PaidClient:
             raise PreflightError(f"joint input {count} exceeds {request.max_input_tokens}; no truncation")
         self.ledger.recover_smoke(request)
         self.backend.record_fallback = self.ledger.format_fallback
+        self.backend.record_provider_fallback = self.ledger.provider_fallback
         while True:
             if self._infrastructure_attempts.get(request.identity, 0) > len(INFRASTRUCTURE_BACKOFF_S):
                 raise InfrastructureError("infrastructure retry limit exhausted for this invocation; rerun to resume")
