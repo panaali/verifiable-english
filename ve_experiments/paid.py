@@ -42,6 +42,30 @@ class PreflightError(RuntimeError):
     pass
 
 
+class InfrastructureError(PreflightError):
+    def __init__(self, message, status_code=None):
+        super().__init__(message)
+        self.status_code = status_code
+
+
+def infrastructure_status(exc):
+    import httpx
+    status = getattr(exc, "status_code", None) or getattr(exc, "code", None)
+    if isinstance(exc, (TimeoutError, httpx.TimeoutException)):
+        return "timeout"
+    if status == 429 or isinstance(status, int) and 500 <= status <= 599:
+        return status
+    return None
+
+
+def smoke(request):
+    return request.identity.startswith("provider-preflight/") or request.metadata.get("role") == "probe"
+
+
+def revision_key(model, response):
+    return model + "/" + str(response.get("provider")) if model == "weak" else model
+
+
 class BudgetExceeded(PreflightError):
     """CLI maps this to exit status 3."""
 
@@ -109,6 +133,7 @@ class Ledger:
         pending, committed, seen, revisions = {}, Decimal(0), set(), {}
         reservations = {}
         blocked = False
+        recovered = {r["halt_time"] for r in rows if r["event"] == "smoke_recovery"}
         for row in rows:
             if row["event"] == "reserve":
                 pending[row["identity"]] = Decimal(row["ceiling_usd"])
@@ -120,12 +145,20 @@ class Ledger:
             elif row["event"] == "complete":
                 ceiling = pending.pop(row["identity"])
                 committed += Decimal(row["cost_usd"])
-                revisions.setdefault(row["model"], row["revision"])
+                revisions.setdefault(revision_key(row["model"], row.get("response", {})), row["revision"])
                 block = reservations[row["identity"]].get("metadata", {}).get("block_id")
                 if block:
                     pending["block:" + block] += ceiling - Decimal(row["cost_usd"])
+            elif row["event"] in ("infrastructure_failure", "smoke_recovery"):
+                ceiling = pending.pop(row["identity"])
+                held = Decimal(row["infrastructure_hold_usd"])
+                committed += held
+                block = reservations[row["identity"]].get("metadata", {}).get("block_id")
+                if block:
+                    pending["block:" + block] += ceiling - held
             elif row["event"] == "halt":
-                blocked = True
+                if row["time"] not in recovered:
+                    blocked = True
             elif row["event"] == "block_reserve":
                 pending["block:" + row["block_id"]] = Decimal(row["ceiling_usd"])
             elif row["event"] == "block_release":
@@ -178,8 +211,17 @@ class Ledger:
         ceiling = cost(request.model, request.max_input_tokens, request.max_output_tokens)
         with self.locked() as (f, rows):
             pending, spent, seen, revisions, blocked = self.state(rows)
-            if request.identity in seen:
+            history = [r for r in rows if r.get("identity") == request.identity]
+            failures = sum(r["event"] == "infrastructure_failure" for r in history)
+            retry = history and history[-1]["event"] == "infrastructure_failure" and failures <= 3
+            if failures > 3 and history[-1]["event"] == "infrastructure_failure":
+                raise InfrastructureError("infrastructure retry limit exhausted")
+            if request.identity in seen and not (smoke(request) or retry):
                 raise PreflightError("assignment already dispatched; paid retries are forbidden")
+            if retry:
+                prior = next(r for r in reversed(history) if r["event"] == "reserve")
+                if any(prior[k] != asdict(request)[k] for k in asdict(request)):
+                    raise PreflightError("infrastructure retry changed frozen request")
             block = request.metadata.get("block_id")
             block_key = "block:" + block if block else None
             if blocked or any(k != block_key for k in pending):
@@ -191,7 +233,7 @@ class Ledger:
             self.append(f, {"event": "reserve", **asdict(request), "ceiling_usd": str(ceiling),
                             "remaining_usd": str(self.cap - spent - ceiling),
                             "prompt_sha256": digest(request.messages), "planned_model": MODELS[request.model]})
-            return revisions.get(request.model)
+            return revisions
 
     def complete(self, request, reply, error=None):
         actual = cost(request.model, reply.input_tokens, reply.billed_output_tokens)
@@ -201,6 +243,7 @@ class Ledger:
             _, spent, _, _, _ = self.state(rows)
             self.append(f, {"event": "complete", "identity": request.identity,
                             "model": request.model, **asdict(reply),
+                            "served_provider": reply.response.get("provider"),
                             "billed_output_tokens": reply.billed_output_tokens,
                             "cost_usd": str(actual), "remaining_usd": str(self.cap - spent - actual),
                             "billing_basis": "design table; cached input charged at full rate"})
@@ -212,6 +255,59 @@ class Ledger:
             self.append(f, {"event": "halt", "identity": request.identity, "error": error,
                             "response": response, "latency_s": latency_s,
                             "billing": "unknown; ceiling remains reserved"})
+
+    def cached_reply(self, request):
+        """Reuse matching smoke evidence; trial outputs are never replaceable."""
+        if not smoke(request):
+            raise PreflightError("only smoke requests may reuse cached replies")
+        with self.locked() as (_, rows):
+            reservation = reply = None
+            halted = False
+            for row in rows:
+                if row.get("identity") != request.identity:
+                    continue
+                if row["event"] == "reserve":
+                    reservation, reply, halted = row, None, False
+                elif row["event"] == "complete":
+                    reply = row
+                elif row["event"] == "halt":
+                    halted = True
+            if reply is not None and not halted:
+                for key in ("model", "messages", "tools", "max_input_tokens", "max_output_tokens"):
+                    if reservation[key] != getattr(request, key):
+                        raise PreflightError("cached smoke request changed")
+                return PaidReply(**{k: reply[k] for k in PaidReply.__dataclass_fields__})
+        return None
+
+    def recover_smoke(self, request):
+        if not smoke(request):
+            return
+        with self.locked() as (f, rows):
+            recovered = {r["halt_time"] for r in rows if r["event"] == "smoke_recovery"}
+            for row in rows:
+                if row.get("identity") != request.identity or row["event"] != "halt" or row["time"] in recovered:
+                    continue
+                pending, _, _, _, _ = self.state(rows)
+                if request.identity not in pending:
+                    continue  # A completed response that failed validation stays halted.
+                free = any(f"HTTP {code}:" in row.get("error", "") for code in (404, 429)) and not row.get("response")
+                recovery = {"event": "smoke_recovery", "identity": request.identity,
+                    "halt_time": row["time"], "infrastructure_hold_usd": "0" if free else str(pending[request.identity]),
+                    "sample": False, "reason": "Amendment 5 smoke exception; original evidence retained"}
+                self.append(f, recovery)
+                rows.append(recovery)
+
+    def infrastructure_failure(self, request, error, status, latency_s):
+        with self.locked() as (f, rows):
+            pending, _, _, _, _ = self.state(rows)
+            attempt = 1 + sum(r["event"] == "infrastructure_failure" and r["identity"] == request.identity for r in rows)
+            self.append(f, {"event": "infrastructure_failure", "identity": request.identity,
+                "error": error, "status": status, "attempt": attempt, "sample": False,
+                "latency_s": latency_s, "backoff_s": 2 ** (attempt-1) if attempt <= 3 else None,
+                "served_provider": None,
+                "infrastructure_hold_usd": "0" if status == 429 else str(pending[request.identity]),
+                "billing": "no trial charge; 429 rejected" if status == 429 else "unknown; ceiling held as infrastructure overhead"})
+            return attempt
 
 
 def integer(value, name):
@@ -309,10 +405,10 @@ class OpenRouterBackend:
             raise PreflightError("invalid OpenRouter model")
         if any("vertex_content" in m for m in request.messages):
             raise PreflightError("cannot flatten Vertex thought signatures into OpenRouter messages")
-        slug = "deepinfra" if request.model == "replication" else "deepinfra/turbo"
+        providers = ["deepinfra"] if request.model == "replication" else ["deepinfra", "novita", "groq"]
         return {"model": MODELS[request.model], "messages": request.messages,
                 "temperature": 0, "seed": 20260921, "max_tokens": request.max_output_tokens,
-                "provider": {"order": [slug], "only": [slug], "allow_fallbacks": False,
+                "provider": {"order": providers, "only": providers, "allow_fallbacks": False,
                              "require_parameters": True, "quantizations": ["fp8"]},
                 **({"tools": [{"type": "function", "function": t} for t in request.tools]}
                    if request.tools else {})}
@@ -332,7 +428,7 @@ class OpenRouterBackend:
             r = await client.post("https://openrouter.ai/api/v1/chat/completions",
                 headers={"Authorization": "Bearer " + key}, json=self.wire(request))
             if r.status_code != 200:
-                raise PreflightError(f"OpenRouter HTTP {r.status_code}: {r.text.replace(key, '[REDACTED]')}")
+                raise InfrastructureError(f"OpenRouter HTTP {r.status_code}: {r.text.replace(key, '[REDACTED]')}", r.status_code)
             data = r.json()
         self.last_response = data
         u = data.get("usage", {})
@@ -342,15 +438,22 @@ class OpenRouterBackend:
         cached = integer(u.get("prompt_tokens_details", {}).get("cached_tokens"), "cached_tokens")
         if thinking > total or u.get("total_tokens") != inp + total:
             raise PreflightError("OpenRouter usage does not reconcile")
-        choice = data["choices"][0]
-        msg = choice["message"]
+        choice = (data.get("choices") or [{}])[0]
+        msg = choice.get("message") or {"role": "assistant", "content": ""}
         calls = [{"id": c["id"], "name": c["function"]["name"],
-                  "arguments": json.loads(c["function"]["arguments"])} for c in msg.get("tool_calls", [])]
+                  "arguments": decode_arguments(c["function"]["arguments"])} for c in msg.get("tool_calls", [])]
         if not data.get("provider") or not data.get("model") or u.get("cost") is None:
             raise PreflightError("OpenRouter omitted provider/model/billing")
         revision = packed({k: data.get(k) for k in ("model", "provider", "system_fingerprint")})
         return PaidReply(msg.get("content") or "", inp, total-thinking, thinking, cached, revision,
                          data, msg, calls, choice.get("finish_reason", ""), u["cost"])
+
+
+def decode_arguments(value):
+    try:
+        return json.loads(value)
+    except (TypeError, ValueError):
+        return value  # Invalid model tool output is scored, never retried.
 
 
 class OfflineBackend:
@@ -391,18 +494,29 @@ class PaidClient:
         count = self.backend.count(request)
         if count > request.max_input_tokens:
             raise PreflightError(f"joint input {count} exceeds {request.max_input_tokens}; no truncation")
-        revision = self.ledger.reserve(request)
-        start = time.monotonic()
-        self.backend.last_response = None
-        try:
-            reply = self._runner.run(self._generate(request))
-        except Exception as exc:
-            error = f"{type(exc).__name__}: {exc}"
-            key = os.environ.get("OPENROUTER_API_KEY")
-            if key:
-                error = error.replace(key, "[REDACTED]")
-            self.ledger.halt(request, error, self.backend.last_response, time.monotonic()-start)
-            raise PreflightError(error) from None
+        self.ledger.recover_smoke(request)
+        while True:
+            revisions = self.ledger.reserve(request)
+            start = time.monotonic()
+            self.backend.last_response = None
+            try:
+                reply = self._runner.run(self._generate(request))
+                break
+            except Exception as exc:
+                error = f"{type(exc).__name__}: {exc}"
+                key = os.environ.get("OPENROUTER_API_KEY")
+                if key:
+                    error = error.replace(key, "[REDACTED]")
+                status = infrastructure_status(exc)
+                if status is not None:
+                    attempt = self.ledger.infrastructure_failure(request, error, status, time.monotonic()-start)
+                    if attempt <= 3:
+                        time.sleep(2 ** (attempt-1))
+                        continue
+                    raise InfrastructureError(error + "; infrastructure retry limit exhausted") from None
+                self.ledger.halt(request, error, self.backend.last_response, time.monotonic()-start)
+                raise PreflightError(error) from None
+        revision = revisions.get(revision_key(request.model, reply.response))
         reply.latency_s = time.monotonic() - start
         error = None
         if reply.input_tokens > request.max_input_tokens or reply.billed_output_tokens > request.max_output_tokens:

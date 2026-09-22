@@ -208,7 +208,8 @@ def replace_reply(reply, **kwargs):
     return replace(reply, **kwargs)
 
 
-def test_timeout_and_token_overrun_halt(tmp_path):
+def test_timeout_and_token_overrun_halt(tmp_path, monkeypatch):
+    monkeypatch.setattr("ve_experiments.paid.time.sleep", lambda _: None)
     class Slow(OfflineBackend):
         async def generate(self, _):
             await asyncio.sleep(1)
@@ -216,7 +217,8 @@ def test_timeout_and_token_overrun_halt(tmp_path):
     client = PaidClient(Slow(None), Ledger(path, 1))
     with pytest.raises(PreflightError, match="TimeoutError"):
         client.call(replace(req(), timeout_s=.001))
-    assert '"event":"halt"' in path.read_text()
+    assert path.read_text().count('"event":"infrastructure_failure"') == 4
+    client.close()
     client = PaidClient(OfflineBackend(lambda _: PaidReply('',0,4097,0,0,'v',{},{})), Ledger(tmp_path / "over.jsonl", 1))
     with pytest.raises(PreflightError, match="token cap"):
         client.call(req())
@@ -246,6 +248,8 @@ def test_openrouter_fails_closed_without_native_counter():
     with pytest.raises(PreflightError, match="tokenizer"):
         backend.count(replace(req(), model="weak"))
     wire = backend.wire(replace(req(), model="weak"))
-    assert wire["provider"]["only"] == ["deepinfra/turbo"]
+    assert wire["provider"]["only"] == wire["provider"]["order"] == ["deepinfra", "novita", "groq"]
+    assert wire["temperature"] == 0 and wire["seed"] == 20260921
+    assert backend.wire(replace(req(), model="replication"))["provider"]["only"] == ["deepinfra"]
     assert wire["provider"]["allow_fallbacks"] is False
     assert wire["messages"] == req().messages
