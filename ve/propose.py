@@ -15,6 +15,7 @@ from .english import EnglishParser, EnglishVocabulary, parse_english_with_metada
 from .english_phrases import distance, lexical, nearest, phrase_end, unary_phrase, wording_key, BLOCKED, PREPOSITIONS
 from .errors import ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_SOURCE_BYTES
+from .lexicon import TOKEN as LEXICON_TOKEN, classify, describe
 from .wire import canonical_json, digest
 
 
@@ -26,6 +27,16 @@ class _ProposalParser(EnglishParser):
         super().__init__(env, source, EnglishVocabulary(env, vocabulary=self.overlay,
                                                      accept_suggested_vocabulary=True))
         self.introduced = []
+        declared = [*env.sorts, *env.predicates, *env.constants,
+                    *self.words.sorts.values(), *self.words.predicates.values(),
+                    *self.words.negatives.values(), *self.words.constants.values()]
+        for decl in env.sorts.values():
+            if decl.verbalisation:
+                declared.extend((decl.verbalisation.singular, decl.verbalisation.plural))
+        declared.extend(decl.verbalisation for decl in env.predicates.values() if decl.verbalisation)
+        self.declared_tokens = {token.casefold() for text in declared
+                                for token in LEXICON_TOKEN.findall(text)}
+        self.declared_tokens.update(part for token in tuple(self.declared_tokens) for part in token.split('_'))
 
     def unknown_atom(self, scope, relative=False, object_allowed=False):
         start = self.i
@@ -58,13 +69,15 @@ class _ProposalParser(EnglishParser):
         for decl in self.words.env.sorts.values():
             if decl.verbalisation:
                 nouns.update((decl.verbalisation.singular, decl.verbalisation.plural))
-        for reference in (*self.env.constants, *nouns):
-            if re.search(r'(?<![a-z0-9_])' + re.escape(wording_key(reference)) + r'(?![a-z0-9_])', normalized_content):
+        for reference in sorted({*self.env.constants, *self.words.constants.values(), *nouns}):
+            if re.search(r'(?<![a-z0-9_])' + re.escape(wording_key(reference)) + r'(?![a-z0-9_])', normalized_content, re.I):
                 raise SyntaxError(f'Phrase {complement!r} contains declared constant or sort noun {reference!r}; '
                                   'a relation must be declared by hand.', span=self._span(start, end))
         if (set(re.findall(r'[a-z0-9_]+', complement.lower())) & BLOCKED
                 or re.search(r'\b(?:un|non)-', complement, re.I)
-                or any(t.lower() in PREPOSITIONS and tokens[i + 1][0].isupper()
+                # A bare prepositional object is relational regardless of case.
+                # Keep the existing opaque article-led phrases (of the guild).
+                or any(t.casefold() in PREPOSITIONS and tokens[i + 1].casefold() not in {'a', 'an', 'the'}
                        for i, t in enumerate(tokens[:-1]))):
             raise SyntaxError(f'Phrase {complement!r} contains blocked relational or negative content; '
                               'a relation must be declared by hand, and negation must use is not.',
@@ -108,7 +121,9 @@ class _ProposalParser(EnglishParser):
             name = root[:64 - len(tail)] + tail
             suffix += 1
         sort = scope[term.index][0]
-        description = f'Machine-proposed, unreviewed unary predicate: {phrase}. No meaning beyond this declared symbol is inferred.'
+        evidence = classify(phrase, self.declared_tokens)
+        description = (describe(evidence) + f'. Unreviewed unary predicate: {phrase}. '
+                       'No meaning beyond this declared symbol is inferred.')
         neighbors = nearest(phrase, self.words)
         if any(row['kind'] == 'constant' and row['near_duplicate'] for row in neighbors):
             raise SyntaxError('A near-duplicate of a declared constant cannot become a unary predicate.',
@@ -116,6 +131,7 @@ class _ProposalParser(EnglishParser):
         self.introduced.append({'symbol': name, 'source_span': asdict(self._span(start, end)),
                                 'source_text': self.source[start:end], 'signature': [sort],
                                 'description': description, 'verbalisation': template,
+                                'lexicon': evidence,
                                 'nearest_existing': [r for i, r in enumerate(neighbors) if i < 3 or r['near_duplicate']],
                                 'near_duplicates': [r['symbol'] for r in neighbors if r['near_duplicate']],
                                 'review_status': 'unreviewed'})
