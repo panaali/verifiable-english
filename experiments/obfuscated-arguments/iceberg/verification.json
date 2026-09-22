@@ -1,0 +1,536 @@
+{
+  "toolchain": "leanprover/lean4:v4.24.0",
+  "lean_source_sha256": "64b3f49e7f82d8f662309374556719f6f4f89fad9377eb96f6b53453df1f0203",
+  "serial_strategy": "Serial, reproducible whole-project build plus iceberg axiom audit.\nRun from any directory: python3 experiments/obfuscated-arguments/iceberg/verify.py\nOnly one module target is requested at a time, dependencies first; native objects\nare also completed before the next target. No assumption that Lake's scheduler\nhas a working -j flag. Final default-target build only aggregates cached modules.\n",
+  "records": [
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Syntax:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:29.456937+00:00",
+      "seconds": 1.294768,
+      "exit_code": 0,
+      "output": "\u2714 [2/3] Built VE.Syntax (782ms)\n\u2714 [3/3] Built VE.Syntax:c.o (457ms)\nBuild completed successfully (3 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Semantics:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:30.752872+00:00",
+      "seconds": 0.570928,
+      "exit_code": 0,
+      "output": "\u2714 [3/4] Built VE.Semantics (398ms)\n\u2714 [4/4] Built VE.Semantics:c.o (53ms)\nBuild completed successfully (4 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Typing:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:31.324326+00:00",
+      "seconds": 0.663014,
+      "exit_code": 0,
+      "output": "\u2714 [4/5] Built VE.Typing (508ms)\n\u2714 [5/5] Built VE.Typing:c.o (105ms)\nBuild completed successfully (5 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Finite:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:31.987806+00:00",
+      "seconds": 0.881415,
+      "exit_code": 0,
+      "output": "\u2714 [5/6] Built VE.Finite (554ms)\n\u2714 [6/6] Built VE.Finite:c.o (187ms)\nBuild completed successfully (6 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Closure.Paths:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:32.869702+00:00",
+      "seconds": 0.670655,
+      "exit_code": 0,
+      "output": "\u2714 [6/7] Built VE.Closure.Paths (450ms)\n\u2714 [7/7] Built VE.Closure.Paths:c.o (117ms)\nBuild completed successfully (7 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Closure.Syntax:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:33.540935+00:00",
+      "seconds": 1.704535,
+      "exit_code": 0,
+      "output": "\u2714 [7/8] Built VE.Closure.Syntax (1.1s)\n\u2714 [8/8] Built VE.Closure.Syntax:c.o (540ms)\nBuild completed successfully (8 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Closure.Finite:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:35.246855+00:00",
+      "seconds": 0.88347,
+      "exit_code": 0,
+      "output": "\u2714 [8/9] Built VE.Closure.Finite (608ms)\n\u2714 [9/9] Built VE.Closure.Finite:c.o (207ms)\nBuild completed successfully (9 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Closure.Consequence:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:36.130799+00:00",
+      "seconds": 0.455815,
+      "exit_code": 0,
+      "output": "\u2714 [9/10] Built VE.Closure.Consequence (359ms)\n\u2714 [10/10] Built VE.Closure.Consequence:c.o (49ms)\nBuild completed successfully (10 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Surface:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:36.587171+00:00",
+      "seconds": 1.190345,
+      "exit_code": 0,
+      "output": "\u2714 [5/6] Built VE.Surface (569ms)\n\u2714 [6/6] Built VE.Surface:c.o (548ms)\nBuild completed successfully (6 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.SurfaceProofs:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:37.778019+00:00",
+      "seconds": 5.784345,
+      "exit_code": 0,
+      "output": "\u2714 [6/7] Built VE.SurfaceProofs (4.2s)\n\u2714 [7/7] Built VE.SurfaceProofs:c.o (1.6s)\nBuild completed successfully (7 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.LexicalProofs:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:43.562870+00:00",
+      "seconds": 0.669241,
+      "exit_code": 0,
+      "output": "\u2714 [7/8] Built VE.LexicalProofs (514ms)\n\u2714 [8/8] Built VE.LexicalProofs:c.o (63ms)\nBuild completed successfully (8 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.RoundTrip:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:44.232589+00:00",
+      "seconds": 6.194833,
+      "exit_code": 0,
+      "output": "\u2714 [8/9] Built VE.RoundTrip (4.7s)\n\u2714 [9/9] Built VE.RoundTrip:c.o (1.4s)\nBuild completed successfully (9 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Closure.Surface:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:50.427957+00:00",
+      "seconds": 1.298431,
+      "exit_code": 0,
+      "output": "\u2714 [12/13] Built VE.Closure.Surface (615ms)\n\u2714 [13/13] Built VE.Closure.Surface:c.o (626ms)\nBuild completed successfully (13 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Closure.RoundTrip:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:51.726808+00:00",
+      "seconds": 6.686396,
+      "exit_code": 0,
+      "output": "\u2714 [13/14] Built VE.Closure.RoundTrip (4.0s)\n\u2714 [14/14] Built VE.Closure.RoundTrip:c.o (1.6s)\nBuild completed successfully (14 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Consequence:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:58.413849+00:00",
+      "seconds": 0.56576,
+      "exit_code": 0,
+      "output": "\u2714 [6/7] Built VE.Consequence (391ms)\n\u2714 [7/7] Built VE.Consequence:c.o (49ms)\nBuild completed successfully (7 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Json:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:58.980117+00:00",
+      "seconds": 0.980343,
+      "exit_code": 0,
+      "output": "\u2714 [2/3] Built VE.Json (502ms)\n\u2714 [3/3] Built VE.Json:c.o (415ms)\nBuild completed successfully (3 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Bridge:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:06:59.961082+00:00",
+      "seconds": 2.543847,
+      "exit_code": 0,
+      "output": "\u2714 [9/10] Built VE.Bridge (853ms)\n\u2714 [10/10] Built VE.Bridge:c.o (1.6s)\nBuild completed successfully (10 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.ModelProofs:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:02.505670+00:00",
+      "seconds": 0.672086,
+      "exit_code": 0,
+      "output": "\u2714 [10/11] Built VE.ModelProofs (482ms)\n\u2714 [11/11] Built VE.ModelProofs:c.o (64ms)\nBuild completed successfully (11 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Closure.Bridge:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:03.178299+00:00",
+      "seconds": 1.391146,
+      "exit_code": 0,
+      "output": "\u2714 [20/21] Built VE.Closure.Bridge (570ms)\n\u2714 [21/21] Built VE.Closure.Bridge:c.o (724ms)\nBuild completed successfully (21 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Tableau:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:04.570012+00:00",
+      "seconds": 1.302694,
+      "exit_code": 0,
+      "output": "\u2714 [5/6] Built VE.Tableau (773ms)\n\u2714 [6/6] Built VE.Tableau:c.o (392ms)\nBuild completed successfully (6 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.TableauClosure:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:05.873245+00:00",
+      "seconds": 0.987623,
+      "exit_code": 0,
+      "output": "\u2714 [6/7] Built VE.TableauClosure (685ms)\n\u2714 [7/7] Built VE.TableauClosure:c.o (238ms)\nBuild completed successfully (7 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.TableauChecker:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:06.861423+00:00",
+      "seconds": 1.193822,
+      "exit_code": 0,
+      "output": "\u2714 [7/8] Built VE.TableauChecker (807ms)\n\u2714 [8/8] Built VE.TableauChecker:c.o (243ms)\nBuild completed successfully (8 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Closure.Substitution:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:08.055806+00:00",
+      "seconds": 0.878552,
+      "exit_code": 0,
+      "output": "\u2714 [10/11] Built VE.Closure.Substitution (576ms)\n\u2714 [11/11] Built VE.Closure.Substitution:c.o (247ms)\nBuild completed successfully (11 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.TableauExtended:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:08.934927+00:00",
+      "seconds": 1.300547,
+      "exit_code": 0,
+      "output": "\u2714 [11/12] Built VE.TableauExtended (863ms)\n\u2714 [12/12] Built VE.TableauExtended:c.o (345ms)\nBuild completed successfully (12 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.TableauExtendedClosure:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:10.236096+00:00",
+      "seconds": 1.091756,
+      "exit_code": 0,
+      "output": "\u2714 [12/13] Built VE.TableauExtendedClosure (731ms)\n\u2714 [13/13] Built VE.TableauExtendedClosure:c.o (244ms)\nBuild completed successfully (13 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Closure.Congruence:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:11.328400+00:00",
+      "seconds": 4.734126,
+      "exit_code": 0,
+      "output": "\u2714 [11/12] Built VE.Closure.Congruence (4.5s)\n\u2714 [12/12] Built VE.Closure.Congruence:c.o (211ms)\nBuild completed successfully (12 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.TableauExtendedRules:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:16.063113+00:00",
+      "seconds": 0.986956,
+      "exit_code": 0,
+      "output": "\u2714 [14/15] Built VE.TableauExtendedRules (737ms)\n\u2714 [15/15] Built VE.TableauExtendedRules:c.o (99ms)\nBuild completed successfully (15 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Closure.PathRules:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:17.050645+00:00",
+      "seconds": 0.567501,
+      "exit_code": 0,
+      "output": "\u2714 [11/12] Built VE.Closure.PathRules (386ms)\n\u2714 [12/12] Built VE.Closure.PathRules:c.o (55ms)\nBuild completed successfully (12 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.TableauExtendedExtra:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:17.618680+00:00",
+      "seconds": 1.189886,
+      "exit_code": 0,
+      "output": "\u2714 [16/17] Built VE.TableauExtendedExtra (839ms)\n\u2714 [17/17] Built VE.TableauExtendedExtra:c.o (223ms)\nBuild completed successfully (17 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.TableauExtendedChecker:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:18.809110+00:00",
+      "seconds": 1.294281,
+      "exit_code": 0,
+      "output": "\u2714 [17/18] Built VE.TableauExtendedChecker (920ms)\n\u2714 [18/18] Built VE.TableauExtendedChecker:c.o (301ms)\nBuild completed successfully (18 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.CertificateWire:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:20.103928+00:00",
+      "seconds": 1.615708,
+      "exit_code": 0,
+      "output": "\u2714 [32/33] Built VE.CertificateWire (769ms)\n\u2714 [33/33] Built VE.CertificateWire:c.o (780ms)\nBuild completed successfully (33 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.ClaimGraph:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:21.720235+00:00",
+      "seconds": 0.883601,
+      "exit_code": 0,
+      "output": "\u2714 [10/11] Built VE.ClaimGraph (550ms)\n\u2714 [11/11] Built VE.ClaimGraph:c.o (265ms)\nBuild completed successfully (11 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.TableauChecks:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:22.604587+00:00",
+      "seconds": 0.562106,
+      "exit_code": 0,
+      "output": "\u2714 [11/12] Built VE.TableauChecks (368ms)\n\u2714 [12/12] Built VE.TableauChecks:c.o (57ms)\nBuild completed successfully (12 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.EnvironmentProofs:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:23.167280+00:00",
+      "seconds": 0.569014,
+      "exit_code": 0,
+      "output": "\u2714 [13/14] Built VE.EnvironmentProofs (381ms)\n\u2714 [14/14] Built VE.EnvironmentProofs:c.o (43ms)\nBuild completed successfully (14 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.ParserContracts:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:23.736852+00:00",
+      "seconds": 0.461441,
+      "exit_code": 0,
+      "output": "\u2714 [9/10] Built VE.ParserContracts (348ms)\n\u2714 [10/10] Built VE.ParserContracts:c.o (45ms)\nBuild completed successfully (10 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.GraphChecks:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:24.198750+00:00",
+      "seconds": 0.668873,
+      "exit_code": 0,
+      "output": "\u2714 [11/12] Built VE.GraphChecks (469ms)\n\u2714 [12/12] Built VE.GraphChecks:c.o (75ms)\nBuild completed successfully (12 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Audit:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:24.868360+00:00",
+      "seconds": 2.228995,
+      "exit_code": 0,
+      "output": "\u2139 [38/39] Built VE.Audit (2.0s)\ninfo: VE/Audit.lean:14:0: 'VE.term_defined' does not depend on any axioms\ninfo: VE/Audit.lean:15:0: 'VE.typed_empty' depends on axioms: [propext]\ninfo: VE/Audit.lean:16:0: 'VE.typed_cons' depends on axioms: [propext]\ninfo: VE/Audit.lean:17:0: 'VE.check_iff_wellFormed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:19:0: 'VE.eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:20:0: 'VE.eval_false_iff_not_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:21:0: 'VE.document_eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:23:0: 'VE.composition_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:24:0: 'VE.entails_cut' does not depend on any axioms\ninfo: VE/Audit.lean:25:0: 'VE.countermodelCheck_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:26:0: 'VE.countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:27:0: 'VE.no_certificate_countermodel_conflict' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:29:0: 'VE.Surface.propositional_printAux' depends on axioms: [propext]\ninfo: VE/Audit.lean:30:0: 'VE.Surface.propositional_check' depends on axioms: [propext]\ninfo: VE/Audit.lean:31:0: 'VE.Surface.consume_append' depends on axioms: [propext]\ninfo: VE/Audit.lean:32:0: 'VE.Surface.propositional_depth_le_length' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:33:0: 'VE.Surface.parseRaw_propositional' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:34:0: 'VE.Surface.propositional_code_nonempty' depends on axioms: [propext]\ninfo: VE/Audit.lean:35:0: 'VE.Surface.parseStatements_nonempty' does not depend on any axioms\ninfo: VE/Audit.lean:36:0: 'VE.Surface.parseStatements_propositional' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:37:0: 'VE.Surface.propositional_document_length' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:38:0: 'VE.Surface.parse_print_propositional' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:39:0: 'VE.Surface.normalize_idempotent_propositional' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:41:0: 'VE.Surface.decimal_digit' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:42:0: 'VE.Surface.digitsCore_valid' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:43:0: 'VE.Surface.digitsCore_value' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:44:0: 'VE.Surface.digitsCore_nonempty' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:45:0: 'VE.Surface.canonicalName_generated' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:46:0: 'VE.Surface.canonicalName_injective' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:47:0: 'VE.Surface.generated_identifier' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:48:0: 'VE.Surface.canonicalName_identifier' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:49:0: 'VE.Surface.generated_not_reserved' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:50:0: 'VE.Surface.span_ident_loop' depends on axioms: [propext]\ninfo: VE/Audit.lean:51:0: 'VE.Surface.span_ident_append' depends on axioms: [propext]\ninfo: VE/Audit.lean:52:0: 'VE.Surface.readIdent_append' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:54:0: 'VE.Surface.scope_mono' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:55:0: 'VE.Surface.scope_fresh' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:56:0: 'VE.Surface.scope_cons' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:57:0: 'VE.Surface.canonical_binderAllowed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:58:0: 'VE.Surface.printAux_counter' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:59:0: 'VE.Surface.index_lookup' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:60:0: 'VE.Surface.parseTerm_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:61:0: 'VE.Surface.printTerm_head' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:62:0: 'VE.Surface.parseRaw_term' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:63:0: 'VE.Surface.consume_sound' depends on axioms: [propext]\ninfo: VE/Audit.lean:64:0: 'VE.Surface.consume_keyword_ne' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:65:0: 'VE.Surface.declaration_identifier' depends on axioms: [propext]\ninfo: VE/Audit.lean:66:0: 'VE.Surface.declaration_not_reserved' depends on axioms: [propext]\ninfo: VE/Audit.lean:67:0: 'VE.Surface.depth_le_print_length' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:68:0: 'VE.Surface.parseRaw_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:69:0: 'VE.Surface.document_length' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:70:0: 'VE.Surface.parseStatements_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:71:0: 'VE.Surface.parse_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:72:0: 'VE.Surface.parse_wellFormed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:73:0: 'VE.Surface.normalize_idempotent' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:75:0: 'VE.Bridge.lookup_name' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:76:0: 'VE.Bridge.vocabulary_namesValid' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:78:0: 'VE.Surface.accepted_normalize' depends on axioms: [propext]\ninfo: VE/Audit.lean:79:0: 'VE.Surface.accepted_reparse' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:80:0: 'VE.Surface.print_injective' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:81:0: 'VE.Surface.canonical_unique' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:82:0: 'VE.Surface.accepted_normalize_eq_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:83:0: 'VE.Surface.normalize_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:85:0: 'VE.Graph.acyclicCheck_dependency' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:86:0: 'VE.Graph.path_rank' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:87:0: 'VE.Graph.acyclicCheck_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:88:0: 'VE.Graph.lookup_sound' depends on axioms: [propext]\ninfo: VE/Audit.lean:89:0: 'VE.Graph.resolve_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:90:0: 'VE.Graph.checkNode_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:91:0: 'VE.Graph.checkNodes_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:92:0: 'VE.Graph.check_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:93:0: 'VE.Graph.check_entails' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:94:0: 'VE.Graph.check_unfolds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:96:0: 'VE.GraphChecks.testCertificate_sound' does not depend on any axioms\ninfo: VE/Audit.lean:98:0: 'VE.Bridge.lookup_mem' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:99:0: 'VE.Bridge.tupleCheck_iff' depends on axioms: [propext]\ninfo: VE/Audit.lean:100:0: 'VE.Bridge.modelData_valid' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:101:0: 'VE.Bridge.decodeModel_valid' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:102:0: 'VE.Bridge.decoded_countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:103:0: 'VE.Bridge.CountermodelQuery.refutes_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:105:0: 'VE.Tableau.token_defined' does not depend on any axioms\ninfo: VE/Audit.lean:106:0: 'VE.Tableau.bindings_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:107:0: 'VE.Tableau.holds_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:108:0: 'VE.Tableau.typed_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:109:0: 'VE.Tableau.add_holds' depends on axioms: [propext]\ninfo: VE/Audit.lean:110:0: 'VE.Tableau.one_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:111:0: 'VE.Tableau.two_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:112:0: 'VE.Tableau.gamma_holds' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:113:0: 'VE.Tableau.delta_witness' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:115:0: 'VE.Tableau.bindings_get' depends on axioms: [propext]\ninfo: VE/Audit.lean:116:0: 'VE.Tableau.termToken_denote' depends on axioms: [propext]\ninfo: VE/Audit.lean:117:0: 'VE.Tableau.ground_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:118:0: 'VE.Tableau.literals_hold' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:119:0: 'VE.Tableau.mem_dedup' depends on axioms: [propext]\ninfo: VE/Audit.lean:120:0: 'VE.Tableau.equalities_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:121:0: 'VE.Tableau.grow_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:122:0: 'VE.Tableau.reachable_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:123:0: 'VE.Tableau.equivalent_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:124:0: 'VE.Tableau.matches_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:125:0: 'VE.Tableau.closes_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:126:0: 'VE.Tableau.closed_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:127:0: 'VE.Tableau.complementary_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:129:0: 'VE.Tableau.next_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:130:0: 'VE.Tableau.checkChildren_member' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:131:0: 'VE.Tableau.replay_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:132:0: 'VE.Tableau.checkCertificate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:134:0: 'VE.Graph.check_sound_of_certificateSound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:135:0: 'VE.Graph.check_entails_of_certificateSound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:136:0: 'VE.Graph.check_unfolds_of_certificateSound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:137:0: 'VE.Graph.tableau_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:139:0: 'VE.CertificateWire.Query.accepts_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:141:0: 'VE.Closure.Path.least' does not depend on any axioms\ninfo: VE/Audit.lean:142:0: 'VE.Closure.Path.trans' does not depend on any axioms\ninfo: VE/Audit.lean:143:0: 'VE.Closure.Path.unfold' does not depend on any axioms\ninfo: VE/Audit.lean:144:0: 'VE.Closure.Surface.parseRaw_print_named' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:145:0: 'VE.Closure.check_iff_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:146:0: 'VE.Closure.conservativity' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:147:0: 'VE.Closure.conservativity_without_reach' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:148:0: 'VE.Closure.countermodelCheck_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:149:0: 'VE.Closure.countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:150:0: 'VE.Closure.embed_of_erase' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:151:0: 'VE.Closure.erase_embed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:152:0: 'VE.Closure.eval_false_iff_not_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:153:0: 'VE.Closure.eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:154:0: 'VE.Closure.mem_bodyEdges' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:155:0: 'VE.Closure.mem_dedup' depends on axioms: [propext]\ninfo: VE/Audit.lean:156:0: 'VE.Closure.mem_namedEdges' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:157:0: 'VE.Closure.mem_pivot' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:158:0: 'VE.Closure.pivot_closed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:159:0: 'VE.Closure.pivot_preserves_closed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:160:0: 'VE.Closure.reachEval_iff' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:161:0: 'VE.Closure.reachable_congr' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:162:0: 'VE.Closure.star_least' does not depend on any axioms\ninfo: VE/Audit.lean:163:0: 'VE.Closure.warshall_closed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:164:0: 'VE.Closure.warshall_extends' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:165:0: 'VE.Closure.warshall_iff_path' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:166:0: 'VE.Closure.warshall_preserves_closed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:167:0: 'VE.Closure.warshall_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:170:0: 'VE.Closure.Surface.parseStatements_nonempty' does not depend on any axioms\ninfo: VE/Audit.lean:171:0: 'VE.Closure.Surface.parse_print_named' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:172:0: 'VE.Closure.Surface.print_injective_named' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:174:0: 'VE.CertificateWire.ClosureQuery.accepts_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:175:0: 'VE.Closure.Path.first' does not depend on any axioms\ninfo: VE/Audit.lean:176:0: 'VE.Closure.Path.last' does not depend on any axioms\ninfo: VE/Audit.lean:177:0: 'VE.Closure.Tableau.add_holds' depends on axioms: [propext]\ninfo: VE/Audit.lean:178:0: 'VE.Closure.Tableau.bindings_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:179:0: 'VE.Closure.Tableau.bindings_get' depends on axioms: [propext]\ninfo: VE/Audit.lean:180:0: 'VE.Closure.Tableau.checkCertificate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:181:0: 'VE.Closure.Tableau.checkCertificate_sound_v0' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:182:0: 'VE.Closure.Tableau.checkChildren_member' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:183:0: 'VE.Closure.Tableau.closed_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:184:0: 'VE.Closure.Tableau.closes_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:185:0: 'VE.Closure.Tableau.closure_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:186:0: 'VE.Closure.Tableau.complementary_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:187:0: 'VE.Closure.Tableau.composeStep_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:188:0: 'VE.Closure.Tableau.delta_witness' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:189:0: 'VE.Closure.Tableau.edgeStep_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:190:0: 'VE.Closure.Tableau.endStep_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:191:0: 'VE.Closure.Tableau.equalities_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:192:0: 'VE.Closure.Tableau.equivalent_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:193:0: 'VE.Closure.Tableau.extra_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:194:0: 'VE.Closure.Tableau.gamma_holds' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:195:0: 'VE.Closure.Tableau.ground_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:196:0: 'VE.Closure.Tableau.grow_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:197:0: 'VE.Closure.Tableau.holds_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:198:0: 'VE.Closure.Tableau.known_bindings' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:199:0: 'VE.Closure.Tableau.literals_hold' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:200:0: 'VE.Closure.Tableau.matches_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:201:0: 'VE.Closure.Tableau.mem_dedup' depends on axioms: [propext]\ninfo: VE/Audit.lean:202:0: 'VE.Closure.Tableau.namedStep_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:203:0: 'VE.Closure.Tableau.next_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:204:0: 'VE.Closure.Tableau.one_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:205:0: 'VE.Closure.Tableau.reachClosed_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:206:0: 'VE.Closure.Tableau.reachable_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:207:0: 'VE.Closure.Tableau.replay_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:208:0: 'VE.Closure.Tableau.rule_closure_formula' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:209:0: 'VE.Closure.Tableau.step_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:210:0: 'VE.Closure.Tableau.termToken_denote' depends on axioms: [propext]\ninfo: VE/Audit.lean:211:0: 'VE.Closure.Tableau.token_defined' does not depend on any axioms\ninfo: VE/Audit.lean:212:0: 'VE.Closure.Tableau.two_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:213:0: 'VE.Closure.Tableau.typed_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:214:0: 'VE.Closure.Tableau.unfoldAt_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:215:0: 'VE.Closure.edge_at_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:216:0: 'VE.Closure.edge_inclusion' does not depend on any axioms\ninfo: VE/Audit.lean:217:0: 'VE.Closure.edge_shift_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:218:0: 'VE.Closure.edge_typed' does not depend on any axioms\ninfo: VE/Audit.lean:219:0: 'VE.Closure.endEdge_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:220:0: 'VE.Closure.formula_matches_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:221:0: 'VE.Closure.liftMatch_sound' depends on axioms: [propext]\ninfo: VE/Audit.lean:222:0: 'VE.Closure.liftSub_denote' does not depend on any axioms\ninfo: VE/Audit.lean:223:0: 'VE.Closure.liftTerm_denote' does not depend on any axioms\ninfo: VE/Audit.lean:224:0: 'VE.Closure.named_body_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:225:0: 'VE.Closure.pair_values' does not depend on any axioms\ninfo: VE/Audit.lean:226:0: 'VE.Closure.reach_compose' depends on axioms: [propext]\ninfo: VE/Audit.lean:227:0: 'VE.Closure.reach_denote' does not depend on any axioms\ninfo: VE/Audit.lean:228:0: 'VE.Closure.reachable_trans' does not depend on any axioms\ninfo: VE/Audit.lean:229:0: 'VE.Closure.substTerm_denote' does not depend on any axioms\ninfo: VE/Audit.lean:230:0: 'VE.Closure.subst_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:231:0: 'VE.Closure.unfold_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:232:0: 'VE.Closure.unlift_denote' does not depend on any axioms\n\u2714 [39/39] Built VE.Audit:c.o (48ms)\nBuild completed successfully (39 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Checks:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:27.098100+00:00",
+      "seconds": 0.671182,
+      "exit_code": 0,
+      "output": "\u2714 [10/11] Built VE.Checks (519ms)\n\u2714 [11/11] Built VE.Checks:c.o (78ms)\nBuild completed successfully (11 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE.Closure.Checks:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:27.769973+00:00",
+      "seconds": 0.666353,
+      "exit_code": 0,
+      "output": "\u2714 [21/22] Built VE.Closure.Checks (520ms)\n\u2714 [22/22] Built VE.Closure.Checks:c.o (61ms)\nBuild completed successfully (22 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+VE:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:28.437048+00:00",
+      "seconds": 0.457062,
+      "exit_code": 0,
+      "output": "\u2139 [38/42] Replayed VE.Audit\ninfo: VE/Audit.lean:14:0: 'VE.term_defined' does not depend on any axioms\ninfo: VE/Audit.lean:15:0: 'VE.typed_empty' depends on axioms: [propext]\ninfo: VE/Audit.lean:16:0: 'VE.typed_cons' depends on axioms: [propext]\ninfo: VE/Audit.lean:17:0: 'VE.check_iff_wellFormed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:19:0: 'VE.eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:20:0: 'VE.eval_false_iff_not_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:21:0: 'VE.document_eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:23:0: 'VE.composition_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:24:0: 'VE.entails_cut' does not depend on any axioms\ninfo: VE/Audit.lean:25:0: 'VE.countermodelCheck_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:26:0: 'VE.countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:27:0: 'VE.no_certificate_countermodel_conflict' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:29:0: 'VE.Surface.propositional_printAux' depends on axioms: [propext]\ninfo: VE/Audit.lean:30:0: 'VE.Surface.propositional_check' depends on axioms: [propext]\ninfo: VE/Audit.lean:31:0: 'VE.Surface.consume_append' depends on axioms: [propext]\ninfo: VE/Audit.lean:32:0: 'VE.Surface.propositional_depth_le_length' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:33:0: 'VE.Surface.parseRaw_propositional' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:34:0: 'VE.Surface.propositional_code_nonempty' depends on axioms: [propext]\ninfo: VE/Audit.lean:35:0: 'VE.Surface.parseStatements_nonempty' does not depend on any axioms\ninfo: VE/Audit.lean:36:0: 'VE.Surface.parseStatements_propositional' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:37:0: 'VE.Surface.propositional_document_length' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:38:0: 'VE.Surface.parse_print_propositional' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:39:0: 'VE.Surface.normalize_idempotent_propositional' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:41:0: 'VE.Surface.decimal_digit' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:42:0: 'VE.Surface.digitsCore_valid' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:43:0: 'VE.Surface.digitsCore_value' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:44:0: 'VE.Surface.digitsCore_nonempty' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:45:0: 'VE.Surface.canonicalName_generated' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:46:0: 'VE.Surface.canonicalName_injective' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:47:0: 'VE.Surface.generated_identifier' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:48:0: 'VE.Surface.canonicalName_identifier' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:49:0: 'VE.Surface.generated_not_reserved' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:50:0: 'VE.Surface.span_ident_loop' depends on axioms: [propext]\ninfo: VE/Audit.lean:51:0: 'VE.Surface.span_ident_append' depends on axioms: [propext]\ninfo: VE/Audit.lean:52:0: 'VE.Surface.readIdent_append' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:54:0: 'VE.Surface.scope_mono' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:55:0: 'VE.Surface.scope_fresh' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:56:0: 'VE.Surface.scope_cons' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:57:0: 'VE.Surface.canonical_binderAllowed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:58:0: 'VE.Surface.printAux_counter' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:59:0: 'VE.Surface.index_lookup' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:60:0: 'VE.Surface.parseTerm_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:61:0: 'VE.Surface.printTerm_head' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:62:0: 'VE.Surface.parseRaw_term' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:63:0: 'VE.Surface.consume_sound' depends on axioms: [propext]\ninfo: VE/Audit.lean:64:0: 'VE.Surface.consume_keyword_ne' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:65:0: 'VE.Surface.declaration_identifier' depends on axioms: [propext]\ninfo: VE/Audit.lean:66:0: 'VE.Surface.declaration_not_reserved' depends on axioms: [propext]\ninfo: VE/Audit.lean:67:0: 'VE.Surface.depth_le_print_length' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:68:0: 'VE.Surface.parseRaw_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:69:0: 'VE.Surface.document_length' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:70:0: 'VE.Surface.parseStatements_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:71:0: 'VE.Surface.parse_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:72:0: 'VE.Surface.parse_wellFormed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:73:0: 'VE.Surface.normalize_idempotent' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:75:0: 'VE.Bridge.lookup_name' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:76:0: 'VE.Bridge.vocabulary_namesValid' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:78:0: 'VE.Surface.accepted_normalize' depends on axioms: [propext]\ninfo: VE/Audit.lean:79:0: 'VE.Surface.accepted_reparse' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:80:0: 'VE.Surface.print_injective' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:81:0: 'VE.Surface.canonical_unique' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:82:0: 'VE.Surface.accepted_normalize_eq_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:83:0: 'VE.Surface.normalize_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:85:0: 'VE.Graph.acyclicCheck_dependency' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:86:0: 'VE.Graph.path_rank' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:87:0: 'VE.Graph.acyclicCheck_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:88:0: 'VE.Graph.lookup_sound' depends on axioms: [propext]\ninfo: VE/Audit.lean:89:0: 'VE.Graph.resolve_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:90:0: 'VE.Graph.checkNode_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:91:0: 'VE.Graph.checkNodes_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:92:0: 'VE.Graph.check_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:93:0: 'VE.Graph.check_entails' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:94:0: 'VE.Graph.check_unfolds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:96:0: 'VE.GraphChecks.testCertificate_sound' does not depend on any axioms\ninfo: VE/Audit.lean:98:0: 'VE.Bridge.lookup_mem' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:99:0: 'VE.Bridge.tupleCheck_iff' depends on axioms: [propext]\ninfo: VE/Audit.lean:100:0: 'VE.Bridge.modelData_valid' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:101:0: 'VE.Bridge.decodeModel_valid' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:102:0: 'VE.Bridge.decoded_countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:103:0: 'VE.Bridge.CountermodelQuery.refutes_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:105:0: 'VE.Tableau.token_defined' does not depend on any axioms\ninfo: VE/Audit.lean:106:0: 'VE.Tableau.bindings_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:107:0: 'VE.Tableau.holds_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:108:0: 'VE.Tableau.typed_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:109:0: 'VE.Tableau.add_holds' depends on axioms: [propext]\ninfo: VE/Audit.lean:110:0: 'VE.Tableau.one_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:111:0: 'VE.Tableau.two_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:112:0: 'VE.Tableau.gamma_holds' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:113:0: 'VE.Tableau.delta_witness' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:115:0: 'VE.Tableau.bindings_get' depends on axioms: [propext]\ninfo: VE/Audit.lean:116:0: 'VE.Tableau.termToken_denote' depends on axioms: [propext]\ninfo: VE/Audit.lean:117:0: 'VE.Tableau.ground_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:118:0: 'VE.Tableau.literals_hold' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:119:0: 'VE.Tableau.mem_dedup' depends on axioms: [propext]\ninfo: VE/Audit.lean:120:0: 'VE.Tableau.equalities_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:121:0: 'VE.Tableau.grow_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:122:0: 'VE.Tableau.reachable_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:123:0: 'VE.Tableau.equivalent_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:124:0: 'VE.Tableau.matches_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:125:0: 'VE.Tableau.closes_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:126:0: 'VE.Tableau.closed_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:127:0: 'VE.Tableau.complementary_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:129:0: 'VE.Tableau.next_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:130:0: 'VE.Tableau.checkChildren_member' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:131:0: 'VE.Tableau.replay_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:132:0: 'VE.Tableau.checkCertificate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:134:0: 'VE.Graph.check_sound_of_certificateSound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:135:0: 'VE.Graph.check_entails_of_certificateSound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:136:0: 'VE.Graph.check_unfolds_of_certificateSound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:137:0: 'VE.Graph.tableau_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:139:0: 'VE.CertificateWire.Query.accepts_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:141:0: 'VE.Closure.Path.least' does not depend on any axioms\ninfo: VE/Audit.lean:142:0: 'VE.Closure.Path.trans' does not depend on any axioms\ninfo: VE/Audit.lean:143:0: 'VE.Closure.Path.unfold' does not depend on any axioms\ninfo: VE/Audit.lean:144:0: 'VE.Closure.Surface.parseRaw_print_named' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:145:0: 'VE.Closure.check_iff_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:146:0: 'VE.Closure.conservativity' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:147:0: 'VE.Closure.conservativity_without_reach' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:148:0: 'VE.Closure.countermodelCheck_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:149:0: 'VE.Closure.countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:150:0: 'VE.Closure.embed_of_erase' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:151:0: 'VE.Closure.erase_embed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:152:0: 'VE.Closure.eval_false_iff_not_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:153:0: 'VE.Closure.eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:154:0: 'VE.Closure.mem_bodyEdges' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:155:0: 'VE.Closure.mem_dedup' depends on axioms: [propext]\ninfo: VE/Audit.lean:156:0: 'VE.Closure.mem_namedEdges' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:157:0: 'VE.Closure.mem_pivot' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:158:0: 'VE.Closure.pivot_closed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:159:0: 'VE.Closure.pivot_preserves_closed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:160:0: 'VE.Closure.reachEval_iff' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:161:0: 'VE.Closure.reachable_congr' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:162:0: 'VE.Closure.star_least' does not depend on any axioms\ninfo: VE/Audit.lean:163:0: 'VE.Closure.warshall_closed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:164:0: 'VE.Closure.warshall_extends' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:165:0: 'VE.Closure.warshall_iff_path' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:166:0: 'VE.Closure.warshall_preserves_closed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:167:0: 'VE.Closure.warshall_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:170:0: 'VE.Closure.Surface.parseStatements_nonempty' does not depend on any axioms\ninfo: VE/Audit.lean:171:0: 'VE.Closure.Surface.parse_print_named' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:172:0: 'VE.Closure.Surface.print_injective_named' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:174:0: 'VE.CertificateWire.ClosureQuery.accepts_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:175:0: 'VE.Closure.Path.first' does not depend on any axioms\ninfo: VE/Audit.lean:176:0: 'VE.Closure.Path.last' does not depend on any axioms\ninfo: VE/Audit.lean:177:0: 'VE.Closure.Tableau.add_holds' depends on axioms: [propext]\ninfo: VE/Audit.lean:178:0: 'VE.Closure.Tableau.bindings_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:179:0: 'VE.Closure.Tableau.bindings_get' depends on axioms: [propext]\ninfo: VE/Audit.lean:180:0: 'VE.Closure.Tableau.checkCertificate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:181:0: 'VE.Closure.Tableau.checkCertificate_sound_v0' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:182:0: 'VE.Closure.Tableau.checkChildren_member' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:183:0: 'VE.Closure.Tableau.closed_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:184:0: 'VE.Closure.Tableau.closes_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:185:0: 'VE.Closure.Tableau.closure_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:186:0: 'VE.Closure.Tableau.complementary_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:187:0: 'VE.Closure.Tableau.composeStep_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:188:0: 'VE.Closure.Tableau.delta_witness' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:189:0: 'VE.Closure.Tableau.edgeStep_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:190:0: 'VE.Closure.Tableau.endStep_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:191:0: 'VE.Closure.Tableau.equalities_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:192:0: 'VE.Closure.Tableau.equivalent_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:193:0: 'VE.Closure.Tableau.extra_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:194:0: 'VE.Closure.Tableau.gamma_holds' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:195:0: 'VE.Closure.Tableau.ground_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:196:0: 'VE.Closure.Tableau.grow_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:197:0: 'VE.Closure.Tableau.holds_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:198:0: 'VE.Closure.Tableau.known_bindings' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:199:0: 'VE.Closure.Tableau.literals_hold' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:200:0: 'VE.Closure.Tableau.matches_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:201:0: 'VE.Closure.Tableau.mem_dedup' depends on axioms: [propext]\ninfo: VE/Audit.lean:202:0: 'VE.Closure.Tableau.namedStep_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:203:0: 'VE.Closure.Tableau.next_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:204:0: 'VE.Closure.Tableau.one_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:205:0: 'VE.Closure.Tableau.reachClosed_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:206:0: 'VE.Closure.Tableau.reachable_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:207:0: 'VE.Closure.Tableau.replay_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:208:0: 'VE.Closure.Tableau.rule_closure_formula' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:209:0: 'VE.Closure.Tableau.step_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:210:0: 'VE.Closure.Tableau.termToken_denote' depends on axioms: [propext]\ninfo: VE/Audit.lean:211:0: 'VE.Closure.Tableau.token_defined' does not depend on any axioms\ninfo: VE/Audit.lean:212:0: 'VE.Closure.Tableau.two_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:213:0: 'VE.Closure.Tableau.typed_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:214:0: 'VE.Closure.Tableau.unfoldAt_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:215:0: 'VE.Closure.edge_at_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:216:0: 'VE.Closure.edge_inclusion' does not depend on any axioms\ninfo: VE/Audit.lean:217:0: 'VE.Closure.edge_shift_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:218:0: 'VE.Closure.edge_typed' does not depend on any axioms\ninfo: VE/Audit.lean:219:0: 'VE.Closure.endEdge_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:220:0: 'VE.Closure.formula_matches_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:221:0: 'VE.Closure.liftMatch_sound' depends on axioms: [propext]\ninfo: VE/Audit.lean:222:0: 'VE.Closure.liftSub_denote' does not depend on any axioms\ninfo: VE/Audit.lean:223:0: 'VE.Closure.liftTerm_denote' does not depend on any axioms\ninfo: VE/Audit.lean:224:0: 'VE.Closure.named_body_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:225:0: 'VE.Closure.pair_values' does not depend on any axioms\ninfo: VE/Audit.lean:226:0: 'VE.Closure.reach_compose' depends on axioms: [propext]\ninfo: VE/Audit.lean:227:0: 'VE.Closure.reach_denote' does not depend on any axioms\ninfo: VE/Audit.lean:228:0: 'VE.Closure.reachable_trans' does not depend on any axioms\ninfo: VE/Audit.lean:229:0: 'VE.Closure.substTerm_denote' does not depend on any axioms\ninfo: VE/Audit.lean:230:0: 'VE.Closure.subst_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:231:0: 'VE.Closure.unfold_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:232:0: 'VE.Closure.unlift_denote' does not depend on any axioms\n\u2714 [41/42] Built VE (355ms)\n\u2714 [42/42] Built VE:c.o (45ms)\nBuild completed successfully (42 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+Main:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:28.894794+00:00",
+      "seconds": 0.664837,
+      "exit_code": 0,
+      "output": "\u2714 [33/34] Built Main (425ms)\n\u2714 [34/34] Built Main:c.o (143ms)\nBuild completed successfully (34 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build",
+        "+Iceberg:o"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:29.560321+00:00",
+      "seconds": 2.12579,
+      "exit_code": 0,
+      "output": "\u2139 [2/3] Built Iceberg (1.9s)\ninfo: Iceberg.lean:288:0: 'Iceberg.mul_sub' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:289:0: 'Iceberg.root_witness' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:290:0: 'Iceberg.initial_mass_balance' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:291:0: 'Iceberg.stage_within_capacity' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:292:0: 'Iceberg.no_spill' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:293:0: 'Iceberg.height_balance' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:294:0: 'Iceberg.water_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:295:0: 'Iceberg.air_approximately_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:296:0: 'Iceberg.positive_air_strictly_lowers' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:297:0: 'Iceberg.metal_lowers' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:298:0: 'Iceberg.iceberg_root' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:299:0: 'Iceberg.air_one_millimetre' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:300:0: 'Iceberg.residual_height_bound' depends on axioms: [propext, Classical.choice, Quot.sound]\n\u2714 [3/3] Built Iceberg:c.o (70ms)\nBuild completed successfully (3 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "build"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:31.686878+00:00",
+      "seconds": 1.392187,
+      "exit_code": 0,
+      "output": "\u2139 [38/78] Replayed VE.Audit\ninfo: VE/Audit.lean:14:0: 'VE.term_defined' does not depend on any axioms\ninfo: VE/Audit.lean:15:0: 'VE.typed_empty' depends on axioms: [propext]\ninfo: VE/Audit.lean:16:0: 'VE.typed_cons' depends on axioms: [propext]\ninfo: VE/Audit.lean:17:0: 'VE.check_iff_wellFormed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:19:0: 'VE.eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:20:0: 'VE.eval_false_iff_not_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:21:0: 'VE.document_eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:23:0: 'VE.composition_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:24:0: 'VE.entails_cut' does not depend on any axioms\ninfo: VE/Audit.lean:25:0: 'VE.countermodelCheck_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:26:0: 'VE.countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:27:0: 'VE.no_certificate_countermodel_conflict' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:29:0: 'VE.Surface.propositional_printAux' depends on axioms: [propext]\ninfo: VE/Audit.lean:30:0: 'VE.Surface.propositional_check' depends on axioms: [propext]\ninfo: VE/Audit.lean:31:0: 'VE.Surface.consume_append' depends on axioms: [propext]\ninfo: VE/Audit.lean:32:0: 'VE.Surface.propositional_depth_le_length' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:33:0: 'VE.Surface.parseRaw_propositional' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:34:0: 'VE.Surface.propositional_code_nonempty' depends on axioms: [propext]\ninfo: VE/Audit.lean:35:0: 'VE.Surface.parseStatements_nonempty' does not depend on any axioms\ninfo: VE/Audit.lean:36:0: 'VE.Surface.parseStatements_propositional' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:37:0: 'VE.Surface.propositional_document_length' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:38:0: 'VE.Surface.parse_print_propositional' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:39:0: 'VE.Surface.normalize_idempotent_propositional' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:41:0: 'VE.Surface.decimal_digit' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:42:0: 'VE.Surface.digitsCore_valid' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:43:0: 'VE.Surface.digitsCore_value' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:44:0: 'VE.Surface.digitsCore_nonempty' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:45:0: 'VE.Surface.canonicalName_generated' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:46:0: 'VE.Surface.canonicalName_injective' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:47:0: 'VE.Surface.generated_identifier' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:48:0: 'VE.Surface.canonicalName_identifier' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:49:0: 'VE.Surface.generated_not_reserved' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:50:0: 'VE.Surface.span_ident_loop' depends on axioms: [propext]\ninfo: VE/Audit.lean:51:0: 'VE.Surface.span_ident_append' depends on axioms: [propext]\ninfo: VE/Audit.lean:52:0: 'VE.Surface.readIdent_append' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:54:0: 'VE.Surface.scope_mono' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:55:0: 'VE.Surface.scope_fresh' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:56:0: 'VE.Surface.scope_cons' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:57:0: 'VE.Surface.canonical_binderAllowed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:58:0: 'VE.Surface.printAux_counter' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:59:0: 'VE.Surface.index_lookup' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:60:0: 'VE.Surface.parseTerm_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:61:0: 'VE.Surface.printTerm_head' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:62:0: 'VE.Surface.parseRaw_term' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:63:0: 'VE.Surface.consume_sound' depends on axioms: [propext]\ninfo: VE/Audit.lean:64:0: 'VE.Surface.consume_keyword_ne' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:65:0: 'VE.Surface.declaration_identifier' depends on axioms: [propext]\ninfo: VE/Audit.lean:66:0: 'VE.Surface.declaration_not_reserved' depends on axioms: [propext]\ninfo: VE/Audit.lean:67:0: 'VE.Surface.depth_le_print_length' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:68:0: 'VE.Surface.parseRaw_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:69:0: 'VE.Surface.document_length' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:70:0: 'VE.Surface.parseStatements_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:71:0: 'VE.Surface.parse_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:72:0: 'VE.Surface.parse_wellFormed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:73:0: 'VE.Surface.normalize_idempotent' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:75:0: 'VE.Bridge.lookup_name' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:76:0: 'VE.Bridge.vocabulary_namesValid' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:78:0: 'VE.Surface.accepted_normalize' depends on axioms: [propext]\ninfo: VE/Audit.lean:79:0: 'VE.Surface.accepted_reparse' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:80:0: 'VE.Surface.print_injective' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:81:0: 'VE.Surface.canonical_unique' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:82:0: 'VE.Surface.accepted_normalize_eq_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:83:0: 'VE.Surface.normalize_print' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:85:0: 'VE.Graph.acyclicCheck_dependency' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:86:0: 'VE.Graph.path_rank' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:87:0: 'VE.Graph.acyclicCheck_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:88:0: 'VE.Graph.lookup_sound' depends on axioms: [propext]\ninfo: VE/Audit.lean:89:0: 'VE.Graph.resolve_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:90:0: 'VE.Graph.checkNode_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:91:0: 'VE.Graph.checkNodes_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:92:0: 'VE.Graph.check_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:93:0: 'VE.Graph.check_entails' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:94:0: 'VE.Graph.check_unfolds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:96:0: 'VE.GraphChecks.testCertificate_sound' does not depend on any axioms\ninfo: VE/Audit.lean:98:0: 'VE.Bridge.lookup_mem' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:99:0: 'VE.Bridge.tupleCheck_iff' depends on axioms: [propext]\ninfo: VE/Audit.lean:100:0: 'VE.Bridge.modelData_valid' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:101:0: 'VE.Bridge.decodeModel_valid' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:102:0: 'VE.Bridge.decoded_countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:103:0: 'VE.Bridge.CountermodelQuery.refutes_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:105:0: 'VE.Tableau.token_defined' does not depend on any axioms\ninfo: VE/Audit.lean:106:0: 'VE.Tableau.bindings_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:107:0: 'VE.Tableau.holds_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:108:0: 'VE.Tableau.typed_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:109:0: 'VE.Tableau.add_holds' depends on axioms: [propext]\ninfo: VE/Audit.lean:110:0: 'VE.Tableau.one_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:111:0: 'VE.Tableau.two_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:112:0: 'VE.Tableau.gamma_holds' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:113:0: 'VE.Tableau.delta_witness' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:115:0: 'VE.Tableau.bindings_get' depends on axioms: [propext]\ninfo: VE/Audit.lean:116:0: 'VE.Tableau.termToken_denote' depends on axioms: [propext]\ninfo: VE/Audit.lean:117:0: 'VE.Tableau.ground_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:118:0: 'VE.Tableau.literals_hold' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:119:0: 'VE.Tableau.mem_dedup' depends on axioms: [propext]\ninfo: VE/Audit.lean:120:0: 'VE.Tableau.equalities_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:121:0: 'VE.Tableau.grow_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:122:0: 'VE.Tableau.reachable_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:123:0: 'VE.Tableau.equivalent_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:124:0: 'VE.Tableau.matches_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:125:0: 'VE.Tableau.closes_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:126:0: 'VE.Tableau.closed_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:127:0: 'VE.Tableau.complementary_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:129:0: 'VE.Tableau.next_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:130:0: 'VE.Tableau.checkChildren_member' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:131:0: 'VE.Tableau.replay_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:132:0: 'VE.Tableau.checkCertificate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:134:0: 'VE.Graph.check_sound_of_certificateSound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:135:0: 'VE.Graph.check_entails_of_certificateSound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:136:0: 'VE.Graph.check_unfolds_of_certificateSound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:137:0: 'VE.Graph.tableau_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:139:0: 'VE.CertificateWire.Query.accepts_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:141:0: 'VE.Closure.Path.least' does not depend on any axioms\ninfo: VE/Audit.lean:142:0: 'VE.Closure.Path.trans' does not depend on any axioms\ninfo: VE/Audit.lean:143:0: 'VE.Closure.Path.unfold' does not depend on any axioms\ninfo: VE/Audit.lean:144:0: 'VE.Closure.Surface.parseRaw_print_named' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:145:0: 'VE.Closure.check_iff_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:146:0: 'VE.Closure.conservativity' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:147:0: 'VE.Closure.conservativity_without_reach' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:148:0: 'VE.Closure.countermodelCheck_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:149:0: 'VE.Closure.countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:150:0: 'VE.Closure.embed_of_erase' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:151:0: 'VE.Closure.erase_embed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:152:0: 'VE.Closure.eval_false_iff_not_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:153:0: 'VE.Closure.eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:154:0: 'VE.Closure.mem_bodyEdges' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:155:0: 'VE.Closure.mem_dedup' depends on axioms: [propext]\ninfo: VE/Audit.lean:156:0: 'VE.Closure.mem_namedEdges' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:157:0: 'VE.Closure.mem_pivot' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:158:0: 'VE.Closure.pivot_closed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:159:0: 'VE.Closure.pivot_preserves_closed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:160:0: 'VE.Closure.reachEval_iff' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:161:0: 'VE.Closure.reachable_congr' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:162:0: 'VE.Closure.star_least' does not depend on any axioms\ninfo: VE/Audit.lean:163:0: 'VE.Closure.warshall_closed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:164:0: 'VE.Closure.warshall_extends' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:165:0: 'VE.Closure.warshall_iff_path' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:166:0: 'VE.Closure.warshall_preserves_closed' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:167:0: 'VE.Closure.warshall_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:170:0: 'VE.Closure.Surface.parseStatements_nonempty' does not depend on any axioms\ninfo: VE/Audit.lean:171:0: 'VE.Closure.Surface.parse_print_named' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:172:0: 'VE.Closure.Surface.print_injective_named' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:174:0: 'VE.CertificateWire.ClosureQuery.accepts_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:175:0: 'VE.Closure.Path.first' does not depend on any axioms\ninfo: VE/Audit.lean:176:0: 'VE.Closure.Path.last' does not depend on any axioms\ninfo: VE/Audit.lean:177:0: 'VE.Closure.Tableau.add_holds' depends on axioms: [propext]\ninfo: VE/Audit.lean:178:0: 'VE.Closure.Tableau.bindings_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:179:0: 'VE.Closure.Tableau.bindings_get' depends on axioms: [propext]\ninfo: VE/Audit.lean:180:0: 'VE.Closure.Tableau.checkCertificate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:181:0: 'VE.Closure.Tableau.checkCertificate_sound_v0' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:182:0: 'VE.Closure.Tableau.checkChildren_member' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:183:0: 'VE.Closure.Tableau.closed_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:184:0: 'VE.Closure.Tableau.closes_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:185:0: 'VE.Closure.Tableau.closure_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:186:0: 'VE.Closure.Tableau.complementary_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:187:0: 'VE.Closure.Tableau.composeStep_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:188:0: 'VE.Closure.Tableau.delta_witness' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:189:0: 'VE.Closure.Tableau.edgeStep_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:190:0: 'VE.Closure.Tableau.endStep_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:191:0: 'VE.Closure.Tableau.equalities_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:192:0: 'VE.Closure.Tableau.equivalent_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:193:0: 'VE.Closure.Tableau.extra_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:194:0: 'VE.Closure.Tableau.gamma_holds' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:195:0: 'VE.Closure.Tableau.ground_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:196:0: 'VE.Closure.Tableau.grow_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:197:0: 'VE.Closure.Tableau.holds_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:198:0: 'VE.Closure.Tableau.known_bindings' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:199:0: 'VE.Closure.Tableau.literals_hold' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:200:0: 'VE.Closure.Tableau.matches_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:201:0: 'VE.Closure.Tableau.mem_dedup' depends on axioms: [propext]\ninfo: VE/Audit.lean:202:0: 'VE.Closure.Tableau.namedStep_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:203:0: 'VE.Closure.Tableau.next_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:204:0: 'VE.Closure.Tableau.one_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:205:0: 'VE.Closure.Tableau.reachClosed_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:206:0: 'VE.Closure.Tableau.reachable_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:207:0: 'VE.Closure.Tableau.replay_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:208:0: 'VE.Closure.Tableau.rule_closure_formula' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:209:0: 'VE.Closure.Tableau.step_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:210:0: 'VE.Closure.Tableau.termToken_denote' depends on axioms: [propext]\ninfo: VE/Audit.lean:211:0: 'VE.Closure.Tableau.token_defined' does not depend on any axioms\ninfo: VE/Audit.lean:212:0: 'VE.Closure.Tableau.two_holds' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: VE/Audit.lean:213:0: 'VE.Closure.Tableau.typed_extend' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:214:0: 'VE.Closure.Tableau.unfoldAt_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:215:0: 'VE.Closure.edge_at_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:216:0: 'VE.Closure.edge_inclusion' does not depend on any axioms\ninfo: VE/Audit.lean:217:0: 'VE.Closure.edge_shift_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:218:0: 'VE.Closure.edge_typed' does not depend on any axioms\ninfo: VE/Audit.lean:219:0: 'VE.Closure.endEdge_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:220:0: 'VE.Closure.formula_matches_sound' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:221:0: 'VE.Closure.liftMatch_sound' depends on axioms: [propext]\ninfo: VE/Audit.lean:222:0: 'VE.Closure.liftSub_denote' does not depend on any axioms\ninfo: VE/Audit.lean:223:0: 'VE.Closure.liftTerm_denote' does not depend on any axioms\ninfo: VE/Audit.lean:224:0: 'VE.Closure.named_body_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:225:0: 'VE.Closure.pair_values' does not depend on any axioms\ninfo: VE/Audit.lean:226:0: 'VE.Closure.reach_compose' depends on axioms: [propext]\ninfo: VE/Audit.lean:227:0: 'VE.Closure.reach_denote' does not depend on any axioms\ninfo: VE/Audit.lean:228:0: 'VE.Closure.reachable_trans' does not depend on any axioms\ninfo: VE/Audit.lean:229:0: 'VE.Closure.substTerm_denote' does not depend on any axioms\ninfo: VE/Audit.lean:230:0: 'VE.Closure.subst_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:231:0: 'VE.Closure.unfold_denote' depends on axioms: [propext, Quot.sound]\ninfo: VE/Audit.lean:232:0: 'VE.Closure.unlift_denote' does not depend on any axioms\n\u2139 [76/78] Replayed Iceberg\ninfo: Iceberg.lean:288:0: 'Iceberg.mul_sub' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:289:0: 'Iceberg.root_witness' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:290:0: 'Iceberg.initial_mass_balance' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:291:0: 'Iceberg.stage_within_capacity' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:292:0: 'Iceberg.no_spill' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:293:0: 'Iceberg.height_balance' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:294:0: 'Iceberg.water_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:295:0: 'Iceberg.air_approximately_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:296:0: 'Iceberg.positive_air_strictly_lowers' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:297:0: 'Iceberg.metal_lowers' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:298:0: 'Iceberg.iceberg_root' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:299:0: 'Iceberg.air_one_millimetre' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: Iceberg.lean:300:0: 'Iceberg.residual_height_bound' depends on axioms: [propext, Classical.choice, Quot.sound]\n\u2714 [78/78] Built ve_conformance:exe (1.2s)\nBuild completed successfully (78 jobs).\n"
+    },
+    {
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "-j1",
+        "Iceberg.lean"
+      ],
+      "cwd": "lean",
+      "start": "2026-09-22T23:07:33.080126+00:00",
+      "seconds": 2.646244,
+      "exit_code": 0,
+      "output": "'Iceberg.mul_sub' depends on axioms: [propext, Classical.choice, Quot.sound]\n'Iceberg.root_witness' depends on axioms: [propext, Classical.choice, Quot.sound]\n'Iceberg.initial_mass_balance' depends on axioms: [propext, Classical.choice, Quot.sound]\n'Iceberg.stage_within_capacity' depends on axioms: [propext, Classical.choice, Quot.sound]\n'Iceberg.no_spill' depends on axioms: [propext, Classical.choice, Quot.sound]\n'Iceberg.height_balance' depends on axioms: [propext, Classical.choice, Quot.sound]\n'Iceberg.water_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]\n'Iceberg.air_approximately_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]\n'Iceberg.positive_air_strictly_lowers' depends on axioms: [propext, Classical.choice, Quot.sound]\n'Iceberg.metal_lowers' depends on axioms: [propext, Classical.choice, Quot.sound]\n'Iceberg.iceberg_root' depends on axioms: [propext, Classical.choice, Quot.sound]\n'Iceberg.air_one_millimetre' depends on axioms: [propext, Classical.choice, Quot.sound]\n'Iceberg.residual_height_bound' depends on axioms: [propext, Classical.choice, Quot.sound]\n"
+    }
+  ]
+}

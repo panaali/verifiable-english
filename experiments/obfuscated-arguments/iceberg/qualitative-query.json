@@ -1,0 +1,603 @@
+{
+  "id": "iceberg-qualitative-only",
+  "environment": {
+    "language": "ve.core@0",
+    "profile": "relational-fol@0",
+    "spec_revision": "ve-v0-draft-2026-09-20",
+    "vocabulary": {
+      "sorts": {
+        "tub": {
+          "description": "A complete tub/process case with a fixed nonnegative tolerance."
+        }
+      },
+      "predicates": {
+        "admissible": {
+          "arguments": [
+            "tub"
+          ],
+          "description": "Satisfies the Tub and Process premises in SPEC.md; arithmetic opaque to VE."
+        },
+        "water": {
+          "arguments": [
+            "tub"
+          ],
+          "description": "Water material premise holds; arithmetic opaque to VE."
+        },
+        "air": {
+          "arguments": [
+            "tub"
+          ],
+          "description": "Air endpoint premise holds; arithmetic opaque to VE."
+        },
+        "metal": {
+          "arguments": [
+            "tub"
+          ],
+          "description": "Positive submerged metal volume and greater density premises hold; arithmetic opaque to VE."
+        },
+        "bounded": {
+          "arguments": [
+            "tub"
+          ],
+          "description": "Nonnegative tolerance and air-mass bound hold; arithmetic opaque to VE."
+        },
+        "stable": {
+          "arguments": [
+            "tub"
+          ],
+          "description": "Final height is Within the fixed nonnegative tolerance; arithmetic opaque to VE."
+        },
+        "lower": {
+          "arguments": [
+            "tub"
+          ],
+          "description": "Final height is strictly below the rim; comparison opaque to relational VE."
+        },
+        "dry": {
+          "arguments": [
+            "tub"
+          ],
+          "description": "Cumulative spill is zero (not that the tub contains no water)."
+        }
+      },
+      "constants": {
+        "w": {
+          "sort": "tub",
+          "description": "The W case."
+        },
+        "a": {
+          "sort": "tub",
+          "description": "The A case."
+        },
+        "m": {
+          "sort": "tub",
+          "description": "The M case."
+        }
+      }
+    }
+  },
+  "premises": [
+    [
+      "forall",
+      "tub",
+      [
+        "implies",
+        [
+          "and",
+          [
+            "unary",
+            "admissible",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "water",
+            [
+              "var",
+              0
+            ]
+          ]
+        ],
+        [
+          "unary",
+          "stable",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    [
+      "forall",
+      "tub",
+      [
+        "implies",
+        [
+          "and",
+          [
+            "unary",
+            "admissible",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "and",
+            [
+              "unary",
+              "air",
+              [
+                "var",
+                0
+              ]
+            ],
+            [
+              "unary",
+              "bounded",
+              [
+                "var",
+                0
+              ]
+            ]
+          ]
+        ],
+        [
+          "unary",
+          "stable",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    [
+      "forall",
+      "tub",
+      [
+        "implies",
+        [
+          "and",
+          [
+            "unary",
+            "admissible",
+            [
+              "var",
+              0
+            ]
+          ],
+          [
+            "unary",
+            "metal",
+            [
+              "var",
+              0
+            ]
+          ]
+        ],
+        [
+          "unary",
+          "lower",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    [
+      "forall",
+      "tub",
+      [
+        "implies",
+        [
+          "unary",
+          "admissible",
+          [
+            "var",
+            0
+          ]
+        ],
+        [
+          "unary",
+          "dry",
+          [
+            "var",
+            0
+          ]
+        ]
+      ]
+    ],
+    [
+      "unary",
+      "admissible",
+      [
+        "const",
+        "w"
+      ]
+    ],
+    [
+      "unary",
+      "admissible",
+      [
+        "const",
+        "a"
+      ]
+    ],
+    [
+      "unary",
+      "admissible",
+      [
+        "const",
+        "m"
+      ]
+    ],
+    [
+      "unary",
+      "water",
+      [
+        "const",
+        "w"
+      ]
+    ],
+    [
+      "unary",
+      "air",
+      [
+        "const",
+        "a"
+      ]
+    ],
+    [
+      "unary",
+      "bounded",
+      [
+        "const",
+        "a"
+      ]
+    ],
+    [
+      "unary",
+      "metal",
+      [
+        "const",
+        "m"
+      ]
+    ]
+  ],
+  "conclusion": [
+    "and",
+    [
+      "unary",
+      "stable",
+      [
+        "const",
+        "w"
+      ]
+    ],
+    [
+      "and",
+      [
+        "unary",
+        "stable",
+        [
+          "const",
+          "a"
+        ]
+      ],
+      [
+        "and",
+        [
+          "unary",
+          "lower",
+          [
+            "const",
+            "m"
+          ]
+        ],
+        [
+          "and",
+          [
+            "unary",
+            "dry",
+            [
+              "const",
+              "w"
+            ]
+          ],
+          [
+            "and",
+            [
+              "unary",
+              "dry",
+              [
+                "const",
+                "a"
+              ]
+            ],
+            [
+              "unary",
+              "dry",
+              [
+                "const",
+                "m"
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]
+  ],
+  "certificate": {
+    "checker_version": "ve-tableau-checker@2",
+    "environment_id": "f6e285240b2756c58ab22104acef5720bacc2fd31d6fc33b57777c67f547e7ae",
+    "premise_meaning_ids": [
+      "0605a32d0b846c42bdf53edc98db0568306697f0be9c4a69ed719a1f690c5961",
+      "49b6489017f80fd4e36c5a28a14d766091decdcbcbb891784eaf0859e831517e",
+      "df8d68b280dc00f03155727b93de907865c63c1a59d946b9d120acf7c84d91ad",
+      "5d8d36b4880f45c4c81d60f717e4d3c6efe9222c5c72bbc87784b96ecaf0cdef",
+      "ddbbff7d7ac905155560dc52f767ffebf0f4bcd6357aec4c0018ffe9e852ce17",
+      "da0178cc3a6a31b718bbe71e6e0632eb198baab29c9a3e4b6741517eafe2d357",
+      "0f0dfe69b3f781994b32a6f497c33fef0948090d292fb19769effa15a607d94c",
+      "c05ff45ffad8051e7f7a50ccf05266b3ee205491ca2f6f1e4726d9fa98e8ab94",
+      "4151eb9637a50a4129622657cbf4af361bfe3052fc4c253864c3fa39b3e07bba",
+      "2c032cf72cb29179066a66bcd774c2943c045472044b7804d9a4651198af85f7",
+      "be646f3ac5cf55681702f5bc7c36e16da387f87b651c850203c93a7a67637698"
+    ],
+    "conclusion_meaning_id": "3c305582a9747c079170e2f7927683841318c650e8ce767c167811b3d54486e4",
+    "trace": {
+      "rule": "expand",
+      "at": 0,
+      "children": [
+        {
+          "rule": "expand",
+          "at": 1,
+          "children": [
+            {
+              "rule": "expand",
+              "at": 2,
+              "children": [
+                {
+                  "rule": "expand",
+                  "at": 3,
+                  "children": [
+                    {
+                      "rule": "expand",
+                      "at": 15,
+                      "children": [
+                        {
+                          "rule": "close"
+                        },
+                        {
+                          "rule": "expand",
+                          "at": 0,
+                          "children": [
+                            {
+                              "rule": "expand",
+                              "at": 1,
+                              "children": [
+                                {
+                                  "rule": "expand",
+                                  "at": 2,
+                                  "children": [
+                                    {
+                                      "rule": "expand",
+                                      "at": 3,
+                                      "children": [
+                                        {
+                                          "rule": "expand",
+                                          "at": 20,
+                                          "children": [
+                                            {
+                                              "rule": "close"
+                                            },
+                                            {
+                                              "rule": "expand",
+                                              "at": 0,
+                                              "children": [
+                                                {
+                                                  "rule": "expand",
+                                                  "at": 1,
+                                                  "children": [
+                                                    {
+                                                      "rule": "expand",
+                                                      "at": 2,
+                                                      "children": [
+                                                        {
+                                                          "rule": "expand",
+                                                          "at": 3,
+                                                          "children": [
+                                                            {
+                                                              "rule": "expand",
+                                                              "at": 25,
+                                                              "children": [
+                                                                {
+                                                                  "rule": "close"
+                                                                },
+                                                                {
+                                                                  "rule": "expand",
+                                                                  "at": 11,
+                                                                  "children": [
+                                                                    {
+                                                                      "rule": "expand",
+                                                                      "at": 12,
+                                                                      "children": [
+                                                                        {
+                                                                          "rule": "expand",
+                                                                          "at": 18,
+                                                                          "children": [
+                                                                            {
+                                                                              "rule": "expand",
+                                                                              "at": 28,
+                                                                              "children": [
+                                                                                {
+                                                                                  "rule": "close"
+                                                                                },
+                                                                                {
+                                                                                  "rule": "close"
+                                                                                }
+                                                                              ]
+                                                                            },
+                                                                            {
+                                                                              "rule": "close"
+                                                                            }
+                                                                          ]
+                                                                        },
+                                                                        {
+                                                                          "rule": "close"
+                                                                        }
+                                                                      ]
+                                                                    },
+                                                                    {
+                                                                      "rule": "expand",
+                                                                      "at": 12,
+                                                                      "children": [
+                                                                        {
+                                                                          "rule": "expand",
+                                                                          "at": 28,
+                                                                          "children": [
+                                                                            {
+                                                                              "rule": "close"
+                                                                            },
+                                                                            {
+                                                                              "rule": "close"
+                                                                            }
+                                                                          ]
+                                                                        },
+                                                                        {
+                                                                          "rule": "expand",
+                                                                          "at": 13,
+                                                                          "children": [
+                                                                            {
+                                                                              "rule": "expand",
+                                                                              "at": 29,
+                                                                              "children": [
+                                                                                {
+                                                                                  "rule": "close"
+                                                                                },
+                                                                                {
+                                                                                  "rule": "expand",
+                                                                                  "at": 30,
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "rule": "close"
+                                                                                    },
+                                                                                    {
+                                                                                      "rule": "close"
+                                                                                    }
+                                                                                  ]
+                                                                                }
+                                                                              ]
+                                                                            },
+                                                                            {
+                                                                              "rule": "expand",
+                                                                              "at": 27,
+                                                                              "children": [
+                                                                                {
+                                                                                  "rule": "close"
+                                                                                },
+                                                                                {
+                                                                                  "rule": "expand",
+                                                                                  "at": 14,
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "rule": "expand",
+                                                                                      "at": 31,
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "rule": "close"
+                                                                                        },
+                                                                                        {
+                                                                                          "rule": "close"
+                                                                                        }
+                                                                                      ]
+                                                                                    },
+                                                                                    {
+                                                                                      "rule": "expand",
+                                                                                      "at": 30,
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "rule": "close"
+                                                                                        },
+                                                                                        {
+                                                                                          "rule": "expand",
+                                                                                          "at": 32,
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "rule": "close"
+                                                                                            },
+                                                                                            {
+                                                                                              "rule": "expand",
+                                                                                              "at": 33,
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "rule": "close"
+                                                                                                },
+                                                                                                {
+                                                                                                  "rule": "close"
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ]
+                                                                                }
+                                                                              ]
+                                                                            }
+                                                                          ]
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ],
+                                                          "parameter": "c:m"
+                                                        }
+                                                      ],
+                                                      "parameter": "c:a"
+                                                    }
+                                                  ],
+                                                  "parameter": "c:m"
+                                                }
+                                              ],
+                                              "parameter": "c:m"
+                                            }
+                                          ]
+                                        }
+                                      ],
+                                      "parameter": "c:a"
+                                    }
+                                  ],
+                                  "parameter": "c:w"
+                                }
+                              ],
+                              "parameter": "c:w"
+                            }
+                          ],
+                          "parameter": "c:a"
+                        }
+                      ]
+                    }
+                  ],
+                  "parameter": "c:w"
+                }
+              ],
+              "parameter": "c:m"
+            }
+          ],
+          "parameter": "c:a"
+        }
+      ],
+      "parameter": "c:w"
+    }
+  }
+}
