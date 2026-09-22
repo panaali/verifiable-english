@@ -1,0 +1,51 @@
+id	code	alt	sure	note
+ld_186	S-premise	O-arith	y	"newest" of 5 put in 4th slot
+ld_52	D		y	Mel-above-Eli overwrites Eli's slot
+ld_264	S-premise	O-arith	y	2nd-from-right of 7 put 3rd from left
+ld_3	D*		y	black=1st is entailed by uncited premise; annotators flagged as jump
+ld_266	N		n	flagged step merely restates a premise
+ld_38	D*		y	full order entailed by all premises; uses uncited blue-jay premise
+ld_288	D*		y	crow3/quail4 entailed by all premises
+ld_270	D*		y	same as ld_3
+ld_19	S-premise		y	second-newest read as second-oldest
+ld_33	O-arith		y	3rd of 7 => "three cheaper" (should be four)
+ld_238	D		y	Amy placed 4th; does not follow (and false)
+ld_215	D*		y	green=7th entailed by all premises
+ld_30	D*		y	hawk=1st entailed by uncited premise
+ld_268	S-premise	O-arith	y	second-oldest put 5th in newest->oldest
+ld_111	D*		n	lists other absolute premises at once; all true
+ld_77	S-premise		y	third-from-left put 2nd
+ld_279	S-premise		y	fourth-from-left put 3rd
+ld_272	S-premise		y	2nd-from-right put 7th
+ld_55	D	S-premise	n	relation reversed and placement unwarranted
+ld_282	S-premise	O-arith	y	third-to-last of 7 put 4th
+ld_105	S-premise		y	2nd-from-right put 7th
+ld_200	N		n	restates earlier true conclusion
+ld_88	D		n	"can be" placements unwarranted
+ld_150	S-premise		y	second-newest read from wrong end
+ld_133	D		y	elimination concludes sedan newest, contradicting given premise
+ld_161	S-premise		y	2nd-from-right put 7th
+ld_51	S-premise		y	second-newest read from wrong end
+ld_202	D	S-premise	n	relation reversed and unwarranted slot
+ld_190	S-premise		y	2nd-from-right of 5 put 3rd; plus unwarranted gray=5th
+ld_32	D	S-premise	n	relation reversed and unwarranted slots
+ld_58	D		y	restricts slots 2-3 without warrant
+ld_60	S-premise	O-arith	y	3rd-from-right of 7 put 4th
+ld_213	S-premise		y	second-newest read from wrong end
+ld_259	D		y	Mel sixth conflicts with Mya sixth
+ld_106	N		n	crow=1st is valid (cardinal 2nd and crow left of it)
+ld_126	D		y	Ada 7th unwarranted
+ld_35	D		y	tractor/hatchback slots unwarranted
+ld_162	O-incomplete		n	premise read but not applied; nothing false stated
+ld_145	N		n	statement is valid
+ld_9	D		y	plums 5th unwarranted
+ld_94	D*		y	owl=1st entailed by uncited premise
+ld_79	S-premise		y	second-newest read from wrong end
+ld_10	S-premise	O-arith	y	third-most-expensive of 7 put 7th
+ld_92	D		y	Mel 5th unwarranted
+ld_69	S-premise		y	3rd-from-right put 3rd from left
+ld_31	D		y	hatchback 5th unwarranted (truck newer)
+ld_78	D	S-premise	n	relation reversed
+ld_73	S-premise		y	second-oldest put 1st
+ld_100	D*		y	loquats=3rd entailed by all premises
+ld_11	N		n	statement is valid

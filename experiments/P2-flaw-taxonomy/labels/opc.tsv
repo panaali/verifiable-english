@@ -1,0 +1,51 @@
+id	code	alt	sure	note
+putnambench:putnam_2022_a3:xai/grok-3-mini-high:11-e40c0f23	P	D	n	claims infinite paths; false (sequence periodic)
+best_of_n:BMOSL_2021_20:openai/o4-mini--high (Random Judge):11-e40c0f23	P	D	n	false fact: M on circumcircle (it is the centre)
+generic:izho_2024_2:qwen/qwen3_235b_a22b:7-575fd418	O-incomplete		y	existence only via unproven algorithm
+best_of_n:USAMO_2012_4:openai/o4-mini--high (Ranking Judge):11-e40c0f23	P	D	y	step-1 claim false (known counterexample)
+generic:IMOSL_2016_15:xai/grok-3-mini-high:16-3b2bf65e	O-incomplete		n	"not well argued" (vague)
+generic:BalticWay_2003_9:gemini/gemini-pro-2.5:6-442464cd	O-incomplete	D	n	edge cases only; no general strategy
+putnambench:putnam_1964_a6:gemini/gemini-pro-2.5:2-71043342	P		y	non-standard characterisation cited without proof
+generic:USAMO_2006_1:openai/o4-mini--high:6-442464cd	O-circ		n	"cyclic argument" (circular)
+generic:BMOSL_2016_7:qwen/qwen3_235b_a22b:13-696e641c	O-incomplete		y	no proof there are no other solutions
+generic:USAMO_2008_5:gemini/gemini-pro-2.5:16-3b2bf65e	D		y	wrong argument about linearity
+generic:BMOSL_2020_7:openai/o3:11-e40c0f23	D		y	claimed invariant not preserved (counterexample)
+generic:bmo2_2005_2:qwen/qwen3_235b_a22b:2-71043342	O-incomplete		y	core algebraic verification omitted
+generic:izho_2016_2:openai/o4-mini--high:2-71043342	U		y	wrong answer and bound; flaw not localised
+generic:USAMO_2014_2:xai/grok-3-mini-high:11-e40c0f23	O-incomplete		y	no proof there are no other solutions
+generic:BMOSL_2018_2:qwen/qwen3_235b_a22b:12-319c988d	O-case		y	misses the a_k = 2 case
+generic:BMOSL_2020_11:qwen/qwen3_235b_a22b:3-e6c6b843	O-incomplete		y	heavy computations omitted
+best_of_n:IMOSL_2019_6:openai/o4-mini--high (Ranking Judge):11-e40c0f23	D		y	polynomial identity does not follow
+generic:swiss_selection_2022_6:qwen/qwen3_235b_a22b:6-442464cd	O-circ		y	circular argument
+generic:irish_2002_6:xai/grok-3-mini-high:6-442464cd	O-incomplete		y	counting/parity work not shown
+generic:RMM_Extralist_2017_6:qwen/qwen3_235b_a22b:12-319c988d	P		y	unproven "pencil radical axis" fact assumed
+generic:izho_2023_5:openai/o4-mini--high:6-442464cd	P	O-incomplete	n	"only 2 reduced forms" asserted
+generic:IMOSL_2022_29:openai/o4-mini--high:6-442464cd	D	O-arith	n	key inequality reversed
+pass_at_n:BMOSL_2021_25:openai/o4-mini--high:2-71043342	P		y	key fact asserted (Levy-Steinitz misconnected)
+putnambench:putnam_1963_a4:openai/o4-mini--high:6-442464cd	D		y	delta>0 does not follow in case 1
+generic:swiss_selection_2022_6:openai/o4-mini--high:6-442464cd	O-case		y	case n not divisible by 11 missing
+generic:BMOSL_2019_5:deepseek/r1_0528:12-319c988d	P	O-incomplete	n	boundary behaviour asserted, not shown
+generic:USAMO_2011_3:openai/o3:12-319c988d	D		y	lemma applied outside its hypotheses
+generic:bulgarian-ZMS_2018_11_4:xai/grok-3-mini-high:15-8528e23b	O-incomplete	P	n	claims consistently unjustified
+generic:IMC_2000_8:deepseek/r1_0528:11-e40c0f23	D	O-incomplete	n	non-rigorous compactness leap wraps up argument
+generic:EGMO_2012_1:qwen/qwen3_235b_a22b:1-f7079988	S-premise		y	coordinate choice loses generality (right isosceles)
+pass_at_n:USAMO_2009_1:openai/o4-mini--high:2-71043342	D		y	concyclicity does not imply the product equality
+generic:bmo1_2004_5:xai/grok-3-mini-high:1-f7079988	O-incomplete		y	no proof no other solutions exist
+generic:USAMO_2014_6:qwen/qwen3_235b_a22b:16-3b2bf65e	D	P	n	false asymptotic comparisons
+putnambench:putnam_1962_a1:xai/grok-3-mini-high:6-442464cd	O-incomplete		y	general triangle case not proven
+generic:BalticWay_2005_5:gemini/gemini-pro-2.5:2-71043342	O-case	O-incomplete	n	subcase region never completed
+generic:bmo1_2016_6:xai/grok-3-mini-high:1-f7079988	P		y	crucial unproved claim
+generic:izho_2023_5:deepseek/r1_0528:6-442464cd	P	O-incomplete	n	"only 2 reduced forms" asserted
+pass_at_n:BMOSL_2019_9:openai/o4-mini--high:2-71043342	D		y	tangency does not imply the angle equalities
+generic:EGMO_2021_1:deepseek/r1_0528:11-e40c0f23	O-incomplete		y	"by extending this process"
+generic:IMOSL_2018_17:gemini/gemini-pro-2.5:2-71043342	U		y	wrong final answer
+generic:EGMO_2015_2:qwen/qwen3_235b_a22b:2-71043342	U		y	wrong final answer
+generic:IMOSL_2007_25:qwen/qwen3_235b_a22b:2-71043342	D		n	final answer contradicts its own earlier claim
+generic:IMOSL_2000_6:gemini/gemini-pro-2.5:3-e6c6b843	P		y	obscure/unverifiable reference
+generic:IMOSL_2011_5:openai/o3:14-e7b22f72	O-incomplete		y	no solution given
+generic:BalticWay_2003_7:openai/o4-mini--high:14-e7b22f72	P		y	bound assumed without proof
+generic:IMOSL_2019_29:qwen/qwen3_235b_a22b:1-f7079988	O-incomplete		y	hand-waving bounds only
+generic:izho_2011_4:openai/o4-mini--high:16-3b2bf65e	D		y	contradiction claimed where none follows
+generic:IMOSL_2016_24:gemini/gemini-pro-2.5:6-442464cd	P		y	fabricated or undiscoverable sources
+putnambench:putnam_1989_a6:qwen/qwen3_235b_a22b:2-71043342	P	D	n	false identity a_{2i}=a_i assumed in general
+pass_at_n:USAMO_2004_4:openai/o4-mini--high:14-e7b22f72	U		y	wrong final answer
