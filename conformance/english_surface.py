@@ -12,6 +12,7 @@ import hashlib
 import json
 from pathlib import Path
 import random
+from tempfile import TemporaryDirectory
 
 from lark import Lark
 
@@ -64,14 +65,16 @@ def vocabularies():
     precision['vocabulary']['predicates']['owns'].update(verbalisation='{0} contributes to {1}',
                                                        negative_verbalisation='{0} does not contribute to {1}')
     yield 'precision_templates', Environment(precision)
-    for path in sorted((ROOT / 'usecases').glob('*/environment.json')):
+    for path in sorted(p.with_name('environment.json')
+                       for p in (ROOT / 'usecases').glob('*/environment.english.json')):
         yield path.parent.name, Environment.from_json(path.read_bytes())
 
 
 def configurations():
     for name, env in vocabularies():
         yield name, env, {}
-    for path in sorted((ROOT / 'usecases').glob('*/environment.json')):
+    for path in sorted(p.with_name('environment.json')
+                       for p in (ROOT / 'usecases').glob('*/environment.english.json')):
         yield path.parent.name + '-reviewed', Environment.from_json(path.read_bytes()), {
             'vocabulary': json.loads(path.with_name('environment.english.json').read_text())}
     data = json.loads((ROOT / 'examples/fluent/environment.json').read_text())
@@ -79,6 +82,24 @@ def configurations():
         decl.pop('verbalisation', None); decl.pop('negative_verbalisation', None)
     env = Environment(data)
     yield 'accepted-suggestions', env, {'vocabulary': suggest_vocabulary(env), 'accept_suggested_vocabulary': True}
+    yield from adopted_configurations()
+
+
+def adopted_configurations():
+    # Audit the finite lexicon loaded AFTER explicit adoption, never the open
+    # proposal generator or a regex terminal standing in for unknown phrases.
+    from ve.propose import propose, adopt
+    path = ROOT / 'usecases/birthright-citizenship-debate/environment.json'
+    env = Environment.from_json(path.read_bytes())
+    overlay = json.loads(path.with_name('environment.english.json').read_text())
+    sentence = 'Every person who is born in the United States and is subject to US jurisdiction is a UK citizen.'
+    preview = propose(env, sentence, overlay, acknowledge=['us_citizen'])
+    with TemporaryDirectory(prefix='ve-adopted-audit-') as directory:
+        output = Path(directory) / 'adopted'
+        adopt(preview, output, acknowledge=['us_citizen'])
+        yield 'adopted-unary', Environment.from_json((output / 'environment.json').read_bytes()), {
+            'vocabulary': json.loads((output / 'environment.english.json').read_text()),
+            'accept_suggested_vocabulary': True}
 
 
 def directed_formulas(env, words):
@@ -148,7 +169,8 @@ def random_formula(rng, env, depth, scope=()):
 
 def lint_report():
     result = []
-    for path in sorted((ROOT / 'usecases').glob('*/environment.json')):
+    for path in sorted(p.with_name('environment.json')
+                       for p in (ROOT / 'usecases').glob('*/environment.english.json')):
         env = Environment.from_json(path.read_bytes())
         old, new = _NaturalVocabulary(env), EnglishVocabulary(env)
         overlay = json.loads(path.with_name('environment.english.json').read_text())
@@ -177,9 +199,10 @@ def formula_depth(formula):
     return 1
 
 
-def audit(per_vocabulary=5000, earley_per_vocabulary=500, random_earley_per_vocabulary=250):
+def audit(per_vocabulary=5000, earley_per_vocabulary=500, random_earley_per_vocabulary=250, *, adopted_only=False):
     rows = []
-    for offset, (name, env, options) in enumerate(configurations()):
+    selected = adopted_configurations() if adopted_only else configurations()
+    for offset, (name, env, options) in enumerate(selected):
         rng = random.Random(SEED + offset)
         words = EnglishVocabulary(env, **options)
         grammar = english_lark_grammar(env, **options)
@@ -266,11 +289,12 @@ def audit(per_vocabulary=5000, earley_per_vocabulary=500, random_earley_per_voca
             'random_earley_texts': sum(r['random_earley_texts'] for r in rows),
             'multi_statement_documents': sum(r['multi_statement_documents'] for r in rows),
             'identity_fixtures': len(json.loads((ROOT / 'conformance/identity.json').read_text())),
-            'vocabularies': rows, 'linter': lint_report()}
+            'vocabularies': rows, 'linter': [] if adopted_only else lint_report()}
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--adopted-only', action='store_true', help='audit only the explicitly adopted unary lexicon')
     parser.add_argument('--per-vocabulary', type=int, default=5000)
     parser.add_argument('--earley-per-vocabulary', type=int, default=500)
     parser.add_argument('--random-earley-per-vocabulary', type=int, default=250)
@@ -280,6 +304,6 @@ if __name__ == '__main__':
         parser.error('Earley count must be between zero and the round-trip count')
     if args.random_earley_per_vocabulary < 0:
         parser.error('Random Earley count must be nonnegative')
-    result = audit(args.per_vocabulary, args.earley_per_vocabulary, args.random_earley_per_vocabulary)
+    result = audit(args.per_vocabulary, args.earley_per_vocabulary, args.random_earley_per_vocabulary, adopted_only=args.adopted_only)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
     print(f"PASS: {result['roundtrips']} unique AST round trips; {result['earley_texts']} prefix + {result['random_earley_texts']} random texts + {result['multi_statement_documents']} multi-statement documents, no multiple derivations")

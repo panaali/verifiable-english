@@ -14,6 +14,7 @@ import warnings
 from . import ast
 from .errors import ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES
+from .english_phrases import nearest, phrase_end, unary_phrase, wording_key, BOUNDARIES
 from .printer import (_NaturalVocabulary, _LOGICAL_WORDS,
                       _fluent_variable_letters, _template_head, _AUXILIARIES, VocabularyLint)
 from .english_vocabulary import IDIOMS, negative_template, display_environment, overlay_provenance
@@ -73,9 +74,9 @@ class EnglishVocabulary:
             else:
                 self.sorts[name] = 'entity of sort ' + quote(name)
         # Reject aliases equal to ANY other selected noun, including fallbacks.
-        counts = Counter(self.sorts.values())
+        counts = Counter(wording_key(n) for n in self.sorts.values())
         for name, noun in list(self.sorts.items()):
-            if counts[noun] > 1:
+            if counts[wording_key(noun)] > 1:
                 self.sorts[name] = 'entity of sort ' + quote(name)
         self.predicates, self.negatives = {}, {}
         issues = set(old.issues)
@@ -83,6 +84,11 @@ class EnglishVocabulary:
             decl = env.sorts[name]
             if decl.verbalisation and noun == decl.verbalisation.singular:
                 issues = {i for i in issues if not i.path.startswith(f'/vocabulary/sorts/{name}/')}
+        template_owners = {}
+        for name, decl in env.predicates.items():
+            for template in (decl.verbalisation or old.predicates[name], decl.negative_verbalisation):
+                if template:
+                    template_owners.setdefault(wording_key(template), set()).add(name)
         for name, decl in env.predicates.items():
             template = decl.verbalisation
             path = f"/vocabulary/predicates/{name}/verbalisation"
@@ -159,9 +165,34 @@ class EnglishVocabulary:
                 if len(decl.arguments) == 1 or name in {'owns', 'audits', 'undermines', 'performs', 'follows', 'benefits', 'outranks', 'exceeds'}:
                     self.predicates[name] = old.predicates[name]
                     continue
+            # Explicitly accepted finite unary phrases from the proposal workflow.
+            # The ordinary environment linter and historical views stay unchanged.
+            entry = self.overlay['predicates'].get(name, {})
+            if (entry.get('suggested') and len(decl.arguments) == 1 and template
+                    and unary_phrase(template) is not None):
+                phrase = unary_phrase(template)
+                collision = any(re.search(r'\b' + re.escape(n) + r'\b', phrase, re.I)
+                                for n in env.constants)
+                duplicate = any(n != name and d.verbalisation and wording_key(d.verbalisation) == wording_key(template)
+                                for n, d in env.predicates.items())
+                heads = set(env.predicates) | {_template_head(d.verbalisation or '', len(d.arguments))
+                                                for d in env.predicates.values()}
+                negated_heads = {prefix + h.lower() for h in heads if h
+                                 for prefix in ('un', 'non', 'un-', 'non-')}
+                negated = bool(negated_heads & set(re.findall(r'[a-z][a-z0-9_-]*', phrase.lower())))
+                if not collision and not duplicate and not negated and 'NEGATED_HEAD' not in codes:
+                    accepted = True
             if accepted and template not in IDIOMS[len(decl.arguments)] and set(re.findall(r'[a-z]+', template)) & _EXTRA_RESERVED:
                 accepted = False
                 issues.add(VocabularyLint(path, 'ENGLISH_STRUCTURE_WORD'))
+            duplicates = set().union(*(template_owners.get(wording_key(t), set())
+                                       for t in (template, decl.negative_verbalisation) if t)) - {name}
+            if duplicates:
+                accepted = False
+                issues.add(VocabularyLint(path, 'DUPLICATE_TEMPLATE'))
+                if name in self.overlay['predicates']:
+                    raise VEError(f'Duplicate English wording {template!r} for {name!r}; '
+                                  f'existing symbol(s): {", ".join(sorted(duplicates))}')
             if accepted:
                 self.predicates[name] = template
                 issues = {i for i in issues if i.path != path}
@@ -388,6 +419,12 @@ class EnglishParseResult:
                 'changed': self.original != self.english_text}
 
 
+def _content_pattern(text):
+    # Quoted fallback symbols retain exact identity; only display words fold case.
+    return ''.join(_literal_pattern(p) if p.startswith('"') else '(?i:' + _literal_pattern(p) + ')'
+                   for p in re.split(r'("(?:[^"\\]|\\.)*")', text) if p)
+
+
 def _literal_pattern(text):
     return r'\s+'.join(re.escape(part) for part in text.split(' '))
 
@@ -405,8 +442,8 @@ class EnglishParser:
                                    self.source.count('\n', 0, pos) + 1,
                                    pos - self.source.rfind('\n', 0, pos)))
 
-    def take(self, text):
-        match = re.compile(_literal_pattern(text)).match(self.source, self.i)
+    def take(self, text, *, content=False):
+        match = re.compile(_content_pattern(text) if content else _literal_pattern(text)).match(self.source, self.i)
         if match is None:
             return False
         # A literal word cannot consume just a prefix of a longer word.
@@ -434,12 +471,12 @@ class EnglishParser:
                                ('second ' + noun, (sort, 'the second ' + noun))])
             # Names are bound in lexical scope; the paraphrase shows canonical numbering.
             prefix = noun + ' named '
-            match = re.compile(_literal_pattern(prefix) + '(' + re.escape(self.words.letters[sort]) + r'[1-9][0-9]*)').match(self.source, self.i)
+            match = re.compile(_content_pattern(prefix) + '(' + re.escape(self.words.letters[sort]) + r'[1-9][0-9]*)').match(self.source, self.i)
             if match:
                 candidates.append((match.group(), (sort, match[1])))
         for text, binding in sorted(candidates, key=lambda item: -len(item[0])):
             start = self.i
-            if self.take(text):
+            if self.take(text, content=True):
                 if any(ref == binding[1] for _, ref in scope):
                     self.error('This name is already in scope. Use first and second, or distinct numbered names.')
                 return binding
@@ -451,10 +488,15 @@ class EnglishParser:
         terms.update({text: ast.Const(name) for name, text in self.words.constants.items()})
         return terms
 
+    def reference_pattern(self, ref, scope):
+        scoped = {name for _, name in scope if name.startswith(('that ', 'the '))}
+        return _content_pattern(ref) if ref in scoped else _literal_pattern(ref)
+
     def atom(self, scope, relative=False, object_allowed=False):
         start = self.i
         terms = self.term_options(scope)
-        term_pattern = '(?:' + '|'.join(_literal_pattern(t) for t in sorted(terms, key=lambda t: -len(t))) + ')'
+        term_literal = lambda t: self.reference_pattern(t, scope)
+        term_pattern = '(?:' + '|'.join(term_literal(t) for t in sorted(terms, key=lambda t: -len(t))) + ')'
         if not terms:
             term_pattern = r'(?!)'
         choices = []
@@ -480,7 +522,7 @@ class EnglishParser:
                 template = template.replace(' {1}', '')
             parts = re.split(r'(\{[01]\})', template)
             pattern = ''.join(('(' + term_pattern + ')') if part in ('{0}', '{1}')
-                              else _literal_pattern(part) for part in parts)
+                              else _content_pattern(part) for part in parts)
             match = re.compile(pattern).match(self.source, start)
             if not match:
                 continue
@@ -488,7 +530,8 @@ class EnglishParser:
             if end < len(self.source) and re.match(r'[A-Za-z0-9_]', self.source[end]):
                 continue
             # Whitespace in a term can be edited; its binding is lexical, not textual.
-            args = [terms[re.sub(r'\s+', ' ', t)] for t in match.groups()]
+            args = [next(value for ref, value in terms.items() if re.fullmatch(term_literal(ref), t))
+                    for t in match.groups()]
             if omitted == 'subject': args.insert(0, ast.Var(0))
             elif omitted == 'object': args.append(ast.Var(0))
             if name is None:
@@ -498,27 +541,58 @@ class EnglishParser:
                 if negative: node = ast.Not(node)
             choices.append((end, node))
         if not choices:
-            self.error('Expected a clause using a declared predicate and an in-scope noun reference or constant name.')
+            return self.unknown_atom(scope, relative, object_allowed)
         # The lexicon is prefix-free at clause boundaries. Retain an explicit
         # ambiguity guard rather than silently selecting a competing template.
         longest = max(end for end, _ in choices)
         nodes = {node for end, node in choices if end == longest}
         if len(nodes) != 1:
             self.error('The vocabulary gives this clause more than one meaning. Use distinct predicate templates.')
+        tail = re.match(r'\s+([A-Za-z][A-Za-z0-9_-]*)', self.source[longest:])
+        clause_heads = {t.split()[1].lower() for t in (*self.words.predicates.values(), *self.words.negatives.values())}
+        if tail and tail[1].lower() not in BOUNDARIES | clause_heads:
+            names = {n.predicate for _, n in choices if type(n) in (ast.Unary, ast.Binary)}
+            names |= {n.body.predicate for _, n in choices if type(n) is ast.Not}
+            if names:
+                existing = '; '.join(f'{n!r}: {self.words.predicates[n]!r}' for n in sorted(names))
+                end = phrase_end(self.source, longest)
+                self.error(f'Phrase {self.source[start:end]!r} extends existing wording {existing}; '
+                           'declare distinct wording by hand.')
         self.i = longest
         self.farthest = max(self.farthest, longest)
         return nodes.pop()
 
+    def unknown_atom(self, scope, relative=False, object_allowed=False):
+        start = self.i
+        # Remove a recognized subject from the diagnostic, but never invent one.
+        if not relative:
+            for ref in sorted(self.term_options(scope), key=len, reverse=True):
+                match = re.compile(self.reference_pattern(ref, scope) + r'\s+').match(self.source, start)
+                if match:
+                    start = match.end()
+                    break
+        head = re.compile(r'is\s+(?:not\s+)?(?:a\s+|an\s+)?').match(self.source, start)
+        content = head.end() if head else start
+        end = phrase_end(self.source, content)
+        end = min(len(self.source), max(end, content, start + 1))
+        phrase = self.source[start:end]
+        matches = nearest(phrase, self.words)[:3]
+        suggestions = '; '.join(repr(row['wording']) for row in matches)
+        raise SyntaxError(f'Unknown English phrase {phrase!r}. Nearest declared wordings: {suggestions}.',
+                          span=Span(start, end, self.source.count('\n', 0, start) + 1,
+                                    start - self.source.rfind('\n', 0, start)))
+
     def term(self, scope):
         for text, value in sorted(self.term_options(scope).items(), key=lambda item: -len(item[0])):
-            if self.take(text): return value
+            if self.take(text, content=any(ref == text and ref.startswith(('that ', 'the '))
+                                           for _, ref in scope)): return value
         self.error('Expected a constant name or a definite reference to an entity already introduced.')
 
     def guard(self, scope):
         def relative():
             # In an object relative, "that person" is the subject reference;
             # only consume a repeated relative pronoun outside such a term.
-            term_prefix = any(re.compile(_literal_pattern(ref) + r'(?![A-Za-z0-9_])').match(self.source, self.i)
+            term_prefix = any(re.compile(self.reference_pattern(ref, scope) + r'(?![A-Za-z0-9_])').match(self.source, self.i)
                               for ref in self.term_options(scope))
             if not term_prefix:
                 self.take('who ') or self.take('that ')
@@ -615,7 +689,8 @@ class EnglishParser:
     def document(self):
         formulas = []
         while self.i < len(self.source):
-            # Only sentence-initial capitalization is optional. Preserve proper nouns.
+            # Clause structure permits sentence-initial capitalization; content
+            # templates fold their own case without altering stored display text.
             if self.source[self.i].isupper():
                 self.source = self.source[:self.i] + self.source[self.i].lower() + self.source[self.i+1:]
             formulas.append(self.formula())
@@ -699,6 +774,12 @@ def english_lark_grammar(env, **options):
     """
     words = EnglishVocabulary(env, **options)
     lit = lambda s: json.dumps(s)
+    # Each regex is one declared literal phrase with editable whitespace, never
+    # an open atom token. Keep quoted symbols exact and avoid word-level lexer
+    # proliferation in the all-derivations audit.
+    content_lit = lambda s: ' '.join(lit(p) if p.startswith('"') else
+                                    '/' + _literal_pattern(p.strip()).replace('/', r'\/') + '/i'
+                                    for p in re.split(r'("(?:[^"\\]|\\.)*")', s) if p.strip())
     rules = [
         'start: (formula ".")+',
         '?formula: atom | negation | compact | listing | universal | existential | reach',
@@ -723,13 +804,13 @@ def english_lark_grammar(env, **options):
         '           | "there is" article declaration "who" relative -> existential_relative\n'
         '           | "there is" article declaration "that" relative -> existential_relative',
         'article: "a" | "an"',
-        'declaration: noun | "first" noun | "second" noun | noun "named" LABEL',
-        'term: constant | "that" noun | "the first" noun | "the second" noun | LABEL',
+        'declaration: noun | "first"i noun | "second"i noun | noun "named"i LABEL',
+        'term: constant | "that"i noun | "the first"i noun | "the second"i noun | LABEL',
         'reach: "starting from" term "," term "is reachable by" count "or more" relation "steps" -> named_reach\n'
         '     | "starting from" term "," term "is reachable by" count "or more steps, where a step from" article declaration "to" article declaration "satisfies the following:" "(a)" formula -> body_reach',
         '     | "starting from" term "," term "is reachable by" count "or more steps, where a step from" article declaration "to" article declaration "satisfies this condition:" formula -> body_reach',
         'count: "one" | "zero"',
-        'noun: ' + (' | '.join(lit(n) for n in words.sorts.values()) or 'IMPOSSIBLE'),
+        'noun: ' + (' | '.join(content_lit(n) for n in words.sorts.values()) or 'IMPOSSIBLE'),
         ('LABEL: /(?:' + '|'.join(re.escape(l) for l in words.letters.values()) + ')[1-9][0-9]*/'
          if words.letters else 'LABEL: /[^\\s\\S]/'),
     ]
@@ -739,19 +820,19 @@ def english_lark_grammar(env, **options):
     relations = [lit(quote(n)) for n, p in env.predicates.items()
                  if len(p.arguments) == 2 and p.arguments[0] == p.arguments[1]]
     rules.append('relation: ' + (' | '.join(relations) or 'IMPOSSIBLE'))
-    atoms = ['"this holds in all cases"', '"this is impossible"', 'term "is the same as" term']
+    atoms = ['"this holds in all cases"', '"this is impossible"', 'term "is the same as"i term']
     relatives = []
     object_relatives = []
     for templates in (words.predicates, words.negatives):
         for name, template in templates.items():
             parts = re.split(r'(\{[01]\})', template)
-            rule = ' '.join('term' if p in ('{0}', '{1}') else lit(p.strip())
+            rule = ' '.join('term' if p in ('{0}', '{1}') else content_lit(p.strip())
                             for p in parts if p.strip())
             atoms.append(rule)
             relatives.append(rule.removeprefix('term '))
             if len(env.predicates[name].arguments) == 2:
                 object_template = template.replace(' {1}', '')
-                object_relatives.append(' '.join('term' if p == '{0}' else lit(p.strip())
+                object_relatives.append(' '.join('term' if p == '{0}' else content_lit(p.strip())
                                                 for p in re.split(r'(\{0\})', object_template) if p.strip()))
     rules.append('atom: ' + ' | '.join(atoms))
     rules.append('relative: ' + (' | '.join(relatives) or 'IMPOSSIBLE'))
