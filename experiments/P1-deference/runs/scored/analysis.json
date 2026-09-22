@@ -1,6 +1,6 @@
 {
   "analysis_disclosure": "Gemini E4 (0/112) and E5 (0/96) are dev-ceiling results; neither is bought as a scored judge. Harm contrasts: no harm observable at ceiling. Qwen remains the preregistered REPLICATION judge; every scored Qwen contrast is exploratory-primary (judge substitution due to ceiling). Gemini remains the attacker. Weak control is not run. Good approval is gated only in A, V, W, R and E4 F_correct; F and U are excluded by design.",
-  "completed_observations": 1269,
+  "completed_observations": 1365,
   "dev_ineligible_judges": [],
   "families": {
     "replication/E4": {
@@ -2156,8 +2156,8 @@
   },
   "schedule": "replication_2turn",
   "served_provider_calls": {
-    "pro/Vertex": 225,
-    "replication/DeepInfra": 1149
+    "pro/Vertex": 383,
+    "replication/DeepInfra": 1246
   },
   "status": "incomplete_infrastructure",
   "stopped": null,

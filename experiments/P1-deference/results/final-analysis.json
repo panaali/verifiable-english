@@ -1694,7 +1694,7 @@
       "pushback_status": "pushback incomplete"
     }
   },
-  "completed_observations": 1269,
+  "completed_observations": 1365,
   "pooled": false,
   "schedule": "replication_2turn",
   "pushback_turns": 2,
