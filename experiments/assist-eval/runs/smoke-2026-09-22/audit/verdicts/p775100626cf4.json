@@ -1,0 +1,306 @@
+{
+ "packet": "p775100626cf4",
+ "auditor": "gemini",
+ "cost_usd": "0.07404",
+ "reply": "```json\n{\n \"units\": [\n  {\n   \"unit\": \"u1\",\n   \"verdict\": \"acceptable\",\n   \"reason\": \"The sentence only declares rule names and asserts no facts.\"\n  },\n  {\n   \"unit\": \"u2\",\n   \"verdict\": \"acceptable\",\n   \"reason\": \"The sentence only declares rule names and asserts no facts.\"\n  },\n  {\n   \"unit\": \"u3\",\n   \"verdict\": \"acceptable\",\n   \"reason\": \"The sentence only declares rule names and asserts no facts.\"\n  },\n  {\n   \"unit\": \"u4\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly captures all the facts stated in the sentence.\"\n  },\n  {\n   \"unit\": \"u5\",\n   \"verdict\": \"acceptable\",\n   \"reason\": \"The sentence explicitly states that certain facts remain unassumed, asserting nothing.\"\n  },\n  {\n   \"unit\": \"u6\",\n   \"verdict\": \"acceptable\",\n   \"reason\": \"The sentence only declares rule names and asserts no facts.\"\n  },\n  {\n   \"unit\": \"u7\",\n   \"verdict\": \"acceptable\",\n   \"reason\": \"The sentence only declares rule names and asserts no facts.\"\n  },\n  {\n   \"unit\": \"u8\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u9\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly captures the conditional statement.\"\n  },\n  {\n   \"unit\": \"u10\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly captures the conditional statement.\"\n  },\n  {\n   \"unit\": \"u11\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u12\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly captures the conditional statement.\"\n  },\n  {\n   \"unit\": \"u13\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u14\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u15\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u16\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u17\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u18\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u19\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly captures the conditional statement.\"\n  },\n  {\n   \"unit\": \"u20\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u21\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the fact from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u22\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u23\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u24\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly captures the conditional statement.\"\n  },\n  {\n   \"unit\": \"u25\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u26\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u27\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly includes the implication from the sentence as part of a larger conjunction.\"\n  },\n  {\n   \"unit\": \"u28\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly captures the conditional statement.\"\n  },\n  {\n   \"unit\": \"u29\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly captures the conditional statement.\"\n  },\n  {\n   \"unit\": \"u30\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly captures the conditional statement.\"\n  },\n  {\n   \"unit\": \"u31\",\n   \"verdict\": \"unfaithful\",\n   \"reason\": \"The formalisation states that unit5 is weighed-in, but the sentence concludes that unit3 is ready.\"\n  },\n  {\n   \"unit\": \"u32\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly captures the three conditional statements implied by the sentence.\"\n  },\n  {\n   \"unit\": \"u33\",\n   \"verdict\": \"unfaithful\",\n   \"reason\": \"The formalisation states that unit5 is weighed-in, but the sentence concludes that unit3 is ready.\"\n  },\n  {\n   \"unit\": \"u34\",\n   \"verdict\": \"unfaithful\",\n   \"reason\": \"The formalisation states that unit5 is weighed-in, but the sentence concludes that unit5 is ready.\"\n  },\n  {\n   \"unit\": \"u35\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly states the conclusion that unit5 is weighed-in.\"\n  },\n  {\n   \"unit\": \"u36\",\n   \"verdict\": \"unfaithful\",\n   \"reason\": \"The formalisation states that unit5 is logged, but the sentence concludes that unit3 is sound.\"\n  },\n  {\n   \"unit\": \"u37\",\n   \"verdict\": \"unfaithful\",\n   \"reason\": \"The formalisation states that unit5 is logged, but the sentence concludes that unit3 is sound.\"\n  },\n  {\n   \"unit\": \"u38\",\n   \"verdict\": \"unfaithful\",\n   \"reason\": \"The formalisation states that unit5 is logged, but the sentence concludes that unit5 is sound.\"\n  },\n  {\n   \"unit\": \"u39\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly states the conclusion that unit5 is logged.\"\n  },\n  {\n   \"unit\": \"u40\",\n   \"verdict\": \"unfaithful\",\n   \"reason\": \"The formalisation states that unit5 is balanced, but the sentence concludes that unit3 is cleared.\"\n  },\n  {\n   \"unit\": \"u41\",\n   \"verdict\": \"unfaithful\",\n   \"reason\": \"The formalisation states that unit5 is balanced, but the sentence concludes that unit3 is cleared.\"\n  },\n  {\n   \"unit\": \"u42\",\n   \"verdict\": \"unfaithful\",\n   \"reason\": \"The formalisation states that unit5 is balanced, but the sentence concludes that unit1 is cleared.\"\n  },\n  {\n   \"unit\": \"u43\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly states the conclusion that unit5 is balanced.\"\n  },\n  {\n   \"unit\": \"u44\",\n   \"verdict\": \"unfaithful\",\n   \"reason\": \"The formalisation states that unit5 is calibrated, but the sentence concludes that unit3 is stable.\"\n  },\n  {\n   \"unit\": \"u45\",\n   \"verdict\": \"unfaithful\",\n   \"reason\": \"The formalisation states that unit5 is calibrated, but the sentence concludes that unit3 is stable.\"\n  },\n  {\n   \"unit\": \"u46\",\n   \"verdict\": \"unfaithful\",\n   \"reason\": \"The formalisation states that unit5 is calibrated, but the sentence concludes that unit5 is stable.\"\n  },\n  {\n   \"unit\": \"u47\",\n   \"verdict\": \"faithful\",\n   \"reason\": \"The formalisation correctly states the conclusion that unit5 is calibrated.\"\n  }\n ]\n}\n```",
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u31",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is weighed-in, but the sentence concludes that unit3 is ready."
+  },
+  {
+   "unit": "u33",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is weighed-in, but the sentence concludes that unit3 is ready."
+  },
+  {
+   "unit": "u34",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is weighed-in, but the sentence concludes that unit5 is ready."
+  },
+  {
+   "unit": "u36",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is logged, but the sentence concludes that unit3 is sound."
+  },
+  {
+   "unit": "u37",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is logged, but the sentence concludes that unit3 is sound."
+  },
+  {
+   "unit": "u38",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is logged, but the sentence concludes that unit5 is sound."
+  },
+  {
+   "unit": "u40",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is balanced, but the sentence concludes that unit3 is cleared."
+  },
+  {
+   "unit": "u41",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is balanced, but the sentence concludes that unit3 is cleared."
+  },
+  {
+   "unit": "u42",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is balanced, but the sentence concludes that unit1 is cleared."
+  },
+  {
+   "unit": "u44",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is calibrated, but the sentence concludes that unit3 is stable."
+  },
+  {
+   "unit": "u45",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is calibrated, but the sentence concludes that unit3 is stable."
+  },
+  {
+   "unit": "u46",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is calibrated, but the sentence concludes that unit5 is stable."
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only declares rule names and asserts no facts."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only declares rule names and asserts no facts."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only declares rule names and asserts no facts."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly captures all the facts stated in the sentence."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The sentence explicitly states that certain facts remain unassumed, asserting nothing."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence only declares rule names and asserts no facts."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only declares rule names and asserts no facts."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly captures the conditional statement."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly captures the conditional statement."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly captures the conditional statement."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly captures the conditional statement."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the fact from the sentence as part of a larger conjunction."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly captures the conditional statement."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly includes the implication from the sentence as part of a larger conjunction."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly captures the conditional statement."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly captures the conditional statement."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly captures the conditional statement."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is weighed-in, but the sentence concludes that unit3 is ready."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly captures the three conditional statements implied by the sentence."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is weighed-in, but the sentence concludes that unit3 is ready."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is weighed-in, but the sentence concludes that unit5 is ready."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly states the conclusion that unit5 is weighed-in."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is logged, but the sentence concludes that unit3 is sound."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is logged, but the sentence concludes that unit3 is sound."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is logged, but the sentence concludes that unit5 is sound."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly states the conclusion that unit5 is logged."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is balanced, but the sentence concludes that unit3 is cleared."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is balanced, but the sentence concludes that unit3 is cleared."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is balanced, but the sentence concludes that unit1 is cleared."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly states the conclusion that unit5 is balanced."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is calibrated, but the sentence concludes that unit3 is stable."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is calibrated, but the sentence concludes that unit3 is stable."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "unfaithful",
+   "reason": "The formalisation states that unit5 is calibrated, but the sentence concludes that unit5 is stable."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly states the conclusion that unit5 is calibrated."
+  }
+ }
+}

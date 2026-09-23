@@ -1,0 +1,14 @@
+{
+ "order": [
+  "p775100626cf4"
+ ],
+ "packets": {
+  "p775100626cf4": {
+   "session_dir": "dev/opus/A3/i11e21a96aa6260b7bafaaec82c8810b9",
+   "author": "opus",
+   "arm": "A3",
+   "item_id": "i11e21a96aa6260b7bafaaec82c8810b9",
+   "split": "dev"
+  }
+ }
+}

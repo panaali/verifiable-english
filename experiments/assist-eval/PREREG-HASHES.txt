@@ -1,0 +1,31 @@
+tool_version ve-assist@1 proposer_prompt ve-assist-propose@3 eval_prompts ve-assist-eval-prompts@2
+e1e382bf34b4e525e190bf37a1acbbea6b3941155bd730716d725b492671a5b1  ve/assist/__init__.py
+ce10af073510db08ee87516ecfa8bf73fdcc05e74ac79d7c1ec4c8382dff4b75  ve/assist/api.py
+655e38ada2eb57138bc1ae0b4784805b80b6a70be73fa909cc607a07837dbb0e  ve/assist/cli.py
+fa124d2de0370ffc8dc11b371d5dd04560b4cd3fa0ab79f172a802add4cbafc2  ve/assist/ground.py
+9e57741a412d3f3dd100bd445b7e6a6a6986ee07724978a3d463bab2d9b947f9  ve/assist/premises.py
+36a9e9b1a28ff84a2fa37e780f4374555e3c68ca5586b0f85acce2843163bed1  ve/assist/proposer.py
+f234dbf15b1d3b0d7effa565226d5bd47183ef31dd29e8b5760ab30f093045e8  ve/assist/session.py
+f88e63192f9ff38d2d2252d757f2cbf32981465d0e8fd3925cc7e56de74568de  ve/assist/sources.py
+bade3b49a2b41a37257d7ff403f7209d6d197995005e19fb7ded9a4596c83af7  ve_experiments/assist_eval/__init__.py
+13a1a5b340cdcfc1902b62be90e508c7c71886000d5bf087e7854aadf09fb35e  ve_experiments/assist_eval/__main__.py
+0d15690a010374ba40a44c189ab3ca476fcb65185518a9e60b4f1771354ba49e  ve_experiments/assist_eval/audit.py
+b7ef62b3322ddb4fb71bfffc0f453c4d66b685df4dc3b105d1afb31f9daeb4c5  ve_experiments/assist_eval/authors.py
+702f6efbc9d9e56c2873fcf963335de0088858ce5a33e770b7af9b277f33b0bd  ve_experiments/assist_eval/cli.py
+56d755353ac3fae0f939122f743a3aa7f5779ecdc8a9b8da6df53ef9c6827bd8  ve_experiments/assist_eval/items.py
+8601c1b77a9e16e80ad63a5b2a9505547bfb768f053ac68f469651fb22457401  ve_experiments/assist_eval/loop.py
+3bc36bda72f6117c9c9fa312782c9e65f4365101687e4bc9a8177bf62b5158bc  ve_experiments/assist_eval/pricing.py
+be53d003260058cd7fcb69eb0f292a83b4fe95c1d8496db1283e2c88f7e37ceb  ve_experiments/assist_eval/prompts.py
+aa109841680640ae02ec5e763a716d35d607bf0705ce8aa0f1498be3faa58274  ve_experiments/assist_haiku.py
+a70b2cbd7cd2b957f1c62dea84442874d0d04047afcac9ce8ab158370c16febc  ve_experiments/claude_cli.py
+90049941e277a8e6d0aab9c33aebd266eb026e84053ca2ba3df56cbc4e04f119  ve_experiments/paid.py
+2ae93d44f24ad552c12f2cc0887781fa081346089fbc4da0f8990e07241258f1  prompt:author:A2:text
+5192941a03d6926d9fa979b0c0a131be8a2bbe68af03d66fac6aec09885a9053  prompt:author:A2:native
+71c2ec94312a8613d6e985174bdda9ffb65b1421adbb98e6d21b7500c5b8ad48  prompt:author:A3:text
+f5a9a8a8b314249cbf60a9a6b4897a74d1c0a4a6d3a080ed028eb30e04393dfb  prompt:author:A3:native
+26a7b23c46bfa1ed5abb1cc6be70d9b9efa5c80c6391581372c0392f541b42b6  prompt:author:A4:text
+a71cceab7440e0fd303652879ebb6e59baae4fdf55672ce343913103a99c6eb6  prompt:author:A4:native
+feba35ee91cce7c35fa1a7350324ec7ccb7c25b628315ccaff94342c09870675  prompt:auditor
+ab43a55b4deae588d88f9e6d9118b66041cdeebc0bf41668cef21987d5109487  items:dev:i11e21a96aa6260b7bafaaec82c8810b9,i0e03b71bf431d179be0530712161e8af,i206f6b8e68e5aabae8bf04e2857d1791,idef535ff33c43fd88eabd3d10685d5b6,ib301f2aab289831d1ddf47088674e53c,ie1d380d54c4e8787526c42f06324257e,i1789fdf8e853490fb1b6731e85d63b13,i248c407facd1841580333a6d67d5af90,i0b251ba74b2be0d9f163e75c4b235c7d,i910d7c5f209964573680cb7258301c2a,ia16a766729f914abd691307ee67fec15,id9eed1756a3842c2d7da8f08ce3b9290
+1dc3a1bbcfea18ef4508fe28bef9907e664a52510eadda374cf1d5422ed5652e  items:heldout:if5b624c232f303a7ea33813fddd2f947,i91ead254f0758986c01ed1ec00772758,i40acae41e18c260c0cf1070ace6f47bb,i405d220e0c3e9d683d316caed080ff40,i04583256a917b122dbba470d951b08dc,i3f37a8fd5fc5cb0583cb13798627bcb9,ibdc20cc010b169a9575d0fd6ce2c6f7f,i5440edc69ccbaf5dbe8ce393446a3db7,i31ec957e0813384dc911ee8fa9ddff66,iacc3cfdd3ca7e9113aca6170ed6f3a1d,i12a8d84479b89e5c0fd0c06e21873c2a,id963557d259029d46b52cfbaf6cc1341
+ec1d8f6a5079e9d031c6253e81dfaea1a4d1834a83e240ad43b0b1de6f4687d6  config:{"arms": ["A2", "A3", "A4"], "author_output_tokens": 16000, "authors": ["opus", "haiku", "gemini"], "budget_usd_per_item": 2.0, "calls_per_turn": 10, "claude_account": "saeedi.danial", "decision_threshold": "proceed to a cost-charged P5 VE-arm DEV run with the tool iff, for at least one author, A3 or A4 reaches faithful_complete >= 6/12 on the HELD-OUT items", "gemini_max_input_tokens": 190000, "gemini_thinking_level": "LOW (ve_experiments.paid.VertexBackend)", "heldout": "12 P5 scored items, seeded: one per family for 12 of 24 families, 4 benign/4 shift/4 smuggle", "max_tool_calls": 250, "max_turns": 60, "opus_effort": "medium", "pricing": "ve_experiments/assist_eval/pricing.py", "success": "tool status success (targets certified by replay, all steps certified, coverage, no load-bearing unanchored assumption, no renamed conclusion, consistent assumptions) AND blind cross-family fidelity audit pass"}

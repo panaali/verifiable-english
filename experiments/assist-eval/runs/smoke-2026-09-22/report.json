@@ -1,0 +1,43 @@
+{
+ "a1": "A1 (existing P5 one-shot, Gemini 3.1 Pro, DEV only): surface VE 0/12 replay after one repair ($1.145812, ve-codex experiments/P5-shifting-definitions/AUTHORING-FEASIBILITY-RESULTS.md); schema-constrained JSON 0/12 ($1.827890 probe, JSON-AUTHORING-RESULTS.md). Fidelity not assessed.",
+ "table": [
+  {
+   "split": "dev",
+   "author": "opus",
+   "arm": "A3",
+   "n": 1,
+   "tool_success": 1,
+   "audit_pass": 0,
+   "certified_faithful": 0,
+   "certified_faithful_benign": "0/1",
+   "certified_unfaithful": 1,
+   "faithful_complete": 0,
+   "flawed_certified_alarm": 0,
+   "gap_located": 0,
+   "mean_spent_usd": 0.2732,
+   "total_spent_usd": 0.2732,
+   "audited": 1
+  }
+ ],
+ "rows": [
+  {
+   "split": "dev",
+   "author": "opus",
+   "arm": "A3",
+   "item_id": "i11e21a96aa6260b7bafaaec82c8810b9",
+   "stop_reason": "finish",
+   "turns": 3,
+   "tool_calls": 30,
+   "kind": "benign",
+   "spent_usd": "0.2732414",
+   "audited": true,
+   "tool_success": true,
+   "audit_pass": false,
+   "certified_faithful": false,
+   "certified_unfaithful": true,
+   "gap_route": false,
+   "faithful_complete": false,
+   "flawed_certified_alarm": false
+  }
+ ]
+}
