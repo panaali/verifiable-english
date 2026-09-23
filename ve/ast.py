@@ -5,6 +5,7 @@ typed claim only after checking under its environment. Every public semantic
 consumer checks its inputs; Python type annotations are not validation evidence.
 """
 from dataclasses import dataclass
+import re
 from typing import TypeAlias
 
 from .environment import Environment
@@ -23,7 +24,26 @@ class Const:
     name: str
 
 
-Term: TypeAlias = Var | Const
+@dataclass(frozen=True, slots=True)
+class Num:
+    """An integer numeral (order@0). Wire form: canonical decimal string."""
+    value: int
+
+
+@dataclass(frozen=True, slots=True)
+class Add:
+    left: "Term"
+    right: "Term"
+
+
+@dataclass(frozen=True, slots=True)
+class Scale:
+    """Multiplication by a literal integer; `-t` is Scale(-1, t), `t - u` is Add(t, Scale(-1, u))."""
+    coefficient: int
+    term: "Term"
+
+
+Term: TypeAlias = Var | Const | Num | Add | Scale
 
 
 @dataclass(frozen=True, slots=True)
@@ -112,7 +132,47 @@ class Reach:
     right: Term
 
 
-Formula: TypeAlias = Top | Bottom | Unary | Binary | Eq | Not | And | Or | Implies | Forall | Exists | Reach
+@dataclass(frozen=True, slots=True)
+class Lt:
+    left: Term
+    right: Term
+
+
+@dataclass(frozen=True, slots=True)
+class Le:
+    left: Term
+    right: Term
+
+
+Formula: TypeAlias = Top | Bottom | Unary | Binary | Eq | Not | And | Or | Implies | Forall | Exists | Reach | Lt | Le
+
+INT_SORT = "$int"
+MAX_NUMERAL_CHARS = 40
+_DECIMAL = re.compile(r"-?(?:0|[1-9][0-9]*)\Z", re.ASCII)
+
+
+def integer_value(value) -> int:
+    """Validate a Python integer used as a numeral or coefficient (not Boolean)."""
+    if type(value) is not int:
+        raise TypeMismatch("Integer literals must be Python int values (not Boolean)")
+    if len(str(value)) > MAX_NUMERAL_CHARS:
+        raise ResourceLimit(f"Integer literal exceeds {MAX_NUMERAL_CHARS} characters")
+    return value
+
+
+def decimal_from_wire(text) -> int:
+    """Canonical decimal string: optional minus, no leading zeros, no -0."""
+    if type(text) is not str:
+        raise SyntaxError("Integer wire values must be canonical decimal strings")
+    if len(text) > MAX_NUMERAL_CHARS:
+        raise ResourceLimit(f"Integer literal exceeds {MAX_NUMERAL_CHARS} characters")
+    if not _DECIMAL.match(text) or text == "-0":
+        raise SyntaxError(f"Non-canonical integer literal {text!r}")
+    return int(text)
+
+
+def decimal_to_wire(value: int) -> str:
+    return str(integer_value(value))
 
 
 @dataclass(frozen=True, slots=True)
@@ -136,8 +196,10 @@ class _Checker:
         if self.nodes > MAX_NODES:
             raise ResourceLimit("AST exceeds 10,000 nodes")
 
-    def term(self, node, context):
+    def term(self, node, context, depth=1):
         self.tick()
+        if depth > MAX_DEPTH:
+            raise ResourceLimit("Arithmetic term exceeds 64 nesting levels")
         if type(node) is Var:
             if type(node.index) is not int or not 0 <= node.index <= MAX_INDEX:
                 raise UnboundVariable("Variable index must be a bounded nonnegative integer (not Boolean)")
@@ -148,6 +210,21 @@ class _Checker:
             if type(node.name) is not str or node.name not in self.env.constants:
                 raise UnknownSymbol(f"Unknown constant {node.name!r}")
             return self.env.constants[node.name].sort
+        if type(node) in (Num, Add, Scale):
+            if not getattr(self.env, "order", False):
+                raise UnsupportedProfile("Integer arithmetic requires order@0")
+            if type(node) is Num:
+                integer_value(node.value)
+                return INT_SORT
+            if type(node) is Scale:
+                integer_value(node.coefficient)
+                parts = (node.term,)
+            else:
+                parts = (node.left, node.right)
+            for part in parts:
+                if self.term(part, context, depth + 1) != INT_SORT:
+                    raise TypeMismatch("Arithmetic requires integer operands")
+            return INT_SORT
         raise TypeMismatch("Expected a variable or constant term")
 
     def formula(self, node, context=(), depth=1):
@@ -190,6 +267,11 @@ class _Checker:
                 raise TypeMismatch("Unknown closure edge variant")
             if self.term(node.left, context) != sort or self.term(node.right, context) != sort:
                 raise TypeMismatch("Closure endpoints must have the edge sort in the outer context")
+        elif kind in (Lt, Le):
+            if not getattr(self.env, "order", False):
+                raise UnsupportedProfile("Comparisons require order@0")
+            if self.term(node.left, context) != INT_SORT or self.term(node.right, context) != INT_SORT:
+                raise TypeMismatch("Comparisons require integer terms")
         elif kind is Eq:
             left, right = self.term(node.left, context), self.term(node.right, context)
             if left != right:
@@ -228,6 +310,14 @@ def _to_data(node):
         return ["var", node.index]
     if kind is Const:
         return ["const", node.name]
+    if kind is Num:
+        return ["num", decimal_to_wire(node.value)]
+    if kind is Add:
+        return ["add", _to_data(node.left), _to_data(node.right)]
+    if kind is Scale:
+        return ["scale", decimal_to_wire(node.coefficient), _to_data(node.term)]
+    if kind in (Lt, Le):
+        return ["lt" if kind is Lt else "le", _to_data(node.left), _to_data(node.right)]
     if kind in (Top, Bottom):
         return ["top" if kind is Top else "bottom"]
     if kind is Unary:
@@ -262,15 +352,19 @@ class _Decoder:
         self.nodes = 0
 
     def decode(self, data, depth=1, term=False):
+        # Formula depth and term depth are separate budgets, matching the type
+        # checker (_Checker.term restarts at depth 1 under each atom) and the
+        # Lean order decoder; every AST the checker accepts round-trips.
         self.nodes += 1
-        if self.nodes > MAX_NODES or depth > MAX_DEPTH + (1 if term else 0):
+        if self.nodes > MAX_NODES or depth > MAX_DEPTH:
             raise ResourceLimit("AST exceeds depth or node budget")
         if type(data) is not list or not data or type(data[0]) is not str:
             raise SyntaxError("AST nodes must be nonempty tagged JSON arrays")
         tag = data[0]
-        arities = {"var": 2, "const": 2} if term else {"top": 1, "bottom": 1, "unary": 3,
+        arities = {"var": 2, "const": 2, "num": 2, "add": 3, "scale": 3} if term else {
+                   "top": 1, "bottom": 1, "unary": 3,
                    "binary": 4, "eq": 3, "not": 2, "and": 3, "or": 3, "implies": 3,
-                   "forall": 3, "exists": 3, "reach": 5}
+                   "forall": 3, "exists": 3, "reach": 5, "lt": 3, "le": 3}
         if tag not in arities or len(data) != arities[tag]:
             raise SyntaxError(f"Unknown AST tag or incorrect arity: {tag!r}")
         if tag == "var":
@@ -279,14 +373,23 @@ class _Decoder:
             return Var(data[1])
         if tag == "const":
             return Const(data[1])
+        if tag == "num":
+            return Num(decimal_from_wire(data[1]))
+        if tag == "add":
+            return Add(self.decode(data[1], depth + 1, True), self.decode(data[2], depth + 1, True))
+        if tag == "scale":
+            return Scale(decimal_from_wire(data[1]), self.decode(data[2], depth + 1, True))
+        if tag in ("lt", "le"):
+            return (Lt if tag == "lt" else Le)(self.decode(data[1], 1, True),
+                                               self.decode(data[2], 1, True))
         if tag in ("top", "bottom"):
             return Top() if tag == "top" else Bottom()
         if tag == "unary":
-            return Unary(data[1], self.decode(data[2], depth + 1, True))
+            return Unary(data[1], self.decode(data[2], 1, True))
         if tag == "binary":
-            return Binary(data[1], self.decode(data[2], depth + 1, True), self.decode(data[3], depth + 1, True))
+            return Binary(data[1], self.decode(data[2], 1, True), self.decode(data[3], 1, True))
         if tag == "eq":
-            return Eq(self.decode(data[1], depth + 1, True), self.decode(data[2], depth + 1, True))
+            return Eq(self.decode(data[1], 1, True), self.decode(data[2], 1, True))
         if tag == "reach":
             edge = data[2]
             if type(edge) is not list or not edge or type(edge[0]) is not str:
@@ -297,8 +400,8 @@ class _Decoder:
                 edge = Body(edge[1], self.decode(edge[2], depth + 1))
             else:
                 raise SyntaxError("Unknown Reach edge tag or incorrect arity")
-            return Reach(data[1], edge, self.decode(data[3], depth + 1, True),
-                         self.decode(data[4], depth + 1, True))
+            return Reach(data[1], edge, self.decode(data[3], 1, True),
+                         self.decode(data[4], 1, True))
         if tag == "not":
             return Not(self.decode(data[1], depth + 1))
         if tag in ("and", "or", "implies"):
