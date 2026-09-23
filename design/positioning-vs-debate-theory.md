@@ -46,8 +46,10 @@ effect vanishes by 32B (`SYNTHESIS.md` §A1).
 machine-checked conjunction is the *worst possible* node for PE debate's ρ-stability, so checked
 deductions do not help there and arguably hurt. Second, BC20's canonical obfuscated argument (RSA: "no
 factor below X" and "no factor above X") is a **valid** deduction from **false leaves** — our checker
-certifies it and catches nothing. Third, PE §8's own dichotomy classifies mathematical proofs as the
-*unstable* class, i.e. exactly the class their protocol cannot exploit.
+certifies it and catches nothing *when leaves are accepted without proof* (under mandatory proof the false leaf
+cannot be accepted; see §4 and correction 2). Third, PE §8's own dichotomy classifies mathematical proofs as the
+*unstable* class, i.e. exactly the class their protocol cannot exploit. (The ρ = N objection applies to leaves that
+are estimated, not to leaves that are proved.)
 
 ---
 
@@ -228,19 +230,21 @@ carries a certificate — hence `Entails` over all admissible structures — or 
 obligation, or is a `gap` with a finite countermodel the judge evaluates in one scenario. The search
 space of `N` plausible-looking steps collapses to the declared leaf set.
 
-**Where it does not.** BC20's own canonical example is immune. "No prime factor less than X" ∧ "no
+**Where it does not (under leaf acceptance).** BC20's own canonical example is immune if leaves are accepted without proof. "No prime factor less than X" ∧ "no
 prime factor greater than X" ⟹ "no prime factors" is a **valid** inference; the flaw is a false leaf,
 and locating it is factoring. Our checker certifies the edge and catches nothing. Worse, BC20's
 construction recipe (§"General method") explicitly manufactures *false subclaims*, not invalid
 inferences: "you have a large number of fairly substantive and relevant false claims that you're
-allowed to assume." So on the literature's paradigm cases, VE's contribution to obfuscation is **zero**,
+allowed to assume." So on the literature's paradigm cases, VE's contribution to obfuscation is **nothing under leaf acceptance**,
 and this must be said plainly.
+
+**Under mandatory proof (correction 2026-09-22).** Under a mandatory-proof rule (nothing is accepted unless VE's verified checker derives it from declared, reviewed foundations), a dishonest prover cannot win by assuming false sub-claims; this defeats the Barnes-Christiano construction for fully formalised claims. Limits: the honest side wins only when the truth has an affordable proof (otherwise "unresolved"); proofs beyond budget (debate's PSPACE regime); foundation leaves accepted without proof; formalisation faithfulness; cost. The benefit comes from sound proof checking, not from VE's English surface.
 
 **Migration map.**
 
 | Destination | Addressed by | Strength |
 |---|---|---|
-| Leaf premises | **Their** estimator (PE soundness); VE nothing | Their result, not ours |
+| Leaf premises | Under leaf acceptance: **their** estimator (PE soundness), VE nothing. Under mandatory proof: a false sub-claim cannot be proved, so only foundation leaves accepted without proof remain | Estimator: their result. Mandatory proof: soundness only; completeness needs an affordable proof |
 | The formalisation (root ≠ task) | VE `challenge-formalisation` + oracle `DIFFERENT` with a checked distinguishing model | Procedural move, no guarantee |
 | Vocabulary / merged predicate | VE `split-predicate`, voiding certificates over the split symbol; cross-examination (per D5.5) | Procedural; checker "blind by construction" (`debate-protocol.md`) |
 | Omitted requirements | Nothing, in either | Open in both |
@@ -318,8 +322,9 @@ estimator assign probabilities the prover cannot distinguish from truth; it is s
 obfuscation, but useful only for ρ-stable arguments. Their §8 already proposes combining Lean proofs
 for precise subclaims with debate for fuzzy ones — our architecture, in their words. Working through
 their Definition 5.3, a machine-checked conjunction over N leaves has ρ exactly N, the worst possible
-value, so verified deductions do not weaken the stability assumption; they relocate it onto the least
-favourable node shape. Verifiable English's defensible contribution is therefore not theoretical. It
+value when those leaves are estimated, so verified deductions over estimated leaves do not weaken the stability
+assumption; they relocate it onto the least favourable node shape. Proved leaves are different: under a mandatory-proof
+rule a dishonest prover cannot win by assuming false sub-claims (correction 2 below). Verifiable English's defensible contribution is therefore not theoretical. It
 is an implemented verified substrate plus measurements they explicitly ask for: where obfuscation
 actually hides, and what stability looks like in real arguments.
 
@@ -384,3 +389,18 @@ BC20 (Alignment Forum).
 - Arnesen, Rein, Michael (2024), *Training language models to win debates with self-play improves
   judge accuracy*.
 - Michael et al. (2023), *Debate helps supervise unreliable experts*, arXiv:2311.08702.
+
+
+> **Correction 2 (2026-09-22, after re-reading BC20, DED, PE and SC in full; `~/code/manage-agents/reviews/obfuscation-recheck.md`).**
+> "VE contributes nothing to obfuscated arguments" must read "nothing *under leaf acceptance*": it holds only for a
+> protocol that ACCEPTS leaves without proof. Under a
+> MANDATORY-PROOF rule (nothing is accepted unless the verified checker derives it from declared, reviewed foundations),
+> a dishonest prover cannot win by assuming false sub-claims: this defeats the Barnes-Christiano construction for fully
+> formalised claims (soundness). BC20 itself: with enough budget, "just have both debaters write out their entire proof,
+> and run a checker"; PE section 8 proposes Lean proofs for mathematical subclaims plus debate for fuzzier ones. The honest
+> side wins only when the truth has an affordable proof (completeness); otherwise the result is "unresolved", which is
+> safe but unhelpful. Not covered: proofs longer than the budget (the PSPACE regime debate targets); foundation leaves
+> accepted without proof (physical laws, idealisations, tolerances, empirical claims), where estimation is still needed;
+> formalisation faithfulness (e.g. the train example: the flaw moves to one visible model-choice leaf); cost (measured on
+> one self-reviewed pilot: iceberg root proved in 912 s). The rho = N objection applies to estimated leaves, not proved
+> ones. See `design/vex-mandatory-evidence.md` for extending this to statistical, approximate and heuristic claims.

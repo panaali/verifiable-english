@@ -169,6 +169,9 @@ def export_grammar(env: Environment, *, dialect: str = "lark", mode: str = "full
     ``wrapper=True`` generates a JSON object with a grammar-constrained ``ve``
     string and an unconstrained JSON ``explanation`` string, in that key order.
     """
+    if getattr(env, "order", False):
+        from .errors import UnsupportedProfile
+        raise UnsupportedProfile("Grammar export does not yet cover order@0 integer terms")
     if not isinstance(env, Environment):
         raise TypeError("env must be a validated Environment")
     if dialect not in ("lark", "gbnf", "ebnf"):

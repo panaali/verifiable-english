@@ -1,3 +1,5 @@
+> SUPERSEDED on 2026-09-22 by ROADMAP.md (queue update now in its section 4) - kept for history; do not edit.
+
 # VE plan v3: gated pilots (supersedes PLAN-V2.md)
 
 PLAN-V2 was reviewed before any spend by GPT-6 Astra (xhigh) and Claude Fable 5.1 (xhigh):
@@ -61,3 +63,10 @@ primary source; the name "obfuscated-arguments benchmark".
 External timestamps for every preregistration (hash published somewhere dated before scoring); replay E4's scored
 certificates through the Lean executable; fix the evidence-layer mathematics in `design/evidence-layer-design.md`;
 "E0 by execution" is folded into package 3.
+
+## Queue update (2026-09-22, after the obfuscation re-check, commit 627a989)
+Order: (1) pushback study; (2) T1c separating certificates; (3) OBFUSCATION STUDY (new): Barnes-Christiano-style chains
+of plausible leaves with one false (including statistical/approximate leaves); arms judge alone, debate, and
+mandatory-proof / mandatory-evidence VE (VEX, design/vex-mandatory-evidence.md); metrics false certifications and honest
+claims left unestablished; seeded with the iceberg Lean pilot and the train and wrapping-ball trees. Plan review by Astra
+xhigh + Opus xhigh before any spend (Astra available after Sep 26 21:34).

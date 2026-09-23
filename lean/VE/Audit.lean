@@ -1,5 +1,8 @@
 import VE.Order.Conservativity
 import VE.Order.Gate
+import VE.Order.ModelCheck
+import VE.Order.ProfileGate
+import VE.Order.WireGate
 import VE.Closure.Bridge
 import VE.CertificateWire
 import VE.TableauChecks
@@ -266,9 +269,82 @@ import Iceberg
 #print axioms VE.Order.numerals_distinct
 #print axioms VE.Order.term_defined
 #print axioms VE.Order.tupleTyped_expand
+#print axioms VE.Order.ProfileGate.bind_ok
+#print axioms VE.Order.ProfileGate.exactFields_keys
+#print axioms VE.Order.ProfileGate.getObjVal_mem
+#print axioms VE.Order.ProfileGate.impl_get_mem
+#print axioms VE.Order.ProfileGate.nodup_length_le
+#print axioms VE.Order.certificate_runCase_profiles
+#print axioms VE.Order.checkCountermodel_iff
+#print axioms VE.Order.checkCountermodel_sound
+#print axioms VE.Order.closure_decode_profiles
+#print axioms VE.Order.closure_runCase_profiles
+#print axioms VE.Order.decode_profiles_accepted
+#print axioms VE.Order.domainCheck_iff
+#print axioms VE.Order.lookup_isSome
+#print axioms VE.Order.lookup_mem
+#print axioms VE.Order.order_not_accepted
+#print axioms VE.Order.singular_order_not_accepted
+#print axioms VE.Order.singular_order_profile_gate
+#print axioms VE.Order.order_profile_gate
+#print axioms VE.Order.profile_gate
+#print axioms VE.Order.runEvaluationCaseReported_eq
+#print axioms VE.Order.tupleCheck_iff
+#print axioms VE.Order.v0_decode_profiles
+#print axioms VE.Order.v0_runCase_profiles
+#print axioms VE.Order.validModel_iff
 
 #print axioms VE.Closure.Tableau.induct_sound
 #print axioms VE.Closure.closure_induction
 #print axioms VE.Closure.inductionStep_denote
 #print axioms VE.Closure.invariantAt_denote
 #print axioms VE.Closure.reachable_induction
+#print axioms VE.Order.sumTerms_append
+#print axioms VE.Order.sumTerms_smul
+#print axioms VE.Order.Lin.eval_zero
+#print axioms VE.Order.Lin.eval_add
+#print axioms VE.Order.Lin.eval_smul
+#print axioms VE.Order.Lin.eval_sub
+#print axioms VE.Order.Lin.eval_shift
+#print axioms VE.Order.linearize_denote
+#print axioms VE.Order.sumTerms_insert
+#print axioms VE.Order.sumTerms_collect
+#print axioms VE.Order.Lin.eval_normal
+#print axioms VE.Order.sumTerms_zero
+#print axioms VE.Order.sumTerms_divide
+#print axioms VE.Order.floor_bound
+#print axioms VE.Order.tighten_sound
+#print axioms VE.Order.Tableau.token_defined
+#print axioms VE.Order.Tableau.bindings_extend
+#print axioms VE.Order.Tableau.holds_extend
+#print axioms VE.Order.Tableau.typed_extend
+#print axioms VE.Order.Tableau.add_holds
+#print axioms VE.Order.Tableau.one_holds
+#print axioms VE.Order.Tableau.two_holds
+#print axioms VE.Order.Tableau.object_of_domain
+#print axioms VE.Order.Tableau.gamma_holds
+#print axioms VE.Order.Tableau.delta_witness
+#print axioms VE.Order.Tableau.next_sound
+#print axioms VE.Order.Tableau.compare_ints
+#print axioms VE.Order.Tableau.constraint_sound
+#print axioms VE.Order.Tableau.addLiterals_sound
+#print axioms VE.Order.Tableau.addCuts_sound
+#print axioms VE.Order.Tableau.comboLin_sound
+#print axioms VE.Order.Tableau.runCuts_sound
+#print axioms VE.Order.Tableau.farkas_sound
+#print axioms VE.Order.Tableau.neqSplit_sound
+#print axioms VE.Order.Tableau.closed_denote
+#print axioms VE.Order.Tableau.bindings_get
+#print axioms VE.Order.Tableau.termToken_denote
+#print axioms VE.Order.Tableau.known_defined
+#print axioms VE.Order.Tableau.objectEq_sound
+#print axioms VE.Order.Tableau.hasLe_sound
+#print axioms VE.Order.Tableau.sameValue_sound
+#print axioms VE.Order.Tableau.closed_sound
+#print axioms VE.Order.Tableau.checkChildren_member
+#print axioms VE.Order.Tableau.replay_sound
+#print axioms VE.Order.Tableau.checkCertificate_sound
+#print axioms VE.Order.Wire.Query.accepts_sound
+#print axioms VE.Order.order_decode_profiles
+#print axioms VE.Order.order_route_gate
+#print axioms VE.Order.combined_profiles_rejected

@@ -192,11 +192,26 @@ checker_record, budget_after, prev_hash}`, replayable end-to-end from the enviro
 
 ### (a) Obfuscated arguments — the lead case
 
+> **Correction 2 (2026-09-22, after re-reading BC20, DED, PE and SC in full; `~/code/manage-agents/reviews/obfuscation-recheck.md`).**
+> "VE contributes nothing to obfuscated arguments" must read "nothing *under leaf acceptance*": it holds only for a
+> protocol that ACCEPTS leaves without proof. Under a
+> MANDATORY-PROOF rule (nothing is accepted unless the verified checker derives it from declared, reviewed foundations),
+> a dishonest prover cannot win by assuming false sub-claims: this defeats the Barnes-Christiano construction for fully
+> formalised claims (soundness). BC20 itself: with enough budget, "just have both debaters write out their entire proof,
+> and run a checker"; PE section 8 proposes Lean proofs for mathematical subclaims plus debate for fuzzier ones. The honest
+> side wins only when the truth has an affordable proof (completeness); otherwise the result is "unresolved", which is
+> safe but unhelpful. Not covered: proofs longer than the budget (the PSPACE regime debate targets); foundation leaves
+> accepted without proof (physical laws, idealisations, tolerances, empirical claims), where estimation is still needed;
+> formalisation faithfulness (e.g. the train example: the flaw moves to one visible model-choice leaf); cost (measured on
+> one self-reviewed pilot: iceberg root proved in 912 s). The rho = N objection applies to estimated leaves, not proved
+> ones. See `design/vex-mandatory-evidence.md` for extending this to statistical, approximate and heuristic claims.
+
 > **Correction (2026-09-21, after a full reading of the primary sources; overrides the text below).** In Barnes and
 > Christiano's obfuscated arguments the premises are already explicit and the steps are valid (their RSA example and
 > their closing formal-logic example): one explicit sub-claim is false and NEITHER debater can tractably find which.
-> Explicit premises and checked deductions therefore contribute nothing on the canonical cases, and a certified
-> conjunction over N leaves has the worst stability parameter (rho = N). See `positioning-vs-debate-theory.md` section 4.
+> Explicit premises and checked deductions therefore contribute nothing on the canonical cases *under leaf acceptance*
+> (under mandatory proof they defeat the construction for fully formalised claims; see Correction 2), and a certified
+> conjunction over N *estimated* leaves has the worst stability parameter (rho = N). See `positioning-vs-debate-theory.md` section 4.
 > What VE does target is a different, named problem: smuggled premises, equivocation and a term defined differently in
 > different sub-claims (safety-case sketch D5.5, "gerrymandering"), which prover-estimator debate does not handle and
 > cross-examination does; cross-examination is the baseline to beat. This section is not "the lead case"; F0 is the
@@ -267,8 +282,9 @@ cost-matched comparisons (top up the prose arms' critic tokens until dollars are
 > **Correction (2026-09-21, after a full reading of the primary sources; overrides the text below).** In Barnes and
 > Christiano's obfuscated arguments the premises are already explicit and the steps are valid (their RSA example and
 > their closing formal-logic example): one explicit sub-claim is false and NEITHER debater can tractably find which.
-> Explicit premises and checked deductions therefore contribute nothing on the canonical cases, and a certified
-> conjunction over N leaves has the worst stability parameter (rho = N). See `positioning-vs-debate-theory.md` section 4.
+> Explicit premises and checked deductions therefore contribute nothing on the canonical cases *under leaf acceptance*
+> (under mandatory proof they defeat the construction for fully formalised claims; see Correction 2), and a certified
+> conjunction over N *estimated* leaves has the worst stability parameter (rho = N). See `positioning-vs-debate-theory.md` section 4.
 > What VE does target is a different, named problem: smuggled premises, equivocation and a term defined differently in
 > different sub-claims (safety-case sketch D5.5, "gerrymandering"), which prover-estimator debate does not handle and
 > cross-examination does; cross-examination is the baseline to beat. This section is not "the lead case"; F0 is the
@@ -374,5 +390,5 @@ forged-checker arm collapses. It would **not** show that VE helps a human, that 
 anything (the model-only arms are indifferent to it), that real frontier work products are formalisable (E0 says much
 of policy and requirements text is not), that an honest agent can afford certificates on a real task, that the planted
 attacks occur at any meaningful rate in the wild, that the leaf and formalisation layers — where the obfuscated-
-arguments problem actually lives after the checker has done its work — are solved rather than made visible, or that a
+arguments problem actually lives after the checker has done its work, for leaves accepted without proof — are solved rather than made visible, or that a
 checked conditional argument should ever be read as an approval.

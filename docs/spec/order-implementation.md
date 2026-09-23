@@ -1,122 +1,151 @@
-# Implemented order boundary: Lean Stage 1 only
+# order@0: implemented boundary (Stages 1–3, round 1 of language expansion)
 
-This is a quota-conscious, green checkpoint on `codex/order`, branched from
-`ve-integration`. The Lean foundation took substantially more work than expected;
-the implementation stops after Stage 1. It does not expose an order environment
-through Python or JSON. No E0 coverage gain or differential-conformance count is
-claimed. See [ORDER.md](../../lean/ORDER.md) for the exact proved statements.
+Branch `opus/numbers`, from `ve-integration` after slice (1) (finite-model gate
+and general profile gate, merged at 05ad851). This round adds slice (2), the
+Python stage, and slice (3), Farkas certificates with a Lean soundness proof.
+The Lean statements are in [ORDER.md](../../lean/ORDER.md). The Stage 1 record
+(`codex/order`) is in the git history of this file.
 
-The fragment adds a disjoint built-in integer sort, literal integers, addition,
-signed numeral scaling, `<`, `≤`, and ordinary equality. Minus and subtraction
-are term constructors' definitional abbreviations. Standard integers are used
-without overflow. User-domain quantifiers remain available; integer quantifiers
-are rejected. This permitted implementation choice avoids inventing a bounded
-meaning for an unbounded quantifier and avoids relying on unproved Presburger
-elimination. It narrows design B: parity examples and translations needing
-quantified integer field values are not covered by this checkpoint.
+The fragment is ground linear integer arithmetic inside many-sorted relational
+FOL: a built-in integer sort, integer constants, numerals, `+`, scaling by a
+literal integer, `<`, `<=` and equality. Integer terms occur as comparison
+operands and as integer predicate arguments. Quantifiers range over user sorts
+only; integer quantification is rejected, so every integer term is ground and no
+Presburger procedure is needed. Standard unbounded integers, no overflow.
 
-`closure@0` and `order@0` are declared incompatible until a combined syntax,
-denotation and evaluator are implemented and proved. V0 formulas embed
-conservatively into the new core, and every admissible old structure has an
-admissible expansion with standard integers. Closure behavior is preserved by
-leaving its implementation untouched, not by claiming a mixed-language theorem.
+## Wire envelope and identities (frozen before any meaning_id was minted)
 
-There are no arithmetic tableau rules. The existing Lean certificate entry
-point rejects both the order-only and combined envelopes at its profile gate.
-The existing Python environment parser also rejects those profiles. The proposed
-revision in `VE.Order.Gate.envelope` is only a negative-test fixture, not a newly
-accepted wire version. A future Python order oracle must return UNKNOWN for
-arithmetic entailment until a separately proved and bound proof path exists.
-
-Stage 2 requires AST/wire/parser/canonical-printer support, independent typing,
-finite-presentation validation/evaluation/search, versioned identities, all five
-views and their inverses, compact legends, explicit grammar budgets, oracle
-routing and at least 500 generated cases replayed in Python and Lean. Preserve
-every existing v0 and closure identity preimage and corpus fixture. Integer wire
-values must be canonical decimal strings. The current Lean result does not prove
-any correspondence for a future parser, serializer or Python evaluator.
-
-The required search boundary is: **numerals are never enumerated or reassigned**;
-each integer constant is assigned an actual integer (aliases allowed). Candidate
-enumeration may bound those assignments to `[-B,B]` and numeric relation-table
-cells to an explicit finite set, but those are search bounds, not semantic
-integer bounds. No integer domain list is accepted. Predicate tables are complete
-finite extensions, with absent tuples false on all integers. Every candidate
-must pass complete typing/model validation and re-evaluation of all premises and
-the conclusion before a countermodel is returned. `countermodel_sound` applies
-only after that admissibility obligation is discharged. Bounded exhaustion or a
-resource limit is UNKNOWN/NotFound, never entailment. This describes obligations
-for the unimplemented Python search; it is not a search-completeness claim.
-
-Stage 3 requires source-pinned true/false witness pairs in
-`experiments/E0/order_witnesses/`. The existing ledger contains **no FRET order
-movers**: its signal formulas are real-valued. Do not fabricate FRET witnesses
-by integerizing them. Its 14-mover projection assumes the full design including
-integer quantification; it cannot be credited to this narrower implementation.
-Witness selection must re-audit each original translation obligation. Neither
-parity through an unbounded quotient nor relational numeric field lookup may be
-silently replaced by a finite active-domain quantifier.
-
-Rust is out of scope. It will need a separately versioned opt-in envelope,
-arbitrary-precision integer AST/model values and decimal-string codecs, typed
-numeric arguments, matching parser/printer/evaluator/search behavior, numeric
-view/grammar budgets where applicable, identity preservation, profile-gated
-certificates, and replay of the eventual shared order corpus. Its existing v0
-suite remains part of checkpoint regression testing.
-
-## Trusted-code change inventory
-
-Every changed or added implementation file affecting the Lean trust boundary is
-listed here. No existing semantic definition or checker implementation changes.
-
-| File | One-line soundness justification |
-|---|---|
-| `lean/VE/Order/Syntax.lean` | Defines a separate typed extension with literal coefficients and an explicit rejection of integer binders; it cannot change old syntax. |
-| `lean/VE/Order/Typing.lean` | Proves the executable checker equivalent to the independently defined typing predicate. |
-| `lean/VE/Order/Semantics.lean` | Fixes numeric meaning to standard `Int` in a disjoint carrier and proves typed terms defined and distinct numerals unequal. |
-| `lean/VE/Order/Finite.lean` | Defines complete finite predicate extensions over actual integer values and proves executable evaluation equivalent to independent denotation. |
-| `lean/VE/Order/Consequence.lean` | Proves refutation soundness from a semantically valid presentation; no bounded search failure is interpreted as proof. |
-| `lean/VE/Order/Conservativity.lean` | Constructs admissible expansions of arbitrary old structures and proves exact truth preservation and no new old-language entailments. |
-| `lean/VE/Order/Gate.lean` | Proves the unchanged environment gate rejects proposed order and combined profiles; it introduces no acceptance rule. |
-| `lean/VE/Order/Checks.lean` | Adds executable boundary regressions without altering definitions or supplying proof evidence to replay. |
-| `lean/VE/Audit.lean` | Imports the extension and adds every new named theorem to dependency auditing, retaining the existing allowlist. |
-| `lean/VE.lean` | Imports order checks so the ordinary build checks them; no executable certificate dispatch changes. |
-| `lean/axioms.txt` | Regenerated evidence of all audited dependencies, not an input supplying assumptions. |
-
-`tests/test_order_gate.py` is an additional runtime regression only. Documentation
-records limits and continuation obligations. No files under `ve/`, `rust/`, or
-the old v0/closure proof modules are modified; the certificate checker and its
-wire entry point are unchanged.
-
-## Verification at the checkpoint
-
-Base: `768dd518e85f196b379700b913d7288c50b9db74` (`ve-integration` when
-`codex/order` was created). Run from the repository root, sequentially:
-
-```sh
-export UV_CACHE_DIR=/private/tmp/ve-uv-cache
-export LEAN_NUM_THREADS=1
-export CARGO_HOME="$PWD/.cargo-home"
-export CARGO_TARGET_DIR="$PWD/rust/target"
-export CARGO_BUILD_JOBS=1
-lake -d lean build
-uv run python lean/audit.py
-cargo build -j 1 --locked --release --manifest-path rust/Cargo.toml
-VE_LEAN_PREBUILT=1 uv run pytest -q
-cargo test -j 1 --locked --manifest-path rust/Cargo.toml -- --test-threads=1
-git diff --check
+```json
+{"language": "ve.core@0.1", "profiles": ["order@0", "relational-fol@0"],
+ "spec_revision": "ve-v0.1-order-2026-09-22", "vocabulary": {...}}
 ```
 
-Results: Lean build passed, including 29 order boundary checks. The audit passed
-for 49 source files and all 218 named theorems, including 18 new order results;
-no new assumptions were added. Pytest: **775 passed, 2 skipped**, 137.93 seconds.
-The two skips are uninstalled optional `llguidance` and `xgrammar` backends.
-Existing v0 identities, closure views/identities, certificate replay and Lean
-conformance regressions passed in that run. Rust: **16 passed**, no failures or
-ignored tests. Whitespace validation passed. The serial release build primes the
-cache before pytest's existing Rust fixture invokes its unchanged build command.
+* The profile list must be exactly this list. `closure@0 x order@0` is rejected
+  in Python (`UnsupportedProfile`) and in Lean on every route
+  (`combined_profiles_rejected`). The Stage 1 fixture revision
+  `ve-v0.1-order-2026-09-21` stays rejected everywhere.
+* Identity domains: `ve-environment-v0.1-order`, `ve-meaning-v0.1-order`,
+  `ve-model-v0.1-order`, `ve-source-v0.1-order`. v0 and closure identities,
+  views and certificates are unchanged (their fixtures and suites pass as before).
+* `$int` is the reserved spelling of the integer sort. It is not an identifier,
+  so no vocabulary can declare it, a model cannot list a domain for it, and
+  `for every $int x` neither parses nor type-checks. It may appear only as a
+  predicate argument sort or constant sort, and only in an order environment.
 
-There are no changes to `ve/`, `rust/`, `conformance/`,
-`lean/VE/Closure/`, the v0 theorem modules, any `Tableau*.lean` module, or
-`lean/VE/CertificateWire.lean` relative to that base. The only modified existing
-Lean source files are the aggregate import and audit registry.
+### Frozen canonical forms
+
+| Surface (`ve_strict`) | AST data | Notes |
+|---|---|---|
+| `12`, `-5` | `["num", "12"]`, `["num", "-5"]` | Canonical decimal strings: optional `-`, no leading zeros, no `-0`, no `+`, at most 40 characters. A `-` directly before a digit is part of the numeral. |
+| `[t + u]` | `["add", t, u]` | Every sum is bracketed. |
+| `[t - u]` | `["add", t, ["scale", "-1", u]]` | Subtraction is sugar; `[t + -u]` parses to the same AST and prints as `[t - u]`. |
+| `-t` (t not a numeral) | `["scale", "-1", t]` | Negation is sugar. `Scale(-1, Num k)` prints `[-1 * k]`, never `-k`. |
+| `[k * t]` | `["scale", "k", t]` | The coefficient must be a numeral. |
+| `t < u`, `t <= u`, `t equals u` | `["lt", t, u]`, `["le", t, u]`, `["eq", t, u]` | No `>`/`>=` constructors. |
+
+Nothing is normalised: `[@n + 1]` and `[1 + @n]` are different ASTs with
+different meaning_ids forever. `tests/test_order.py::test_frozen_meaning_ids`
+pins four meaning identities and the environment identity. The other views
+render the same terms (`fol_*` with parentheses); `ve_natural`, `ve_fluent` and
+English say "is less than" and "is at most".
+
+## Python stage (slice 2)
+
+`ve/ast.py` (`Num`, `Add`, `Scale`, `Lt`, `Le`; typing), `ve/environment.py`,
+`ve/parser.py`, `ve/printer.py`, `ve/fluent.py`, `ve/model.py`, `ve/evaluate.py`
+and `ve/search.py`. Models give integer constants and integer relation cells as
+canonical decimal strings; absent rows are false.
+
+Countermodel search: numerals are never enumerated or reassigned. Integer
+constants range over a finite *search* set, `[-3, 3]` plus every numeral and
+its neighbours; integer relation cells range over the values of the integer
+argument terms that actually occur. Every candidate is validated and
+re-evaluated before it is returned. These are search bounds, not semantic
+integer bounds: exhaustion is `NotFound`, never entailment.
+
+The grammar export (`ve.grammar`) and the named-FOL adapter (`ve.fol`) raise
+`UnsupportedProfile` for order environments.
+
+## Farkas certificates (slice 3)
+
+`prove_entailment` on an order environment runs an untrusted search
+(`ve/order.py`: tableau rules, Fourier-Motzkin with provenance, gcd cuts,
+branch and bound) and returns a certificate only after independent replay.
+Checker version `ve-order-farkas-checker@1`; the five binding fields are as in
+v0. Trace nodes:
+
+* `close`: complementary formulas, or complementary predicate atoms whose
+  argument pairs are equal by (a) the same resolved token, or one positive
+  object equality between the two tokens, (b) an identical linearizable term,
+  or (c) certified `t <= u` and `u <= t` already on the branch. `P(c+1)` against
+  `not P(1+c)` therefore closes only after two splits, never by normalisation.
+  A negated equality closes on equal arguments by the same evidence.
+* `expand`: the v0 propositional and user-sort quantifier rules.
+* `order-split@1` (`formula`: a `le`/`lt` with linearizable sides): two children,
+  the formula and its negation. This is the `c <= k` or `c >= k + 1` split.
+* `order-neq@1` (`at`: a negated integer equality): children `t < u`, `u < t`.
+* `order-farkas@1` (`cuts`, `literals`, `final_cuts`): each literal reads as
+  `0 <= p` (`t < u` as `t + 1 <= u`; negated `<=`/`<` as the opposite bound;
+  a positive equality as `0 = p`, which alone may take a negative multiplier).
+  Multipliers are canonical decimal strings. Each cut combines literals and
+  earlier cuts with nonnegative multipliers, requires a divisor `g > 0`
+  dividing every collected coefficient, and yields the rounded-down quotient
+  (gcd tightening). The final combination must have every coefficient zero and
+  a negative constant: `0 <= -k`, `k > 0`.
+
+Lean: `VE.Order.Tableau.checkCertificate_sound` (no `sorry`, no custom axioms,
+no `native_decide`; `omega` inside proofs). The Lean route is
+`ve_conformance order`, with case kinds `certificate`, `countermodel` (through
+the proved `checkCountermodel` gate) and `evaluate`.
+
+## English surface
+
+Comparisons only. Rendering: "t is less than u", "t is at most u"; parsing also
+accepts "t is more than u" and "t is at least u" (operands swapped). "At least n"
+is a comparison between terms, never a counting quantifier: "At least 3 items
+are p." does not parse. Integer terms keep the frozen bracketed spelling. In
+order environments, predicate templates containing comparison words fall back
+to the formal wording. The English audit
+(`python -m conformance.english_surface`) includes an `order` vocabulary,
+appended last so every earlier row keeps its seed and digests.
+
+## Conformance (Python vs Lean)
+
+`python -m conformance.order` (report: `conformance/order-report.json`),
+also run by `tests/test_order.py`:
+
+* 546 generated certificates (Farkas sums, rewritten formulas, integer-only
+  gcd/split cases, congruence, quantified, random), accepted by both.
+* 4496 mutated or hand-built certificates: 4493 rejected by both, and 3
+  mutations that happen to remain valid accepted by both. Named hazards (bare
+  close on commuted arguments, `2c = 1` without cuts or with a wrong divisor,
+  negative multipliers, forward cut references, splits on objects, the
+  closure x order envelope) are rejected by both.
+* 106 Python countermodels confirmed by Lean's `checkCountermodel`; 200 random
+  formula/model evaluations identical.
+* Zero disagreements.
+
+## Trusted-code inventory
+
+| File | Role |
+|---|---|
+| `lean/VE/Order/Linear.lean` | Linear forms, linearization, collection, gcd tightening; proved. |
+| `lean/VE/Order/Tableau.lean` | Order tableau checker and `checkCertificate_sound`. |
+| `lean/VE/Order/Wire.lean` | JSON decoders and the `order` route; boundary code, identity digests. |
+| `lean/VE/Order/WireGate.lean` | Order route gate and combined rejection theorems. |
+| `lean/VE/Order/ProfileGate.lean` | Closure branch now also excludes a singular `profile` field; singular `order@0` gate. |
+| `lean/VE/Order/TableauChecks.lean` | Executable regressions. |
+| `lean/Main.lean` | Adds the `order` subcommand; other routes unchanged. |
+| `ve/order.py` | Python replayer (mirror of the Lean checker) and untrusted search. |
+
+## What remains
+
+* Integer quantification, parity/quotients and relational numeric lookups
+  (design B beyond this fragment); FRET order witnesses (no integer movers exist).
+* Rust support; grammar export and named-FOL adapter for order.
+* Object equality in the order tableau is single-step (no congruence closure);
+  such entailments may be `NotFound`. Proof search is incomplete by design;
+  failure is inconclusive.
+* A Lean parser/printer for the order surface (only the evaluator, countermodel
+  gate and certificate checker are compared with Python).
+* Round 2: lemma citation and conservative definitions.
