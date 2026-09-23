@@ -18,6 +18,7 @@ from .search import check_countermodel, find_countermodel, find_distinguishing_m
 from .check import check
 from .entailment import (EntailmentResult, EntailmentCertificateCheck,
                          prove_entailment, check_entailment_certificate)
+from .closure import InductionInvariant
 from .argument import (Claim, Deduction, Evidence, ArgumentGraph, ArgumentResult,
                        check_argument, deduction_identity, outstanding_obligations,
                        predicate_use_panel)

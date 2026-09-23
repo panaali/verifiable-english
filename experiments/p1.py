@@ -126,7 +126,8 @@ def _finding(item_json):
         record["interpretation"] = p["asserted_model"]
     else:
         record["finding"] = "conditional inference follows; premises unassessed"
-    return record
+    from experiments.p1_history import replayed_historical_finding
+    return replayed_historical_finding(record)
 
 
 def finding(item):
