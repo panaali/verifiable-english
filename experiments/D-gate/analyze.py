@@ -60,7 +60,9 @@ STATUSES = MODEL_OUTCOMES + ("ENDPOINT_ERROR",)
 FINAL_LEDGER = ("ok", "error", "infrastructure_error")
 # ledger-<UTC date>.jsonl; ledger-<UTC date>-q<n>.jsonl after the n-th excluded usage-limit rejection that day
 LEDGER_NAME = re.compile(r"^ledger-(\d{4}-\d{2}-\d{2})(?:-q([1-9]\d*))?\.jsonl$")
-ANSWER_LINE = re.compile(r"ANSWER:[ \t]*(YES|NO)")
+ANSWER_LINE = re.compile(r"ANSWER:[ \t]*(YES|NO)", re.I)
+# one markdown heading marker (`#` to `######`) or one list marker (`-`, `*`, `+`, `1.`, `1)`) before the answer
+LINE_PREFIX = re.compile(r"^(?:#{1,6}|[-*+]|\d{1,3}[.)])[ \t]+")
 MARKDOWN_EMPHASIS = re.compile(r"[*_`]")
 TRAILING_PUNCTUATION = re.compile(r"[.!;:,]+$")
 MAX_TOKENS_TEXT = re.compile(r"max[_ ]?output[_ ]?tokens|output[- ]token (?:maximum|limit)|max_tokens", re.I)
@@ -78,13 +80,16 @@ class DataError(Exception):
 
 def parse(text):
     """The answer on the final nonempty line, else UNPARSED. Earlier answer lines never count. The final
-    line may carry markdown emphasis (`**ANSWER: YES**`, `**ANSWER:** NO`) and trailing punctuation."""
+    line may start with one heading or list marker (`## ANSWER: YES`, `- ANSWER: NO`), may carry markdown
+    emphasis (`**ANSWER: YES**`, `**ANSWER:** NO`) and trailing punctuation, and is case-insensitive
+    (`Answer: Yes`)."""
     lines = [line.strip() for line in (text or "").splitlines() if line.strip()]
     if not lines:
         return "UNPARSED"
-    last = TRAILING_PUNCTUATION.sub("", MARKDOWN_EMPHASIS.sub("", lines[-1]).strip()).strip()
+    last = LINE_PREFIX.sub("", lines[-1])
+    last = TRAILING_PUNCTUATION.sub("", MARKDOWN_EMPHASIS.sub("", last).strip()).strip()
     m = ANSWER_LINE.fullmatch(last)
-    return m.group(1) if m else "UNPARSED"
+    return m.group(1).upper() if m else "UNPARSED"
 
 
 def _records(row):
@@ -429,6 +434,9 @@ def item_stats(records, items, gt, k=K):
             # missingness sensitivity: every scheduled sample in the denominator; ENDPOINT_ERROR (and any
             # missing sample) imputed as correct
             error_missing_as_correct=(wrong_valid + len(model) - len(valid)) / k,
+            # joint sensitivity: both corrections at once. INVALID samples leave the denominator and every
+            # ENDPOINT_ERROR (or missing sample) stays in it as a correct answer: wrong_valid / (k - n_invalid)
+            error_joint=wrong_valid / (k - (len(model) - len(valid))) if k > len(model) - len(valid) else None,
             # directional: the numerator needs an actual YES/NO opposite to the reference
             wrong_direction=valid.count(other) / len(model) if model else None,
             wrong_direction_valid_only=valid.count(other) / len(valid) if valid else None)
@@ -550,9 +558,11 @@ def analyse_arm(records, items, gt, arm, n_scheduled, k=K):
     top_share = max(sum(v) for v in by_cluster.values()) / total_err if total_err else None
     valid_only = mean_over(stats, primary_ids, "error_valid_only", 0.0)
     imputed = mean_over(stats, primary_ids, "error_missing_as_correct", 0.0)
+    joint = mean_over(stats, primary_ids, "error_joint", 0.0)
     robust = dict(
         endpoint_errors_imputed_correct=dict(error=r4(imputed), holds=imputed >= GATE),
         invalid_excluded=dict(error=r4(valid_only), holds=valid_only >= GATE),
+        endpoint_errors_correct_and_invalid_excluded=dict(error=r4(joint), holds=joint >= GATE),
         planted_edits_excluded=dict(items=len(no_edits), error=r4(est(no_edits)), holds=est(no_edits) >= GATE),
         artefacts_with_errors=dict(n=len(err_artefacts), artefacts=err_artefacts,
                                    holds=len(err_artefacts) >= MIN_ERROR_ARTEFACTS),
@@ -583,7 +593,8 @@ def analyse_arm(records, items, gt, arm, n_scheduled, k=K):
             artefact_mean_t_interval=dict(mean_of_artefact_means=r4(t_mean), ci95=[r4(x) for x in t_ci]),
             error_mass_share_of_top_artefact=r4(top_share),
             invalid_excluded_sensitivity=r4(valid_only),
-            endpoint_errors_imputed_correct=r4(imputed)),
+            endpoint_errors_imputed_correct=r4(imputed),
+            joint_sensitivity=r4(joint)),
         robustness=robust,
         key_secondary_false_approval_restriction_NO=direction("restriction", "NO"),
         direction_split=dict(

@@ -23,8 +23,8 @@ earlier VE preregistrations; a pending calendar receipt suffices). Nothing is pu
 (outside runs/); the frozen commit is an ancestor of HEAD and nothing under experiments/D-gate, ve or
 ve_experiments changed since it (apart from FREEZE.json, the stamp files and runs/); every frozen hash,
 SYSTEM, the model id, the `claude` binary, the host controls, --account and the account-UUID hash match;
-FREEZE-STAMP.txt and its .ots are committed, name the committed FREEZE.json, and the .ots binds the
-stamp file's SHA-256; and every repository module loaded by the endpoint lies under those paths.
+FREEZE-STAMP.txt and its .ots are committed, name the committed FREEZE.json, and the .ots deserializes,
+commits to the stamp file's SHA-256 and carries a pending calendar or completed Bitcoin attestation; and every repository module loaded by the endpoint lies under those paths.
 
 Execution rules (frozen):
 * One fresh process per sample through ClaudeCLI; no infrastructure retries; a started sample is
@@ -171,11 +171,125 @@ def freeze(account):
           "stamp files before running")
 
 
+OTS_PENDING = bytes.fromhex("83dfe30d2ef90c8e")
+OTS_BITCOIN = bytes.fromhex("0588960d73d71901")
+OTS_UNARY = {0x02, 0x03, 0x08, 0x67, 0xf2, 0xf3}   # sha1 ripemd160 sha256 keccak256 reverse hexlify
+OTS_BINARY = {0xf0, 0xf1}                          # append prepend (varbytes argument)
+
+
+class OtsError(ValueError):
+    pass
+
+
+class _Reader:
+    def __init__(self, b):
+        self.b, self.i = b, 0
+
+    def bytes(self, n):
+        if self.i + n > len(self.b):
+            raise OtsError("truncated proof")
+        out, self.i = self.b[self.i:self.i + n], self.i + n
+        return out
+
+    def varuint(self):
+        v, shift = 0, 0
+        while True:
+            c = self.bytes(1)[0]
+            v |= (c & 0x7f) << shift
+            if not c & 0x80:
+                return v
+            shift += 7
+            if shift > 63:
+                raise OtsError("varuint too long")
+
+    def varbytes(self, max_len):
+        n = self.varuint()
+        if n > max_len:
+            raise OtsError("varbytes too long")
+        return self.bytes(n)
+
+
+def _ots_attestations_manual(r, depth=0):
+    """Parse one serialized Timestamp (the OpenTimestamps tree format) and return its attestation kinds."""
+    if depth > 256:
+        raise OtsError("timestamp tree too deep")
+    found = []
+
+    def branch(tag):
+        if tag == 0x00:
+            atag = r.bytes(8)
+            payload = _Reader(r.varbytes(8192))
+            if atag == OTS_PENDING:
+                uri = payload.varbytes(1000)
+                if not uri.startswith(b"https://") or payload.i != len(payload.b):
+                    raise OtsError("malformed pending attestation")
+                found.append(("pending", uri.decode("ascii")))
+            elif atag == OTS_BITCOIN:
+                found.append(("bitcoin", payload.varuint()))
+            else:
+                found.append(("unknown", atag.hex()))
+        elif tag in OTS_BINARY:
+            r.varbytes(4096)
+            found.extend(_ots_attestations_manual(r, depth + 1))
+        elif tag in OTS_UNARY:
+            found.extend(_ots_attestations_manual(r, depth + 1))
+        else:
+            raise OtsError(f"unknown op tag 0x{tag:02x}")
+
+    tag = r.bytes(1)[0]
+    while tag == 0xff:
+        branch(r.bytes(1)[0])
+        tag = r.bytes(1)[0]
+    branch(tag)
+    return found
+
+
+def ots_attestations(proof, data):
+    """Deserialize the detached OpenTimestamps proof `proof` (bytes) for `data` (bytes) and return its attestations
+    as (kind, detail) pairs. Raises OtsError unless the proof is well formed and commits to SHA-256(data). Uses the
+    opentimestamps library when it is installed and otherwise parses the serialization directly."""
+    digest = hashlib.sha256(data).digest()
+    try:
+        from opentimestamps.core.notary import BitcoinBlockHeaderAttestation, PendingAttestation
+        from opentimestamps.core.op import OpSHA256
+        from opentimestamps.core.serialize import BytesDeserializationContext
+        from opentimestamps.core.timestamp import DetachedTimestampFile
+    except ImportError:
+        r = _Reader(proof)
+        if r.bytes(len(OTS_MAGIC)) != OTS_MAGIC or r.varuint() != 1:
+            raise OtsError("not an OpenTimestamps v1 proof")
+        if r.bytes(1) != b"\x08" or r.bytes(32) != digest:
+            raise OtsError("the proof is not for the SHA-256 of the stamped file")
+        found = _ots_attestations_manual(r)
+        if r.i != len(proof):
+            raise OtsError("trailing bytes after the timestamp")
+        return found
+    try:
+        dtf = DetachedTimestampFile.deserialize(BytesDeserializationContext(proof))
+    except Exception as e:  # the library raises several deserialization error types
+        raise OtsError(f"malformed proof: {e}") from e
+    if not isinstance(dtf.file_hash_op, OpSHA256) or dtf.file_digest != digest:
+        raise OtsError("the proof is not for the SHA-256 of the stamped file")
+    out = []
+    for _, att in dtf.timestamp.all_attestations():
+        if isinstance(att, PendingAttestation):
+            if not att.uri.startswith("https://"):
+                raise OtsError("malformed pending attestation")
+            out.append(("pending", att.uri))
+        elif isinstance(att, BitcoinBlockHeaderAttestation):
+            out.append(("bitcoin", att.height))
+        else:
+            out.append(("unknown", att.TAG.hex()))
+    return out
+
+
 def ots_binds(proof, data):
-    """The detached OpenTimestamps proof `proof` (bytes) is for the SHA-256 of `data` (bytes)."""
-    head = len(OTS_MAGIC)
-    return (proof[:head] == OTS_MAGIC and proof[head:head + 2] == b"\x01\x08"
-            and proof[head + 2:head + 34] == hashlib.sha256(data).digest())
+    """The detached OpenTimestamps proof `proof` deserializes, commits to SHA-256(`data`), and carries at least
+    one pending calendar attestation or a completed (Bitcoin) timestamp. A header alone does not count."""
+    try:
+        return any(kind in ("pending", "bitcoin") for kind, _ in ots_attestations(proof, data))
+    except OtsError:
+        return False
 
 
 def freeze_commit():

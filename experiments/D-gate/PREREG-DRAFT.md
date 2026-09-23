@@ -1,8 +1,10 @@
 # PREREG DRAFT: D gate (raw Opus 5.5 on universal properties of real Cedar and Kubernetes policies)
 
-Status: DRAFT v3, not frozen. No model call has been made. v2 addressed the first Astra xhigh and Opus xhigh reviews;
+Status: DRAFT v4, not frozen. No model call has been made. v2 addressed the first Astra xhigh and Opus xhigh reviews;
 v3 addresses both re-reviews (both FIX FIRST): missingness and formatting gates, truncation from stream evidence,
-the stop-rule bypasses, the account UUID, the OpenTimestamps step and cross-day drift. Before any call:
+the stop-rule bypasses, the account UUID, the OpenTimestamps step and cross-day drift. v4 addresses the third
+reviews (both FIX FIRST): a joint missingness-and-formatting gate, a deserialized OpenTimestamps check, the D-1
+citation and a more tolerant final-line parser. Before any call:
 1. Both reviewers re-review this draft.
 2. `run_raw.py freeze --account <label>` runs on a clean committed tree. It writes `FREEZE.json` with the commit, the
    SHA-256 of every frozen input, and the execution identity (below). `FREEZE.json` is committed.
@@ -10,13 +12,15 @@ the stop-rule bypasses, the account UUID, the OpenTimestamps step and cross-day 
    stamps it with OpenTimestamps (`ots stamp`, as in the earlier VE preregistrations; a pending calendar receipt
    suffices, no Bitcoin claim). Both files are committed. Nothing is pushed.
 4. `run_raw.py run` refuses to call the model unless every freeze check passes, including the committed stamp and a
-   `.ots` receipt that binds it.
+   `.ots` receipt that binds it. The receipt is deserialized: it must commit to the stamp file's SHA-256 and carry a
+   pending calendar attestation or a completed Bitcoin timestamp. A header without a timestamp fails.
 
-**Metric amendment (recorded).** PLAN-FRONTIER's table row for D states the gate as false approval (FA) < 15%. This
-preregistration replaces that with the **total error rate** on the non-edge items (the Gate below). Reason: 25 of
-the 41 primary items are not restriction-NO items, where FA is not defined, and a verifier fixes errors in both
-directions. FA on the 16 restriction-NO items is kept as the key secondary. This overrides the plan's D row for this
-gate.
+**Metric amendment (recorded; PLAN-FRONTIER amendment D-1).** PLAN-FRONTIER's table row for D states the gate as
+false approval (FA) < 15%. Amendment D-1 in PLAN-FRONTIER (commit c56cb55) replaces that with the **total error
+rate** on the non-edge items (the Gate below), and this preregistration applies it. Reason: 25 of the 41 primary
+items are not restriction-NO items, where FA is not defined, and a verifier fixes errors in both directions. FA on
+the 16 restriction-NO items is kept as the key secondary. The formatting and joint gates below go beyond D-1; they
+are stricter, never looser.
 
 ## Question and hypothesis
 
@@ -143,8 +147,10 @@ fail.
 ## Scoring and analysis (`analyze.py`)
 
 * **Parsing.** The answer is the final nonempty line only, and it must be `ANSWER: YES` or `ANSWER: NO`.
-  Surrounding whitespace, markdown emphasis (`*`, `_`, backticks, e.g. `**ANSWER: YES**` or `**ANSWER:** NO`) and
-  trailing punctuation (e.g. `ANSWER: NO.`) are tolerated. An earlier answer line never counts.
+  Tolerated on that line: surrounding whitespace; one leading markdown heading or list marker followed by a space
+  (`#` to `######`, `-`, `*`, `+`, `1.`, `1)`, e.g. `## ANSWER: YES` or `- ANSWER: NO`); markdown emphasis (`*`, `_`,
+  backticks, e.g. `**ANSWER: YES**` or `**ANSWER:** NO`); letter case (`Answer: Yes`); and trailing punctuation
+  (e.g. `ANSWER: NO.`). An earlier answer line never counts.
 * **Sample status:**
   * `YES` or `NO`;
   * `UNPARSED`: a complete reply without a final answer line;
@@ -171,18 +177,25 @@ fail.
   * Item error: the mean over the item's remaining samples.
   * An item with no model outcome is reported by id and counts as error 0.
   * Available-case means alone can let endpoint errors raise an item's error. Two reviewer examples show this:
-    9.8% to 19.5%, and 14.63% to 19.51%, each with 12 endpoint errors. So a required gate condition also imputes
-    every ENDPOINT_ERROR (every missing scheduled response) as correct (see the Gate rule). Missingness therefore
-    can never create a pass.
+    9.8% to 19.5%, and 14.63% to 19.51%, each with 12 endpoint errors. A single correction is not enough: the
+    two failure types can mask each other. With 18 wrong answers, 3 INVALID and 12 endpoint errors, the
+    missingness and formatting estimates are 17.07% and 19.51%, but applying both corrections gives 14.63%. So a
+    required gate condition applies **both at once** (see the Gate rule). Neither missingness, nor formatting
+    failures, nor the two combined can create a pass: every passing condition then rests on actual wrong YES/NO
+    answers alone.
 * **Primary statistic:** the mean item error over the 41 non-edge items at `effort=high`, clustered by artefact.
   * 95% cluster bootstrap over the 28 artefacts (10,000 resamples, seed 0).
   * Also reported: a 95% Student-t interval over the artefact means, and the error share of the top artefact.
-* **Gate rule (high effort only).** PASS iff all six hold:
+* **Gate rule (high effort only).** PASS iff all seven hold:
   * the point estimate is ≥ 0.15;
   * **missingness:** with every ENDPOINT_ERROR imputed as correct (item error = errors ÷ 3 scheduled samples), the
     estimate is ≥ 0.15;
   * **formatting:** with the INVALID samples excluded (valid-only item means; an item without a valid sample counts
     as 0), the estimate is ≥ 0.15;
+  * **joint (missingness and formatting together):** with every ENDPOINT_ERROR (every missing scheduled response)
+    imputed as correct and the INVALID samples excluded, the estimate is ≥ 0.15. Item error = wrong valid answers ÷
+    (3 − INVALID samples); an item whose three samples are all INVALID counts as 0. Only this condition closes the
+    combined case: each single gate still lets the other failure type raise the estimate;
   * with the planted edits excluded, the error is still ≥ 0.15;
   * errors fall on at least 5 artefacts;
   * every leave-one-artefact-out estimate is ≥ 0.15.

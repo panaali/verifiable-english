@@ -166,7 +166,22 @@ def calls(clients):
     ("**ANSWER: NO.**", "NO"),
     ("ANSWER: NO!", "NO"),
     ("**ANSWER: YES**\nThough I am not sure.", "UNPARSED"),          # still the final line only
-    ("answer: yes", "UNPARSED"),
+    ("answer: yes", "YES"),                                           # case-insensitive
+    ("reasoning\nAnswer: NO", "NO"),
+    ("**Answer:** Yes", "YES"),
+    ("## ANSWER: YES", "YES"),                                        # one heading marker
+    ("reasoning\n### **Answer: no**", "NO"),
+    ("- ANSWER: NO", "NO"),                                           # one list marker
+    ("* **ANSWER: YES**", "YES"),
+    ("+ Answer: No.", "NO"),
+    ("1. ANSWER: YES", "YES"),
+    ("2) answer: no", "NO"),
+    ("## ANSWER: YES\nOn reflection, no.", "UNPARSED"),               # still the final line only
+    ("- ANSWER: NO\n- ANSWER: YES", "YES"),
+    ("#ANSWER: YES", "UNPARSED"),                                     # a marker needs its space
+    ("- - ANSWER: YES", "UNPARSED"),                                  # one marker only
+    ("The answer: YES", "UNPARSED"),
+    ("> ANSWER: YES", "UNPARSED"),
     ("ANSWER: YES, probably", "UNPARSED"),
     ("ANSWER: YESNO", "UNPARSED"),
     ("ANSWER: MAYBE", "UNPARSED"),
@@ -425,7 +440,7 @@ def test_opus_review_case_twelve_endpoint_errors_now_fail(real):
     assert out["endpoint_errors"]["n"] == 12 <= out["endpoint_errors"]["stop_threshold"]
     assert out["primary"]["error"] == round(8 / 41, 4)                       # 0.1951 as run
     assert out["primary"]["endpoint_errors_imputed_correct"] == round(4 / 41, 4)
-    assert only_failing(out) == ["endpoint_errors_imputed_correct"]           # every other condition holds
+    assert only_failing(out) == ["endpoint_errors_correct_and_invalid_excluded", "endpoint_errors_imputed_correct"]           # every other condition holds
     assert out["gate"].startswith("FAIL: the point estimate") and "endpoint_errors_imputed_correct" in out["gate"]
 
 
@@ -445,7 +460,7 @@ def test_astra_review_case_14_63_to_19_51_now_fails(real):
     out = A.analyse_arm(records_from(st), items, gt, "high", 129)
     assert out["primary"]["error"] == round(8 / 41, 4) == 0.1951
     assert out["primary"]["endpoint_errors_imputed_correct"] == 0.1463
-    assert only_failing(out) == ["endpoint_errors_imputed_correct"]
+    assert only_failing(out) == ["endpoint_errors_correct_and_invalid_excluded", "endpoint_errors_imputed_correct"]
     assert out["gate"].startswith("FAIL") and "WEAK" not in out["gate"] and out["gate"] != "PASS"
 
 
@@ -459,11 +474,68 @@ def test_formatting_alone_cannot_create_a_pass(real):
     out = A.analyse_arm(records_from(st), items, gt, "high", 129)
     assert out["primary"]["error"] == round(12 / 41, 4) and out["primary"]["ci95_cluster_bootstrap"][0] >= 0.15
     assert out["primary"]["invalid_excluded_sensitivity"] == round(3 / 41, 4)
-    assert only_failing(out) == ["invalid_excluded"]
+    assert only_failing(out) == ["endpoint_errors_correct_and_invalid_excluded", "invalid_excluded"]
     assert out["gate"].startswith("FAIL") and "invalid_excluded" in out["gate"]
     # the same errors as real wrong answers pass
     st.update({(i, s): flip(gt, i) for i in pick[:9] for s in range(3)})
     assert A.analyse_arm(records_from(st), items, gt, "high", 129)["gate"] == "PASS"
+
+
+def primary_items(items, n):
+    """n non-edge items, original items on distinct artefacts first."""
+    first = []
+    seen = set()
+    for i in items:
+        if "edge" not in items[i]["tags"] and items[i]["variant"] == "original" and items[i]["cluster"] not in seen:
+            first.append(i)
+            seen.add(items[i]["cluster"])
+    rest = [i for i in items if "edge" not in items[i]["tags"] and i not in first]
+    out = (first + rest)[:n]
+    assert len(out) == n
+    return out
+
+
+def test_astra_review3_case_joint_sensitivity_fails(real):
+    """Astra re-review 3: 18 wrong, 3 INVALID and 12 ENDPOINT_ERROR pass each single gate; joint is 14.63%."""
+    items, gt, _ = real
+    pick = primary_items(items, 21)
+    st = all_correct(items, gt)
+    for i in pick[:12]:      # [wrong, EE, C]
+        st.update({(i, 0): flip(gt, i), (i, 1): "ENDPOINT_ERROR"})
+    for i in pick[12:18]:    # [wrong, C, C]
+        st[(i, 0)] = flip(gt, i)
+    for i in pick[18:]:      # [INVALID, C, C]
+        st[(i, 0)] = "UNPARSED"
+    out = A.analyse_arm(records_from(st), items, gt, "high", 129)
+    assert out["endpoint_errors"]["n"] == 12 and out["invalid_samples"] == 3
+    assert out["primary"]["endpoint_errors_imputed_correct"] == round(7 / 41, 4) == 0.1707
+    assert out["primary"]["invalid_excluded_sensitivity"] == round(8 / 41, 4) == 0.1951
+    assert out["primary"]["joint_sensitivity"] == round(6 / 41, 4) == 0.1463
+    assert only_failing(out) == ["endpoint_errors_correct_and_invalid_excluded"]   # both single gates hold
+    assert out["gate"].startswith("FAIL: the point estimate") and "endpoint_errors_correct_and_invalid_excluded" in out["gate"]
+
+
+def test_opus_review3_case_joint_sensitivity_fails(real):
+    """Opus re-review 3: 6x[wrong,EE,EE], 1x[wrong,C,C], 12x[UNPARSED,C,C] passed; only 7 answers are wrong."""
+    items, gt, _ = real
+    pick = primary_items(items, 19)
+    st = all_correct(items, gt)
+    for i in pick[:6]:
+        st.update({(i, 0): flip(gt, i), (i, 1): "ENDPOINT_ERROR", (i, 2): "ENDPOINT_ERROR"})
+    st[(pick[6], 0)] = flip(gt, pick[6])
+    for i in pick[7:]:
+        st[(i, 0)] = "UNPARSED"
+    out = A.analyse_arm(records_from(st), items, gt, "high", 129)
+    assert out["endpoint_errors"]["n"] == 12 and out["invalid_samples"] == 12
+    assert out["primary"]["error"] >= 0.25
+    assert out["primary"]["endpoint_errors_imputed_correct"] == round(19 / 3 / 41, 4)
+    assert out["primary"]["invalid_excluded_sensitivity"] == round(19 / 3 / 41, 4)
+    assert out["primary"]["joint_sensitivity"] == round(7 / 3 / 41, 4) == 0.0569
+    assert "endpoint_errors_correct_and_invalid_excluded" in only_failing(out)
+    assert not out["robustness"]["endpoint_errors_correct_and_invalid_excluded"]["holds"]
+    assert out["robustness"]["endpoint_errors_imputed_correct"]["holds"]
+    assert out["robustness"]["invalid_excluded"]["holds"]
+    assert out["gate"].startswith("FAIL")
 
 
 def test_t_quantile_and_interval():
@@ -724,14 +796,54 @@ def fake_ots(cmd, **_):
     """Stands in for `ots stamp FILE`: writes FILE.ots with a real OpenTimestamps header for FILE's SHA-256."""
     assert tuple(cmd[:-1]) == R.OTS_CMD
     f = Path(cmd[-1])
-    Path(f"{f}.ots").write_bytes(R.OTS_MAGIC + b"\x01\x08" + hashlib.sha256(f.read_bytes()).digest() + b"\xf0\x10pending")
+    Path(f"{f}.ots").write_bytes(ots_proof(f.read_bytes()))
     return subprocess.CompletedProcess(cmd, 0, "", "")
 
 
-def test_ots_header_parser_matches_an_earlier_ve_receipt():
-    root = Path(__file__).resolve().parent.parent / "experiments" / "T1c"
-    assert R.ots_binds((root / "HASHES.ots").read_bytes(), (root / "HASHES").read_bytes())
-    assert not R.ots_binds((root / "HASHES.ots").read_bytes(), b"other")
+def ots_header(data):
+    return R.OTS_MAGIC + b"\x01\x08" + hashlib.sha256(data).digest()
+
+
+def ots_attestation(tag, payload):
+    return b"\x00" + tag + bytes([len(payload)]) + payload
+
+
+def ots_proof(data, uri=b"https://alice.btc.calendar.opentimestamps.org"):
+    """A minimal well-formed proof: append a nonce, SHA-256, then a pending calendar attestation."""
+    return ots_header(data) + b"\xf0\x10" + b"n" * 16 + b"\x08" + ots_attestation(R.OTS_PENDING, bytes([len(uri)]) + uri)
+
+
+VE_RECEIPTS = subprocess.run(["git", "-C", str(Path(__file__).resolve().parent.parent), "ls-files", "*.ots"],
+                             capture_output=True, text=True, check=True).stdout.split()
+
+
+def test_ots_validation_accepts_every_existing_ve_receipt():
+    root = Path(__file__).resolve().parent.parent
+    receipts = [f for f in VE_RECEIPTS if "D-gate" not in f]
+    assert len(receipts) >= 5
+    for f in receipts:
+        proof, data = (root / f).read_bytes(), (root / f[:-4]).read_bytes()
+        atts = R.ots_attestations(proof, data)
+        assert any(k == "pending" and u.startswith("https://") for k, u in atts), f
+        assert R.ots_binds(proof, data), f
+        assert not R.ots_binds(proof, data + b"x"), f
+
+
+def test_ots_validation_rejects_a_header_only_or_malformed_proof():
+    data = b"FREEZE-STAMP contents\n"
+    assert R.ots_binds(ots_proof(data), data)
+    assert not R.ots_binds(ots_header(data), data)                              # header, no timestamp payload
+    assert not R.ots_binds(ots_header(data) + b"\xf0\x10pending", data)          # op without attestation
+    assert not R.ots_binds(ots_proof(data)[:-3], data)                          # truncated
+    assert not R.ots_binds(ots_proof(data) + b"\x00", data)                     # trailing bytes
+    assert not R.ots_binds(ots_proof(data, uri=b"http://calendar.example"), data)
+    unknown = ots_header(data) + ots_attestation(bytes(8), b"")
+    assert R.ots_attestations(unknown, data) == [("unknown", "00" * 8)] and not R.ots_binds(unknown, data)
+    done = ots_header(data) + b"\x08" + ots_attestation(R.OTS_BITCOIN, b"\x80\x80\x2c")   # block 720896
+    assert R.ots_attestations(done, data) == [("bitcoin", 720896)] and R.ots_binds(done, data)
+    fork = ots_header(data) + b"\xff" + ots_attestation(R.OTS_BITCOIN, b"\x01") + b"\x08" + \
+        ots_attestation(R.OTS_PENDING, b"\x0chttps://a.b/")
+    assert [k for k, _ in R.ots_attestations(fork, data)] == ["bitcoin", "pending"]
 
 
 def test_freeze_record(repo):
