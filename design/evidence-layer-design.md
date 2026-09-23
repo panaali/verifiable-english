@@ -214,9 +214,11 @@ three consequences, all checked in `tests/test_evidence_bounds.py`:
 1. **A reported violation is genuine.** If the relaxed LP is infeasible, the exact one is too.
 2. **Narrowed intervals are outer approximations.** They never exclude a value the true constraints
    allow. Root lower bounds computed by the same LP are sound for the same reason.
-3. **"No violation found" certifies coherence only when no atom is UNKNOWN.** Only then is the LP
-   exact. Otherwise the report says "no violation found; u atoms UNKNOWN, kept possible" and does not
-   say "coherent".
+3. **"No violation found" certifies only avoiding sure loss, and only when no atom is UNKNOWN.**
+   With zero UNKNOWN atoms the LP is exact, so feasibility is exact feasibility. That is still not
+   "coherent (tight)", which additionally requires every endpoint to be unchanged by narrowing
+   (tested: a feasible assessment with no UNKNOWN atoms whose lower endpoint narrows). With UNKNOWN
+   atoms the report says "no violation found; u atoms UNKNOWN, kept possible" and claims neither.
 
 Treating an UNKNOWN atom as impossible is unsound in the other direction. It shrinks the feasible
 region, which produces false violations, over-narrow intervals and inflated root bounds. With a
@@ -224,7 +226,7 @@ single claim at [0.5, 0.5] and its ¬A atom UNKNOWN, dropping that atom forces P
 violation that does not exist. Above k = 12, the checker falls back to the pairwise and triple
 constraints in the table. A constraint is used only when its trigger is certified, never on UNKNOWN.
 This is a relaxation of the atom LP, so consequences 1–3 still hold, and "no violation found" is never
-upgraded to "coherent". The oracle's measured `UNKNOWN` rate is 2.0% (8/400,
+upgraded to "avoids sure loss", let alone "coherent (tight)". The oracle's measured `UNKNOWN` rate is 2.0% (8/400,
 `/Users/seyran/code/ve-integration/experiments/oracle/results/summary.json`). That audit used three
 predicates and domains of size ≤ 2, with all eight UNKNOWNs in one template, so the rate should be
 re-measured at realistic vocabulary sizes before anyone relies on it.
@@ -253,10 +255,14 @@ bound for a conjunction),
 > **P(C) ≥ P(⋀Lᵢ) ≥ max(0, 1 − Σᵢ (1 − P(Lᵢ)))**
 
 With interval assessments, use the lower ends loᵢ; the bound is monotone in each marginal. Given only
-the marginals and this one entailment, the bound is **tight**: it is attained when the leaves fail on
-disjoint events and C = ⋀Lᵢ (tested). There is **no upper bound on P(C) from the leaves**. The inclusion
+the marginals and this one entailment, the bound is **tight**. When d = Σᵢ (1 − loᵢ) ≤ 1 it is
+attained by leaves that fail on pairwise disjoint events with C = ⋀Lᵢ. When d > 1 the bound is 0, and
+disjoint failures are impossible (their masses would sum past 1); zero is attained instead by failure
+events that together cover the whole space, overlapping as needed, again with C = ⋀Lᵢ. Both cases are
+tested. There is **no upper bound on P(C) from the leaves**. The inclusion
 runs one way, so C can have probability 1 however doubtful the leaves are. The familiar
-P(⋀Lᵢ) ≤ minᵢ P(Lᵢ) bounds the *conjunction*, not C. It bounds C only if C is certified
+P(⋀Lᵢ) ≤ minᵢ P(Lᵢ) bounds the *conjunction*, not C. With interval assessments it must use the
+upper endpoints, P(⋀Lᵢ) ≤ minᵢ hiᵢ; the lower endpoints loᵢ give no upper bound on anything. It bounds C only if C is certified
 **equivalent** to ⋀Lᵢ (`compare = EQUIVALENT`), and then P(C) = P(⋀Lᵢ) ≤ minᵢ P(Lᵢ). An earlier draft
 printed "P(R) ≤ min leaf" as a bound on the root. That was wrong, and it is retracted.
 
@@ -341,10 +347,20 @@ column, and the presentation leads with the leaf set, never with the certified-e
 
 1. **Post-cutoff resolved questions.** Propositions with a public outcome after the model's cutoff,
    with a frozen document snapshot from before resolution. Score Brier and ECE on leaves and roots.
-   Lower-bound validity is testable frequentistically, though only in expectation and only if the
-   leaf probabilities are calibrated: then among roots with LB ≥ 0.8, at least about 80% should
-   resolve true. A shortfall points to miscalibrated leaves (or a faulty checker), not to faulty
-   Fréchet arithmetic. `docs/runs/evidence-1/RESULTS.md` contains a ready-made instance — *Trump v. Barbara*,
+   Lower-bound validity is testable frequentistically, in expectation, but marginal calibration of
+   the leaves is **not** enough. Each leaf being calibrated on its own (among items where leaf i was
+   forecast at p, a fraction p is true) does not survive selecting roots by their bound, because the
+   selection looks at all the leaf forecasts at once. Counterexample (tested): three equally frequent
+   strata with forecasts (.9, .9), (.9, .1), (.1, .9) and true leaf frequencies (.8, .8), (1, .1),
+   (.1, 1). Each leaf is calibrated, since forecast .9 is right (.8 + 1)/2 = 90% of the time and .1
+   is right 10% of the time. Only the first stratum has LB ≥ 0.8, and there, with disjoint failures,
+   the root holds 60% of the time. The requirement is **conditional validity given the full forecast
+   and selection information**: for each leaf, P(Lᵢ | the whole forecast vector, and anything else
+   the selection depends on) ≥ loᵢ. Under that condition Fréchet holds inside each forecast cell, so
+   among roots with LB ≥ t at least a fraction t resolve true, in expectation (tested). The report
+   states this condition beside every calibration number. A shortfall then points to leaves that are
+   not conditionally valid (or a faulty checker), not to faulty Fréchet arithmetic; a pass does not
+   show the leaves are marginally calibrated either, and each needs its own measurement. `docs/runs/evidence-1/RESULTS.md` contains a ready-made instance — *Trump v. Barbara*,
    decided 30 June 2026, post-freeze, verified, found by one agent and not searched for by the other.
 2. **Synthetic worlds.** Sample a latent world from a Bayes net, emit documents with known reliability
    and known duplication structure, compute the exact posterior by enumeration. Ground truth for every
@@ -396,7 +412,7 @@ A move without its artefact is not a move (VE's existing rule).
 |---|---|---|
 | P(R) ≥ P(⋀Lᵢ) ≥ 1 − Σ(1 − loᵢ) for a certified derivation | proved; tested | certificate replay; leaf lows being true lower ends |
 | That bound is the best possible from marginals plus one entailment | proved; tested | none beyond the above |
-| No upper bound on P(R) from its leaves; min leaf bounds only ⋀Lᵢ | proved; counterexample tested | none |
+| No upper bound on P(R) from its leaves; min leaf *upper* endpoint bounds only ⋀Lᵢ | proved; counterexample tested | none |
 | Flattened support bound (shared leaves counted once) ≥ node-by-node recursion; both sound | proved; tested | entailment composition |
 | P(R) ≥ max over certified derivations | proved; tested | none beyond the above |
 | P(R) ≤ 1 − LB(M) from a certified derivation of ¬R | proved | same as the lower bound, for M |
@@ -404,7 +420,9 @@ A move without its artefact is not a move (VE's existing rule).
 | Product of leaf marginals (or the partial-block bound) | **assumed**; sound if the premise holds (tested) | mutual independence under the evidence-conditioned measure, supported as its own claim |
 | Product of group LRs | **assumed**; exact under CI (tested); wrong for distinct originators with a common cause (tested) | CI given L and given ¬L, supported as its own claim |
 | A reported coherence violation is real | proved; tested | certified refutations only remove atoms |
-| "No violation found" means coherent | only when 0 atoms are UNKNOWN; otherwise not claimed | exhaustive atom decision |
+| "No violation found" means the assessment avoids sure loss (exact LP feasibility) | only when 0 atoms are UNKNOWN; otherwise not claimed | exhaustive atom decision |
+| "Coherent (tight)" | only when 0 atoms are UNKNOWN **and** narrowing changes no endpoint (tested) | exhaustive atom decision; LP min/max per endpoint |
+| Among roots with LB ≥ t, at least a fraction t resolve true | proved and tested **given** leaf validity conditional on the full forecast vector; marginal leaf calibration is not enough (counterexample tested) | conditional validity of leaf lows |
 | Leaf priors, LRs, reliability, relevance, faithfulness | **judgment** | assessor and challenge rounds |
 | The checker computes all of the above correctly | **assumed** (Python replay) | the Lean item in §6 is pending |
 
@@ -427,13 +445,15 @@ field: that number bounds the conjunction, not the root. New `IndependenceClaim`
 root: R   derivations: 1 certified (7 distinct leaves), 1 gap (countermodel m3)
 leaf lows: L1 .97  L2 .98  L3 .88  L4 .99  L5 .91  L6 .97  L7 .98
 bound:  P(R) >= 0.68  (Frechet, 7 leaves, doubt budget 0.32 -- ACTIVE regime, d(LB)/d(lo_i) = 1)
-        IF IND-1 (leaves {1,2,4,6,7} mutually independent) THEN P(R) >= 0.685   [ASSUMPTION]
+        IF IND-1 (leaves {1,2,4,6,7} mutually independent) THEN P(R) >= 0.684   [ASSUMPTION]
            (independence of all 7 would give 0.716: not printed, no IND claim covers L3, L5)
-upper:  none -- no certified derivation of not-R  (min leaf 0.88 bounds the conjunction, not R)
+upper:  none -- no certified derivation of not-R  (min leaf UPPER endpoint would bound only
+        the conjunction, not R; leaf lows such as L3 .88 bound nothing from above)
 uncertainty: leaves 3 (0.88) and 5 (0.91) contribute 0.21 of the 0.32 doubt budget
 records: 19 evidence records, 4 independence groups; 3 records fail scope-subsumption (L5)
 coherence: no violation found (8 claims, 256 atoms: 201 possible, 53 certified impossible,
-           2 UNKNOWN kept possible) -- NOT certified coherent while UNKNOWN > 0
+           2 UNKNOWN kept possible) -- neither avoids-sure-loss nor coherent certified
+           while UNKNOWN > 0
 gaps: 2 leaves have no disconfirming search on record (L2, L6)
       1 request-search unanswered (L3, round 2)
       1 assessment still provisional (L5)
@@ -441,7 +461,9 @@ judgment items not checked: 7 reliability priors, 1 independence claim (IND-1), 
                             9 likelihood ratios
 ```
 
-Here the independence assumption buys 0.005. With small doubts, the Fréchet bound and the product
+Every printed bound is rounded **down** (the exact partial-independence value is 0.6846039564, so
+0.684; the full product 0.716398848 prints as 0.716); rounding a lower bound up would overstate it.
+Here the independence assumption buys under 0.005. With small doubts, the Fréchet bound and the product
 are close (1 − d against roughly e^(−d)). Independence matters only when the doubt budget is large,
 and that is exactly where it is most tempting and least supported.
 
@@ -519,7 +541,8 @@ search; (2) RAG with citations; (3) layer, single pass; (4) layer + executed `re
 **Metrics.** Brier and ECE per stage; **overconfidence repair** = E|p₀ − y| − E|p₅ − y|; fraction of
 items whose first estimate was on the wrong side of 0.5 and was corrected; movement direction
 conditional on outcome; **lower-bound calibration** (among roots with LB ≥ t, fraction resolving true,
-for t = 0.6/0.7/0.8/0.9); pre- vs post-cutoff gap as the contamination check; $/item.
+for t = 0.6/0.7/0.8/0.9; a test of leaf validity conditional on the whole forecast vector, not of
+marginal leaf calibration, §2.6); pre- vs post-cutoff gap as the contamination check; $/item.
 
 **Predictions.** Stage 0 overconfident; most of the gain at stage 4 (forced search), a smaller but
 non-zero gain at stage 5. **Refutation:** stage 3 ≈ stage 5 (the challenge round adds nothing — the
