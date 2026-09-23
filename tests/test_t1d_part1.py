@@ -1,5 +1,5 @@
-"""T1d Part 1 offline tests: materials v2 ground truth, parsers, near-miss kinds, certificates
-(Python + Lean when built), seed disjointness, design balance, leakage audit plumbing."""
+"""T1d Part 1 offline tests: materials v4 ground truth, parsers, near-miss kinds, hub symmetry,
+certificates (Python + Lean when built), seed disjointness, byte sizing, leakage audit plumbing."""
 from collections import Counter
 from itertools import product
 
@@ -71,7 +71,7 @@ def test_validation_catches_a_wrong_label():
 
 @pytest.mark.parametrize('kind', ('honest',) + M.SABOTAGE_KINDS)
 def test_certificate_outcomes_by_kind(kind):
-    item = M.generate(spec('k8s' if kind in M.SEMANTIC_KINDS else 'teams', 'paths', 'powerlaw', kind))
+    item = M.generate(spec('k8s' if kind in M.RELATED_KINDS else 'teams', 'paths', 'powerlaw', kind))
     edges = M.edges_of(item)
     sub = C.build(item, edges=edges)
     report = C.ve_verdict(item, sub, lean=LEAN, edges=edges)
@@ -79,8 +79,8 @@ def test_certificate_outcomes_by_kind(kind):
     assert expected(item, report, script)
     assert report['statement'] != item['claim']  # v3: never string-identical, for any kind
     assert P.rule_decision(item, report) == ('APPROVE' if kind == 'honest' else 'REJECT')
-    assert M.PAD_RANGE[0] <= len(sub['separating_set']) <= M.PAD_RANGE[1] + 20
-    if kind in M.SEMANTIC_KINDS or kind.startswith('char'):
+    assert sub['separating_set'] == sorted(M.closure(edges, *C.certified_entity(item, kind)[:1], sub['leak_cut'] and tuple(sub['leak_cut'])))
+    if kind in M.RELATED_KINDS or kind.startswith('char'):
         # Valid for another statement, which is true under the policy; the claim itself is false.
         assert report['verdict'] == 'VALID' and report['statement'] != item['claim']
         assert item['resource'] in M.forward(edges, item['principal'])
@@ -133,8 +133,10 @@ def test_prompts_show_only_the_frozen_fields_and_features_come_from_the_text():
     assert claim == item['claim'] and set(cert) == {'statement', 'principal', 'resource', 'proof'}
     assert all(texts[name] == item['raw'][name] for name in item['raw'])
     features, family = prompt_features(system, user)
-    assert family == item['family'] and set(FEATURE_SETS['ve_prompt']) == set(features)
+    assert family == item['family'] and set(FEATURE_SETS['ve_prompt']) <= set(features)
     assert set(prompt_features(raw_system, raw_user)[0]) == set(FEATURE_SETS['raw_prompt'])
+    # The certified subject (the group) is profiled from the policy text, and it is in the directory.
+    assert features['subject_in_directory'] == 1 and features['subject_out'] > 0
     # The frozen hash does not depend on the run's HMAC key.
     other = P.prompts(item, 'haiku-ve', submission=sub, report=report, key=b'1' * 32)
     assert other[0] != system and P.prompt_hash(*other) == P.prompt_hash(system, user)
@@ -142,19 +144,77 @@ def test_prompts_show_only_the_frozen_fields_and_features_come_from_the_text():
 
 def test_leakage_audit_is_two_sided_and_near_chance_on_random_labels():
     import numpy as np
-    from ve_experiments.t1d.leakage import criterion, run_audits
+    from ve_experiments.t1d.leakage import criterion, run_audits, univariate
     rng = np.random.default_rng(0)
     names = FEATURE_SETS['ve_prompt']
     rows = [{'kind': 'honest' if i % 2 else 'leak', 'family': 'rbac4', 'scheme': 'hex', 'shape': 'uniform',
              'features': {f: float(rng.normal()) for f in names}} for i in range(80)]
     res = run_audits(rows, {'leak': ('leak',)}, feature_sets=('ve_prompt',), which=('logistic',), repeats=2,
-                     permutations=19, boot=50, workers=2)
+                     permutations=39, boot=50, workers=2)
     m = res['ve_prompt']['leak']['models']['logistic']
-    assert .3 < m['foldwise_auc'] < .7 and m['p_two_sided'] > .05 and m['permutations'] == 19
-    assert criterion(res, ('leak',))['passes']
+    assert .3 < m['foldwise_auc'] < .7 and m['p_two_sided'] > .05 and m['permutations'] == 39
+    verdict = criterion(res, ('leak',), univariate(rows, {'leak': ('leak',)}, ('ve_prompt',)))
+    assert verdict['gate_can_fail'] and verdict['passes']
+    # With too few permutations the gate cannot fail, and then it does not pass (v4).
+    few = run_audits(rows, {'leak': ('leak',)}, feature_sets=('ve_prompt',), which=('logistic',), repeats=1,
+                     permutations=9, boot=10, workers=2)
+    assert not criterion(few, ('leak',))['gate_can_fail'] and not criterion(few, ('leak',))['passes']
     # A leaking feature is caught (the p-value is two-sided: |AUC - null mean|).
     for i, r in enumerate(rows):
         r['features'][names[0]] = float(i % 2) + .01 * i
     res = run_audits(rows, {'leak': ('leak',)}, feature_sets=('ve_prompt',), which=('logistic',), repeats=2,
-                     permutations=19, boot=50, workers=2)
+                     permutations=39, boot=50, workers=2)
     assert res['ve_prompt']['leak']['models']['logistic']['p_two_sided'] <= .05
+    uni = univariate(rows, {'leak': ('leak',)}, ('ve_prompt',))
+    assert not criterion(res, ('leak',), uni)['passes'] and uni[('ve_prompt', 'leak', names[0])]['p'] < 1e-6
+
+
+def _hub_degrees(item):
+    edges = M.edges_of(item)
+    out, inn = Counter(a for a, _ in edges), Counter(b for _, b in edges)
+    return edges, out, inn
+
+
+def test_v4_hub_symmetry_and_directory_cover_every_candidate_subject():
+    """Second-round review leak (a): every candidate certified subject is a hub built from the same
+    template (three relation edges to hubs, local links, D + 2 chains), whatever the label, and every
+    non-resource entity has a directory entry."""
+    for kind in ('honest', 'char_principal', 'group_member', 'role_user', 'alias'):
+        item = M.generate(spec('rbac4', 'hex', 'uniform', kind, index=7))
+        edges, out, inn = _hub_degrees(item)
+        hubs = {item['principal']} | set(item['hubs']['upper']) | set(item['hubs']['lower'])
+        roles = item['roles']
+        for h in [item['principal'], roles['near_principal'], roles['alias_account'], roles['primary_group'],
+                  roles['direct_role']]:
+            to_hubs = sum(b in hubs for a, b in edges if a == h)
+            assert to_hubs == 3, (kind, h)
+            assert 8 <= out[h] <= 13, (kind, h, out[h])  # 3 relations + 1..3 local + 4..7 chains
+        in_degrees = [inn[h] for h in hubs]
+        assert max(in_degrees) - min(in_degrees) <= 3  # common base + i.i.d. top-up of 0..3
+        directory = M.parse_directory(item['raw']['directory.txt'])
+        ids = {n for e in edges for n in e}
+        assert set(directory.values()) == {n for n in ids if not n.startswith('x_')}
+
+
+def test_v4_granters_of_the_resource_are_chain_nodes_in_both_labels():
+    """Second-round review leak (b): the resource is the end of the same number of chains of the
+    principal in both labels (sabotaged: intact spine + D broken decoys; honest: D + 1 broken), and
+    both planted resources get the same background-grant distribution."""
+    for kind in ('honest', 'leak'):
+        item = M.generate(spec('teams', 'numeric', 'community', kind, index=3))
+        edges = M.edges_of(item)
+        x = item['resource']
+        principal_chains = [e for e in edges if e[0] == item['principal']]
+        assert len(principal_chains) >= 3 + 1 + 4  # relations + local + spine, decoys, extra
+        granters = [a for a, b in edges if b == x]
+        assert len(granters) >= 5
+
+
+def test_byte_sized_items_fit_the_cap_and_seeds_are_new():
+    for s in M.design('dev')[:3]:
+        item = M.generate(s)
+        size = len(M.packet(item).encode())
+        assert s['target_bytes'] * .985 <= size <= s['target_bytes'] <= M.BYTES_CAP
+    v3 = {M.seed_of(split, i, 'T1d-v3') for split, n in M.SPLITS.items() for i in range(n['binding'] + n['leak'] + n['honest'])}
+    v4 = {s['seed'] for split in M.SPLITS for s in M.design(split)}
+    assert not v3 & v4

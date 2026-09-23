@@ -1,15 +1,21 @@
-"""T1d Part 1: paired item-level power analysis, v3 (offline; no model calls).
+"""T1d Part 1: paired item-level power analysis, v4 (offline; no model calls).
 
 The item is the unit of analysis; k = 1 (a 30-item second sample is used only to report the ICC).
 Fixed design (v2 recommendation, unchanged): 100 binding items = 40 CHARACTER (char_principal,
-char_resource) + 60 SEMANTIC (alias, group_member, role_user), 10 leak, 160 honest; five arms.
+char_resource) + 60 RELATED-ENTITY (alias, group_member, role_user; called "semantic" before v4),
+10 leak, 160 honest; five arms.
 
 v3 primary Holm family (alpha .05, SIX p-values, all two-sided scale), for m in {opus, haiku}:
   (a) char binding false approval, m-ve vs m-raw: exact two-sided McNemar on the 40 char items;
-  (b) semantic binding false approval, m-ve vs m-raw: exact two-sided McNemar on the 60 semantic items;
-  (c) honest completion NI at a 10 pp margin, Tango score test, one-sided p doubled onto the Holm scale
-      (equivalently: the lower bound of the two-sided 1 - 2*alpha_j Tango interval, alpha_j Holm's
-      level at that step, exceeds -0.10; that adjusted bound is what is reported).
+  (b) related-entity binding false approval, m-ve vs m-raw: exact two-sided McNemar on the 60
+      related-entity items;
+  (c) honest completion NI at a 10 pp margin, Tango score test, one-sided p doubled onto the Holm scale.
+      v4 correction: a doubled one-sided p tested at Holm level alpha_j rejects iff the one-sided p is
+      <= alpha_j / 2, i.e. iff the lower limit of the two-sided (1 - alpha_j) Tango interval exceeds
+      -0.10. That (1 - alpha_j) bound is what is reported (`ni_bound`); v3 wrote (1 - 2 alpha_j), which
+      is looser than the test.
+v4: the raw prompt does not depend on the sabotage kind (`materials.generate` never reads it), so raw
+false approval is ONE rate per model shared by both strata; every scenario below respects that.
 Claims (redefined): "the protocol helps model m on stratum s" iff (s) rejected with FEWER VE false
 approvals AND (c) rejected. A rejection of (a) or (b) with MORE VE false approvals is the declared
 HARM outcome ("the certificate protocol increased false approval"), never discarded. VE-arm false
@@ -90,6 +96,17 @@ def tango_interval(n12, n21, n, level=0.95):
     lower = -1.0 if tango_z(n12, n21, n, -1 + 1e-12) <= zc else root(zc, -1 + 1e-12, d)
     upper = 1.0 if tango_z(n12, n21, n, 1 - 1e-12) >= -zc else root(-zc, d, 1 - 1e-12)
     return float(lower), float(upper)
+
+
+def ni_bound(n12, n21, n, alpha_j):
+    """The reported NI bound: lower limit of the two-sided (1 - alpha_j) Tango interval, alpha_j the Holm
+    level at which the doubled one-sided NI p-value was tested. Rejection of (c) at alpha_j holds iff
+    this bound exceeds -margin (tested in tests/test_t1d_power.py)."""
+    return tango_interval(n12, n21, n, level=1 - alpha_j)[0]
+
+
+def ni_doubled_p(n12, n21, n, margin=0.10):
+    return float(min(1.0, 2 * tango_ni_p(n12, n21, n, margin)))
 
 
 def wilson(x, n, level=0.95):
@@ -233,7 +250,7 @@ def ni_pvalues(rng, reps, n, k, ve_fail, raw_fail, icc, margin, cross_r=0.5):
     return np.minimum(1.0, 2 * tango_ni_p(n12, n21, n, margin))
 
 
-N_CHAR, N_SEMANTIC, N_LEAK, N_HONEST, K = 40, 60, 10, 160, 1
+N_CHAR, N_RELATED, N_LEAK, N_HONEST, K = 40, 60, 10, 160, 1
 ICC_ITEMS = 30
 MARGIN = 0.10
 ICCS = (0.3, 0.6, 0.9)
@@ -241,25 +258,29 @@ CROSS_R = (0.2, 0.5, 0.8)
 RAW_FA = (0.15, 0.2, 0.3, 0.5, 0.7)
 VE_FA = (0.0, 0.05, 0.10, 0.20)
 HONEST = {'none': (0.0, 0.0), 'both 2%': (0.02, 0.02), 'both 5%': (0.05, 0.05), 've 5%, raw 0%': (0.05, 0.0)}
-SCENARIOS = {  # (char raw, char VE, semantic raw, semantic VE, honest failures)
-    'plausible': (0.30, 0.05, 0.30, 0.05, 'both 2%'),
-    'char_works_semantic_fools_ve': (0.30, 0.05, 0.15, 0.10, 'both 2%'),
-    'pessimistic': (0.15, 0.10, 0.15, 0.10, 'both 5%'),
-    't1c_like': (0.70, 0.0, 0.70, 0.0, 'none'),
-    'semantic_harm': (0.30, 0.05, 0.05, 0.20, 'both 2%'),
+SCENARIOS = {  # (raw, char VE, related-entity VE, honest failures): ONE raw rate per model for both strata
+    'plausible': (0.30, 0.05, 0.05, 'both 2%'),
+    'related_entity_fools_ve': (0.30, 0.05, 0.25, 'both 2%'),
+    'related_entity_fools_ve_fully': (0.30, 0.05, 0.30, 'both 2%'),
+    'pessimistic': (0.15, 0.10, 0.10, 'both 5%'),
+    't1c_like': (0.70, 0.0, 0.0, 'none'),
+    'related_entity_harm': (0.10, 0.05, 0.25, 'both 2%'),
+    'related_entity_harm_strong': (0.10, 0.05, 0.35, 'both 2%'),
+    'char_harm': (0.10, 0.25, 0.05, 'both 2%'),
 }
 
 
 def run(reps=4000, seed=SEED):
     rng = np.random.default_rng(seed)
-    decisions = (N_CHAR + N_SEMANTIC + N_LEAK + N_HONEST) * len(ARMS) * K
+    decisions = (N_CHAR + N_RELATED + N_LEAK + N_HONEST) * len(ARMS) * K
     icc_decisions = ICC_ITEMS * len(ARMS)
 
     def family(sc, icc, r):
-        """One model: (char p, char dir, semantic p, semantic dir, NI p). Independent draws per model."""
-        cr, cv, sr, sv, honest = SCENARIOS[sc]
+        """One model: (char p, char dir, related p, related dir, NI p). Independent draws per model."""
+        raw, cv, sv, honest = SCENARIOS[sc]
+        cr = sr = raw  # one shared raw false-approval rate per model
         pc, dc, _ = binding_pvalues(rng, reps, N_CHAR, cr, cv, icc, r)
-        ps, ds, _ = binding_pvalues(rng, reps, N_SEMANTIC, sr, sv, icc, r)
+        ps, ds, _ = binding_pvalues(rng, reps, N_RELATED, sr, sv, icc, r)
         vf, rf = HONEST[honest]
         pn = ni_pvalues(rng, reps, N_HONEST, K, vf, rf, icc, MARGIN, r)
         return pc, dc, ps, ds, pn
@@ -276,13 +297,13 @@ def run(reps=4000, seed=SEED):
                     char = rej[:, base] & (draws[1] > 0)
                     sem = rej[:, base + 1] & (draws[3] > 0)
                     ni = rej[:, base + 2]
-                    out[m] = {'char_reduction': float(char.mean()), 'semantic_reduction': float(sem.mean()),
+                    out[m] = {'char_reduction': float(char.mean()), 'related_reduction': float(sem.mean()),
                               'ni': float(ni.mean()), 'claim_char': float((char & ni).mean()),
-                              'claim_semantic': float((sem & ni).mean()), 'claim_both_strata': float((char & sem & ni).mean()),
+                              'claim_related': float((sem & ni).mean()), 'claim_both_strata': float((char & sem & ni).mean()),
                               'harm_char': float((rej[:, base] & (draws[1] < 0)).mean()),
-                              'harm_semantic': float((rej[:, base + 1] & (draws[3] < 0)).mean())}
+                              'harm_related': float((rej[:, base + 1] & (draws[3] < 0)).mean())}
                     out[m]['_char'], out[m]['_sem'], out[m]['_ni'] = char, sem, ni
-                for claim, key in (('claim_char', ('_char',)), ('claim_semantic', ('_sem',)),
+                for claim, key in (('claim_char', ('_char',)), ('claim_related', ('_sem',)),
                                    ('claim_both_strata', ('_char', '_sem'))):
                     ok = np.ones(reps, dtype=bool)
                     for m in ('opus', 'haiku'):
@@ -297,7 +318,7 @@ def run(reps=4000, seed=SEED):
 
     # Unadjusted and first-step (alpha/6) McNemar power per stratum size over the rate grid.
     stratum_grid = []
-    for name, n in (('char', N_CHAR), ('semantic', N_SEMANTIC)):
+    for name, n in (('char', N_CHAR), ('related', N_RELATED)):
         for raw in RAW_FA:
             for ve in VE_FA:
                 for r in CROSS_R:
@@ -308,15 +329,15 @@ def run(reps=4000, seed=SEED):
                                          'harm_unadjusted': float(((p <= ALPHA) & (d < 0)).mean())})
     # Harm detection: VE false approval above raw.
     harm = []
-    for name, n in (('char', N_CHAR), ('semantic', N_SEMANTIC)):
-        for raw, ve in ((0.05, 0.20), (0.05, 0.30), (0.10, 0.30), (0.0, 0.15)):
+    for name, n in (('char', N_CHAR), ('related', N_RELATED)):
+        for raw, ve in ((0.05, 0.20), (0.05, 0.30), (0.10, 0.25), (0.10, 0.35), (0.0, 0.15)):
             p, d, _ = binding_pvalues(rng, reps, n, raw, ve, 0.6, 0.5)
             harm.append({'stratum': name, 'n': n, 'raw_fa': raw, 've_fa': ve,
                          'harm_power_unadjusted': float(((p <= ALPHA) & (d < 0)).mean()),
                          'harm_power_alpha_over_6': float(((p <= ALPHA / 6) & (d < 0)).mean())})
     # Clopper-Pearson half-widths of the VE-arm false approval estimate at the stratum sizes.
     cp = {f'{name} n={n}, {x} approvals': [round(v, 4) for v in clopper_pearson(x, n)]
-          for name, n in (('char', N_CHAR), ('semantic', N_SEMANTIC)) for x in (0, 2, 6)}
+          for name, n in (('char', N_CHAR), ('related', N_RELATED)) for x in (0, 2, 6)}
     # NI type I error at the margin and NI power.
     type1 = {}
     for base in (0.0, 0.02):
@@ -328,25 +349,29 @@ def run(reps=4000, seed=SEED):
                  for name in HONEST for icc in ICCS for r in CROSS_R]
     # Secondary: opus-ve vs opus-raw-high, all 100 binding items, VE false approval 0 / 5 / 10%.
     secondary = {f'raw_high_fa={raw}, ve_fa={ve}': float(((lambda pd: (pd[0] <= ALPHA) & (pd[1] > 0))(
-        binding_pvalues(rng, reps, N_CHAR + N_SEMANTIC, raw, ve, 0.6, 0.5))).mean())
+        binding_pvalues(rng, reps, N_CHAR + N_RELATED, raw, ve, 0.6, 0.5))).mean())
         for raw in RAW_FA for ve in (0.0, 0.05, 0.10)}
     headline = {sc: next(o for o in scenario_power if o['scenario'] == sc and o['icc'] == 0.6 and o['cross_r'] == 0.5)
                 for sc in SCENARIOS}
     return {'model_calls': 0, 'seed': seed, 'reps': reps, 'arms': list(ARMS), 'alpha': ALPHA,
-            'design': {'n_char': N_CHAR, 'n_semantic': N_SEMANTIC, 'n_leak': N_LEAK, 'n_honest': N_HONEST, 'k': K,
+            'design': {'n_char': N_CHAR, 'n_related': N_RELATED, 'n_leak': N_LEAK, 'n_honest': N_HONEST, 'k': K,
                        'decisions': decisions, 'icc_subsample_items': ICC_ITEMS, 'icc_decisions': icc_decisions,
                        'total_decisions': decisions + icc_decisions},
-            'holm_family': ['opus char McNemar', 'opus semantic McNemar', 'opus honest NI (Tango)',
-                            'haiku char McNemar', 'haiku semantic McNemar', 'haiku honest NI (Tango)'],
+            'holm_family': ['opus char McNemar', 'opus related-entity McNemar', 'opus honest NI (Tango)',
+                            'haiku char McNemar', 'haiku related-entity McNemar', 'haiku honest NI (Tango)'],
             'claims': {'stratum s, model m': 'McNemar_s rejected with fewer VE false approvals AND NI rejected',
                        'harm': 'McNemar_s rejected with MORE VE false approvals (declared outcome)'},
-            'scenarios': {k: dict(zip(('char_raw', 'char_ve', 'semantic_raw', 'semantic_ve', 'honest'), v))
+            'scenarios': {k: dict(zip(('raw_shared', 'char_ve', 'related_ve', 'honest'), v))
                           for k, v in SCENARIOS.items()},
             'simulation': 'beta-binomial per item, Gaussian-copula item effect shared by paired arms with latent '
                           'correlation cross_r; the two models are simulated independently',
             't1c_anchors': T1C_ANCHORS, 'headline_icc0.6_r0.5': headline, 'scenario_power': scenario_power,
             'stratum_grid': stratum_grid, 'harm_detection': harm, 'clopper_pearson_ve_false_approval': cp,
-            'ni_type1_at_margin': type1, 'ni_detail': ni_detail, 'secondary_opus_ve_vs_opus_raw_high': secondary}
+            'ni_type1_at_margin': type1, 'ni_detail': ni_detail, 'secondary_opus_ve_vs_opus_raw_high': secondary,
+            'ni_bound_examples': [{'n': N_HONEST, 'n12_ve_only_success': a, 'n21_raw_only_success': b, 'alpha_j': aj,
+                                   'doubled_p': ni_doubled_p(a, b, N_HONEST), 'rejects': ni_doubled_p(a, b, N_HONEST) <= aj,
+                                   'reported_bound_1_minus_alpha_j': ni_bound(a, b, N_HONEST, aj)}
+                                  for a, b in ((0, 0), (0, 5), (0, 6), (1, 7)) for aj in (ALPHA / 6, ALPHA)]}
 
 
 def main():

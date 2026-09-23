@@ -45,7 +45,7 @@ trusted checker has replayed the certificate against the complete policy; S itse
 The report below comes from the trusted checker; the harness has verified its authentication tag.
 It certifies only the statement it names, and statements name policy identifiers. A certified
 statement supports the claim only if it is about the same principal and the same resource as the
-claim; directory.txt says which account a display name denotes.'''
+claim; directory.txt says which identifier a display name denotes.'''
 PROOF_NOTE = 'VE closure-induction certificate over a separating set (omitted here; replayed by the trusted checker)'
 AUDIT_KEY = b'0' * 32  # offline rendering only; the run key is generated at run time
 _SIGNATURE = re.compile(r'(HMAC-SHA256 )[0-9a-f]{16}(\.\.\.\):)')

@@ -65,3 +65,27 @@ def test_clopper_pearson_and_two_sided_harm_direction():
     rng = np.random.default_rng(3)
     p, d, _ = P.binding_pvalues(rng, 300, 60, 0.05, 0.40, 0.6, 0.5)  # VE approves far more: harm
     assert ((p <= .05) & (d < 0)).mean() > .9
+
+
+def test_ni_reported_bound_matches_the_doubled_p_test_at_every_holm_level():
+    """v4 regression (second-round review): the bound reported for the doubled one-sided NI p tested
+    at Holm level alpha_j is the two-sided (1 - alpha_j) Tango interval, and the two always agree."""
+    n, margin = 160, 0.10
+    for alpha_j in [P.ALPHA / m for m in range(1, 7)]:
+        for n12 in range(0, 4):
+            for n21 in range(0, 16):
+                rejects = P.ni_doubled_p(n12, n21, n, margin) <= alpha_j
+                assert rejects == (P.ni_bound(n12, n21, n, alpha_j) > -margin), (alpha_j, n12, n21)
+    # The reviewer's case: n = 160, n12 = 0, n21 = 6. Doubled p = .008408 > .05/6, so (c) is not rejected at
+    # the first Holm step, and the reported (1 - .05/6) bound does not pass -10%. The v3 (1 - 2 alpha_j)
+    # interval did pass it, contradicting the test.
+    assert P.ni_doubled_p(0, 6, n) == pytest.approx(0.008408, abs=5e-6)
+    assert P.ni_bound(0, 6, n, P.ALPHA / 6) <= -margin
+    assert P.tango_interval(0, 6, n, level=1 - 2 * P.ALPHA / 6)[0] > -margin
+
+
+def test_power_scenarios_share_one_raw_rate_across_strata():
+    for raw, char_ve, related_ve, honest in P.SCENARIOS.values():
+        assert 0 <= raw <= 1 and honest in P.HONEST
+    harm = {k: v for k, v in P.SCENARIOS.items() if 'harm' in k}
+    assert harm and all(max(v[1], v[2]) > v[0] for v in harm.values())  # harm needs VE above the shared raw rate

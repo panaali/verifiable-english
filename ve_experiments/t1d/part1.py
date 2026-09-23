@@ -21,14 +21,13 @@ from pathlib import Path
 
 from . import certificates as C
 from . import protocol as P
-from .leakage import FEATURE_SETS, RAW_FEATURES, VE_ONLY_FEATURES, criterion, prompt_features, run_audits
-from .materials import BINDING_KINDS, BURNED_SEED_TAG, SEMANTIC_KINDS, SPLITS, design, edges_of, generate, seed_of
+from .leakage import FEATURE_SETS, criterion, prompt_features, run_audits, univariate
+from .materials import (BINDING_KINDS, BURNED_SEED_TAGS, CHAR_KINDS, RELATED_KINDS, SPLITS, design, edges_of, generate,
+                        seed_of)
 
 ROOT = Path(__file__).resolve().parents[2]
 HOME = ROOT / 'experiments/T1d'
 
-
-CHAR_KINDS = tuple(k for k in BINDING_KINDS if k not in SEMANTIC_KINDS)
 
 
 def expected(item, report, script):
@@ -56,19 +55,28 @@ def process(args):
     raw_system, raw_user = P.prompts(item, 'opus-raw')
     ve_system, ve_user = P.prompts(item, 'opus-ve', submission=sub, report=report)
     raw_features, family = prompt_features(raw_system, raw_user)
-    ve_features, family_ve = prompt_features(ve_system, ve_user)
+    refs = None if item['sabotaged'] else {'group_member': item['roles']['primary_group'],
+                                           'role_user': item['roles']['direct_role']}
+    ve_features, family_ve = prompt_features(ve_system, ve_user, refs)
     if family != item['family'] or family_ve != item['family']:
         raise AssertionError('family not recoverable from the prompt')
-    features = {**{f: raw_features[f] for f in RAW_FEATURES}, **{f: ve_features[f] for f in VE_ONLY_FEATURES}}
+    features = {'raw_prompt': {f: raw_features[f] for f in FEATURE_SETS['raw_prompt']},
+                've_prompt': {f: ve_features[f] for f in FEATURE_SETS['ve_prompt']}}
+    if refs:
+        features['references'] = ve_features['references']
     return {'id': item['id'], 'seed': item['seed'], 'index': item['index'], 'family': item['family'],
             'scheme': item['scheme'], 'shape': item['shape'], 'sabotaged': item['sabotaged'],
-            'kind': item['sabotage_kind'], 'hops': len(item['planted']), 'claim': item['claim'],
+            'kind': item['sabotage_kind'], 'hops': len(item['planted']), 'claim': item['claim'], 'facts': item['grants'],
+            'target_bytes': spec.get('target_bytes'),
             'claim_principal': item['claim_principal'], 'account': item['principal'],
             'statement': report['statement'], 'set_size': report['set_size'], 'forged_leaves': sub['forged_leaves'],
             've_verdict': report['verdict'], 'python_replay': report['python_replay'],
             'replay_steps': report['python_replay_steps'], 'lean_replay_valid': report['lean_replay_valid'],
             'script_verdict': script['verdict'], 'expected_outcome': ok,
             'principal_in_set': item['principal'] in sub['separating_set'],
+            'statement_subject': sub['principal'], 'statement_resource': sub['resource'], 'resource': item['resource'],
+            'statement_subject_kind': 'U' if sub['principal'] in (item['principal'], item['roles']['near_principal'],
+                                                                  item['roles']['alias_account']) else 'other',
             'rule_decision': P.rule_decision(item, report), 'equality_rule': 'APPROVE' if report['verdict'] == 'VALID'
             and report['statement'] == item['claim'] else 'REJECT',
             'prompt_sha256': {'raw': P.prompt_hash(raw_system, raw_user), 've': P.prompt_hash(ve_system, ve_user)},
@@ -103,7 +111,10 @@ def prepare(split, *, lean=True, workers=6):
                                  max(r['set_size'] for r in v)] for k, v in sorted(by_kind.items())},
         'hops_range': [min(r['hops'] for r in rows), max(r['hops'] for r in rows)],
         'max_replay_steps': max(r['replay_steps'] for r in rows),
-        'seed_collisions_with_T1c_or_burned_v2': seed_collisions([r['seed'] for r in rows]),
+        'facts_range': [min(r['facts'] for r in rows), max(r['facts'] for r in rows)],
+        'raw_prompt_bytes_range': [min(r['prompt_bytes']['raw'] for r in rows), max(r['prompt_bytes']['raw'] for r in rows)],
+        've_prompt_bytes_max': max(r['prompt_bytes']['ve'] for r in rows),
+        'seed_collisions_with_T1c_or_burned_v2_v3': seed_collisions([r['seed'] for r in rows]),
         'lean': lean}
     out = {'created_at': datetime.now(timezone.utc).isoformat(), 'model_calls': 0, 'split': split,
            'summary': summary, 'rows': rows}
@@ -118,34 +129,43 @@ def seed_collisions(seeds):
     the burned T1d v2 seeds (every v2 split)."""
     t1c = {base + 100 * size + i for base in (202609260100, 202609270100, 202609280100)
            for size in (5000, 20000) for i in range(100)}
-    v2 = {seed_of(split, i, BURNED_SEED_TAG) for split, n in (('dev', 12), ('audit', 300), ('full', 270)) for i in range(n)}
-    return len(set(seeds) & (t1c | v2))
+    v2 = {seed_of(split, i, BURNED_SEED_TAGS[0]) for split, n in (('dev', 12), ('audit', 300), ('full', 270)) for i in range(n)}
+    v3 = {seed_of(split, i, BURNED_SEED_TAGS[1]) for split, n in (('dev', 12), ('leakdev', 500), ('audit', 300),
+                                                                   ('full', 270)) for i in range(n)}
+    return len(set(seeds) & (t1c | v2 | v3))
 
 
 GROUPS = {'all_sabotaged': ('leak',) + BINDING_KINDS, 'binding': BINDING_KINDS, 'char': CHAR_KINDS,
-          'semantic': SEMANTIC_KINDS, 'leak': ('leak',), **{k: (k,) for k in BINDING_KINDS}}
-POOLED = ('all_sabotaged', 'binding', 'char', 'semantic')
-AUDIT = {'repeats': 10, 'permutations': 200, 'boot': 2000}
+          'related': RELATED_KINDS, 'leak': ('leak',), **{k: (k,) for k in BINDING_KINDS}}
+POOLED = ('all_sabotaged', 'binding', 'char', 'related')
+# v4: 40 multivariate tests x 2,000 permutations: the smallest attainable Holm-adjusted p is 40 / 2,001
+# = .020, so the gate can fail. Repeats cut from 10 to 2 (for the observed statistic and every
+# permutation alike) to afford the permutations.
+AUDIT = {'repeats': 2, 'permutations': 2000, 'boot': 2000}
 
 
 def _summarise(results):
-    return {fs: {g: {name: [m['foldwise_auc'], m.get('p_two_sided')] for name, m in r['models'].items()}
+    return {fs: {g: {name: [round(m['foldwise_auc'], 4), m.get('p_two_sided')] for name, m in r['models'].items()}
                  for g, r in gs.items()} for fs, gs in results.items()}
 
 
 def leakage(dev=False):
-    """dev=True: the burned leakdev split (development only). Otherwise THE v3 audit, run once on the
-    fresh audit + full splits, with the criterion declared in leakage.criterion."""
+    """dev=True: the burned leakdev split (development only, fewer permutations). Otherwise THE v4
+    audit, run once on the fresh v4 audit + full splits, with the criterion declared in
+    leakage.criterion."""
     splits = ('leakdev',) if dev else ('audit', 'full')
     rows = []
     for split in splits:
         rows.extend(dict(r, split=split) for r in json.loads((HOME / f'part1-{split}.json').read_text())['rows'])
-    settings = dict(AUDIT, permutations=100) if dev else AUDIT
+    settings = dict(AUDIT, permutations=200) if dev else AUDIT
     results = run_audits(rows, GROUPS, **settings)
+    uni = univariate(rows, GROUPS)
     result = {'created_at': datetime.now(timezone.utc).isoformat(), 'model_calls': 0, 'splits': list(splits),
               'items': len(rows), 'settings': settings, 'feature_sets': {k: list(v) for k, v in FEATURE_SETS.items()},
-              'criterion': leakage_criterion_text(), 'summary': _summarise(results), 'audits': results}
-    result['verdict'] = criterion(results, POOLED)
+              'criterion': leakage_criterion_text(), 'summary': _summarise(results), 'audits': results,
+              'univariate': [{'feature_set': k[0], 'group': k[1], 'feature': k[2], **v} for k, v in sorted(uni.items())],
+              'descriptive_decision_variable': decision_variable_auc(rows)}
+    result['verdict'] = criterion(results, POOLED, uni)
     name = 'leakage-dev.json' if dev else 'leakage.json'
     (HOME / name).write_text(json.dumps(result, indent=1) + '\n')
     print(json.dumps(result['summary'], indent=1))
@@ -153,12 +173,32 @@ def leakage(dev=False):
     return result
 
 
+def decision_variable_auc(rows):
+    """Descriptive, not gated: how well string-level functions of the certified statement alone
+    (excluded as the decision variable) separate each kind from honest items."""
+    import numpy as np
+    from sklearn.metrics import roc_auc_score
+    out = {}
+    for g, positive in GROUPS.items():
+        chosen = [r for r in rows if r['kind'] in positive or r['kind'] == 'honest']
+        y = np.array([r['kind'] != 'honest' for r in chosen], dtype=int)
+        same = np.array([r['statement_subject'] != r['account'] or r['statement_resource'] != r['resource']
+                         for r in chosen], dtype=float)
+        kind = np.array([r['statement_subject_kind'] != 'U' for r in chosen], dtype=float)
+        out[g] = {'identity_mismatch_auc': float(roc_auc_score(y, same)),
+                  'subject_kind_not_principal_auc': float(roc_auc_score(y, kind))}
+    return out
+
+
 def leakage_criterion_text():
-    return ('v3, declared before the single fresh-seed audit: features computed from the rendered prompt '
-            'strings (raw-arm and VE-arm feature sets); per kind and pooled groups vs honest; foldwise AUC over '
-            '10 x 5-fold CV; null from 200 full-procedure label permutations; two-sided p. PASS iff every '
-            'Holm-adjusted p (all feature sets x groups x classifiers) >= .05 and every pooled group has '
-            'unadjusted p >= .05.')
+    return ('v4, declared before the single fresh-seed audit: features computed from the rendered prompt strings '
+            '(raw-arm set: global statistics + claimed account and resource graph profiles; VE-arm set: global '
+            'statistics + certified subject and resource graph profiles + masked display); per kind and pooled '
+            'groups vs honest; foldwise AUC over 2 x 5-fold CV; null from 2,000 full-procedure label permutations; '
+            'two-sided unrounded p. PASS iff (a) every Holm-adjusted multivariate p (2 feature sets x 10 groups x 2 '
+            'classifiers = 40 tests; smallest attainable 40/2001 = .020) >= .05, (b) the 16 pooled-group tests, Holm-'
+            'adjusted among themselves, are >= .05, and (c) every univariate Mann-Whitney p, Holm-adjusted over all '
+            'univariate tests, >= .05.')
 
 
 def main():
