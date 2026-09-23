@@ -1,0 +1,500 @@
+{
+ "packet": "pde928ee15266",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u5\",\"verdict\":\"unacceptable\",\"reason\":\"The given facts are omitted without an allowlist code.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only identifies unassumed checks, and no nodes assume them.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u8\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u9\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u10\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u11\",\"verdict\":\"acceptable\",\"reason\":\"Neither audited nor scheduled is derivable for unit3, and no claimed sentence relies on this rule.\"},{\"unit\":\"u12\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u13\",\"verdict\":\"acceptable\",\"reason\":\"Neither audited nor scheduled is derivable for unit3, and no claimed sentence relies on this rule.\"},{\"unit\":\"u14\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u15\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u16\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u17\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u18\",\"verdict\":\"acceptable\",\"reason\":\"Neither audited nor scheduled is derivable for unit3, and no claimed sentence relies on this rule.\"},{\"unit\":\"u19\",\"verdict\":\"acceptable\",\"reason\":\"The sentence states a lot/sample relationship that the glossary cannot express.\"},{\"unit\":\"u20\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u21\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u22\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u23\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u24\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u25\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u26\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u27\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u28\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u29\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u30\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u31\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u32\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u33\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u34\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u35\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u36\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u37\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u38\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u39\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u40\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u41\",\"verdict\":\"unacceptable\",\"reason\":\"The conditional claims are omitted without an allowlist code.\"},{\"unit\":\"u42\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u43\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u44\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u45\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u46\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed sentence is omitted without an allowlist code.\"},{\"unit\":\"u47\",\"verdict\":\"faithful\",\"reason\":\"The formalisation exactly states the sentence's conclusion that unit5 is stored, as permitted for a conclusion with reasons.\"}]}",
+ "auditor_tokens": 23777,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u5",
+   "sentence": "n17.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u8",
+   "sentence": "r15.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u9",
+   "sentence": "r03.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u10",
+   "sentence": "r01.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u12",
+   "sentence": "r14.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u14",
+   "sentence": "r08.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u15",
+   "sentence": "r00.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u16",
+   "sentence": "r12.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u17",
+   "sentence": "r05.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u20",
+   "sentence": "r06.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u21",
+   "sentence": "r04.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u22",
+   "sentence": "r11.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u23",
+   "sentence": "r13.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u24",
+   "sentence": "r02.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u25",
+   "sentence": "r10.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u26",
+   "sentence": "r07.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u27",
+   "sentence": "r07.2",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u28",
+   "sentence": "r07.3",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u29",
+   "sentence": "r07.4",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u30",
+   "sentence": "r09.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u31",
+   "sentence": "n00.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u32",
+   "sentence": "n02.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u33",
+   "sentence": "n07.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u34",
+   "sentence": "n16.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u35",
+   "sentence": "n05.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u36",
+   "sentence": "n20.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u37",
+   "sentence": "n06.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u38",
+   "sentence": "n03.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u39",
+   "sentence": "n14.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u40",
+   "sentence": "n21.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u41",
+   "sentence": "n21.2",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u42",
+   "sentence": "n01.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u43",
+   "sentence": "n15.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u44",
+   "sentence": "n08.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u45",
+   "sentence": "n18.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u46",
+   "sentence": "n04.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "unacceptable",
+   "reason": "The given facts are omitted without an allowlist code."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence only identifies unassumed checks, and no nodes assume them."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "acceptable",
+   "reason": "Neither audited nor scheduled is derivable for unit3, and no claimed sentence relies on this rule."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "acceptable",
+   "reason": "Neither audited nor scheduled is derivable for unit3, and no claimed sentence relies on this rule."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "acceptable",
+   "reason": "Neither audited nor scheduled is derivable for unit3, and no claimed sentence relies on this rule."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "acceptable",
+   "reason": "The sentence states a lot/sample relationship that the glossary cannot express."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "unacceptable",
+   "reason": "The conditional claims are omitted without an allowlist code."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "unacceptable",
+   "reason": "The claimed sentence is omitted without an allowlist code."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "The formalisation exactly states the sentence's conclusion that unit5 is stored, as permitted for a conclusion with reasons."
+  }
+ }
+}

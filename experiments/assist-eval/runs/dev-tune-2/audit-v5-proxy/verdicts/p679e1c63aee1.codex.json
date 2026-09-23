@@ -1,0 +1,247 @@
+{
+ "packet": "p679e1c63aee1",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u4\",\"verdict\":\"faithful\",\"reason\":\"The seven statements preserve all seven facts about unit5.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only identifies unassumed checks, and the graph does not assume them.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"The entities, payment-settled sense, and implication direction match.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"Both packing-completed conditions and the weighed-in conclusion are preserved.\"},{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"All three conditions and the packing-completed conclusion match.\"},{\"unit\":\"u11\",\"verdict\":\"acceptable\",\"reason\":\"Neither tied nor boxed is supplied or derivable, and no claim relies on this rule.\"},{\"unit\":\"u12\",\"verdict\":\"faithful\",\"reason\":\"The weighed-in condition and casing-intact conclusion match.\"},{\"unit\":\"u13\",\"verdict\":\"faithful\",\"reason\":\"Both conditions, the target entity, and the temperature-constant conclusion match.\"},{\"unit\":\"u14\",\"verdict\":\"faithful\",\"reason\":\"Both conditions and the shape-retained conclusion about unit1 match.\"},{\"unit\":\"u15\",\"verdict\":\"faithful\",\"reason\":\"Both conditions and the temperature-constant conclusion about unit5 match.\"},{\"unit\":\"u16\",\"verdict\":\"faithful\",\"reason\":\"Both conditions and the shape-retained conclusion about unit5 match.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the direction from temperature constant to shape retained.\"},{\"unit\":\"u18\",\"verdict\":\"faithful\",\"reason\":\"The logged condition and inspection-passed conclusion match.\"},{\"unit\":\"u19\",\"verdict\":\"faithful\",\"reason\":\"All three conditions and the staffing-arranged conclusion match.\"},{\"unit\":\"u20\",\"verdict\":\"acceptable\",\"reason\":\"Neither tied nor boxed is supplied or derivable, and no claim relies on this rule.\"},{\"unit\":\"u21\",\"verdict\":\"acceptable\",\"reason\":\"No rule or claimed sentence uses the lot-to-sample supply fact.\"},{\"unit\":\"u22\",\"verdict\":\"faithful\",\"reason\":\"The payment-settled implication preserves both entities and its direction.\"},{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"The balanced condition and temperature-constant conclusion match.\"},{\"unit\":\"u24\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the signal-audible sense and both entities.\"},{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"The shape-retained condition and calibrated conclusion match.\"},{\"unit\":\"u26\",\"verdict\":\"acceptable\",\"reason\":\"Neither tied nor boxed is supplied or derivable, and no claim relies on this rule.\"},{\"unit\":\"u27\",\"verdict\":\"faithful\",\"reason\":\"The implication correctly runs from inspection passed to payment settled.\"},{\"unit\":\"u28\",\"verdict\":\"faithful\",\"reason\":\"Both distinct readiness conditions and the packing-completed conclusion match.\"},{\"unit\":\"u29\",\"verdict\":\"faithful\",\"reason\":\"The implication correctly runs from casing intact to signal audible.\"},{\"unit\":\"u30\",\"verdict\":\"faithful\",\"reason\":\"The signal-audible condition and logged conclusion match.\"},{\"unit\":\"u31\",\"verdict\":\"faithful\",\"reason\":\"The staffing-arranged sense matches the stated bundled, retained, and packed reasons through r00.1.\"},{\"unit\":\"u32\",\"verdict\":\"faithful\",\"reason\":\"The three respective conditionals preserve the checks and supported stability senses using the recorded shape-retained result and r15.1–r15.3.\"},{\"unit\":\"u33\",\"verdict\":\"faithful\",\"reason\":\"The packing-completed sense matches the mounted, routed, and rated reasons through r03.1.\"},{\"unit\":\"u34\",\"verdict\":\"faithful\",\"reason\":\"The conclusion uses the two readiness results and their matching rule r06.1.\"},{\"unit\":\"u35\",\"verdict\":\"faithful\",\"reason\":\"The weighed-in conclusion rests on unit3's packing readiness and the immediately preceding readiness result through r09.1.\"},{\"unit\":\"u36\",\"verdict\":\"faithful\",\"reason\":\"The casing-intact sense matches the weighed-in reason through r01.1.\"},{\"unit\":\"u37\",\"verdict\":\"faithful\",\"reason\":\"The signal-audible conclusion follows the stated sound reason in its casing-intact sense through r14.1.\"},{\"unit\":\"u38\",\"verdict\":\"faithful\",\"reason\":\"The signal-audible conclusion about unit5 uses the corresponding sound result about unit3 through r07.1.\"},{\"unit\":\"u39\",\"verdict\":\"faithful\",\"reason\":\"The logged conclusion uses the immediately preceding sound result through r10.1.\"},{\"unit\":\"u40\",\"verdict\":\"faithful\",\"reason\":\"The inspection-passed sense matches the logged reason through r04.1.\"},{\"unit\":\"u41\",\"verdict\":\"faithful\",\"reason\":\"The payment-settled conclusion uses the inspection-passed result through r02.1.\"},{\"unit\":\"u42\",\"verdict\":\"faithful\",\"reason\":\"The payment-settled conclusion about unit1 uses the corresponding result about unit3 through r12.1.\"},{\"unit\":\"u43\",\"verdict\":\"faithful\",\"reason\":\"The balanced conclusion uses the immediately preceding cleared result through r08.1.\"},{\"unit\":\"u44\",\"verdict\":\"faithful\",\"reason\":\"The temperature-constant sense matches the balanced reason through r13.1.\"},{\"unit\":\"u45\",\"verdict\":\"faithful\",\"reason\":\"The shape-retained conclusion uses the temperature-constant result through r11.1.\"},{\"unit\":\"u46\",\"verdict\":\"faithful\",\"reason\":\"The shape-retained conclusion about unit5 uses unit3's shape retention and unit5's scanning through r15.4.\"},{\"unit\":\"u47\",\"verdict\":\"faithful\",\"reason\":\"Both statements preserve the calibrated conclusion, and N42 uses the immediately preceding stability result through r05.1.\"}]}",
+ "auditor_tokens": 28828,
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "The seven statements preserve all seven facts about unit5."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The sentence only identifies unassumed checks, and the graph does not assume them."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The entities, payment-settled sense, and implication direction match."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "Both packing-completed conditions and the weighed-in conclusion are preserved."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "All three conditions and the packing-completed conclusion match."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "acceptable",
+   "reason": "Neither tied nor boxed is supplied or derivable, and no claim relies on this rule."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The weighed-in condition and casing-intact conclusion match."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "Both conditions, the target entity, and the temperature-constant conclusion match."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "Both conditions and the shape-retained conclusion about unit1 match."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "Both conditions and the temperature-constant conclusion about unit5 match."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "Both conditions and the shape-retained conclusion about unit5 match."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The implication preserves the direction from temperature constant to shape retained."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The logged condition and inspection-passed conclusion match."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "All three conditions and the staffing-arranged conclusion match."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "acceptable",
+   "reason": "Neither tied nor boxed is supplied or derivable, and no claim relies on this rule."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "acceptable",
+   "reason": "No rule or claimed sentence uses the lot-to-sample supply fact."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The payment-settled implication preserves both entities and its direction."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The balanced condition and temperature-constant conclusion match."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The implication preserves the signal-audible sense and both entities."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The shape-retained condition and calibrated conclusion match."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "acceptable",
+   "reason": "Neither tied nor boxed is supplied or derivable, and no claim relies on this rule."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The implication correctly runs from inspection passed to payment settled."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "Both distinct readiness conditions and the packing-completed conclusion match."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The implication correctly runs from casing intact to signal audible."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The signal-audible condition and logged conclusion match."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The staffing-arranged sense matches the stated bundled, retained, and packed reasons through r00.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The three respective conditionals preserve the checks and supported stability senses using the recorded shape-retained result and r15.1–r15.3."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The packing-completed sense matches the mounted, routed, and rated reasons through r03.1."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The conclusion uses the two readiness results and their matching rule r06.1."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "The weighed-in conclusion rests on unit3's packing readiness and the immediately preceding readiness result through r09.1."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "The casing-intact sense matches the weighed-in reason through r01.1."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "The signal-audible conclusion follows the stated sound reason in its casing-intact sense through r14.1."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "The signal-audible conclusion about unit5 uses the corresponding sound result about unit3 through r07.1."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "The logged conclusion uses the immediately preceding sound result through r10.1."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "The inspection-passed sense matches the logged reason through r04.1."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "The payment-settled conclusion uses the inspection-passed result through r02.1."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "The payment-settled conclusion about unit1 uses the corresponding result about unit3 through r12.1."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The balanced conclusion uses the immediately preceding cleared result through r08.1."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "The temperature-constant sense matches the balanced reason through r13.1."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "The shape-retained conclusion uses the temperature-constant result through r11.1."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "The shape-retained conclusion about unit5 uses unit3's shape retention and unit5's scanning through r15.4."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "Both statements preserve the calibrated conclusion, and N42 uses the immediately preceding stability result through r05.1."
+  }
+ }
+}

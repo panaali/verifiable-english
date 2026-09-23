@@ -1,0 +1,276 @@
+{
+ "packet": "p9e8471d10679",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u4\",\"verdict\":\"faithful\",\"reason\":\"The seven statements preserve all seven facts about unit5.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only identifies unassumed checks, and the graph does not assume them.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves the entities, payment-settled sense, and implication direction.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves both packing-completed conditions and the weighed-in conclusion.\"},{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves all three conditions and the packing-completed conclusion about unit3.\"},{\"unit\":\"u11\",\"verdict\":\"acceptable\",\"reason\":\"Neither tied nor boxed is derivable from the given facts, and no claimed sentence relies on this rule.\"},{\"unit\":\"u12\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves the weighed-in condition and casing-intact conclusion.\"},{\"unit\":\"u13\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code and removes a rule supporting the stacked-check conditional in n18.2.\"},{\"unit\":\"u14\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code and removes a rule supporting the checked-check conditional in n18.2.\"},{\"unit\":\"u15\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves both conditions and the temperature-constant conclusion about unit5.\"},{\"unit\":\"u16\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code and removes a rule supporting the scanned-check conditional in n18.2.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves the implication from temperature constant to shape retained for unit3.\"},{\"unit\":\"u18\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves the logged condition and inspection-passed conclusion.\"},{\"unit\":\"u19\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves all three conditions and the staffing-arranged conclusion about unit3.\"},{\"unit\":\"u20\",\"verdict\":\"acceptable\",\"reason\":\"Neither tied nor boxed is derivable from the given facts, and no claimed sentence relies on this rule.\"},{\"unit\":\"u21\",\"verdict\":\"acceptable\",\"reason\":\"No rule or claimed sentence uses the lot-to-sample supply fact.\"},{\"unit\":\"u22\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves the payment-settled implication from unit3 to unit1.\"},{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves the balanced condition and temperature-constant conclusion about unit3.\"},{\"unit\":\"u24\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves the signal-audible implication from unit3 to unit5.\"},{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves shape retained as the condition for unit5 being calibrated.\"},{\"unit\":\"u26\",\"verdict\":\"acceptable\",\"reason\":\"Neither tied nor boxed is derivable from the given facts, and no claimed sentence relies on this rule.\"},{\"unit\":\"u27\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves the implication from inspection passed to payment settled for unit3.\"},{\"unit\":\"u28\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves both distinct readiness conditions for unit3 and the packing-completed conclusion for unit5.\"},{\"unit\":\"u29\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves the implication from casing intact to signal audible for unit3.\"},{\"unit\":\"u30\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves the signal-audible condition and logged conclusion for unit5.\"},{\"unit\":\"u31\",\"verdict\":\"faithful\",\"reason\":\"The staffing-arranged conclusion matches the stated bundled, retained, and packed reasons through r00.1.\"},{\"unit\":\"u32\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence asserts three expressible conditional claims and is omitted without an allowlist code.\"},{\"unit\":\"u33\",\"verdict\":\"faithful\",\"reason\":\"The packing-completed conclusion matches the stated mounted, routed, and rated reasons through r03.1.\"},{\"unit\":\"u34\",\"verdict\":\"faithful\",\"reason\":\"The packing-completed conclusion for unit5 matches the two readiness results combined by r06.1.\"},{\"unit\":\"u35\",\"verdict\":\"faithful\",\"reason\":\"The weighed-in conclusion uses unit3's packing readiness and the immediately preceding readiness result for unit5 through r09.1.\"},{\"unit\":\"u36\",\"verdict\":\"faithful\",\"reason\":\"The casing-intact conclusion matches the stated weighed-in reason through r01.1.\"},{\"unit\":\"u37\",\"verdict\":\"faithful\",\"reason\":\"The signal-audible conclusion matches the preceding casing-intact result through r14.1.\"},{\"unit\":\"u38\",\"verdict\":\"faithful\",\"reason\":\"The signal-audible conclusion for unit5 matches the signal-audible result for unit3 through r07.1.\"},{\"unit\":\"u39\",\"verdict\":\"faithful\",\"reason\":\"The logged conclusion uses the immediately preceding sound result through r10.1.\"},{\"unit\":\"u40\",\"verdict\":\"faithful\",\"reason\":\"The inspection-passed conclusion matches the stated logged reason through r04.1.\"},{\"unit\":\"u41\",\"verdict\":\"faithful\",\"reason\":\"The payment-settled conclusion matches the preceding inspection-passed result through r02.1.\"},{\"unit\":\"u42\",\"verdict\":\"faithful\",\"reason\":\"The payment-settled conclusion for unit1 matches the payment-settled result for unit3 through r12.1.\"},{\"unit\":\"u43\",\"verdict\":\"faithful\",\"reason\":\"The balanced conclusion uses the immediately preceding cleared result through r08.1.\"},{\"unit\":\"u44\",\"verdict\":\"faithful\",\"reason\":\"The temperature-constant conclusion matches the stated balanced reason through r13.1.\"},{\"unit\":\"u45\",\"verdict\":\"faithful\",\"reason\":\"The shape-retained conclusion matches the preceding temperature-constant result through r11.1.\"},{\"unit\":\"u46\",\"verdict\":\"faithful\",\"reason\":\"The temperature-constant conclusion for unit5 matches unit3's shape-retained result and unit5's coded fact through r15.3.\"},{\"unit\":\"u47\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the calibration conclusion and its stated reliance on the immediately preceding stable result, without altering either stability sense.\"}]}",
+ "auditor_tokens": 28448,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u13",
+   "sentence": "r15.1",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u14",
+   "sentence": "r15.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u16",
+   "sentence": "r15.4",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u32",
+   "sentence": "n18.2",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "The seven statements preserve all seven facts about unit5."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The sentence only identifies unassumed checks, and the graph does not assume them."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The statement preserves the entities, payment-settled sense, and implication direction."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The statement preserves both packing-completed conditions and the weighed-in conclusion."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The statement preserves all three conditions and the packing-completed conclusion about unit3."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "acceptable",
+   "reason": "Neither tied nor boxed is derivable from the given facts, and no claimed sentence relies on this rule."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The statement preserves the weighed-in condition and casing-intact conclusion."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code and removes a rule supporting the stacked-check conditional in n18.2."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code and removes a rule supporting the checked-check conditional in n18.2."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The statement preserves both conditions and the temperature-constant conclusion about unit5."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code and removes a rule supporting the scanned-check conditional in n18.2."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The statement preserves the implication from temperature constant to shape retained for unit3."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The statement preserves the logged condition and inspection-passed conclusion."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "The statement preserves all three conditions and the staffing-arranged conclusion about unit3."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "acceptable",
+   "reason": "Neither tied nor boxed is derivable from the given facts, and no claimed sentence relies on this rule."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "acceptable",
+   "reason": "No rule or claimed sentence uses the lot-to-sample supply fact."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The statement preserves the payment-settled implication from unit3 to unit1."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The statement preserves the balanced condition and temperature-constant conclusion about unit3."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The statement preserves the signal-audible implication from unit3 to unit5."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The statement preserves shape retained as the condition for unit5 being calibrated."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "acceptable",
+   "reason": "Neither tied nor boxed is derivable from the given facts, and no claimed sentence relies on this rule."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The statement preserves the implication from inspection passed to payment settled for unit3."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "The statement preserves both distinct readiness conditions for unit3 and the packing-completed conclusion for unit5."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The statement preserves the implication from casing intact to signal audible for unit3."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The statement preserves the signal-audible condition and logged conclusion for unit5."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The staffing-arranged conclusion matches the stated bundled, retained, and packed reasons through r00.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "unacceptable",
+   "reason": "The sentence asserts three expressible conditional claims and is omitted without an allowlist code."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The packing-completed conclusion matches the stated mounted, routed, and rated reasons through r03.1."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The packing-completed conclusion for unit5 matches the two readiness results combined by r06.1."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "The weighed-in conclusion uses unit3's packing readiness and the immediately preceding readiness result for unit5 through r09.1."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "The casing-intact conclusion matches the stated weighed-in reason through r01.1."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "The signal-audible conclusion matches the preceding casing-intact result through r14.1."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "The signal-audible conclusion for unit5 matches the signal-audible result for unit3 through r07.1."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "The logged conclusion uses the immediately preceding sound result through r10.1."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "The inspection-passed conclusion matches the stated logged reason through r04.1."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "The payment-settled conclusion matches the preceding inspection-passed result through r02.1."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "The payment-settled conclusion for unit1 matches the payment-settled result for unit3 through r12.1."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The balanced conclusion uses the immediately preceding cleared result through r08.1."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "The temperature-constant conclusion matches the stated balanced reason through r13.1."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "The shape-retained conclusion matches the preceding temperature-constant result through r11.1."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "The temperature-constant conclusion for unit5 matches unit3's shape-retained result and unit5's coded fact through r15.3."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the calibration conclusion and its stated reliance on the immediately preceding stable result, without altering either stability sense."
+  }
+ }
+}

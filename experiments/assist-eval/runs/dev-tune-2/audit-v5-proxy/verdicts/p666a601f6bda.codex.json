@@ -1,0 +1,16 @@
+{
+ "packet": "p666a601f6bda",
+ "auditor": "codex",
+ "auditor_model": null,
+ "cost_usd": "0",
+ "reply": null,
+ "pass": false,
+ "problems": [
+  {
+   "unit": null,
+   "verdict": null,
+   "reason": "empty packet"
+  }
+ ],
+ "units": {}
+}

@@ -1,0 +1,16 @@
+{
+ "packet": "pa68c3ae0ee6f",
+ "auditor": "codex",
+ "auditor_model": null,
+ "cost_usd": "0",
+ "reply": null,
+ "pass": false,
+ "problems": [
+  {
+   "unit": null,
+   "verdict": null,
+   "reason": "empty packet"
+  }
+ ],
+ "units": {}
+}

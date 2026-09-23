@@ -1,0 +1,325 @@
+{
+ "packet": "p936bb8ad1c53",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u6\",\"verdict\":\"faithful\",\"reason\":\"The seven statements preserve every stated property of unit0.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only identifies unassumed checks, and the graph does not assume them.\"},{\"unit\":\"u8\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence is omitted without an allowlist code.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions, the conclusion, the entities, and the specified senses.\"},{\"unit\":\"u10\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence is omitted without an allowlist code.\"},{\"unit\":\"u11\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence is omitted without an allowlist code.\"},{\"unit\":\"u12\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the implication from seal removed to account enabled for unit1.\"},{\"unit\":\"u13\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the account-enabled implication from unit1 to unit0.\"},{\"unit\":\"u14\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves packing unit0 as the condition for staffing readiness of unit1.\"},{\"unit\":\"u15\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves packing readiness of unit0 as the condition for bundling unit0.\"},{\"unit\":\"u16\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves documentation of unit0 as the condition for seal removal on unit1.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both audible-signal conditions and the checking conclusion.\"},{\"unit\":\"u18\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three conditions and the audible-signal conclusion for unit1.\"},{\"unit\":\"u19\",\"verdict\":\"acceptable\",\"reason\":\"No given facts or rules establish dated and tied for unit2, and no claimed sentence relies on this rule.\"},{\"unit\":\"u20\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three conditions and the intact-casing conclusion for unit1.\"},{\"unit\":\"u21\",\"verdict\":\"acceptable\",\"reason\":\"No given facts or rules establish dated and tied for unit2, and no claimed sentence relies on this rule.\"},{\"unit\":\"u22\",\"verdict\":\"acceptable\",\"reason\":\"The glossary cannot express the stated lot-to-sample relationship.\"},{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves optical transparency of unit2 as the condition for documenting unit0.\"},{\"unit\":\"u24\",\"verdict\":\"acceptable\",\"reason\":\"No given facts or rules establish dated and tied for unit2, and no claimed sentence relies on this rule.\"},{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the implication from contamination absence to optical transparency for unit1.\"},{\"unit\":\"u26\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both distinct sound senses for unit1 and the audible-signal conclusion for unit0.\"},{\"unit\":\"u27\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the packing-readiness implication from unit1 to unit0.\"},{\"unit\":\"u28\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the implication from staffing readiness to packing readiness for unit1.\"},{\"unit\":\"u29\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves account enablement of unit0 as the condition for packing unit0.\"},{\"unit\":\"u30\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves checking unit0 as the condition for contamination absence in unit1.\"},{\"unit\":\"u31\",\"verdict\":\"faithful\",\"reason\":\"The intact-casing sense is established by the stated sizing, wrapping-up, and release reasons through r06.1.\"},{\"unit\":\"u32\",\"verdict\":\"faithful\",\"reason\":\"The audible-signal sense is established by the stated review, staging, and registration reasons through r08.1.\"},{\"unit\":\"u33\",\"verdict\":\"faithful\",\"reason\":\"The audible-signal conclusion for unit0 uses the two preceding sound results through r14.1.\"},{\"unit\":\"u34\",\"verdict\":\"faithful\",\"reason\":\"The checking conclusion uses unit1's audible signal and the immediately preceding sound result for unit0 through r05.1.\"},{\"unit\":\"u35\",\"verdict\":\"faithful\",\"reason\":\"The contamination-absent sense follows from the stated checking reason through r09.1.\"},{\"unit\":\"u36\",\"verdict\":\"faithful\",\"reason\":\"The optical-transparency sense follows from the preceding contamination-absence result through r02.1.\"},{\"unit\":\"u37\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence is omitted without an allowlist code.\"},{\"unit\":\"u38\",\"verdict\":\"faithful\",\"reason\":\"The contamination-absent conclusion for unit2 uses the stated clarity and inspection reasons through r11.2.\"},{\"unit\":\"u39\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the documentation conclusion and its stated preceding-clear-result reason, irrespective of the inference's validity.\"},{\"unit\":\"u40\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence is omitted without an allowlist code.\"},{\"unit\":\"u41\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence is omitted without an allowlist code.\"},{\"unit\":\"u42\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence is omitted without an allowlist code.\"},{\"unit\":\"u43\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence is omitted without an allowlist code.\"},{\"unit\":\"u44\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence is omitted without an allowlist code.\"},{\"unit\":\"u45\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence is omitted without an allowlist code.\"},{\"unit\":\"u46\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence is omitted without an allowlist code.\"},{\"unit\":\"u47\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states the exact bundling conclusion, which is sufficient for a sentence giving a conclusion with reasons.\"}]}",
+ "auditor_tokens": 27650,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u8",
+   "sentence": "r11.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u10",
+   "sentence": "r11.3",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u11",
+   "sentence": "r11.4",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u37",
+   "sentence": "n16.2",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u40",
+   "sentence": "n17.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u41",
+   "sentence": "n01.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u42",
+   "sentence": "n21.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u43",
+   "sentence": "n10.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u44",
+   "sentence": "n14.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u45",
+   "sentence": "n20.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u46",
+   "sentence": "n00.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "faithful",
+   "reason": "The seven statements preserve every stated property of unit0."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only identifies unassumed checks, and the graph does not assume them."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "unacceptable",
+   "reason": "The sentence is omitted without an allowlist code."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions, the conclusion, the entities, and the specified senses."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "unacceptable",
+   "reason": "The sentence is omitted without an allowlist code."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "unacceptable",
+   "reason": "The sentence is omitted without an allowlist code."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the implication from seal removed to account enabled for unit1."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the account-enabled implication from unit1 to unit0."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves packing unit0 as the condition for staffing readiness of unit1."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves packing readiness of unit0 as the condition for bundling unit0."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves documentation of unit0 as the condition for seal removal on unit1."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both audible-signal conditions and the checking conclusion."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three conditions and the audible-signal conclusion for unit1."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "acceptable",
+   "reason": "No given facts or rules establish dated and tied for unit2, and no claimed sentence relies on this rule."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three conditions and the intact-casing conclusion for unit1."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "acceptable",
+   "reason": "No given facts or rules establish dated and tied for unit2, and no claimed sentence relies on this rule."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "acceptable",
+   "reason": "The glossary cannot express the stated lot-to-sample relationship."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves optical transparency of unit2 as the condition for documenting unit0."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "acceptable",
+   "reason": "No given facts or rules establish dated and tied for unit2, and no claimed sentence relies on this rule."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the implication from contamination absence to optical transparency for unit1."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both distinct sound senses for unit1 and the audible-signal conclusion for unit0."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the packing-readiness implication from unit1 to unit0."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the implication from staffing readiness to packing readiness for unit1."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves account enablement of unit0 as the condition for packing unit0."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves checking unit0 as the condition for contamination absence in unit1."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The intact-casing sense is established by the stated sizing, wrapping-up, and release reasons through r06.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The audible-signal sense is established by the stated review, staging, and registration reasons through r08.1."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The audible-signal conclusion for unit0 uses the two preceding sound results through r14.1."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The checking conclusion uses unit1's audible signal and the immediately preceding sound result for unit0 through r05.1."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "The contamination-absent sense follows from the stated checking reason through r09.1."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "The optical-transparency sense follows from the preceding contamination-absence result through r02.1."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "unacceptable",
+   "reason": "The sentence is omitted without an allowlist code."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "The contamination-absent conclusion for unit2 uses the stated clarity and inspection reasons through r11.2."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the documentation conclusion and its stated preceding-clear-result reason, irrespective of the inference's validity."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "unacceptable",
+   "reason": "The sentence is omitted without an allowlist code."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "unacceptable",
+   "reason": "The sentence is omitted without an allowlist code."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "unacceptable",
+   "reason": "The sentence is omitted without an allowlist code."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "unacceptable",
+   "reason": "The sentence is omitted without an allowlist code."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "unacceptable",
+   "reason": "The sentence is omitted without an allowlist code."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "unacceptable",
+   "reason": "The sentence is omitted without an allowlist code."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "unacceptable",
+   "reason": "The sentence is omitted without an allowlist code."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "The formalisation states the exact bundling conclusion, which is sufficient for a sentence giving a conclusion with reasons."
+  }
+ }
+}

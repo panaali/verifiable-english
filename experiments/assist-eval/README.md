@@ -44,13 +44,12 @@ $M waivers --write          # the preregistered allowlist W (waivers.json)
 $M hashes --write           # PREREG text, tool, prompts, W, items, CONFIG
 git add experiments/assist-eval ve_experiments/assist_eval && git commit -m "PREREG-ASSIST: freeze"
 uvx --from opentimestamps-client ots stamp experiments/assist-eval/PREREG-HASHES.txt
-# 2. HELD-OUT (refuses unless FROZEN, hashes and W match, and no setting flag differs from CONFIG)
-$M run --split heldout --run-id heldout-1 --authors opus --arms A2
-$M run --split heldout --run-id heldout-1 --authors opus --arms A3
-$M run --split heldout --run-id heldout-1 --authors opus --arms A4
-$M run --split heldout --run-id heldout-1 --authors gemini --arms A2,A3,A4   # Gemini run ledger capped at $40
+# 2. HELD-OUT (refuses unless FROZEN, hashes (whole ve/ package included) and W match, no setting flag differs
+#    from CONFIG, the author/arm set is the FULL registered one, no other held-out run id exists, and no
+#    account-override environment variable is set). Rerun the same command to resume after an abort.
+$M run --split heldout --run-id heldout-1        # opus,gemini x A2,A3,A4; Gemini run ledger capped at $40
 $M audit-export --run-id heldout-1
-$M audit-run    --run-id heldout-1   # Codex audits every packet; Opus also audits Gemini packets
+$M audit-run    --run-id heldout-1   # Codex (pinned gpt-6-astra) audits every packet; Opus also audits Gemini's
 $M report       --run-id heldout-1   # report.json (primary: Opus A3 vs A2 paired) + audit-spotcheck.jsonl
 ```
 
@@ -227,6 +226,77 @@ with holds), which the new restart accounting prevents. Primary endpoint on dev 
 12/12 vs A2 9/12, 3 discordant pairs all favouring A3, sign test p = 0.25; A3 12/12 has an exact lower bound of
 0.779; alarms 0/8 (upper bound 0.312). A4: proposer offered, uptake 0/12 for every author.
 
+## Re-review fixes (2026-09-23, prompts v5, scoring v3)
+
+Both re-reviews (`manage-agents/reviews/assist-heldout-review2-{astra.final,opus}.md`) returned FIX FIRST. Changes:
+
+- **Complete graph in every packet (Astra A1).** Packets carry every node under neutral ids (N1, N2, ...: kind,
+  statement, anchors, derived-from edges), unanchored helpers included, and each unit's "reasons" follow helpers
+  down to anchored nodes. Astra's two certified graphs (stated reason vs an unstated alternative behind a helper) now
+  give different packets (`test_packet_exports_the_complete_graph_so_a_helper_cannot_hide_the_reasoning`). No
+  check result, status or certification is exported; author node names are replaced.
+- **Anchors both ways (Astra A2, Opus A1/A2).** Per anchor: each anchor sentence ALONE must entail the assumption
+  (Q anchored to "P" and "if P then Q" is a violation; split it). Coverage: the nodes anchored to a formalised
+  given sentence, steps included, must together entail its reference formalisation. Claim steps: a step anchored to
+  a claimed sentence must be decided non-valid and may use only the (unit, term) atoms its sentence mentions, so
+  Opus's tautology construction no longer reaches the gap route. The `scoring.py` docstring that claimed
+  certification alone blocked it is corrected. **Dev replay:** 0 of the 108 dev-tune-2 sessions gain a violation;
+  all 42 faithful-complete sessions (718 claim-anchored steps) pass (`test_no_faithful_dev_session_is_rejected_by_the_new_checks`;
+  `runs/dev-tune-2/replay-v5/`).
+- **Freeze (Opus A3, Astra A3).** The manifest hashes every file of `ve/` (checker, entailment, parser, English
+  layer, lexicon data) besides the harness. The held-out gate requires the full registered author and arm set and
+  refuses a second held-out run id. `VE_CLAUDE_ACCOUNT_CONFIG_DIR` / `CLAUDE_CODE_OAUTH_TOKEN` (which could reroute
+  "main") make every real Claude backend refuse to start. Codex runs with `-m gpt-6-astra`; a reported model other
+  than that (or none) voids the call; the Opus auditor rejects any served model but `claude-opus-5-5`.
+- **Budget (Astra B, Opus B1).** `PaidClient` calls a `before_attempt` gate before EVERY backend attempt (its
+  internal 5xx retries included) and the Claude endpoint a `before_retry` gate; both check the item budget with what
+  the call was already charged. Every Gemini turn charges the paid ledger's completions and holds for its identity
+  (a recovered 504's holds included; a billed reply that fails validation is charged), and every exit reconciles the
+  session with the ledger. Astra's cases are tests: after $1.70, 504s stop the item at $1.90 (was $2.31 committed,
+  $1.70 reported); four failed attempts after $1.40 stop at $1.80 (was $2.52). An item over budget over all attempts
+  scores as a failure. The Claude ceiling now prices input at the cache-write rate (dearer than uncached).
+- **Blinding (Opus C2).** Each Codex call runs in a fresh temporary directory holding only `packet.json`; `--json`
+  events are kept in the ledger (`stdout`), and any tool use (command, file read, MCP, web) voids the call.
+- **No real calls from tests (Opus C3).** `tests/conftest.py` fails any test that starts `claude`, `codex`, `gemini`
+  or `security`, or connects to a non-loopback address, even when the code under test swallows the error.
+- **Auditor spend cap.** `audit-run --max-usd X` gates each priced (Opus) auditor call on its ceiling (output capped
+  at 6,000 tokens, retries off; failed calls charged).
+
+### W and the held-out text (disclosure, Opus C1)
+
+`dossier.py` (W and the reference reading) was written on 2026-09-23 AFTER the held-out dossier text had been read
+(the W document covers both splits). Two parsing branches fired only on held-out text and are REMOVED: the "lot
+tail" split of a given "If A, then B. unitX is a sample of lot unitY." sentence (with the second `LOT` form), and
+the "would yield" verb of the "would imply ..., respectively" pattern. Removing "yield" changes no W entry (those
+sentences' mentions already mark the rules as relied on). The five held-out "rule + lot" givens (`i91ead25` r12.2,
+`i0458325` r01.2, `ibdc20cc` r00.2, `i31ec957` r12.2, `iacc3cf` r05.2) now fall to the generic `unparsed` kind:
+never in W (they were `dead-rule` waivers before), no reference, so no deterministic anchor or coverage check;
+the auditor judges them, and its prompt now says that stating every expressible part of a partly inexpressible
+sentence is faithful. No dev sentence is `unparsed`.
+
+Branches the held-out items trigger (every one also fires on dev, apart from `unparsed`): given kinds `declared`
+60, `unassumed` 12, `lot` 4 ("The sample from lot ..." form), `supplied` 3, `facts` 12, `rule` 259, `unparsed` 5;
+W codes `declared` 60, `unassumed` 12, `lot-sample` 4, `unused-fact` 3 (the `supplied` facts), `dead-rule` 31;
+claimed-sentence readings "the immediately preceding TERM result" (48 sentences) and "would imply/establish ...,
+respectively" (9; "yield" 3 no longer matched); 88 dead rules relied on. Dev: `declared` 60, `unassumed` 12, `lot`
+9, `supplied` 3, `facts` 12, `rule` 264; W `dead-rule` 36, `lot-sample` 9, `unused-fact` 3; 76 relied on.
+
+### New dual audit on a dev-tune-2 copy (2026-09-23, LABELLED DEV PROXY; `runs/dev-tune-2/audit-v5-proxy/`)
+
+One `audit-run` with the new packets (complete graph) and auditor prompt v5 on a copy of dev-tune-2's sessions
+(`--max-usd 0.40`; the copy's session directories stayed outside the repo, so packet ids differ from the legacy
+ones and are matched by session directory). Codex (`gpt-6-astra`, reported model confirmed on all 91 calls, no tool
+use) audited all 91 non-empty packets (17 empty packets fail without a call). Opus audited 2 Gemini packets for
+$0.258721 before the cap stopped it; the other 33 Gemini packets lack their Opus verdict and count as unaudited.
+This validates the new path end to end; it is a dev proxy, not a validation of the audit.
+
+Agreement with the old single-auditor verdicts (packet pass/fail): Codex 57/91 (Opus-authored 32/36, Gemini 12/35, Haiku 13/20),
+combined decision 46/58 where complete. Every
+disagreement is old PASS -> new FAIL (34 Codex, 1 Opus); none goes the other way: the full graph and helper rule
+make the audit stricter. Opus faithful-complete under the new audit: A2 9/12 (unchanged), A3 11/12 (was 12), A4
+12/12; primary dev pairing 9 both / 2 A3-only / 0 A2-only / 1 neither, sign p = 0.5. Gemini rows are not
+interpretable (33/36 packets missing the Opus verdict).
+
 ## Tuning log
 
 - v1 (`ve-assist-eval-prompts@1`): initial prompts; smoke only.
@@ -237,3 +307,7 @@ with holds), which the new restart accounting prevents. Primary endpoint on dev 
 - v4 (`ve-assist-eval-prompts@4`, after the dev-tune-2 reviews): the coverage text states the allowlist rule and the
   anchor content check; the gap text states the gap-route conditions; the auditor prompt audits W codes, omitted
   units and step reasons and drops "a fact never used". Not run on dev with authors (replay only).
+- v5 (`ve-assist-eval-prompts@5`, after the re-reviews): author text states the per-anchor rule (one assumption per
+  sentence), full coverage of given sentences and the claim-step rules; the auditor prompt describes the complete
+  node graph and helper nodes and says how to judge partly inexpressible sentences. Not run on dev with authors;
+  the auditor prompt was run once on a dev-tune-2 copy (above).

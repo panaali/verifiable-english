@@ -1,0 +1,507 @@
+{
+ "packet": "p44a92c7ba06d",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules, matching the declared code.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules, matching the declared code.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules, matching the declared code.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules, matching the declared code.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules, matching the declared code.\"},{\"unit\":\"u6\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the stated initial facts.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only identifies unassumed checks, and the empty graph contains no assumptions of them.\"},{\"unit\":\"u8\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code and drops a rule supporting the conditional claim in n16.2.\"},{\"unit\":\"u9\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code and drops a rule supporting the conditional claim in n16.2.\"},{\"unit\":\"u10\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code and drops a rule supporting the conditional claim in n16.2.\"},{\"unit\":\"u11\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n04.1.\"},{\"unit\":\"u12\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n01.1.\"},{\"unit\":\"u13\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n21.1.\"},{\"unit\":\"u14\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n14.1.\"},{\"unit\":\"u15\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n08.1.\"},{\"unit\":\"u16\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n17.1.\"},{\"unit\":\"u17\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n05.1.\"},{\"unit\":\"u18\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n13.1.\"},{\"unit\":\"u19\",\"verdict\":\"acceptable\",\"reason\":\"No given fact or rule establishes dated or tied for unit2, and no claimed sentence relies on this alternative rule.\"},{\"unit\":\"u20\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n12.1.\"},{\"unit\":\"u21\",\"verdict\":\"acceptable\",\"reason\":\"No given fact or rule establishes dated or tied for unit2, and no claimed sentence relies on this alternative rule.\"},{\"unit\":\"u22\",\"verdict\":\"acceptable\",\"reason\":\"The sentence states a lot/sample relationship that the glossary cannot express, matching the lot-sample code.\"},{\"unit\":\"u23\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n02.1.\"},{\"unit\":\"u24\",\"verdict\":\"acceptable\",\"reason\":\"No given fact or rule establishes dated or tied for unit2, and no claimed sentence relies on this alternative rule.\"},{\"unit\":\"u25\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n16.1.\"},{\"unit\":\"u26\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n07.1.\"},{\"unit\":\"u27\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n00.1.\"},{\"unit\":\"u28\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n20.1.\"},{\"unit\":\"u29\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n10.1.\"},{\"unit\":\"u30\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the rule used by n15.1.\"},{\"unit\":\"u31\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claimed casing-intact conclusion for unit1.\"},{\"unit\":\"u32\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claimed signal-audible conclusion for unit1.\"},{\"unit\":\"u33\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claimed signal-audible conclusion for unit0.\"},{\"unit\":\"u34\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claim that unit0 is checked.\"},{\"unit\":\"u35\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claimed contamination-absent conclusion for unit1.\"},{\"unit\":\"u36\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claimed optically-transparent conclusion for unit1.\"},{\"unit\":\"u37\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops three expressible conditional claims about the unassumed checks.\"},{\"unit\":\"u38\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claimed optically-transparent conclusion for unit2.\"},{\"unit\":\"u39\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claim that unit0 is documented.\"},{\"unit\":\"u40\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claimed seal-removed conclusion for unit1.\"},{\"unit\":\"u41\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claimed account-enabled conclusion for unit1.\"},{\"unit\":\"u42\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claimed account-enabled conclusion for unit0.\"},{\"unit\":\"u43\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claim that unit0 is packed.\"},{\"unit\":\"u44\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claimed staffing-arranged conclusion for unit1.\"},{\"unit\":\"u45\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claimed packing-completed conclusion for unit1.\"},{\"unit\":\"u46\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claimed packing-completed conclusion for unit0.\"},{\"unit\":\"u47\",\"verdict\":\"unacceptable\",\"reason\":\"The omission has no allowlist code and drops the claim that unit0 is bundled.\"}]}",
+ "auditor_tokens": 24550,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u6",
+   "sentence": "n19.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u8",
+   "sentence": "r11.1",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u9",
+   "sentence": "r11.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u10",
+   "sentence": "r11.3",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u11",
+   "sentence": "r11.4",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u12",
+   "sentence": "r00.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u13",
+   "sentence": "r10.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u14",
+   "sentence": "r12.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u15",
+   "sentence": "r04.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u16",
+   "sentence": "r13.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u17",
+   "sentence": "r05.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u18",
+   "sentence": "r08.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u20",
+   "sentence": "r06.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u23",
+   "sentence": "r01.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u25",
+   "sentence": "r02.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u26",
+   "sentence": "r14.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u27",
+   "sentence": "r07.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u28",
+   "sentence": "r03.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u29",
+   "sentence": "r15.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u30",
+   "sentence": "r09.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u31",
+   "sentence": "n12.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u32",
+   "sentence": "n13.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u33",
+   "sentence": "n07.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u34",
+   "sentence": "n05.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u35",
+   "sentence": "n15.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u36",
+   "sentence": "n16.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u37",
+   "sentence": "n16.2",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u38",
+   "sentence": "n04.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u39",
+   "sentence": "n02.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u40",
+   "sentence": "n17.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u41",
+   "sentence": "n01.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u42",
+   "sentence": "n21.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u43",
+   "sentence": "n10.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u44",
+   "sentence": "n14.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u45",
+   "sentence": "n20.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u46",
+   "sentence": "n00.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u47",
+   "sentence": "n08.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules, matching the declared code."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules, matching the declared code."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules, matching the declared code."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules, matching the declared code."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules, matching the declared code."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the stated initial facts."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only identifies unassumed checks, and the empty graph contains no assumptions of them."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code and drops a rule supporting the conditional claim in n16.2."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code and drops a rule supporting the conditional claim in n16.2."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code and drops a rule supporting the conditional claim in n16.2."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n04.1."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n01.1."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n21.1."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n14.1."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n08.1."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n17.1."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n05.1."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n13.1."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "acceptable",
+   "reason": "No given fact or rule establishes dated or tied for unit2, and no claimed sentence relies on this alternative rule."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n12.1."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "acceptable",
+   "reason": "No given fact or rule establishes dated or tied for unit2, and no claimed sentence relies on this alternative rule."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "acceptable",
+   "reason": "The sentence states a lot/sample relationship that the glossary cannot express, matching the lot-sample code."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n02.1."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "acceptable",
+   "reason": "No given fact or rule establishes dated or tied for unit2, and no claimed sentence relies on this alternative rule."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n16.1."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n07.1."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n00.1."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n20.1."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n10.1."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the rule used by n15.1."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claimed casing-intact conclusion for unit1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claimed signal-audible conclusion for unit1."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claimed signal-audible conclusion for unit0."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claim that unit0 is checked."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claimed contamination-absent conclusion for unit1."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claimed optically-transparent conclusion for unit1."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops three expressible conditional claims about the unassumed checks."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claimed optically-transparent conclusion for unit2."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claim that unit0 is documented."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claimed seal-removed conclusion for unit1."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claimed account-enabled conclusion for unit1."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claimed account-enabled conclusion for unit0."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claim that unit0 is packed."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claimed staffing-arranged conclusion for unit1."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claimed packing-completed conclusion for unit1."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claimed packing-completed conclusion for unit0."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "unacceptable",
+   "reason": "The omission has no allowlist code and drops the claim that unit0 is bundled."
+  }
+ }
+}

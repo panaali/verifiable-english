@@ -1,0 +1,276 @@
+{
+ "packet": "p70aa7b18e326",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u5\",\"verdict\":\"faithful\",\"reason\":\"The seven statements preserve all seven facts about unit2.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only identifies unassumed checks, and none is assumed in the graph.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the condition, entities, and power-connected sense.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both clear senses and the implication direction.\"},{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three conditions and the staffing-arranged conclusion.\"},{\"unit\":\"u11\",\"verdict\":\"acceptable\",\"reason\":\"Neither audited nor scheduled is derivable from the givens, and no claim relies on this rule.\"},{\"unit\":\"u12\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves unit3's optical transparency as the condition for unit6 being shipped.\"},{\"unit\":\"u13\",\"verdict\":\"acceptable\",\"reason\":\"Neither audited nor scheduled is derivable from the givens, and no claim relies on this rule.\"},{\"unit\":\"u14\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the shipping condition and account-enabled conclusion.\"},{\"unit\":\"u15\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the seal-removed condition and unit5 storage conclusion.\"},{\"unit\":\"u16\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both open senses and the implication direction.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three conditions and the packing-completed conclusion.\"},{\"unit\":\"u18\",\"verdict\":\"acceptable\",\"reason\":\"Neither audited nor scheduled is derivable from the givens, and no claim relies on this rule.\"},{\"unit\":\"u19\",\"verdict\":\"acceptable\",\"reason\":\"The sentence states a lot/sample relationship that the glossary cannot express.\"},{\"unit\":\"u20\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both entities and the registry-current sense.\"},{\"unit\":\"u21\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the direction from unit7 to unit2 and the seal-removed sense.\"},{\"unit\":\"u22\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves unit3's registry-current condition and unit6's logged conclusion.\"},{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the direction from power connected to registry current.\"},{\"unit\":\"u24\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both distinct readiness conditions and unit2's staffing-arranged conclusion.\"},{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the logged condition and contamination-absent conclusion.\"},{\"unit\":\"u26\",\"verdict\":\"unacceptable\",\"reason\":\"No allowlist code is supplied, and this rule underlies the documented-check claim in n21.2.\"},{\"unit\":\"u27\",\"verdict\":\"unacceptable\",\"reason\":\"No allowlist code is supplied, and this rule underlies the queued-check claim in n21.2.\"},{\"unit\":\"u28\",\"verdict\":\"unacceptable\",\"reason\":\"No allowlist code is supplied, and this rule underlies the boxed-check claim in n21.2.\"},{\"unit\":\"u29\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions, both entities, and the optical-transparency sense.\"},{\"unit\":\"u30\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both staffing-arranged conditions and unit4's storage conclusion.\"},{\"unit\":\"u31\",\"verdict\":\"faithful\",\"reason\":\"The packing-completed sense matches the stated bagged, logged, and listed reasons and their rule.\"},{\"unit\":\"u32\",\"verdict\":\"faithful\",\"reason\":\"The staffing-arranged sense matches the stated stored, routed, and shipped reasons and their rule.\"},{\"unit\":\"u33\",\"verdict\":\"faithful\",\"reason\":\"The conclusion and derivation preserve the two preceding readiness results and their combination rule.\"},{\"unit\":\"u34\",\"verdict\":\"faithful\",\"reason\":\"The storage conclusion uses unit7's staffing readiness and the immediately preceding unit2 readiness result.\"},{\"unit\":\"u35\",\"verdict\":\"faithful\",\"reason\":\"The power-connected conclusion matches the stated unit4 storage reason and its rule.\"},{\"unit\":\"u36\",\"verdict\":\"faithful\",\"reason\":\"The registry-current conclusion uses the preceding power-connected result through the declared conversion rule.\"},{\"unit\":\"u37\",\"verdict\":\"faithful\",\"reason\":\"The registry-current conclusion for unit3 matches the stated unit7 activity reason and its rule.\"},{\"unit\":\"u38\",\"verdict\":\"faithful\",\"reason\":\"The logged conclusion uses the immediately preceding activity result for unit3.\"},{\"unit\":\"u39\",\"verdict\":\"faithful\",\"reason\":\"The contamination-absent sense matches the stated unit6 logged reason and its rule.\"},{\"unit\":\"u40\",\"verdict\":\"faithful\",\"reason\":\"The optical-transparency conclusion uses the preceding contamination-absent result through the declared rule.\"},{\"unit\":\"u41\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence asserts expressible conditional claims and has no allowlist code permitting waiver.\"},{\"unit\":\"u42\",\"verdict\":\"faithful\",\"reason\":\"The optical-transparency conclusion matches the stated unit7 clarity and unit2 retention reasons.\"},{\"unit\":\"u43\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the shipping conclusion and cites the immediately preceding clear result, irrespective of inference validity.\"},{\"unit\":\"u44\",\"verdict\":\"faithful\",\"reason\":\"The account-enabled sense matches the stated unit6 shipping reason and its rule.\"},{\"unit\":\"u45\",\"verdict\":\"faithful\",\"reason\":\"The seal-removed conclusion uses the preceding account-enabled result through the declared conversion rule.\"},{\"unit\":\"u46\",\"verdict\":\"faithful\",\"reason\":\"The seal-removed conclusion for unit2 matches the stated unit7 openness reason and its rule.\"},{\"unit\":\"u47\",\"verdict\":\"faithful\",\"reason\":\"Both statements preserve unit5's storage conclusion, and the derivation uses the immediately preceding unit2 openness result.\"}]}",
+ "auditor_tokens": 27976,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u26",
+   "sentence": "r07.1",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u27",
+   "sentence": "r07.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u28",
+   "sentence": "r07.3",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u41",
+   "sentence": "n21.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "The seven statements preserve all seven facts about unit2."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence only identifies unassumed checks, and none is assumed in the graph."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the condition, entities, and power-connected sense."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both clear senses and the implication direction."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three conditions and the staffing-arranged conclusion."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "acceptable",
+   "reason": "Neither audited nor scheduled is derivable from the givens, and no claim relies on this rule."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves unit3's optical transparency as the condition for unit6 being shipped."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "acceptable",
+   "reason": "Neither audited nor scheduled is derivable from the givens, and no claim relies on this rule."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the shipping condition and account-enabled conclusion."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the seal-removed condition and unit5 storage conclusion."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both open senses and the implication direction."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three conditions and the packing-completed conclusion."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "acceptable",
+   "reason": "Neither audited nor scheduled is derivable from the givens, and no claim relies on this rule."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "acceptable",
+   "reason": "The sentence states a lot/sample relationship that the glossary cannot express."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both entities and the registry-current sense."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the direction from unit7 to unit2 and the seal-removed sense."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves unit3's registry-current condition and unit6's logged conclusion."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the direction from power connected to registry current."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both distinct readiness conditions and unit2's staffing-arranged conclusion."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the logged condition and contamination-absent conclusion."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "unacceptable",
+   "reason": "No allowlist code is supplied, and this rule underlies the documented-check claim in n21.2."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "unacceptable",
+   "reason": "No allowlist code is supplied, and this rule underlies the queued-check claim in n21.2."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "unacceptable",
+   "reason": "No allowlist code is supplied, and this rule underlies the boxed-check claim in n21.2."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions, both entities, and the optical-transparency sense."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both staffing-arranged conditions and unit4's storage conclusion."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The packing-completed sense matches the stated bagged, logged, and listed reasons and their rule."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The staffing-arranged sense matches the stated stored, routed, and shipped reasons and their rule."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The conclusion and derivation preserve the two preceding readiness results and their combination rule."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The storage conclusion uses unit7's staffing readiness and the immediately preceding unit2 readiness result."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "The power-connected conclusion matches the stated unit4 storage reason and its rule."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "The registry-current conclusion uses the preceding power-connected result through the declared conversion rule."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "The registry-current conclusion for unit3 matches the stated unit7 activity reason and its rule."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "The logged conclusion uses the immediately preceding activity result for unit3."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "The contamination-absent sense matches the stated unit6 logged reason and its rule."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "The optical-transparency conclusion uses the preceding contamination-absent result through the declared rule."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "unacceptable",
+   "reason": "The sentence asserts expressible conditional claims and has no allowlist code permitting waiver."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "The optical-transparency conclusion matches the stated unit7 clarity and unit2 retention reasons."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the shipping conclusion and cites the immediately preceding clear result, irrespective of inference validity."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "The account-enabled sense matches the stated unit6 shipping reason and its rule."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "The seal-removed conclusion uses the preceding account-enabled result through the declared conversion rule."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "The seal-removed conclusion for unit2 matches the stated unit7 openness reason and its rule."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "Both statements preserve unit5's storage conclusion, and the derivation uses the immediately preceding unit2 openness result."
+  }
+ }
+}

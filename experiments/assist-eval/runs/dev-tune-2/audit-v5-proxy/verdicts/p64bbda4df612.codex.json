@@ -1,0 +1,423 @@
+{
+ "packet": "p64bbda4df612",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u5\",\"verdict\":\"faithful\",\"reason\":\"The seven statements preserve all seven facts about unit2.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only identifies unassumed checks, and none of those checks is assumed in the graph.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the entities, implication direction, and power-connected sense of active.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the implication from contamination absence to optical transparency for unit7.\"},{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three antecedents and the staffing-arranged conclusion for unit7.\"},{\"unit\":\"u11\",\"verdict\":\"acceptable\",\"reason\":\"Neither audited nor scheduled for unit3 follows from the given facts, and no claim relies on this alternative rule.\"},{\"unit\":\"u12\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u13\",\"verdict\":\"acceptable\",\"reason\":\"Neither audited nor scheduled for unit3 follows from the given facts, and no claim relies on this alternative rule.\"},{\"unit\":\"u14\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u15\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u16\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three antecedents and the packing-completed conclusion for unit7.\"},{\"unit\":\"u18\",\"verdict\":\"acceptable\",\"reason\":\"Neither audited nor scheduled for unit3 follows from the given facts, and no claim relies on this alternative rule.\"},{\"unit\":\"u19\",\"verdict\":\"acceptable\",\"reason\":\"The glossary cannot express the lot-to-sample relationship stated here.\"},{\"unit\":\"u20\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the implication from unit7 to unit3 using the registry-current sense of active.\"},{\"unit\":\"u21\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u22\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves unit3's registry-current antecedent and unit6's logged conclusion.\"},{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the implication from power connected to registry current for unit7.\"},{\"unit\":\"u24\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both distinct ready antecedents for unit7 and the staffing-arranged conclusion for unit2.\"},{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves unit6's logged antecedent and unit7's contamination-absent conclusion.\"},{\"unit\":\"u26\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code, and this rule supports the documented-check claim in n21.2.\"},{\"unit\":\"u27\",\"verdict\":\"unacceptable\",\"reason\":\"The rule is omitted without an allowlist code.\"},{\"unit\":\"u28\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code, and this rule supports the boxed-check claim in n21.2.\"},{\"unit\":\"u29\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code, and this rule supports the retained-check claim in n21.2.\"},{\"unit\":\"u30\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both staffing-arranged antecedents and the stored conclusion for unit4.\"},{\"unit\":\"u31\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u32\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u33\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u34\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u35\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u36\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u37\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u38\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u39\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u40\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u41\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code and drops expressible conditional claims about what the three checks would establish.\"},{\"unit\":\"u42\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u43\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u44\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u45\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u46\",\"verdict\":\"unacceptable\",\"reason\":\"The claimed conclusion is omitted without an allowlist code.\"},{\"unit\":\"u47\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states the exact conclusion that unit5 is stored, which is sufficient for a sentence giving a conclusion with reasons.\"}]}",
+ "auditor_tokens": 25337,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u12",
+   "sentence": "r14.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u14",
+   "sentence": "r08.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u15",
+   "sentence": "r00.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u16",
+   "sentence": "r12.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u21",
+   "sentence": "r04.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u26",
+   "sentence": "r07.1",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u27",
+   "sentence": "r07.2",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u28",
+   "sentence": "r07.3",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u29",
+   "sentence": "r07.4",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u31",
+   "sentence": "n00.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u32",
+   "sentence": "n02.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u33",
+   "sentence": "n07.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u34",
+   "sentence": "n16.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u35",
+   "sentence": "n05.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u36",
+   "sentence": "n20.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u37",
+   "sentence": "n06.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u38",
+   "sentence": "n03.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u39",
+   "sentence": "n14.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u40",
+   "sentence": "n21.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u41",
+   "sentence": "n21.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u42",
+   "sentence": "n01.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u43",
+   "sentence": "n15.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u44",
+   "sentence": "n08.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u45",
+   "sentence": "n18.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u46",
+   "sentence": "n04.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "The seven statements preserve all seven facts about unit2."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence only identifies unassumed checks, and none of those checks is assumed in the graph."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the entities, implication direction, and power-connected sense of active."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the implication from contamination absence to optical transparency for unit7."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three antecedents and the staffing-arranged conclusion for unit7."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "acceptable",
+   "reason": "Neither audited nor scheduled for unit3 follows from the given facts, and no claim relies on this alternative rule."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "acceptable",
+   "reason": "Neither audited nor scheduled for unit3 follows from the given facts, and no claim relies on this alternative rule."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three antecedents and the packing-completed conclusion for unit7."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "acceptable",
+   "reason": "Neither audited nor scheduled for unit3 follows from the given facts, and no claim relies on this alternative rule."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "acceptable",
+   "reason": "The glossary cannot express the lot-to-sample relationship stated here."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the implication from unit7 to unit3 using the registry-current sense of active."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves unit3's registry-current antecedent and unit6's logged conclusion."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the implication from power connected to registry current for unit7."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both distinct ready antecedents for unit7 and the staffing-arranged conclusion for unit2."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves unit6's logged antecedent and unit7's contamination-absent conclusion."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code, and this rule supports the documented-check claim in n21.2."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "unacceptable",
+   "reason": "The rule is omitted without an allowlist code."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code, and this rule supports the boxed-check claim in n21.2."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code, and this rule supports the retained-check claim in n21.2."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both staffing-arranged antecedents and the stored conclusion for unit4."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code and drops expressible conditional claims about what the three checks would establish."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "unacceptable",
+   "reason": "The claimed conclusion is omitted without an allowlist code."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "The formalisation states the exact conclusion that unit5 is stored, which is sufficient for a sentence giving a conclusion with reasons."
+  }
+ }
+}

@@ -1,0 +1,353 @@
+{
+ "packet": "p304db3199ef5",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u2\",\"verdict\":\"faithful\",\"reason\":\"The seven statements preserve all seven facts about unit4.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only identifies unassumed checks, and none is assumed in the graph.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit0, both specified clear senses, and their direction.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit3's audit as the condition for unit0's seal being removed.\"},{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the transition from seal removed to account enabled for unit0.\"},{\"unit\":\"u11\",\"verdict\":\"faithful\",\"reason\":\"All three conditions and the signal-audible conclusion for unit0 are preserved.\"},{\"unit\":\"u12\",\"verdict\":\"acceptable\",\"reason\":\"Neither staging nor inspection is derivable from the givens, and no claimed sentence relies on this rule.\"},{\"unit\":\"u13\",\"verdict\":\"faithful\",\"reason\":\"All three conditions and the casing-intact conclusion for unit0 are preserved.\"},{\"unit\":\"u14\",\"verdict\":\"acceptable\",\"reason\":\"Neither staging nor inspection is derivable from the givens, and no claimed sentence relies on this rule.\"},{\"unit\":\"u15\",\"verdict\":\"acceptable\",\"reason\":\"The glossary cannot express the lot-to-sample relationship.\"},{\"unit\":\"u16\",\"verdict\":\"faithful\",\"reason\":\"Both conditions, the entities, and the optical-transparency sense are preserved.\"},{\"unit\":\"u17\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code and removes a rule supporting the bagged conditional claim in n18.2.\"},{\"unit\":\"u18\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code and removes a rule supporting the tracked conditional claim in n18.2.\"},{\"unit\":\"u19\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code and removes a rule supporting the wrapped conditional claim in n18.2.\"},{\"unit\":\"u20\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit3 being logged as the condition for unit0 having contamination absent.\"},{\"unit\":\"u21\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit5's account being enabled as the condition for unit1 being dried.\"},{\"unit\":\"u22\",\"verdict\":\"faithful\",\"reason\":\"Both distinct sound conditions for unit0 and the signal-audible conclusion for unit4 are preserved.\"},{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit4's signal being audible as the condition for unit7 being dried.\"},{\"unit\":\"u24\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the account-enabled sense and the direction from unit0 to unit5.\"},{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the registry-current sense and the direction from unit0 to unit5.\"},{\"unit\":\"u26\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit7 being dried as the condition for unit0's power being connected.\"},{\"unit\":\"u27\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit5's registry being current as the condition for unit3 being logged.\"},{\"unit\":\"u28\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the transition from power connected to registry current for unit0.\"},{\"unit\":\"u29\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit4's optical transparency as the condition for unit3 being audited.\"},{\"unit\":\"u30\",\"verdict\":\"acceptable\",\"reason\":\"Neither staging nor inspection is derivable from the givens, and no claimed sentence relies on this rule.\"},{\"unit\":\"u31\",\"verdict\":\"faithful\",\"reason\":\"The casing-intact conclusion uses the stated clipping, logging, and shipping reasons through r08.1.\"},{\"unit\":\"u32\",\"verdict\":\"faithful\",\"reason\":\"The signal-audible conclusion uses the stated drying, scanning, and auditing reasons through r12.1.\"},{\"unit\":\"u33\",\"verdict\":\"faithful\",\"reason\":\"The signal-audible conclusion for unit4 uses the two preceding sound results through r14.1.\"},{\"unit\":\"u34\",\"verdict\":\"faithful\",\"reason\":\"The drying conclusion for unit7 uses the immediately preceding sound result through r06.1.\"},{\"unit\":\"u35\",\"verdict\":\"unacceptable\",\"reason\":\"The substantive claim is omitted without an allowlist code.\"},{\"unit\":\"u36\",\"verdict\":\"unacceptable\",\"reason\":\"The waiver has no allowlist code and drops three expressible conditional claims.\"},{\"unit\":\"u37\",\"verdict\":\"unacceptable\",\"reason\":\"The substantive active-sense transition is omitted without an allowlist code.\"},{\"unit\":\"u38\",\"verdict\":\"unacceptable\",\"reason\":\"The substantive claim about unit5 being active is omitted without an allowlist code.\"},{\"unit\":\"u39\",\"verdict\":\"unacceptable\",\"reason\":\"The substantive claim about unit3 being logged is omitted without an allowlist code.\"},{\"unit\":\"u40\",\"verdict\":\"unacceptable\",\"reason\":\"The substantive claim about unit0 being clear is omitted without an allowlist code.\"},{\"unit\":\"u41\",\"verdict\":\"unacceptable\",\"reason\":\"The substantive clear-sense transition is omitted without an allowlist code.\"},{\"unit\":\"u42\",\"verdict\":\"unacceptable\",\"reason\":\"The substantive claim about unit4 being clear is omitted without an allowlist code.\"},{\"unit\":\"u43\",\"verdict\":\"unacceptable\",\"reason\":\"The substantive claim about unit3 being audited is omitted without an allowlist code.\"},{\"unit\":\"u44\",\"verdict\":\"unacceptable\",\"reason\":\"The substantive claim about unit0 being open is omitted without an allowlist code.\"},{\"unit\":\"u45\",\"verdict\":\"unacceptable\",\"reason\":\"The substantive open-sense transition is omitted without an allowlist code.\"},{\"unit\":\"u46\",\"verdict\":\"unacceptable\",\"reason\":\"The substantive claim about unit5 being open is omitted without an allowlist code.\"},{\"unit\":\"u47\",\"verdict\":\"faithful\",\"reason\":\"The frozen statement exactly preserves the conclusion that unit1 is dried, and no conflicting derivation is supplied.\"}]}",
+ "auditor_tokens": 26594,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u17",
+   "sentence": "r10.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u18",
+   "sentence": "r10.3",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u19",
+   "sentence": "r10.4",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u35",
+   "sentence": "n18.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u36",
+   "sentence": "n18.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "waiver sentence outside the allowlist W"
+  },
+  {
+   "unit": "u37",
+   "sentence": "n13.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u38",
+   "sentence": "n17.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u39",
+   "sentence": "n06.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u40",
+   "sentence": "n11.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u41",
+   "sentence": "n01.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u42",
+   "sentence": "n19.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u43",
+   "sentence": "n00.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u44",
+   "sentence": "n21.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u45",
+   "sentence": "n03.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  },
+  {
+   "unit": "u46",
+   "sentence": "n05.1",
+   "kind": "omitted",
+   "verdict": "unacceptable",
+   "reason": "omitted sentence outside the allowlist W"
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "The seven statements preserve all seven facts about unit4."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only identifies unassumed checks, and none is assumed in the graph."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit0, both specified clear senses, and their direction."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit3's audit as the condition for unit0's seal being removed."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The implication preserves the transition from seal removed to account enabled for unit0."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "All three conditions and the signal-audible conclusion for unit0 are preserved."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "acceptable",
+   "reason": "Neither staging nor inspection is derivable from the givens, and no claimed sentence relies on this rule."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "All three conditions and the casing-intact conclusion for unit0 are preserved."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "acceptable",
+   "reason": "Neither staging nor inspection is derivable from the givens, and no claimed sentence relies on this rule."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "acceptable",
+   "reason": "The glossary cannot express the lot-to-sample relationship."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "Both conditions, the entities, and the optical-transparency sense are preserved."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code and removes a rule supporting the bagged conditional claim in n18.2."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code and removes a rule supporting the tracked conditional claim in n18.2."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code and removes a rule supporting the wrapped conditional claim in n18.2."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit3 being logged as the condition for unit0 having contamination absent."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit5's account being enabled as the condition for unit1 being dried."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "Both distinct sound conditions for unit0 and the signal-audible conclusion for unit4 are preserved."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit4's signal being audible as the condition for unit7 being dried."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The implication preserves the account-enabled sense and the direction from unit0 to unit5."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The implication preserves the registry-current sense and the direction from unit0 to unit5."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit7 being dried as the condition for unit0's power being connected."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit5's registry being current as the condition for unit3 being logged."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "The implication preserves the transition from power connected to registry current for unit0."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit4's optical transparency as the condition for unit3 being audited."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "acceptable",
+   "reason": "Neither staging nor inspection is derivable from the givens, and no claimed sentence relies on this rule."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The casing-intact conclusion uses the stated clipping, logging, and shipping reasons through r08.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The signal-audible conclusion uses the stated drying, scanning, and auditing reasons through r12.1."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The signal-audible conclusion for unit4 uses the two preceding sound results through r14.1."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The drying conclusion for unit7 uses the immediately preceding sound result through r06.1."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "unacceptable",
+   "reason": "The substantive claim is omitted without an allowlist code."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "unacceptable",
+   "reason": "The waiver has no allowlist code and drops three expressible conditional claims."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "unacceptable",
+   "reason": "The substantive active-sense transition is omitted without an allowlist code."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "unacceptable",
+   "reason": "The substantive claim about unit5 being active is omitted without an allowlist code."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "unacceptable",
+   "reason": "The substantive claim about unit3 being logged is omitted without an allowlist code."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "unacceptable",
+   "reason": "The substantive claim about unit0 being clear is omitted without an allowlist code."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "unacceptable",
+   "reason": "The substantive clear-sense transition is omitted without an allowlist code."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "unacceptable",
+   "reason": "The substantive claim about unit4 being clear is omitted without an allowlist code."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "unacceptable",
+   "reason": "The substantive claim about unit3 being audited is omitted without an allowlist code."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "unacceptable",
+   "reason": "The substantive claim about unit0 being open is omitted without an allowlist code."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "unacceptable",
+   "reason": "The substantive open-sense transition is omitted without an allowlist code."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "unacceptable",
+   "reason": "The substantive claim about unit5 being open is omitted without an allowlist code."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "The frozen statement exactly preserves the conclusion that unit1 is dried, and no conflicting derivation is supplied."
+  }
+ }
+}

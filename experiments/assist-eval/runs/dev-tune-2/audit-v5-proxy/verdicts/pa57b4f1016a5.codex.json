@@ -1,0 +1,247 @@
+{
+ "packet": "pa57b4f1016a5",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u6\",\"verdict\":\"faithful\",\"reason\":\"The seven statements preserve every stated property of unit0.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only identifies unassumed checks, and none is assumed in the graph.\"},{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions, the conclusion, and the specified clear senses.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions, the conclusion, and the specified clear senses.\"},{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions and the optical transparency conclusion for unit0.\"},{\"unit\":\"u11\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions and the optical transparency conclusion for unit2.\"},{\"unit\":\"u12\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit1 and the direction from seal removed to account enabled.\"},{\"unit\":\"u13\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the account enabled sense and the direction from unit1 to unit0.\"},{\"unit\":\"u14\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the packed condition and staffing arranged conclusion.\"},{\"unit\":\"u15\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves packing completed as the condition for unit0 being bundled.\"},{\"unit\":\"u16\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves documentation of unit0 as the condition for unit1 having its seal removed.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both signal audible conditions and the checked conclusion.\"},{\"unit\":\"u18\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three conditions and the signal audible conclusion for unit1.\"},{\"unit\":\"u19\",\"verdict\":\"acceptable\",\"reason\":\"Neither dated nor tied is derivable from the given facts, and no claimed sentence relies on this rule.\"},{\"unit\":\"u20\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three conditions and the casing intact conclusion for unit1.\"},{\"unit\":\"u21\",\"verdict\":\"acceptable\",\"reason\":\"Neither dated nor tied is derivable from the given facts, and no claimed sentence relies on this rule.\"},{\"unit\":\"u22\",\"verdict\":\"acceptable\",\"reason\":\"The glossary cannot express the stated lot-to-sample relationship.\"},{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves optical transparency of unit2 as the condition for documentation of unit0.\"},{\"unit\":\"u24\",\"verdict\":\"acceptable\",\"reason\":\"Neither dated nor tied is derivable from the given facts, and no claimed sentence relies on this rule.\"},{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the direction from contamination absent to optical transparency for unit1.\"},{\"unit\":\"u26\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both distinct sound conditions for unit1 and the signal audible conclusion for unit0.\"},{\"unit\":\"u27\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the packing completed sense and the direction from unit1 to unit0.\"},{\"unit\":\"u28\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the direction from staffing arranged to packing completed for unit1.\"},{\"unit\":\"u29\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves account enabled as the condition for unit0 being packed.\"},{\"unit\":\"u30\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit0 being checked as the condition for contamination being absent from unit1.\"},{\"unit\":\"u31\",\"verdict\":\"faithful\",\"reason\":\"The casing intact sense matches the stated sizing, wrapping-up, and release reasons through r06.1.\"},{\"unit\":\"u32\",\"verdict\":\"faithful\",\"reason\":\"The signal audible sense matches the stated review, staging, and registration reasons through r08.1.\"},{\"unit\":\"u33\",\"verdict\":\"faithful\",\"reason\":\"The signal audible conclusion for unit0 matches the two preceding sound results and r14.1.\"},{\"unit\":\"u34\",\"verdict\":\"faithful\",\"reason\":\"The checked conclusion uses unit1's signal audible result and the immediately preceding sound result for unit0.\"},{\"unit\":\"u35\",\"verdict\":\"faithful\",\"reason\":\"The contamination absent sense matches the stated checked reason through r09.1.\"},{\"unit\":\"u36\",\"verdict\":\"faithful\",\"reason\":\"The optical transparency conclusion matches the preceding contamination absent result through r02.1.\"},{\"unit\":\"u37\",\"verdict\":\"faithful\",\"reason\":\"The three conditionals preserve the respective checks, entities, and clear senses supplied by the cited rules and preceding result.\"},{\"unit\":\"u38\",\"verdict\":\"faithful\",\"reason\":\"The contamination absent conclusion for unit2 matches the stated clear and inspected reasons through r11.2.\"},{\"unit\":\"u39\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states the documentation conclusion and uses the immediately preceding clear result as the sentence specifies.\"},{\"unit\":\"u40\",\"verdict\":\"faithful\",\"reason\":\"The seal removed sense matches the stated documentation reason through r13.1.\"},{\"unit\":\"u41\",\"verdict\":\"faithful\",\"reason\":\"The account enabled conclusion matches the preceding seal removed result through r00.1.\"},{\"unit\":\"u42\",\"verdict\":\"faithful\",\"reason\":\"The account enabled conclusion for unit0 matches the preceding open result for unit1 through r10.1.\"},{\"unit\":\"u43\",\"verdict\":\"faithful\",\"reason\":\"The packed conclusion uses the immediately preceding account enabled result through r15.1.\"},{\"unit\":\"u44\",\"verdict\":\"faithful\",\"reason\":\"The staffing arranged sense matches the stated packed reason through r12.1.\"},{\"unit\":\"u45\",\"verdict\":\"faithful\",\"reason\":\"The packing completed conclusion matches the preceding staffing arranged result through r03.1.\"},{\"unit\":\"u46\",\"verdict\":\"faithful\",\"reason\":\"The packing completed conclusion for unit0 matches the preceding ready result for unit1 through r07.1.\"},{\"unit\":\"u47\",\"verdict\":\"faithful\",\"reason\":\"Both statements preserve the bundled conclusion, and the step uses the immediately preceding packing completed result through r04.1.\"}]}",
+ "auditor_tokens": 29316,
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "faithful",
+   "reason": "The seven statements preserve every stated property of unit0."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only identifies unassumed checks, and none is assumed in the graph."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions, the conclusion, and the specified clear senses."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions, the conclusion, and the specified clear senses."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions and the optical transparency conclusion for unit0."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions and the optical transparency conclusion for unit2."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit1 and the direction from seal removed to account enabled."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The implication preserves the account enabled sense and the direction from unit1 to unit0."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "The implication preserves the packed condition and staffing arranged conclusion."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The implication preserves packing completed as the condition for unit0 being bundled."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The implication preserves documentation of unit0 as the condition for unit1 having its seal removed."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both signal audible conditions and the checked conclusion."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three conditions and the signal audible conclusion for unit1."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "acceptable",
+   "reason": "Neither dated nor tied is derivable from the given facts, and no claimed sentence relies on this rule."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three conditions and the casing intact conclusion for unit1."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "acceptable",
+   "reason": "Neither dated nor tied is derivable from the given facts, and no claimed sentence relies on this rule."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "acceptable",
+   "reason": "The glossary cannot express the stated lot-to-sample relationship."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The implication preserves optical transparency of unit2 as the condition for documentation of unit0."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "acceptable",
+   "reason": "Neither dated nor tied is derivable from the given facts, and no claimed sentence relies on this rule."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The implication preserves the direction from contamination absent to optical transparency for unit1."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both distinct sound conditions for unit1 and the signal audible conclusion for unit0."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The implication preserves the packing completed sense and the direction from unit1 to unit0."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "The implication preserves the direction from staffing arranged to packing completed for unit1."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The implication preserves account enabled as the condition for unit0 being packed."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit0 being checked as the condition for contamination being absent from unit1."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The casing intact sense matches the stated sizing, wrapping-up, and release reasons through r06.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The signal audible sense matches the stated review, staging, and registration reasons through r08.1."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The signal audible conclusion for unit0 matches the two preceding sound results and r14.1."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The checked conclusion uses unit1's signal audible result and the immediately preceding sound result for unit0."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "The contamination absent sense matches the stated checked reason through r09.1."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "The optical transparency conclusion matches the preceding contamination absent result through r02.1."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "The three conditionals preserve the respective checks, entities, and clear senses supplied by the cited rules and preceding result."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "The contamination absent conclusion for unit2 matches the stated clear and inspected reasons through r11.2."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "The formalisation states the documentation conclusion and uses the immediately preceding clear result as the sentence specifies."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "The seal removed sense matches the stated documentation reason through r13.1."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "The account enabled conclusion matches the preceding seal removed result through r00.1."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "The account enabled conclusion for unit0 matches the preceding open result for unit1 through r10.1."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The packed conclusion uses the immediately preceding account enabled result through r15.1."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "The staffing arranged sense matches the stated packed reason through r12.1."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "The packing completed conclusion matches the preceding staffing arranged result through r03.1."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "The packing completed conclusion for unit0 matches the preceding ready result for unit1 through r07.1."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "Both statements preserve the bundled conclusion, and the step uses the immediately preceding packing completed result through r04.1."
+  }
+ }
+}

@@ -1,0 +1,1082 @@
+[
+ {
+  "dir": "dev/gemini/A2/i0b251ba74b2be0d9f163e75c4b235c7d",
+  "author": "gemini",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": false,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/gemini/A2/i0e03b71bf431d179be0530712161e8af",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A2/i11e21a96aa6260b7bafaaec82c8810b9",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A2/i1789fdf8e853490fb1b6731e85d63b13",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A2/i206f6b8e68e5aabae8bf04e2857d1791",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A2/i248c407facd1841580333a6d67d5af90",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A2/i910d7c5f209964573680cb7258301c2a",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A2/ia16a766729f914abd691307ee67fec15",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A2/ib301f2aab289831d1ddf47088674e53c",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A2/id9eed1756a3842c2d7da8f08ce3b9290",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A2/idef535ff33c43fd88eabd3d10685d5b6",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A2/ie1d380d54c4e8787526c42f06324257e",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A3/i0b251ba74b2be0d9f163e75c4b235c7d",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A3/i0e03b71bf431d179be0530712161e8af",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A3/i11e21a96aa6260b7bafaaec82c8810b9",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A3/i1789fdf8e853490fb1b6731e85d63b13",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A3/i206f6b8e68e5aabae8bf04e2857d1791",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A3/i248c407facd1841580333a6d67d5af90",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A3/i910d7c5f209964573680cb7258301c2a",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A3/ia16a766729f914abd691307ee67fec15",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": true,
+  "opus": true,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A3/ib301f2aab289831d1ddf47088674e53c",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A3/id9eed1756a3842c2d7da8f08ce3b9290",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A3/idef535ff33c43fd88eabd3d10685d5b6",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A3/ie1d380d54c4e8787526c42f06324257e",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A4/i0b251ba74b2be0d9f163e75c4b235c7d",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A4/i0e03b71bf431d179be0530712161e8af",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A4/i11e21a96aa6260b7bafaaec82c8810b9",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A4/i1789fdf8e853490fb1b6731e85d63b13",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A4/i206f6b8e68e5aabae8bf04e2857d1791",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A4/i248c407facd1841580333a6d67d5af90",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A4/i910d7c5f209964573680cb7258301c2a",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A4/ia16a766729f914abd691307ee67fec15",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A4/ib301f2aab289831d1ddf47088674e53c",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A4/id9eed1756a3842c2d7da8f08ce3b9290",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A4/idef535ff33c43fd88eabd3d10685d5b6",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": null,
+  "empty": false
+ },
+ {
+  "dir": "dev/gemini/A4/ie1d380d54c4e8787526c42f06324257e",
+  "author": "gemini",
+  "old_auditor": "claude-opus-5-5",
+  "old": true,
+  "codex": false,
+  "opus": false,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A2/i0b251ba74b2be0d9f163e75c4b235c7d",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A2/i0e03b71bf431d179be0530712161e8af",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A2/i11e21a96aa6260b7bafaaec82c8810b9",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A2/i1789fdf8e853490fb1b6731e85d63b13",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A2/i206f6b8e68e5aabae8bf04e2857d1791",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A2/i248c407facd1841580333a6d67d5af90",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A2/i910d7c5f209964573680cb7258301c2a",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A2/ia16a766729f914abd691307ee67fec15",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A2/ib301f2aab289831d1ddf47088674e53c",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A2/id9eed1756a3842c2d7da8f08ce3b9290",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A2/idef535ff33c43fd88eabd3d10685d5b6",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A2/ie1d380d54c4e8787526c42f06324257e",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A3/i0b251ba74b2be0d9f163e75c4b235c7d",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A3/i0e03b71bf431d179be0530712161e8af",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A3/i11e21a96aa6260b7bafaaec82c8810b9",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A3/i1789fdf8e853490fb1b6731e85d63b13",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A3/i206f6b8e68e5aabae8bf04e2857d1791",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A3/i248c407facd1841580333a6d67d5af90",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A3/i910d7c5f209964573680cb7258301c2a",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A3/ia16a766729f914abd691307ee67fec15",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A3/ib301f2aab289831d1ddf47088674e53c",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A3/id9eed1756a3842c2d7da8f08ce3b9290",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A3/idef535ff33c43fd88eabd3d10685d5b6",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A3/ie1d380d54c4e8787526c42f06324257e",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A4/i0b251ba74b2be0d9f163e75c4b235c7d",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A4/i0e03b71bf431d179be0530712161e8af",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A4/i11e21a96aa6260b7bafaaec82c8810b9",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A4/i1789fdf8e853490fb1b6731e85d63b13",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A4/i206f6b8e68e5aabae8bf04e2857d1791",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A4/i248c407facd1841580333a6d67d5af90",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A4/i910d7c5f209964573680cb7258301c2a",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A4/ia16a766729f914abd691307ee67fec15",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A4/ib301f2aab289831d1ddf47088674e53c",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A4/id9eed1756a3842c2d7da8f08ce3b9290",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/haiku/A4/idef535ff33c43fd88eabd3d10685d5b6",
+  "author": "haiku",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/haiku/A4/ie1d380d54c4e8787526c42f06324257e",
+  "author": "haiku",
+  "old_auditor": null,
+  "old": false,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": true
+ },
+ {
+  "dir": "dev/opus/A2/i0b251ba74b2be0d9f163e75c4b235c7d",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A2/i0e03b71bf431d179be0530712161e8af",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A2/i11e21a96aa6260b7bafaaec82c8810b9",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A2/i1789fdf8e853490fb1b6731e85d63b13",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A2/i206f6b8e68e5aabae8bf04e2857d1791",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A2/i248c407facd1841580333a6d67d5af90",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A2/i910d7c5f209964573680cb7258301c2a",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A2/ia16a766729f914abd691307ee67fec15",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A2/ib301f2aab289831d1ddf47088674e53c",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A2/id9eed1756a3842c2d7da8f08ce3b9290",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A2/idef535ff33c43fd88eabd3d10685d5b6",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A2/ie1d380d54c4e8787526c42f06324257e",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A3/i0b251ba74b2be0d9f163e75c4b235c7d",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": false,
+  "opus": null,
+  "combined": false,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A3/i0e03b71bf431d179be0530712161e8af",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A3/i11e21a96aa6260b7bafaaec82c8810b9",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A3/i1789fdf8e853490fb1b6731e85d63b13",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A3/i206f6b8e68e5aabae8bf04e2857d1791",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A3/i248c407facd1841580333a6d67d5af90",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A3/i910d7c5f209964573680cb7258301c2a",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A3/ia16a766729f914abd691307ee67fec15",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A3/ib301f2aab289831d1ddf47088674e53c",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A3/id9eed1756a3842c2d7da8f08ce3b9290",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A3/idef535ff33c43fd88eabd3d10685d5b6",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A3/ie1d380d54c4e8787526c42f06324257e",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A4/i0b251ba74b2be0d9f163e75c4b235c7d",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A4/i0e03b71bf431d179be0530712161e8af",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A4/i11e21a96aa6260b7bafaaec82c8810b9",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A4/i1789fdf8e853490fb1b6731e85d63b13",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A4/i206f6b8e68e5aabae8bf04e2857d1791",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A4/i248c407facd1841580333a6d67d5af90",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A4/i910d7c5f209964573680cb7258301c2a",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A4/ia16a766729f914abd691307ee67fec15",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A4/ib301f2aab289831d1ddf47088674e53c",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A4/id9eed1756a3842c2d7da8f08ce3b9290",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A4/idef535ff33c43fd88eabd3d10685d5b6",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ },
+ {
+  "dir": "dev/opus/A4/ie1d380d54c4e8787526c42f06324257e",
+  "author": "opus",
+  "old_auditor": "gpt-6-astra",
+  "old": true,
+  "codex": true,
+  "opus": null,
+  "combined": true,
+  "empty": false
+ }
+]

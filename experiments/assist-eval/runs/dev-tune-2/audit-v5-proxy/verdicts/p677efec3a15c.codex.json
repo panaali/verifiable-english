@@ -1,0 +1,247 @@
+{
+ "packet": "p677efec3a15c",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u2\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states all seven properties of unit4 without additions or omissions.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only identifies unassumed checks, and the graph does not assume those checks.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit0, both specified clear senses, and their direction.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the audit condition on unit3 and the seal-removed conclusion on unit0.\"},{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves both specified open senses and their direction for unit0.\"},{\"unit\":\"u11\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three conditions on unit4 and the audible-signal conclusion on unit0.\"},{\"unit\":\"u12\",\"verdict\":\"acceptable\",\"reason\":\"Neither staging nor inspection is supplied or derivable from the given records, and no claimed sentence relies on this rule.\"},{\"unit\":\"u13\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three conditions on unit4 and the intact-casing conclusion on unit0.\"},{\"unit\":\"u14\",\"verdict\":\"acceptable\",\"reason\":\"Neither staging nor inspection is supplied or derivable from the given records, and no claimed sentence relies on this rule.\"},{\"unit\":\"u15\",\"verdict\":\"acceptable\",\"reason\":\"The sentence states a lot-to-sample relationship that the glossary cannot express.\"},{\"unit\":\"u16\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both antecedents, the entities, and the optical-transparency conclusion.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves optical transparency of unit0 and bagging of unit4 as conditions for contamination absence in unit5.\"},{\"unit\":\"u18\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves optical transparency of unit0 and tracking of unit4 as conditions for contamination absence in unit4.\"},{\"unit\":\"u19\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves optical transparency of unit0 and wrapping of unit4 as conditions for optical transparency of unit5.\"},{\"unit\":\"u20\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves logging of unit3 as the condition for contamination absence in unit0.\"},{\"unit\":\"u21\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the account-enabled sense for unit5 and the drying conclusion for unit1.\"},{\"unit\":\"u22\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both distinct sound conditions on unit0 and the audible-signal conclusion on unit4.\"},{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the audible-signal condition on unit4 and the drying conclusion on unit7.\"},{\"unit\":\"u24\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the account-enabled sense and the direction from unit0 to unit5.\"},{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the registry-current sense and the direction from unit0 to unit5.\"},{\"unit\":\"u26\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves drying of unit7 as the condition for power connection of unit0.\"},{\"unit\":\"u27\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves registry currency of unit5 as the condition for logging of unit3.\"},{\"unit\":\"u28\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the transition from power connected to registry current for unit0.\"},{\"unit\":\"u29\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves optical transparency of unit4 as the condition for auditing of unit3.\"},{\"unit\":\"u30\",\"verdict\":\"acceptable\",\"reason\":\"Neither staging nor inspection is supplied or derivable from the given records, and no claimed sentence relies on this rule.\"},{\"unit\":\"u31\",\"verdict\":\"faithful\",\"reason\":\"The intact-casing sense matches the stated clipping, logging, and shipping reasons and their given rule.\"},{\"unit\":\"u32\",\"verdict\":\"faithful\",\"reason\":\"The audible-signal sense matches the stated drying, scanning, and auditing reasons and their given rule.\"},{\"unit\":\"u33\",\"verdict\":\"faithful\",\"reason\":\"The audible-signal conclusion for unit4 matches the two preceding sound results and their combination rule.\"},{\"unit\":\"u34\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states drying of unit7 using the immediately preceding sound result and its given rule.\"},{\"unit\":\"u35\",\"verdict\":\"faithful\",\"reason\":\"The power-connected sense matches the stated drying reason and its given rule.\"},{\"unit\":\"u36\",\"verdict\":\"faithful\",\"reason\":\"The three separate conditionals preserve the respective checks, entities, and clear senses supplied by the relevant rules and unit0's clear result.\"},{\"unit\":\"u37\",\"verdict\":\"faithful\",\"reason\":\"The registry-current conclusion matches the preceding power-connected result and the given sense-transition rule.\"},{\"unit\":\"u38\",\"verdict\":\"faithful\",\"reason\":\"The registry-current conclusion for unit5 matches the stated active reason and its given rule.\"},{\"unit\":\"u39\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states logging of unit3 using the immediately preceding active result and its given rule.\"},{\"unit\":\"u40\",\"verdict\":\"faithful\",\"reason\":\"The contamination-absent sense matches the stated logging reason and its given rule.\"},{\"unit\":\"u41\",\"verdict\":\"faithful\",\"reason\":\"The optical-transparency conclusion matches the preceding contamination-absence result and the given sense-transition rule.\"},{\"unit\":\"u42\",\"verdict\":\"faithful\",\"reason\":\"The contamination-absence conclusion for unit4 matches the stated clear and tracking reasons and their given rule.\"},{\"unit\":\"u43\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the asserted audit conclusion and its reliance on the immediately preceding clear result without changing that result's sense.\"},{\"unit\":\"u44\",\"verdict\":\"faithful\",\"reason\":\"The seal-removed sense matches the stated audit reason and its given rule.\"},{\"unit\":\"u45\",\"verdict\":\"faithful\",\"reason\":\"The account-enabled conclusion matches the preceding seal-removed result and the given sense-transition rule.\"},{\"unit\":\"u46\",\"verdict\":\"faithful\",\"reason\":\"The account-enabled conclusion for unit5 matches the stated open reason and its given rule.\"},{\"unit\":\"u47\",\"verdict\":\"faithful\",\"reason\":\"Both entries state drying of unit1, and the step uses the immediately preceding open result and its given rule.\"}]}",
+ "auditor_tokens": 28572,
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "The formalisation states all seven properties of unit4 without additions or omissions."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only identifies unassumed checks, and the graph does not assume those checks."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit0, both specified clear senses, and their direction."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The implication preserves the audit condition on unit3 and the seal-removed conclusion on unit0."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The implication preserves both specified open senses and their direction for unit0."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three conditions on unit4 and the audible-signal conclusion on unit0."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "acceptable",
+   "reason": "Neither staging nor inspection is supplied or derivable from the given records, and no claimed sentence relies on this rule."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three conditions on unit4 and the intact-casing conclusion on unit0."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "acceptable",
+   "reason": "Neither staging nor inspection is supplied or derivable from the given records, and no claimed sentence relies on this rule."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "acceptable",
+   "reason": "The sentence states a lot-to-sample relationship that the glossary cannot express."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both antecedents, the entities, and the optical-transparency conclusion."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves optical transparency of unit0 and bagging of unit4 as conditions for contamination absence in unit5."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves optical transparency of unit0 and tracking of unit4 as conditions for contamination absence in unit4."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves optical transparency of unit0 and wrapping of unit4 as conditions for optical transparency of unit5."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The implication preserves logging of unit3 as the condition for contamination absence in unit0."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The implication preserves the account-enabled sense for unit5 and the drying conclusion for unit1."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both distinct sound conditions on unit0 and the audible-signal conclusion on unit4."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The implication preserves the audible-signal condition on unit4 and the drying conclusion on unit7."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The implication preserves the account-enabled sense and the direction from unit0 to unit5."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The implication preserves the registry-current sense and the direction from unit0 to unit5."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "The implication preserves drying of unit7 as the condition for power connection of unit0."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The implication preserves registry currency of unit5 as the condition for logging of unit3."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "The implication preserves the transition from power connected to registry current for unit0."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The implication preserves optical transparency of unit4 as the condition for auditing of unit3."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "acceptable",
+   "reason": "Neither staging nor inspection is supplied or derivable from the given records, and no claimed sentence relies on this rule."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The intact-casing sense matches the stated clipping, logging, and shipping reasons and their given rule."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The audible-signal sense matches the stated drying, scanning, and auditing reasons and their given rule."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The audible-signal conclusion for unit4 matches the two preceding sound results and their combination rule."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The formalisation states drying of unit7 using the immediately preceding sound result and its given rule."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "The power-connected sense matches the stated drying reason and its given rule."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "The three separate conditionals preserve the respective checks, entities, and clear senses supplied by the relevant rules and unit0's clear result."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "The registry-current conclusion matches the preceding power-connected result and the given sense-transition rule."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "The registry-current conclusion for unit5 matches the stated active reason and its given rule."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "The formalisation states logging of unit3 using the immediately preceding active result and its given rule."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "The contamination-absent sense matches the stated logging reason and its given rule."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "The optical-transparency conclusion matches the preceding contamination-absence result and the given sense-transition rule."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "The contamination-absence conclusion for unit4 matches the stated clear and tracking reasons and their given rule."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the asserted audit conclusion and its reliance on the immediately preceding clear result without changing that result's sense."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "The seal-removed sense matches the stated audit reason and its given rule."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "The account-enabled conclusion matches the preceding seal-removed result and the given sense-transition rule."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "The account-enabled conclusion for unit5 matches the stated open reason and its given rule."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "Both entries state drying of unit1, and the step uses the immediately preceding open result and its given rule."
+  }
+ }
+}

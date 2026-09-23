@@ -1,0 +1,16 @@
+{
+ "packet": "p4a32e528de05",
+ "auditor": "codex",
+ "auditor_model": null,
+ "cost_usd": "0",
+ "reply": null,
+ "pass": false,
+ "problems": [
+  {
+   "unit": null,
+   "verdict": null,
+   "reason": "empty packet"
+  }
+ ],
+ "units": {}
+}

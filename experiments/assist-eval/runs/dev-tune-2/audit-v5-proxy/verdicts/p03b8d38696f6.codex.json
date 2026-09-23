@@ -1,0 +1,247 @@
+{
+ "packet": "p03b8d38696f6",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u5\",\"verdict\":\"faithful\",\"reason\":\"N1 states exactly the seven given properties of unit2.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only identifies unassumed checks, and the graph does not assume those checks.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"N6 preserves the entities, condition, and power-connected sense of the conclusion.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"N11 preserves the direction from contamination absence to optical transparency for unit7.\"},{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"N3 preserves all three conditions and the staffing-arranged conclusion for unit7.\"},{\"unit\":\"u11\",\"verdict\":\"acceptable\",\"reason\":\"Neither auditing nor scheduling unit3 is supplied or derivable from the given rules, and no claim relies on this rule.\"},{\"unit\":\"u12\",\"verdict\":\"faithful\",\"reason\":\"N13 preserves unit3's optical transparency as the condition for unit6 being shipped.\"},{\"unit\":\"u13\",\"verdict\":\"acceptable\",\"reason\":\"The auditing and scheduling antecedents cannot be derived from the givens, and no claim relies on this rule.\"},{\"unit\":\"u14\",\"verdict\":\"faithful\",\"reason\":\"N14 preserves the shipping condition and the account-enabled conclusion.\"},{\"unit\":\"u15\",\"verdict\":\"faithful\",\"reason\":\"N17 preserves unit2's seal removal as the condition for unit5 being stored.\"},{\"unit\":\"u16\",\"verdict\":\"faithful\",\"reason\":\"N15 preserves the direction from account enabled to seal removed for unit7.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"N2 preserves all three conditions and the packing-completed conclusion for unit7.\"},{\"unit\":\"u18\",\"verdict\":\"acceptable\",\"reason\":\"The auditing and scheduling antecedents cannot be derived from the givens, and no claim relies on this rule.\"},{\"unit\":\"u19\",\"verdict\":\"acceptable\",\"reason\":\"The glossary cannot express the stated lot-to-sample relationship.\"},{\"unit\":\"u20\",\"verdict\":\"faithful\",\"reason\":\"N8 preserves the entities and registry-current sense in both condition and conclusion.\"},{\"unit\":\"u21\",\"verdict\":\"faithful\",\"reason\":\"N16 preserves the direction from unit7's seal removal to unit2's seal removal.\"},{\"unit\":\"u22\",\"verdict\":\"faithful\",\"reason\":\"N9 preserves unit3's current registry as the condition for unit6 being logged.\"},{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"N7 preserves the direction from power connected to registry current for unit7.\"},{\"unit\":\"u24\",\"verdict\":\"faithful\",\"reason\":\"N4 preserves both distinct readiness conditions for unit7 and the staffing-arranged conclusion for unit2.\"},{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"N10 preserves unit6 being logged as the condition for unit7's contamination absence.\"},{\"unit\":\"u26\",\"verdict\":\"faithful\",\"reason\":\"N34 preserves both conditions and the contamination-absent conclusion for unit3.\"},{\"unit\":\"u27\",\"verdict\":\"faithful\",\"reason\":\"N12 preserves both conditions and the optically-transparent conclusion for unit3.\"},{\"unit\":\"u28\",\"verdict\":\"faithful\",\"reason\":\"N35 preserves both conditions and the contamination-absent conclusion for unit2.\"},{\"unit\":\"u29\",\"verdict\":\"faithful\",\"reason\":\"N36 preserves both conditions and the optically-transparent conclusion for unit2.\"},{\"unit\":\"u30\",\"verdict\":\"faithful\",\"reason\":\"N5 preserves both staffing-arranged conditions and the conclusion that unit4 is stored.\"},{\"unit\":\"u31\",\"verdict\":\"faithful\",\"reason\":\"N18 selects packing completed using the stated bagging, logging, and listing reasons through r05.1.\"},{\"unit\":\"u32\",\"verdict\":\"faithful\",\"reason\":\"N19 selects staffing arranged using the stated storage, routing, and shipping reasons through r01.1.\"},{\"unit\":\"u33\",\"verdict\":\"faithful\",\"reason\":\"N20 states unit2's staffing readiness using the two preceding readiness results and r02.1.\"},{\"unit\":\"u34\",\"verdict\":\"faithful\",\"reason\":\"N21 states unit4 is stored using unit7's staffing readiness and the immediately preceding unit2 readiness result through r09.1.\"},{\"unit\":\"u35\",\"verdict\":\"faithful\",\"reason\":\"N22 selects power connected from the stated storage reason through r15.1.\"},{\"unit\":\"u36\",\"verdict\":\"faithful\",\"reason\":\"N23 selects registry current from the preceding power-connected result through r13.1.\"},{\"unit\":\"u37\",\"verdict\":\"faithful\",\"reason\":\"N24 states unit3's registry is current using unit7's preceding registry-current result through r06.1.\"},{\"unit\":\"u38\",\"verdict\":\"faithful\",\"reason\":\"N25 states unit6 is logged using the immediately preceding active result for unit3 through r11.1.\"},{\"unit\":\"u39\",\"verdict\":\"faithful\",\"reason\":\"N26 selects contamination absent from the stated logging reason through r10.1.\"},{\"unit\":\"u40\",\"verdict\":\"faithful\",\"reason\":\"N27 selects optical transparency from unit7's preceding contamination-absent result through r03.1.\"},{\"unit\":\"u41\",\"verdict\":\"faithful\",\"reason\":\"N37 preserves all three respective conditional checks and their supported senses using the established clarity of unit7 and the corresponding rules.\"},{\"unit\":\"u42\",\"verdict\":\"faithful\",\"reason\":\"N28 selects optical transparency for unit3 using unit7's optical transparency and unit2 being queued through r07.2.\"},{\"unit\":\"u43\",\"verdict\":\"faithful\",\"reason\":\"N29 states unit6 is shipped using the immediately preceding optical-transparency result for unit3 through r14.1.\"},{\"unit\":\"u44\",\"verdict\":\"faithful\",\"reason\":\"N30 selects account enabled using the stated shipping reason through r08.1.\"},{\"unit\":\"u45\",\"verdict\":\"faithful\",\"reason\":\"N31 selects seal removed using unit7's preceding account-enabled result through r12.1.\"},{\"unit\":\"u46\",\"verdict\":\"faithful\",\"reason\":\"N32 states unit2's seal is removed using unit7's preceding seal-removal result through r04.1.\"},{\"unit\":\"u47\",\"verdict\":\"faithful\",\"reason\":\"Both statements preserve the storage conclusion, and N33 uses the immediately preceding seal-removal result for unit2 through r00.1.\"}]}",
+ "auditor_tokens": 28459,
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "N1 states exactly the seven given properties of unit2."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence only identifies unassumed checks, and the graph does not assume those checks."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "N6 preserves the entities, condition, and power-connected sense of the conclusion."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "N11 preserves the direction from contamination absence to optical transparency for unit7."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "N3 preserves all three conditions and the staffing-arranged conclusion for unit7."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "acceptable",
+   "reason": "Neither auditing nor scheduling unit3 is supplied or derivable from the given rules, and no claim relies on this rule."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "N13 preserves unit3's optical transparency as the condition for unit6 being shipped."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "acceptable",
+   "reason": "The auditing and scheduling antecedents cannot be derived from the givens, and no claim relies on this rule."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "N14 preserves the shipping condition and the account-enabled conclusion."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "N17 preserves unit2's seal removal as the condition for unit5 being stored."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "N15 preserves the direction from account enabled to seal removed for unit7."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "N2 preserves all three conditions and the packing-completed conclusion for unit7."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "acceptable",
+   "reason": "The auditing and scheduling antecedents cannot be derived from the givens, and no claim relies on this rule."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "acceptable",
+   "reason": "The glossary cannot express the stated lot-to-sample relationship."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "N8 preserves the entities and registry-current sense in both condition and conclusion."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "N16 preserves the direction from unit7's seal removal to unit2's seal removal."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "N9 preserves unit3's current registry as the condition for unit6 being logged."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "N7 preserves the direction from power connected to registry current for unit7."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "N4 preserves both distinct readiness conditions for unit7 and the staffing-arranged conclusion for unit2."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "N10 preserves unit6 being logged as the condition for unit7's contamination absence."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "N34 preserves both conditions and the contamination-absent conclusion for unit3."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "N12 preserves both conditions and the optically-transparent conclusion for unit3."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "N35 preserves both conditions and the contamination-absent conclusion for unit2."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "N36 preserves both conditions and the optically-transparent conclusion for unit2."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "N5 preserves both staffing-arranged conditions and the conclusion that unit4 is stored."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "N18 selects packing completed using the stated bagging, logging, and listing reasons through r05.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "N19 selects staffing arranged using the stated storage, routing, and shipping reasons through r01.1."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "N20 states unit2's staffing readiness using the two preceding readiness results and r02.1."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "N21 states unit4 is stored using unit7's staffing readiness and the immediately preceding unit2 readiness result through r09.1."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "N22 selects power connected from the stated storage reason through r15.1."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "N23 selects registry current from the preceding power-connected result through r13.1."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "N24 states unit3's registry is current using unit7's preceding registry-current result through r06.1."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "N25 states unit6 is logged using the immediately preceding active result for unit3 through r11.1."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "N26 selects contamination absent from the stated logging reason through r10.1."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "N27 selects optical transparency from unit7's preceding contamination-absent result through r03.1."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "N37 preserves all three respective conditional checks and their supported senses using the established clarity of unit7 and the corresponding rules."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "N28 selects optical transparency for unit3 using unit7's optical transparency and unit2 being queued through r07.2."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "N29 states unit6 is shipped using the immediately preceding optical-transparency result for unit3 through r14.1."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "N30 selects account enabled using the stated shipping reason through r08.1."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "N31 selects seal removed using unit7's preceding account-enabled result through r12.1."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "N32 states unit2's seal is removed using unit7's preceding seal-removal result through r04.1."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "Both statements preserve the storage conclusion, and N33 uses the immediately preceding seal-removal result for unit2 through r00.1."
+  }
+ }
+}
