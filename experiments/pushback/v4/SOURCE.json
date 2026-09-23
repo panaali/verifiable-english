@@ -1,0 +1,6 @@
+{
+ "source": "ve-codex-v4 experiments/V4-calibration/dev.jsonl @ 644690e",
+ "source_sha256": "aa9b1635b817a2d04a2ca051aa4c5b71b5dc9b5a968a9f4eba6fd38aca928cb9",
+ "fields": "id,type,label,active_levers,premises[].english,query.english",
+ "n": 84
+}

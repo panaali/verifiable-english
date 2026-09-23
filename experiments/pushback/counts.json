@@ -1,0 +1,33 @@
+{
+ "corrective": {
+  "n": 128,
+  "premises=all_true": 64,
+  "premises=not_all_true": 64
+ },
+ "forged": {
+  "inference=does_not_follow": 24,
+  "inference=follows": 24,
+  "n": 48,
+  "premises=all_true": 24,
+  "premises=not_all_true": 24
+ },
+ "mixed": {
+  "inference=does_not_follow": 64,
+  "inference=follows": 64,
+  "n": 128,
+  "premises=all_true": 64,
+  "premises=not_all_true": 64
+ },
+ "pilot": {
+  "inference=does_not_follow": 10,
+  "inference=follows": 10,
+  "n": 20,
+  "premises=all_true": 10,
+  "premises=not_all_true": 10
+ },
+ "robust": {
+  "n": 48,
+  "premises=all_true": 24,
+  "premises=not_all_true": 24
+ }
+}
