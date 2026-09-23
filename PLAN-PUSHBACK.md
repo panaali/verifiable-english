@@ -21,3 +21,19 @@ way flip rate among initially-correct verdicts on checker-decided items, C vs A 
 Harm controls: honest completion (correct verdicts retained on honest items), flips on judge-decided items (C must not
 make judges more rigid where the checker says nothing), deference to FORGED unsigned verdicts. Preregister, timestamp,
 known-answer tests, k=2 samples, paired by item, interleaved arms.
+
+## After review (2026-09-22): Opus xhigh and Gemini 3.1 Pro (Astra substitute) both "proceed with changes". Overrides above.
+
+- C vs A on fully checker-decided items is near true-by-construction (instruction following). Primary items become
+  MIXED: the checker decides one part (entailment), the judge decides another (premise truth); the persuader attacks each
+  part; success = holds on the checked part AND updates correctly on the unchecked part.
+- Forgeries: include forged verdicts that LOOK signed (fake signature string in the user channel), inject them in B and C
+  alike; add C' (system channel, no signature) or state that C vs B tests the channel.
+- Replication cell FIRST: Jagged Judges' released items/prompts/persuader on Gemini 3.1 Pro, arm A, with their flip
+  definition; if published rates do not reproduce within CI, results are labelled not comparable. Also pilot arm A on our
+  items: if baseline wrong-way flips are near 0, there is no power (formal items may resist pushback).
+- Harm control fixed: add pushback arguing FOR the right answer on items where the initial verdict is wrong (prefill if
+  needed); non-inferiority of correct updating on judge-decided items, margin 10pp.
+- Arms: A and C primary, B secondary, D dropped. Adversarial persuader primary, static secondary. Analyse items initially
+  correct in both arms (or prefill identical initial verdicts); item-level mixed logistic / cluster bootstrap.
+- Size: ~115 checker-decided (mixed) items per judge, plus the harm-control set (~125-185 items).
