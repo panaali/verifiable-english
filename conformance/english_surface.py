@@ -70,6 +70,25 @@ def vocabularies():
         yield path.parent.name, Environment.from_json(path.read_bytes())
 
 
+def order_environment():
+    """order@0: comparisons over integer constants, numerals and bracketed terms."""
+    return Environment({
+        'language': 've.core@0.1', 'profiles': ['order@0', 'relational-fol@0'],
+        'spec_revision': 've-v0.1-order-2026-09-22',
+        'vocabulary': {
+            'sorts': {'service': {'description': 'A service.',
+                                  'verbalisation': {'singular': 'service', 'plural': 'services'}}},
+            'predicates': {
+                'deployed': {'arguments': ['service'], 'description': 'Deployed.', 'verbalisation': '{0} is deployed'},
+                'costs': {'arguments': ['service', '$int'], 'description': 'Monthly cost.', 'verbalisation': '{0} costs {1}'},
+                'reserved': {'arguments': ['$int'], 'description': 'A reserved port.', 'verbalisation': '{0} is reserved'},
+                'links': {'arguments': ['service', 'service'], 'description': 'Directed link.',
+                          'verbalisation': '{0} depends on {1}'}},
+            'constants': {'budget': {'sort': '$int', 'description': 'Budget.'},
+                          'limit': {'sort': '$int', 'description': 'Limit.'},
+                          'api': {'sort': 'service', 'description': 'API.'}}}})
+
+
 def configurations():
     for name, env in vocabularies():
         yield name, env, {}
@@ -83,6 +102,8 @@ def configurations():
     env = Environment(data)
     yield 'accepted-suggestions', env, {'vocabulary': suggest_vocabulary(env), 'accept_suggested_vocabulary': True}
     yield from adopted_configurations()
+    # Appended last so every earlier row keeps its seed and corpus digest.
+    yield 'order', order_environment(), {}
 
 
 def adopted_configurations():
@@ -105,7 +126,20 @@ def adopted_configurations():
 def directed_formulas(env, words):
     """Force every new guard shape/lexical template into the Earley sample."""
     object_coordination_checked = False
+    if getattr(env, 'order', False):
+        # Integer slots take terms, never binders; exercise them inside guards and relatives.
+        budget, limit = ast.Const('budget'), ast.Const('limit')
+        costs = ast.Binary('costs', ast.Var(0), ast.Add(budget, ast.Scale(-1, ast.Num(5))))
+        deployed = ast.Unary('deployed', ast.Var(0))
+        yield ast.Forall('service', ast.Implies(costs, deployed))
+        yield ast.Forall('service', ast.Implies(ast.And(deployed, costs), costs))
+        yield ast.Exists('service', costs)
+        yield ast.Forall('service', ast.Implies(costs, ast.Lt(budget, ast.Scale(2, limit))))
+        yield ast.And(ast.Le(ast.Scale(-1, budget), ast.Num(-3)), ast.Unary('reserved', ast.Add(limit, ast.Num(1))))
+        yield ast.Or(ast.Eq(budget, ast.Scale(-1, ast.Scale(-1, limit))), ast.Lt(ast.Num(0), ast.Num(-1)))
     for name, decl in env.predicates.items():
+        if '$int' in decl.arguments:
+            continue
         atom = (ast.Unary(name, ast.Var(0)) if len(decl.arguments) == 1
                 else ast.Binary(name, ast.Var(0), ast.Var(1)))
         def bind(body):
@@ -135,13 +169,27 @@ def directed_formulas(env, words):
     yield ast.Implies(p, ast.Implies(q, p))
 
 
+def random_int_term(rng, env, depth=2):
+    constants = [ast.Const(n) for n, d in env.constants.items() if d.sort == '$int']
+    if depth == 0 or rng.random() < 0.4:
+        return rng.choice(constants + [ast.Num(rng.randint(-12, 12))])
+    kind = rng.randrange(4)
+    if kind == 0: return ast.Add(random_int_term(rng, env, depth - 1), random_int_term(rng, env, depth - 1))
+    if kind == 1: return ast.Add(random_int_term(rng, env, depth - 1), ast.Scale(-1, random_int_term(rng, env, depth - 1)))
+    if kind == 2: return ast.Scale(rng.choice((-2, -1, 2, 3)), random_int_term(rng, env, depth - 1))
+    return ast.Scale(-1, random_int_term(rng, env, depth - 1))
+
+
 def random_formula(rng, env, depth, scope=()):
     def available(sort):
+        if sort == '$int' and env.order:
+            return [random_int_term(rng, env)]
         return [ast.Var(i) for i, s in enumerate(scope) if s == sort] + [ast.Const(n) for n, d in env.constants.items() if d.sort == sort]
-    def term(sort): return rng.choice(available(sort))
+    def term(sort): return random_int_term(rng, env) if sort == '$int' and env.order else rng.choice(available(sort))
     eligible = [(name, d) for name, d in env.predicates.items() if all(available(s) for s in d.arguments)]
     sorts = [s for s in env.sorts if available(s)]
     choices = ['top', 'bottom'] + (['atom'] * 4 if eligible else []) + (['eq'] if sorts else [])
+    if env.order: choices += ['compare'] * 3
     if depth:
         choices += ['not', 'and', 'or', 'implies', 'forall', 'exists'] * 2
         if env.closure and sorts: choices += ['reach'] * 3
@@ -153,8 +201,10 @@ def random_formula(rng, env, depth, scope=()):
         name, decl = rng.choice(eligible)
         return (ast.Unary if len(decl.arguments) == 1 else ast.Binary)(name, *(term(s) for s in decl.arguments))
     if choice == 'eq':
-        sort = rng.choice(sorts)
+        sort = rng.choice(sorts + (['$int'] if env.order else []))
         return ast.Eq(term(sort), term(sort))
+    if choice == 'compare':
+        return rng.choice((ast.Lt, ast.Le))(term('$int'), term('$int'))
     if choice == 'not': return ast.Not(child())
     if choice in ('and', 'or', 'implies'):
         return {'and': ast.And, 'or': ast.Or, 'implies': ast.Implies}[choice](child(), child())

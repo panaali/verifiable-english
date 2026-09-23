@@ -15,7 +15,8 @@ def closureProfiles : List String := ["closure@0", "relational-fol@0"]
 /-- The accepted profile declarations of an environment object. -/
 def ProfilesAccepted (env : Json) : Prop :=
   (VE.Bridge.stringField env "language" = .ok "ve.core@0.1" ∧
-    (env.getObjVal? "profiles" >>= VE.Bridge.strings) = .ok closureProfiles) ∨
+    (env.getObjVal? "profiles" >>= VE.Bridge.strings) = .ok closureProfiles ∧
+    ∀ p, env.getObjVal? "profile" ≠ .ok p) ∨
   (VE.Bridge.stringField env "language" = .ok "ve.core@0" ∧
     VE.Bridge.stringField env "profile" = .ok "relational-fol@0" ∧
     ∀ p, env.getObjVal? "profiles" ≠ .ok p)
@@ -113,13 +114,15 @@ end ProfileGate
 open ProfileGate
 
 /-- The closure decoder succeeds only on language `ve.core@0.1` with exactly
-the declared profile list `["closure@0", "relational-fol@0"]`. -/
+the declared profile list `["closure@0", "relational-fol@0"]` and no singular
+`profile` field. -/
 theorem closure_decode_profiles (env : Json) (v : VE.Bridge.Vocabulary)
     (h : VE.Closure.Bridge.decodeEnvironment env = .ok v) :
     VE.Bridge.stringField env "language" = .ok "ve.core@0.1" ∧
-    (env.getObjVal? "profiles" >>= VE.Bridge.strings) = .ok closureProfiles := by
+    (env.getObjVal? "profiles" >>= VE.Bridge.strings) = .ok closureProfiles ∧
+    ∀ p, env.getObjVal? "profile" ≠ .ok p := by
   unfold VE.Closure.Bridge.decodeEnvironment at h
-  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, hx, h⟩ := bind_ok h
   obtain ⟨l, hl, h⟩ := bind_ok h
   obtain ⟨pj, hpj, h⟩ := bind_ok h
   obtain ⟨ps, hps, h⟩ := bind_ok h
@@ -129,7 +132,13 @@ theorem closure_decode_profiles (env : Json) (v : VE.Bridge.Vocabulary)
   · rename_i hc
     simp only [Bool.and_eq_true, beq_iff_eq] at hc
     obtain ⟨⟨rfl, rfl⟩, _⟩ := hc
-    exact ⟨hl, by simp [hpj, bind, Except.bind, hps, closureProfiles]⟩
+    refine ⟨hl, by simp [hpj, bind, Except.bind, hps, closureProfiles], fun p hp => ?_⟩
+    obtain ⟨fs, hfs, hk⟩ := exactFields_keys (by decide) hx
+    obtain ⟨fs', hfs', hp'⟩ := getObjVal_mem hp
+    rw [hfs] at hfs'
+    cases hfs'
+    have := hk _ hp'
+    simp at this
   · cases h
 
 /-- The v0 decoder succeeds only on language `ve.core@0` with singular profile
@@ -220,12 +229,35 @@ theorem profile_gate (j r : Json)
 theorem order_not_accepted (env : Json) (ps : List String)
     (hp : (env.getObjVal? "profiles" >>= VE.Bridge.strings) = .ok ps)
     (ho : "order@0" ∈ ps) : ¬ ProfilesAccepted env := by
-  rintro (⟨_, hc⟩ | ⟨_, _, hn⟩)
+  rintro (⟨_, hc, _⟩ | ⟨_, _, hn⟩)
   · rw [hc] at hp
     cases hp
     simp [closureProfiles] at ho
   · obtain ⟨pj, hpj, _⟩ := bind_ok hp
     exact hn pj hpj
+
+/-- A singular `"profile": "order@0"` field is never accepted either, whatever
+the language: the closure form has no `profile` field and the v0 form requires
+`relational-fol@0`. -/
+theorem singular_order_not_accepted (env : Json)
+    (hp : env.getObjVal? "profile" = .ok (.str "order@0")) : ¬ ProfilesAccepted env := by
+  rintro (⟨_, _, hn⟩ | ⟨_, hr, _⟩)
+  · exact hn _ hp
+  · simp [VE.Bridge.stringField, hp, bind, Except.bind, Json.getStr?] at hr
+    have := congrArg (fun x : Except String String => match x with | .ok s => s | .error _ => "") hr
+    exact absurd this (by decide)
+
+theorem singular_order_profile_gate (j r env : Json)
+    (he : j.getObjVal? "environment" = .ok env)
+    (hp : env.getObjVal? "profile" = .ok (.str "order@0")) :
+    VE.CertificateWire.runCase j ≠ .ok r ∧ runEvaluationCase j ≠ .ok r := by
+  constructor <;> intro h
+  · obtain ⟨env', he', ha⟩ := profile_gate j r (Or.inl h)
+    rw [he] at he'; cases he'
+    exact singular_order_not_accepted env hp ha
+  · obtain ⟨env', he', ha⟩ := profile_gate j r (Or.inr h)
+    rw [he] at he'; cases he'
+    exact singular_order_not_accepted env hp ha
 
 /-- Therefore no case whose environment declares `order@0` succeeds, on either
 route, for any other field values. -/

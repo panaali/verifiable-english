@@ -284,6 +284,8 @@ import Iceberg
 #print axioms VE.Order.lookup_isSome
 #print axioms VE.Order.lookup_mem
 #print axioms VE.Order.order_not_accepted
+#print axioms VE.Order.singular_order_not_accepted
+#print axioms VE.Order.singular_order_profile_gate
 #print axioms VE.Order.order_profile_gate
 #print axioms VE.Order.profile_gate
 #print axioms VE.Order.runEvaluationCaseReported_eq

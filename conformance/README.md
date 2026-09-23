@@ -308,3 +308,14 @@ UV_CACHE_DIR=/private/tmp/ve-uv-cache-propose uv run python -m conformance.engli
 
 The audit uses `ve.propose.adopt`, reloads the written files, and checks the
 ordinary finite English grammar. Its overlay and report remain unreviewed.
+
+## order@0 (Python vs Lean)
+
+`python -m conformance.order` generates order@0 entailment queries, proves them
+with the untrusted Python search, and replays every certificate with the Python
+checker (`ve/order.py`) and the Lean checker (`ve_conformance order`, proved by
+`VE.Order.Tableau.checkCertificate_sound`). It also sends mutated and hand-built
+certificates (all verdicts must agree; hazards must be rejected), Python
+countermodels (checked by Lean's proved `checkCountermodel` gate) and random
+evaluations. The report is `order-report.json`; `tests/test_order.py` reruns the
+corpus. Rust does not implement order@0.
