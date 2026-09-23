@@ -11,9 +11,14 @@ Family (alpha .05, Holm over six p-values), for m in {opus, haiku}:
   char_m     exact two-sided McNemar, m-ve vs m-raw false approval, 40 character items;
   related_m  the same on the 60 related-entity items;
   ni_m       honest completion non-inferiority (margin 10 pp), Tango score test, doubled one-sided p.
-Claims: "the protocol helps m on stratum s" iff s_m is rejected with fewer VE false approvals AND ni_m
-is rejected. HARM: s_m rejected with more VE false approvals. Reported NI bound: the lower limit of the
-two-sided (1 - alpha_j) Tango interval, alpha_j the Holm level at which ni_m was compared.
+Outcomes per model m and stratum s (preregistered):
+  SUCCESS ("the protocol helps m on s"): s_m rejected with fewer VE false approvals AND ni_m rejected;
+  REFUTATION: HARM (s_m rejected with more VE false approvals) or NI FAILURE (honest completion shown
+    worse by more than the margin: the upper limit of the two-sided (1 - alpha_j) Tango interval for
+    VE minus raw is below -10 pp);
+  INCONCLUSIVE: everything else. Non-rejection alone is never a refutation.
+Reported NI bound: the lower limit of the two-sided (1 - alpha_j) Tango interval, alpha_j the Holm level
+at which ni_m was compared.
 """
 from collections import Counter, defaultdict
 import json
@@ -102,12 +107,20 @@ def family(table, ids, invalid_as_approval_arms=()):
     claims = {}
     for m in MODELS:
         t = tests[f'ni_{m}']
-        t['reported_bound_1_minus_alpha_j'] = W.ni_bound(t['n12_ve_only'], t['n21_raw_only'], t['n'], t['holm_alpha_j'])
+        lo, hi = W.tango_interval(t['n12_ve_only'], t['n21_raw_only'], t['n'], level=1 - t['holm_alpha_j']) \
+            if t['n'] else (-1.0, 1.0)
+        t['reported_bound_1_minus_alpha_j'], t['upper_1_minus_alpha_j'] = lo, hi
+        t['ni_failure'] = hi < -MARGIN
         for s in ('char', 'related'):
             x = tests[f'{s}_{m}']
-            claims[f'{m}/{s}'] = ('protocol_helps' if x['rejected'] and x['direction'] == 'fewer_ve_false_approvals'
-                                  and t['rejected'] else 'harm' if x['rejected'] and x['direction'] ==
-                                  'more_ve_false_approvals' else 'reduction_without_ni' if x['rejected'] else 'inconclusive')
+            if x['rejected'] and x['direction'] == 'more_ve_false_approvals':
+                claims[f'{m}/{s}'] = 'refuted_harm'
+            elif t['ni_failure']:
+                claims[f'{m}/{s}'] = 'refuted_ni_failure'
+            elif x['rejected'] and x['direction'] == 'fewer_ve_false_approvals' and t['rejected']:
+                claims[f'{m}/{s}'] = 'protocol_helps'
+            else:
+                claims[f'{m}/{s}'] = 'inconclusive'
     for s in ('char', 'related'):
         claims[f'both_models/{s}'] = 'protocol_helps' if all(claims[f'{m}/{s}'] == 'protocol_helps' for m in MODELS) \
             else 'not_both'

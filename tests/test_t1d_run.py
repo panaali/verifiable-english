@@ -149,13 +149,19 @@ def test_analysis_family_claims_harm_and_ni_bound():
     ids = {'char': [f'c{n}' for n in range(40)], 'related': [f'r{n}' for n in range(60)],
            'honest': [f'h{n}' for n in range(160)]}
     tests, claims = A.family(table, ids)
-    assert claims['opus/char'] == 'protocol_helps' and claims['haiku/related'] == 'harm'
+    assert claims['opus/char'] == 'protocol_helps' and claims['haiku/related'] == 'refuted_harm'
     assert claims['opus/related'] == 'inconclusive' and claims['both_models/char'] == 'not_both'
     t = tests['ni_opus']
-    assert t['rejected'] and t['reported_bound_1_minus_alpha_j'] > -0.10
+    assert t['rejected'] and t['reported_bound_1_minus_alpha_j'] > -0.10 and not t['ni_failure']
+    # NI failure (VE honest completion worse by more than the margin) refutes the stratum claims.
+    worse = dict(d)
+    for n in range(40):
+        worse[(f'h{n}', 'opus-ve')] = 'REJECT'
+    tests_w, claims_w = A.family(A._table(_rows(worse)), ids)
+    assert tests_w['ni_opus']['ni_failure'] and claims_w['opus/char'] == 'refuted_ni_failure'
     # Sensitivity: INVALID counted as approval in the raw arms removes the haiku harm (raw now approves all 60).
     sens_tests, sens_claims = A.family(table, ids, invalid_as_approval_arms=A.RAW_ARMS)
-    assert sens_claims['haiku/related'] != 'harm'
+    assert sens_claims['haiku/related'] != 'refuted_harm'
     assert sens_tests['related_haiku']['direction'] == 'fewer_ve_false_approvals'
 
 
