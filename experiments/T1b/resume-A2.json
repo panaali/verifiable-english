@@ -1,0 +1,62 @@
+{
+  "at": "2026-09-23T00:58:51.188940+00:00",
+  "scores": {
+    "experiments/T1b/results-gate/scores/32f4c84f554a-a-haiku-0.json": "e96d0d5f3177a52b7e3458437f71119397194b0884c44fc915ff5305dfa2120a",
+    "experiments/T1b/results-gate/scores/403ffc2968ff-a-haiku-0.json": "f4706bd44cd0b753cbdfab695f64753b17588f49e559857ae60309301bbe0e83",
+    "experiments/T1b/results-gate/scores/403ffc2968ff-a-haiku-1.json": "6066d975398574f35eaaec79657e73b5f1a5906e3c0e6b72ef812617826c7f71",
+    "experiments/T1b/results-gate/scores/403ffc2968ff-a-haiku-2.json": "caf4259e56081c1d77f92b6605228ee398a44cca40a25416154971d1cf392688",
+    "experiments/T1b/results-gate/scores/82a1e2fd54ec-a-haiku-0.json": "fbf702cd2bfa5f747db998b4173f222b327650edcb35a05b55fc86c9960d096e",
+    "experiments/T1b/results-gate/scores/82a1e2fd54ec-a-haiku-1.json": "0a7aa5cee0ce9c4ea784924d97fc25a332026bca3252d67f5232ca62730528f6",
+    "experiments/T1b/results-gate/scores/82a1e2fd54ec-a-haiku-2.json": "4451953907c2e15bb567fba9e510708de8521cb2316721693b8a4877099eeaa3",
+    "experiments/T1b/results-gate/scores/82a1e2fd54ec-a-opus-0.json": "3176d2af94b9709da5391ff034440e41f93551277a994d8eeb54bdbf9766d0e8",
+    "experiments/T1b/results-gate/scores/82a1e2fd54ec-a-opus-1.json": "cc838edf4cdf036070eca0602ca7d929ae41f7e609b2210eb40a8c7c5f3400c7",
+    "experiments/T1b/results-gate/scores/82a1e2fd54ec-a-opus-2.json": "ae9bd0a2aa0bc43c22b64470dd12bb39024f0ef6ea12475a4ed64d4ca285674c",
+    "experiments/T1b/results-gate/scores/a42c66f5b1f2-a-haiku-0.json": "213d5743682d378820fc8ded4a600022cc0b6577ecce45112e2eed7c3b73abfd",
+    "experiments/T1b/results-gate/scores/a42c66f5b1f2-a-haiku-1.json": "e55442640fce7d24425f9dd881291e39ddfb93bfce96fd99ffc0144d37c3de60",
+    "experiments/T1b/results-gate/scores/a42c66f5b1f2-a-haiku-2.json": "44f90346ef029f0c4e0bc3a935f9403fbde981f3e33b23c7c6f35846884724aa",
+    "experiments/T1b/results-gate/scores/a42c66f5b1f2-a-opus-0.json": "2b8fa1182bd35f657c4a561db4fe34d28879a80f1d6baf1b55c4fcc76aa2b07a",
+    "experiments/T1b/results-gate/scores/a42c66f5b1f2-a-opus-1.json": "9e2153058657014a991b1e094d134b81ab4c114c5c218d1670e43af7849db89a",
+    "experiments/T1b/results-gate/scores/a42c66f5b1f2-a-opus-2.json": "90bdac0b08932d0862b5de9c60ef1036c281a9096ea33d507338903256843c5a",
+    "experiments/T1b/results-gate/scores/c11750b9289e-a-haiku-0.json": "18e97235035920cb73b03b1b536fe264531474f28f6a97f73f94651d7a0f090f",
+    "experiments/T1b/results-gate/scores/c11750b9289e-a-haiku-1.json": "19175ea6a712bd8a8c3080193f08f598159dd6e5a3b130e96a7af5edf871eb8d",
+    "experiments/T1b/results-gate/scores/c11750b9289e-a-haiku-2.json": "bed8e7ddf2891e7b153665ff2c87f087e05739e2a10c05942ff8c49105d29bf3"
+  },
+  "preserved": {
+    "experiments/T1b/STOP.json": {
+      "sha256": "27eccc2dadde5a6680657481113bae2af17a37a67a4cec452fc5acb1640fdfa2",
+      "bytes": 146
+    },
+    "experiments/T1b/STOP-A1.json": {
+      "sha256": "2d902b52dbf46d7eb852e0723459ad214363e444c4d256fe244ddabf6a4f86a8",
+      "bytes": 167
+    },
+    "experiments/T1b/results-gate/STOP-A1.json": {
+      "sha256": "80bddbebbe386882d4985309641f65eec6d4b03e225cac395821165c8c7afc47",
+      "bytes": 215
+    },
+    "experiments/T1b/results-gate/ledgers/haiku-judge-2026-09-22.jsonl": {
+      "sha256": "dbd765bded618ded2c49b6c05025d293386dfd3d8859948e6a779f562e82cc99",
+      "bytes": 135659
+    },
+    "experiments/T1b/results-gate/ledgers/haiku-judge-2026-09-23.jsonl": {
+      "sha256": "32b88386cb971ab399d332ef43efa40cb6fe037228922723868cd93d46683628",
+      "bytes": 3263241
+    },
+    "experiments/T1b/results-gate/ledgers/opus-author-2026-09-22.jsonl": {
+      "sha256": "228ec9a53b88ef1438f6e39e1bf72e6cc144a18b2c36e631c24e9bb837fcfabd",
+      "bytes": 132765
+    },
+    "experiments/T1b/results-gate/ledgers/opus-author-2026-09-23.jsonl": {
+      "sha256": "31ad94199c8b2fad86ece01b58f2914ba4876d4acf8a8fe6ea0d1c66184063f7",
+      "bytes": 1027405
+    },
+    "experiments/T1b/results-gate/ledgers/opus-judge-2026-09-23.jsonl": {
+      "sha256": "298a56bf8782de8de2e08617caef8b5fae27043e68ae2a1e9d9f7629c4b27277",
+      "bytes": 2284094
+    },
+    "experiments/T1b/results-gate/summary-before-A2.json": {
+      "sha256": "618fe66d8578e1b2a36ca2caf28dbe7532fe5e6c0971bd8cb15cc85aa82d2d85",
+      "bytes": 9073
+    }
+  }
+}
