@@ -21,7 +21,9 @@ evidence with propagated uncertainty.
 
 A Barnes-Christiano argument chains many 96-99%-plausible leaves. In VEX each leaf carries evidence and a probability
 that the checker propagates (worst-case Frechet bounds unless independence is itself supported), so the certified
-confidence of a long merely-plausible chain collapses: the dishonest claim comes out "not established" instead of
+confidence of a long merely-plausible chain collapses. What is propagated is a *lower* bound on each claim; leaves never
+give an upper bound, and evidence within a leaf combines multiplicatively only under a supported conditional-independence
+claim (`design/evidence-layer-design.md` §§2.2-2.4, 2.9). Hence the dishonest claim comes out "not established" instead of
 fooling the judge. Sound but incomplete: a true claim with equally long, uncertain support is also unestablished.
 Acceptable for control (refuse uncertified actions), costly for open science.
 

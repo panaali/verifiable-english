@@ -1,6 +1,7 @@
 import VE.Bridge
 import VE.Closure.Bridge
 import VE.CertificateWire
+import VE.Order.ProfileGate
 import VE.Order.Wire
 
 open Lean
@@ -25,8 +26,7 @@ def main (args : List String) : IO UInt32 := do
       | .ok j =>
         if order then VE.Order.Wire.runCaseReported j
         else if certificates then VE.CertificateWire.runCaseReported j
-        else if (j.getObjValD "environment").getObjValD "language" == .str "ve.core@0.1"
-        then VE.Closure.Bridge.runCaseReported j else VE.Bridge.runCaseReported j
+        else VE.Order.runEvaluationCaseReported j
       | .error message => Json.mkObj ([("status", .str "error"),
           ("case_index", toJson index), ("error", .str message)] ++
           if certificates || order then [("valid", .bool false)] else [])
