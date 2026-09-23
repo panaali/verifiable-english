@@ -1,0 +1,750 @@
+{
+  "artifacts": [
+    {
+      "category": "syntax/parse error",
+      "item_id": "id9eed1756a3842c2d7da8f08ce3b9290",
+      "replay": {
+        "claim_id": "n08",
+        "cpu_s": 0.0006740000000000079,
+        "elapsed_s": 0.09821699996246025,
+        "error": "VEError: A claim must contain exactly one closed statement",
+        "ok": false,
+        "query_sha256": "dc57d6ee4abf6f76d312b66c725f2225f60f602d4680c7776765fa5d64573257",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "aafe6ddf67507b70cf25857d319ddedc53e803d02ff6b9d3d51f983b00377495",
+      "stage": "author"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "id9eed1756a3842c2d7da8f08ce3b9290",
+      "replay": {
+        "claim_id": "n08",
+        "cpu_s": 0.0005909999999999943,
+        "elapsed_s": 0.10186204197816551,
+        "error": "SyntaxError: expected ') and (' or ') or ('",
+        "ok": false,
+        "query_sha256": "b9dfb023883219d815c84cddeb8e198b565d063dd3cf4a1b56f9db4d373e33c9",
+        "span": {
+          "column": 185,
+          "end": 185,
+          "line": 1,
+          "start": 184
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "ac1d2d80e1cf12f7b9e0c2d90f6dbe28ee837f5a1328ef17df0450bba82302ea",
+      "stage": "repair"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "id9eed1756a3842c2d7da8f08ce3b9290",
+      "replay": {
+        "claim_id": "n08",
+        "cpu_s": 0.0005169999999999897,
+        "elapsed_s": 0.0991320830071345,
+        "error": "SyntaxError: expected ') and (' or ') or ('",
+        "ok": false,
+        "query_sha256": "55ce5ac3857f3948c4a399282a12b4a5df5f4cb2070497e5932830071e4528cf",
+        "span": {
+          "column": 185,
+          "end": 185,
+          "line": 1,
+          "start": 184
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "f5a0ba014b247027cdb2a6d9377becd7fe0a1b758f1fbdd0bcb74e7d4337c123",
+      "stage": "defender"
+    },
+    {
+      "category": "JSON delivery",
+      "item_id": "i0e03b71bf431d179be0530712161e8af",
+      "replay": {
+        "delivery_error": "Expecting value: line 1 column 1 (char 0)",
+        "ok": false
+      },
+      "response_sha256": "3df6aa79258e2556f09d1d7fee8e8f139d023348d613d8ac4bfd2c6851cbd962",
+      "stage": "author"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "i0e03b71bf431d179be0530712161e8af",
+      "replay": {
+        "claim_id": "n05",
+        "cpu_s": 0.0006280000000000036,
+        "elapsed_s": 0.09763049997854978,
+        "error": "VEError: A claim must contain exactly one closed statement",
+        "ok": false,
+        "query_sha256": "0d5b78f531bf4b1d8c542bebd1be6691e60f0c038363c1eb54dbc4066304e84b",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "778d5ce50d080a7b5c87e07f63c12ae312db511ba1ae490672c472a3a79d8059",
+      "stage": "repair"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "i0e03b71bf431d179be0530712161e8af",
+      "replay": {
+        "claim_id": "n05",
+        "cpu_s": 0.0005860000000000032,
+        "elapsed_s": 0.09584704198641703,
+        "error": "SyntaxError: expected ') and (' or ') or ('",
+        "ok": false,
+        "query_sha256": "c20cfa04e75faa0a081a1ef7c721774f4d9bbca1e80fbd76dfdf3bdf40ede150",
+        "span": {
+          "column": 379,
+          "end": 379,
+          "line": 1,
+          "start": 378
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "fddabdcd389d746a82292a014ce09429f0ac7cc9df9352aefc24e24d7148a77c",
+      "stage": "defender"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "ib301f2aab289831d1ddf47088674e53c",
+      "replay": {
+        "claim_id": "n05",
+        "cpu_s": 0.0005599999999999911,
+        "elapsed_s": 0.09670358302537352,
+        "error": "SyntaxError: expected '), then ('",
+        "ok": false,
+        "query_sha256": "ef831a076cc7c36df181fb87082d4eb49817e408fe26836f9a7efba61146c87a",
+        "span": {
+          "column": 58,
+          "end": 58,
+          "line": 1,
+          "start": 57
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "1d69d8791b54d8c9508e6d3075e2684b1404ecd3c58ef01365ef9e853ddcd6ee",
+      "stage": "author"
+    },
+    {
+      "category": "JSON delivery",
+      "item_id": "ib301f2aab289831d1ddf47088674e53c",
+      "replay": {
+        "delivery_error": "Expecting value: line 1 column 1 (char 0)",
+        "ok": false
+      },
+      "response_sha256": "a2d34ed66861d5cf92ab6f6665f415d461d05fbbd8a76227a009666490375c13",
+      "stage": "repair"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "ib301f2aab289831d1ddf47088674e53c",
+      "replay": {
+        "claim_id": "n05",
+        "cpu_s": 0.0005519999999999969,
+        "elapsed_s": 0.09661991702159867,
+        "error": "SyntaxError: expected '), then ('",
+        "ok": false,
+        "query_sha256": "cb3234493e8e1e66d27b9be600ff215ac83ed2bbbbd8c641c77989f9fabc7240",
+        "span": {
+          "column": 58,
+          "end": 58,
+          "line": 1,
+          "start": 57
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "d97d9e66ed589853d36d34966f21055c8be1b4af79859a677bfc1562cc58e692",
+      "stage": "defender"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "i248c407facd1841580333a6d67d5af90",
+      "replay": {
+        "claim_id": "n10",
+        "cpu_s": 0.0005879999999999913,
+        "elapsed_s": 0.09710104099940509,
+        "error": "VEError: A claim must contain exactly one closed statement",
+        "ok": false,
+        "query_sha256": "b7f241e4419c6fa3c02b6d0c22936c784c23996e47106fe7baae4d3d61c00128",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "77b42de6bc14cda7af4f7ea9299e258e842c8cf26dedf895bffe118bf0ed88c7",
+      "stage": "author"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "i248c407facd1841580333a6d67d5af90",
+      "replay": {
+        "claim_id": "n17",
+        "cpu_s": 0.003491000000000008,
+        "elapsed_s": 0.10073341702809557,
+        "error": "SyntaxError: expected '.\\n'",
+        "ok": false,
+        "query_sha256": "778a83c16ab9d0f46d5274d083bb33e3545e5e2043225a0f0a6e6063527c5683",
+        "span": {
+          "column": 17,
+          "end": 17,
+          "line": 1,
+          "start": 16
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "0ce33052ab779d1fb314e78f4dec9cd864c51e8894f58648fcae707254666004",
+      "stage": "repair"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "i248c407facd1841580333a6d67d5af90",
+      "replay": {
+        "claim_id": "n10",
+        "cpu_s": 0.0005939999999999973,
+        "elapsed_s": 0.09799629199551418,
+        "error": "VEError: A claim must contain exactly one closed statement",
+        "ok": false,
+        "query_sha256": "992eda5c75d88d413224a3c5f991a8e39372859de9ed9fed9b09eb41ca2b0220",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "e851bc131eb99f18a1de3fe2bd8d4910bc521ceb744f4a9681377f372822ae01",
+      "stage": "defender"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+      "replay": {
+        "claim_id": "n06",
+        "cpu_s": 0.0006359999999999977,
+        "elapsed_s": 0.09648666699649766,
+        "error": "VEError: A claim must contain exactly one closed statement",
+        "ok": false,
+        "query_sha256": "485636ad90f955a8b132eb0ad9a5036abc42f1b3c9920337c1c3f36ad794ba40",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "e6bce89d63b13190ccc4d7cec10cf181e3c4c11eb6a6e117d3fbff62c3c3a315",
+      "stage": "author"
+    },
+    {
+      "category": "JSON delivery",
+      "item_id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+      "replay": {
+        "delivery_error": "Expecting value: line 1 column 1 (char 0)",
+        "ok": false
+      },
+      "response_sha256": "8c0f9876022f50e8e41d64bb7da993157783dddc0665ddd3fa2c4480a791b70a",
+      "stage": "repair"
+    },
+    {
+      "category": "JSON delivery",
+      "item_id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+      "replay": {
+        "delivery_error": "Expecting value: line 1 column 1 (char 0)",
+        "ok": false
+      },
+      "response_sha256": "d0e65bbd7a993aaa4e20bb7916ce97f762cce69f33f6c434b61e875c70084504",
+      "stage": "defender"
+    },
+    {
+      "category": "certificate/format",
+      "item_id": "i910d7c5f209964573680cb7258301c2a",
+      "replay": {
+        "cpu_s": 0.0004179999999999878,
+        "elapsed_s": 0.10066204197937623,
+        "error": "VEError: Incorrect fields (missing=['description'], unknown=[])",
+        "ok": false,
+        "query_sha256": "390f473b1f4cede2912c8b5b773df7b2d80d8de848de84362161e0ae42ccab12",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "2a1be26125c56c95330bf732cbf9a7325eae574b310f46c77f2a64f26e9ff47e",
+      "stage": "author"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "i910d7c5f209964573680cb7258301c2a",
+      "replay": {
+        "claim_id": "n10",
+        "cpu_s": 0.0005799999999999972,
+        "elapsed_s": 0.09777941700303927,
+        "error": "VEError: A claim must contain exactly one closed statement",
+        "ok": false,
+        "query_sha256": "2d1bcfa3f20c7f7d93d81dccb4fb7d1f8921e22ec54bae1d0fe0963cf0facd97",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "a325e77ec5da992352e9ac93c8897e53b33e2d3522efff72d80526811710c939",
+      "stage": "repair"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "i910d7c5f209964573680cb7258301c2a",
+      "replay": {
+        "claim_id": "n10",
+        "cpu_s": 0.0005819999999999992,
+        "elapsed_s": 0.09694075002335012,
+        "error": "SyntaxError: expected ') and (' or ') or ('",
+        "ok": false,
+        "query_sha256": "909662a60862626910e244195cce6c7154894dfed3dfd82566e9dc7f54e395d9",
+        "span": {
+          "column": 262,
+          "end": 262,
+          "line": 1,
+          "start": 261
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "d523981a95a7f87bccfc65c80f71c89637a42b0ea8a8cc4c5272a48c728554f4",
+      "stage": "defender"
+    },
+    {
+      "category": "JSON delivery",
+      "item_id": "i1789fdf8e853490fb1b6731e85d63b13",
+      "replay": {
+        "delivery_error": "Expecting value: line 1 column 1 (char 0)",
+        "ok": false
+      },
+      "response_sha256": "9079191e43caf9dc60d94e052bf848dba53be5bf64637aa2720525ee146aeb3e",
+      "stage": "author"
+    },
+    {
+      "category": "certificate/format",
+      "item_id": "i1789fdf8e853490fb1b6731e85d63b13",
+      "replay": {
+        "cpu_s": 0.00039200000000000346,
+        "elapsed_s": 0.09676195803331211,
+        "error": "VEError: Incorrect fields (missing=['description'], unknown=[])",
+        "ok": false,
+        "query_sha256": "043ceda4ece742b6d8fcca46651ad41153920d31f35469344c44f5b1050110cb",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "1eebdd4835bd7152d02e6d19446602f87c0f8ad254c9e29bb718f7c85c916b0c",
+      "stage": "repair"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "i1789fdf8e853490fb1b6731e85d63b13",
+      "replay": {
+        "claim_id": "n06",
+        "cpu_s": 0.0005350000000000077,
+        "elapsed_s": 0.09653783298563212,
+        "error": "SyntaxError: expected '), then ('",
+        "ok": false,
+        "query_sha256": "a43782f6442b0f3f3077e4ac9af86f4339d8630da1fa411cd44d72e5aac1ac0c",
+        "span": {
+          "column": 36,
+          "end": 36,
+          "line": 1,
+          "start": 35
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "ddc0480ec6db73c2777ae8844b3777ac4cce70e08ba2d892780d35d1de5323ec",
+      "stage": "defender"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "ia16a766729f914abd691307ee67fec15",
+      "replay": {
+        "claim_id": "n17",
+        "cpu_s": 0.0005369999999999958,
+        "elapsed_s": 0.09556837496347725,
+        "error": "VEError: A claim must contain exactly one closed statement",
+        "ok": false,
+        "query_sha256": "c08ca34094b303f824c61461d37d4fa1cf7f14555991fb628e3779bb4ff10032",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "5363767fcd0eebfc2989147bf63c1942b461054763b0ed70b6fb86022b7cb839",
+      "stage": "author"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "ia16a766729f914abd691307ee67fec15",
+      "replay": {
+        "claim_id": "n17",
+        "cpu_s": 0.0005269999999999997,
+        "elapsed_s": 0.09593599999789149,
+        "error": "SyntaxError: expected '.\\n'",
+        "ok": false,
+        "query_sha256": "6ce96deac100843bddfc911e518d89d9d85402d113555dda82fd5bd37a71b73b",
+        "span": {
+          "column": 17,
+          "end": 17,
+          "line": 1,
+          "start": 16
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "663b696860401592476f54301f25c4bc9e9a2a34ac6f7b4f9e0ecbe70f0e5761",
+      "stage": "repair"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "ia16a766729f914abd691307ee67fec15",
+      "replay": {
+        "claim_id": "n17",
+        "cpu_s": 0.0005379999999999968,
+        "elapsed_s": 0.09712524997303262,
+        "error": "SyntaxError: expected ') and (' or ') or ('",
+        "ok": false,
+        "query_sha256": "73aeeee50e20a09f66afab471335c3601f7ad64bbb2f523cf0b3ca188fc4e851",
+        "span": {
+          "column": 23,
+          "end": 23,
+          "line": 1,
+          "start": 22
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "b5f1c0a505d898da59335806e8c92118313616e09fa2508c608ebe8b0256f773",
+      "stage": "defender"
+    },
+    {
+      "category": "certificate/format",
+      "item_id": "ie1d380d54c4e8787526c42f06324257e",
+      "replay": {
+        "cpu_s": 0.00038799999999999946,
+        "elapsed_s": 0.10050429101102054,
+        "error": "VEError: Incorrect fields (missing=['description'], unknown=[])",
+        "ok": false,
+        "query_sha256": "053731362d3591238c7eb3b1d2d74ee173b25234384faf5e51a7ea6daa8ada01",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "5e537f9f7c977c30b70e7d1bc0c4565243ebdb606a5e24523626084967379c43",
+      "stage": "author"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "ie1d380d54c4e8787526c42f06324257e",
+      "replay": {
+        "claim_id": "n08",
+        "cpu_s": 0.0005549999999999999,
+        "elapsed_s": 0.09646204096497968,
+        "error": "VEError: A claim must contain exactly one closed statement",
+        "ok": false,
+        "query_sha256": "2d56c6efe607191666f412ef191b9c8ce37d2739e19598e406d4c874ee8cecf5",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "845acd651b4414735c8d78d879a46d53ce76c02ca67676e3f8bb09ed2ccf3ec6",
+      "stage": "repair"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "ie1d380d54c4e8787526c42f06324257e",
+      "replay": {
+        "claim_id": "n08",
+        "cpu_s": 0.0005970000000000003,
+        "elapsed_s": 0.0989828750025481,
+        "error": "SyntaxError: expected ') and (' or ') or ('",
+        "ok": false,
+        "query_sha256": "c63f6d35d6e20d74693db2d0073c78f914c127bf4df56d5bcf8aaec6cf73c4d7",
+        "span": {
+          "column": 238,
+          "end": 238,
+          "line": 1,
+          "start": 237
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "561a1f07b3993a767e2faf94b6345d0862de8d782d06c44a4d1476d3da2c88f5",
+      "stage": "defender"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "i206f6b8e68e5aabae8bf04e2857d1791",
+      "replay": {
+        "claim_id": "n08",
+        "cpu_s": 0.0005320000000000047,
+        "elapsed_s": 0.09581525000976399,
+        "error": "SyntaxError: expected term",
+        "ok": false,
+        "query_sha256": "1be2ae00f682fd951c80af2c1a75cfce365c5902a4ec168eda66b5f8ef3a466b",
+        "span": {
+          "column": 1,
+          "end": 1,
+          "line": 1,
+          "start": 0
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "f7e644b4c2df6cd93a250cf1eb27b82c4980933a15de10c9909feefff4863535",
+      "stage": "author"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "i206f6b8e68e5aabae8bf04e2857d1791",
+      "replay": {
+        "claim_id": "n08",
+        "cpu_s": 0.0005659999999999971,
+        "elapsed_s": 0.09666495799319819,
+        "error": "SyntaxError: expected ') and (' or ') or ('",
+        "ok": false,
+        "query_sha256": "ff9949f05891a1c52188a01721ae899b66cf5ae94f36db66b3e74b0762410dde",
+        "span": {
+          "column": 53,
+          "end": 53,
+          "line": 1,
+          "start": 52
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "7f2d6662376b52377d22c2ae9146e9083dc50706c14293e174e6f6dd6e7d443a",
+      "stage": "repair"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "i206f6b8e68e5aabae8bf04e2857d1791",
+      "replay": {
+        "claim_id": "n08",
+        "cpu_s": 0.0005639999999999951,
+        "elapsed_s": 0.09766679198946804,
+        "error": "SyntaxError: expected ') and (' or ') or ('",
+        "ok": false,
+        "query_sha256": "0f395e3b90c3bd668173d3514a7cefe9e5e2abe7a6cdcafc0a554d66551d0bae",
+        "span": {
+          "column": 53,
+          "end": 53,
+          "line": 1,
+          "start": 52
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "c317013e996a8c8175fef90139d33d51309a3d0135a262b84729a13869446d88",
+      "stage": "defender"
+    },
+    {
+      "category": "certificate/format",
+      "item_id": "i11e21a96aa6260b7bafaaec82c8810b9",
+      "replay": {
+        "cpu_s": 0.00038399999999999546,
+        "elapsed_s": 0.09546066704206169,
+        "error": "VEError: Incorrect fields (missing=['description'], unknown=[])",
+        "ok": false,
+        "query_sha256": "7954c7763eb7733a208b4c5efb2c6636095daf489a9a86fc1e4e6a9620477b19",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "c0ebf84112a7cee4c4a453a90d5adb72e3a7845558414a32d76412081c4d7902",
+      "stage": "author"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "i11e21a96aa6260b7bafaaec82c8810b9",
+      "replay": {
+        "claim_id": "n05",
+        "cpu_s": 0.0005320000000000047,
+        "elapsed_s": 0.0958546670153737,
+        "error": "SyntaxError: expected '), then ('",
+        "ok": false,
+        "query_sha256": "3a53856421adab0f3c1f151fc70fd1cf6835ccda7ec2dc202a9d905234c9ea7a",
+        "span": {
+          "column": 58,
+          "end": 58,
+          "line": 1,
+          "start": 57
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "3dfdbfef4d34124f36c91180433dbf7c391607bfbe3f5501df74f6ec35f0910f",
+      "stage": "repair"
+    },
+    {
+      "category": "sort/type error",
+      "item_id": "i11e21a96aa6260b7bafaaec82c8810b9",
+      "replay": {
+        "claim_id": "n05",
+        "cpu_s": 0.0005649999999999961,
+        "elapsed_s": 0.09605654201004654,
+        "error": "UnboundVariable: unbound variable 'unit3'",
+        "ok": false,
+        "query_sha256": "eb9c3b7a43e920a36e68e8d3bd639d484372cb3df77fb802da4a0997fd259de9",
+        "span": {
+          "column": 87,
+          "end": 91,
+          "line": 1,
+          "start": 86
+        },
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "56bdb759c53790dc31993e1b6dbfa74d1d45f6e6532efbae00297389a9ff126a",
+      "stage": "defender"
+    },
+    {
+      "category": "JSON delivery",
+      "item_id": "idef535ff33c43fd88eabd3d10685d5b6",
+      "replay": {
+        "delivery_error": "Expecting value: line 1 column 1 (char 0)",
+        "ok": false
+      },
+      "response_sha256": "d436c93c388105b5dce59e54a94a8649057b8f99ce256d8f42ce40657a059800",
+      "stage": "author"
+    },
+    {
+      "category": "certificate/format",
+      "item_id": "idef535ff33c43fd88eabd3d10685d5b6",
+      "replay": {
+        "cpu_s": 0.0004089999999999927,
+        "elapsed_s": 0.09547129197744653,
+        "error": "VEError: Incorrect fields (missing=['description'], unknown=[])",
+        "ok": false,
+        "query_sha256": "4738c0c455b9bf743b76e35731d5f1da7ddc47238053a70cbbb241f3c07aaf07",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "7099b4209d7709ff4dcd23998c1b6224f07e79443114c68f388abfe396d724dd",
+      "stage": "repair"
+    },
+    {
+      "category": "syntax/parse error",
+      "item_id": "idef535ff33c43fd88eabd3d10685d5b6",
+      "replay": {
+        "claim_id": "n06",
+        "cpu_s": 0.0005949999999999983,
+        "elapsed_s": 0.09914495801785961,
+        "error": "VEError: A claim must contain exactly one closed statement",
+        "ok": false,
+        "query_sha256": "310046b287210fbd4e795d0caced7c50ba5d8b52f70964df2a3838152b33d43d",
+        "status": "UNKNOWN"
+      },
+      "response_sha256": "2b8d44c42048a222a79c84dcdeb5e20401b155bb3c10aff1086d6d9de2e7cf7f",
+      "stage": "defender"
+    }
+  ],
+  "categories": {
+    "certificate/format": 5,
+    "missing premise so the step does not entail": 0,
+    "other": 0,
+    "prover ResourceLimit": 0,
+    "sort/type error": 1,
+    "syntax/parse error": 24,
+    "undeclared or misspelled predicate": 0,
+    "wrong graph shape": 0
+  },
+  "delivery_failures": 6,
+  "first_failure_only": true,
+  "paid_calls": 0,
+  "retained_hashes": {
+    "experiments/P5-shifting-definitions/labels.jsonl.gz": "cd9f0f491492d9066bbcd3803968ca9f1bf50ac3dd48f47f0927d382148324c3",
+    "experiments/P5-shifting-definitions/materials/dev.jsonl.gz": "ed709b3b5f36c1ea109dfaf6e2ba6a436abbf3d49af242093aa74bda7d28f06a",
+    "experiments/P5-shifting-definitions/materials/scored.jsonl.gz": "8b5ddb7acfe7704f91554eb2c0a45a787d48b2133a1fba57e9c0e1067731e144",
+    "experiments/P5-shifting-definitions/runs/dev-v10/local-events.jsonl": "8eccd84f7e0b16fc564fd94104dfef23e261707f5cc09ac77802994fc945c464",
+    "experiments/P5-shifting-definitions/runs/dev-v10/ratings.jsonl": "7107552a753071825c95242b0820f2f5994347c2579aa140e7e7a10484ee2cb0",
+    "experiments/P5-shifting-definitions/runs/dev-v10/trials.jsonl": "e6059dc5b4d4eee211911466fafbfde8aaf3f9a1816f1b0b73f27d739dd46ce5",
+    "experiments/P5-shifting-definitions/runs/study/costs.jsonl": "b2176e1f5f433331adbc82cb12cd8e89ead3667d2ea5274a89b2b2a5d1fd3768"
+  },
+  "time_utc": "2026-09-23T01:57:11.057498+00:00",
+  "x_decoder": [
+    {
+      "critic_sha256": "8d1ecb75869ea62112992a61bcb7077ee52a7d628ac7a511c938d614274caffc",
+      "followup_error": null,
+      "historical_completed": false,
+      "isolated_context_exact": true,
+      "item_id": "ia16a766729f914abd691307ee67fec15",
+      "previous_wrapper_failure": true,
+      "questions": 1,
+      "texts_unchanged": true
+    },
+    {
+      "critic_sha256": "78e0ba82ce5e004365425ee9f8d3b7177a440a845940b45d57d96baffdf0acdf",
+      "followup_error": null,
+      "historical_completed": false,
+      "isolated_context_exact": true,
+      "item_id": "ie1d380d54c4e8787526c42f06324257e",
+      "previous_wrapper_failure": true,
+      "questions": 3,
+      "texts_unchanged": true
+    },
+    {
+      "critic_sha256": "da915e0fde3b2efceb0bfc0098cfcd80a2d509d9aeb69e7ed1860bd93a644ea2",
+      "followup_error": "Expecting value: line 1 column 1 (char 0)",
+      "historical_completed": false,
+      "isolated_context_exact": true,
+      "item_id": "i11e21a96aa6260b7bafaaec82c8810b9",
+      "previous_wrapper_failure": false,
+      "questions": 0,
+      "texts_unchanged": true
+    },
+    {
+      "critic_sha256": "fc33ddc41551e570d82ccaf6258c75ce56124c5b862c215b012df35396d312ac",
+      "followup_error": null,
+      "historical_completed": false,
+      "isolated_context_exact": true,
+      "item_id": "ib301f2aab289831d1ddf47088674e53c",
+      "previous_wrapper_failure": true,
+      "questions": 1,
+      "texts_unchanged": true
+    },
+    {
+      "critic_sha256": "20c909042a99642d2a1737396eaebd8fe9979af32f520aa8ba0e3ef2582f225b",
+      "followup_error": null,
+      "historical_completed": false,
+      "isolated_context_exact": true,
+      "item_id": "i248c407facd1841580333a6d67d5af90",
+      "previous_wrapper_failure": true,
+      "questions": 3,
+      "texts_unchanged": true
+    },
+    {
+      "critic_sha256": "f2c4dc1f790e53999fe3d983c35f68797e3382a3ee7b2d6f7cc6e8fceec27f8d",
+      "followup_error": null,
+      "historical_completed": false,
+      "isolated_context_exact": true,
+      "item_id": "i206f6b8e68e5aabae8bf04e2857d1791",
+      "previous_wrapper_failure": true,
+      "questions": 1,
+      "texts_unchanged": true
+    },
+    {
+      "critic_sha256": "6c4fc89e764d7f01baeca6eb12bb96fd768f6e90d57f3f2c6211dad97adb6ee1",
+      "followup_error": null,
+      "historical_completed": false,
+      "isolated_context_exact": true,
+      "item_id": "i910d7c5f209964573680cb7258301c2a",
+      "previous_wrapper_failure": true,
+      "questions": 3,
+      "texts_unchanged": true
+    },
+    {
+      "critic_sha256": "b94d5b1577f6519c212978e94a3b3859f21fa08d626f395bdcf7a0ca1e31e01d",
+      "followup_error": null,
+      "historical_completed": false,
+      "isolated_context_exact": true,
+      "item_id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+      "previous_wrapper_failure": true,
+      "questions": 2,
+      "texts_unchanged": true
+    },
+    {
+      "critic_sha256": "9a0c0ffa690abf4c6cd7471beae2d2171798935614af8253162423b8adb04fbc",
+      "followup_error": null,
+      "historical_completed": false,
+      "isolated_context_exact": true,
+      "item_id": "i1789fdf8e853490fb1b6731e85d63b13",
+      "previous_wrapper_failure": true,
+      "questions": 1,
+      "texts_unchanged": true
+    },
+    {
+      "critic_sha256": "cba16651e486cafc191ebd80c4e550c791f88f06db209e1ffc0f0bfeaea233f9",
+      "followup_error": null,
+      "historical_completed": true,
+      "isolated_context_exact": true,
+      "item_id": "id9eed1756a3842c2d7da8f08ce3b9290",
+      "previous_wrapper_failure": false,
+      "questions": 1,
+      "texts_unchanged": true
+    },
+    {
+      "critic_sha256": "f2f22b2d835cad939ea7a47f31ab6aaa5bc564e958a21290bb08ac7ef027a391",
+      "followup_error": null,
+      "historical_completed": true,
+      "isolated_context_exact": true,
+      "item_id": "i0e03b71bf431d179be0530712161e8af",
+      "previous_wrapper_failure": false,
+      "questions": 1,
+      "texts_unchanged": true
+    },
+    {
+      "critic_sha256": "efe35a0434a268729c616c375a7accd33f7aeec34ff29133a697d74c71cf226c",
+      "followup_error": null,
+      "historical_completed": false,
+      "isolated_context_exact": true,
+      "item_id": "idef535ff33c43fd88eabd3d10685d5b6",
+      "previous_wrapper_failure": true,
+      "questions": 2,
+      "texts_unchanged": true
+    }
+  ]
+}

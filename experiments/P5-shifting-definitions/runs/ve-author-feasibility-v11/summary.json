@@ -1,0 +1,15 @@
+{
+  "calls": 24,
+  "cap_usd": "3",
+  "initial_successes": 0,
+  "judges": 0,
+  "n": 12,
+  "pending_usd": "0",
+  "rate": 0.0,
+  "retained_inputs_unchanged": true,
+  "revision": "ve-author-feasibility-v11",
+  "scored_items": 0,
+  "source_fidelity_assessed": false,
+  "spend_usd": "1.145812",
+  "successes": 0
+}

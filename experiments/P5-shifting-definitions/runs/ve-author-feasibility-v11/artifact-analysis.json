@@ -1,0 +1,1426 @@
+{
+  "all_claims_parse": 8,
+  "artifacts": 24,
+  "category_counts": {
+    "JSON delivery": 7,
+    "syntax/parse error": 9,
+    "unproved edge (NotFound, not a refutation)": 4,
+    "wrong graph shape": 4
+  },
+  "delivery_ok": 17,
+  "environment_ok": 17,
+  "freeze_precedes_first_dispatch": true,
+  "frozen_sources_and_retained_inputs_unchanged": true,
+  "graph_checked": 4,
+  "initial_all_claims_parse": 5,
+  "initial_successes": 0,
+  "ledger_sha256": "8b8b51fad1c5f80e622151c5a5c8f706448004a8ce8a1d7172a363549d562be7",
+  "n": 12,
+  "paid_calls_in_this_analysis": 0,
+  "records": [
+    {
+      "all_claims_parse": true,
+      "category": "wrong graph shape",
+      "claim_count": 22,
+      "claim_parse_failures": [],
+      "delivery_ok": true,
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/author/0",
+      "item_id": "i11e21a96aa6260b7bafaaec82c8810b9",
+      "ok": false,
+      "response_sha256": "b4b7a7310e955e7db449c11b8993d82c3320312094c6f7adfb19f1507bbc2506",
+      "stage": "author"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "JSON delivery",
+      "delivery_ok": false,
+      "environment_ok": false,
+      "finish_reason": "MAX_TOKENS",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/repair/0",
+      "inspection_error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+      "item_id": "i11e21a96aa6260b7bafaaec82c8810b9",
+      "ok": false,
+      "response_sha256": "a1bb8c825129f3aa622719c5d64c078561d01b1bdce64aec4bbdc228b4f51ee1",
+      "stage": "repair"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "syntax/parse error",
+      "claim_count": 22,
+      "claim_parse_failures": [
+        {
+          "claim_id": "n09",
+          "error": "SyntaxError: expected ') and (' or ') or ('"
+        }
+      ],
+      "delivery_ok": true,
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/i0e03b71bf431d179be0530712161e8af/VE/pro/author/0",
+      "item_id": "i0e03b71bf431d179be0530712161e8af",
+      "ok": false,
+      "response_sha256": "9a1ac1dff7e0418f528dee2460eee0fcf299235df4b86d25c072a75ec728b632",
+      "stage": "author"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "JSON delivery",
+      "delivery_ok": false,
+      "environment_ok": false,
+      "finish_reason": "MAX_TOKENS",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/i0e03b71bf431d179be0530712161e8af/VE/pro/repair/0",
+      "inspection_error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+      "item_id": "i0e03b71bf431d179be0530712161e8af",
+      "ok": false,
+      "response_sha256": "cbd645caa5e9c56a0b4aeac426d2279491bd9180e053e8b12485e2300813cb36",
+      "stage": "repair"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "syntax/parse error",
+      "claim_count": 22,
+      "claim_parse_failures": [
+        {
+          "claim_id": "n09",
+          "error": "SyntaxError: expected ') and (' or ') or ('"
+        },
+        {
+          "claim_id": "n12",
+          "error": "SyntaxError: expected '.\\n'"
+        }
+      ],
+      "delivery_ok": true,
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/i206f6b8e68e5aabae8bf04e2857d1791/VE/pro/author/0",
+      "item_id": "i206f6b8e68e5aabae8bf04e2857d1791",
+      "ok": false,
+      "response_sha256": "4a64082b5afd3044d65839cf81dfe48d7cd42e8bc882e58f3ced748ce1b5191a",
+      "stage": "author"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "syntax/parse error",
+      "claim_count": 22,
+      "claim_parse_failures": [
+        {
+          "claim_id": "n09",
+          "error": "SyntaxError: expected ') and (' or ') or ('"
+        },
+        {
+          "claim_id": "n12",
+          "error": "SyntaxError: expected '.\\n'"
+        }
+      ],
+      "delivery_ok": true,
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/i206f6b8e68e5aabae8bf04e2857d1791/VE/pro/repair/0",
+      "item_id": "i206f6b8e68e5aabae8bf04e2857d1791",
+      "ok": false,
+      "response_sha256": "0b54c16b175dc72daa615187509b82810ab0321069d8514c92380f61cfaf535d",
+      "stage": "repair"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "syntax/parse error",
+      "claim_count": 22,
+      "claim_parse_failures": [
+        {
+          "claim_id": "n06",
+          "error": "SyntaxError: reserved word 'if' cannot be a term"
+        },
+        {
+          "claim_id": "n11",
+          "error": "SyntaxError: expected '), then ('"
+        },
+        {
+          "claim_id": "n18",
+          "error": "SyntaxError: expected ') and (' or ') or ('"
+        },
+        {
+          "claim_id": "n03",
+          "error": "SyntaxError: expected ') and (' or ') or ('"
+        },
+        {
+          "claim_id": "n09",
+          "error": "SyntaxError: expected '), then ('"
+        },
+        {
+          "claim_id": "n19",
+          "error": "SyntaxError: expected ') and (' or ') or ('"
+        }
+      ],
+      "delivery_ok": true,
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/idef535ff33c43fd88eabd3d10685d5b6/VE/pro/author/0",
+      "item_id": "idef535ff33c43fd88eabd3d10685d5b6",
+      "ok": false,
+      "response_sha256": "6bc595d5ef832bb65b4e27b5b37f9bd323b872e56965e349b421107ad582726d",
+      "stage": "author"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "JSON delivery",
+      "delivery_ok": false,
+      "environment_ok": false,
+      "finish_reason": "MAX_TOKENS",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/idef535ff33c43fd88eabd3d10685d5b6/VE/pro/repair/0",
+      "inspection_error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+      "item_id": "idef535ff33c43fd88eabd3d10685d5b6",
+      "ok": false,
+      "response_sha256": "55b8dcf47cf9198faf6104df179cc83e63528635241d0dd924f099ad4b28948a",
+      "stage": "repair"
+    },
+    {
+      "all_claims_parse": true,
+      "category": "wrong graph shape",
+      "claim_count": 22,
+      "claim_parse_failures": [],
+      "delivery_ok": true,
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/ib301f2aab289831d1ddf47088674e53c/VE/pro/author/0",
+      "item_id": "ib301f2aab289831d1ddf47088674e53c",
+      "ok": false,
+      "response_sha256": "924a577b6b3d38a31a8320963fbf207411bcd05045e565a5a1ba922192cbd0ea",
+      "stage": "author"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "JSON delivery",
+      "delivery_ok": false,
+      "environment_ok": false,
+      "finish_reason": "MAX_TOKENS",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/ib301f2aab289831d1ddf47088674e53c/VE/pro/repair/0",
+      "inspection_error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+      "item_id": "ib301f2aab289831d1ddf47088674e53c",
+      "ok": false,
+      "response_sha256": "eaf24ccb8f238b9c0cc2d31fcd7e09f2422ca076d1768dd15fb35f5d2dd3494f",
+      "stage": "repair"
+    },
+    {
+      "all_claims_parse": true,
+      "category": "wrong graph shape",
+      "claim_count": 22,
+      "claim_parse_failures": [],
+      "delivery_ok": true,
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/ie1d380d54c4e8787526c42f06324257e/VE/pro/author/0",
+      "item_id": "ie1d380d54c4e8787526c42f06324257e",
+      "ok": false,
+      "response_sha256": "9dc1fa4df1891033b32396a1e42d9c102635b56e6a1362064d8d5c5c2c79a14b",
+      "stage": "author"
+    },
+    {
+      "all_claims_parse": true,
+      "category": "unproved edge (NotFound, not a refutation)",
+      "checker_errors": [],
+      "claim_count": 22,
+      "claim_parse_failures": [],
+      "delivery_ok": true,
+      "edge_findings": {
+        "e00": [],
+        "e01": [
+          "follows"
+        ],
+        "e02": [
+          "follows"
+        ],
+        "e03": [
+          "follows"
+        ],
+        "e04": [
+          "follows"
+        ],
+        "e05": [
+          "follows"
+        ],
+        "e06": [
+          "follows"
+        ],
+        "e07": [
+          "follows"
+        ],
+        "e11": [
+          "follows"
+        ],
+        "e13": [
+          "follows"
+        ],
+        "e15": [
+          "follows"
+        ],
+        "e17": [
+          "follows"
+        ],
+        "e18": [
+          "follows"
+        ],
+        "e19": [
+          "follows"
+        ],
+        "e20": [
+          "follows"
+        ],
+        "e21": [
+          "follows"
+        ]
+      },
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": true,
+      "identity": "ve-author-feasibility-v11/dev/ie1d380d54c4e8787526c42f06324257e/VE/pro/repair/0",
+      "item_id": "ie1d380d54c4e8787526c42f06324257e",
+      "offline_proof_search": [
+        {
+          "conclusion": "n07",
+          "detail": "",
+          "edge_id": "e07",
+          "premises": [
+            "n09",
+            "n12"
+          ],
+          "status": "Found",
+          "steps": 11
+        },
+        {
+          "conclusion": "n04",
+          "detail": "",
+          "edge_id": "e04",
+          "premises": [
+            "n09",
+            "n10"
+          ],
+          "status": "Found",
+          "steps": 16
+        },
+        {
+          "conclusion": "n20",
+          "detail": "",
+          "edge_id": "e20",
+          "premises": [
+            "n07",
+            "n04",
+            "n16"
+          ],
+          "status": "Found",
+          "steps": 6
+        },
+        {
+          "conclusion": "n15",
+          "detail": "",
+          "edge_id": "e15",
+          "premises": [
+            "n20",
+            "n08"
+          ],
+          "status": "Found",
+          "steps": 4
+        },
+        {
+          "conclusion": "n18",
+          "detail": "",
+          "edge_id": "e18",
+          "premises": [
+            "n15",
+            "n14"
+          ],
+          "status": "Found",
+          "steps": 4
+        },
+        {
+          "conclusion": "n13",
+          "detail": "",
+          "edge_id": "e13",
+          "premises": [
+            "n18",
+            "n12"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n17",
+          "detail": "",
+          "edge_id": "e17",
+          "premises": [
+            "n13",
+            "n10"
+          ],
+          "status": "Found",
+          "steps": 6
+        },
+        {
+          "conclusion": "n06",
+          "detail": "",
+          "edge_id": "e06",
+          "premises": [
+            "n17",
+            "n16"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n11",
+          "detail": "",
+          "edge_id": "e11",
+          "premises": [
+            "n06",
+            "n08"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n01",
+          "detail": "",
+          "edge_id": "e01",
+          "premises": [
+            "n11",
+            "n14"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n19",
+          "detail": "",
+          "edge_id": "e19",
+          "premises": [
+            "n01",
+            "n09",
+            "n12"
+          ],
+          "status": "Found",
+          "steps": 19
+        },
+        {
+          "conclusion": "n00",
+          "detail": "saturated open branch; no entailment certificate found",
+          "edge_id": "e00",
+          "premises": [
+            "n19",
+            "n10"
+          ],
+          "status": "NotFound",
+          "steps": 14
+        },
+        {
+          "conclusion": "n21",
+          "detail": "",
+          "edge_id": "e21",
+          "premises": [
+            "n00",
+            "n16"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n03",
+          "detail": "",
+          "edge_id": "e03",
+          "premises": [
+            "n21",
+            "n08"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n05",
+          "detail": "",
+          "edge_id": "e05",
+          "premises": [
+            "n03",
+            "n14"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n02",
+          "detail": "",
+          "edge_id": "e02",
+          "premises": [
+            "n05",
+            "n12"
+          ],
+          "status": "Found",
+          "steps": 6
+        }
+      ],
+      "ok": false,
+      "response_sha256": "f511515882ab090bb221cdc3cac8ab37e9459a1064ecd915a419055000db1c07",
+      "stage": "repair"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "syntax/parse error",
+      "claim_count": 22,
+      "claim_parse_failures": [
+        {
+          "claim_id": "n06",
+          "error": "SyntaxError: reserved word 'if' cannot be a term"
+        },
+        {
+          "claim_id": "n11",
+          "error": "SyntaxError: expected '), then ('"
+        },
+        {
+          "claim_id": "n18",
+          "error": "SyntaxError: expected '), then ('"
+        },
+        {
+          "claim_id": "n03",
+          "error": "SyntaxError: expected '), then ('"
+        },
+        {
+          "claim_id": "n09",
+          "error": "SyntaxError: expected '), then ('"
+        }
+      ],
+      "delivery_ok": true,
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/i1789fdf8e853490fb1b6731e85d63b13/VE/pro/author/0",
+      "item_id": "i1789fdf8e853490fb1b6731e85d63b13",
+      "ok": false,
+      "response_sha256": "ec63f0690f9cf2bf33a6df898e1b4a0ecd68a7f7c16bc6ada801e693f4cb4fbb",
+      "stage": "author"
+    },
+    {
+      "all_claims_parse": true,
+      "category": "wrong graph shape",
+      "claim_count": 22,
+      "claim_parse_failures": [],
+      "delivery_ok": true,
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/i1789fdf8e853490fb1b6731e85d63b13/VE/pro/repair/0",
+      "item_id": "i1789fdf8e853490fb1b6731e85d63b13",
+      "ok": false,
+      "response_sha256": "64f62cbf61c9df14d04ea93382d19db54a8c175e8e44a1b188715457030d0236",
+      "stage": "repair"
+    },
+    {
+      "all_claims_parse": true,
+      "category": "unproved edge (NotFound, not a refutation)",
+      "checker_errors": [],
+      "claim_count": 22,
+      "claim_parse_failures": [],
+      "delivery_ok": true,
+      "edge_findings": {
+        "e00": [
+          "follows"
+        ],
+        "e01": [
+          "follows"
+        ],
+        "e02": [
+          "follows"
+        ],
+        "e03": [
+          "follows"
+        ],
+        "e04": [
+          "follows"
+        ],
+        "e05": [
+          "follows"
+        ],
+        "e06": [
+          "follows"
+        ],
+        "e07": [
+          "follows"
+        ],
+        "e08": [
+          "follows"
+        ],
+        "e14": [
+          "follows"
+        ],
+        "e15": [],
+        "e16": [
+          "follows"
+        ],
+        "e18": [
+          "follows"
+        ],
+        "e19": [
+          "follows"
+        ],
+        "e20": [
+          "follows"
+        ],
+        "e21": [
+          "follows"
+        ]
+      },
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": true,
+      "identity": "ve-author-feasibility-v11/dev/i248c407facd1841580333a6d67d5af90/VE/pro/author/0",
+      "item_id": "i248c407facd1841580333a6d67d5af90",
+      "offline_proof_search": [
+        {
+          "conclusion": "n00",
+          "detail": "",
+          "edge_id": "e00",
+          "premises": [
+            "n17",
+            "n09"
+          ],
+          "status": "Found",
+          "steps": 11
+        },
+        {
+          "conclusion": "n02",
+          "detail": "",
+          "edge_id": "e02",
+          "premises": [
+            "n17",
+            "n12"
+          ],
+          "status": "Found",
+          "steps": 16
+        },
+        {
+          "conclusion": "n07",
+          "detail": "",
+          "edge_id": "e07",
+          "premises": [
+            "n00",
+            "n02",
+            "n10"
+          ],
+          "status": "Found",
+          "steps": 7
+        },
+        {
+          "conclusion": "n16",
+          "detail": "",
+          "edge_id": "e16",
+          "premises": [
+            "n02",
+            "n07",
+            "n13"
+          ],
+          "status": "Found",
+          "steps": 7
+        },
+        {
+          "conclusion": "n05",
+          "detail": "",
+          "edge_id": "e05",
+          "premises": [
+            "n16",
+            "n11"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n20",
+          "detail": "",
+          "edge_id": "e20",
+          "premises": [
+            "n05",
+            "n09"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n06",
+          "detail": "",
+          "edge_id": "e06",
+          "premises": [
+            "n20",
+            "n12"
+          ],
+          "status": "Found",
+          "steps": 6
+        },
+        {
+          "conclusion": "n03",
+          "detail": "",
+          "edge_id": "e03",
+          "premises": [
+            "n06",
+            "n10"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n14",
+          "detail": "",
+          "edge_id": "e14",
+          "premises": [
+            "n03",
+            "n13"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n21",
+          "detail": "",
+          "edge_id": "e21",
+          "premises": [
+            "n14",
+            "n11"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n01",
+          "detail": "",
+          "edge_id": "e01",
+          "premises": [
+            "n21",
+            "n17",
+            "n09"
+          ],
+          "status": "Found",
+          "steps": 18
+        },
+        {
+          "conclusion": "n15",
+          "detail": "saturated open branch; no entailment certificate found",
+          "edge_id": "e15",
+          "premises": [
+            "n01",
+            "n12"
+          ],
+          "status": "NotFound",
+          "steps": 14
+        },
+        {
+          "conclusion": "n08",
+          "detail": "",
+          "edge_id": "e08",
+          "premises": [
+            "n15",
+            "n10"
+          ],
+          "status": "Found",
+          "steps": 4
+        },
+        {
+          "conclusion": "n18",
+          "detail": "",
+          "edge_id": "e18",
+          "premises": [
+            "n08",
+            "n13"
+          ],
+          "status": "Found",
+          "steps": 4
+        },
+        {
+          "conclusion": "n04",
+          "detail": "",
+          "edge_id": "e04",
+          "premises": [
+            "n18",
+            "n11"
+          ],
+          "status": "Found",
+          "steps": 4
+        },
+        {
+          "conclusion": "n19",
+          "detail": "",
+          "edge_id": "e19",
+          "premises": [
+            "n04",
+            "n09"
+          ],
+          "status": "Found",
+          "steps": 9
+        }
+      ],
+      "ok": false,
+      "response_sha256": "11773ef1058225593f7453024cf31a97d14b06dcc39e9702f093fa9957718914",
+      "stage": "author"
+    },
+    {
+      "all_claims_parse": true,
+      "category": "unproved edge (NotFound, not a refutation)",
+      "checker_errors": [],
+      "claim_count": 22,
+      "claim_parse_failures": [],
+      "delivery_ok": true,
+      "edge_findings": {
+        "e00": [
+          "follows"
+        ],
+        "e01": [
+          "follows"
+        ],
+        "e02": [
+          "follows"
+        ],
+        "e03": [
+          "follows"
+        ],
+        "e04": [
+          "follows"
+        ],
+        "e05": [
+          "follows"
+        ],
+        "e06": [
+          "follows"
+        ],
+        "e07": [
+          "follows"
+        ],
+        "e08": [
+          "follows"
+        ],
+        "e14": [
+          "follows"
+        ],
+        "e15": [],
+        "e16": [
+          "follows"
+        ],
+        "e18": [
+          "follows"
+        ],
+        "e19": [
+          "follows"
+        ],
+        "e20": [
+          "follows"
+        ],
+        "e21": [
+          "follows"
+        ]
+      },
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": true,
+      "identity": "ve-author-feasibility-v11/dev/i248c407facd1841580333a6d67d5af90/VE/pro/repair/0",
+      "item_id": "i248c407facd1841580333a6d67d5af90",
+      "offline_proof_search": [
+        {
+          "conclusion": "n00",
+          "detail": "",
+          "edge_id": "e00",
+          "premises": [
+            "n17",
+            "n09"
+          ],
+          "status": "Found",
+          "steps": 11
+        },
+        {
+          "conclusion": "n02",
+          "detail": "",
+          "edge_id": "e02",
+          "premises": [
+            "n17",
+            "n12"
+          ],
+          "status": "Found",
+          "steps": 16
+        },
+        {
+          "conclusion": "n07",
+          "detail": "",
+          "edge_id": "e07",
+          "premises": [
+            "n00",
+            "n02",
+            "n10"
+          ],
+          "status": "Found",
+          "steps": 7
+        },
+        {
+          "conclusion": "n16",
+          "detail": "",
+          "edge_id": "e16",
+          "premises": [
+            "n02",
+            "n07",
+            "n13"
+          ],
+          "status": "Found",
+          "steps": 7
+        },
+        {
+          "conclusion": "n05",
+          "detail": "",
+          "edge_id": "e05",
+          "premises": [
+            "n16",
+            "n11"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n20",
+          "detail": "",
+          "edge_id": "e20",
+          "premises": [
+            "n05",
+            "n09"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n06",
+          "detail": "",
+          "edge_id": "e06",
+          "premises": [
+            "n20",
+            "n12"
+          ],
+          "status": "Found",
+          "steps": 6
+        },
+        {
+          "conclusion": "n03",
+          "detail": "",
+          "edge_id": "e03",
+          "premises": [
+            "n06",
+            "n10"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n14",
+          "detail": "",
+          "edge_id": "e14",
+          "premises": [
+            "n03",
+            "n13"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n21",
+          "detail": "",
+          "edge_id": "e21",
+          "premises": [
+            "n14",
+            "n11"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n01",
+          "detail": "",
+          "edge_id": "e01",
+          "premises": [
+            "n21",
+            "n17",
+            "n09"
+          ],
+          "status": "Found",
+          "steps": 18
+        },
+        {
+          "conclusion": "n15",
+          "detail": "saturated open branch; no entailment certificate found",
+          "edge_id": "e15",
+          "premises": [
+            "n01",
+            "n12"
+          ],
+          "status": "NotFound",
+          "steps": 14
+        },
+        {
+          "conclusion": "n08",
+          "detail": "",
+          "edge_id": "e08",
+          "premises": [
+            "n15",
+            "n10"
+          ],
+          "status": "Found",
+          "steps": 4
+        },
+        {
+          "conclusion": "n18",
+          "detail": "",
+          "edge_id": "e18",
+          "premises": [
+            "n08",
+            "n13"
+          ],
+          "status": "Found",
+          "steps": 4
+        },
+        {
+          "conclusion": "n04",
+          "detail": "",
+          "edge_id": "e04",
+          "premises": [
+            "n18",
+            "n11"
+          ],
+          "status": "Found",
+          "steps": 4
+        },
+        {
+          "conclusion": "n19",
+          "detail": "",
+          "edge_id": "e19",
+          "premises": [
+            "n04",
+            "n09"
+          ],
+          "status": "Found",
+          "steps": 9
+        }
+      ],
+      "ok": false,
+      "response_sha256": "d56370b9abaec74ae786d11c57a733f5a56d6f8e372d6842d00e98c79d6a5cc4",
+      "stage": "repair"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "syntax/parse error",
+      "claim_count": 22,
+      "claim_parse_failures": [
+        {
+          "claim_id": "n06",
+          "error": "SyntaxError: reserved word 'if' cannot be a term"
+        },
+        {
+          "claim_id": "n11",
+          "error": "SyntaxError: expected '), then ('"
+        },
+        {
+          "claim_id": "n18",
+          "error": "SyntaxError: expected '), then ('"
+        },
+        {
+          "claim_id": "n03",
+          "error": "SyntaxError: expected '), then ('"
+        },
+        {
+          "claim_id": "n09",
+          "error": "SyntaxError: expected '), then ('"
+        }
+      ],
+      "delivery_ok": true,
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/i0b251ba74b2be0d9f163e75c4b235c7d/VE/pro/author/0",
+      "item_id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+      "ok": false,
+      "response_sha256": "93fc48cd23fa14801020abb9f47d88347dc31619ffcd32c020e373e775517c97",
+      "stage": "author"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "JSON delivery",
+      "delivery_ok": false,
+      "environment_ok": false,
+      "finish_reason": "MAX_TOKENS",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/i0b251ba74b2be0d9f163e75c4b235c7d/VE/pro/repair/0",
+      "inspection_error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+      "item_id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+      "ok": false,
+      "response_sha256": "792e696822cc6277b4e6d0b998a2d11643cd31249d8fab5eb6c253507a5628f4",
+      "stage": "repair"
+    },
+    {
+      "all_claims_parse": true,
+      "category": "unproved edge (NotFound, not a refutation)",
+      "checker_errors": [],
+      "claim_count": 22,
+      "claim_parse_failures": [],
+      "delivery_ok": true,
+      "edge_findings": {
+        "e00": [
+          "follows"
+        ],
+        "e01": [
+          "follows"
+        ],
+        "e02": [
+          "follows"
+        ],
+        "e03": [
+          "follows"
+        ],
+        "e04": [
+          "follows"
+        ],
+        "e05": [
+          "follows"
+        ],
+        "e06": [
+          "follows"
+        ],
+        "e07": [
+          "follows"
+        ],
+        "e08": [
+          "follows"
+        ],
+        "e09": [
+          "follows"
+        ],
+        "e10": [
+          "follows"
+        ],
+        "e11": [],
+        "e12": [
+          "follows"
+        ],
+        "e13": [
+          "follows"
+        ],
+        "e14": [
+          "follows"
+        ],
+        "e15": [
+          "follows"
+        ]
+      },
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": true,
+      "identity": "ve-author-feasibility-v11/dev/i910d7c5f209964573680cb7258301c2a/VE/pro/author/0",
+      "item_id": "i910d7c5f209964573680cb7258301c2a",
+      "offline_proof_search": [
+        {
+          "conclusion": "n00",
+          "detail": "",
+          "edge_id": "e00",
+          "premises": [
+            "n17",
+            "n09"
+          ],
+          "status": "Found",
+          "steps": 11
+        },
+        {
+          "conclusion": "n02",
+          "detail": "",
+          "edge_id": "e01",
+          "premises": [
+            "n17",
+            "n12"
+          ],
+          "status": "Found",
+          "steps": 16
+        },
+        {
+          "conclusion": "n07",
+          "detail": "",
+          "edge_id": "e02",
+          "premises": [
+            "n00",
+            "n02",
+            "n10"
+          ],
+          "status": "Found",
+          "steps": 7
+        },
+        {
+          "conclusion": "n16",
+          "detail": "",
+          "edge_id": "e03",
+          "premises": [
+            "n02",
+            "n07",
+            "n13"
+          ],
+          "status": "Found",
+          "steps": 7
+        },
+        {
+          "conclusion": "n05",
+          "detail": "",
+          "edge_id": "e04",
+          "premises": [
+            "n16",
+            "n11"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n20",
+          "detail": "",
+          "edge_id": "e05",
+          "premises": [
+            "n05",
+            "n09"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n06",
+          "detail": "",
+          "edge_id": "e06",
+          "premises": [
+            "n20",
+            "n12"
+          ],
+          "status": "Found",
+          "steps": 6
+        },
+        {
+          "conclusion": "n03",
+          "detail": "",
+          "edge_id": "e07",
+          "premises": [
+            "n06",
+            "n10"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n14",
+          "detail": "",
+          "edge_id": "e08",
+          "premises": [
+            "n03",
+            "n13"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n21",
+          "detail": "",
+          "edge_id": "e09",
+          "premises": [
+            "n14",
+            "n11"
+          ],
+          "status": "Found",
+          "steps": 5
+        },
+        {
+          "conclusion": "n01",
+          "detail": "",
+          "edge_id": "e10",
+          "premises": [
+            "n21",
+            "n17",
+            "n09"
+          ],
+          "status": "Found",
+          "steps": 13
+        },
+        {
+          "conclusion": "n15",
+          "detail": "saturated open branch; no entailment certificate found",
+          "edge_id": "e11",
+          "premises": [
+            "n01",
+            "n12"
+          ],
+          "status": "NotFound",
+          "steps": 14
+        },
+        {
+          "conclusion": "n08",
+          "detail": "",
+          "edge_id": "e12",
+          "premises": [
+            "n15",
+            "n10"
+          ],
+          "status": "Found",
+          "steps": 4
+        },
+        {
+          "conclusion": "n18",
+          "detail": "",
+          "edge_id": "e13",
+          "premises": [
+            "n08",
+            "n13"
+          ],
+          "status": "Found",
+          "steps": 4
+        },
+        {
+          "conclusion": "n04",
+          "detail": "",
+          "edge_id": "e14",
+          "premises": [
+            "n18",
+            "n11"
+          ],
+          "status": "Found",
+          "steps": 4
+        },
+        {
+          "conclusion": "n19",
+          "detail": "",
+          "edge_id": "e15",
+          "premises": [
+            "n04",
+            "n09"
+          ],
+          "status": "Found",
+          "steps": 9
+        }
+      ],
+      "ok": false,
+      "response_sha256": "d618ac9391debfaa1b2bc3542eea2582c78f9ec32e3e8bbf520237539a281339",
+      "stage": "author"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "JSON delivery",
+      "delivery_ok": false,
+      "environment_ok": false,
+      "finish_reason": "MAX_TOKENS",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/i910d7c5f209964573680cb7258301c2a/VE/pro/repair/0",
+      "inspection_error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+      "item_id": "i910d7c5f209964573680cb7258301c2a",
+      "ok": false,
+      "response_sha256": "80e1aa8bfa728012633e238ddcfe0857be79769158b3d1f77ecfc6fc346b9b05",
+      "stage": "repair"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "syntax/parse error",
+      "claim_count": 22,
+      "claim_parse_failures": [
+        {
+          "claim_id": "n09",
+          "error": "SyntaxError: expected '.\\n'"
+        }
+      ],
+      "delivery_ok": true,
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/ia16a766729f914abd691307ee67fec15/VE/pro/author/0",
+      "item_id": "ia16a766729f914abd691307ee67fec15",
+      "ok": false,
+      "response_sha256": "58a21cc0ba725d6ca9149907da70027b95c22f80039accbc9b2d3e6127baa072",
+      "stage": "author"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "JSON delivery",
+      "delivery_ok": false,
+      "environment_ok": false,
+      "finish_reason": "MAX_TOKENS",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/ia16a766729f914abd691307ee67fec15/VE/pro/repair/0",
+      "inspection_error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+      "item_id": "ia16a766729f914abd691307ee67fec15",
+      "ok": false,
+      "response_sha256": "e76878d06b78555a0181b6728b469e6ee0f93f7cf235abc4e85d86f6a888808f",
+      "stage": "repair"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "syntax/parse error",
+      "claim_count": 22,
+      "claim_parse_failures": [
+        {
+          "claim_id": "n12",
+          "error": "SyntaxError: expected '.\\n'"
+        },
+        {
+          "claim_id": "n10",
+          "error": "SyntaxError: expected '.\\n'"
+        },
+        {
+          "claim_id": "n14",
+          "error": "SyntaxError: expected '.\\n'"
+        },
+        {
+          "claim_id": "n16",
+          "error": "SyntaxError: expected '.\\n'"
+        }
+      ],
+      "delivery_ok": true,
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/id9eed1756a3842c2d7da8f08ce3b9290/VE/pro/author/0",
+      "item_id": "id9eed1756a3842c2d7da8f08ce3b9290",
+      "ok": false,
+      "response_sha256": "4596f51784dda63048f47011f03c5068a50dcb3b712ef99176ca2f80044586f0",
+      "stage": "author"
+    },
+    {
+      "all_claims_parse": false,
+      "category": "syntax/parse error",
+      "claim_count": 22,
+      "claim_parse_failures": [
+        {
+          "claim_id": "n12",
+          "error": "SyntaxError: expected ') and (' or ') or ('"
+        },
+        {
+          "claim_id": "n10",
+          "error": "SyntaxError: expected ') and (' or ') or ('"
+        },
+        {
+          "claim_id": "n14",
+          "error": "SyntaxError: expected ') and (' or ') or ('"
+        },
+        {
+          "claim_id": "n16",
+          "error": "SyntaxError: expected ') and (' or ') or ('"
+        }
+      ],
+      "delivery_ok": true,
+      "environment_ok": true,
+      "finish_reason": "STOP",
+      "graph_checked": false,
+      "identity": "ve-author-feasibility-v11/dev/id9eed1756a3842c2d7da8f08ce3b9290/VE/pro/repair/0",
+      "item_id": "id9eed1756a3842c2d7da8f08ce3b9290",
+      "ok": false,
+      "response_sha256": "51b04137fa9918579f2fd4e705773f04504df0c88cd33d51111be15b8a0201b0",
+      "stage": "repair"
+    }
+  ],
+  "repair_all_claims_parse": 3,
+  "repair_successes": 0,
+  "results_sha256": "7904bf779563f4b79007b2d43eb38ebb3412b07013898773983f68b74a7383e1"
+}

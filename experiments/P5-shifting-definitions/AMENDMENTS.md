@@ -1143,3 +1143,15 @@ Final validation: `UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run --offline
 pytest -q tests/test_p5*.py` — **235 passed** (one third-party deprecation
 warning). The tracked blinding audit includes the two new diagnosis artifacts
 as explicitly barred, documented scoring evidence. `git diff --check` passes.
+
+## Amendment (2026-09-22): VE authoring-only feasibility probe
+
+The user authorizes a separate, at-most-$3 DEV-only probe after retained failure
+taxonomy and harness repair. The binding pre-inference plan is
+[AUTHORING-FEASIBILITY-AMENDMENT.md](AUTHORING-FEASIBILITY-AMENDMENT.md): all
+12 DEV items, Gemini author plus at most one diagnostic repair, no judges,
+unchanged checker and output caps, exact grammar and a replayed unrelated toy
+example, no dossier solution, and an independent durable cost ledger. The
+original v10 outcomes, prompts, ratings and costs remain unchanged. Scored
+execution is still blocked. The probe uses its own dated local code/prompt
+freeze; the main study freeze and external timestamp are not renewed by it.
