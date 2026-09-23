@@ -8,9 +8,11 @@ Design: [PREREG-ASSIST.md](PREREG-ASSIST.md). Code: `ve_experiments/assist_eval/
 | `prompts.py` | Author prompts (task, VE guide, per-arm interface, Claude text protocol) and auditor prompts |
 | `authors.py` | Claude CLI text-protocol author and Gemini Vertex function-calling author; per-call cost and ceiling |
 | `loop.py` | `SessionRun`: the budgeted loop for arms A2/A3/A4, A2 whole-document evaluation, persistence |
-| `audit.py` | Blind packets, cross-family audit, endpoints, report and human spot-check list |
+| `dossier.py` | The waiver allowlist W(item), reference formalisations of given sentences, dossier graph checks |
+| `scoring.py` | Evaluation success and the faithful-complete gap route |
+| `audit.py` | Blind packets, cross-family audit (Codex all, Opus also Gemini), endpoints, report, spot-check list |
 | `pricing.py` | List prices used for budget matching |
-| `cli.py` | Commands, registered `CONFIG`, PREREG hash manifest and held-out gate |
+| `cli.py` | Commands, registered `CONFIG`, PREREG hash manifest, held-out gate, proposer smoke |
 
 Each session writes `runs/<run-id>/<split>/<author>/<arm>/<item>/`:
 
@@ -23,36 +25,37 @@ Each session writes `runs/<run-id>/<split>/<author>/<arm>/<item>/`:
 - `result.json`.
 
 A session with `result.json` is skipped on rerun. An interrupted session is rerun from scratch, and completed model
-calls replay from the ledgers at no cost.
+calls replay from the ledgers at no cost. An infrastructure-aborted session keeps `result.aborted-N.json`; its rerun
+starts with every earlier attempt's spend charged to the item's $2 budget and stops when that budget is exhausted.
 
 ## Commands
 
 Set `UV_CACHE_DIR=/private/tmp/ve-uv-cache-assist`. Run sessions serially: one command at a time, since the Claude
-ledgers are per session and the Gemini ledger is per run.
+ledgers are per session and the Gemini ledger is per run. Claude calls use the main account (the default Claude
+configuration directory); the saeedi.danial token is revoked and no longer a default.
 
 ```sh
 M="uv run python -m ve_experiments.assist_eval"
-# 1. DEV tuning pass (all authors x arms x 12 DEV items; Gemini spend hard-capped by the run ledger)
-# one author x arm per command, so that one Claude account serves the whole arm
-$M run --split dev --run-id dev-tune-2 --authors opus --arms A2 --account saeedi.danial   # ... each author x arm
-$M run --split dev --run-id dev-tune-2 --authors gemini --arms A2,A3,A4 --gemini-cap-usd 40
-$M audit-export --run-id dev-tune-2
-$M audit-run    --run-id dev-tune-2 --account saeedi.danial   # Codex audits Claude authors, Opus audits Gemini
-$M report       --run-id dev-tune-2
-# (optional prompt/budget changes: bump PROMPT_VERSION, log them below, rerun with a new --run-id)
-# 2. Freeze
+# 0. Proposer smoke on DEV (<= 2 proposer calls; done 2026-09-23, runs/proposer-smoke-2026-09-23/)
+$M proposer-smoke --run-id proposer-smoke-2026-09-23
+# 1. Freeze
 #    edit PREREG-ASSIST.md line 1 -> "Status: FROZEN 2026-..", then:
-$M hashes --write
+$M waivers --write          # the preregistered allowlist W (waivers.json)
+$M hashes --write           # PREREG text, tool, prompts, W, items, CONFIG
 git add experiments/assist-eval ve_experiments/assist_eval && git commit -m "PREREG-ASSIST: freeze"
 uvx --from opentimestamps-client ots stamp experiments/assist-eval/PREREG-HASHES.txt
-# 3. HELD-OUT evaluation (refuses unless FROZEN and hashes match)
-$M run --split heldout --run-id heldout-1 --authors opus,haiku,gemini --arms A2,A3,A4 --gemini-cap-usd 80
+# 2. HELD-OUT (refuses unless FROZEN, hashes and W match, and no setting flag differs from CONFIG)
+$M run --split heldout --run-id heldout-1 --authors opus --arms A2
+$M run --split heldout --run-id heldout-1 --authors opus --arms A3
+$M run --split heldout --run-id heldout-1 --authors opus --arms A4
+$M run --split heldout --run-id heldout-1 --authors gemini --arms A2,A3,A4   # Gemini run ledger capped at $40
 $M audit-export --run-id heldout-1
-$M audit-run    --run-id heldout-1
-$M report       --run-id heldout-1
+$M audit-run    --run-id heldout-1   # Codex audits every packet; Opus also audits Gemini packets
+$M report       --run-id heldout-1   # report.json (primary: Opus A3 vs A2 paired) + audit-spotcheck.jsonl
 ```
 
-Run a single author or arm with `--authors opus --arms A3`, and a subset of items with `--items 0,3` (index or id).
+On DEV, `--budget`, `--max-tool-calls`, `--proposer-model`, `--account`, `--gemini-cap-usd` (at most $40) and
+`--items` remain available for tuning; on held-out they are rejected unless equal to CONFIG (`--items` always).
 
 ## Smoke test (2026-09-22)
 
@@ -163,6 +166,67 @@ first ledger, halted by an under-counted call, `gemini-ledger.halted-1.jsonl`); 
 Codex audits 566k tokens (subscription). Gemini infrastructure: 429 and 504 errors caused 13 aborted session
 attempts (kept as `result.aborted-N.json`); each was restarted with fresh call ids.
 
+## Review fixes (2026-09-23, after dev-tune-2; prompts v4, scoring v2)
+
+Two xhigh reviews (Astra, Opus; `manage-agents/reviews/assist-heldout-review-*.md`) returned FIX FIRST. Changes:
+
+- **Waivers (Astra A1, Opus A2).** A preregistered allowlist W(item) computed from the public dossier text
+  (`dossier.py`, hashed as `waivers.json`): declared-rule lists, "remain unassumed" metadata, lot/sample
+  statements (waive-only), unused facts, and dead rules that no claimed sentence relies on. Waivers must lie in W;
+  no node may anchor to a waive-only sentence; a given-anchored assumption must be entailed by its anchors'
+  reference content (closes the anchoring smuggle in full, not only the conditional-to-fact case); no assumption
+  may entail a "remain unassumed" check. Authors see the rule in words, not the list (dead rules mark underivable
+  conditions). Opus's point (c): "Lot U supplied sample U." is formalisable (`supplied`) and is NOT waive-only; it
+  is in W as an `unused-fact` because no rule and no claimed sentence uses it (decision 1 puts unused facts in W),
+  and anchoring anything but its content to it fails the content check.
+- **Faithful-complete (Astra A2, Opus A1).** `scoring.gap_route`: every claimed sentence has an anchored step,
+  verified ledger, every non-gap step certified, every gap step refuted by a checker countermodel (unchecked or
+  unknown steps never count) and not entailed by the whole dossier, no violations, and `gap_located` required. A
+  hard dependency-alignment gate was tried and rejected: faithful "would imply" steps legitimately use earlier
+  results that are not the paragraph's P5 parents (e.g. `s_n18b <- s_n01`, 12 faithful dev sessions). Alignment is
+  audited instead (packets list each step's "reasons").
+- **Audit (Astra A5, Opus A3).** Codex audits every packet; Opus also audits Gemini packets; a packet passes only if
+  both pass. Waiver units show W codes and fixed descriptions, never the author's reason. Author-declared glosses
+  are listed apart and marked AUTHOR-WRITTEN. Omitted sentences are units. The auditor prompt drops "a fact never
+  used" and is frozen in the manifest.
+- **Endpoint and claim (Astra A3/A4, Opus A4).** Primary: Opus A3 vs A2, paired by item at the same total budget
+  (exact sign test). Gemini secondary, Haiku dropped, A4 exploratory ("proposer offered, uptake n"). The ">= 6/12"
+  threshold is removed; the claim is the Opus review's minimum claim (PREREG "Claim scope").
+- **Freeze (Astra A6, Opus B1-B3).** The manifest hashes the PREREG text, W and every executable setting; held-out
+  runs reject any deviating flag. Default account = main. Gemini cap $40. Stale README/CONFIG/PREREG text updated.
+- **Restarts (Astra B7).** Every attempt counts toward the item budget and the reports: restarts start with the
+  aborted attempts' spend, budget exhaustion stops the item, Claude prior attempts and failed calls are charged,
+  and a Gemini 5xx/timeout charges the paid ledger's unknown-billing hold. `report` sums all attempts and
+  reconciles Gemini against its paid ledger.
+- **Proposer restored.** `proposer-smoke` on DEV, main account: 1 Haiku call, one valid candidate, $0.0051.
+
+### dev-tune-2 replayed under the new scoring ($0, `runs/dev-tune-2/replay-v4/report.json`)
+
+Deterministic parts (W, graph checks, gap route, all-attempt spend) are recomputed from the committed ledgers. The
+audit part is a **legacy proxy**: the packets were audited once under the old layout (Codex for Claude authors, Opus
+for Gemini) and that single verdict stands in for every required auditor; the new packets (W codes, omitted units,
+reasons) and the second (Codex) audit of Gemini packets were not run (no model calls).
+
+| Author | Arm | Tool success | Faithful-complete | Gap located | Sessions with violations | Alarms | Spend, all attempts | Items over $2 |
+|---|---|---|---|---|---|---|---|---|
+| Opus 5.5 | A2 | 4 -> 4 | 9 -> **9** | 5 | 0 | 0 | $1.31 -> $1.31 | 0 |
+| Opus 5.5 | A3 | 4 -> 4 | 12 -> **12** | 8 | 0 | 0 | $8.29 -> $8.29 | 0 |
+| Opus 5.5 | A4 | 4 -> 4 | 12 -> **12** | 8 | 0 | 0 | $8.78 -> $8.78 | 0 |
+| Gemini 3.1 Pro | A2 | 3 -> 3 | 5 -> **4** | 5 | 7 | 0 | $0.86 -> $0.86 | 0 |
+| Gemini 3.1 Pro | A3 | 4 -> 4 | 4 -> **4** | 5 | 2 | 0 | $3.51 -> $4.35 | 0 |
+| Gemini 3.1 Pro | A4 | 0 -> 0 | 0 -> **0** | 6 | 5 | 0 | $6.07 -> $10.33 | 2 |
+| Haiku 4.5 | A2 | 1 -> 1 | 1 -> **1** | 1 | 5 | 0 | $0.99 -> $0.99 | 0 |
+| Haiku 4.5 | A3 | 0 -> 0 | 0 -> **0** | 0 | 8 | 0 | $10.73 -> $10.73 | 0 |
+| Haiku 4.5 | A4 | 0 -> 0 | 0 -> **0** | 0 | 2 | 0 | $14.12 -> $14.12 | 0 |
+
+The one change is Gemini A2 `i0e03b71` (the Opus-review A1 instance): claimed `n18.2` has no step and three live
+rules (`r15.1`, `r15.2`, `r15.4`) were waived. No dev node anchors to a waive-only sentence and no dev assumption
+fails the content check. Spend rises only for Gemini A3/A4 (aborted attempts and 504 holds now counted); two
+Gemini A4 items exceed $2 over all attempts (`i910d7c5`: $2.01 recorded, $4.46 with holds; `i248c407`: $2.05
+with holds), which the new restart accounting prevents. Primary endpoint on dev (tuning, not evidence): Opus A3
+12/12 vs A2 9/12, 3 discordant pairs all favouring A3, sign test p = 0.25; A3 12/12 has an exact lower bound of
+0.779; alarms 0/8 (upper bound 0.312). A4: proposer offered, uptake 0/12 for every author.
+
 ## Tuning log
 
 - v1 (`ve-assist-eval-prompts@1`): initial prompts; smoke only.
@@ -170,3 +234,6 @@ attempts (kept as `result.aborted-N.json`); each was restarted with fresh call i
 - v3 (`ve-assist-eval-prompts@3`, before dev-tune-2): coverage text for the fixed tool (claimed sentences derived and
   never waived; given meta-sentences waived; the waiver status line alone is acceptable); `finish` "complete" is
   refused by the harness otherwise; the auditor may accept a waiver of a "remain unassumed" sentence.
+- v4 (`ve-assist-eval-prompts@4`, after the dev-tune-2 reviews): the coverage text states the allowlist rule and the
+  anchor content check; the gap text states the gap-route conditions; the auditor prompt audits W codes, omitted
+  units and step reasons and drops "a fact never used". Not run on dev with authors (replay only).

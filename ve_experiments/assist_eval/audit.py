@@ -1,25 +1,31 @@
 """Blind cross-family fidelity audit, human spot-check list, and the results report.
 
 Export (no model calls): each finished session becomes a PACKET with the
-dossier's sentences (id, role, text), the predicate glosses, and one UNIT per
-asserting sentence that has a formalisation (the deterministic paraphrases of
-the nodes anchored to it, plus the frozen target for a target sentence) or a
-waiver (with its reason). A packet carries NO parents, check results, status,
-certification, arm, author, cost or item id; packet ids are salted hashes and
-the mapping stays in ``audit/mapping.json``. Packets are shuffled with a seed.
+dossier's sentences (id, role, text), the dossier's predicate glossary (any
+predicate the author declared is listed apart, under "author_declared", marked
+as author text), and one UNIT per asserting sentence:
+* ``formalised``: the deterministic paraphrases of the nodes anchored to it
+  (plus the frozen target for a target sentence) and, for steps, the sentence
+  ids their parents are anchored to ("reasons");
+* ``waiver``: the sentence was waived; the unit shows its allowlist CODE and
+  the code's fixed description (never the author's free-text reason);
+* ``omitted``: neither formalised nor waived; shows its code, if any.
+A packet carries NO check results, status, certification, arm, author, cost or
+item id; packet ids are salted hashes and the mapping stays in
+``audit/mapping.json``. Packets are shuffled with a seed.
 
-Auditor = a different family from the author: GPT-6 Astra (``codex exec``,
-read-only sandbox, reasoning effort high, an empty working directory) audits
-Claude authors (Opus, Haiku); Opus 5.5 (claude CLI) audits Gemini. (The design
-first named Gemini 3.1 Pro as the auditor of Claude authors; the lead replaced
-it on 2026-09-23 before any dev-tune-2 audit ran.) Every verdict records the
-auditor and the served auditor model. A packet PASSES iff every formalised unit
-is "faithful" and every waiver "acceptable"; a missing, unparseable or
-"unclear" verdict, or a packet with no units, fails it (conservative). An
-auditor call that errors is logged in ``audit/errors.jsonl`` and leaves no
-verdict (rerun ``audit-run`` to retry); the command exits nonzero while any
-packet lacks a verdict. Auditor spend is evaluation cost, not charged to the
-author's budget.
+Auditors: GPT-6 Astra (``codex exec``, read-only sandbox, reasoning effort
+high, an empty working directory) audits EVERY packet; Opus 5.5 (claude CLI,
+main account) additionally audits the packets of Gemini-authored sessions.
+Verdicts are ``audit/verdicts/<packet>.<auditor>.json``. A packet PASSES iff
+every required auditor passes it; an auditor passes it iff every formalised
+unit is "faithful" and every waiver/omitted unit "acceptable" (a waiver outside
+W or an omitted sentence without a code fails deterministically); a missing,
+unparseable or "unclear" verdict, or a packet with no units, fails it
+(conservative). An auditor call that errors is logged in
+``audit/errors.jsonl`` and leaves no verdict (rerun ``audit-run`` to retry);
+the command exits nonzero while any packet lacks a required verdict. Auditor
+spend is evaluation cost, not charged to the author's budget.
 """
 from __future__ import annotations
 
@@ -29,6 +35,7 @@ import hashlib
 import json
 from pathlib import Path
 from collections import Counter
+from functools import lru_cache
 import random
 import re
 import subprocess
@@ -37,9 +44,10 @@ import time
 
 from ve.assist import AssistSession
 
-from . import prompts
+from . import dossier, prompts
 from .authors import ClaudeTextAuthor, last_json_block
-from .items import labels
+from .items import items as load_items, labels
+from .scoring import gap_route, session_checks
 
 AUDIT_SEED = 20260923
 SALT = "ve-assist-eval-audit@1"
@@ -57,17 +65,30 @@ def _load(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
-def packet_for(session_dir):
+@lru_cache(maxsize=None)
+def _items_by_id(split):
+    return {i["id"]: i for i in load_items(split)}
+
+
+def _item_for(result):
+    return _items_by_id(result["split"])[result["item_id"]]
+
+
+def packet_for(session_dir, item=None):
     ledger = session_dir / "session.json"
     if not ledger.exists():
         return None
     session = AssistSession.from_ledger(_load(ledger))  # replays and verifies every recorded result
-    by_sentence = {}
+    item = item or _item_for(_load(session_dir / "result.json"))
+    allow = dossier.allowlist(item)
+    by_sentence, reasons = {}, {}
     for node in session.nodes.values():
         for sid in node.anchors:
             others = [a for a in node.anchors if a != sid]
             by_sentence.setdefault(sid, []).append(session.paraphrase_formula(node.formula) + (
                 f"  (also anchored to: {', '.join(others)})" if others else ""))
+            if node.parents:
+                reasons.setdefault(sid, set()).update(a for p in node.parents for a in session.nodes[p].anchors)
     units = []
     for sid in session.sentence_order:
         s = session.sentences[sid]
@@ -77,17 +98,25 @@ def packet_for(session_dir):
         for tid, row in session.targets.items():
             if row["sentence"] == sid and row["formula"] is not None:
                 formal.insert(0, "(frozen conclusion) " + session.paraphrase_formula(row["formula"]))
-        if formal:
-            units.append({"unit": f"u{len(units) + 1}", "kind": "formalised", "sentence": sid,
-                          "role": s["role"], "text": s["text"], "formalisation": formal})
-        elif sid in session.waivers:
-            units.append({"unit": f"u{len(units) + 1}", "kind": "waiver", "sentence": sid, "role": s["role"],
-                          "text": s["text"], "waiver_reason": session.waivers[sid]})
+        base = {"unit": f"u{len(units) + 1}", "sentence": sid, "role": s["role"], "text": s["text"]}
+        code = allow.get(sid)
+        coded = {"code": code, "code_description": dossier.W_CODES[code]} if code else {"code": None}
+        if sid in session.waivers:
+            units.append({**base, "kind": "waiver", **coded})
+        elif formal:
+            units.append({**base, "kind": "formalised", "formalisation": formal,
+                          **({"reasons": sorted(reasons[sid] - {sid})} if reasons.get(sid) else {})})
+        else:
+            units.append({**base, "kind": "omitted", **coded})
     packet_id = "p" + hashlib.sha256((SALT + str(session_dir.resolve())).encode()).hexdigest()[:12]
+    public = session.config["environment"]["vocabulary"]["predicates"]
+    declared = {k: v.description for k, v in session.env.predicates.items() if k not in public}
     return {"packet": packet_id,
             "sentences": [{"id": sid, "role": session.sentences[sid]["role"], "text": session.sentences[sid]["text"]}
                           for sid in session.sentence_order],
-            "glossary": {k: v.description for k, v in session.env.predicates.items()},
+            "glossary": {k: v["description"] for k, v in public.items()},
+            **({"author_declared": {k: "AUTHOR-WRITTEN gloss (not dossier text): " + v
+                                    for k, v in declared.items()}} if declared else {}),
             "units": units}
 
 
@@ -114,8 +143,9 @@ def audit_prompt(packet):
     return prompts.AUDIT_INSTRUCTIONS + "\n\nPACKET:\n" + json.dumps(packet, ensure_ascii=False, indent=1)
 
 
-def auditor_for(author):
-    return "codex" if author in ("opus", "haiku") else "opus"
+def auditors_for(author):
+    """Codex audits every packet; Opus additionally audits Gemini-authored packets."""
+    return ["codex", "opus"] if author == "gemini" else ["codex"]
 
 
 class CodexAuditor:
@@ -176,17 +206,20 @@ class CodexAuditor:
 
 def judge(packet, reply_text):
     value, error = last_json_block(reply_text)
-    expected = {u["unit"]: u["kind"] for u in packet["units"]}
-    sentence_of = {u["unit"]: u["sentence"] for u in packet["units"]}
+    expected = {u["unit"]: u for u in packet["units"]}
     rows = [] if error else value.get("units") if isinstance(value.get("units"), list) else []
     verdicts = {r.get("unit"): r for r in rows if isinstance(r, dict)}
     problems = []
-    for uid, kind in expected.items():
+    for uid, unit in expected.items():
         v = verdicts.get(uid, {}).get("verdict")
-        ok = v == "faithful" if kind == "formalised" else v == "acceptable"
+        if unit["kind"] == "formalised":
+            ok, why = v == "faithful", None
+        else:  # waiver / omitted: must be on the allowlist AND judged acceptable
+            ok = v == "acceptable" and unit.get("code") is not None
+            why = None if unit.get("code") is not None else f"{unit['kind']} sentence outside the allowlist W"
         if not ok:
-            problems.append({"unit": uid, "sentence": sentence_of[uid], "kind": kind, "verdict": v,
-                             "reason": verdicts.get(uid, {}).get("reason")})
+            problems.append({"unit": uid, "sentence": unit["sentence"], "kind": unit["kind"], "verdict": v,
+                             "reason": why or verdicts.get(uid, {}).get("reason")})
     return {"pass": bool(expected) and not problems and not error, "problems": problems,
             "units": {u: verdicts.get(u) for u in expected}, **({"error": error} if error else {})}
 
@@ -195,12 +228,17 @@ def make_auditor(who, out, account):
     if who == "codex":
         return CodexAuditor(out / "codex-audit-calls.jsonl")
     # one calls ledger per Claude account (the endpoint refuses mixed accounts in one ledger)
-    name = "opus-audit-calls.jsonl" if account == "saeedi.danial" else f"opus-audit-calls.{account or 'main'}.jsonl"
+    name = f"opus-audit-calls.{account or 'main'}.jsonl"
     return ClaudeTextAuthor("opus", out / name, account=account)
 
 
+def verdict_path(out, pid, who):
+    return out / "verdicts" / f"{pid}.{who}.json"
+
+
 def run_audit(run_dir, *, account=None, auditors=None):
-    """Audit every exported packet that has no verdict yet; return the number still missing a verdict."""
+    """Audit every exported packet by every required auditor that has no verdict yet; return the number of
+    (packet, auditor) verdicts still missing."""
     run_dir = Path(run_dir)
     out = run_dir / "audit"
     mapping = _load(out / "mapping.json")
@@ -208,58 +246,74 @@ def run_audit(run_dir, *, account=None, auditors=None):
     auditors = dict(auditors or {})
     missing = 0
     for pid in mapping["order"]:
-        target = out / "verdicts" / f"{pid}.json"
-        if target.exists():
-            continue
         packet = _load(out / "packets" / f"{pid}.json")
-        who = auditor_for(mapping["packets"][pid]["author"])
-        if not packet["units"]:  # nothing was formalised or waived: fails without an auditor call
-            verdict = {"packet": pid, "auditor": None, "auditor_model": None, "cost_usd": "0", "reply": None,
-                       "pass": False, "problems": [{"unit": None, "verdict": None, "reason": "empty packet"}],
-                       "units": {}}
+        for who in auditors_for(mapping["packets"][pid]["author"]):
+            target = verdict_path(out, pid, who)
+            if target.exists():
+                continue
+            if not any(u["kind"] != "omitted" for u in packet["units"]):
+                # nothing was formalised or waived: fails without an auditor call
+                verdict = {"packet": pid, "auditor": who, "auditor_model": None, "cost_usd": "0", "reply": None,
+                           "pass": False, "problems": [{"unit": None, "verdict": None, "reason": "empty packet"}],
+                           "units": {}}
+                target.write_text(json.dumps(verdict, ensure_ascii=False, indent=1))
+                continue
+            try:
+                if who not in auditors:
+                    auditors[who] = make_auditor(who, out, account)
+                text, cost, row = auditors[who].single(f"assist-audit/{pid}", prompts.AUDIT_SYSTEM,
+                                                       audit_prompt(packet))
+            except Exception as exc:  # logged; the packet stays unaudited and a rerun retries it
+                missing += 1
+                with (out / "errors.jsonl").open("a", encoding="utf-8") as f:
+                    f.write(json.dumps({"packet": pid, "auditor": who,
+                                        "error": f"{type(exc).__name__}: {exc}"[:2000],
+                                        "time": datetime.now(timezone.utc).isoformat()}) + "\n")
+                continue
+            model = (row or {}).get("served_model") if isinstance(row, dict) else None
+            verdict = {"packet": pid, "auditor": who, "auditor_model": model, "cost_usd": str(cost), "reply": text,
+                       **({"auditor_tokens": row.get("tokens_used")} if isinstance(row, dict) and "tokens_used" in row
+                          else {}),
+                       **judge(packet, text)}
             target.write_text(json.dumps(verdict, ensure_ascii=False, indent=1))
-            continue
-        try:
-            if who not in auditors:
-                auditors[who] = make_auditor(who, out, account)
-            text, cost, row = auditors[who].single(f"assist-audit/{pid}", prompts.AUDIT_SYSTEM,
-                                                   audit_prompt(packet))
-        except Exception as exc:  # logged; the packet stays unaudited and a rerun retries it
-            missing += 1
-            with (out / "errors.jsonl").open("a", encoding="utf-8") as f:
-                f.write(json.dumps({"packet": pid, "auditor": who, "error": f"{type(exc).__name__}: {exc}"[:2000],
-                                    "time": datetime.now(timezone.utc).isoformat()}) + "\n")
-            continue
-        model = (row or {}).get("served_model") if isinstance(row, dict) else None
-        verdict = {"packet": pid, "auditor": who, "auditor_model": model, "cost_usd": str(cost), "reply": text,
-                   **({"auditor_tokens": row.get("tokens_used")} if isinstance(row, dict) and "tokens_used" in row
-                      else {}),
-                   **judge(packet, text)}
-        target.write_text(json.dumps(verdict, ensure_ascii=False, indent=1))
     return missing
+
+
+def load_verdicts(run_dir, pid, author, legacy=False):
+    """{auditor: verdict} for one packet. ``legacy``: a run audited before the dual-audit layout keeps ONE
+    verdict per packet in ``verdicts/<packet>.json``; it stands in for every required auditor (a proxy,
+    reported as such)."""
+    out = Path(run_dir) / "audit"
+    if legacy:
+        path = out / "verdicts" / f"{pid}.json"
+        if not path.exists():
+            return {}
+        v = _load(path)
+        return {who: {**v, "legacy_proxy": True} for who in auditors_for(author)}
+    return {who: _load(verdict_path(out, pid, who)) for who in auditors_for(author)
+            if verdict_path(out, pid, who).exists()}
+
+
+def combine(verdicts, author):
+    """One packet decision from the required auditors: pass iff every required auditor passed."""
+    required = auditors_for(author)
+    have = [verdicts[w] for w in required if w in verdicts]
+    if len(have) < len(required):
+        return None
+    problems = [dict(p, auditor=v.get("auditor")) for v in have for p in v.get("problems", [])]
+    passes = {w: bool(verdicts[w]["pass"]) for w in required}
+    return {"pass": all(passes.values()), "passes": passes, "problems": problems,
+            "disagreement": len(set(passes.values())) > 1,
+            "legacy_proxy": any(v.get("legacy_proxy") for v in have),
+            "units": {w: verdicts[w].get("units", {}) for w in required}}
 
 
 # ------------------------------------------------------------------ report
 
-def _paragraphs(session_dir, steps):
-    ledger = session_dir / "session.json"
-    if not ledger.exists():
-        return set()
-    session = AssistSession.from_ledger(_load(ledger), verify=False)
-    found = set()
-    for name in steps:
-        node = session.nodes.get(name)
-        if node:
-            found |= {a.split(".")[0] for a in node.anchors if session.sentences[a]["role"] == "claimed"}
-    return found
-
-
-def unit_origins(session_dir, verdict):
+def unit_origins(session, verdict):
     """For each failing unit: the provenance of the formal statements shown for its sentence."""
-    ledger = session_dir / "session.json"
-    if verdict is None or not ledger.exists():
+    if verdict is None or session is None:
         return {}
-    session = AssistSession.from_ledger(_load(ledger), verify=False)
     out = {}
     for problem in verdict.get("problems", []):
         sid = problem.get("sentence")
@@ -268,8 +322,9 @@ def unit_origins(session_dir, verdict):
         origins = [n.origin for n in session.nodes.values() if sid in n.anchors]
         origins += [row.get("origin", "hand-written") for row in session.targets.values()
                     if row["sentence"] == sid and row["formula"] is not None]
-        out[problem["unit"]] = {"sentence": sid, "kind": problem.get("kind"), "verdict": problem.get("verdict"),
-                                "origins": sorted(set(origins))}
+        key = f"{problem.get('auditor')}:{problem['unit']}" if problem.get("auditor") else problem["unit"]
+        out[key] = {"sentence": sid, "kind": problem.get("kind"), "verdict": problem.get("verdict"),
+                    "origins": sorted(set(origins))}
     return out
 
 
@@ -284,6 +339,8 @@ def attribute(result, verdict, cls, origins):
         return "infrastructure"
     if not (result.get("verification") or {}).get("ok"):
         return "ledger-verification"
+    if cls.get("violations"):
+        return "dossier contract violation (waiver outside W / anchor content / unassumed check)"
     if verdict is None:
         return "unaudited"
     if not verdict["pass"]:
@@ -292,39 +349,121 @@ def attribute(result, verdict, cls, origins):
         rows = list(origins.values())
         if any("proposer-verbatim" in r["origins"] for r in rows):
             return "audit-fail: proposer candidate accepted unchanged"
-        if rows and all(r["verdict"] in (None, "unclear") for r in rows):
-            return "audit-fail: audit disagreement (unclear/missing verdicts)"
-        if not rows:
+        if not rows or all(r["verdict"] in (None, "unclear") for r in rows):
             return "audit-fail: audit disagreement (unclear/missing verdicts)"
         return "audit-fail: author-written"
     if cls["flawed_certified_alarm"]:
         return "alarm: flawed item certified"
     if stop in ("budget", "max_turns", "max_tool_calls"):
         return "budget"
-    return "tool refusal"
+    return "tool refusal" if cls["kind"] == "benign" else "gap route: " + ", ".join(cls["gap_route_failures"][:3])
 
 
-def classify(result, audit_pass, kind, audited=True):
-    status = result.get("status") or {}
-    tool = bool(result.get("tool_success"))
-    unproved = {r["node"] for r in status.get("unproved_steps", [])}
-    finish = result.get("finish") or {}
-    target_stated = all(t.get("reason") != "no step node states the frozen target" and t.get("text")
-                        for t in status.get("targets", [])) and bool(status.get("targets"))
-    gap_route = (finish.get("verdict") == "gap" and bool(unproved) and unproved <= set(finish.get("gap_steps", []))
-                 and target_stated and not status.get("uncovered")
-                 and not any(w.get("role") == "claimed" for w in status.get("waivers", []))
-                 and not any(u["load_bearing"] for u in status.get("unanchored_assumptions", []))
-                 and not status.get("renamed_conclusions"))
+def classify(result, audit_pass, kind, checks, acceptable_locations, audited=True):
+    """Endpoints of one session. ``checks`` = ``scoring.session_checks`` (None: no ledger)."""
+    verified = bool((result.get("verification") or {}).get("ok"))
+    violations = (checks or {}).get("violations") or []
+    tool = bool(result.get("tool_success")) and verified and not violations
+    if checks is None:
+        route, located, why = False, False, ["no session ledger"]
+    else:
+        route, located, why = gap_route(result, checks, acceptable_locations)
     certified_faithful = tool and audit_pass
-    faithful_complete = certified_faithful if kind == "benign" else (audit_pass and gap_route and not tool)
-    return {"tool_success": tool, "audit_pass": audit_pass, "certified_faithful": certified_faithful,
-            "certified_unfaithful": tool and audited and not audit_pass, "gap_route": gap_route,
-            "faithful_complete": faithful_complete, "flawed_certified_alarm": tool and kind != "benign"}
+    faithful_complete = certified_faithful if kind == "benign" else (audit_pass and route and not tool)
+    return {"kind": kind, "tool_success": tool, "audit_pass": audit_pass, "certified_faithful": certified_faithful,
+            "certified_unfaithful": tool and audited and not audit_pass, "gap_route": route,
+            "gap_route_failures": [] if kind == "benign" else why, "gap_located": located if kind != "benign"
+            else None, "violations": violations, "faithful_complete": faithful_complete,
+            "flawed_certified_alarm": tool and kind != "benign"}
 
 
-def report(run_dir):
+def all_attempts_spend(run_dir, d, result):
+    """Spend over every attempt at the session: the final record plus every ``result.aborted-N.json``;
+    for Gemini, reconciled against the run's paid ledger (every call billed under the session's identity)."""
+    own = lambda r: Decimal(r["spent_usd"]["author"]) + Decimal(r["spent_usd"]["proposer"])
+    total = own(result) + sum((own(_load(p)) for p in sorted(d.glob("result.aborted-*.json"))), Decimal(0))
+    out = {"records_usd": str(total), "attempts": 1 + len(list(d.glob("result.aborted-*.json")))}
+    ledger = Path(run_dir) / "gemini-ledger.jsonl"
+    if result["author"] == "gemini" and ledger.exists():
+        prefix = f"assist-eval/{result['split']}/gemini/{result['arm']}/{result['item_id']}/"
+        billed, held = Decimal(0), Decimal(0)
+        for line in ledger.read_text(encoding="utf-8").splitlines():
+            row = json.loads(line) if line.strip() else {}
+            if str(row.get("identity", "")).startswith(prefix):
+                if row.get("event") == "complete":
+                    billed += Decimal(str(row.get("cost_usd") or 0))
+                elif row.get("event") == "infrastructure_failure":
+                    held += Decimal(str(row.get("infrastructure_hold_usd") or 0))
+        # billed = completed calls; held = the ledger's ceiling for 5xx/timeouts whose billing is unknown
+        # (counted against the item budget, fail closed)
+        out["paid_ledger_billed_usd"], out["unknown_billing_holds_usd"] = str(billed), str(held)
+        total = max(total, billed + held)
+    out["total_usd"] = str(total)
+    out["over_budget"] = total > Decimal(str(result.get("budget_usd", 0)))
+    return out
+
+
+def _uptake(session):
+    """A4: did the author use the proposer? (successful propose calls, candidates accepted)."""
+    if session is None:
+        return {"propose_ok": 0, "accepted": 0}
+    ok = sum(1 for e in session.events if e.get("action") == "propose" and (e.get("result") or {}).get("ok"))
+    accepted = sum(1 for n in session.nodes.values() if n.origin.startswith("proposer"))
+    return {"propose_ok": ok, "accepted": accepted}
+
+
+def sign_test(b, c):
+    """Exact two-sided sign test p for b vs c discordant pairs."""
+    from math import comb
+    n = b + c
+    if n == 0:
+        return 1.0
+    tail = sum(comb(n, k) for k in range(0, min(b, c) + 1)) / 2 ** n
+    return min(1.0, 2 * tail)
+
+
+def exact_lower(k, n, alpha=0.05):
+    """One-sided exact (Clopper-Pearson) lower bound for k/n."""
+    from math import comb
+    if k == 0:
+        return 0.0
+    lo, hi = 0.0, 1.0
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        tail = sum(comb(n, j) * mid ** j * (1 - mid) ** (n - j) for j in range(k, n + 1))
+        lo, hi = (mid, hi) if tail < alpha else (lo, mid)
+    return round(lo, 4)
+
+
+def exact_upper(k, n, alpha=0.05):
+    return round(1 - exact_lower(n - k, n, alpha), 4)
+
+
+def primary(rows, split):
+    """Primary endpoint: Opus A3 vs A2 faithful-complete, paired by item at the same total budget."""
+    a3 = {r["item_id"]: r for r in rows if (r["split"], r["author"], r["arm"]) == (split, "opus", "A3")}
+    a2 = {r["item_id"]: r for r in rows if (r["split"], r["author"], r["arm"]) == (split, "opus", "A2")}
+    both = sorted(set(a3) & set(a2))
+    cell = lambda x, y: sum(1 for i in both if bool(a3[i]["faithful_complete"]) == x
+                            and bool(a2[i]["faithful_complete"]) == y)
+    b, c = cell(True, False), cell(False, True)
+    k3 = sum(bool(a3[i]["faithful_complete"]) for i in both)
+    alarms = sum(bool(a3[i]["flawed_certified_alarm"]) for i in both)
+    flawed = sum(a3[i]["kind"] != "benign" for i in both)
+    return {"endpoint": "Opus A3 vs A2 faithful-complete, paired by item", "split": split, "pairs": len(both),
+            "both": cell(True, True), "a3_only": b, "a2_only": c, "neither": cell(False, False),
+            "sign_test_p": sign_test(b, c), "a3_faithful_complete": f"{k3}/{len(both)}",
+            "a3_lower_95": exact_lower(k3, len(both)) if both else None,
+            "a3_alarms": f"{alarms}/{flawed}", "a3_alarm_upper_95": exact_upper(alarms, flawed) if flawed else None}
+
+
+ROLES = {"opus": "primary", "gemini": "secondary", "haiku": "dropped (dev only)"}
+
+
+def report(run_dir, *, legacy_audit=False, out_dir=None):
     run_dir = Path(run_dir)
+    out_dir = Path(out_dir) if out_dir else run_dir
+    out_dir.mkdir(parents=True, exist_ok=True)
     mapping = _load(run_dir / "audit" / "mapping.json")["packets"] if (run_dir / "audit" / "mapping.json").exists() else {}
     by_dir = {v["session_dir"]: k for k, v in mapping.items()}
     labs = labels()
@@ -332,31 +471,38 @@ def report(run_dir):
     rng = random.Random(AUDIT_SEED)
     for d in session_dirs(run_dir):
         result = _load(d / "result.json")
+        item = _item_for(result)
         pid = by_dir.get(str(d.relative_to(run_dir)))
-        verdict_path = run_dir / "audit" / "verdicts" / f"{pid}.json"
-        verdict = _load(verdict_path) if pid and verdict_path.exists() else None
+        verdicts = load_verdicts(run_dir, pid, result["author"], legacy_audit) if pid else {}
+        verdict = combine(verdicts, result["author"]) if pid else None
         kind = labs[result["item_id"]]["kind"]
-        cls = classify(result, bool(verdict and verdict["pass"]), kind, audited=verdict is not None)
-        origins = unit_origins(d, verdict)
+        session = (AssistSession.from_ledger(_load(d / "session.json"), verify=False)
+                   if (d / "session.json").exists() else None)
+        checks = session_checks(session, item, result.get("finish")) if session else None
+        cls = classify(result, bool(verdict and verdict["pass"]), kind, checks,
+                       labs[result["item_id"]]["acceptable_locations"], audited=verdict is not None)
+        origins = unit_origins(session, verdict)
         row = {**{k: result[k] for k in ("split", "author", "arm", "item_id", "stop_reason", "turns", "tool_calls")},
-               "kind": kind, "spent_usd": result["spent_usd"]["total"], "audited": verdict is not None,
-               "auditor": (verdict or {}).get("auditor"), "auditor_model": (verdict or {}).get("auditor_model"),
+               "author_role": ROLES.get(result["author"], "other"),
+               "spent_usd": result["spent_usd"]["total"], "spend_all_attempts": all_attempts_spend(run_dir, d, result),
+               "audited": verdict is not None, "auditors": sorted(verdicts),
+               "audit_disagreement": bool(verdict and verdict["disagreement"]),
+               "legacy_audit_proxy": bool(verdict and verdict["legacy_proxy"]),
                "verified": bool((result.get("verification") or {}).get("ok")),
                "tool_success_strict": bool(result.get("tool_success_strict")),
                "proposer_model": result.get("proposer_model"), "account": result.get("account"),
                "provenance": (result.get("status") or {}).get("provenance"),
-               **cls, "failing_units": origins, "attribution": attribute(result, verdict, cls, origins)}
-        if kind != "benign" and (result.get("finish") or {}).get("verdict") == "gap":
-            located = _paragraphs(d, result["finish"].get("gap_steps", []))
-            row["gap_paragraphs"] = sorted(located)
-            row["gap_located"] = any(set(loc) == located for loc in labs[result["item_id"]]["acceptable_locations"])
+               **({"proposer_uptake": _uptake(session)} if result["arm"] == "A4" else {}),
+               **cls, "checks": {k: v for k, v in (checks or {}).items() if k != "violations"},
+               "failing_units": origins, "attribution": attribute(result, verdict, cls, origins)}
         rows.append(row)
         if pid:
             packet = _load(run_dir / "audit" / "packets" / f"{pid}.json")
             chosen = packet["units"] if row["tool_success"] else rng.sample(
                 packet["units"], min(SPOT_PER_PACKET, len(packet["units"])))
             for unit in chosen:
-                spot.append({"packet": pid, **unit, "auditor_verdict": (verdict or {}).get("units", {}).get(unit["unit"]),
+                spot.append({"packet": pid, **unit,
+                             "auditor_verdicts": {w: v.get("units", {}).get(unit["unit"]) for w, v in verdicts.items()},
                              "reason_selected": "tool-certified session" if row["tool_success"] else "random sample"})
     groups = {}
     for r in rows:
@@ -366,22 +512,33 @@ def report(run_dir):
         n = len(rs)
         count = lambda key, sub=rs: sum(bool(r.get(key)) for r in sub)
         benign = [r for r in rs if r["kind"] == "benign"]
-        table.append({"split": split, "author": author, "arm": arm, "n": n,
-                      "tool_success": count("tool_success"), "audit_pass": count("audit_pass"),
-                      "certified_faithful": count("certified_faithful"),
-                      "certified_faithful_benign": f"{count('certified_faithful', benign)}/{len(benign)}",
-                      "certified_unfaithful": count("certified_unfaithful"),
-                      "faithful_complete": count("faithful_complete"),
-                      "flawed_certified_alarm": count("flawed_certified_alarm"),
-                      "gap_located": count("gap_located"),
-                      "mean_spent_usd": round(sum(float(r["spent_usd"]) for r in rs) / n, 4),
-                      "total_spent_usd": round(sum(float(r["spent_usd"]) for r in rs), 4),
-                      "audited": count("audited"), "verified": count("verified"),
-                      "tool_success_strict": count("tool_success_strict"),
-                      "attribution": dict(sorted(Counter(r["attribution"] for r in rs if r["attribution"]).items()))})
-    out = {"a1": A1_CITATION, "table": table, "rows": rows}
-    (run_dir / "report.json").write_text(json.dumps(out, indent=1))
-    with (run_dir / "audit-spotcheck.jsonl").open("w") as f:
+        spend = [float(r["spend_all_attempts"]["total_usd"]) for r in rs]
+        row = {"split": split, "author": author, "author_role": ROLES.get(author, "other"), "arm": arm, "n": n,
+               "tool_success": count("tool_success"), "audit_pass": count("audit_pass"),
+               "certified_faithful": count("certified_faithful"),
+               "certified_faithful_benign": f"{count('certified_faithful', benign)}/{len(benign)}",
+               "certified_unfaithful": count("certified_unfaithful"),
+               "faithful_complete": count("faithful_complete"),
+               "flawed_certified_alarm": count("flawed_certified_alarm"),
+               "gap_located": count("gap_located"), "violations": sum(bool(r["violations"]) for r in rs),
+               "mean_spent_usd": round(sum(spend) / n, 4), "total_spent_usd": round(sum(spend), 4),
+               "over_budget_items": sum(r["spend_all_attempts"]["over_budget"] for r in rs),
+               "audited": count("audited"), "audit_disagreement": count("audit_disagreement"),
+               "legacy_audit_proxy": count("legacy_audit_proxy"), "verified": count("verified"),
+               "tool_success_strict": count("tool_success_strict"),
+               "attribution": dict(sorted(Counter(r["attribution"] for r in rs if r["attribution"]).items()))}
+        if arm == "A4":
+            used = sum(1 for r in rs if r["proposer_uptake"]["propose_ok"])
+            row["proposer"] = f"proposer offered, uptake {used}/{n} sessions"
+            row["arm_role"] = "exploratory"
+        table.append(row)
+    splits = sorted({r["split"] for r in rows})
+    out = {"a1": A1_CITATION, "scoring": "ve-assist-eval-scoring@2 (W allowlist, dossier graph checks, gap route, "
+           "dual audit for Gemini)" + (" -- LEGACY AUDIT PROXY: one pre-v4 verdict per packet stands in for every "
+           "required auditor" if legacy_audit else ""),
+           "primary": [primary(rows, sp) for sp in splits], "table": table, "rows": rows}
+    (out_dir / "report.json").write_text(json.dumps(out, indent=1))
+    with (out_dir / "audit-spotcheck.jsonl").open("w") as f:
         for row in spot:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
     return out

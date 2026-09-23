@@ -1,11 +1,14 @@
 """Author (and auditor) model backends with per-call cost and a pre-call ceiling.
 
 ``ClaudeTextAuthor``: the audited claude CLI endpoint (ve_experiments.claude_cli,
-account saeedi.danial, CLAUDE_CODE_NO_MODEL_FALLBACK=1). The endpoint is
+the main account = the default Claude configuration directory unless a label is
+given, CLAUDE_CODE_NO_MODEL_FALLBACK=1). The endpoint is
 single-turn with native tools disabled, so each author turn is one fresh CLI
 call whose user message is the whole transcript so far, and tool calls travel
 as a JSON block in the reply text (``parse_text_calls``). Costed at API list
-price with the CLI's cache breakdown.
+price with the CLI's cache breakdown; the tokens of every earlier attempt of the
+same call (``prior_attempts``: infrastructure retries) and of a call that failed
+with an infrastructure error are charged too.
 
 ``GeminiAuthor``: Vertex gemini-3.1-pro-preview through ve_experiments.paid
 (durable dollar reservations, fail-closed ledger), native function calling
@@ -27,7 +30,7 @@ import re
 from .pricing import ceiling as price_ceiling, claude_cost, gemini_cost
 
 CLAUDE_MODELS = {"opus": "claude-opus-5-5", "haiku": "claude-haiku-4-5-20251001"}
-DEFAULT_ACCOUNT = "saeedi.danial"
+DEFAULT_ACCOUNT = None  # the main account (default Claude configuration directory)
 CHARS_PER_TOKEN = 3  # conservative estimate for ceilings (JSON-heavy text)
 
 
@@ -36,7 +39,19 @@ class AuthorError(RuntimeError):
 
 
 class AuthorAbort(RuntimeError):
-    """Infrastructure or accounting failure: stop the session without a verdict."""
+    """Infrastructure or accounting failure: stop the session without a verdict. ``cost`` is what the
+    failed call itself spent (charged to the attempt)."""
+
+    def __init__(self, message, cost=Decimal(0)):
+        super().__init__(message)
+        self.cost = cost
+
+
+def attempts_cost(model, attempts):
+    """List price of earlier attempts ({input_tokens, output_tokens}, None counted as 0), all input uncached."""
+    return sum((claude_cost(model, {"input_tokens": a.get("input_tokens") or 0,
+                                    "output_tokens": a.get("output_tokens") or 0})
+                for a in attempts or [] if type(a) is dict), Decimal(0))
 
 
 @dataclass
@@ -137,11 +152,19 @@ class ClaudeTextAuthor:
         try:
             row = self.client.sample(call_id, self.system, self.prompt(history), 0)
         except InfrastructureError as exc:
-            raise AuthorAbort(f"infrastructure: {exc}") from exc
+            spent = getattr(exc, "usage", None)
+            spent = spent if type(spent) is dict else {}
+            cost = attempts_cost(self.model, ([] if spent.get("not_started") else [spent])
+                                 + list(spent.get("prior_attempts") or []))
+            raise AuthorAbort(f"infrastructure: {exc}", cost) from exc
         except EndpointError as exc:
-            # The call may have been served (e.g. truncated at the output cap): charge the ceiling.
-            return Turn("", [], self.ceiling(history), {}, protocol_error=f"endpoint rejected the reply: {exc}")
-        cost = claude_cost(self.model, row["usage"])
+            # The call may have been served (e.g. truncated at the output cap): charge the ceiling, plus
+            # any earlier attempts of the call.
+            spent = getattr(exc, "usage", None)
+            prior = attempts_cost(self.model, spent.get("prior_attempts")) if type(spent) is dict else Decimal(0)
+            return Turn("", [], self.ceiling(history) + prior, {},
+                        protocol_error=f"endpoint rejected the reply: {exc}")
+        cost = claude_cost(self.model, row["usage"]) + attempts_cost(self.model, row.get("prior_attempts"))
         usage = {"input_tokens": row["input_tokens"], "output_tokens": row["output_tokens"],
                  "cache_read_input_tokens": row["usage"].get("cache_read_input_tokens", 0),
                  "cache_creation_input_tokens": row["usage"].get("cache_creation_input_tokens", 0)}
@@ -173,6 +196,7 @@ class GeminiAuthor:
         self.output_tokens = output_tokens
         self.max_input_tokens = max_input_tokens
         self.backend = backend or VertexBackend()
+        self.ledger_path = Path(ledger)
         self.client = client or PaidClient(self.backend, Ledger(ledger, cap_usd), reuse_completed=True)
         self.tools = []
 
@@ -225,7 +249,9 @@ class GeminiAuthor:
         except BudgetExceeded as exc:
             raise AuthorAbort(f"run cap: {exc}") from exc
         except InfrastructureError as exc:
-            raise AuthorAbort(f"infrastructure: {exc}") from exc
+            # A 5xx/timeout may or may not be billed: the paid ledger holds the call's ceiling as
+            # infrastructure overhead. Charge those holds to this attempt (fail closed).
+            raise AuthorAbort(f"infrastructure: {exc}", self.holds(call_id)) from exc
         except PreflightError as exc:
             raise AuthorAbort(f"paid ledger: {exc}") from exc
         cost = gemini_cost(reply.input_tokens, reply.billed_output_tokens)
@@ -240,6 +266,17 @@ class GeminiAuthor:
         if not calls:
             error = f"no function call in the reply (finish_reason {reply.finish_reason})"
         return Turn(reply.text, calls, cost, usage, protocol_error=error, raw={"assistant": assistant})
+
+    def holds(self, identity):
+        """Unknown-billing holds the paid ledger recorded for ``identity`` (0 for a rejected 429)."""
+        if not self.ledger_path.exists():
+            return Decimal(0)
+        total = Decimal(0)
+        for line in self.ledger_path.read_text(encoding="utf-8").splitlines():
+            row = json.loads(line) if line.strip() else {}
+            if row.get("identity") == identity and row.get("event") == "infrastructure_failure":
+                total += Decimal(str(row.get("infrastructure_hold_usd") or 0))
+        return total
 
     @staticmethod
     def function_responses(calls, results):

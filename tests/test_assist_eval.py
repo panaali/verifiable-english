@@ -144,7 +144,7 @@ def test_a4_proposer_is_charged_to_the_same_budget(tmp_path):
     # the fake proposer wrote no calls ledger: verify_session rejects the recorded call, so no success
     assert not result["verification"]["ok"] and result["tool_success"] is False
     assert any("calls ledger" in p for p in result["verification"]["problems"])
-    assert result["proposer_model"] == "haiku"
+    assert result["proposer_model"] == "haiku" and result["account"] is None  # main account by default
 
 
 def test_eval_success_tolerates_only_given_waivers():
@@ -265,6 +265,13 @@ def test_gemini_wiring_function_calls_and_responses(tmp_path):
     assert vertex_tools([prompts.FINISH_TOOL])[0]["name"] == "finish"
 
 
+@pytest.fixture(autouse=True)
+def demo_item(monkeypatch):
+    """The audit/report layer looks items up by id; the synthetic ITEM is not a registered item."""
+    real = audit._item_for
+    monkeypatch.setattr(audit, "_item_for", lambda result: ITEM if result["item_id"] == "demo" else real(result))
+
+
 def test_audit_packet_is_blind_and_judged_conservatively(tmp_path):
     author = FakeAuthor([block({"calls": GOOD_CALLS})])
     run(tmp_path, author, max_turns=1)
@@ -274,6 +281,8 @@ def test_audit_packet_is_blind_and_judged_conservatively(tmp_path):
         assert leak not in text
     kinds = {u["sentence"]: u["kind"] for u in packet["units"]}
     assert kinds == {"n00.1": "formalised", "n00.2": "waiver", "r01.1": "formalised", "n02.1": "formalised"}
+    waiver = next(u for u in packet["units"] if u["kind"] == "waiver")
+    assert waiver["code"] == "declared" and "Only lists" not in text  # W code, never the author's reason
     target_unit = next(u for u in packet["units"] if u["sentence"] == "n02.1")
     assert target_unit["formalisation"][0].startswith("(frozen conclusion)")
     good = {"units": [{"unit": u["unit"], "verdict": "faithful" if u["kind"] == "formalised" else "acceptable"}
@@ -288,16 +297,25 @@ def test_classify_endpoints():
     status = {"targets": [{"id": "t", "text": "x", "certified": False, "reason": None}],
               "unproved_steps": [{"node": "s3"}], "unanchored_assumptions": [], "uncovered": [],
               "renamed_conclusions": []}
-    gap = {"tool_success": False, "status": status, "finish": {"verdict": "gap", "gap_steps": ["s3"]}}
-    assert audit.classify(gap, True, "shift")["faithful_complete"]
-    assert not audit.classify(gap, True, "benign")["faithful_complete"]
-    done = {"tool_success": True, "status": {**status, "unproved_steps": []}, "finish": None}
-    assert audit.classify(done, False, "benign")["certified_unfaithful"]
-    assert audit.classify(done, True, "smuggle")["flawed_certified_alarm"]
-    assert audit.auditor_for("opus") == "codex" and audit.auditor_for("haiku") == "codex"
-    assert audit.auditor_for("gemini") == "opus"
+    clean = {"violations": [], "claimed_without_step": [], "gap_steps": ["s3"], "non_gap_uncertified": [],
+             "gap_not_refuted": [], "gap_repairable_from_dossier": [], "gap_paragraphs": ["n14"]}
+    loc = [["n14"], ["n15", "n14"]]
+    gap = {"tool_success": False, "status": status, "finish": {"verdict": "gap", "gap_steps": ["s3"]},
+           "verification": {"ok": True}}
+    assert audit.classify(gap, True, "shift", clean, loc)["faithful_complete"]
+    assert not audit.classify(gap, True, "benign", clean, loc)["faithful_complete"]
+    assert not audit.classify(gap, True, "shift", {**clean, "gap_paragraphs": ["n02"]}, loc)["faithful_complete"]
+    assert not audit.classify({**gap, "verification": {"ok": False}}, True, "shift", clean, loc)["faithful_complete"]
+    done = {"tool_success": True, "status": {**status, "unproved_steps": []}, "finish": None,
+            "verification": {"ok": True}}
+    assert audit.classify(done, False, "benign", clean, loc)["certified_unfaithful"]
+    assert audit.classify(done, True, "smuggle", clean, loc)["flawed_certified_alarm"]
+    # a dossier violation voids tool success
+    assert not audit.classify(done, True, "benign", {**clean, "violations": ["waiver outside W: r1"]},
+                              loc)["tool_success"]
+    assert audit.auditors_for("opus") == ["codex"] and audit.auditors_for("gemini") == ["codex", "opus"]
     # an unaudited certified session is not counted as certified-unfaithful
-    assert not audit.classify(done, False, "benign", audited=False)["certified_unfaithful"]
+    assert not audit.classify(done, False, "benign", clean, loc, audited=False)["certified_unfaithful"]
 
 
 class FakeCompleted:
@@ -358,8 +376,8 @@ def test_audit_run_logs_errors_and_report_attributes_failures(tmp_path):
     assert "ledger halted" in (run_dir / "audit" / "errors.jsonl").read_text()
     # the auditor rejects the proposer-accepted fact: attributed to the proposer
     reply = lambda prompt: block({"units": [
-        {"unit": u["unit"], "verdict": "unfaithful" if u["sentence"] == "n00.1" else "faithful"}
-        for u in _packet_units(prompt)]})
+        {"unit": u["unit"], "verdict": "unfaithful" if u["sentence"] == "n00.1" else
+         "faithful" if u["kind"] == "formalised" else "acceptable"} for u in _packet_units(prompt)]})
     assert audit.run_audit(run_dir, auditors={"codex": ScriptedAuditor(reply)}) == 0
     verdict = json.loads(next((run_dir / "audit" / "verdicts").glob("*.json")).read_text())
     assert verdict["auditor"] == "codex" and verdict["auditor_model"] == "scripted" and not verdict["pass"]
@@ -372,8 +390,9 @@ def test_audit_run_logs_errors_and_report_attributes_failures(tmp_path):
         mod.labels = original
     assert row["attribution"] == "ledger-verification"  # the fake proposer has no calls ledger
     failing = row["failing_units"]
-    assert [u["origins"] for u in failing.values()] == [["proposer-verbatim"]]
-    cls = {"faithful_complete": False, "flawed_certified_alarm": False}
+    # n00.1 was the proposer's; r01.1 was omitted and is outside W (fails deterministically, no origin)
+    assert {u["sentence"]: u["origins"] for u in failing.values()} == {"n00.1": ["proposer-verbatim"], "r01.1": []}
+    cls = {"faithful_complete": False, "flawed_certified_alarm": False, "kind": "benign", "violations": []}
     ok = {"stop_reason": "finish", "verification": {"ok": True}}
     assert audit.attribute(ok, {"pass": False}, cls, failing) == "audit-fail: proposer candidate accepted unchanged"
     hand = {"u9": {"verdict": "unfaithful", "origins": ["hand-written"]}}
@@ -393,9 +412,12 @@ def test_empty_packet_fails_without_an_auditor_call(tmp_path):
     SessionRun(ITEM, split="dev", author_name="gemini", author=FakeAuthor([]), arm="A3", out_dir=out,
                limits=Limits(budget_usd=2.0, max_turns=0)).run()
     audit.export(run_dir)
-    assert audit.run_audit(run_dir, auditors={}) == 0
-    verdict = json.loads(next((run_dir / "audit" / "verdicts").glob("*.json")).read_text())
-    assert verdict["pass"] is False and verdict["auditor"] is None
+    never = ScriptedAuditor(reply=lambda prompt: pytest.fail("an empty packet must not reach an auditor"))
+    assert audit.run_audit(run_dir, auditors={"codex": never, "opus": never}) == 0
+    verdicts = [json.loads(p.read_text()) for p in (run_dir / "audit" / "verdicts").glob("*.json")]
+    # a Gemini packet needs both auditors; an empty packet fails for each without a call
+    assert sorted(v["auditor"] for v in verdicts) == ["codex", "opus"]
+    assert all(v["pass"] is False and v["auditor_model"] is None for v in verdicts)
 
 
 def test_gemini_margin_covers_undercounted_tool_declarations():

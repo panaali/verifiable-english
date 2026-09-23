@@ -14,21 +14,25 @@ Every session's final ledger (and every A2 attempt ledger) is checked with
 session's dedicated proposer calls ledger; a ledger that does not verify is
 never a tool success.
 
-Evaluation success rule. The fixed tool reports any waiver of an asserting
-sentence as "never success". Every P5 dossier has given sentences that are
-meta-statements about the premise set ("Rules r00, r14 are declared.", "The
-checks that ... remain unassumed.") and that no VE statement states faithfully.
+Evaluation success rule (``scoring.eval_success``). The fixed tool reports any
+waiver of an asserting sentence as "never success". Every P5 dossier has given
+sentences that no VE statement states faithfully ("Rules r00, r14 are
+declared.", "The checks that ... remain unassumed.", "The sample from lot ...").
 ``tool_success`` in this evaluation is therefore: the tool's status is success,
-OR its ONLY failure is the waiver line and every waived sentence is GIVEN (a
-claimed sentence may never be waived); the waivers then go to the blind audit
-as units that must be judged "acceptable". ``tool_success_strict`` records the
-tool's own verdict.
+OR its ONLY failure is the waiver line and every waived sentence is in the
+preregistered allowlist W(item) (``dossier.py``, hashed as ``waivers.json``),
+AND the dossier graph checks pass (no anchor on a waive-only sentence, every
+given-anchored assumption states its anchor's content, no assumed "remain
+unassumed" check). ``tool_success_strict`` records the tool's own verdict.
 
 Budget (identical for every arm and author): a hard per-item dollar cap on
-TOTAL spend (author + proposer). Before each author call the harness computes
-that call's worst-case cost (all input uncached, full output allowance) and
-stops if spent + ceiling would exceed the cap; proposer calls are gated the
-same way. Turn and tool-call caps are secondary safety limits.
+TOTAL spend (author + proposer) over EVERY attempt at the item: a session
+restarted after an infrastructure abort starts with the aborted attempts'
+spend already charged (``prior_spent``), and an item whose budget is exhausted
+stops ("budget"); it is never reset. Before each author call the harness
+computes that call's worst-case cost (all input uncached, full output
+allowance) and stops if spent + ceiling would exceed the cap; proposer calls are
+gated the same way. Turn and tool-call caps are secondary safety limits.
 """
 from __future__ import annotations
 
@@ -36,16 +40,16 @@ from dataclasses import dataclass, asdict
 from decimal import Decimal
 import json
 import os
-import re
 from pathlib import Path
 import time
 
 from ve.assist import AssistSession, call_tool, source_from_p5, tool_schemas, verify_session
 from ve.assist.proposer import build_prompt
 
-from . import prompts
+from . import dossier, prompts
 from .authors import AuthorAbort, GeminiAuthor, last_json_block
 from .pricing import ceiling as price_ceiling, claude_cost
+from .scoring import WAIVER_FAILURE, eval_success as _eval_success
 
 ARMS = {"A2": {"tools": False, "proposer": False},
         "A3": {"tools": True, "proposer": False},
@@ -53,7 +57,6 @@ ARMS = {"A2": {"tools": False, "proposer": False},
 MAX_RESULT_CHARS = 8000
 ARM_OPTIONS = {"premise_suggestions": False}
 DEFAULT_PROPOSER = "haiku"
-WAIVER_FAILURE = re.compile(r"\d+ asserting sentence\(s\) waived ")
 
 
 @dataclass
@@ -81,16 +84,23 @@ def new_session(item, *, author, arm, split):
                                 options=dict(ARM_OPTIONS), metadata=metadata)
 
 
-def eval_success(status):
-    """(strict, evaluation) success; see the module docstring."""
-    if not status:
-        return False, False
-    strict = bool(status["success"])
-    waivers = status.get("waivers") or []
-    blocking = [w for w in waivers if w.get("counts_against_success")]
-    only_waivers = (bool(blocking) and all(w["role"] == "given" for w in blocking)
-                    and all(WAIVER_FAILURE.match(f) for f in status["failures"]))
-    return strict, strict or only_waivers
+def eval_success(status, session=None, item=None):
+    """(strict, evaluation) success; see the module docstring. With ``session`` and ``item`` the waivers must
+    lie in W(item) and the dossier graph checks must pass."""
+    if session is None or item is None:
+        return _eval_success(status)
+    return _eval_success(status, dossier.graph_violations(session, item), dossier.allowlist(item))
+
+
+def neutral_violations(session, item, status):
+    """Violations the author may see during a session. Anchor and assumption checks concern only the given
+    sentences' own content (flaw-neutral). Waivers outside W are shown only once they are the sole remaining
+    obstacle (W marks rules whose conditions are underivable, so earlier feedback could hint at derivability)."""
+    rows = dossier.graph_violations(session, item)
+    shown = [v for v in rows if not v.startswith("waiver outside W")]
+    if status and all(WAIVER_FAILURE.match(f) for f in status["failures"]) and not shown:
+        shown = rows
+    return shown
 
 
 def verify_ledger(ledger, item, calls_path):
@@ -118,9 +128,9 @@ class CostedProposer:
     """``ClaudeProposer`` backend (``model`` haiku/sonnet/opus) that also prices each call at list price,
     including failed calls and earlier infrastructure attempts (tokens spent are always charged)."""
 
-    def __init__(self, ledger, account, model=DEFAULT_PROPOSER):
+    def __init__(self, ledger, account, model=DEFAULT_PROPOSER, max_calls=None):
         from ve_experiments.assist_haiku import ClaudeProposer
-        self.inner = ClaudeProposer(ledger, model=model, account=account)
+        self.inner = ClaudeProposer(ledger, model=model, account=account, max_calls=max_calls)
         self.inner.client.infrastructure_retries = True
         self.model, self.model_id = self.inner.model, self.inner.model_id
         self.costs = []
@@ -227,6 +237,9 @@ def evaluate_document(item, doc, frozen, *, author, split, attempt):
         checks.append(view)
     status = session.apply("status")
     diag.update(node_errors=node_errors, checks=checks, status=compact_status(status))
+    shown = neutral_violations(session, item, status)
+    if shown:
+        diag["evaluation_violations"] = shown
     return session, diag, frozen
 
 
@@ -234,13 +247,15 @@ def evaluate_document(item, doc, frozen, *, author, split, attempt):
 
 class SessionRun:
     def __init__(self, item, *, split, author_name, author, arm, out_dir, limits=Limits(),
-                 account=None, proposer_factory=None, proposer_model=DEFAULT_PROPOSER, restart=0):
+                 account=None, proposer_factory=None, proposer_model=DEFAULT_PROPOSER, restart=0,
+                 prior_spent=Decimal(0)):
         if arm not in ARMS:
             raise ValueError(f"unknown arm {arm}")
         self.item, self.split, self.author_name, self.author, self.arm = item, split, author_name, author, arm
         self.out = Path(out_dir)
         self.limits = limits
-        self.spent = {"author": Decimal(0), "proposer": Decimal(0)}
+        # Spend of earlier (aborted) attempts at this item counts against the same budget.
+        self.spent = {"author": Decimal(0), "proposer": Decimal(0), "prior_attempts": Decimal(str(prior_spent))}
         self.turns = self.tool_calls = self.protocol_errors = 0
         self.history = []
         self.session = new_session(item, author=author_name, arm=arm, split=split)
@@ -268,7 +283,7 @@ class SessionRun:
     # -- accounting
     @property
     def total(self):
-        return self.spent["author"] + self.spent["proposer"]
+        return self.spent["author"] + self.spent["proposer"] + self.spent["prior_attempts"]
 
     def state(self):
         return {"spent": float(self.total), "budget": self.limits.budget_usd, "tool_calls": self.tool_calls,
@@ -303,10 +318,12 @@ class SessionRun:
                                                "message": 'finish needs verdict "complete" or "gap"'}}
             if args["verdict"] == "complete":
                 status = self.session.apply("status")
-                if not eval_success(status)[1]:
+                if not eval_success(status, self.session, self.item)[1]:
+                    extra = neutral_violations(self.session, self.item, status)
                     return {"ok": False, "error": {"code": "NotComplete", "message":
-                            'finish "complete" refused: status is not success (apart from waivers of given '
-                            'sentences). Remaining failures: ' + "; ".join(status["failures"])[:1500]}}
+                            'finish "complete" refused: status is not success (apart from permitted waivers of '
+                            'given sentences) or an evaluation check fails. Remaining failures: '
+                            + "; ".join(status["failures"] + extra)[:1500]}}
             self.finish = {"verdict": args["verdict"], "gap_steps": list(args.get("gap_steps") or []),
                            "note": str(args.get("note") or "")[:1000]}
             return {"ok": True, "finished": self.finish["verdict"]}
@@ -319,6 +336,10 @@ class SessionRun:
         result = call_tool(self.session, name, args)
         if self.proposer:
             self.spent["proposer"] += sum(self.proposer.costs[before:], Decimal(0))
+        if name == "status" and type(result) is dict and result.get("ok", True) is not False:
+            shown = neutral_violations(self.session, self.item, result.get("status", result))
+            if shown:
+                result = {**result, "evaluation_violations": shown}
         return result
 
     # -- turns
@@ -364,6 +385,7 @@ class SessionRun:
                         reason = "success"
         except AuthorAbort as exc:
             reason = "abort: " + str(exc)
+            self.spent["author"] += getattr(exc, "cost", Decimal(0))  # tokens the failed call spent
         final = self.a2_session if self.arm == "A2" else self.session
         status = final.apply("status") if final is not None else None
         verification = None
@@ -376,7 +398,7 @@ class SessionRun:
                        if not verify_ledger(json.loads(p.read_text(encoding="utf-8")), self.item,
                                             self.calls_path)["ok"]]
                 verification["attempts_failing"] = bad
-        strict, success = eval_success(status)
+        strict, success = eval_success(status, final, self.item) if final is not None else (False, False)
         verified = bool(verification and verification["ok"])
         result = {"item_id": self.item["id"], "split": self.split, "author": self.author_name, "arm": self.arm,
                   "stop_reason": reason, "finish": self.finish, "turns": self.turns, "tool_calls": self.tool_calls,
@@ -387,7 +409,8 @@ class SessionRun:
                   "verification": verification, "proposer_model": self.proposer_model,
                   "account": self.account,
                   "status": compact_status(status) if status else None,
-                  "restart": self.restart, "elapsed_s": round(time.monotonic() - start, 1), "prompt_version": prompts.PROMPT_VERSION}
+                  "restart": self.restart, "prior_attempts_spent_usd": str(self.spent["prior_attempts"]),
+                  "elapsed_s": round(time.monotonic() - start, 1), "prompt_version": prompts.PROMPT_VERSION}
         self._write("result.json", result)
         return result
 
@@ -447,7 +470,7 @@ class SessionRun:
         else:
             self.a2_session = session
             self._write(f"attempt-{self.turns:03d}.json", session.to_ledger())
-            self.a2_last_success = eval_success(diag.get("status"))[1]
+            self.a2_last_success = eval_success(diag.get("status"), session, self.item)[1]
             fin = doc.get("finish")
             if type(fin) is dict and fin.get("verdict") == "complete" and not self.a2_last_success:
                 diag["finish_refused"] = ('"complete" refused: this document does not pass every check '

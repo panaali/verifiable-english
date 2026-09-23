@@ -11,7 +11,7 @@ import json
 
 from ve.assist.proposer import GRAMMAR
 
-PROMPT_VERSION = "ve-assist-eval-prompts@3"
+PROMPT_VERSION = "ve-assist-eval-prompts@4"
 
 TASK = """You are formalising an English argument into Verifiable English (VE), a small
 first-order logic with a checker. You receive the argument split into
@@ -26,19 +26,25 @@ What a finished formalisation contains:
    first and never changed afterwards.
 2. NODES. Each node is ONE VE statement anchored to the sentence id(s) it
    formalises. A node without parents is an assumption; an assumption must be
-   anchored to a GIVEN sentence that states it. A node with parents is a step:
+   anchored to a GIVEN sentence that states it: the harness checks that the
+   given sentence's own content entails the assumption, so citing a sentence
+   is not enough. A node with parents is a step:
    it must follow logically from its parents, and the checker certifies this
    (or returns a countermodel: a situation where every parent is true and the
    step is false).
 3. COVERAGE: every claimed sentence is DERIVED: a certified step anchored to
    it states its conclusion. A claimed sentence may never be waived. Every
-   given sentence is covered by a node anchored to it, or WAIVED with a reason
-   when no statement can or need state it: a sentence that only lists which
-   rules are declared, a sentence saying which checks remain unassumed, or a
-   fact or rule the argument never uses. The checker's status lists any waiver
-   as a failure ("asserting sentence(s) waived"); in this task that failure
-   ALONE is acceptable when every waived sentence is given, and each waiver is
-   audited.
+   given sentence is covered by a node anchored to it, or WAIVED. Only these
+   given sentences may be waived (a fixed allowlist computed from the text;
+   any other waiver fails the item): a sentence that only lists which rules
+   are declared; a sentence saying which checks remain unassumed (those checks
+   may still never be assumed); a statement about which sample comes from
+   which lot; a fact that no usable rule and no claimed sentence uses; a rule
+   whose conditions can never be established from the given facts and on
+   which no claimed sentence relies. Never anchor a node to a sentence of the
+   first three kinds. The checker's status lists any waiver as a failure
+   ("asserting sentence(s) waived"); in this task that failure ALONE is
+   acceptable when every waived sentence is on the allowlist.
 4. A certified chain from anchored assumptions to a step that states each
    frozen target exactly.
 
@@ -56,7 +62,10 @@ needs a different sense of the same word is a gap. Never add a premise that
 no given sentence states: an unanchored assumption that a certified step
 depends on fails the item. The argument itself MAY be flawed. If a claimed
 step does not follow when faithfully formalised, do not force it: leave it
-unproved and finish with verdict "gap", naming the step node(s).
+unproved and finish with verdict "gap", naming the step node(s). A gap counts
+only when every claimed sentence has its own step, every step you do not name
+is certified, and each named step was checked and refuted by a countermodel
+(an unchecked or undecided step is not a gap).
 """
 
 GUIDE = GRAMMAR.replace("Use ONLY the sorts, predicates and constants listed below. Where a word has\n"
@@ -172,7 +181,9 @@ AUDIT_INSTRUCTIONS = """Below is an English argument split into sentences (with 
 predicate senses, and for each sentence the formal statement(s) someone wrote
 for it, shown as deterministic English paraphrases (sense names appear in the
 predicate names, e.g. ready_packing_completed). Some sentences were instead
-WAIVED with a reason, and some were left without any formalisation.
+WAIVED, and some were OMITTED (left without any formalisation). The glossary
+comes from the dossier; any "author_declared" entries were written by the
+author and are not part of the dossier.
 
 For each unit judge fidelity only:
 - A formalised sentence is "faithful" if the paraphrase(s) together say what the
@@ -189,9 +200,14 @@ For each unit judge fidelity only:
   several sentences jointly: it is faithful for THIS sentence only if it states
   this sentence's content correctly; a statement that states only some other
   sentence's conclusion does not formalise this one (unfaithful).
-- A waiver is "acceptable" if the sentence asserts nothing the argument's
-  reasoning relies on (e.g. a list of declared rule names, a statement of which
-  checks remain unassumed, a fact never used).
+- A formalised unit may list "reasons": the sentences whose statements the
+  step was derived from. Judge whether they are the reasons this sentence
+  itself gives (or the given records those reasons rest on); a step that
+  uses a reason the sentence does not give is "unfaithful".
+- A waiver or omission unit shows an allowlist CODE with a fixed description.
+  It is "acceptable" only if the sentence really is of that kind, and
+  "unacceptable" if it asserts something the stated reasoning relies on. An
+  omitted sentence with no code is "unacceptable".
 Use "unfaithful"/"unacceptable" when something is wrong, "unclear" only when
 the sentence itself is too ambiguous to judge.
 
