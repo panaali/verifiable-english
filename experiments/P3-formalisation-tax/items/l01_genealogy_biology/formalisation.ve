@@ -1,0 +1,1 @@
+not (there exists atom p, ((p is sig_person) and (tc[f_parents](p, p)))).

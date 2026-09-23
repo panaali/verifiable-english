@@ -1,0 +1,7 @@
+[
+ {
+  "name": "plus-as-star",
+  "description": "`n.^(b.addr)` written with reflexive closure.",
+  "ve": "(@t is sig_addr) and (rtc[atom a, c | (there exists tuple u, ((u t_addr_1 @b) and ((u t_addr_2 a) and (u t_addr_3 c))))](@n, @t)).\n"
+ }
+]

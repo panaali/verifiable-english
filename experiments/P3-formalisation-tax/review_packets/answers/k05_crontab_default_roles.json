@@ -1,0 +1,14 @@
+{"answers": [
+ {"n": 0, "answer": true, "why": "admin aggregates aggregate-cron-tabs-edit (get); ana bound to admin in team-a"},
+ {"n": 1, "answer": true, "why": "admin includes delete on crontabs via aggregate-cron-tabs-edit; team-a binding"},
+ {"n": 2, "answer": true, "why": "edit aggregates aggregate-cron-tabs-edit (create); ed bound in team-a"},
+ {"n": 3, "answer": true, "why": "view aggregates aggregate-cron-tabs-view (list); vic bound in team-a"},
+ {"n": 4, "answer": false, "why": "view only has get/list/watch on crontabs; no create"},
+ {"n": 5, "answer": false, "why": "vic's RoleBinding is scoped to team-a only"},
+ {"n": 6, "answer": false, "why": "ed's RoleBinding is scoped to team-a only"},
+ {"n": 7, "answer": true, "why": "admin includes patch on crontabs; team-a binding"},
+ {"n": 8, "answer": false, "why": "cluster-wide (namespace empty) watch needs ClusterRoleBinding; vic only has a namespaced RoleBinding"},
+ {"n": 9, "answer": false, "why": "ana's RoleBinding is scoped to team-a only"}
+],
+"confidence": "high",
+"notes": "Aggregation: admin <- {aggregate-cron-tabs-edit, edit}; edit <- {aggregate-cron-tabs-edit, view}; view <- {aggregate-cron-tabs-view}. Nested aggregation irrelevant since crontab rules reach each role directly. Only RoleBindings in team-a exist, so other namespaces and cluster-scope requests are denied."}

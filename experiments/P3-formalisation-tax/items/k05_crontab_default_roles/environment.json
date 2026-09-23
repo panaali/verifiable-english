@@ -1,0 +1,205 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "role": {
+    "description": "A Role or ClusterRole object."
+   },
+   "binding": {
+    "description": "A RoleBinding or ClusterRoleBinding object."
+   },
+   "rule": {
+    "description": "One PolicyRule of a role."
+   },
+   "sel": {
+    "description": "One label selector of an aggregationRule."
+   },
+   "str": {
+    "description": "A string occurring in the objects or request."
+   }
+  },
+  "predicates": {
+   "is_role": {
+    "arguments": [
+     "role"
+    ],
+    "description": "Object is a namespaced Role."
+   },
+   "is_clusterrole": {
+    "arguments": [
+     "role"
+    ],
+    "description": "Object is a ClusterRole."
+   },
+   "role_name": {
+    "arguments": [
+     "role",
+     "str"
+    ],
+    "description": "metadata.name of the role."
+   },
+   "role_ns": {
+    "arguments": [
+     "role",
+     "str"
+    ],
+    "description": "metadata.namespace of a Role."
+   },
+   "role_label": {
+    "arguments": [
+     "role",
+     "str"
+    ],
+    "description": "The role carries label key=value (one string)."
+   },
+   "has_aggregation": {
+    "arguments": [
+     "role"
+    ],
+    "description": "The ClusterRole has an aggregationRule."
+   },
+   "role_selector": {
+    "arguments": [
+     "role",
+     "sel"
+    ],
+    "description": "One clusterRoleSelectors entry of the role's aggregationRule."
+   },
+   "sel_label": {
+    "arguments": [
+     "sel",
+     "str"
+    ],
+    "description": "The selector's matchLabels contains key=value."
+   },
+   "role_rule": {
+    "arguments": [
+     "role",
+     "rule"
+    ],
+    "description": "A rules[] entry of the role (as written; the controller overwrites rules of aggregated roles)."
+   },
+   "rule_verb": {
+    "arguments": [
+     "rule",
+     "str"
+    ],
+    "description": "verbs entry."
+   },
+   "rule_group": {
+    "arguments": [
+     "rule",
+     "str"
+    ],
+    "description": "apiGroups entry."
+   },
+   "rule_resource": {
+    "arguments": [
+     "rule",
+     "str"
+    ],
+    "description": "resources entry."
+   },
+   "rule_resname": {
+    "arguments": [
+     "rule",
+     "str"
+    ],
+    "description": "resourceNames entry."
+   },
+   "is_rolebinding": {
+    "arguments": [
+     "binding"
+    ],
+    "description": "Object is a RoleBinding."
+   },
+   "is_clusterrolebinding": {
+    "arguments": [
+     "binding"
+    ],
+    "description": "Object is a ClusterRoleBinding."
+   },
+   "binding_ns": {
+    "arguments": [
+     "binding",
+     "str"
+    ],
+    "description": "metadata.namespace of a RoleBinding."
+   },
+   "ref_role": {
+    "arguments": [
+     "binding"
+    ],
+    "description": "roleRef.kind is Role."
+   },
+   "ref_clusterrole": {
+    "arguments": [
+     "binding"
+    ],
+    "description": "roleRef.kind is ClusterRole."
+   },
+   "ref_name": {
+    "arguments": [
+     "binding",
+     "str"
+    ],
+    "description": "roleRef.name."
+   },
+   "subject_user": {
+    "arguments": [
+     "binding",
+     "str"
+    ],
+    "description": "A User subject name (ServiceAccounts as system:serviceaccount:ns:name)."
+   },
+   "subject_group": {
+    "arguments": [
+     "binding",
+     "str"
+    ],
+    "description": "A Group subject name."
+   },
+   "req_group": {
+    "arguments": [
+     "str"
+    ],
+    "description": "A group of the requesting user."
+   }
+  },
+  "constants": {
+   "user": {
+    "sort": "str",
+    "description": "Request user name."
+   },
+   "verb": {
+    "sort": "str",
+    "description": "Request verb."
+   },
+   "apigroup": {
+    "sort": "str",
+    "description": "Request API group (\"\" = core)."
+   },
+   "path": {
+    "sort": "str",
+    "description": "Request resource, or resource/subresource when a subresource is requested (adapter-joined string)."
+   },
+   "namespace": {
+    "sort": "str",
+    "description": "Request namespace (\"\" for cluster-scoped requests)."
+   },
+   "name": {
+    "sort": "str",
+    "description": "Request object name (\"\" if none)."
+   },
+   "star": {
+    "sort": "str",
+    "description": "The wildcard string \"*\"."
+   }
+  }
+ }
+}

@@ -1,0 +1,273 @@
+{
+ "family": "alloy",
+ "synthetic": false,
+ "question": "Does the target paragraph hold in each finite instance (or: do the facts entail the assertion)?",
+ "provenance": {
+  "repository": "AlloyTools/models",
+  "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+  "licence": "Apache-2.0",
+  "path": "simple-models/genealogy/genealogy.als",
+  "note": "Model text verbatim; instances synthetic."
+ },
+ "questions": [
+  {
+   "description": "acyclic",
+   "target": {
+    "kind": "fact",
+    "name": "Biology"
+   },
+   "instance": {
+    "sigs": {
+     "Person": [
+      "adam",
+      "cain",
+      "abel",
+      "eve",
+      "awan"
+     ],
+     "Man": [
+      "adam",
+      "cain",
+      "abel"
+     ],
+     "Woman": [
+      "eve",
+      "awan"
+     ],
+     "Adam": [
+      "adam"
+     ],
+     "Eve": [
+      "eve"
+     ]
+    },
+    "fields": {
+     "parents": [
+      [
+       "cain",
+       "adam"
+      ],
+      [
+       "cain",
+       "eve"
+      ],
+      [
+       "abel",
+       "adam"
+      ],
+      [
+       "abel",
+       "eve"
+      ],
+      [
+       "awan",
+       "adam"
+      ],
+      [
+       "awan",
+       "eve"
+      ]
+     ],
+     "spouse": []
+    },
+    "bindings": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "self-parent",
+   "target": {
+    "kind": "fact",
+    "name": "Biology"
+   },
+   "instance": {
+    "sigs": {
+     "Person": [
+      "adam",
+      "cain",
+      "abel",
+      "eve",
+      "awan"
+     ],
+     "Man": [
+      "adam",
+      "cain",
+      "abel"
+     ],
+     "Woman": [
+      "eve",
+      "awan"
+     ],
+     "Adam": [
+      "adam"
+     ],
+     "Eve": [
+      "eve"
+     ]
+    },
+    "fields": {
+     "parents": [
+      [
+       "cain",
+       "cain"
+      ]
+     ],
+     "spouse": []
+    },
+    "bindings": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "3-cycle",
+   "target": {
+    "kind": "fact",
+    "name": "Biology"
+   },
+   "instance": {
+    "sigs": {
+     "Person": [
+      "adam",
+      "cain",
+      "abel",
+      "eve",
+      "awan"
+     ],
+     "Man": [
+      "adam",
+      "cain",
+      "abel"
+     ],
+     "Woman": [
+      "eve",
+      "awan"
+     ],
+     "Adam": [
+      "adam"
+     ],
+     "Eve": [
+      "eve"
+     ]
+    },
+    "fields": {
+     "parents": [
+      [
+       "cain",
+       "abel"
+      ],
+      [
+       "abel",
+       "awan"
+      ],
+      [
+       "awan",
+       "cain"
+      ]
+     ],
+     "spouse": []
+    },
+    "bindings": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "empty",
+   "target": {
+    "kind": "fact",
+    "name": "Biology"
+   },
+   "instance": {
+    "sigs": {
+     "Person": [
+      "adam",
+      "cain",
+      "abel",
+      "eve",
+      "awan"
+     ],
+     "Man": [
+      "adam",
+      "cain",
+      "abel"
+     ],
+     "Woman": [
+      "eve",
+      "awan"
+     ],
+     "Adam": [
+      "adam"
+     ],
+     "Eve": [
+      "eve"
+     ]
+    },
+    "fields": {
+     "parents": [],
+     "spouse": []
+    },
+    "bindings": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "long chain",
+   "target": {
+    "kind": "fact",
+    "name": "Biology"
+   },
+   "instance": {
+    "sigs": {
+     "Person": [
+      "adam",
+      "cain",
+      "abel",
+      "eve",
+      "awan"
+     ],
+     "Man": [
+      "adam",
+      "cain",
+      "abel"
+     ],
+     "Woman": [
+      "eve",
+      "awan"
+     ],
+     "Adam": [
+      "adam"
+     ],
+     "Eve": [
+      "eve"
+     ]
+    },
+    "fields": {
+     "parents": [
+      [
+       "abel",
+       "cain"
+      ],
+      [
+       "cain",
+       "awan"
+      ],
+      [
+       "awan",
+       "eve"
+      ],
+      [
+       "eve",
+       "adam"
+      ]
+     ],
+     "spouse": []
+    },
+    "bindings": {}
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "l01_genealogy_biology",
+ "source_files": {
+  "source.als": "5f646d5168d193afe0b45136d3b69bc19565eb59389a0d181adef36e38914de8"
+ }
+}

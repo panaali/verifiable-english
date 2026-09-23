@@ -1,0 +1,14 @@
+{"answers": [
+{"n": 0, "answer": true, "why": "view; VacationPhoto94 in Album jane_vacation; principal unconstrained"},
+{"n": 1, "answer": true, "why": "principal unconstrained; resource in jane_vacation; action view"},
+{"n": 2, "answer": true, "why": "principal unconstrained (any type); resource in jane_vacation"},
+{"n": 3, "answer": false, "why": "passportscan's parent is Account jane, not in Album jane_vacation (in goes up, not down)"},
+{"n": 4, "answer": true, "why": "principal scope unconstrained, so even a Photo principal matches; no schema validation at authorization"},
+{"n": 5, "answer": true, "why": "no conditions, so the missing confidence_score in context is irrelevant"},
+{"n": 6, "answer": true, "why": "view on a resource in jane_vacation; any principal"},
+{"n": 7, "answer": true, "why": "no when clause, so authenticated=false has no effect"},
+{"n": 8, "answer": true, "why": "unconstrained principal matches any entity incl. an Action uid; no conditions"},
+{"n": 9, "answer": false, "why": "action edit != view; no other permit, so default deny"}
+],
+"confidence": "high",
+"notes": "Only one permit and no conditions or forbids. Q4 and Q8 use unusual principal types; they are allowed because the authorizer runs without schema validation and the principal scope is unconstrained."}

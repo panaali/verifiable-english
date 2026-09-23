@@ -1,0 +1,2 @@
+not (there exists atom p, ((p is sig_person) and (there exists atom q, (((p f_mother q) or (p f_father q)) and (q f_father p))))).
+(not (there exists atom p, ((p is sig_person) and (tc[atom a, b | ((a f_mother b) or (a f_father b))](p, p))))) and (for every atom x, (for every atom y, ((if (x f_wife y), then (y f_husband x)) and (if (y f_husband x), then (x f_wife y))))).

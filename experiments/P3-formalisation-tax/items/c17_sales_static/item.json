@@ -1,0 +1,241 @@
+{
+ "family": "cedar",
+ "synthetic": false,
+ "provenance": {
+  "repository": "cedar-policy/cedar-examples",
+  "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+  "licence": "Apache-2.0",
+  "policy_path": "cedar-example-use-cases/sales_orgs/static/policies.cedar",
+  "entities_path": "cedar-example-use-cases/sales_orgs/static/entities.json",
+  "schema_path": "cedar-example-use-cases/sales_orgs/static/policies.cedarschema",
+  "requests": "cedar-example-use-cases/sales_orgs/static/ALLOW, cedar-example-use-cases/sales_orgs/static/DENY",
+  "schema_used_for_action_hierarchy": true
+ },
+ "question": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "world": {
+  "entities": [
+   {
+    "uid": "User::\"Alice\"",
+    "attrs": {
+     "job": {
+      "__entity": "Job::\"internal\""
+     },
+     "customerId": "1AYZ"
+    },
+    "parents": [
+     "Market::\"YoungAdult\""
+    ]
+   },
+   {
+    "uid": "Market::\"YoungAdult\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "User::\"Bob\"",
+    "attrs": {
+     "job": {
+      "__entity": "Job::\"customer\""
+     },
+     "customerId": "1AYZ"
+    },
+    "parents": [
+     "Market::\"YoungAdult\""
+    ]
+   },
+   {
+    "uid": "User::\"Charlie\"",
+    "attrs": {
+     "job": {
+      "__entity": "Job::\"distributor\""
+     },
+     "customerId": "1AYZ"
+    },
+    "parents": []
+   },
+   {
+    "uid": "Presentation::\"proposal\"",
+    "attrs": {
+     "owner": {
+      "__entity": "User::\"Alice\""
+     },
+     "viewers": [
+      {
+       "__entity": "User::\"Bob\""
+      }
+     ],
+     "editors": []
+    },
+    "parents": []
+   },
+   {
+    "uid": "Action::\"InternalPrezViewActions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"ExternalPrezViewActions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"PrezEditActions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"viewPresentation\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"InternalPrezViewActions\"",
+     "Action::\"ExternalPrezViewActions\"",
+     "Action::\"PrezEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"removeSelfAccessFromPresentation\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"InternalPrezViewActions\"",
+     "Action::\"ExternalPrezViewActions\"",
+     "Action::\"PrezEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"duplicatePresentation\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"InternalPrezViewActions\"",
+     "Action::\"PrezEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"editPresentation\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"PrezEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"grantViewAccessToPresentation\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"PrezEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"grantEditAccessToPresentation\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"PrezEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"InternalTemplateViewActions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"MarketTemplateViewActions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"TemplateEditActions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"viewTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"InternalTemplateViewActions\"",
+     "Action::\"TemplateEditActions\"",
+     "Action::\"MarketTemplateViewActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"duplicateTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"InternalTemplateViewActions\"",
+     "Action::\"TemplateEditActions\"",
+     "Action::\"MarketTemplateViewActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"removeSelfAccessFromTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"InternalTemplateViewActions\"",
+     "Action::\"TemplateEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"editTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"TemplateEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"removeOthersAccessToTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"TemplateEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"grantViewAccessToTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"TemplateEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"grantEditAccessToTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"TemplateEditActions\""
+    ]
+   }
+  ],
+  "linked": []
+ },
+ "questions": [
+  {
+   "description": "ALLOW/alice_view.json",
+   "request": {
+    "principal": "User::\"Alice\"",
+    "action": "Action::\"viewPresentation\"",
+    "resource": "Presentation::\"proposal\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/bob_view.json",
+   "request": {
+    "principal": "User::\"Bob\"",
+    "action": "Action::\"viewPresentation\"",
+    "resource": "Presentation::\"proposal\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "DENY/charlie_view.json",
+   "request": {
+    "principal": "User::\"Charlie\"",
+    "action": "Action::\"viewPresentation\"",
+    "resource": "Presentation::\"proposal\"",
+    "context": {}
+   },
+   "recorded_decision": "deny"
+  }
+ ],
+ "id": "c17_sales_static",
+ "source_files": {
+  "source.cedar": "83423c40f6a19268edf27a9ce6edda9f7a01702fceeb3ab3a11c0dc282c8a80d"
+ }
+}

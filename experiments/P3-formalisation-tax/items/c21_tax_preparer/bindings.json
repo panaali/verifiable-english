@@ -1,0 +1,13 @@
+{
+ "constants": {
+  "view_document": {
+   "entity": "Taxpreparer::Action::\"viewDocument\""
+  },
+  "alice": {
+   "entity": "Taxpreparer::Professional::\"Alice\""
+  },
+  "doc_def": {
+   "entity": "Taxpreparer::Document::\"DEF\""
+  }
+ }
+}

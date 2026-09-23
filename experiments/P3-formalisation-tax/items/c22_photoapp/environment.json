@@ -1,0 +1,122 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "A Cedar entity UID, record node, or the request context node."
+   },
+   "value": {
+    "description": "A Cedar string, long or extension literal value."
+   }
+  },
+  "predicates": {
+   "parent": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Immediate hierarchy edge, child to parent."
+   },
+   "ea_owner": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute owner."
+   },
+   "es_subjects": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Member of entity-set attribute subjects."
+   },
+   "ss_labels": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Member of string-set attribute labels."
+   },
+   "has_owner": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute owner present."
+   },
+   "bt_judgingsession": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Boolean attribute judgingSession present and true."
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "The request principal."
+   },
+   "action": {
+    "sort": "entity",
+    "description": "The request action."
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "The request resource."
+   },
+   "context": {
+    "sort": "entity",
+    "description": "The request context record node."
+   },
+   "app": {
+    "sort": "entity",
+    "description": "PhotoApp::Application::\"PhotoApp\""
+   },
+   "view_photo": {
+    "sort": "entity",
+    "description": "PhotoApp::Action::\"viewPhoto\""
+   },
+   "edit_photo": {
+    "sort": "entity",
+    "description": "PhotoApp::Action::\"editPhoto\""
+   },
+   "delete_photo": {
+    "sort": "entity",
+    "description": "PhotoApp::Action::\"deletePhoto\""
+   },
+   "photo_judge": {
+    "sort": "entity",
+    "description": "PhotoApp::Role::\"PhotoJudge\""
+   },
+   "doe_family": {
+    "sort": "entity",
+    "description": "PhotoApp::UserGroup::\"DoeFamily\""
+   },
+   "doe_photos": {
+    "sort": "entity",
+    "description": "PhotoApp::Album::\"DoePhotos\""
+   },
+   "john_doe": {
+    "sort": "entity",
+    "description": "PhotoApp::User::\"JohnDoe\""
+   },
+   "jane_vacation": {
+    "sort": "entity",
+    "description": "PhotoApp::Album::\"JaneVacation\""
+   },
+   "s_contest": {
+    "sort": "value",
+    "description": "\"contest\""
+   },
+   "s_private": {
+    "sort": "value",
+    "description": "\"private\""
+   }
+  }
+ }
+}

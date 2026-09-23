@@ -1,0 +1,40 @@
+{
+ "constants": {
+  "viewreservation": {
+   "entity": "Action::\"viewReservation\""
+  },
+  "updatereservation": {
+   "entity": "Action::\"updateReservation\""
+  },
+  "createreservation": {
+   "entity": "Action::\"createReservation\""
+  },
+  "grantaccessreservation": {
+   "entity": "Action::\"grantAccessReservation\""
+  },
+  "viewproperty": {
+   "entity": "Action::\"viewProperty\""
+  },
+  "updateproperty": {
+   "entity": "Action::\"updateProperty\""
+  },
+  "createproperty": {
+   "entity": "Action::\"createProperty\""
+  },
+  "grantaccessproperty": {
+   "entity": "Action::\"grantAccessProperty\""
+  },
+  "viewhotel": {
+   "entity": "Action::\"viewHotel\""
+  },
+  "updatehotel": {
+   "entity": "Action::\"updateHotel\""
+  },
+  "createhotel": {
+   "entity": "Action::\"createHotel\""
+  },
+  "grantaccesshotel": {
+   "entity": "Action::\"grantAccessHotel\""
+  }
+ }
+}

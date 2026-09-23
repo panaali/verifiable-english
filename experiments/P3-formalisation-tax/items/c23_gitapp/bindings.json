@@ -1,0 +1,40 @@
+{
+ "constants": {
+  "app": {
+   "entity": "GitApp::Application::\"GitApp\""
+  },
+  "pushrepo": {
+   "entity": "GitApp::Action::\"pushRepo\""
+  },
+  "pullrepo": {
+   "entity": "GitApp::Action::\"pullRepo\""
+  },
+  "forkrepo": {
+   "entity": "GitApp::Action::\"forkRepo\""
+  },
+  "addreporeporter": {
+   "entity": "GitApp::Action::\"addRepoReporter\""
+  },
+  "addrepocontributor": {
+   "entity": "GitApp::Action::\"addRepoContributor\""
+  },
+  "addrepoadmin": {
+   "entity": "GitApp::Action::\"addRepoAdmin\""
+  },
+  "addissue": {
+   "entity": "GitApp::Action::\"addIssue\""
+  },
+  "editissue": {
+   "entity": "GitApp::Action::\"editIssue\""
+  },
+  "assignissue": {
+   "entity": "GitApp::Action::\"assignIssue\""
+  },
+  "closeissue": {
+   "entity": "GitApp::Action::\"closeIssue\""
+  },
+  "deleteissue": {
+   "entity": "GitApp::Action::\"deleteIssue\""
+  }
+ }
+}

@@ -1,0 +1,1 @@
+(@action equals @add_photo) and ((rtc[parent](@resource, @alice_account)) and (there exists entity ph, ((@context ea_photo ph) and ((((ph sa_filetype @jpeg) or (ph sa_filetype @png)) and (ph is filesize_le_1)) or (((ph sa_filetype @raw) and (ph is filesize_le_100)) and (rtc[parent](@principal, @avteam))))))).

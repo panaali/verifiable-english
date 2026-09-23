@@ -1,0 +1,142 @@
+{
+ "family": "k8s",
+ "synthetic": false,
+ "question": "Does Kubernetes RBAC authorize each request given these RBAC objects?",
+ "provenance": {
+  "repository": "kubernetes/website",
+  "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+  "licence": "CC-BY-4.0",
+  "paths": [
+   "content/en/examples/access/simple-clusterrole.yaml",
+   "content/en/examples/access/simple-clusterrolebinding.yaml"
+  ],
+  "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+ },
+ "world": {
+  "objects": [
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "secret-reader"
+    },
+    "rules": [
+     {
+      "apiGroups": [
+       ""
+      ],
+      "resources": [
+       "secrets"
+      ],
+      "verbs": [
+       "get",
+       "watch",
+       "list"
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "ClusterRoleBinding",
+    "metadata": {
+     "name": "read-secrets-global"
+    },
+    "subjects": [
+     {
+      "kind": "Group",
+      "name": "manager",
+      "apiGroup": "rbac.authorization.k8s.io"
+     }
+    ],
+    "roleRef": {
+     "kind": "ClusterRole",
+     "name": "secret-reader",
+     "apiGroup": "rbac.authorization.k8s.io"
+    }
+   }
+  ]
+ },
+ "questions": [
+  {
+   "description": "k03-0",
+   "request": {
+    "user": "carol",
+    "groups": [
+     "manager"
+    ],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "secrets",
+    "subresource": "",
+    "namespace": "kube-system",
+    "name": "token"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k03-1",
+   "request": {
+    "user": "carol",
+    "groups": [
+     "manager"
+    ],
+    "verb": "list",
+    "apiGroup": "",
+    "resource": "secrets",
+    "subresource": "",
+    "namespace": "",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k03-2",
+   "request": {
+    "user": "manager",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "secrets",
+    "subresource": "",
+    "namespace": "default",
+    "name": "x"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k03-3",
+   "request": {
+    "user": "carol",
+    "groups": [
+     "managers"
+    ],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "secrets",
+    "subresource": "",
+    "namespace": "default",
+    "name": "x"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k03-4",
+   "request": {
+    "user": "carol",
+    "groups": [
+     "manager"
+    ],
+    "verb": "delete",
+    "apiGroup": "",
+    "resource": "secrets",
+    "subresource": "",
+    "namespace": "default",
+    "name": "x"
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "k03_secret_reader_global",
+ "source_files": {
+  "source.yaml": "e33fb91b07b3d95f07ca67ef90572ec6707db1ffed382069806a4267c04f5d02"
+ }
+}

@@ -1,0 +1,232 @@
+{
+ "family": "alloy",
+ "synthetic": false,
+ "question": "Does the target paragraph hold in each finite instance (or: do the facts entail the assertion)?",
+ "provenance": {
+  "repository": "AlloyTools/models",
+  "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+  "licence": "Apache-2.0",
+  "path": "software-abstractions-book/chapter4/grandpa1.als",
+  "note": "Model text verbatim; instances synthetic."
+ },
+ "questions": [
+  {
+   "description": "ok",
+   "target": {
+    "kind": "fact",
+    "index": 0
+   },
+   "instance": {
+    "sigs": {
+     "Person": [
+      "m1",
+      "m2",
+      "w1",
+      "w2"
+     ],
+     "Man": [
+      "m1",
+      "m2"
+     ],
+     "Woman": [
+      "w1",
+      "w2"
+     ]
+    },
+    "fields": {
+     "father": [
+      [
+       "m2",
+       "m1"
+      ],
+      [
+       "w2",
+       "m1"
+      ]
+     ],
+     "mother": [
+      [
+       "m2",
+       "w1"
+      ]
+     ],
+     "wife": [
+      [
+       "m1",
+       "w1"
+      ]
+     ],
+     "husband": [
+      [
+       "w1",
+       "m1"
+      ]
+     ]
+    },
+    "bindings": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "husband not converse",
+   "target": {
+    "kind": "fact",
+    "index": 0
+   },
+   "instance": {
+    "sigs": {
+     "Person": [
+      "m1",
+      "m2",
+      "w1",
+      "w2"
+     ],
+     "Man": [
+      "m1",
+      "m2"
+     ],
+     "Woman": [
+      "w1",
+      "w2"
+     ]
+    },
+    "fields": {
+     "father": [],
+     "mother": [],
+     "wife": [
+      [
+       "m1",
+       "w1"
+      ]
+     ],
+     "husband": [
+      [
+       "w2",
+       "m1"
+      ]
+     ]
+    },
+    "bindings": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "mixed cycle",
+   "target": {
+    "kind": "fact",
+    "index": 0
+   },
+   "instance": {
+    "sigs": {
+     "Person": [
+      "m1",
+      "m2",
+      "w1",
+      "w2"
+     ],
+     "Man": [
+      "m1",
+      "m2"
+     ],
+     "Woman": [
+      "w1",
+      "w2"
+     ]
+    },
+    "fields": {
+     "father": [
+      [
+       "w1",
+       "m1"
+      ]
+     ],
+     "mother": [
+      [
+       "m1",
+       "w1"
+      ]
+     ],
+     "wife": [],
+     "husband": []
+    },
+    "bindings": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "mother self",
+   "target": {
+    "kind": "fact",
+    "index": 0
+   },
+   "instance": {
+    "sigs": {
+     "Person": [
+      "m1",
+      "m2",
+      "w1",
+      "w2"
+     ],
+     "Man": [
+      "m1",
+      "m2"
+     ],
+     "Woman": [
+      "w1",
+      "w2"
+     ]
+    },
+    "fields": {
+     "father": [],
+     "mother": [
+      [
+       "w2",
+       "w2"
+      ]
+     ],
+     "wife": [],
+     "husband": []
+    },
+    "bindings": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "empty",
+   "target": {
+    "kind": "fact",
+    "index": 0
+   },
+   "instance": {
+    "sigs": {
+     "Person": [
+      "m1",
+      "m2",
+      "w1",
+      "w2"
+     ],
+     "Man": [
+      "m1",
+      "m2"
+     ],
+     "Woman": [
+      "w1",
+      "w2"
+     ]
+    },
+    "fields": {
+     "father": [],
+     "mother": [],
+     "wife": [],
+     "husband": []
+    },
+    "bindings": {}
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "l02_grandpa1_fact",
+ "source_files": {
+  "source.als": "2bbc4d5bb68fb766d5d732736684f54cace77b827fd86741412f05ffa493599e"
+ }
+}

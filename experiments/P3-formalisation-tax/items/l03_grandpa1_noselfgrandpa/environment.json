@@ -1,0 +1,52 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "atom": {
+    "description": "An Alloy atom of the instance (one universe)."
+   }
+  },
+  "predicates": {
+   "sig_person": {
+    "arguments": [
+     "atom"
+    ],
+    "description": "Atom of sig Person."
+   },
+   "f_mother": {
+    "arguments": [
+     "atom",
+     "atom"
+    ],
+    "description": "Field mother: Person -> lone Woman."
+   },
+   "f_father": {
+    "arguments": [
+     "atom",
+     "atom"
+    ],
+    "description": "Field father: Person -> lone Man."
+   },
+   "f_wife": {
+    "arguments": [
+     "atom",
+     "atom"
+    ],
+    "description": "Field wife: Man -> lone Woman."
+   },
+   "f_husband": {
+    "arguments": [
+     "atom",
+     "atom"
+    ],
+    "description": "Field husband: Woman -> lone Man."
+   }
+  },
+  "constants": {}
+ }
+}

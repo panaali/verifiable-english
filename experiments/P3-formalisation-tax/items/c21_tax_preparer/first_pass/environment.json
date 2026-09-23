@@ -1,0 +1,130 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "A Cedar entity UID, record node, or the request context node."
+   },
+   "value": {
+    "description": "A Cedar string, long or extension literal value."
+   }
+  },
+  "predicates": {
+   "es_assigned_orgs": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Member of record-set attribute assigned_orgs."
+   },
+   "ea_owner": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute owner."
+   },
+   "ea_consent": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Record attribute consent (context)."
+   },
+   "ea_client": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute client."
+   },
+   "sa_organization": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "String attribute organization."
+   },
+   "sa_serviceline": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "String attribute serviceline."
+   },
+   "sa_location": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "String attribute location."
+   },
+   "ss_team_region_list": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Member of string-set attribute team_region_list."
+   },
+   "has_client": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute client present."
+   },
+   "has_owner": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute owner present."
+   },
+   "has_team_region_list": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute team_region_list present."
+   },
+   "has_location": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute location present."
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "The request principal."
+   },
+   "action": {
+    "sort": "entity",
+    "description": "The request action."
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "The request resource."
+   },
+   "context": {
+    "sort": "entity",
+    "description": "The request context record node."
+   },
+   "view_document": {
+    "sort": "entity",
+    "description": "Taxpreparer::Action::\"viewDocument\""
+   },
+   "alice": {
+    "sort": "entity",
+    "description": "Taxpreparer::Professional::\"Alice\""
+   },
+   "doc_def": {
+    "sort": "entity",
+    "description": "Taxpreparer::Document::\"DEF\""
+   }
+  }
+ }
+}

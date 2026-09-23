@@ -1,0 +1,138 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "stmt": {
+    "description": "A policy statement."
+   },
+   "cond": {
+    "description": "A condition (operator, key) block."
+   },
+   "str": {
+    "description": "A string in the policies or request."
+   }
+  },
+  "predicates": {
+   "allow_stmt": {
+    "arguments": [
+     "stmt"
+    ],
+    "description": "Effect Allow."
+   },
+   "deny_stmt": {
+    "arguments": [
+     "stmt"
+    ],
+    "description": "Effect Deny."
+   },
+   "uses_action": {
+    "arguments": [
+     "stmt"
+    ],
+    "description": "Statement has Action."
+   },
+   "uses_notaction": {
+    "arguments": [
+     "stmt"
+    ],
+    "description": "Statement has NotAction."
+   },
+   "uses_resource": {
+    "arguments": [
+     "stmt"
+    ],
+    "description": "Statement has Resource."
+   },
+   "uses_notresource": {
+    "arguments": [
+     "stmt"
+    ],
+    "description": "Statement has NotResource."
+   },
+   "action_pat": {
+    "arguments": [
+     "stmt",
+     "str"
+    ],
+    "description": "A pattern listed under Action or NotAction."
+   },
+   "resource_pat": {
+    "arguments": [
+     "stmt",
+     "str"
+    ],
+    "description": "A pattern listed under Resource or NotResource."
+   },
+   "stmt_cond": {
+    "arguments": [
+     "stmt",
+     "cond"
+    ],
+    "description": "A (operator, key) condition block of the statement."
+   },
+   "cond_op": {
+    "arguments": [
+     "cond",
+     "str"
+    ],
+    "description": "Condition operator name."
+   },
+   "cond_key": {
+    "arguments": [
+     "cond",
+     "str"
+    ],
+    "description": "Condition key."
+   },
+   "cond_value": {
+    "arguments": [
+     "cond",
+     "str"
+    ],
+    "description": "One listed condition value."
+   },
+   "ctx": {
+    "arguments": [
+     "str",
+     "str"
+    ],
+    "description": "Request context: key has value."
+   },
+   "action_glob": {
+    "arguments": [
+     "str"
+    ],
+    "description": "OPAQUE (adapter): the pattern matches the request action (case-insensitive * ? glob)."
+   },
+   "resource_glob": {
+    "arguments": [
+     "str"
+    ],
+    "description": "OPAQUE (adapter): the pattern, after ${var} substitution from context, matches the request resource (case-sensitive glob)."
+   }
+  },
+  "constants": {
+   "op_string_equals": {
+    "sort": "str",
+    "description": "The operator name StringEquals."
+   },
+   "op_string_not_equals": {
+    "sort": "str",
+    "description": "The operator name StringNotEquals."
+   },
+   "op_bool": {
+    "sort": "str",
+    "description": "The operator name Bool."
+   },
+   "op_bool_if_exists": {
+    "sort": "str",
+    "description": "The operator name BoolIfExists."
+   }
+  }
+ }
+}

@@ -1,0 +1,11 @@
+{"language": "ve.core@0.1", "profiles": ["closure@0", "relational-fol@0"],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+   "sorts": {"entity": {"description": "Cedar entities (principals, actions, resources, groups)"}},
+   "predicates": {"parent": {"arguments": ["entity", "entity"], "description": "immediate parent edge: first argument's parent is the second"}},
+   "constants": {
+     "principal": {"sort": "entity", "description": "request principal"},
+     "action": {"sort": "entity", "description": "request action"},
+     "resource": {"sort": "entity", "description": "request resource"},
+     "act_view": {"sort": "entity", "description": "Action::\"view\""},
+     "jane_vacation": {"sort": "entity", "description": "Album::\"jane_vacation\""}}}}

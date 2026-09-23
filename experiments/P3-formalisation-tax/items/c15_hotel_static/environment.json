@@ -1,0 +1,299 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "A Cedar entity UID, record node, or the request context node."
+   },
+   "value": {
+    "description": "A Cedar string, long or extension literal value."
+   }
+  },
+  "predicates": {
+   "parent": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Immediate hierarchy edge, child to parent."
+   },
+   "ea_viewpermissions": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Record attribute viewPermissions."
+   },
+   "ea_memberpermissions": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Record attribute memberPermissions."
+   },
+   "type_property": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Entity type Property."
+   },
+   "type_record": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Anonymous record node."
+   },
+   "has_hotelreservations": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute hotelreservations present."
+   },
+   "sa_hotelreservations": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar attribute hotelreservations."
+   },
+   "bt_hotelreservations": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "hotelreservations is Boolean true."
+   },
+   "bf_hotelreservations": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "hotelreservations is Boolean false."
+   },
+   "ss_hotelreservations": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar member of set attribute hotelreservations."
+   },
+   "es_hotelreservations": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record member of set attribute hotelreservations."
+   },
+   "ea_hotelreservations": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record-valued attribute hotelreservations."
+   },
+   "has_propertyreservations": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute propertyreservations present."
+   },
+   "sa_propertyreservations": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar attribute propertyreservations."
+   },
+   "bt_propertyreservations": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "propertyreservations is Boolean true."
+   },
+   "bf_propertyreservations": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "propertyreservations is Boolean false."
+   },
+   "ss_propertyreservations": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar member of set attribute propertyreservations."
+   },
+   "es_propertyreservations": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record member of set attribute propertyreservations."
+   },
+   "ea_propertyreservations": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record-valued attribute propertyreservations."
+   },
+   "has_hoteladminpermissions": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute hoteladminpermissions present."
+   },
+   "sa_hoteladminpermissions": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar attribute hoteladminpermissions."
+   },
+   "bt_hoteladminpermissions": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "hoteladminpermissions is Boolean true."
+   },
+   "bf_hoteladminpermissions": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "hoteladminpermissions is Boolean false."
+   },
+   "ss_hoteladminpermissions": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar member of set attribute hoteladminpermissions."
+   },
+   "es_hoteladminpermissions": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record member of set attribute hoteladminpermissions."
+   },
+   "ea_hoteladminpermissions": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record-valued attribute hoteladminpermissions."
+   },
+   "has_propertyadminpermissions": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute propertyadminpermissions present."
+   },
+   "sa_propertyadminpermissions": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar attribute propertyadminpermissions."
+   },
+   "bt_propertyadminpermissions": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "propertyadminpermissions is Boolean true."
+   },
+   "bf_propertyadminpermissions": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "propertyadminpermissions is Boolean false."
+   },
+   "ss_propertyadminpermissions": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar member of set attribute propertyadminpermissions."
+   },
+   "es_propertyadminpermissions": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record member of set attribute propertyadminpermissions."
+   },
+   "ea_propertyadminpermissions": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record-valued attribute propertyadminpermissions."
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "The request principal."
+   },
+   "action": {
+    "sort": "entity",
+    "description": "The request action."
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "The request resource."
+   },
+   "viewreservation": {
+    "sort": "entity",
+    "description": "Action::\"viewReservation\""
+   },
+   "updatereservation": {
+    "sort": "entity",
+    "description": "Action::\"updateReservation\""
+   },
+   "createreservation": {
+    "sort": "entity",
+    "description": "Action::\"createReservation\""
+   },
+   "grantaccessreservation": {
+    "sort": "entity",
+    "description": "Action::\"grantAccessReservation\""
+   },
+   "viewproperty": {
+    "sort": "entity",
+    "description": "Action::\"viewProperty\""
+   },
+   "updateproperty": {
+    "sort": "entity",
+    "description": "Action::\"updateProperty\""
+   },
+   "createproperty": {
+    "sort": "entity",
+    "description": "Action::\"createProperty\""
+   },
+   "grantaccessproperty": {
+    "sort": "entity",
+    "description": "Action::\"grantAccessProperty\""
+   },
+   "viewhotel": {
+    "sort": "entity",
+    "description": "Action::\"viewHotel\""
+   },
+   "updatehotel": {
+    "sort": "entity",
+    "description": "Action::\"updateHotel\""
+   },
+   "createhotel": {
+    "sort": "entity",
+    "description": "Action::\"createHotel\""
+   },
+   "grantaccesshotel": {
+    "sort": "entity",
+    "description": "Action::\"grantAccessHotel\""
+   }
+  }
+ }
+}

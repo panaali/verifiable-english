@@ -1,0 +1,43 @@
+{
+ "constants": {
+  "external_prez_view": {
+   "entity": "Action::\"ExternalPrezViewActions\""
+  },
+  "internal_prez_view": {
+   "entity": "Action::\"InternalPrezViewActions\""
+  },
+  "prez_edit": {
+   "entity": "Action::\"PrezEditActions\""
+  },
+  "market_template_view": {
+   "entity": "Action::\"MarketTemplateViewActions\""
+  },
+  "internal_template_view": {
+   "entity": "Action::\"InternalTemplateViewActions\""
+  },
+  "template_edit": {
+   "entity": "Action::\"TemplateEditActions\""
+  },
+  "grant_view_prez": {
+   "entity": "Action::\"grantViewAccessToPresentation\""
+  },
+  "grant_edit_prez": {
+   "entity": "Action::\"grantEditAccessToPresentation\""
+  },
+  "grant_view_template": {
+   "entity": "Action::\"grantViewAccessToTemplate\""
+  },
+  "grant_edit_template": {
+   "entity": "Action::\"grantEditAccessToTemplate\""
+  },
+  "job_internal": {
+   "entity": "Job::\"internal\""
+  },
+  "job_customer": {
+   "entity": "Job::\"customer\""
+  },
+  "job_distributor": {
+   "entity": "Job::\"distributor\""
+  }
+ }
+}

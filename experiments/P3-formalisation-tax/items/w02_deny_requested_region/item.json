@@ -1,0 +1,149 @@
+{
+ "family": "iam",
+ "synthetic": false,
+ "question": "Is each request allowed by these identity-based policies (explicit deny > allow > implicit deny)?",
+ "provenance": {
+  "repository": "docs.aws.amazon.com IAM User Guide",
+  "commit": "fetched 2026-09-22",
+  "licence": "AWS documentation (example policy excerpt)",
+  "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_aws_deny-requested-region.html",
+  "note": "Policy JSON verbatim from the page; requests synthetic. The Allow-all policy is the AWS managed AdministratorAccess document, added (synthetic pairing) so the deny is observable.",
+  "synthetic_parts": [
+   "AdministratorAccess pairing",
+   "requests"
+  ]
+ },
+ "world": {
+  "policies": [
+   {
+    "Version": "2012-10-17",
+    "Statement": [
+     {
+      "Sid": "DenyAllOutsideRequestedRegions",
+      "Effect": "Deny",
+      "NotAction": [
+       "cloudfront:*",
+       "iam:*",
+       "organizations:*",
+       "route53:*",
+       "support:*"
+      ],
+      "Resource": "*",
+      "Condition": {
+       "StringNotEquals": {
+        "aws:RequestedRegion": [
+         "eu-central-1",
+         "eu-west-1",
+         "eu-west-2",
+         "eu-west-3"
+        ]
+       }
+      }
+     }
+    ]
+   },
+   {
+    "Version": "2012-10-17",
+    "Statement": [
+     {
+      "Effect": "Allow",
+      "Action": "*",
+      "Resource": "*"
+     }
+    ]
+   }
+  ]
+ },
+ "questions": [
+  {
+   "description": "w02-0",
+   "request": {
+    "action": "ec2:RunInstances",
+    "resource": "*",
+    "context": {
+     "aws:RequestedRegion": "eu-west-1"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w02-1",
+   "request": {
+    "action": "ec2:RunInstances",
+    "resource": "*",
+    "context": {
+     "aws:RequestedRegion": "us-east-1"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w02-2",
+   "request": {
+    "action": "iam:CreateUser",
+    "resource": "*",
+    "context": {
+     "aws:RequestedRegion": "us-east-1"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w02-3",
+   "request": {
+    "action": "s3:GetObject",
+    "resource": "arn:aws:s3:::b/k",
+    "context": {}
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w02-4",
+   "request": {
+    "action": "route53:ChangeResourceRecordSets",
+    "resource": "*",
+    "context": {
+     "aws:RequestedRegion": "ap-south-1"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w02-5",
+   "request": {
+    "action": "ec2:RunInstances",
+    "resource": "*",
+    "context": {
+     "aws:RequestedRegion": "EU-WEST-1"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w02-6",
+   "request": {
+    "action": "support:DescribeCases",
+    "resource": "*",
+    "context": {
+     "aws:RequestedRegion": "us-west-2"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "w02-7",
+   "request": {
+    "action": "cloudfrontx:Get",
+    "resource": "*",
+    "context": {
+     "aws:RequestedRegion": "us-west-2"
+    }
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "w02_deny_requested_region",
+ "source_files": {
+  "source.json": "93dcb6887888426d1b4a775cd3a265d43a40bbb76ba70438a095d8c714230c36"
+ }
+}

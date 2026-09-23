@@ -1,0 +1,93 @@
+{
+ "c05_cit_3a": [
+  true,
+  true,
+  true,
+  false,
+  true,
+  true,
+  true,
+  true,
+  true,
+  false
+ ],
+ "c11_cit_4f": [
+  true,
+  false,
+  true,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true
+ ],
+ "c13_document_cloud": [
+  true,
+  true,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  true,
+  false
+ ],
+ "c17_sales_static": [
+  true,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false
+ ],
+ "k05_crontab_default_roles": [
+  true,
+  true,
+  true,
+  true,
+  false,
+  false,
+  false,
+  true,
+  false,
+  false
+ ],
+ "k07_subresource_wildcard": [
+  true,
+  true,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false
+ ],
+ "w03_mfa_selfmanage": [
+  true,
+  true,
+  false,
+  false,
+  true,
+  false,
+  false,
+  false,
+  false,
+  false
+ ],
+ "l07_marksweep_mark": [
+  true,
+  false,
+  false,
+  true,
+  false
+ ]
+}

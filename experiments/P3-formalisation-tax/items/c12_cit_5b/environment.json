@@ -1,0 +1,95 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "A Cedar entity UID, record node, or the request context node."
+   },
+   "value": {
+    "description": "A Cedar string, long or extension literal value."
+   }
+  },
+  "predicates": {
+   "parent": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Immediate hierarchy edge, child to parent."
+   },
+   "ea_photo": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Record attribute photo (context.photo)."
+   },
+   "sa_filetype": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "String attribute filetype."
+   },
+   "filesize_le_1": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "OPAQUE (adapter): long attribute filesize_mb present and <= 1."
+   },
+   "filesize_le_100": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "OPAQUE (adapter): long attribute filesize_mb present and <= 100."
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "The request principal."
+   },
+   "action": {
+    "sort": "entity",
+    "description": "The request action."
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "The request resource."
+   },
+   "context": {
+    "sort": "entity",
+    "description": "The request context record node."
+   },
+   "add_photo": {
+    "sort": "entity",
+    "description": "Action::\"addPhoto\""
+   },
+   "alice_account": {
+    "sort": "entity",
+    "description": "Account::\"alice\""
+   },
+   "avteam": {
+    "sort": "entity",
+    "description": "UserGroup::\"AVTeam\""
+   },
+   "jpeg": {
+    "sort": "value",
+    "description": "\"JPEG\""
+   },
+   "png": {
+    "sort": "value",
+    "description": "\"PNG\""
+   },
+   "raw": {
+    "sort": "value",
+    "description": "\"RAW\""
+   }
+  }
+ }
+}
