@@ -2,15 +2,15 @@
   "configs": {
     "27646b0ac8a639fd293c516b1ad8953d7ba87f0076453ea7dae291a6728d38fc": {
       "calibrated": true,
-      "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/critic/0"
+      "example": "study-v10/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/critic/0"
     },
     "2853bd0ccb1b4368ee337254a83286ef91dd8f782d93819ce3f331717d26f896": {
       "calibrated": true,
-      "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/followup/0"
+      "example": "study-v10/dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/followup/0"
     },
     "335c4fe4487db197da93ea2d6d154e37a78640cc2558db50b2b7b091a74b0f58": {
       "calibrated": true,
-      "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/critic/0"
+      "example": "study-v10/dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/critic/0"
     },
     "3cb78e852757816cfc0b0840fa5bd7a2cecb634c6decbf8c4ed3bfccb3ebd130": {
       "calibrated": true,
@@ -22,15 +22,15 @@
     },
     "44929d316920a67025f09a833bee09731d9c7a63f72ef60106e4febca5675dbe": {
       "calibrated": true,
-      "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/judge/0"
+      "example": "study-v10/dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/judge/0"
     },
     "56dfd336e0ff46fddd4ae738508bd088b2cd105a07e40b66533e902b08675c5a": {
       "calibrated": true,
-      "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/defender/0"
+      "example": "study-v10/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/defender/0"
     },
     "5a5d4b0ed7aa4f8f5393710396b11102c9effb5aa5a918af56dfdc16be0e85dd": {
       "calibrated": true,
-      "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/answer/0"
+      "example": "study-v10/dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/answer/0"
     },
     "6891eebd498909df19f38f4289c107a099044f4e48337dc61d1e212513e89d4a": {
       "calibrated": true,
@@ -38,18 +38,18 @@
     },
     "8eaa0e98463d6e3697adec3f863b10e6c0c9d645e18ba0b19cbaf5dc1d05facf": {
       "calibrated": true,
-      "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/repair/0"
+      "example": "study-v10/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/repair/0"
     },
     "e92bc2e3fb65c2623864408855ae362cedc18586ec7572a5c0792b5627e393fc": {
       "calibrated": true,
-      "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/author/0"
+      "example": "study-v10/dev/i11e21a96aa6260b7bafaaec82c8810b9/X/pro/author/0"
     },
     "eeaec373358ff31de0bd7a28fc878d341420dd7c9c7d08d1640b1aacbd6bc531": {
       "calibrated": true,
-      "example": "study-v9/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/author/0"
+      "example": "study-v10/dev/i11e21a96aa6260b7bafaaec82c8810b9/VE/pro/author/0"
     }
   },
-  "freeze_sha256": "aeef711e96d33d7e23dfaaccb1c9e35ac96ec9e20ef0853b524334d69f232394",
+  "freeze_sha256": "e0c3cd6a145aec586a7f12482c44cabee793c3a20ad8d2cd79826bd7e7b64bce",
   "generation_calls": 0,
   "passed": true,
   "policy": "Exact config calibration required; no smoke residual extrapolation."

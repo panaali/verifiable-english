@@ -1,5 +1,16 @@
 # P5 study-cap schedule amendment — 2026-09-22
 
+**Latest amendment (v10, 2026-09-22):** only X/VE dev are re-run under new
+identities after harness defects. All 48 L/S judgments are retained as final.
+The revised worst-case total is **$35.5617664072**, including **$6.4484455664**
+retained commitments, **$0.264290** remaining calibration authorization,
+**$6.6739108608** replacement dev, and **$22.1751199800** unchanged scored work.
+Headroom is **$4.4382335928** under the cumulative **$40** cap. All old costs
+remain; only the unused old reservation was released. The common matched
+ceiling remains $0.45. See the final dated entry in [AMENDMENTS.md](AMENDMENTS.md).
+The resume command below now dispatches only X/VE dev into `runs/dev-v10/`.
+The remaining text records the earlier schedule and its original accounting.
+
 The study cap remains **$40**. The first schedule fitting that cap is **(a)**:
 Gemini primary plus Qwen replication, all X/S/VE/L arms, four unchanged dev
 families and **nine scored families** (27 scored packets). Cross-examination

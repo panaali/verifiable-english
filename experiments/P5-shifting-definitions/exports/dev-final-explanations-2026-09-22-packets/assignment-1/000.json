@@ -1,0 +1,375 @@
+[
+  {
+    "answer": {
+      "explanation": "The original root n08 is correctly justified. The paragraph n08 states that 'It follows that unit0 is bundled because the immediately preceding ready result holds.' This is supported by the rule r04, which states that 'If unit0 is ready (packing completed), then unit0 is bundled.' The readiness of unit0 is established in the preceding paragraph n00, which states 'Given that unit1 is ready, we infer that unit0 is ready.' This is further supported by the rule r07, which states 'If unit1 is ready (packing completed), then unit0 is ready (packing completed).' Therefore, the original root n08 is correctly justified and supported by the provided rules and preceding paragraphs.",
+      "issue_type": "none",
+      "locations": [],
+      "verdict": "approve"
+    },
+    "event": "rating",
+    "item_id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+    "packet": {
+      "argument": "[n12] Because unit0 is sized and unit0 is wrapped-up and unit0 is released, unit1 is sound.\n\n[n13] Since unit0 is reviewed and unit0 is staged and unit0 is registered, it follows that unit1 is sound.\n\n[n07] Given that unit1 is sound and unit1 is sound, we infer that unit0 is sound.\n\n[n05] It follows that unit0 is checked because unit1 is sound and the immediately preceding sound result holds.\n\n[n15] Because unit0 is checked, unit1 is clear.\n\n[n16] Since unit1 is clear, it follows that unit1 is clear. The checks that unit0 is bagged and unit0 is inspected and unit0 is listed would establish that unit0 is clear and unit2 is clear and unit2 is clear, respectively.\n\n[n04] Given that unit1 is clear and unit0 is numbered, we infer that unit0 is clear.\n\n[n02] It follows that unit0 is documented because the immediately preceding clear result holds.\n\n[n17] Because unit0 is documented, unit1 is open.\n\n[n01] Since unit1 is open, it follows that unit1 is open.\n\n[n21] Given that unit1 is open, we infer that unit0 is open.\n\n[n10] It follows that unit0 is packed because the immediately preceding open result holds.\n\n[n14] Because unit0 is packed, unit1 is ready.\n\n[n20] Since unit1 is ready, it follows that unit1 is ready.\n\n[n00] Given that unit1 is ready, we infer that unit0 is ready.\n\n[n08] It follows that unit0 is bundled because the immediately preceding ready result holds.",
+      "glossary": [
+        {
+          "sense": "measured: measurement recorded (R14)",
+          "term": "measured"
+        },
+        {
+          "sense": "checked: check completed (R30)",
+          "term": "checked"
+        },
+        {
+          "sense": "secured: fastener fitted (R39)",
+          "term": "secured"
+        },
+        {
+          "sense": "stored: location assigned (R04)",
+          "term": "stored"
+        },
+        {
+          "sense": "sorted: contents ordered (R54)",
+          "term": "sorted"
+        },
+        {
+          "sense": "clear: optically transparent (R33)",
+          "term": "clear"
+        },
+        {
+          "sense": "ready: staffing arranged (R07)",
+          "term": "ready"
+        },
+        {
+          "sense": "scheduled: time assigned (R36)",
+          "term": "scheduled"
+        },
+        {
+          "sense": "registered: registration recorded (R52)",
+          "term": "registered"
+        },
+        {
+          "sense": "coded: identifier assigned (R58)",
+          "term": "coded"
+        },
+        {
+          "sense": "marked: mark applied (R37)",
+          "term": "marked"
+        },
+        {
+          "sense": "packed: container filled (R22)",
+          "term": "packed"
+        },
+        {
+          "sense": "wrapped-up: handling completed (R46)",
+          "term": "wrapped-up"
+        },
+        {
+          "sense": "clear: contamination absent (R06)",
+          "term": "clear"
+        },
+        {
+          "sense": "reviewed: review completed (R40)",
+          "term": "reviewed"
+        },
+        {
+          "sense": "shipped: departure recorded (R41)",
+          "term": "shipped"
+        },
+        {
+          "sense": "cooled: temperature reduced (R38)",
+          "term": "cooled"
+        },
+        {
+          "sense": "open: account enabled (R32)",
+          "term": "open"
+        },
+        {
+          "sense": "dated: date recorded (R03)",
+          "term": "dated"
+        },
+        {
+          "sense": "rated: grade recorded (R15)",
+          "term": "rated"
+        },
+        {
+          "sense": "calibrated: calibration recorded (R56)",
+          "term": "calibrated"
+        },
+        {
+          "sense": "boxed: box fitted (R05)",
+          "term": "boxed"
+        },
+        {
+          "sense": "sound: signal audible (R35)",
+          "term": "sound"
+        },
+        {
+          "sense": "bundled: bundle formed (R12)",
+          "term": "bundled"
+        },
+        {
+          "sense": "documented: documentation stored (R16)",
+          "term": "documented"
+        },
+        {
+          "sense": "listed: catalogue entry made (R48)",
+          "term": "listed"
+        },
+        {
+          "sense": "mounted: mount fitted (R01)",
+          "term": "mounted"
+        },
+        {
+          "sense": "weighed-in: arrival mass recorded (R08)",
+          "term": "weighed-in"
+        },
+        {
+          "sense": "inspected: inspection completed (R21)",
+          "term": "inspected"
+        },
+        {
+          "sense": "sound: casing intact (R02)",
+          "term": "sound"
+        },
+        {
+          "sense": "ready: packing completed (R43)",
+          "term": "ready"
+        },
+        {
+          "sense": "released: release recorded (R10)",
+          "term": "released"
+        },
+        {
+          "sense": "shelved: shelf assigned (R29)",
+          "term": "shelved"
+        },
+        {
+          "sense": "received: receipt recorded (R57)",
+          "term": "received"
+        },
+        {
+          "sense": "sized: dimensions measured (R55)",
+          "term": "sized"
+        },
+        {
+          "sense": "unloaded: unloading completed (R24)",
+          "term": "unloaded"
+        },
+        {
+          "sense": "retained: retention recorded (R59)",
+          "term": "retained"
+        },
+        {
+          "sense": "tied: tie attached (R26)",
+          "term": "tied"
+        },
+        {
+          "sense": "bagged: bag fitted (R23)",
+          "term": "bagged"
+        },
+        {
+          "sense": "photographed: image recorded (R09)",
+          "term": "photographed"
+        },
+        {
+          "sense": "audited: audit completed (R28)",
+          "term": "audited"
+        },
+        {
+          "sense": "labelled: label attached (R18)",
+          "term": "labelled"
+        },
+        {
+          "sense": "stacked: stack formed (R25)",
+          "term": "stacked"
+        },
+        {
+          "sense": "weighed: mass measured (R34)",
+          "term": "weighed"
+        },
+        {
+          "sense": "booked: transport reserved (R11)",
+          "term": "booked"
+        },
+        {
+          "sense": "open: seal removed (R31)",
+          "term": "open"
+        },
+        {
+          "sense": "staged: staging completed (R19)",
+          "term": "staged"
+        },
+        {
+          "sense": "numbered: number assigned (R13)",
+          "term": "numbered"
+        },
+        {
+          "sense": "sealed: packaging intact (R17)",
+          "term": "sealed"
+        },
+        {
+          "sense": "tagged: tag attached (R51)",
+          "term": "tagged"
+        },
+        {
+          "sense": "dried: moisture removed (R50)",
+          "term": "dried"
+        },
+        {
+          "sense": "logged: entry recorded (R45)",
+          "term": "logged"
+        },
+        {
+          "sense": "stamped: stamp applied (R49)",
+          "term": "stamped"
+        },
+        {
+          "sense": "filed: document stored (R27)",
+          "term": "filed"
+        },
+        {
+          "sense": "loaded: loading completed (R42)",
+          "term": "loaded"
+        },
+        {
+          "sense": "processed: processing completed (R44)",
+          "term": "processed"
+        },
+        {
+          "sense": "tracked: tracking enabled (R47)",
+          "term": "tracked"
+        },
+        {
+          "sense": "queued: place assigned (R20)",
+          "term": "queued"
+        },
+        {
+          "sense": "clipped: clip attached (R60)",
+          "term": "clipped"
+        },
+        {
+          "sense": "tested: test completed (R53)",
+          "term": "tested"
+        }
+      ],
+      "id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+      "premises": [
+        {
+          "id": "n06",
+          "text": "Rules r09, r00, r07 are declared."
+        },
+        {
+          "id": "n11",
+          "text": "Rules r05, r13, r03 are declared."
+        },
+        {
+          "id": "n18",
+          "text": "Rules r08, r11, r15 are declared."
+        },
+        {
+          "id": "n03",
+          "text": "Rules r06, r02, r10, r04 are declared."
+        },
+        {
+          "id": "n09",
+          "text": "Rules r14, r01, r12 are declared."
+        },
+        {
+          "id": "n19",
+          "text": "unit0 is sized; unit0 is wrapped-up; unit0 is released; unit0 is reviewed; unit0 is staged; unit0 is registered; unit0 is numbered. The checks that unit0 is bagged and unit0 is inspected and unit0 is listed remain unassumed."
+        }
+      ],
+      "records": [
+        {
+          "id": "r11",
+          "text": "If unit1 is clear (optically transparent) and unit0 is bagged, then unit0 is clear (contamination absent). If unit1 is clear (optically transparent) and unit0 is inspected, then unit2 is clear (contamination absent). If unit1 is clear (optically transparent) and unit0 is numbered, then unit0 is clear (optically transparent). If unit1 is clear (optically transparent) and unit0 is listed, then unit2 is clear (optically transparent)."
+        },
+        {
+          "id": "r00",
+          "text": "If unit1 is open (seal removed), then unit1 is open (account enabled)."
+        },
+        {
+          "id": "r10",
+          "text": "If unit1 is open (account enabled), then unit0 is open (account enabled)."
+        },
+        {
+          "id": "r12",
+          "text": "If unit0 is packed, then unit1 is ready (staffing arranged)."
+        },
+        {
+          "id": "r04",
+          "text": "If unit0 is ready (packing completed), then unit0 is bundled."
+        },
+        {
+          "id": "r13",
+          "text": "If unit0 is documented, then unit1 is open (seal removed)."
+        },
+        {
+          "id": "r05",
+          "text": "If unit1 is sound (signal audible) and unit0 is sound (signal audible), then unit0 is checked."
+        },
+        {
+          "id": "r08",
+          "text": "If unit0 is reviewed and unit0 is staged and unit0 is registered, then unit1 is sound (signal audible). If unit2 is dated and unit2 is tied, then unit1 is sound (signal audible)."
+        },
+        {
+          "id": "r06",
+          "text": "If unit0 is sized and unit0 is wrapped-up and unit0 is released, then unit1 is sound (casing intact). If unit2 is dated and unit2 is tied, then unit1 is sound (casing intact). The sample from lot unit0 is unit2."
+        },
+        {
+          "id": "r01",
+          "text": "If unit2 is clear (optically transparent), then unit0 is documented. If unit2 is dated and unit2 is tied, then unit0 is documented."
+        },
+        {
+          "id": "r02",
+          "text": "If unit1 is clear (contamination absent), then unit1 is clear (optically transparent)."
+        },
+        {
+          "id": "r14",
+          "text": "If unit1 is sound (casing intact) and unit1 is sound (signal audible), then unit0 is sound (signal audible)."
+        },
+        {
+          "id": "r07",
+          "text": "If unit1 is ready (packing completed), then unit0 is ready (packing completed)."
+        },
+        {
+          "id": "r03",
+          "text": "If unit1 is ready (staffing arranged), then unit1 is ready (packing completed)."
+        },
+        {
+          "id": "r15",
+          "text": "If unit0 is open (account enabled), then unit0 is packed."
+        },
+        {
+          "id": "r09",
+          "text": "If unit0 is checked, then unit1 is clear (contamination absent)."
+        }
+      ],
+      "root": "n08",
+      "step_ids": [
+        "n12",
+        "n13",
+        "n07",
+        "n05",
+        "n15",
+        "n16",
+        "n04",
+        "n02",
+        "n17",
+        "n01",
+        "n21",
+        "n10",
+        "n14",
+        "n20",
+        "n00",
+        "n08"
+      ]
+    },
+    "protocol_recognized": null,
+    "rater_id": "",
+    "reason": "",
+    "response_sha256": "c725266671c66c0c2f1a294b07ffb95e129525dbb7cb9334362614105dff5400",
+    "source_fidelity": null,
+    "source_grounded": null
+  }
+]

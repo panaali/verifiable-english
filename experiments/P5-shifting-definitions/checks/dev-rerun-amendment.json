@@ -1,0 +1,26 @@
+{
+  "cost_policy": "No refund. Superseded v9 X/VE are study-only harness costs; old v8 accepted attribution and shared costs remain. New X/VE use the common $0.45 matched ceiling.",
+  "date": "2026-09-22",
+  "ledger_prefix_bytes": 7004962,
+  "ledger_prefix_sha256": "f811286ce667c60e44baf2abffde4d85f65b3a5e5cf9b37a4974bfcda9f72902",
+  "no_paid_calls": true,
+  "reason": "superseded by harness defect",
+  "rerun_arms": [
+    "X",
+    "VE"
+  ],
+  "retained_final_arms": [
+    "L",
+    "S"
+  ],
+  "retained_final_judgments": 48,
+  "retained_hashes": {
+    "checks/dev-diagnosis.json": "b6ab86e6fdba98cedc9103c069dd14ee01a03f58f792d697eec52b681a2ad205",
+    "runs/dev-v9/analysis-corrected.json": "f52b2b164e8a5bc1154f745db3b9578b8611ac8415f8bc4c0b5cd2de22674742",
+    "runs/dev-v9/analysis.json": "dfa9387babe691521b184c22fc4fc762d807a4a3c5b68851ae449a220b7b89b9",
+    "runs/dev-v9/local-events.jsonl": "9ccc397c8fdfab69f548f49ef0e28342e13ea222db32b5f608b55a9497cf8543",
+    "runs/dev-v9/trials.jsonl": "bc03027eb3e79e2169827328de9ef0e11ecf44e5915a23dc63e42ea3fae341ec"
+  },
+  "revision": "study-v10",
+  "superseded": "study-v9/dev X and VE (all stages and both judges)"
+}

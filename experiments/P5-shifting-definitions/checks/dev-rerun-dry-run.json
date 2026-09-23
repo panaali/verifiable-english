@@ -1,0 +1,226 @@
+{
+  "generation_calls": 0,
+  "paid_calls": 0,
+  "passed": true,
+  "results": [
+    {
+      "adaptive_answers": 1,
+      "arm": "X",
+      "isolated_answers": 3,
+      "item_id": "i11e21a96aa6260b7bafaaec82c8810b9",
+      "judgments": 2,
+      "passed": true
+    },
+    {
+      "arm": "VE",
+      "artifact_sha256": "b628316ac786a59c6f206e99d48f319cb97c33d22d34ce4822c8d951c3509cc4",
+      "author_replay": true,
+      "defender_replay": true,
+      "item_id": "i11e21a96aa6260b7bafaaec82c8810b9",
+      "judgments": 2,
+      "passed": true,
+      "repair_replay": true
+    },
+    {
+      "adaptive_answers": 1,
+      "arm": "X",
+      "isolated_answers": 3,
+      "item_id": "i0e03b71bf431d179be0530712161e8af",
+      "judgments": 2,
+      "passed": true
+    },
+    {
+      "arm": "VE",
+      "artifact_sha256": "b628316ac786a59c6f206e99d48f319cb97c33d22d34ce4822c8d951c3509cc4",
+      "author_replay": true,
+      "defender_replay": true,
+      "item_id": "i0e03b71bf431d179be0530712161e8af",
+      "judgments": 2,
+      "passed": true,
+      "repair_replay": true
+    },
+    {
+      "adaptive_answers": 1,
+      "arm": "X",
+      "isolated_answers": 3,
+      "item_id": "i206f6b8e68e5aabae8bf04e2857d1791",
+      "judgments": 2,
+      "passed": true
+    },
+    {
+      "arm": "VE",
+      "artifact_sha256": "c0b78870f387681e86e0245d38ca58c74f7814133d92d2e448cc3d6fb5b0d9e3",
+      "author_replay": true,
+      "defender_replay": true,
+      "item_id": "i206f6b8e68e5aabae8bf04e2857d1791",
+      "judgments": 2,
+      "passed": true,
+      "repair_replay": true
+    },
+    {
+      "adaptive_answers": 1,
+      "arm": "X",
+      "isolated_answers": 3,
+      "item_id": "idef535ff33c43fd88eabd3d10685d5b6",
+      "judgments": 2,
+      "passed": true
+    },
+    {
+      "arm": "VE",
+      "artifact_sha256": "b7cefe56a16c84c3dd7e229c1204526dc7b0c6a69ef743e36cb80bfe34d3017b",
+      "author_replay": true,
+      "defender_replay": true,
+      "item_id": "idef535ff33c43fd88eabd3d10685d5b6",
+      "judgments": 2,
+      "passed": true,
+      "repair_replay": true
+    },
+    {
+      "adaptive_answers": 1,
+      "arm": "X",
+      "isolated_answers": 3,
+      "item_id": "ib301f2aab289831d1ddf47088674e53c",
+      "judgments": 2,
+      "passed": true
+    },
+    {
+      "arm": "VE",
+      "artifact_sha256": "b628316ac786a59c6f206e99d48f319cb97c33d22d34ce4822c8d951c3509cc4",
+      "author_replay": true,
+      "defender_replay": true,
+      "item_id": "ib301f2aab289831d1ddf47088674e53c",
+      "judgments": 2,
+      "passed": true,
+      "repair_replay": true
+    },
+    {
+      "adaptive_answers": 1,
+      "arm": "X",
+      "isolated_answers": 3,
+      "item_id": "ie1d380d54c4e8787526c42f06324257e",
+      "judgments": 2,
+      "passed": true
+    },
+    {
+      "arm": "VE",
+      "artifact_sha256": "c0b78870f387681e86e0245d38ca58c74f7814133d92d2e448cc3d6fb5b0d9e3",
+      "author_replay": true,
+      "defender_replay": true,
+      "item_id": "ie1d380d54c4e8787526c42f06324257e",
+      "judgments": 2,
+      "passed": true,
+      "repair_replay": true
+    },
+    {
+      "adaptive_answers": 1,
+      "arm": "X",
+      "isolated_answers": 3,
+      "item_id": "i1789fdf8e853490fb1b6731e85d63b13",
+      "judgments": 2,
+      "passed": true
+    },
+    {
+      "arm": "VE",
+      "artifact_sha256": "b7cefe56a16c84c3dd7e229c1204526dc7b0c6a69ef743e36cb80bfe34d3017b",
+      "author_replay": true,
+      "defender_replay": true,
+      "item_id": "i1789fdf8e853490fb1b6731e85d63b13",
+      "judgments": 2,
+      "passed": true,
+      "repair_replay": true
+    },
+    {
+      "adaptive_answers": 1,
+      "arm": "X",
+      "isolated_answers": 3,
+      "item_id": "i248c407facd1841580333a6d67d5af90",
+      "judgments": 2,
+      "passed": true
+    },
+    {
+      "arm": "VE",
+      "artifact_sha256": "39585e0228a7116537a97384c81947796708a1fc1cb1e54ea7783e589153d244",
+      "author_replay": true,
+      "defender_replay": true,
+      "item_id": "i248c407facd1841580333a6d67d5af90",
+      "judgments": 2,
+      "passed": true,
+      "repair_replay": true
+    },
+    {
+      "adaptive_answers": 1,
+      "arm": "X",
+      "isolated_answers": 3,
+      "item_id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+      "judgments": 2,
+      "passed": true
+    },
+    {
+      "arm": "VE",
+      "artifact_sha256": "b7cefe56a16c84c3dd7e229c1204526dc7b0c6a69ef743e36cb80bfe34d3017b",
+      "author_replay": true,
+      "defender_replay": true,
+      "item_id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+      "judgments": 2,
+      "passed": true,
+      "repair_replay": true
+    },
+    {
+      "adaptive_answers": 1,
+      "arm": "X",
+      "isolated_answers": 3,
+      "item_id": "i910d7c5f209964573680cb7258301c2a",
+      "judgments": 2,
+      "passed": true
+    },
+    {
+      "arm": "VE",
+      "artifact_sha256": "39585e0228a7116537a97384c81947796708a1fc1cb1e54ea7783e589153d244",
+      "author_replay": true,
+      "defender_replay": true,
+      "item_id": "i910d7c5f209964573680cb7258301c2a",
+      "judgments": 2,
+      "passed": true,
+      "repair_replay": true
+    },
+    {
+      "adaptive_answers": 1,
+      "arm": "X",
+      "isolated_answers": 3,
+      "item_id": "ia16a766729f914abd691307ee67fec15",
+      "judgments": 2,
+      "passed": true
+    },
+    {
+      "arm": "VE",
+      "artifact_sha256": "39585e0228a7116537a97384c81947796708a1fc1cb1e54ea7783e589153d244",
+      "author_replay": true,
+      "defender_replay": true,
+      "item_id": "ia16a766729f914abd691307ee67fec15",
+      "judgments": 2,
+      "passed": true,
+      "repair_replay": true
+    },
+    {
+      "adaptive_answers": 1,
+      "arm": "X",
+      "isolated_answers": 3,
+      "item_id": "id9eed1756a3842c2d7da8f08ce3b9290",
+      "judgments": 2,
+      "passed": true
+    },
+    {
+      "arm": "VE",
+      "artifact_sha256": "c0b78870f387681e86e0245d38ca58c74f7814133d92d2e448cc3d6fb5b0d9e3",
+      "author_replay": true,
+      "defender_replay": true,
+      "item_id": "id9eed1756a3842c2d7da8f08ce3b9290",
+      "judgments": 2,
+      "passed": true,
+      "repair_replay": true
+    }
+  ],
+  "scope": "12 X protocols with 48 isolated answers; 36 synthetic VE author/repair/defender checker replays. No efficacy evidence.",
+  "source_fidelity_asserted": false,
+  "synthetic_only": true
+}

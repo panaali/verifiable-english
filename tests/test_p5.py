@@ -86,7 +86,7 @@ def test_caps_and_scenarios():
         assert Decimal(c['all_in_usd'])<40 and c['within_cap']
         assert c['within_matched_ceiling']==all(Decimal(v)<=p.MATCHED_CAP
             for v in c['combined_attributed_item_arm_usd'].values())
-    assert Decimal(p.ceilings('dual_judge')['all_in_usd'])==Decimal('35.2264590298')
+    assert Decimal(p.ceilings('dual_judge')['all_in_usd'])==Decimal('35.5617664072')
     for cap in (0,-1,41):
         with pytest.raises(PreflightError):p.ledger(cap)
 

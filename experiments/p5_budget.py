@@ -54,6 +54,9 @@ def matched_charges(rows):
     from experiments import p5 as p
     shared, charged = defaultdict(Decimal), defaultdict(Decimal)
     for meta, row in accepted_calls(rows):
+        # Defective v9 dev protocols are study-only engineering costs.
+        if p.dev_revision.superseded_identity(row.get('identity')):
+            continue
         amount = Decimal(row['cost_usd'])
         if meta.get('role') == 'paraphrase':
             shared[meta['item_id']] += amount
@@ -87,23 +90,26 @@ def ceilings(scenario, scored_families=None):
     extra = {a: cost('replication', *p.stage_limits(a, 'lone' if a == 'L' else 'judge', 'replication'))
              if scenario == 'dual_judge' else Decimal(0) for a in p.ARMS}
     shared, charged = item_charges()
-    attributed = {a: max(arms[a]+extra[a]+shared[i['id']]+charged[i['id'], a] for i in items) for a in p.ARMS}
-    online = sum(arms.values())+sum(extra.values())
+    def future(i, a):
+        return i['split'] != 'dev' or a in p.dev_revision.RERUN_ARMS
+    attributed = {a: max((arms[a]+extra[a] if future(i,a) else Decimal(0))
+        +shared[i['id']]+charged[i['id'], a] for i in items) for a in p.ARMS}
     retained = Decimal(data['retained_commitment_usd'])
     calibration = Decimal(data['calibration_task_cap_usd'])
-    total = retained+calibration+len(items)*online
+    api = sum((arms[a]+extra[a] for i in items for a in p.ARMS if future(i,a)), Decimal(0))
+    total = retained+calibration+api
     return {'scenario': scenario, 'scored_families': count, 'dev_families': 4,
             'scheduled_items': len(items), 'selected_scored_families': sorted(families),
             'retained_commitment_usd': str(retained), 'cpu_usd': '.1344',
             'cpu_accounting': 'already included in retained commitment; no duplicate charge',
             'gemini_calibration_ceiling_usd': str(calibration),
-            'api_usd': str(len(items)*online), 'all_in_usd': str(total),
+            'api_usd': str(api), 'all_in_usd': str(total),
             'reserve_usd': str(p.CAP-total), 'within_cap': total <= p.CAP,
             'matched_ceiling_usd': str(p.MATCHED_CAP),
-            'matched_accounting': 'accepted provider completions only; infrastructure and CPU are study-only',
+            'matched_accounting': 'accepted provider completions; superseded v9 dev X/VE, infrastructure and CPU are study-only',
             'within_matched_ceiling': all(v <= p.MATCHED_CAP for v in attributed.values()),
             'combined_attributed_item_arm_usd': {a: str(v) for a, v in attributed.items()},
-            'replication_judge_overhead_usd': str(len(items)*sum(extra.values())),
-            'future_online_calls': len(items)*(sum(len(p.stage_list(a)) for a in p.ARMS)+(4 if scenario == 'dual_judge' else 0)),
+            'replication_judge_overhead_usd': str(sum((extra[a] for i in items for a in p.ARMS if future(i,a)), Decimal(0))),
+            'future_online_calls': sum(len(p.stage_list(a))+(1 if scenario=='dual_judge' else 0) for i in items for a in p.ARMS if future(i,a)),
             'primary': 'Gemini min(VE_shift,VE_smuggle) - min(X_shift,X_smuggle)',
             'replication_policy': 'same frozen Gemini transcript; Qwen final judgment and lone floor'}

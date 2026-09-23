@@ -1,0 +1,215 @@
+[
+  {
+    "answer": {
+      "explanation": "The original root n02 is part of a chain of inferences that relies on multiple rules and premises. However, the justification for the original root n02 is not clearly supported by a single rule or premise. The chain of reasoning leading to n02 involves multiple steps and rules, making it difficult to determine if the original root is directly supported without a more detailed analysis of the entire argument. Therefore, the original justification is unknown.",
+      "issue_type": "unknown",
+      "locations": [],
+      "verdict": "unknown"
+    },
+    "event": "rating",
+    "item_id": "i206f6b8e68e5aabae8bf04e2857d1791",
+    "packet": {
+      "argument": "[n07] Because unit4 is clipped and unit4 is logged and unit4 is shipped, unit0 is sound.\n\n[n04] Since unit4 is dried and unit4 is scanned and unit4 is audited, it follows that unit0 is sound.\n\n[n20] Given that unit0 is sound and unit0 is sound, we infer that unit4 is sound.\n\n[n15] It follows that unit7 is dried because the immediately preceding sound result holds.\n\n[n18] Because unit7 is dried, unit0 is active. The checks that unit4 is bagged and unit4 is tracked and unit4 is wrapped would imply that unit5 is clear and unit4 is clear and unit5 is clear, respectively.\n\n[n13] Since unit0 is active, it follows that unit0 is active.\n\n[n17] Given that unit0 is active, we infer that unit5 is active.\n\n[n06] It follows that unit3 is logged because the immediately preceding active result holds.\n\n[n11] Because unit3 is logged, unit0 is clear.\n\n[n01] Since unit0 is clear, it follows that unit0 is clear.\n\n[n19] Given that unit0 is clear and unit4 is numbered, we infer that unit4 is clear.\n\n[n00] It follows that unit3 is audited because the immediately preceding clear result holds.\n\n[n21] Because unit3 is audited, unit0 is open.\n\n[n03] Since unit0 is open, it follows that unit0 is open.\n\n[n05] Given that unit0 is open, we infer that unit5 is open.\n\n[n02] It follows that unit1 is dried because the immediately preceding open result holds.",
+      "glossary": [
+        {
+          "sense": "numbered: number assigned (R13)",
+          "term": "numbered"
+        },
+        {
+          "sense": "dried: moisture removed (R01)",
+          "term": "dried"
+        },
+        {
+          "sense": "scanned: barcode read (R16)",
+          "term": "scanned"
+        },
+        {
+          "sense": "open: account enabled (R05)",
+          "term": "open"
+        },
+        {
+          "sense": "active: power connected (R03)",
+          "term": "active"
+        },
+        {
+          "sense": "bagged: bag fitted (R10)",
+          "term": "bagged"
+        },
+        {
+          "sense": "shipped: departure recorded (R04)",
+          "term": "shipped"
+        },
+        {
+          "sense": "clipped: clip attached (R06)",
+          "term": "clipped"
+        },
+        {
+          "sense": "sound: casing intact (R09)",
+          "term": "sound"
+        },
+        {
+          "sense": "clear: contamination absent (R19)",
+          "term": "clear"
+        },
+        {
+          "sense": "open: seal removed (R02)",
+          "term": "open"
+        },
+        {
+          "sense": "inspected: inspection completed (R11)",
+          "term": "inspected"
+        },
+        {
+          "sense": "active: registry current (R17)",
+          "term": "active"
+        },
+        {
+          "sense": "sound: signal audible (R08)",
+          "term": "sound"
+        },
+        {
+          "sense": "tracked: tracking enabled (R20)",
+          "term": "tracked"
+        },
+        {
+          "sense": "logged: entry recorded (R18)",
+          "term": "logged"
+        },
+        {
+          "sense": "clear: optically transparent (R07)",
+          "term": "clear"
+        },
+        {
+          "sense": "audited: audit completed (R15)",
+          "term": "audited"
+        },
+        {
+          "sense": "wrapped: cover fitted (R14)",
+          "term": "wrapped"
+        },
+        {
+          "sense": "staged: staging completed (R12)",
+          "term": "staged"
+        }
+      ],
+      "id": "i206f6b8e68e5aabae8bf04e2857d1791",
+      "premises": [
+        {
+          "id": "n08",
+          "text": "Rules r06, r05, r15 are declared."
+        },
+        {
+          "id": "n09",
+          "text": "unit4 is clipped; unit4 is logged; unit4 is shipped; unit4 is dried; unit4 is scanned; unit4 is audited; unit4 is numbered. The checks that unit4 is bagged and unit4 is tracked and unit4 is wrapped remain unassumed."
+        },
+        {
+          "id": "n12",
+          "text": "Rules r08, r01, r10, r02 are declared."
+        },
+        {
+          "id": "n10",
+          "text": "Rules r12, r07, r04 are declared."
+        },
+        {
+          "id": "n14",
+          "text": "Rules r09, r11, r03 are declared."
+        },
+        {
+          "id": "n16",
+          "text": "Rules r14, r13, r00 are declared."
+        }
+      ],
+      "records": [
+        {
+          "id": "r11",
+          "text": "If unit0 is clear (contamination absent), then unit0 is clear (optically transparent)."
+        },
+        {
+          "id": "r00",
+          "text": "If unit3 is audited, then unit0 is open (seal removed)."
+        },
+        {
+          "id": "r15",
+          "text": "If unit0 is open (seal removed), then unit0 is open (account enabled)."
+        },
+        {
+          "id": "r12",
+          "text": "If unit4 is dried and unit4 is scanned and unit4 is audited, then unit0 is sound (signal audible). If unit4 is staged and unit4 is inspected, then unit0 is sound (signal audible)."
+        },
+        {
+          "id": "r08",
+          "text": "If unit4 is clipped and unit4 is logged and unit4 is shipped, then unit0 is sound (casing intact). If unit4 is staged and unit4 is inspected, then unit0 is sound (casing intact). The sample from lot unit4 is unit5."
+        },
+        {
+          "id": "r10",
+          "text": "If unit0 is clear (optically transparent) and unit4 is numbered, then unit4 is clear (optically transparent). If unit0 is clear (optically transparent) and unit4 is bagged, then unit5 is clear (contamination absent). If unit0 is clear (optically transparent) and unit4 is tracked, then unit4 is clear (contamination absent). If unit0 is clear (optically transparent) and unit4 is wrapped, then unit5 is clear (optically transparent)."
+        },
+        {
+          "id": "r05",
+          "text": "If unit3 is logged, then unit0 is clear (contamination absent)."
+        },
+        {
+          "id": "r02",
+          "text": "If unit5 is open (account enabled), then unit1 is dried."
+        },
+        {
+          "id": "r14",
+          "text": "If unit0 is sound (casing intact) and unit0 is sound (signal audible), then unit4 is sound (signal audible)."
+        },
+        {
+          "id": "r06",
+          "text": "If unit4 is sound (signal audible), then unit7 is dried."
+        },
+        {
+          "id": "r03",
+          "text": "If unit0 is open (account enabled), then unit5 is open (account enabled)."
+        },
+        {
+          "id": "r07",
+          "text": "If unit0 is active (registry current), then unit5 is active (registry current)."
+        },
+        {
+          "id": "r09",
+          "text": "If unit7 is dried, then unit0 is active (power connected)."
+        },
+        {
+          "id": "r13",
+          "text": "If unit5 is active (registry current), then unit3 is logged."
+        },
+        {
+          "id": "r01",
+          "text": "If unit0 is active (power connected), then unit0 is active (registry current)."
+        },
+        {
+          "id": "r04",
+          "text": "If unit4 is clear (optically transparent), then unit3 is audited. If unit4 is staged and unit4 is inspected, then unit3 is audited."
+        }
+      ],
+      "root": "n02",
+      "step_ids": [
+        "n07",
+        "n04",
+        "n20",
+        "n15",
+        "n18",
+        "n13",
+        "n17",
+        "n06",
+        "n11",
+        "n01",
+        "n19",
+        "n00",
+        "n21",
+        "n03",
+        "n05",
+        "n02"
+      ]
+    },
+    "protocol_recognized": null,
+    "rater_id": "",
+    "reason": "",
+    "response_sha256": "c50133471d9a00f24a6c0d86d8963d3333fe1f114b6c2c1b749945e941dbca69",
+    "source_fidelity": null,
+    "source_grounded": null
+  }
+]

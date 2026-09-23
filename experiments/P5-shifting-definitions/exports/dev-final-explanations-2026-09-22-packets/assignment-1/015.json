@@ -1,0 +1,215 @@
+[
+  {
+    "answer": {
+      "explanation": "The argument correctly applies the declared rules and premises. Explicit shifts (such as in n20, n21, and n18) correctly correspond to rules r13, r03, and r12 respectively, and all other inferences faithfully track the required senses without smuggling or invalid shifts.",
+      "issue_type": "none",
+      "locations": [],
+      "verdict": "approve"
+    },
+    "event": "rating",
+    "item_id": "ia16a766729f914abd691307ee67fec15",
+    "packet": {
+      "argument": "[n00] Because unit2 is bagged and unit2 is logged and unit2 is listed, unit7 is ready.\n\n[n02] Since unit2 is stored and unit2 is routed and unit2 is shipped, it follows that unit7 is ready.\n\n[n07] Given that unit7 is ready and unit7 is ready, we infer that unit2 is ready.\n\n[n16] It follows that unit4 is stored because unit7 is ready and the immediately preceding ready result holds.\n\n[n05] Because unit4 is stored, unit7 is active.\n\n[n20] Since unit7 is active, it follows that unit7 is active.\n\n[n06] Given that unit7 is active, we infer that unit3 is active.\n\n[n03] It follows that unit6 is logged because the immediately preceding active result holds.\n\n[n14] Because unit6 is logged, unit7 is clear.\n\n[n21] Since unit7 is clear, it follows that unit7 is clear. The checks that unit2 is documented and unit2 is boxed and unit2 is retained would establish that unit3 is clear and unit2 is clear and unit2 is clear, respectively.\n\n[n01] Given that unit7 is clear and unit2 is queued, we infer that unit3 is clear.\n\n[n15] It follows that unit6 is shipped because the immediately preceding clear result holds.\n\n[n08] Because unit6 is shipped, unit7 is open.\n\n[n18] Since unit7 is open, it follows that unit7 is open.\n\n[n04] Given that unit7 is open, we infer that unit2 is open.\n\n[n19] It follows that unit5 is stored because the immediately preceding open result holds.",
+      "glossary": [
+        {
+          "sense": "stored: location assigned (R15)",
+          "term": "stored"
+        },
+        {
+          "sense": "audited: audit completed (R08)",
+          "term": "audited"
+        },
+        {
+          "sense": "retained: retention recorded (R10)",
+          "term": "retained"
+        },
+        {
+          "sense": "queued: place assigned (R07)",
+          "term": "queued"
+        },
+        {
+          "sense": "shipped: departure recorded (R12)",
+          "term": "shipped"
+        },
+        {
+          "sense": "ready: staffing arranged (R06)",
+          "term": "ready"
+        },
+        {
+          "sense": "open: seal removed (R02)",
+          "term": "open"
+        },
+        {
+          "sense": "documented: documentation stored (R11)",
+          "term": "documented"
+        },
+        {
+          "sense": "clear: contamination absent (R16)",
+          "term": "clear"
+        },
+        {
+          "sense": "clear: optically transparent (R19)",
+          "term": "clear"
+        },
+        {
+          "sense": "routed: route assigned (R13)",
+          "term": "routed"
+        },
+        {
+          "sense": "ready: packing completed (R18)",
+          "term": "ready"
+        },
+        {
+          "sense": "active: power connected (R14)",
+          "term": "active"
+        },
+        {
+          "sense": "active: registry current (R09)",
+          "term": "active"
+        },
+        {
+          "sense": "boxed: box fitted (R05)",
+          "term": "boxed"
+        },
+        {
+          "sense": "scheduled: time assigned (R20)",
+          "term": "scheduled"
+        },
+        {
+          "sense": "open: account enabled (R01)",
+          "term": "open"
+        },
+        {
+          "sense": "logged: entry recorded (R04)",
+          "term": "logged"
+        },
+        {
+          "sense": "listed: catalogue entry made (R03)",
+          "term": "listed"
+        },
+        {
+          "sense": "bagged: bag fitted (R17)",
+          "term": "bagged"
+        }
+      ],
+      "id": "ia16a766729f914abd691307ee67fec15",
+      "premises": [
+        {
+          "id": "n10",
+          "text": "Rules r02, r11, r08 are declared."
+        },
+        {
+          "id": "n12",
+          "text": "Rules r01, r06, r14 are declared."
+        },
+        {
+          "id": "n13",
+          "text": "Rules r09, r10, r12 are declared."
+        },
+        {
+          "id": "n09",
+          "text": "Rules r05, r13, r07, r00 are declared."
+        },
+        {
+          "id": "n17",
+          "text": "unit2 is bagged; unit2 is logged; unit2 is listed; unit2 is stored; unit2 is routed; unit2 is shipped; unit2 is queued. The checks that unit2 is documented and unit2 is boxed and unit2 is retained remain unassumed."
+        },
+        {
+          "id": "n11",
+          "text": "Rules r15, r03, r04 are declared."
+        }
+      ],
+      "records": [
+        {
+          "id": "r15",
+          "text": "If unit4 is stored, then unit7 is active (power connected)."
+        },
+        {
+          "id": "r03",
+          "text": "If unit7 is clear (contamination absent), then unit7 is clear (optically transparent)."
+        },
+        {
+          "id": "r01",
+          "text": "If unit2 is stored and unit2 is routed and unit2 is shipped, then unit7 is ready (staffing arranged). If unit3 is audited and unit3 is scheduled, then unit7 is ready (staffing arranged)."
+        },
+        {
+          "id": "r14",
+          "text": "If unit3 is clear (optically transparent), then unit6 is shipped. If unit3 is audited and unit3 is scheduled, then unit6 is shipped."
+        },
+        {
+          "id": "r08",
+          "text": "If unit6 is shipped, then unit7 is open (account enabled)."
+        },
+        {
+          "id": "r00",
+          "text": "If unit2 is open (seal removed), then unit5 is stored."
+        },
+        {
+          "id": "r12",
+          "text": "If unit7 is open (account enabled), then unit7 is open (seal removed)."
+        },
+        {
+          "id": "r05",
+          "text": "If unit2 is bagged and unit2 is logged and unit2 is listed, then unit7 is ready (packing completed). If unit3 is audited and unit3 is scheduled, then unit7 is ready (packing completed). The sample from lot unit2 is unit3."
+        },
+        {
+          "id": "r06",
+          "text": "If unit7 is active (registry current), then unit3 is active (registry current)."
+        },
+        {
+          "id": "r04",
+          "text": "If unit7 is open (seal removed), then unit2 is open (seal removed)."
+        },
+        {
+          "id": "r11",
+          "text": "If unit3 is active (registry current), then unit6 is logged."
+        },
+        {
+          "id": "r13",
+          "text": "If unit7 is active (power connected), then unit7 is active (registry current)."
+        },
+        {
+          "id": "r02",
+          "text": "If unit7 is ready (packing completed) and unit7 is ready (staffing arranged), then unit2 is ready (staffing arranged)."
+        },
+        {
+          "id": "r10",
+          "text": "If unit6 is logged, then unit7 is clear (contamination absent)."
+        },
+        {
+          "id": "r07",
+          "text": "If unit7 is clear (optically transparent) and unit2 is documented, then unit3 is clear (contamination absent). If unit7 is clear (optically transparent) and unit2 is queued, then unit3 is clear (optically transparent). If unit7 is clear (optically transparent) and unit2 is boxed, then unit2 is clear (contamination absent). If unit7 is clear (optically transparent) and unit2 is retained, then unit2 is clear (optically transparent)."
+        },
+        {
+          "id": "r09",
+          "text": "If unit7 is ready (staffing arranged) and unit2 is ready (staffing arranged), then unit4 is stored."
+        }
+      ],
+      "root": "n19",
+      "step_ids": [
+        "n00",
+        "n02",
+        "n07",
+        "n16",
+        "n05",
+        "n20",
+        "n06",
+        "n03",
+        "n14",
+        "n21",
+        "n01",
+        "n15",
+        "n08",
+        "n18",
+        "n04",
+        "n19"
+      ]
+    },
+    "protocol_recognized": null,
+    "rater_id": "",
+    "reason": "",
+    "response_sha256": "fc4eab68c3ea3226383bdd4b0232cf578efdecc21b1fc2fd6ab0cba25d7f9562",
+    "source_fidelity": null,
+    "source_grounded": null
+  }
+]

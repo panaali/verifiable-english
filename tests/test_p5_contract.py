@@ -108,7 +108,7 @@ def test_v9_caps_history_reserves_and_no_legacy_cache_reuse():
     for stage in ('author','repair','critic','defender','judge'):
         r=p.request(item,'VE',stage)
         assert r.max_output_tokens==r.billed_output_cap==4096
-        assert r.identity.startswith('study-v9/dev/')
+        assert r.identity.startswith('study-v10/dev/')
     assert p.run_path('dev','trials.jsonl')!=p.HERE/'runs/dev/trials.jsonl'
     pairs=[(r,n) for r,n in fixtures() if r.metadata['item_id']==item['id'] and r.metadata['arm']=='VE']
     assert next(n for r,n in pairs if r.metadata['role']=='judge')==4*4096+1024

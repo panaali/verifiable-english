@@ -1,14 +1,10 @@
 {
-  "blockers": [
-    "budget"
-  ],
-  "calibration_new_calls": 6,
-  "calibration_task_spend_usd": "0.035710",
-  "dev_scored_calls": 0,
-  "freeze_sha256": "d816fd81641bb12800d3cc4c4a0afc04b29261cb00823c0998bb7ba5f7b362cb",
+  "blockers": [],
+  "freeze_sha256": "e0c3cd6a145aec586a7f12482c44cabee793c3a20ad8d2cd79826bd7e7b64bce",
   "gates": {
-    "budget": false,
+    "budget": true,
     "construction": true,
+    "dev-harness": true,
     "external-timestamp": true,
     "gemini-calibration-coverage": true,
     "known-answer": true,
@@ -16,7 +12,6 @@
     "lean-replay": true,
     "packet-safety": true,
     "prose-provenance": true,
-    "provider-preflight": true,
     "review": true,
     "role-boundaries": true,
     "surface-soundness": true,
@@ -24,11 +19,5 @@
     "tracked-blinding": true
   },
   "generation_calls": 0,
-  "note": "Study total fits $40; existing $0.16 item/arm gate requires explicit amendment. Dev remains unrun.",
-  "passed": false,
-  "tests": {
-    "command": "uv run pytest -q tests/test_p5*.py",
-    "failed": 0,
-    "passed": 176
-  }
+  "passed": true
 }

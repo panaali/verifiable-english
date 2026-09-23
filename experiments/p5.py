@@ -17,6 +17,7 @@ import time
 
 from experiments.p5_materials import HERE, SEED, read, archive, write_json, generate
 from experiments.p5_isolation import single_context
+from experiments import p5_dev_revision as dev_revision
 from experiments.p5_analysis import ARMS, parse, analyze, known_answer, contract_report
 from experiments.p5_paraphrase import SANITISER, validate_reply
 from experiments import p5_review as review
@@ -87,6 +88,7 @@ def packet(item, arm=None):
     lines += ['Authoritative records:'] + [f"{r['id']}: {r['text']}" for r in p['records']]
     lines += ['Paragraph IDs in order: ' + ', '.join(n['id'] for n in p['nodes']), 'Proposed argument:', p['argument'], f"Original root {p['root']}."]
     if arm == 'VE':
+        lines += [dev_revision.WIRE_GUIDE]
         lines += ['VE node block:'] + [f"{n['id']} ({','.join(n['parents'])}): {n['text']}" for n in p['nodes']]
     return '\n'.join(lines)
 
@@ -148,7 +150,8 @@ def request(item,arm,stage,history=None,*,judge='pro',turn=0,commitment=None,que
     # the separate provider response_schema overhead; p5_tokens handles that.
     system=(instruction if stage=='paraphrase' else SYSTEM+' '+instruction)+((' Response schema: '+packed(schema)) if schema else '')
     inp,out=stage_limits(arm,stage,model)
-    prefix = "rewrite-v7/" if stage == "paraphrase" else STUDY_REVISION+'/'
+    revision = dev_revision.REVISION if item['split']=='dev' and arm in dev_revision.RERUN_ARMS else STUDY_REVISION
+    prefix = "rewrite-v7/" if stage == "paraphrase" else revision+'/'
     return PaidRequest(prefix+f"{item['split']}/{item['id']}/{arm}/{model}/{stage}/{turn}",model,
         [{'role':'system','content':system},{'role':'user','content':content}],inp,out,
         response_schema=schema,metadata={'item_id':item['id'],'arm':arm,'role':stage,'turn':turn,
@@ -375,7 +378,7 @@ def freeze(scenario):
     paths += list((HERE/'runs').glob('revision-*/paraphrase-costs.jsonl'))
     paths += [HERE/'checks/v7-final-acceptance.json', HERE/'checks/gemini-rendered-adjudication.json']
     paths += [HERE/'DEV-CONTRACT-AUDIT.md',HERE/'checks/dev-contract-audit.json',
-        HERE/'checks/dev-superseded-v8.json',HERE/'checks/budget-scenarios.json',HERE/'runs/dev/trials.jsonl',HERE/'runs/dev/analysis.json']
+        HERE/'checks/dev-rerun-amendment.json',HERE/'checks/dev-rerun-dry-run.json',HERE/'checks/dev-superseded-v8.json',HERE/'checks/budget-scenarios.json',HERE/'runs/dev/trials.jsonl',HERE/'runs/dev/analysis.json']
     paths += [HERE/name for name in ('MATERIALS-MANIFEST.json','MATERIALS-HASHES.txt',
         'MATERIALS-HASHES.txt.ots','checks/round5-review-submission.json',
         'checks/round5-review-verification.txt','checks/round5-review-import.json',
@@ -399,6 +402,7 @@ def freeze(scenario):
 
 def verify_freeze(*, paraphrase_progress=False, check_budget=True):
     f=json.loads((HERE/'freeze.json').read_text())
+    dev_revision.verify_retained()
     # Only this pre-scoring construction stage may replace its own outputs.
     # Dossiers, code and every other frozen input must still match exactly.
     progress={HERE/f'materials/{name}.jsonl.gz' for name in ('paraphrases','dev','scored')} if paraphrase_progress else set()
@@ -428,7 +432,7 @@ def gate_receipt(name,result,stamp):
 
 def require_gates(scored=False):
     f=verify_freeze(); blockers=[]
-    for name in ('tracked-blinding','surface-soundness','review','prose-provenance','construction','known-answer','gemini-calibration-coverage','tokenizer','budget','lean-replay','packet-safety','leakage','role-boundaries','external-timestamp','provider-preflight',*(['dev'] if scored else [])):
+    for name in ('dev-harness','tracked-blinding','surface-soundness','review','prose-provenance','construction','known-answer','gemini-calibration-coverage','tokenizer','budget','lean-replay','packet-safety','leakage','role-boundaries','external-timestamp','provider-preflight',*(['dev'] if scored else [])):
         path=HERE/f'checks/{name}.json'
         r=json.loads(path.read_text()) if path.exists() else {}
         if r.get('passed') is not True or r.get('freeze_sha256')!=f['manifest_sha256']:
@@ -519,18 +523,20 @@ def ledger(cap):
 def run(split,cap,resume=False):
     f=require_gates(split=='scored'); plan=SCENARIOS[f['scenario']]
     book=ledger(cap); book.allowance('p5-local-envelope','.1344')
-    block=f'{STUDY_REVISION}/{f["scenario"]}/{split}'
+    revision=dev_revision.REVISION if split=='dev' else STUDY_REVISION
+    arms=dev_revision.RERUN_ARMS if split=='dev' else ARMS
+    block=f'{revision}/{f["scenario"]}/{split}'
     n=len(scheduled_materials(split))
-    online=sum((cost('pro',*stage_limits(a,s)) for a in ARMS for s in stage_list(a)),Decimal(0))
+    online=sum((cost('pro',*stage_limits(a,s)) for a in arms for s in stage_list(a)),Decimal(0))
     if len(plan)>1:
-        online+=sum((cost('replication',*stage_limits(a,'lone' if a=='L' else 'judge','replication')) for a in ARMS),Decimal(0))
+        online+=sum((cost('replication',*stage_limits(a,'lone' if a=='L' else 'judge','replication')) for a in arms),Decimal(0))
     book.reserve_block(block,str(n*online),resume=resume,schedule=f['scenario'],split=split)
     pro=PaidClient(VertexBackend(),book,block,reuse_completed=True)
     clients={'pro':pro}
     if 'replication' in plan: clients['replication']=PaidClient(OpenRouterBackend(native_counter()),book,block,reuse_completed=True)
-    trials_path=run_path(split,'trials.jsonl'); existing=read(trials_path)
+    trials_path=dev_revision.run_path(split,'trials.jsonl'); existing=dev_revision.trials(split)
     done={(r['item_id'],r['condition'],r['judge']) for r in existing}
-    assignments=[(i,a) for i in scheduled_materials(split) for a in ARMS];random.Random(SEED).shuffle(assignments)
+    assignments=[(i,a) for i in scheduled_materials(split) for a in arms];random.Random(SEED).shuffle(assignments)
     stopped=None
     try:
         for item,arm in assignments:
@@ -542,7 +548,7 @@ def run(split,cap,resume=False):
             if not active:break
             events=[]
             try:
-                local_path=run_path(split,'local-events.jsonl')
+                local_path=dev_revision.run_path(split,'local-events.jsonl')
                 cache=[r['event'] for r in read(local_path) if r['item_id']==item['id'] and r['arm']==arm]
                 rows=execute(item,arm,pro,active,local_events=events,local_cache=cache,
                     event_sink=lambda e:append(local_path,{'item_id':item['id'],'arm':arm,'event':e}))
@@ -555,16 +561,16 @@ def run(split,cap,resume=False):
         stopped=str(exc)
     finally:
         for c in clients.values():c.close()
-    rows=read(trials_path)
+    rows=dev_revision.trials(split)
     _,halted=infrastructure_state(book)
     report=analyze(rows,scheduled_materials(split),labels(),plan,allow_missing=True)
     report.update(stopped=stopped,halted_judges=halted)
     if split=='dev':
         # Source-fidelity must be manually reviewed; contract alone never passes dev.
         report.update(passed=False,source_fidelity_review_required=True,
-            **contract_report(rows,len(assignments),plan))
+            **contract_report(rows,n*len(ARMS),plan))
         gate_receipt('dev',report,f['manifest_sha256'])
-    write_json(run_path(split,'analysis.json'),report)
+    write_json(dev_revision.run_path(split,'analysis.json'),report)
     if not stopped and not halted and report['missing']==0:book.release_block(block)
     return report
 
@@ -750,14 +756,14 @@ def main(argv=None):
             from experiments.p5_preflight import explanations
             result=explanations(args.split,args.export,args.submit)
         else:
-            f=verify_freeze();result=analyze(read(run_path(args.split,'trials.jsonl')),scheduled_materials(args.split),labels(),
-                SCENARIOS[f['scenario']],read(run_path(args.split,'ratings.jsonl')),allow_missing=True)
+            f=verify_freeze();result=analyze(dev_revision.trials(args.split),scheduled_materials(args.split),labels(),
+                SCENARIOS[f['scenario']],read(dev_revision.run_path(args.split,'ratings.jsonl')),allow_missing=True)
             from experiments.p5_preflight import cost_report
             result['costs']=cost_report(args.split)
             result['cost_accuracy_frontier']={j:{a:{'mean_cost_usd':result['costs']['mean_attributed_cost_by_arm'][a],
                 'worst_flaw_accuracy':r['worst_flaw'][a], 'benign_completion':r['accuracy'][a]['benign']} for a in ARMS}
                 for j,r in result['judges'].items()}
-            write_json(run_path(args.split,'analysis.json'),result)
+            write_json(dev_revision.run_path(args.split,'analysis.json'),result)
         print(json.dumps(result,indent=2,default=str))
         return 2 if result.get('requested_models_passed',result.get('passed')) is False else 0
     except (PreflightError,ValueError,FileNotFoundError) as exc:

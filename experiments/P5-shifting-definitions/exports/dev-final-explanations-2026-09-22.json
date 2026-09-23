@@ -1,0 +1,60 @@
+{
+  "assignments": [
+    [
+      "dev-final-explanations-2026-09-22-packets/assignment-1/000.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/001.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/002.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/003.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/004.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/005.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/006.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/007.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/008.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/009.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/010.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/011.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/012.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/013.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/014.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-1/015.json"
+    ],
+    [
+      "dev-final-explanations-2026-09-22-packets/assignment-2/000.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/001.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/002.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/003.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/004.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/005.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/006.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/007.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/008.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/009.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/010.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/011.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/012.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/013.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/014.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-2/015.json"
+    ],
+    [
+      "dev-final-explanations-2026-09-22-packets/assignment-3/000.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/001.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/002.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/003.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/004.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/005.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/006.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/007.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/008.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/009.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/010.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/011.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/012.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/013.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/014.json",
+      "dev-final-explanations-2026-09-22-packets/assignment-3/015.json"
+    ]
+  ],
+  "packets": 48,
+  "policy": "One assignment per reviewer; one file per fresh context. Never combine assignments or use sibling few-shot examples."
+}

@@ -1,8 +1,8 @@
 {
   "assigned": 96,
   "assigned_valid_fraction": {
-    "pro": 1.0,
-    "replication": 0.9583333333333334
+    "pro": 0.5,
+    "replication": 0.5
   },
   "contract_compliance": {
     "pro": 1.0,
@@ -11,19 +11,19 @@
   "contract_counts": {
     "pro": {
       "assigned": 48,
-      "observed": 48,
-      "valid": 48
+      "observed": 24,
+      "valid": 24
     },
     "replication": {
       "assigned": 48,
-      "observed": 46,
-      "valid": 46
+      "observed": 24,
+      "valid": 24
     }
   },
   "contract_passed": false,
   "coverage_passed": false,
   "families": 4,
-  "freeze_sha256": "aeef711e96d33d7e23dfaaccb1c9e35ac96ec9e20ef0853b524334d69f232394",
+  "freeze_sha256": "e0c3cd6a145aec586a7f12482c44cabee793c3a20ad8d2cd79826bd7e7b64bce",
   "halted_judges": {},
   "judges": {
     "pro": {
@@ -89,11 +89,11 @@
           "unsafe_approval": 7
         },
         "VE": {
-          "author_failure": 12,
+          "author_failure": 0,
           "completion": 0,
           "detection": 0,
           "failed": 12,
-          "oracle_unknown": 5,
+          "oracle_unknown": 0,
           "original_approval": 0,
           "score": 0,
           "unsafe_approval": 8
@@ -102,18 +102,18 @@
           "author_failure": 0,
           "completion": 0,
           "detection": 0,
-          "failed": 0,
+          "failed": 12,
           "oracle_unknown": 0,
-          "original_approval": 6,
+          "original_approval": 0,
           "score": 0,
-          "unsafe_approval": 4
+          "unsafe_approval": 8
         }
       },
       "oracle_unknown_family_interval": [
-        0.3333333333333333,
-        0.5833333333333333
+        0.0,
+        0.0
       ],
-      "oracle_unknown_rate": 0.4166666666666667,
+      "oracle_unknown_rate": 0.0,
       "paired_per_flaw": {
         "shift": {
           "bootstrap": [
@@ -216,7 +216,7 @@
           }
         }
       },
-      "practical_oracle_coverage_refuted": true,
+      "practical_oracle_coverage_refuted": false,
       "primary": {
         "bonferroni_wilson": [
           -0.6093190165180365,
@@ -357,11 +357,11 @@
           "unsafe_approval": 3
         },
         "VE": {
-          "author_failure": 11,
+          "author_failure": 0,
           "completion": 0,
           "detection": 0,
           "failed": 12,
-          "oracle_unknown": 4,
+          "oracle_unknown": 0,
           "original_approval": 0,
           "score": 0,
           "unsafe_approval": 8
@@ -370,18 +370,18 @@
           "author_failure": 0,
           "completion": 0,
           "detection": 0,
-          "failed": 1,
+          "failed": 12,
           "oracle_unknown": 0,
-          "original_approval": 4,
+          "original_approval": 0,
           "score": 0,
-          "unsafe_approval": 1
+          "unsafe_approval": 8
         }
       },
       "oracle_unknown_family_interval": [
-        0.08333333333333333,
-        0.5833333333333333
+        0.0,
+        0.0
       ],
-      "oracle_unknown_rate": 0.3333333333333333,
+      "oracle_unknown_rate": 0.0,
       "paired_per_flaw": {
         "shift": {
           "bootstrap": [
@@ -484,7 +484,7 @@
           }
         }
       },
-      "practical_oracle_coverage_refuted": true,
+      "practical_oracle_coverage_refuted": false,
       "primary": {
         "bonferroni_wilson": [
           -0.6093190165180365,
@@ -563,9 +563,18 @@
       }
     }
   },
-  "missing": 2,
+  "missing": 48,
   "passed": false,
   "primary_framing": "matched ceiling; actual dollars reported",
+  "replacement_arms": [
+    "X",
+    "VE"
+  ],
+  "replacement_pending": true,
+  "retained_final_arms": [
+    "L",
+    "S"
+  ],
   "source_fidelity_review_required": true,
   "status": "incomplete",
   "stopped": null

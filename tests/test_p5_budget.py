@@ -39,8 +39,8 @@ def test_retained_envelopes_cpu_and_dev_are_charged_once():
     data = budget.plan()
     c = p.ceilings('dual_judge')
     assert Decimal(c['all_in_usd']) == (Decimal(data['retained_commitment_usd'])
-        + Decimal('.30') + Decimal(c['api_usd']))
-    assert c['future_online_calls'] == 858
+        + Decimal(data['calibration_task_cap_usd']) + Decimal(c['api_usd']))
+    assert c['future_online_calls'] == 774
     assert c['combined_attributed_item_arm_usd']['VE'] == '0.4275424776'
     assert Decimal(c['combined_attributed_item_arm_usd']['VE']) > Decimal('.38')
 

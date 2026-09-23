@@ -966,3 +966,86 @@ Validation: `uv run --offline pytest -q tests/test_p5*.py` passes **218 tests**.
 The offline audit verifies all 94 response/prompt/history joins and reruns the
 checker on all 36 authored/repaired/defended VE artifacts. Trial, local-event,
 material and paid-ledger hashes are unchanged across diagnosis and testing.
+
+## Amendment (2026-09-22): X/VE dev superseded by harness defect; v10 replacement
+
+The orchestrator authorizes preparing new identities for **only X and VE dev**,
+with no paid calls in this work session. The v9 X and VE cells are **superseded
+by harness defect**, not efficacy observations: fenced JSON prevented all 12 X
+protocols from delivering cross-examination, and the underspecified VE wire
+contract elicited a string instead of an environment object in all 36 retained
+author/repair/defender artifacts. All v9 histories, judgments, diagnosis and
+costs remain archived, hash-bound in `checks/dev-rerun-amendment.json`. This
+amendment does not repair or reinterpret those historical model replies.
+
+The 48 L/S judgments (12 packets × two arms × two judges) are already final.
+They remain byte-for-byte in `runs/dev-v9/trials.jsonl` and are read into the
+active dev view; they are neither copied as new observations nor re-bought.
+The old X/VE judgments never enter active dev analysis or explanation exports.
+All replacement stages, turns and both judges use `study-v10/dev/...` request
+identities and a fresh `study-v10/dual_judge/dev` block. Replacement trials,
+local events, analysis and all active explanation ratings use `runs/dev-v10/`.
+No old X/VE response or local checker event is reusable under those identities.
+Resume skips completed replacement cells and reuses only their own v10 cache.
+
+The lossless fenced-JSON decoder from 7b45a6d is retained. VE now receives a
+small, generic JSON environment and strict-VE syntax guide in its **user
+message**. It documents object structure, declared identifiers, `@` constants,
+punctuation/newline requirements and exact record alignment IDs. It supplies
+no dossier-specific vocabulary, formalisation, source interpretation, proof,
+or gold answer. The system configurations, calibrated billing overheads, stage
+token caps, thinking level, protocol lengths, checker and source-fidelity rubric
+are unchanged. Invalid model artifacts still fail; none is repaired by the
+harness. Free full-config token recounts cover all stage fixtures after this
+prompt change, and exact existing calibration coverage must pass.
+
+`python -m experiments.p5_dev_dry_run` uses synthetic replies and the actual
+execution path and checker. All 12 X protocols complete three isolated initial
+answers and one isolated adaptive answer; copy isolation is asserted. All 36
+synthetic VE author/repair/defender artifacts replay. The synthetic vocabulary
+and tautological claims are deliberately not source-faithful and never become
+paid trials, ratings, or efficacy evidence. A regression also exercises an
+invalid author followed by a successful repair and defender recertification.
+The frozen `dev-harness` preflight receipt binds this delivery smoke.
+
+**Every historical cost is retained.** The only paid-ledger addition is release
+of the old block's unused $6.3386034834 reservation, explicitly without refund
+or a completed-block claim. The retained study commitment is $6.4484455664,
+including earlier revision envelopes, infrastructure charges and CPU allowance.
+The already-spent $0.035710 calibration is included there; its remaining
+$0.264290 authorization is still reserved. New X/VE dev costs at most
+$6.6739108608; the unchanged dual-judge, all-arm nine-family scored schedule
+costs at most $22.1751199800. Thus the amended study envelope is
+**$35.5617664072**, leaving **$4.4382335928** under $40. The prior budget snapshot
+is `checks/budget-scenarios-pre-v10.json`. A 12-family scored expansion would
+cost $42.9534730672 and remains blocked.
+
+Accepted responses from the specifically superseded v9 X/VE dev protocols are
+study-only harness costs, not reasoning consumed by their new protocol.
+Shared costs and the older retained v8 accepted-response attribution remain;
+L/S attribution is unchanged. Every active arm retains the common $0.45
+matched ceiling; the largest retained-plus-future bound remains $0.4275424776.
+No refund, extra efficacy sample, outcome-based selection, stage expansion or
+budget increase is permitted.
+
+The orchestrator's exact replacement command is:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P5-shifting-definitions/run_p5.py resume --split dev --cap-usd 40
+```
+
+The cap is **cumulative study spending**, not an additional $40. No scored
+execution is enabled until the replacement dev is complete and the unchanged
+contract and independent explanation/source-fidelity review gates pass.
+
+The already-final judgments are exported with:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run --offline python experiments/P5-shifting-definitions/run_p5.py explanations --split dev --export experiments/P5-shifting-definitions/exports/dev-final-explanations-2026-09-22.json
+```
+
+This packet contains 48 judgments with opaque IDs and shuffled order, no arm or
+judge fields, three sibling-disjoint assignments, and one dossier per file.
+Rating fields are blank. Each assignment needs two independent raters under
+the existing exposure rules; no ratings are invented by this export. Early
+L/S submissions remain valid when later v10 X/VE judgments are added.

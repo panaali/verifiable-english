@@ -1,0 +1,227 @@
+{
+  "additional_future_paraphrase_calls": 0,
+  "arms": [
+    "X",
+    "S",
+    "VE",
+    "L"
+  ],
+  "calibration_actual_usd": "0.035710",
+  "calibration_generation_calls": 6,
+  "calibration_task_cap_usd": ".30",
+  "calibration_unspent_authorization_usd": "0.264290",
+  "cpu_already_in_retained_usd": ".1344",
+  "cross_examination_initial_questions": 3,
+  "date": "2026-09-22",
+  "executable_selection": "a",
+  "historical_revision_envelopes_retained": true,
+  "item_arm_ceiling_status": "Adopted $0.45 for every arm; accepted provider responses only; infrastructure and CPU study-only",
+  "ledger_prefix_bytes": 2195608,
+  "ledger_prefix_sha256": "51b3803db615ec89cbc8be501b2473342cfe725f283984e9239ddb3a18b16d87",
+  "power": {
+    "benign_planning_half_width": 0.2449489742783178,
+    "delta_planning_half_width": 0.4898979485566356,
+    "independent_families_after": 9,
+    "independent_families_before": 24,
+    "interpretation": "Planning square-root-N scaling, not measured power or a guarantee; same bootstrap and boundary safeguards.",
+    "standard_error_multiplier": 1.632993161855452,
+    "worse_delta_half_width": 0.816496580927726,
+    "zero_harm_one_sided_95_upper": 0.2831288355631135
+  },
+  "required_common_item_arm_ceiling_usd": ".45",
+  "retained_commitment_usd": "2.8957301698",
+  "scenarios": [
+    {
+      "all_in_usd": "35.2264590298",
+      "candidates": [
+        {
+          "all_in_usd": "20.4430457098",
+          "scored_families": 3
+        },
+        {
+          "all_in_usd": "27.8347523698",
+          "scored_families": 6
+        },
+        {
+          "all_in_usd": "35.2264590298",
+          "scored_families": 9
+        },
+        {
+          "all_in_usd": "42.6181656898",
+          "scored_families": 12
+        },
+        {
+          "all_in_usd": "50.0098723498",
+          "scored_families": 15
+        },
+        {
+          "all_in_usd": "57.4015790098",
+          "scored_families": 18
+        },
+        {
+          "all_in_usd": "64.7932856698",
+          "scored_families": 21
+        },
+        {
+          "all_in_usd": "72.1849923298",
+          "scored_families": 24
+        }
+      ],
+      "dev_families": 4,
+      "future_online_usd": "32.0307288600",
+      "max_retained_item_arm_usd": "0.4275424776",
+      "online_per_item_usd": "0.8213007400",
+      "priority": "a",
+      "reserve_usd": "4.7735409702",
+      "scenario": "dual_judge",
+      "scored_families": 9,
+      "selected_family_names": [
+        "p5-scored-00",
+        "p5-scored-01",
+        "p5-scored-02",
+        "p5-scored-03",
+        "p5-scored-04",
+        "p5-scored-05",
+        "p5-scored-06",
+        "p5-scored-07",
+        "p5-scored-08"
+      ],
+      "within_existing_item_arm_cap": true,
+      "within_study_cap": true
+    },
+    {
+      "all_in_usd": "70.3533941698",
+      "candidates": [
+        {
+          "all_in_usd": "19.9851461698",
+          "scored_families": 3
+        },
+        {
+          "all_in_usd": "27.1806101698",
+          "scored_families": 6
+        },
+        {
+          "all_in_usd": "34.3760741698",
+          "scored_families": 9
+        },
+        {
+          "all_in_usd": "41.5715381698",
+          "scored_families": 12
+        },
+        {
+          "all_in_usd": "48.7670021698",
+          "scored_families": 15
+        },
+        {
+          "all_in_usd": "55.9624661698",
+          "scored_families": 18
+        },
+        {
+          "all_in_usd": "63.1579301698",
+          "scored_families": 21
+        },
+        {
+          "all_in_usd": "70.3533941698",
+          "scored_families": 24
+        }
+      ],
+      "dev_families": 4,
+      "future_online_usd": "67.157664",
+      "max_retained_item_arm_usd": "0.4186453672",
+      "online_per_item_usd": "0.799496",
+      "priority": "b",
+      "reserve_usd": "-30.3533941698",
+      "scenario": "primary",
+      "scored_families": 24,
+      "selected_family_names": [
+        "p5-scored-00",
+        "p5-scored-01",
+        "p5-scored-02",
+        "p5-scored-03",
+        "p5-scored-04",
+        "p5-scored-05",
+        "p5-scored-06",
+        "p5-scored-07",
+        "p5-scored-08",
+        "p5-scored-09",
+        "p5-scored-10",
+        "p5-scored-11",
+        "p5-scored-12",
+        "p5-scored-13",
+        "p5-scored-14",
+        "p5-scored-15",
+        "p5-scored-16",
+        "p5-scored-17",
+        "p5-scored-18",
+        "p5-scored-19",
+        "p5-scored-20",
+        "p5-scored-21",
+        "p5-scored-22",
+        "p5-scored-23"
+      ],
+      "within_existing_item_arm_cap": true,
+      "within_study_cap": false
+    },
+    {
+      "all_in_usd": "34.3760741698",
+      "candidates": [
+        {
+          "all_in_usd": "19.9851461698",
+          "scored_families": 3
+        },
+        {
+          "all_in_usd": "27.1806101698",
+          "scored_families": 6
+        },
+        {
+          "all_in_usd": "34.3760741698",
+          "scored_families": 9
+        },
+        {
+          "all_in_usd": "41.5715381698",
+          "scored_families": 12
+        },
+        {
+          "all_in_usd": "48.7670021698",
+          "scored_families": 15
+        },
+        {
+          "all_in_usd": "55.9624661698",
+          "scored_families": 18
+        },
+        {
+          "all_in_usd": "63.1579301698",
+          "scored_families": 21
+        },
+        {
+          "all_in_usd": "70.3533941698",
+          "scored_families": 24
+        }
+      ],
+      "dev_families": 4,
+      "future_online_usd": "31.180344",
+      "max_retained_item_arm_usd": "0.4186453672",
+      "online_per_item_usd": "0.799496",
+      "priority": "c",
+      "reserve_usd": "5.6239258302",
+      "scenario": "primary",
+      "scored_families": 9,
+      "selected_family_names": [
+        "p5-scored-00",
+        "p5-scored-01",
+        "p5-scored-02",
+        "p5-scored-03",
+        "p5-scored-04",
+        "p5-scored-05",
+        "p5-scored-06",
+        "p5-scored-07",
+        "p5-scored-08"
+      ],
+      "within_existing_item_arm_cap": true,
+      "within_study_cap": true
+    }
+  ],
+  "selected_for_study_cap": "a",
+  "selection_rule": "First study-cap-fitting priority; common $0.45 accepted-response ceiling also passes.",
+  "study_cap_usd": "40"
+}

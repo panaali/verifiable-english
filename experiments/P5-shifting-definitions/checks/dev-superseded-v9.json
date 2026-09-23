@@ -1,0 +1,572 @@
+{
+  "assigned": 96,
+  "assigned_valid_fraction": {
+    "pro": 1.0,
+    "replication": 0.9583333333333334
+  },
+  "contract_compliance": {
+    "pro": 1.0,
+    "replication": 1.0
+  },
+  "contract_counts": {
+    "pro": {
+      "assigned": 48,
+      "observed": 48,
+      "valid": 48
+    },
+    "replication": {
+      "assigned": 48,
+      "observed": 46,
+      "valid": 46
+    }
+  },
+  "contract_passed": false,
+  "coverage_passed": false,
+  "families": 4,
+  "freeze_sha256": "aeef711e96d33d7e23dfaaccb1c9e35ac96ec9e20ef0853b524334d69f232394",
+  "halted_judges": {},
+  "judges": {
+    "pro": {
+      "accuracy": {
+        "L": {
+          "benign": 1.0,
+          "shift": 0.0,
+          "smuggle": 0.0
+        },
+        "S": {
+          "benign": 0.75,
+          "shift": 0.0,
+          "smuggle": 0.0
+        },
+        "VE": {
+          "benign": 0.0,
+          "shift": 0.0,
+          "smuggle": 0.0
+        },
+        "X": {
+          "benign": 0.0,
+          "shift": 0.0,
+          "smuggle": 0.0
+        }
+      },
+      "benign": {
+        "bootstrap": [
+          0.0,
+          0.0
+        ],
+        "boundary_safeguard": true,
+        "estimate": 0.0,
+        "interval": [
+          -0.5567319980583418,
+          0.5567319980583418
+        ],
+        "wilson_sensitivity": [
+          -0.5567319980583418,
+          0.5567319980583418
+        ]
+      },
+      "benign_harm": false,
+      "benign_harm_signal": false,
+      "endpoint_counts": {
+        "L": {
+          "author_failure": 0,
+          "completion": 4,
+          "detection": 0,
+          "failed": 0,
+          "oracle_unknown": 0,
+          "original_approval": 4,
+          "score": 4,
+          "unsafe_approval": 0
+        },
+        "S": {
+          "author_failure": 0,
+          "completion": 3,
+          "detection": 0,
+          "failed": 0,
+          "oracle_unknown": 0,
+          "original_approval": 10,
+          "score": 3,
+          "unsafe_approval": 7
+        },
+        "VE": {
+          "author_failure": 12,
+          "completion": 0,
+          "detection": 0,
+          "failed": 12,
+          "oracle_unknown": 5,
+          "original_approval": 0,
+          "score": 0,
+          "unsafe_approval": 8
+        },
+        "X": {
+          "author_failure": 0,
+          "completion": 0,
+          "detection": 0,
+          "failed": 0,
+          "oracle_unknown": 0,
+          "original_approval": 6,
+          "score": 0,
+          "unsafe_approval": 4
+        }
+      },
+      "oracle_unknown_family_interval": [
+        0.3333333333333333,
+        0.5833333333333333
+      ],
+      "oracle_unknown_rate": 0.4166666666666667,
+      "paired_per_flaw": {
+        "shift": {
+          "bootstrap": [
+            0.0,
+            0.0
+          ],
+          "boundary_safeguard": true,
+          "estimate": 0.0,
+          "interval": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ],
+          "wilson_sensitivity": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ]
+        },
+        "smuggle": {
+          "bootstrap": [
+            0.0,
+            0.0
+          ],
+          "boundary_safeguard": true,
+          "estimate": 0.0,
+          "interval": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ],
+          "wilson_sensitivity": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ]
+        }
+      },
+      "per_vocabulary": {
+        "20": {
+          "L": {
+            "benign": 1.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "S": {
+            "benign": 1.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "VE": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "X": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          }
+        },
+        "40": {
+          "L": {
+            "benign": 1.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "S": {
+            "benign": 1.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "VE": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "X": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          }
+        },
+        "60": {
+          "L": {
+            "benign": 1.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "S": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "VE": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "X": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          }
+        }
+      },
+      "practical_oracle_coverage_refuted": true,
+      "primary": {
+        "bonferroni_wilson": [
+          -0.6093190165180365,
+          0.6093190165180365
+        ],
+        "bootstrap": [
+          0.0,
+          0.0
+        ],
+        "boundary_safeguard": true,
+        "estimate": 0.0,
+        "interval": [
+          -0.6093190165180365,
+          0.6093190165180365
+        ]
+      },
+      "refutation": false,
+      "role": "primary",
+      "structured_secondary": {
+        "benign": {
+          "bootstrap": [
+            -1.0,
+            -0.25
+          ],
+          "boundary_safeguard": true,
+          "estimate": -0.75,
+          "interval": [
+            -1.0,
+            0.29770919449751587
+          ],
+          "wilson_sensitivity": [
+            -0.9626111974100031,
+            0.29770919449751587
+          ]
+        },
+        "shift": {
+          "bootstrap": [
+            0.0,
+            0.0
+          ],
+          "boundary_safeguard": true,
+          "estimate": 0.0,
+          "interval": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ],
+          "wilson_sensitivity": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ]
+        },
+        "smuggle": {
+          "bootstrap": [
+            0.0,
+            0.0
+          ],
+          "boundary_safeguard": true,
+          "estimate": 0.0,
+          "interval": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ],
+          "wilson_sensitivity": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ]
+        }
+      },
+      "useful_advantage_statistical_criterion": false,
+      "useful_point_threshold_failed": true,
+      "worst_flaw": {
+        "L": 0.0,
+        "S": 0.0,
+        "VE": 0.0,
+        "X": 0.0
+      }
+    },
+    "replication": {
+      "accuracy": {
+        "L": {
+          "benign": 0.25,
+          "shift": 0.0,
+          "smuggle": 0.0
+        },
+        "S": {
+          "benign": 1.0,
+          "shift": 0.0,
+          "smuggle": 0.0
+        },
+        "VE": {
+          "benign": 0.0,
+          "shift": 0.0,
+          "smuggle": 0.0
+        },
+        "X": {
+          "benign": 0.0,
+          "shift": 0.0,
+          "smuggle": 0.0
+        }
+      },
+      "benign": {
+        "bootstrap": [
+          0.0,
+          0.0
+        ],
+        "boundary_safeguard": true,
+        "estimate": 0.0,
+        "interval": [
+          -0.5567319980583418,
+          0.5567319980583418
+        ],
+        "wilson_sensitivity": [
+          -0.5567319980583418,
+          0.5567319980583418
+        ]
+      },
+      "benign_harm": false,
+      "benign_harm_signal": false,
+      "endpoint_counts": {
+        "L": {
+          "author_failure": 0,
+          "completion": 1,
+          "detection": 0,
+          "failed": 0,
+          "oracle_unknown": 0,
+          "original_approval": 3,
+          "score": 1,
+          "unsafe_approval": 2
+        },
+        "S": {
+          "author_failure": 0,
+          "completion": 4,
+          "detection": 0,
+          "failed": 0,
+          "oracle_unknown": 0,
+          "original_approval": 7,
+          "score": 4,
+          "unsafe_approval": 3
+        },
+        "VE": {
+          "author_failure": 11,
+          "completion": 0,
+          "detection": 0,
+          "failed": 12,
+          "oracle_unknown": 4,
+          "original_approval": 0,
+          "score": 0,
+          "unsafe_approval": 8
+        },
+        "X": {
+          "author_failure": 0,
+          "completion": 0,
+          "detection": 0,
+          "failed": 1,
+          "oracle_unknown": 0,
+          "original_approval": 4,
+          "score": 0,
+          "unsafe_approval": 1
+        }
+      },
+      "oracle_unknown_family_interval": [
+        0.08333333333333333,
+        0.5833333333333333
+      ],
+      "oracle_unknown_rate": 0.3333333333333333,
+      "paired_per_flaw": {
+        "shift": {
+          "bootstrap": [
+            0.0,
+            0.0
+          ],
+          "boundary_safeguard": true,
+          "estimate": 0.0,
+          "interval": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ],
+          "wilson_sensitivity": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ]
+        },
+        "smuggle": {
+          "bootstrap": [
+            0.0,
+            0.0
+          ],
+          "boundary_safeguard": true,
+          "estimate": 0.0,
+          "interval": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ],
+          "wilson_sensitivity": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ]
+        }
+      },
+      "per_vocabulary": {
+        "20": {
+          "L": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "S": {
+            "benign": 1.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "VE": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "X": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          }
+        },
+        "40": {
+          "L": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "S": {
+            "benign": 1.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "VE": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "X": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          }
+        },
+        "60": {
+          "L": {
+            "benign": 1.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "S": {
+            "benign": 1.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "VE": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          },
+          "X": {
+            "benign": 0.0,
+            "shift": 0.0,
+            "smuggle": 0.0
+          }
+        }
+      },
+      "practical_oracle_coverage_refuted": true,
+      "primary": {
+        "bonferroni_wilson": [
+          -0.6093190165180365,
+          0.6093190165180365
+        ],
+        "bootstrap": [
+          0.0,
+          0.0
+        ],
+        "boundary_safeguard": true,
+        "estimate": 0.0,
+        "interval": [
+          -0.6093190165180365,
+          0.6093190165180365
+        ]
+      },
+      "refutation": false,
+      "role": "amended descriptive replication",
+      "structured_secondary": {
+        "benign": {
+          "bootstrap": [
+            -1.0,
+            -1.0
+          ],
+          "boundary_safeguard": true,
+          "estimate": -1.0,
+          "interval": [
+            -1.0,
+            0.11346399611668367
+          ],
+          "wilson_sensitivity": [
+            -1.0,
+            0.11346399611668367
+          ]
+        },
+        "shift": {
+          "bootstrap": [
+            0.0,
+            0.0
+          ],
+          "boundary_safeguard": true,
+          "estimate": 0.0,
+          "interval": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ],
+          "wilson_sensitivity": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ]
+        },
+        "smuggle": {
+          "bootstrap": [
+            0.0,
+            0.0
+          ],
+          "boundary_safeguard": true,
+          "estimate": 0.0,
+          "interval": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ],
+          "wilson_sensitivity": [
+            -0.5567319980583418,
+            0.5567319980583418
+          ]
+        }
+      },
+      "useful_advantage_statistical_criterion": false,
+      "useful_point_threshold_failed": true,
+      "worst_flaw": {
+        "L": 0.0,
+        "S": 0.0,
+        "VE": 0.0,
+        "X": 0.0
+      }
+    }
+  },
+  "missing": 2,
+  "passed": false,
+  "primary_framing": "matched ceiling; actual dollars reported",
+  "source_fidelity_review_required": true,
+  "status": "incomplete",
+  "stopped": null
+}

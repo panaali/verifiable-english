@@ -1,0 +1,298 @@
+[
+  {
+    "answer": {
+      "explanation": "The original justification is flawed. The final step (n14) attempts to conclude that unit5 is calibrated based on the preceding result that unit1 is stable (shape retained) from n15. However, the applicable rule (r05) requires unit5 to be stable (shape retained) to infer that unit5 is calibrated. This constitutes a term mismatch.",
+      "issue_type": "shift",
+      "locations": [
+        "n14",
+        "n15"
+      ],
+      "verdict": "reject"
+    },
+    "event": "rating",
+    "item_id": "ib301f2aab289831d1ddf47088674e53c",
+    "packet": {
+      "argument": "[n18] Because unit5 is bundled and unit5 is retained and unit5 is packed, unit3 is ready. The checks that unit5 is stacked and unit5 is coded and unit5 is scanned would imply that unit1 is stable and unit5 is stable and unit5 is stable, respectively.\n\n[n07] Since unit5 is mounted and unit5 is routed and unit5 is rated, it follows that unit3 is ready.\n\n[n03] Given that unit3 is ready and unit3 is ready, we infer that unit5 is ready.\n\n[n08] It follows that unit5 is weighed-in because unit3 is ready and the immediately preceding ready result holds.\n\n[n16] Because unit5 is weighed-in, unit3 is sound.\n\n[n12] Since unit3 is sound, it follows that unit3 is sound.\n\n[n04] Given that unit3 is sound, we infer that unit5 is sound.\n\n[n20] It follows that unit5 is logged because the immediately preceding sound result holds.\n\n[n10] Because unit5 is logged, unit3 is cleared.\n\n[n02] Since unit3 is cleared, it follows that unit3 is cleared.\n\n[n17] Given that unit3 is cleared, we infer that unit1 is cleared.\n\n[n00] It follows that unit5 is balanced because the immediately preceding cleared result holds.\n\n[n13] Because unit5 is balanced, unit3 is stable.\n\n[n01] Since unit3 is stable, it follows that unit3 is stable.\n\n[n15] Given that unit3 is stable and unit5 is checked, we infer that unit1 is stable.\n\n[n14] It follows that unit5 is calibrated because the immediately preceding stable result holds.",
+      "glossary": [
+        {
+          "sense": "dried: moisture removed (R10)",
+          "term": "dried"
+        },
+        {
+          "sense": "packed: container filled (R02)",
+          "term": "packed"
+        },
+        {
+          "sense": "registered: registration recorded (R11)",
+          "term": "registered"
+        },
+        {
+          "sense": "bundled: bundle formed (R07)",
+          "term": "bundled"
+        },
+        {
+          "sense": "shelved: shelf assigned (R37)",
+          "term": "shelved"
+        },
+        {
+          "sense": "clipped: clip attached (R38)",
+          "term": "clipped"
+        },
+        {
+          "sense": "numbered: number assigned (R23)",
+          "term": "numbered"
+        },
+        {
+          "sense": "rated: grade recorded (R20)",
+          "term": "rated"
+        },
+        {
+          "sense": "checked: check completed (R29)",
+          "term": "checked"
+        },
+        {
+          "sense": "coded: identifier assigned (R22)",
+          "term": "coded"
+        },
+        {
+          "sense": "ready: packing completed (R12)",
+          "term": "ready"
+        },
+        {
+          "sense": "ready: staffing arranged (R03)",
+          "term": "ready"
+        },
+        {
+          "sense": "cleared: payment settled (R32)",
+          "term": "cleared"
+        },
+        {
+          "sense": "bagged: bag fitted (R28)",
+          "term": "bagged"
+        },
+        {
+          "sense": "stamped: stamp applied (R16)",
+          "term": "stamped"
+        },
+        {
+          "sense": "calibrated: calibration recorded (R25)",
+          "term": "calibrated"
+        },
+        {
+          "sense": "processed: processing completed (R13)",
+          "term": "processed"
+        },
+        {
+          "sense": "filed: document stored (R17)",
+          "term": "filed"
+        },
+        {
+          "sense": "marked: mark applied (R36)",
+          "term": "marked"
+        },
+        {
+          "sense": "photographed: image recorded (R35)",
+          "term": "photographed"
+        },
+        {
+          "sense": "boxed: box fitted (R40)",
+          "term": "boxed"
+        },
+        {
+          "sense": "counted: quantity tallied (R09)",
+          "term": "counted"
+        },
+        {
+          "sense": "routed: route assigned (R26)",
+          "term": "routed"
+        },
+        {
+          "sense": "cleared: inspection passed (R14)",
+          "term": "cleared"
+        },
+        {
+          "sense": "sound: signal audible (R18)",
+          "term": "sound"
+        },
+        {
+          "sense": "stable: temperature constant (R33)",
+          "term": "stable"
+        },
+        {
+          "sense": "received: receipt recorded (R04)",
+          "term": "received"
+        },
+        {
+          "sense": "logged: entry recorded (R24)",
+          "term": "logged"
+        },
+        {
+          "sense": "tied: tie attached (R01)",
+          "term": "tied"
+        },
+        {
+          "sense": "cooled: temperature reduced (R27)",
+          "term": "cooled"
+        },
+        {
+          "sense": "scanned: barcode read (R06)",
+          "term": "scanned"
+        },
+        {
+          "sense": "stable: shape retained (R15)",
+          "term": "stable"
+        },
+        {
+          "sense": "stacked: stack formed (R21)",
+          "term": "stacked"
+        },
+        {
+          "sense": "mounted: mount fitted (R19)",
+          "term": "mounted"
+        },
+        {
+          "sense": "sound: casing intact (R05)",
+          "term": "sound"
+        },
+        {
+          "sense": "loaded: loading completed (R30)",
+          "term": "loaded"
+        },
+        {
+          "sense": "released: release recorded (R39)",
+          "term": "released"
+        },
+        {
+          "sense": "balanced: balance checked (R08)",
+          "term": "balanced"
+        },
+        {
+          "sense": "weighed-in: arrival mass recorded (R34)",
+          "term": "weighed-in"
+        },
+        {
+          "sense": "retained: retention recorded (R31)",
+          "term": "retained"
+        }
+      ],
+      "id": "ib301f2aab289831d1ddf47088674e53c",
+      "premises": [
+        {
+          "id": "n05",
+          "text": "Rules r00, r14, r12, r05 are declared."
+        },
+        {
+          "id": "n06",
+          "text": "Rules r03, r07, r08 are declared."
+        },
+        {
+          "id": "n19",
+          "text": "Rules r06, r10, r13 are declared."
+        },
+        {
+          "id": "n09",
+          "text": "unit5 is bundled; unit5 is retained; unit5 is packed; unit5 is mounted; unit5 is routed; unit5 is rated; unit5 is checked. The checks that unit5 is stacked and unit5 is coded and unit5 is scanned remain unassumed."
+        },
+        {
+          "id": "n11",
+          "text": "Rules r09, r04, r11 are declared."
+        },
+        {
+          "id": "n21",
+          "text": "Rules r01, r02, r15 are declared."
+        }
+      ],
+      "records": [
+        {
+          "id": "r08",
+          "text": "If unit1 is cleared (payment settled), then unit5 is balanced."
+        },
+        {
+          "id": "r09",
+          "text": "If unit3 is ready (packing completed) and unit5 is ready (packing completed), then unit5 is weighed-in."
+        },
+        {
+          "id": "r03",
+          "text": "If unit5 is mounted and unit5 is routed and unit5 is rated, then unit3 is ready (packing completed). If unit5 is tied and unit5 is boxed, then unit3 is ready (packing completed)."
+        },
+        {
+          "id": "r01",
+          "text": "If unit5 is weighed-in, then unit3 is sound (casing intact)."
+        },
+        {
+          "id": "r15",
+          "text": "If unit3 is stable (shape retained) and unit5 is stacked, then unit1 is stable (temperature constant). If unit3 is stable (shape retained) and unit5 is checked, then unit1 is stable (shape retained). If unit3 is stable (shape retained) and unit5 is coded, then unit5 is stable (temperature constant). If unit3 is stable (shape retained) and unit5 is scanned, then unit5 is stable (shape retained)."
+        },
+        {
+          "id": "r11",
+          "text": "If unit3 is stable (temperature constant), then unit3 is stable (shape retained)."
+        },
+        {
+          "id": "r04",
+          "text": "If unit5 is logged, then unit3 is cleared (inspection passed)."
+        },
+        {
+          "id": "r00",
+          "text": "If unit5 is bundled and unit5 is retained and unit5 is packed, then unit3 is ready (staffing arranged). If unit5 is tied and unit5 is boxed, then unit3 is ready (staffing arranged). Lot unit5 supplied sample unit1."
+        },
+        {
+          "id": "r12",
+          "text": "If unit3 is cleared (payment settled), then unit1 is cleared (payment settled)."
+        },
+        {
+          "id": "r13",
+          "text": "If unit5 is balanced, then unit3 is stable (temperature constant)."
+        },
+        {
+          "id": "r07",
+          "text": "If unit3 is sound (signal audible), then unit5 is sound (signal audible)."
+        },
+        {
+          "id": "r05",
+          "text": "If unit5 is stable (shape retained), then unit5 is calibrated. If unit5 is tied and unit5 is boxed, then unit5 is calibrated."
+        },
+        {
+          "id": "r02",
+          "text": "If unit3 is cleared (inspection passed), then unit3 is cleared (payment settled)."
+        },
+        {
+          "id": "r06",
+          "text": "If unit3 is ready (staffing arranged) and unit3 is ready (packing completed), then unit5 is ready (packing completed)."
+        },
+        {
+          "id": "r14",
+          "text": "If unit3 is sound (casing intact), then unit3 is sound (signal audible)."
+        },
+        {
+          "id": "r10",
+          "text": "If unit5 is sound (signal audible), then unit5 is logged."
+        }
+      ],
+      "root": "n14",
+      "step_ids": [
+        "n18",
+        "n07",
+        "n03",
+        "n08",
+        "n16",
+        "n12",
+        "n04",
+        "n20",
+        "n10",
+        "n02",
+        "n17",
+        "n00",
+        "n13",
+        "n01",
+        "n15",
+        "n14"
+      ]
+    },
+    "protocol_recognized": null,
+    "rater_id": "",
+    "reason": "",
+    "response_sha256": "05bc6d8c77b86163db101e1e5c5efec12433ac77f381828f6fdfc5830149e96d",
+    "source_fidelity": null,
+    "source_grounded": null
+  }
+]

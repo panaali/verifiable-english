@@ -237,6 +237,7 @@ def test_cached_request_cannot_cross_dossier_contract(stage):
 
 
 def test_resume_freeze_allows_only_paraphrase_outputs(tmp_path, monkeypatch):
+    monkeypatch.setattr(p5.dev_revision, 'verify_retained', lambda: None)
     monkeypatch.setattr(p5, 'HERE', tmp_path)
     monkeypatch.setattr(p5, 'ROOT', tmp_path)
     monkeypatch.setattr(p5, 'ceilings', lambda _: {'within_cap': True})

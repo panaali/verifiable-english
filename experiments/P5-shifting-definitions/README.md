@@ -1,5 +1,15 @@
 # P5 materials and staged duel runner
 
+**2026-09-22 v10 harness amendment:** X/VE dev are superseded by harness defect
+and prepared for fresh run identities; 48 final L/S judgments are retained.
+The offline synthetic delivery/checker smoke passes; it supplies no efficacy
+evidence. Worst-case retained-plus-future spending is $35.5617664072 under $40.
+The blinded final-judgment packet is
+`exports/dev-final-explanations-2026-09-22.json`. See the final dated entry in
+[AMENDMENTS.md](AMENDMENTS.md) for the command and accounting. Scored execution
+still requires completed dev and independent source-fidelity ratings.
+
+
 **2026-09-22 schedule amendment:** the first $40 study-cap fit retains both
 judges and all four arms with nine scored families (three per vocabulary size),
 at $35.2264590298 including retained costs and calibration reserve. The common

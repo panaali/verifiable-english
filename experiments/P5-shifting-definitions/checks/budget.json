@@ -1,25 +1,25 @@
 {
   "ceilings": {
-    "all_in_usd": "35.2264590298",
-    "api_usd": "32.0307288600",
+    "all_in_usd": "35.5617664072",
+    "api_usd": "28.8490308408",
     "combined_attributed_item_arm_usd": {
-      "L": "0.0884021338",
-      "S": "0.2405638418",
+      "L": "0.0741449600",
+      "S": "0.2044212056",
       "VE": "0.4275424776",
       "X": "0.1899184600"
     },
     "cpu_accounting": "already included in retained commitment; no duplicate charge",
     "cpu_usd": ".1344",
     "dev_families": 4,
-    "future_online_calls": 858,
-    "gemini_calibration_ceiling_usd": "0.30",
-    "matched_accounting": "accepted provider completions only; infrastructure and CPU are study-only",
+    "future_online_calls": 774,
+    "gemini_calibration_ceiling_usd": "0.264290",
+    "matched_accounting": "accepted provider completions; superseded v9 dev X/VE, infrastructure and CPU are study-only",
     "matched_ceiling_usd": "0.45",
     "primary": "Gemini min(VE_shift,VE_smuggle) - min(X_shift,X_smuggle)",
-    "replication_judge_overhead_usd": "0.8503848600",
+    "replication_judge_overhead_usd": "0.7462548408",
     "replication_policy": "same frozen Gemini transcript; Qwen final judgment and lone floor",
-    "reserve_usd": "4.7735409702",
-    "retained_commitment_usd": "2.8957301698",
+    "reserve_usd": "4.4382335928",
+    "retained_commitment_usd": "6.4484455664",
     "scenario": "dual_judge",
     "scheduled_items": 39,
     "scored_families": 9,
@@ -37,7 +37,7 @@
     "within_cap": true,
     "within_matched_ceiling": true
   },
-  "freeze_sha256": "aeef711e96d33d7e23dfaaccb1c9e35ac96ec9e20ef0853b524334d69f232394",
+  "freeze_sha256": "e0c3cd6a145aec586a7f12482c44cabee793c3a20ad8d2cd79826bd7e7b64bce",
   "generation_calls": 0,
   "passed": true
 }

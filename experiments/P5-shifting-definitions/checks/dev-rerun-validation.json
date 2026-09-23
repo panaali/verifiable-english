@@ -1,0 +1,108 @@
+{
+  "all_in_worst_case_usd": "35.5617664072",
+  "all_retained_hashes_verified": true,
+  "cumulative_cap_usd": "40",
+  "date": "2026-09-22",
+  "dev_prerequisites_passed": true,
+  "export": "experiments/P5-shifting-definitions/exports/dev-final-explanations-2026-09-22.json",
+  "export_assignments": 3,
+  "export_explicit_arm_and_judge_fields": false,
+  "export_hashes": {
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/000.json": "3d9788397e1705a3e7b59fa6ef20ddbb1792a6cbd342bcc086bc07af74f1db02",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/001.json": "ad0d197983e57bdc9929ec75e5eefb6452609d261af6689b2b51bb6c1ab76cc1",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/002.json": "a822861dc2fed242136d3dc1237d236dcc97b9f9affd989f5733dd7177b4c558",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/003.json": "8f3f2f32c11a06e437a071a43beed331093476106cfa40399bf043c2154fb5e4",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/004.json": "5b41df69d846a07dfe9ed4ac94627cdd9c75da61bcfe4fc0712840c826d19227",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/005.json": "127761a34a518936beef4e1f2ce241e16d57b996001974dddbb07518db5bc844",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/006.json": "e9e6f8e9d67a2edf2dfb6113856ae3fef33f38ac0109f43e57f06021c6085704",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/007.json": "405599e1ccfca0b3deb8d1d7d72eb204999a5a77122898b9bbc7cd769d3d7312",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/008.json": "d583e5cb64b1b3cf9156b0493eb5f3fcf86fa3eafd98f32ab40ea433aee9291a",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/009.json": "f2a678ce362543c527472df05493d4c2871ac967ea0649dc2cf4934775e28517",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/010.json": "cb4824d146d23bfd53a65dd4737d58aaf07361642fc0acb2c6d21ac9aae62471",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/011.json": "a42146cdebaec8062f5f74cd4700f857e4ad7b1505b76116b7dc9e1c66ba2325",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/012.json": "6ebf3a824d76cf76e8d46b4d6ed22ac3d8c6edf3844e32154e7a5027fd89cc0e",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/013.json": "231e6892afe5f4dfc97a777f5a46429f523c702d5978bffbc81b3e1d0aac2855",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/014.json": "9f0700bcf262fd02936716f66210054081ad79197f8fde00b6433ca1ab872610",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-1/015.json": "24d4157ab9abc0389babb1bbee785e7871fbcd6667f268b64732a6e740189b75",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/000.json": "26100b4bc13a3467529cc260b1a34d1b8619de8b8e7e805d9c728b179a8202a3",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/001.json": "7bab7e7b520953fe78d12c2a28f04203c121ca53f8c31c4569aa93fd249fbf12",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/002.json": "af279db3d2ef218c3092a2bb080279d144950d33b88ba64f9d0b94298464688d",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/003.json": "c465c7fa2aba36d12b9fa7b05ee934c1064c8b08100b3e9b4617b5f015cc684e",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/004.json": "57cbf0fbe394f2d80a0da5bba090e71ce9e382cc2a7f666320fc923c900403cc",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/005.json": "c9373d90ba1b29c24f7d24855032b4ffb9739820b5e80968bb64a5c30671cf62",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/006.json": "5e24e5d4edb08cacf7da5d4bdce293b459caf6345ee93b6db8275a008601c738",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/007.json": "6ab873ee06879375b166bdf7f82add1ed77c999787606be4f1e9bc137b5c763e",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/008.json": "2de20e8db0c80c7e90c7c9659d2a5d9551371cee31ccaf905d3232b19c304494",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/009.json": "5d716ab2facf4e7bcf1ac0c216adb5620137a884fe058d4a74862fa4e2a9039a",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/010.json": "f0b6926fc553b8f3f4b6b2a1f922f614b64326fcb63f592ec9e960b1a6ce5991",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/011.json": "173287b4690593c26ee1e7837af66f6ea8d64d97416c83ddfc017d9e7ce47e76",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/012.json": "4be63c51cf2d7b9df09f23b033b84495d74a1e65507d9493b7f623eee1b82585",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/013.json": "dd8ba0ca828672394965cb28d61c5c90bf8755b27cbf5848dac1cfa0f5765b69",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/014.json": "d407ddf9f0f80bba4754eb471e8ec6a0b552a9bf1f8ca6f5f11c0c3e5d18c1c9",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-2/015.json": "537d42161a44276e1e5308783a9d3d802c1b40f3d00740aeb6e76754a9b252a0",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/000.json": "4e7e5a8ecc6113daeb049f340a6cc5c69ffcab6c3f339ea9ac0ac0dcfbce0063",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/001.json": "20d3664ee1769872461d8f29c87541d4ffb157c4d78919bd3a64cfe72b196a6a",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/002.json": "526badeb158be86f01869ef70e124dfeee2a6ffe76a05427bc1e4d77b4447c05",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/003.json": "e89720353dbd3353ed3e7d5e9fc9cd5786a4dd3014a14ac044167952e8824437",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/004.json": "fbab09efce3d28e8d1d1c8ebbfad97b150508186c6532a9ba3503219f03cd8dc",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/005.json": "74706ef5c5f93fa4ec1a3d3d2747cc5ecf2d2894f0cca751251ae2033c65e2a5",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/006.json": "4285afeda5fe19ea40a04b305c799f6b61312cc08cbd066697001ea740fccaa8",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/007.json": "bc5a43eea5b8c70522cb452f482f5f170e800cf8720a728c3ba0a1055e778183",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/008.json": "e9dfe84358d98a4fec5cad00f9a9247aed22a823969a2a2f8f23f765d267f4d8",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/009.json": "aa7347be77dc6b137a01347418c12f25e4754515b040140037d06af755666742",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/010.json": "4f28b2e266badc2aca35b567722a769a7ebdf6443d8de28c005f3c5371a2d652",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/011.json": "090e8b80c6907e00792818eaa925425f7e0c3e5fe0bfdb59191a1fa8eb289310",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/012.json": "054f1c633f5f63e01e948f1e9bb4dcb8e0466897261129cbf5f1b7c10e27d913",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/013.json": "29260a8fcafffbdc388834c1f1ac0603d4a5e6433f33d2f3432e6ae865ef355b",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/014.json": "d2f69673f17ebd3a97292ba024db08f561cbf2c581dbc352daff8933f2bb0218",
+    "exports/dev-final-explanations-2026-09-22-packets/assignment-3/015.json": "752b84690471a3fb7551f8ce9e1edfad69f65efaccf1402c5c74bc38b92cd043",
+    "exports/dev-final-explanations-2026-09-22.json": "f5c292d28db734ab37cbfc203a86f7a487ddc4339f7fe320636b84d2d83859f9"
+  },
+  "export_model_name_mentions": 0,
+  "export_packets": 48,
+  "freeze_sha256": "e0c3cd6a145aec586a7f12482c44cabee793c3a20ad8d2cd79826bd7e7b64bce",
+  "generation_calls": 0,
+  "headroom_usd": "4.4382335928",
+  "ledger_delta": [
+    {
+      "block_id": "study-v9/dual_judge/dev",
+      "event": "block_release",
+      "reason": "2026-09-22: X/VE superseded by harness defect; L/S final; unused reservation only; no refund, no completed block claim",
+      "released_usd": "6.3386034834",
+      "time": 1790121763.913205
+    }
+  ],
+  "new_identity_prefix": "study-v10/dev/",
+  "new_run_directory": "runs/dev-v10/",
+  "new_spend_usd": "0",
+  "orchestrator_command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run python experiments/P5-shifting-definitions/run_p5.py resume --split dev --cap-usd 40",
+  "p5_tests": {
+    "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run --offline pytest -q tests/test_p5*.py",
+    "failed": 0,
+    "passed": 224
+  },
+  "replacement_dev_block_usd": "6.6739108608",
+  "replacement_pending_judgments": 48,
+  "repository_tests": {
+    "baseline_commit": "7b45a6dd82bc3ea3944fa523d58b0b64abed1fc0",
+    "baseline_method": "Same two tests reproduce in a clean git archive of 7b45a6d with the same Python environment; no P1 changes.",
+    "baseline_reproduced_failures": [
+      {
+        "reason": "Existing amendment-15 block is selected where the historical test expects amendment-13.",
+        "test": "tests/test_p1_amendment13.py::test_scored_gate_and_cap_reach_only_qwen_attacker_backends"
+      },
+      {
+        "reason": "Existing retained spending is 4.84262062420; stale assertion expects 3.64271861740.",
+        "test": "tests/test_p1_amendment14.py::test_recover_and_reconstruct_every_retained_scored_call_without_dispatch"
+      }
+    ],
+    "deselected": 1,
+    "failed": 2,
+    "passed": 1642,
+    "skipped": 2
+  },
+  "retained_final_judgments": 48,
+  "scored_blocked_by": [
+    "dev"
+  ]
+}
