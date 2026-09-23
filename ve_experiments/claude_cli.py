@@ -119,34 +119,54 @@ class InfrastructurePaused(InfrastructureError):
 RETRY_BACKOFF = (30, 60, 120, 240, 480)
 
 
+def _dicts(value):
+    """The dict elements of ``value`` if it is a list, else none (total over arbitrary JSON)."""
+    return [v for v in value if type(v) is dict] if type(value) is list else []
+
+
+def _as_dict(value):
+    return value if type(value) is dict else {}
+
+
+def _stream_identity(raw):
+    """``(records, assistants, results, real_models, init_models, synthetic)`` of a raw stream.
+
+    TOTAL over arbitrary JSON: non-dict records (null, arrays, scalars) are skipped, a non-dict
+    ``message`` or ``modelUsage`` contributes nothing, and only string model names count (a list- or
+    dict-valued model is ignored, never hashed). Usage is extracted separately
+    (``stream_audit.stream_usage``), so no malformed record can make classification lose it."""
+    records = [r for r in stream_audit.records_from_raw(raw) if type(r) is dict]
+    assistants = [_as_dict(r.get("message")) for r in records if r.get("type") == "assistant"]
+    results = [r for r in records if r.get("type") == "result"]
+    real = {m.get("model") for m in assistants
+            if type(m.get("model")) is str and m.get("model") != "<synthetic>"}
+    real.update(k for r in results for k in _as_dict(r.get("modelUsage"))
+                if type(k) is str and k != "<synthetic>")
+    init_models = {r.get("model") if type(r.get("model")) is str else repr(r.get("model"))
+                   for r in records if r.get("subtype") == "init" and r.get("model") is not None}
+    synthetic = any(m.get("model") == "<synthetic>" for m in assistants)
+    return records, assistants, results, real, init_models, synthetic
+
+
 def infrastructure_failure(raw, expected_model, diagnostic=""):
     """Classify protocol errors without mistaking model prose for network errors.
 
     A real alternate model always wins over a simultaneous transport failure.
     Init is requested identity, not evidence that a model served a response.
+    Total over arbitrary stream content: it never raises on malformed records.
     """
+    raw = raw if isinstance(raw, str) else str(raw or "")
     if not raw.strip():
         return "empty stream"
-    records = []
-    for line in raw.splitlines():
-        try:
-            records.append(json.loads(line))
-        except ValueError:
-            continue
-    assistants = [r.get("message", {}) for r in records if r.get("type") == "assistant"]
-    results = [r for r in records if r.get("type") == "result"]
-    real = {m.get("model") for m in assistants if m.get("model") not in (None, "<synthetic>")}
-    real.update(k for r in results for k in r.get("modelUsage", {}) if k != "<synthetic>")
-    init_models = {r.get("model") for r in records if r.get("subtype") == "init"}
-    if (real | init_models) - {None, expected_model}:
+    records, assistants, results, real, init_models, synthetic = _stream_identity(raw)
+    if (real | init_models) - {expected_model}:
         return None
-    synthetic = any(m.get("model") == "<synthetic>" for m in assistants)
     if synthetic and not real:
         return "synthetic placeholder without a served model"
-    errors = [diagnostic]
+    errors = [str(diagnostic)]
     errors.extend(str(r.get("result", "")) for r in results if r.get("is_error"))
     errors.extend(str(b.get("text", "")) for m in assistants if m.get("model") == "<synthetic>"
-                  for b in m.get("content", []))
+                  for b in _dicts(m.get("content")))
     message = " ".join(errors).lower()
     if any(term in message for term in ("econnreset", "connection error", "connection dropped",
                                        "connection reset", "connection refused", "econnrefused",
@@ -263,14 +283,14 @@ def reported_usage(raw):
     (each result record and each assistant message), for well-formed and malformed streams alike, so no
     later record can erase what an earlier one reported. ``ve.assist.verify`` recomputes it from the
     stored ``stream_records``."""
-    records = [r for r in stream_audit.records_from_raw(raw) if type(r) is dict]
-    results = [r for r in records if r.get("type") == "result"]
-    models = {m.get("model") for r in records if r.get("type") == "assistant"
-              for m in [r.get("message") or {}] if type(m) is dict}
-    models |= {k for r in results if type(r.get("modelUsage")) is dict for k in r["modelUsage"]}
-    models = sorted(str(m) for m in models - {None, "<synthetic>"})
+    raw = raw if isinstance(raw, str) else str(raw or "")
+    # Usage FIRST and independently of identity: a malformed record can never cost the spend.
+    usage = stream_audit.stream_usage(stream_audit.records_from_raw(raw))
+    try:
+        models = sorted(_stream_identity(raw)[3])
+    except Exception:  # identity is best effort; usage is not
+        models = []
     out = {"served_model": models[0] if len(models) == 1 else None, "reported_models": models}
-    usage = stream_audit.stream_usage(records)
     if usage:
         counted_input, counted_output = stream_audit.usage_totals(usage)
         if counted_input is not None:
@@ -282,10 +302,31 @@ def reported_usage(raw):
 
 
 def parse_stream(raw, expected_model):
+    """Validate a complete stream. Any malformation surfaces as an EndpointError (never another type)."""
+    try:
+        return _parse_stream(raw, expected_model)
+    except EndpointError:
+        raise
+    except Exception as exc:
+        raise EndpointError(f"Malformed stream ({type(exc).__name__})") from None
+
+
+def _parse_stream(raw, expected_model):
     reason = infrastructure_failure(raw, expected_model)
     if reason:
         raise InfrastructureError(reason)
     records = [json.loads(line) for line in raw.splitlines() if line.strip()]
+    if any(type(r) is not dict for r in records):
+        raise EndpointError("Malformed stream record (not a JSON object)")
+    if any(r.get("type") == "assistant" and (type(r.get("message")) is not dict
+                                             or type(r["message"].get("content", [])) is not list
+                                             or type(r["message"].get("model")) is not str)
+           for r in records):
+        raise EndpointError("Malformed assistant record")
+    if any(r.get("type") == "result" and type(r.get("modelUsage", {})) is not dict for r in records):
+        raise EndpointError("Malformed result record")
+    if any(r.get("subtype") == "init" and type(r.get("model")) is not str for r in records):
+        raise EndpointError("Malformed init record")
     init = [r for r in records if r.get("type") == "system" and r.get("subtype") == "init"]
     results = [r for r in records if r.get("type") == "result"]
     if len(init) != 1 or len(results) != 1:
@@ -301,7 +342,7 @@ def parse_stream(raw, expected_model):
     if (any(initial.get(k) for k in ("skills", "plugins", "slash_commands"))
             or set(initial.get("agents", [])) - {"claude", "Explore", "general-purpose", "Plan"}):
         raise EndpointError("Ambient agents, skills, or plugins loaded")
-    if any(b.get("type") not in ("text", "thinking", "redacted_thinking")
+    if any(type(b) is not dict or b.get("type") not in ("text", "thinking", "redacted_thinking")
            for m in assistants for b in m.get("content", [])):
         raise EndpointError("Non-text assistant action")
     if len({m.get("id") for m in assistants}) != 1 or result.get("num_turns") != 1:
@@ -555,19 +596,35 @@ class ClaudeCLI:
                         raw = exc.stdout.decode(errors="replace") if isinstance(exc.stdout, bytes) else exc.stdout
                     if infrastructure_failure(raw, self.controls.model, str(exc)) or isinstance(exc, ConnectionError):
                         exc = InfrastructureError("connection error or empty timed-out stream")
-                # Usage is taken from the stream even when validation rejected it (e.g. truncation).
-                parsed = parsed or reported_usage(raw)
+                # Usage is taken from the stream even when validation rejected it (e.g. truncation), and
+                # FIRST: nothing below (classification, identity, records) may cost the usage already seen.
+                if not parsed:
+                    try:
+                        parsed = reported_usage(raw)
+                    except Exception:
+                        parsed = {}
+                is_infra = isinstance(exc, InfrastructureError)
+                try:
+                    reason = infrastructure_failure(raw, self.controls.model, str(exc))
+                except Exception:
+                    reason = None
+                try:
+                    records = stream_records(raw, token)
+                except Exception:
+                    records = {"stream_records": [], "unparsed_lines": None}
+                identity = {}
                 if parsed.get("served_model") is not None:
-                    parsed = {**parsed, "served_model": redact(parsed["served_model"], token)}
-                if parsed.get("reported_models"):
-                    parsed = {**parsed, "reported_models": [redact(m, token) for m in parsed["reported_models"]]}
-                failed = {**base, **parsed, "status": "infrastructure_error" if isinstance(exc, InfrastructureError) else "error",
-                          "classification": "INFRASTRUCTURE" if isinstance(exc, InfrastructureError) else "ENDPOINT",
+                    identity["served_model"] = redact(parsed["served_model"], token)
+                if type(parsed.get("reported_models")) is list:
+                    identity["reported_models"] = [redact(m, token) for m in parsed["reported_models"]]
+                failed = {**base, **parsed, **identity,
+                          "status": "infrastructure_error" if is_infra else "error",
+                          "classification": "INFRASTRUCTURE" if is_infra else "ENDPOINT",
                           "counts_as_sample": False, "retry_number": retry_number,
                           "timestamp": now(), "error": redact(exc, token),
-                          "infrastructure_reason": infrastructure_failure(raw, self.controls.model, str(exc)),
+                          "infrastructure_reason": reason,
                           "elapsed_s": time.monotonic()-start,
-                          **stream_digest(raw_bytes), **stream_records(raw, token)}
+                          **stream_digest(raw_bytes), **records}
                 # Every decoded string (dict keys included) is sanitized exactly as on the success path.
                 failed = sanitize(failed, token)
                 append(failed)
