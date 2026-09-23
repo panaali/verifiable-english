@@ -266,3 +266,9 @@ import Iceberg
 #print axioms VE.Order.numerals_distinct
 #print axioms VE.Order.term_defined
 #print axioms VE.Order.tupleTyped_expand
+
+#print axioms VE.Closure.Tableau.induct_sound
+#print axioms VE.Closure.closure_induction
+#print axioms VE.Closure.inductionStep_denote
+#print axioms VE.Closure.invariantAt_denote
+#print axioms VE.Closure.reachable_induction

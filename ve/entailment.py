@@ -19,7 +19,7 @@ from .wire import canonical_json
 
 
 ENTAILMENT_CHECKER_VERSION = "ve-tableau-checker@2"
-CLOSURE_CHECKER_VERSION = "ve-tableau-closure-checker@0"
+CLOSURE_CHECKER_VERSION = "ve-tableau-closure-checker@1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -319,9 +319,11 @@ def _ground_connections(key: tuple) -> frozenset[tuple]:
 
 
 class _Searcher:
-    def __init__(self, maximum: int, closure: bool = False):
+    def __init__(self, maximum: int, closure: bool = False, *, env=None, invariants=(), focused=False):
         self.maximum, self.steps = maximum, 0
         self.closure = closure
+        self.env, self.invariants = env, invariants
+        self.focused = focused
         self.instance_limit = 1
         self.cutoff = False
         self.depth_cutoffs = 0
@@ -341,6 +343,62 @@ class _Searcher:
             return None
         if _closed(branch): return {"rule": "close"}
         keys = {self.instance_key(item) for item in branch.formulas}
+        if self.invariants:
+            from .closure import induction_candidates
+            from .ast import _to_data
+            for at, sort, invariant, alternatives in induction_candidates(self.env, branch, self.invariants):
+                if self.instance_key(alternatives[2][0]) in keys:
+                    continue
+                base = branch.copy()
+                base.formulas.extend(alternatives[0])
+                base_trace = {'rule': 'close'} if _closed(base) else None
+                if base_trace is None:
+                    f = alternatives[0][0].formula
+                    if type(f) is And:
+                        f = f.left
+                    # A matching pair of endpoints is a useful base hint for
+                    # relational invariants (e.g. edge inclusion). It is only
+                    # scheduling: the base still needs a complete subproof.
+                    if type(f) not in (Binary, Reach):
+                        continue
+                    endpoints = tuple(_term_token(t, alternatives[0][0].bindings)
+                                      for t in (f.left, f.right))
+                    if not any(a.positive and type(a.formula) in (Binary, Reach) and
+                               tuple(_term_token(t, a.bindings) for t in
+                                     (a.formula.left, a.formula.right)) == endpoints
+                               for a in branch.formulas):
+                        continue
+                    base.expanded.update(i for i, a in enumerate(branch.formulas)
+                                         if type(a.formula) is Reach)
+                    attempt = _Searcher(min(250, self.maximum - self.steps), self.closure, focused=True)
+                    try:
+                        base_trace = attempt.prove(base)
+                    except (_Budget, RecursionError):
+                        base_trace = None
+                    self.steps += attempt.steps
+                    if base_trace is None:
+                        continue
+                step = branch.copy()
+                step.formulas.extend(alternatives[1])
+                # Suppress existing-path unfolding in this bounded search
+                # attempt; other preservation proofs may need another schedule.
+                step.expanded.update(i for i, a in enumerate(branch.formulas)
+                                     if type(a.formula) is Reach)
+                attempt = _Searcher(min(1000, self.maximum - self.steps), self.closure, focused=True)
+                try:
+                    step_trace = attempt.prove(step)
+                except (_Budget, RecursionError):
+                    step_trace = None
+                self.steps += attempt.steps
+                if step_trace is None:
+                    continue
+                continuation = branch.copy()
+                continuation.formulas.extend(alternatives[2])
+                child = self.search(continuation, depth + 1)
+                if child is not None:
+                    return {'rule': 'closure-induct@1', 'at': at, 'sort': sort,
+                            'invariant': _to_data(invariant),
+                            'children': [base_trace, step_trace, child]}
         complements = {self.connection_key(item, True) for item in branch.formulas}
         ground_complements = frozenset().union(*(self.ground_connections(key) for key in complements))
         counts: dict[int, int] = {}
@@ -385,8 +443,12 @@ class _Searcher:
                 # only the parameter choices of that same formula, so a new
                 # relevant universal cannot starve an older one.
                 priority = (0 if connects else 1 if kind in ("not", "alpha") else
-                            2 if kind == "delta" else 3 if kind == "gamma" else 4)
-                choices.append(((priority, counts.get(at, 0), at, -hits, order), _rule(item), at, token, additions))
+                            2 if kind == "delta" or (self.invariants and kind == "closure"
+                                                     and item.positive) else
+                            3 if kind == "gamma" else 4)
+                rank = ((priority, -hits, counts.get(at, 0), at, order) if self.focused else
+                        (priority, counts.get(at, 0), at, -hits, order))
+                choices.append((rank, _rule(item), at, token, additions))
         if self.closure:
             from .closure import extra_candidates
             for rule, at, token, addition in extra_candidates(branch):
@@ -448,12 +510,19 @@ def _binding(env: Any, premises: tuple[Any, ...], conclusion: Any) -> dict[str, 
 
 
 def prove_entailment(env: Any, premises: Sequence[Any], conclusion: Any, *,
-                     max_steps: int = 10_000) -> EntailmentResult:
-    """Search for a closed tableau. Failure is inconclusive, never refutation."""
+                     max_steps: int = 10_000, invariants: Sequence[Any] = ()) -> EntailmentResult:
+    """Search for a closed tableau. Failure is inconclusive, never refutation.
+
+    In closure@0, invariants accepts unary formulas (index 0 is the node), or
+    InductionInvariant hints with explicit captured tableau parameter tokens.
+    The certificate includes each selected formula and all three subproofs.
+    """
     premises = _validate_inputs(env, premises, conclusion)
     if type(max_steps) is not int or isinstance(max_steps, bool) or max_steps < 0:
         raise ValueError("max_steps must be a nonnegative integer")
-    searcher = _Searcher(max_steps, env.closure)
+    if invariants and not env.closure:
+        raise ValueError("induction invariants require closure@0")
+    searcher = _Searcher(max_steps, env.closure, env=env, invariants=tuple(invariants))
     try:
         trace = searcher.prove(_initial_branch(env, premises, conclusion))
     except (_Budget, RecursionError):
@@ -473,8 +542,9 @@ def prove_entailment(env: Any, premises: Sequence[Any], conclusion: Any, *,
 
 
 class _Replayer:
-    def __init__(self, maximum: int, closure: bool = False):
+    def __init__(self, maximum: int, closure: bool = False, *, env=None, induction=False):
         self.maximum, self.steps, self.closure = maximum, 0, closure
+        self.env, self.induction = env, induction
 
     def replay(self, branch: _Branch, node: Any, depth: int = 0) -> None:
         if depth > MAX_TABLEAU_DEPTH: raise _Budget
@@ -487,6 +557,20 @@ class _Replayer:
                 raise _InvalidTrace("open or malformed close node")
             return
         from .closure import EXTRA_RULES, derive_extra
+        if self.induction and rule == 'closure-induct@1':
+            from .ast import _Decoder
+            from .closure import derive_induction
+            if set(node) != {'rule', 'at', 'sort', 'invariant', 'children'}:
+                raise _InvalidTrace('malformed induction node')
+            invariant = _Decoder().decode(node['invariant'])
+            alternatives = derive_induction(self.env, branch, node['at'], node['sort'], invariant)
+            if type(node['children']) is not list or len(node['children']) != 3:
+                raise _InvalidTrace('induction requires three children')
+            for additions, child in zip(alternatives, node['children'], strict=True):
+                next_branch = branch.copy()
+                next_branch.formulas.extend(additions)
+                self.replay(next_branch, child, depth + 1)
+            return
         if self.closure and rule in EXTRA_RULES:
             if not set(node) <= {"rule", "at", "children", "parameter"} or not {"rule", "at", "children"} <= set(node):
                 raise _InvalidTrace("malformed closure consequence")
@@ -526,9 +610,12 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
         if type(certificate) is not dict or set(certificate) != set(_binding(env, premises, conclusion)) | {"trace"}:
             raise _InvalidTrace("certificate fields do not match the wire schema")
         expected = _binding(env, premises, conclusion)
+        if env.closure and certificate.get('checker_version') == 've-tableau-closure-checker@0':
+            expected['checker_version'] = 've-tableau-closure-checker@0'
         if any(certificate.get(key) != value for key, value in expected.items()):
             raise _InvalidTrace("certificate is stale or bound to different inputs")
-        replayer = _Replayer(max_steps, env.closure)
+        replayer = _Replayer(max_steps, env.closure, env=env,
+                            induction=env.closure and certificate['checker_version'] == CLOSURE_CHECKER_VERSION)
         replayer.replay(_initial_branch(env, premises, conclusion), certificate["trace"])
         return EntailmentCertificateCheck(True, "Valid", replayer.steps)
     except _Budget:

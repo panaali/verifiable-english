@@ -323,6 +323,10 @@ def run(executable):
         trace_coverage(env, fs[:-1], fs[-1], case['certificate']['trace'], closure_coverage)
     positive.extend(closure)
     forged.extend(closure_attacks)
+    from conformance.induction import positive_cases as induction_positive, forged_cases as induction_forged
+    induction, induction_attacks = induction_positive(), induction_forged()
+    positive.extend(induction)
+    forged.extend(induction_attacks)
     accepted = invoke(executable, positive)
     rejected = invoke(executable, forged)
     gaps = [{"id": c["id"], "result": r} for c, r in zip(positive, accepted, strict=True)
@@ -339,6 +343,10 @@ def run(executable):
                   closure_forged=len(closure_attacks), closure_lean_rejected_forged=len(closure_attacks)-len(closure_false_accepts),
                   closure_reviewer_outcomes=closure_outcomes,
                   closure_trace_rule_counts=dict(sorted(closure_coverage.items())))
+    report.update(induction_python_accepted=len(induction),
+                  induction_lean_accepted=sum(r['valid'] for r in accepted[-len(induction):]),
+                  induction_forged=len(induction_attacks),
+                  induction_lean_rejected_forged=sum(not r['valid'] for r in rejected[-len(induction_attacks):]))
     assert not gaps, gaps
     assert not false_accepts, false_accepts
     return report

@@ -131,6 +131,15 @@ def decodeClosureTrace : Nat → Json → Except String Closure.Tableau.Trace
     if rule == "close" then
       Bridge.exactFields j ["rule"]
       pure .close
+    else if rule == "closure-induct@1" then
+      Bridge.exactFields j ["rule", "at", "sort", "invariant", "children"]
+      let index ← (← j.getObjVal? "at").getNat?
+      let sort ← Bridge.stringField j "sort"
+      let invariant ← Closure.Bridge.decodeFormula 64 (← j.getObjVal? "invariant")
+      if Closure.Bridge.formulaNodes invariant > 10000 then
+        throw "ResourceLimit: invariant AST node count"
+      let children ← (← (← j.getObjVal? "children").getArr?).toList.mapM (decodeClosureTrace fuel)
+      pure (.induct index sort invariant children)
     else if rule == "expand" || rule == "closure-plus@0" || rule == "closure-star@0" ||
         Closure.Tableau.extraRule rule then
       let names := (← Bridge.fields j).map Prod.fst

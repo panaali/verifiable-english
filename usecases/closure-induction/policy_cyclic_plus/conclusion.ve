@@ -1,0 +1,1 @@
+for every entity x0, (if (x0 is group), then (not (tc[link](x0, @resource)))).

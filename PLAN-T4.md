@@ -30,3 +30,11 @@ need interacting rules/principals. Decision:
    sabotaged, violations arising from COMBINATIONS of individually harmless rules), arms (a), (b') at a preregistered
    bound, (c); Haiku only; generator supplies background axioms; one hand-written mistranslation per sabotaged item.
    Two-sided gate: (a) false approval >= 15% AND (b') misses >= 30% AND >= 80% of true invariants certify. Intervals.
+
+Implementation update (2026-09-22): item 1 is implemented as `closure-induct@1`
+in checker version `ve-tableau-closure-checker@1`, with old certificates accepted
+unchanged. Lean proves the rule and the extended certificate checker sound.
+[Specification](docs/spec/closure-induction.md),
+[implementation report](docs/closure-induction-report.md), and
+[T9/T9e plus cyclic-policy certificates](usecases/closure-induction/README.md).
+The pilot in item 2 remains separate future work.
