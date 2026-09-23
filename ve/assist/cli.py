@@ -110,11 +110,18 @@ def render(command, result):
             lines.append(f"unanchored assumption {row['node']} [{row['anchor_state']}]"
                          + (" LOAD-BEARING for " + ", ".join(row["needed_by"]) if row["load_bearing"] else ""))
         cov = result["coverage"]
-        lines.append(f"coverage: {cov['covered']} covered, {cov['waived']} waived, "
-                     f"{len(cov['uncovered'])} uncovered" + (f" ({', '.join(cov['uncovered'])})"
-                                                            if cov["uncovered"] else ""))
+        lines.append(f"coverage: {cov['derived']} claimed derived, {cov['covered']} given covered, "
+                     f"{cov['waived']} waived, {len(cov['uncovered'])} uncovered"
+                     + (f" ({', '.join(cov['uncovered'])})" if cov["uncovered"] else "")
+                     + f", {len(cov['underived'])} claimed underived"
+                     + (f" ({', '.join(cov['underived'])})" if cov["underived"] else ""))
+        for row in result["waivers"]:
+            lines.append(f"waiver {row['sentence']} [{row['role']}]: {row['reason']}"
+                         + (" (blocks success)" if row["counts_against_success"] else ""))
         for row in result["renamed_conclusions"]:
-            lines.append(f"renamed conclusion: {row['assumptions']} entail {row['target']}")
+            lines.append(f"renamed conclusion: {row['assumptions']} "
+                         + ("may entail (undecided within budget; fail closed) " if row.get("undecided") else "entail ")
+                         + row["target"])
         lines.append("provenance: " + ", ".join(f"{k} {v}" for k, v in result["provenance"].items() if v))
         tokens = result["usage"]["tokens"]
         if tokens:
@@ -150,9 +157,9 @@ def render(command, result):
 
 
 def _proposer(args):
-    from ve_experiments.assist_haiku import HaikuProposer
+    from ve_experiments.assist_haiku import ClaudeProposer
     ledger = args.calls_ledger or str(args.session) + ".calls.jsonl"
-    return HaikuProposer(ledger, account=args.account, max_calls=args.max_calls)
+    return ClaudeProposer(ledger, model=args.proposer_model, account=args.account, max_calls=args.max_calls)
 
 
 def main(argv=None):
@@ -164,7 +171,8 @@ def main(argv=None):
     new.add_argument("session")
     new.add_argument("--env", help="environment JSON")
     new.add_argument("--english-vocabulary", help="English overlay JSON")
-    new.add_argument("--text", help="source prose file (paragraphs; optional [given]/[claimed]/[context] tags)")
+    new.add_argument("--text", help="source prose file (paragraphs tagged [given]/[claimed]/[context]; "
+                                    "untagged paragraphs are claimed)")
     new.add_argument("--source", help="source JSON {'sentences': [...]}")
     new.add_argument("--target", action="append", default=[], metavar="SENTENCE_ID")
     new.add_argument("--p5", help="P5 dossier JSONL(.gz) file")
@@ -203,7 +211,7 @@ def main(argv=None):
     p = with_session("show", "show nodes with paraphrases"); p.add_argument("name", nargs="?")
     p = with_session("paraphrase", "paraphrase VE text"); p.add_argument("text")
     p = with_session("compare", "compare two statements"); p.add_argument("a"); p.add_argument("b")
-    p = with_session("propose", "Haiku 4.5 candidates for one sentence")
+    p = with_session("propose", "proposer (Haiku 4.5 by default) candidates for one sentence")
     p.add_argument("sentence"); p.add_argument("--k", type=int); p.add_argument("--note")
     with_session("export", "export argument graphs and nodes")
     with_session("replay", "replay the ledger and report whether it reproduces")
@@ -215,7 +223,11 @@ def main(argv=None):
     tools.add_argument("--proposer", action="store_true"); tools.add_argument("--premise-suggestions", action="store_true")
     for p in sub.choices.values():
         if "session" in [a.dest for a in p._actions]:
-            p.add_argument("--account", default="saeedi.danial", help="Claude account label for propose")
+            p.add_argument("--account", default=None,
+                           help="Claude account label for propose (~/.claude-LABEL; default "
+                                "$VE_ASSIST_CLAUDE_ACCOUNT, else the default Claude configuration)")
+            p.add_argument("--proposer-model", choices=("haiku", "sonnet", "opus"), default="haiku",
+                           help="proposer model (recorded with every call in the ledger)")
             p.add_argument("--max-calls", type=int, default=None, help="cap on proposer calls in the calls ledger")
             p.add_argument("--calls-ledger", help="claude CLI audit ledger (default SESSION.calls.jsonl)")
     args = parser.parse_args(argv)
@@ -305,7 +317,7 @@ def main(argv=None):
         result = session.apply(action, arguments)
         _save(session, args.session)
         return emit(command, result)
-    except (VEError, OSError, ValueError) as exc:
+    except (VEError, OSError, ValueError, RuntimeError) as exc:
         message = exc.message if isinstance(exc, VEError) else str(exc)
         print(f"error: {message}", file=sys.stderr)
         return 2

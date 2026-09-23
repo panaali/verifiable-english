@@ -16,14 +16,16 @@ author's responsibility and is audited outside the tool.
 from __future__ import annotations
 
 from copy import deepcopy
+import dataclasses
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 import hashlib
 import inspect
 import json
+import secrets
 import warnings
 
-from .. import ast
+from .. import ast, stream_audit
 from ..argument import ArgumentGraph, Claim, Deduction, check_argument, deduction_identity
 from ..entailment import check_entailment_certificate, prove_entailment
 from ..environment import RESERVED, Environment, valid_identifier
@@ -56,6 +58,11 @@ def _now():
 
 def _sha(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def config_digest(config):
+    """Digest of a session configuration (everything except the creation time and the digest itself)."""
+    return _sha({k: v for k, v in config.items() if k not in ("created", "config_digest")})
 
 
 def _ident(name, label="name"):
@@ -95,6 +102,29 @@ def _predicates_of(formula, found=None):
     return found
 
 
+def _symbols_of(formula):
+    """Every vocabulary symbol a formula uses: predicates, relations, constants and quantified sorts."""
+    found, pending = set(), [formula]
+    while pending:
+        node = pending.pop()
+        if type(node) is ast.Const:
+            found.add(node.name)
+            continue
+        for item in dataclasses.fields(node):
+            value = getattr(node, item.name)
+            if item.name in ("predicate", "relation", "sort") and type(value) is str:
+                found.add(value)
+            elif dataclasses.is_dataclass(value):
+                pending.append(value)
+    return found
+
+
+def _conjuncts(formula):
+    if type(formula) is ast.And:
+        return _conjuncts(formula.left) + _conjuncts(formula.right)
+    return [formula]
+
+
 def _constants_of(formula, found=None):
     found = set() if found is None else found
     pending = [formula]
@@ -128,6 +158,11 @@ class Node:
 class AssistSession:
     """One authoring session. Use ``apply`` (or the JSON tool API) to act."""
 
+    # Deterministic needles of the canonical sanitizer (``ve.stream_audit``) for everything the session
+    # logs or returns: the known credential prefixes. A backend's live token is applied where the backend's
+    # output enters the session (``proposer._call``), so replay without the backend is identical.
+    SECRET_NEEDLES = stream_audit.needles_for(None)
+
     def __init__(self, config):
         config = deepcopy(config)
         if config.get("format") != SESSION_FORMAT:
@@ -147,13 +182,18 @@ class AssistSession:
             tid = _ident(row.get("id"), "target id")
             if row.get("sentence") not in self.sentences:
                 raise AssistError(f"Target {tid} names an unknown sentence {row.get('sentence')!r}")
+            if self.sentences[row["sentence"]]["role"] != "claimed":
+                raise AssistError(f"Target {tid} must be a claimed sentence; {row['sentence']} is "
+                                  f"{self.sentences[row['sentence']]['role']!r}")
             if tid in self.targets:
                 raise AssistError(f"Duplicate target id {tid}")
             self.targets[tid] = {"id": tid, "sentence": row["sentence"], "formula": None, "text": None,
                                  "frozen_by": None}
             if row.get("formula"):
                 formula, _ = self._parse(row["formula"], "auto")
-                self.targets[tid].update(formula=formula, text=self._canonical(formula), frozen_by="config")
+                vacuity = self._reject_vacuous(tid, formula)
+                self.targets[tid].update(formula=formula, text=self._canonical(formula), frozen_by="config",
+                                         vacuity=vacuity)
         if not self.targets:
             raise AssistError("A session needs at least one target sentence")
         self.nodes: dict[str, Node] = {}
@@ -166,18 +206,27 @@ class AssistSession:
         self.events: list[dict] = []
         self.proposer = None  # injected callable, see ve.assist.proposer
         self._replaying = None
+        self._leftover_calls = 0
+        self._seq = None
 
     # ------------------------------------------------------------------ creation
     @classmethod
     def create(cls, environment, source, targets, *, english_vocabulary=None, options=None, metadata=None):
         env = environment if isinstance(environment, dict) else environment.to_dict()
-        config = {"format": SESSION_FORMAT, "tool_version": TOOL_VERSION, "environment": env,
+        # session_id names this session's backend calls (item ids in the calls ledger). It is fixed at
+        # creation and survives metadata edits, so calls cannot be orphaned by re-digesting the config.
+        config = {"format": SESSION_FORMAT, "tool_version": TOOL_VERSION, "session_id": secrets.token_hex(8),
+                  "environment": env,
                   "english_vocabulary": english_vocabulary, "source": source, "targets": targets,
                   "options": options or {}, "metadata": metadata or {}, "created": _now()}
         session = cls(config)
         session.config["options"] = dict(session.options)
-        session.config["config_digest"] = _sha({k: v for k, v in session.config.items() if k != "created"})
+        session.config["config_digest"] = config_digest(session.config)
         return session
+
+    @property
+    def session_id(self):
+        return self.config.get("session_id") or str(self.config.get("config_digest", "session"))[:16]
 
     # ------------------------------------------------------------------ helpers
     def _canonical(self, formula):
@@ -250,6 +299,87 @@ class AssistSession:
             view["matches_targets"] = matches
         return view
 
+    def _reject_vacuous(self, tid, formula):
+        """A target valid on its own certifies nothing. Returns ``invalid`` (a real claim) or ``unknown``
+        (the check ran out of budget: the target may be frozen but the item can never succeed)."""
+        vacuity = self._validity(formula)
+        if vacuity == "valid":
+            raise AssistError(f"Target {tid} is provable from no premises (vacuous); freeze the sentence's "
+                              "actual claim")
+        return vacuity
+
+    def _premise_key(self, formula):
+        return self._canonical(formula)
+
+    def _canonical_premises(self, premises):
+        """THE premise canonicalization (sorted by canonical text, deduplicated): every prover or model
+        search the session runs sees premises as a SET, never in node or parent order."""
+        return tuple({self._premise_key(p): p for p in sorted(premises, key=self._premise_key)}.values())
+
+    def _ordered_parents(self, node):
+        """``node``'s parents in canonical order (by canonical formula text, then name). ``_check`` proves a
+        step against exactly these premises and ``target_graph`` lists the deduction's premises in the same
+        order, so the certificate, its replay and the verdict are independent of the author's parent order."""
+        return tuple(sorted(node.parents, key=lambda p: (self._premise_key(self.nodes[p].formula), p)))
+
+    def _decide(self, premises, conclusion):
+        """Does ``premises`` entail ``conclusion``? ``yes`` / ``no`` / ``unknown``.
+
+        The single interpretation point for every fidelity search. ``yes`` needs a Found proof;
+        ``no`` needs a saturated open tableau (no closure) or a checked countermodel. Anything
+        else -- an exhausted proof budget (ResourceLimit), a prover error, no countermodel within
+        budget -- is ``unknown``, and every caller treats ``unknown`` as blocking success. So
+        raising or lowering the proof budget can only turn ``unknown`` into a decision, never flip a
+        decided answer, and never turn a failing item into a success.
+        """
+        # Canonical premise order (sorted, deduplicated): a verdict is a function of the premise SET,
+        # never of node insertion order or parent order.
+        premises = self._canonical_premises(premises)
+        if type(conclusion) is ast.Top:
+            return "yes"
+        try:
+            status = prove_entailment(self.env, premises, conclusion,
+                                      max_steps=self.options["max_proof_steps"]).status
+        except (ValueError, VEError):
+            status = "ResourceLimit"
+        if status == "Found":
+            return "yes"
+        if status == "NotFound" and not self.env.closure:
+            return "no"
+        budget = self._budget()
+        try:
+            found, model = ground_countermodel(self.env, premises, conclusion)
+            if found == "Unsupported":
+                model = find_countermodel(self.env, premises, conclusion,
+                                          max_domain_size=budget["max_domain_size"],
+                                          max_models=budget["max_models"],
+                                          max_evaluations=budget["max_evaluations"]).model
+            if model is not None and check_countermodel(self.env, premises, conclusion, model,
+                                                        max_evaluations=budget["max_evaluations"]).valid:
+                return "no"
+        except (ValueError, VEError):
+            pass
+        return "unknown"
+
+    def _validity(self, formula):
+        """``valid`` / ``invalid`` / ``unknown`` from no premises, conjunct by conjunct (fails closed)."""
+        parts = []
+        for part in _conjuncts(formula):
+            verdict = self._decide((), part)
+            if verdict == "no":
+                return "invalid"
+            parts.append("valid" if verdict == "yes" else "unknown")
+        return "valid" if all(p == "valid" for p in parts) else "unknown"
+
+    def _offered(self, formula):
+        """The candidate or suggestion (kind, id) whose formula this is, if any: provenance is bound to
+        content, so retyping an offered formula by hand cannot erase that the proposer supplied it."""
+        for kind, pool in (("proposer", self.candidates), ("suggestion", self.suggestions)):
+            for ref, row in pool.items():
+                if row["formula"] == formula:
+                    return kind, ref
+        return None
+
     def _require_frozen(self):
         missing = [t for t, row in self.targets.items() if row["formula"] is None]
         if missing:
@@ -291,29 +421,47 @@ class AssistSession:
         args = deepcopy(args or {})
         if type(args) is not dict:
             raise AssistError("Arguments must be an object")
+        # Arguments are sanitized BEFORE they are acted on, so live and replayed runs see the same input.
+        args = stream_audit.sanitize(args, self.SECRET_NEEDLES)
         handler = getattr(self, "_do_" + action)
         event = {"seq": len(self.events), "action": action, "args": args, "time": _now()}
+        self._seq = event["seq"]
         self._model_calls = []
-        self._replaying = list(_recorded.get("model_calls", [])) if _recorded else None
+        recorded_calls = _recorded.get("model_calls", []) if _recorded else []
+        if type(recorded_calls) is not list:
+            raise LedgerReplayError("Recorded model_calls must be a list")
+        self._replaying = list(recorded_calls) if _recorded is not None else None
+        self._leftover_calls = 0
         try:
             try:
                 inspect.signature(handler).bind(**args)
             except TypeError as exc:
                 raise AssistError(f"Invalid arguments for {action}: {exc}") from exc
             result = {"ok": True, **handler(**args)}
+        except LedgerReplayError:
+            raise
         except VEError as exc:
             result = {"ok": False, "error": exc.to_dict()}
+        except RuntimeError as exc:  # a backend failure must still be logged, never lost
+            from .proposer import redact_secrets
+            result = {"ok": False, "error": {"code": "BackendError", "message": redact_secrets(str(exc))[:500]}}
         finally:
+            self._leftover_calls = len(self._replaying) if self._replaying is not None else 0
             self._replaying = None
         if self._model_calls:
             event["model_calls"] = self._model_calls
+            # Earlier failed attempts of the same backend call (retries) spent tokens too.
+            spent = lambda c, k: (c.get(k) or 0) + sum(a.get(k) or 0 for a in c.get("attempts", ()))
             event["tokens"] = {"proposer": {
-                "input_tokens": sum(c.get("input_tokens") or 0 for c in self._model_calls),
-                "output_tokens": sum(c.get("output_tokens") or 0 for c in self._model_calls),
+                "input_tokens": sum(spent(c, "input_tokens") for c in self._model_calls),
+                "output_tokens": sum(spent(c, "output_tokens") for c in self._model_calls),
                 "calls": len(self._model_calls)}}
         if action == "record_usage" and result["ok"]:
             event["tokens"] = {args["role"]: {"input_tokens": args.get("input_tokens", 0),
                                               "output_tokens": args.get("output_tokens", 0), "calls": 1}}
+        # Every string of every logged event and returned result passes through the canonical sanitizer.
+        result = stream_audit.sanitize(result, self.SECRET_NEEDLES)
+        event = stream_audit.sanitize(event, self.SECRET_NEEDLES)
         event["result"] = result
         event["result_chars"] = len(json.dumps(result, ensure_ascii=False))
         self.events.append(event)
@@ -337,12 +485,20 @@ class AssistSession:
         if self.nodes:
             raise AssistError("Targets must be frozen before any node is added")
         formula, used = self._parse(text, surface)
+        vacuity = self._reject_vacuous(target, formula)
         origin = "hand-written"
         if candidate is not None:
             origin = "proposer-verbatim" if formula == self.candidates[candidate]["formula"] else "proposer-edited"
-        row.update(formula=formula, text=self._canonical(formula), frozen_by="author", origin=origin)
-        return {"target": target, "sentence": self._sentence_view(row["sentence"]), "text": row["text"],
-                "paraphrase": self.paraphrase_formula(formula), "surface": used}
+        elif self._offered(formula):
+            origin = self._offered(formula)[0] + "-verbatim"
+        row.update(formula=formula, text=self._canonical(formula), frozen_by="author", origin=origin,
+                   vacuity=vacuity)
+        result = {"target": target, "sentence": self._sentence_view(row["sentence"]), "text": row["text"],
+                  "paraphrase": self.paraphrase_formula(formula), "surface": used, "origin": origin}
+        if vacuity == "unknown":
+            result["warning"] = ("Could not decide within budget whether this target is provable from no "
+                                 "premises; the item cannot succeed (fail closed).")
+        return result
 
     def _do_add_node(self, name, text=None, anchors=(), parents=(), candidate=None, suggestion=None,
                      surface="auto"):
@@ -370,6 +526,9 @@ class AssistSession:
                 raise AssistError("add_node needs text, a candidate, or a suggestion")
             formula, _ = self._parse(text, surface)
             origin = "hand-written"
+            offered = self._offered(formula)
+            if offered:
+                origin, ref = offered[0] + "-verbatim", offered[1]
         self.nodes[name] = Node(name, formula, self._canonical(formula), anchors, parents, origin, ref)
         return {"node": self.node_view(name)}
 
@@ -395,8 +554,12 @@ class AssistSession:
             raise AssistError("Rewrite changes nothing")
         node.history.append({"text": node.text, "anchors": list(node.anchors), "parents": list(node.parents),
                              "origin": node.origin})
-        if formula != node.formula and node.origin.endswith("-verbatim"):
-            node.origin = node.origin.replace("-verbatim", "-edited")
+        if formula != node.formula:
+            offered = self._offered(formula)
+            if offered:
+                node.origin, node.source_ref = offered[0] + "-verbatim", offered[1]
+            elif node.origin.endswith("-verbatim"):
+                node.origin = node.origin.replace("-verbatim", "-edited")
         node.formula, node.text, node.anchors, node.parents = formula, self._canonical(formula), new_anchors, new_parents
         self._invalidate(name)
         return {"node": self.node_view(name), "invalidated_checks": sorted(
@@ -417,6 +580,8 @@ class AssistSession:
         """Add vocabulary through the ``ve propose``-style gates. Gloss required."""
         from ..english import EnglishVocabulary
         from ..english_phrases import BLOCKED, content_tokens, nearest
+        # Targets are frozen in the original vocabulary, never in newly invented words.
+        self._require_frozen()
         _ident(name, "symbol")
         if kind not in ("predicate", "constant", "sort"):
             raise AssistError("kind must be predicate, constant or sort")
@@ -499,7 +664,8 @@ class AssistSession:
         return formula.body
 
     def _check(self, node, invariants=()):
-        premises = tuple(self.nodes[p].formula for p in node.parents)
+        # Same canonicalization as _decide: parent ORDER never changes what the prover sees.
+        premises = tuple(self.nodes[p].formula for p in self._ordered_parents(node))
         budget = self._budget()
         record = {"status": "unknown", "parents": list(node.parents)}
         if invariants:
@@ -519,9 +685,8 @@ class AssistSession:
             if replay.valid:
                 record.update(status="follows", certificate=proof.certificate,
                               certificate_digest=_sha(proof.certificate), replay_steps=replay.steps)
-                contradiction = prove_entailment(self.env, premises, ast.Bottom(),
-                                                 max_steps=budget["max_proof_steps"])
-                if contradiction.status == "Found":
+                # Informational only: status decides consistency of every support fail-closed.
+                if self._entails(premises, ast.Bottom()):
                     record["contradictory_parents"] = True
                 return record
             record["prover"]["replay"] = replay.status
@@ -635,7 +800,8 @@ class AssistSession:
         row = self.targets[tid]
         view = {"id": tid, "sentence": self._sentence_view(row["sentence"]), "frozen": row["formula"] is not None}
         if row["formula"] is not None:
-            view.update(text=row["text"], paraphrase=self.paraphrase_formula(row["formula"]))
+            view.update(text=row["text"], paraphrase=self.paraphrase_formula(row["formula"]),
+                        vacuity=row.get("vacuity", "invalid"))
         return view
 
     def _do_paraphrase(self, text, surface="auto"):
@@ -691,12 +857,18 @@ class AssistSession:
         return found
 
     def _anchor_state(self, node):
+        """``anchored`` only when every anchor is given: an anchor to any claimed sentence means the
+        assumption states (part of) a conclusion, which must be derived, not assumed."""
         roles = {self.sentences[a]["role"] for a in node.anchors}
-        if "given" in roles:
-            return "anchored"
         if "claimed" in roles:
             return "anchored_to_claim_only"
+        if "given" in roles:
+            return "anchored"
         return "unanchored"
+
+    def _is_anchored_parent(self, name):
+        node = self.nodes[name]
+        return node.kind == "step" or self._anchor_state(node) == "anchored"
 
     def target_graph(self, tid):
         """Build the checked ArgumentGraph for one target, or (None, reason)."""
@@ -707,28 +879,35 @@ class AssistSession:
         if not matches:
             return None, "no step node states the frozen target", None
         certified = [n for n in matches if self.checks.get(n.name, {}).get("status") == "follows"]
-        root = (certified or matches)[0]
+        # Deterministic in the graph (by name), never by insertion order; every other matching step is
+        # still evaluated by status as a witness.
+        root = min(certified or matches, key=lambda n: n.name)
         support = self._support(root.name)
         claims = tuple(Claim.create(self.env, n, print_formula(self.env, self.nodes[n].formula) + ".\n")
                        for n in support)
         steps = [n for n in support if self.nodes[n].kind == "step"]
-        bare = ArgumentGraph(self.env, claims, tuple(Deduction("d_" + n, self.nodes[n].parents, n) for n in steps),
+        # Deduction premises in the canonical parent order _check proved them in.
+        parents = {n: self._ordered_parents(self.nodes[n]) for n in steps}
+        bare = ArgumentGraph(self.env, claims, tuple(Deduction("d_" + n, parents[n], n) for n in steps),
                              root.name, target_scope="assist:" + tid)
         deductions = []
         for n in steps:
-            plain = Deduction("d_" + n, self.nodes[n].parents, n)
+            plain = Deduction("d_" + n, parents[n], n)
             check = self.checks.get(n)
             certs = ()
             if check and check["status"] == "follows":
                 certs = ({"edge_id": deduction_identity(bare, plain), "direction": "follows",
                           "proof": check["certificate"]},)
-            deductions.append(Deduction("d_" + n, self.nodes[n].parents, n, certs))
+            deductions.append(Deduction("d_" + n, parents[n], n, certs))
         graph = ArgumentGraph(self.env, claims, tuple(deductions), root.name, target_scope="assist:" + tid)
         return graph, None, root.name
 
     def _entails(self, premises, conclusion):
+        """Positive-only proof search (True only on a Found proof). Used for suggestions and
+        comparisons; never interpret False as "not entailed" in a check success depends on: use
+        ``_decide``, which reports an exhausted search as ``unknown``."""
         try:
-            return prove_entailment(self.env, tuple(premises), conclusion,
+            return prove_entailment(self.env, self._canonical_premises(premises), conclusion,
                                     max_steps=self.options["max_proof_steps"]).status == "Found"
         except (ValueError, VEError):
             return False
@@ -750,76 +929,252 @@ class AssistSession:
                             support=support, assumptions=list(result.remaining_assumptions))
                 if result.status != "Checked":
                     failures.append(f"target {tid}: graph replay status {result.status}")
-                leaves = [self.nodes[n].formula for n in result.remaining_assumptions]
-                if leaves and self._entails(leaves, ast.Bottom()):
-                    view["inconsistent_assumptions"] = True
-                    failures.append(f"target {tid}: its assumptions are jointly contradictory")
+                failures += self._consistency_failures(f"target {tid}", result.remaining_assumptions, view)
+                # Vacuity through the graph: tautological assumptions add nothing, so a target they
+                # entail on their own is vacuous even when the direct empty-premise check ran out of budget.
+                # An assumption whose validity is undecided counts as possibly tautological (fail closed).
+                verdicts = {n: self._validity(self.nodes[n].formula) for n in sorted(result.remaining_assumptions)}
+                trivial = [n for n, v in verdicts.items() if v != "invalid"]
+                if trivial:
+                    verdict = self._decide([self.nodes[n].formula for n in trivial], self.targets[tid]["formula"])
+                    undecided = [n for n in trivial if verdicts[n] == "unknown"]
+                    if verdict == "yes" and not undecided:
+                        view["vacuous"] = True
+                        failures.append(f"target {tid}: provable from tautological assumptions only "
+                                        f"({', '.join(trivial)})")
+                    elif verdict != "no":
+                        view["vacuous"] = "unknown"
+                        failures.append(f"target {tid}: vacuity through assumptions undecided within budget "
+                                        f"({', '.join(trivial)} may be tautologies that entail it; fail closed)")
+            if view["frozen"] and view.get("vacuity") == "unknown":
+                failures.append(f"target {tid}: vacuity unknown (the empty-premise check exhausted its budget; "
+                                "fail closed)")
             targets.append(view)
         steps = [n for n in self.nodes.values() if n.kind == "step"]
+        # Outcome is a FUNCTION OF THE GRAPH: every certified step that states a frozen target or is anchored
+        # to a claimed sentence is a WITNESS, and ALL witnesses are evaluated (never "the first found"), in
+        # name order. Each witness joins the load-bearing analysis, has its assumptions checked for
+        # consistency, and must be entailed by its ANCHORED assumptions alone (decided by ``_decide``): a
+        # witness that needs an unanchored assumption blocks success whatever other witnesses exist.
+        witnesses = self._witnesses()
+        dependence = {}
+        for w in witnesses:
+            support = self._support(w)
+            support_all.update(support)
+            leaves = [n for n in support if self.nodes[n].kind == "assumption"]
+            failures += self._consistency_failures(f"step {w}", leaves)
+            verdict, loose = self._anchored_entailment(w)
+            dependence[w] = {"verdict": verdict, "unanchored_assumptions": loose}
+            if verdict == "no":
+                failures.append(f"step {w}: its anchored assumptions alone do not entail it (it needs "
+                                f"unanchored {', '.join(loose)})")
+            elif verdict == "unknown":
+                failures.append(f"step {w}: undecided within budget whether its anchored assumptions alone "
+                                f"entail it (unanchored {', '.join(loose) or 'none'}; fail closed)")
+        # A claimed sentence is DERIVED when some witness anchored to it is independent of unanchored
+        # assumptions (decided) and no single assumption in its support already states it (decided "no").
+        # Covering it with an idle node, restating it, or waiving it never counts.
+        derived, derivation_unknown = {}, {}
+        for sid in self.sentence_order:
+            if self.sentences[sid]["role"] == "claimed" and self.sentences[sid]["asserting"]:
+                by, undecided = self._derivation(sid, dependence)
+                if by:
+                    derived[sid] = by
+                elif undecided:
+                    derivation_unknown[sid] = undecided
         unproved = [{"node": n.name, "check": self.checks.get(n.name, {}).get("status", "unchecked"),
                      "parents": list(n.parents)} for n in steps
                     if self.checks.get(n.name, {}).get("status") != "follows"]
         if unproved:
             failures.append(f"{len(unproved)} unproved step(s)")
+        # Load-bearing: a certified step whose anchored parents ALONE (every unanchored parent removed at
+        # once, so duplicates cannot hide each other) no longer entail it needs its unanchored parents.
+        needs, undecided_needs = {}, {}
+        for s in steps:
+            if s.name not in support_all or self.checks.get(s.name, {}).get("status") != "follows":
+                continue
+            loose = [p for p in s.parents if not self._is_anchored_parent(p)]
+            if not loose:
+                continue
+            anchored = [self.nodes[p].formula for p in s.parents if self._is_anchored_parent(p)]
+            verdict = self._decide(anchored, s.formula)
+            if verdict != "yes":  # "unknown" counts as needed (fail closed)
+                for p in loose:
+                    needs.setdefault(p, []).append(s.name)
+                    undecided_needs.setdefault(p, []).extend([s.name] if verdict == "unknown" else [])
         unanchored = []
         for n in self.nodes.values():
             if n.kind != "assumption" or self._anchor_state(n) == "anchored":
                 continue
-            needed_by = []
-            for s in steps:
-                if n.name in s.parents and s.name in support_all and \
-                        self.checks.get(s.name, {}).get("status") == "follows":
-                    rest = [self.nodes[p].formula for p in s.parents if p != n.name]
-                    if not self._entails(rest, s.formula):
-                        needed_by.append(s.name)
+            needed_by = needs.get(n.name, [])
             row = {"node": n.name, "anchor_state": self._anchor_state(n), "text": n.text,
                    "paraphrase": self.paraphrase_formula(n.formula),
                    "supports_target": n.name in support_all, "load_bearing": bool(needed_by),
                    "needed_by": needed_by}
+            if undecided_needs.get(n.name):
+                row["load_bearing_undecided_for"] = undecided_needs[n.name]
             unanchored.append(row)
             if needed_by:
-                failures.append(f"load-bearing unanchored assumption {n.name}")
-        coverage, uncovered = [], []
+                failures.append(f"load-bearing unanchored assumption {n.name}"
+                                + (" (undecided within budget; fail closed)"
+                                   if set(needed_by) <= set(undecided_needs.get(n.name, ())) else ""))
+        coverage, uncovered, underived, waived = [], [], [], []
         for sid in self.sentence_order:
             s = self.sentences[sid]
             if not s["asserting"]:
                 continue
             by = [n.name for n in self.nodes.values() if sid in n.anchors]
-            state = "covered" if by else "waived" if sid in self.waivers else "uncovered"
+            if s["role"] == "claimed":
+                state = "derived" if sid in derived else "underived"
+            else:
+                state = "covered" if by else "uncovered"
+            # Waiving ANY asserting sentence blocks success, even one that is already covered or derived.
+            state = "waived" if sid in self.waivers else state
             coverage.append({"sentence": sid, "role": s["role"], "state": state, "nodes": by,
+                             **({"derived_by": derived[sid]} if sid in derived else {}),
+                             **({"derivation_undecided": derivation_unknown[sid]}
+                                if sid in derivation_unknown else {}),
                              **({"waiver": self.waivers[sid]} if state == "waived" else {})})
-            if state == "uncovered":
-                uncovered.append(sid)
+            {"uncovered": uncovered, "underived": underived, "waived": waived}.get(state, []).append(sid)
         if uncovered:
-            failures.append(f"{len(uncovered)} asserting sentence(s) neither covered nor waived")
+            failures.append(f"{len(uncovered)} given sentence(s) not covered by any node: {', '.join(uncovered)}")
+        if underived:
+            failures.append(f"{len(underived)} claimed sentence(s) not derived by a certified step: "
+                            f"{', '.join(underived)}")
+        for sid, rows in derivation_unknown.items():
+            if sid in underived:
+                failures.append(f"claimed sentence {sid}: undecided within budget whether it is derived "
+                                f"({'; '.join(rows)}; fail closed)")
+        if waived:
+            failures.append(f"{len(waived)} asserting sentence(s) waived (a waiver is reported, never success): "
+                            f"{', '.join(waived)}")
+        waivers = [{"sentence": sid, "role": self.sentences[sid]["role"],
+                    "asserting": self.sentences[sid]["asserting"], "reason": reason,
+                    "counts_against_success": sid in waived}
+                   for sid, reason in self.waivers.items()]
+        for tid, row in self.targets.items():
+            if row["formula"] is None:
+                continue
+            for n in self.nodes.values():
+                if n.kind != "assumption":
+                    continue
+                verdict = self._decide([n.formula], row["formula"])
+                if verdict == "yes":
+                    failures.append(f"assumption {n.name} alone entails target {tid}")
+                elif verdict == "unknown":
+                    failures.append(f"assumption {n.name}: undecided within budget whether it alone entails "
+                                    f"target {tid} (fail closed)")
         renamed = self._renamed_conclusions()
         failures += [f"declared vocabulary carries target {r['target']} ({', '.join(r['assumptions'])})"
+                     if not r.get("undecided") else
+                     f"declared vocabulary may carry target {r['target']} ({', '.join(r['assumptions'])}): "
+                     "undecided within budget (fail closed)"
                      for r in renamed]
         origins = {o: sum(1 for n in self.nodes.values() if n.origin == o) for o in ORIGINS}
         return {"success": not failures, "failures": failures, "targets": targets,
                 "unproved_steps": unproved, "unanchored_assumptions": unanchored,
                 "coverage": {"covered": sum(r["state"] == "covered" for r in coverage),
+                             "derived": sum(r["state"] == "derived" for r in coverage),
                              "waived": sum(r["state"] == "waived" for r in coverage),
-                             "uncovered": uncovered, "sentences": coverage},
+                             "uncovered": uncovered, "underived": underived, "sentences": coverage},
+                "waivers": waivers,
                 "renamed_conclusions": renamed, "provenance": origins,
                 "declared": self.declared, "usage": self.usage()}
 
+    def _witnesses(self):
+        """Every certified step that states a frozen target or is anchored to a claimed sentence, by name."""
+        targets = [row["formula"] for row in self.targets.values() if row["formula"] is not None]
+        return sorted(n.name for n in self.nodes.values()
+                      if n.kind == "step" and self.checks.get(n.name, {}).get("status") == "follows"
+                      and (n.formula in targets or any(self.sentences[a]["role"] == "claimed" for a in n.anchors)))
+
+    def _anchored_entailment(self, name):
+        """``(verdict, unanchored)``: do the ANCHORED assumptions under step ``name`` alone entail it?
+
+        ``yes`` without search when its support is fully certified and every assumption is anchored (the
+        certified chain is the proof); otherwise decided by ``_decide`` on the anchored assumptions only.
+        An uncertified step in the support makes the chain no proof: ``unknown`` (fail closed)."""
+        support = [self.nodes[n] for n in self._support(name)]
+        loose = sorted(m.name for m in support if m.kind == "assumption" and self._anchor_state(m) != "anchored")
+        if not all(self.checks.get(m.name, {}).get("status") == "follows" for m in support if m.kind == "step"):
+            return "unknown", loose
+        if not loose:
+            return "yes", loose
+        anchored = [m.formula for m in support if m.kind == "assumption" and m.name not in loose]
+        return self._decide(anchored, self.nodes[name].formula), loose
+
+    def _derivation(self, sid, dependence):
+        """``(steps, undecided)``: EVERY witness that derives claimed sentence ``sid`` (sorted), and, when
+        none does, the witnesses rejected only because a decision is still undecided within budget."""
+        derived, undecided = [], []
+        for name in sorted(n.name for n in self.nodes.values() if sid in n.anchors):
+            if name not in dependence:  # not a certified step
+                continue
+            node = self.nodes[name]
+            verdicts = {m: self._decide([self.nodes[m].formula], node.formula)
+                        for m in self._support(name) if self.nodes[m].kind == "assumption"}
+            if dependence[name]["verdict"] == "no" or any(v == "yes" for v in verdicts.values()):
+                continue
+            unknown = sorted(m for m, v in verdicts.items() if v == "unknown")
+            if dependence[name]["verdict"] == "unknown":
+                unknown.append("independence of unanchored assumptions")
+            if unknown:
+                undecided.append(f"{name}: {', '.join(unknown)}")
+                continue
+            derived.append(name)
+        return derived, [] if derived else undecided
+
+    def _consistency_failures(self, label, names, view=None):
+        """Assumptions ``names`` must be decided consistent; contradictory or undecided fails."""
+        leaves = [self.nodes[n].formula for n in sorted(names)]
+        if not leaves:
+            return []
+        verdict = self._decide(leaves, ast.Bottom())
+        if view is not None and verdict != "no":
+            view["inconsistent_assumptions"] = True if verdict == "yes" else "unknown"
+        if verdict == "yes":
+            return [f"{label}: its assumptions are jointly contradictory"]
+        if verdict == "unknown":
+            return [f"{label}: consistency of its assumptions undecided within budget (fail closed)"]
+        return []
+
     def _renamed_conclusions(self):
-        """Declared symbols whose assumptions alone (singly or in pairs) entail a target."""
+        """Declared vocabulary that carries a target.
+
+        The suspect assumptions are every assumption that mentions a declared symbol (predicate,
+        constant or sort) plus every
+        assumption not anchored to given prose. If they jointly entail a target WITHOUT the anchored,
+        undeclared premises, the target was carried in, not derived; the reported set is a minimal
+        entailing subset (so chains through ordinary assumptions are caught, not only pairs).
+        """
         if not self.declared:
             return []
         declared = set(self.declared)
-        carriers = [n for n in self.nodes.values() if n.kind == "assumption"
-                    and (_predicates_of(n.formula) | _constants_of(n.formula)) & declared]
+        carriers = [n for n in self.nodes.values() if n.kind == "assumption" and _symbols_of(n.formula) & declared]
+        if not carriers:
+            return []
+        names = {n.name for n in carriers}
+        suspects = [n for n in self.nodes.values() if n.kind == "assumption"
+                    and (n.name in names or self._anchor_state(n) != "anchored")]
         found = []
         for tid, row in self.targets.items():
             if row["formula"] is None:
                 continue
-            groups = [(a,) for a in carriers] + [(a, b) for i, a in enumerate(carriers) for b in carriers[i + 1:]]
-            for group in groups:
-                if self._entails([g.formula for g in group], row["formula"]):
-                    found.append({"target": tid, "assumptions": [g.name for g in group]})
-                    break
+            verdict = self._decide([g.formula for g in suspects], row["formula"])
+            if verdict == "no":
+                continue
+            if verdict == "unknown":
+                found.append({"target": tid, "assumptions": [g.name for g in suspects], "undecided": True})
+                continue
+            group = list(suspects)
+            # Drop ordinary assumptions before declared carriers, so a carrier stays in the witness set.
+            # A member is dropped only when the rest is PROVED to still entail the target.
+            for member in sorted(group, key=lambda g: (g.name in names, g.name)):  # graph order, not insertion
+                rest = [g for g in group if g is not member]
+                if self._decide([g.formula for g in rest], row["formula"]) == "yes":
+                    group = rest
+            if any(g.name in names for g in group):
+                found.append({"target": tid, "assumptions": [g.name for g in group]})
         return found
 
     def usage(self):
@@ -847,8 +1202,9 @@ class AssistSession:
 
     def log_rejection(self, action, args, error):
         """Record a call rejected before dispatch (unknown tool or argument)."""
-        result = {"ok": False, "error": error}
-        self.events.append({"seq": len(self.events), "action": action, "args": deepcopy(args), "time": _now(),
+        result = stream_audit.sanitize({"ok": False, "error": error}, self.SECRET_NEEDLES)
+        args = stream_audit.sanitize(deepcopy(args), self.SECRET_NEEDLES)
+        self.events.append({"seq": len(self.events), "action": action, "args": args, "time": _now(),
                             "rejected_by_api": True, "result": result,
                             "result_chars": len(json.dumps(result, ensure_ascii=False))})
         return result
@@ -859,28 +1215,83 @@ class AssistSession:
 
     @classmethod
     def from_ledger(cls, data, *, verify=True):
-        """Rebuild by replaying every event; recorded model outputs are reused, never re-requested."""
-        if data.get("format") != SESSION_FORMAT:
+        """Rebuild by replaying every event; recorded model outputs are reused, never re-requested.
+
+        Integrity checks run whether or not ``verify`` is set: the configuration must match its
+        ``config_digest``; token totals are recomputed from the recorded calls (never copied from the
+        file); every recorded model call must be consumed; ``rejected_by_api`` events must have the
+        exact shape ``log_rejection`` writes. ``verify`` additionally requires every result to reproduce.
+        This proves internal consistency only: an evaluator must also rebuild the configuration from
+        its own materials and compare the calls ledger (``ve.assist.verify.verify_session``).
+        """
+        if type(data) is not dict or data.get("format") != SESSION_FORMAT:
             raise LedgerReplayError("Not a ve assist ledger")
-        session = cls(data["config"])
-        for event in data["events"]:
-            if event.get("rejected_by_api"):
-                session.events.append(deepcopy(event))
+        config = data.get("config")
+        if type(config) is not dict or not isinstance(config.get("config_digest"), str):
+            raise LedgerReplayError("Ledger configuration has no config_digest")
+        if config_digest(config) != config["config_digest"]:
+            raise LedgerReplayError("Ledger configuration does not match its config_digest")
+        events = data.get("events")
+        if type(events) is not list:
+            raise LedgerReplayError("Ledger events must be a list")
+        session = cls(config)
+        for index, event in enumerate(events):
+            if type(event) is not dict or event.get("seq") != index:
+                raise LedgerReplayError(f"Ledger event {index} is malformed or out of sequence")
+            if "rejected_by_api" in event:
+                session._replay_rejection(event)
                 continue
-            result = session.apply(event["action"], event["args"], _recorded=event)
+            if type(event.get("args")) is not dict:
+                raise LedgerReplayError(f"Ledger event {index} has no argument object")
+            result = session.apply(event.get("action"), event["args"], _recorded=event)
             replayed = session.events[-1]
             replayed["time"] = event.get("time", replayed["time"])
-            if "model_calls" in event:
-                replayed["model_calls"] = event["model_calls"]
-                replayed["tokens"] = event.get("tokens", replayed.get("tokens"))
-            if verify and json.loads(json.dumps(result)) != event["result"]:
-                raise LedgerReplayError(f"Ledger event {event['seq']} ({event['action']}) does not replay")
+            if session._leftover_calls:
+                raise LedgerReplayError(f"Ledger event {index} records model calls the replay never used")
+            for key in ("model_calls", "tokens"):
+                if event.get(key) != replayed.get(key):
+                    raise LedgerReplayError(f"Ledger event {index} ({event.get('action')}): recorded {key} "
+                                            "do not match the replay")
+            if verify and json.loads(json.dumps(result)) != event.get("result"):
+                raise LedgerReplayError(f"Ledger event {index} ({event.get('action')}) does not replay")
         return session
 
+    REJECTION_KEYS = {"seq", "action", "args", "time", "rejected_by_api", "result", "result_chars"}
+
+    def _replay_rejection(self, event):
+        """Accept a pre-dispatch rejection only in the exact shape ``log_rejection`` writes."""
+        result = event.get("result")
+        error = result.get("error") if type(result) is dict else None
+        if (set(event) != self.REJECTION_KEYS or event["rejected_by_api"] is not True
+                or type(event["action"]) is not str or type(event["args"]) is not dict
+                or result != {"ok": False, "error": error} or type(error) is not dict
+                or set(error) != {"code", "message"} or not all(type(v) is str for v in error.values())
+                or event["result_chars"] != len(json.dumps(result, ensure_ascii=False))):
+            raise LedgerReplayError(f"Ledger event {event['seq']} is not a valid API rejection")
+        self.events.append(deepcopy(event))
+
     def recorded_model_call(self):
-        """During replay, the next recorded model call (or None when live)."""
-        if self._replaying is None:
-            return None
+        """During replay, the next recorded model call; None when live or when none remain.
+
+        A replayed session has no backend, so running out of recorded calls reproduces exactly the
+        live "no backend" failure; the result comparison then detects a truncated ledger.
+        """
         if not self._replaying:
-            raise LedgerReplayError("Ledger has fewer recorded model calls than the replay needs")
-        return self._replaying.pop(0)
+            return None
+        call = self._replaying.pop(0)
+        if type(call) is not dict or not isinstance(call.get("prompt_digest"), str):
+            raise LedgerReplayError("Recorded model call is malformed")
+        attempts = call.get("attempts", [])
+        if type(attempts) is not list or not all(type(a) is dict and set(a) == {"input_tokens", "output_tokens"}
+                                                 for a in attempts):
+            raise LedgerReplayError("Recorded model call has malformed retry attempts")
+        for row in (call, *attempts):
+            for key in ("input_tokens", "output_tokens"):
+                value = row.get(key)
+                if value is not None and (type(value) is not int or value < 0):
+                    raise LedgerReplayError("Recorded model call has invalid token counts")
+        return call
+
+    @property
+    def replaying(self):
+        return self._replaying is not None
