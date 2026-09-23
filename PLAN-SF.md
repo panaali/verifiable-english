@@ -1,3 +1,5 @@
+> SUPERSEDED on 2026-09-22 by ROADMAP.md (stopped at the witness-yield gate; see section 6) - kept for history; do not edit.
+
 # Statement-faithfulness pilot (2026-09-22), for review
 
 Evidence (~/code/manage-agents/reviews/lit-proof-grading.md): with Lean + Comparator, proof validity is mechanical; the

@@ -1,3 +1,5 @@
+> SUPERSEDED on 2026-09-22 by PLAN-V3.md and ROADMAP.md - kept for history; do not edit.
+
 # VE v2 plan: a trusted oversight component that is not a language model
 
 Approved by the project lead on 2026-09-21 ("Good ideas. go ahead."). Supersedes the experiment part of `PLAN.md`;

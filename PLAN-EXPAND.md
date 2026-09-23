@@ -1,3 +1,5 @@
+> Status: ACTIVE, see ROADMAP.md
+
 # Language expansion, round 1 (2026-09-22), for review
 
 Lead's direction: while credit lasts, one agent expands VE in parallel with the experiments; proofs for stable parts

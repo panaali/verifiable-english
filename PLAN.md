@@ -1,3 +1,5 @@
+> SUPERSEDED on 2026-09-22 by ROADMAP.md (via PLAN-V2.md) - kept for history; do not edit.
+
 # VE: 12-hour plan to a tested implementation and a paper
 
 **Owner:** orchestrator (Claude session `verifiable-english-ab`). **Started:** 2026-09-21 ~00:30 local. **Deadline:** ~12:30 local.

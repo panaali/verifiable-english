@@ -1,3 +1,5 @@
+> SUPERSEDED on 2026-09-22 by PLAN-V5-DEMO.md (T1c) and ROADMAP.md - kept for history; do not edit.
+
 # T4: universal policy guarantees with a weak trusted monitor (2026-09-22), for review
 
 Why: P3 found VE added value ONLY on universal properties (6/12 certified); per-request questions were answered 75/75 by

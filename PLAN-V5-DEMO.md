@@ -1,3 +1,5 @@
+> Status: ACTIVE, see ROADMAP.md
+
 # Three demonstration tasks: VE for frontier oversight of untrusted work (2026-09-22)
 
 Lead's request: design ~3 tasks that can show a VE benefit for FRONTIER models, since literature cases leave frontier

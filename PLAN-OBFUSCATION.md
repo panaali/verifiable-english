@@ -1,3 +1,5 @@
+> Status: ACTIVE, see ROADMAP.md
+
 # Obfuscation study: mandatory proof and mandatory evidence against Barnes-Christiano chains (2026-09-22), for review
 
 Sources: PLAN-V3 queue update; design/vex-mandatory-evidence.md; obfuscation-recheck.md; handoff experiment 3;
@@ -93,3 +95,4 @@ at cache rate as primary; judge tokens reported separately; debate as a curve at
 Pilot: N in {8, 32}, K = 4, 6 pairs per cell (24 items), Vertex <= $5; gates G0 generator, G1 judge-alone obfuscation
 at N=32, G2 honest prover on 4 N=8 items (simplify items if median > 1M tokens), red team on 6 N=32 items + 20 planted,
 debate at two budgets on the same 6. Scheduled after the pushback study and T1c.
+## Astra xhigh review (2026-09-22): "conditional go for diagnostics, not comparative claims" - see ~/code/manage-agents/reviews/astra-rev-obf.md

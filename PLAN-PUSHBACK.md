@@ -1,3 +1,5 @@
+> Status: ACTIVE, see ROADMAP.md
+
 # Pushback study: signed checker verdicts vs Jagged-Judges-style persuasion (2026-09-22), for review
 
 Evidence: design/frontier-failure-modes-and-ve.md; Jagged Judges (arXiv 2608.12645): GPT-5.x, Opus 4.6, Gemini 3.1 Pro
