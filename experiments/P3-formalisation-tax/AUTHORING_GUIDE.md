@@ -82,6 +82,8 @@ bt_<a>(o) / bf_<a>(o) Boolean attribute present and true / present and false
 es_<a>(o, e)          member of an entity-set or record-set attribute
 ss_<a>(o, v)          member of a string/long set attribute
 type_record(r)        r is an anonymous record node
+nattrs_<n>(r)         record node r has exactly n attributes (Cedar record equality needs equal key sets)
+                      [added after the review of 2026-09-22; not in the brief the independent authors saw]
 <a> = attribute name lower-cased, non-alphanumerics -> "_" (isPrivate -> isprivate, "Role-A" -> role_a)
 Constants always available: principal, action, resource (entity), context (entity: the context record node).
 ```
@@ -118,6 +120,8 @@ action_pat(stmt, str)    patterns under Action or NotAction
 resource_pat(stmt, str)  patterns under Resource or NotResource
 stmt_cond(stmt, cond); cond_op(cond, str operator); cond_key(cond, str); cond_value(cond, str)  (one cond per operator+key)
 ctx(str key, str value)  request context
+                      Key names (cond_key, ctx, ${var}) are case-insensitive in IAM and are encoded lower-cased
+                      [added after the review of 2026-09-22]
 action_glob(str p)    ADAPTER: pattern p matches the request action (case-insensitive * ? glob)
 resource_glob(str p)  ADAPTER: pattern p, after ${var} substitution from the context, matches the request resource
                       (case-sensitive glob; false if a variable is missing)

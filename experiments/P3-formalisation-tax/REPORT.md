@@ -6,27 +6,43 @@ in [README.md](README.md). No paid API calls were made.
 
 ## Bottom line
 
-* **Faithfulness is not the problem.** For 40 real artefacts (22 Cedar policy
+"Faithful" below always means **sampled agreement**: agreement with an independent
+source-language reference on the item's questions and on the perturbed worlds the
+harness drew. It is not a proof of equivalence, and the tests' power is measured in §2.
+
+* **Sampled faithfulness is high.** For 40 real artefacts (22 Cedar policy
   sets, 7 Kubernetes RBAC configurations, 3 AWS IAM policies, 8 Alloy paragraphs), my
-  first-pass VE agreed with an independent source-language reference on every item
-  question and on 300 perturbed worlds per item in **39/40** cases, and in 40/40
-  after one repair that the differential test prompted. Eight fresh agents, given
-  only [AUTHORING_GUIDE.md](AUTHORING_GUIDE.md), wrote faithful VE on the first pass
+  first-pass VE agreed with the reference on every item question, on 300 random
+  perturbed worlds per item, and on 100 targeted perturbations per applicable item
+  (added after review) in **37/40** cases. It agreed in 40/40 after the
+  differential test prompted repairs. Eight fresh agents, given
+  only [AUTHORING_GUIDE.md](AUTHORING_GUIDE.md), wrote first-pass VE that agreed
   for **8/8** of the items they authored. Their versions and mine never disagreed on
   2,000 extra perturbed worlds per item. PLAN-V3's faithfulness clause (below about 30%)
   is far from triggered.
-* **Cost is the problem.** Paired on 8 items with the same model and the same
+* **In the one sampled comparison, authoring cost more than review.** Paired on 8 items with the same model and the same
   accounting, VE authoring cost **1.47× the tokens and 4.3× the wall-clock** of a
-  complete structured review that answered the same 10 questions per item. The review
-  was **75/75 correct**. On per-request authorization questions, VE therefore saved
-  no review at all: accuracy was already at ceiling. Someone would still have to sign
-  off the formalisation, which for the Cedar and Alloy items is 0.5–2.3× the length of the source. **PLAN-V3's
-  cost clause is met: P3's refutation condition holds** for this question type.
+  structured review that answered the same packet questions (10 per item, 5 for
+  Alloy `l07`: 75 in all). The review was **75/75 correct**, and VE, run on the same packets, was also 75/75. So
+  on these questions VE showed **no accuracy gain**. That is not the same as "saved no
+  review": authoring yields a reusable evaluator that was tested across changing
+  worlds, while the review answered one fixed packet. Shared infrastructure,
+  sign-off of the formalisation (0.5–2.3× the source length for the Cedar and Alloy
+  items) and the value of reuse were not measured. **For one sampled review batch
+  of per-request questions, the cost clause is met.** A broader refutation, across
+  question volumes or artefact lifetimes, is not supported by these data.
 * VE bought something the review did not only on **universal properties**. There it
   gave certified answers (a replayed tableau certificate or a finite countermodel)
   in 6 of 12 property tasks. That took hand-written background axioms in one case,
   and in 4 tasks it hit checker limits. P3 did not cost this regime against review.
   If the thesis survives, it survives there.
+* **Post-review corrections (cross-family review of `94274a9`).** The IAM reference
+  and the IAM encoding both treated context-key names as case-sensitive. That was a
+  trusted-side defect: re-casing w02's `aws:RequestedRegion` flipped both answers.
+  Both are fixed, with regression tests. c21's encoding ignored extra keys in record
+  equality. It is fixed with a new `nattrs_<n>` fact, and the new targeted
+  perturbations then also exposed a c20 type-error defect. Both are counted as
+  first-pass failures (39/40 became 37/40).
 
 ## 1. Items and ground truth
 
@@ -39,22 +55,38 @@ The K8s, IAM and Alloy references have unit tests and hand-checked answers.
 
 ## 2. Faithful-formalisation rate
 
-| Author | Items | Faithful on item questions + 300 perturbations |
+| Author | Items | Sampled agreement on item questions + 300 random + 100 targeted perturbations |
 |---|---:|---:|
-| Me, first pass (frozen in `items/*/first_pass/`) | 40 | 39/40 |
+| Me, first pass (frozen in `items/*/first_pass/`) | 40 | 37/40 |
 | Me, after differential feedback | 40 | 40/40 |
 | Independent agents (first pass, no reference access) | 8 | 8/8 |
 
-The single first-pass failure was **c15 (hotel_chains)**. A perturbation put a string
-into a set used with `in`. Cedar raises a type error and skips the policy; my formula
-fell through to the next `||` disjunct. Two of the independent agents had modelled
-exactly this rule. Inspection then found the same latent bug in c17, which the test
-had not exposed; both were repaired (`authoring_log.jsonl`). Separately, 6 items
-need OPAQUE adapter predicates, so only **34/40** are faithful *in pure VE* (see §3).
+Targeted perturbations (800 in all) exist for the 3 IAM items (re-cased context-key and
+`${var}` names) and for the 5 Cedar items whose worlds contain records (an extra key
+added to a record). They were added after the review.
+
+There were three first-pass failures:
+* **c15 (hotel_chains)**, found by a random perturbation. A string was put into a set
+  used with `in`. Cedar raises a type error and skips the policy; my formula fell
+  through to the next `||` disjunct. Two of the independent agents had modelled exactly
+  this rule. Inspection then found the same latent bug in c17, which the test had not
+  exposed.
+* **c21 (tax_preparer)**, found by the cross-family review. Cedar record equality
+  needs equal key sets, but my formula ignored extra keys in `assigned_orgs` members.
+  The first pass disagrees on 17/100 targeted worlds. The repair needed a new encoding
+  fact, `nattrs_<n>(r)`, because an open attribute vocabulary cannot say "no other key"
+  in the old encoding.
+* **c20 (tags_n_roles)**, found by the new targeted perturbations (1/100). A tag value
+  that is not a set makes `.contains`/`.containsAll` a type error.
+
+All of these are Cedar error or equality semantics, and all were repaired
+(`authoring_log.jsonl`). None of the 300 random perturbations per item caught c20 or
+c21. Separately, 6 items need OPAQUE adapter predicates, so only **34/40** agree
+*in pure VE* (see §3).
 
 **How much "faithful" means.** An all-green differential test is only as good as its
 power, which I measured two ways.
-* *Mutation analysis* (`mutation_results.json`): 813 mutants over the 40 items. The differential test killed **539 (66%)**; the item's own questions alone killed 406 (50%). Of the 274 survivors, VE's prover showed 6 equivalent to the original. For 59, a small finite VE structure distinguishes them, but it may be unrealisable in the source language (e.g. aliased constants). 209 are unclassified within budget. Kill rates are lowest for the reused K8s and IAM authorizer formulas (w01: 3/25), whose clauses the item worlds never exercise.
+* *Mutation analysis* (`mutation_results.json`): 813 mutants over the 40 items. The differential test (random plus targeted perturbations) killed **536 (66%)**; the item's own questions alone killed 405 (50%). Of the 277 survivors, VE's prover showed 6 equivalent to the original. For 54, a small finite VE structure distinguishes them, but it may be unrealisable in the source language (e.g. aliased constants). 217 are unclassified within budget. Kill rates are lowest for the reused K8s and IAM authorizer formulas (w01: 3/25), whose clauses the item worlds never exercise.
 * *Hand-written realistic mistranslations* (`naive_results.json`): 14 variants such as
   ignoring Cedar error semantics, reading `action in [..]` as `==`, one-level ClusterRole
   aggregation, or IAM's missing-key rule for negated operators. The test caught
@@ -88,14 +120,18 @@ captured parameter (`n.^(b.addr)`), is expressed directly.
 Class c is numeric comparison (c08, c12), datetime arithmetic (c19), and string
 globbing with policy variables (all IAM). Known gaps are noted in `coverage.py` and
 never exercised by the tests:
-* Cedar record equality also requires no extra keys (c21).
+* c21 compares record-literal fields as string/long values only (the schema has String).
+  Its extra-key gap, previously listed here, turned out to be exercisable and is now fixed (§2).
+* c20's `containsAll` compares record-valued set members by node identity (the schema
+  has `Set<String>`).
 * IAM `Bool` is case-insensitive (w03).
 * Kubernetes has `*/subresource` forms. The independent k07 author approximated them
   by enumerating 18 subresources.
 
 A second cost that coverage alone does not show: **Cedar's error semantics had to be
-hand-encoded** (has_/bf_/type guards) in 8 of 22 Cedar items. This was the source of
-the only real mistranslation, and of most naive variants the test found hardest.
+hand-encoded** (has_/bf_/type guards) in 9 of 22 Cedar items. Together with record
+equality, this was the source of all three first-pass mistranslations and of most naive
+variants the test found hardest.
 
 ## 4. Authoring cost
 
@@ -103,11 +139,15 @@ the only real mistranslation, and of most naive variants the test found hardest.
 |---|---|---|---|
 | Tokens per item | not measurable inside my own context; VE artefacts median ≈1.0k tokens | mean 31.1k (23.6k–38.1k) | mean 21.1k (19.6k–22.8k) |
 | Wall-clock per item | 526 s in total; median 13.5 s for non-reused items (upper bound, includes running the checker) | mean 68 s (16–118 s) | mean 16 s (12–20 s) |
-| Checker errors / repairs | 0 parse/type errors; 1 differential-driven repair (+1 same-class) | 11 check runs, 3 with syntax errors (all bracket nesting), 0 semantic repairs | n/a |
-| Accuracy | 39/40 → 40/40 items | 8/8 items | 75/75 answers |
+| Checker errors / repairs | 0 parse/type errors; 4 repairs (c15 test-driven, c17 same class, c21 review-driven, c20 test-driven after review) | 11 check runs, 3 with syntax errors (all bracket nesting), 0 semantic repairs | n/a |
+| Accuracy | 37/40 → 40/40 items (sampled agreement) | 8/8 items | 75/75 answers |
 
-Both agent arms carry the same fixed prompt overhead, so their *marginal* ratio is
-larger than 1.47×. Two structural points matter more than the constants:
+The review arm's 75 answers were rescored against the fixed reference (unchanged), and
+VE gives the same 75/75 on those packets. Both agent arms carry the same fixed prompt
+overhead, so their *marginal* ratio is larger than 1.47×. The two arms do not produce
+the same thing, though. The author ends with an evaluator that answers any further
+request on the artefact; the reviewer ends with 10 (or 5) answers. Two structural
+points matter more than the constants:
 * The K8s and IAM formalisations are **one formalisation of the authorizer**, reused
   across artefacts (k02–k07 and w02–w03 cost 0 s). Only the Cedar and Alloy items
   were written per artefact.
@@ -146,11 +186,13 @@ exhaustive bounded enumeration (Alloy).
 
 1. **Inexpressible constructs**: 14/126 units in 6 items, all class c (numbers,
    datetimes, string globs), plus the unexercised semantic gaps in §3. No class d.
-2. **Mistranslation caught by the differential test**: 1 of 40 first passes (c15,
-   Cedar type error of `in` over a set with a non-entity member); 0 of 8 independent
-   first passes. Plus the detection rates for seeded mistranslations in §2, including
-   one realistic miss at N=300.
-3. **Checker limits**: finite evaluation never hit ResourceLimit (40 items × 301 worlds).
+2. **Mistranslation in a first pass**: 3 of 40 (c15, Cedar type error of `in` over
+   a set with a non-entity member; c21, record equality with extra keys; c20, set
+   methods on a non-set tag); 0 of 8 independent first passes. Only c15 was caught by
+   the original random test. c21 was found by an outside reviewer, and c20 only by
+   targeted perturbations written after that review. Add to this the detection rates
+   for seeded mistranslations in §2, including one realistic miss at N=300.
+3. **Checker limits**: finite evaluation never hit ResourceLimit (40 items × 300–400 worlds).
    The prover hit ResourceLimit in 6 of 12 property tasks: a 15-policy formula without
    axioms, a 3-level aggregation chain, closure monotonicity (not implemented), and
    finite-only validity (no sound certificate exists). Bounded countermodel search
@@ -168,21 +210,37 @@ exhaustive bounded enumeration (Alloy).
    * 1 reference deviation from Cedar's spec: `in` over a mixed set short-circuited.
      `cedar-spec` `Evaluator.lean` `inₛ` type-checks every member first. It was found
      while diagnosing c15, fixed, and unit-tested; no recorded decision exercises it.
+   * 1 shared defect in the IAM reference **and** the IAM encoding, found by the
+     cross-family review. Context-key names (and `${var}` names) are case-insensitive
+     in AWS, but both looked them up case-sensitively, so they agreed with each other
+     while both being wrong. Both now fold key names to lower case (values keep their
+     case). Regression tests: w02 with `AWS:REQUESTEDREGION` in
+     `test_reference_other.py` and `test_harness_regressions.py`. The IAM items'
+     formalisations needed no change.
+   * The reference and adapter machinery as a whole expands what the experiment
+     trusts, even though the VE checker itself was not changed.
 
 ## 7. Refutation condition
 
 PLAN-V3, package 3: *refuted if faithful formalisation is below about 30%, or
 authoring costs more than the review it saves.*
 
-* Faithfulness: 39/40 first pass (40/40 after one test-driven repair), and 8/8 for
-  independent authors. This clause is **not met**, with the caveat that the test
-  catches about 11/14 realistic mistranslations at the budget used.
-* Cost: VE authoring cost more than the complete review (1.47× tokens, 4.3× time).
-  The review was already 100% accurate, and it saved nothing. This clause is **met**.
+* Faithfulness (sampled agreement): 37/40 first pass (40/40 after repairs), and 8/8
+  for independent authors. This clause is **not met**, with two caveats. The test
+  catches about 11/14 realistic mistranslations at the budget used, and two of my
+  first-pass defects needed targeted perturbations that were written only after an
+  outside review.
+* Cost: for one sampled review batch (8 items, 75 fixed questions), VE authoring
+  cost more than the review (1.47× tokens, 4.3× time). Both arms were at ceiling
+  accuracy, so VE showed no accuracy gain on these questions. Whether it saves review
+  over repeated questions, sign-off and reuse was not measured. The clause is **met
+  for this batch only**.
 
-**Outcome: the refutation condition holds for per-request authorization and
-constraint questions on real RBAC and Alloy artefacts.** Following the plan, the
-"tolerable usefulness tax" claim cannot rest on these items. The live possibility is
+**Outcome: the refutation condition holds narrowly.** It holds for one sampled review
+batch of per-request authorization and constraint questions on real RBAC and Alloy
+artefacts. It is not shown for larger question volumes or for reuse of a
+formalisation over an artefact's lifetime. Following the plan, the
+"tolerable usefulness tax" claim cannot rest on these measurements. The live possibility is
 certified universal properties (§5). There VE answered questions review can only
 argue about, but needed reviewed background axioms, and its prover stopped at
 closure monotonicity and multi-level aggregation. A package that costs that regime
@@ -191,10 +249,14 @@ against review is the next test.
 ## Limitations
 
 * I am not a blind author. I wrote the reference agents' specifications and knew
-  Cedar's error semantics, so the 39/40 is an optimistic author. The independent-agent
-  arm (8/8) guards against this, but it uses the same model family.
+  Cedar's error semantics, so the 37/40 is an optimistic author. The independent-agent
+  arm (8/8) guards against this, but it uses the same model family. The `nattrs_<n>`
+  fact and the IAM key-case note were added to `AUTHORING_GUIDE.md` after the
+  independent authors ran. None of their 8 items needs `nattrs_<n>`, and the w03
+  agent's formalisation passes the key-case perturbations unchanged.
 * The review arm used the same model and a small sample (8 items, 75 questions). It
-  was not run on property questions.
+  was not run on property questions. Its cost is for fixed packets, while authoring
+  cost buys a reusable evaluator. Neither sign-off nor reuse was costed.
 * Perturbations are random edits of the upstream worlds. They exercise only
   constructs present in each world (e.g. no new K8s object kinds), which is why
   mutation kill rates for K8s and IAM are low.
