@@ -119,7 +119,9 @@ def render(command, result):
             lines.append(f"waiver {row['sentence']} [{row['role']}]: {row['reason']}"
                          + (" (blocks success)" if row["counts_against_success"] else ""))
         for row in result["renamed_conclusions"]:
-            lines.append(f"renamed conclusion: {row['assumptions']} entail {row['target']}")
+            lines.append(f"renamed conclusion: {row['assumptions']} "
+                         + ("may entail (undecided within budget; fail closed) " if row.get("undecided") else "entail ")
+                         + row["target"])
         lines.append("provenance: " + ", ".join(f"{k} {v}" for k, v in result["provenance"].items() if v))
         tokens = result["usage"]["tokens"]
         if tokens:

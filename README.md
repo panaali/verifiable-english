@@ -110,8 +110,17 @@ Concepts:
   the dossier and matches every recorded model call, failed ones included,
   against the claude CLI calls ledger (tokens, models, account, and the event
   that made the call), and reports calls-ledger rows the session never
-  recorded. Calls are named by the session's fixed `session_id`, so editing
-  metadata and re-digesting the configuration cannot hide them. Errors and
+  recorded. Every backend attempt is accounted for: earlier failed attempts
+  under the same call key (infrastructure retries) are carried in the
+  recorded call and counted in the session's token totals, which must equal
+  the calls ledger's totals; a `started` row with no outcome fails
+  verification. Usage is taken from the stream even when it ends without a
+  result record (EOF or timeout), from its assistant messages. The default
+  assumes a dedicated calls ledger held by the evaluator (every row counts).
+  A shared calls ledger is attributable only through an independently trusted
+  session id, so `verify_session(..., dedicated_calls=False)` is refused
+  unless `trusted_session_id=` is supplied (the ledger's own `session_id` can
+  be forged). Errors and
   backend-reported fields are redacted of anything that looks like a
   credential before they are logged or returned.
 
@@ -120,11 +129,22 @@ has a step whose certified support graph replays through `check_argument`;
 every step is certified; every asserting `claimed` sentence is *derived* (a
 certified step anchored to it, with a fully certified support in which no
 single assumption already states it); every asserting `given` sentence is
-covered by a node; no asserting sentence is waived (waivers are recorded with
-their reasons and counted, but a waived asserting sentence never counts as
-success); no unanchored assumption is load-bearing; no declared vocabulary
-carries a target; no target is vacuous or of unknown vacuity; and the
-target's assumptions are consistent.
+covered by a node; no asserting sentence is waived at all -- waiving ANY
+asserting sentence blocks success, even one that is already covered or
+derived (waivers of non-asserting sentences are recorded and harmless); no
+unanchored assumption is load-bearing; no declared vocabulary carries a
+target; no target is vacuous or of unknown vacuity; and the assumptions of
+every target and every deriving step are consistent.
+
+Every fidelity check fails closed. Each entailment, consistency, vacuity,
+derivation, load-bearing and carrier question is decided as `yes`, `no`
+(which needs a saturated proof search or a checked countermodel) or
+`unknown`; an exhausted proof budget or countermodel search is `unknown`,
+and `unknown` never counts as passing: `status` lists it as a failure marked
+"undecided within budget (fail closed)". Raising or lowering
+`max_proof_steps` can therefore turn an undecided item into a decided one,
+but never a failing item into a success, and success at one budget implies
+success at every larger budget.
 
 The proposer and premise suggestions are separate ablations:
 

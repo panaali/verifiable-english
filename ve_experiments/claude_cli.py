@@ -231,6 +231,31 @@ def isolated_env(base, config, home, token, controls):
     return env
 
 
+def _assistant_usage(records):
+    """Usage reported by assistant messages when the stream ended without a result record (EOF,
+    timeout). Each message id counts once: its input fields are fixed, and its output count is
+    cumulative, so the largest reported value is kept. Messages are summed."""
+    keys = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens")
+    per_message = {}
+    for index, record in enumerate(records):
+        message = record.get("message") if record.get("type") == "assistant" else None
+        usage = message.get("usage") if type(message) is dict else None
+        if type(usage) is not dict:
+            continue
+        row = per_message.setdefault(message.get("id") or f"#{index}", {})
+        for key in keys:
+            value = usage.get(key)
+            if type(value) is int and value >= 0:
+                row[key] = max(row.get(key, 0), value)
+    if not per_message:
+        return {}
+    total = {key: sum(row.get(key, 0) for row in per_message.values()) for key in keys}
+    if not any(key in row for row in per_message.values() for key in keys[:3]):
+        total.pop("input_tokens")
+    total["source"] = "assistant_messages"
+    return total
+
+
 def reported_usage(raw):
     """Usage the stream reports, extracted leniently BEFORE any validation (so a truncated or
     otherwise rejected response still accounts for the tokens it spent)."""
@@ -249,6 +274,8 @@ def reported_usage(raw):
     models = sorted(str(m) for m in models - {None, "<synthetic>"})
     out = {"served_model": models[0] if len(models) == 1 else None, "reported_models": models}
     usage = (results[-1].get("usage") if results else None) or {}
+    if not results:
+        usage = _assistant_usage(records)
     if type(usage) is dict:
         keys = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
         values = [usage.get(k, 0) for k in keys]
@@ -301,6 +328,12 @@ def parse_stream(raw, expected_model):
             "stop_reason": result.get("stop_reason"), "text": result["result"]}
 
 
+def _attempt_usage(spent):
+    spent = spent if type(spent) is dict else {}
+    return {k: spent.get(k) if type(spent.get(k)) is int and spent.get(k) >= 0 else None
+            for k in ("input_tokens", "output_tokens")}
+
+
 class ClaudeCLI:
     def __init__(self, ledger: Path, controls=Controls(), max_calls=None, *, account_config_dir=None, infrastructure_retries=False):
         self.ledger, self.controls, self.max_calls = Path(ledger), controls, max_calls
@@ -309,15 +342,32 @@ class ClaudeCLI:
         self.account_label = account_label(self.account_config)
 
     def sample(self, item_id, system, prompt, sample_index=0, *, content_tokens=None):
+        """One sample. Every earlier failed attempt under the same key (infrastructure retries) is
+        returned as ``prior_attempts`` -- on the reply, or in the final error's ``usage`` -- so the
+        caller can account for the tokens those attempts spent."""
+        prior = []
         for attempt in range(1 + (len(RETRY_BACKOFF) if self.infrastructure_retries else 0)):
             try:
-                return self._sample_once(item_id, system, prompt, sample_index,
-                                         content_tokens=content_tokens, retry_number=attempt)
+                row = self._sample_once(item_id, system, prompt, sample_index,
+                                        content_tokens=content_tokens, retry_number=attempt)
             except InfrastructureError as exc:
+                spent = getattr(exc, "usage", None)
                 if not self.infrastructure_retries:
+                    if type(spent) is dict:
+                        spent["prior_attempts"] = list(prior)
                     raise
                 if attempt == len(RETRY_BACKOFF):
-                    raise InfrastructurePaused("Infrastructure retries exhausted; resume the same request") from exc
+                    paused = InfrastructurePaused("Infrastructure retries exhausted; resume the same request")
+                    if type(spent) is dict:
+                        paused.usage = {**spent, "prior_attempts": list(prior)}
+                    raise paused from exc
+                prior.append(_attempt_usage(spent))
+            except EndpointError as exc:
+                if type(getattr(exc, "usage", None)) is dict:
+                    exc.usage["prior_attempts"] = list(prior)
+                raise
+            else:
+                return {**row, "prior_attempts": list(prior)}
 
     def _sample_once(self, item_id, system, prompt, sample_index=0, *, content_tokens=None, retry_number=0):
         self.ledger.parent.mkdir(parents=True, exist_ok=True)

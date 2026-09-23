@@ -14,10 +14,17 @@ an evaluator that holds its own materials:
   account, requested model, prompt digest), and binds each call to its event:
   the calls-ledger ``item_id`` must name this session and the recording event's
   sequence number, so deleting or reordering events is detected;
-* it reports calls-ledger rows the session never recorded. A session's calls are
-  found by its ``session_id`` (fixed at creation, unaffected by metadata edits and
-  config re-digesting); with ``dedicated_calls`` (the default, matching the CLI's
-  per-session ``SESSION.calls.jsonl``) EVERY unused row in the calls ledger counts.
+* it accounts for every backend attempt: each earlier failed attempt under a call's
+  key (infrastructure retries) must be carried in the recorded call's ``attempts``
+  with the same token counts; a ``started`` row with no outcome (crash, kill) is an
+  unresolved attempt of unknown usage and fails verification; and the session's
+  proposer token totals must equal the calls ledger's totals over every attempt;
+* it reports calls-ledger rows the session never recorded. With ``dedicated_calls``
+  (the default, matching the CLI's per-session ``SESSION.calls.jsonl``, which the
+  evaluator must hold) EVERY row in the calls ledger counts. A SHARED calls ledger
+  finds a session's rows by session id, and a ledger's own ``session_id`` can be
+  forged to disown rows: shared mode therefore requires ``trusted_session_id`` --
+  an id the evaluator assigned or recorded independently -- and is refused without it.
 
 Provenance is bound to content inside the session itself: a node or target whose
 formula equals a shown candidate or suggestion is marked proposer/suggestion-
@@ -51,7 +58,7 @@ def expected_config_from_p5(item, *, targets="root"):
 
 
 def verify_session(ledger, *, item=None, expected_config=None, options=None, calls=None, p5_targets="root",
-                   dedicated_calls=True):
+                   dedicated_calls=True, trusted_session_id=None):
     """Return ``{"ok", "problems", "session", "calls"}``; never raises on a bad ledger.
 
     ``item``: the P5 dossier the session claims to formalise (config is rebuilt from it).
@@ -59,6 +66,10 @@ def verify_session(ledger, *, item=None, expected_config=None, options=None, cal
     ``options``: the options the evaluation arm set (compared after defaults).
     ``calls``: the claude CLI calls ledger (path or rows); None skips the call comparison.
     ``dedicated_calls``: the calls ledger belongs to this session alone (every row must be accounted for).
+    ``trusted_session_id``: the session id the evaluator assigned or recorded independently of the
+    ledger. REQUIRED when ``dedicated_calls`` is False: in a shared calls ledger a session's rows are
+    found by session id, and a ledger's own ``session_id`` can be forged to disown rows, so shared mode
+    without a trusted id is refused (reported as a problem, never ok).
     """
     problems = []
     try:
@@ -85,12 +96,19 @@ def verify_session(ledger, *, item=None, expected_config=None, options=None, cal
     recorded = [(event["seq"], call) for event in ledger["events"] for call in event.get("model_calls", [])]
     summary = {"recorded_calls": len(recorded)}
     if calls is not None:
+        if not dedicated_calls and trusted_session_id is None:
+            problems.append("shared calls ledger refused: a shared ledger is attributable only through an "
+                            "independently trusted session id (pass trusted_session_id); the ledger's own "
+                            "session_id can be forged")
+        if trusted_session_id is not None and session.session_id != trusted_session_id:
+            problems.append("session_id differs from the independently trusted session id")
         rows = _read_calls(calls)
+        prefix = (trusted_session_id if trusted_session_id is not None else session.session_id) + "/"
+        mine = lambda r: dedicated_calls or str(r.get("item_id", "")).startswith(prefix)
         by_key = {}
         for row in rows:
             by_key.setdefault(row.get("key"), []).append(row)
         used = set()
-        prefix = session.session_id + "/"
         for seq, call in recorded:
             key = call.get("call_key")
             finals = [r for r in by_key.get(key, []) if r.get("status") in FINAL] if key else []
@@ -99,6 +117,19 @@ def verify_session(ledger, *, item=None, expected_config=None, options=None, cal
                 continue
             used.add(key)
             row = finals[-1]
+            # Every earlier attempt under the same key (a retried call) spent tokens the session must carry.
+            attempts = call.get("attempts", [])
+            earlier = finals[:-1]
+            if any(r["status"] == "ok" for r in earlier):
+                problems.append(f"event {seq}: the calls ledger has more than one reply for this call")
+            if len(attempts) != len(earlier):
+                problems.append(f"event {seq}: the calls ledger has {len(earlier)} earlier attempt(s) under this "
+                                f"key but the session accounts for {len(attempts)}")
+            else:
+                for index, (mine_row, theirs) in enumerate(zip(attempts, earlier)):
+                    for field in ("input_tokens", "output_tokens"):
+                        if mine_row.get(field) != theirs.get(field):
+                            problems.append(f"event {seq}: attempt {index} {field} differs from the calls ledger")
             if row.get("prompt") is None or _digest([row.get("system"), row["prompt"]]) != call.get("prompt_digest"):
                 problems.append(f"event {seq}: prompt differs from the calls ledger")
             item_id = str(row.get("item_id", ""))
@@ -118,18 +149,35 @@ def verify_session(ledger, *, item=None, expected_config=None, options=None, cal
                 compared = (("text", "text"), ("input_tokens", "input_tokens"),
                             ("output_tokens", "output_tokens"), ("model", "served_model"),
                             ("account_label", "account_label"))
-            for mine, theirs in compared:
-                if call.get(mine) != row.get(theirs):
-                    problems.append(f"event {seq}: {mine} differs from the calls ledger")
+            for mine_field, theirs in compared:
+                if call.get(mine_field) != row.get(theirs):
+                    problems.append(f"event {seq}: {mine_field} differs from the calls ledger")
             if call.get("requested_model") != (row.get("controls") or {}).get("model"):
                 problems.append(f"event {seq}: requested model differs from the calls ledger")
-        stray = [r for r in rows if r.get("status") in FINAL and r.get("key") not in used
-                 and (dedicated_calls or str(r.get("item_id", "")).startswith(prefix))]
+        scoped = [r for r in rows if mine(r)]
+        stray = [r for r in scoped if r.get("status") in FINAL and r.get("key") not in used]
         if stray:
             problems.append(f"calls ledger has {len(stray)} call(s) for this session that the session never recorded")
-        mine = [r for r in rows if r.get("status") in FINAL
-                and (dedicated_calls or str(r.get("item_id", "")).startswith(prefix))]
-        summary.update(ledger_calls=len(mine),
-                       ledger_input_tokens=sum(r.get("input_tokens") or 0 for r in mine),
-                       ledger_output_tokens=sum(r.get("output_tokens") or 0 for r in mine))
+        # An attempt that started but never logged an outcome (crash, kill) may have spent tokens that
+        # no one can account for: the session cannot verify.
+        started, finished = {}, {}
+        for r in scoped:
+            if r.get("status") == "started":
+                started[r.get("key")] = started.get(r.get("key"), 0) + 1
+            elif r.get("status") in FINAL:
+                finished[r.get("key")] = finished.get(r.get("key"), 0) + 1
+        orphans = sum(max(0, n - finished.get(k, 0)) for k, n in started.items())
+        if orphans:
+            problems.append(f"calls ledger has {orphans} started call(s) with no recorded outcome "
+                            "(usage unknown)")
+        final = [r for r in scoped if r.get("status") in FINAL]
+        summary.update(ledger_calls=len(final), ledger_attempts_started=sum(started.values()),
+                       unresolved_started=orphans,
+                       ledger_input_tokens=sum(r.get("input_tokens") or 0 for r in final),
+                       ledger_output_tokens=sum(r.get("output_tokens") or 0 for r in final))
+        totals = session.usage()["tokens"].get("proposer", {})
+        for field in ("input_tokens", "output_tokens"):
+            if (totals.get(field) or 0) != summary["ledger_" + field]:
+                problems.append(f"session proposer {field} total ({totals.get(field) or 0}) differs from the "
+                                f"calls ledger total ({summary['ledger_' + field]})")
     return {"ok": not problems, "problems": problems, "session": session, "calls": summary}
