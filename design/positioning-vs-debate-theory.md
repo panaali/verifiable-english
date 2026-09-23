@@ -384,3 +384,17 @@ BC20 (Alignment Forum).
 - Arnesen, Rein, Michael (2024), *Training language models to win debates with self-play improves
   judge accuracy*.
 - Michael et al. (2023), *Debate helps supervise unreliable experts*, arXiv:2311.08702.
+
+
+> **Correction 2 (2026-09-22, after re-reading BC20, DED, PE and SC in full; `~/code/manage-agents/reviews/obfuscation-recheck.md`).**
+> "VE contributes nothing to obfuscated arguments" holds only for a protocol that ACCEPTS leaves without proof. Under a
+> MANDATORY-PROOF rule (nothing is accepted unless the verified checker derives it from declared, reviewed foundations),
+> a dishonest prover cannot win by assuming false sub-claims: this defeats the Barnes-Christiano construction for fully
+> formalised claims (soundness). BC20 itself: with enough budget, "just have both debaters write out their entire proof,
+> and run a checker"; PE section 8 proposes Lean proofs for mathematical subclaims plus debate for fuzzier ones. The honest
+> side wins only when the truth has an affordable proof (completeness); otherwise the result is "unresolved", which is
+> safe but unhelpful. Not covered: proofs longer than the budget (the PSPACE regime debate targets); foundation leaves
+> accepted without proof (physical laws, idealisations, tolerances, empirical claims), where estimation is still needed;
+> formalisation faithfulness (e.g. the train example: the flaw moves to one visible model-choice leaf); cost (measured on
+> one self-reviewed pilot: iceberg root proved in 912 s). The rho = N objection applies to estimated leaves, not proved
+> ones. See `design/vex-mandatory-evidence.md` for extending this to statistical, approximate and heuristic claims.
