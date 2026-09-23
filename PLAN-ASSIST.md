@@ -1,3 +1,5 @@
+> Status: ACTIVE, see ROADMAP.md
+
 # `ve assist`: interactive, sentence-level assisted formalisation (2026-09-22), for review
 
 Motivation: the P5 authoring probes (surface: 0/12; schema-constrained JSON: 0/12) gave Gemini 3.1 Pro ONE shot plus ONE

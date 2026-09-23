@@ -20,7 +20,7 @@ The user is away for about 12 hours. Nobody can answer permission prompts, so ne
    (`claude/...` or `codex/...`). Commit small and often. Tests must pass before you report.
 4. **Report when done.** Send the orchestrator a report with exactly these parts:
    `BRANCH`, `SUMMARY` (what and why, 5 lines at most), `VERIFY` (commands that reproduce your checks and their
-   results), `GAPS` (what is missing, uncertain, or not tested), `PLAN CHANGES` (proposed edits to `PLAN.md`, if any).
+   results), `GAPS` (what is missing, uncertain, or not tested), `PLAN CHANGES` (proposed edits to `ROADMAP.md`, if any).
    Worker C reports with SendMessage to `verifiable-english-ab`. Worker X puts the report in its final message of the
    turn; the orchestrator reads it from the session file.
 5. **Review requests.** When asked to review a branch, do not edit it. Read `git diff ve-integration...<branch>`.

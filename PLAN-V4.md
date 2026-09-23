@@ -1,3 +1,5 @@
+> SUPERSEDED on 2026-09-22 by PLAN-V5-DEMO.md and ROADMAP.md - kept for history; do not edit.
+
 # VE plan v4: frontier-scale tests close to the literature (supersedes PLAN-V3 priorities; PLAN-V3 pilots P1 done, P5 finishing)
 
 Direction from the lead (2026-09-22): show whether VE helps FRONTIER models, using Opus 5.5 through the lead's Claude

@@ -1,3 +1,5 @@
+> SUPERSEDED on 2026-09-22 by ROADMAP.md (stopped; see section 6) - kept for history; do not edit.
+
 # Independent-formaliser pilot (2026-09-22), for review
 
 Motivation: P2 (experiments/P2-flaw-taxonomy/report.md, single rater) found ~35% of natural flaws are invalid steps, and

@@ -1,3 +1,5 @@
+> SUPERSEDED on 2026-09-22 by ROADMAP.md (queue update now in its section 4) - kept for history; do not edit.
+
 # VE plan v3: gated pilots (supersedes PLAN-V2.md)
 
 PLAN-V2 was reviewed before any spend by GPT-6 Astra (xhigh) and Claude Fable 5.1 (xhigh):
