@@ -5,7 +5,8 @@ from dataclasses import dataclass
 from typing import Any
 
 from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall,
-                  Implies, Not, Or, Top, Unary, Var, Reach, Named, Body, check_document, check_formula)
+                  Implies, Not, Or, Top, Unary, Var, Reach, Named, Body, check_document, check_formula,
+                  Num, Add, Scale, Lt, Le)
 from .model import FiniteModel
 from .errors import InvalidModel, ResourceLimit, VEError
 from .limits import MAX_EVALUATIONS
@@ -62,6 +63,12 @@ class _Evaluator:
             return bindings[term.index][1]
         if isinstance(term, Const):
             return self.model.constants[term.name]
+        if isinstance(term, Num):
+            return term.value
+        if isinstance(term, Add):
+            return self.term(term.left, bindings) + self.term(term.right, bindings)
+        if isinstance(term, Scale):
+            return term.coefficient * self.term(term.term, bindings)
         raise TypeError(f"unknown term node {type(term).__name__}")
 
     def formula(self, f: Any, bindings: tuple[tuple[str, str], ...] = ()) -> tuple[bool, Explanation | None]:
@@ -111,6 +118,11 @@ class _Evaluator:
             value = (f.kind == "star" and left == right) or (left, right) in self.closures[key]
             return value, self.explanation("reach", value, shown,
                 f"{f.kind}: {left} to {right}; finite directed paths")
+        if isinstance(f, (Lt, Le)):
+            left, right = self.term(f.left, bindings), self.term(f.right, bindings)
+            value = left < right if isinstance(f, Lt) else left <= right
+            return value, self.explanation("comparison", value, shown,
+                f"{left} {'<' if isinstance(f, Lt) else '<='} {right}")
         if isinstance(f, Eq):
             left, right = self.term(f.left, bindings), self.term(f.right, bindings); value = left == right
             return value, self.explanation("equality", value, shown, f"{left} equals {right}")

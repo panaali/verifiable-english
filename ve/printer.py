@@ -55,6 +55,36 @@ _SURFACES = {
     },
 }
 
+# order@0 arithmetic terms (frozen canonical forms, see docs/spec/order-implementation.md):
+# numerals are canonical decimals (a leading minus is part of the numeral);
+# Scale(-1, t) prints as -t unless t is a numeral; Add(t, Scale(-1, u)) prints
+# as [t - u]; every other sum or scaling is bracketed. No term is normalised.
+_COMPARISONS = {
+    "fol_symbols": ("{left} < {right}", "{left} ≤ {right}"),
+    "fol_keywords": ("{left} < {right}", "{left} <= {right}"),
+    "ve_strict": ("{left} < {right}", "{left} <= {right}"),
+    "ve_natural": ("{left} is less than {right}", "{left} is at most {right}"),
+}
+
+
+def render_int_term(value, leaf, brackets="[]"):
+    """Render an order@0 term; ``leaf`` renders variables and constants."""
+    open_, close = brackets
+    kind = type(value)
+    if kind is ast.Num:
+        return str(value.value)
+    if kind is ast.Scale:
+        if value.coefficient == -1 and type(value.term) is not ast.Num:
+            return "-" + render_int_term(value.term, leaf, brackets)
+        return f"{open_}{value.coefficient} * {render_int_term(value.term, leaf, brackets)}{close}"
+    if kind is ast.Add:
+        left = render_int_term(value.left, leaf, brackets)
+        if type(value.right) is ast.Scale and value.right.coefficient == -1:
+            return f"{open_}{left} - {render_int_term(value.right.term, leaf, brackets)}{close}"
+        return f"{open_}{left} + {render_int_term(value.right, leaf, brackets)}{close}"
+    return leaf(value)
+
+
 # Templates are deliberately a small positive atomic grammar. Logical language,
 # punctuation, variable-looking words, missing/repeated arguments and format
 # expressions are excluded. Unsupported strings remain in the environment but
@@ -450,11 +480,12 @@ class _Traversal:
         self.surface = _SURFACES[view]
         self.natural = _NaturalVocabulary(env) if view == "ve_natural" else None
 
-    @staticmethod
-    def term(value, scope):
-        if isinstance(value, ast.Var):
-            return scope[value.index]
-        return "@" + value.name
+    def term(self, value, scope):
+        def leaf(value):
+            if isinstance(value, ast.Var):
+                return scope[value.index]
+            return "@" + value.name
+        return render_int_term(value, leaf, "()" if self.view.startswith("fol_") else "[]")
 
     def child(self, value, scope):
         # Every immediate operand is grouped in the four explicit views, even atoms.
@@ -485,6 +516,9 @@ class _Traversal:
                 noun = self.natural.sorts[sort]
                 return f"{right} is reachable from {left} by {count} steps satisfying [{noun} {src}, {dst} | ({body})]"
             return f"{op}[{sort} {src}, {dst} | ({body})]({left}, {right})"
+        if kind in (ast.Lt, ast.Le):
+            template = _COMPARISONS[self.view][kind is ast.Le]
+            return template.format(left=self.term(value.left, scope), right=self.term(value.right, scope))
         if kind in (ast.Unary, ast.Binary, ast.Eq):
             terms = (value.term,) if kind is ast.Unary else (value.left, value.right)
             rendered = tuple(self.term(term, scope) for term in terms)

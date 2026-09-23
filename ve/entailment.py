@@ -16,6 +16,7 @@ from .errors import ResourceLimit, VEError
 from .identity import meaning_id
 from .limits import MAX_NODES, MAX_TABLEAU_DEPTH
 from .wire import canonical_json
+from .order import Budget as _OrderBudget, InvalidTrace as _OrderInvalid
 
 
 ENTAILMENT_CHECKER_VERSION = "ve-tableau-checker@2"
@@ -503,7 +504,9 @@ def _rule(item):
 
 
 def _binding(env: Any, premises: tuple[Any, ...], conclusion: Any) -> dict[str, Any]:
-    return {"checker_version": CLOSURE_CHECKER_VERSION if env.closure else ENTAILMENT_CHECKER_VERSION,
+    from .order import CHECKER_VERSION as ORDER_CHECKER_VERSION
+    return {"checker_version": (ORDER_CHECKER_VERSION if getattr(env, "order", False) else
+                                CLOSURE_CHECKER_VERSION if env.closure else ENTAILMENT_CHECKER_VERSION),
             "environment_id": env.environment_id,
             "premise_meaning_ids": [meaning_id(env, x) for x in premises],
             "conclusion_meaning_id": meaning_id(env, conclusion)}
@@ -522,6 +525,8 @@ def prove_entailment(env: Any, premises: Sequence[Any], conclusion: Any, *,
         raise ValueError("max_steps must be a nonnegative integer")
     if invariants and not env.closure:
         raise ValueError("induction invariants require closure@0")
+    if getattr(env, "order", False):
+        return _prove_order(env, premises, conclusion, max_steps)
     searcher = _Searcher(max_steps, env.closure, env=env, invariants=tuple(invariants))
     try:
         trace = searcher.prove(_initial_branch(env, premises, conclusion))
@@ -539,6 +544,22 @@ def prove_entailment(env: Any, premises: Sequence[Any], conclusion: Any, *,
         return EntailmentResult("ResourceLimit" if checked.status == "ResourceLimit" else "NotFound",
                                 None, searcher.steps, "generated trace did not replay")
     return EntailmentResult("Found", certificate, searcher.steps)
+
+
+def _prove_order(env, premises, conclusion, max_steps) -> EntailmentResult:
+    """order@0: untrusted Farkas-tableau search, then independent replay."""
+    from .order import search
+    trace, steps = search(env, premises, conclusion, max_steps)
+    if trace is None:
+        return EntailmentResult("NotFound", None, steps,
+                                "no order@0 certificate found by the implemented rules; failure is inconclusive")
+    certificate = {**_binding(env, premises, conclusion), "trace": trace}
+    checked = check_entailment_certificate(env, premises, conclusion, certificate,
+                                           max_steps=max(max_steps, 10_000))
+    if not checked.valid:
+        return EntailmentResult("ResourceLimit" if checked.status == "ResourceLimit" else "NotFound",
+                                None, steps, "generated trace did not replay")
+    return EntailmentResult("Found", certificate, steps)
 
 
 class _Replayer:
@@ -614,6 +635,12 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
             expected['checker_version'] = 've-tableau-closure-checker@0'
         if any(certificate.get(key) != value for key, value in expected.items()):
             raise _InvalidTrace("certificate is stale or bound to different inputs")
+        if getattr(env, "order", False):
+            from .order import replay_trace
+            valid, steps = replay_trace(env, premises, conclusion, certificate["trace"], max_steps)
+            if not valid:
+                raise _InvalidTrace("order certificate does not replay")
+            return EntailmentCertificateCheck(True, "Valid", steps)
         replayer = _Replayer(max_steps, env.closure, env=env,
                             induction=env.closure and certificate['checker_version'] == CLOSURE_CHECKER_VERSION)
         replayer.replay(_initial_branch(env, premises, conclusion), certificate["trace"])
@@ -621,6 +648,11 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
     except _Budget:
         return EntailmentCertificateCheck(False, "ResourceLimit", max_steps,
                                           "certificate replay budget exhausted")
+    except _OrderBudget:
+        return EntailmentCertificateCheck(False, "ResourceLimit", max_steps,
+                                          "certificate replay budget exhausted")
+    except _OrderInvalid as exc:
+        return EntailmentCertificateCheck(False, "InvalidCertificate", 0, str(exc))
     except (ResourceLimit, RecursionError) as exc:
         return EntailmentCertificateCheck(False, "ResourceLimit", 0, str(exc))
     except (VEError, ValueError, TypeError, KeyError, IndexError, AttributeError,

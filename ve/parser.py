@@ -12,6 +12,7 @@ from .limits import MAX_DEPTH, MAX_IDENTIFIER_BYTES, MAX_NODES, MAX_SOURCE_BYTES
 
 _IDENT = re.compile(r"[a-z][a-z0-9_]*", re.ASCII)
 _IDENT_CONT = re.compile(r"[a-z0-9_]", re.ASCII)
+_NUMERAL = re.compile(r"-?(?:0|[1-9][0-9]*)", re.ASCII)
 
 
 @dataclass(frozen=True, slots=True)
@@ -72,8 +73,52 @@ class _Parser:
         self.names.append(name)
         return value
 
-    def term(self):
+    def numeral(self):
         start = self.i
+        match = _NUMERAL.match(self.s, self.i)
+        if match is None:
+            self.error("expected an integer numeral")
+        text = match.group()
+        if len(text) > ast.MAX_NUMERAL_CHARS:
+            self.error(f"numeral exceeds {ast.MAX_NUMERAL_CHARS} characters", start, ResourceLimit)
+        if text == "-0" or (self.i + len(text) < len(self.s) and self.s[self.i + len(text)].isdigit()):
+            self.error("non-canonical integer numeral", start)
+        self.i = match.end()
+        return int(text)
+
+    def term(self, depth: int = 1):
+        start = self.i
+        if getattr(self.env, "order", False):
+            if depth > MAX_DEPTH:
+                self.error(f"term exceeds nesting limit {MAX_DEPTH}", cls=ResourceLimit)
+            char = self.s[self.i:self.i + 1]
+            nxt = self.s[self.i + 1:self.i + 2]
+            if char.isdigit() or (char == "-" and nxt.isdigit()):
+                return ast.Num(self.numeral())
+            if char == "-":
+                self.i += 1
+                return ast.Scale(-1, self.term(depth + 1))
+            if char == "[":
+                self.i += 1
+                left = self.term(depth + 1)
+                if self.s.startswith(" * ", self.i):
+                    if type(left) is not ast.Num:
+                        self.error("a scaling coefficient must be an integer numeral", start)
+                    self.i += 3
+                    right = self.term(depth + 1)
+                    self.literal("]")
+                    return ast.Scale(left.value, right)
+                if self.s.startswith(" + ", self.i):
+                    self.i += 3
+                    right = self.term(depth + 1)
+                    self.literal("]")
+                    return ast.Add(left, right)
+                if self.s.startswith(" - ", self.i):
+                    self.i += 3
+                    right = self.term(depth + 1)
+                    self.literal("]")
+                    return ast.Add(left, ast.Scale(-1, right))
+                self.error("expected ' + ', ' - ' or ' * '")
         if self.s.startswith("@", self.i):
             self.i += 1
             name, pos = self.identifier("constant identifier")
@@ -191,6 +236,11 @@ class _Parser:
         if self.s.startswith(" equals ", self.i):
             self.i += 8
             return self.node(start, ast.Eq(left, self.term()))
+        if getattr(self.env, "order", False):
+            for operator, constructor in ((" <= ", ast.Le), (" < ", ast.Lt)):
+                if self.s.startswith(operator, self.i):
+                    self.i += len(operator)
+                    return self.node(start, constructor(left, self.term()))
         self.literal(" ")
         pred, pos = self.identifier("binary predicate")
         decl = self.env.predicates.get(pred)

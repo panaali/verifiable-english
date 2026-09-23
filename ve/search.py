@@ -190,8 +190,103 @@ def _domain_sizes(minima: list[int], maximum: int) -> Iterator[tuple[int, ...]]:
         yield from walk(0, total, ())
 
 
+ORDER_SEARCH_MAGNITUDE = 3
+
+
+def _int_terms(formulas, int_constants) -> tuple[list[Any], set[int]]:
+    """Integer terms used as predicate arguments, and every numeral occurring."""
+    from .ast import Num, Add, Scale, Lt, Le, Const, Var
+    arguments, numerals, stack = [], set(), [f for f in formulas if f is not None]
+    def term(t, argument):
+        if argument and type(t) is not Var and not (type(t) is Const and t.name not in int_constants):
+            arguments.append(t)
+        inner = [t]
+        while inner:
+            node = inner.pop()
+            if type(node) is Num:
+                numerals.add(node.value)
+            elif type(node) is Add:
+                inner.extend((node.left, node.right))
+            elif type(node) is Scale:
+                numerals.add(node.coefficient)
+                inner.append(node.term)
+    while stack:
+        node = stack.pop()
+        if isinstance(node, Unary):
+            term(node.term, True)
+        elif isinstance(node, Binary):
+            term(node.left, True); term(node.right, True)
+        elif isinstance(node, (Eq, Lt, Le)):
+            term(node.left, False); term(node.right, False)
+        elif isinstance(node, (And, Or, Implies)):
+            stack.extend((node.left, node.right))
+        elif isinstance(node, (Not, Forall, Exists)):
+            stack.append(node.body)
+    return arguments, numerals
+
+
+def _int_value(term, numbers):
+    from .ast import Num, Add, Scale
+    if type(term) is Num:
+        return term.value
+    if type(term) is Add:
+        return _int_value(term.left, numbers) + _int_value(term.right, numbers)
+    if type(term) is Scale:
+        return term.coefficient * _int_value(term.term, numbers)
+    return numbers[term.name]
+
+
+def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str],
+                  formulas) -> Iterator[FiniteModel]:
+    """order@0 candidates. Numerals are never enumerated or reassigned; integer
+    constants range over a finite SEARCH set ([-B, B] plus every numeral and its
+    neighbours), and integer relation cells over the values of the integer
+    argument terms actually occurring. These are search bounds, not semantic
+    integer bounds: exhaustion is NotFound, never entailment."""
+    from .ast import INT_SORT
+    sorts = sorted(env.sorts)
+    constants = sorted(env.constants)
+    int_constants = [c for c in constants if env.constants[c].sort == INT_SORT]
+    object_constants = [c for c in constants if env.constants[c].sort != INT_SORT]
+    arguments, numerals = _int_terms(formulas, frozenset(int_constants))
+    values = set(range(-ORDER_SEARCH_MAGNITUDE, ORDER_SEARCH_MAGNITUDE + 1))
+    for k in numerals:
+        values.update((k - 1, k, k + 1))
+    values = sorted(values, key=lambda v: (abs(v), v))
+    minimum = {sort: minimum_size for sort in sorts}
+    for name in object_constants:
+        minimum[env.constants[name].sort] = max(minimum[env.constants[name].sort], 1)
+    for sizes in _domain_sizes([minimum[s] for s in sorts], maximum):
+        domains = {sort: [f"e{i}" for i in range(size)] for sort, size in zip(sorts, sizes, strict=True)}
+        for assignment in product(values, repeat=len(int_constants)):
+            numbers = dict(zip(int_constants, assignment, strict=True))
+            cells = sorted({_int_value(t, numbers) for t in arguments}, key=lambda v: (abs(v), v))
+            pools = {INT_SORT: cells, **domains}
+            possible = sum(math.prod(len(pools[s]) for s in env.predicates[name].arguments)
+                           for name in used)
+            if possible > MAX_TUPLES:
+                raise _SearchSpaceLimit
+            atoms = tuple((name, row) for name in sorted(used)
+                          for row in product(*(pools[s] for s in env.predicates[name].arguments)))
+            choices = [domains[env.constants[name].sort] for name in object_constants]
+            for size in range(len(atoms) + 1):
+                for subset in combinations(atoms, size):
+                    relations = {name: [] for name in sorted(env.predicates)}
+                    for name, row in subset:
+                        relations[name].append([str(x) if type(x) is int else x for x in row])
+                    for denotations in product(*choices):
+                        constant_map = {name: str(value) for name, value in numbers.items()}
+                        constant_map.update(zip(object_constants, denotations, strict=True))
+                        yield FiniteModel.from_dict(env, {"complete": True, "domains": domains,
+                                                          "constants": constant_map,
+                                                          "relations": relations})
+
+
 def _models(env: Any, minimum_size: int, maximum: int,
-            used: frozenset[str]) -> Iterator[FiniteModel]:
+            used: frozenset[str], formulas=()) -> Iterator[FiniteModel]:
+    if getattr(env, "order", False):
+        yield from _order_models(env, minimum_size, maximum, used, formulas)
+        return
     sorts = sorted(env.sorts)
     constants = sorted(env.constants)
     minimum = {sort: minimum_size for sort in sorts}
@@ -318,7 +413,8 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
                                   max_evaluations, nonvacuous_id, semantic_nonvacuity)
     checked = work = 0
     iterator = _models(env, minimum_size, max_domain_size,
-                       _used_predicates(*premises, conclusion, nonvacuous_for))
+                       _used_predicates(*premises, conclusion, nonvacuous_for),
+                       (*premises, conclusion, nonvacuous_for))
     while checked < max_models:
         try:
             model = next(iterator)
@@ -384,7 +480,7 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
 
     checked = work = 0
     iterator = _models(env, minimum_size, max_domain_size,
-                       _used_predicates(a, b, nonvacuous_for))
+                       _used_predicates(a, b, nonvacuous_for), (a, b, nonvacuous_for))
     while checked < max_models:
         try:
             model = next(iterator)

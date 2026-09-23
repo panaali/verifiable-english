@@ -1,0 +1,35 @@
+{
+  "certificates_replayed": 546,
+  "countermodels_checked": 106,
+  "disagreements": [],
+  "evaluation_agreements": 200,
+  "evaluation_cases": 200,
+  "forged_replayed": 4496,
+  "lean_accepted": 546,
+  "lean_refutes": 106,
+  "lean_rejected": 4493,
+  "python_accepted": 546,
+  "python_rejected": 4493,
+  "search_outcomes": {
+    "congruence:Found": 80,
+    "farkas:Found": 170,
+    "integer:Found": 80,
+    "quantified:Found": 60,
+    "random:Found": 18,
+    "random:NotFound": 142,
+    "random:countermodel:Found": 106,
+    "random:countermodel:NotFound": 4,
+    "random:countermodel:ResourceLimit": 32,
+    "rewrite:Found": 138,
+    "rewrite:NotFound": 2
+  },
+  "seed": 20260922,
+  "trace_rule_counts": {
+    "close": 308,
+    "expand": 627,
+    "gcd-cut": 123,
+    "order-farkas@1": 1035,
+    "order-neq@1": 51,
+    "order-split@1": 572
+  }
+}
