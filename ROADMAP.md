@@ -73,7 +73,7 @@ evidence-layer maths corrected; paper v1 (rev2, mostly negative); P1, P3, iceber
 | 5 | Numbers round 1, then round 2 (lemma citation, conservative definitions) | [PLAN-EXPAND](PLAN-EXPAND.md) | tests green; Lean soundness; >= 500 cases Python=Lean; cross-family review |
 | 6 | Lean proof of English-surface unambiguity | [PLAN-EXPAND](PLAN-EXPAND.md) | after round 1 grammar settles |
 | 7 | Paper rev3 (Astra writes, after Sep 26 21:34) | `paper/` | both frontier reviews |
-| 8 | Grant wording redraft (Astra) | `~/code/manage-agents/grants/` | lead approves before any form edit; never submit |
+| 8 | Grant | `~/code/manage-agents/grants/` | paused: the lead will ask when needed (2026-09-22) |
 
 Every study: plan reviewed by two frontier models (Astra xhigh + Opus xhigh; Opus substitutes while Codex is out)
 before spend; preregistered and timestamped; baselines; pilots capped at $40.
