@@ -79,3 +79,17 @@ Vertex hard cap $40 (pilot $5) on the ledger; Claude via subscription quota. Rev
 4. Unfaithful formalisation: measured only as judge review against one dishonest prover; no translator or sample audits.
 5. Cost as an attack (flooding): not studied.
 Also out of scope: proofs beyond budget (the PSPACE regime) and any benefit of VE's English surface.
+
+## After review (2026-09-22): Opus xhigh and Gemini 3.1 Pro both "reduced pilot"; Astra review still owed (after Sep 26)
+
+Adopted: class F only for the pilot (class S is arithmetic by construction: demote to secondary or drop until
+independence claims and search-charging exist); drop arm 4 on class F (identical to arm 3 when leaves are proved);
+mechanical escapes blocked (axiom whitelist via #print axioms, fixed foundation menu, auto-reject new axioms / sorry /
+native_decide); strengthened adversary = dishonest prover iterating against Lean and a proxy judge with an attack library
+(truncated Nat subtraction, division by zero, coercions, vacuous hypotheses, misstated root, redefined names) PLUS a
+PROGRAMMATIC planted set of known misformalisations (judge recall measured independently); attack success reported only
+among Lean-accepted certificates; claim conditional on planted-set results. Cost: list-price dollars with cache reads
+at cache rate as primary; judge tokens reported separately; debate as a curve at 0.1x/0.3x/1x of arm 3's median dollars.
+Pilot: N in {8, 32}, K = 4, 6 pairs per cell (24 items), Vertex <= $5; gates G0 generator, G1 judge-alone obfuscation
+at N=32, G2 honest prover on 4 N=8 items (simplify items if median > 1M tokens), red team on 6 N=32 items + 20 planted,
+debate at two budgets on the same 6. Scheduled after the pushback study and T1c.

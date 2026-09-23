@@ -5,9 +5,11 @@ assesses leaves and has no machine-checked deduction. Neither half is worth much
 graph over unassessed leaves is a conditional nobody should read as approval, and a probability table
 over unrelated propositions is a mood. Joined, VE's claim graph says *which* leaves matter and *how
 they compose*, and the evidence layer says *how strongly each is supported and why* — and the join
-buys three things that neither side has today: a **sound lower bound** on the root, a **coherence
-checker** that uses VE's entailment oracle to constrain probabilities mechanically, and an
-**adversarial update ledger** that makes a premature estimate a protocol violation rather than a habit.
+buys three things that neither side has today: a **lower bound on the root that is sound relative to
+the leaf assessments** (if the leaf probabilities are right, the bound is right; it can never be an
+upper bound), a **coherence checker** that uses VE's entailment oracle to constrain probabilities
+mechanically, and an **adversarial update ledger** that makes a premature estimate a protocol
+violation rather than a habit. §2.9 separates what is proved from what is assumed.
 
 ---
 
@@ -128,12 +130,37 @@ cap.
 ### 2.2 How a leaf gets a probability
 
 Per leaf L: (i) a **prior** with a stated basis from a fixed enum (reference class / structural /
-uniform-over-declared-alternatives), (ii) records partitioned into independence groups, (iii) one
-likelihood ratio *per group*, not per record — ten reprints of one wire story are one group and update
-once, (iv) the posterior as the product of group LRs against the prior odds, (v) if the assessor cannot
-justify point values, an **interval** [lo, hi] propagated by interval arithmetic on odds. Interval
-output is the default; point values require a `reliability_reason` of machine-generated log or party
-admission.
+uniform-over-declared-alternatives), (ii) records partitioned into independence groups by originator,
+(iii) one likelihood ratio *per group*, not per record — ten reprints of one wire story are one group
+and update once, (iv) a posterior, computed as below, (v) if the assessor cannot justify point values,
+an **interval** [lo, hi]. Interval output is the default; point values require a `reliability_reason`
+of machine-generated log or party admission.
+
+**When LRs may be multiplied.** Bayes gives, for evidence groups G₁…G_g,
+
+> O(L | G₁…G_g) = O(L) · P(G₁…G_g | L) / P(G₁…G_g | ¬L).
+
+The right-hand side factorises into ∏ⱼ LRⱼ with LRⱼ = P(Gⱼ | L)/P(Gⱼ | ¬L) when the groups are
+**conditionally independent given L and given ¬L**. Distinct originators do not establish this. Two
+originators can share a cause other than L (the same rumour, instrument, misreading or draft); the
+search that found the second can depend on the first; and ¬L is a composite hypothesis, so
+independence given ¬L is a claim about every way L could be false. `tests/test_evidence_bounds.py`
+has a two-originator example with a shared cause independent of L: the product gives 0.73, the true
+posterior is 0.61. Grouping by originator removes one known failure (reprints). It does not certify
+the rest. So:
+
+- The product over groups is allowed only for groups covered by a **conditional-independence claim**
+  `CI(G_a, G_b, … | L)`. That claim is a first-class object: it has its own basis (for example,
+  "separate physical access, no communication channel before the date"), its own records, a status,
+  and it can be attacked with `challenge-evidence(…, independence)`. It is listed among the judgment
+  items in the report.
+- Without that claim, the checker does not multiply. The assessor supplies **one joint LR interval**
+  for the dependent groups, judged over the combined evidence. The only mechanical alternative is the
+  Fréchet interval on the joint likelihoods, P(G_a∧G_b | h) ∈ [max(0, P(G_a|h)+P(G_b|h)−1),
+  min(P(G_a|h), P(G_b|h))]. For specific evidence the likelihoods are small, so the lower end is 0
+  and the LR interval is [0, ∞], which is vacuous. The checker says so; it does not substitute a product.
+- Intervals propagate through odds by monotonicity: with prior odds in [o⁻, o⁺] and each admitted LR
+  in [ℓⱼ⁻, ℓⱼ⁺], posterior odds lie in [o⁻∏ℓⱼ⁻, o⁺∏ℓⱼ⁺], then map through p = o/(1+o).
 
 **Adversarial search obligation.** Each side must log queries run, sources returned, and sources
 *rejected with a reason*, in a `search_record`. A leaf carries a flag `disconfirming_search : bool`,
@@ -159,13 +186,48 @@ from an authoring norm into a check. Over a set of assessed claims A₁…A_k in
 | Σ P(Aᵢ) = 1 | exclusive **and** `entails(E, ⊤, ⋁Aᵢ)` | certificate of exhaustiveness |
 | P(root) ≥ Fréchet lower bound of its leaves | certified derivation | §2.4 |
 
-**Implementation.** For k ≤ ~12 assessed claims, build the atom table: for each of the 2^k sign
-patterns ask the model finder whether the conjunction is satisfiable. Coherence is then exact LP
-feasibility over atom masses (de Finetti), and interval assessments are box constraints. Above k = 12,
-fall back to the pairwise and triple constraints above — a sound relaxation, since dropping constraints
-can only *reduce* reported violations. **An `UNKNOWN` from the oracle drops the constraint; it never
-asserts one.** The oracle's measured `UNKNOWN` rate is 2.0% (8/400,
-`/Users/seyran/code/ve-integration/experiments/oracle/results/summary.json`).
+**What "coherent" means for intervals.** An assessment gives each claim Aᵢ an interval [loᵢ, hiᵢ].
+An *atom* is a sign pattern over A₁…A_k (each claim true or false). A probability over the environment
+E's models induces masses on the atoms consistent with E. Two properties, in increasing strength:
+
+- **Avoids sure loss.** Some probability P on the E-consistent atoms has loᵢ ≤ P(Aᵢ) ≤ hiᵢ for every
+  i. This is LP feasibility over atom masses (de Finetti; Walley for intervals). Failure means a
+  bookmaker can combine bets you call acceptable into a loss in every model of E.
+- **Coherent (tight).** Every endpoint is attained. loᵢ equals the minimum of P(Aᵢ) over the feasible
+  set, and hiᵢ equals the maximum. The checker computes these minima and maxima, which is the
+  *narrowing* that §1.4 asks for (Walley's natural extension). It reports the narrowed intervals and
+  marks the assessment tight only if nothing narrowed.
+
+**Implementation, and how UNKNOWN is handled.** For k ≤ ~12 assessed claims, build the atom table.
+For each of the 2^k sign patterns the oracle returns one of three statuses:
+
+| Atom status | Evidence | Treatment in the LP |
+|---|---|---|
+| POSSIBLE | a model (replayable witness) | variable ≥ 0 |
+| IMPOSSIBLE | a certified refutation (tableau certificate that E entails the negated pattern) | removed |
+| UNKNOWN | no model found within the search bounds and no refutation certificate | **variable ≥ 0: kept possible** |
+
+An atom leaves the LP only when its impossibility is certified. "No model up to domain size d" is
+UNKNOWN, not IMPOSSIBLE. The feasible region is therefore a superset of the true one, and this has
+three consequences, all checked in `tests/test_evidence_bounds.py`:
+
+1. **A reported violation is genuine.** If the relaxed LP is infeasible, the exact one is too.
+2. **Narrowed intervals are outer approximations.** They never exclude a value the true constraints
+   allow. Root lower bounds computed by the same LP are sound for the same reason.
+3. **"No violation found" certifies coherence only when no atom is UNKNOWN.** Only then is the LP
+   exact. Otherwise the report says "no violation found; u atoms UNKNOWN, kept possible" and does not
+   say "coherent".
+
+Treating an UNKNOWN atom as impossible is unsound in the other direction. It shrinks the feasible
+region, which produces false violations, over-narrow intervals and inflated root bounds. With a
+single claim at [0.5, 0.5] and its ¬A atom UNKNOWN, dropping that atom forces P(A) = 1 and reports a
+violation that does not exist. Above k = 12, the checker falls back to the pairwise and triple
+constraints in the table. A constraint is used only when its trigger is certified, never on UNKNOWN.
+This is a relaxation of the atom LP, so consequences 1–3 still hold, and "no violation found" is never
+upgraded to "coherent". The oracle's measured `UNKNOWN` rate is 2.0% (8/400,
+`/Users/seyran/code/ve-integration/experiments/oracle/results/summary.json`). That audit used three
+predicates and domains of size ≤ 2, with all eight UNKNOWNs in one template, so the rate should be
+re-measured at realistic vocabulary sizes before anyone relies on it.
 
 **Reporting and repair.** A violation is reported as the *minimal infeasible subset* of constraints
 plus the offending assessments, and the LP's nearest coherent projection is offered as a suggestion,
