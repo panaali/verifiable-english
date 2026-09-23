@@ -1,0 +1,387 @@
+{
+ "cedar": "cedar-policy-cli 4.13.0",
+ "domain_clause": "Every referenced entity exists in the entity store",
+ "cases": [
+  {
+   "item": "D29",
+   "reference": "YES",
+   "kind": "only_if",
+   "request": {
+    "principal": "Taxpreparer::Professional::\"Alice\"",
+    "action": "Taxpreparer::Action::\"viewDocument\"",
+    "resource": "Taxpreparer::Document::\"DEF\"",
+    "context": {
+     "consent": {
+      "client": {
+       "__entity": {
+        "type": "Taxpreparer::Client",
+        "id": "X"
+       }
+      },
+      "team_region_list": []
+     }
+    }
+   },
+   "entities": [
+    {
+     "uid": {
+      "type": "Taxpreparer::Professional",
+      "id": "Alice"
+     },
+     "attrs": {
+      "assigned_orgs": [],
+      "location": "L"
+     },
+     "parents": []
+    },
+    {
+     "uid": {
+      "type": "Taxpreparer::Client",
+      "id": "X"
+     },
+     "attrs": {
+      "organization": "O"
+     },
+     "parents": []
+    }
+   ],
+   "native_cedar": {
+    "artefact_allows": true,
+    "property_holds": false
+   },
+   "violates_property": true,
+   "dangling": [
+    "Taxpreparer::Document::\"DEF\""
+   ],
+   "out_of_domain": true,
+   "completed_store_violates": false,
+   "completed": {
+    "artefact_allows": false,
+    "property_holds": true
+   },
+   "completion": [
+    {
+     "uid": {
+      "type": "Taxpreparer::Document",
+      "id": "DEF"
+     },
+     "attrs": {
+      "serviceline": "S",
+      "location": "L",
+      "owner": {
+       "__entity": {
+        "type": "Taxpreparer::Client",
+        "id": "X"
+       }
+      }
+     },
+     "parents": []
+    }
+   ],
+   "dangling_after_completion": []
+  },
+  {
+   "item": "D22",
+   "reference": "YES",
+   "kind": "only_if",
+   "request": {
+    "principal": "User::\"ghost\"",
+    "action": "Action::\"grantViewAccessToPresentation\"",
+    "resource": "Presentation::\"r\"",
+    "context": {
+     "target": {
+      "__entity": {
+       "type": "User",
+       "id": "t"
+      }
+     }
+    }
+   },
+   "entities": [
+    {
+     "uid": {
+      "type": "Presentation",
+      "id": "r"
+     },
+     "attrs": {
+      "owner": {
+       "__entity": {
+        "type": "User",
+        "id": "ghost"
+       }
+      },
+      "viewers": [],
+      "editors": []
+     },
+     "parents": []
+    },
+    {
+     "uid": {
+      "type": "User",
+      "id": "t"
+     },
+     "attrs": {
+      "job": {
+       "__entity": {
+        "type": "Job",
+        "id": "customer"
+       }
+      },
+      "customerId": "C1"
+     },
+     "parents": []
+    },
+    {
+     "uid": {
+      "type": "Job",
+      "id": "customer"
+     },
+     "attrs": {},
+     "parents": []
+    },
+    {
+     "uid": {
+      "type": "Job",
+      "id": "other"
+     },
+     "attrs": {},
+     "parents": []
+    }
+   ],
+   "native_cedar": {
+    "artefact_allows": true,
+    "property_holds": false
+   },
+   "violates_property": true,
+   "dangling": [
+    "User::\"ghost\""
+   ],
+   "out_of_domain": true,
+   "completed_store_violates": false,
+   "completed": {
+    "artefact_allows": false,
+    "property_holds": false
+   },
+   "completion": [
+    {
+     "uid": {
+      "type": "User",
+      "id": "ghost"
+     },
+     "attrs": {
+      "job": {
+       "__entity": {
+        "type": "Job",
+        "id": "other"
+       }
+      },
+      "customerId": "C1"
+     },
+     "parents": []
+    }
+   ],
+   "dangling_after_completion": []
+  },
+  {
+   "item": "D11",
+   "reference": "YES",
+   "kind": "if",
+   "request": {
+    "principal": "User::\"u\"",
+    "action": "Action::\"view\"",
+    "resource": "Photo::\"p\"",
+    "context": {
+     "authenticated": true
+    }
+   },
+   "entities": [
+    {
+     "uid": {
+      "type": "Account",
+      "id": "a"
+     },
+     "attrs": {
+      "admins": [],
+      "owner": {
+       "__entity": {
+        "type": "User",
+        "id": "u"
+       }
+      },
+      "private": false
+     },
+     "parents": []
+    },
+    {
+     "uid": {
+      "type": "Photo",
+      "id": "p"
+     },
+     "attrs": {
+      "account": {
+       "__entity": {
+        "type": "Account",
+        "id": "a"
+       }
+      },
+      "admins": [],
+      "private": false
+     },
+     "parents": []
+    }
+   ],
+   "native_cedar": {
+    "artefact_allows": false,
+    "property_holds": true
+   },
+   "violates_property": true,
+   "dangling": [
+    "User::\"u\""
+   ],
+   "out_of_domain": true,
+   "completed_store_violates": false,
+   "completed": {
+    "artefact_allows": true,
+    "property_holds": true
+   },
+   "completion": [
+    {
+     "uid": {
+      "type": "User",
+      "id": "u"
+     },
+     "attrs": {
+      "department": "D",
+      "jobLevel": 1
+     },
+     "parents": []
+    }
+   ],
+   "dangling_after_completion": []
+  },
+  {
+   "item": "D23",
+   "reference": "YES",
+   "kind": "if",
+   "request": {
+    "principal": "User::\"Bob\"",
+    "action": "Action::\"viewPresentation\"",
+    "resource": "Presentation::\"proposal\"",
+    "context": {}
+   },
+   "entities": [
+    {
+     "uid": {
+      "type": "Presentation",
+      "id": "proposal"
+     },
+     "attrs": {
+      "owner": {
+       "__entity": {
+        "type": "User",
+        "id": "Carol"
+       }
+      }
+     },
+     "parents": []
+    },
+    {
+     "uid": {
+      "type": "User",
+      "id": "Carol"
+     },
+     "attrs": {
+      "job": {
+       "__entity": {
+        "type": "Job",
+        "id": "other"
+       }
+      },
+      "customerId": ""
+     },
+     "parents": []
+    },
+    {
+     "uid": {
+      "type": "Job",
+      "id": "other"
+     },
+     "attrs": {},
+     "parents": []
+    },
+    {
+     "uid": {
+      "type": "Job",
+      "id": "internal"
+     },
+     "attrs": {},
+     "parents": []
+    }
+   ],
+   "native_cedar": {
+    "artefact_allows": false,
+    "property_holds": true
+   },
+   "violates_property": true,
+   "dangling": [
+    "User::\"Bob\""
+   ],
+   "out_of_domain": true,
+   "completed_store_violates": false,
+   "completed": {
+    "artefact_allows": true,
+    "property_holds": true
+   },
+   "completion": [
+    {
+     "uid": {
+      "type": "User",
+      "id": "Bob"
+     },
+     "attrs": {
+      "job": {
+       "__entity": {
+        "type": "Job",
+        "id": "other"
+       }
+      },
+      "customerId": ""
+     },
+     "parents": []
+    }
+   ],
+   "dangling_after_completion": []
+  }
+ ],
+ "symcc_probes": [
+  {
+   "item": "D29",
+   "probe": "resource.owner == resource.owner",
+   "results": [
+    "holds"
+   ]
+  },
+  {
+   "item": "D22",
+   "probe": "resource.owner.job == resource.owner.job",
+   "results": [
+    "holds"
+   ]
+  },
+  {
+   "item": "D11",
+   "probe": "principal.department == principal.department",
+   "results": [
+    "holds"
+   ]
+  },
+  {
+   "item": "D23",
+   "probe": "principal.job == principal.job",
+   "results": [
+    "holds"
+   ]
+  }
+ ],
+ "all_expectations_met": true
+}

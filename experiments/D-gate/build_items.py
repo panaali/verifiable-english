@@ -38,7 +38,9 @@ CEDAR_DOMAIN = (
     "All authorization requests and entity stores that are valid for the stated Cedar schema "
     "(any number of entities, any attribute values of the declared types, any parent edges the "
     "schema's `in` declarations allow; request context as declared per action; action entities and "
-    "action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any "
+    "action groups exactly as declared in the schema). Every referenced entity exists in the entity "
+    "store: the request's principal and resource, every entity in the request context, and every "
+    "entity named by an attribute or a parent edge of a stored entity. Cedar 4 semantics: default deny, any "
     "applicable forbid overrides every permit, and a policy whose condition raises an error "
     "(e.g. missing attribute, overflow) is ignored."
 )
@@ -69,6 +71,11 @@ K8S_ASSUMPTIONS = (
 # "all" means every action with a non-empty appliesTo. Optional principal/resource type filters.
 # ----------------------------------------------------------------------------------------------
 C = []
+# restriction: "every allowed request satisfies phi" (a necessary condition for access; a wrong YES on a
+#              NO item is a false approval of unsafe access)
+# guarantee:   "every request satisfying phi is allowed" (a sufficient condition for access; a wrong YES
+#              on a NO item overstates availability, not safety)
+DIRECTION = {"only_if": "restriction", "if": "guarantee"}
 
 
 def cedar(id, art, question, kind, phi, actions="all", principal_types=None, resource_types=None,
@@ -192,9 +199,11 @@ cedar("D25", "c19_streaming",
       "only_if", '!(resource.isEarlyAccess && context.now.datetime < resource.releaseDate)',
       actions=["watch"], principal_types=["FreeMember"], resource_types=["Show"])
 cedar("D26", "c19_streaming",
-      "Is every allowed watch request by a Subscriber whose profile isKid made at a local time (datetime offset by localTimeOffset, time of day) between 06:00 and 21:00 inclusive?",
+      "Is every allowed watch request by a Subscriber whose profile isKid one whose local time is defined and lies between 06:00 and 21:00 inclusive? "
+      "The local time is the time of day of context.now.datetime offset by context.now.localTimeOffset, computed as Cedar computes it; "
+      "it is defined only if that computation raises no error, and a request whose local time is undefined does not satisfy the property.",
       "only_if", '!principal.profile.isKid || (duration("6h") <= context.now.datetime.offset(context.now.localTimeOffset).toTime() && context.now.datetime.offset(context.now.localTimeOffset).toTime() <= duration("21h"))',
-      actions=["watch"], principal_types=["Subscriber"], tags=["edge-error-semantics"])
+      actions=["watch"], principal_types=["Subscriber"], tags=["edge", "edge-error-semantics"])
 cedar("D27", "c19_streaming",
       "Is every allowed Action::\"rent\" request made at a time (context.now.datetime) at or after 2025-02-02T19:00:00-0500 and before 2025-03-02T19:00:00-0500?",
       "only_if", 'context.now.datetime >= datetime("2025-02-02T19:00:00-0500") && context.now.datetime < datetime("2025-03-02T19:00:00-0500")',
@@ -255,8 +264,9 @@ when { resource has reporters && principal in resource.reporters };"""]],
 K = []
 
 
-def k8s(id, art, question, z3, edit=None, tags=()):
-    K.append(dict(id=id, artefact=art, family="k8s", question=question, z3=z3, edit=edit, tags=list(tags)))
+def k8s(id, art, question, z3, edit=None, tags=(), direction="restriction"):
+    K.append(dict(id=id, artefact=art, family="k8s", question=question, z3=z3, edit=edit, tags=list(tags),
+                  direction=direction))
 
 
 k8s("D35", "k01_pod_reader",
@@ -267,7 +277,8 @@ k8s("D36", "k02_secret_reader_rolebinding",
     "Implies(allowed, ns == 'development')")
 k8s("D37", "k03_secret_reader_global",
     "Is every member of group \"manager\" allowed to list secrets (core API group, no subresource) across all namespaces, i.e. with an empty namespace?",
-    "Implies(And(grp('manager'), verb == 'list', api == '', res == 'secrets', sub == '', ns == '', name == ''), allowed)")
+    "Implies(And(grp('manager'), verb == 'list', api == '', res == 'secrets', sub == '', ns == '', name == ''), allowed)",
+    direction="guarantee")
 k8s("D38", "k04_monitoring_aggregation",
     "Is it true that no request on secrets (any verb, any namespace) is ever allowed?",
     "Implies(allowed, res != 'secrets')")
@@ -290,9 +301,8 @@ k8s("D42", "k06_configmap_updater",
     "Is it true that user \"ci-bot\" is never allowed to list configmaps?",
     "Implies(And(allowed, user == 'ci-bot'), verb != 'list')",
     edit=dict(description="verb \"list\" added to the configmap-updater rule (resourceNames kept)",
-              set=[[["objects", 0, "rules", 0, "verbs"], ["update", "get", "list"]]],
-              yaml_replace=[['verbs: ["update", "get"]', 'verbs: ["update", "get", "list"]']]),
-    tags=["planted-edit"])
+              set=[[["objects", 0, "rules", 0, "verbs"], ["update", "get", "list"]]]),
+    tags=["planted-edit", "edge", "edge-field-selector"])
 k8s("D43", "k07_subresource_wildcard",
     "Is every allowed request that names a subresource a request for pods/log in the core API group?",
     "Implies(And(allowed, sub != ''), And(res == 'pods', sub == 'log', api == ''))")
@@ -454,6 +464,7 @@ def main():
         items.append(dict(
             id=it["id"], artefact=it["artefact"], cluster=it["artefact"], family="cedar",
             variant="planted-edit" if it["edit"] else "original",
+            direction=DIRECTION[it["kind"]],
             edit_description=(it["edit"] or {}).get("description"),
             question=it["question"] + " Answer YES or NO.",
             domain=CEDAR_DOMAIN,
@@ -486,6 +497,7 @@ def main():
         items.append(dict(
             id=it["id"], artefact=it["artefact"], cluster=it["artefact"], family="k8s",
             variant="planted-edit" if it["edit"] else "original",
+            direction=it["direction"],
             edit_description=(it["edit"] or {}).get("description"),
             question=it["question"] + " Answer YES or NO.",
             domain=K8S_DOMAIN, assumptions=K8S_ASSUMPTIONS,

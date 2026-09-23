@@ -12,7 +12,9 @@ artefact). YES iff every query HOLDS. Any query that errors (e.g. an ill-typed p
 out makes the item UNDECIDED; nothing is guessed.
 
 K8s items: Z3 (z3-solver 5.1.0, strings) over a direct encoding of the RBAC authorizer written for
-this script (it does not import P3's encoding or VE). YES iff the property's negation is unsat.
+this script (it does not import P3's encoding or VE). YES iff the property's negation is unsat within
+the stated request domain (`domain_constraints`: no '/' in resource or subresource; get, update,
+patch and delete requests name an object).
 Every K8s counterexample is replayed through P3's independent reference authorizer
 (experiments/P3-formalisation-tax/reference_rbac.py) as a cross-check.
 """
@@ -163,6 +165,23 @@ def k8s_encode(z3, objects, V):
     return z3.Or(alts or [z3.BoolVal(False)])
 
 
+# Verbs whose requests always name one object (K8S_DOMAIN in build_items.py): their name is nonempty.
+NAMED_VERBS = ("get", "update", "patch", "delete")
+
+
+def domain_constraints(z3, V):
+    """The request domain stated to the model: resource and subresource contain no '/', and get,
+    update, patch and delete requests carry a nonempty object name."""
+    S = z3.StringVal
+    return z3.And(z3.Not(z3.Contains(V["res"], S("/"))), z3.Not(z3.Contains(V["sub"], S("/"))),
+                  z3.Implies(z3.Or([V["verb"] == S(v) for v in NAMED_VERBS]), V["name"] != S("")))
+
+
+def in_domain(req):
+    return ("/" not in req["resource"] and "/" not in req["subresource"]
+            and not (req["verb"] in NAMED_VERBS and req["name"] == ""))
+
+
 def k8s_item(it, reference_rbac):
     import z3
     world = json.loads((HERE / it["verifier"]["policies"]).read_text())
@@ -176,7 +195,7 @@ def k8s_item(it, reference_rbac):
     prop = eval(it["verifier"]["property"], {"__builtins__": {}}, env)
     s = z3.Solver()
     s.set("timeout", TIMEOUT_S * 1000)
-    s.add(z3.Not(z3.Contains(V["res"], z3.StringVal("/"))), z3.Not(z3.Contains(V["sub"], z3.StringVal("/"))))
+    s.add(domain_constraints(z3, V))
     s.add(z3.Not(prop))
     t = time.time()
     r = s.check()
@@ -195,7 +214,7 @@ def k8s_item(it, reference_rbac):
         ref_allowed = reference_rbac.k8s_authorize(objects, req)
         row.update(answer="NO", counterexample=dict(request=req, allowed_z3=z3_allowed, allowed_reference=ref_allowed),
                    crosscheck="agree" if z3_allowed == ref_allowed else "DISAGREE")
-        if z3_allowed != ref_allowed:
+        if z3_allowed != ref_allowed or not in_domain(req):
             row["answer"] = "UNDECIDED"
     else:
         row["answer"] = "UNDECIDED"
@@ -261,6 +280,9 @@ def k8s_grid_crosscheck(z3, it, objects, V, prop, reference_rbac, n=3000, seed=0
             for k in fields:
                 if rnd.random() < 0.15:
                     req[k] = rnd.choice(pool)
+        if req["verb"] in NAMED_VERBS and req["name"] == "":
+            req["name"] = rnd.choice([p for p in pool if p])  # the domain: these verbs name an object
+        assert in_domain(req), req
         ref = reference_rbac.k8s_authorize(objects, req)
         allowed_n += ref
         sub = [(V["user"], z3.StringVal(req["user"])), (V["verb"], z3.StringVal(req["verb"])),

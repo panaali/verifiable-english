@@ -12,7 +12,9 @@ named reference verifier. All four are here. **No model has been called.** The d
 | `ground_truth.json` | Reference-verifier answers, one record per query, with counterexamples |
 | `prompts.jsonl` | The exact raw-arm prompts and their SHA-256 hashes (rendered, not sent) |
 | `build_items.py`, `ground_truth.py`, `render_prompts.py` | Rebuild everything (see Reproduce) |
-| `run_raw.py`, `analyze.py` | The raw-arm runner (refuses to run until frozen) and the preregistered analysis |
+| `domain_check.py`, `domain_check.json` | Native `cedar authorize` replay of the reviewers' dangling-entity counterexamples (§3) |
+| `run_raw.py`, `analyze.py` | The freeze, the raw-arm runner (refuses to run until frozen) and the preregistered analysis |
+| `../../tests/test_dgate.py` | Offline tests: parsing, reconciliation, statistics, stop rules, resume, freeze checks |
 
 ## 1. Artefact inventory (29 = 22 Cedar + 7 Kubernetes)
 
@@ -63,32 +65,60 @@ There are 34 Cedar items and 9 Kubernetes items. Every artefact has 1–3 items.
 single edit: 8 break the property and 1 (D32) restores it. The reference answers split 20 YES and 23 NO. Each item
 in `items.json` gives:
 
-* `question`: a yes/no universal property. Some say "every allowed request satisfies X" (a NO is a false approval if
-  the model says YES). Others say "every request satisfying X is allowed".
-* `domain`: what is quantified. **Cedar:** all requests and all entity stores valid for the schema, under Cedar 4
-  semantics (default deny, forbid overrides, a policy whose condition errors is ignored). **Kubernetes:** all resource
-  requests (any user, groups, verb, API group, resource, subresource, namespace, name), under the RBAC authorizer.
+* `question`: a yes/no universal property.
+* `direction`: `restriction` items say "every allowed request satisfies X" (a necessary condition for access; a YES
+  on a NO item is a false approval of unsafe access). `guarantee` items say "every request satisfying X is allowed"
+  (a sufficient condition; a YES on a NO item overstates availability, not safety). Among the 41 non-edge items:
+  restriction 16 NO / 15 YES, guarantee 5 NO / 5 YES.
+* `domain`: what is quantified. **Cedar:** all requests and all entity stores valid for the schema in which every
+  referenced entity exists (the principal, the resource, every entity in the context, every entity named by an
+  attribute or parent edge of a stored entity), under Cedar 4 semantics (default deny, forbid overrides, a policy
+  whose condition errors is ignored). The existence clause is SymCC's own assumption (§3). **Kubernetes:** all
+  resource requests (any user, groups, verb, API group, resource, subresource, namespace, name; get, update, patch
+  and delete requests name an object, so their name is nonempty), under the RBAC authorizer.
 * `assumptions`: **Cedar:** the upstream schema, verbatim; for templated artefacts, exactly the upstream links.
   **Kubernetes:** a closed world (only the listed objects; no bootstrap `cluster-admin`/`system:masters`); the
   aggregation controller has converged; list and watch requests may carry a name (field selector).
-* `shown_to_model`: the policy text (the source, or the edited source), the schema and the links, or the YAML with
-  the filler objects appended. The model never sees the verifier encoding.
-* `tags`: `planted-edit`, `control` (D01), `edge-error-semantics` (D26).
+* `shown_to_model`: the policy text (the source, or the edited source), the schema and the links, or the RBAC
+  objects. The model never sees the verifier encoding. Presentation is normalised (§2a).
+* `tags`: `planted-edit`, `control` (D01), and `edge` for the two edge items, D26 (`edge-error-semantics`) and D42
+  (`edge-field-selector`). Edge items are excluded from the primary endpoint and reported separately.
 
 Some items test known pitfalls:
 
 * `in` is reflexive (D07, D09).
 * Entities can have several parents (D08).
 * Schema `appliesTo` limits (D05, D06).
-* Missing-attribute errors that silently drop a policy (D10, D12).
+* A `has` guard that is false for Account resources (Account has no `account` attribute), so the owner permit never
+  applies to an Account (D10). Every sandbox_b attribute is required, so no missing-attribute error is involved.
+* A policy that checks the Photo's own `admins`, not the `admins` of the Photo's Account (D12).
 * An optional context attribute lets a request escape a forbid (D21).
 * Action-group membership (D24).
 * A forbid scoped to an application (D31).
 * `A || B && C` precedence (D19).
 * Aggregation chains (D39–D41).
-* `resourceNames` with list and field selectors (D42).
+* `resourceNames` with list and field selectors (D42, edge).
 * `*` over subresources (D43).
-* Datetime overflow errors that disable a forbid (D26; see §3).
+* Datetime overflow errors that disable a forbid (D26, edge; see §3). The question states that the local time must
+  be defined, that is, its computation raises no error.
+
+## 2a. Prompt presentation
+
+The review found presentation cues: contributor comments near the planted condition in D34's policy, upstream
+comments in c09 and c11 that nearly answer D10, Kubernetes comments that paraphrase answers (k02, k03), and D39's
+added ClusterRole rendered in a different YAML style at the end of the file. `render_prompts.py` (`dgate-raw-v2`)
+therefore normalises every artefact the same way, whether or not it has an item that needs it:
+
+* Cedar policies and schemas: every `//` comment is removed (string literals are respected) and comment-only lines
+  are dropped. For all 68 policy and schema texts, `cedar translate-policy`/`translate-schema` gives the same JSON
+  before and after, so the semantics are unchanged. Annotations such as `@id` stay; they are code.
+* Kubernetes: every object (upstream, filler and planted edit alike) is rendered from the JSON the verifier checks,
+  by one dumper in the upstream style (flow lists of double-quoted strings), in a fixed kind order (ClusterRole,
+  Role, ClusterRoleBinding, RoleBinding). YAML comments are gone, and D39's object is neither styled differently
+  nor last. The rendered YAML loads back to exactly the verified objects.
+
+This changes the upstream bytes shown to the model (comments and YAML layout only). Because the change is uniform
+and semantics-preserving, no cue-sensitivity analysis is preregistered.
 
 ## 3. Ground truth and reference verifiers
 
@@ -106,9 +136,21 @@ Templated artefacts are analysed as static policies plus each upstream link, wit
 (`analysis.cedar`; the model sees the template text and the links). Every NO carries SymCC's concrete
 counterexample in `ground_truth.json`.
 
+**Existence of referenced entities.** SymCC treats every referenced entity as present. `cedar authorize` does not
+require that: with a dangling reference, an attribute access errors and a forbid can be skipped. The review built
+such counterexamples for D29 and D22 (reference YES) and argued D11 and D23. The Cedar domain now states the
+existence clause. `domain_check.py` replays all four in native `cedar authorize` 4.13.0 with the schema: each
+violates its property only because an entity is missing (`Document::"DEF"`, `User::"ghost"`, `User::"u"`,
+`User::"Bob"`), so each is out of domain. Adding the missing entity removes the violation. SymCC VERIFIES a probe
+that dereferences each of these entities (`x.a == x.a`) for every request, which confirms its existence
+assumption. All 34 Cedar items were re-run (112 queries): every query result and every answer is unchanged.
+
 **Kubernetes: Z3 5.1.0 over a direct Python encoding** of the RBAC authorizer (`ground_truth.py:k8s_encode`: string
 theory; group membership as an uninterpreted predicate; aggregation computed to a fixpoint). It does not import
-P3's encoding or VE. YES iff the negated property is unsat. There are two independent checks against P3's
+P3's encoding or VE. YES iff the negated property is unsat within the stated request domain
+(`domain_constraints`: no `/` in resource or subresource; get, update, patch and delete name an object). The
+nonempty-name constraint was added after review, and the steered samples respect it. All 9 answers are unchanged;
+the D39 and D40 counterexamples now name an object. There are two independent checks against P3's
 reference authorizer (`reference_rbac.py`, written separately):
 * every Z3 counterexample is replayed through it, and all agree;
 * 3,000 steered samples per item evaluate the property with it. YES items show 0 violations; NO items show 19–383.
@@ -120,7 +162,8 @@ matched the verifiers on 42/43. The exception is D42: I expected YES. It is NO b
 
 **Caveats.**
 * D26 (NO) depends on 64-bit datetime overflow. An overflowing `offset` makes the bedtime forbid error, and Cedar then
-  ignores it. The item is tagged `edge-error-semantics` and analysed separately.
+  ignores it. The question now says the local time must be defined. D26 and D42 (whose answer the K8s domain text
+  states) are edge items: excluded from the primary endpoint and reported separately.
 * SymCC's verdicts are per environment. An action with an empty `appliesTo` cannot be requested, so it is not
   enumerated.
 * Ground truth assumes the SymCC and cvc5 builds are correct. The Cedar NO answers ship with counterexamples;
@@ -160,6 +203,8 @@ cargo install cedar-policy-cli@4.13.0 --features analyze --locked --root <dir>
 cd experiments/D-gate
 export CEDAR=<dir>/bin/cedar CVC5=<cvc5 binary> UV_CACHE_DIR=/private/tmp/ve-uv-cache-dgate
 DGATE_DATA=~/code/ve-claude/data python3 build_items.py           # needs the pinned Cedar clones
-uv run --project solvers --locked python ground_truth.py          # ~5 s; z3-solver 5.1.0 locked in solvers/
-uv run --project solvers --locked python render_prompts.py
+uv run --project solvers --locked python ground_truth.py          # ~15 s; z3-solver 5.1.0 locked in solvers/
+python3 domain_check.py                                           # native cedar authorize + SymCC probes
+uv run --project solvers --locked python render_prompts.py        # with CEDAR set: checks comment stripping
+cd ../.. && uv run --frozen pytest tests/test_dgate.py            # offline tests
 ```
