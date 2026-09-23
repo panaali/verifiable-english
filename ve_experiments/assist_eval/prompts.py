@@ -11,7 +11,7 @@ import json
 
 from ve.assist.proposer import GRAMMAR
 
-PROMPT_VERSION = "ve-assist-eval-prompts@4"
+PROMPT_VERSION = "ve-assist-eval-prompts@5"
 
 TASK = """You are formalising an English argument into Verifiable English (VE), a small
 first-order logic with a checker. You receive the argument split into
@@ -26,14 +26,19 @@ What a finished formalisation contains:
    first and never changed afterwards.
 2. NODES. Each node is ONE VE statement anchored to the sentence id(s) it
    formalises. A node without parents is an assumption; an assumption must be
-   anchored to a GIVEN sentence that states it: the harness checks that the
-   given sentence's own content entails the assumption, so citing a sentence
-   is not enough. A node with parents is a step:
+   anchored to a GIVEN sentence that states it: the harness checks that EACH
+   anchor sentence's own content ALONE entails the assumption, so citing a
+   sentence is not enough and one assumption may not combine two sentences
+   (write one assumption per sentence). The nodes anchored to a given sentence
+   must together state everything it says. A node with parents is a step:
    it must follow logically from its parents, and the checker certifies this
    (or returns a countermodel: a situation where every parent is true and the
    step is false).
 3. COVERAGE: every claimed sentence is DERIVED: a certified step anchored to
-   it states its conclusion. A claimed sentence may never be waived. Every
+   it states its conclusion. A claimed sentence may never be waived. A step
+   anchored to a claimed sentence must say something (never a tautology such
+   as "if X then X") and may talk only about the units and words that
+   sentence mentions. Every
    given sentence is covered by a node anchored to it, or WAIVED. Only these
    given sentences may be waived (a fixed allowlist computed from the text;
    any other waiver fails the item): a sentence that only lists which rules
@@ -200,10 +205,22 @@ For each unit judge fidelity only:
   several sentences jointly: it is faithful for THIS sentence only if it states
   this sentence's content correctly; a statement that states only some other
   sentence's conclusion does not formalise this one (unfaithful).
-- A formalised unit may list "reasons": the sentences whose statements the
-  step was derived from. Judge whether they are the reasons this sentence
-  itself gives (or the given records those reasons rest on); a step that
-  uses a reason the sentence does not give is "unfaithful".
+- "nodes" is the COMPLETE statement graph: every node (N1, N2, ...), its
+  kind (assumption or step), its statement, the sentences it is anchored to
+  (none for an unanchored helper the author added) and, for a step, the nodes
+  it is derived from. Formalisation entries cite their node id. Use the graph
+  to see how each step was actually derived, through any helper nodes.
+- A formalised unit may list "reasons": the sentences its steps' derivations
+  rest on (following unanchored helpers down to anchored nodes). Judge whether
+  they are the reasons this sentence itself gives (or the given records those
+  reasons rest on); a step derived from a reason the sentence does not give,
+  directly or through a helper, is "unfaithful". An unanchored helper that
+  states something no given sentence says makes every step resting on it
+  "unfaithful".
+- Part of a sentence may be inexpressible in the glossary (for example which
+  sample came from which lot). A formalisation that states every expressible
+  part is faithful; it is unfaithful if it drops or changes an expressible
+  part.
 - A waiver or omission unit shows an allowlist CODE with a fixed description.
   It is "acceptable" only if the sentence really is of that kind, and
   "unacceptable" if it asserts something the stated reasoning relies on. An

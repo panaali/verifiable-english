@@ -259,8 +259,11 @@ def test_heldout_settings_must_equal_config():
     for flag in ("--budget", "--proposer-model", "--account", "--gemini-cap-usd", "--items", "--authors"):
         assert any(x.startswith(flag) for x in bad), flag
     clean = argparse.Namespace(budget=None, max_tool_calls=None, proposer_model=None, account=None,
-                               gemini_cap_usd=None, items=None, authors="opus", arms="A2,A3")
+                               gemini_cap_usd=None, items=None, authors="gemini,opus", arms="A4,A2,A3")
     assert cli.registered_deviations(clean) == []
+    # a subset of the registered authors or arms is a deviation (re-review A3: "--authors opus --arms A3")
+    subset = argparse.Namespace(**{**vars(clean), "authors": "opus", "arms": "A3"})
+    assert {x.split()[0] for x in cli.registered_deviations(subset)} == {"--authors", "--arms"}
 
 
 def test_manifest_hashes_prereg_waivers_and_executable_config():

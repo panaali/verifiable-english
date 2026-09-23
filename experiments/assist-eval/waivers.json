@@ -35,10 +35,6 @@
      "code": "unassumed",
      "text_sha256": "0e57ffbe81bd927e3a83ee1e3b35d138b713a583759a56d0ac7e1565f4a262d8"
     },
-    "r01.2": {
-     "code": "dead-rule",
-     "text_sha256": "2f8d1470ae99a145ae75476b9ba927382acbacd6716c4dd4673f441b0fcc1b20"
-    },
     "r10.2": {
      "code": "dead-rule",
      "text_sha256": "35cbfeb385352f64e91218a58e6c3de0f9dcace790b899f21d72fddbc151ed6a"
@@ -395,10 +391,6 @@
      "code": "dead-rule",
      "text_sha256": "601498a99bab4e354ac6cd2681a7ef420aeb83d65229c354e5d410cd5654a6fc"
     },
-    "r12.2": {
-     "code": "dead-rule",
-     "text_sha256": "de0d1e598a9c4e2d28b035e2c12fe4bc8a48531a31f648fd7a554a8bc6a60566"
-    },
     "r13.2": {
      "code": "dead-rule",
      "text_sha256": "27cbb3ca208b37d88aaba829594a2670d0d290f5dbf0bc860018d48d93397789"
@@ -661,10 +653,6 @@
      "code": "dead-rule",
      "text_sha256": "02d1e924d756e29e31c2ce1ec7d529366c3ccf4027fd683a5bb8cd443c0d32a3"
     },
-    "r12.2": {
-     "code": "dead-rule",
-     "text_sha256": "692dcd7098908d3bf37a9a2ff6aef9b7ef2ef5126a95d0d3932163c2b56738ce"
-    },
     "r13.2": {
      "code": "dead-rule",
      "text_sha256": "6052f783a4af13a87fe9a0b68b741aa3e06bbb6c022cda74e948c233efa19b0c"
@@ -747,10 +735,6 @@
      "code": "dead-rule",
      "text_sha256": "2ad532cbd0a1fb74cde226adbc4625847a4a71adf929785bce3e97bc7fef49ea"
     },
-    "r05.2": {
-     "code": "dead-rule",
-     "text_sha256": "c46f85c89d153fc25aeacda88d8431663a09a99faa328bb56cd7624bf3873b11"
-    },
     "r13.2": {
      "code": "dead-rule",
      "text_sha256": "f01dc50bb1a1289e95bd90c95618504f756c27967f7c95fe5870cebed5f46f3a"
@@ -828,10 +812,6 @@
     "n16.1": {
      "code": "declared",
      "text_sha256": "82d3e3b1f0a4d33e9905b272768e73bb7230ae13db99f63b29073d9306d84e63"
-    },
-    "r00.2": {
-     "code": "dead-rule",
-     "text_sha256": "75378adb3880e66b811d3b69975de132f3bb70389093e99c4986c516f6b81b01"
     },
     "r11.2": {
      "code": "dead-rule",

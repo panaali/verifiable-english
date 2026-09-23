@@ -6,14 +6,18 @@ Commands
   run      --split S --run-id ID [...]     serial sessions (items x authors x arms); resumable
   audit-export --run-id ID                 blinded packets (no model calls)
   proposer-smoke [--run-id ID]             ONE A4 propose call on a DEV sentence (<= 2 proposer model calls)
-  audit-run    --run-id ID [--account L]    Codex (GPT-6 Astra) audits every packet; Opus also audits Gemini's
+  audit-run    --run-id ID [--account L] [--max-usd X]
+                                           Codex (GPT-6 Astra, pinned) audits every packet; Opus also audits
+                                           Gemini's (priced Opus calls gated on --max-usd)
   report       --run-id ID [--legacy-audit] report.json + audit-spotcheck.jsonl
   hashes   [--write]                       PREREG hash manifest (PREREG text, tool, prompts, W, items, config)
   waivers  [--write]                       the preregistered allowlist W (waivers.json)
 
 A held-out run refuses to start unless PREREG-ASSIST.md line 1 is
-"Status: FROZEN", the recomputed manifest equals PREREG-HASHES.txt, waivers.json
-equals the recomputed W, and no command-line setting differs from CONFIG.
+"Status: FROZEN", the recomputed manifest (the whole ve/ package included)
+equals PREREG-HASHES.txt, waivers.json equals the recomputed W, no command-line
+setting differs from CONFIG (the full author and arm set), no other held-out run
+id exists, and no account-override environment variable is set.
 """
 from __future__ import annotations
 
@@ -38,7 +42,10 @@ WAIVERS = HERE / "waivers.json"
 CONFIG = {
     "budget_usd_per_item": 2.00,
     "budget_scope": "author + proposer spend over EVERY attempt at the item (aborted attempts included); "
-                    "an exhausted budget stops the item, a restart never resets it",
+                    "every backend attempt (internal 5xx/infrastructure retries included) is gated on the item "
+                    "budget before it is made; every turn charges the paid ledger's completions and holds for its "
+                    "call; an exhausted budget stops the item, a restart never resets it; an item whose spend "
+                    "over all attempts exceeds the budget scores as a failure",
     "max_turns": 60,
     "max_tool_calls": 250,
     "calls_per_turn": 10,
@@ -57,11 +64,22 @@ CONFIG = {
     "ledger_verification": "ve.assist.verify_session on every final and A2 attempt ledger (dossier, arm options, "
                            "dedicated proposer calls ledger); a ledger that does not verify is never a success",
     "waivers": "waivers.json: W(item) from the public dossier text (dossier.py); waivers must lie in W; no anchor "
-               "on a waive-only sentence; a given-anchored assumption must be entailed by its anchors' reference "
-               "content; no assumption may entail a 'remain unassumed' check",
-    "auditors": {"all packets": "GPT-6 Astra via codex exec (reasoning high)",
-                 "gemini packets": "additionally Opus 5.5 (claude CLI, main account)",
-                 "packet pass": "every required auditor passes it"},
+               "on a waive-only sentence; a given-anchored assumption must be entailed by EACH anchor's reference "
+               "alone; the nodes anchored to a formalised given sentence must entail its reference; claim steps "
+               "must be decided non-valid and use only the (unit, term) atoms their sentence mentions; no "
+               "assumption may entail a 'remain unassumed' check; unparsed given sentences are never in W",
+    "auditors": {"all packets": "GPT-6 Astra via codex exec -m gpt-6-astra (reasoning high, --json events kept; "
+                                "a reported model other than gpt-6-astra, or any tool use, voids the call)",
+                 "codex_model": "gpt-6-astra",
+                 "codex_workdir": "a fresh temporary directory holding only packet.json",
+                 "gemini packets": "additionally Opus 5.5 (claude CLI, main account, claude-opus-5-5 pinned)",
+                 "opus_audit_output_tokens": 6000,
+                 "packet pass": "every required auditor passes it",
+                 "packet content": "sentences, glossary, the complete node graph (neutral ids, statements, anchors, "
+                                   "derived-from edges, unanchored helpers included) and one unit per asserting "
+                                   "sentence; no check result, status, certification, arm, author or cost"},
+    "account_env": "VE_CLAUDE_ACCOUNT_CONFIG_DIR / CLAUDE_CODE_OAUTH_TOKEN set: every Claude backend refuses to start",
+    "heldout_runs": "exactly one held-out run id; the full registered author and arm set",
     "pricing": "ve_experiments/assist_eval/pricing.py",
     "success": "evaluation tool success (scoring.eval_success: status success apart from waivers inside W, and "
                "no dossier graph violation) AND a verified ledger AND audit pass",
@@ -79,9 +97,17 @@ CONFIG = {
     "heldout": "12 P5 scored items, seeded: one per family for 12 of 24 families, 4 benign/4 shift/4 smuggle",
 }
 
-TOOL_FILES = sorted([*(ROOT / "ve" / "assist").glob("*.py"), ROOT / "ve_experiments" / "assist_haiku.py",
-                     ROOT / "ve_experiments" / "claude_cli.py", ROOT / "ve_experiments" / "paid.py",
-                     *(ROOT / "ve_experiments" / "assist_eval").glob("*.py")])
+def tool_files():
+    """Every file the evaluation executes or reads at run time: the WHOLE ``ve/`` package (checker,
+    entailment, parser, English layer, lexicon data, assist tool) and the evaluation harness."""
+    runtime = [p for p in (ROOT / "ve").rglob("*") if p.is_file() and "__pycache__" not in p.parts
+               and p.suffix != ".pyc"]
+    return sorted([*runtime, ROOT / "ve_experiments" / "__init__.py", ROOT / "ve_experiments" / "assist_haiku.py",
+                   ROOT / "ve_experiments" / "claude_cli.py", ROOT / "ve_experiments" / "paid.py",
+                   *(ROOT / "ve_experiments" / "assist_eval").glob("*.py")])
+
+
+TOOL_FILES = tool_files()
 
 
 def sha(data):
@@ -125,11 +151,26 @@ def heldout_gate(args=None):
         raise SystemExit("held-out run refused: waivers.json does not match the recomputed allowlist W")
     if not MANIFEST.exists() or MANIFEST.read_text(encoding="utf-8") != manifest():
         raise SystemExit("held-out run refused: PREREG-HASHES.txt does not match the current tool/prompts/config")
+    from .authors import AuthorError, refuse_account_env
+    try:
+        refuse_account_env()
+    except AuthorError as exc:
+        raise SystemExit(f"held-out run refused: {exc}")
     if args is not None:
         deviations = registered_deviations(args)
         if deviations:
             raise SystemExit("held-out run refused: settings differ from the registered CONFIG: "
                              + "; ".join(deviations))
+        others = heldout_run_ids() - {getattr(args, "run_id", None)}
+        if others:
+            raise SystemExit("held-out run refused: a held-out run already exists (" + ", ".join(sorted(others))
+                             + "); exactly one held-out run id is allowed (resume it)")
+
+
+def heldout_run_ids(runs=None):
+    """Run ids that already hold held-out sessions (or a started held-out directory)."""
+    runs = Path(runs or RUNS)
+    return {p.parent.name for p in runs.glob("*/heldout") if p.is_dir()}
 
 
 def registered_deviations(args):
@@ -144,10 +185,11 @@ def registered_deviations(args):
             out.append(f"--{key.replace('_', '-')} {value} (registered {registered})")
     if getattr(args, "items", None):
         out.append("--items (a held-out run covers every registered item)")
-    for key, allowed in (("authors", CONFIG["authors"]), ("arms", CONFIG["arms"])):
+    for key, registered in (("authors", CONFIG["authors"]), ("arms", CONFIG["arms"])):
         value = getattr(args, key, None)
-        if value and set(value.split(",")) - set(allowed):
-            out.append(f"--{key} {value} (registered {','.join(allowed)})")
+        given = value.split(",") if value else list(registered)
+        if sorted(given) != sorted(registered):  # the FULL registered set, no subset and no extra
+            out.append(f"--{key} {value} (registered {','.join(registered)})")
     return out
 
 
@@ -277,6 +319,8 @@ def main(argv=None):
         s = sub.add_parser(name); s.add_argument("--run-id", required=True)
         if name == "audit-run":
             s.add_argument("--account", help="Claude account label for the Opus auditor ('main' = default)")
+            s.add_argument("--max-usd", type=float, help="hard cap on priced (Opus) auditor spend for this "
+                                                         "invocation; each call is gated on its ceiling")
         if name == "report":
             s.add_argument("--legacy-audit", action="store_true",
                            help="score with verdicts/<packet>.json from a run audited before the dual-audit "
@@ -318,7 +362,8 @@ def main(argv=None):
             heldout_gate()
             if (args.account or CONFIG["auditor_claude_account"]) != CONFIG["auditor_claude_account"]:
                 raise SystemExit("held-out audit refused: --account differs from the registered auditor account")
-        missing = run_audit(RUNS / args.run_id, account=account_label(args, CONFIG["auditor_claude_account"]))
+        missing = run_audit(RUNS / args.run_id, account=account_label(args, CONFIG["auditor_claude_account"]),
+                            max_usd=args.max_usd)
         if missing:
             print(f"{missing} packet(s) without a verdict; see audit/errors.jsonl and rerun audit-run")
             return 1

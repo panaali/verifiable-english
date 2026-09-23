@@ -47,7 +47,7 @@ from ve.assist import AssistSession, call_tool, source_from_p5, tool_schemas, ve
 from ve.assist.proposer import build_prompt
 
 from . import dossier, prompts
-from .authors import AuthorAbort, GeminiAuthor, last_json_block
+from .authors import AuthorAbort, GeminiAuthor, ItemBudgetExhausted, attempts_cost, last_json_block
 from .pricing import ceiling as price_ceiling, claude_cost
 from .scoring import WAIVER_FAILURE, eval_success as _eval_success
 
@@ -130,6 +130,8 @@ class CostedProposer:
 
     def __init__(self, ledger, account, model=DEFAULT_PROPOSER, max_calls=None):
         from ve_experiments.assist_haiku import ClaudeProposer
+        from .authors import refuse_account_env
+        refuse_account_env()
         self.inner = ClaudeProposer(ledger, model=model, account=account, max_calls=max_calls)
         self.inner.client.infrastructure_retries = True
         self.model, self.model_id = self.inner.model, self.inner.model_id
@@ -274,6 +276,9 @@ class SessionRun:
                                             per_turn=limits.calls_per_turn)
         self.opening = prompts.item_materials(self.session)
         self.author.start(self.system, self.opening, self.tools if not text_protocol else None)
+        if hasattr(type(author), "attempt_gate"):
+            # every BACKEND ATTEMPT (internal infrastructure retries included) must fit the item budget
+            author.attempt_gate = lambda ceiling, already: self.affordable(Decimal(ceiling) + Decimal(already))
         self.text_protocol = text_protocol
         self.finish = None
         self.a2_frozen = None
@@ -292,6 +297,20 @@ class SessionRun:
 
     def affordable(self, ceiling):
         return self.total + ceiling <= Decimal(str(self.limits.budget_usd))
+
+    def _reconcile(self):
+        """On every exit: the author spend is at least what the paid ledger charged this attempt's call
+        identities (completed calls, billed validation failures, 5xx/timeout holds)."""
+        if not isinstance(self.author, GeminiAuthor):
+            return
+        import re
+        base = re.escape(f"assist-eval/{self.split}/{self.author_name}/{self.arm}/{self.item['id']}/")
+        tail = re.escape(f"/restart{self.restart}") if self.restart else ""
+        mine = re.compile(base + r"t\d+" + tail + "$")
+        ledger = self.author.charged(match=lambda identity: bool(mine.match(identity)))
+        if ledger > self.spent["author"]:
+            self.spent["ledger_reconciliation"] = ledger - self.spent["author"]
+            self.spent["author"] = ledger
 
     # -- persistence
     def _write(self, name, value):
@@ -332,6 +351,10 @@ class SessionRun:
             if not self.affordable(need):
                 return self.session.log_rejection("propose", args, {
                     "code": "BudgetExhausted", "message": "not enough budget left for a proposer call"})
+            client = getattr(getattr(self.proposer, "inner", None), "client", None)
+            if client is not None:  # a proposer infrastructure retry is one more backend attempt
+                model = self.proposer.model_id
+                client.before_retry = lambda prior: self.affordable(need + attempts_cost(model, prior))
         before = len(self.proposer.costs) if self.proposer else 0
         result = call_tool(self.session, name, args)
         if self.proposer:
@@ -383,9 +406,13 @@ class SessionRun:
                 if self.arm == "A2" and self.a2_session is not None and not self.finish:
                     if self.a2_last_success:
                         reason = "success"
+        except ItemBudgetExhausted as exc:
+            reason = "budget"  # the next backend attempt (a retry included) could exceed the item budget
+            self.spent["author"] += getattr(exc, "cost", Decimal(0))
         except AuthorAbort as exc:
             reason = "abort: " + str(exc)
             self.spent["author"] += getattr(exc, "cost", Decimal(0))  # tokens the failed call spent
+        self._reconcile()
         final = self.a2_session if self.arm == "A2" else self.session
         status = final.apply("status") if final is not None else None
         verification = None

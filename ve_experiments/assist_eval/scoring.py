@@ -6,7 +6,9 @@ text and the author's ``finish``; labels enter only through ``acceptable_locatio
 Evaluation success (``eval_success``): the tool's status is success, OR its ONLY failure is the waiver
 line, every waived sentence is in the preregistered allowlist W(item) (never a claimed sentence), AND the
 dossier graph checks pass (``dossier.graph_violations``: no anchor on a waive-only sentence, every
-given-anchored assumption states its anchor's content, no assumed "remain unassumed" check).
+given-anchored assumption is entailed by each anchor alone, the nodes anchored to a given sentence entail all
+it says, claim steps are non-valid and stay within their sentence's atoms, no assumed "remain unassumed"
+check).
 
 Gap route (flawed items; decision 2 of the 2026-09-23 review round). ALL of:
 * the author finished with verdict "gap" and named at least one gap step;
@@ -20,9 +22,13 @@ Gap route (flawed items; decision 2 of the 2026-09-23 review round). ALL of:
 * the ledger verified;
 * ``gap_located``: the claimed paragraphs the gap steps are anchored to equal one of the item's
   acceptable locations.
-Because every claimed sentence needs its own step and every non-gap step must be certified, "freeze the
-target, add one step that states it, finish gap" cannot score even when the root paragraph is an
-acceptable location: every other claimed paragraph would still need a certified step.
+"Freeze the target, add one step that states it, finish gap" does not score even when the root paragraph
+is an acceptable location: every other claimed sentence still needs a certified step. Certification alone
+would NOT stop it (a tautology such as "if (X), then (X)" is certified from any parent; Opus re-review A1),
+so the dossier graph checks also require every claim-anchored step to be decided non-valid and to use only
+the (unit, term) atoms its own sentence mentions. What those checks cannot see -- a non-trivial step that
+states the wrong thing about the right atoms, or derives it from reasons the sentence does not give -- is
+left to the blind audit, which sees the whole node graph (``audit.packet_for``).
 """
 from __future__ import annotations
 

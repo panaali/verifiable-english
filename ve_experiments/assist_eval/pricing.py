@@ -30,9 +30,11 @@ def claude_cost(model, usage):
 
 
 def ceiling(model, input_tokens, output_tokens):
-    """Worst-case cost of a call: all input uncached, full output allowance."""
+    """Worst-case cost of a call: every input token at the dearest input rate (uncached, or a 5-minute cache
+    write, which costs more than uncached input for Claude), full output allowance."""
     p = PRICES[model]
-    return (Decimal(input_tokens) * Decimal(p["input"]) + Decimal(output_tokens) * Decimal(p["output"])) / M
+    rate = max(Decimal(p["input"]), Decimal(p["cache_write"]))
+    return (Decimal(input_tokens) * rate + Decimal(output_tokens) * Decimal(p["output"])) / M
 
 
 def gemini_cost(input_tokens, billed_output_tokens):

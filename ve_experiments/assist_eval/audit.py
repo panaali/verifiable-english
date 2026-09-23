@@ -74,6 +74,20 @@ def _item_for(result):
     return _items_by_id(result["split"])[result["item_id"]]
 
 
+def support_sentences(session, name, seen=None):
+    """The sentence ids a step's derivation rests on: its parents' anchors, following UNANCHORED parents
+    (helpers) down to the anchored nodes they rest on, so a helper cannot hide the reasoning."""
+    seen = set() if seen is None else seen
+    out = set()
+    for p in session.nodes[name].parents:
+        if p in seen or p not in session.nodes:
+            continue
+        seen.add(p)
+        parent = session.nodes[p]
+        out |= set(parent.anchors) if parent.anchors else support_sentences(session, p, seen)
+    return out
+
+
 def packet_for(session_dir, item=None):
     ledger = session_dir / "session.json"
     if not ledger.exists():
@@ -81,14 +95,21 @@ def packet_for(session_dir, item=None):
     session = AssistSession.from_ledger(_load(ledger))  # replays and verifies every recorded result
     item = item or _item_for(_load(session_dir / "result.json"))
     allow = dossier.allowlist(item)
+    # The COMPLETE node graph under neutral ids (author node names are not shown): every node, anchored or
+    # not, its statement, its anchors and the nodes it is derived from. No check result or status.
+    ids = {name: f"N{i}" for i, name in enumerate(session.nodes, 1)}
+    graph = [{"id": ids[n.name], "kind": n.kind, "statement": session.paraphrase_formula(n.formula),
+              "anchors": list(n.anchors), **({"derived_from": [ids[p] for p in n.parents if p in ids]}
+                                             if n.parents else {})}
+             for n in session.nodes.values()]
     by_sentence, reasons = {}, {}
     for node in session.nodes.values():
         for sid in node.anchors:
             others = [a for a in node.anchors if a != sid]
-            by_sentence.setdefault(sid, []).append(session.paraphrase_formula(node.formula) + (
+            by_sentence.setdefault(sid, []).append(f"[{ids[node.name]}] " + session.paraphrase_formula(node.formula) + (
                 f"  (also anchored to: {', '.join(others)})" if others else ""))
             if node.parents:
-                reasons.setdefault(sid, set()).update(a for p in node.parents for a in session.nodes[p].anchors)
+                reasons.setdefault(sid, set()).update(support_sentences(session, node.name))
     units = []
     for sid in session.sentence_order:
         s = session.sentences[sid]
@@ -117,6 +138,7 @@ def packet_for(session_dir, item=None):
             "glossary": {k: v["description"] for k, v in public.items()},
             **({"author_declared": {k: "AUTHOR-WRITTEN gloss (not dossier text): " + v
                                     for k, v in declared.items()}} if declared else {}),
+            "nodes": graph,
             "units": units}
 
 
@@ -148,19 +170,92 @@ def auditors_for(author):
     return ["codex", "opus"] if author == "gemini" else ["codex"]
 
 
-class CodexAuditor:
-    """GPT-6 Astra through ``codex exec`` (headless, read-only sandbox, no stdin, empty working directory).
+CODEX_MODEL = "gpt-6-astra"  # GPT-6 Astra, pinned with -m; any other reported model is rejected
+CODEX_SESSIONS = Path.home() / ".codex" / "sessions"
+QUIET_ITEMS = {"agent_message", "reasoning"}  # the only event items a text-only audit may produce
 
-    Every call is ledgered (prompt digest, served model from the CLI header, tokens used, exit code, reply);
-    a completed call with the same key replays from the ledger at no cost. Codex runs on a subscription:
+
+class AuditorViolation(RuntimeError):
+    """The auditor call is not a valid audit (wrong or unknown model, or it used a tool): no verdict."""
+
+
+def codex_events(stdout):
+    rows = []
+    for line in (stdout or "").splitlines():
+        line = line.strip()
+        if line.startswith("{"):
+            try:
+                value = json.loads(line)
+            except ValueError:
+                continue
+            if isinstance(value, dict):
+                rows.append(value)
+    return rows
+
+
+def _find_key(value, key):
+    if isinstance(value, dict):
+        for k, v in value.items():
+            if k == key and isinstance(v, str):
+                yield v
+            else:
+                yield from _find_key(v, key)
+    elif isinstance(value, list):
+        for v in value:
+            yield from _find_key(v, key)
+
+
+def codex_tool_uses(events):
+    """Every event item that is not a message or reasoning (a command, file change, MCP or web call...)."""
+    out = []
+    for e in events:
+        item = e.get("item")
+        if isinstance(item, dict) and item.get("type") not in QUIET_ITEMS:
+            out.append(str(item.get("type")))
+    return out
+
+
+def codex_served_model(stderr, events, sessions=CODEX_SESSIONS):
+    """The model the CLI reports: the stderr header, else any "model" field of the JSON events, else the
+    session rollout named by the thread id (turn_context.model). None when nothing reports it."""
+    models = re.findall(r"^model: (\S+)", stderr or "", re.M) + [m for e in events for m in _find_key(e, "model")]
+    thread = next((e.get("thread_id") for e in events if e.get("type") == "thread.started"), None)
+    if not models and thread and Path(sessions).exists():
+        for path in Path(sessions).glob(f"**/rollout-*{thread}.jsonl"):
+            for line in path.read_text(encoding="utf-8").splitlines():
+                try:
+                    row = json.loads(line)
+                except ValueError:
+                    continue
+                if row.get("type") == "turn_context" and isinstance(row.get("payload", {}).get("model"), str):
+                    models.append(row["payload"]["model"])
+    models = sorted(set(models))
+    return models[0] if len(models) == 1 else (None if not models else "MIXED:" + ",".join(models))
+
+
+class CodexAuditor:
+    """GPT-6 Astra through ``codex exec`` (headless, read-only sandbox, no stdin, model pinned with ``-m``).
+
+    Blinding: every call runs in a FRESH temporary directory that holds only ``packet.json`` (the packet
+    the prompt also carries); the run directory, ``mapping.json`` and the labels are never in it. The
+    read-only sandbox can still read absolute paths, so ``--json`` events are kept (``stdout`` in the
+    ledger) and a call whose events show any tool use (a command, file read, MCP or web call) is VOID: no
+    verdict. A reported model other than ``CODEX_MODEL`` (or none) is rejected the same way.
+
+    Every call is ledgered (prompt digest, served model, tokens, exit code, reply, stdout events); a
+    completed call with the same key replays from the ledger at no cost. Codex runs on a subscription:
     tokens are recorded, dollars are not priced (``cost_usd`` 0)."""
 
-    ARGS = ("exec", "-s", "read-only", "-c", "model_reasoning_effort=high", "--skip-git-repo-check")
+    ARGS = ("exec", "-m", CODEX_MODEL, "-s", "read-only", "-c", "model_reasoning_effort=high",
+            "--skip-git-repo-check", "--json")
     NOTE = "\n\nAnswer from this message alone: do not run commands or read files."
 
-    def __init__(self, ledger, *, workdir="/private/tmp/ve-assist-audit-codex-empty", timeout_s=1200,
-                 runner=subprocess.run):
-        self.ledger, self.workdir, self.timeout_s, self.runner = Path(ledger), Path(workdir), timeout_s, runner
+    def __init__(self, ledger, *, timeout_s=1200, runner=None, sessions=CODEX_SESSIONS):
+        # runner None: ``subprocess.run`` looked up at call time (so the test guard in tests/conftest.py sees it)
+        self.ledger, self.timeout_s = Path(ledger), timeout_s
+        self.runner = runner or (lambda *a, **k: subprocess.run(*a, **k))
+        self.sessions = Path(sessions)
+        self.last_workdir = None
 
     def _rows(self):
         if not self.ledger.exists():
@@ -178,29 +273,45 @@ class CodexAuditor:
         done = [r for r in self._rows() if r.get("key") == key and r.get("status") == "ok"]
         if done:
             return done[-1]["text"], Decimal(0), done[-1]
-        self.workdir.mkdir(parents=True, exist_ok=True)
         self._append({"key": key, "call_id": call_id, "status": "started",
                       "time": datetime.now(timezone.utc).isoformat()})
-        with tempfile.TemporaryDirectory() as tmp:
+        with tempfile.TemporaryDirectory(prefix="ve-assist-audit-") as tmp:
+            work = Path(tmp) / "packet"
+            work.mkdir()
+            packet = prompt.split("PACKET:\n", 1)[1] if "PACKET:\n" in prompt else prompt
+            (work / "packet.json").write_text(packet, encoding="utf-8")
+            self.last_workdir = sorted(p.name for p in work.iterdir())
             out = Path(tmp) / "reply.txt"
             start = time.monotonic()
-            proc = self.runner(["codex", *self.ARGS, "-o", str(out), text], cwd=self.workdir,
+            proc = self.runner(["codex", *self.ARGS, "-C", str(work), "-o", str(out), text], cwd=work,
                                stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=self.timeout_s)
             reply = out.read_text(encoding="utf-8") if out.exists() else ""
-        log = (proc.stdout or "") + "\n" + (proc.stderr or "")
-        model = re.search(r"^model: (\S+)", log, re.M)
-        tokens = re.search(r"tokens used\s*\n\s*([\d,]+)", log)
+        events = codex_events(proc.stdout)
+        model = codex_served_model(proc.stderr, events, self.sessions)
+        tools = codex_tool_uses(events)
+        usage = next((e.get("usage") for e in reversed(events) if e.get("type") == "turn.completed"), None)
+        tokens = re.search(r"tokens used\s*\n\s*([\d,]+)", (proc.stdout or "") + "\n" + (proc.stderr or ""))
+        used = (sum(v for k, v in usage.items() if k in ("input_tokens", "output_tokens") and type(v) is int)
+                if isinstance(usage, dict) else int(tokens[1].replace(",", "")) if tokens else None)
+        status = "ok" if proc.returncode == 0 and reply.strip() else "error"
+        why = None
+        if status == "ok" and model != CODEX_MODEL:
+            status, why = "void", f"reported model {model!r} is not the pinned {CODEX_MODEL}"
+        elif status == "ok" and tools:
+            status, why = "void", f"the auditor used tools ({', '.join(sorted(set(tools)))}); verdict void"
         row = {"key": key, "call_id": call_id, "prompt_sha256": hashlib.sha256(text.encode()).hexdigest(),
-               "served_model": model[1] if model else None,
-               "tokens_used": int(tokens[1].replace(",", "")) if tokens else None,
+               "served_model": model, "pinned_model": CODEX_MODEL, "tokens_used": used,
+               **({"usage": usage} if isinstance(usage, dict) else {}), "tool_uses": tools,
                "returncode": proc.returncode, "elapsed_s": round(time.monotonic() - start, 1),
-               "text": reply, "status": "ok" if proc.returncode == 0 and reply.strip() else "error",
-               "time": datetime.now(timezone.utc).isoformat()}
-        if row["status"] != "ok":
-            row["log_tail"] = log[-1500:]
+               "text": reply, "status": status, "stdout": proc.stdout or "",
+               "time": datetime.now(timezone.utc).isoformat(), **({"void_reason": why} if why else {})}
+        if status == "error":
+            row["log_tail"] = ((proc.stdout or "") + "\n" + (proc.stderr or ""))[-1500:]
         self._append(row)
-        if row["status"] != "ok":
-            raise RuntimeError(f"codex exec failed (exit {proc.returncode}): {log[-300:]}")
+        if status == "void":
+            raise AuditorViolation(why)
+        if status != "ok":
+            raise RuntimeError(f"codex exec failed (exit {proc.returncode}): {row['log_tail'][-300:]}")
         return reply, Decimal(0), row
 
 
@@ -224,27 +335,46 @@ def judge(packet, reply_text):
             "units": {u: verdicts.get(u) for u in expected}, **({"error": error} if error else {})}
 
 
+OPUS_AUDIT_OUTPUT_TOKENS = 6000  # dev-tune-2 Opus audits used at most 3,083 output tokens
+EXPECTED_MODELS = {"codex": CODEX_MODEL, "opus": "claude-opus-5-5"}
+
+
 def make_auditor(who, out, account):
     if who == "codex":
         return CodexAuditor(out / "codex-audit-calls.jsonl")
     # one calls ledger per Claude account (the endpoint refuses mixed accounts in one ledger)
     name = f"opus-audit-calls.{account or 'main'}.jsonl"
-    return ClaudeTextAuthor("opus", out / name, account=account)
+    auditor = ClaudeTextAuthor("opus", out / name, account=account, output_tokens=OPUS_AUDIT_OUTPUT_TOKENS)
+    auditor.client.infrastructure_retries = False  # one backend attempt per gated call (a rerun retries)
+    return auditor
 
 
 def verdict_path(out, pid, who):
     return out / "verdicts" / f"{pid}.{who}.json"
 
 
-def run_audit(run_dir, *, account=None, auditors=None):
+def run_audit(run_dir, *, account=None, auditors=None, max_usd=None):
     """Audit every exported packet by every required auditor that has no verdict yet; return the number of
-    (packet, auditor) verdicts still missing."""
+    (packet, auditor) verdicts still missing.
+
+    ``max_usd``: a hard cap on PRICED auditor spend (Opus, at list price) for this invocation. Before each
+    priced call the auditor's worst-case ceiling is checked against it; a call that could cross it is not
+    made (the verdict stays missing). A failed call is charged the tokens it reported. Spend is appended to
+    ``audit/spend.jsonl``. A reported model other than the pinned one voids the call (no verdict)."""
     run_dir = Path(run_dir)
     out = run_dir / "audit"
     mapping = _load(out / "mapping.json")
     (out / "verdicts").mkdir(exist_ok=True)
     auditors = dict(auditors or {})
+    real = set()
     missing = 0
+    spent = Decimal(0)
+    cap = Decimal(str(max_usd)) if max_usd is not None else None
+
+    def log(name, row):
+        with (out / name).open("a", encoding="utf-8") as f:
+            f.write(json.dumps({**row, "time": datetime.now(timezone.utc).isoformat()}) + "\n")
+
     for pid in mapping["order"]:
         packet = _load(out / "packets" / f"{pid}.json")
         for who in auditors_for(mapping["packets"][pid]["author"]):
@@ -258,19 +388,34 @@ def run_audit(run_dir, *, account=None, auditors=None):
                            "units": {}}
                 target.write_text(json.dumps(verdict, ensure_ascii=False, indent=1))
                 continue
+            system, prompt = prompts.AUDIT_SYSTEM, audit_prompt(packet)
             try:
                 if who not in auditors:
                     auditors[who] = make_auditor(who, out, account)
-                text, cost, row = auditors[who].single(f"assist-audit/{pid}", prompts.AUDIT_SYSTEM,
-                                                       audit_prompt(packet))
+                    real.add(who)
+                auditor = auditors[who]
+                if cap is not None and hasattr(auditor, "single_ceiling"):
+                    need = auditor.single_ceiling(system, prompt)
+                    if spent + need > cap:
+                        missing += 1
+                        log("errors.jsonl", {"packet": pid, "auditor": who, "error": f"auditor cap: spent {spent} "
+                                             f"+ ceiling {need} > ${cap}; not called"})
+                        continue
+                text, cost, row = auditor.single(f"assist-audit/{pid}", system, prompt)
+                spent += Decimal(str(cost))
+                if cost:
+                    log("spend.jsonl", {"packet": pid, "auditor": who, "cost_usd": str(cost)})
+                model = (row or {}).get("served_model") if isinstance(row, dict) else None
+                if who in real and model != EXPECTED_MODELS[who]:
+                    raise AuditorViolation(f"reported model {model!r} is not the pinned {EXPECTED_MODELS[who]}")
             except Exception as exc:  # logged; the packet stays unaudited and a rerun retries it
+                lost = Decimal(str(getattr(exc, "cost", 0) or 0))
+                spent += lost
+                if lost:
+                    log("spend.jsonl", {"packet": pid, "auditor": who, "cost_usd": str(lost), "failed": True})
                 missing += 1
-                with (out / "errors.jsonl").open("a", encoding="utf-8") as f:
-                    f.write(json.dumps({"packet": pid, "auditor": who,
-                                        "error": f"{type(exc).__name__}: {exc}"[:2000],
-                                        "time": datetime.now(timezone.utc).isoformat()}) + "\n")
+                log("errors.jsonl", {"packet": pid, "auditor": who, "error": f"{type(exc).__name__}: {exc}"[:2000]})
                 continue
-            model = (row or {}).get("served_model") if isinstance(row, dict) else None
             verdict = {"packet": pid, "auditor": who, "auditor_model": model, "cost_usd": str(cost), "reply": text,
                        **({"auditor_tokens": row.get("tokens_used")} if isinstance(row, dict) and "tokens_used" in row
                           else {}),
@@ -332,6 +477,8 @@ def attribute(result, verdict, cls, origins):
     """One cause per non-faithful-complete session (see README "Failure attribution")."""
     if cls["faithful_complete"]:
         return None
+    if cls.get("over_budget"):
+        return "budget"  # spend over every attempt exceeded the item budget: scored as a failure
     stop = str(result.get("stop_reason"))
     if stop.startswith(("abort: run cap", "abort: context")):
         return "budget"
@@ -359,18 +506,20 @@ def attribute(result, verdict, cls, origins):
     return "tool refusal" if cls["kind"] == "benign" else "gap route: " + ", ".join(cls["gap_route_failures"][:3])
 
 
-def classify(result, audit_pass, kind, checks, acceptable_locations, audited=True):
-    """Endpoints of one session. ``checks`` = ``scoring.session_checks`` (None: no ledger)."""
+def classify(result, audit_pass, kind, checks, acceptable_locations, audited=True, over_budget=False):
+    """Endpoints of one session. ``checks`` = ``scoring.session_checks`` (None: no ledger). An item whose
+    spend over every attempt exceeds its budget (``all_attempts_spend``) is a FAILURE on every endpoint."""
     verified = bool((result.get("verification") or {}).get("ok"))
     violations = (checks or {}).get("violations") or []
-    tool = bool(result.get("tool_success")) and verified and not violations
+    tool = bool(result.get("tool_success")) and verified and not violations and not over_budget
     if checks is None:
         route, located, why = False, False, ["no session ledger"]
     else:
         route, located, why = gap_route(result, checks, acceptable_locations)
     certified_faithful = tool and audit_pass
-    faithful_complete = certified_faithful if kind == "benign" else (audit_pass and route and not tool)
-    return {"kind": kind, "tool_success": tool, "audit_pass": audit_pass, "certified_faithful": certified_faithful,
+    faithful_complete = (certified_faithful if kind == "benign" else (audit_pass and route and not tool)) \
+        and not over_budget
+    return {"kind": kind, "over_budget": bool(over_budget), "tool_success": tool, "audit_pass": audit_pass, "certified_faithful": certified_faithful,
             "certified_unfaithful": tool and audited and not audit_pass, "gap_route": route,
             "gap_route_failures": [] if kind == "benign" else why, "gap_located": located if kind != "benign"
             else None, "violations": violations, "faithful_complete": faithful_complete,
@@ -479,12 +628,14 @@ def report(run_dir, *, legacy_audit=False, out_dir=None):
         session = (AssistSession.from_ledger(_load(d / "session.json"), verify=False)
                    if (d / "session.json").exists() else None)
         checks = session_checks(session, item, result.get("finish")) if session else None
+        spend = all_attempts_spend(run_dir, d, result)
         cls = classify(result, bool(verdict and verdict["pass"]), kind, checks,
-                       labs[result["item_id"]]["acceptable_locations"], audited=verdict is not None)
+                       labs[result["item_id"]]["acceptable_locations"], audited=verdict is not None,
+                       over_budget=spend["over_budget"])
         origins = unit_origins(session, verdict)
         row = {**{k: result[k] for k in ("split", "author", "arm", "item_id", "stop_reason", "turns", "tool_calls")},
                "author_role": ROLES.get(result["author"], "other"),
-               "spent_usd": result["spent_usd"]["total"], "spend_all_attempts": all_attempts_spend(run_dir, d, result),
+               "spent_usd": result["spent_usd"]["total"], "spend_all_attempts": spend,
                "audited": verdict is not None, "auditors": sorted(verdicts),
                "audit_disagreement": bool(verdict and verdict["disagreement"]),
                "legacy_audit_proxy": bool(verdict and verdict["legacy_proxy"]),

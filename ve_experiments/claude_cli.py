@@ -116,6 +116,10 @@ class InfrastructurePaused(InfrastructureError):
     """Retry allowance exhausted; the same request remains resumable."""
 
 
+class RetryRefused(EndpointError):
+    """The caller's ``before_retry`` gate (e.g. a per-item budget) refused another backend attempt."""
+
+
 RETRY_BACKOFF = (30, 60, 120, 240, 480)
 
 
@@ -462,6 +466,11 @@ class ClaudeCLI:
         self._last_key = None  # once per sample: a retry keeps the key its earlier attempts computed
         failure = None
         for attempt in range(1 + (len(RETRY_BACKOFF) if self.infrastructure_retries else 0)):
+            gate = getattr(self, "before_retry", None)
+            if attempt and gate is not None and not gate([_attempt_usage(r) for r in self._final_rows(self._last_key)]):
+                # the caller's budget cannot cover another backend attempt: stop, accounted like any failure
+                failure = RetryRefused("the caller's budget gate refused an infrastructure retry")
+                break
             try:
                 row = self._sample_once(item_id, system, prompt, sample_index,
                                         content_tokens=content_tokens, retry_number=attempt)

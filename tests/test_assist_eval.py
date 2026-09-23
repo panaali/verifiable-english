@@ -323,30 +323,67 @@ class FakeCompleted:
         self.returncode, self.stdout, self.stderr = returncode, stdout, stderr
 
 
-def test_codex_auditor_ledgers_model_and_tokens_and_replays(tmp_path):
+def codex_stdout(*items, usage=None):
+    rows = [{"type": "thread.started", "thread_id": "t-1"}, {"type": "turn.started"}]
+    rows += [{"type": "item.completed", "item": item} for item in items]
+    rows.append({"type": "turn.completed", "usage": usage or {"input_tokens": 12000, "output_tokens": 345}})
+    return "\n".join(json.dumps(r) for r in rows) + "\n"
+
+
+def test_codex_auditor_pins_the_model_isolates_the_packet_and_replays(tmp_path):
     seen = []
 
     def runner(cmd, **kw):
-        seen.append((cmd, kw))
-        out = cmd[cmd.index("-o") + 1]
-        Path(out).write_text('{"units": []}')
-        return FakeCompleted(0, "codex\n{}\ntokens used\n12,345\n", "model: gpt-6-astra\nsandbox: read-only\n")
+        work = Path(cmd[cmd.index("-C") + 1])
+        seen.append((cmd, kw, sorted(p.name for p in work.iterdir()), (work / "packet.json").read_text()))
+        Path(cmd[cmd.index("-o") + 1]).write_text('{"units": []}')
+        return FakeCompleted(0, codex_stdout({"type": "agent_message", "text": "{}"}),
+                             "model: gpt-6-astra\nsandbox: read-only\n")
 
-    auditor = audit.CodexAuditor(tmp_path / "codex.jsonl", workdir=tmp_path / "wd", runner=runner)
-    text, cost, row = auditor.single("assist-audit/p1", "SYS", "PROMPT")
+    auditor = audit.CodexAuditor(tmp_path / "codex.jsonl", runner=runner)
+    text, cost, row = auditor.single("assist-audit/p1", "SYS", "PROMPT\n\nPACKET:\n{\"units\": []}")
     assert text == '{"units": []}' and cost == 0
     assert row["served_model"] == "gpt-6-astra" and row["tokens_used"] == 12345
-    cmd, kw = seen[0]
-    assert cmd[:7] == ["codex", "exec", "-s", "read-only", "-c", "model_reasoning_effort=high",
-                       "--skip-git-repo-check"]
-    assert kw["stdin"] is not None and "SYS" in cmd[-1] and "PROMPT" in cmd[-1]
-    auditor.single("assist-audit/p1", "SYS", "PROMPT")  # replays from the ledger
+    assert "turn.completed" in row["stdout"]  # the --json events are kept for checking
+    cmd, kw, listing, packet = seen[0]
+    assert cmd[:5] == ["codex", "exec", "-m", "gpt-6-astra", "-s"] and "--json" in cmd
+    # a fresh temporary directory holding ONLY the packet: no run directory, mapping.json or labels
+    assert listing == ["packet.json"] and packet == '{"units": []}'
+    assert kw["cwd"] == Path(cmd[cmd.index("-C") + 1]) and "assist-eval" not in str(kw["cwd"])
+    assert kw["stdin"] is not None and "SYS" in cmd[-1]
+    auditor.single("assist-audit/p1", "SYS", "PROMPT\n\nPACKET:\n{\"units\": []}")  # replays from the ledger
     assert len(seen) == 1
 
     def failing(cmd, **kw):
         return FakeCompleted(1, "", "error: usage limit")
     with pytest.raises(RuntimeError):
-        audit.CodexAuditor(tmp_path / "c2.jsonl", workdir=tmp_path / "wd", runner=failing).single("x", "S", "P")
+        audit.CodexAuditor(tmp_path / "c2.jsonl", runner=failing).single("x", "S", "P")
+
+
+def test_codex_auditor_rejects_another_model_and_voids_tool_use(tmp_path):
+    def reply(stdout, stderr):
+        def runner(cmd, **kw):
+            Path(cmd[cmd.index("-o") + 1]).write_text('{"units": []}')
+            return FakeCompleted(0, stdout, stderr)
+        return runner
+
+    ok_events = codex_stdout({"type": "agent_message", "text": "{}"})
+    for stdout, stderr in ((ok_events, "model: gpt-5.6-sol\n"),  # a different model: rejected
+                           (ok_events, ""),                          # no reported model: rejected
+                           (codex_stdout({"type": "command_execution", "command": "cat mapping.json"},
+                                         {"type": "agent_message", "text": "{}"}), "model: gpt-6-astra\n")):
+        ledger = tmp_path / f"c{len(stdout)}{len(stderr)}.jsonl"
+        auditor = audit.CodexAuditor(ledger, runner=reply(stdout, stderr), sessions=tmp_path / "none")
+        with pytest.raises(audit.AuditorViolation):
+            auditor.single("x", "S", "P")
+        rows = [json.loads(l) for l in ledger.read_text().splitlines()]
+        assert rows[-1]["status"] == "void" and rows[-1]["stdout"] == stdout
+    # the model can also come from the session rollout named by the thread id
+    rollout = tmp_path / "sessions" / "2026" / "rollout-2026-t-1.jsonl"
+    rollout.parent.mkdir(parents=True)
+    rollout.write_text(json.dumps({"type": "turn_context", "payload": {"model": "gpt-6-astra"}}) + "\n")
+    auditor = audit.CodexAuditor(tmp_path / "r.jsonl", runner=reply(ok_events, ""), sessions=tmp_path / "sessions")
+    assert auditor.single("x", "S", "P")[2]["served_model"] == "gpt-6-astra"
 
 
 class ScriptedAuditor:

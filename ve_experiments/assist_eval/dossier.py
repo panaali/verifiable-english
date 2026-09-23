@@ -10,12 +10,16 @@ Given sentences are template text. Kinds:
 * ``declared``   "Rules r09, r00 are declared."                   waive-only (W code ``declared``)
 * ``unassumed``  "The checks that A and B remain unassumed."     waive-only (W code ``unassumed``);
                   its ASSUMPTION RESTRICTION stays: no assumption node may entail A or B.
-* ``lot``        "The sample from lot unit0 is unit2." / "unit4 is a sample of lot unit6."
-                  waive-only (W code ``lot-sample``): the vocabulary cannot state it.
+* ``lot``        "The sample from lot unit0 is unit2."            waive-only (W code ``lot-sample``): the
+                  vocabulary cannot state it.
 * ``facts``      "unit0 is sized; unit0 is released."            reference = the conjunction
 * ``supplied``   "Lot unit0 supplied sample unit2."               reference = supplied(unit0, unit2)
-* ``rule``       "If A and B, then C." (optionally followed by an inexpressible lot sentence that
-                  the splitter did not separate)                    reference = if (A and B), then (C)
+* ``rule``       "If A and B, then C."                            reference = if (A and B), then (C)
+* ``unparsed``   any given sentence none of the templates above parses. NEVER in W (it cannot be waived); no
+                  reference, so no deterministic content or coverage check (the auditor alone judges it).
+                  No dev sentence is unparsed; five held-out sentences are ("rule + lot sentence" in one
+                  given sentence). The 2026-09-23 "lot tail" branch that split them was written after the
+                  held-out text had been read and was removed (README "W and the held-out text").
 
 W(item) = the waive-only sentences, plus
 * ``unused-fact``: a facts/supplied sentence none of whose atoms is an antecedent of a live rule or of a
@@ -29,9 +33,16 @@ W(item) = the waive-only sentences, plus
 Graph checks (``graph_violations``), each blocking evaluation success and the gap route:
 * every waiver is in W;
 * no node is anchored to a waive-only sentence;
-* ANCHOR CONTENT: an assumption whose anchors are all given must be entailed by the reference
-  formalisation of those sentences (it states what they say, or part of it). Citing a sentence is not
-  enough: a lot/sample bridge anchored to "The sample from lot unit0 is unit2." fails;
+* ANCHOR CONTENT, per anchor: an assumption anchored to given sentences must be entailed by EACH anchor's
+  reference formalisation ALONE (it states what that sentence says, or part of it). An assumption citing
+  two sentences jointly (Q anchored to "P" and "if P then Q") fails: split it, one assumption per sentence.
+  Citing a sentence is not enough: a lot/sample bridge anchored to a rule sentence fails;
+* COVERAGE, per formalised given sentence (every non-W one must be formalised; a formalised W sentence is
+  checked too, so the check reveals nothing about W): the nodes anchored to it (assumptions AND steps) must
+  together entail its reference formalisation (nothing it says is dropped);
+* CLAIM STEPS: a step anchored to a claimed sentence must not be valid (a tautology states nothing; decided
+  "no" required) and may use only the (unit, term) atoms its sentence(s) mention ("unitN is TERM", or
+  "the immediately preceding TERM result" for any unit); no relation, identity or author-declared predicate;
 * no assumption node entails an atom a "remain unassumed" sentence lists (decided "no" required).
 """
 from __future__ import annotations
@@ -57,12 +68,11 @@ ATOM = re.compile(r"^(unit\d+) is ([a-z][a-z-]*)(?: \(([^)]+)\))?$")
 MENTION = re.compile(r"\b(unit\d+) is ([a-z][a-z-]*)")
 DECLARED = re.compile(r"^Rules? .+ (?:is|are) declared\.$")
 UNASSUMED = re.compile(r"^The checks? that (.+) remains? unassumed\.$")
-LOT = re.compile(r"^(?:The sample from lot (unit\d+) is (unit\d+)|(unit\d+) is a sample of lot (unit\d+))\.$")
-LOT_TAIL = re.compile(r"\s+(unit\d+) is a sample of lot (unit\d+)\.$")
+LOT = re.compile(r"^The sample from lot (unit\d+) is (unit\d+)\.$")
 SUPPLIED = re.compile(r"^Lot (unit\d+) supplied sample (unit\d+)\.$")
 RULE = re.compile(r"^If (.+), then (.+)\.$")
 PRECEDING = re.compile(r"\bthe immediately preceding ([a-z][a-z-]*) result\b")
-WOULD = re.compile(r"^The checks? that (.+) would (?:imply|establish|yield) that (.+), respectively\.$")
+WOULD = re.compile(r"^The checks? that (.+) would (?:imply|establish) that (.+), respectively\.$")
 
 
 class DossierError(ValueError):
@@ -115,22 +125,26 @@ def _classify(text, by_sense, by_term):
     m = SUPPLIED.match(text)
     if m:
         return {"kind": "supplied", "atoms": [], "reference": f"@{m[1]} supplied @{m[2]}."}
-    tail = LOT_TAIL.search(text)
-    body = text[:tail.start()] if tail else text
-    m = RULE.match(body)
+    m = RULE.match(text)
     if m:
         ante = [_atom(a, by_sense, by_term) for a in m[1].split(" and ")]
         cons = [_atom(a, by_sense, by_term) for a in m[2].split(" and ")]
         if len(cons) != 1:
             raise DossierError(f"rule with {len(cons)} consequents: {text!r}")
         return {"kind": "rule", "antecedents": ante, "consequent": cons[0],
-                "reference": f"if ({_conj([_atom_text(a) for a in ante])}), then ({_atom_text(cons[0])}).",
-                **({"lot_tail": True} if tail else {})}
+                "reference": f"if ({_conj([_atom_text(a) for a in ante])}), then ({_atom_text(cons[0])})."}
     parts = [p for p in text.rstrip(".").split("; ")]
     atoms = [_atom(p, by_sense, by_term) for p in parts]
     return {"kind": "facts", "atoms": atoms,
             "reference": (_conj([_atom_text(a) for a in atoms]) + ".") if len(atoms) > 1
             else _atom_text(atoms[0]) + "."}
+
+
+def _classify_or_unparsed(text, by_sense, by_term):
+    try:
+        return _classify(text, by_sense, by_term)
+    except DossierError:
+        return {"kind": "unparsed"}
 
 
 def _key(atom):
@@ -147,7 +161,7 @@ def _analyse_json(item_json):
     built = source_from_p5(item)
     by_sense, by_term = _predicates(built["environment"])
     sentences = built["source"]["sentences"]
-    given = {s["id"]: {"text": s["text"], **_classify(s["text"], by_sense, by_term)}
+    given = {s["id"]: {"text": s["text"], **_classify_or_unparsed(s["text"], by_sense, by_term)}
              for s in sentences if s["role"] == "given"}
     claimed = [s for s in sentences if s["role"] == "claimed"]
     facts = {_key(a) for g in given.values() if g["kind"] == "facts" for a in g["atoms"]}
@@ -208,6 +222,8 @@ def _analyse_json(item_json):
             "kinds": {sid: g["kind"] for sid, g in given.items()},
             "unassumed": sorted(set(unassumed)),
             "premises": sorted(g["reference"] for g in given.values() if "reference" in g),
+            "mentions": {s["id"]: sorted(m) for s, m in zip(claimed, mentions)},
+            "terms": {name: term for term, names in by_term.items() for name in names},
             "live_rules": sorted(live), "relied_dead_rules": sorted(relied)}
 
 
@@ -244,20 +260,76 @@ def _parse(session, text):
     return session._parse(text, "auto")[0]
 
 
+def formula_atoms(formula):
+    """What a formula talks about: {(unit, predicate)} for unary atoms (unit "?" for a quantified variable),
+    plus ("!", kind) markers for every relation, identity, arithmetic or reachability atom."""
+    import dataclasses
+    from ve import ast
+    found, pending = set(), [formula]
+    while pending:
+        node = pending.pop()
+        if type(node) is ast.Unary:
+            found.add((node.term.name if type(node.term) is ast.Const else "?", node.predicate))
+            continue
+        if type(node) in (ast.Binary, ast.Eq, ast.Reach, ast.Lt, ast.Le):
+            found.add(("!", type(node).__name__ + (f" {node.predicate}" if type(node) is ast.Binary else "")))
+            continue
+        if dataclasses.is_dataclass(node):
+            for f in dataclasses.fields(node):
+                value = getattr(node, f.name)
+                if dataclasses.is_dataclass(value):
+                    pending.append(value)
+    return found
+
+
+def _unmentioned(atoms, mentions, terms):
+    """The atoms of a claim step its sentence(s) do not mention (as readable strings)."""
+    said = {tuple(m) for m in mentions}
+    wild = {t for u, t in said if u == "*"}
+    out = []
+    for unit, pred in sorted(atoms):
+        term = terms.get(pred)
+        if unit == "!":
+            out.append(pred)
+        elif term is None:
+            out.append(f"{pred} (not a dossier predicate)")
+        elif unit == "?":
+            if not any(t == term for _, t in said):
+                out.append(f"<variable> is {term}")
+        elif (unit, term) not in said and term not in wild:
+            out.append(f"{unit} is {term}")
+    return out
+
+
 def graph_violations(session, item):
     """Evaluation-level violations of the dossier contract (see the module docstring); [] when clean."""
     info = analyse(item)
     allow, only = info["allow"], {sid for sid, c in info["allow"].items() if c in WAIVE_ONLY}
+    refs = info["reference"]
     out = []
     for sid in session.waivers:
         if sid not in allow:
             out.append(f"waiver outside W: {sid}")
     unassumed = [_parse(session, t) for t in info["unassumed"]]
+    parsed = {}
+    ref = lambda sid: parsed.setdefault(sid, _parse(session, refs[sid]))
     for node in session.nodes.values():
         bad = [a for a in node.anchors if a in only]
         if bad:
             out.append(f"node {node.name} is anchored to waive-only sentence(s) {', '.join(bad)}")
             continue
+        claimed = [a for a in node.anchors if session.sentences[a]["role"] == "claimed"]
+        if node.kind == "step" and claimed:
+            if session._decide((), node.formula) != "no":
+                out.append(f"step {node.name} (anchored to {', '.join(claimed)}) is not decided non-valid: a "
+                           f"claim step must state something")
+            mentions = [m for a in claimed for m in info["mentions"].get(a, [])]
+            mentions += [(u, info["terms"].get(p)) for a in node.anchors if a in refs
+                         for u, p in formula_atoms(ref(a)) if u not in ("!", "?")]
+            extra = _unmentioned(formula_atoms(node.formula), mentions, info["terms"])
+            if extra:
+                out.append(f"step {node.name} uses what its sentence(s) {', '.join(claimed)} do not mention: "
+                           + "; ".join(extra))
         if node.kind != "assumption":
             continue
         for atom in unassumed:
@@ -266,14 +338,23 @@ def graph_violations(session, item):
         roles = {session.sentences[a]["role"] for a in node.anchors}
         if not node.anchors or roles != {"given"}:
             continue  # unanchored / claim-anchored: the tool already reports these
-        refs = [info["reference"].get(a) for a in node.anchors]
-        if any(r is None for r in refs):
-            out.append(f"assumption {node.name}: an anchor has no reference content")
+        for a in node.anchors:
+            if a not in refs:
+                continue  # an unparsed given sentence: no reference; the auditor alone judges it
+            verdict = session._decide([ref(a)], node.formula)
+            if verdict != "yes":
+                out.append(f"assumption {node.name} does not state what its anchor {a} alone says "
+                           f"(content check {verdict})" + ("; one assumption per sentence"
+                                                           if len(node.anchors) > 1 else ""))
+    for sid in refs:
+        # Every formalised given sentence, in W or not (so the check is flaw-neutral and reveals nothing
+        # about W); an unformalised, unwaived one is the tool's own "uncovered" failure.
+        nodes = [n.formula for n in session.nodes.values() if sid in n.anchors]
+        if not nodes:
             continue
-        verdict = session._decide([_parse(session, r) for r in refs], node.formula)
+        verdict = session._decide(nodes, ref(sid))
         if verdict != "yes":
-            out.append(f"assumption {node.name} does not state what its anchor(s) {', '.join(node.anchors)} say "
-                       f"(content check {verdict})")
+            out.append(f"the nodes anchored to given {sid} do not state all it says (coverage check {verdict})")
     return out
 
 

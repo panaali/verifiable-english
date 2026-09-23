@@ -1,18 +1,20 @@
-Status: DRAFT v4 (post-dev-tune-2 review fixes, prompts v4, scoring v2; the manifest stamped on 2026-09-22 records the pre-tuning state). Freeze: set this line to "Status: FROZEN <date>", run `waivers --write` and `hashes --write`, commit, OpenTimestamps-stamp PREREG-HASHES.txt, then run held-out.
+Status: DRAFT v5 (post-re-review fixes, prompts v5, scoring v3; the manifest stamped on 2026-09-22 records the pre-tuning state). Freeze: set this line to "Status: FROZEN <date>", run `waivers --write` and `hashes --write`, commit, OpenTimestamps-stamp PREREG-HASHES.txt, then run held-out.
 
 # PREREG-ASSIST: budgeted evaluation of `ve assist` on P5 dossiers
 
 Plan: [PLAN-ASSIST.md](../../PLAN-ASSIST.md). The final "After review" section is binding. Runner:
 `ve_experiments/assist_eval/` (`python -m ve_experiments.assist_eval`). Hash manifest:
-[PREREG-HASHES.txt](PREREG-HASHES.txt). It covers this PREREG text, the tool version, every tool and runner source
-file, each author system prompt (arm x protocol), the frozen auditor prompt, the waiver allowlist W
+[PREREG-HASHES.txt](PREREG-HASHES.txt). It covers this PREREG text, the tool version, every file of the `ve/`
+package (checker, entailment, parser, English layer, lexicon data, assist tool) and every runner source file, each author system prompt (arm x protocol), the frozen auditor prompt, the waiver allowlist W
 ([waivers.json](waivers.json)), both item-id lists and the registered configuration (`CONFIG` in `cli.py`: every
 executable setting: budget and its scope, limits, proposer model, Claude account, Gemini cap, authors, arms, items,
 auditors, success rule, endpoints and claim). The manifest's OpenTimestamps proof is `PREREG-HASHES.txt.ots`. The
 held-out command refuses to run unless line 1 says FROZEN, the manifest recomputes byte for byte, `waivers.json`
-equals the recomputed W, and no command-line setting (`--budget`, `--max-tool-calls`, `--proposer-model`,
-`--account`, `--gemini-cap-usd`, `--items`, an unregistered author or arm) differs from CONFIG. `audit-run` on a
-held-out run applies the same gate and the registered auditor account.
+equals the recomputed W, no command-line setting (`--budget`, `--max-tool-calls`, `--proposer-model`,
+`--account`, `--gemini-cap-usd`, `--items`, any author or arm set other than the FULL registered one) differs from
+CONFIG, no other held-out run id exists (exactly one held-out run; it is resumed under the same id), and neither
+`VE_CLAUDE_ACCOUNT_CONFIG_DIR` nor `CLAUDE_CODE_OAUTH_TOKEN` is set (every real Claude backend also refuses to start
+while either is set). `audit-run` on a held-out run applies the same gate and the registered auditor account.
 
 ## Question
 
@@ -73,9 +75,16 @@ cap. Both get the same `[budget]` line after every turn.
   $1 / $5 / $1.25 / $0.10. Haiku subscription calls are costed at API list price (orchestrator decision c). Gemini
   3.1 Pro costs $2 in / $12 out, with thoughts billed as output and cached input at the full rate
   (`ve_experiments.paid`).
-- Before every author call the harness computes that call's worst case: all input uncached, 16,000 output tokens
-  including thinking. It stops if the spent amount plus this ceiling would exceed the cap. Proposer calls are gated
-  the same way. Spend therefore never exceeds the cap.
+- Before every author call the harness computes that call's worst case: every input token at the dearest input
+  rate (a Claude cache write costs more than uncached input), 16,000 output tokens including thinking. It stops if
+  the spent amount plus this ceiling would exceed the cap. The gate covers EVERY BACKEND ATTEMPT: an internal
+  retry after a Gemini 5xx/timeout (inside `PaidClient`) or a Claude infrastructure error is made only if the
+  spend so far, what the call's earlier attempts were already charged (holds included) and the attempt's ceiling
+  fit the cap; otherwise the item stops ("budget"). Every Gemini turn charges what the paid ledger recorded for its
+  call identity (completions, a billed reply that then failed validation, and 5xx holds, recovered or not), and
+  every exit reconciles the session's author spend with the ledger. Proposer calls and their retries are gated the
+  same way. An item whose spend over all attempts nevertheless exceeds the cap is scored as a FAILURE on every
+  endpoint.
 - Secondary limits: 60 turns, 250 tool calls, 10 calls per turn, and 8,000 characters per tool result (larger
   results are truncated and flagged). Gemini input is capped at 190k tokens, below the long-context price tier.
 - Auditor spend is evaluation cost and is not charged to the item. The Gemini run ledger is capped at **$40** per
@@ -95,27 +104,39 @@ rule, relied-on rule or claimed sentence uses (`unused-fact`); and rules whose a
 the given facts (`dead-rule`) **only if** no claimed sentence relies on them (mentions, sense-free, one of the
 underivable antecedents together with the consequent, including "would imply ..., respectively" pairs and "the
 immediately preceding X result"); a relied-on dead rule must be formalised. The first three kinds are
-**waive-only**. On the 12 dev items W has the same code profile on benign and flawed items. Authors see the rule in
+**waive-only**. A given sentence none of the dev-developed templates parses is `unparsed`: never in W, no reference
+formalisation, judged by the auditor alone (none on dev; five held-out "rule + lot sentence" givens, see README "W
+and the held-out text"). On the 12 dev items W has the same code profile on benign and flawed items. Authors see the rule in
 words, not the list (W marks underivable rules, which could hint at a flaw); a waiver outside W is reported to the
 author only once it is the sole remaining obstacle.
 
 **Evaluation tool success** (`scoring.eval_success`) = status success, or the waiver line is its only failure with
 every waived sentence in W, AND no dossier graph violation:
 - no node is anchored to a waive-only sentence;
-- **anchor content**: an assumption whose anchors are all given must be entailed by the reference formalisation of
-  those sentences (the template reading of the given text). Citing a sentence is not enough: the Opus-review smuggle
-  (a lot/sample bridge anchored to "The sample from lot unit0 is unit2.") fails twice (waive-only anchor; content);
+- **anchor content, per anchor**: an assumption whose anchors are all given must be entailed by EACH anchor's
+  reference formalisation ALONE (the template reading of the given text); an assumption stating what two sentences
+  say only jointly (Q anchored to "P" and "if P then Q") fails and must be split. Citing a sentence is not enough:
+  the Opus-review smuggle (a lot/sample bridge anchored to "The sample from lot unit0 is unit2.") fails twice
+  (waive-only anchor; content);
+- **coverage**: the nodes (assumptions and steps) anchored to a formalised given sentence must together entail its
+  reference formalisation (a partial transcription of a fact list fails);
+- **claim steps**: a step anchored to a claimed sentence must be decided non-valid (no tautology) and may use only
+  the (unit, term) atoms that sentence mentions ("unitN is TERM", or "the immediately preceding TERM result");
 - "remain unassumed" keeps its restriction: no assumption node may entail a listed check (decided "no" required);
 - and the ledger verifies.
 
 **Fidelity audit.** A separate step, blind to proof status, by a model from a different family. `audit-export`
 writes one packet per session: the sentences, the dossier glossary (author-declared predicates listed apart and
 marked "AUTHOR-WRITTEN"), and one unit per asserting sentence: `formalised` (deterministic paraphrases of its
-anchored nodes, the frozen conclusion for the target sentence, and the sentence ids of each step's parents as
-"reasons", so dependency alignment is audited without certification status), `waiver` (the W code and its fixed
+anchored nodes, each with its node id, the frozen conclusion for the target sentence, and as "reasons" the sentence
+ids its steps' derivations rest on, following unanchored helper nodes down to anchored ones), `waiver` (the W code and its fixed
 description; never the author's free-text reason) or `omitted` (with its W code, if any). Packets never contain
-check results, status, arm, author or item id; packet ids are salted hashes, order shuffled with seed 20260923.
-**GPT-6 Astra** (`codex exec`, read-only, reasoning high) audits every packet; **Opus 5.5** (main account)
+check results, status, arm, author or item id. Each packet also carries the COMPLETE node graph under neutral ids
+(every node including unanchored helpers: kind, statement, anchors, derived-from edges; never a check result or
+certification). Packet ids are salted hashes, order shuffled with seed 20260923.
+**GPT-6 Astra** (`codex exec -m gpt-6-astra`, read-only, reasoning high, run in a fresh temporary directory that
+holds only the packet; `--json` events kept; a reported model other than `gpt-6-astra`, no reported model, or any
+tool use voids the call and leaves no verdict) audits every packet; **Opus 5.5** (main account)
 additionally audits every Gemini-authored packet, and such a packet passes only if both pass (disagreements are
 reported). The auditor prompt is frozen in the manifest. An auditor passes a packet iff every formalised unit is
 `faithful` and every waiver/omitted unit `acceptable`; a waiver or omission outside W fails deterministically; a
@@ -135,8 +156,9 @@ disagreements on Gemini packets are listed.
   renamed conclusion, no dossier graph violation; **verified ledger**; and **`gap_located`**: the claimed paragraphs
   of the gap steps equal one of the item's P5 `acceptable_locations`. When the root paragraph is an acceptable
   location, "freeze the target, add one step that states it, finish gap" still fails: every other claimed
-  sentence needs its own step and every non-gap step must be certified (regression test
-  `test_opus_a1_construction_state_target_and_finish_gap_cannot_score`).
+  sentence needs its own certified step, and a tautology there ("if X then X", certified from any parent) is a
+  claim-step violation (regression tests `test_opus_a1_construction_state_target_and_finish_gap_cannot_score`,
+  `test_opus_a1_tautology_construction_no_longer_reaches_the_gap_route`).
 - **Alarms:** tool success on a flawed item. Each case is examined.
 
 **Primary endpoint.** Opus 5.5 **A3 vs A2** faithful-complete, paired by held-out item at the same $2 total
@@ -165,6 +187,7 @@ by the lead from this report, not by a count threshold.
    legacy single-auditor proxy, see README). Each change bumps `PROMPT_VERSION` and is recorded in README "Tuning
    log".
 3. Freeze: set line 1 FROZEN, run `waivers --write` and `hashes --write`, commit, run `ots stamp`.
-4. HELD-OUT: `run --split heldout` with no setting flags (one author x arm per command is allowed), then
+4. HELD-OUT: `run --split heldout --run-id <one id>` with no setting flags and the full registered author and arm
+   set (a rerun of the same command resumes it; a second held-out run id is refused), then
    audit-export, audit-run, report. No changes after the freeze. An infrastructure-aborted session is rerun with the
    same command; its earlier attempts stay charged to the item. Aborts are reported.

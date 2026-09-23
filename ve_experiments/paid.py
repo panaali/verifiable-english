@@ -97,6 +97,10 @@ class BudgetExceeded(PreflightError):
     """CLI maps this to exit status 3."""
 
 
+class AttemptRefused(BudgetExceeded):
+    """The caller's ``before_attempt`` gate refused the next backend attempt (first call or retry)."""
+
+
 @dataclass(frozen=True)
 class PaidRequest:
     identity: str
@@ -788,6 +792,11 @@ class PaidClient:
         self.ledger.recover_smoke(request)
         self.backend.record_fallback = self.ledger.format_fallback
         while True:
+            # A caller gate (e.g. a per-item budget) sees EVERY backend attempt, internal retries included,
+            # before its reservation; it returns False to refuse the attempt.
+            gate = getattr(self, "before_attempt", None)
+            if gate is not None and not gate(request):
+                raise AttemptRefused("the caller's budget gate refused this attempt")
             revisions = self.ledger.reserve(request)
             start = time.monotonic()
             self.backend.last_response = None

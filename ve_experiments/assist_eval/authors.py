@@ -47,6 +47,26 @@ class AuthorAbort(RuntimeError):
         self.cost = cost
 
 
+class ItemBudgetExhausted(AuthorAbort):
+    """The item budget cannot cover the next BACKEND ATTEMPT of a call (a retry after a 5xx included): the
+    item stops with reason "budget". ``cost`` = everything the call's earlier attempts were charged."""
+
+
+ACCOUNT_ENV = ("VE_CLAUDE_ACCOUNT_CONFIG_DIR", "CLAUDE_CODE_OAUTH_TOKEN")
+
+
+def refuse_account_env(environ=None):
+    """The claude CLI endpoint lets two environment variables reroute the "main" account (a config directory
+    and a raw OAuth token). The evaluation never honours them: a real Claude backend refuses to start while
+    either is set (names only are reported; values are never read into a message)."""
+    import os
+    environ = os.environ if environ is None else environ
+    found = [k for k in ACCOUNT_ENV if environ.get(k)]
+    if found:
+        raise AuthorError("account override refused: unset " + ", ".join(found)
+                          + " (the evaluation's Claude account is fixed by CONFIG / --account)")
+
+
 def attempts_cost(model, attempts):
     """List price of earlier attempts ({input_tokens, output_tokens}, None counted as 0), all input uncached."""
     return sum((claude_cost(model, {"input_tokens": a.get("input_tokens") or 0,
@@ -125,6 +145,7 @@ class ClaudeTextAuthor:
         self.model = CLAUDE_MODELS[which]
         self.output_tokens = output_tokens
         if client is None:
+            refuse_account_env()
             wd = working_directory or f"/private/tmp/ve-assist-eval-{which}-empty"
             controls = Controls(model=self.model, thinking_tokens=None, output_tokens=output_tokens,
                                 effort=effort if which == "opus" else None, timeout_s=timeout_s,
@@ -147,10 +168,23 @@ class ClaudeTextAuthor:
         tokens = (len(self.system) + len(self.prompt(history))) // CHARS_PER_TOKEN + 2000
         return price_ceiling(self.model, tokens, self.output_tokens)
 
+    attempt_gate = None  # set by the loop: gate(ceiling_usd, already_charged_usd) -> affordable?
+
     def turn(self, history, call_id, parse_calls=True):
-        from ve_experiments.claude_cli import EndpointError, InfrastructureError
+        from ve_experiments.claude_cli import EndpointError, InfrastructureError, RetryRefused
+        need = self.ceiling(history)
+        if self.attempt_gate is not None:
+            # every internal infrastructure retry is one more backend attempt: gate it on the item budget
+            # with the tokens the earlier attempts of this call already spent
+            self.client.before_retry = lambda prior: self.attempt_gate(need, attempts_cost(self.model, prior))
         try:
             row = self.client.sample(call_id, self.system, self.prompt(history), 0)
+        except RetryRefused as exc:
+            spent = getattr(exc, "usage", None)
+            spent = spent if type(spent) is dict else {}
+            cost = attempts_cost(self.model, ([] if spent.get("not_started") else [spent])
+                                 + list(spent.get("prior_attempts") or []))
+            raise ItemBudgetExhausted(f"budget: {exc}", cost) from exc
         except InfrastructureError as exc:
             spent = getattr(exc, "usage", None)
             spent = spent if type(spent) is dict else {}
@@ -173,10 +207,27 @@ class ClaudeTextAuthor:
         calls, error = parse_text_calls(row["text"])
         return Turn(row["text"], calls, cost, usage, protocol_error=error, raw={"key": row["key"]})
 
+    def single_ceiling(self, system, prompt):
+        """Worst-case cost of one standalone call (auditor use)."""
+        return price_ceiling(self.model, (len(system) + len(prompt)) // CHARS_PER_TOKEN + 2000, self.output_tokens)
+
     def single(self, call_id, system, prompt):
-        """One standalone call (auditor use)."""
-        row = self.client.sample(call_id, system, prompt, 0)
-        return row["text"], claude_cost(self.model, row["usage"]), row
+        """One standalone call (auditor use). A failed call carries ``cost`` (the tokens it reported, plus
+        earlier attempts); a reply from any model but the pinned one is rejected (charged)."""
+        try:
+            row = self.client.sample(call_id, system, prompt, 0)
+        except Exception as exc:
+            spent = getattr(exc, "usage", None)
+            if type(spent) is dict:
+                exc.cost = attempts_cost(self.model, ([] if spent.get("not_started") else [spent])
+                                         + list(spent.get("prior_attempts") or []))
+            raise
+        cost = claude_cost(self.model, row["usage"]) + attempts_cost(self.model, row.get("prior_attempts"))
+        if row.get("served_model") != self.model:
+            exc = AuthorError(f"reported model {row.get('served_model')!r} is not the pinned {self.model}")
+            exc.cost = cost
+            raise exc
+        return row["text"], cost, row
 
 
 # ------------------------------------------------------------------ Gemini (Vertex)
@@ -238,23 +289,41 @@ class GeminiAuthor:
         # the count plus 4,096; the turn aborts (context) when that exceeds the input cap.
         return 2 * count + 4096
 
+    attempt_gate = None  # set by the loop: gate(ceiling_usd, already_charged_usd) -> affordable?
+
+    def _before_attempt(self, request):
+        """PaidClient hook, run before EVERY backend attempt (its internal 5xx retries included): the
+        attempt's ledger ceiling plus what this call identity was already charged must fit the item budget."""
+        if self.attempt_gate is None:
+            return True
+        from ve_experiments.paid import cost
+        return self.attempt_gate(cost(request.model, request.max_input_tokens, request.billed_output_cap),
+                                 self.charged(request.identity))
+
     def turn(self, history, call_id, parse_calls=True):
-        from ve_experiments.paid import BudgetExceeded, InfrastructureError, PreflightError
+        from ve_experiments.paid import AttemptRefused, BudgetExceeded, InfrastructureError, PreflightError
         count = self._count(history, call_id)
         if self._margin(count) > self.max_input_tokens:
             raise AuthorAbort(f"context {count} tokens exceeds the {self.max_input_tokens} cap")
         request = self.request(history, call_id, self._margin(count))
+        if hasattr(self.client, "__dict__"):
+            self.client.before_attempt = self._before_attempt
+        # Every exit charges what the paid ledger recorded for this call identity: completed calls (a billed
+        # reply that then failed validation included) and the unknown-billing holds of 5xx/timeouts.
         try:
             reply = self.client.call(request)
+        except AttemptRefused as exc:
+            raise ItemBudgetExhausted(f"budget: {exc}", self.charged(call_id)) from exc
         except BudgetExceeded as exc:
-            raise AuthorAbort(f"run cap: {exc}") from exc
+            raise AuthorAbort(f"run cap: {exc}", self.charged(call_id)) from exc
         except InfrastructureError as exc:
-            # A 5xx/timeout may or may not be billed: the paid ledger holds the call's ceiling as
-            # infrastructure overhead. Charge those holds to this attempt (fail closed).
-            raise AuthorAbort(f"infrastructure: {exc}", self.holds(call_id)) from exc
+            raise AuthorAbort(f"infrastructure: {exc}", self.charged(call_id)) from exc
         except PreflightError as exc:
-            raise AuthorAbort(f"paid ledger: {exc}") from exc
-        cost = gemini_cost(reply.input_tokens, reply.billed_output_tokens)
+            raise AuthorAbort(f"paid ledger: {exc}", self.charged(call_id)) from exc
+        # the reply's own price, or what the ledger charged for the identity (holds of recovered 5xx
+        # attempts included), whichever is larger
+        cost = max(gemini_cost(reply.input_tokens, reply.billed_output_tokens) + self.holds(call_id),
+                   self.charged(call_id))
         usage = {"input_tokens": reply.input_tokens, "output_tokens": reply.output_tokens,
                  "thinking_tokens": reply.thinking_tokens, "cached_tokens": reply.cached_tokens,
                  "finish_reason": reply.finish_reason}
@@ -267,16 +336,29 @@ class GeminiAuthor:
             error = f"no function call in the reply (finish_reason {reply.finish_reason})"
         return Turn(reply.text, calls, cost, usage, protocol_error=error, raw={"assistant": assistant})
 
-    def holds(self, identity):
-        """Unknown-billing holds the paid ledger recorded for ``identity`` (0 for a rejected 429)."""
+    def _ledger_rows(self, match):
         if not self.ledger_path.exists():
-            return Decimal(0)
-        total = Decimal(0)
+            return []
+        rows = []
         for line in self.ledger_path.read_text(encoding="utf-8").splitlines():
             row = json.loads(line) if line.strip() else {}
-            if row.get("identity") == identity and row.get("event") == "infrastructure_failure":
-                total += Decimal(str(row.get("infrastructure_hold_usd") or 0))
-        return total
+            if match(str(row.get("identity", ""))):
+                rows.append(row)
+        return rows
+
+    def holds(self, identity):
+        """Unknown-billing holds the paid ledger recorded for ``identity`` (0 for a rejected 429)."""
+        return sum((Decimal(str(r.get("infrastructure_hold_usd") or 0))
+                    for r in self._ledger_rows(lambda i: i == identity) if r.get("event") == "infrastructure_failure"),
+                   Decimal(0))
+
+    def charged(self, identity=None, match=None):
+        """Everything the paid ledger charged for ``identity`` (or every identity ``match`` accepts):
+        completed calls plus unknown-billing holds."""
+        rows = self._ledger_rows(match or (lambda i: i == identity))
+        return (sum((Decimal(str(r.get("cost_usd") or 0)) for r in rows if r.get("event") == "complete"), Decimal(0))
+                + sum((Decimal(str(r.get("infrastructure_hold_usd") or 0)) for r in rows
+                       if r.get("event") == "infrastructure_failure"), Decimal(0)))
 
     @staticmethod
     def function_responses(calls, results):
