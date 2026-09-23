@@ -118,12 +118,24 @@ def submission(item, kind=None, edges=None):
                     seen.add(b)
                     stack.append(b)
         return seen
-    candidates = [c for c in (reach(comp) for comp in components) if not c & blocked]
-    while len(members) < target and candidates:
-        window = candidates
-        best = min(window, key=lambda c: abs(facts + sum(out[n] for n in c - members)
-                                             - ratio * len(members | c)))
-        candidates.remove(best)
+    # v3: candidates are whole components and the closure of every single sink node (all closed), so
+    # the padding can land close to both label-independent targets (size and facts per member).
+    seen, candidates = set(), []
+    for c in [reach(comp) for comp in components] + [reach([n]) for comp in components for n in comp]:
+        key = frozenset(c)
+        if key not in seen and not c & blocked:
+            seen.add(key)
+            candidates.append(c)
+
+    def score(c):
+        new = c - members
+        size = len(members) + len(new)
+        return (size > target + 2, abs(facts + sum(out[n] for n in new) - ratio * size), len(new))
+    while len(members) < target:
+        useful = [c for c in candidates if c - members]
+        if not useful:
+            break
+        best = min(useful, key=score)
         facts += sum(out[n] for n in best - members)
         members |= best
     return {'kind': kind, 'principal': principal, 'resource': resource, 'separating_set': sorted(members),

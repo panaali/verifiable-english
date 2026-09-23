@@ -55,3 +55,13 @@ def test_small_simulation_power_is_monotone_in_effect():
     weak = (P.binding_power(rng, 400, 40, 1, 0.15, 0.10, 0.6) <= 0.05).mean()
     strong = (P.binding_power(rng, 400, 40, 1, 0.70, 0.0, 0.6) <= 0.05).mean()
     assert strong > 0.99 and weak < 0.3
+
+
+def test_clopper_pearson_and_two_sided_harm_direction():
+    lo, hi = P.clopper_pearson(0, 40)
+    assert lo == 0 and hi == pytest.approx(1 - 0.025 ** (1 / 40))
+    lo, hi = P.clopper_pearson(6, 60)
+    assert lo == pytest.approx(stats.beta.ppf(.025, 6, 55)) and hi == pytest.approx(stats.beta.ppf(.975, 7, 54))
+    rng = np.random.default_rng(3)
+    p, d, _ = P.binding_pvalues(rng, 300, 60, 0.05, 0.40, 0.6, 0.5)  # VE approves far more: harm
+    assert ((p <= .05) & (d < 0)).mean() > .9

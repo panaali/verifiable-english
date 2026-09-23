@@ -1,25 +1,22 @@
-"""T1d Part 1: paired item-level power analysis (offline; no model calls).
+"""T1d Part 1: paired item-level power analysis, v3 (offline; no model calls).
 
-The item is the unit of analysis. Each arm gives k samples per item; every test uses one
-pre-declared per-item summary so that repeats never masquerade as independent items.
+The item is the unit of analysis; k = 1 (a 30-item second sample is used only to report the ICC).
+Fixed design (v2 recommendation, unchanged): 100 binding items = 40 CHARACTER (char_principal,
+char_resource) + 60 SEMANTIC (alias, group_member, role_user), 10 leak, 160 honest; five arms.
 
-Pre-declared per-item binaries (conservative in the safety direction for each endpoint):
-* binding false approval: item counts as approved if ANY of its k samples approves
-  ("any-approval"); a monitor that approves a false claim even once has failed on it.
-* honest completion: item counts as completed only if ALL k samples approve ("all-completion");
-  any honest rejection or INVALID counts against the arm.
-With k = 1 both reduce to the single decision.
-
-Primary Holm family (alpha .05, four p-values, all on the two-sided scale):
-  for m in {opus, haiku}:
-    (a) binding false approval, m-ve vs m-raw: exact McNemar (two-sided binomial on discordant items);
-    (b) honest completion, m-ve vs m-raw: paired non-inferiority, H0: p_ve - p_raw <= -margin,
-        Tango (1998) score test; the one-sided p is doubled so it sits on the Holm scale
-        (equivalently: the lower bound of a two-sided 1 - 2*alpha_adj Tango interval > -margin).
-  The joint claim for model m requires both (a) (with a reduction) and (b) rejected under Holm.
-  Newcombe hybrid score (method 10) and an item-cluster bootstrap are sensitivity analyses.
-Secondary (outside the family): opus-ve vs opus-raw-high, McNemar on binding items.
-Descriptive: sign-flip permutation on per-item mean differences (exact, convolution), ICC for k >= 2.
+v3 primary Holm family (alpha .05, SIX p-values, all two-sided scale), for m in {opus, haiku}:
+  (a) char binding false approval, m-ve vs m-raw: exact two-sided McNemar on the 40 char items;
+  (b) semantic binding false approval, m-ve vs m-raw: exact two-sided McNemar on the 60 semantic items;
+  (c) honest completion NI at a 10 pp margin, Tango score test, one-sided p doubled onto the Holm scale
+      (equivalently: the lower bound of the two-sided 1 - 2*alpha_j Tango interval, alpha_j Holm's
+      level at that step, exceeds -0.10; that adjusted bound is what is reported).
+Claims (redefined): "the protocol helps model m on stratum s" iff (s) rejected with FEWER VE false
+approvals AND (c) rejected. A rejection of (a) or (b) with MORE VE false approvals is the declared
+HARM outcome ("the certificate protocol increased false approval"), never discarded. VE-arm false
+approval per stratum is also reported with an exact Clopper-Pearson 95% CI.
+Power is reported per model and for both models jointly, per stratum claim, over ICC and the latent
+paired-arm correlation. Secondary (outside the family): opus-ve vs opus-raw-high, McNemar on all 100
+binding items, with VE false approval 0, 5% or 10%.
 """
 from __future__ import annotations
 
@@ -31,7 +28,7 @@ from scipy import stats
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'experiments/T1d/power.json'
-ARMS = ('opus-raw', 'opus-ve', 'haiku-raw', 'haiku-ve', 'opus-raw-high')
+ARMS = ('opus-raw', 'opus-raw-high', 'opus-ve', 'haiku-raw', 'haiku-ve')
 BUDGET = 1500
 ALPHA = 0.05
 SEED = 20260923
@@ -196,169 +193,172 @@ def item_propensities(rng, reps, n, means, icc, cross_r=0.5):
     return out
 
 
-def simulate_items(rng, reps, n, k, means, icc):
+def simulate_items(rng, reps, n, k, means, icc, cross_r=0.5):
     """reps x n x arms counts of successes over k samples."""
-    p = item_propensities(rng, reps, n, means, icc)
+    p = item_propensities(rng, reps, n, means, icc, cross_r)
     return rng.binomial(k, p)
 
 
-def binding_power(rng, reps, n, k, raw_fa, ve_fa, icc):
-    counts = simulate_items(rng, reps, n, k, (ve_fa, raw_fa), icc)
+def clopper_pearson(x, n, level=0.95):
+    a = (1 - level) / 2
+    lo = 0.0 if x == 0 else float(stats.beta.ppf(a, x, n - x + 1))
+    hi = 1.0 if x == n else float(stats.beta.ppf(1 - a, x + 1, n - x))
+    return lo, hi
+
+
+def binding_pvalues(rng, reps, n, raw_fa, ve_fa, icc, cross_r):
+    """Two-sided exact McNemar p and the direction (+1: VE approves fewer false claims)."""
+    counts = simulate_items(rng, reps, n, 1, (ve_fa, raw_fa), icc, cross_r)
+    ve, raw = counts[..., 0] > 0, counts[..., 1] > 0
+    b = (ve & ~raw).sum(axis=1)   # VE approves, raw does not
+    c = (~ve & raw).sum(axis=1)   # raw approves, VE does not
+    return mcnemar_exact(b, c), np.sign(c - b), ve.sum(axis=1)
+
+
+def binding_power(rng, reps, n, k, raw_fa, ve_fa, icc, cross_r=0.5):
+    """p-values usable for a REDUCTION claim (wrong direction -> 1). Kept for the v2 tests."""
+    counts = simulate_items(rng, reps, n, k, (ve_fa, raw_fa), icc, cross_r)
     any_ve, any_raw = counts[..., 0] > 0, counts[..., 1] > 0
-    b = (any_ve & ~any_raw).sum(axis=1)   # ve approves, raw does not
-    c = (~any_ve & any_raw).sum(axis=1)   # raw approves, ve does not
+    b = (any_ve & ~any_raw).sum(axis=1)
+    c = (~any_ve & any_raw).sum(axis=1)
     p = mcnemar_exact(b, c)
-    return np.where(c > b, p, 1.0)        # a claim needs a reduction; wrong-direction = no claim
+    return np.where(c > b, p, 1.0)
 
 
-def ni_pvalues(rng, reps, n, k, ve_fail, raw_fail, icc, margin):
-    counts = simulate_items(rng, reps, n, k, (1 - ve_fail, 1 - raw_fail), icc)
+def ni_pvalues(rng, reps, n, k, ve_fail, raw_fail, icc, margin, cross_r=0.5):
+    counts = simulate_items(rng, reps, n, k, (1 - ve_fail, 1 - raw_fail), icc, cross_r)
     all_ve, all_raw = counts[..., 0] == k, counts[..., 1] == k
     n12 = (all_ve & ~all_raw).sum(axis=1)
     n21 = (~all_ve & all_raw).sum(axis=1)
     return np.minimum(1.0, 2 * tango_ni_p(n12, n21, n, margin))
 
 
-RAW_FA = (0.15, 0.2, 0.3, 0.5, 0.7)
-VE_FA = (0.0, 0.05, 0.10)
+N_CHAR, N_SEMANTIC, N_LEAK, N_HONEST, K = 40, 60, 10, 160, 1
+ICC_ITEMS = 30
+MARGIN = 0.10
 ICCS = (0.3, 0.6, 0.9)
+CROSS_R = (0.2, 0.5, 0.8)
+RAW_FA = (0.15, 0.2, 0.3, 0.5, 0.7)
+VE_FA = (0.0, 0.05, 0.10, 0.20)
 HONEST = {'none': (0.0, 0.0), 'both 2%': (0.02, 0.02), 'both 5%': (0.05, 0.05), 've 5%, raw 0%': (0.05, 0.0)}
-N_BINDING = (30, 40, 50, 60, 80, 100)
-N_HONEST = (60, 80, 100, 120, 160)
-N_LEAK = (10, 20)
-KS = (1, 2, 3)
-MARGINS = (0.10, 0.15)
-PLAUSIBLE = {'raw_fa': 0.3, 've_fa': 0.05, 'icc': 0.6, 'honest': 'both 2%'}
+SCENARIOS = {  # (char raw, char VE, semantic raw, semantic VE, honest failures)
+    'plausible': (0.30, 0.05, 0.30, 0.05, 'both 2%'),
+    'char_works_semantic_fools_ve': (0.30, 0.05, 0.15, 0.10, 'both 2%'),
+    'pessimistic': (0.15, 0.10, 0.15, 0.10, 'both 5%'),
+    't1c_like': (0.70, 0.0, 0.70, 0.0, 'none'),
+    'semantic_harm': (0.30, 0.05, 0.05, 0.20, 'both 2%'),
+}
 
 
-def designs():
-    for nb in N_BINDING:
-        for nh in N_HONEST:
-            for nl in N_LEAK:
-                for k in KS:
-                    total = (nb + nl + nh) * len(ARMS) * k
-                    if total <= BUDGET:
-                        yield {'n_binding': nb, 'n_leak': nl, 'n_honest': nh, 'k': k, 'decisions': total}
-
-
-def run(reps=2000, seed=SEED):
+def run(reps=4000, seed=SEED):
     rng = np.random.default_rng(seed)
-    grid = list(designs())
-    nbs = sorted({d['n_binding'] for d in grid})
-    nhs = sorted({d['n_honest'] for d in grid})
-    ks = sorted({d['k'] for d in grid})
-    # Binding McNemar p-value draws, per (n, k, raw, ve, icc).
-    bind = {}
-    for n in nbs:
-        for k in ks:
-            for raw in RAW_FA:
-                for ve in VE_FA:
-                    for icc in ICCS:
-                        bind[(n, k, raw, ve, icc)] = binding_power(rng, reps, n, k, raw, ve, icc)
-    ni = {}
-    for n in nhs:
-        for k in ks:
-            for name, (vf, rf) in HONEST.items():
-                for icc in ICCS:
-                    for margin in MARGINS:
-                        ni[(n, k, name, icc, margin)] = ni_pvalues(rng, reps, n, k, vf, rf, icc, margin)
-    # Type-I error of the NI test at the boundary (true delta = -margin), per n, k, margin.
+    decisions = (N_CHAR + N_SEMANTIC + N_LEAK + N_HONEST) * len(ARMS) * K
+    icc_decisions = ICC_ITEMS * len(ARMS)
+
+    def family(sc, icc, r):
+        """One model: (char p, char dir, semantic p, semantic dir, NI p). Independent draws per model."""
+        cr, cv, sr, sv, honest = SCENARIOS[sc]
+        pc, dc, _ = binding_pvalues(rng, reps, N_CHAR, cr, cv, icc, r)
+        ps, ds, _ = binding_pvalues(rng, reps, N_SEMANTIC, sr, sv, icc, r)
+        vf, rf = HONEST[honest]
+        pn = ni_pvalues(rng, reps, N_HONEST, K, vf, rf, icc, MARGIN, r)
+        return pc, dc, ps, ds, pn
+
+    scenario_power = []
+    for sc in SCENARIOS:
+        for icc in ICCS:
+            for r in CROSS_R:
+                opus, haiku = family(sc, icc, r), family(sc, icc, r)
+                ps = np.stack([opus[0], opus[2], opus[4], haiku[0], haiku[2], haiku[4]], axis=-1)
+                rej = holm_reject(ps)
+                out = {'scenario': sc, 'icc': icc, 'cross_r': r}
+                for m, (base, draws) in (('opus', (0, opus)), ('haiku', (3, haiku))):
+                    char = rej[:, base] & (draws[1] > 0)
+                    sem = rej[:, base + 1] & (draws[3] > 0)
+                    ni = rej[:, base + 2]
+                    out[m] = {'char_reduction': float(char.mean()), 'semantic_reduction': float(sem.mean()),
+                              'ni': float(ni.mean()), 'claim_char': float((char & ni).mean()),
+                              'claim_semantic': float((sem & ni).mean()), 'claim_both_strata': float((char & sem & ni).mean()),
+                              'harm_char': float((rej[:, base] & (draws[1] < 0)).mean()),
+                              'harm_semantic': float((rej[:, base + 1] & (draws[3] < 0)).mean())}
+                    out[m]['_char'], out[m]['_sem'], out[m]['_ni'] = char, sem, ni
+                for claim, key in (('claim_char', ('_char',)), ('claim_semantic', ('_sem',)),
+                                   ('claim_both_strata', ('_char', '_sem'))):
+                    ok = np.ones(reps, dtype=bool)
+                    for m in ('opus', 'haiku'):
+                        ok &= out[m]['_ni']
+                        for k_ in key:
+                            ok &= out[m][k_]
+                    out[f'both_models_{claim}'] = float(ok.mean())
+                for m in ('opus', 'haiku'):
+                    for k_ in ('_char', '_sem', '_ni'):
+                        del out[m][k_]
+                scenario_power.append(out)
+
+    # Unadjusted and first-step (alpha/6) McNemar power per stratum size over the rate grid.
+    stratum_grid = []
+    for name, n in (('char', N_CHAR), ('semantic', N_SEMANTIC)):
+        for raw in RAW_FA:
+            for ve in VE_FA:
+                for r in CROSS_R:
+                    p, d, _ = binding_pvalues(rng, reps, n, raw, ve, 0.6, r)
+                    stratum_grid.append({'stratum': name, 'n': n, 'raw_fa': raw, 've_fa': ve, 'icc': 0.6, 'cross_r': r,
+                                         'reduction_unadjusted': float(((p <= ALPHA) & (d > 0)).mean()),
+                                         'reduction_alpha_over_6': float(((p <= ALPHA / 6) & (d > 0)).mean()),
+                                         'harm_unadjusted': float(((p <= ALPHA) & (d < 0)).mean())})
+    # Harm detection: VE false approval above raw.
+    harm = []
+    for name, n in (('char', N_CHAR), ('semantic', N_SEMANTIC)):
+        for raw, ve in ((0.05, 0.20), (0.05, 0.30), (0.10, 0.30), (0.0, 0.15)):
+            p, d, _ = binding_pvalues(rng, reps, n, raw, ve, 0.6, 0.5)
+            harm.append({'stratum': name, 'n': n, 'raw_fa': raw, 've_fa': ve,
+                         'harm_power_unadjusted': float(((p <= ALPHA) & (d < 0)).mean()),
+                         'harm_power_alpha_over_6': float(((p <= ALPHA / 6) & (d < 0)).mean())})
+    # Clopper-Pearson half-widths of the VE-arm false approval estimate at the stratum sizes.
+    cp = {f'{name} n={n}, {x} approvals': [round(v, 4) for v in clopper_pearson(x, n)]
+          for name, n in (('char', N_CHAR), ('semantic', N_SEMANTIC)) for x in (0, 2, 6)}
+    # NI type I error at the margin and NI power.
     type1 = {}
-    for n in nhs:
-        for k in (1,):
-            for margin in MARGINS:
-                for base in (0.0, 0.02):
-                    p = ni_pvalues(rng, reps * 2, n, k, base + margin, base, 0.6, margin)
-                    # Unadjusted one-sided level .025 (doubled p <= .05) and Holm's most stringent .0125.
-                    type1[f'n={n},margin={margin},raw_fail={base}'] = {
-                        'one_sided_.025': float(np.mean(p <= ALPHA)), 'holm_first_.0125': float(np.mean(p <= ALPHA / 4))}
-
-    def joint(design, raw, ve, icc, honest, margin):
-        """Both models under the same scenario, independent draws; Holm over the 4 p-values."""
-        nb, nh, k = design['n_binding'], design['n_honest'], design['k']
-        pb = bind[(nb, k, raw, ve, icc)]
-        pn = ni[(nh, k, honest, icc, margin)]
-        perm = np.random.default_rng(seed + 1).permutation(len(pb))
-        family = np.stack([pb, pn, pb[perm], pn[perm[::-1]]], axis=-1)
-        rej = holm_reject(family)
-        return {'binding_opus': float(rej[:, 0].mean()), 'ni_opus': float(rej[:, 1].mean()),
-                'joint_opus': float((rej[:, 0] & rej[:, 1]).mean()),
-                'joint_both_models': float(rej.all(axis=1).mean()),
-                'binding_unadjusted': float((pb <= ALPHA).mean()), 'ni_unadjusted': float((pn <= ALPHA).mean())}
-
-    rows = []
-    for d in grid:
-        cell = dict(d)
-        cell['plausible'] = joint(d, PLAUSIBLE['raw_fa'], PLAUSIBLE['ve_fa'], PLAUSIBLE['icc'], PLAUSIBLE['honest'], 0.10)
-        cell['pessimistic'] = joint(d, 0.15, 0.10, 0.9, 'both 5%', 0.10)
-        cell['t1c_like'] = joint(d, 0.7, 0.0, 0.6, 'none', 0.10)
-        cell['plausible_margin15'] = joint(d, PLAUSIBLE['raw_fa'], PLAUSIBLE['ve_fa'], PLAUSIBLE['icc'], PLAUSIBLE['honest'], 0.15)
-        rows.append(cell)
-    # Choose: maximise plausible joint power (both models), then pessimistic; prefer k = 1 and fewer decisions.
-    best = max(rows, key=lambda r: (round(r['plausible']['joint_both_models'], 2), round(r['pessimistic']['joint_opus'], 2),
-                                    -r['k'], -r['decisions']))
-    spare = BUDGET - best['decisions']
-    icc_items = spare // len(ARMS)  # one extra sample on this many items, all arms, for ICC reporting
-    # Full scenario table for the chosen design.
-    detail = []
-    for raw in RAW_FA:
-        for ve in VE_FA:
-            for icc in ICCS:
-                detail.append({'raw_fa': raw, 've_fa': ve, 'icc': icc,
-                               'binding_mcnemar_power_unadjusted': float((bind[(best['n_binding'], best['k'], raw, ve, icc)] <= ALPHA).mean()),
-                               'binding_power_holm_first_step': float((bind[(best['n_binding'], best['k'], raw, ve, icc)] <= ALPHA / 4).mean())})
-    ni_detail = [{'honest_failures': name, 'icc': icc, 'margin': m,
-                  'ni_power_unadjusted': float((ni[(best['n_honest'], best['k'], name, icc, m)] <= ALPHA).mean()),
-                  'ni_power_holm_last_step': float((ni[(best['n_honest'], best['k'], name, icc, m)] <= ALPHA / 4).mean())}
-                 for name in HONEST for icc in ICCS for m in MARGINS]
-    secondary = {f'opus-raw-high fa={raw}': float((bind[(best['n_binding'], best['k'], raw, 0.0, 0.6)] <= ALPHA).mean())
-                 for raw in RAW_FA}
-    # Sensitivity: agreement of Tango, Newcombe and bootstrap NI decisions on simulated plausible data.
-    sens_rng = np.random.default_rng(seed + 2)
-    counts = simulate_items(sens_rng, 200, best['n_honest'], 1, (0.98, 0.98), 0.6)
-    agree = {'tango': 0, 'newcombe': 0, 'bootstrap': 0}
-    for rep in counts:
-        ve, raw = rep[:, 0] == 1, rep[:, 1] == 1
-        n11, n12, n21 = int((ve & raw).sum()), int((ve & ~raw).sum()), int((~ve & raw).sum())
-        n22 = len(ve) - n11 - n12 - n21
-        agree['tango'] += tango_interval(n12, n21, len(ve))[0] > -0.10
-        agree['newcombe'] += newcombe_interval(n11, n12, n21, n22)[0] > -0.10
-        agree['bootstrap'] += cluster_bootstrap_lower(ve.astype(int) - raw.astype(int), reps=1000, rng=sens_rng) > -0.10
-    recommendation = {
-        'design': {k: best[k] for k in ('n_binding', 'n_leak', 'n_honest', 'k', 'decisions')},
-        'icc_subsample': {'items': int(icc_items), 'extra_decisions': int(icc_items * len(ARMS)),
-                          'note': 'a second sample on this many items (half binding, half honest), all arms; '
-                                  'ICC is reported, never used in the primary tests'},
-        'power_plausible': best['plausible'], 'power_pessimistic': best['pessimistic'],
-        'power_t1c_like': best['t1c_like'], 'power_plausible_margin15': best['plausible_margin15'],
-        'scenarios': {'plausible': PLAUSIBLE, 'pessimistic': {'raw_fa': 0.15, 've_fa': 0.10, 'icc': 0.9, 'honest': 'both 5%'},
-                      't1c_like': {'raw_fa': 0.7, 've_fa': 0.0, 'icc': 0.6, 'honest': 'none'}},
-        'binding_detail': detail, 'ni_detail': ni_detail, 'secondary_opus_ve_vs_opus_raw_high_power': secondary,
-        'ni_method_agreement_at_true_delta_0_both_2pct_fail': {k: v / len(counts) for k, v in agree.items()},
-    }
-    return {'model_calls': 0, 'seed': seed, 'reps': reps, 'budget_decisions': BUDGET, 'arms': list(ARMS),
-            'alpha': ALPHA, 'holm_family': ['opus binding McNemar', 'opus honest NI (Tango)',
-                                            'haiku binding McNemar', 'haiku honest NI (Tango)'],
-            'binaries': {'binding': 'approved in >= 1 of k samples', 'honest': 'approved in all k samples'},
-            'simulation': 'beta-binomial per item (ICC within item), Gaussian-copula item effect shared across '
-                          'paired arms (latent r = 0.5); both models simulated independently under the same scenario',
-            't1c_anchors': T1C_ANCHORS, 'ni_type1_at_margin': type1, 'grid': rows, 'recommendation': recommendation}
+    for base in (0.0, 0.02):
+        p = ni_pvalues(rng, reps, N_HONEST, K, base + MARGIN, base, 0.6, MARGIN)
+        type1[f'raw_fail={base}'] = {'one_sided_.025': float(np.mean(p <= ALPHA)),
+                                     'holm_first_.05/6': float(np.mean(p <= ALPHA / 6))}
+    ni_detail = [{'honest_failures': name, 'icc': icc, 'cross_r': r,
+                  'ni_power_unadjusted': float((ni_pvalues(rng, reps, N_HONEST, K, *HONEST[name], icc, MARGIN, r) <= ALPHA).mean())}
+                 for name in HONEST for icc in ICCS for r in CROSS_R]
+    # Secondary: opus-ve vs opus-raw-high, all 100 binding items, VE false approval 0 / 5 / 10%.
+    secondary = {f'raw_high_fa={raw}, ve_fa={ve}': float(((lambda pd: (pd[0] <= ALPHA) & (pd[1] > 0))(
+        binding_pvalues(rng, reps, N_CHAR + N_SEMANTIC, raw, ve, 0.6, 0.5))).mean())
+        for raw in RAW_FA for ve in (0.0, 0.05, 0.10)}
+    headline = {sc: next(o for o in scenario_power if o['scenario'] == sc and o['icc'] == 0.6 and o['cross_r'] == 0.5)
+                for sc in SCENARIOS}
+    return {'model_calls': 0, 'seed': seed, 'reps': reps, 'arms': list(ARMS), 'alpha': ALPHA,
+            'design': {'n_char': N_CHAR, 'n_semantic': N_SEMANTIC, 'n_leak': N_LEAK, 'n_honest': N_HONEST, 'k': K,
+                       'decisions': decisions, 'icc_subsample_items': ICC_ITEMS, 'icc_decisions': icc_decisions,
+                       'total_decisions': decisions + icc_decisions},
+            'holm_family': ['opus char McNemar', 'opus semantic McNemar', 'opus honest NI (Tango)',
+                            'haiku char McNemar', 'haiku semantic McNemar', 'haiku honest NI (Tango)'],
+            'claims': {'stratum s, model m': 'McNemar_s rejected with fewer VE false approvals AND NI rejected',
+                       'harm': 'McNemar_s rejected with MORE VE false approvals (declared outcome)'},
+            'scenarios': {k: dict(zip(('char_raw', 'char_ve', 'semantic_raw', 'semantic_ve', 'honest'), v))
+                          for k, v in SCENARIOS.items()},
+            'simulation': 'beta-binomial per item, Gaussian-copula item effect shared by paired arms with latent '
+                          'correlation cross_r; the two models are simulated independently',
+            't1c_anchors': T1C_ANCHORS, 'headline_icc0.6_r0.5': headline, 'scenario_power': scenario_power,
+            'stratum_grid': stratum_grid, 'harm_detection': harm, 'clopper_pearson_ve_false_approval': cp,
+            'ni_type1_at_margin': type1, 'ni_detail': ni_detail, 'secondary_opus_ve_vs_opus_raw_high': secondary}
 
 
 def main():
     result = run()
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(result, indent=1, sort_keys=True) + '\n')
-    print(f"{'nb':>4} {'nl':>3} {'nh':>4} {'k':>2} {'dec':>5} | plaus: bind  NI   joint both | pess joint_opus | t1c joint")
-    for r in sorted(result['grid'], key=lambda r: -r['plausible']['joint_both_models'])[:15]:
-        pl, pe, t1 = r['plausible'], r['pessimistic'], r['t1c_like']
-        print(f"{r['n_binding']:>4} {r['n_leak']:>3} {r['n_honest']:>4} {r['k']:>2} {r['decisions']:>5} | "
-              f"{pl['binding_opus']:.3f} {pl['ni_opus']:.3f} {pl['joint_opus']:.3f} {pl['joint_both_models']:.3f} | "
-              f"{pe['joint_opus']:.3f} | {t1['joint_opus']:.3f}")
-    rec = result['recommendation']
-    print('recommendation:', json.dumps(rec['design']), 'icc subsample:', rec['icc_subsample']['items'])
-    print('type I (NI at margin):', json.dumps(result['ni_type1_at_margin'], indent=0))
-    print('method agreement:', rec['ni_method_agreement_at_true_delta_0_both_2pct_fail'])
+    for sc, o in result['headline_icc0.6_r0.5'].items():
+        print(sc, json.dumps({m: o[m] for m in ('opus', 'haiku')}),
+              {k: o[k] for k in o if k.startswith('both_models')})
+    print('type I:', result['ni_type1_at_margin'])
+    print('harm:', json.dumps(result['harm_detection']))
+    print('secondary:', json.dumps(result['secondary_opus_ve_vs_opus_raw_high']))
 
 
 if __name__ == '__main__':
