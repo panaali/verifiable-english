@@ -1,0 +1,886 @@
+"""Interactive, sentence-level assisted formalisation (``ve assist``).
+
+A session holds frozen targets, source sentences, an environment, and a graph
+of nodes. Every node is one closed VE formula, anchored to the source
+sentences it formalises. An *assumption* has no parents; a *step* has parents
+and must be checked by ``check_step``. Nothing enters the graph without an
+explicit author action, and every action (including rejected ones) is logged
+in an append-only ledger that deterministically replays.
+
+Trust boundary: the tableau certificate checker and ``check_countermodel`` are
+the only authorities for "follows" and "countermodel". Everything else here
+(anchoring, coverage, load-bearing analysis, lexical gates, the proposer) is
+bookkeeping that reports, never certifies. Fidelity to the prose is the
+author's responsibility and is audited outside the tool.
+"""
+from __future__ import annotations
+
+from copy import deepcopy
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+import hashlib
+import inspect
+import json
+import warnings
+
+from .. import ast
+from ..argument import ArgumentGraph, Claim, Deduction, check_argument, deduction_identity
+from ..entailment import check_entailment_certificate, prove_entailment
+from ..environment import RESERVED, Environment, valid_identifier
+from ..errors import VEError
+from ..parser import parse
+from ..printer import print_formula
+from ..search import check_countermodel, find_countermodel
+from .ground import ground_countermodel
+from .sources import load_source
+
+SESSION_FORMAT = "ve.assist-session@1"
+TOOL_VERSION = "ve-assist@1"
+ORIGINS = ("hand-written", "proposer-verbatim", "proposer-edited", "suggestion-verbatim", "suggestion-edited")
+DEFAULT_OPTIONS = {"premise_suggestions": False, "max_proof_steps": 10_000, "max_domain_size": 2,
+                   "max_models": 2_000, "max_evaluations": 100_000, "proposer_k": 3,
+                   "propose_repair_rounds": 1}
+
+
+class AssistError(VEError):
+    code = "AssistError"
+
+
+class LedgerReplayError(VEError):
+    code = "LedgerReplayError"
+
+
+def _now():
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def _sha(value):
+    return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def _ident(name, label="name"):
+    if not valid_identifier(name) or name in RESERVED:
+        raise AssistError(f"Invalid {label} {name!r}: use [a-z][a-z0-9_]*, not a reserved word")
+    return name
+
+
+def _names(value, label):
+    if value is None:
+        return ()
+    if isinstance(value, str):
+        value = [value]
+    if type(value) not in (list, tuple) or any(type(v) is not str for v in value):
+        raise AssistError(f"{label} must be a list of strings")
+    if len(set(value)) != len(value):
+        raise AssistError(f"Duplicate entry in {label}")
+    return tuple(value)
+
+
+def _predicates_of(formula, found=None):
+    found = set() if found is None else found
+    pending = [formula]
+    while pending:
+        node = pending.pop()
+        if type(node) in (ast.Unary, ast.Binary):
+            found.add(node.predicate)
+        if type(node) is ast.Reach:
+            if type(node.edge) is ast.Named:
+                found.add(node.edge.relation)
+            else:
+                pending.append(node.edge.formula)
+        for key in ("body", "left", "right"):
+            child = getattr(node, key, None)
+            if child is not None and not isinstance(child, (ast.Var, ast.Const)):
+                pending.append(child)
+    return found
+
+
+def _constants_of(formula, found=None):
+    found = set() if found is None else found
+    pending = [formula]
+    while pending:
+        node = pending.pop()
+        for key in ("term", "left", "right", "body", "edge", "formula"):
+            child = getattr(node, key, None)
+            if type(child) is ast.Const:
+                found.add(child.name)
+            elif child is not None and not isinstance(child, (ast.Var, str)):
+                pending.append(child)
+    return found
+
+
+@dataclass
+class Node:
+    name: str
+    formula: ast.Formula
+    text: str
+    anchors: tuple[str, ...]
+    parents: tuple[str, ...]
+    origin: str
+    source_ref: str | None = None  # candidate or suggestion id
+    history: list = field(default_factory=list)
+
+    @property
+    def kind(self):
+        return "step" if self.parents else "assumption"
+
+
+class AssistSession:
+    """One authoring session. Use ``apply`` (or the JSON tool API) to act."""
+
+    def __init__(self, config):
+        config = deepcopy(config)
+        if config.get("format") != SESSION_FORMAT:
+            raise AssistError("Not a ve assist session configuration")
+        self.config = config
+        self.options = {**DEFAULT_OPTIONS, **config.get("options", {})}
+        unknown = set(self.options) - set(DEFAULT_OPTIONS)
+        if unknown:
+            raise AssistError("Unknown session options: " + ", ".join(sorted(unknown)))
+        self.env = Environment(config["environment"])
+        self.overlay = config.get("english_vocabulary")
+        source = load_source(config["source"])
+        self.sentences = {s["id"]: s for s in source["sentences"]}
+        self.sentence_order = [s["id"] for s in source["sentences"]]
+        self.targets = {}
+        for row in config.get("targets", []):
+            tid = _ident(row.get("id"), "target id")
+            if row.get("sentence") not in self.sentences:
+                raise AssistError(f"Target {tid} names an unknown sentence {row.get('sentence')!r}")
+            if tid in self.targets:
+                raise AssistError(f"Duplicate target id {tid}")
+            self.targets[tid] = {"id": tid, "sentence": row["sentence"], "formula": None, "text": None,
+                                 "frozen_by": None}
+            if row.get("formula"):
+                formula, _ = self._parse(row["formula"], "auto")
+                self.targets[tid].update(formula=formula, text=self._canonical(formula), frozen_by="config")
+        if not self.targets:
+            raise AssistError("A session needs at least one target sentence")
+        self.nodes: dict[str, Node] = {}
+        self.checks: dict[str, dict] = {}
+        self.waivers: dict[str, str] = {}
+        self.declared: dict[str, dict] = {}
+        self.proposals: dict[str, dict] = {}
+        self.candidates: dict[str, dict] = {}
+        self.suggestions: dict[str, dict] = {}
+        self.events: list[dict] = []
+        self.proposer = None  # injected callable, see ve.assist.proposer
+        self._replaying = None
+
+    # ------------------------------------------------------------------ creation
+    @classmethod
+    def create(cls, environment, source, targets, *, english_vocabulary=None, options=None, metadata=None):
+        env = environment if isinstance(environment, dict) else environment.to_dict()
+        config = {"format": SESSION_FORMAT, "tool_version": TOOL_VERSION, "environment": env,
+                  "english_vocabulary": english_vocabulary, "source": source, "targets": targets,
+                  "options": options or {}, "metadata": metadata or {}, "created": _now()}
+        session = cls(config)
+        session.config["options"] = dict(session.options)
+        session.config["config_digest"] = _sha({k: v for k, v in session.config.items() if k != "created"})
+        return session
+
+    # ------------------------------------------------------------------ helpers
+    def _canonical(self, formula):
+        return print_formula(self.env, formula) + "."
+
+    def _parse(self, text, surface="auto"):
+        if type(text) is not str or not text.strip():
+            raise AssistError("Formula text must be a nonempty string")
+        body = text.strip()
+        strict = body if body.endswith(".") else body + "."
+        errors = []
+        if surface in ("auto", "strict"):
+            try:
+                document = parse(self.env, strict + "\n")
+                if len(document.formulas) != 1:
+                    raise AssistError("A node is exactly one statement")
+                return document.formulas[0], "strict"
+            except AssistError:
+                raise
+            except VEError as exc:
+                errors.append(exc)
+                if surface == "strict":
+                    raise
+        if surface in ("auto", "english"):
+            from ..english import parse_english_with_metadata
+            try:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    parsed = parse_english_with_metadata(self.env, strict + "\n", vocabulary=self.overlay,
+                                                         accept_suggested_vocabulary=True)
+                if len(parsed.document.formulas) != 1:
+                    raise AssistError("A node is exactly one statement")
+                return parsed.document.formulas[0], "english"
+            except AssistError:
+                raise
+            except VEError as exc:
+                if surface == "english" or not errors:
+                    raise
+                raise errors[0] from exc
+        raise AssistError(f"Unknown surface {surface!r}: use auto, strict or english")
+
+    def paraphrase_formula(self, formula):
+        """Deterministic English paraphrase (ve_english), strict text on failure."""
+        from ..english import render_english
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                return render_english(formula, self.env, vocabulary=self.overlay,
+                                      accept_suggested_vocabulary=True) + "."
+        except Exception:  # display only; never part of a verdict
+            return self._canonical(formula)
+
+    def _sentence_view(self, sid):
+        s = self.sentences[sid]
+        return {"id": sid, "role": s["role"], "text": s["text"]}
+
+    def node_view(self, name):
+        node = self.nodes[name]
+        check = self.checks.get(name)
+        view = {"name": name, "kind": node.kind, "text": node.text,
+                "paraphrase": self.paraphrase_formula(node.formula),
+                "anchors": [self._sentence_view(a) for a in node.anchors],
+                "parents": list(node.parents), "origin": node.origin}
+        if node.source_ref:
+            view["source_ref"] = node.source_ref
+        if node.kind == "step":
+            view["check"] = check["status"] if check else "unchecked"
+        matches = [t for t, row in self.targets.items() if row["formula"] == node.formula]
+        if matches:
+            view["matches_targets"] = matches
+        return view
+
+    def _require_frozen(self):
+        missing = [t for t, row in self.targets.items() if row["formula"] is None]
+        if missing:
+            raise AssistError("Freeze every target first (freeze_target): " + ", ".join(missing))
+
+    def _anchors(self, anchors):
+        anchors = _names(anchors, "anchors")
+        for a in anchors:
+            if a not in self.sentences:
+                raise AssistError(f"Unknown sentence id {a!r}")
+        return anchors
+
+    def _descendants(self, name):
+        found, pending = set(), [name]
+        while pending:
+            current = pending.pop()
+            for other in self.nodes.values():
+                if current in other.parents and other.name not in found:
+                    found.add(other.name)
+                    pending.append(other.name)
+        return found
+
+    def _invalidate(self, name):
+        for affected in {name, *(n.name for n in self.nodes.values() if name in n.parents)}:
+            self.checks.pop(affected, None)
+
+    def _budget(self):
+        return {k: self.options[k] for k in ("max_proof_steps", "max_domain_size", "max_models", "max_evaluations")}
+
+    # ------------------------------------------------------------------ dispatch
+    ACTIONS = ("freeze_target", "add_node", "accept", "rewrite", "remove_node", "declare", "check_step",
+               "status", "waive", "show", "paraphrase", "sentences", "compare", "propose", "export",
+               "record_usage")
+
+    def apply(self, action, args=None, *, _recorded=None):
+        """Run one action, log it, and return its JSON result (never raises VEError)."""
+        if action not in self.ACTIONS:
+            raise AssistError(f"Unknown action {action!r}")
+        args = deepcopy(args or {})
+        if type(args) is not dict:
+            raise AssistError("Arguments must be an object")
+        handler = getattr(self, "_do_" + action)
+        event = {"seq": len(self.events), "action": action, "args": args, "time": _now()}
+        self._model_calls = []
+        self._replaying = list(_recorded.get("model_calls", [])) if _recorded else None
+        try:
+            try:
+                inspect.signature(handler).bind(**args)
+            except TypeError as exc:
+                raise AssistError(f"Invalid arguments for {action}: {exc}") from exc
+            result = {"ok": True, **handler(**args)}
+        except VEError as exc:
+            result = {"ok": False, "error": exc.to_dict()}
+        finally:
+            self._replaying = None
+        if self._model_calls:
+            event["model_calls"] = self._model_calls
+            event["tokens"] = {"proposer": {
+                "input_tokens": sum(c.get("input_tokens") or 0 for c in self._model_calls),
+                "output_tokens": sum(c.get("output_tokens") or 0 for c in self._model_calls),
+                "calls": len(self._model_calls)}}
+        if action == "record_usage" and result["ok"]:
+            event["tokens"] = {args["role"]: {"input_tokens": args.get("input_tokens", 0),
+                                              "output_tokens": args.get("output_tokens", 0), "calls": 1}}
+        event["result"] = result
+        event["result_chars"] = len(json.dumps(result, ensure_ascii=False))
+        self.events.append(event)
+        return result
+
+    # ------------------------------------------------------------------ actions
+    def _do_freeze_target(self, target, text=None, surface="auto", candidate=None):
+        """Commit the formal target for a target sentence. Irreversible."""
+        if candidate is not None:
+            if candidate not in self.candidates:
+                raise AssistError(f"Unknown candidate {candidate!r}")
+            if text is None:
+                text = self._canonical(self.candidates[candidate]["formula"])
+        if text is None:
+            raise AssistError("freeze_target needs text or a candidate")
+        if target not in self.targets:
+            raise AssistError(f"Unknown target {target!r}")
+        row = self.targets[target]
+        if row["formula"] is not None:
+            raise AssistError(f"Target {target} is already frozen and cannot change")
+        if self.nodes:
+            raise AssistError("Targets must be frozen before any node is added")
+        formula, used = self._parse(text, surface)
+        origin = "hand-written"
+        if candidate is not None:
+            origin = "proposer-verbatim" if formula == self.candidates[candidate]["formula"] else "proposer-edited"
+        row.update(formula=formula, text=self._canonical(formula), frozen_by="author", origin=origin)
+        return {"target": target, "sentence": self._sentence_view(row["sentence"]), "text": row["text"],
+                "paraphrase": self.paraphrase_formula(formula), "surface": used}
+
+    def _do_add_node(self, name, text=None, anchors=(), parents=(), candidate=None, suggestion=None,
+                     surface="auto"):
+        self._require_frozen()
+        _ident(name, "node name")
+        if name in self.nodes:
+            raise AssistError(f"Node {name} already exists; use rewrite")
+        anchors, parents = self._anchors(anchors), _names(parents, "parents")
+        for p in parents:
+            if p not in self.nodes:
+                raise AssistError(f"Unknown parent node {p!r}")
+        if candidate and suggestion:
+            raise AssistError("Give at most one of candidate and suggestion")
+        ref = candidate or suggestion
+        if ref:
+            pool = self.candidates if candidate else self.suggestions
+            if ref not in pool:
+                raise AssistError(f"Unknown {'candidate' if candidate else 'suggestion'} {ref!r}")
+            offered = pool[ref]["formula"]
+            formula = offered if text is None else self._parse(text, surface)[0]
+            kind = "proposer" if candidate else "suggestion"
+            origin = f"{kind}-verbatim" if formula == offered else f"{kind}-edited"
+        else:
+            if text is None:
+                raise AssistError("add_node needs text, a candidate, or a suggestion")
+            formula, _ = self._parse(text, surface)
+            origin = "hand-written"
+        self.nodes[name] = Node(name, formula, self._canonical(formula), anchors, parents, origin, ref)
+        return {"node": self.node_view(name)}
+
+    def _do_accept(self, candidate, name, anchors=(), parents=()):
+        """Accept a proposer candidate verbatim (alias of add_node with candidate)."""
+        return self._do_add_node(name, anchors=anchors, parents=parents, candidate=candidate)
+
+    def _do_rewrite(self, name, text=None, anchors=None, parents=None, surface="auto"):
+        if name not in self.nodes:
+            raise AssistError(f"Unknown node {name!r}")
+        node = self.nodes[name]
+        formula = node.formula if text is None else self._parse(text, surface)[0]
+        new_anchors = node.anchors if anchors is None else self._anchors(anchors)
+        new_parents = node.parents if parents is None else _names(parents, "parents")
+        if parents is not None:
+            below = self._descendants(name) | {name}
+            for p in new_parents:
+                if p not in self.nodes:
+                    raise AssistError(f"Unknown parent node {p!r}")
+                if p in below:
+                    raise AssistError(f"Parent {p} would create a cycle")
+        if (formula, new_anchors, new_parents) == (node.formula, node.anchors, node.parents):
+            raise AssistError("Rewrite changes nothing")
+        node.history.append({"text": node.text, "anchors": list(node.anchors), "parents": list(node.parents),
+                             "origin": node.origin})
+        if formula != node.formula and node.origin.endswith("-verbatim"):
+            node.origin = node.origin.replace("-verbatim", "-edited")
+        node.formula, node.text, node.anchors, node.parents = formula, self._canonical(formula), new_anchors, new_parents
+        self._invalidate(name)
+        return {"node": self.node_view(name), "invalidated_checks": sorted(
+            {name, *(n.name for n in self.nodes.values() if name in n.parents)})}
+
+    def _do_remove_node(self, name):
+        if name not in self.nodes:
+            raise AssistError(f"Unknown node {name!r}")
+        children = sorted(n.name for n in self.nodes.values() if name in n.parents)
+        if children:
+            raise AssistError(f"Node {name} is a parent of {', '.join(children)}; rewrite those first")
+        del self.nodes[name]
+        self.checks.pop(name, None)
+        return {"removed": name}
+
+    def _do_declare(self, name, gloss, kind="predicate", arguments=(), sort=None, verbalisation=None,
+                    acknowledge=()):
+        """Add vocabulary through the ``ve propose``-style gates. Gloss required."""
+        from ..english import EnglishVocabulary
+        from ..english_phrases import BLOCKED, content_tokens, nearest
+        _ident(name, "symbol")
+        if kind not in ("predicate", "constant", "sort"):
+            raise AssistError("kind must be predicate, constant or sort")
+        taken = {*self.env.sorts, *self.env.predicates, *self.env.constants}
+        if name in taken:
+            raise AssistError(f"Symbol {name} is already declared")
+        if type(gloss) is not str or len(gloss.strip()) < 3 or gloss.strip().lower() == name.replace("_", " "):
+            raise AssistError("A gloss is required: say in words what the symbol means (not just its name)")
+        acknowledge = set(_names(acknowledge, "acknowledge"))
+        data = self.env.to_dict()
+        if kind == "predicate":
+            arguments = _names(arguments, "arguments")
+            if len(arguments) not in (1, 2) or any(a not in self.env.sorts for a in arguments):
+                raise AssistError("A predicate needs one or two declared argument sorts")
+            data["vocabulary"]["predicates"][name] = {"arguments": list(arguments), "description": gloss.strip()}
+        elif kind == "constant":
+            if sort not in self.env.sorts:
+                raise AssistError("A constant needs a declared sort")
+            data["vocabulary"]["constants"][name] = {"sort": sort, "description": gloss.strip()}
+        else:
+            data["vocabulary"]["sorts"][name] = {"description": gloss.strip()}
+        flags = []
+        # Gate 1 (as in ve propose): near-duplicates of existing wording need acknowledgement.
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            words = EnglishVocabulary(self.env, vocabulary=self.overlay, accept_suggested_vocabulary=True)
+        phrase = (verbalisation or "").replace("{0}", "").replace("{1}", "").strip() or name.replace("_", " ")
+        for row in nearest(phrase, words):
+            if row["near_duplicate"]:
+                flags.append({"flag": row["symbol"], "reason": "near-duplicate of existing " + row["kind"],
+                              "detail": {k: row[k] for k in ("wording", "edit_distance", "shared_stem",
+                                                             "content_overlap")}})
+        if kind == "predicate" and set(content_tokens(phrase)) & BLOCKED:
+            raise AssistError("Wording contains blocked relational or negative content; declare a neutral name")
+        # Gate 2: the new symbol must not be a target conclusion under another name.
+        for tid, row in self.targets.items():
+            target_words = content_tokens(self.sentences[row["sentence"]]["text"])
+            target_words -= {c.lower() for c in self.env.constants}
+            symbol_words = content_tokens(gloss + " " + name.replace("_", " ") + " " + phrase)
+            symbol_words -= {c.lower() for c in self.env.constants}
+            if target_words and symbol_words and (target_words <= symbol_words or symbol_words <= target_words):
+                flags.append({"flag": "conclusion:" + tid, "reason": "gloss/name restates target sentence " + tid,
+                              "detail": {"target_sentence": self.sentences[row["sentence"]]["text"]}})
+        missing = sorted({f["flag"] for f in flags} - acknowledge)
+        if missing:
+            raise AssistError("Declaration blocked; acknowledge each flag if intended: " + ", ".join(missing)
+                              + ". Flags: " + json.dumps(flags, ensure_ascii=False))
+        stray = acknowledge - {f["flag"] for f in flags}
+        if stray:
+            raise AssistError("Acknowledgement names no raised flag: " + ", ".join(sorted(stray)))
+        new_env = Environment(data)
+        overlay = deepcopy(self.overlay)
+        if overlay is not None or verbalisation:
+            overlay = overlay or {"format": "ve.english-vocabulary@1", "sorts": {}, "predicates": {}}
+            overlay["environment_id"] = new_env.environment_id
+            if verbalisation and kind == "predicate":
+                overlay["predicates"][name] = {"verbalisation": verbalisation, "suggested": True}
+            if verbalisation and kind == "sort":
+                raise AssistError("Sort wording is not supported here; use the sort name")
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                try:
+                    EnglishVocabulary(new_env, vocabulary=overlay, accept_suggested_vocabulary=True)
+                except VEError as exc:
+                    raise AssistError("Verbalisation fails the English template linter: " + exc.message) from exc
+        self.env, self.overlay = new_env, overlay
+        self.declared[name] = {"kind": kind, "gloss": gloss.strip(), "acknowledged": sorted(acknowledge)}
+        # Certificates and models bind the environment identity: recheck silently.
+        rechecked = sorted(self.checks)
+        for step in rechecked:
+            self.checks[step] = self._check(self.nodes[step], self.checks[step].get("invariants") or ())
+        return {"declared": name, "kind": kind, "gloss": gloss.strip(), "acknowledged": sorted(acknowledge),
+                "environment_id": self.env.environment_id, "rechecked": rechecked}
+
+    def _invariant(self, text):
+        """Closure-induction invariant written as 'for every SORT v, (F)'; F with v free is used."""
+        formula, _ = self._parse(text, "strict")
+        if type(formula) is not ast.Forall:
+            raise AssistError("Write an invariant as 'for every SORT v, (F)', where F mentions v")
+        return formula.body
+
+    def _check(self, node, invariants=()):
+        premises = tuple(self.nodes[p].formula for p in node.parents)
+        budget = self._budget()
+        record = {"status": "unknown", "parents": list(node.parents)}
+        if invariants:
+            record["invariants"] = list(invariants)
+        inv = tuple(self._invariant(i) for i in invariants)
+        try:
+            proof = prove_entailment(self.env, premises, node.formula, max_steps=budget["max_proof_steps"],
+                                     invariants=inv)
+        except (ValueError, VEError) as exc:
+            record["prover"] = {"status": "error", "detail": str(exc)}
+            proof = None
+        if proof is not None:
+            record["prover"] = {"status": proof.status, "steps": proof.steps}
+        if proof is not None and proof.status == "Found":
+            replay = check_entailment_certificate(self.env, premises, node.formula, proof.certificate,
+                                                  max_steps=budget["max_proof_steps"])
+            if replay.valid:
+                record.update(status="follows", certificate=proof.certificate,
+                              certificate_digest=_sha(proof.certificate), replay_steps=replay.steps)
+                contradiction = prove_entailment(self.env, premises, ast.Bottom(),
+                                                 max_steps=budget["max_proof_steps"])
+                if contradiction.status == "Found":
+                    record["contradictory_parents"] = True
+                return record
+            record["prover"]["replay"] = replay.status
+        status, model = ground_countermodel(self.env, premises, node.formula)
+        search = "ground"
+        if status == "Unsupported":
+            search = "bounded"
+            result = find_countermodel(self.env, premises, node.formula,
+                                       max_domain_size=budget["max_domain_size"],
+                                       max_models=budget["max_models"],
+                                       max_evaluations=budget["max_evaluations"])
+            status, model = result.status, result.model
+        record["countermodel_search"] = {"method": search, "status": status}
+        if model is not None:
+            checked = check_countermodel(self.env, premises, node.formula, model,
+                                         max_evaluations=budget["max_evaluations"])
+            if checked.valid:
+                record.update(status="countermodel", model=model.to_dict(), model_id=model.model_id,
+                              explanation={**self.describe_model(model, (*premises, node.formula)),
+                                           "reading": "Every parent is true in this model and the "
+                                                      "step's conclusion is false."})
+        return record
+
+    def describe_model(self, model, formulas):
+        """Readable model: named entities, true atoms, and the false atoms the formulas mention."""
+        from .ground import _atoms
+        used, mentioned = set(), {}
+        for f in formulas:
+            _predicates_of(f, used)
+            _atoms(f, mentioned)  # ground atoms (constants only); stops at binders
+        names = {}
+        for const, entity in model.constants.items():
+            names.setdefault(entity, []).append(const)
+        label = lambda e: " = ".join(sorted(names[e])) if e in names else e
+        spell = lambda p, args: (f"{label(args[0])} is {p}" if len(args) == 1
+                                 else f"{label(args[0])} {p} {label(args[1])}")
+        true_atoms = [spell(p, row) for p in sorted(used) if p in self.env.predicates
+                      for row in sorted(model.relations[p])]
+        false_atoms = []
+        for (p, consts) in mentioned:
+            row = tuple(model.constants[c] for c in consts)
+            text = spell(p, row)
+            if row not in model.relations[p] and text not in false_atoms:
+                false_atoms.append(text)
+        return {"entities": {sort: [label(e) for e in model.domains[sort]] for sort in sorted(model.domains)},
+                "true": true_atoms, "false": sorted(false_atoms)}
+
+    def _do_check_step(self, name, invariants=(), suggest_premises=False):
+        """Does node ``name`` follow from its parents? follows / countermodel / unknown."""
+        if name not in self.nodes:
+            raise AssistError(f"Unknown node {name!r}")
+        node = self.nodes[name]
+        if node.kind != "step":
+            raise AssistError(f"{name} is an assumption (no parents); only steps are checked")
+        if suggest_premises and not self.options["premise_suggestions"]:
+            raise AssistError("Premise suggestions are disabled in this session (option premise_suggestions)")
+        record = self._check(node, tuple(_names(invariants, "invariants")))
+        self.checks[name] = record
+        result = {"node": name, "status": record["status"], "parents": list(node.parents),
+                  "conclusion": node.text, "conclusion_paraphrase": self.paraphrase_formula(node.formula)}
+        if record["status"] == "follows":
+            result["certificate_digest"] = record["certificate_digest"]
+            if record.get("contradictory_parents"):
+                result["warning"] = "The parents are jointly contradictory; the step follows vacuously."
+        elif record["status"] == "countermodel":
+            result["countermodel"] = record["explanation"]
+            result["model_id"] = record["model_id"]
+        else:
+            result["detail"] = "No certificate and no countermodel within budget (not a refutation)."
+        if suggest_premises and record["status"] != "follows":
+            result["premise_suggestions"] = self._suggest_premises(node)
+        return result
+
+    def _suggest_premises(self, node):
+        """Off by default. Suggestions can assume the gap away: each is labelled."""
+        from .premises import suggest_premises
+        rows = suggest_premises(self, node)
+        out = []
+        for row in rows:
+            sid = f"s{len(self.suggestions) + 1}"
+            self.suggestions[sid] = {"formula": row["formula"], "for": node.name, "kind": row["kind"]}
+            view = {k: v for k, v in row.items() if k != "formula"}
+            out.append({"id": sid, **view, "text": self._canonical(row["formula"]),
+                        "paraphrase": self.paraphrase_formula(row["formula"])})
+        return out
+
+    def _do_waive(self, sentence, reason):
+        if sentence not in self.sentences:
+            raise AssistError(f"Unknown sentence id {sentence!r}")
+        if type(reason) is not str or len(reason.strip()) < 3:
+            raise AssistError("A waiver needs a reason")
+        if any(row["sentence"] == sentence for row in self.targets.values()):
+            raise AssistError("A target sentence cannot be waived")
+        self.waivers[sentence] = reason.strip()
+        return {"waived": sentence, "reason": reason.strip()}
+
+    def _do_show(self, name=None):
+        if name is not None:
+            if name not in self.nodes:
+                raise AssistError(f"Unknown node {name!r}")
+            view = self.node_view(name)
+            view["history"] = self.nodes[name].history
+            check = self.checks.get(name)
+            if check and check["status"] == "countermodel":
+                view["countermodel"] = check["explanation"]
+            return {"node": view}
+        return {"targets": [self._target_view(t) for t in self.targets],
+                "nodes": [self.node_view(n) for n in self.nodes]}
+
+    def _target_view(self, tid):
+        row = self.targets[tid]
+        view = {"id": tid, "sentence": self._sentence_view(row["sentence"]), "frozen": row["formula"] is not None}
+        if row["formula"] is not None:
+            view.update(text=row["text"], paraphrase=self.paraphrase_formula(row["formula"]))
+        return view
+
+    def _do_paraphrase(self, text, surface="auto"):
+        formula, used = self._parse(text, surface)
+        return {"text": self._canonical(formula), "paraphrase": self.paraphrase_formula(formula), "surface": used}
+
+    def _do_sentences(self):
+        return {"sentences": [self._sentence_view(s) | {"asserting": self.sentences[s]["asserting"]}
+                              for s in self.sentence_order],
+                "targets": [self._target_view(t) for t in self.targets],
+                "vocabulary": self.vocabulary()}
+
+    def vocabulary(self):
+        return {"sorts": {k: v.description for k, v in self.env.sorts.items()},
+                "predicates": {k: {"arguments": list(v.arguments), "gloss": v.description}
+                               for k, v in self.env.predicates.items()},
+                "constants": {k: v.sort for k, v in self.env.constants.items()}}
+
+    def _resolve(self, ref):
+        if ref in self.nodes:
+            return self.nodes[ref].formula
+        if ref in self.candidates:
+            return self.candidates[ref]["formula"]
+        if ref in self.targets and self.targets[ref]["formula"] is not None:
+            return self.targets[ref]["formula"]
+        return self._parse(ref, "auto")[0]
+
+    def _do_compare(self, a, b):
+        """Compare two formulas (node names, candidate ids, target ids or VE text)."""
+        from .proposer import compare_formulas
+        return compare_formulas(self, self._resolve(a), self._resolve(b))
+
+    def _do_propose(self, sentence, k=None, note=None):
+        from .proposer import run_propose
+        return run_propose(self, sentence, k=k, note=note)
+
+    def _do_record_usage(self, role, input_tokens=0, output_tokens=0, note=None):
+        if role not in ("author", "proposer", "auditor"):
+            raise AssistError("role must be author, proposer or auditor")
+        if any(type(v) is not int or v < 0 for v in (input_tokens, output_tokens)):
+            raise AssistError("Token counts must be nonnegative integers")
+        return {"recorded": role}
+
+    # ------------------------------------------------------------------ status
+    def _support(self, root):
+        found, pending = [], [root]
+        while pending:
+            name = pending.pop()
+            if name in found:
+                continue
+            found.append(name)
+            pending.extend(self.nodes[name].parents)
+        return found
+
+    def _anchor_state(self, node):
+        roles = {self.sentences[a]["role"] for a in node.anchors}
+        if "given" in roles:
+            return "anchored"
+        if "claimed" in roles:
+            return "anchored_to_claim_only"
+        return "unanchored"
+
+    def target_graph(self, tid):
+        """Build the checked ArgumentGraph for one target, or (None, reason)."""
+        row = self.targets[tid]
+        if row["formula"] is None:
+            return None, "target not frozen", None
+        matches = [n for n in self.nodes.values() if n.formula == row["formula"] and n.kind == "step"]
+        if not matches:
+            return None, "no step node states the frozen target", None
+        certified = [n for n in matches if self.checks.get(n.name, {}).get("status") == "follows"]
+        root = (certified or matches)[0]
+        support = self._support(root.name)
+        claims = tuple(Claim.create(self.env, n, print_formula(self.env, self.nodes[n].formula) + ".\n")
+                       for n in support)
+        steps = [n for n in support if self.nodes[n].kind == "step"]
+        bare = ArgumentGraph(self.env, claims, tuple(Deduction("d_" + n, self.nodes[n].parents, n) for n in steps),
+                             root.name, target_scope="assist:" + tid)
+        deductions = []
+        for n in steps:
+            plain = Deduction("d_" + n, self.nodes[n].parents, n)
+            check = self.checks.get(n)
+            certs = ()
+            if check and check["status"] == "follows":
+                certs = ({"edge_id": deduction_identity(bare, plain), "direction": "follows",
+                          "proof": check["certificate"]},)
+            deductions.append(Deduction("d_" + n, self.nodes[n].parents, n, certs))
+        graph = ArgumentGraph(self.env, claims, tuple(deductions), root.name, target_scope="assist:" + tid)
+        return graph, None, root.name
+
+    def _entails(self, premises, conclusion):
+        try:
+            return prove_entailment(self.env, tuple(premises), conclusion,
+                                    max_steps=self.options["max_proof_steps"]).status == "Found"
+        except (ValueError, VEError):
+            return False
+
+    def _do_status(self):
+        failures = []
+        targets, support_all = [], set()
+        for tid in self.targets:
+            view = self._target_view(tid)
+            graph, reason, root = self.target_graph(tid) if view["frozen"] else (None, "target not frozen", None)
+            if graph is None:
+                view.update(certified=False, reason=reason)
+                failures.append(f"target {tid}: {reason}")
+            else:
+                result = check_argument(graph, search=False)
+                support = self._support(root)
+                support_all.update(support)
+                view.update(node=root, replay=result.status, certified=result.status == "Checked",
+                            support=support, assumptions=list(result.remaining_assumptions))
+                if result.status != "Checked":
+                    failures.append(f"target {tid}: graph replay status {result.status}")
+                leaves = [self.nodes[n].formula for n in result.remaining_assumptions]
+                if leaves and self._entails(leaves, ast.Bottom()):
+                    view["inconsistent_assumptions"] = True
+                    failures.append(f"target {tid}: its assumptions are jointly contradictory")
+            targets.append(view)
+        steps = [n for n in self.nodes.values() if n.kind == "step"]
+        unproved = [{"node": n.name, "check": self.checks.get(n.name, {}).get("status", "unchecked"),
+                     "parents": list(n.parents)} for n in steps
+                    if self.checks.get(n.name, {}).get("status") != "follows"]
+        if unproved:
+            failures.append(f"{len(unproved)} unproved step(s)")
+        unanchored = []
+        for n in self.nodes.values():
+            if n.kind != "assumption" or self._anchor_state(n) == "anchored":
+                continue
+            needed_by = []
+            for s in steps:
+                if n.name in s.parents and s.name in support_all and \
+                        self.checks.get(s.name, {}).get("status") == "follows":
+                    rest = [self.nodes[p].formula for p in s.parents if p != n.name]
+                    if not self._entails(rest, s.formula):
+                        needed_by.append(s.name)
+            row = {"node": n.name, "anchor_state": self._anchor_state(n), "text": n.text,
+                   "paraphrase": self.paraphrase_formula(n.formula),
+                   "supports_target": n.name in support_all, "load_bearing": bool(needed_by),
+                   "needed_by": needed_by}
+            unanchored.append(row)
+            if needed_by:
+                failures.append(f"load-bearing unanchored assumption {n.name}")
+        coverage, uncovered = [], []
+        for sid in self.sentence_order:
+            s = self.sentences[sid]
+            if not s["asserting"]:
+                continue
+            by = [n.name for n in self.nodes.values() if sid in n.anchors]
+            state = "covered" if by else "waived" if sid in self.waivers else "uncovered"
+            coverage.append({"sentence": sid, "role": s["role"], "state": state, "nodes": by,
+                             **({"waiver": self.waivers[sid]} if state == "waived" else {})})
+            if state == "uncovered":
+                uncovered.append(sid)
+        if uncovered:
+            failures.append(f"{len(uncovered)} asserting sentence(s) neither covered nor waived")
+        renamed = self._renamed_conclusions()
+        failures += [f"declared vocabulary carries target {r['target']} ({', '.join(r['assumptions'])})"
+                     for r in renamed]
+        origins = {o: sum(1 for n in self.nodes.values() if n.origin == o) for o in ORIGINS}
+        return {"success": not failures, "failures": failures, "targets": targets,
+                "unproved_steps": unproved, "unanchored_assumptions": unanchored,
+                "coverage": {"covered": sum(r["state"] == "covered" for r in coverage),
+                             "waived": sum(r["state"] == "waived" for r in coverage),
+                             "uncovered": uncovered, "sentences": coverage},
+                "renamed_conclusions": renamed, "provenance": origins,
+                "declared": self.declared, "usage": self.usage()}
+
+    def _renamed_conclusions(self):
+        """Declared symbols whose assumptions alone (singly or in pairs) entail a target."""
+        if not self.declared:
+            return []
+        declared = set(self.declared)
+        carriers = [n for n in self.nodes.values() if n.kind == "assumption"
+                    and (_predicates_of(n.formula) | _constants_of(n.formula)) & declared]
+        found = []
+        for tid, row in self.targets.items():
+            if row["formula"] is None:
+                continue
+            groups = [(a,) for a in carriers] + [(a, b) for i, a in enumerate(carriers) for b in carriers[i + 1:]]
+            for group in groups:
+                if self._entails([g.formula for g in group], row["formula"]):
+                    found.append({"target": tid, "assumptions": [g.name for g in group]})
+                    break
+        return found
+
+    def usage(self):
+        totals = {}
+        for event in self.events:
+            for role, row in event.get("tokens", {}).items():
+                acc = totals.setdefault(role, {"input_tokens": 0, "output_tokens": 0, "calls": 0})
+                for key in acc:
+                    acc[key] += row.get(key, 0) or 0
+        actions = {}
+        for event in self.events:
+            actions[event["action"]] = actions.get(event["action"], 0) + 1
+        return {"tokens": totals, "actions": actions, "events": len(self.events),
+                "rejected_actions": sum(1 for e in self.events if not e["result"]["ok"]),
+                "tool_result_chars": sum(e.get("result_chars", 0) for e in self.events)}
+
+    def _do_export(self):
+        graphs = {}
+        for tid in self.targets:
+            graph, reason, _ = self.target_graph(tid)
+            graphs[tid] = graph.to_dict() if graph is not None else {"missing": reason}
+        return {"graphs": graphs,
+                "nodes": [{**self.node_view(n), "anchors": list(self.nodes[n].anchors)} for n in self.nodes],
+                "environment": self.env.to_dict(), "english_vocabulary": self.overlay}
+
+    def log_rejection(self, action, args, error):
+        """Record a call rejected before dispatch (unknown tool or argument)."""
+        result = {"ok": False, "error": error}
+        self.events.append({"seq": len(self.events), "action": action, "args": deepcopy(args), "time": _now(),
+                            "rejected_by_api": True, "result": result,
+                            "result_chars": len(json.dumps(result, ensure_ascii=False))})
+        return result
+
+    # ------------------------------------------------------------------ ledger
+    def to_ledger(self):
+        return {"format": SESSION_FORMAT, "config": self.config, "events": self.events}
+
+    @classmethod
+    def from_ledger(cls, data, *, verify=True):
+        """Rebuild by replaying every event; recorded model outputs are reused, never re-requested."""
+        if data.get("format") != SESSION_FORMAT:
+            raise LedgerReplayError("Not a ve assist ledger")
+        session = cls(data["config"])
+        for event in data["events"]:
+            if event.get("rejected_by_api"):
+                session.events.append(deepcopy(event))
+                continue
+            result = session.apply(event["action"], event["args"], _recorded=event)
+            replayed = session.events[-1]
+            replayed["time"] = event.get("time", replayed["time"])
+            if "model_calls" in event:
+                replayed["model_calls"] = event["model_calls"]
+                replayed["tokens"] = event.get("tokens", replayed.get("tokens"))
+            if verify and json.loads(json.dumps(result)) != event["result"]:
+                raise LedgerReplayError(f"Ledger event {event['seq']} ({event['action']}) does not replay")
+        return session
+
+    def recorded_model_call(self):
+        """During replay, the next recorded model call (or None when live)."""
+        if self._replaying is None:
+            return None
+        if not self._replaying:
+            raise LedgerReplayError("Ledger has fewer recorded model calls than the replay needs")
+        return self._replaying.pop(0)

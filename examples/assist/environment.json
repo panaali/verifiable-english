@@ -1,0 +1,17 @@
+{
+  "language": "ve.core@0",
+  "profile": "relational-fol@0",
+  "spec_revision": "ve-v0-draft-2026-09-20",
+  "vocabulary": {
+    "sorts": {"service": {"description": "A service recorded in the inventory."}},
+    "predicates": {
+      "deployed": {"arguments": ["service"], "description": "Recorded as deployed in this inventory."},
+      "reviewed": {"arguments": ["service"], "description": "Recorded as reviewed in this inventory."},
+      "safe": {"arguments": ["service"], "description": "Recorded as safe in this inventory."}
+    },
+    "constants": {
+      "api": {"sort": "service", "description": "The public API service."},
+      "web": {"sort": "service", "description": "The web front-end service."}
+    }
+  }
+}

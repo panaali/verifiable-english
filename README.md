@@ -56,3 +56,117 @@ The current recommendation is a small study of **human review of requirements an
 The [semantic oracle and attack validator](docs/oracle.md) return checked proofs,
 distinguishing models, or explicit uncertainty, with a JSONL validation CLI and
 a reproducible FO2 template audit.
+
+## Assisted formalisation: `ve assist`
+
+`ve assist` is an interactive tool for formalising prose **one sentence at a
+time** ([plan](PLAN-ASSIST.md)). Humans use it through a small CLI; agents use
+the same session through a JSON tool-calling API. The author owns fidelity to
+the prose. The tool only reports: nothing enters the graph unless the author
+adds it, and only the certificate checker and `check_countermodel` decide
+"follows" or "countermodel".
+
+Concepts:
+
+- **Sentences.** Each source sentence has an id and a role. A `given` sentence
+  states a premise. A `claimed` sentence asserts a conclusion, which must be
+  derived. A `context` sentence needs no coverage.
+- **Frozen targets.** Each target sentence gets a formal statement through
+  `freeze_target` before any node is added. It can never change afterwards.
+- **Nodes.** A node is one VE statement, anchored to the sentence(s) it
+  formalises. A node with no parents is an assumption. A node with parents is
+  a step, and `check_step` must certify it.
+- **Unanchored assumptions.** An assumption with no anchor to a `given`
+  sentence is unanchored. If one is *load-bearing* (a certified step no longer
+  follows without it), the item fails.
+- **Declarations.** `declare` requires a gloss. It blocks near-duplicates of
+  existing vocabulary (the `ve propose` gate) and names or glosses that restate
+  a target sentence until the author acknowledges each flag. `status` also flags
+  new vocabulary whose assumptions alone entail a target.
+- **Ledger.** The session file is an append-only ledger of every action,
+  including rejected ones. For each action it records the result, the node
+  provenance (`hand-written`, `proposer-verbatim`/`-edited`,
+  `suggestion-verbatim`/`-edited`), the proposer's tokens, and author tokens
+  (via `record_usage`). Every CLI command replays the ledger and fails if any
+  recorded result does not reproduce.
+
+`status` reports `success` only when all of the following hold: every target
+has a step whose certified support graph replays through `check_argument`;
+every step is certified; every asserting sentence is covered or explicitly
+waived; no unanchored assumption is load-bearing; no declared vocabulary
+carries a target; and the target's assumptions are consistent.
+
+The proposer and premise suggestions are separate ablations:
+
+- **`propose SENTENCE`** asks Claude Haiku 4.5 (claude CLI backend, account
+  `saeedi.danial` by default, no model fallback) for 1–3 candidates. Each
+  candidate is parsed, type-checked and paraphrased, and each differing pair
+  gets a checked distinguishing model. Accepting a candidate is a separate,
+  explicit step.
+- **Premise suggestions** are off unless the session is created with
+  `--premise-suggestions`. A `bridge` suggestion assumes the step itself and is
+  labelled as such.
+
+### Worked example
+
+Files: `examples/assist/environment.json` and `examples/assist/argument.txt`.
+Run `uv run python -m ve assist ...`:
+
+```text
+$ python -m ve assist new demo.json --env examples/assist/environment.json --text examples/assist/argument.txt --target p2.1
+created demo.json: 5 sentences, targets t_p2_1 -> p2.1
+$ python -m ve assist sentences demo.json
+    p1.1 [given] Every reviewed service is safe.
+    p1.2 [given] The API is reviewed.
+    p1.3 [given] The web front end is deployed.
+    p2.1 [claimed] So the API is safe.
+    p3.1 [context, non-asserting] The inventory was exported on Monday.
+$ python -m ve assist freeze demo.json t_p2_1 '@api is safe.'
+$ python -m ve assist add demo.json fact '@api is reviewed.' --anchor p1.2
+$ python -m ve assist add demo.json goal '@api is safe.' --anchor p2.1 --parent fact
+$ python -m ve assist check demo.json goal
+goal: COUNTERMODEL  (fact => @api is safe.)
+  countermodel (all parents true, conclusion false):
+    entities: service: api, web
+    true:  api is reviewed
+    false: api is safe
+$ python -m ve assist add demo.json rule 'Every service that is reviewed is safe.' --anchor p1.1
+[rule] assumption, hand-written
+  VE:   for every service x0, (if (x0 is reviewed), then (x0 is safe)).
+  says: Every service that is reviewed is safe.
+$ python -m ve assist rewrite demo.json goal --parent rule --parent fact
+$ python -m ve assist check demo.json goal
+goal: FOLLOWS  (rule, fact => @api is safe.)
+$ python -m ve assist status demo.json
+NOT YET: 1 asserting sentence(s) neither covered nor waived
+$ python -m ve assist waive demo.json p1.3 'Background fact; the conclusion does not use it.'
+$ python -m ve assist status demo.json
+SUCCESS
+target t_p2_1: certified (graph replays)
+coverage: 3 covered, 1 waived, 0 uncovered
+$ python -m ve assist replay demo.json
+ledger replays: 11 events reproduce
+```
+
+Nodes can be written in strict VE or in the controlled English surface; the
+parser tries strict first. Other commands: `show`, `paraphrase`, `compare A B`
+(prints distinguishing models), `declare NAME --gloss ... --arg SORT`,
+`propose SENTENCE`, `export` (argument graphs), and `ledger` (usage).
+
+For a P5 dossier, run `new s.json --p5 PATH/dev.jsonl.gz --item 0`. It loads
+the premises and records as `given`, the paragraphs as `claimed`, and the root
+paragraph's conclusion as the target. It builds a public vocabulary with one
+predicate per glossary sense, such as `ready_packing_completed` and
+`ready_staffing_arranged`.
+
+### Agent API
+
+`ve.assist.tool_schemas(proposer=..., premise_suggestions=...)` returns the
+Anthropic-style tool definitions for one evaluation arm. The tools are
+`sentences`, `freeze_target`, `add_node`, `rewrite`, `remove_node`, `declare`,
+`check_step`, `status`, `waive`, `show`, `paraphrase` and `compare`, plus
+`propose` and `accept` when a proposer is configured.
+`ve.assist.call_tool(session, name, arguments)` executes and logs a call and
+never raises on bad input. `AssistSession.to_ledger()` and
+`AssistSession.from_ledger()` persist and replay a session. From a shell, run
+`python -m ve assist call SESSION TOOL '{json}'`.
