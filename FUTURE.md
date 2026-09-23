@@ -161,7 +161,7 @@ Adopted into the plan as package 3b, after P5 and before the long-argument study
 **formalise one original Barnes-Christiano physics argument (the iceberg problem) end to end in Lean from accepted
 physical laws, with a separate cost ledger (model review, formalisation, proof repair, checking, compute) and an
 assumption checklist.** It measures the "mandatory proof" tax on the canonical example and is the honest companion to
-our finding that VE contributes nothing to obfuscation itself: the residue is the model/assumption review. The handoff's
+the corrected obfuscation position (`design/positioning-vs-debate-theory.md` correction 2): Under a mandatory-proof rule (nothing is accepted unless VE's verified checker derives it from declared, reviewed foundations), a dishonest prover cannot win by assuming false sub-claims; this defeats the Barnes-Christiano construction for fully formalised claims. Limits: the honest side wins only when the truth has an affordable proof (otherwise "unresolved"); proofs beyond budget (debate's PSPACE regime); foundation leaves accepted without proof; formalisation faithfulness; cost. The benefit comes from sound proof checking, not from VE's English surface. The residue is the model/assumption review. The handoff's
 experiment 2 (do humans catch a valid proof of the wrong model with VE vs a structured formal interface) is the best
 human study we have on the list and stays deferred with the other human studies; experiment 3 (mandatory proofs vs
 adversarial debate) folds into P5 and the long-argument study; experiment 4 (size scaling, PrOntoQA subset) into the
