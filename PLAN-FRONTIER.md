@@ -150,3 +150,10 @@ a cost/reuse audit.
 
 **Budget and schedule.** No Vertex total was authorised; the rule is at most $40 per pilot. Codex quota resets Sep
 29 23:00. The fixed three-week schedule is replaced by gates: A and D now; B after its authoring gate; C after B.
+
+**Amendment D-1 (2026-09-23, orchestrator, after the D-gate reviews).** D's gate metric is the overall error rate
+at effort=high on the 41 non-edge items (D26 and D42 are edge items), clustered by artefact, and replaces "FA < 15%".
+Rationale: a verifier's headroom covers errors in both directions. The gate must also hold without planted edits, on
+>= 5 artefacts and under leave-one-artefact-out; it is a weak pass if the bootstrap lower bound is < 15%. Key
+secondary: false approval on the restriction-NO items. Missing scheduled responses count as correct in a required
+sensitivity gate.
