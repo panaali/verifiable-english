@@ -1,0 +1,103 @@
+{
+ "failures": [],
+ "mutations": [
+  {
+   "condition": "negation_flip",
+   "id": "afe9fbcd9d50",
+   "mutation": "rule 6: negation_flip dst archived"
+  },
+  {
+   "condition": "dropped_rule",
+   "id": "204d776e6cbe",
+   "mutation": "rule 0: dropped"
+  },
+  {
+   "condition": "relation_swap",
+   "id": "ae7c0644c88c",
+   "mutation": "rule 2: relation inherits -> holds"
+  },
+  {
+   "condition": "added_exception",
+   "id": "7c47eeeccc0d",
+   "mutation": "rule 7: added_exception src restricted"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "942477649e18",
+   "mutation": "rule 2: dst guard temporary -> privileged"
+  },
+  {
+   "condition": "narrowed_scope",
+   "id": "46786a291814",
+   "mutation": "rule 2: narrowed_scope src suspended"
+  },
+  {
+   "condition": "narrowed_scope",
+   "id": "192bd2b92a95",
+   "mutation": "rule 4: narrowed_scope src restricted"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "e75c5086b3c8",
+   "mutation": "rule 2: negation_flip dst external"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "9db11c41cacb",
+   "mutation": "rule 4: dst guard privileged -> temporary"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "b034c12757d5",
+   "mutation": "rule 2: dst guard public -> archived"
+  },
+  {
+   "condition": "added_exception",
+   "id": "32837c88b12d",
+   "mutation": "rule 2: added_exception src employee"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "f560adee5c28",
+   "mutation": "rule 3: src guard contractor -> employee"
+  },
+  {
+   "condition": "relation_swap",
+   "id": "7c0d525cb7dd",
+   "mutation": "rule 5: relation member_of -> sponsored_by"
+  },
+  {
+   "condition": "dropped_rule",
+   "id": "9ff058c4506f",
+   "mutation": "rule 3: dropped"
+  }
+ ],
+ "seconds": 2.1,
+ "split": "dev",
+ "stats": {
+  "datalog": {
+   "displayed_ok": 28,
+   "gold_ok": 28,
+   "mutated": 14,
+   "n": 28,
+   "normalise_identity": 28,
+   "rewrite_equal": 14
+  },
+  "script": {
+   "displayed_ok": 28,
+   "gold_ok": 28,
+   "mutated": 14,
+   "n": 28,
+   "normalise_identity": 28,
+   "rewrite_equal": 14
+  },
+  "ve": {
+   "displayed_ok": 28,
+   "gold_ok": 28,
+   "mutated": 14,
+   "n": 28,
+   "normalise_identity": 28,
+   "rewrite_equal": 14
+  }
+ }
+}

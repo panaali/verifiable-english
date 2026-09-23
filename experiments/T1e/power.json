@@ -1,0 +1,370 @@
+[
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.2,
+  "n_sab": 60,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.026,
+  "power_fa": 0.109
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.2,
+  "n_sab": 60,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.0355,
+  "power_fa": 0.3955
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.15,
+  "n_sab": 60,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.0055,
+  "power_fa": 0.307
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.15,
+  "n_sab": 60,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.003,
+  "power_fa": 0.813
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.1,
+  "n_sab": 60,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.0,
+  "power_fa": 0.611
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.1,
+  "n_sab": 60,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.0,
+  "power_fa": 0.967
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.05,
+  "n_sab": 60,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.0,
+  "power_fa": 0.915
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.05,
+  "n_sab": 60,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.0,
+  "power_fa": 0.997
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.4,
+  "n_sab": 60,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.0295,
+  "power_fa": 0.092
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.4,
+  "n_sab": 60,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.0555,
+  "power_fa": 0.386
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.35,
+  "n_sab": 60,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.005,
+  "power_fa": 0.242
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.35,
+  "n_sab": 60,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.0035,
+  "power_fa": 0.8205
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.3,
+  "n_sab": 60,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.0005,
+  "power_fa": 0.424
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.3,
+  "n_sab": 60,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.0,
+  "power_fa": 0.972
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.25,
+  "n_sab": 60,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.0005,
+  "power_fa": 0.6455
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.25,
+  "n_sab": 60,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.0,
+  "power_fa": 0.9985
+ },
+ {
+  "hc_script": 0.85,
+  "hc_ve": 0.85,
+  "n_hon": 60,
+  "nested": false,
+  "power_ni": 0.3085
+ },
+ {
+  "hc_script": 0.85,
+  "hc_ve": 0.85,
+  "n_hon": 60,
+  "nested": true,
+  "power_ni": 1.0
+ },
+ {
+  "hc_script": 0.85,
+  "hc_ve": 0.8,
+  "n_hon": 60,
+  "nested": false,
+  "power_ni": 0.085
+ },
+ {
+  "hc_script": 0.85,
+  "hc_ve": 0.8,
+  "n_hon": 60,
+  "nested": true,
+  "power_ni": 0.23
+ },
+ {
+  "hc_script": 0.95,
+  "hc_ve": 0.95,
+  "n_hon": 60,
+  "nested": false,
+  "power_ni": 0.565
+ },
+ {
+  "hc_script": 0.95,
+  "hc_ve": 0.95,
+  "n_hon": 60,
+  "nested": true,
+  "power_ni": 1.0
+ },
+ {
+  "hc_script": 0.95,
+  "hc_ve": 0.9,
+  "n_hon": 60,
+  "nested": false,
+  "power_ni": 0.142
+ },
+ {
+  "hc_script": 0.95,
+  "hc_ve": 0.9,
+  "n_hon": 60,
+  "nested": true,
+  "power_ni": 0.2035
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.2,
+  "n_sab": 120,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.0335,
+  "power_fa": 0.2725
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.2,
+  "n_sab": 120,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.042,
+  "power_fa": 0.958
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.15,
+  "n_sab": 120,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.0005,
+  "power_fa": 0.654
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.15,
+  "n_sab": 120,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.001,
+  "power_fa": 0.999
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.1,
+  "n_sab": 120,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.0,
+  "power_fa": 0.951
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.1,
+  "n_sab": 120,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.0,
+  "power_fa": 1.0
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.05,
+  "n_sab": 120,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.0,
+  "power_fa": 0.999
+ },
+ {
+  "fa_script": 0.3,
+  "fa_ve": 0.05,
+  "n_sab": 120,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.0,
+  "power_fa": 1.0
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.4,
+  "n_sab": 120,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.0195,
+  "power_fa": 0.214
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.4,
+  "n_sab": 120,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.039,
+  "power_fa": 0.961
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.35,
+  "n_sab": 120,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.004,
+  "power_fa": 0.4965
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.35,
+  "n_sab": 120,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.0005,
+  "power_fa": 0.9995
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.3,
+  "n_sab": 120,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.0005,
+  "power_fa": 0.792
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.3,
+  "n_sab": 120,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.0,
+  "power_fa": 1.0
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.25,
+  "n_sab": 120,
+  "nested": false,
+  "p_refuted_ci_excludes_10pp": 0.0,
+  "power_fa": 0.9575
+ },
+ {
+  "fa_script": 0.5,
+  "fa_ve": 0.25,
+  "n_sab": 120,
+  "nested": true,
+  "p_refuted_ci_excludes_10pp": 0.0,
+  "power_fa": 1.0
+ },
+ {
+  "hc_script": 0.85,
+  "hc_ve": 0.85,
+  "n_hon": 120,
+  "nested": false,
+  "power_ni": 0.5655
+ },
+ {
+  "hc_script": 0.85,
+  "hc_ve": 0.85,
+  "n_hon": 120,
+  "nested": true,
+  "power_ni": 1.0
+ },
+ {
+  "hc_script": 0.85,
+  "hc_ve": 0.8,
+  "n_hon": 120,
+  "nested": false,
+  "power_ni": 0.1735
+ },
+ {
+  "hc_script": 0.85,
+  "hc_ve": 0.8,
+  "n_hon": 120,
+  "nested": true,
+  "power_ni": 0.5745
+ },
+ {
+  "hc_script": 0.95,
+  "hc_ve": 0.95,
+  "n_hon": 120,
+  "nested": false,
+  "power_ni": 0.91
+ },
+ {
+  "hc_script": 0.95,
+  "hc_ve": 0.95,
+  "n_hon": 120,
+  "nested": true,
+  "power_ni": 1.0
+ },
+ {
+  "hc_script": 0.95,
+  "hc_ve": 0.9,
+  "n_hon": 120,
+  "nested": false,
+  "power_ni": 0.286
+ },
+ {
+  "hc_script": 0.95,
+  "hc_ve": 0.9,
+  "n_hon": 120,
+  "nested": true,
+  "power_ni": 0.455
+ }
+]

@@ -1,0 +1,233 @@
+{
+ "failures": [],
+ "mutations": [
+  {
+   "condition": "negation_flip",
+   "id": "7efb0763b3e4",
+   "mutation": "rule 4: negation_flip dst archived"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "95592d3b74e4",
+   "mutation": "rule 3: dst guard archived -> public"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "d18cb529d786",
+   "mutation": "rule 5: dst guard temporary -> privileged"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "0987f4990013",
+   "mutation": "rule 1: dst guard public -> confidential"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "3fc48cda05f7",
+   "mutation": "rule 6: negation_flip dst archived"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "499007ec0025",
+   "mutation": "rule 1: src guard employee -> contractor"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "58be52b42f81",
+   "mutation": "rule 4: dst guard confidential -> archived"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "d591bb7fb00b",
+   "mutation": "rule 1: negation_flip dst confidential"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "81863f14f0b4",
+   "mutation": "rule 2: src guard suspended -> contractor"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "d55571d4813d",
+   "mutation": "rule 2: dst guard public -> confidential"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "2d580ba0ac46",
+   "mutation": "rule 0: negation_flip dst public"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "f7092dfb9d14",
+   "mutation": "rule 2: dst guard public -> confidential"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "d1e9cde9f858",
+   "mutation": "rule 1: negation_flip dst public"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "ff900faa9182",
+   "mutation": "rule 0: dst guard archived -> confidential"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "295f558957cd",
+   "mutation": "rule 3: src guard contractor -> external"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "8be3c8c4d335",
+   "mutation": "rule 2: negation_flip dst privileged"
+  },
+  {
+   "condition": "relation_swap",
+   "id": "e911b9b25112",
+   "mutation": "rule 0: relation owns -> sponsored_by"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "a6a39773024b",
+   "mutation": "rule 0: dst guard confidential -> public"
+  },
+  {
+   "condition": "relation_swap",
+   "id": "4c067a02e813",
+   "mutation": "rule 5: relation grants -> sponsored_by"
+  },
+  {
+   "condition": "relation_swap",
+   "id": "5b12ae9ac533",
+   "mutation": "rule 1: relation grants -> owns"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "9fe087ca75b5",
+   "mutation": "rule 2: dst guard archived -> confidential"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "c11f65dbadc2",
+   "mutation": "rule 4: negation_flip dst privileged"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "655b1a8bc53d",
+   "mutation": "rule 2: src guard employee -> external"
+  },
+  {
+   "condition": "relation_swap",
+   "id": "f5aa3951e185",
+   "mutation": "rule 0: relation grants -> owns"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "8615e2a0c5eb",
+   "mutation": "rule 2: negation_flip dst temporary"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "63a4a2b29f30",
+   "mutation": "rule 0: negation_flip dst public"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "71cf0dab8ec6",
+   "mutation": "rule 1: dst guard archived -> public"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "3cae35032d04",
+   "mutation": "rule 2: dst guard temporary -> privileged"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "825827c71c51",
+   "mutation": "rule 3: dst guard confidential -> public"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "c0bf87775620",
+   "mutation": "rule 1: negation_flip dst temporary"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "99e607cc0535",
+   "mutation": "rule 6: dst guard archived -> confidential"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "c4c46546144c",
+   "mutation": "rule 0: dst guard confidential -> archived"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "cfff8280be94",
+   "mutation": "rule 2: negation_flip dst public"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "db42fbc42230",
+   "mutation": "rule 3: dst guard public -> archived"
+  },
+  {
+   "condition": "relation_swap",
+   "id": "c2dc2f8abc44",
+   "mutation": "rule 3: relation holds -> inherits"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "0f7eed607132",
+   "mutation": "rule 3: src guard employee -> contractor"
+  },
+  {
+   "condition": "relation_swap",
+   "id": "8e0c3cfd280d",
+   "mutation": "rule 1: relation grants -> member_of"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "dd02f994c7fc",
+   "mutation": "rule 3: negation_flip dst confidential"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "627fc680661e",
+   "mutation": "rule 5: dst guard restricted -> external"
+  },
+  {
+   "condition": "relation_swap",
+   "id": "f1f99777f3c4",
+   "mutation": "rule 1: relation holds -> inherits"
+  }
+ ],
+ "seconds": 18.1,
+ "split": "study",
+ "stats": {
+  "datalog": {
+   "displayed_ok": 240,
+   "gold_ok": 240,
+   "mutated": 120,
+   "n": 240,
+   "normalise_identity": 240,
+   "rewrite_equal": 120
+  },
+  "script": {
+   "displayed_ok": 240,
+   "gold_ok": 240,
+   "mutated": 120,
+   "n": 240,
+   "normalise_identity": 240,
+   "rewrite_equal": 120
+  },
+  "ve": {
+   "displayed_ok": 240,
+   "gold_ok": 240,
+   "mutated": 120,
+   "n": 240,
+   "normalise_identity": 240,
+   "rewrite_equal": 120
+  }
+ }
+}

@@ -1,0 +1,93 @@
+{
+ "failures": [],
+ "mutations": [
+  {
+   "condition": "negation_flip",
+   "id": "ead8562c5b42",
+   "mutation": "rule 0: negation_flip dst restricted"
+  },
+  {
+   "condition": "relation_swap",
+   "id": "ce0994cc40ac",
+   "mutation": "rule 4: relation holds -> inherits"
+  },
+  {
+   "condition": "relation_swap",
+   "id": "7c220cd11433",
+   "mutation": "rule 0: relation owns -> member_of"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "e0db6dcd8727",
+   "mutation": "rule 0: negation_flip dst temporary"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "8caa674a7d43",
+   "mutation": "rule 1: src guard privileged -> temporary"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "e0488a547a0b",
+   "mutation": "rule 0: dst guard archived -> public"
+  },
+  {
+   "condition": "negation_flip",
+   "id": "98ec35ec97c4",
+   "mutation": "rule 2: negation_flip dst external"
+  },
+  {
+   "condition": "relation_swap",
+   "id": "4c125650870b",
+   "mutation": "rule 6: relation owns -> holds"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "34a52623bca8",
+   "mutation": "rule 0: dst guard confidential -> archived"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "b2aeab6a0600",
+   "mutation": "rule 6: dst guard privileged -> temporary"
+  },
+  {
+   "condition": "scope_swap",
+   "id": "a67214b6c0c4",
+   "mutation": "rule 7: dst guard public -> confidential"
+  },
+  {
+   "condition": "exception_swap",
+   "id": "11d01dc94749",
+   "mutation": "rule 4: dst guard temporary -> privileged"
+  }
+ ],
+ "seconds": 1.8,
+ "split": "gate",
+ "stats": {
+  "datalog": {
+   "displayed_ok": 24,
+   "gold_ok": 24,
+   "mutated": 12,
+   "n": 24,
+   "normalise_identity": 24,
+   "rewrite_equal": 12
+  },
+  "script": {
+   "displayed_ok": 24,
+   "gold_ok": 24,
+   "mutated": 12,
+   "n": 24,
+   "normalise_identity": 24,
+   "rewrite_equal": 12
+  },
+  "ve": {
+   "displayed_ok": 24,
+   "gold_ok": 24,
+   "mutated": 12,
+   "n": 24,
+   "normalise_identity": 24,
+   "rewrite_equal": 12
+  }
+ }
+}
