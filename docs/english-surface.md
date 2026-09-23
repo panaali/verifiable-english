@@ -385,20 +385,20 @@ of the citizenship dispute. Suggestions intentionally leave uncertain names unwo
 
 <!-- BEGIN GENERATED ENGLISH EVIDENCE -->
 
-**80,000 distinct well-typed environment/AST pairs** round-tripped through
+**85,000 distinct well-typed environment/AST pairs** round-tripped through
 `render` and `parse_english`, across sixteen configurations (the original ten,
 four reviewed overlays, accepted suggestions, and an adopted unary vocabulary). Each configuration
 contributed 5,000 distinct ASTs: directed boundary cases followed by seeded random
 draws. Directed cases cover every template, validated negatives, subject and object relatives, two-atom guards,
 both three-atom associations, deeper/mixed guards, nested implications, and the
 actual use-case claims. Duplicate draws are recorded, not counted twice.
-**8,000 environment/text pairs** (500 per configuration) had exactly one
+**8,500 environment/text pairs** (500 per configuration) had exactly one
 Earley dynamic-complete derivation, with zero ambiguity nodes. Every directed
 case is in that directed-heavy prefix of each configuration; it is **not a random sample**.
-A separate seeded random sample adds **4,000 texts**
+A separate seeded random sample adds **4,250 texts**
 (250 per configuration), all at measured AST depths 6–9, each with exactly one
 all-derivations parse and an exact AST round trip. It excludes the original corpus.
-Another **800 five-statement documents** round-trip
+Another **850 five-statement documents** round-trip
 and have exactly one all-derivations parse using the document grammar.
 This is finite evidence, not a universal unambiguity proof.
 The report records seeds, corpus/grammar hashes, overlay digests, constructor
