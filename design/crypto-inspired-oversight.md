@@ -56,3 +56,35 @@ named in a checked certificate (binding intent to action), with facts filled by 
 proof-carrying authorization, Appel & Felten 1999; Grey), tool contracts as reviewed VE pre/effect specs, trajectory-
 level policies (information flow as closure/reachability), and delegation via attenuated Datalog-style tokens
 (Biscuit, macaroons). Flagship evaluation: ControlArena-style control settings vs frontier LLM monitors.
+
+## Assessment: what is most promising (2026-09-22)
+
+**Most promising: separating certificates for universal claims, inside proof-carrying actions.**
+
+Why:
+1. It targets the only place our data leaves room. Wherever a frontier model can redo the work, VE added nothing (E1,
+   P1 Gemini, V4, D pilot, P3 single requests). Where redoing is expensive or the claim is universal there are signs of
+   life: at 1,500 grants Opus wrongly approved 6.7% of false "no access" claims (T1 gate); P3 certified 6/12 "for all
+   principals" properties plain review cannot. Reading 5,000-50,000 grants should degrade; a linear certificate check
+   does not.
+2. The asymmetry is real, not constructed: "cannot access" otherwise requires exhaustive search by the verifier; with a
+   certificate the verifier checks one closed set in one pass, independent of judge strength.
+3. Ground truth is computable (access either exists or not), so no LLM grades outcomes.
+4. It connects directly to AI control ("this action cannot reach secrets", "this change grants no new access") and
+   extends to proof-carrying actions and information-flow policies.
+
+Main risk (hostile reviewer): "a 20-line graph-reachability script does this; why VE?" Partly true: much of the
+benefit belongs to the certificate protocol, not to VE's English. Defensible claims: (a) the protocol result itself
+(untrusted agent supplies the certificate, trusted checker verifies), reported honestly even where a plain script
+could play VE's role; (b) VE's role is generality: one proved-sound, human-readable language and checker for
+reachability, role inheritance, universal policy properties, exceptions (once added) and multi-step trajectory rules,
+instead of a bespoke script per policy type. Include a plain-script baseline and state where VE adds nothing.
+
+Ranking of the rest: signed verdicts are a design rule to adopt (no research result left after P1); meaning_id
+commitments are a reasonable P5 arm against a strong cross-examination baseline (expect a modest effect at best);
+security games, amplification and transparency logs are methodology and deployment, not the headline.
+
+Proposed next experiment, T1c (plan review required first): "cannot access" claims at 5,000 and 20,000 grants; the
+saboteur must attach a separating set. Arms: Opus reading the raw policy; Haiku reading the raw policy; Haiku plus the
+checker's verdict on the certificate; a plain graph-script baseline. Primary metric: false approval of sabotaged claims
+against honest completion. Preregistered and timestamped; judge calls on the danielsaeedi37 account.
