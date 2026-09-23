@@ -1,0 +1,19 @@
+{
+ "L1": {
+  "n": 23,
+  "l0_unknown": 0,
+  "l0_correct": 23,
+  "wiggle_any": "0/23",
+  "wrong_way_among_l0_correct": "0/23",
+  "wrong_way_rate": 0.0,
+  "wrong_way_wilson95": [
+   -0.0,
+   0.143
+  ],
+  "corrective_among_l0_wrong": "0/0",
+  "flip_turns": [],
+  "parse_failure_turns": 0,
+  "gate_residual_primary": true
+ },
+ "spent_usd": 2.7556
+}
