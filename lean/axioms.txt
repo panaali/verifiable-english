@@ -1,3 +1,16 @@
+'Iceberg.mul_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Iceberg.initial_mass_balance' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Iceberg.stage_within_capacity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Iceberg.no_spill' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Iceberg.height_balance' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Iceberg.water_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Iceberg.metal_lowers' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Iceberg.residual_height_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Iceberg.air_approximately_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Iceberg.positive_air_strictly_lowers' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Iceberg.iceberg_root' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Iceberg.root_witness' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Iceberg.air_one_millimetre' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.term_defined' does not depend on any axioms
 'VE.typed_empty' depends on axioms: [propext]
 'VE.typed_cons' depends on axioms: [propext]
@@ -216,3 +229,9 @@
 'VE.Order.numerals_distinct' depends on axioms: [propext, Quot.sound]
 'VE.Order.term_defined' depends on axioms: [propext]
 'VE.Order.tupleTyped_expand' depends on axioms: [propext]
+'VE.Closure.Tableau.induct_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Closure.closure_induction' depends on axioms: [propext, Quot.sound]
+'VE.Closure.inductionStep_denote' depends on axioms: [propext, Quot.sound]
+'VE.Closure.invariantAt_denote' depends on axioms: [propext, Quot.sound]
+'VE.Closure.reachable_induction' does not depend on any axioms
+PASS: 52 source files; 236 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.

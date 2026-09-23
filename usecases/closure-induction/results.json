@@ -1,0 +1,30 @@
+[
+  {
+    "id": "T9_induction",
+    "python_valid": true,
+    "lean_valid": true,
+    "replay_steps": 151,
+    "certificate_bytes": 7135
+  },
+  {
+    "id": "T9e_induction",
+    "python_valid": true,
+    "lean_valid": true,
+    "replay_steps": 57,
+    "certificate_bytes": 2887
+  },
+  {
+    "id": "policy_cyclic_plus",
+    "python_valid": true,
+    "lean_valid": true,
+    "replay_steps": 18,
+    "certificate_bytes": 1349
+  },
+  {
+    "id": "policy_cyclic_star",
+    "python_valid": true,
+    "lean_valid": true,
+    "replay_steps": 18,
+    "certificate_bytes": 1349
+  }
+]

@@ -1,9 +1,78 @@
-"""Capture-avoiding closure unfolding. No induction or cyclic proof rule.
+"""Capture-avoiding closure rules, including supplied-invariant induction.
 
 The independent Lean checker proves these equations and each extra rule over
 all admissible structures; conformance tests compare the Python implementation.
 """
 from . import ast
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class InductionInvariant:
+    """Search hint: index 0 is the node; subsequent indices name bindings.
+
+    Bindings are tableau tokens (c:name or w:index). They only guide search;
+    replay checks the rebased formula and reconstructs every obligation.
+    A formula without captured parameters can be passed directly instead.
+    """
+    formula: ast.Formula
+    bindings: tuple[str, ...] = ()
+
+
+def invariant_at(invariant, term):
+    return map_free(invariant, lambda i: term if i == 0 else ast.Var(i - 1))
+
+
+def induction_step(sort, edge, invariant):
+    shifted = shift(ast.Reach('plus', edge, ast.Var(0), ast.Var(0)), 2).edge
+    source = map_free(invariant, lambda i: ast.Var(1 if i == 0 else i + 1))
+    destination = map_free(invariant, lambda i: ast.Var(0 if i == 0 else i + 1))
+    return ast.Forall(sort, ast.Forall(sort, ast.Implies(
+        ast.And(source, edge_at(shifted, ast.Var(1), ast.Var(0))), destination)))
+
+
+def derive_induction(env, branch, at, sort, invariant):
+    """Three children: deny base, deny preservation, assert endpoint invariant."""
+    from .entailment import _InvalidTrace, _Signed
+    if type(at) is not int or not 0 <= at < len(branch.formulas):
+        raise _InvalidTrace('invalid induction target')
+    item = branch.formulas[at]
+    f = item.formula
+    if not item.positive or type(f) is not ast.Reach:
+        raise _InvalidTrace('induction requires a positive path')
+    if type(sort) is not str or sort not in env.sorts:
+        raise _InvalidTrace('invalid induction sort')
+    if ((type(f.edge) is ast.Named and branch.signatures.get(f.edge.relation) != (sort, sort))
+            or (type(f.edge) is ast.Body and f.edge.sort != sort)):
+        raise _InvalidTrace('induction edge sort mismatch')
+    context = (sort,) + tuple(branch.parameters[t] for t in item.bindings)
+    ast._Checker(env).formula(invariant, context)
+    return [[_Signed(invariant_at(invariant, f.left), False, item.bindings)],
+            [_Signed(induction_step(sort, f.edge, invariant), False, item.bindings)],
+            [_Signed(invariant_at(invariant, f.right), True, item.bindings)]]
+
+
+def induction_candidates(env, branch, hints):
+    from .entailment import _term_token
+    for at, item in enumerate(branch.formulas):
+        if not item.positive or type(item.formula) is not ast.Reach:
+            continue
+        sort = branch.parameters[_term_token(item.formula.left, item.bindings)]
+        for hint in hints:
+            hint = hint if isinstance(hint, InductionInvariant) else InductionInvariant(hint)
+            def replacement(i):
+                if i == 0:
+                    return ast.Var(0)
+                token = hint.bindings[i - 1]
+                if token.startswith('c:'):
+                    return ast.Const(token[2:])
+                return ast.Var(item.bindings.index(token) + 1)
+            try:
+                invariant = map_free(hint.formula, replacement)
+                additions = derive_induction(env, branch, at, sort, invariant)
+            except (ValueError, IndexError, KeyError):
+                continue
+            yield at, sort, invariant, additions
 
 
 def map_free(formula, replacement, depth=0):

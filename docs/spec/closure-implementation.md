@@ -1,7 +1,8 @@
 # Implemented closure@0 boundary
 
 This implements the closure part of the [v0.1 design](v0.1-profiles.md). Integer
-order and Rust closure support are outside this change. The v0 wire envelope,
+order support is separate. Rust supports closure syntax and finite evaluation,
+but has no tableau certificate checker. The v0 wire envelope,
 canonical source and all existing identity preimages remain unchanged.
 
 A closure environment has exactly these version fields plus `vocabulary`:
@@ -54,11 +55,14 @@ unfolding and exact Reach congruence are checked, including outer captures
 through nested Body binders. New versioned rules add homogeneous Named edge
 inclusion, composition of all plus/star combinations, plus first/last-edge
 existence, and Named-to-binary-Body equivalence. Every new rule has a Lean
-soundness proof; no induction or cyclic certificate rule is accepted.
+soundness proof. Version `@1` adds supplied-invariant induction with three
+checked branches (base, preservation, continuation); cyclic certificates remain
+rejected. See [the rule and wire format](closure-induction.md).
 
 `CertificateWire` routes the exact closure envelope to
 `VE.Closure.Tableau.checkCertificate`. It validates the v0.1 environment/meaning
-identity domains and requires `ve-tableau-closure-checker@0`. V0 versions in a
+identity domains and accepts `ve-tableau-closure-checker@0` and `@1`.
+Old certificates are accepted unchanged; only `@1` enables induction. V0 versions in a
 closure envelope are rejected, even for Reach-free formulas. V0 envelopes still
 use the unchanged original checker. The four original `Tableau*.lean` sources
 and `VE.Tableau.checkCertificate_sound` statement are unchanged.
@@ -68,7 +72,9 @@ at every universe. `checkCertificate_sound_v0` derives v0 entailment from accept
 embedded formulas using conservativity. The recursion is bounded by the same
 124-expansion limit; extra consequences introduce no recursive proof search in
 replay. Failure to find a closure certificate explicitly says it is inconclusive.
-Monotonicity and symmetric reversal remain ResourceLimit in the reviewer tests.
+Without supplied invariants, monotonicity and symmetric reversal retain their
+ResourceLimit reviewer regressions. The new T9/T9e induction certificates replay
+in both Python and Lean.
 
 Argument results expose `profiles`, `lean_checked`, and `lean_status`. The default
 Python API says `Lean-checked: no`; it does not infer an execution result from
@@ -93,7 +99,8 @@ remain outside the metatheory.
 Reproduce sequentially from the root:
 
 ```sh
-export UV_CACHE_DIR=/private/tmp/ve-uv-cache
+export UV_CACHE_DIR=/private/tmp/ve-uv-cache-induct
+export LEAN_NUM_THREADS=1
 export CARGO_HOME="$PWD/.cargo-home"
 export CARGO_TARGET_DIR="$PWD/rust/target"
 export CARGO_BUILD_JOBS=1
@@ -110,13 +117,10 @@ self-loops, cycles, reversed paths, captured filters and nested closures. Lean
 also checks every corpus model as a countermodel request. These are development
 fixtures, not an independent estimate of real-world coverage or translation accuracy.
 
-Rust still rejects the new envelope. It would need matching profile/wire types,
-Body scoping and substitution, checker and parser/printer support, budgeted finite
-closure evaluation, updated base-predicate discovery, v0.1 identity domains,
-and replay of `conformance/closure.json` plus the E0 witnesses. Its v0 behavior
-and existing fixture files are unchanged. Rust v0 conformance and cargo tests
-are included in the integration verification; only its named closure corpus
-test is explicitly skipped because that profile is unsupported. The complete
+Rust supports the closure profile, including Body scopes, finite evaluation,
+identity domains, and the shared closure corpus. It has no tableau certificate
+type, proof search, or certificate-replay command, so there is no Rust induction
+checker to update. [Rust scope](../rust.md) documents this boundary. The complete
 882-case frozen v0 certificate replay regression is documented in
 [conformance/README.md](../../conformance/README.md). The full trusted-code change
 inventory and verification results are in

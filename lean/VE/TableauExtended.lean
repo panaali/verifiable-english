@@ -21,6 +21,7 @@ def Token.parse (text : String) : Option Token :=
 inductive Trace where
   | close
   | expand (rule : String) (index : Nat) (parameter : Option String) (children : List Trace)
+  | induct (index : Nat) (sort : String) (invariant : Formula) (children : List Trace)
   deriving Repr
 
 /-- The five fields shared by ve-tableau-checker@1 and @2. Hash bindings are checked by the
