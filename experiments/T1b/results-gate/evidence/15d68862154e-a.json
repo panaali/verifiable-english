@@ -1,0 +1,5 @@
+{
+  "claim": "u_e44a cannot access x_ac31.",
+  "note": "u_e44a belongs only to g_d1a3 and g_d1a3_d0 through g_d1a3_d6. Every chain toward x_ac31 breaks. Base: g_d1a3\u2192g_2260\u2192g_5744\u2192g_3d56 holds r_fdd8, but no rule gives r_fdd8 any other role's permissions (r_b658 feeds r_fdd8_v2, not r_fdd8). d0: the chain reaches r_fdd8_d0, which receives r_b658_d0. r_5750_d0 flows only into r_b658_d0_v2, so r_b658_d0 gains nothing. d1: g_2260_d1\u2192g_5744_d1, but only g_5744_d1_v2 is in g_3d56_d1. d2: g_d1a3_d2\u2192g_2260_d2, but only g_2260_d2_v2 is in g_5744_d2. d3: the chain reaches g_3d56_d3, but r_fdd8_d3 is bound to g_3d56_d3_v2. d4: only g_d1a3_d4_v2 (not g_d1a3_d4) is in g_2260_d4. Also, r_5750_d4 grants into r_b658_d4, which is the wrong direction. d5: only g_2260_d5_v2 is in g_5744_d5. d6: only g_5744_d6_v2 is in g_3d56_d6. The only x_ac31 grants go to r_5750 and r_5750_d0 through r_5750_d6, and none is reachable. The claim therefore holds.",
+  "valid": true
+}

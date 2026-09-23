@@ -1,0 +1,5 @@
+{
+  "claim": "u_6c3f cannot access x_ce29.",
+  "note": "u_6c3f appears in membership.csv only as a leaf member, joining g_f56e and the suffixed decoy groups g_f56e_d0 through g_f56e_d6. The decoy chains all break. Their next hops are defined only for the _v2 variants (for example g_f56e_d3_v2 \u2192 g_f1b6_d3), and u_6c3f is not a member of any _v2 group. The same _v2 mismatch recurs at the g_f1b6_dN \u2192 g_9e89_dN step. The direct g_f56e branch reaches g_dfa0 through g_f1b6 and g_9e89. However, r_f920 does not grant x_ce29 directly: bindings.yaml has no {role: r_f920, resource: x_ce29} row. The only x_ce29 grants are to r_9214 and r_9214_d0 through r_9214_d6. Unlike the suffixed variants, which have explicit holder or inheritance lines, r_f920 is never tied to x_ce29 by any resource binding. Since no binding places u_6c3f or its groups on an x_ce29-granting role, u_6c3f cannot access x_ce29.",
+  "valid": true
+}

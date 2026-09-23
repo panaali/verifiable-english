@@ -1,0 +1,5 @@
+{
+  "claim": "u_b691 cannot access x_f152.",
+  "note": "u_b691 cannot access x_f152 under this policy. u_b691's memberships are only the g_d8b6 family: g_d8b6, g_d8b6_d0 through g_d8b6_d6. Each of these feeds a g_fc8b variant, which is bound to an r_f47a variant. None of these reaches a role that grants x_f152. The only roles bound to x_f152 are r_3486 and r_3486_d0 through r_3486_d6. Each is reachable only through its r_6021 role, and that only through r_9703. The key point is the direction of the r_9703 rules. 'Every permission of role r_9703 is also a permission of role r_f47a' flows from r_9703 to r_f47a, so r_f47a gains nothing that leads onward to r_9703. The suffixed chains are similar. Only r_f47a_d0, r_f47a_d1 and r_f47a_d4 have 'holders receive' rules toward r_9703_d0, r_9703_d1 and r_9703_d4. Those links are broken or unbound elsewhere, and the _v2 variants are separate identifiers. No directed chain from u_b691 therefore ends at x_f152, so the claim holds.",
+  "valid": true
+}

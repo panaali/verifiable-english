@@ -1,0 +1,305 @@
+{
+  "attempts": [
+    {
+      "counts_as_sample": false,
+      "elapsed_s": 1.2039103339775465,
+      "error": "synthetic placeholder without a served model",
+      "eventually_completed": false,
+      "item_id": "5a47675a06cf/b-monitor/0",
+      "key": "8408d3bea129e493f28a1349465409d870cf9231c3aaab892cb58b2a7113ea30",
+      "provider_errors": [
+        "You've hit your session limit \u00b7 resets 6am (UTC)"
+      ],
+      "provider_list_price_usd_estimate": [
+        0
+      ],
+      "provider_model_usage": [
+        {}
+      ],
+      "provider_usage": [
+        {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "inference_geo": "",
+          "input_tokens": 0,
+          "iterations": [],
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_fetch_requests": 0,
+            "web_search_requests": 0
+          },
+          "service_tier": "standard",
+          "speed": "standard"
+        }
+      ],
+      "sample_index": 0,
+      "timestamp": "2026-09-23T01:54:02.937023+00:00"
+    },
+    {
+      "counts_as_sample": false,
+      "elapsed_s": 1.067536165995989,
+      "error": "synthetic placeholder without a served model",
+      "eventually_completed": false,
+      "item_id": "5a47675a06cf/b-monitor/0",
+      "key": "8408d3bea129e493f28a1349465409d870cf9231c3aaab892cb58b2a7113ea30",
+      "provider_errors": [
+        "You've hit your session limit \u00b7 resets 6am (UTC)"
+      ],
+      "provider_list_price_usd_estimate": [
+        0
+      ],
+      "provider_model_usage": [
+        {}
+      ],
+      "provider_usage": [
+        {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "inference_geo": "",
+          "input_tokens": 0,
+          "iterations": [],
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_fetch_requests": 0,
+            "web_search_requests": 0
+          },
+          "service_tier": "standard",
+          "speed": "standard"
+        }
+      ],
+      "sample_index": 0,
+      "timestamp": "2026-09-23T01:54:34.183033+00:00"
+    },
+    {
+      "counts_as_sample": false,
+      "elapsed_s": 1.1539442090434022,
+      "error": "synthetic placeholder without a served model",
+      "eventually_completed": false,
+      "item_id": "5a47675a06cf/b-monitor/0",
+      "key": "8408d3bea129e493f28a1349465409d870cf9231c3aaab892cb58b2a7113ea30",
+      "provider_errors": [
+        "You've hit your session limit \u00b7 resets 6am (UTC)"
+      ],
+      "provider_list_price_usd_estimate": [
+        0
+      ],
+      "provider_model_usage": [
+        {}
+      ],
+      "provider_usage": [
+        {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "inference_geo": "",
+          "input_tokens": 0,
+          "iterations": [],
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_fetch_requests": 0,
+            "web_search_requests": 0
+          },
+          "service_tier": "standard",
+          "speed": "standard"
+        }
+      ],
+      "sample_index": 0,
+      "timestamp": "2026-09-23T01:55:35.542990+00:00"
+    },
+    {
+      "counts_as_sample": false,
+      "elapsed_s": 1.2869669169886038,
+      "error": "synthetic placeholder without a served model",
+      "eventually_completed": false,
+      "item_id": "5a47675a06cf/b-monitor/0",
+      "key": "8408d3bea129e493f28a1349465409d870cf9231c3aaab892cb58b2a7113ea30",
+      "provider_errors": [
+        "You've hit your session limit \u00b7 resets 6am (UTC)"
+      ],
+      "provider_list_price_usd_estimate": [
+        0
+      ],
+      "provider_model_usage": [
+        {}
+      ],
+      "provider_usage": [
+        {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "inference_geo": "",
+          "input_tokens": 0,
+          "iterations": [],
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_fetch_requests": 0,
+            "web_search_requests": 0
+          },
+          "service_tier": "standard",
+          "speed": "standard"
+        }
+      ],
+      "sample_index": 0,
+      "timestamp": "2026-09-23T01:57:37.011578+00:00"
+    },
+    {
+      "counts_as_sample": false,
+      "elapsed_s": 1.057104041974526,
+      "error": "synthetic placeholder without a served model",
+      "eventually_completed": false,
+      "item_id": "5a47675a06cf/b-monitor/0",
+      "key": "8408d3bea129e493f28a1349465409d870cf9231c3aaab892cb58b2a7113ea30",
+      "provider_errors": [
+        "You've hit your session limit \u00b7 resets 6am (UTC)"
+      ],
+      "provider_list_price_usd_estimate": [
+        0
+      ],
+      "provider_model_usage": [
+        {}
+      ],
+      "provider_usage": [
+        {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "inference_geo": "",
+          "input_tokens": 0,
+          "iterations": [],
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_fetch_requests": 0,
+            "web_search_requests": 0
+          },
+          "service_tier": "standard",
+          "speed": "standard"
+        }
+      ],
+      "sample_index": 0,
+      "timestamp": "2026-09-23T02:01:38.254770+00:00"
+    },
+    {
+      "counts_as_sample": false,
+      "elapsed_s": 1.22786029195413,
+      "error": "synthetic placeholder without a served model",
+      "eventually_completed": false,
+      "item_id": "5a47675a06cf/b-monitor/0",
+      "key": "8408d3bea129e493f28a1349465409d870cf9231c3aaab892cb58b2a7113ea30",
+      "provider_errors": [
+        "You've hit your session limit \u00b7 resets 6am (UTC)"
+      ],
+      "provider_list_price_usd_estimate": [
+        0
+      ],
+      "provider_model_usage": [
+        {}
+      ],
+      "provider_usage": [
+        {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "inference_geo": "",
+          "input_tokens": 0,
+          "iterations": [],
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_fetch_requests": 0,
+            "web_search_requests": 0
+          },
+          "service_tier": "standard",
+          "speed": "standard"
+        }
+      ],
+      "sample_index": 0,
+      "timestamp": "2026-09-23T02:09:39.681017+00:00"
+    }
+  ],
+  "retry_events": [
+    {
+      "backoff_s": 30,
+      "counts_as_sample": false,
+      "item_id": "5a47675a06cf/b-monitor/0",
+      "key": "8408d3bea129e493f28a1349465409d870cf9231c3aaab892cb58b2a7113ea30",
+      "retry_number": 1,
+      "sample_index": 0,
+      "timestamp": "2026-09-23T01:54:03.107107+00:00"
+    },
+    {
+      "backoff_s": 60,
+      "counts_as_sample": false,
+      "item_id": "5a47675a06cf/b-monitor/0",
+      "key": "8408d3bea129e493f28a1349465409d870cf9231c3aaab892cb58b2a7113ea30",
+      "retry_number": 2,
+      "sample_index": 0,
+      "timestamp": "2026-09-23T01:54:34.361756+00:00"
+    },
+    {
+      "backoff_s": 120,
+      "counts_as_sample": false,
+      "item_id": "5a47675a06cf/b-monitor/0",
+      "key": "8408d3bea129e493f28a1349465409d870cf9231c3aaab892cb58b2a7113ea30",
+      "retry_number": 3,
+      "sample_index": 0,
+      "timestamp": "2026-09-23T01:55:35.714838+00:00"
+    },
+    {
+      "backoff_s": 240,
+      "counts_as_sample": false,
+      "item_id": "5a47675a06cf/b-monitor/0",
+      "key": "8408d3bea129e493f28a1349465409d870cf9231c3aaab892cb58b2a7113ea30",
+      "retry_number": 4,
+      "sample_index": 0,
+      "timestamp": "2026-09-23T01:57:37.190398+00:00"
+    },
+    {
+      "backoff_s": 480,
+      "counts_as_sample": false,
+      "item_id": "5a47675a06cf/b-monitor/0",
+      "key": "8408d3bea129e493f28a1349465409d870cf9231c3aaab892cb58b2a7113ea30",
+      "retry_number": 5,
+      "sample_index": 0,
+      "timestamp": "2026-09-23T02:01:38.440086+00:00"
+    }
+  ],
+  "subscription_dollars_inferred": false,
+  "unknown_usage_is_not_zero": true
+}

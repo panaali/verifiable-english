@@ -1,0 +1,29 @@
+{
+  "account_label": "danielsaeedi37",
+  "arm": "a",
+  "elapsed_s": 12.118595833017025,
+  "input_tokens": 29907,
+  "item_id": "50162d034f0a/claim",
+  "key": "d9c364d1721e1ef2fd21e6a9f265ec3276dffac00580d912bf0aca84c71ed192",
+  "model": "opus",
+  "model_usage": {
+    "claude-opus-5-5": {
+      "cacheCreationInputTokens": 29905,
+      "cacheReadInputTokens": 0,
+      "canonicalModel": "claude-opus-5-5",
+      "contextWindow": 1000000,
+      "costBasis": "list",
+      "costUSD": 0.255648,
+      "inputTokens": 2,
+      "maxOutputTokens": 128000,
+      "outputTokens": 820,
+      "provider": "firstParty",
+      "thinkingTokens": 418,
+      "webSearchRequests": 0
+    }
+  },
+  "output_tokens": 820,
+  "role": "author",
+  "served_model": "claude-opus-5-5",
+  "thinking_tokens_reported": 418
+}

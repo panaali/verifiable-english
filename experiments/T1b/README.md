@@ -53,3 +53,36 @@ A new `STOP-A1.json` is an immutable active global stop. Never delete either
 stop file or change frozen code to force continuation. The standalone audit and
 report scripts make no model calls. A 5,000-record honest VE closure/coverage
 check also passed offline before continuation.
+
+## Explicit A2 infrastructure continuation
+
+[PREREG-T1b-A2.md](PREREG-T1b-A2.md), timestamped and committed as `73df459`,
+supersedes only infrastructure handling. Original/A1 files and stops remain
+historical and immutable. All 19 completed gate decisions and pre-resume ledger
+prefixes are bound by `resume-A2.json` and reused without generation.
+
+Active commands (run on the host; account danielsaeedi37 only):
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python -m ve_experiments.t1b.a2_run all
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/T1b/audit_A2.py
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/T1b/write_report_A2.py
+```
+
+The runner verifies every freeze and bound timestamp before gate/full launches.
+Connection failures, unserved synthetic placeholders, empty streams and HTTP 5xx
+receive up to five retries at 30/60/120/240/480 seconds, then exit 75 with a
+resumable `PAUSE-A2.json`. A new `STOP-A2.json` remains an immutable global
+integrity stop. Infrastructure failures never count as experimental samples.
+The D pilot backend code is preserved in a separate A2 copy, with explicit 5xx
+classification and exactly five retries when resuming a previous failure.
+`all` finishes every gate before running all five arms in each passing cell.
+
+A2 execution status (2026-09-23 02:09:39 UTC): gate complete, 180/180; only
+Haiku/5,000 qualifies. Full study began, then exited 75 after the first Sonnet
+monitor request returned six unserved session-limit placeholders (initial plus
+five retries). The provider displayed a 06:00 UTC reset. `results-full/PAUSE-A2.json`
+is resumable; 0/600 full decisions have been scored. Both completed full author
+responses are cached. See [RESULTS.md](RESULTS.md), [execution-A2.json](execution-A2.json)
+and [integrity-audit-A2.json](integrity-audit-A2.json). The full study is incomplete;
+no five-arm performance claim is available.

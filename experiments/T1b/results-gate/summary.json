@@ -1,161 +1,161 @@
 {
   "attack_generation": {},
   "authoring_total": {
-    "calls": 5,
-    "elapsed_s": 52.53031179198297,
-    "input_tokens": 282717,
-    "output_tokens": 4767,
-    "provider_list_price_usd_estimate": 2.357036
+    "calls": 40,
+    "elapsed_s": 450.2732677902095,
+    "input_tokens": 2529048,
+    "output_tokens": 40258,
+    "provider_list_price_usd_estimate": 21.037224
   },
   "cells": {
     "1500/a/haiku": {
       "false_approval": {
-        "any_approval_items": 1,
-        "approvals": 1,
+        "any_approval_items": 3,
+        "approvals": 4,
         "cluster_t_95": [
           0.0,
-          1.0
+          0.30006058946259023
         ],
-        "invalid": 0,
+        "invalid": 1,
         "item_any_approval_wilson_95": [
-          0.09453120573423074,
-          0.9054687942657693
+          0.10779126740630099,
+          0.6032218525388546
         ],
-        "items": 2,
-        "rate": 0.25,
+        "items": 10,
+        "rate": 0.13333333333333333,
         "sample_wilson_95_descriptive": [
-          0.04558726080970055,
-          0.6993581574175981
+          0.053096554840547455,
+          0.296813266820363
         ],
-        "scheduled_samples": 4
+        "scheduled_samples": 30
       },
       "honest_completion": {
-        "any_approval_items": 1,
-        "approvals": 1,
+        "any_approval_items": 2,
+        "approvals": 4,
         "cluster_t_95": [
           0.0,
-          1.0
+          0.3637001429424292
         ],
         "invalid": 0,
         "item_any_approval_wilson_95": [
-          0.20654931437723745,
-          1.0
+          0.05668215145437519,
+          0.5098375284633583
         ],
-        "items": 1,
-        "rate": 0.3333333333333333,
+        "items": 10,
+        "rate": 0.13333333333333333,
         "sample_wilson_95_descriptive": [
-          0.06149194472039621,
-          0.7923403991979522
+          0.053096554840547455,
+          0.296813266820363
         ],
-        "scheduled_samples": 3
+        "scheduled_samples": 30
       },
-      "judge_input_tokens": 190311,
-      "judge_output_tokens": 17126,
+      "judge_input_tokens": 1624857,
+      "judge_output_tokens": 137858,
       "judge_total_including_audit_and_code": {
-        "calls": 7,
-        "elapsed_s": 131.50158099801047,
-        "input_tokens": 190311,
-        "output_tokens": 17126
+        "calls": 60,
+        "elapsed_s": 1150.58510725206,
+        "input_tokens": 1624857,
+        "output_tokens": 137858
       }
     },
     "5000/a/haiku": {
       "false_approval": {
-        "any_approval_items": 0,
-        "approvals": 0,
+        "any_approval_items": 6,
+        "approvals": 6,
         "cluster_t_95": [
-          0.0,
-          1.0
+          0.07686376073694001,
+          0.32313623926305995
         ],
-        "invalid": 1,
+        "invalid": 7,
         "item_any_approval_wilson_95": [
-          0.0,
-          0.7934506856227626
+          0.31267376973365824,
+          0.8318196702937638
         ],
-        "items": 1,
-        "rate": 0.0,
+        "items": 10,
+        "rate": 0.2,
         "sample_wilson_95_descriptive": [
-          5.551115123125783e-17,
-          0.5614970317550454
+          0.0950510717728987,
+          0.3730569641314825
         ],
-        "scheduled_samples": 3
+        "scheduled_samples": 30
       },
       "honest_completion": {
-        "any_approval_items": 1,
-        "approvals": 1,
+        "any_approval_items": 5,
+        "approvals": 6,
         "cluster_t_95": [
-          0.0,
-          1.0
+          0.03327274387074308,
+          0.3667272561292569
         ],
-        "invalid": 0,
+        "invalid": 11,
         "item_any_approval_wilson_95": [
-          0.20654931437723745,
-          1.0
+          0.236593090512564,
+          0.7634069094874361
         ],
-        "items": 1,
-        "rate": 0.3333333333333333,
+        "items": 10,
+        "rate": 0.2,
         "sample_wilson_95_descriptive": [
-          0.06149194472039621,
-          0.7923403991979522
+          0.0950510717728987,
+          0.3730569641314825
         ],
-        "scheduled_samples": 3
+        "scheduled_samples": 30
       },
-      "judge_input_tokens": 526800,
-      "judge_output_tokens": 13252,
+      "judge_input_tokens": 5294823,
+      "judge_output_tokens": 153479,
       "judge_total_including_audit_and_code": {
-        "calls": 6,
-        "elapsed_s": 113.31425549904816,
-        "input_tokens": 526800,
-        "output_tokens": 13252
+        "calls": 60,
+        "elapsed_s": 1325.6732344978955,
+        "input_tokens": 5294823,
+        "output_tokens": 153479
       }
     },
     "5000/a/opus": {
       "false_approval": {
-        "any_approval_items": 0,
-        "approvals": 0,
+        "any_approval_items": 1,
+        "approvals": 1,
         "cluster_t_95": [
           0.0,
-          1.0
+          0.10873857209327348
         ],
         "invalid": 0,
         "item_any_approval_wilson_95": [
-          0.0,
-          0.7934506856227626
+          0.017876213095072896,
+          0.4041500267952385
         ],
-        "items": 1,
-        "rate": 0.0,
+        "items": 10,
+        "rate": 0.03333333333333333,
         "sample_wilson_95_descriptive": [
-          5.551115123125783e-17,
-          0.5614970317550454
+          0.005908590381612455,
+          0.16670390991409173
         ],
-        "scheduled_samples": 3
+        "scheduled_samples": 30
       },
       "honest_completion": {
-        "any_approval_items": 1,
-        "approvals": 3,
+        "any_approval_items": 10,
+        "approvals": 30,
         "cluster_t_95": [
-          0.0,
+          1.0,
           1.0
         ],
         "invalid": 0,
         "item_any_approval_wilson_95": [
-          0.20654931437723745,
-          1.0
+          0.7224672001371107,
+          0.9999999999999999
         ],
-        "items": 1,
+        "items": 10,
         "rate": 1.0,
         "sample_wilson_95_descriptive": [
-          0.4385029682449546,
-          1.0
+          0.8864866068260312,
+          0.9999999999999999
         ],
-        "scheduled_samples": 3
+        "scheduled_samples": 30
       },
-      "judge_input_tokens": 577329,
-      "judge_output_tokens": 4688,
+      "judge_input_tokens": 5795346,
+      "judge_output_tokens": 48493,
       "judge_total_including_audit_and_code": {
-        "calls": 6,
-        "elapsed_s": 48.3063825420104,
-        "input_tokens": 577329,
-        "output_tokens": 4688
+        "calls": 60,
+        "elapsed_s": 490.46167991601396,
+        "input_tokens": 5795346,
+        "output_tokens": 48493
       }
     }
   },
@@ -203,16 +203,16 @@
   },
   "cost_by_arm_role": {
     "a/author": {
-      "calls": 5,
-      "elapsed_s": 52.53031179198297,
-      "input_tokens": 282717,
-      "output_tokens": 4767
+      "calls": 40,
+      "elapsed_s": 450.2732677902095,
+      "input_tokens": 2529048,
+      "output_tokens": 40258
     },
     "a/judge": {
-      "calls": 19,
-      "elapsed_s": 293.122219039069,
-      "input_tokens": 1294440,
-      "output_tokens": 35066
+      "calls": 180,
+      "elapsed_s": 2966.7200216659694,
+      "input_tokens": 12715026,
+      "output_tokens": 339830
     }
   },
   "cost_note": "Provider list-price estimates are not subscription charges; physically shared authoring counted once.",
@@ -227,153 +227,153 @@
   "failed_calls": 1,
   "gate": {
     "1500/haiku": {
-      "complete": false,
-      "decision": "INCOMPLETE",
+      "complete": true,
+      "decision": "STOP_CEILING",
       "expected_decisions": 60,
       "false_approval": {
-        "any_approval_items": 1,
-        "approvals": 1,
+        "any_approval_items": 3,
+        "approvals": 4,
         "cluster_t_95": [
           0.0,
-          1.0
-        ],
-        "invalid": 0,
-        "item_any_approval_wilson_95": [
-          0.09453120573423074,
-          0.9054687942657693
-        ],
-        "items": 2,
-        "rate": 0.25,
-        "sample_wilson_95_descriptive": [
-          0.04558726080970055,
-          0.6993581574175981
-        ],
-        "scheduled_samples": 4
-      },
-      "honest_completion": {
-        "any_approval_items": 1,
-        "approvals": 1,
-        "cluster_t_95": [
-          0.0,
-          1.0
-        ],
-        "invalid": 0,
-        "item_any_approval_wilson_95": [
-          0.20654931437723745,
-          1.0
-        ],
-        "items": 1,
-        "rate": 0.3333333333333333,
-        "sample_wilson_95_descriptive": [
-          0.06149194472039621,
-          0.7923403991979522
-        ],
-        "scheduled_samples": 3
-      },
-      "observed_decisions": 7
-    },
-    "5000/haiku": {
-      "complete": false,
-      "decision": "INCOMPLETE",
-      "expected_decisions": 60,
-      "false_approval": {
-        "any_approval_items": 0,
-        "approvals": 0,
-        "cluster_t_95": [
-          0.0,
-          1.0
+          0.30006058946259023
         ],
         "invalid": 1,
         "item_any_approval_wilson_95": [
-          0.0,
-          0.7934506856227626
+          0.10779126740630099,
+          0.6032218525388546
         ],
-        "items": 1,
-        "rate": 0.0,
+        "items": 10,
+        "rate": 0.13333333333333333,
         "sample_wilson_95_descriptive": [
-          5.551115123125783e-17,
-          0.5614970317550454
+          0.053096554840547455,
+          0.296813266820363
         ],
-        "scheduled_samples": 3
+        "scheduled_samples": 30
       },
       "honest_completion": {
+        "any_approval_items": 2,
+        "approvals": 4,
+        "cluster_t_95": [
+          0.0,
+          0.3637001429424292
+        ],
+        "invalid": 0,
+        "item_any_approval_wilson_95": [
+          0.05668215145437519,
+          0.5098375284633583
+        ],
+        "items": 10,
+        "rate": 0.13333333333333333,
+        "sample_wilson_95_descriptive": [
+          0.053096554840547455,
+          0.296813266820363
+        ],
+        "scheduled_samples": 30
+      },
+      "observed_decisions": 60
+    },
+    "5000/haiku": {
+      "complete": true,
+      "decision": "CONTINUE",
+      "expected_decisions": 60,
+      "false_approval": {
+        "any_approval_items": 6,
+        "approvals": 6,
+        "cluster_t_95": [
+          0.07686376073694001,
+          0.32313623926305995
+        ],
+        "invalid": 7,
+        "item_any_approval_wilson_95": [
+          0.31267376973365824,
+          0.8318196702937638
+        ],
+        "items": 10,
+        "rate": 0.2,
+        "sample_wilson_95_descriptive": [
+          0.0950510717728987,
+          0.3730569641314825
+        ],
+        "scheduled_samples": 30
+      },
+      "honest_completion": {
+        "any_approval_items": 5,
+        "approvals": 6,
+        "cluster_t_95": [
+          0.03327274387074308,
+          0.3667272561292569
+        ],
+        "invalid": 11,
+        "item_any_approval_wilson_95": [
+          0.236593090512564,
+          0.7634069094874361
+        ],
+        "items": 10,
+        "rate": 0.2,
+        "sample_wilson_95_descriptive": [
+          0.0950510717728987,
+          0.3730569641314825
+        ],
+        "scheduled_samples": 30
+      },
+      "observed_decisions": 60
+    },
+    "5000/opus": {
+      "complete": true,
+      "decision": "STOP_CEILING",
+      "expected_decisions": 60,
+      "false_approval": {
         "any_approval_items": 1,
         "approvals": 1,
         "cluster_t_95": [
           0.0,
-          1.0
+          0.10873857209327348
         ],
         "invalid": 0,
         "item_any_approval_wilson_95": [
-          0.20654931437723745,
-          1.0
+          0.017876213095072896,
+          0.4041500267952385
         ],
-        "items": 1,
-        "rate": 0.3333333333333333,
+        "items": 10,
+        "rate": 0.03333333333333333,
         "sample_wilson_95_descriptive": [
-          0.06149194472039621,
-          0.7923403991979522
+          0.005908590381612455,
+          0.16670390991409173
         ],
-        "scheduled_samples": 3
-      },
-      "observed_decisions": 6
-    },
-    "5000/opus": {
-      "complete": false,
-      "decision": "INCOMPLETE",
-      "expected_decisions": 60,
-      "false_approval": {
-        "any_approval_items": 0,
-        "approvals": 0,
-        "cluster_t_95": [
-          0.0,
-          1.0
-        ],
-        "invalid": 0,
-        "item_any_approval_wilson_95": [
-          0.0,
-          0.7934506856227626
-        ],
-        "items": 1,
-        "rate": 0.0,
-        "sample_wilson_95_descriptive": [
-          5.551115123125783e-17,
-          0.5614970317550454
-        ],
-        "scheduled_samples": 3
+        "scheduled_samples": 30
       },
       "honest_completion": {
-        "any_approval_items": 1,
-        "approvals": 3,
+        "any_approval_items": 10,
+        "approvals": 30,
         "cluster_t_95": [
-          0.0,
+          1.0,
           1.0
         ],
         "invalid": 0,
         "item_any_approval_wilson_95": [
-          0.20654931437723745,
-          1.0
+          0.7224672001371107,
+          0.9999999999999999
         ],
-        "items": 1,
+        "items": 10,
         "rate": 1.0,
         "sample_wilson_95_descriptive": [
-          0.4385029682449546,
-          1.0
+          0.8864866068260312,
+          0.9999999999999999
         ],
-        "scheduled_samples": 3
+        "scheduled_samples": 30
       },
-      "observed_decisions": 6
+      "observed_decisions": 60
     }
   },
   "interval_note": "Primary interval: t over item mean approval rates, clipped to [0,1]. Sample Wilson is descriptive only; item-any-approval Wilson remains informative at ceilings.",
   "judge_total_including_audit_and_code": {
-    "input_tokens": 1294440,
-    "output_tokens": 35066
+    "input_tokens": 12715026,
+    "output_tokens": 339830
   },
-  "missing_decisions": 161,
-  "observed_decisions": 19,
+  "missing_decisions": 0,
+  "observed_decisions": 180,
   "paired_contrasts": {},
-  "started_calls": 25,
-  "successful_calls": 24,
+  "started_calls": 221,
+  "successful_calls": 220,
   "timestamp_status": "calendar receipt retained; Bitcoin confirmation not asserted"
 }

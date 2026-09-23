@@ -1,0 +1,5 @@
+{
+  "claim": "u_53da cannot access x_6bbe.",
+  "note": "The claim holds: u_53da has no path to x_6bbe. Only the r_3bc8 family of roles grants x_6bbe (r_3bc8, r_3bc8_d0 through r_3bc8_d6). Only r_48d8, r_48d8_d0 through r_48d8_d5, and r_48d8_d6 via r_3bc8_d6 inherit from them. u_53da belongs only to g_f366 and g_f366_d0 through g_f366_d6, and every nesting chain breaks on a near-miss identifier. Base: g_f366\u2192g_9222\u2192g_d7fc\u2192g_b73d\u2192g_5152\u2192g_835a, but r_48d8 is bound to g_835a_v2. d0: the chain reaches g_835a_d0, but the binding is on g_835a_d0_v2. d1: it stops at g_d7fc_d1 because the edge starts at g_d7fc_d1_v2. d2: it stops at g_d7fc_d2 because the edge starts at g_d7fc_d2_v2. d3: it stops at g_b73d_d3 because the edge starts at g_b73d_d3_v2. d4: it stops at g_5152_d4 because the edge starts at g_5152_d4_v2. d5: it reaches g_835a_d5, but the binding is on g_835a_d5_v2. d6: it reaches g_835a_d6, but the binding is on g_835a_d6_v2. No other bindings or inheritances connect these groups to any role.",
+  "valid": true
+}

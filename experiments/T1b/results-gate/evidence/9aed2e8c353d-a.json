@@ -1,0 +1,5 @@
+{
+  "claim": "u_29e6 cannot access x_154c.",
+  "note": "No directed path exists from u_29e6 to x_154c. u_29e6 belongs only to g_5cbf and g_5cbf_d0..d6. Every chain breaks. g_5cbf\u2192g_9a40\u2192g_3efc\u2192g_d884\u2192g_e63d\u2192g_b35a, but g_b35a has no binding; only g_b35a_v2 holds r_54c8, which reaches x_154c via r_7036/r_d9b9. d0: g_9a40_d0 has no outgoing edge; only g_9a40_d0_v2\u2192g_3efc_d0. d1: g_5cbf_d1 has no outgoing edge; only g_5cbf_d1_v2\u2192g_9a40_d1. d2: the chain reaches g_e63d_d2, but only g_e63d_d2_v2\u2192g_b35a_d2. d4 and d6: the chain ends at g_9a40_d4 or g_9a40_d6, since only the _v2 variants link onward. d3: the chain reaches g_b35a_d3\u2192r_54c8_d3\u2192r_7036_d3, but r_7036_d3 has no grants; only r_7036_d3_v2 receives r_d9b9_d3. d5: the chain reaches g_b35a_d5\u2192r_54c8_d5, but r_54c8_d5 only receives r_7036_d5, which has no grants; r_7036_d5_v2 is the role that inherits r_d9b9_d5. No other role grants x_154c or leads to the r_d9b9 roles, so u_29e6 cannot access x_154c.",
+  "valid": true
+}

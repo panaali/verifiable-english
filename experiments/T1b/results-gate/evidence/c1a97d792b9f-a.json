@@ -1,0 +1,5 @@
+{
+  "claim": "u_fce1 cannot access x_87bc.",
+  "note": "Claim holds: no chain from u_fce1 reaches a role that grants x_87bc. x_87bc is granted only by r_2c30 and r_2c30_d0 through r_2c30_d6. Every chain from u_fce1 breaks: (1) u_fce1\u2192g_e079\u2192g_c043\u2192g_a285\u2192g_0673 gets r_5cd1, which passes on r_d84c; nothing flows into r_d84c (r_38aa feeds r_d84c_v2 instead). (2) The d0 chain gets r_5cd1_d0\u2192r_d84c_d0, which has no source (r_d84c_d0_v2 is a different role). (3) d1: r_5cd1_d1 has no grant (the rule names r_5cd1_d1_v2). (4) d2: r_5cd1_d2\u2192r_d84c_d2\u2192r_38aa_d2, but only r_38aa_d2_v2 receives r_2c30_d2. (5) d4: r_5cd1_d4\u2192r_d84c_d4\u2192r_38aa_d4, but only r_38aa_d4_v2 receives r_2c30_d4. (6) d5: g_c043_d5\u2192g_a285_d5 stops; only g_a285_d5_v2 is a member of g_0673_d5. (7) d6: r_5cd1_d6 has no grant (the rule names r_5cd1_d6_v2). (8) d3: g_e079_d3 has no parent group; only g_e079_d3_v2 belongs to g_c043_d3. u_fce1 has no direct bindings, so u_fce1 cannot access x_87bc.",
+  "valid": true
+}

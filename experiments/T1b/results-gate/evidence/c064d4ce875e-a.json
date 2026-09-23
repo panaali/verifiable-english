@@ -1,0 +1,5 @@
+{
+  "claim": "u_29d3 cannot access x_e61b.",
+  "note": "Audit conclusion: u_29d3 cannot access x_e61b. u_29d3's only memberships are the g_f18d family of groups. The resource x_e61b is granted only to the r_b43c variant roles (r_b43c, r_b43c_d0 through r_b43c_d6). In inheritance.txt, those roles connect only to the r_3632_* roles through the one-way 'permission of' direction. The r_8adf_* bindings held by the g_2ee4_* groups sit on the receiving side of a separate chain. Every decoy chain also breaks: g_f18d_d1 is not linked to g_f18d_d1_v2, r_3632_d0_v2 is not r_3632_d0, and r_8adf_d2_v2 and r_8adf_d5_v2 are not bound to any principal. No monotone path therefore delivers x_e61b to u_29d3, and the claim holds.",
+  "valid": true
+}

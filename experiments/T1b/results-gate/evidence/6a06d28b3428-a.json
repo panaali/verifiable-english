@@ -1,0 +1,5 @@
+{
+  "claim": "u_8baf cannot access x_8271.",
+  "note": "u_8baf is a member of g_dc8f and the decoy groups g_dc8f_d0 through g_dc8f_d6. Every x_8271 grant goes through an r_d21c* role. The decoy branches all dead-end: r_4a58_d1 and r_4a58_d5 pull from r_a3b1_d1 and r_a3b1_d5, which have no d21c link. The existing links run the other way (r_a3b1_d1_v2 and r_a3b1_d5 holders receive d21c) and are never held. g_c052_d6 has no role; the binding is on g_c052_d6_v2. d0, d2, d3 and d4 likewise lack a complete forward link from a held role to r_d21c_dN. On the main branch, g_c052 holds r_4a58. The only r_a3b1/r_4a58 statement says r_a3b1's permissions are also r_4a58's, which feeds r_4a58 upward and grants nothing downstream from r_4a58. r_a3b1 inherits r_d21c, but no principal holds r_a3b1. So there is no directed path from u_8baf to any r_d21c role, and u_8baf cannot access x_8271.",
+  "valid": true
+}

@@ -1,0 +1,59 @@
+{
+  "attempts": [
+    {
+      "counts_as_sample": false,
+      "elapsed_s": 75.6040582919959,
+      "error": "synthetic placeholder without a served model",
+      "eventually_completed": true,
+      "item_id": "32f4c84f554a/a/haiku/1/decision",
+      "key": "de81ebc83454a6c6a9a236f7aa627d68ca04ec5487a26368d34490b9bda6666f",
+      "provider_errors": [
+        "API Error: Connection to the API was lost (ECONNRESET). This is usually temporary \u2014 try again."
+      ],
+      "provider_list_price_usd_estimate": [
+        0
+      ],
+      "provider_model_usage": [
+        {}
+      ],
+      "provider_usage": [
+        {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "inference_geo": "",
+          "input_tokens": 0,
+          "iterations": [],
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_fetch_requests": 0,
+            "web_search_requests": 0
+          },
+          "service_tier": "standard",
+          "speed": "standard"
+        }
+      ],
+      "sample_index": 1,
+      "timestamp": "2026-09-23T00:06:45.579630+00:00"
+    }
+  ],
+  "retry_events": [
+    {
+      "backoff_s": 30,
+      "counts_as_sample": false,
+      "item_id": "32f4c84f554a/a/haiku/1/decision",
+      "key": "de81ebc83454a6c6a9a236f7aa627d68ca04ec5487a26368d34490b9bda6666f",
+      "retry_number": 1,
+      "sample_index": 1,
+      "timestamp": "2026-09-23T01:00:29.620715+00:00"
+    }
+  ],
+  "subscription_dollars_inferred": false,
+  "unknown_usage_is_not_zero": true
+}

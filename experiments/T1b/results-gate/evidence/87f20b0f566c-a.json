@@ -1,0 +1,5 @@
+{
+  "claim": "u_3143 cannot access x_0a18.",
+  "note": "True. u_3143's groups are g_0bd0 and g_0bd0_d0 through g_0bd0_d6. Every chain toward x_0a18 breaks at an exact-string mismatch: - g_0bd0\u2192g_31b3\u2192g_1314: stops. Only g_1314_v2 is a member of g_7fe8. - d0: g_31b3_d0\u2192g_1314_d0: stops. Only g_1314_d0_v2 feeds g_7fe8_d0. - d1: \u2026\u2192g_7fe8_d1: stops. Only g_7fe8_d1_v2 feeds g_c43d_d1. - d2: g_0bd0_d2 stops. Only g_0bd0_d2_v2 feeds g_31b3_d2. - d3: \u2026\u2192g_c43d_d3 holds r_f400_d3, which receives r_9ed6_d3. r_9ed6_d3 has no inheritance; only r_9ed6_d3_v2 inherits r_d1ac_d3. So there is no route to r_d1ec_d3. - d4: \u2026\u2192g_c43d_d4 has no binding. r_f400_d4 is bound only to g_c43d_d4_v2. - d5: g_0bd0_d5 stops. Only g_0bd0_d5_v2 feeds g_31b3_d5. - d6: \u2026\u2192g_c43d_d6 has no binding. r_f400_d6 is bound only to g_c43d_d6_v2. u_3143 has no direct role bindings. With no wildcards or implicit grants, no path reaches any r_d1ec* role granting x_0a18.",
+  "valid": true
+}

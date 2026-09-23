@@ -1,0 +1,5 @@
+{
+  "claim": "u_14ab cannot access x_faae.",
+  "note": "Claim holds. u_14ab's only memberships are g_44e4 and g_44e4_d0 through g_44e4_d6. Each chain dead-ends one step before reaching a bound group, because of a near-miss identifier. base: g_44e4\u2192g_826e\u2192g_c7b9\u2192g_6df8\u2192g_032d\u2192g_d159, but the binding is for g_d159_v2. d0: stops at g_6df8_d0; only g_6df8_d0_v2 is a member of g_032d_d0. d1: reaches g_d159_d1, but the binding is for g_d159_d1_v2. d2: stops at g_032d_d2; only g_032d_d2_v2 is a member of g_d159_d2. d3: stops at g_c7b9_d3; only g_c7b9_d3_v2 is a member of g_6df8_d3. d4: stops at g_6df8_d4; only g_6df8_d4_v2 is a member of g_032d_d4. d5: stops at g_032d_d5; only g_032d_d5_v2 is a member of g_d159_d5. d6: stops at g_c7b9_d6; only g_c7b9_d6_v2 is a member of g_6df8_d6. None of the groups u_14ab reaches has any role binding, and u_14ab has no direct binding. With no roles, u_14ab cannot reach x_faae or any other resource.",
+  "valid": true
+}

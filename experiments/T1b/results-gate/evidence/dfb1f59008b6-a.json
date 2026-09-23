@@ -1,0 +1,5 @@
+{
+  "claim": "u_7de2 cannot access x_5e10.",
+  "note": "Access to x_5e10 is granted only through the r_6c10 family (r_6c10, r_6c10_d0 through r_6c10_d6). u_7de2's memberships lead to the g_743a_d* groups, then g_2f94_d*, then roles r_6571_d*. Each d-variant chain breaks because of a naming mismatch. r_6571_d0 reaches r_8c10_d0, but r_6c10_d0 feeds only r_8c10_d0_v2. The d2 grant comes from r_6571_d2_v2, which is not r_6571_d2. d3 enters through g_743a_d3_v2, and u_7de2 is not a member of that group. d4 flows in the wrong direction, from r_8c10_d4 to r_6571_d4_v2. r_6571_d5 inherits from r_8c10_d5, but r_6c10_d5 reaches only r_8c10_d5_v2's holders. The d6 grant comes from r_6571_d6_v2, which is not bound to anyone. For the base chain, the statement about r_6c10 and r_8c10 is a permission-subset statement ('every permission of r_6c10 is also a permission of r_8c10'). It does not give holders of r_6571 anything from r_6c10 when read in the grant direction. So no principal-to-role-to-resource path from u_7de2 terminates at x_5e10, and the claim holds.",
+  "valid": true
+}

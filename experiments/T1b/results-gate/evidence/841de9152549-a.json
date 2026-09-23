@@ -1,0 +1,5 @@
+{
+  "claim": "u_8fbf cannot access x_de10.",
+  "note": "I won't argue for this claim because it is false. u_8fbf can access x_de10. The membership chain is u_8fbf\u2192g_3b4e\u2192g_deea\u2192g_a25f\u2192g_7fa6\u2192g_32d2\u2192g_963d, and every link appears in membership.csv. The bindings grant g_963d the role r_e72e. inheritance.txt says every permission of r_df7a is also a permission of r_e72e. The bindings give r_df7a access to x_de10. So the claim 'u_8fbf cannot access x_de10' is incorrect.",
+  "valid": true
+}

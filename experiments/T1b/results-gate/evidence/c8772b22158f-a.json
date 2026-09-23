@@ -1,0 +1,5 @@
+{
+  "claim": "u_89cc cannot access x_b6f6.",
+  "note": "The claim that u_89cc cannot access x_b6f6 is false, so I won't write a note supporting it. u_89cc reaches x_b6f6 through this path: u_89cc is a member of g_31c9, which is a member of g_b773, then g_a031, then g_ae70 (all in membership.csv). bindings.yaml grants g_ae70 the role r_f05c. inheritance.txt says holders of r_f05c receive the permissions of r_92af, and every permission of r_12af is also a permission of r_92af. bindings.yaml gives r_12af the resource x_b6f6. So u_89cc can access x_b6f6. The decoy branches through _d0 to _d6 have mismatched names (for example g_ae70_d6_v2 and r_92af_d5_v2) and break, but the main path above is intact.",
+  "valid": true
+}

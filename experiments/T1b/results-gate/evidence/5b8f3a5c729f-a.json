@@ -1,0 +1,5 @@
+{
+  "claim": "u_d9c2 cannot access x_cf22.",
+  "note": "The claim holds. u_d9c2 belongs only to g_39d5 and the suffixed groups g_39d5_d0 through g_39d5_d6. Each suffixed group reaches its own g_0ee5_dN/g_d776_dN branch, and those are separate identifiers. Several links in those chains are also broken by '_v2' mismatches (e.g., g_39d5_d0_v2 rather than g_39d5_d0; g_0ee5_d6_v2 rather than g_0ee5_d6; g_d776_d5_v2 holds r_d857_d5 rather than g_d776_d5). The remaining chains end at r_d857_dN roles that have no x_cf22 binding. The unsuffixed chain g_39d5 -> g_0ee5 -> g_d776 grants r_d857, but r_d857 has no direct resource bindings. The only relevant inheritance line reads 'Every permission of role r_d9fe is also a permission of role r_d857.' This makes r_d857 a superset target of r_d9fe for policy-definition purposes. It gives r_d857 holders no r_d9fe resource grants, because the monotone model propagates access only through holder/inherits phrasing. No principal is bound to r_d9fe. The x_cf22 bindings (r_d9fe, r_d9fe_d0 through r_d9fe_d6) are therefore unreachable from u_d9c2, and the cannot-access claim is correct.",
+  "valid": true
+}

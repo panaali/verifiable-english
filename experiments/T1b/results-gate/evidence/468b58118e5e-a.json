@@ -1,0 +1,5 @@
+{
+  "claim": "u_ea8b cannot access x_f071.",
+  "note": "The claim is true: u_ea8b cannot access x_f071. u_ea8b's only memberships are g_89df and g_89df_d0 through g_89df_d6. Each chain breaks. - g_89df \u2192 g_0f33 \u2192 g_326e: g_326e has no role binding (only g_326e_v2 does). - d0: g_326e_d0 holds r_f038_d0, which inherits r_893a_d0. But r_1e02_d0 flows only to r_893a_d0_v2, so the chain stops. - d1: g_89df_d1 belongs to no group (only g_89df_d1_v2 does). - d2: r_f038_d2 has no inheritance; only r_f038_d2_v2 inherits r_893a_d2. - d3: g_89df_d3 \u2192 g_0f33_d3, which has no membership (only g_0f33_d3_v2 joins g_326e_d3). - d4: r_f038_d4 inherits nothing; r_893a_d4 feeds r_f038_d4_v2 instead. - d5: r_f038_d5 inherits r_893a_d5, but r_1e02_d5 feeds r_893a_d5_v2, not r_893a_d5. - d6: g_89df_d6 \u2192 g_0f33_d6, which has no membership (only g_0f33_d6_v2 joins g_326e_d6). x_f071 is granted only by the r_1e02 family, and none of these paths reach it.",
+  "valid": true
+}

@@ -1,0 +1,5 @@
+{
+  "claim": "u_0765 cannot access x_6d79.",
+  "note": "Audit finding: u_0765's memberships lead only into the environment-scoped chains. These are g_0fa1_d0 through g_0fa1_d6, which map to g_da30_d*, then r_ed45_d*, then r_c50c_d*. Those chains are broken. For example, g_da30_d0 is bound to r_ed45_d0, but the grant to g_0fa1_d0 comes through the _v2 variant, g_0fa1_d0_v2, which u_0765 is not a member of. Similarly, r_ed45_d2_v2, r_ed45_d1_v2 and r_c50c_d4_v2 are the inheriting roles, not r_ed45_d2, r_ed45_d1 or r_c50c_d4, so identifiers do not match. Case-sensitive exact matching means these suffix mismatches sever the paths to every r_4267_d* role. The undecorated g_0fa1 to g_da30 to r_ed45 to r_c50c chain ends at r_d5ac. No binding grants r_d5ac any resource, and treating r_d5ac as reaching x_6d79 would require an implicit grant, which the policy excludes. u_0765 has no direct role bindings. Conclusion: no complete directed path exists, so u_0765 cannot access x_6d79.",
+  "valid": true
+}

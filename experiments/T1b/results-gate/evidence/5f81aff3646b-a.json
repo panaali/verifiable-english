@@ -1,0 +1,5 @@
+{
+  "claim": "u_b9f5 cannot access x_8cfc.",
+  "note": "I won't write a note supporting this claim, because the policy shows it is false: u_b9f5 can access x_8cfc. Path: u_b9f5 is a member of g_ace1 (membership.csv), and g_ace1 is a member of g_c8f4. bindings.yaml grants g_c8f4 the role r_9586. r_9586 inherits all permissions of r_b627. Every permission of r_8e26 is also a permission of r_b627, and r_8e26 inherits all permissions of r_2c22. bindings.yaml gives r_2c22 the resource x_8cfc. So u_b9f5 \u2192 g_ace1 \u2192 g_c8f4 \u2192 r_9586 \u2192 r_b627 \u2192 r_8e26 \u2192 r_2c22 \u2192 x_8cfc is a valid directed path. The suffixed variants (_d0 to _d6, _v2) are distractors, but the unsuffixed chain is complete. The claim that u_b9f5 cannot access x_8cfc is incorrect.",
+  "valid": true
+}

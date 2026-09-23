@@ -1,0 +1,5 @@
+{
+  "claim": "u_d6ac cannot access x_a452.",
+  "note": "The claim holds: no directed path connects u_d6ac to x_a452. u_d6ac's direct groups are g_5b52 and g_5b52_d0 through g_5b52_d6. Among these, only g_5b52_d1, g_5b52_d2, g_5b52_d3 and g_5b52_d5 lead onward, to g_9a2f_d1/d2/d3/d5. Those groups hold r_8437_d1/d2/d3/d5. g_5b52_d4 reaches g_9a2f_d4, but the binding is on g_9a2f_d4_v2. g_5b52, g_5b52_d0 and g_5b52_d6 have no edges; the edges exist only for the _v2 variants. x_a452 is granted only to r_55bf and r_55bf_d0 through r_55bf_d6. None of u_d6ac's roles reaches these. r_8437_d1 inherits from r_88c8_d1, but r_55bf_d1 feeds r_88c8_d1_v2, not r_88c8_d1. r_88c8_d2 and r_88c8_d3 feed only r_8437_d2_v2 and r_8437_d3_v2. r_88c8_d5 feeds only r_8437_d5_v2. r_8437_d2, r_8437_d3 and r_8437_d5 receive nothing. The inheritance direction is also reversed: r_55bf_* grant to r_88c8_*, never the other way. So no role held by u_d6ac inherits an r_55bf_* role, and u_d6ac cannot access x_a452.",
+  "valid": true
+}

@@ -1,0 +1,5 @@
+{
+  "claim": "u_7ff5 cannot access x_757e.",
+  "note": "Claim holds: u_7ff5 cannot access x_757e. Only the r_b301 roles (base and _d0 to _d6) grant x_757e, and they reach r_024c-style roles only through 95b4/7df1 chains. u_7ff5 belongs only to g_60c9 and g_60c9_d0 to _d6. No group on any of these paths has a direct binding, and every chain breaks before reaching one. Base: g_60c9>g_f012>g_3b6a>g_0e40>g_6fd3, but only g_6fd3_v2 is bound (r_024c). d0: stops at g_0e40_d0; only g_0e40_d0_v2 joins g_6fd3_d0. d1: stops at g_3b6a_d1; only g_3b6a_d1_v2 joins g_0e40_d1. d2: stops at g_3b6a_d2; only g_3b6a_d2_v2 joins g_0e40_d2. d3: reaches g_6fd3_d3, but only g_6fd3_d3_v2 is bound. d4: stops at g_0e40_d4; only g_0e40_d4_v2 joins g_6fd3_d4. d5: reaches g_6fd3_d5, but only g_6fd3_d5_v2 is bound. d6: reaches g_6fd3_d6, but only g_6fd3_d6_v2 is bound. Identifiers are exact strings, so the _v2 near-misses do not match. u_7ff5 therefore holds no roles and has no path to x_757e.",
+  "valid": true
+}

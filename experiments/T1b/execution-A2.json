@@ -1,0 +1,25 @@
+{
+  "recorded_at": "2026-09-23T02:10:27.003791+00:00",
+  "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python -u -m ve_experiments.t1b.a2_run all",
+  "amendment_commit_before_launch": "73df459",
+  "exit_code": 75,
+  "gate_complete": true,
+  "gate_decisions": 180,
+  "full_passing_cells": [
+    "5000/haiku"
+  ],
+  "full_expected_decisions": 600,
+  "full_observed_decisions": 0,
+  "status": "INFRASTRUCTURE_PAUSED_RESUMABLE",
+  "pause": {
+    "at": "2026-09-23T02:09:39.681922+00:00",
+    "counts_as_sample": false,
+    "error": "Infrastructure retries exhausted; resume the same request",
+    "item_id": "5a47675a06cf/b-monitor/0",
+    "resumable": true,
+    "role": "attack_monitor"
+  },
+  "reported_account_reset_utc": "2026-09-23T06:00:00+00:00",
+  "offline_tests_passed": 36,
+  "integrity_audit": "integrity-audit-A2.json"
+}

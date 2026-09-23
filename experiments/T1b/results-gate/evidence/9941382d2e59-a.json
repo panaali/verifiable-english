@@ -1,0 +1,5 @@
+{
+  "claim": "u_912e cannot access x_6a57.",
+  "note": "The claim is true: no path leads from u_912e to x_6a57. u_912e belongs directly to g_8bb1 and g_8bb1_d0 through g_8bb1_d6. Checking each chain: (1) g_8bb1_d1 and g_8bb1_d3 have no parent groups; only the _v2 variants join g_dee0_d1 and g_dee0_d3. (2) g_8bb1 joins g_dee0 and g_8bb1_d5 joins g_dee0_d5, but neither has further memberships or bindings; only g_dee0_v2 and g_dee0_d5_v2 feed g_b0f6*. (3) The d0 chain reaches g_b0f6_d0 and r_7701_d0, which receives r_ee85_d0. r_ee85_d0 has no resources and no inherited roles; r_d809_d0 feeds r_ee85_d0_v2 instead. (4) The d4 chain reaches r_7701_d4 and then r_ee85_d4, but only r_ee85_d4_v2 receives r_d809_d4. (5) The d2 and d6 chains reach r_7701_d2 and r_7701_d6. The only rules linking these to r_ee85_d2 and r_ee85_d6 run the other way (ee85 into 7701), so r_7701_d2 and r_7701_d6 gain nothing. No r_d809* role is ever reached, and only r_d809* roles grant x_6a57. Therefore u_912e cannot access x_6a57.",
+  "valid": true
+}

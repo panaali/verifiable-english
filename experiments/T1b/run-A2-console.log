@@ -1,0 +1,583 @@
+{"event": "infrastructure_retry", "item_id": "32f4c84f554a/a/haiku/1/decision", "sample_index": 1, "retry_number": 1, "backoff_s": 30}
+{"event": "call_ok", "key": "32f4c84f554a/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 27345, "output_tokens": 5064}
+{"event": "call_ok", "key": "32f4c84f554a/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 27345, "output_tokens": 1502}
+{"event": "call_ok", "key": "468b58118e5e/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96409, "output_tokens": 1235}
+{"event": "call_ok", "key": "468b58118e5e/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 88159, "output_tokens": 1673}
+{"event": "call_ok", "key": "468b58118e5e/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96487, "output_tokens": 1063}
+{"event": "call_ok", "key": "468b58118e5e/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96487, "output_tokens": 1438}
+{"event": "call_ok", "key": "468b58118e5e/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 88159, "output_tokens": 2716}
+{"event": "call_ok", "key": "468b58118e5e/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 88159, "output_tokens": 4656}
+{"event": "call_ok", "key": "468b58118e5e/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96487, "output_tokens": 1179}
+{"event": "call_ok", "key": "621ea575bcb0/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 29943, "output_tokens": 1395}
+{"event": "call_ok", "key": "621ea575bcb0/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 27251, "output_tokens": 2582}
+{"event": "call_ok", "key": "621ea575bcb0/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 27251, "output_tokens": 2508}
+{"event": "call_ok", "key": "621ea575bcb0/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 27251, "output_tokens": 1561}
+{"event": "call_ok", "key": "9aed2e8c353d/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96759, "output_tokens": 1478}
+{"event": "call_ok", "key": "9aed2e8c353d/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 88526, "output_tokens": 2138}
+{"event": "call_ok", "key": "9aed2e8c353d/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96837, "output_tokens": 1251}
+{"event": "call_ok", "key": "9aed2e8c353d/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96837, "output_tokens": 1209}
+{"event": "call_ok", "key": "9aed2e8c353d/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 88526, "output_tokens": 2431}
+{"event": "call_ok", "key": "9aed2e8c353d/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 88526, "output_tokens": 2230}
+{"event": "call_ok", "key": "9aed2e8c353d/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96837, "output_tokens": 1266}
+{"event": "call_ok", "key": "c8772b22158f/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 29821, "output_tokens": 645}
+{"event": "call_ok", "key": "c8772b22158f/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 26897, "output_tokens": 2019}
+{"event": "call_ok", "key": "c8772b22158f/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 26897, "output_tokens": 1537}
+{"event": "call_ok", "key": "c8772b22158f/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 26897, "output_tokens": 1119}
+{"event": "call_ok", "key": "9c5d22df6a70/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96724, "output_tokens": 1180}
+{"event": "call_ok", "key": "9c5d22df6a70/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 88533, "output_tokens": 1360}
+{"event": "call_ok", "key": "9c5d22df6a70/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96805, "output_tokens": 1241}
+{"event": "call_ok", "key": "9c5d22df6a70/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96805, "output_tokens": 1435}
+{"event": "call_ok", "key": "9c5d22df6a70/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 88533, "output_tokens": 2413}
+{"event": "call_ok", "key": "9c5d22df6a70/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 88533, "output_tokens": 1708}
+{"event": "call_ok", "key": "9c5d22df6a70/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96805, "output_tokens": 1237}
+{"event": "call_ok", "key": "852f1abcc8e5/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 29991, "output_tokens": 1163}
+{"event": "call_ok", "key": "852f1abcc8e5/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 27047, "output_tokens": 2626}
+{"event": "call_ok", "key": "852f1abcc8e5/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 27047, "output_tokens": 4485}
+{"event": "call_ok", "key": "852f1abcc8e5/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 27047, "output_tokens": 2525}
+{"event": "call_ok", "key": "3e8ebb942deb/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 97038, "output_tokens": 935}
+{"event": "call_ok", "key": "3e8ebb942deb/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 89374, "output_tokens": 1448}
+{"event": "call_ok", "key": "3e8ebb942deb/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 97019, "output_tokens": 422}
+{"event": "call_ok", "key": "3e8ebb942deb/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 97019, "output_tokens": 1063}
+{"event": "call_ok", "key": "3e8ebb942deb/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 89374, "output_tokens": 1696}
+{"event": "call_ok", "key": "3e8ebb942deb/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 89374, "output_tokens": 2055}
+{"event": "call_ok", "key": "3e8ebb942deb/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 97019, "output_tokens": 385}
+{"event": "call_ok", "key": "1aae8d0523d4/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 29896, "output_tokens": 928}
+{"event": "call_ok", "key": "1aae8d0523d4/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 27076, "output_tokens": 2029}
+{"event": "call_ok", "key": "1aae8d0523d4/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 27076, "output_tokens": 1792}
+{"event": "call_ok", "key": "1aae8d0523d4/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 27076, "output_tokens": 2386}
+{"event": "call_ok", "key": "c1a97d792b9f/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96560, "output_tokens": 1375}
+{"event": "call_ok", "key": "c1a97d792b9f/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 87706, "output_tokens": 2822}
+{"event": "call_ok", "key": "c1a97d792b9f/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96639, "output_tokens": 1185}
+{"event": "call_ok", "key": "c1a97d792b9f/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96639, "output_tokens": 1100}
+{"event": "call_ok", "key": "c1a97d792b9f/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 87706, "output_tokens": 4099}
+{"event": "call_ok", "key": "c1a97d792b9f/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 87706, "output_tokens": 1642}
+{"event": "call_ok", "key": "c1a97d792b9f/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96639, "output_tokens": 1212}
+{"event": "call_ok", "key": "5f81aff3646b/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 30346, "output_tokens": 685}
+{"event": "call_ok", "key": "5f81aff3646b/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 27365, "output_tokens": 1990}
+{"event": "call_ok", "key": "5f81aff3646b/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 27365, "output_tokens": 2157}
+{"event": "call_ok", "key": "5f81aff3646b/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 27365, "output_tokens": 4023}
+{"event": "call_ok", "key": "a10f9a0518ed/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 97268, "output_tokens": 942}
+{"event": "call_ok", "key": "a10f9a0518ed/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 88859, "output_tokens": 2793}
+{"event": "call_ok", "key": "a10f9a0518ed/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 97271, "output_tokens": 825}
+{"event": "call_ok", "key": "a10f9a0518ed/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 97271, "output_tokens": 375}
+{"event": "call_ok", "key": "a10f9a0518ed/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 88859, "output_tokens": 4671}
+{"event": "call_ok", "key": "a10f9a0518ed/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 88859, "output_tokens": 2119}
+{"event": "call_ok", "key": "a10f9a0518ed/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 97271, "output_tokens": 455}
+{"event": "call_ok", "key": "bfd7f9aacb15/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 29752, "output_tokens": 1426}
+{"event": "call_ok", "key": "bfd7f9aacb15/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 27036, "output_tokens": 1280}
+{"event": "call_ok", "key": "bfd7f9aacb15/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 27036, "output_tokens": 2047}
+{"event": "call_ok", "key": "bfd7f9aacb15/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 27036, "output_tokens": 1011}
+{"event": "call_ok", "key": "6a06d28b3428/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96369, "output_tokens": 826}
+{"event": "call_ok", "key": "6a06d28b3428/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 87908, "output_tokens": 1955}
+{"event": "call_ok", "key": "6a06d28b3428/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96376, "output_tokens": 996}
+{"event": "call_ok", "key": "6a06d28b3428/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96376, "output_tokens": 426}
+{"event": "call_ok", "key": "6a06d28b3428/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 87908, "output_tokens": 1525}
+{"event": "call_ok", "key": "6a06d28b3428/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 87908, "output_tokens": 2102}
+{"event": "call_ok", "key": "6a06d28b3428/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96376, "output_tokens": 502}
+{"event": "call_ok", "key": "565e533c8114/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 29626, "output_tokens": 1104}
+{"event": "call_ok", "key": "565e533c8114/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 26856, "output_tokens": 1536}
+{"event": "call_ok", "key": "565e533c8114/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 26856, "output_tokens": 1546}
+{"event": "call_ok", "key": "565e533c8114/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 26856, "output_tokens": 1888}
+{"event": "call_ok", "key": "841de9152549/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96608, "output_tokens": 503}
+{"event": "call_ok", "key": "841de9152549/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 88379, "output_tokens": 1106}
+{"event": "call_ok", "key": "841de9152549/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96595, "output_tokens": 905}
+{"event": "call_ok", "key": "841de9152549/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96595, "output_tokens": 532}
+{"event": "call_ok", "key": "841de9152549/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 88379, "output_tokens": 1657}
+{"event": "call_ok", "key": "841de9152549/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 88379, "output_tokens": 3296}
+{"event": "call_ok", "key": "841de9152549/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96595, "output_tokens": 787}
+{"event": "call_ok", "key": "1d8493dd467f/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 30166, "output_tokens": 725}
+{"event": "call_ok", "key": "1d8493dd467f/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 27131, "output_tokens": 4289}
+{"event": "call_ok", "key": "1d8493dd467f/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 27131, "output_tokens": 2144}
+{"event": "call_ok", "key": "1d8493dd467f/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 27131, "output_tokens": 1903}
+{"event": "call_ok", "key": "627d8f66e4fa/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96362, "output_tokens": 1264}
+{"event": "call_ok", "key": "627d8f66e4fa/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 87783, "output_tokens": 4223}
+{"event": "call_ok", "key": "627d8f66e4fa/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96441, "output_tokens": 979}
+{"event": "call_ok", "key": "627d8f66e4fa/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96441, "output_tokens": 912}
+{"event": "call_ok", "key": "627d8f66e4fa/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 87783, "output_tokens": 3542}
+{"event": "call_ok", "key": "627d8f66e4fa/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 87783, "output_tokens": 5618}
+{"event": "call_ok", "key": "627d8f66e4fa/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96441, "output_tokens": 1180}
+{"event": "call_ok", "key": "9941382d2e59/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 29909, "output_tokens": 1139}
+{"event": "call_ok", "key": "9941382d2e59/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 27170, "output_tokens": 1623}
+{"event": "call_ok", "key": "9941382d2e59/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 27170, "output_tokens": 1638}
+{"event": "call_ok", "key": "9941382d2e59/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 27170, "output_tokens": 2657}
+{"event": "call_ok", "key": "49640ca52b18/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96537, "output_tokens": 778}
+{"event": "call_ok", "key": "49640ca52b18/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 88354, "output_tokens": 1830}
+{"event": "call_ok", "key": "49640ca52b18/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96542, "output_tokens": 250}
+{"event": "call_ok", "key": "49640ca52b18/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96542, "output_tokens": 251}
+{"event": "call_ok", "key": "49640ca52b18/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 88354, "output_tokens": 1846}
+{"event": "call_ok", "key": "49640ca52b18/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 88354, "output_tokens": 1727}
+{"event": "call_ok", "key": "49640ca52b18/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96542, "output_tokens": 238}
+{"event": "call_ok", "key": "4bfc2444f84d/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 30072, "output_tokens": 1268}
+{"event": "call_ok", "key": "4bfc2444f84d/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 27311, "output_tokens": 2557}
+{"event": "call_ok", "key": "4bfc2444f84d/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 27311, "output_tokens": 3264}
+{"event": "call_ok", "key": "4bfc2444f84d/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 27311, "output_tokens": 1740}
+{"event": "call_ok", "key": "2b20dd18ea03/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96247, "output_tokens": 713}
+{"event": "call_ok", "key": "2b20dd18ea03/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 87653, "output_tokens": 2217}
+{"event": "call_ok", "key": "2b20dd18ea03/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96242, "output_tokens": 387}
+{"event": "call_ok", "key": "2b20dd18ea03/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96242, "output_tokens": 452}
+{"event": "call_ok", "key": "2b20dd18ea03/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 87653, "output_tokens": 2734}
+{"event": "call_ok", "key": "2b20dd18ea03/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 87653, "output_tokens": 1730}
+{"event": "call_ok", "key": "2b20dd18ea03/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96242, "output_tokens": 460}
+{"event": "call_ok", "key": "c2a8821914ec/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 29781, "output_tokens": 1052}
+{"event": "call_ok", "key": "c2a8821914ec/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 27043, "output_tokens": 2134}
+{"event": "call_ok", "key": "c2a8821914ec/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 27043, "output_tokens": 3805}
+{"event": "call_ok", "key": "c2a8821914ec/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 27043, "output_tokens": 2466}
+{"event": "call_ok", "key": "b2eacfa3e7c0/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96568, "output_tokens": 1208}
+{"event": "call_ok", "key": "b2eacfa3e7c0/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 88492, "output_tokens": 4514}
+{"event": "call_ok", "key": "b2eacfa3e7c0/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96646, "output_tokens": 1152}
+{"event": "call_ok", "key": "b2eacfa3e7c0/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96646, "output_tokens": 1045}
+{"event": "call_ok", "key": "b2eacfa3e7c0/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 88492, "output_tokens": 2217}
+{"event": "call_ok", "key": "b2eacfa3e7c0/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 88492, "output_tokens": 4302}
+{"event": "call_ok", "key": "b2eacfa3e7c0/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96646, "output_tokens": 1156}
+{"event": "call_ok", "key": "5b8f3a5c729f/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 29421, "output_tokens": 907}
+{"event": "call_ok", "key": "5b8f3a5c729f/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 26638, "output_tokens": 1935}
+{"event": "call_ok", "key": "5b8f3a5c729f/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 26638, "output_tokens": 2048}
+{"event": "call_ok", "key": "5b8f3a5c729f/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 26638, "output_tokens": 2578}
+{"event": "call_ok", "key": "cb4133a20c04/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96138, "output_tokens": 1303}
+{"event": "call_ok", "key": "cb4133a20c04/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 87692, "output_tokens": 2077}
+{"event": "call_ok", "key": "cb4133a20c04/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96216, "output_tokens": 1086}
+{"event": "call_ok", "key": "cb4133a20c04/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96216, "output_tokens": 1087}
+{"event": "call_ok", "key": "cb4133a20c04/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 87692, "output_tokens": 838}
+{"event": "call_ok", "key": "cb4133a20c04/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 87692, "output_tokens": 2196}
+{"event": "call_ok", "key": "cb4133a20c04/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96216, "output_tokens": 992}
+{"event": "call_ok", "key": "453255ec5dc5/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 29707, "output_tokens": 802}
+{"event": "call_ok", "key": "453255ec5dc5/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 26962, "output_tokens": 4110}
+{"event": "call_ok", "key": "453255ec5dc5/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 26962, "output_tokens": 3044}
+{"event": "call_ok", "key": "453255ec5dc5/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 26962, "output_tokens": 2624}
+{"event": "call_ok", "key": "a79933900011/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96875, "output_tokens": 594}
+{"event": "call_ok", "key": "a79933900011/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 88853, "output_tokens": 4317}
+{"event": "call_ok", "key": "a79933900011/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96883, "output_tokens": 270}
+{"event": "call_ok", "key": "a79933900011/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96883, "output_tokens": 283}
+{"event": "call_ok", "key": "a79933900011/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 88853, "output_tokens": 1493}
+{"event": "call_ok", "key": "a79933900011/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 88853, "output_tokens": 1946}
+{"event": "call_ok", "key": "a79933900011/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96883, "output_tokens": 293}
+{"event": "call_ok", "key": "01664d0d29dd/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 29552, "output_tokens": 677}
+{"event": "call_ok", "key": "01664d0d29dd/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 26909, "output_tokens": 804}
+{"event": "call_ok", "key": "01664d0d29dd/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 26909, "output_tokens": 727}
+{"event": "call_ok", "key": "01664d0d29dd/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 26909, "output_tokens": 2103}
+{"event": "call_ok", "key": "dfb1f59008b6/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96716, "output_tokens": 1102}
+{"event": "call_ok", "key": "dfb1f59008b6/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 87887, "output_tokens": 1776}
+{"event": "call_ok", "key": "dfb1f59008b6/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96727, "output_tokens": 380}
+{"event": "call_ok", "key": "dfb1f59008b6/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96727, "output_tokens": 332}
+{"event": "call_ok", "key": "dfb1f59008b6/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 87887, "output_tokens": 5634}
+{"event": "call_ok", "key": "dfb1f59008b6/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 87887, "output_tokens": 4690}
+{"event": "call_ok", "key": "dfb1f59008b6/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96727, "output_tokens": 315}
+{"event": "call_ok", "key": "15d68862154e/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 29758, "output_tokens": 1178}
+{"event": "call_ok", "key": "15d68862154e/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 27028, "output_tokens": 4008}
+{"event": "call_ok", "key": "15d68862154e/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 27028, "output_tokens": 1533}
+{"event": "call_ok", "key": "15d68862154e/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 27028, "output_tokens": 2284}
+{"event": "call_ok", "key": "c064d4ce875e/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 97258, "output_tokens": 595}
+{"event": "call_ok", "key": "c064d4ce875e/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 88849, "output_tokens": 2245}
+{"event": "call_ok", "key": "c064d4ce875e/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 97267, "output_tokens": 428}
+{"event": "call_ok", "key": "c064d4ce875e/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 97267, "output_tokens": 445}
+{"event": "call_ok", "key": "c064d4ce875e/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 88849, "output_tokens": 2291}
+{"event": "call_ok", "key": "c064d4ce875e/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 88849, "output_tokens": 2228}
+{"event": "call_ok", "key": "c064d4ce875e/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 97267, "output_tokens": 492}
+{"event": "call_ok", "key": "50162d034f0a/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 29907, "output_tokens": 820}
+{"event": "call_ok", "key": "50162d034f0a/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 27099, "output_tokens": 1389}
+{"event": "call_ok", "key": "50162d034f0a/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 27099, "output_tokens": 2433}
+{"event": "call_ok", "key": "50162d034f0a/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 27099, "output_tokens": 2116}
+{"event": "call_ok", "key": "87f20b0f566c/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96396, "output_tokens": 1289}
+{"event": "call_ok", "key": "87f20b0f566c/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 88583, "output_tokens": 1553}
+{"event": "call_ok", "key": "87f20b0f566c/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 96474, "output_tokens": 1157}
+{"event": "call_ok", "key": "87f20b0f566c/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 96474, "output_tokens": 1147}
+{"event": "call_ok", "key": "87f20b0f566c/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 88583, "output_tokens": 3921}
+{"event": "call_ok", "key": "87f20b0f566c/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 88583, "output_tokens": 2803}
+{"event": "call_ok", "key": "87f20b0f566c/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 96474, "output_tokens": 1145}
+{"event": "call_ok", "key": "a0145ae4d33f/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 30057, "output_tokens": 1092}
+{"event": "call_ok", "key": "a0145ae4d33f/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 27133, "output_tokens": 922}
+{"event": "call_ok", "key": "a0145ae4d33f/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 27133, "output_tokens": 2855}
+{"event": "call_ok", "key": "a0145ae4d33f/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 27133, "output_tokens": 1786}
+{"event": "call_ok", "key": "e6c81c64f81d/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 95794, "output_tokens": 1165}
+{"event": "call_ok", "key": "e6c81c64f81d/a/haiku/0/decision", "role": "judge", "model": "haiku", "sample": 0, "input_tokens": 87751, "output_tokens": 1710}
+{"event": "call_ok", "key": "e6c81c64f81d/a/opus/0/decision", "role": "judge", "model": "opus", "sample": 0, "input_tokens": 95872, "output_tokens": 1034}
+{"event": "call_ok", "key": "e6c81c64f81d/a/opus/1/decision", "role": "judge", "model": "opus", "sample": 1, "input_tokens": 95872, "output_tokens": 1024}
+{"event": "call_ok", "key": "e6c81c64f81d/a/haiku/1/decision", "role": "judge", "model": "haiku", "sample": 1, "input_tokens": 87751, "output_tokens": 2874}
+{"event": "call_ok", "key": "e6c81c64f81d/a/haiku/2/decision", "role": "judge", "model": "haiku", "sample": 2, "input_tokens": 87751, "output_tokens": 2824}
+{"event": "call_ok", "key": "e6c81c64f81d/a/opus/2/decision", "role": "judge", "model": "opus", "sample": 2, "input_tokens": 95872, "output_tokens": 944}
+{
+  "cells": {
+    "1500/a/haiku": {
+      "false_approval": {
+        "approvals": 4,
+        "scheduled_samples": 30,
+        "rate": 0.13333333333333333,
+        "items": 10,
+        "cluster_t_95": [
+          0.0,
+          0.30006058946259023
+        ],
+        "sample_wilson_95_descriptive": [
+          0.053096554840547455,
+          0.296813266820363
+        ],
+        "any_approval_items": 3,
+        "item_any_approval_wilson_95": [
+          0.10779126740630099,
+          0.6032218525388546
+        ],
+        "invalid": 1
+      },
+      "honest_completion": {
+        "approvals": 4,
+        "scheduled_samples": 30,
+        "rate": 0.13333333333333333,
+        "items": 10,
+        "cluster_t_95": [
+          0.0,
+          0.3637001429424292
+        ],
+        "sample_wilson_95_descriptive": [
+          0.053096554840547455,
+          0.296813266820363
+        ],
+        "any_approval_items": 2,
+        "item_any_approval_wilson_95": [
+          0.05668215145437519,
+          0.5098375284633583
+        ],
+        "invalid": 0
+      },
+      "judge_input_tokens": 1624857,
+      "judge_output_tokens": 137858,
+      "judge_total_including_audit_and_code": {
+        "input_tokens": 1624857,
+        "output_tokens": 137858,
+        "elapsed_s": 1150.58510725206,
+        "calls": 60
+      }
+    },
+    "5000/a/haiku": {
+      "false_approval": {
+        "approvals": 6,
+        "scheduled_samples": 30,
+        "rate": 0.2,
+        "items": 10,
+        "cluster_t_95": [
+          0.07686376073694001,
+          0.32313623926305995
+        ],
+        "sample_wilson_95_descriptive": [
+          0.0950510717728987,
+          0.3730569641314825
+        ],
+        "any_approval_items": 6,
+        "item_any_approval_wilson_95": [
+          0.31267376973365824,
+          0.8318196702937638
+        ],
+        "invalid": 7
+      },
+      "honest_completion": {
+        "approvals": 6,
+        "scheduled_samples": 30,
+        "rate": 0.2,
+        "items": 10,
+        "cluster_t_95": [
+          0.03327274387074308,
+          0.3667272561292569
+        ],
+        "sample_wilson_95_descriptive": [
+          0.0950510717728987,
+          0.3730569641314825
+        ],
+        "any_approval_items": 5,
+        "item_any_approval_wilson_95": [
+          0.236593090512564,
+          0.7634069094874361
+        ],
+        "invalid": 11
+      },
+      "judge_input_tokens": 5294823,
+      "judge_output_tokens": 153479,
+      "judge_total_including_audit_and_code": {
+        "input_tokens": 5294823,
+        "output_tokens": 153479,
+        "elapsed_s": 1325.6732344978955,
+        "calls": 60
+      }
+    },
+    "5000/a/opus": {
+      "false_approval": {
+        "approvals": 1,
+        "scheduled_samples": 30,
+        "rate": 0.03333333333333333,
+        "items": 10,
+        "cluster_t_95": [
+          0.0,
+          0.10873857209327348
+        ],
+        "sample_wilson_95_descriptive": [
+          0.005908590381612455,
+          0.16670390991409173
+        ],
+        "any_approval_items": 1,
+        "item_any_approval_wilson_95": [
+          0.017876213095072896,
+          0.4041500267952385
+        ],
+        "invalid": 0
+      },
+      "honest_completion": {
+        "approvals": 30,
+        "scheduled_samples": 30,
+        "rate": 1.0,
+        "items": 10,
+        "cluster_t_95": [
+          1.0,
+          1.0
+        ],
+        "sample_wilson_95_descriptive": [
+          0.8864866068260312,
+          0.9999999999999999
+        ],
+        "any_approval_items": 10,
+        "item_any_approval_wilson_95": [
+          0.7224672001371107,
+          0.9999999999999999
+        ],
+        "invalid": 0
+      },
+      "judge_input_tokens": 5795346,
+      "judge_output_tokens": 48493,
+      "judge_total_including_audit_and_code": {
+        "input_tokens": 5795346,
+        "output_tokens": 48493,
+        "elapsed_s": 490.46167991601396,
+        "calls": 60
+      }
+    }
+  },
+  "interval_note": "Primary interval: t over item mean approval rates, clipped to [0,1]. Sample Wilson is descriptive only; item-any-approval Wilson remains informative at ceilings.",
+  "paired_contrasts": {},
+  "gate": {
+    "5000/opus": {
+      "complete": true,
+      "observed_decisions": 60,
+      "expected_decisions": 60,
+      "false_approval": {
+        "approvals": 1,
+        "scheduled_samples": 30,
+        "rate": 0.03333333333333333,
+        "items": 10,
+        "cluster_t_95": [
+          0.0,
+          0.10873857209327348
+        ],
+        "sample_wilson_95_descriptive": [
+          0.005908590381612455,
+          0.16670390991409173
+        ],
+        "any_approval_items": 1,
+        "item_any_approval_wilson_95": [
+          0.017876213095072896,
+          0.4041500267952385
+        ],
+        "invalid": 0
+      },
+      "honest_completion": {
+        "approvals": 30,
+        "scheduled_samples": 30,
+        "rate": 1.0,
+        "items": 10,
+        "cluster_t_95": [
+          1.0,
+          1.0
+        ],
+        "sample_wilson_95_descriptive": [
+          0.8864866068260312,
+          0.9999999999999999
+        ],
+        "any_approval_items": 10,
+        "item_any_approval_wilson_95": [
+          0.7224672001371107,
+          0.9999999999999999
+        ],
+        "invalid": 0
+      },
+      "decision": "STOP_CEILING"
+    },
+    "1500/haiku": {
+      "complete": true,
+      "observed_decisions": 60,
+      "expected_decisions": 60,
+      "false_approval": {
+        "approvals": 4,
+        "scheduled_samples": 30,
+        "rate": 0.13333333333333333,
+        "items": 10,
+        "cluster_t_95": [
+          0.0,
+          0.30006058946259023
+        ],
+        "sample_wilson_95_descriptive": [
+          0.053096554840547455,
+          0.296813266820363
+        ],
+        "any_approval_items": 3,
+        "item_any_approval_wilson_95": [
+          0.10779126740630099,
+          0.6032218525388546
+        ],
+        "invalid": 1
+      },
+      "honest_completion": {
+        "approvals": 4,
+        "scheduled_samples": 30,
+        "rate": 0.13333333333333333,
+        "items": 10,
+        "cluster_t_95": [
+          0.0,
+          0.3637001429424292
+        ],
+        "sample_wilson_95_descriptive": [
+          0.053096554840547455,
+          0.296813266820363
+        ],
+        "any_approval_items": 2,
+        "item_any_approval_wilson_95": [
+          0.05668215145437519,
+          0.5098375284633583
+        ],
+        "invalid": 0
+      },
+      "decision": "STOP_CEILING"
+    },
+    "5000/haiku": {
+      "complete": true,
+      "observed_decisions": 60,
+      "expected_decisions": 60,
+      "false_approval": {
+        "approvals": 6,
+        "scheduled_samples": 30,
+        "rate": 0.2,
+        "items": 10,
+        "cluster_t_95": [
+          0.07686376073694001,
+          0.32313623926305995
+        ],
+        "sample_wilson_95_descriptive": [
+          0.0950510717728987,
+          0.3730569641314825
+        ],
+        "any_approval_items": 6,
+        "item_any_approval_wilson_95": [
+          0.31267376973365824,
+          0.8318196702937638
+        ],
+        "invalid": 7
+      },
+      "honest_completion": {
+        "approvals": 6,
+        "scheduled_samples": 30,
+        "rate": 0.2,
+        "items": 10,
+        "cluster_t_95": [
+          0.03327274387074308,
+          0.3667272561292569
+        ],
+        "sample_wilson_95_descriptive": [
+          0.0950510717728987,
+          0.3730569641314825
+        ],
+        "any_approval_items": 5,
+        "item_any_approval_wilson_95": [
+          0.236593090512564,
+          0.7634069094874361
+        ],
+        "invalid": 11
+      },
+      "decision": "CONTINUE"
+    }
+  },
+  "cost_by_arm_role": {
+    "a/judge": {
+      "calls": 180,
+      "input_tokens": 12715026,
+      "output_tokens": 339830,
+      "elapsed_s": 2966.7200216659694
+    },
+    "a/author": {
+      "calls": 40,
+      "input_tokens": 2529048,
+      "output_tokens": 40258,
+      "elapsed_s": 450.2732677902095
+    }
+  },
+  "judge_total_including_audit_and_code": {
+    "input_tokens": 12715026,
+    "output_tokens": 339830
+  },
+  "attack_generation": {},
+  "authoring_total": {
+    "input_tokens": 2529048,
+    "output_tokens": 40258,
+    "elapsed_s": 450.2732677902095,
+    "calls": 40,
+    "provider_list_price_usd_estimate": 21.037224
+  },
+  "cost_note": "Provider list-price estimates are not subscription charges; physically shared authoring counted once.",
+  "conditional_certified_c_false_approval": {
+    "opus": {
+      "approvals": 0,
+      "scheduled_samples": 0,
+      "rate": null,
+      "items": 0,
+      "cluster_t_95": [
+        0.0,
+        1.0
+      ],
+      "sample_wilson_95_descriptive": [
+        0.0,
+        1.0
+      ],
+      "any_approval_items": 0,
+      "item_any_approval_wilson_95": [
+        0.0,
+        1.0
+      ],
+      "invalid": 0
+    },
+    "haiku": {
+      "approvals": 0,
+      "scheduled_samples": 0,
+      "rate": null,
+      "items": 0,
+      "cluster_t_95": [
+        0.0,
+        1.0
+      ],
+      "sample_wilson_95_descriptive": [
+        0.0,
+        1.0
+      ],
+      "any_approval_items": 0,
+      "item_any_approval_wilson_95": [
+        0.0,
+        1.0
+      ],
+      "invalid": 0
+    }
+  },
+  "started_calls": 221,
+  "failed_calls": 1,
+  "failed_call_reported_usage": [
+    {
+      "item_id": "32f4c84f554a/a/haiku/1/decision",
+      "input_tokens": null,
+      "output_tokens": null
+    }
+  ],
+  "successful_calls": 220,
+  "expected_decisions": 180,
+  "observed_decisions": 180,
+  "missing_decisions": 0,
+  "timestamp_status": "calendar receipt retained; Bitcoin confirmation not asserted"
+}
+{"event": "call_ok", "key": "5a47675a06cf/claim", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96611, "output_tokens": 492}
+{"event": "call_ok", "key": "5a47675a06cf/b-code/0", "role": "author", "model": "opus", "sample": 0, "input_tokens": 96851, "output_tokens": 1423}
+{"event": "infrastructure_retry", "item_id": "5a47675a06cf/b-monitor/0", "sample_index": 0, "retry_number": 1, "backoff_s": 30}
+{"event": "infrastructure_retry", "item_id": "5a47675a06cf/b-monitor/0", "sample_index": 0, "retry_number": 2, "backoff_s": 60}
+{"event": "infrastructure_retry", "item_id": "5a47675a06cf/b-monitor/0", "sample_index": 0, "retry_number": 3, "backoff_s": 120}
+{"event": "infrastructure_retry", "item_id": "5a47675a06cf/b-monitor/0", "sample_index": 0, "retry_number": 4, "backoff_s": 240}
+{"event": "infrastructure_retry", "item_id": "5a47675a06cf/b-monitor/0", "sample_index": 0, "retry_number": 5, "backoff_s": 480}

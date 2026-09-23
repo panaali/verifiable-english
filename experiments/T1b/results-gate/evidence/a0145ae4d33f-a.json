@@ -1,0 +1,5 @@
+{
+  "claim": "u_9ed9 cannot access x_4c3b.",
+  "note": "The claim is true: no path links u_9ed9 to x_4c3b. u_9ed9 holds no direct role bindings. Its only groups are g_9bf6 and g_9bf6_d0 through g_9bf6_d6, and every group chain ends before reaching a role that grants x_4c3b. g_9bf6 leads to g_3471, which has no parent group; only g_3471_v2 links to g_02c6. g_9bf6_d0 and g_9bf6_d1 have no parent groups; only the _v2 variants do. g_9bf6_d3 and g_9bf6_d5 lead to g_3471_d3 and g_3471_d5, which have no parents; only the _v2 variants link onward. g_9bf6_d2 leads to g_3471_d2 and then g_02c6_d2, which has no parent; only g_02c6_d2_v2 links to g_cf4a_d2. g_9bf6_d6 leads to g_3471_d6 and then g_02c6_d6, which has no parent; only g_02c6_d6_v2 links to g_cf4a_d6. g_9bf6_d4 leads through g_3471_d4 and g_02c6_d4 to g_cf4a_d4, which holds r_cd63_d4. However, only r_cd63_d4_v2 inherits from r_7924_d4, so r_cd63_d4 inherits nothing and never reaches r_39ad_d4. None of the roles that grant x_4c3b (r_39ad and r_39ad_d0 through r_39ad_d6) is reachable.",
+  "valid": true
+}

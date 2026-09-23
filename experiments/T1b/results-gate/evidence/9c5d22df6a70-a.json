@@ -1,0 +1,5 @@
+{
+  "claim": "u_e0b1 cannot access x_c4b3.",
+  "note": "The claim holds. Only roles r_1fbb and r_1fbb_d0 through r_1fbb_d6 grant x_c4b3. u_e0b1 belongs to g_1315 and g_1315_d0 through g_1315_d6, and every chain toward those roles breaks. Base: g_1315\u2192g_7da2\u2192g_e0c3\u2192g_6936, but only g_6936_v2 is in g_83c0. Also r_a843 flows into r_e6f7, not the reverse. d0: reaches r_e6f7_d0\u2192r_a843_d0\u2192r_61b3_d0, but r_1fbb_d0 feeds r_61b3_d0_v2, not r_61b3_d0. d1: only g_1315_d1_v2 is in g_7da2_d1. d2: reaches r_e6f7_d2, but r_a843_d2 grants into r_e6f7_d2, not the reverse. d3: r_e6f7_d3 receives r_a843_d3, but only r_a843_d3_v2 inherits r_61b3_d3. d4: only g_7da2_d4_v2 is in g_e0c3_d4. d5: only g_1315_d5_v2 is in g_7da2_d5. d6: only g_e0c3_d6_v2 is in g_6936_d6. No other bindings or memberships reach these roles, so no path exists.",
+  "valid": true
+}

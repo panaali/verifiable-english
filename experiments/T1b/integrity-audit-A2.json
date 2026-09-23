@@ -1,0 +1,71 @@
+{
+  "active_stop": null,
+  "amendment": "PREREG-T1b-A1.md canonical metadata; PREREG-T1b-A2.md prospective infrastructure recovery",
+  "freeze_verified": true,
+  "original_19_decisions_unchanged": true,
+  "original_metadata_stop": {
+    "at": "2026-09-22T23:47:32.789329+00:00",
+    "error": "RuntimeError: Served canonical model changed",
+    "resample": false,
+    "split": "gate"
+  },
+  "original_t1_unchanged": true,
+  "pre_A2_ledger_prefixes_unchanged": true,
+  "provenance_checks_passed": true,
+  "resumable_pause": {
+    "at": "2026-09-23T02:09:39.681922+00:00",
+    "counts_as_sample": false,
+    "error": "Infrastructure retries exhausted; resume the same request",
+    "item_id": "5a47675a06cf/b-monitor/0",
+    "resumable": true,
+    "role": "attack_monitor"
+  },
+  "splits": {
+    "full": {
+      "all_observed_slots_valid_unique": true,
+      "all_raw_arm_prompts_exact": true,
+      "complete": false,
+      "costs_cover_all_successful_calls": true,
+      "expected_decisions": 600,
+      "failed_calls": 6,
+      "failed_errors": [
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model"
+      ],
+      "first_intent": "2026-09-23T01:53:38.337528+00:00",
+      "last_result": "2026-09-23T01:54:01.350559+00:00",
+      "observed_decisions": 0,
+      "protocol_streams_replayed": true,
+      "served_models": [
+        "claude-opus-5-5"
+      ],
+      "started_calls": 8,
+      "successful_calls": 2
+    },
+    "gate": {
+      "all_observed_slots_valid_unique": true,
+      "all_raw_arm_prompts_exact": true,
+      "complete": true,
+      "costs_cover_all_successful_calls": true,
+      "expected_decisions": 180,
+      "failed_calls": 1,
+      "failed_errors": [
+        "synthetic placeholder without a served model"
+      ],
+      "first_intent": "2026-09-22T23:47:05.453340+00:00",
+      "last_result": "2026-09-23T01:53:35.775071+00:00",
+      "observed_decisions": 180,
+      "protocol_streams_replayed": true,
+      "served_models": [
+        "claude-haiku-4-5-20251001",
+        "claude-opus-5-5"
+      ],
+      "started_calls": 221,
+      "successful_calls": 220
+    }
+  }
+}

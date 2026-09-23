@@ -1,0 +1,5 @@
+{
+  "claim": "u_904e cannot access x_f1c5.",
+  "note": "u_904e's memberships go through the suffixed chains (g_6860_d0 to g_6860_d6). Each chain breaks before reaching x_f1c5, because the suffixed identifiers do not match exactly. For example, g_6860_d5_v2 and g_8103_d0_v2 are distinct from g_6860_d5 and g_8103_d0. g_8103_d4_v2 feeds g_3d8e_d4, but that chain ends in r_8117_d4. The rule for r_04d5_d4 points the wrong way: its permissions flow up to r_8117_d4, so r_8117_d4 holders do not inherit r_04d5_d4. r_8117_d2_v2 is not r_8117_d2. r_6f31_d6 feeds r_04d5_d6_v2, not r_04d5_d6. Role r_04d5_d5 inherits from r_6f31_d5, not the reverse, so r_8117_d5 gets nothing. The d0, d1 and d3 chains break on similar exact-string mismatches (g_3d8e_d1_v2, g_7586_d3_v2). Because matching is exact and case-sensitive, no suffixed chain connects u_904e to any role bound to x_f1c5. The claim that u_904e cannot access x_f1c5 is supported.",
+  "valid": true
+}

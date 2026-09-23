@@ -1,0 +1,5 @@
+{
+  "claim": "u_fe73 cannot access x_9260.",
+  "note": "The claim is true: no path leads from u_fe73 to x_9260. u_fe73 belongs directly to g_6730 and g_6730_d0 through g_6730_d6. Every chain from these groups stops before reaching a role that grants x_9260, which is only granted by r_5bea and r_5bea_d0 to r_5bea_d6. g_6730 leads to g_6df6, which has no outgoing edge; only g_6df6_v2 does. The d0 and d3 chains end at g_c472_d0 and g_c472_d3; only the _v2 variants link to g_e35a. The d1 and d2 chains end at g_6df6_d1 and g_6df6_d2; only the _v2 variants continue. g_6730_d5 has no edge; only g_6730_d5_v2 does. The d6 chain ends at g_3505_d6; only g_3505_d6_v2 continues. The d4 chain does reach g_e35a_d4, which is bound to r_1493_d4. However, the inheritance rule names r_1493_d4_v2, not r_1493_d4, and r_1493_d4 has no permissions of its own. u_fe73 has no direct bindings. Because identifiers are exact and nothing is granted implicitly, u_fe73 cannot access x_9260.",
+  "valid": true
+}

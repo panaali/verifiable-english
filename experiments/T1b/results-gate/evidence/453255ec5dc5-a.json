@@ -1,0 +1,5 @@
+{
+  "claim": "u_8ddb cannot access x_cd25.",
+  "note": "u_8ddb holds no direct role bindings. It reaches only g_ee08 and the suffixed g_ee08_d0 through d6 groups, which lead to the g_682f_d* groups and their r_7436_d* roles. Each suffixed chain toward x_cd25 is broken. d0: r_7436_d0 gets r_2e64_d0, and r_94fa_d0 feeds r_2e64_d0, but r_4083_d0 feeds only r_94fa_d0_v2, a different role. d1: r_4083_d1 feeds r_94fa_d1_v2, not r_94fa_d1. d2: g_eb33_d2_v2, not g_eb33_d2, is the member of g_682f_d2. d3: r_4083_d3 feeds r_94fa_d3_v2. d4: r_2e64_d4_v2, not r_2e64_d4, receives r_94fa_d4. d5 and d6: the inheritance runs toward r_7436, the wrong direction for access. Because of these exact-string mismatches, no suffixed chain reaches any r_4083_d* binding on x_cd25. Under this analysis, u_8ddb cannot access x_cd25.",
+  "valid": true
+}

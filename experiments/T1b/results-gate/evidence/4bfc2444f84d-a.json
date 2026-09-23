@@ -1,0 +1,5 @@
+{
+  "claim": "u_e7a2 cannot access x_6223.",
+  "note": "Claim holds. u_e7a2's only memberships are g_4bcb, g_4bcb_d0 through g_4bcb_d6. Each chain toward x_6223 breaks. (1) g_4bcb reaches g_3f4f, but the binding is on g_3f4f_v2. Also, r_0d5e's permissions flow to r_7ec7, not the reverse. (2) g_4bcb_d0 reaches g_3f4f_d0, but the binding is on g_3f4f_d0_v2. (3) g_4bcb_d1 reaches g_3f4f_d1, but the binding is on g_3f4f_d1_v2. So r_7ec7_d1, which would pass to r_0d5e_d1 and then r_6a42_d1, is never granted. (4) g_4bcb_d2 reaches g_3f4f_d2 and r_7ec7_d2. Only r_7ec7_d2_v2 inherits from r_0d5e_d2, so r_7ec7_d2 gets nothing. (5) g_4bcb_d3 reaches g_3f4f_d3 and r_7ec7_d3. No rule gives r_7ec7_d3 any permissions; r_0d5e_d3 flows to r_7ec7_d3_v2, which is a different role and the wrong direction. (6) g_4bcb_d4, g_4bcb_d5 and g_4bcb_d6 have no memberships at all. Only the _v2 variants join g_3f4f_d4, g_3f4f_d5 and g_3f4f_d6. u_e7a2 has no direct role bindings. Because identifiers are exact strings, no path reaches any r_6a42* role, and so none reaches x_6223.",
+  "valid": true
+}

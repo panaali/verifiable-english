@@ -1,0 +1,5 @@
+{
+  "claim": "u_7610 cannot access x_04e5.",
+  "note": "The claim is true. u_7610 belongs only to g_1683 and g_1683_d0 through g_1683_d6. Complete chains, each ending in a role: - Base: g_1683\u2192g_5982\u2192g_144b\u2192g_1f91\u2192g_9e1b\u2192g_3394 has r_c5a4. r_c5a4 only receives r_ecc4, which has no resources or sources. The r_ebe5 grant goes to r_ecc4_v2 instead. - d0: chain\u2192g_3394_d0 has r_c5a4_d0, which receives r_ecc4_d0 (empty). r_ebe5_d0 goes to r_ecc4_d0_v2. - d5: chain\u2192g_3394_d5 has r_c5a4_d5, which receives r_ecc4_d5 (empty). r_ebe5_d5 goes to r_ecc4_d5_v2. - d6: chain\u2192g_3394_d6 has r_c5a4_d6, which receives r_ecc4_d6 (empty). r_ebe5_d6 goes to r_ecc4_d6_v2. Broken chains: - d1: reaches g_3394_d1, but the binding is on g_3394_d1_v2. - d2: reaches g_9e1b_d2, but only g_9e1b_d2_v2 is a member of g_3394_d2. - d3: reaches g_3394_d3, but the binding is on g_3394_d3_v2. - d4: reaches g_144b_d4, but only g_144b_d4_v2 is a member of g_1f91_d4. No reachable role is any r_ebe5* role, and none inherits from one. So u_7610 cannot reach x_04e5.",
+  "valid": true
+}

@@ -1,0 +1,29 @@
+{
+  "account_label": "danielsaeedi37",
+  "arm": "a",
+  "elapsed_s": 24.676930208981503,
+  "input_tokens": 88859,
+  "item_id": "a10f9a0518ed/a/haiku/0/decision",
+  "key": "d148790942016ba5879751276d8362e44b7254e7c1cedfb1a5e2bdd66c2c1437",
+  "model": "haiku",
+  "model_usage": {
+    "claude-haiku-4-5-20251001": {
+      "cacheCreationInputTokens": 88849,
+      "cacheReadInputTokens": 0,
+      "canonicalModel": "claude-haiku-4-5",
+      "contextWindow": 200000,
+      "costBasis": "list",
+      "costUSD": 0.19167299999999998,
+      "inputTokens": 10,
+      "maxOutputTokens": 32000,
+      "outputTokens": 2793,
+      "provider": "firstParty",
+      "thinkingTokens": 2517,
+      "webSearchRequests": 0
+    }
+  },
+  "output_tokens": 2793,
+  "role": "judge",
+  "served_model": "claude-haiku-4-5-20251001",
+  "thinking_tokens_reported": 2517
+}

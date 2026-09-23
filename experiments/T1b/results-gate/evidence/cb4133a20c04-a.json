@@ -1,0 +1,5 @@
+{
+  "claim": "u_b44b cannot access x_ce40.",
+  "note": "u_b44b has no direct role bindings. Its only memberships are g_17a4 and g_17a4_d0 through g_17a4_d6. The main chain g_17a4\u2192g_7c1b\u2192g_0853\u2192g_d0ff\u2192g_0fe1\u2192g_fbe3 reaches role r_0ca3. However, no inheritance line gives r_0ca3 any x_ce40 role: r_e3ef's permissions flow only to r_0ca3_v2, and that is outward, not to r_0ca3. Each _dN chain breaks at a near-miss membership. d0 needs g_0fe1_d0_v2 in g_fbe3_d0, but u_b44b's chain reaches only g_0fe1_d0. d1 needs g_0853_d1_v2 in g_d0ff_d1, but the chain reaches only g_0853_d1. d2 needs g_0fe1_d2_v2, but the chain reaches only g_0fe1_d2. d3 needs g_d0ff_d3_v2 in g_0fe1_d3, but the chain reaches only g_d0ff_d3. d4 needs g_0853_d4_v2, but the chain reaches only g_0853_d4. d5 and d6 need g_0fe1_d5_v2 and g_0fe1_d6_v2, but the chains reach only g_0fe1_d5 and g_0fe1_d6. In addition, for d0, d1, d3 and d4 the inheritance runs r_e3ef_dN\u2192r_0ca3_dN, the wrong direction. So u_b44b reaches no r_0ca3_dN role and no role granting x_ce40. The claim holds.",
+  "valid": true
+}

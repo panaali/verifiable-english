@@ -1,0 +1,5 @@
+{
+  "claim": "u_4932 cannot access x_50b0.",
+  "note": "Tracing u_4932's memberships, it enters the g_b178 decoy family, which appears built to look reachable without connecting. Every suffixed chain breaks. d2: g_73ea_d2\u2192g_f57b_d2\u2192r_3b40_d2, but only r_3b40_d2_v2 receives r_c316_d2. d3: r_3b40_d3 is granted, but only r_3b40_d3_v2 inherits r_c316_d3. d5: likewise, only r_3b40_d5_v2 is linked. d0: only r_3b40_d0_v2 inherits r_c316_d0. d1: the grant goes to g_f57b_d1_v2, while membership reaches only g_f57b_d1. d4: g_73ea_d4 never reaches g_f57b_d4, since only g_73ea_d4_v2 is a member. d6: g_73ea_d6 does not reach g_f57b_d6, since only g_73ea_d6_v2 is. The policy is exact-string and case-sensitive, so none of these near-miss names connect. u_4932 also holds no direct role bindings and appears in no ordinary group, so the large inherited role graph never applies to it. Because no chain ends in a role bound to x_50b0, the claim that u_4932 cannot access x_50b0 is supported.",
+  "valid": true
+}

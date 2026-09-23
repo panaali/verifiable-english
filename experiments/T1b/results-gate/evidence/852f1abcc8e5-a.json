@@ -1,0 +1,5 @@
+{
+  "claim": "u_c5de cannot access x_175d.",
+  "note": "The claim holds. u_c5de belongs to g_dfbc, g_dfbc_d0, d1, d2, d3, d4, d5 and d6. Through these it reaches g_1c52 and g_1c52_d0, d2, d3, d5 and d6. It does not reach g_1c52_d1 or g_1c52_d4, which only the _v2 groups join. g_1c52 has no binding. The grants are r_2e3c_d0, r_2e3c_d2, r_2e3c_d3, r_2e3c_d5 and r_2e3c_d6. x_175d is granted only to r_5030 and r_5030_d0 through r_5030_d6. Checking each role: r_2e3c_d0 has no inheritance; only r_2e3c_d0_v2 gets r_b965_d0. r_2e3c_d2 gets r_b965_d2 and then r_606e_d2. That path stops there, because only r_606e_d2_v2 gets r_5030_d2. r_2e3c_d3 inherits nothing; r_b965_d3 feeds r_2e3c_d3_v2, which runs the other way. r_2e3c_d5 gets r_b965_d5, which inherits nothing; r_606e_d5 feeds r_b965_d5_v2, not r_b965_d5. r_2e3c_d6 inherits nothing; only r_2e3c_d6_v2 gets r_b965_d6. No path reaches any r_5030 role, so u_c5de cannot access x_175d.",
+  "valid": true
+}
