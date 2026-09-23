@@ -200,6 +200,8 @@ def _call(session, purpose, system, prompt, item):
                     **tokens, "model": redact_secrets(spent.get("model")),
                     "account_label": redact_secrets(spent.get("account_label")),
                     "call_key": spent.get("call_key")}
+            if spent.get("not_started") is True:  # rejected before any backend call: nothing was spent
+                call["not_started"] = True
             attempts = _attempts(spent.get("prior_attempts"))
         else:
             call = {**base, "text": reply["text"],

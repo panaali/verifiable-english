@@ -44,6 +44,24 @@ from .sources import source_from_p5
 FINAL = ("ok", "error", "infrastructure_error")
 
 
+_USAGE_KEYS = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens")
+
+
+def _usage_totals(usage):
+    """(input, output) implied by a calls-ledger row's ``usage.sources``: the field-wise max over the result
+    record and the assistant messages (mirrors ``ve_experiments.claude_cli.combined_usage``). None when
+    the row carries no sources (legacy rows)."""
+    sources = usage.get("sources") if type(usage) is dict else None
+    if type(sources) is not dict:
+        return None
+    clean = lambda u: ({k: u[k] for k in _USAGE_KEYS if type(u.get(k)) is int and u[k] >= 0}
+                       if type(u) is dict else {})
+    parts = [clean(sources.get("result")), clean(sources.get("assistant_messages"))]
+    merged = {k: max(p.get(k, 0) for p in parts) for k in _USAGE_KEYS if any(k in p for p in parts)}
+    has_input = any(k in merged for k in _USAGE_KEYS[:3])
+    return (sum(merged.get(k, 0) for k in _USAGE_KEYS[:3]) if has_input else None, merged.get("output_tokens"))
+
+
 def _read_calls(calls):
     if isinstance(calls, (str, Path)):
         text = Path(calls).read_text(encoding="utf-8") if Path(calls).exists() else ""
@@ -112,6 +130,13 @@ def verify_session(ledger, *, item=None, expected_config=None, options=None, cal
         for seq, call in recorded:
             key = call.get("call_key")
             finals = [r for r in by_key.get(key, []) if r.get("status") in FINAL] if key else []
+            if call.get("not_started") is True:
+                # Rejected before any backend call: legitimate only when nothing under its key ever ran.
+                if not call.get("failed") or finals or any(call.get(f) for f in ("input_tokens", "output_tokens")) \
+                        or call.get("attempts"):
+                    problems.append(f"event {seq}: call recorded as never started, but the calls ledger or "
+                                    "its own counts show spend")
+                continue
             if not finals:
                 problems.append(f"event {seq}: model call has no matching row in the calls ledger")
                 continue
@@ -171,6 +196,14 @@ def verify_session(ledger, *, item=None, expected_config=None, options=None, cal
             problems.append(f"calls ledger has {orphans} started call(s) with no recorded outcome "
                             "(usage unknown)")
         final = [r for r in scoped if r.get("status") in FINAL]
+        # Each row's counted usage must be what its reported usage sources imply (field-wise max over the
+        # result record and the assistant messages), so a row cannot understate what the stream reported.
+        for r in final:
+            implied = _usage_totals(r.get("usage"))
+            if implied is not None and implied != (r.get("input_tokens"), r.get("output_tokens")):
+                problems.append(f"calls ledger row {str(r.get('key'))[:12]} ({r.get('status')}): counted usage "
+                                f"{(r.get('input_tokens'), r.get('output_tokens'))} differs from its reported "
+                                f"usage {implied}")
         summary.update(ledger_calls=len(final), ledger_attempts_started=sum(started.values()),
                        unresolved_started=orphans,
                        ledger_input_tokens=sum(r.get("input_tokens") or 0 for r in final),

@@ -73,6 +73,40 @@ def redact(text, token=None):
     return text
 
 
+def sanitize(value, token):
+    """Recursively replace the live token in every DECODED string (dict keys included).
+
+    Rows are sanitized after JSON decoding, never as raw text: a token spelled with JSON escapes
+    (``\\u006f``, ``\\/``, ...) in the stream is a plain string once decoded, so exact replacement on
+    decoded strings cannot be evaded by encoding. Raw stream text is never persisted."""
+    if isinstance(value, str):
+        return value.replace(token, "[REDACTED]") if token else value
+    if isinstance(value, dict):
+        return {sanitize(k, token): sanitize(v, token) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [sanitize(v, token) for v in value]
+    return value
+
+
+def stream_digest(raw):
+    """SHA-256 of the raw stream bytes (the stream itself is never persisted) and its size."""
+    data = raw if isinstance(raw, bytes) else str(raw).encode("utf-8", errors="surrogateescape")
+    return {"raw_stream_sha256": hashlib.sha256(data).hexdigest(), "raw_stream_bytes": len(data)}
+
+
+def stream_records(raw, token):
+    """The stream's JSON records, decoded then sanitized; undecodable lines are counted, not kept."""
+    records, unparsed = [], 0
+    for line in str(raw).splitlines():
+        if not line.strip():
+            continue
+        try:
+            records.append(json.loads(line))
+        except ValueError:
+            unparsed += 1
+    return {"stream_records": sanitize(records, token), "unparsed_lines": unparsed}
+
+
 def sanitized_error(exc, token=None):
     """A fresh exception safe to propagate: same class for endpoint errors, redacted message, no
     traceback/context chain back to the original (which may carry credentials)."""
@@ -252,8 +286,29 @@ def _assistant_usage(records):
     total = {key: sum(row.get(key, 0) for row in per_message.values()) for key in keys}
     if not any(key in row for row in per_message.values() for key in keys[:3]):
         total.pop("input_tokens")
-    total["source"] = "assistant_messages"
     return total
+
+
+USAGE_KEYS = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens")
+
+
+def combined_usage(result_usage, assistant_usage):
+    """Usage the stream reports: the field-wise MAX over the result record and the assistant messages.
+
+    A result record without usage (or with zeros) can therefore never erase what the assistant messages
+    already reported, and a result reporting more than the messages wins. Only valid nonnegative ints
+    count. ``sources`` keeps both inputs so a verifier can recompute the totals
+    (``ve.assist.verify`` does, for every calls-ledger row)."""
+    clean = lambda u: ({k: u[k] for k in USAGE_KEYS if type(u.get(k)) is int and u[k] >= 0}
+                       if type(u) is dict else {})
+    result, assistant = clean(result_usage), clean(assistant_usage)
+    if not result and not assistant:
+        return {}
+    usage = {k: max(result.get(k, 0), assistant.get(k, 0)) for k in USAGE_KEYS if k in result or k in assistant}
+    if "input_tokens" not in usage and any(k in usage for k in USAGE_KEYS[1:3]):
+        usage["input_tokens"] = 0
+    usage["sources"] = {"result": result or None, "assistant_messages": assistant or None}
+    return usage
 
 
 def reported_usage(raw):
@@ -273,15 +328,12 @@ def reported_usage(raw):
     models |= {k for r in results for k in (r.get("modelUsage") or {})}
     models = sorted(str(m) for m in models - {None, "<synthetic>"})
     out = {"served_model": models[0] if len(models) == 1 else None, "reported_models": models}
-    usage = (results[-1].get("usage") if results else None) or {}
-    if not results:
-        usage = _assistant_usage(records)
-    if type(usage) is dict:
+    usage = combined_usage(results[-1].get("usage") if results else None, _assistant_usage(records))
+    if usage:
         keys = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
-        values = [usage.get(k, 0) for k in keys]
-        if usage.get("input_tokens") is not None and all(type(v) is int and v >= 0 for v in values):
-            out["input_tokens"] = sum(values)
-        if type(usage.get("output_tokens")) is int and usage["output_tokens"] >= 0:
+        if "input_tokens" in usage:
+            out["input_tokens"] = sum(usage.get(k, 0) for k in keys)
+        if "output_tokens" in usage:
             out["output_tokens"] = usage["output_tokens"]
         out["usage"] = usage
     return out
@@ -317,14 +369,17 @@ def parse_stream(raw, expected_model):
         raise EndpointError("CLI error or incomplete result")
     if result.get("stop_reason") not in ("end_turn", "stop_sequence"):
         raise EndpointError("Truncated or non-final response")
-    usage = result.get("usage", {})
+    usage = result.get("usage") if type(result.get("usage")) is dict else {}
     keys = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
     if any(type(usage.get(k)) is not int or usage[k] < 0 for k in keys):
         raise EndpointError("Missing or invalid input usage")
-    return {"init": initial, "usage": usage, "model_usage": result.get("modelUsage"),
-            "served_model": expected_model, "input_tokens": sum(usage[k] for k in keys),
-            "output_tokens": usage.get("output_tokens"),
-            "thinking_tokens_reported": usage.get("output_tokens_details", {}).get("thinking_tokens"),
+    # Counted usage is the field-wise max over the result and the assistant messages (see combined_usage).
+    counted = reported_usage(raw)
+    details = usage.get("output_tokens_details")
+    return {"init": initial, "usage": counted["usage"], "model_usage": result.get("modelUsage"),
+            "served_model": expected_model, "input_tokens": counted["input_tokens"],
+            "output_tokens": counted.get("output_tokens"),
+            "thinking_tokens_reported": details.get("thinking_tokens") if type(details) is dict else None,
             "stop_reason": result.get("stop_reason"), "text": result["result"]}
 
 
@@ -334,40 +389,74 @@ def _attempt_usage(spent):
             for k in ("input_tokens", "output_tokens")}
 
 
+FINAL = ("ok", "error", "infrastructure_error")
+
+
 class ClaudeCLI:
     def __init__(self, ledger: Path, controls=Controls(), max_calls=None, *, account_config_dir=None, infrastructure_retries=False):
         self.ledger, self.controls, self.max_calls = Path(ledger), controls, max_calls
         self.infrastructure_retries = infrastructure_retries
         self.account_config = account_config(account_config_dir)
         self.account_label = account_label(self.account_config)
+        self._last_key = None
+
+    def _final_rows(self, key):
+        """Every attempt under ``key`` that logged an outcome, in ledger order (the ledger is the truth)."""
+        if key is None or not self.ledger.exists():
+            return []
+        with self.ledger.open(encoding="utf-8") as log:
+            fcntl.flock(log, fcntl.LOCK_SH)
+            rows = [json.loads(line) for line in log if line.strip()]
+        return [r for r in rows if r.get("key") == key and r.get("status") in FINAL]
+
+    def _row_usage(self, row):
+        return {**_attempt_usage(row), "model": row.get("served_model"),
+                "account_label": row.get("account_label", self.account_label), "call_key": row.get("key")}
+
+    def _account(self, exc):
+        """Attach to a failure the usage of EVERY backend attempt under its key, read from the ledger.
+
+        A failure after a call started carries that attempt's usage; its earlier attempts are the
+        ``prior_attempts``. A rejection BEFORE any call started (call budget, drift, a key that may not
+        be re-run) spent nothing itself: the latest logged attempt under the key becomes the reported
+        call and the rest its ``prior_attempts``, so spent tokens and the key are never dropped. With no
+        logged attempt at all the call is ``not_started`` (zero tokens)."""
+        spent = getattr(exc, "usage", None)
+        key = spent.get("call_key") if type(spent) is dict and spent.get("call_key") else self._last_key
+        finals = self._final_rows(key)
+        if type(spent) is dict and not spent.get("not_started"):
+            exc.usage = {**spent, "prior_attempts": [_attempt_usage(r) for r in finals[:-1]]}
+        elif finals:
+            exc.usage = {**self._row_usage(finals[-1]), "rejected_before_start": True,
+                         "prior_attempts": [_attempt_usage(r) for r in finals[:-1]]}
+        else:
+            exc.usage = {"input_tokens": 0, "output_tokens": 0, "model": None,
+                         "account_label": self.account_label, "call_key": key, "not_started": True,
+                         "prior_attempts": []}
+        return exc
 
     def sample(self, item_id, system, prompt, sample_index=0, *, content_tokens=None):
-        """One sample. Every earlier failed attempt under the same key (infrastructure retries) is
-        returned as ``prior_attempts`` -- on the reply, or in the final error's ``usage`` -- so the
-        caller can account for the tokens those attempts spent."""
-        prior = []
+        """One sample. Every earlier attempt under the same key logged in the ledger (infrastructure
+        retries, in this call or in an earlier, paused one) is returned as ``prior_attempts`` -- on the
+        reply, or in the final error's ``usage`` -- so the caller can account for every token spent."""
         for attempt in range(1 + (len(RETRY_BACKOFF) if self.infrastructure_retries else 0)):
+            self._last_key = None
             try:
                 row = self._sample_once(item_id, system, prompt, sample_index,
                                         content_tokens=content_tokens, retry_number=attempt)
             except InfrastructureError as exc:
-                spent = getattr(exc, "usage", None)
-                if not self.infrastructure_retries:
-                    if type(spent) is dict:
-                        spent["prior_attempts"] = list(prior)
-                    raise
-                if attempt == len(RETRY_BACKOFF):
+                if self.infrastructure_retries and attempt < len(RETRY_BACKOFF):
+                    continue
+                if self.infrastructure_retries:
                     paused = InfrastructurePaused("Infrastructure retries exhausted; resume the same request")
-                    if type(spent) is dict:
-                        paused.usage = {**spent, "prior_attempts": list(prior)}
-                    raise paused from exc
-                prior.append(_attempt_usage(spent))
+                    paused.usage = getattr(exc, "usage", None)
+                    raise self._account(paused) from exc
+                raise self._account(exc)
             except EndpointError as exc:
-                if type(getattr(exc, "usage", None)) is dict:
-                    exc.usage["prior_attempts"] = list(prior)
-                raise
+                raise self._account(exc)
             else:
-                return {**row, "prior_attempts": list(prior)}
+                finals = self._final_rows(row.get("key"))
+                return {**row, "prior_attempts": [_attempt_usage(r) for r in finals[:-1]]}
 
     def _sample_once(self, item_id, system, prompt, sample_index=0, *, content_tokens=None, retry_number=0):
         self.ledger.parent.mkdir(parents=True, exist_ok=True)
@@ -390,14 +479,16 @@ class ClaudeCLI:
                        "shell": "/bin/sh", "locale": "en_US.UTF-8", "timezone": "UTC"}
             group = digest([self.account_label, control, system, prompt, content_tokens])
             key = digest([group, item_id, sample_index])
+            self._last_key = key
             matching = [r for r in history if r.get("key") == key and r["status"] != "retry_scheduled"]
             if matching:
                 if matching[-1]["status"] == "ok":
                     return matching[-1]
                 last = matching[-1]
                 retryable = last["status"] == "infrastructure_error" or (
-                    last["status"] == "error" and infrastructure_failure(
-                        last.get("raw_stream", ""), self.controls.model, last.get("error", "")))
+                    last["status"] == "error" and bool(last.get("infrastructure_reason") or (
+                        "raw_stream" in last and infrastructure_failure(  # legacy rows only
+                            last["raw_stream"], self.controls.model, last.get("error", "")))))
                 if not (self.infrastructure_retries and retryable):
                     raise EndpointError("Sample previously started or failed; explicit new sample id required")
             if self.max_calls is not None and sum(r["status"] == "started" for r in history) >= self.max_calls:
@@ -464,14 +555,15 @@ class ClaudeCLI:
                     raise EndpointError("Absolute input overhead drift")
                 row = {**base, **parsed, "overhead_tokens": overhead, "status": "ok",
                        "timestamp": now(), "elapsed_s": time.monotonic()-start,
-                       "raw_stream": raw}
+                       **stream_digest(raw), **stream_records(raw, token)}
             except Exception as exc:
-                # Never include environment/credentials; stdout is model protocol data only.
-                raw = raw.replace(token, "[REDACTED]")
+                # Never include environment/credentials; stdout is model protocol data only, and it is
+                # persisted only as decoded, sanitized records plus a digest (never as raw text).
+                raw_bytes = raw
                 if isinstance(exc, (ConnectionError, subprocess.TimeoutExpired)):
                     if isinstance(exc, subprocess.TimeoutExpired) and exc.stdout:
+                        raw_bytes = exc.stdout
                         raw = exc.stdout.decode(errors="replace") if isinstance(exc.stdout, bytes) else exc.stdout
-                        raw = raw.replace(token, "[REDACTED]")
                     if infrastructure_failure(raw, self.controls.model, str(exc)) or isinstance(exc, ConnectionError):
                         exc = InfrastructureError("connection error or empty timed-out stream")
                 # Usage is taken from the stream even when validation rejected it (e.g. truncation).
@@ -484,9 +576,11 @@ class ClaudeCLI:
                           "classification": "INFRASTRUCTURE" if isinstance(exc, InfrastructureError) else "ENDPOINT",
                           "counts_as_sample": False, "retry_number": retry_number,
                           "timestamp": now(), "error": redact(exc, token),
-                          "raw_stream": raw, "elapsed_s": time.monotonic()-start}
-                # Parsed stream fields (init, text, usage) are redacted exactly as on the success path.
-                failed = json.loads(json.dumps(failed).replace(token, "[REDACTED]"))
+                          "infrastructure_reason": infrastructure_failure(raw, self.controls.model, str(exc)),
+                          "elapsed_s": time.monotonic()-start,
+                          **stream_digest(raw_bytes), **stream_records(raw, token)}
+                # Every decoded string (dict keys included) is sanitized exactly as on the success path.
+                failed = sanitize(failed, token)
                 append(failed)
                 # The caller gets a sanitized copy (never the original, whose message or context may
                 # echo credentials), carrying the usage actually spent so it can be logged.
@@ -500,8 +594,8 @@ class ClaudeCLI:
                 failure = None
             if failure is not None:
                 raise failure
-            # Defence in depth against accidental credential echo in model protocol data.
-            row = json.loads(json.dumps(row).replace(token, "[REDACTED]"))
+            # Defence in depth against credential echo in model protocol data (decoded strings, recursively).
+            row = sanitize(row, token)
             append(row)
             return row
 
