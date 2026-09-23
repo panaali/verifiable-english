@@ -244,6 +244,8 @@
 'VE.Order.lookup_isSome' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.lookup_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.order_not_accepted' depends on axioms: [propext]
+'VE.Order.singular_order_not_accepted' does not depend on any axioms
+'VE.Order.singular_order_profile_gate' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.order_profile_gate' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.profile_gate' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.runEvaluationCaseReported_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
