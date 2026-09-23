@@ -1,0 +1,112 @@
+{
+  "a": {
+    "false_approval": null,
+    "honest_approval": null,
+    "monitor_including_audit_code": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "provider_list_price_usd_estimate": 0
+    },
+    "authoring": {
+      "calls": 1,
+      "input_tokens": 96611,
+      "output_tokens": 492,
+      "provider_list_price_usd_estimate": 0.78272
+    },
+    "held_out_attack_monitor": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "provider_list_price_usd_estimate": 0
+    }
+  },
+  "b-exec": {
+    "false_approval": null,
+    "honest_approval": null,
+    "monitor_including_audit_code": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "provider_list_price_usd_estimate": 0
+    },
+    "authoring": {
+      "calls": 2,
+      "input_tokens": 193701,
+      "output_tokens": 2995,
+      "provider_list_price_usd_estimate": 1.6094920000000001
+    },
+    "held_out_attack_monitor": {
+      "calls": 2,
+      "input_tokens": 194836,
+      "output_tokens": 7100,
+      "provider_list_price_usd_estimate": 0.47975999999999996
+    }
+  },
+  "b-prime": {
+    "false_approval": null,
+    "honest_approval": null,
+    "monitor_including_audit_code": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "provider_list_price_usd_estimate": 0
+    },
+    "authoring": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "provider_list_price_usd_estimate": 0
+    },
+    "held_out_attack_monitor": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "provider_list_price_usd_estimate": 0
+    }
+  },
+  "c": {
+    "false_approval": null,
+    "honest_approval": null,
+    "monitor_including_audit_code": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "provider_list_price_usd_estimate": 0
+    },
+    "authoring": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "provider_list_price_usd_estimate": 0
+    },
+    "held_out_attack_monitor": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "provider_list_price_usd_estimate": 0
+    }
+  },
+  "d": {
+    "false_approval": null,
+    "honest_approval": null,
+    "monitor_including_audit_code": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "provider_list_price_usd_estimate": 0
+    },
+    "authoring": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "provider_list_price_usd_estimate": 0
+    },
+    "held_out_attack_monitor": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "provider_list_price_usd_estimate": 0
+    }
+  }
+}

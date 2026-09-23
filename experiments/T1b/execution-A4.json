@@ -1,0 +1,36 @@
+{
+  "recorded_at": "2026-09-23T02:31:00+00:00",
+  "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python -u -m ve_experiments.t1b.a4_run full",
+  "amendment_commit_before_launch": "0629d7a",
+  "account": "saeedi.danial",
+  "config_dir": "~/.claude-saeedi.danial",
+  "status": "GLOBAL_INTEGRITY_STOP",
+  "offline_tests_passed": 54,
+  "host_sandbox_confinement_test": "passed",
+  "resumed_request": {
+    "item_id": "5a47675a06cf/b-monitor/1",
+    "outcome": "ok after one A2 retry",
+    "output_tokens": 4991
+  },
+  "stop": {
+    "at": "2026-09-23T02:28:30.095107+00:00",
+    "error": "EndpointError: Served model mismatch: ['claude-opus-4-8', 'claude-opus-5-5']",
+    "resample": false,
+    "split": "full"
+  },
+  "stop_cause": {
+    "item_id": "5a47675a06cf/b-code/2",
+    "role": "author",
+    "arm": "b-exec",
+    "bug_family": "case-normalisation",
+    "cli_event": "model_refusal_fallback",
+    "api_refusal_category": "cyber",
+    "original_model": "claude-opus-5-5",
+    "fallback_model": "claude-opus-4-8"
+  },
+  "served_model_change": true,
+  "new_account_session_limit": false,
+  "full_observed_decisions": 0,
+  "full_missing_decisions": 600,
+  "integrity_audit": "integrity-audit-A4.json"
+}

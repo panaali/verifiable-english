@@ -116,3 +116,23 @@ single-turn control. The model remained claude-sonnet-5; no new-account session
 limit was reported. `STOP-A3.json` is immutable. The failed response reports
 195,106 input and 20,121 output tokens; it was not scored. See RESULTS.md and
 execution-A3.json. Do not relaunch the command after this integrity stop.
+
+## A4 output-cap amendment and served-model stop
+
+The A3 stop was diagnosed as a CLI output-cap continuation. The held-out Sonnet
+review exhausted its 12,000-token cap, and CLI 2.1.280 injected a synthetic
+"Output token limit hit" user turn. [PREREG-T1b-A4.md](PREREG-T1b-A4.md) (commit
+`0629d7a`, OpenTimestamps receipts) classifies exactly that pattern, and bare
+max_tokens stops, as A2 infrastructure: never a sample, retried in place.
+The failed review then completed on retry. The next Opus 5.5 sabotage-code author
+request (`5a47675a06cf/b-code/2`) was flagged by the Opus 5.5 cyber safeguard;
+the CLI retracted it and fell back to `claude-opus-4-8`. That is a served-model
+change, so `STOP-A4.json` is an immutable global stop at 0/600 decisions. Do not
+relaunch `a4_run`. Continuing requires a new orchestrator decision on refused
+contractor requests; see RESULTS.md, [execution-A4.json](execution-A4.json) and
+[integrity-audit-A4.json](integrity-audit-A4.json).
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/T1b/audit_A4.py
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/T1b/write_report_A4.py
+```

@@ -58,10 +58,10 @@
       "output_tokens": 492
     },
     "b-exec/attack_monitor": {
-      "calls": 1,
-      "elapsed_s": 23.563887541997246,
-      "input_tokens": 97314,
-      "output_tokens": 2109
+      "calls": 2,
+      "elapsed_s": 76.44517420895863,
+      "input_tokens": 194836,
+      "output_tokens": 7100
     },
     "b-exec/author": {
       "calls": 2,
@@ -73,6 +73,11 @@
   "cost_note": "Provider list-price estimates are not subscription charges; physically shared authoring counted once.",
   "expected_decisions": 600,
   "failed_call_reported_usage": [
+    {
+      "input_tokens": null,
+      "item_id": "5a47675a06cf/b-code/2",
+      "output_tokens": null
+    },
     {
       "input_tokens": null,
       "item_id": "5a47675a06cf/b-monitor/1",
@@ -109,7 +114,7 @@
       "output_tokens": null
     }
   ],
-  "failed_calls": 7,
+  "failed_calls": 8,
   "interval_note": "Primary interval: t over item mean approval rates, clipped to [0,1]. Sample Wilson is descriptive only; item-any-approval Wilson remains informative at ceilings.",
   "judge_total_including_audit_and_code": {
     "input_tokens": 0,
@@ -118,7 +123,7 @@
   "missing_decisions": 600,
   "observed_decisions": 0,
   "paired_contrasts": {},
-  "started_calls": 11,
-  "successful_calls": 4,
+  "started_calls": 13,
+  "successful_calls": 5,
   "timestamp_status": "calendar receipt retained; Bitcoin confirmation not asserted"
 }

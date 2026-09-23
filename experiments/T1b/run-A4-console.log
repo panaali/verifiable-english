@@ -1,0 +1,32 @@
+{"event": "infrastructure_retry", "item_id": "5a47675a06cf/b-monitor/1", "sample_index": 0, "retry_number": 1, "backoff_s": 30}
+{"event": "call_ok", "key": "5a47675a06cf/b-monitor/1", "role": "attack_monitor", "model": "sonnet", "sample": 0, "input_tokens": 97522, "output_tokens": 4991}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/a4_run.py", line 495, in <module>
+    main()
+    ~~~~^^
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/a4_run.py", line 490, in main
+    else: run(args.command)
+          ~~~^^^^^^^^^^^^^^
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/a4_run.py", line 458, in run
+    evidence={arm:runner.evidence(item,arm) for arm in ordered}
+                  ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/a4_run.py", line 286, in evidence
+    value=p.code_arm(self,item)
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/protocol.py", line 52, in code_arm
+    candidate=runner.ask('opus',item['id']+f'/b-code/{i}',AUTHOR_SYSTEM,packet(item)+'\n'+objective+'\n'+CODE_INSTRUCTIONS,role='author',arm='b-exec')
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/a4_run.py", line 258, in ask
+    row=self.clients[tag].sample(key,system,prompt,sample)
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/a4_transport.py", line 295, in sample
+    return self._sample_once(item_id, system, prompt, sample_index,
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             content_tokens=content_tokens, retry_number=attempt)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/a4_transport.py", line 414, in _sample_once
+    raise exc
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/a4_transport.py", line 388, in _sample_once
+    parsed = parse_stream(raw, self.controls.model)
+  File "/Users/seyran/code/ve-codex-v4/ve_experiments/t1b/a4_transport.py", line 254, in parse_stream
+    raise EndpointError(f"Served model mismatch: {sorted(map(str, served))}")
+ve_experiments.t1b.a4_transport.EndpointError: Served model mismatch: ['claude-opus-4-8', 'claude-opus-5-5']

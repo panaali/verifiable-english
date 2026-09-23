@@ -1,0 +1,101 @@
+{
+  "freeze_verified": true,
+  "original_t1_unchanged": true,
+  "splits": {
+    "gate": {
+      "costs_cover_all_successful_calls": true,
+      "expected_decisions": 180,
+      "observed_decisions": 180,
+      "complete": true,
+      "started_calls": 221,
+      "successful_calls": 220,
+      "failed_calls": 1,
+      "all_observed_slots_valid_unique": true,
+      "all_raw_arm_prompts_exact": true,
+      "protocol_streams_replayed": true,
+      "served_models": [
+        "claude-haiku-4-5-20251001",
+        "claude-opus-5-5"
+      ],
+      "first_intent": "2026-09-22T23:47:05.453340+00:00",
+      "last_result": "2026-09-23T01:53:35.775071+00:00",
+      "failed_errors": [
+        "synthetic placeholder without a served model"
+      ]
+    },
+    "full": {
+      "costs_cover_all_successful_calls": true,
+      "expected_decisions": 600,
+      "observed_decisions": 0,
+      "complete": false,
+      "started_calls": 13,
+      "successful_calls": 5,
+      "failed_calls": 8,
+      "all_observed_slots_valid_unique": true,
+      "all_raw_arm_prompts_exact": true,
+      "protocol_streams_replayed": true,
+      "served_models": [
+        "claude-opus-5-5",
+        "claude-sonnet-5"
+      ],
+      "first_intent": "2026-09-23T01:53:38.337528+00:00",
+      "last_result": "2026-09-23T02:28:05.079352+00:00",
+      "failed_errors": [
+        "Served model mismatch: ['claude-opus-4-8', 'claude-opus-5-5']",
+        "Not a single-turn response",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model"
+      ]
+    }
+  },
+  "failure_classification": {
+    "gate": {
+      "infrastructure_attempts": 1,
+      "integrity_failures": 0,
+      "session_limit_attempts": 0,
+      "output_cap_attempts_by_role": {
+        "judge": 0
+      }
+    },
+    "full": {
+      "infrastructure_attempts": 7,
+      "integrity_failures": 1,
+      "session_limit_attempts": 6,
+      "output_cap_attempts_by_role": {
+        "attack_monitor": 1,
+        "author": 0
+      }
+    }
+  },
+  "original_metadata_stop": {
+    "at": "2026-09-22T23:47:32.789329+00:00",
+    "error": "RuntimeError: Served canonical model changed",
+    "resample": false,
+    "split": "gate"
+  },
+  "resumable_pause": null,
+  "historical_a3_stop": {
+    "at": "2026-09-23T02:19:25.124294+00:00",
+    "error": "EndpointError: Not a single-turn response",
+    "resample": false,
+    "split": "full"
+  },
+  "active_stop": {
+    "at": "2026-09-23T02:28:30.095107+00:00",
+    "error": "EndpointError: Served model mismatch: ['claude-opus-4-8', 'claude-opus-5-5']",
+    "resample": false,
+    "split": "full"
+  },
+  "amendment": "A1 metadata; A2 infrastructure recovery; A3 whole full-study account move; A4 output-cap exhaustion as infrastructure",
+  "pre_A4_artifacts_preserved": true,
+  "pre_A3_artifacts_preserved": true,
+  "full_monitor_account": "saeedi.danial",
+  "retained_author_responses": 2,
+  "original_19_decisions_unchanged": true,
+  "pre_A2_ledger_prefixes_unchanged": true,
+  "provenance_checks_passed": true
+}

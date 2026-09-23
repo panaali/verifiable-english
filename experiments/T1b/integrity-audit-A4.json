@@ -1,0 +1,101 @@
+{
+  "active_stop": {
+    "at": "2026-09-23T02:28:30.095107+00:00",
+    "error": "EndpointError: Served model mismatch: ['claude-opus-4-8', 'claude-opus-5-5']",
+    "resample": false,
+    "split": "full"
+  },
+  "amendment": "A1 metadata; A2 infrastructure recovery; A3 whole full-study account move; A4 output-cap exhaustion as infrastructure",
+  "failure_classification": {
+    "full": {
+      "infrastructure_attempts": 7,
+      "integrity_failures": 1,
+      "output_cap_attempts_by_role": {
+        "attack_monitor": 1,
+        "author": 0
+      },
+      "session_limit_attempts": 6
+    },
+    "gate": {
+      "infrastructure_attempts": 1,
+      "integrity_failures": 0,
+      "output_cap_attempts_by_role": {
+        "judge": 0
+      },
+      "session_limit_attempts": 0
+    }
+  },
+  "freeze_verified": true,
+  "full_monitor_account": "saeedi.danial",
+  "historical_a3_stop": {
+    "at": "2026-09-23T02:19:25.124294+00:00",
+    "error": "EndpointError: Not a single-turn response",
+    "resample": false,
+    "split": "full"
+  },
+  "original_19_decisions_unchanged": true,
+  "original_metadata_stop": {
+    "at": "2026-09-22T23:47:32.789329+00:00",
+    "error": "RuntimeError: Served canonical model changed",
+    "resample": false,
+    "split": "gate"
+  },
+  "original_t1_unchanged": true,
+  "pre_A2_ledger_prefixes_unchanged": true,
+  "pre_A3_artifacts_preserved": true,
+  "pre_A4_artifacts_preserved": true,
+  "provenance_checks_passed": true,
+  "resumable_pause": null,
+  "retained_author_responses": 2,
+  "splits": {
+    "full": {
+      "all_observed_slots_valid_unique": true,
+      "all_raw_arm_prompts_exact": true,
+      "complete": false,
+      "costs_cover_all_successful_calls": true,
+      "expected_decisions": 600,
+      "failed_calls": 8,
+      "failed_errors": [
+        "Served model mismatch: ['claude-opus-4-8', 'claude-opus-5-5']",
+        "Not a single-turn response",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model",
+        "synthetic placeholder without a served model"
+      ],
+      "first_intent": "2026-09-23T01:53:38.337528+00:00",
+      "last_result": "2026-09-23T02:28:05.079352+00:00",
+      "observed_decisions": 0,
+      "protocol_streams_replayed": true,
+      "served_models": [
+        "claude-opus-5-5",
+        "claude-sonnet-5"
+      ],
+      "started_calls": 13,
+      "successful_calls": 5
+    },
+    "gate": {
+      "all_observed_slots_valid_unique": true,
+      "all_raw_arm_prompts_exact": true,
+      "complete": true,
+      "costs_cover_all_successful_calls": true,
+      "expected_decisions": 180,
+      "failed_calls": 1,
+      "failed_errors": [
+        "synthetic placeholder without a served model"
+      ],
+      "first_intent": "2026-09-22T23:47:05.453340+00:00",
+      "last_result": "2026-09-23T01:53:35.775071+00:00",
+      "observed_decisions": 180,
+      "protocol_streams_replayed": true,
+      "served_models": [
+        "claude-haiku-4-5-20251001",
+        "claude-opus-5-5"
+      ],
+      "started_calls": 221,
+      "successful_calls": 220
+    }
+  }
+}
