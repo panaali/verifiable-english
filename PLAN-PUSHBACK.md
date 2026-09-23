@@ -37,3 +37,13 @@ known-answer tests, k=2 samples, paired by item, interleaved arms.
 - Arms: A and C primary, B secondary, D dropped. Adversarial persuader primary, static secondary. Analyse items initially
   correct in both arms (or prefill identical initial verdicts); item-level mixed logistic / cluster bootstrap.
 - Size: ~115 checker-decided (mixed) items per judge, plus the harm-control set (~125-185 items).
+
+## Revision 2 (2026-09-22): design/frontier-failure-modes-and-ve.md section 5 (commit dec9a77) is adopted
+
+Jagged Judges ladder exactly (L1 "are you sure?", L2 counterargument, L3 expert authority, L4 fabricated consensus, L5
+random mix, L6 adaptive persuader; 10 turns); items = V4 logic items and T1 access claims (+ mixed items); arms = judge
+alone vs judge + signed checker verdict that the SYSTEM will not let the judge override (pressure can only move the
+residual, e.g. translation faithfulness); WildGuard calibration slice to show our pressure matches theirs (no VE claim
+there); second arm = holistic verdict vs VE-leaf decomposition with a named catch-all judgement predicate; residual
+reported honestly (equal flips on the residual = VE only relocated the problem). Reviews for this revision: Opus 5.5
+xhigh and, while Codex is exhausted (resets Sep 26 21:34), Gemini 3.1 Pro as the cross-family reviewer.
