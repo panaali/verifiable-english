@@ -1,0 +1,9 @@
+{
+  "context_limit": 1000000,
+  "fits": true,
+  "method": "conservative_utf8_byte_upper_bound",
+  "model": "claude-opus-5-5",
+  "output_reserve": 16000,
+  "utf8_bytes": 46410,
+  "wrapper_reserve": 4096
+}
