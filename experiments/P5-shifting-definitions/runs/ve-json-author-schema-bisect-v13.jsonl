@@ -1,0 +1,10 @@
+{"name": "full", "field": "response_schema", "model": "gemini-2.5-flash-lite", "ok": false, "error": "400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'The specified schema produces a constraint that has too many states for serving.  Typical causes of this error are schemas with lots of text (for example, very long property or enum names), schemas with long array length limits (especially wh"}
+{"name": "full", "field": "response_json_schema", "model": "gemini-2.5-flash-lite", "ok": false, "error": "400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'The specified schema produces a constraint that has too many states for serving.  Typical causes of this error are schemas with lots of text (for example, very long property or enum names), schemas with long array length limits (especially wh"}
+{"name": "no_items_bounds", "field": "response_json_schema", "model": "gemini-2.5-flash-lite", "ok": true, "prompt": 3, "out": 16}
+{"name": "no_minmax_int", "field": "response_json_schema", "model": "gemini-2.5-flash-lite", "ok": false, "error": "400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'The specified schema produces a constraint that has too many states for serving.  Typical causes of this error are schemas with lots of text (for example, very long property or enum names), schemas with long array length limits (especially wh"}
+{"name": "no_all3", "field": "response_json_schema", "model": "gemini-2.5-flash-lite", "ok": true, "prompt": 3, "out": 16}
+{"name": "wire", "field": "response_json_schema", "model": "gemini-2.5-flash-lite", "ok": true, "prompt": 3, "out": 16}
+{"name": "wire", "field": "response_json_schema", "model": "gemini-2.5-flash-lite", "ok": true, "prompt": 3, "out": 16}
+{"name": "wire", "field": "response_json_schema", "model": "gemini-2.5-flash-lite", "ok": true, "prompt": 3, "out": 16}
+{"name": "wire", "field": "response_schema", "model": "gemini-2.5-flash-lite", "ok": true, "prompt": 879, "out": 16}
+{"name": "wire", "field": "response_schema", "model": "gemini-2.5-flash-lite", "ok": true, "prompt": 899, "out": 16}
