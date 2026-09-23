@@ -14,7 +14,7 @@ import hashlib
 import json
 import re
 
-from .. import ast
+from .. import ast, stream_audit
 from ..errors import VEError
 from ..search import check_countermodel, find_distinguishing_model
 from .ground import ground_countermodel
@@ -51,6 +51,28 @@ formalise the conditional. When a word in the sentence matches SEVERAL predicate
 plausible sense rather than guessing. Otherwise give more than one candidate only
 when the sentence genuinely admits different readings (scope, conditional vs
 asserted). Different candidates must differ in meaning."""
+
+
+# Anything that looks like a credential is redacted from every logged or returned error and from
+# backend-reported identity fields (a token echoed as a "model name" must not reach the ledger).
+# The same patterns live in ve_experiments/claude_cli.py. Credential NEEDLES (the live token under any
+# encoding) are handled by the one canonical sanitizer, ve.stream_audit.sanitize.
+_SECRET_PATTERNS = (
+    re.compile(r"sk-[A-Za-z0-9_\-]{6,}"),                                    # API / OAuth keys
+    re.compile(r"eyJ[A-Za-z0-9_\-]{6,}\.[A-Za-z0-9_\-]{6,}(?:\.[A-Za-z0-9_\-]*)?"),  # JWTs
+    re.compile(r"(?i)\bbearer\s+[^\s'\",;\]]+"),
+    re.compile(r"(?i)\b([a-z_]*(?:token|secret|password|api_?key|credential)[a-z_]*)\s*[:=]\s*[^\s'\",;\]]{8,}"),
+    re.compile(r"(?<![A-Za-z0-9_\-])(?=[A-Za-z0-9_\-]*[0-9])(?=[A-Za-z0-9_\-]*[A-Za-z])[A-Za-z0-9_\-]{32,}"),
+)
+
+
+def redact_secrets(value):
+    """Return ``value`` (any str; other types pass through) with credential-like substrings replaced."""
+    if not isinstance(value, str):
+        return value
+    for pattern in _SECRET_PATTERNS:
+        value = pattern.sub("[REDACTED]", value)
+    return value
 
 
 def _digest(value):
@@ -143,6 +165,19 @@ def extract_candidates(text):
     return out, None
 
 
+class ProposerBackendError(VEError):
+    code = "ProposerBackendError"
+
+
+def _attempts(value):
+    """Earlier failed attempts of the same backend call (infrastructure retries): their token usage."""
+    if type(value) is not list:
+        return []
+    clean = lambda v: v if type(v) is int and v >= 0 else None
+    return [{"input_tokens": clean(a.get("input_tokens")), "output_tokens": clean(a.get("output_tokens"))}
+            for a in value if type(a) is dict]
+
+
 def _call(session, purpose, system, prompt, item):
     recorded = session.recorded_model_call()
     if recorded is not None:
@@ -152,13 +187,44 @@ def _call(session, purpose, system, prompt, item):
     else:
         if session.proposer is None:
             raise VEError("No proposer backend is configured for this session")
-        reply = session.proposer(system, prompt, item)
-        call = {"purpose": purpose, "prompt_version": PROMPT_VERSION,
-                "prompt_digest": _digest([system, prompt]), "text": reply["text"],
-                "input_tokens": reply.get("input_tokens"), "output_tokens": reply.get("output_tokens"),
-                "model": reply.get("model"), "account_label": reply.get("account_label"),
-                "call_key": reply.get("call_key")}
+        base = {"purpose": purpose, "prompt_version": PROMPT_VERSION, "prompt_digest": _digest([system, prompt]),
+                "requested_model": getattr(session.proposer, "model_id", None), "item_id": item}
+        try:
+            reply = session.proposer(system, prompt, item)
+        except Exception as exc:  # the backend boundary: log the failure and the usage actually spent
+            spent = getattr(exc, "usage", None)
+            spent = spent if type(spent) is dict else {}
+            tokens = {k: spent.get(k) if type(spent.get(k)) is int and spent.get(k) >= 0 else None
+                      for k in ("input_tokens", "output_tokens")}
+            call = {**base, "failed": True, "text": None,
+                    "error": redact_secrets(f"{type(exc).__name__}: {str(exc)}")[:300],
+                    **tokens, "model": redact_secrets(spent.get("model")),
+                    "account_label": redact_secrets(spent.get("account_label")),
+                    "call_key": spent.get("call_key")}
+            if spent.get("not_started") is True:  # rejected before any backend call: nothing was spent
+                call["not_started"] = True
+            attempts = _attempts(spent.get("prior_attempts"))
+        else:
+            call = {**base, "text": reply["text"],
+                    "input_tokens": reply.get("input_tokens"), "output_tokens": reply.get("output_tokens"),
+                    "model": reply.get("model"), "account_label": reply.get("account_label"),
+                    "call_key": reply.get("call_key")}
+            attempts = _attempts(reply.get("prior_attempts"))
+        if attempts:
+            call["attempts"] = attempts
+        # The backend boundary: the recorded call (reply text, error, identity fields) passes through the
+        # canonical sanitizer with the backend's own needles (its live token, in memory only) plus the
+        # known credential prefixes. Everything the session derives -- candidates, results, the ledger --
+        # comes from this recorded call, so replay reproduces it without the backend.
+        needles = getattr(session.proposer, "secret_needles", None)
+        needles = stream_audit.needles_for(None) | frozenset(needles() if callable(needles) else ())
+        call = stream_audit.sanitize(call, needles)
     session._model_calls.append(call)
+    if call.get("failed"):
+        raise ProposerBackendError("Proposer backend failed (usage recorded; propose again to retry): "
+                                   + str(call.get("error")))
+    if not isinstance(call.get("text"), str):
+        raise VEError("Recorded model call has no reply text")
     return call
 
 
@@ -170,13 +236,17 @@ def run_propose(session, sentence, k=None, note=None):
         raise VEError("k must be 1, 2 or 3")
     pid = f"q{len(session.proposals) + 1}"
     prompt = build_prompt(session, sentence, k, note)
-    item = f"{session.config.get('config_digest', 'session')[:16]}/{pid}"
+    # The event sequence number makes every propose attempt a fresh backend key, so a failed
+    # call can be retried (the endpoint refuses to re-run a key that started or failed).
+    item = f"{session.session_id}/{pid}/e{session._seq}"
     valid, dropped = [], []
     raw_prompt = prompt
     for round_number in range(1 + session.options["propose_repair_rounds"]):
         call = _call(session, "propose" if round_number == 0 else "repair", SYSTEM, prompt,
                      f"{item}/r{round_number}")
         rows, problem = extract_candidates(call["text"])
+        # Parsed candidate JSON is sanitized AFTER parsing (decoding can only happen once it is parsed).
+        rows = stream_audit.sanitize(rows, session.SECRET_NEEDLES)
         if problem:
             dropped.append({"round": round_number, "raw": call["text"][:500], "error": problem})
         diagnostics = []

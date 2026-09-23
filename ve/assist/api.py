@@ -10,7 +10,8 @@ from __future__ import annotations
 
 import json
 
-from .session import AssistError, AssistSession
+from ..errors import VEError
+from .session import AssistSession
 
 _STR = {"type": "string"}
 _STRS = {"type": "array", "items": {"type": "string"}}
@@ -71,7 +72,9 @@ def tool_schemas(*, proposer=False, premise_suggestions=False):
         _tool("status", "Summarise progress: target certification (graph replay), unproved steps, unanchored "
               "assumptions and whether they are load-bearing, sentence coverage/waivers, renamed-conclusion "
               "flags, provenance counts and token usage. 'success' is true only when everything passes.", {}),
-        _tool("waive", "Explicitly mark an asserting sentence as not needing formalisation, with a reason.",
+        _tool("waive", "Explicitly mark a sentence as not formalised, with a reason. The waiver is reported; "
+              "waiving ANY asserting sentence blocks 'success', even one already covered or derived (every "
+              "claimed sentence must be derived by a certified step, every given sentence covered).",
               {"sentence": _STR, "reason": _STR}, ["sentence", "reason"]),
         _tool("show", "Show all nodes (or one node, with history) with their deterministic English paraphrase.",
               {"name": _STR}),
@@ -119,5 +122,7 @@ def call_tool(session: AssistSession, name, arguments=None):
                                      "message": "Unknown argument(s): " + ", ".join(sorted(extra))})
     try:
         return session.apply(name, arguments)
-    except AssistError as exc:
+    except VEError as exc:
         return {"ok": False, "error": exc.to_dict()}
+    except RuntimeError as exc:  # never lose a backend failure: log it as a rejected call
+        return session.log_rejection(name, arguments, {"code": "BackendError", "message": str(exc)[:500]})

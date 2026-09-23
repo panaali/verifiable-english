@@ -7,6 +7,10 @@ role, and an ``asserting`` flag. Roles:
 * ``claimed`` - the prose asserts it as a conclusion; it must be derived.
 * ``context`` - neither (headings, commentary); never needs coverage.
 
+Untagged prose defaults to ``claimed``, never ``given``: intermediate conclusions
+must not become anchors for assumptions by default. Tag premise paragraphs
+``[given]`` (or give each JSON sentence an explicit ``role``).
+
 Nothing here interprets meaning. Sentence splitting is a deterministic regex.
 """
 from __future__ import annotations
@@ -36,10 +40,12 @@ def _sentence(sid, text, role, block, asserting=True):
             "asserting": bool(asserting) and role != "context"}
 
 
-def source_from_text(text, *, default_role="given"):
+def source_from_text(text, *, default_role="claimed"):
     """Paragraphs (blank-line separated) become blocks p1, p2, ...
 
-    A paragraph may start with ``[given]``, ``[claimed]`` or ``[context]``.
+    A paragraph may start with ``[given]``, ``[claimed]`` or ``[context]``; an
+    untagged paragraph is ``claimed`` (it must be derived, and cannot anchor an
+    assumption), so premises have to be tagged ``[given]`` explicitly.
     Sentence ids are ``p<paragraph>.<sentence>``, one-based.
     """
     sentences = []
@@ -57,7 +63,10 @@ def source_from_text(text, *, default_role="given"):
 
 
 def load_source(data):
-    """Validate a source dictionary ({"sentences": [...]}) and return a copy."""
+    """Validate a source dictionary ({"sentences": [...]}) and return a copy.
+
+    A sentence without a ``role`` is ``claimed`` (see the module docstring).
+    """
     if type(data) is not dict or type(data.get("sentences")) is not list or not data["sentences"]:
         raise VEError("A source needs a nonempty 'sentences' list")
     seen, result = set(), []
@@ -67,7 +76,7 @@ def load_source(data):
         if row["id"] in seen:
             raise VEError(f"Duplicate sentence id: {row['id']}")
         seen.add(row["id"])
-        result.append(_sentence(row["id"], row["text"], row.get("role", "given"),
+        result.append(_sentence(row["id"], row["text"], row.get("role", "claimed"),
                                 row.get("block", row["id"].split(".")[0]), row.get("asserting", True)))
     return {"sentences": result}
 
