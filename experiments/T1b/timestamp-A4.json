@@ -1,0 +1,39 @@
+{
+  "HASHES-A4": "071105f835ae65ed27228cb6cea303787f0e8ed022238f5fb199251f7e36b429",
+  "HASHES-A4.ots": "6243a90e68411ff4b030270ca5014ea5bff16b15b78845e5045fe12803eb0d67",
+  "PREREG-T1b-A4.md": "5c692e6a9f03e116d08d4224ae549015c753b6f1a49feb51125ded84eaf70f25",
+  "PREREG-T1b-A4.md.ots": "8d1604e1ab75bf4404ac60328dd043b4235eb1c9ad03e91ffa17dc67c22248b1",
+  "bitcoin_verified": false,
+  "created_at": "2026-09-23T02:26:28.194412+00:00",
+  "receipts": [
+    {
+      "at": "2026-09-23T02:26:28.028825+00:00",
+      "command": [
+        "uvx",
+        "--from",
+        "opentimestamps-client",
+        "ots",
+        "info",
+        "/Users/seyran/code/ve-codex-v4/experiments/T1b/PREREG-T1b-A4.md.ots"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "File sha256 hash: 5c692e6a9f03e116d08d4224ae549015c753b6f1a49feb51125ded84eaf70f25\nTimestamp:\nappend d77e570cd72d6e9278a5fcd4c8a98c01\nsha256\nappend ef572dab5f4d87f76a966c40af80575c00365ad13813cecdfca48cc512664dff\nsha256\n -> append 57cf87bbeb8f5fb9afe4e64e39342904\n    sha256\n    prepend ac701cca27a3e97d150dfa5b8ab16b483b962805a4dd025dfa0197c525f42b85\n    sha256\n    append 2690656985fe12c3689c5248fc527b212602a1c1055cfae2e24868d7775af9f0\n    sha256\n    prepend 6ab338cb\n    append 6dc727a244b7b321\n    verify PendingAttestation('https://finney.calendar.eternitywall.com')\n -> append b6b831d121771f38\n    sha256\n    prepend 3a5d96370f6f88568123b04dfb5f75e4b0028ce0359e3b344769c0ae94624189\n    sha256\n    append 9b1535bc32dccc8e13096c8eceabd643\n    sha256\n    append 1375da9cd661431c5b6ea7e136267bce5c103932bab551beb9f968a3bde7702b\n    sha256\n    append ea0190fee73fcbe16cad5bcbee84019942d89ed83d284733ccff52574160b483\n    sha256\n    prepend 6ab338ca\n    append b2946598e0ce2603\n    verify PendingAttestation('https://alice.btc.calendar.opentimestamps.org')\n -> append c053726644be0be0\n    sha256\n    prepend f10515cff42b0d399b6703dc2416233ad996fbe3fec7ac9a34a979c0f76880a5\n    sha256\n    append 2d2c04c1307021d7361d11ef6ced8e74\n    sha256\n    prepend 462f6ddaa2e5091353644ee78eaa399194965f46d708df5d4000f79985d4d103\n    sha256\n    prepend 6ab338ca\n    append d9aeec06f83ac0c9\n    verify PendingAttestation('https://bob.btc.calendar.opentimestamps.org')\n\n"
+    },
+    {
+      "at": "2026-09-23T02:26:28.193718+00:00",
+      "command": [
+        "uvx",
+        "--from",
+        "opentimestamps-client",
+        "ots",
+        "info",
+        "/Users/seyran/code/ve-codex-v4/experiments/T1b/HASHES-A4.ots"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "File sha256 hash: 071105f835ae65ed27228cb6cea303787f0e8ed022238f5fb199251f7e36b429\nTimestamp:\nappend 2dd7e80c9a9e4ae21378a0fcfc29d03f\nsha256\nprepend ac1f510ec5532335ee3b8c97be3bcd4ecd1c3eb24da960c2b385fb4f62a95d8d\nsha256\n -> append 57cf87bbeb8f5fb9afe4e64e39342904\n    sha256\n    prepend ac701cca27a3e97d150dfa5b8ab16b483b962805a4dd025dfa0197c525f42b85\n    sha256\n    append 2690656985fe12c3689c5248fc527b212602a1c1055cfae2e24868d7775af9f0\n    sha256\n    prepend 6ab338cb\n    append 6dc727a244b7b321\n    verify PendingAttestation('https://finney.calendar.eternitywall.com')\n -> append b6b831d121771f38\n    sha256\n    prepend 3a5d96370f6f88568123b04dfb5f75e4b0028ce0359e3b344769c0ae94624189\n    sha256\n    append 9b1535bc32dccc8e13096c8eceabd643\n    sha256\n    append 1375da9cd661431c5b6ea7e136267bce5c103932bab551beb9f968a3bde7702b\n    sha256\n    append ea0190fee73fcbe16cad5bcbee84019942d89ed83d284733ccff52574160b483\n    sha256\n    prepend 6ab338ca\n    append b2946598e0ce2603\n    verify PendingAttestation('https://alice.btc.calendar.opentimestamps.org')\n -> append c053726644be0be0\n    sha256\n    prepend f10515cff42b0d399b6703dc2416233ad996fbe3fec7ac9a34a979c0f76880a5\n    sha256\n    append 2d2c04c1307021d7361d11ef6ced8e74\n    sha256\n    prepend 462f6ddaa2e5091353644ee78eaa399194965f46d708df5d4000f79985d4d103\n    sha256\n    prepend 6ab338ca\n    append d9aeec06f83ac0c9\n    verify PendingAttestation('https://bob.btc.calendar.opentimestamps.org')\n\n"
+    }
+  ],
+  "status": "bound_calendar_submission_pending_bitcoin"
+}
