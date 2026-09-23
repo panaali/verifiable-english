@@ -2,7 +2,12 @@
 
 Preregistration: [PREREG-T1c.md](PREREG-T1c.md), amended before any call by
 [PREREG-T1c-A1.md](PREREG-T1c-A1.md) (binding false approval primary; gate also continues on
-haiku-raw honest completion <= 80%; Holm co-primary analysis; token-overhead stop; covariates). Design notes: `design/crypto-inspired-oversight.md`
+haiku-raw honest completion <= 80%; Holm co-primary analysis; token-overhead stop; covariates).
+After the gate, amendment [PREREG-T1c-A2.md](PREREG-T1c-A2.md) (before any full-study call): the 56
+Haiku gate INVALIDs were a format artefact (markdown before the requested JSON); an embedded-JSON
+parser and a 16,000-token output cap apply identically to all arms; an `opus-ve` arm is added with
+opus-ve minus opus-raw as the primary frontier contrast (eight-test Holm family). The gate decision
+stands as recorded. Results: [RESULTS.md](RESULTS.md). Design notes: `design/crypto-inspired-oversight.md`
 (section 1 and Assessment) and `design/frontier-failure-modes-and-ve.md` (section 3, item 2).
 Code: `ve_experiments/t1c/`. Tests: `tests/test_t1c.py`. This pilot replaces the PLAN-T4
 policy-invariant pilot as the next use of the closure-induction rule.
@@ -31,4 +36,4 @@ cd /Users/seyran/code/ve-opus-t4 && UV_CACHE_DIR=/private/tmp/ve-uv-cache-t4 \
 ```
 
 Exit 75 means a resumable pause (transport failure or session limit): rerun the same command later.
-After CONTINUE, `full` runs the four arms; `report --split gate|full` summarises without calls.
+After CONTINUE, `full` runs the five arms (A2); `report --split gate|full` summarises without calls.

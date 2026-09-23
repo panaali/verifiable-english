@@ -2,3 +2,5 @@ results-*-oracle/
 results-*-random/
 results-*-approve/
 results-*-reject/
+results-*/ledgers/*.jsonl
+results-*/verdict-key.bin

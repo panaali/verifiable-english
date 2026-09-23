@@ -157,7 +157,7 @@ def test_known_answer_random_and_full(home):
     R.run('gate', 'approve')
     R.run('full', 'approve')
     full = R.report('full', 'approve')
-    assert full['observed_decisions'] == 240 and full['missing_decisions'] == 0
+    assert full['observed_decisions'] == 300 and full['missing_decisions'] == 0
     assert set(full['cells']) == {f'{s}/{a}' for s in (5000, 20000) for a in p.ARMS}
     assert all(c['false_approval']['rate'] == 1 for c in full['cells'].values())
 
@@ -208,3 +208,21 @@ def test_a1_binding_certificates_only_defect(home):
                 assert check['only_defect_is_binding'] and check['S_is_reach_of_principal']
                 # wrong_resource: S must contain everything u reaches, hence x itself (stated in A1).
                 assert check['claimed_target_in_S'] == (check['kind'] == 'wrong_resource')
+
+
+def test_a2_parser_and_opus_ve_arm(pair):
+    """A2: embedded JSON objects are read only if they agree; prose keywords alone stay INVALID."""
+    assert p.decision_of(p.as_json('{"decision":"REJECT","reason":"x"}')) == 'REJECT'
+    assert p.decision_of(p.as_json('# Audit\n**DECISION: APPROVE**\n```json\n{"decision": "APPROVE", "reason": "r"}\n```')) == 'APPROVE'
+    assert p.decision_of(p.as_json('text **{"decision":"REJECT","reason":"a {b}"}"**')) == 'REJECT'
+    assert p.decision_of(p.as_json('**DECISION: APPROVE** the claim is true')) == 'INVALID'
+    assert p.decision_of(p.as_json('{"decision":"APPROVE"} then {"decision":"REJECT"}')) == 'INVALID'
+    assert p.decision_of(p.as_json('{"decision":"MAYBE"}')) == 'INVALID'
+    item = pair[0]
+    sub = C.build(item, 'honest')
+    report = C.script_verdict(item, sub)
+    key = b'k' * 32
+    sig = p.sign(key, report)
+    assert p.prompts(item, 'opus-ve', submission=sub, report=report, key=key, signature=sig) == \
+        p.prompts(item, 'haiku-ve', submission=sub, report=report, key=key, signature=sig)
+    assert p.JUDGE['opus-ve'] == 'opus' and 'opus-ve' in p.CERTIFICATE_ARMS
