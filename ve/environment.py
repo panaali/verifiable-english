@@ -13,6 +13,14 @@ SPEC_REVISION = "ve-v0-draft-2026-09-20"
 CLOSURE_LANGUAGE = "ve.core@0.1"
 CLOSURE_PROFILES = ("closure@0", PROFILE)
 CLOSURE_REVISION = "ve-v0.1-closure-2026-09-21"
+# order@0: linear integer comparisons. `$int` is the reserved built-in integer
+# sort. It is not an identifier, so no vocabulary can declare, enumerate or
+# quantify over it; it may appear only as a predicate argument or constant sort
+# in an order environment. Combined closure@0 x order@0 is rejected.
+ORDER_LANGUAGE = CLOSURE_LANGUAGE
+ORDER_PROFILES = ("order@0", PROFILE)
+ORDER_REVISION = "ve-v0.1-order-2026-09-22"
+INT_SORT = "$int"
 RESERVED = frozenset("true false is equals not and or if then for every there exists believes must eventually".split())
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_]*\Z", re.ASCII)
 
@@ -93,9 +101,15 @@ class Environment:
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
         closure = data.get("language") == CLOSURE_LANGUAGE if type(data) is dict else False
         require_fields(data, {"language", "profiles" if closure else "profile", "spec_revision", "vocabulary"})
+        order = False
         if closure:
-            if data["profiles"] != list(CLOSURE_PROFILES) or data["spec_revision"] != CLOSURE_REVISION:
-                raise UnsupportedProfile("Unsupported profiles or specification revision")
+            if (data["profiles"], data["spec_revision"]) == (list(ORDER_PROFILES), ORDER_REVISION):
+                order = True
+            elif data["profiles"] != list(CLOSURE_PROFILES) or data["spec_revision"] != CLOSURE_REVISION:
+                raise UnsupportedProfile("Unsupported profiles or specification revision"
+                                         + (" (closure@0 x order@0 is not supported)"
+                                            if type(data["profiles"]) is list
+                                            and {"closure@0", "order@0"} <= set(data["profiles"]) else ""))
         elif (data["language"], data["profile"], data["spec_revision"]) != (LANGUAGE, PROFILE, SPEC_REVISION):
             raise UnsupportedProfile("Unsupported language, semantic profile, or specification revision")
         vocab = data["vocabulary"]
@@ -132,7 +146,7 @@ class Environment:
             if type(args) is not list or len(args) not in (1, 2):
                 raise VEError("Predicate arguments must be an array of one or two sort identifiers")
             for sort in args:
-                if type(sort) is not str or sort not in sorts:
+                if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)):
                     raise UnknownSymbol(f"Undeclared predicate argument sort: {sort!r}")
             verbalisation = _verbalisation(entry["verbalisation"]) if "verbalisation" in entry else None
             negative = (_verbalisation(entry["negative_verbalisation"])
@@ -142,11 +156,11 @@ class Environment:
         for name, entry in vocab["constants"].items():
             require_fields(entry, {"sort", "description"}, path=f"/vocabulary/constants/{name}")
             sort = entry["sort"]
-            if type(sort) is not str or sort not in sorts:
+            if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)):
                 raise UnknownSymbol(f"Undeclared constant sort: {sort!r}")
             constants[name] = ConstantDecl(sort, _description(entry["description"]))
         for field, value in (("language", data["language"]), ("profile", None if closure else PROFILE),
-                             ("profiles", CLOSURE_PROFILES if closure else (PROFILE,)),
+                             ("profiles", (ORDER_PROFILES if order else CLOSURE_PROFILES) if closure else (PROFILE,)),
                              ("spec_revision", data["spec_revision"]),
                              ("sorts", MappingProxyType(sorts)), ("predicates", MappingProxyType(predicates)),
                              ("constants", MappingProxyType(constants))):
@@ -176,7 +190,7 @@ class Environment:
                 entry["negative_verbalisation"] = declaration.negative_verbalisation
             return entry
 
-        return {"language": self.language, **({"profiles": list(self.profiles)} if self.closure else {"profile": self.profile}), "spec_revision": self.spec_revision,
+        return {"language": self.language, **({"profiles": list(self.profiles)} if self.closure or self.order else {"profile": self.profile}), "spec_revision": self.spec_revision,
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
                                "constants": {k: {"sort": v.sort, "description": v.description}
@@ -187,8 +201,13 @@ class Environment:
         return "closure@0" in self.profiles
 
     @property
+    def order(self):
+        return "order@0" in self.profiles
+
+    @property
     def identity_version(self):
-        return "v0.1" if self.closure else "v0"
+        # Domain-separated before any order meaning_id was minted.
+        return "v0.1-order" if self.order else "v0.1" if self.closure else "v0"
 
     @property
     def environment_id(self):

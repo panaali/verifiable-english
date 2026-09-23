@@ -9,6 +9,8 @@ import re
 from .errors import InvalidModel, ResourceLimit
 from .limits import MAX_ENTITIES, MAX_IDENTIFIER_BYTES, MAX_PACKAGE_BYTES, MAX_TUPLES
 
+INT_SORT = "$int"
+
 _ID = re.compile(r"^[a-z][a-z0-9_]*$")
 
 
@@ -79,10 +81,25 @@ class FiniteModel:
                 _fail("duplicate domain entity", f"/domains/{sort}")
             domains[sort] = tuple(sorted(values))
 
-        constants: dict[str, str] = {}
+        order = getattr(env, "order", False)
+
+        def integer(raw, path):
+            from .ast import decimal_from_wire
+            from .errors import VEError
+            try:
+                return decimal_from_wire(raw)
+            except ResourceLimit:
+                raise
+            except VEError as exc:
+                _fail("integer values must be canonical decimal strings", path)
+
+        constants: dict[str, str | int] = {}
         for name in sorted(constant_names):
-            value = _local_id(wire["constants"][name], f"/constants/{name}")
             sort = env.constants[name].sort
+            if order and sort == INT_SORT:
+                constants[name] = integer(wire["constants"][name], f"/constants/{name}")
+                continue
+            value = _local_id(wire["constants"][name], f"/constants/{name}")
             if value not in domains[sort]:
                 _fail("constant denotes an entity outside its sort", f"/constants/{name}")
             constants[name] = value
@@ -100,9 +117,11 @@ class FiniteModel:
             for i, item in enumerate(raw):
                 if not isinstance(item, list) or len(item) != len(signature):
                     _fail("relation tuple has wrong arity", f"/relations/{name}/{i}")
-                row = tuple(_local_id(x, f"/relations/{name}/{i}/{j}") for j, x in enumerate(item))
+                row = tuple(integer(x, f"/relations/{name}/{i}/{j}") if order and sort == INT_SORT
+                            else _local_id(x, f"/relations/{name}/{i}/{j}")
+                            for j, (x, sort) in enumerate(zip(item, signature, strict=True)))
                 for j, (value, sort) in enumerate(zip(row, signature, strict=True)):
-                    if value not in domains[sort]:
+                    if not (order and sort == INT_SORT) and value not in domains[sort]:
                         _fail("relation tuple contains a dangling or wrong-sort entity", f"/relations/{name}/{i}/{j}")
                 tuples.append(row)
             if len(set(tuples)) != len(tuples):
@@ -112,21 +131,25 @@ class FiniteModel:
                 raise ResourceLimit("model exceeds total relation tuple limit", path="/relations")
             relations[name] = frozenset(tuples)
 
-        normalized = {
-            "complete": True,
-            "domains": {k: list(domains[k]) for k in sorted(domains)},
-            "constants": {k: constants[k] for k in sorted(constants)},
-            "relations": {k: [list(x) for x in sorted(relations[k])] for k in sorted(relations)},
-        }
+        normalized = _normalized(domains, constants, relations)
         from .wire import digest
         environment_id = env.environment_id
         model_id = digest(f"ve-model-{env.identity_version}\n", {"environment_id": environment_id, "model": normalized})
         return cls(MappingProxyType(domains), MappingProxyType(constants), MappingProxyType(relations), environment_id, model_id)
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            "complete": True,
-            "domains": {k: list(self.domains[k]) for k in sorted(self.domains)},
-            "constants": {k: self.constants[k] for k in sorted(self.constants)},
-            "relations": {k: [list(x) for x in sorted(self.relations[k])] for k in sorted(self.relations)},
-        }
+        return _normalized(self.domains, self.constants, self.relations)
+
+
+def _cell(value):
+    # Integers (order@0 only) travel as canonical decimal strings.
+    return str(value) if type(value) is int else value
+
+
+def _normalized(domains, constants, relations) -> dict[str, Any]:
+    return {
+        "complete": True,
+        "domains": {k: list(domains[k]) for k in sorted(domains)},
+        "constants": {k: _cell(constants[k]) for k in sorted(constants)},
+        "relations": {k: [[_cell(c) for c in x] for x in sorted(relations[k])] for k in sorted(relations)},
+    }

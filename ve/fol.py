@@ -46,6 +46,9 @@ def document_from_named_fol(env: Any, value: Mapping[str, Any]) -> ast.Document:
     binders require ``sort``, ``variable``, and ``body``. Terms are
     ``{"var": name}`` or ``{"const": id}``.
     """
+    if getattr(env, "order", False):
+        from .errors import UnsupportedProfile
+        raise UnsupportedProfile("The named FOL adapter does not yet cover order@0 integer terms")
     canonical_json(value)  # Validate the complete wire package before discarding source names.
     if not isinstance(value, Mapping) or set(value) != {"formulas"} or not isinstance(value["formulas"], list) or not value["formulas"]:
         _fail("named FOL document requires only a nonempty 'formulas' array", "")
@@ -110,6 +113,9 @@ def document_from_named_fol(env: Any, value: Mapping[str, Any]) -> ast.Document:
 
 def document_to_named_fol(env: Any, document: ast.Document) -> dict[str, list[dict[str, Any]]]:
     """Export *document* with deterministic preorder names and explicit sorts."""
+    if getattr(env, "order", False):
+        from .errors import UnsupportedProfile
+        raise UnsupportedProfile("The named FOL adapter does not yet cover order@0 integer terms")
     ast.check_document(env, document)
 
     def term(value: ast.Term, scope: list[str]) -> dict[str, str]:

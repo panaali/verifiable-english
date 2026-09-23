@@ -15,7 +15,7 @@ from . import ast
 from .errors import ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES
 from .english_phrases import nearest, phrase_end, unary_phrase, wording_key, BOUNDARIES
-from .printer import (_NaturalVocabulary, _LOGICAL_WORDS,
+from .printer import (_NaturalVocabulary, _LOGICAL_WORDS, render_int_term,
                       _fluent_variable_letters, _template_head, _AUXILIARIES, VocabularyLint)
 from .english_vocabulary import IDIOMS, negative_template, display_environment, overlay_provenance
 
@@ -36,6 +36,29 @@ _ACTIVE = (
 )
 _EXTRA_RESERVED = frozenset("this it holds impossible classified recorded relation entity sort named first second following hold who where step steps source destination from reachable using starting ending definition end".split())
 _RESERVED = _LOGICAL_WORDS | _EXTRA_RESERVED
+# order@0 comparison wording ("at least n" is a comparison, never a counting quantifier).
+_COMPARISON_WORDS = frozenset('less more than least most same'.split())
+_COMPARISONS = (('{0} is less than {1}', ast.Lt, False), ('{0} is at most {1}', ast.Le, False),
+                ('{0} is more than {1}', ast.Lt, True), ('{0} is at least {1}', ast.Le, True))
+# Integer slots match any bracket depth: outermost bracket groups are masked
+# (length-preserving) before regex matching, and the exact term text is then
+# checked by `int_syntax` and parsed by `int_term`, which budgets term depth
+# exactly as the type checker does (MAX_DEPTH), so every renderable integer
+# term of a valid AST parses back.
+_INT_MASK = '\x00'
+
+
+def _mask_brackets(source):
+    """Replace the interior of each balanced outermost [...] group by _INT_MASK."""
+    chars, stack = list(source), []
+    for index, char in enumerate(source):
+        if char == '[':
+            stack.append(index)
+        elif char == ']' and stack:
+            open_ = stack.pop()
+            if not stack:
+                chars[open_ + 1:index] = _INT_MASK * (index - open_ - 1)
+    return ''.join(chars)
 
 
 # Function words cannot establish a semantic connection to a declaration.
@@ -185,6 +208,9 @@ class EnglishVocabulary:
             if accepted and template not in IDIOMS[len(decl.arguments)] and set(re.findall(r'[a-z]+', template)) & _EXTRA_RESERVED:
                 accepted = False
                 issues.add(VocabularyLint(path, 'ENGLISH_STRUCTURE_WORD'))
+            if accepted and getattr(env, 'order', False) and set(re.findall(r'[a-z]+', template.lower())) & _COMPARISON_WORDS:
+                accepted = False
+                issues.add(VocabularyLint(path, 'ENGLISH_STRUCTURE_WORD'))
             duplicates = set().union(*(template_owners.get(wording_key(t), set())
                                        for t in (template, decl.negative_verbalisation) if t)) - {name}
             if duplicates:
@@ -275,10 +301,15 @@ class EnglishTraversal:
         return (sort, label), noun + ' named ' + label
 
     def term(self, value, scope):
-        return scope[value.index][1] if type(value) is ast.Var else self.words.constants[value.name]
+        if type(value) is ast.Var:
+            return scope[value.index][1]
+        if type(value) is ast.Const:
+            return self.words.constants[value.name]
+        # order@0 integer terms keep the frozen bracketed canonical spelling.
+        return render_int_term(value, lambda leaf: self.term(leaf, scope))
 
     def simple(self, value):
-        return type(value) in (ast.Top, ast.Bottom, ast.Unary, ast.Binary, ast.Eq) or (
+        return type(value) in (ast.Top, ast.Bottom, ast.Unary, ast.Binary, ast.Eq, ast.Lt, ast.Le) or (
             type(value) is ast.Not and type(value.body) in (ast.Unary, ast.Binary)
             and value.body.predicate in self.words.negatives)
 
@@ -321,6 +352,11 @@ class EnglishTraversal:
             return self.words.atom(value.predicate, [self.term(t, scope) for t in terms])
         if kind is ast.Eq:
             return self.term(value.left, scope) + ' is the same as ' + self.term(value.right, scope)
+        if kind in (ast.Lt, ast.Le):
+            # Comparisons only: "at least"/"more than" are accepted when parsing
+            # (swapping the operands); rendering always uses these two forms.
+            return (self.term(value.left, scope) + (' is less than ' if kind is ast.Lt else ' is at most ')
+                    + self.term(value.right, scope))
         if kind is ast.Not:
             if type(value.body) in (ast.Unary, ast.Binary) and value.body.predicate in self.words.negatives:
                 atom = value.body
@@ -494,11 +530,32 @@ class EnglishParser:
 
     def atom(self, scope, relative=False, object_allowed=False):
         start = self.i
+        order = getattr(self.env, 'order', False)
         terms = self.term_options(scope)
+        if order:
+            # Integer constants fill only integer slots; objects only object slots.
+            terms = {ref: value for ref, value in terms.items()
+                     if not (type(value) is ast.Const and self.env.constants[value.name].sort == ast.INT_SORT)}
         term_literal = lambda t: self.reference_pattern(t, scope)
         term_pattern = '(?:' + '|'.join(term_literal(t) for t in sorted(terms, key=lambda t: -len(t))) + ')'
         if not terms:
             term_pattern = r'(?!)'
+        int_pattern = self.int_pattern() if order else None
+        if order and getattr(self, '_masked_for', None) is not self.source:
+            self._masked_for, self._masked = self.source, _mask_brackets(self.source)
+        subject = self._masked if order else self.source
+
+        def slots(name, omitted):
+            """Per-placeholder patterns: integer slots take bracketed integer terms."""
+            if name is None or not order:
+                return None
+            if type(name) is tuple:
+                return (int_pattern, int_pattern)
+            sorts = self.env.predicates[name].arguments
+            if (omitted == 'subject' and sorts[0] == ast.INT_SORT) or (
+                    omitted == 'object' and sorts[-1] == ast.INT_SORT):
+                return False
+            return tuple(int_pattern if sort == ast.INT_SORT else term_pattern for sort in sorts)
         choices = []
         if not relative:
             for text, node in [('this holds in all cases', ast.Top()), ('this is impossible', ast.Bottom())]:
@@ -510,31 +567,51 @@ class EnglishParser:
         templates += [(name, template, True) for name, template in self.words.negatives.items()]
         if not relative:
             templates.append((None, '{0} is the same as {1}', False))
+            if order:
+                templates.append((('eq', ast.Eq, False), '{0} is the same as {1}', False))
+                templates += [(('cmp', kind, swap), text, False) for text, kind, swap in _COMPARISONS]
         alternatives = [(name, template, negative, 'subject' if relative else None)
                         for name, template, negative in templates]
         if relative and object_allowed:
             alternatives += [(name, template, negative, 'object') for name, template, negative in templates
-                             if len(self.env.predicates[name].arguments) == 2]
+                             if type(name) is str and len(self.env.predicates[name].arguments) == 2]
         for name, template, negative, omitted in alternatives:
             if omitted == 'subject':
                 template = template.removeprefix('{0} ')
             elif omitted == 'object':
                 template = template.replace(' {1}', '')
+            slot = slots(name, omitted)
+            if slot is False:
+                continue
             parts = re.split(r'(\{[01]\})', template)
-            pattern = ''.join(('(' + term_pattern + ')') if part in ('{0}', '{1}')
-                              else _content_pattern(part) for part in parts)
-            match = re.compile(pattern).match(self.source, start)
+            pattern = ''.join(('(' + (term_pattern if slot is None else slot[int(part[1])]) + ')')
+                              if part in ('{0}', '{1}') else _content_pattern(part) for part in parts)
+            match = re.compile(pattern).match(subject, start)
             if not match:
                 continue
             end = match.end()
             if end < len(self.source) and re.match(r'[A-Za-z0-9_]', self.source[end]):
                 continue
+            groups = [self.source[a:b] for a, b in (match.span(g) for g in range(1, len(match.groups()) + 1))]
+            if slot not in (None, False):
+                offset = 1 if omitted == 'subject' else 0
+                if not all(self.int_syntax(t) for i, t in enumerate(groups)
+                           if slot[i + offset] is int_pattern):
+                    continue
             # Whitespace in a term can be edited; its binding is lexical, not textual.
-            args = [next(value for ref, value in terms.items() if re.fullmatch(term_literal(ref), t))
-                    for t in match.groups()]
+            if slot is None:
+                args = [next(value for ref, value in terms.items() if re.fullmatch(term_literal(ref), t))
+                        for t in groups]
+            else:
+                offset = 1 if omitted == 'subject' else 0
+                args = [self.int_term(t) if slot[i + offset] is int_pattern else
+                        next(value for ref, value in terms.items() if re.fullmatch(term_literal(ref), t))
+                        for i, t in enumerate(groups)]
             if omitted == 'subject': args.insert(0, ast.Var(0))
             elif omitted == 'object': args.append(ast.Var(0))
-            if name is None:
+            if type(name) is tuple:
+                node = (name[1](args[1], args[0]) if name[2] else name[1](*args))
+            elif name is None:
                 node = ast.Eq(*args)
             else:
                 node = (ast.Unary if len(args) == 1 else ast.Binary)(name, *args)
@@ -561,6 +638,91 @@ class EnglishParser:
         self.i = longest
         self.farthest = max(self.farthest, longest)
         return nodes.pop()
+
+    def int_constants(self):
+        return {text: name for name, text in self.words.constants.items()
+                if self.env.constants[name].sort == ast.INT_SORT}
+
+    def int_leaf(self):
+        constants = sorted(self.int_constants(), key=lambda t: -len(t))
+        return r'(?:-?(?:0|[1-9][0-9]*)(?![0-9])' + ''.join(
+            '|' + re.escape(t) + (r'(?![A-Za-z0-9_])' if t[-1:].isalnum() or t[-1:] == '_' else '')
+            for t in constants) + ')'
+
+    def int_pattern(self):
+        """An integer term over the bracket-masked source: a leaf or one masked bracket group."""
+        return '-*(?:' + self.int_leaf() + r'|\[' + _INT_MASK + r'*\])'
+
+    def int_syntax(self, text):
+        """The exact integer-term shape (any depth) that the frozen grammar admits."""
+        leaf = re.compile(self.int_leaf())
+        position = 0
+
+        def term(depth):
+            # depth is the AST term depth int_term will build (Scale(-1, t) per
+            # prefix minus, Add(t, Scale(-1, u)) for [t - u]), bounded as in the checker.
+            nonlocal position
+            while text.startswith('-', position) and not text[position + 1:position + 2].isdigit():
+                position += 1
+                depth += 1
+            if depth > MAX_DEPTH:
+                self.error(f'Arithmetic term exceeds {MAX_DEPTH} nesting levels.', ResourceLimit)
+            match = leaf.match(text, position)
+            if match:
+                position = match.end()
+                return True
+            if not text.startswith('[', position):
+                return False
+            position += 1
+            if not term(depth + 1):
+                return False
+            operator = text[position:position + 3]
+            if operator not in (' + ', ' - ', ' * '):
+                return False
+            position += 3
+            if not term(depth + (2 if operator == ' - ' else 1)) or not text.startswith(']', position):
+                return False
+            position += 1
+            return True
+        return term(1) and position == len(text)
+
+    def int_term(self, text):
+        """Parse an integer term with the canonical (frozen) term grammar."""
+        constants = self.int_constants()
+        position = 0
+
+        def term():
+            nonlocal position
+            if text.startswith('-', position) and not text[position + 1:position + 2].isdigit():
+                position += 1
+                return ast.Scale(-1, term())
+            match = re.compile(r'-?(?:0|[1-9][0-9]*)(?![0-9])').match(text, position)
+            if match:
+                position = match.end()
+                return ast.Num(int(match.group()))
+            if text.startswith('[', position):
+                position += 1
+                left = term()
+                operator = text[position:position + 3]
+                position += 3
+                right = term()
+                if not text.startswith(']', position) or operator not in (' + ', ' - ', ' * '):
+                    self.error('Expected an integer term such as [n + 1].')
+                position += 1
+                if operator == ' * ':
+                    if type(left) is not ast.Num:
+                        self.error('A scaling coefficient must be an integer numeral.')
+                    return ast.Scale(left.value, right)
+                return ast.Add(left, ast.Scale(-1, right) if operator == ' - ' else right)
+            for display in sorted(constants, key=lambda t: -len(t)):
+                if text.startswith(display, position):
+                    position += len(display)
+                    return ast.Const(constants[display])
+            self.error('Expected an integer term.')
+        value = term()
+        if position != len(text):
+            self.error('Unexpected text in an integer term.')
+        return value
 
     def unknown_atom(self, scope, relative=False, object_allowed=False):
         start = self.i
@@ -814,7 +976,9 @@ def english_lark_grammar(env, **options):
         ('LABEL: /(?:' + '|'.join(re.escape(l) for l in words.letters.values()) + ')[1-9][0-9]*/'
          if words.letters else 'LABEL: /[^\\s\\S]/'),
     ]
-    constants = [lit(v) for v in words.constants.values()]
+    order = getattr(env, 'order', False)
+    is_int = lambda name: order and env.constants[name].sort == ast.INT_SORT
+    constants = [lit(v) for n, v in words.constants.items() if not is_int(n)]
     # An impossible terminal keeps grammars valid for empty vocabularies.
     rules.append('constant: ' + (' | '.join(constants) or 'IMPOSSIBLE'))
     relations = [lit(quote(n)) for n, p in env.predicates.items()
@@ -825,15 +989,30 @@ def english_lark_grammar(env, **options):
     object_relatives = []
     for templates in (words.predicates, words.negatives):
         for name, template in templates.items():
+            sorts = env.predicates[name].arguments
+            slot = lambda p: ('int_term' if order and sorts[int(p[1])] == ast.INT_SORT else 'term')
             parts = re.split(r'(\{[01]\})', template)
-            rule = ' '.join('term' if p in ('{0}', '{1}') else content_lit(p.strip())
+            rule = ' '.join(slot(p) if p in ('{0}', '{1}') else content_lit(p.strip())
                             for p in parts if p.strip())
             atoms.append(rule)
-            relatives.append(rule.removeprefix('term '))
-            if len(env.predicates[name].arguments) == 2:
+            if slot('{0}') == 'term':
+                relatives.append(rule.removeprefix('term '))
+            if len(env.predicates[name].arguments) == 2 and slot('{1}') == 'term':
                 object_template = template.replace(' {1}', '')
-                object_relatives.append(' '.join('term' if p == '{0}' else content_lit(p.strip())
+                object_relatives.append(' '.join(slot(p) if p == '{0}' else content_lit(p.strip())
                                                 for p in re.split(r'(\{0\})', object_template) if p.strip()))
+    if order:
+        # Comparisons only; integer terms use the frozen bracketed spelling.
+        atoms += ['int_term "is the same as"i int_term'] + [
+            'int_term ' + content_lit(text.removeprefix('{0} ').removesuffix(' {1}')) + ' int_term'
+            for text, _, _ in _COMPARISONS]
+        ints = [lit(v) for n, v in words.constants.items() if is_int(n)]
+        rules += ['int_term: int_atom | "-" int_neg',
+                  'int_atom: int_constant | NUMERAL | "[" int_term INT_OP int_term "]"',
+                  'int_neg: int_constant | "[" int_term INT_OP int_term "]" | "-" int_neg',
+                  'int_constant: ' + (' | '.join(ints) or 'IMPOSSIBLE'),
+                  'NUMERAL: /-?(?:0|[1-9][0-9]*)(?![0-9])/',
+                  'INT_OP: "+" | "-" | "*"']
     rules.append('atom: ' + ' | '.join(atoms))
     rules.append('relative: ' + (' | '.join(relatives) or 'IMPOSSIBLE'))
     rules.append('object_relative: ' + (' | '.join(object_relatives) or 'IMPOSSIBLE'))
