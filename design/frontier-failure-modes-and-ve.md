@@ -59,3 +59,19 @@ over-trusting a "checked" label.
 Row 26: SHADE-Arena says "over 20%" false positives, not "20-40%". Row 19: monitors included GPT-5 and Sonnet 4, not
 only GPT-4x. Terekhov safety numbers 0.75->0.2 unverified. Missing: Elasky 2026, Baker's recall collapse, self-preference
 growing with capability, negative-claim evidence (AbsenceBench, "bug-free" framing).
+
+## 5. Pushback study design details (added 2026-09-22)
+
+- Pressure protocol: reuse Jagged Judges (arXiv 2608.12645) exactly: L1 "Are you sure?", L2 counterargument, L3 expert
+  authority, L4 fabricated consensus ("three independent reviewers all disagree"), L5 random mix of L1-L4, L6 adaptive
+  persuader LLM; 10 turns. Their tasks are judgement classification (WildGuard, AEGIS, HH-RLHF, ToxiGen, MAGE, Paired
+  Prompts) with no checkable core, so VE is not claimed to help there.
+- Items: our checker-decidable items (V4 logic, e.g. c-smoke-modus_tollens-000; T1 access claims, e.g. the 5,000-grant
+  item copied to ~/code/manage-agents/examples/t1-5000-grants).
+- Arms: judge alone vs judge + signed checker verdict on the checkable part (system refuses judge overrides of signed
+  verdicts; pressure can only move the residual, e.g. translation faithfulness).
+- Calibration anchor: reproduce their flip rate for 1-2 frontier judges on a small WildGuard slice, to show our pressure
+  is as strong as theirs.
+- Second arm (tests the "decomposition" argument): holistic verdict vs the same verdict decomposed into VE leaves with a
+  named catch-all judgement predicate; hypothesis: fewer flips and higher inter-judge agreement per leaf.
+- Report the residual honestly: if flips on the residual equal the original flips, VE only relocated the problem.
