@@ -1380,6 +1380,9 @@ def _graph_session(spec, budget, seed=None, **options):
         row = rng.choice(ready) if seed is not None else ready[0]
         pending.remove(row)
         name, text, anchors, parents = row
+        parents = list(parents)
+        if seed is not None:  # parent ORDER within a node is permuted too
+            rng.shuffle(parents)
         ok(s.apply("add_node", {"name": name, "text": text, "anchors": anchors, "parents": parents}))
     steps = [n for n in s.nodes if s.nodes[n].kind == "step"]
     if seed is not None:
@@ -1416,7 +1419,7 @@ def test_astra_fix3_every_witness_is_reported_and_restatements_never_count():
 
 
 def test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget():
-    """Success is a function of the graph: identical under every insertion/check order, and monotone in
+    """Success is a function of the graph: identical under every insertion/check/PARENT order, and monotone in
     the proof budget (with and without countermodel search), including competing witnesses."""
     budgets = (0, 2, 3, 4, 5, 6, 10, 10_000)
     for name, spec in GRAPH_SPECS.items():
@@ -1625,3 +1628,171 @@ def test_astra_fix3_json_escaped_credentials_never_persist(tmp_path, monkeypatch
     result = s.apply("propose", {"sentence": "p1.2", "k": 1})
     assert not result["ok"]
     assert secret not in json.dumps(result, ensure_ascii=False) and secret not in json.dumps(s.to_ledger())
+
+
+# ---------------------------------------------------------------- Astra fix-review 4
+
+FAKE_TOKEN = "oauth-fake-9f8e7d6c5b4a"
+
+
+def _needle_free(value, secret=FAKE_TOKEN):
+    """Independent check (not the sanitizer's own decoder): the secret appears under no decoding."""
+    from secret_decode import exposes_secret
+    return not exposes_secret(value, secret)
+
+
+def test_astra_fix4_parent_order_never_changes_the_check_or_success():
+    """Astra's probe: at budgets 3-4, deriving safe(api) succeeded with parents [rule, fact, extra] and failed
+    with [extra, rule, fact]. _check now proves against the canonical premise order."""
+    nodes = [("fact", "@api is reviewed.", ["p1.2"], []),
+             ("rule", "if (@api is reviewed), then (@api is safe).", ["p1.1"], []),
+             ("extra", "if (@api is reviewed), then (@web is deployed).", ["p1.1"], [])]
+    for budget in (0, 1, 2, 3, 4, 5, 6, 10, 10_000):
+        outcomes = {}
+        for order in (["rule", "fact", "extra"], ["extra", "rule", "fact"], ["fact", "extra", "rule"]):
+            spec = {"text": TEXT, "nodes": nodes + [("goal", "@api is safe.", ["p2.1"], order)]}
+            s = _graph_session(spec, budget)
+            check = s.checks["goal"]["status"]
+            status = s.apply("status")
+            replayed = AssistSession.from_ledger(json.loads(json.dumps(s.to_ledger())))
+            assert replayed.apply("status")["success"] is status["success"]
+            outcomes[tuple(order)] = (check, status["success"])
+        assert len(set(outcomes.values())) == 1, (budget, outcomes)
+
+
+def test_astra_fix4_later_result_records_cannot_erase_usage(tmp_path, monkeypatch):
+    """A result reporting 900/7 followed by one reporting zeros is malformed, and still counts 900/7 in both
+    ledgers; verify_session recomputes the count from the stored stream records."""
+    import ve_experiments.claude_cli as cc
+    from ve.assist import verify_session
+    model = cc.MODELS["sonnet"]
+    records = _stream(model, model, text=GOOD_REPLY)
+    zeros = {**records[2], "usage": {"input_tokens": 0, "cache_creation_input_tokens": 0,
+                                     "cache_read_input_tokens": 0, "output_tokens": 0}}
+    proposer = _fake_cli(tmp_path, monkeypatch, [])
+    _run_streams(monkeypatch, [(_raw(records + [zeros]), 0)])
+    s = _session_with(proposer)
+    assert not s.apply("propose", {"sentence": "p1.2", "k": 1})["ok"]
+    row = [json.loads(l) for l in (tmp_path / "calls.jsonl").read_text().splitlines()][-1]
+    assert row["status"] == "error" and (row["input_tokens"], row["output_tokens"]) == (900, 7)
+    assert s.usage()["tokens"]["proposer"] == {"input_tokens": 900, "output_tokens": 7, "calls": 1}
+    ledger = json.loads(json.dumps(s.to_ledger()))
+    good = verify_session(ledger, calls=tmp_path / "calls.jsonl")
+    assert good["ok"], good["problems"]
+    # Consistently lowered counts in BOTH ledgers are caught from the stored stream records.
+    rows = [json.loads(l) for l in (tmp_path / "calls.jsonl").read_text().splitlines()]
+    for r in rows:
+        if r["status"] == "error":
+            r["input_tokens"], r["output_tokens"], r["usage"] = 0, 0, {}
+    tampered = json.loads(json.dumps(ledger))
+    tampered["events"][-1]["model_calls"][0].update(input_tokens=0, output_tokens=0)
+    tampered["events"][-1]["tokens"]["proposer"].update(input_tokens=0, output_tokens=0)
+    problems = verify_session(tampered, calls=rows)["problems"]
+    assert any("counted usage (0, 0) differs from its reported usage (900, 7)" in p for p in problems), problems
+    # Dropping the stream records to dodge the recomputation is reported too.
+    for r in rows:
+        r.pop("stream_records", None)
+    assert any("stream records missing" in p for p in verify_session(tampered, calls=rows)["problems"])
+
+
+@pytest.mark.parametrize("preflight", ["claude_missing", "version_fails"])
+def test_astra_fix4_retry_preflight_failure_keeps_prior_attempt_key_and_usage(tmp_path, monkeypatch, preflight):
+    import subprocess
+    import ve_experiments.claude_cli as cc
+    from ve.assist import verify_session
+    model = cc.MODELS["sonnet"]
+    proposer = _fake_cli(tmp_path, monkeypatch, [])
+    proposer.client.infrastructure_retries = True
+    fake = str(tmp_path / "claude")
+    calls = {"n": 0}
+
+    def run(*a, **k):  # the first attempt spends 900 tokens, then the CLI breaks before the retry
+        calls["n"] += 1
+        if preflight == "claude_missing":
+            monkeypatch.setattr(cc.shutil, "which", lambda name: None)
+        else:
+            def broken(*a, **k):
+                raise subprocess.CalledProcessError(1, ["claude", "--version"], output=FAKE_TOKEN)
+            monkeypatch.setattr(cc.subprocess, "check_output", broken)
+        return subprocess.CompletedProcess(a, 1, _raw(_infra_stream(model)), "")
+    monkeypatch.setattr(cc.subprocess, "run", run)
+    monkeypatch.setattr(cc.time, "sleep", lambda seconds: None)
+    s = _session_with(proposer)
+    result = s.apply("propose", {"sentence": "p1.2", "k": 1})
+    assert not result["ok"] and calls["n"] == 1
+    call = s.events[-1]["model_calls"][0]
+    assert call["input_tokens"] == 900 and call["call_key"] and not call.get("not_started"), call
+    assert s.usage()["tokens"]["proposer"]["input_tokens"] == 900
+    good = verify_session(json.loads(json.dumps(s.to_ledger())), calls=tmp_path / "calls.jsonl")
+    assert good["ok"], good["problems"]
+    # A fresh client resuming the same request with the CLI still broken keeps the identity too.
+    row = next(json.loads(l) for l in (tmp_path / "calls.jsonl").read_text().splitlines()
+               if json.loads(l)["status"] == "infrastructure_error")
+    fresh = cc.ClaudeCLI(tmp_path / "calls.jsonl", proposer.client.controls, infrastructure_retries=True)
+    with pytest.raises(cc.EndpointError) as caught:
+        fresh.sample(row["item_id"], row["system"], row["prompt"], 0)
+    usage = caught.value.usage
+    assert usage["call_key"] == row["key"] and usage["input_tokens"] == 900 and not usage.get("not_started")
+    assert caught.value.__context__ is None and caught.value.__cause__ is None
+    assert _needle_free([str(caught.value), usage])
+
+
+def _encodings(secret):
+    import base64
+    from urllib.parse import quote
+    b64 = base64.b64encode(("key=" + secret).encode()).decode()
+    return {
+        # Astra's probe: the first character JSON-escaped inside the candidate JSON the reply carries.
+        "nested_json_escape": "\\u%04x" % ord(secret[0]) + secret[1:],
+        # JSON inside a JSON string field inside the reply's JSON.
+        "json_in_json": json.dumps({"inner": json.dumps({"t": "\\u%04x" % ord(secret[0]) + secret[1:]})}),
+        "base64": b64,
+        "base64url": base64.urlsafe_b64encode(secret.encode()).decode().rstrip("="),
+        "percent": "".join("%%%02X" % b for b in secret.encode()),
+        "hex": secret.encode().hex(),
+        # Mixed: percent-encoded base64 of a JSON-escaped spelling.
+        "mixed": quote(base64.b64encode(("\\u%04x" % ord(secret[0]) + secret[1:]).encode()).decode(), safe=""),
+    }
+
+
+@pytest.mark.parametrize("how", list(_encodings(FAKE_TOKEN)))
+def test_astra_fix4_encoded_credentials_never_persist_on_any_path(tmp_path, monkeypatch, how):
+    import subprocess
+    import ve_experiments.claude_cli as cc
+    from ve.assist import verify_session
+    secret, model = FAKE_TOKEN, cc.MODELS["sonnet"]
+    enc = _encodings(secret)[how]
+    reply = json.dumps({"candidates": [{"ve": "@api is reviewed.", "reading": enc}]})
+    proposer = _fake_cli(tmp_path, monkeypatch, [], secret=secret)
+    calls = tmp_path / "calls.jsonl"
+    returned = []
+    # Success path, through a session: the candidate survives with its reading redacted.
+    _run_streams(monkeypatch, [(_raw(_stream(model, model, text=reply)), 0)])
+    s = _session_with(proposer)
+    result = s.apply("propose", {"sentence": "p1.2", "k": 1})
+    assert result["ok"] and result["candidates"][0]["text"] == "@api is reviewed.", result
+    returned.append(result)
+    # Model-mismatch path: the encoded token is the served "model" and appears in the reply.
+    _run_streams(monkeypatch, [(_raw(_stream(model, "claude-" + enc, text=reply)), 0)])
+    returned.append(s.apply("propose", {"sentence": "p1.2", "k": 1}))
+    assert not returned[-1]["ok"]
+    # Timeout path: a partial stream (bytes) carrying the reply.
+    partial = "\n".join(_raw(_stream(model, model, text=reply)).splitlines()[:2]).encode()
+    _run_streams(monkeypatch, [subprocess.TimeoutExpired(["claude"], 180, output=partial)])
+    returned.append(s.apply("propose", {"sentence": "p1.2", "k": 1}))
+    assert not returned[-1]["ok"]
+    # Direct endpoint calls: returned rows and raised errors are clean too.
+    _run_streams(monkeypatch, [(_raw(_stream(model, model, text=reply)), 0)])
+    returned.append(proposer.client.sample("direct", "sys", "prompt"))
+    _run_streams(monkeypatch, [(_raw(_stream(model, "claude-" + enc, text=reply)), 0)])
+    with pytest.raises(cc.EndpointError) as caught:
+        proposer.client.sample("direct-mismatch", "sys", "prompt")
+    returned.append([str(caught.value), caught.value.usage])
+    ledger = json.loads(json.dumps(s.to_ledger()))
+    assert _needle_free([json.loads(l) for l in calls.read_text().splitlines()])
+    assert _needle_free(calls.read_text()) and _needle_free(ledger) and _needle_free(returned)
+    replayed = AssistSession.from_ledger(ledger)
+    assert _needle_free(replayed.to_ledger())
+    good = verify_session(ledger, calls=[json.loads(l) for l in calls.read_text().splitlines()
+                                         if not json.loads(l)["item_id"].startswith("direct")])
+    assert good["ok"], good["problems"]

@@ -25,7 +25,7 @@ import json
 import secrets
 import warnings
 
-from .. import ast
+from .. import ast, stream_audit
 from ..argument import ArgumentGraph, Claim, Deduction, check_argument, deduction_identity
 from ..entailment import check_entailment_certificate, prove_entailment
 from ..environment import RESERVED, Environment, valid_identifier
@@ -157,6 +157,11 @@ class Node:
 
 class AssistSession:
     """One authoring session. Use ``apply`` (or the JSON tool API) to act."""
+
+    # Deterministic needles of the canonical sanitizer (``ve.stream_audit``) for everything the session
+    # logs or returns: the known credential prefixes. A backend's live token is applied where the backend's
+    # output enters the session (``proposer._call``), so replay without the backend is identical.
+    SECRET_NEEDLES = stream_audit.needles_for(None)
 
     def __init__(self, config):
         config = deepcopy(config)
@@ -303,6 +308,20 @@ class AssistSession:
                               "actual claim")
         return vacuity
 
+    def _premise_key(self, formula):
+        return self._canonical(formula)
+
+    def _canonical_premises(self, premises):
+        """THE premise canonicalization (sorted by canonical text, deduplicated): every prover or model
+        search the session runs sees premises as a SET, never in node or parent order."""
+        return tuple({self._premise_key(p): p for p in sorted(premises, key=self._premise_key)}.values())
+
+    def _ordered_parents(self, node):
+        """``node``'s parents in canonical order (by canonical formula text, then name). ``_check`` proves a
+        step against exactly these premises and ``target_graph`` lists the deduction's premises in the same
+        order, so the certificate, its replay and the verdict are independent of the author's parent order."""
+        return tuple(sorted(node.parents, key=lambda p: (self._premise_key(self.nodes[p].formula), p)))
+
     def _decide(self, premises, conclusion):
         """Does ``premises`` entail ``conclusion``? ``yes`` / ``no`` / ``unknown``.
 
@@ -314,9 +333,8 @@ class AssistSession:
         decided answer, and never turn a failing item into a success.
         """
         # Canonical premise order (sorted, deduplicated): a verdict is a function of the premise SET,
-        # never of node insertion order.
-        premises = tuple(sorted({self._canonical(p): p for p in premises}.items()))
-        premises = tuple(p for _, p in premises)
+        # never of node insertion order or parent order.
+        premises = self._canonical_premises(premises)
         if type(conclusion) is ast.Top:
             return "yes"
         try:
@@ -403,6 +421,8 @@ class AssistSession:
         args = deepcopy(args or {})
         if type(args) is not dict:
             raise AssistError("Arguments must be an object")
+        # Arguments are sanitized BEFORE they are acted on, so live and replayed runs see the same input.
+        args = stream_audit.sanitize(args, self.SECRET_NEEDLES)
         handler = getattr(self, "_do_" + action)
         event = {"seq": len(self.events), "action": action, "args": args, "time": _now()}
         self._seq = event["seq"]
@@ -439,6 +459,9 @@ class AssistSession:
         if action == "record_usage" and result["ok"]:
             event["tokens"] = {args["role"]: {"input_tokens": args.get("input_tokens", 0),
                                               "output_tokens": args.get("output_tokens", 0), "calls": 1}}
+        # Every string of every logged event and returned result passes through the canonical sanitizer.
+        result = stream_audit.sanitize(result, self.SECRET_NEEDLES)
+        event = stream_audit.sanitize(event, self.SECRET_NEEDLES)
         event["result"] = result
         event["result_chars"] = len(json.dumps(result, ensure_ascii=False))
         self.events.append(event)
@@ -641,7 +664,8 @@ class AssistSession:
         return formula.body
 
     def _check(self, node, invariants=()):
-        premises = tuple(self.nodes[p].formula for p in node.parents)
+        # Same canonicalization as _decide: parent ORDER never changes what the prover sees.
+        premises = tuple(self.nodes[p].formula for p in self._ordered_parents(node))
         budget = self._budget()
         record = {"status": "unknown", "parents": list(node.parents)}
         if invariants:
@@ -862,17 +886,19 @@ class AssistSession:
         claims = tuple(Claim.create(self.env, n, print_formula(self.env, self.nodes[n].formula) + ".\n")
                        for n in support)
         steps = [n for n in support if self.nodes[n].kind == "step"]
-        bare = ArgumentGraph(self.env, claims, tuple(Deduction("d_" + n, self.nodes[n].parents, n) for n in steps),
+        # Deduction premises in the canonical parent order _check proved them in.
+        parents = {n: self._ordered_parents(self.nodes[n]) for n in steps}
+        bare = ArgumentGraph(self.env, claims, tuple(Deduction("d_" + n, parents[n], n) for n in steps),
                              root.name, target_scope="assist:" + tid)
         deductions = []
         for n in steps:
-            plain = Deduction("d_" + n, self.nodes[n].parents, n)
+            plain = Deduction("d_" + n, parents[n], n)
             check = self.checks.get(n)
             certs = ()
             if check and check["status"] == "follows":
                 certs = ({"edge_id": deduction_identity(bare, plain), "direction": "follows",
                           "proof": check["certificate"]},)
-            deductions.append(Deduction("d_" + n, self.nodes[n].parents, n, certs))
+            deductions.append(Deduction("d_" + n, parents[n], n, certs))
         graph = ArgumentGraph(self.env, claims, tuple(deductions), root.name, target_scope="assist:" + tid)
         return graph, None, root.name
 
@@ -881,7 +907,7 @@ class AssistSession:
         comparisons; never interpret False as "not entailed" in a check success depends on: use
         ``_decide``, which reports an exhausted search as ``unknown``."""
         try:
-            return prove_entailment(self.env, tuple(premises), conclusion,
+            return prove_entailment(self.env, self._canonical_premises(premises), conclusion,
                                     max_steps=self.options["max_proof_steps"]).status == "Found"
         except (ValueError, VEError):
             return False
@@ -1176,8 +1202,9 @@ class AssistSession:
 
     def log_rejection(self, action, args, error):
         """Record a call rejected before dispatch (unknown tool or argument)."""
-        result = {"ok": False, "error": error}
-        self.events.append({"seq": len(self.events), "action": action, "args": deepcopy(args), "time": _now(),
+        result = stream_audit.sanitize({"ok": False, "error": error}, self.SECRET_NEEDLES)
+        args = stream_audit.sanitize(deepcopy(args), self.SECRET_NEEDLES)
+        self.events.append({"seq": len(self.events), "action": action, "args": args, "time": _now(),
                             "rejected_by_api": True, "result": result,
                             "result_chars": len(json.dumps(result, ensure_ascii=False))})
         return result

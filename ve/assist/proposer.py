@@ -14,7 +14,7 @@ import hashlib
 import json
 import re
 
-from .. import ast
+from .. import ast, stream_audit
 from ..errors import VEError
 from ..search import check_countermodel, find_distinguishing_model
 from .ground import ground_countermodel
@@ -55,7 +55,8 @@ asserted). Different candidates must differ in meaning."""
 
 # Anything that looks like a credential is redacted from every logged or returned error and from
 # backend-reported identity fields (a token echoed as a "model name" must not reach the ledger).
-# The same patterns live in ve_experiments/claude_cli.py, which does not import ve.
+# The same patterns live in ve_experiments/claude_cli.py. Credential NEEDLES (the live token under any
+# encoding) are handled by the one canonical sanitizer, ve.stream_audit.sanitize.
 _SECRET_PATTERNS = (
     re.compile(r"sk-[A-Za-z0-9_\-]{6,}"),                                    # API / OAuth keys
     re.compile(r"eyJ[A-Za-z0-9_\-]{6,}\.[A-Za-z0-9_\-]{6,}(?:\.[A-Za-z0-9_\-]*)?"),  # JWTs
@@ -211,6 +212,13 @@ def _call(session, purpose, system, prompt, item):
             attempts = _attempts(reply.get("prior_attempts"))
         if attempts:
             call["attempts"] = attempts
+        # The backend boundary: the recorded call (reply text, error, identity fields) passes through the
+        # canonical sanitizer with the backend's own needles (its live token, in memory only) plus the
+        # known credential prefixes. Everything the session derives -- candidates, results, the ledger --
+        # comes from this recorded call, so replay reproduces it without the backend.
+        needles = getattr(session.proposer, "secret_needles", None)
+        needles = stream_audit.needles_for(None) | frozenset(needles() if callable(needles) else ())
+        call = stream_audit.sanitize(call, needles)
     session._model_calls.append(call)
     if call.get("failed"):
         raise ProposerBackendError("Proposer backend failed (usage recorded; propose again to retry): "
@@ -237,6 +245,8 @@ def run_propose(session, sentence, k=None, note=None):
         call = _call(session, "propose" if round_number == 0 else "repair", SYSTEM, prompt,
                      f"{item}/r{round_number}")
         rows, problem = extract_candidates(call["text"])
+        # Parsed candidate JSON is sanitized AFTER parsing (decoding can only happen once it is parsed).
+        rows = stream_audit.sanitize(rows, session.SECRET_NEEDLES)
         if problem:
             dropped.append({"round": round_number, "raw": call["text"][:500], "error": problem})
         diagnostics = []

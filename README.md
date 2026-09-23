@@ -117,12 +117,23 @@ Concepts:
   verification. Earlier attempts are read from the calls ledger itself, so
   resuming a paused key reports every attempt, and a call rejected before it
   starts (e.g. by `max_calls`) after a failed attempt still reports that
-  attempt's tokens and key. Counted usage is the field-wise maximum of the
-  result record and the assistant messages, so a result without usage never
-  erases reported tokens; each calls-ledger row keeps both sources and
-  `verify_session` recomputes the count from them. The raw stream is never
-  persisted: rows keep its SHA-256 and its JSON records, decoded and then
-  sanitized recursively (so JSON-escaped credentials cannot survive). The default
+  attempt's tokens and key; so does a retry whose preflight fails (no `claude`
+  binary, a failing `claude --version`): every exit path keeps the prior
+  attempt's key (found from the request itself when it cannot be recomputed)
+  and its tokens. Counted usage is the field-wise maximum over EVERY
+  usage-bearing record of the stream (each result record and each assistant
+  message), for malformed streams too, so no later record erases reported
+  tokens; `verify_session` recomputes it from each row's stored stream
+  records with the same rule (`ve.stream_audit.stream_usage`). The raw stream
+  is never persisted: rows keep its SHA-256 and its decoded JSON records. The
+  access token is only in the child's environment, never in a prompt; as
+  defence in depth ONE canonical sanitizer (`ve.stream_audit.sanitize`) is
+  applied to every string of every calls-ledger row, returned row, error,
+  session result and session-ledger event, and to parsed candidate JSON after
+  parsing: it redacts the token, its prefix and known credential prefixes,
+  sanitizes embedded JSON structurally, then decodes to a fixpoint (escapes
+  at any JSON depth, percent-encoding, HTML entities, NFKC, base64/base64url,
+  hex) and redacts any string that still exposes one. The default
   assumes a dedicated calls ledger held by the evaluator (every row counts).
   A shared calls ledger is attributable only through an independently trusted
   session id, so `verify_session(..., dedicated_calls=False)` is refused
@@ -156,8 +167,10 @@ and `unknown` never counts as passing: `status` lists it as a failure marked
 `max_proof_steps` can therefore turn an undecided item into a decided one,
 but never a failing item into a success, and success at one budget implies
 success at every larger budget. The outcome is a function of the graph:
-premises are passed to every search in canonical order and witnesses are
-evaluated in name order, so node insertion order never changes it.
+premises are passed to every search -- including `check_step`'s own proof,
+whose certificate is replayed with the deduction's premises in the same
+canonical order -- and witnesses are evaluated in name order, so neither node
+insertion order nor a step's parent order changes it.
 
 The proposer and premise suggestions are separate ablations:
 
