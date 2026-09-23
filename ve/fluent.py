@@ -7,7 +7,7 @@ operands. It never normalizes, reassociates, or exchanges AST nodes.
 from collections import Counter
 
 from . import ast
-from .printer import _NaturalVocabulary, _fluent_variable_letters, _check_naming
+from .printer import _NaturalVocabulary, _fluent_variable_letters, _check_naming, render_int_term
 
 
 FLUENT_RENDERER = "ve.fluent"
@@ -23,7 +23,7 @@ def _references(value, index=0):
     kind = type(value)
     if kind is ast.Unary:
         return int(value.term == ast.Var(index))
-    if kind in (ast.Binary, ast.Eq):
+    if kind in (ast.Binary, ast.Eq, ast.Lt, ast.Le):
         return int(value.left == ast.Var(index)) + int(value.right == ast.Var(index))
     if kind is ast.Reach:
         endpoints = int(value.left == ast.Var(index)) + int(value.right == ast.Var(index))
@@ -67,21 +67,25 @@ class FluentTraversal:
 
     @staticmethod
     def term(value, scope):
-        if type(value) is ast.Var:
-            name = scope[value.index][0]
-            assert name is not None
-            return name
-        return "@" + value.name
+        def leaf(value):
+            if type(value) is ast.Var:
+                name = scope[value.index][0]
+                assert name is not None
+                return name
+            return "@" + value.name
+        return render_int_term(value, leaf)
 
     def equality(self, value, scope, negative=False):
         sort = (scope[value.left.index][1] if type(value.left) is ast.Var
-                else self.env.constants[value.left.name].sort)
+                else self.env.constants[value.left.name].sort if type(value.left) is ast.Const
+                else ast.INT_SORT)
+        noun = "integer" if sort == ast.INT_SORT else self.words.sorts[sort]
         return (self.term(value.left, scope) + " is " + ("not " if negative else "")
-                + "the same " + self.words.sorts[sort] + " as " + self.term(value.right, scope))
+                + "the same " + noun + " as " + self.term(value.right, scope))
 
     def unit(self, value, scope):
         text = self.formula(value, scope)
-        if type(value) in (ast.Top, ast.Bottom, ast.Unary, ast.Binary, ast.Eq):
+        if type(value) in (ast.Top, ast.Bottom, ast.Unary, ast.Binary, ast.Eq, ast.Lt, ast.Le):
             return text
         if self.negative_atom(value):
             return text
@@ -150,6 +154,9 @@ class FluentTraversal:
             return prefix + f"steps satisfying [{self.words.sorts[sort]} {src}, {dst} | ({body})]"
         if kind is ast.Eq:
             return self.equality(value, scope)
+        if kind in (ast.Lt, ast.Le):
+            relation = " is less than " if kind is ast.Lt else " is at most "
+            return self.term(value.left, scope) + relation + self.term(value.right, scope)
         if kind is ast.Not:
             if type(value.body) is ast.Eq:
                 return self.equality(value.body, scope, negative=True)
