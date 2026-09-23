@@ -5,7 +5,7 @@ Commands
   smoke    [--run-id ID]                   ONE dev item, arm A3, Opus author, <= 30 tool calls
   run      --split S --run-id ID [...]     serial sessions (items x authors x arms); resumable
   audit-export --run-id ID                 blinded packets (no model calls)
-  audit-run    --run-id ID --gemini-cap-usd X
+  audit-run    --run-id ID [--account L]    Codex (GPT-6 Astra) audits Claude authors, Opus audits Gemini
   report       --run-id ID                 report.json + audit-spotcheck.jsonl
   hashes   [--write]                       PREREG hash manifest (tool, prompts, items, config)
 
@@ -39,13 +39,19 @@ CONFIG = {
     "opus_effort": "medium",
     "gemini_thinking_level": "LOW (ve_experiments.paid.VertexBackend)",
     "gemini_max_input_tokens": 190000,
-    "claude_account": "saeedi.danial",
+    "claude_account": "saeedi.danial (default; --account main uses the default Claude configuration; one "
+                      "account per author x arm)",
+    "proposer_model": "haiku (default; --proposer-model sonnet|opus)",
+    "ledger_verification": "ve.assist.verify_session on every final and A2 attempt ledger (dossier, arm options, "
+                           "dedicated proposer calls ledger); a ledger that does not verify is never a success",
+    "auditors": "GPT-6 Astra via codex exec (reasoning high) audits Claude authors; Opus 5.5 audits Gemini",
     "pricing": "ve_experiments/assist_eval/pricing.py",
     "arms": ["A2", "A3", "A4"],
     "authors": list(AUTHORS),
-    "success": "tool status success (targets certified by replay, all steps certified, coverage, no load-bearing "
-               "unanchored assumption, no renamed conclusion, consistent assumptions) AND blind cross-family "
-               "fidelity audit pass",
+    "success": "tool status success (targets certified by replay, all steps certified, every claimed sentence "
+               "derived, coverage, no load-bearing unanchored assumption, no renamed conclusion, consistent "
+               "assumptions), where waivers of GIVEN sentences are the only tolerated failure, AND blind "
+               "cross-family fidelity audit pass (every waiver judged acceptable)",
     "decision_threshold": "proceed to a cost-charged P5 VE-arm DEV run with the tool iff, for at least one author, "
                           "A3 or A4 reaches faithful_complete >= 6/12 on the HELD-OUT items",
     "heldout": "12 P5 scored items, seeded: one per family for 12 of 24 families, 4 benign/4 shift/4 smuggle",
@@ -97,10 +103,18 @@ def limits(args):
                   calls_per_turn=CONFIG["calls_per_turn"])
 
 
+DEFAULT_ACCOUNT = "saeedi.danial"
+
+
+def account_label(args):
+    value = getattr(args, "account", None) or DEFAULT_ACCOUNT
+    return None if value == "main" else value
+
+
 def make_author(name, out_dir, args):
     from .authors import ClaudeTextAuthor, GeminiAuthor
     if name in ("opus", "haiku"):
-        return ClaudeTextAuthor(name, Path(out_dir) / "author-calls.jsonl", account=CONFIG["claude_account"],
+        return ClaudeTextAuthor(name, Path(out_dir) / "author-calls.jsonl", account=account_label(args),
                                 effort=CONFIG["opus_effort"], output_tokens=CONFIG["author_output_tokens"])
     if args.gemini_cap_usd is None:
         raise SystemExit("gemini needs --gemini-cap-usd (hard cap for the run's paid ledger)")
@@ -121,12 +135,23 @@ def run(args, split, authors, arms, only=None):
                 if (out / "result.json").exists():
                     summary.append(json.loads((out / "result.json").read_text()))
                     continue
+                calls = out / "proposer-calls.jsonl"
+                if calls.exists():  # an interrupted A4 session restarts with a new session id: keep its
+                    n = len(list(out.glob("proposer-calls.interrupted-*.jsonl"))) + 1  # calls apart
+                    calls.rename(out / f"proposer-calls.interrupted-{n}.jsonl")
                 out.mkdir(parents=True, exist_ok=True)
                 author = make_author(author_name, out, args)
                 result = SessionRun(item, split=split, author_name=author_name, author=author, arm=arm,
-                                    out_dir=out, limits=limits(args), account=CONFIG["claude_account"]).run()
+                                    out_dir=out, limits=limits(args), account=account_label(args),
+                                    proposer_model=args.proposer_model).run()
                 print(json.dumps({k: result[k] for k in ("item_id", "author", "arm", "stop_reason", "turns",
                                                          "tool_calls", "spent_usd", "tool_success")}), flush=True)
+                if str(result["stop_reason"]).startswith(("abort: infrastructure", "abort: paid ledger")):
+                    # e.g. an account session limit: not the author's failure. Keep the record aside so a
+                    # rerun (same account, or the whole arm on another one) retries the session, and stop.
+                    n = len(list(out.glob("result.aborted-*.json"))) + 1
+                    (out / "result.json").rename(out / f"result.aborted-{n}.json")
+                    raise SystemExit(f"infrastructure abort in {out}: {result['stop_reason']}")
                 summary.append(result)
     return summary
 
@@ -147,10 +172,14 @@ def main(argv=None):
             s.add_argument("--authors", default=",".join(AUTHORS))
             s.add_argument("--arms", default="A2,A3,A4")
             s.add_argument("--items", help="comma-separated item ids or indexes (default all)")
+        s.add_argument("--account", help="Claude account label (~/.claude-LABEL) for Claude authors and the "
+                                         "proposer; 'main' = the default configuration (default saeedi.danial)")
+        s.add_argument("--proposer-model", choices=("haiku", "sonnet", "opus"), default="haiku",
+                       help="A4 proposer model (default haiku)")
     for name in ("audit-export", "audit-run", "report"):
         s = sub.add_parser(name); s.add_argument("--run-id", required=True)
         if name == "audit-run":
-            s.add_argument("--gemini-cap-usd", type=float, required=True)
+            s.add_argument("--account", help="Claude account label for the Opus auditor ('main' = default)")
     args = p.parse_args(argv)
     if args.command == "items":
         print("\n".join(item_ids(args.split)))
@@ -175,8 +204,10 @@ def main(argv=None):
         print(f"{export(RUNS / args.run_id)} packets")
     elif args.command == "audit-run":
         from .audit import run_audit
-        run_audit(RUNS / args.run_id, gemini_ledger=RUNS / args.run_id / "gemini-ledger.jsonl",
-                  gemini_cap_usd=args.gemini_cap_usd, account=CONFIG["claude_account"])
+        missing = run_audit(RUNS / args.run_id, account=account_label(args))
+        if missing:
+            print(f"{missing} packet(s) without a verdict; see audit/errors.jsonl and rerun audit-run")
+            return 1
     elif args.command == "report":
         from .audit import report
         out = report(RUNS / args.run_id)

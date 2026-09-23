@@ -1,0 +1,81 @@
+{
+ "item_id": "i0e03b71bf431d179be0530712161e8af",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A2",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "n14"
+  ],
+  "note": "n14 infers unit5 calibrated from the preceding result, unit5 stable in the temperature-constant sense (r15.3). Rule r05.1 requires unit5 stable in the shape-retained sense. That sense would need unit5 scanned (r15.4), which is unassumed, so the step does not follow."
+ },
+ "turns": 1,
+ "tool_calls": 0,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.1010466",
+  "proposer": "0",
+  "total": "0.1010466"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n14: no step node states the frozen target",
+   "18 asserting sentence(s) neither covered nor waived"
+  ],
+  "targets": [
+   {
+    "id": "t_n14",
+    "text": "@unit5 is calibrated.",
+    "certified": false,
+    "reason": "no step node states the frozen target",
+    "replay": null,
+    "node": null
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "n09.1",
+   "n18.1",
+   "n18.2",
+   "n07.1",
+   "n03.1",
+   "n08.1",
+   "n16.1",
+   "n12.1",
+   "n04.1",
+   "n20.1",
+   "n10.1",
+   "n02.1",
+   "n17.1",
+   "n00.1",
+   "n13.1",
+   "n01.1",
+   "n15.1",
+   "n14.1"
+  ],
+  "covered": 23,
+  "waived": 6,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 23,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 30.5,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

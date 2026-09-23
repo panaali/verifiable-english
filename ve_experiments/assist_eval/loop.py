@@ -6,8 +6,23 @@ Arms (PLAN-ASSIST "After review"; A1 is the existing P5 one-shot result):
       frozen from the first document that freezes), checks every step and
       returns diagnostics; repeat until success, "finish", or budget.
   A3  interactive ve assist tools, no proposer, premise suggestions off.
-  A4  full tool: A3 + the Haiku 4.5 proposer (propose/accept); premise
-      suggestions off.
+  A4  full tool: A3 + the proposer (propose/accept; Haiku 4.5 by default,
+      ``proposer_model``); premise suggestions off.
+
+Every session's final ledger (and every A2 attempt ledger) is checked with
+``ve.assist.verify_session`` against the dossier, the arm's options and the
+session's dedicated proposer calls ledger; a ledger that does not verify is
+never a tool success.
+
+Evaluation success rule. The fixed tool reports any waiver of an asserting
+sentence as "never success". Every P5 dossier has given sentences that are
+meta-statements about the premise set ("Rules r00, r14 are declared.", "The
+checks that ... remain unassumed.") and that no VE statement states faithfully.
+``tool_success`` in this evaluation is therefore: the tool's status is success,
+OR its ONLY failure is the waiver line and every waived sentence is GIVEN (a
+claimed sentence may never be waived); the waivers then go to the blind audit
+as units that must be judged "acceptable". ``tool_success_strict`` records the
+tool's own verdict.
 
 Budget (identical for every arm and author): a hard per-item dollar cap on
 TOTAL spend (author + proposer). Before each author call the harness computes
@@ -21,10 +36,11 @@ from dataclasses import dataclass, asdict
 from decimal import Decimal
 import json
 import os
+import re
 from pathlib import Path
 import time
 
-from ve.assist import AssistSession, call_tool, source_from_p5, tool_schemas
+from ve.assist import AssistSession, call_tool, source_from_p5, tool_schemas, verify_session
 from ve.assist.proposer import build_prompt
 
 from . import prompts
@@ -35,7 +51,9 @@ ARMS = {"A2": {"tools": False, "proposer": False},
         "A3": {"tools": True, "proposer": False},
         "A4": {"tools": True, "proposer": True}}
 MAX_RESULT_CHARS = 8000
-HAIKU = "claude-haiku-4-5-20251001"
+ARM_OPTIONS = {"premise_suggestions": False}
+DEFAULT_PROPOSER = "haiku"
+WAIVER_FAILURE = re.compile(r"\d+ asserting sentence\(s\) waived ")
 
 
 @dataclass
@@ -60,7 +78,25 @@ def new_session(item, *, author, arm, split):
     metadata = {**built["metadata"], "eval": {"author": author, "arm": arm, "split": split,
                                               "prompt_version": prompts.PROMPT_VERSION}}
     return AssistSession.create(built["environment"], built["source"], built["targets"],
-                                options={"premise_suggestions": False}, metadata=metadata)
+                                options=dict(ARM_OPTIONS), metadata=metadata)
+
+
+def eval_success(status):
+    """(strict, evaluation) success; see the module docstring."""
+    if not status:
+        return False, False
+    strict = bool(status["success"])
+    waivers = status.get("waivers") or []
+    blocking = [w for w in waivers if w.get("counts_against_success")]
+    only_waivers = (bool(blocking) and all(w["role"] == "given" for w in blocking)
+                    and all(WAIVER_FAILURE.match(f) for f in status["failures"]))
+    return strict, strict or only_waivers
+
+
+def verify_ledger(ledger, item, calls_path):
+    """``verify_session`` summary for one ledger (dedicated calls ledger; a missing file is no rows)."""
+    out = verify_session(ledger, item=item, options=ARM_OPTIONS, calls=str(calls_path))
+    return {"ok": out["ok"], "problems": out["problems"][:20]}
 
 
 def compact_status(status):
@@ -70,34 +106,55 @@ def compact_status(status):
             "unproved_steps": status["unproved_steps"],
             "unanchored_assumptions": [{k: u[k] for k in ("node", "anchor_state", "load_bearing", "needed_by")}
                                        for u in status["unanchored_assumptions"]],
-            "uncovered": status["coverage"]["uncovered"],
-            "covered": status["coverage"]["covered"], "waived": status["coverage"]["waived"],
+            "uncovered": status["coverage"]["uncovered"], "underived": status["coverage"].get("underived", []),
+            "covered": status["coverage"]["covered"], "derived": status["coverage"].get("derived"),
+            "waived": status["coverage"]["waived"],
+            "waivers": [{k: w[k] for k in ("sentence", "role", "counts_against_success")}
+                        for w in status.get("waivers", [])],
             "renamed_conclusions": status["renamed_conclusions"], "provenance": status["provenance"]}
 
 
 class CostedProposer:
-    """HaikuProposer backend that also prices each call at list price."""
+    """``ClaudeProposer`` backend (``model`` haiku/sonnet/opus) that also prices each call at list price,
+    including failed calls and earlier infrastructure attempts (tokens spent are always charged)."""
 
-    def __init__(self, ledger, account):
-        from ve_experiments.assist_haiku import HaikuProposer
-        self.inner = HaikuProposer(ledger, account=account)
+    def __init__(self, ledger, account, model=DEFAULT_PROPOSER):
+        from ve_experiments.assist_haiku import ClaudeProposer
+        self.inner = ClaudeProposer(ledger, model=model, account=account)
         self.inner.client.infrastructure_retries = True
+        self.model, self.model_id = self.inner.model, self.inner.model_id
         self.costs = []
 
-    def __call__(self, system, prompt, item_id):
-        row = self.inner.client.sample(item_id, system, prompt, 0)
-        self.costs.append(claude_cost(HAIKU, row["usage"]))
-        return {"text": row["text"], "input_tokens": row["input_tokens"], "output_tokens": row["output_tokens"],
-                "model": row["served_model"], "account_label": row["account_label"], "call_key": row["key"]}
+    def secret_needles(self):
+        return self.inner.secret_needles()
 
-    @staticmethod
-    def ceiling(session, sentence, k=None, note=None):
+    def _charge_attempts(self, attempts):
+        for a in attempts or []:
+            self.costs.append(claude_cost(self.model_id, {"input_tokens": a.get("input_tokens") or 0,
+                                                          "output_tokens": a.get("output_tokens") or 0}))
+
+    def __call__(self, system, prompt, item_id):
+        try:
+            row = self.inner.client.sample(item_id, system, prompt, 0)
+        except Exception as exc:
+            spent = getattr(exc, "usage", None)
+            if type(spent) is dict:
+                self._charge_attempts([spent] if not spent.get("not_started") else [])
+                self._charge_attempts(spent.get("prior_attempts"))
+            raise
+        self.costs.append(claude_cost(self.model_id, row["usage"]))
+        self._charge_attempts(row.get("prior_attempts"))
+        return {"text": row["text"], "input_tokens": row["input_tokens"], "output_tokens": row["output_tokens"],
+                "model": row["served_model"], "account_label": row["account_label"], "call_key": row["key"],
+                "prior_attempts": row.get("prior_attempts", [])}
+
+    def ceiling(self, session, sentence, k=None, note=None):
         if sentence not in session.sentences:
             return Decimal(0)  # rejected before any call
         k = session.options["proposer_k"] if k is None else k
         prompt = build_prompt(session, sentence, k if k in (1, 2, 3) else 3, note)
         rounds = 1 + session.options["propose_repair_rounds"]
-        return rounds * price_ceiling(HAIKU, len(prompt) // 3 + 1500 + 1500 * (rounds - 1), 2048)
+        return rounds * price_ceiling(self.model_id, len(prompt) // 3 + 1500 + 1500 * (rounds - 1), 2048)
 
 
 # ------------------------------------------------------------------ A2 document evaluation
@@ -177,7 +234,7 @@ def evaluate_document(item, doc, frozen, *, author, split, attempt):
 
 class SessionRun:
     def __init__(self, item, *, split, author_name, author, arm, out_dir, limits=Limits(),
-                 account="saeedi.danial", proposer_factory=None):
+                 account=None, proposer_factory=None, proposer_model=DEFAULT_PROPOSER):
         if arm not in ARMS:
             raise ValueError(f"unknown arm {arm}")
         self.item, self.split, self.author_name, self.author, self.arm = item, split, author_name, author, arm
@@ -188,8 +245,10 @@ class SessionRun:
         self.history = []
         self.session = new_session(item, author=author_name, arm=arm, split=split)
         self.proposer = None
+        self.account, self.proposer_model = account, proposer_model if ARMS[arm]["proposer"] else None
+        self.calls_path = self.out / "proposer-calls.jsonl"
         if ARMS[arm]["proposer"]:
-            factory = proposer_factory or (lambda: CostedProposer(self.out / "proposer-calls.jsonl", account))
+            factory = proposer_factory or (lambda: CostedProposer(self.calls_path, account, proposer_model))
             self.proposer = factory()
             self.session.proposer = self.proposer
         self.tools = (tool_schemas(proposer=bool(self.proposer)) + [prompts.FINISH_TOOL]) if ARMS[arm]["tools"] else []
@@ -240,11 +299,17 @@ class SessionRun:
             if type(args) is not dict or args.get("verdict") not in ("complete", "gap"):
                 return {"ok": False, "error": {"code": "InvalidArguments",
                                                "message": 'finish needs verdict "complete" or "gap"'}}
+            if args["verdict"] == "complete":
+                status = self.session.apply("status")
+                if not eval_success(status)[1]:
+                    return {"ok": False, "error": {"code": "NotComplete", "message":
+                            'finish "complete" refused: status is not success (apart from waivers of given '
+                            'sentences). Remaining failures: ' + "; ".join(status["failures"])[:1500]}}
             self.finish = {"verdict": args["verdict"], "gap_steps": list(args.get("gap_steps") or []),
                            "note": str(args.get("note") or "")[:1000]}
             return {"ok": True, "finished": self.finish["verdict"]}
         if name == "propose" and self.proposer is not None and type(args) is dict:
-            need = CostedProposer.ceiling(self.session, args.get("sentence"), args.get("k"), args.get("note"))
+            need = self.proposer.ceiling(self.session, args.get("sentence"), args.get("k"), args.get("note"))
             if not self.affordable(need):
                 return self.session.log_rejection("propose", args, {
                     "code": "BudgetExhausted", "message": "not enough budget left for a proposer call"})
@@ -298,14 +363,26 @@ class SessionRun:
             reason = "abort: " + str(exc)
         final = self.a2_session if self.arm == "A2" else self.session
         status = final.apply("status") if final is not None else None
+        verification = None
         if final is not None:
-            self._write("session.json", final.to_ledger())
+            ledger = final.to_ledger()
+            self._write("session.json", ledger)
+            verification = verify_ledger(ledger, self.item, self.calls_path)
+            if self.arm == "A2":
+                bad = [p.name for p in sorted(self.out.glob("attempt-*.json"))
+                       if not verify_ledger(json.loads(p.read_text(encoding="utf-8")), self.item,
+                                            self.calls_path)["ok"]]
+                verification["attempts_failing"] = bad
+        strict, success = eval_success(status)
+        verified = bool(verification and verification["ok"])
         result = {"item_id": self.item["id"], "split": self.split, "author": self.author_name, "arm": self.arm,
                   "stop_reason": reason, "finish": self.finish, "turns": self.turns, "tool_calls": self.tool_calls,
                   "protocol_errors": self.protocol_errors,
                   "spent_usd": {k: str(v) for k, v in self.spent.items()} | {"total": str(self.total)},
                   "budget_usd": self.limits.budget_usd, "limits": asdict(self.limits),
-                  "tool_success": bool(status and status["success"]),
+                  "tool_success": success and verified, "tool_success_strict": strict and verified,
+                  "verification": verification, "proposer_model": self.proposer_model,
+                  "account": self.account,
                   "status": compact_status(status) if status else None,
                   "elapsed_s": round(time.monotonic() - start, 1), "prompt_version": prompts.PROMPT_VERSION}
         self._write("result.json", result)
@@ -367,9 +444,12 @@ class SessionRun:
         else:
             self.a2_session = session
             self._write(f"attempt-{self.turns:03d}.json", session.to_ledger())
-            self.a2_last_success = bool(diag.get("status", {}).get("success"))
+            self.a2_last_success = eval_success(diag.get("status"))[1]
             fin = doc.get("finish")
-            if type(fin) is dict and fin.get("verdict") in ("complete", "gap"):
+            if type(fin) is dict and fin.get("verdict") == "complete" and not self.a2_last_success:
+                diag["finish_refused"] = ('"complete" refused: this document does not pass every check '
+                                          "(apart from waivers of given sentences); fix it or finish with gap")
+            elif type(fin) is dict and fin.get("verdict") in ("complete", "gap"):
                 self.finish = {"verdict": fin["verdict"], "gap_steps": list(fin.get("gap_steps") or []),
                                "note": str(fin.get("note") or "")[:1000]}
         self._feedback(turn, None, {"diagnostics": clip(diag, 3 * MAX_RESULT_CHARS)})

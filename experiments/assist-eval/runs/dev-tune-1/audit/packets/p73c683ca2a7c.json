@@ -1,0 +1,744 @@
+{
+ "packet": "p73c683ca2a7c",
+ "sentences": [
+  {
+   "id": "n05.1",
+   "role": "given",
+   "text": "Rules r00, r14, r12, r05 are declared."
+  },
+  {
+   "id": "n06.1",
+   "role": "given",
+   "text": "Rules r03, r07, r08 are declared."
+  },
+  {
+   "id": "n19.1",
+   "role": "given",
+   "text": "Rules r06, r10, r13 are declared."
+  },
+  {
+   "id": "n09.1",
+   "role": "given",
+   "text": "unit5 is bundled; unit5 is retained; unit5 is packed; unit5 is mounted; unit5 is routed; unit5 is rated; unit5 is checked."
+  },
+  {
+   "id": "n09.2",
+   "role": "given",
+   "text": "The checks that unit5 is stacked and unit5 is coded and unit5 is scanned remain unassumed."
+  },
+  {
+   "id": "n11.1",
+   "role": "given",
+   "text": "Rules r09, r04, r11 are declared."
+  },
+  {
+   "id": "n21.1",
+   "role": "given",
+   "text": "Rules r01, r02, r15 are declared."
+  },
+  {
+   "id": "r08.1",
+   "role": "given",
+   "text": "If unit1 is cleared (payment settled), then unit5 is balanced."
+  },
+  {
+   "id": "r09.1",
+   "role": "given",
+   "text": "If unit3 is ready (packing completed) and unit5 is ready (packing completed), then unit5 is weighed-in."
+  },
+  {
+   "id": "r03.1",
+   "role": "given",
+   "text": "If unit5 is mounted and unit5 is routed and unit5 is rated, then unit3 is ready (packing completed)."
+  },
+  {
+   "id": "r03.2",
+   "role": "given",
+   "text": "If unit5 is tied and unit5 is boxed, then unit3 is ready (packing completed)."
+  },
+  {
+   "id": "r01.1",
+   "role": "given",
+   "text": "If unit5 is weighed-in, then unit3 is sound (casing intact)."
+  },
+  {
+   "id": "r15.1",
+   "role": "given",
+   "text": "If unit3 is stable (shape retained) and unit5 is stacked, then unit1 is stable (temperature constant)."
+  },
+  {
+   "id": "r15.2",
+   "role": "given",
+   "text": "If unit3 is stable (shape retained) and unit5 is checked, then unit1 is stable (shape retained)."
+  },
+  {
+   "id": "r15.3",
+   "role": "given",
+   "text": "If unit3 is stable (shape retained) and unit5 is coded, then unit5 is stable (temperature constant)."
+  },
+  {
+   "id": "r15.4",
+   "role": "given",
+   "text": "If unit3 is stable (shape retained) and unit5 is scanned, then unit5 is stable (shape retained)."
+  },
+  {
+   "id": "r11.1",
+   "role": "given",
+   "text": "If unit3 is stable (temperature constant), then unit3 is stable (shape retained)."
+  },
+  {
+   "id": "r04.1",
+   "role": "given",
+   "text": "If unit5 is logged, then unit3 is cleared (inspection passed)."
+  },
+  {
+   "id": "r00.1",
+   "role": "given",
+   "text": "If unit5 is bundled and unit5 is retained and unit5 is packed, then unit3 is ready (staffing arranged)."
+  },
+  {
+   "id": "r00.2",
+   "role": "given",
+   "text": "If unit5 is tied and unit5 is boxed, then unit3 is ready (staffing arranged)."
+  },
+  {
+   "id": "r00.3",
+   "role": "given",
+   "text": "Lot unit5 supplied sample unit1."
+  },
+  {
+   "id": "r12.1",
+   "role": "given",
+   "text": "If unit3 is cleared (payment settled), then unit1 is cleared (payment settled)."
+  },
+  {
+   "id": "r13.1",
+   "role": "given",
+   "text": "If unit5 is balanced, then unit3 is stable (temperature constant)."
+  },
+  {
+   "id": "r07.1",
+   "role": "given",
+   "text": "If unit3 is sound (signal audible), then unit5 is sound (signal audible)."
+  },
+  {
+   "id": "r05.1",
+   "role": "given",
+   "text": "If unit5 is stable (shape retained), then unit5 is calibrated."
+  },
+  {
+   "id": "r05.2",
+   "role": "given",
+   "text": "If unit5 is tied and unit5 is boxed, then unit5 is calibrated."
+  },
+  {
+   "id": "r02.1",
+   "role": "given",
+   "text": "If unit3 is cleared (inspection passed), then unit3 is cleared (payment settled)."
+  },
+  {
+   "id": "r06.1",
+   "role": "given",
+   "text": "If unit3 is ready (staffing arranged) and unit3 is ready (packing completed), then unit5 is ready (packing completed)."
+  },
+  {
+   "id": "r14.1",
+   "role": "given",
+   "text": "If unit3 is sound (casing intact), then unit3 is sound (signal audible)."
+  },
+  {
+   "id": "r10.1",
+   "role": "given",
+   "text": "If unit5 is sound (signal audible), then unit5 is logged."
+  },
+  {
+   "id": "n18.1",
+   "role": "claimed",
+   "text": "Because unit5 is bundled and unit5 is retained and unit5 is packed, unit3 is ready."
+  },
+  {
+   "id": "n18.2",
+   "role": "claimed",
+   "text": "The checks that unit5 is stacked and unit5 is coded and unit5 is scanned would imply that unit1 is stable and unit5 is stable and unit5 is stable, respectively."
+  },
+  {
+   "id": "n07.1",
+   "role": "claimed",
+   "text": "Since unit5 is mounted and unit5 is routed and unit5 is rated, it follows that unit3 is ready."
+  },
+  {
+   "id": "n03.1",
+   "role": "claimed",
+   "text": "Given that unit3 is ready and unit3 is ready, we infer that unit5 is ready."
+  },
+  {
+   "id": "n08.1",
+   "role": "claimed",
+   "text": "It follows that unit5 is weighed-in because unit3 is ready and the immediately preceding ready result holds."
+  },
+  {
+   "id": "n16.1",
+   "role": "claimed",
+   "text": "Because unit5 is weighed-in, unit3 is sound."
+  },
+  {
+   "id": "n12.1",
+   "role": "claimed",
+   "text": "Since unit3 is sound, it follows that unit3 is sound."
+  },
+  {
+   "id": "n04.1",
+   "role": "claimed",
+   "text": "Given that unit3 is sound, we infer that unit5 is sound."
+  },
+  {
+   "id": "n20.1",
+   "role": "claimed",
+   "text": "It follows that unit5 is logged because the immediately preceding sound result holds."
+  },
+  {
+   "id": "n10.1",
+   "role": "claimed",
+   "text": "Because unit5 is logged, unit3 is cleared."
+  },
+  {
+   "id": "n02.1",
+   "role": "claimed",
+   "text": "Since unit3 is cleared, it follows that unit3 is cleared."
+  },
+  {
+   "id": "n17.1",
+   "role": "claimed",
+   "text": "Given that unit3 is cleared, we infer that unit1 is cleared."
+  },
+  {
+   "id": "n00.1",
+   "role": "claimed",
+   "text": "It follows that unit5 is balanced because the immediately preceding cleared result holds."
+  },
+  {
+   "id": "n13.1",
+   "role": "claimed",
+   "text": "Because unit5 is balanced, unit3 is stable."
+  },
+  {
+   "id": "n01.1",
+   "role": "claimed",
+   "text": "Since unit3 is stable, it follows that unit3 is stable."
+  },
+  {
+   "id": "n15.1",
+   "role": "claimed",
+   "text": "Given that unit3 is stable and unit5 is checked, we infer that unit1 is stable."
+  },
+  {
+   "id": "n14.1",
+   "role": "claimed",
+   "text": "It follows that unit5 is calibrated because the immediately preceding stable result holds."
+  }
+ ],
+ "glossary": {
+  "bagged": "bagged: bag fitted (R28)",
+  "balanced": "balanced: balance checked (R08)",
+  "boxed": "boxed: box fitted (R40)",
+  "bundled": "bundled: bundle formed (R07)",
+  "calibrated": "calibrated: calibration recorded (R25)",
+  "checked": "checked: check completed (R29)",
+  "cleared_inspection_passed": "cleared: inspection passed (R14)",
+  "cleared_payment_settled": "cleared: payment settled (R32)",
+  "clipped": "clipped: clip attached (R38)",
+  "coded": "coded: identifier assigned (R22)",
+  "cooled": "cooled: temperature reduced (R27)",
+  "counted": "counted: quantity tallied (R09)",
+  "dried": "dried: moisture removed (R10)",
+  "filed": "filed: document stored (R17)",
+  "loaded": "loaded: loading completed (R30)",
+  "logged": "logged: entry recorded (R24)",
+  "marked": "marked: mark applied (R36)",
+  "mounted": "mounted: mount fitted (R19)",
+  "numbered": "numbered: number assigned (R23)",
+  "packed": "packed: container filled (R02)",
+  "photographed": "photographed: image recorded (R35)",
+  "processed": "processed: processing completed (R13)",
+  "rated": "rated: grade recorded (R20)",
+  "ready_packing_completed": "ready: packing completed (R12)",
+  "ready_staffing_arranged": "ready: staffing arranged (R03)",
+  "received": "received: receipt recorded (R04)",
+  "registered": "registered: registration recorded (R11)",
+  "released": "released: release recorded (R39)",
+  "retained": "retained: retention recorded (R31)",
+  "routed": "routed: route assigned (R26)",
+  "scanned": "scanned: barcode read (R06)",
+  "shelved": "shelved: shelf assigned (R37)",
+  "sound_casing_intact": "sound: casing intact (R05)",
+  "sound_signal_audible": "sound: signal audible (R18)",
+  "stable_shape_retained": "stable: shape retained (R15)",
+  "stable_temperature_constant": "stable: temperature constant (R33)",
+  "stacked": "stacked: stack formed (R21)",
+  "stamped": "stamped: stamp applied (R16)",
+  "supplied": "Lot supplied sample.",
+  "tied": "tied: tie attached (R01)",
+  "weighed_in": "weighed-in: arrival mass recorded (R34)"
+ },
+ "units": [
+  {
+   "unit": "u1",
+   "kind": "waiver",
+   "sentence": "n05.1",
+   "role": "given",
+   "text": "Rules r00, r14, r12, r05 are declared.",
+   "waiver_reason": "Only lists which rules are declared; the rules themselves are formalised individually."
+  },
+  {
+   "unit": "u2",
+   "kind": "waiver",
+   "sentence": "n06.1",
+   "role": "given",
+   "text": "Rules r03, r07, r08 are declared.",
+   "waiver_reason": "Only lists which rules are declared; the rules themselves are formalised individually."
+  },
+  {
+   "unit": "u3",
+   "kind": "waiver",
+   "sentence": "n19.1",
+   "role": "given",
+   "text": "Rules r06, r10, r13 are declared.",
+   "waiver_reason": "Only lists which rules are declared; the rules themselves are formalised individually."
+  },
+  {
+   "unit": "u4",
+   "kind": "formalised",
+   "sentence": "n09.1",
+   "role": "given",
+   "text": "unit5 is bundled; unit5 is retained; unit5 is packed; unit5 is mounted; unit5 is routed; unit5 is rated; unit5 is checked.",
+   "formalisation": [
+    "All of the following hold:\n  (a) \"unit5\" is bundled;\n  (b) all of the following hold:\n    (i) \"unit5\" is retained;\n    (ii) all of the following hold:\n      (a) \"unit5\" is packed;\n      (b) all of the following hold:\n        (i) \"unit5\" is mounted;\n        (ii) all of the following hold:\n          (a) \"unit5\" is routed;\n          (b) both \"unit5\" is rated and \"unit5\" is checked."
+   ]
+  },
+  {
+   "unit": "u5",
+   "kind": "waiver",
+   "sentence": "n09.2",
+   "role": "given",
+   "text": "The checks that unit5 is stacked and unit5 is coded and unit5 is scanned remain unassumed.",
+   "waiver_reason": "States only that unit5 stacked/coded/scanned are not assumed; it asserts no fact, so there is nothing to formalise."
+  },
+  {
+   "unit": "u6",
+   "kind": "waiver",
+   "sentence": "n11.1",
+   "role": "given",
+   "text": "Rules r09, r04, r11 are declared.",
+   "waiver_reason": "Only lists which rules are declared; the rules themselves are formalised individually."
+  },
+  {
+   "unit": "u7",
+   "kind": "waiver",
+   "sentence": "n21.1",
+   "role": "given",
+   "text": "Rules r01, r02, r15 are declared.",
+   "waiver_reason": "Only lists which rules are declared; the rules themselves are formalised individually."
+  },
+  {
+   "unit": "u8",
+   "kind": "formalised",
+   "sentence": "r08.1",
+   "role": "given",
+   "text": "If unit1 is cleared (payment settled), then unit5 is balanced.",
+   "formalisation": [
+    "If \"unit1\" is classified as \"cleared_payment_settled\", then \"unit5\" is balanced."
+   ]
+  },
+  {
+   "unit": "u9",
+   "kind": "formalised",
+   "sentence": "r09.1",
+   "role": "given",
+   "text": "If unit3 is ready (packing completed) and unit5 is ready (packing completed), then unit5 is weighed-in.",
+   "formalisation": [
+    "If both \"unit3\" is classified as \"ready_packing_completed\" and \"unit5\" is classified as \"ready_packing_completed\", then \"unit5\" is classified as \"weighed_in\"."
+   ]
+  },
+  {
+   "unit": "u10",
+   "kind": "formalised",
+   "sentence": "r03.1",
+   "role": "given",
+   "text": "If unit5 is mounted and unit5 is routed and unit5 is rated, then unit3 is ready (packing completed).",
+   "formalisation": [
+    "If all of the following hold:\n  (a) both \"unit5\" is mounted and \"unit5\" is routed;\n  (b) \"unit5\" is rated, then \"unit3\" is classified as \"ready_packing_completed\"."
+   ]
+  },
+  {
+   "unit": "u11",
+   "kind": "formalised",
+   "sentence": "r03.2",
+   "role": "given",
+   "text": "If unit5 is tied and unit5 is boxed, then unit3 is ready (packing completed).",
+   "formalisation": [
+    "If both \"unit5\" is tied and \"unit5\" is boxed, then \"unit3\" is classified as \"ready_packing_completed\"."
+   ]
+  },
+  {
+   "unit": "u12",
+   "kind": "formalised",
+   "sentence": "r01.1",
+   "role": "given",
+   "text": "If unit5 is weighed-in, then unit3 is sound (casing intact).",
+   "formalisation": [
+    "If \"unit5\" is classified as \"weighed_in\", then \"unit3\" is classified as \"sound_casing_intact\"."
+   ]
+  },
+  {
+   "unit": "u13",
+   "kind": "formalised",
+   "sentence": "r15.1",
+   "role": "given",
+   "text": "If unit3 is stable (shape retained) and unit5 is stacked, then unit1 is stable (temperature constant).",
+   "formalisation": [
+    "If both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is stacked, then \"unit1\" is classified as \"stable_temperature_constant\"."
+   ]
+  },
+  {
+   "unit": "u14",
+   "kind": "formalised",
+   "sentence": "r15.2",
+   "role": "given",
+   "text": "If unit3 is stable (shape retained) and unit5 is checked, then unit1 is stable (shape retained).",
+   "formalisation": [
+    "If both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is checked, then \"unit1\" is classified as \"stable_shape_retained\"."
+   ]
+  },
+  {
+   "unit": "u15",
+   "kind": "formalised",
+   "sentence": "r15.3",
+   "role": "given",
+   "text": "If unit3 is stable (shape retained) and unit5 is coded, then unit5 is stable (temperature constant).",
+   "formalisation": [
+    "If both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is coded, then \"unit5\" is classified as \"stable_temperature_constant\"."
+   ]
+  },
+  {
+   "unit": "u16",
+   "kind": "formalised",
+   "sentence": "r15.4",
+   "role": "given",
+   "text": "If unit3 is stable (shape retained) and unit5 is scanned, then unit5 is stable (shape retained).",
+   "formalisation": [
+    "If both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is scanned, then \"unit5\" is classified as \"stable_shape_retained\"."
+   ]
+  },
+  {
+   "unit": "u17",
+   "kind": "formalised",
+   "sentence": "r11.1",
+   "role": "given",
+   "text": "If unit3 is stable (temperature constant), then unit3 is stable (shape retained).",
+   "formalisation": [
+    "If \"unit3\" is classified as \"stable_temperature_constant\", then \"unit3\" is classified as \"stable_shape_retained\"."
+   ]
+  },
+  {
+   "unit": "u18",
+   "kind": "formalised",
+   "sentence": "r04.1",
+   "role": "given",
+   "text": "If unit5 is logged, then unit3 is cleared (inspection passed).",
+   "formalisation": [
+    "If \"unit5\" is logged, then \"unit3\" is classified as \"cleared_inspection_passed\"."
+   ]
+  },
+  {
+   "unit": "u19",
+   "kind": "formalised",
+   "sentence": "r00.1",
+   "role": "given",
+   "text": "If unit5 is bundled and unit5 is retained and unit5 is packed, then unit3 is ready (staffing arranged).",
+   "formalisation": [
+    "If all of the following hold:\n  (a) both \"unit5\" is bundled and \"unit5\" is retained;\n  (b) \"unit5\" is packed, then \"unit3\" is classified as \"ready_staffing_arranged\"."
+   ]
+  },
+  {
+   "unit": "u20",
+   "kind": "formalised",
+   "sentence": "r00.2",
+   "role": "given",
+   "text": "If unit5 is tied and unit5 is boxed, then unit3 is ready (staffing arranged).",
+   "formalisation": [
+    "If both \"unit5\" is tied and \"unit5\" is boxed, then \"unit3\" is classified as \"ready_staffing_arranged\"."
+   ]
+  },
+  {
+   "unit": "u21",
+   "kind": "formalised",
+   "sentence": "r00.3",
+   "role": "given",
+   "text": "Lot unit5 supplied sample unit1.",
+   "formalisation": [
+    "\"unit5\" has the recorded relation \"supplied\" to \"unit1\"."
+   ]
+  },
+  {
+   "unit": "u22",
+   "kind": "formalised",
+   "sentence": "r12.1",
+   "role": "given",
+   "text": "If unit3 is cleared (payment settled), then unit1 is cleared (payment settled).",
+   "formalisation": [
+    "If \"unit3\" is classified as \"cleared_payment_settled\", then \"unit1\" is classified as \"cleared_payment_settled\"."
+   ]
+  },
+  {
+   "unit": "u23",
+   "kind": "formalised",
+   "sentence": "r13.1",
+   "role": "given",
+   "text": "If unit5 is balanced, then unit3 is stable (temperature constant).",
+   "formalisation": [
+    "If \"unit5\" is balanced, then \"unit3\" is classified as \"stable_temperature_constant\"."
+   ]
+  },
+  {
+   "unit": "u24",
+   "kind": "formalised",
+   "sentence": "r07.1",
+   "role": "given",
+   "text": "If unit3 is sound (signal audible), then unit5 is sound (signal audible).",
+   "formalisation": [
+    "If \"unit3\" is classified as \"sound_signal_audible\", then \"unit5\" is classified as \"sound_signal_audible\"."
+   ]
+  },
+  {
+   "unit": "u25",
+   "kind": "formalised",
+   "sentence": "r05.1",
+   "role": "given",
+   "text": "If unit5 is stable (shape retained), then unit5 is calibrated.",
+   "formalisation": [
+    "If \"unit5\" is classified as \"stable_shape_retained\", then \"unit5\" is calibrated."
+   ]
+  },
+  {
+   "unit": "u26",
+   "kind": "formalised",
+   "sentence": "r05.2",
+   "role": "given",
+   "text": "If unit5 is tied and unit5 is boxed, then unit5 is calibrated.",
+   "formalisation": [
+    "If both \"unit5\" is tied and \"unit5\" is boxed, then \"unit5\" is calibrated."
+   ]
+  },
+  {
+   "unit": "u27",
+   "kind": "formalised",
+   "sentence": "r02.1",
+   "role": "given",
+   "text": "If unit3 is cleared (inspection passed), then unit3 is cleared (payment settled).",
+   "formalisation": [
+    "If \"unit3\" is classified as \"cleared_inspection_passed\", then \"unit3\" is classified as \"cleared_payment_settled\"."
+   ]
+  },
+  {
+   "unit": "u28",
+   "kind": "formalised",
+   "sentence": "r06.1",
+   "role": "given",
+   "text": "If unit3 is ready (staffing arranged) and unit3 is ready (packing completed), then unit5 is ready (packing completed).",
+   "formalisation": [
+    "If both \"unit3\" is classified as \"ready_staffing_arranged\" and \"unit3\" is classified as \"ready_packing_completed\", then \"unit5\" is classified as \"ready_packing_completed\"."
+   ]
+  },
+  {
+   "unit": "u29",
+   "kind": "formalised",
+   "sentence": "r14.1",
+   "role": "given",
+   "text": "If unit3 is sound (casing intact), then unit3 is sound (signal audible).",
+   "formalisation": [
+    "If \"unit3\" is classified as \"sound_casing_intact\", then \"unit3\" is classified as \"sound_signal_audible\"."
+   ]
+  },
+  {
+   "unit": "u30",
+   "kind": "formalised",
+   "sentence": "r10.1",
+   "role": "given",
+   "text": "If unit5 is sound (signal audible), then unit5 is logged.",
+   "formalisation": [
+    "If \"unit5\" is classified as \"sound_signal_audible\", then \"unit5\" is logged."
+   ]
+  },
+  {
+   "unit": "u31",
+   "kind": "formalised",
+   "sentence": "n18.1",
+   "role": "claimed",
+   "text": "Because unit5 is bundled and unit5 is retained and unit5 is packed, unit3 is ready.",
+   "formalisation": [
+    "\"unit3\" is classified as \"ready_staffing_arranged\"."
+   ]
+  },
+  {
+   "unit": "u32",
+   "kind": "formalised",
+   "sentence": "n18.2",
+   "role": "claimed",
+   "text": "The checks that unit5 is stacked and unit5 is coded and unit5 is scanned would imply that unit1 is stable and unit5 is stable and unit5 is stable, respectively.",
+   "formalisation": [
+    "All of the following hold:\n  (a) if both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is stacked, then \"unit1\" is classified as \"stable_temperature_constant\";\n  (b) all of the following hold:\n    (i) if both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is coded, then \"unit5\" is classified as \"stable_temperature_constant\";\n    (ii) if both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is scanned, then \"unit5\" is classified as \"stable_shape_retained\"."
+   ]
+  },
+  {
+   "unit": "u33",
+   "kind": "formalised",
+   "sentence": "n07.1",
+   "role": "claimed",
+   "text": "Since unit5 is mounted and unit5 is routed and unit5 is rated, it follows that unit3 is ready.",
+   "formalisation": [
+    "\"unit3\" is classified as \"ready_packing_completed\"."
+   ]
+  },
+  {
+   "unit": "u34",
+   "kind": "formalised",
+   "sentence": "n03.1",
+   "role": "claimed",
+   "text": "Given that unit3 is ready and unit3 is ready, we infer that unit5 is ready.",
+   "formalisation": [
+    "\"unit5\" is classified as \"ready_packing_completed\"."
+   ]
+  },
+  {
+   "unit": "u35",
+   "kind": "formalised",
+   "sentence": "n08.1",
+   "role": "claimed",
+   "text": "It follows that unit5 is weighed-in because unit3 is ready and the immediately preceding ready result holds.",
+   "formalisation": [
+    "\"unit5\" is classified as \"weighed_in\"."
+   ]
+  },
+  {
+   "unit": "u36",
+   "kind": "formalised",
+   "sentence": "n16.1",
+   "role": "claimed",
+   "text": "Because unit5 is weighed-in, unit3 is sound.",
+   "formalisation": [
+    "\"unit3\" is classified as \"sound_casing_intact\"."
+   ]
+  },
+  {
+   "unit": "u37",
+   "kind": "formalised",
+   "sentence": "n12.1",
+   "role": "claimed",
+   "text": "Since unit3 is sound, it follows that unit3 is sound.",
+   "formalisation": [
+    "\"unit3\" is classified as \"sound_signal_audible\"."
+   ]
+  },
+  {
+   "unit": "u38",
+   "kind": "formalised",
+   "sentence": "n04.1",
+   "role": "claimed",
+   "text": "Given that unit3 is sound, we infer that unit5 is sound.",
+   "formalisation": [
+    "\"unit5\" is classified as \"sound_signal_audible\"."
+   ]
+  },
+  {
+   "unit": "u39",
+   "kind": "formalised",
+   "sentence": "n20.1",
+   "role": "claimed",
+   "text": "It follows that unit5 is logged because the immediately preceding sound result holds.",
+   "formalisation": [
+    "\"unit5\" is logged."
+   ]
+  },
+  {
+   "unit": "u40",
+   "kind": "formalised",
+   "sentence": "n10.1",
+   "role": "claimed",
+   "text": "Because unit5 is logged, unit3 is cleared.",
+   "formalisation": [
+    "\"unit3\" is classified as \"cleared_inspection_passed\"."
+   ]
+  },
+  {
+   "unit": "u41",
+   "kind": "formalised",
+   "sentence": "n02.1",
+   "role": "claimed",
+   "text": "Since unit3 is cleared, it follows that unit3 is cleared.",
+   "formalisation": [
+    "\"unit3\" is classified as \"cleared_payment_settled\"."
+   ]
+  },
+  {
+   "unit": "u42",
+   "kind": "formalised",
+   "sentence": "n17.1",
+   "role": "claimed",
+   "text": "Given that unit3 is cleared, we infer that unit1 is cleared.",
+   "formalisation": [
+    "\"unit1\" is classified as \"cleared_payment_settled\"."
+   ]
+  },
+  {
+   "unit": "u43",
+   "kind": "formalised",
+   "sentence": "n00.1",
+   "role": "claimed",
+   "text": "It follows that unit5 is balanced because the immediately preceding cleared result holds.",
+   "formalisation": [
+    "\"unit5\" is balanced."
+   ]
+  },
+  {
+   "unit": "u44",
+   "kind": "formalised",
+   "sentence": "n13.1",
+   "role": "claimed",
+   "text": "Because unit5 is balanced, unit3 is stable.",
+   "formalisation": [
+    "\"unit3\" is classified as \"stable_temperature_constant\"."
+   ]
+  },
+  {
+   "unit": "u45",
+   "kind": "formalised",
+   "sentence": "n01.1",
+   "role": "claimed",
+   "text": "Since unit3 is stable, it follows that unit3 is stable.",
+   "formalisation": [
+    "\"unit3\" is classified as \"stable_shape_retained\"."
+   ]
+  },
+  {
+   "unit": "u46",
+   "kind": "formalised",
+   "sentence": "n15.1",
+   "role": "claimed",
+   "text": "Given that unit3 is stable and unit5 is checked, we infer that unit1 is stable.",
+   "formalisation": [
+    "\"unit1\" is classified as \"stable_shape_retained\"."
+   ]
+  },
+  {
+   "unit": "u47",
+   "kind": "formalised",
+   "sentence": "n14.1",
+   "role": "claimed",
+   "text": "It follows that unit5 is calibrated because the immediately preceding stable result holds.",
+   "formalisation": [
+    "(frozen conclusion) \"unit5\" is calibrated.",
+    "\"unit5\" is calibrated."
+   ]
+  }
+ ]
+}

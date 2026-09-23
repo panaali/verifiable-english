@@ -1,0 +1,27 @@
+{
+ "item_id": "ia16a766729f914abd691307ee67fec15",
+ "split": "dev",
+ "author": "gemini",
+ "arm": "A2",
+ "stop_reason": "abort: paid ledger: provider exceeded per-call token cap",
+ "finish": null,
+ "turns": 0,
+ "tool_calls": 0,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0",
+  "proposer": "0",
+  "total": "0"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "status": null,
+ "elapsed_s": 1.3,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

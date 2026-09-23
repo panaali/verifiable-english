@@ -1,0 +1,53 @@
+{
+ "item_id": "i1789fdf8e853490fb1b6731e85d63b13",
+ "split": "dev",
+ "author": "haiku",
+ "arm": "A2",
+ "stop_reason": "success",
+ "finish": null,
+ "turns": 3,
+ "tool_calls": 0,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.098935",
+  "proposer": "0",
+  "total": "0.098935"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": true,
+ "status": {
+  "success": true,
+  "failures": [],
+  "targets": [
+   {
+    "id": "t_n08",
+    "text": "@unit0 is bundled.",
+    "certified": true,
+    "reason": null,
+    "replay": "Checked",
+    "node": "step_n08_1"
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "covered": 33,
+  "waived": 14,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 33,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 125.9,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

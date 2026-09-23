@@ -1,0 +1,81 @@
+{
+ "item_id": "idef535ff33c43fd88eabd3d10685d5b6",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A2",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "n02_1"
+  ],
+  "note": "n02.1 cites the preceding clear result: unit2 is clear in the contamination-absent sense (n04.1). Rule r01.1 needs unit2 clear in the optically-transparent sense. The alternative rule r01.2 needs unit2 dated and tied, which is never given. So 'unit0 is documented' does not follow, and the target depends on it."
+ },
+ "turns": 1,
+ "tool_calls": 0,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.1010616",
+  "proposer": "0",
+  "total": "0.1010616"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n08: no step node states the frozen target",
+   "18 asserting sentence(s) neither covered nor waived"
+  ],
+  "targets": [
+   {
+    "id": "t_n08",
+    "text": "@unit0 is bundled.",
+    "certified": false,
+    "reason": "no step node states the frozen target",
+    "replay": null,
+    "node": null
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "n19.1",
+   "n12.1",
+   "n13.1",
+   "n07.1",
+   "n05.1",
+   "n15.1",
+   "n16.1",
+   "n16.2",
+   "n04.1",
+   "n02.1",
+   "n17.1",
+   "n01.1",
+   "n21.1",
+   "n10.1",
+   "n14.1",
+   "n20.1",
+   "n00.1",
+   "n08.1"
+  ],
+  "covered": 22,
+  "waived": 7,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 22,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 28.8,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

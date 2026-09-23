@@ -78,8 +78,9 @@ vocabulary carries a target, and the assumptions are consistent.
 `audit-export` writes one packet per session. A packet holds the sentences, the predicate glosses, and per asserting
 sentence either the deterministic paraphrases of its anchored nodes (plus the frozen conclusion for the target
 sentence) or its waiver reason. Packets never contain parents, checks, status, arm, author or item id. Packet ids
-are salted hashes, and the order is shuffled with seed 20260923. Gemini 3.1 Pro audits Claude authors; Opus 5.5
-audits Gemini. A packet passes iff every formalised unit is `faithful` and every waiver is `acceptable`. A missing,
+are salted hashes, and the order is shuffled with seed 20260923. GPT-6 Astra (`codex exec`, read-only, reasoning
+high) audits Claude authors; Opus 5.5 audits Gemini (lead decision 2026-09-23, replacing Gemini 3.1 Pro as an
+auditor; every verdict records the auditor model). An empty packet fails. A packet passes iff every formalised unit is `faithful` and every waiver is `acceptable`. A missing,
 unparseable or `unclear` verdict fails the packet. The human spot-check list (`audit-spotcheck.jsonl`) contains
 every unit of every tool-successful session plus 2 seeded random units from each other packet.
 

@@ -1,0 +1,92 @@
+{
+ "item_id": "i910d7c5f209964573680cb7258301c2a",
+ "split": "dev",
+ "author": "haiku",
+ "arm": "A2",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "n_15_1"
+  ],
+  "note": "Step n15.1 (unit6 is shipped) cannot be derived. It depends on r14.1 which requires @unit3 is clear_optically_transparent, but n01.1 only establishes @unit3 is clear_contamination_absent (a different sense). Alternative rule r14.2 requires unit3 audited and scheduled, which are not established. Without n15.1, the chain to target n19.1 (unit5 is stored) is broken."
+ },
+ "turns": 1,
+ "tool_calls": 0,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.042925",
+  "proposer": "0",
+  "total": "0.042925"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n19: no step node states the frozen target",
+   "29 asserting sentence(s) neither covered nor waived"
+  ],
+  "targets": [
+   {
+    "id": "t_n19",
+    "text": "there exists entity x0, (x0 is stored).",
+    "certified": false,
+    "reason": "no step node states the frozen target",
+    "replay": null,
+    "node": null
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "r01.1",
+   "r01.2",
+   "r14.2",
+   "r08.1",
+   "r00.1",
+   "r12.1",
+   "r05.1",
+   "r05.2",
+   "r05.3",
+   "r04.1",
+   "r07.2",
+   "r07.3",
+   "r07.4",
+   "n00.1",
+   "n02.1",
+   "n07.1",
+   "n16.1",
+   "n05.1",
+   "n20.1",
+   "n06.1",
+   "n03.1",
+   "n14.1",
+   "n21.1",
+   "n01.1",
+   "n15.1",
+   "n08.1",
+   "n18.1",
+   "n04.1",
+   "n19.1"
+  ],
+  "covered": 11,
+  "waived": 7,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 17,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 72.6,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

@@ -1,13 +1,14 @@
 """ve_experiments.assist_eval: loop, arms, budget, text protocol, Gemini wiring, audit export (offline)."""
 from decimal import Decimal
 import json
+from pathlib import Path
 
 import pytest
 
 from ve_experiments.assist_eval import audit, items, prompts
 from ve_experiments.assist_eval.authors import (GeminiAuthor, Turn, parse_text_calls, render_transcript,
                                                 vertex_tools)
-from ve_experiments.assist_eval.loop import Limits, SessionRun, evaluate_document
+from ve_experiments.assist_eval.loop import Limits, SessionRun, eval_success, evaluate_document
 from ve_experiments.assist_eval.pricing import claude_cost
 
 ITEM = {"id": "demo", "payload": {
@@ -75,7 +76,10 @@ def test_a3_loop_success_finish_and_accounting(tmp_path):
     author = FakeAuthor([block({"calls": GOOD_CALLS}),
                          block({"calls": [{"tool": "finish", "arguments": {"verdict": "complete"}}]})])
     result = run(tmp_path, author)
+    # the tool itself never counts a waiver as success; the evaluation tolerates waivers of GIVEN sentences
     assert result["stop_reason"] == "finish" and result["tool_success"] is True
+    assert result["tool_success_strict"] is False and result["verification"] == {"ok": True, "problems": []}
+    assert result["proposer_model"] is None
     assert result["turns"] == 2 and result["tool_calls"] == 8 and result["protocol_errors"] == 0
     assert result["spent_usd"]["total"] == "0.20"
     # the second prompt carries the first turn's results and the budget line
@@ -114,8 +118,13 @@ def test_unknown_tools_and_bad_finish_are_rejected_not_raised(tmp_path):
 
 
 class FakeProposer:
+    model_id = "fake"
+
     def __init__(self):
         self.costs = []
+
+    def ceiling(self, session, sentence, k=None, note=None):
+        return Decimal("0.05")
 
     def __call__(self, system, prompt, item_id):
         self.costs.append(Decimal("0.01"))
@@ -132,6 +141,22 @@ def test_a4_proposer_is_charged_to_the_same_budget(tmp_path):
     assert result["spent_usd"]["proposer"] == "0.01" and result["spent_usd"]["total"] == "0.11"
     assert result["status"]["provenance"]["proposer-verbatim"] == 1
     assert "propose" in (tmp_path / "A4" / "prompt.json").read_text()
+    # the fake proposer wrote no calls ledger: verify_session rejects the recorded call, so no success
+    assert not result["verification"]["ok"] and result["tool_success"] is False
+    assert any("calls ledger" in p for p in result["verification"]["problems"])
+    assert result["proposer_model"] == "haiku"
+
+
+def test_eval_success_tolerates_only_given_waivers():
+    base = {"success": False, "failures": ["1 asserting sentence(s) waived (a waiver is reported, never success): n00.2"],
+            "waivers": [{"sentence": "n00.2", "role": "given", "counts_against_success": True}]}
+    assert eval_success(base) == (False, True)
+    claimed = {**base, "waivers": [{"sentence": "n02.1", "role": "claimed", "counts_against_success": True}]}
+    assert eval_success(claimed) == (False, False)
+    other = {**base, "failures": base["failures"] + ["1 claimed sentence(s) not derived by a certified step: n02.1"]}
+    assert eval_success(other) == (False, False)
+    assert eval_success({"success": True, "failures": [], "waivers": []}) == (True, True)
+    assert eval_success(None) == (False, False)
 
 
 def test_a3_tool_list_has_no_proposer(tmp_path):
@@ -155,11 +180,11 @@ def document(target="@unit2 is ready_packing_completed.", finish=None):
 
 def test_a2_document_evaluation_orders_nodes_and_freezes_targets():
     session, diag, frozen = evaluate_document(ITEM, document(), None, author="opus", split="dev", attempt=1)
-    assert diag["status"]["success"] and not diag["node_errors"]
+    assert eval_success(diag["status"]) == (False, True) and not diag["node_errors"]
     assert diag["checks"] == [{"node": "goal", "status": "follows"}]
     _, diag2, frozen2 = evaluate_document(ITEM, document(target="@unit2 is ready_staffing_arranged."), frozen,
                                           author="opus", split="dev", attempt=2)
-    assert frozen2 == frozen and "frozen" in diag2["note"] and diag2["status"]["success"]
+    assert frozen2 == frozen and "frozen" in diag2["note"] and eval_success(diag2["status"])[1]
     broken = document()
     broken["nodes"] = broken["nodes"][:1]
     _, diag3, _ = evaluate_document(ITEM, broken, frozen, author="opus", split="dev", attempt=3)
@@ -269,4 +294,125 @@ def test_classify_endpoints():
     done = {"tool_success": True, "status": {**status, "unproved_steps": []}, "finish": None}
     assert audit.classify(done, False, "benign")["certified_unfaithful"]
     assert audit.classify(done, True, "smuggle")["flawed_certified_alarm"]
-    assert audit.auditor_for("opus") == "gemini" and audit.auditor_for("gemini") == "opus"
+    assert audit.auditor_for("opus") == "codex" and audit.auditor_for("haiku") == "codex"
+    assert audit.auditor_for("gemini") == "opus"
+    # an unaudited certified session is not counted as certified-unfaithful
+    assert not audit.classify(done, False, "benign", audited=False)["certified_unfaithful"]
+
+
+class FakeCompleted:
+    def __init__(self, returncode, stdout, stderr):
+        self.returncode, self.stdout, self.stderr = returncode, stdout, stderr
+
+
+def test_codex_auditor_ledgers_model_and_tokens_and_replays(tmp_path):
+    seen = []
+
+    def runner(cmd, **kw):
+        seen.append((cmd, kw))
+        out = cmd[cmd.index("-o") + 1]
+        Path(out).write_text('{"units": []}')
+        return FakeCompleted(0, "codex\n{}\ntokens used\n12,345\n", "model: gpt-6-astra\nsandbox: read-only\n")
+
+    auditor = audit.CodexAuditor(tmp_path / "codex.jsonl", workdir=tmp_path / "wd", runner=runner)
+    text, cost, row = auditor.single("assist-audit/p1", "SYS", "PROMPT")
+    assert text == '{"units": []}' and cost == 0
+    assert row["served_model"] == "gpt-6-astra" and row["tokens_used"] == 12345
+    cmd, kw = seen[0]
+    assert cmd[:7] == ["codex", "exec", "-s", "read-only", "-c", "model_reasoning_effort=high",
+                       "--skip-git-repo-check"]
+    assert kw["stdin"] is not None and "SYS" in cmd[-1] and "PROMPT" in cmd[-1]
+    auditor.single("assist-audit/p1", "SYS", "PROMPT")  # replays from the ledger
+    assert len(seen) == 1
+
+    def failing(cmd, **kw):
+        return FakeCompleted(1, "", "error: usage limit")
+    with pytest.raises(RuntimeError):
+        audit.CodexAuditor(tmp_path / "c2.jsonl", workdir=tmp_path / "wd", runner=failing).single("x", "S", "P")
+
+
+class ScriptedAuditor:
+    def __init__(self, reply=None, fail=False):
+        self.reply, self.fail = reply, fail
+
+    def single(self, call_id, system, prompt):
+        if self.fail:
+            raise RuntimeError("ledger halted")
+        return self.reply(prompt), Decimal(0), {"served_model": "scripted", "tokens_used": 7}
+
+
+def _packet_units(prompt):
+    return json.loads(prompt.split("PACKET:\n", 1)[1])["units"]
+
+
+def test_audit_run_logs_errors_and_report_attributes_failures(tmp_path):
+    run_dir = tmp_path / "run"
+    calls = [GOOD_CALLS[0], {"tool": "propose", "arguments": {"sentence": "n00.1"}},
+             {"tool": "accept", "arguments": {"candidate": "q1.1", "name": "fact", "anchors": ["n00.1"]}}]
+    out = run_dir / "dev" / "opus" / "A4" / "demo"
+    SessionRun(ITEM, split="dev", author_name="opus", author=FakeAuthor([block({"calls": calls})]), arm="A4",
+               out_dir=out, limits=Limits(budget_usd=2.0, max_turns=1), proposer_factory=FakeProposer).run()
+    assert audit.export(run_dir) == 1
+    # an auditor failure leaves no verdict and is logged
+    assert audit.run_audit(run_dir, auditors={"codex": ScriptedAuditor(fail=True)}) == 1
+    assert "ledger halted" in (run_dir / "audit" / "errors.jsonl").read_text()
+    # the auditor rejects the proposer-accepted fact: attributed to the proposer
+    reply = lambda prompt: block({"units": [
+        {"unit": u["unit"], "verdict": "unfaithful" if u["sentence"] == "n00.1" else "faithful"}
+        for u in _packet_units(prompt)]})
+    assert audit.run_audit(run_dir, auditors={"codex": ScriptedAuditor(reply)}) == 0
+    verdict = json.loads(next((run_dir / "audit" / "verdicts").glob("*.json")).read_text())
+    assert verdict["auditor"] == "codex" and verdict["auditor_model"] == "scripted" and not verdict["pass"]
+    import ve_experiments.assist_eval.audit as mod
+    original = mod.labels
+    mod.labels = lambda: {"demo": {"kind": "benign", "acceptable_locations": []}}
+    try:
+        row = audit.report(run_dir)["rows"][0]
+    finally:
+        mod.labels = original
+    assert row["attribution"] == "ledger-verification"  # the fake proposer has no calls ledger
+    failing = row["failing_units"]
+    assert [u["origins"] for u in failing.values()] == [["proposer-verbatim"]]
+    cls = {"faithful_complete": False, "flawed_certified_alarm": False}
+    ok = {"stop_reason": "finish", "verification": {"ok": True}}
+    assert audit.attribute(ok, {"pass": False}, cls, failing) == "audit-fail: proposer candidate accepted unchanged"
+    hand = {"u9": {"verdict": "unfaithful", "origins": ["hand-written"]}}
+    assert audit.attribute(ok, {"pass": False}, cls, hand) == "audit-fail: author-written"
+    unclear = {"u9": {"verdict": "unclear", "origins": ["hand-written"]}}
+    assert audit.attribute(ok, {"pass": False}, cls, unclear).startswith("audit-fail: audit disagreement")
+    assert audit.attribute({**ok, "stop_reason": "budget"}, {"pass": True}, cls, {}) == "budget"
+    assert audit.attribute(ok, {"pass": True}, cls, {}) == "tool refusal"
+    assert audit.attribute({**ok, "stop_reason": "abort: x"}, None, cls, {}) == "infrastructure"
+
+
+def test_empty_packet_fails_without_an_auditor_call(tmp_path):
+    run_dir = tmp_path / "run"
+    out = run_dir / "dev" / "gemini" / "A3" / "demo"
+    SessionRun(ITEM, split="dev", author_name="gemini", author=FakeAuthor([]), arm="A3", out_dir=out,
+               limits=Limits(budget_usd=2.0, max_turns=0)).run()
+    audit.export(run_dir)
+    assert audit.run_audit(run_dir, auditors={}) == 0
+    verdict = json.loads(next((run_dir / "audit" / "verdicts").glob("*.json")).read_text())
+    assert verdict["pass"] is False and verdict["auditor"] is None
+
+
+def test_gemini_margin_covers_undercounted_tool_declarations():
+    # dev-tune-1: counted ~3.5k, billed 4,004 -> the old 2% + 256 margin halted the run ledger
+    assert GeminiAuthor._margin(3520) >= 4004
+
+
+def test_finish_complete_is_refused_until_status_succeeds(tmp_path):
+    author = FakeAuthor([block({"calls": [{"tool": "finish", "arguments": {"verdict": "complete"}}]}),
+                         block({"calls": [{"tool": "finish", "arguments": {"verdict": "gap", "gap_steps": []}}]})])
+    result = run(tmp_path, author)
+    rows = [json.loads(l) for l in (tmp_path / "A3" / "transcript.jsonl").read_text().splitlines()]
+    assert "NotComplete" in rows[0]["feedback"] and result["finish"]["verdict"] == "gap" and result["turns"] == 2
+
+
+def test_a2_finish_complete_on_a_failing_document_is_refused(tmp_path):
+    bad = document(finish={"verdict": "complete"})
+    bad["nodes"] = bad["nodes"][:1]
+    author = FakeAuthor([block(bad)], ceiling="0.2")
+    result = run(tmp_path, author, arm="A2", max_turns=1)
+    assert result["finish"] is None and "finish_refused" in author.prompts[0] + (
+        tmp_path / "A2" / "transcript.jsonl").read_text()

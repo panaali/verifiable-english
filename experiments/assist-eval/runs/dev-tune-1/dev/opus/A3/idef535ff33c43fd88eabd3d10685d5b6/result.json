@@ -1,0 +1,71 @@
+{
+ "item_id": "idef535ff33c43fd88eabd3d10685d5b6",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A3",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "s02"
+  ],
+  "note": "n04.1 (via r11.2) establishes that unit2 is clear in the contamination-absent sense. n02.1 then infers that unit0 is documented from that result, but the only applicable rule, r01.1, needs unit2 to be clear in the optically-transparent sense. The alternative route (r01.2, needing unit2 dated and tied) is never established. The checker returned a countermodel for s02. Every other step is certified, including the downstream chain from s02 to the target, which is certified conditionally on s02."
+ },
+ "turns": 8,
+ "tool_calls": 67,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.706578",
+  "proposer": "0",
+  "total": "0.706578"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n08: graph replay status Incomplete",
+   "1 unproved step(s)"
+  ],
+  "targets": [
+   {
+    "id": "t_n08",
+    "text": "@unit0 is bundled.",
+    "certified": false,
+    "reason": null,
+    "replay": "Incomplete",
+    "node": "s08"
+   }
+  ],
+  "unproved_steps": [
+   {
+    "node": "s02",
+    "check": "countermodel",
+    "parents": [
+     "s04",
+     "r01_1"
+    ]
+   }
+  ],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "covered": 37,
+  "waived": 10,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 37,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 62.6,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

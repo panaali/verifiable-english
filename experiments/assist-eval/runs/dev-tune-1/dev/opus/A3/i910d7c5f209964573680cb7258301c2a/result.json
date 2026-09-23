@@ -1,0 +1,71 @@
+{
+ "item_id": "i910d7c5f209964573680cb7258301c2a",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A3",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "s_n15"
+  ],
+  "note": "n01.1 validly concludes, via r07.1, that unit3 is clear in the contamination-absent sense. n15.1 then infers that unit6 is shipped 'because the immediately preceding clear result holds'. But the only rule available, r14.1, requires unit3 to be clear in the optically-transparent sense. The checker returned a countermodel for this step. The only given route to unit3 being optically transparent is r07.2, which needs unit2 to be queued. n17.2 says that check remains unassumed. r14.2 needs unit3 to be audited and scheduled, which is never given. So the target 'unit5 is stored' is not established. Everything downstream of s_n15 (n08.1, n18.1, n04.1, n19.1) checks individually but depends on this gap. All other steps are certified."
+ },
+ "turns": 8,
+ "tool_calls": 67,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.679313",
+  "proposer": "0",
+  "total": "0.679313"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n19: graph replay status Incomplete",
+   "1 unproved step(s)"
+  ],
+  "targets": [
+   {
+    "id": "t_n19",
+    "text": "@unit5 is stored.",
+    "certified": false,
+    "reason": null,
+    "replay": "Incomplete",
+    "node": "s_n19"
+   }
+  ],
+  "unproved_steps": [
+   {
+    "node": "s_n15",
+    "check": "countermodel",
+    "parents": [
+     "s_n01",
+     "a_r14_1"
+    ]
+   }
+  ],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "covered": 40,
+  "waived": 7,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 40,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 75.4,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

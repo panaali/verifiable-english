@@ -1,0 +1,57 @@
+{
+ "item_id": "i206f6b8e68e5aabae8bf04e2857d1791",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A4",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "complete",
+  "gap_steps": [],
+  "note": "Target t_n02 (@unit1 is dried) is certified through a checked chain. The chain starts from the facts in n09.1 and the given rules, and each claimed sentence has its own certified step. Where a word has several senses, each step uses the sense its own stated reason establishes. n18.2 is formalised as the three conditionals (bagged, tracked, wrapped), given unit0 is clear in the optically transparent sense. Waived: the rule-declaration sentences; n09.2, which assumes nothing; and r08.3, a sample/lot relation the argument never uses."
+ },
+ "turns": 8,
+ "tool_calls": 67,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.6540064",
+  "proposer": "0",
+  "total": "0.6540064"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": true,
+ "status": {
+  "success": true,
+  "failures": [],
+  "targets": [
+   {
+    "id": "t_n02",
+    "text": "@unit1 is dried.",
+    "certified": true,
+    "reason": null,
+    "replay": "Checked",
+    "node": "s02"
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "covered": 40,
+  "waived": 7,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 40,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 190.5,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

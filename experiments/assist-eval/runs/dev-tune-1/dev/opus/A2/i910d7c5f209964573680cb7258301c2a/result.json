@@ -1,0 +1,81 @@
+{
+ "item_id": "i910d7c5f209964573680cb7258301c2a",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A2",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "n15"
+  ],
+  "note": "n01.1 establishes that unit3 is clear in the contamination-absent sense (r07.1). r14.1 needs unit3 clear in the optically-transparent sense. The other route, r14.2, needs unit3 audited and scheduled, which no given states. So unit6 shipped (n15.1) does not follow. The steps after it (n08, n18, n04, n19) depend on it."
+ },
+ "turns": 1,
+ "tool_calls": 0,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.1008316",
+  "proposer": "0",
+  "total": "0.1008316"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n19: no step node states the frozen target",
+   "18 asserting sentence(s) neither covered nor waived"
+  ],
+  "targets": [
+   {
+    "id": "t_n19",
+    "text": "@unit5 is stored.",
+    "certified": false,
+    "reason": "no step node states the frozen target",
+    "replay": null,
+    "node": null
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "n17.1",
+   "n00.1",
+   "n02.1",
+   "n07.1",
+   "n16.1",
+   "n05.1",
+   "n20.1",
+   "n06.1",
+   "n03.1",
+   "n14.1",
+   "n21.1",
+   "n21.2",
+   "n01.1",
+   "n15.1",
+   "n08.1",
+   "n18.1",
+   "n04.1",
+   "n19.1"
+  ],
+  "covered": 22,
+  "waived": 7,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 22,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 30.7,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

@@ -1,0 +1,57 @@
+{
+ "item_id": "ia16a766729f914abd691307ee67fec15",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A4",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "complete",
+  "gap_steps": [],
+  "note": "Every claimed step has its own certified node. Where a claimed sentence left a word's sense open (ready/active/clear/open), I used the sense its stated reasons establish via the given rules. The only unused givens are the declaration lists, the sample/lot sentence and the 'remain unassumed' sentence; these are waived."
+ },
+ "turns": 9,
+ "tool_calls": 73,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.7890472",
+  "proposer": "0",
+  "total": "0.7890472"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": true,
+ "status": {
+  "success": true,
+  "failures": [],
+  "targets": [
+   {
+    "id": "t_n19",
+    "text": "@unit5 is stored.",
+    "certified": true,
+    "reason": null,
+    "replay": "Checked",
+    "node": "s_n19"
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "covered": 40,
+  "waived": 7,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 46,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 73.6,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

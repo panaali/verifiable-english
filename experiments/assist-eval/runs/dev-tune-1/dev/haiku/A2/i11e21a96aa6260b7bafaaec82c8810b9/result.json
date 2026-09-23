@@ -1,0 +1,57 @@
+{
+ "item_id": "i11e21a96aa6260b7bafaaec82c8810b9",
+ "split": "dev",
+ "author": "haiku",
+ "arm": "A2",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "complete",
+  "gap_steps": [],
+  "note": "All claimed conclusions derived and target certified. All uncovered sentences are rule definitions unused in the derivation chain, properly waived."
+ },
+ "turns": 2,
+ "tool_calls": 0,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.06694625",
+  "proposer": "0",
+  "total": "0.06694625"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": true,
+ "status": {
+  "success": true,
+  "failures": [],
+  "targets": [
+   {
+    "id": "t_n14",
+    "text": "@unit5 is calibrated.",
+    "certified": true,
+    "reason": null,
+    "replay": "Checked",
+    "node": "n14_1"
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "covered": 33,
+  "waived": 14,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 39,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 88.9,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

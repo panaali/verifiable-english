@@ -1,0 +1,1878 @@
+{
+ "format": "ve.assist-session@1",
+ "config": {
+  "format": "ve.assist-session@1",
+  "tool_version": "ve-assist@1",
+  "environment": {
+   "language": "ve.core@0",
+   "profile": "relational-fol@0",
+   "spec_revision": "ve-v0-draft-2026-09-20",
+   "vocabulary": {
+    "sorts": {
+     "entity": {
+      "description": "A named dossier entity."
+     }
+    },
+    "predicates": {
+     "audited": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "audited: audit completed (R11)"
+     },
+     "bagged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "bagged: bag fitted (R07)"
+     },
+     "booked": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "booked: transport reserved (R36)"
+     },
+     "boxed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "boxed: box fitted (R18)"
+     },
+     "bundled": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "bundled: bundle formed (R23)"
+     },
+     "calibrated": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "calibrated: calibration recorded (R02)"
+     },
+     "checked": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "checked: check completed (R47)"
+     },
+     "clear_contamination_absent": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "clear: contamination absent (R20)"
+     },
+     "clear_optically_transparent": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "clear: optically transparent (R03)"
+     },
+     "clipped": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "clipped: clip attached (R29)"
+     },
+     "coded": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "coded: identifier assigned (R25)"
+     },
+     "cooled": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "cooled: temperature reduced (R51)"
+     },
+     "dated": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "dated: date recorded (R21)"
+     },
+     "documented": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "documented: documentation stored (R06)"
+     },
+     "dried": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "dried: moisture removed (R05)"
+     },
+     "filed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "filed: document stored (R54)"
+     },
+     "inspected": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "inspected: inspection completed (R27)"
+     },
+     "labelled": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "labelled: label attached (R09)"
+     },
+     "listed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "listed: catalogue entry made (R38)"
+     },
+     "loaded": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "loaded: loading completed (R58)"
+     },
+     "logged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "logged: entry recorded (R16)"
+     },
+     "marked": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "marked: mark applied (R08)"
+     },
+     "measured": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "measured: measurement recorded (R60)"
+     },
+     "mounted": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "mounted: mount fitted (R01)"
+     },
+     "numbered": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "numbered: number assigned (R37)"
+     },
+     "open_account_enabled": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "open: account enabled (R50)"
+     },
+     "open_seal_removed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "open: seal removed (R57)"
+     },
+     "packed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "packed: container filled (R56)"
+     },
+     "photographed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "photographed: image recorded (R10)"
+     },
+     "processed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "processed: processing completed (R46)"
+     },
+     "queued": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "queued: place assigned (R48)"
+     },
+     "rated": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "rated: grade recorded (R33)"
+     },
+     "ready_packing_completed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "ready: packing completed (R49)"
+     },
+     "ready_staffing_arranged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "ready: staffing arranged (R44)"
+     },
+     "received": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "received: receipt recorded (R52)"
+     },
+     "registered": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "registered: registration recorded (R39)"
+     },
+     "released": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "released: release recorded (R12)"
+     },
+     "retained": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "retained: retention recorded (R41)"
+     },
+     "reviewed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "reviewed: review completed (R34)"
+     },
+     "scheduled": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "scheduled: time assigned (R40)"
+     },
+     "sealed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "sealed: packaging intact (R17)"
+     },
+     "secured": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "secured: fastener fitted (R22)"
+     },
+     "shelved": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "shelved: shelf assigned (R04)"
+     },
+     "shipped": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "shipped: departure recorded (R32)"
+     },
+     "sized": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "sized: dimensions measured (R24)"
+     },
+     "sorted": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "sorted: contents ordered (R13)"
+     },
+     "sound_casing_intact": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "sound: casing intact (R19)"
+     },
+     "sound_signal_audible": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "sound: signal audible (R42)"
+     },
+     "stacked": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "stacked: stack formed (R26)"
+     },
+     "staged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "staged: staging completed (R55)"
+     },
+     "stamped": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "stamped: stamp applied (R53)"
+     },
+     "stored": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "stored: location assigned (R35)"
+     },
+     "tagged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "tagged: tag attached (R59)"
+     },
+     "tested": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "tested: test completed (R15)"
+     },
+     "tied": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "tied: tie attached (R31)"
+     },
+     "tracked": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "tracked: tracking enabled (R28)"
+     },
+     "unloaded": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "unloaded: unloading completed (R45)"
+     },
+     "weighed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "weighed: mass measured (R14)"
+     },
+     "weighed_in": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "weighed-in: arrival mass recorded (R43)"
+     },
+     "wrapped_up": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "wrapped-up: handling completed (R30)"
+     }
+    },
+    "constants": {
+     "unit0": {
+      "sort": "entity",
+      "description": "unit0"
+     },
+     "unit1": {
+      "sort": "entity",
+      "description": "unit1"
+     },
+     "unit2": {
+      "sort": "entity",
+      "description": "unit2"
+     }
+    }
+   }
+  },
+  "english_vocabulary": null,
+  "source": {
+   "sentences": [
+    {
+     "id": "n06.1",
+     "text": "Rules r09, r00, r07 are declared.",
+     "role": "given",
+     "block": "n06",
+     "asserting": true
+    },
+    {
+     "id": "n11.1",
+     "text": "Rules r05, r13, r03 are declared.",
+     "role": "given",
+     "block": "n11",
+     "asserting": true
+    },
+    {
+     "id": "n18.1",
+     "text": "Rules r08, r11, r15 are declared.",
+     "role": "given",
+     "block": "n18",
+     "asserting": true
+    },
+    {
+     "id": "n03.1",
+     "text": "Rules r06, r02, r10, r04 are declared.",
+     "role": "given",
+     "block": "n03",
+     "asserting": true
+    },
+    {
+     "id": "n09.1",
+     "text": "Rules r14, r01, r12 are declared.",
+     "role": "given",
+     "block": "n09",
+     "asserting": true
+    },
+    {
+     "id": "n19.1",
+     "text": "unit0 is sized; unit0 is wrapped-up; unit0 is released; unit0 is reviewed; unit0 is staged; unit0 is registered; unit0 is inspected.",
+     "role": "given",
+     "block": "n19",
+     "asserting": true
+    },
+    {
+     "id": "n19.2",
+     "text": "The checks that unit0 is bagged and unit0 is numbered and unit0 is listed remain unassumed.",
+     "role": "given",
+     "block": "n19",
+     "asserting": true
+    },
+    {
+     "id": "r11.1",
+     "text": "If unit1 is clear (optically transparent) and unit0 is bagged, then unit0 is clear (contamination absent).",
+     "role": "given",
+     "block": "r11",
+     "asserting": true
+    },
+    {
+     "id": "r11.2",
+     "text": "If unit1 is clear (optically transparent) and unit0 is inspected, then unit2 is clear (contamination absent).",
+     "role": "given",
+     "block": "r11",
+     "asserting": true
+    },
+    {
+     "id": "r11.3",
+     "text": "If unit1 is clear (optically transparent) and unit0 is numbered, then unit0 is clear (optically transparent).",
+     "role": "given",
+     "block": "r11",
+     "asserting": true
+    },
+    {
+     "id": "r11.4",
+     "text": "If unit1 is clear (optically transparent) and unit0 is listed, then unit2 is clear (optically transparent).",
+     "role": "given",
+     "block": "r11",
+     "asserting": true
+    },
+    {
+     "id": "r00.1",
+     "text": "If unit1 is open (seal removed), then unit1 is open (account enabled).",
+     "role": "given",
+     "block": "r00",
+     "asserting": true
+    },
+    {
+     "id": "r10.1",
+     "text": "If unit1 is open (account enabled), then unit0 is open (account enabled).",
+     "role": "given",
+     "block": "r10",
+     "asserting": true
+    },
+    {
+     "id": "r12.1",
+     "text": "If unit0 is packed, then unit1 is ready (staffing arranged).",
+     "role": "given",
+     "block": "r12",
+     "asserting": true
+    },
+    {
+     "id": "r04.1",
+     "text": "If unit0 is ready (packing completed), then unit0 is bundled.",
+     "role": "given",
+     "block": "r04",
+     "asserting": true
+    },
+    {
+     "id": "r13.1",
+     "text": "If unit0 is documented, then unit1 is open (seal removed).",
+     "role": "given",
+     "block": "r13",
+     "asserting": true
+    },
+    {
+     "id": "r05.1",
+     "text": "If unit1 is sound (signal audible) and unit0 is sound (signal audible), then unit0 is checked.",
+     "role": "given",
+     "block": "r05",
+     "asserting": true
+    },
+    {
+     "id": "r08.1",
+     "text": "If unit0 is reviewed and unit0 is staged and unit0 is registered, then unit1 is sound (signal audible).",
+     "role": "given",
+     "block": "r08",
+     "asserting": true
+    },
+    {
+     "id": "r08.2",
+     "text": "If unit2 is dated and unit2 is tied, then unit1 is sound (signal audible).",
+     "role": "given",
+     "block": "r08",
+     "asserting": true
+    },
+    {
+     "id": "r06.1",
+     "text": "If unit0 is sized and unit0 is wrapped-up and unit0 is released, then unit1 is sound (casing intact).",
+     "role": "given",
+     "block": "r06",
+     "asserting": true
+    },
+    {
+     "id": "r06.2",
+     "text": "If unit2 is dated and unit2 is tied, then unit1 is sound (casing intact).",
+     "role": "given",
+     "block": "r06",
+     "asserting": true
+    },
+    {
+     "id": "r06.3",
+     "text": "The sample from lot unit0 is unit2.",
+     "role": "given",
+     "block": "r06",
+     "asserting": true
+    },
+    {
+     "id": "r01.1",
+     "text": "If unit2 is clear (optically transparent), then unit0 is documented.",
+     "role": "given",
+     "block": "r01",
+     "asserting": true
+    },
+    {
+     "id": "r01.2",
+     "text": "If unit2 is dated and unit2 is tied, then unit0 is documented.",
+     "role": "given",
+     "block": "r01",
+     "asserting": true
+    },
+    {
+     "id": "r02.1",
+     "text": "If unit1 is clear (contamination absent), then unit1 is clear (optically transparent).",
+     "role": "given",
+     "block": "r02",
+     "asserting": true
+    },
+    {
+     "id": "r14.1",
+     "text": "If unit1 is sound (casing intact) and unit1 is sound (signal audible), then unit0 is sound (signal audible).",
+     "role": "given",
+     "block": "r14",
+     "asserting": true
+    },
+    {
+     "id": "r07.1",
+     "text": "If unit1 is ready (packing completed), then unit0 is ready (packing completed).",
+     "role": "given",
+     "block": "r07",
+     "asserting": true
+    },
+    {
+     "id": "r03.1",
+     "text": "If unit1 is ready (staffing arranged), then unit1 is ready (packing completed).",
+     "role": "given",
+     "block": "r03",
+     "asserting": true
+    },
+    {
+     "id": "r15.1",
+     "text": "If unit0 is open (account enabled), then unit0 is packed.",
+     "role": "given",
+     "block": "r15",
+     "asserting": true
+    },
+    {
+     "id": "r09.1",
+     "text": "If unit0 is checked, then unit1 is clear (contamination absent).",
+     "role": "given",
+     "block": "r09",
+     "asserting": true
+    },
+    {
+     "id": "n12.1",
+     "text": "Because unit0 is sized and unit0 is wrapped-up and unit0 is released, unit1 is sound.",
+     "role": "claimed",
+     "block": "n12",
+     "asserting": true
+    },
+    {
+     "id": "n13.1",
+     "text": "Since unit0 is reviewed and unit0 is staged and unit0 is registered, it follows that unit1 is sound.",
+     "role": "claimed",
+     "block": "n13",
+     "asserting": true
+    },
+    {
+     "id": "n07.1",
+     "text": "Given that unit1 is sound and unit1 is sound, we infer that unit0 is sound.",
+     "role": "claimed",
+     "block": "n07",
+     "asserting": true
+    },
+    {
+     "id": "n05.1",
+     "text": "It follows that unit0 is checked because unit1 is sound and the immediately preceding sound result holds.",
+     "role": "claimed",
+     "block": "n05",
+     "asserting": true
+    },
+    {
+     "id": "n15.1",
+     "text": "Because unit0 is checked, unit1 is clear.",
+     "role": "claimed",
+     "block": "n15",
+     "asserting": true
+    },
+    {
+     "id": "n16.1",
+     "text": "Since unit1 is clear, it follows that unit1 is clear.",
+     "role": "claimed",
+     "block": "n16",
+     "asserting": true
+    },
+    {
+     "id": "n16.2",
+     "text": "The checks that unit0 is bagged and unit0 is numbered and unit0 is listed would establish that unit0 is clear and unit0 is clear and unit2 is clear, respectively.",
+     "role": "claimed",
+     "block": "n16",
+     "asserting": true
+    },
+    {
+     "id": "n04.1",
+     "text": "Given that unit1 is clear and unit0 is inspected, we infer that unit2 is clear.",
+     "role": "claimed",
+     "block": "n04",
+     "asserting": true
+    },
+    {
+     "id": "n02.1",
+     "text": "It follows that unit0 is documented because the immediately preceding clear result holds.",
+     "role": "claimed",
+     "block": "n02",
+     "asserting": true
+    },
+    {
+     "id": "n17.1",
+     "text": "Because unit0 is documented, unit1 is open.",
+     "role": "claimed",
+     "block": "n17",
+     "asserting": true
+    },
+    {
+     "id": "n01.1",
+     "text": "Since unit1 is open, it follows that unit1 is open.",
+     "role": "claimed",
+     "block": "n01",
+     "asserting": true
+    },
+    {
+     "id": "n21.1",
+     "text": "Given that unit1 is open, we infer that unit0 is open.",
+     "role": "claimed",
+     "block": "n21",
+     "asserting": true
+    },
+    {
+     "id": "n10.1",
+     "text": "It follows that unit0 is packed because the immediately preceding open result holds.",
+     "role": "claimed",
+     "block": "n10",
+     "asserting": true
+    },
+    {
+     "id": "n14.1",
+     "text": "Because unit0 is packed, unit1 is ready.",
+     "role": "claimed",
+     "block": "n14",
+     "asserting": true
+    },
+    {
+     "id": "n20.1",
+     "text": "Since unit1 is ready, it follows that unit1 is ready.",
+     "role": "claimed",
+     "block": "n20",
+     "asserting": true
+    },
+    {
+     "id": "n00.1",
+     "text": "Given that unit1 is ready, we infer that unit0 is ready.",
+     "role": "claimed",
+     "block": "n00",
+     "asserting": true
+    },
+    {
+     "id": "n08.1",
+     "text": "It follows that unit0 is bundled because the immediately preceding ready result holds.",
+     "role": "claimed",
+     "block": "n08",
+     "asserting": true
+    }
+   ]
+  },
+  "targets": [
+   {
+    "id": "t_n08",
+    "sentence": "n08.1"
+   }
+  ],
+  "options": {
+   "premise_suggestions": false,
+   "max_proof_steps": 10000,
+   "max_domain_size": 2,
+   "max_models": 2000,
+   "max_evaluations": 100000,
+   "proposer_k": 3,
+   "propose_repair_rounds": 1
+  },
+  "metadata": {
+   "p5_item_id": "idef535ff33c43fd88eabd3d10685d5b6",
+   "p5_root": "n08",
+   "p5_paragraph_parents": {
+    "n12": [
+     "n19"
+    ],
+    "n13": [
+     "n19"
+    ],
+    "n07": [
+     "n12",
+     "n13"
+    ],
+    "n05": [
+     "n13",
+     "n07"
+    ],
+    "n15": [
+     "n05"
+    ],
+    "n16": [
+     "n15"
+    ],
+    "n04": [
+     "n15",
+     "n16"
+    ],
+    "n02": [
+     "n16",
+     "n04"
+    ],
+    "n17": [
+     "n16",
+     "n02"
+    ],
+    "n01": [
+     "n17"
+    ],
+    "n21": [
+     "n01"
+    ],
+    "n10": [
+     "n05",
+     "n21"
+    ],
+    "n14": [
+     "n07",
+     "n10"
+    ],
+    "n20": [
+     "n16",
+     "n14"
+    ],
+    "n00": [
+     "n20"
+    ],
+    "n08": [
+     "n00"
+    ]
+   },
+   "eval": {
+    "author": "gemini",
+    "arm": "A4",
+    "split": "dev",
+    "prompt_version": "ve-assist-eval-prompts@2"
+   }
+  },
+  "created": "2026-09-23T04:30:55+00:00",
+  "config_digest": "6fd9b2a70f3d24bef6bf3c175cc8f3b0f18296cc184eb12738090ce5195697b5"
+ },
+ "events": [
+  {
+   "seq": 0,
+   "action": "sentences",
+   "args": {},
+   "time": "2026-09-23T04:30:55+00:00",
+   "result": {
+    "ok": true,
+    "sentences": [
+     {
+      "id": "n06.1",
+      "role": "given",
+      "text": "Rules r09, r00, r07 are declared.",
+      "asserting": true
+     },
+     {
+      "id": "n11.1",
+      "role": "given",
+      "text": "Rules r05, r13, r03 are declared.",
+      "asserting": true
+     },
+     {
+      "id": "n18.1",
+      "role": "given",
+      "text": "Rules r08, r11, r15 are declared.",
+      "asserting": true
+     },
+     {
+      "id": "n03.1",
+      "role": "given",
+      "text": "Rules r06, r02, r10, r04 are declared.",
+      "asserting": true
+     },
+     {
+      "id": "n09.1",
+      "role": "given",
+      "text": "Rules r14, r01, r12 are declared.",
+      "asserting": true
+     },
+     {
+      "id": "n19.1",
+      "role": "given",
+      "text": "unit0 is sized; unit0 is wrapped-up; unit0 is released; unit0 is reviewed; unit0 is staged; unit0 is registered; unit0 is inspected.",
+      "asserting": true
+     },
+     {
+      "id": "n19.2",
+      "role": "given",
+      "text": "The checks that unit0 is bagged and unit0 is numbered and unit0 is listed remain unassumed.",
+      "asserting": true
+     },
+     {
+      "id": "r11.1",
+      "role": "given",
+      "text": "If unit1 is clear (optically transparent) and unit0 is bagged, then unit0 is clear (contamination absent).",
+      "asserting": true
+     },
+     {
+      "id": "r11.2",
+      "role": "given",
+      "text": "If unit1 is clear (optically transparent) and unit0 is inspected, then unit2 is clear (contamination absent).",
+      "asserting": true
+     },
+     {
+      "id": "r11.3",
+      "role": "given",
+      "text": "If unit1 is clear (optically transparent) and unit0 is numbered, then unit0 is clear (optically transparent).",
+      "asserting": true
+     },
+     {
+      "id": "r11.4",
+      "role": "given",
+      "text": "If unit1 is clear (optically transparent) and unit0 is listed, then unit2 is clear (optically transparent).",
+      "asserting": true
+     },
+     {
+      "id": "r00.1",
+      "role": "given",
+      "text": "If unit1 is open (seal removed), then unit1 is open (account enabled).",
+      "asserting": true
+     },
+     {
+      "id": "r10.1",
+      "role": "given",
+      "text": "If unit1 is open (account enabled), then unit0 is open (account enabled).",
+      "asserting": true
+     },
+     {
+      "id": "r12.1",
+      "role": "given",
+      "text": "If unit0 is packed, then unit1 is ready (staffing arranged).",
+      "asserting": true
+     },
+     {
+      "id": "r04.1",
+      "role": "given",
+      "text": "If unit0 is ready (packing completed), then unit0 is bundled.",
+      "asserting": true
+     },
+     {
+      "id": "r13.1",
+      "role": "given",
+      "text": "If unit0 is documented, then unit1 is open (seal removed).",
+      "asserting": true
+     },
+     {
+      "id": "r05.1",
+      "role": "given",
+      "text": "If unit1 is sound (signal audible) and unit0 is sound (signal audible), then unit0 is checked.",
+      "asserting": true
+     },
+     {
+      "id": "r08.1",
+      "role": "given",
+      "text": "If unit0 is reviewed and unit0 is staged and unit0 is registered, then unit1 is sound (signal audible).",
+      "asserting": true
+     },
+     {
+      "id": "r08.2",
+      "role": "given",
+      "text": "If unit2 is dated and unit2 is tied, then unit1 is sound (signal audible).",
+      "asserting": true
+     },
+     {
+      "id": "r06.1",
+      "role": "given",
+      "text": "If unit0 is sized and unit0 is wrapped-up and unit0 is released, then unit1 is sound (casing intact).",
+      "asserting": true
+     },
+     {
+      "id": "r06.2",
+      "role": "given",
+      "text": "If unit2 is dated and unit2 is tied, then unit1 is sound (casing intact).",
+      "asserting": true
+     },
+     {
+      "id": "r06.3",
+      "role": "given",
+      "text": "The sample from lot unit0 is unit2.",
+      "asserting": true
+     },
+     {
+      "id": "r01.1",
+      "role": "given",
+      "text": "If unit2 is clear (optically transparent), then unit0 is documented.",
+      "asserting": true
+     },
+     {
+      "id": "r01.2",
+      "role": "given",
+      "text": "If unit2 is dated and unit2 is tied, then unit0 is documented.",
+      "asserting": true
+     },
+     {
+      "id": "r02.1",
+      "role": "given",
+      "text": "If unit1 is clear (contamination absent), then unit1 is clear (optically transparent).",
+      "asserting": true
+     },
+     {
+      "id": "r14.1",
+      "role": "given",
+      "text": "If unit1 is sound (casing intact) and unit1 is sound (signal audible), then unit0 is sound (signal audible).",
+      "asserting": true
+     },
+     {
+      "id": "r07.1",
+      "role": "given",
+      "text": "If unit1 is ready (packing completed), then unit0 is ready (packing completed).",
+      "asserting": true
+     },
+     {
+      "id": "r03.1",
+      "role": "given",
+      "text": "If unit1 is ready (staffing arranged), then unit1 is ready (packing completed).",
+      "asserting": true
+     },
+     {
+      "id": "r15.1",
+      "role": "given",
+      "text": "If unit0 is open (account enabled), then unit0 is packed.",
+      "asserting": true
+     },
+     {
+      "id": "r09.1",
+      "role": "given",
+      "text": "If unit0 is checked, then unit1 is clear (contamination absent).",
+      "asserting": true
+     },
+     {
+      "id": "n12.1",
+      "role": "claimed",
+      "text": "Because unit0 is sized and unit0 is wrapped-up and unit0 is released, unit1 is sound.",
+      "asserting": true
+     },
+     {
+      "id": "n13.1",
+      "role": "claimed",
+      "text": "Since unit0 is reviewed and unit0 is staged and unit0 is registered, it follows that unit1 is sound.",
+      "asserting": true
+     },
+     {
+      "id": "n07.1",
+      "role": "claimed",
+      "text": "Given that unit1 is sound and unit1 is sound, we infer that unit0 is sound.",
+      "asserting": true
+     },
+     {
+      "id": "n05.1",
+      "role": "claimed",
+      "text": "It follows that unit0 is checked because unit1 is sound and the immediately preceding sound result holds.",
+      "asserting": true
+     },
+     {
+      "id": "n15.1",
+      "role": "claimed",
+      "text": "Because unit0 is checked, unit1 is clear.",
+      "asserting": true
+     },
+     {
+      "id": "n16.1",
+      "role": "claimed",
+      "text": "Since unit1 is clear, it follows that unit1 is clear.",
+      "asserting": true
+     },
+     {
+      "id": "n16.2",
+      "role": "claimed",
+      "text": "The checks that unit0 is bagged and unit0 is numbered and unit0 is listed would establish that unit0 is clear and unit0 is clear and unit2 is clear, respectively.",
+      "asserting": true
+     },
+     {
+      "id": "n04.1",
+      "role": "claimed",
+      "text": "Given that unit1 is clear and unit0 is inspected, we infer that unit2 is clear.",
+      "asserting": true
+     },
+     {
+      "id": "n02.1",
+      "role": "claimed",
+      "text": "It follows that unit0 is documented because the immediately preceding clear result holds.",
+      "asserting": true
+     },
+     {
+      "id": "n17.1",
+      "role": "claimed",
+      "text": "Because unit0 is documented, unit1 is open.",
+      "asserting": true
+     },
+     {
+      "id": "n01.1",
+      "role": "claimed",
+      "text": "Since unit1 is open, it follows that unit1 is open.",
+      "asserting": true
+     },
+     {
+      "id": "n21.1",
+      "role": "claimed",
+      "text": "Given that unit1 is open, we infer that unit0 is open.",
+      "asserting": true
+     },
+     {
+      "id": "n10.1",
+      "role": "claimed",
+      "text": "It follows that unit0 is packed because the immediately preceding open result holds.",
+      "asserting": true
+     },
+     {
+      "id": "n14.1",
+      "role": "claimed",
+      "text": "Because unit0 is packed, unit1 is ready.",
+      "asserting": true
+     },
+     {
+      "id": "n20.1",
+      "role": "claimed",
+      "text": "Since unit1 is ready, it follows that unit1 is ready.",
+      "asserting": true
+     },
+     {
+      "id": "n00.1",
+      "role": "claimed",
+      "text": "Given that unit1 is ready, we infer that unit0 is ready.",
+      "asserting": true
+     },
+     {
+      "id": "n08.1",
+      "role": "claimed",
+      "text": "It follows that unit0 is bundled because the immediately preceding ready result holds.",
+      "asserting": true
+     }
+    ],
+    "targets": [
+     {
+      "id": "t_n08",
+      "sentence": {
+       "id": "n08.1",
+       "role": "claimed",
+       "text": "It follows that unit0 is bundled because the immediately preceding ready result holds."
+      },
+      "frozen": false
+     }
+    ],
+    "vocabulary": {
+     "sorts": {
+      "entity": "A named dossier entity."
+     },
+     "predicates": {
+      "audited": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "audited: audit completed (R11)"
+      },
+      "bagged": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "bagged: bag fitted (R07)"
+      },
+      "booked": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "booked: transport reserved (R36)"
+      },
+      "boxed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "boxed: box fitted (R18)"
+      },
+      "bundled": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "bundled: bundle formed (R23)"
+      },
+      "calibrated": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "calibrated: calibration recorded (R02)"
+      },
+      "checked": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "checked: check completed (R47)"
+      },
+      "clear_contamination_absent": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "clear: contamination absent (R20)"
+      },
+      "clear_optically_transparent": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "clear: optically transparent (R03)"
+      },
+      "clipped": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "clipped: clip attached (R29)"
+      },
+      "coded": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "coded: identifier assigned (R25)"
+      },
+      "cooled": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "cooled: temperature reduced (R51)"
+      },
+      "dated": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "dated: date recorded (R21)"
+      },
+      "documented": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "documented: documentation stored (R06)"
+      },
+      "dried": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "dried: moisture removed (R05)"
+      },
+      "filed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "filed: document stored (R54)"
+      },
+      "inspected": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "inspected: inspection completed (R27)"
+      },
+      "labelled": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "labelled: label attached (R09)"
+      },
+      "listed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "listed: catalogue entry made (R38)"
+      },
+      "loaded": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "loaded: loading completed (R58)"
+      },
+      "logged": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "logged: entry recorded (R16)"
+      },
+      "marked": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "marked: mark applied (R08)"
+      },
+      "measured": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "measured: measurement recorded (R60)"
+      },
+      "mounted": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "mounted: mount fitted (R01)"
+      },
+      "numbered": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "numbered: number assigned (R37)"
+      },
+      "open_account_enabled": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "open: account enabled (R50)"
+      },
+      "open_seal_removed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "open: seal removed (R57)"
+      },
+      "packed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "packed: container filled (R56)"
+      },
+      "photographed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "photographed: image recorded (R10)"
+      },
+      "processed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "processed: processing completed (R46)"
+      },
+      "queued": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "queued: place assigned (R48)"
+      },
+      "rated": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "rated: grade recorded (R33)"
+      },
+      "ready_packing_completed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "ready: packing completed (R49)"
+      },
+      "ready_staffing_arranged": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "ready: staffing arranged (R44)"
+      },
+      "received": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "received: receipt recorded (R52)"
+      },
+      "registered": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "registered: registration recorded (R39)"
+      },
+      "released": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "released: release recorded (R12)"
+      },
+      "retained": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "retained: retention recorded (R41)"
+      },
+      "reviewed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "reviewed: review completed (R34)"
+      },
+      "scheduled": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "scheduled: time assigned (R40)"
+      },
+      "sealed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "sealed: packaging intact (R17)"
+      },
+      "secured": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "secured: fastener fitted (R22)"
+      },
+      "shelved": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "shelved: shelf assigned (R04)"
+      },
+      "shipped": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "shipped: departure recorded (R32)"
+      },
+      "sized": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "sized: dimensions measured (R24)"
+      },
+      "sorted": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "sorted: contents ordered (R13)"
+      },
+      "sound_casing_intact": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "sound: casing intact (R19)"
+      },
+      "sound_signal_audible": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "sound: signal audible (R42)"
+      },
+      "stacked": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "stacked: stack formed (R26)"
+      },
+      "staged": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "staged: staging completed (R55)"
+      },
+      "stamped": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "stamped: stamp applied (R53)"
+      },
+      "stored": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "stored: location assigned (R35)"
+      },
+      "tagged": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "tagged: tag attached (R59)"
+      },
+      "tested": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "tested: test completed (R15)"
+      },
+      "tied": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "tied: tie attached (R31)"
+      },
+      "tracked": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "tracked: tracking enabled (R28)"
+      },
+      "unloaded": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "unloaded: unloading completed (R45)"
+      },
+      "weighed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "weighed: mass measured (R14)"
+      },
+      "weighed_in": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "weighed-in: arrival mass recorded (R43)"
+      },
+      "wrapped_up": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "wrapped-up: handling completed (R30)"
+      }
+     },
+     "constants": {
+      "unit0": "entity",
+      "unit1": "entity",
+      "unit2": "entity"
+     }
+    }
+   },
+   "result_chars": 11960
+  },
+  {
+   "seq": 1,
+   "action": "status",
+   "args": {},
+   "time": "2026-09-23T04:30:56+00:00",
+   "result": {
+    "ok": true,
+    "success": false,
+    "failures": [
+     "target t_n08: target not frozen",
+     "47 asserting sentence(s) neither covered nor waived"
+    ],
+    "targets": [
+     {
+      "id": "t_n08",
+      "sentence": {
+       "id": "n08.1",
+       "role": "claimed",
+       "text": "It follows that unit0 is bundled because the immediately preceding ready result holds."
+      },
+      "frozen": false,
+      "certified": false,
+      "reason": "target not frozen"
+     }
+    ],
+    "unproved_steps": [],
+    "unanchored_assumptions": [],
+    "coverage": {
+     "covered": 0,
+     "waived": 0,
+     "uncovered": [
+      "n06.1",
+      "n11.1",
+      "n18.1",
+      "n03.1",
+      "n09.1",
+      "n19.1",
+      "n19.2",
+      "r11.1",
+      "r11.2",
+      "r11.3",
+      "r11.4",
+      "r00.1",
+      "r10.1",
+      "r12.1",
+      "r04.1",
+      "r13.1",
+      "r05.1",
+      "r08.1",
+      "r08.2",
+      "r06.1",
+      "r06.2",
+      "r06.3",
+      "r01.1",
+      "r01.2",
+      "r02.1",
+      "r14.1",
+      "r07.1",
+      "r03.1",
+      "r15.1",
+      "r09.1",
+      "n12.1",
+      "n13.1",
+      "n07.1",
+      "n05.1",
+      "n15.1",
+      "n16.1",
+      "n16.2",
+      "n04.1",
+      "n02.1",
+      "n17.1",
+      "n01.1",
+      "n21.1",
+      "n10.1",
+      "n14.1",
+      "n20.1",
+      "n00.1",
+      "n08.1"
+     ],
+     "sentences": [
+      {
+       "sentence": "n06.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n11.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n18.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n03.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n09.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n19.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n19.2",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r11.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r11.2",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r11.3",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r11.4",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r00.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r10.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r12.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r04.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r13.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r05.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r08.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r08.2",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r06.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r06.2",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r06.3",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r01.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r01.2",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r02.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r14.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r07.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r03.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r15.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "r09.1",
+       "role": "given",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n12.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n13.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n07.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n05.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n15.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n16.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n16.2",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n04.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n02.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n17.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n01.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n21.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n10.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n14.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n20.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n00.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      },
+      {
+       "sentence": "n08.1",
+       "role": "claimed",
+       "state": "uncovered",
+       "nodes": []
+      }
+     ]
+    },
+    "renamed_conclusions": [],
+    "provenance": {
+     "hand-written": 0,
+     "proposer-verbatim": 0,
+     "proposer-edited": 0,
+     "suggestion-verbatim": 0,
+     "suggestion-edited": 0
+    },
+    "declared": {},
+    "usage": {
+     "tokens": {},
+     "actions": {
+      "sentences": 1
+     },
+     "events": 1,
+     "rejected_actions": 0,
+     "tool_result_chars": 11960
+    }
+   },
+   "result_chars": 4775
+  }
+ ]
+}

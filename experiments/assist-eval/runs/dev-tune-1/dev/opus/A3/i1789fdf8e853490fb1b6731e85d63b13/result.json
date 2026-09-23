@@ -1,0 +1,57 @@
+{
+ "item_id": "i1789fdf8e853490fb1b6731e85d63b13",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A3",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "complete",
+  "gap_steps": [],
+  "note": "Every claimed sentence has its own step node, using the sense that its cited rules establish. All steps are certified by the checker, and t_n08 (unit0 is bundled) is derived from anchored givens. I waived the rule-declaration sentences, n19.2, the unused alternative rules (r08.2, r06.2, r01.2) and the unused background sentence r06.3."
+ },
+ "turns": 8,
+ "tool_calls": 67,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.694003",
+  "proposer": "0",
+  "total": "0.694003"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": true,
+ "status": {
+  "success": true,
+  "failures": [],
+  "targets": [
+   {
+    "id": "t_n08",
+    "text": "@unit0 is bundled.",
+    "certified": true,
+    "reason": null,
+    "replay": "Checked",
+    "node": "s_n08"
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "covered": 37,
+  "waived": 10,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 37,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 59.8,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

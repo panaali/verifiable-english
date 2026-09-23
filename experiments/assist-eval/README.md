@@ -33,10 +33,12 @@ ledgers are per session and the Gemini ledger is per run.
 ```sh
 M="uv run python -m ve_experiments.assist_eval"
 # 1. DEV tuning pass (all authors x arms x 12 DEV items; Gemini spend hard-capped by the run ledger)
-$M run --split dev --run-id dev-tune-1 --authors opus,haiku,gemini --arms A2,A3,A4 --gemini-cap-usd 80
-$M audit-export --run-id dev-tune-1
-$M audit-run    --run-id dev-tune-1 --gemini-cap-usd 90   # same run ledger, raise the cap to cover audits
-$M report       --run-id dev-tune-1
+# one author x arm per command, so that one Claude account serves the whole arm
+$M run --split dev --run-id dev-tune-2 --authors opus --arms A2 --account saeedi.danial   # ... each author x arm
+$M run --split dev --run-id dev-tune-2 --authors gemini --arms A2,A3,A4 --gemini-cap-usd 40
+$M audit-export --run-id dev-tune-2
+$M audit-run    --run-id dev-tune-2 --account saeedi.danial   # Codex audits Claude authors, Opus audits Gemini
+$M report       --run-id dev-tune-2
 # (optional prompt/budget changes: bump PROMPT_VERSION, log them below, rerun with a new --run-id)
 # 2. Freeze
 #    edit PREREG-ASSIST.md line 1 -> "Status: FROZEN 2026-..", then:
@@ -46,7 +48,7 @@ uvx --from opentimestamps-client ots stamp experiments/assist-eval/PREREG-HASHES
 # 3. HELD-OUT evaluation (refuses unless FROZEN and hashes match)
 $M run --split heldout --run-id heldout-1 --authors opus,haiku,gemini --arms A2,A3,A4 --gemini-cap-usd 80
 $M audit-export --run-id heldout-1
-$M audit-run    --run-id heldout-1 --gemini-cap-usd 90
+$M audit-run    --run-id heldout-1
 $M report       --run-id heldout-1
 ```
 
@@ -81,7 +83,51 @@ Change made before any tuning run (prompts v2): the task now requires one step p
 exactly that sentence's conclusion. Audit packets now show "also anchored to" for multi-anchored nodes. The v1 smoke
 artifacts are kept unchanged.
 
+## dev-tune-1 (2026-09-23): DISCARDED
+
+`runs/dev-tune-1/` is kept unchanged but is **not evidence**: it ran the unfixed tool (before the `ve-green-assist`
+fixes merged from `ve-integration`), and the branch was switched during the run. Its report's "0 audits passed" is
+an artefact. Diagnosis:
+
+- The first Gemini A3 call was counted at ~3.5k input tokens by Vertex `countTokens` (the reservation allowed
+  3,846 with the old 2% + 256 margin) but billed 4,004: `countTokens` under-counts the function declarations. The
+  paid ledger recorded `panel_validation_halt` ("provider exceeded per-call token cap"), which is sticky for model
+  `pro`. Every later Gemini session (11 A2, 12 A3, 12 A4) aborted at $0, and so did every Gemini audit call.
+- `audit-run` therefore audited exactly one packet (a Gemini A4 packet with no units, which Opus answered with
+  `{"units": []}`), then raised on the first Claude-author packet (Gemini auditor, halted ledger) and exited 1.
+  96 of 97 packets had no verdict, and `report` counted every unaudited tool success as "certified unfaithful".
+
+Fixes: the Gemini margin is now 5% + 2,048 tokens; `audit-run` logs auditor errors to `audit/errors.jsonl`,
+continues, and exits 1 while any packet lacks a verdict; an empty packet fails without an auditor call; `report`
+counts certified-unfaithful only for audited sessions; a Claude infrastructure abort (e.g. a session limit) or a
+halted Gemini ledger stops the run instead of recording failures.
+
+## dev-tune-2 changes (fixed tool, prompts v3)
+
+- Tool: `ve assist` from `ve-integration` (tag `ve-green-assist`). Every session's final ledger, and every A2
+  attempt ledger, is checked with `ve.assist.verify_session` (dossier, arm options, the session's dedicated
+  `proposer-calls.jsonl`); an unverified ledger is never a success (`result.json` `verification`).
+- Proposer: `--proposer-model haiku|sonnet|opus` (default haiku), recorded per session; proposer calls are priced
+  at that model's list price, including failed calls and retried attempts.
+- Success rule: the fixed tool reports any waiver of an asserting sentence as "never success". Every P5 dossier has
+  given meta-sentences that no VE statement states ("Rules r00, r14 are declared.", "The checks that ... remain
+  unassumed."), so strict tool success is structurally unreachable. `tool_success` here = status success, or the
+  waiver line is the only failure and every waived sentence is given; the waivers are audited and must be
+  "acceptable". `tool_success_strict` keeps the tool's own verdict.
+- Auditors (lead decision 2026-09-23): GPT-6 Astra via `codex exec -s read-only -c model_reasoning_effort=high`
+  audits Claude authors; Opus 5.5 audits Gemini. Gemini is an author only. Each verdict records `auditor` and
+  `auditor_model`.
+- Harness: `finish` with verdict "complete" is refused unless the evaluation success rule holds (Haiku finished
+  "complete" after a failed `freeze_target` in a probe).
+- Accounts: `--account LABEL|main`; one account per author x arm.
+- Report: per-session failure attribution (`attribution`, `failing_units` with node provenance): proposer
+  candidate accepted unchanged / author-written / audit disagreement (unclear or missing verdicts) / tool refusal /
+  budget / infrastructure / ledger verification.
+
 ## Tuning log
 
 - v1 (`ve-assist-eval-prompts@1`): initial prompts; smoke only.
 - v2 (`ve-assist-eval-prompts@2`, before any tuning run): added the one-step-per-claimed-sentence rule and the multi-anchor audit wording, in response to the smoke's collapsed graph.
+- v3 (`ve-assist-eval-prompts@3`, before dev-tune-2): coverage text for the fixed tool (claimed sentences derived and
+  never waived; given meta-sentences waived; the waiver status line alone is acceptable); `finish` "complete" is
+  refused by the harness otherwise; the auditor may accept a waiver of a "remain unassumed" sentence.

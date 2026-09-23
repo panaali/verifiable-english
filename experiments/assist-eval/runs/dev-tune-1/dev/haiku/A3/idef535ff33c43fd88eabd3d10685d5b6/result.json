@@ -1,0 +1,113 @@
+{
+ "item_id": "idef535ff33c43fd88eabd3d10685d5b6",
+ "split": "dev",
+ "author": "haiku",
+ "arm": "A3",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "step_n02",
+   "step_n17",
+   "step_n10",
+   "step_n08"
+  ],
+  "note": "The argument has a semantic gap at step_n02. The immediately preceding result (step_n04) establishes that unit2 is clear (contamination absent), but rule r01.1 requires unit2 to be clear (optically transparent). These are different senses of 'clear' as indicated by the vocabulary. There is no rule converting between clear_contamination_absent and clear_optically_transparent for unit2. This breaks the chain at step_n02 (documented) and cascades to all downstream steps."
+ },
+ "turns": 2,
+ "tool_calls": 2,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.06088375",
+  "proposer": "0",
+  "total": "0.06088375"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n08: target not frozen",
+   "47 asserting sentence(s) neither covered nor waived"
+  ],
+  "targets": [
+   {
+    "id": "t_n08",
+    "text": null,
+    "certified": false,
+    "reason": "target not frozen",
+    "replay": null,
+    "node": null
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "n06.1",
+   "n11.1",
+   "n18.1",
+   "n03.1",
+   "n09.1",
+   "n19.1",
+   "n19.2",
+   "r11.1",
+   "r11.2",
+   "r11.3",
+   "r11.4",
+   "r00.1",
+   "r10.1",
+   "r12.1",
+   "r04.1",
+   "r13.1",
+   "r05.1",
+   "r08.1",
+   "r08.2",
+   "r06.1",
+   "r06.2",
+   "r06.3",
+   "r01.1",
+   "r01.2",
+   "r02.1",
+   "r14.1",
+   "r07.1",
+   "r03.1",
+   "r15.1",
+   "r09.1",
+   "n12.1",
+   "n13.1",
+   "n07.1",
+   "n05.1",
+   "n15.1",
+   "n16.1",
+   "n16.2",
+   "n04.1",
+   "n02.1",
+   "n17.1",
+   "n01.1",
+   "n21.1",
+   "n10.1",
+   "n14.1",
+   "n20.1",
+   "n00.1",
+   "n08.1"
+  ],
+  "covered": 0,
+  "waived": 0,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 0,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 75.3,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

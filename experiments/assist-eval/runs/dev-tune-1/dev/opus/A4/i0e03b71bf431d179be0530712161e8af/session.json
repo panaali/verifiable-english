@@ -1,0 +1,4382 @@
+{
+ "format": "ve.assist-session@1",
+ "config": {
+  "format": "ve.assist-session@1",
+  "tool_version": "ve-assist@1",
+  "environment": {
+   "language": "ve.core@0",
+   "profile": "relational-fol@0",
+   "spec_revision": "ve-v0-draft-2026-09-20",
+   "vocabulary": {
+    "sorts": {
+     "entity": {
+      "description": "A named dossier entity."
+     }
+    },
+    "predicates": {
+     "bagged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "bagged: bag fitted (R25)"
+     },
+     "balanced": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "balanced: balance checked (R02)"
+     },
+     "boxed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "boxed: box fitted (R03)"
+     },
+     "bundled": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "bundled: bundle formed (R15)"
+     },
+     "calibrated": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "calibrated: calibration recorded (R26)"
+     },
+     "checked": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "checked: check completed (R33)"
+     },
+     "cleared_inspection_passed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "cleared: inspection passed (R17)"
+     },
+     "cleared_payment_settled": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "cleared: payment settled (R16)"
+     },
+     "clipped": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "clipped: clip attached (R06)"
+     },
+     "coded": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "coded: identifier assigned (R19)"
+     },
+     "cooled": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "cooled: temperature reduced (R08)"
+     },
+     "counted": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "counted: quantity tallied (R21)"
+     },
+     "dried": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "dried: moisture removed (R12)"
+     },
+     "filed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "filed: document stored (R34)"
+     },
+     "loaded": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "loaded: loading completed (R04)"
+     },
+     "logged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "logged: entry recorded (R07)"
+     },
+     "marked": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "marked: mark applied (R30)"
+     },
+     "mounted": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "mounted: mount fitted (R09)"
+     },
+     "numbered": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "numbered: number assigned (R28)"
+     },
+     "packed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "packed: container filled (R32)"
+     },
+     "photographed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "photographed: image recorded (R29)"
+     },
+     "processed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "processed: processing completed (R13)"
+     },
+     "rated": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "rated: grade recorded (R40)"
+     },
+     "ready_packing_completed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "ready: packing completed (R14)"
+     },
+     "ready_staffing_arranged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "ready: staffing arranged (R18)"
+     },
+     "received": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "received: receipt recorded (R11)"
+     },
+     "registered": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "registered: registration recorded (R01)"
+     },
+     "released": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "released: release recorded (R23)"
+     },
+     "retained": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "retained: retention recorded (R35)"
+     },
+     "routed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "routed: route assigned (R20)"
+     },
+     "scanned": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "scanned: barcode read (R38)"
+     },
+     "shelved": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "shelved: shelf assigned (R24)"
+     },
+     "sound_casing_intact": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "sound: casing intact (R36)"
+     },
+     "sound_signal_audible": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "sound: signal audible (R37)"
+     },
+     "stable_shape_retained": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "stable: shape retained (R10)"
+     },
+     "stable_temperature_constant": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "stable: temperature constant (R05)"
+     },
+     "stacked": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "stacked: stack formed (R39)"
+     },
+     "stamped": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "stamped: stamp applied (R27)"
+     },
+     "supplied": {
+      "arguments": [
+       "entity",
+       "entity"
+      ],
+      "description": "Lot supplied sample."
+     },
+     "tied": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "tied: tie attached (R22)"
+     },
+     "weighed_in": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "weighed-in: arrival mass recorded (R31)"
+     }
+    },
+    "constants": {
+     "unit1": {
+      "sort": "entity",
+      "description": "unit1"
+     },
+     "unit3": {
+      "sort": "entity",
+      "description": "unit3"
+     },
+     "unit5": {
+      "sort": "entity",
+      "description": "unit5"
+     }
+    }
+   }
+  },
+  "english_vocabulary": null,
+  "source": {
+   "sentences": [
+    {
+     "id": "n05.1",
+     "text": "Rules r00, r14, r12, r05 are declared.",
+     "role": "given",
+     "block": "n05",
+     "asserting": true
+    },
+    {
+     "id": "n06.1",
+     "text": "Rules r03, r07, r08 are declared.",
+     "role": "given",
+     "block": "n06",
+     "asserting": true
+    },
+    {
+     "id": "n19.1",
+     "text": "Rules r06, r10, r13 are declared.",
+     "role": "given",
+     "block": "n19",
+     "asserting": true
+    },
+    {
+     "id": "n09.1",
+     "text": "unit5 is bundled; unit5 is retained; unit5 is packed; unit5 is mounted; unit5 is routed; unit5 is rated; unit5 is coded.",
+     "role": "given",
+     "block": "n09",
+     "asserting": true
+    },
+    {
+     "id": "n09.2",
+     "text": "The checks that unit5 is stacked and unit5 is checked and unit5 is scanned remain unassumed.",
+     "role": "given",
+     "block": "n09",
+     "asserting": true
+    },
+    {
+     "id": "n11.1",
+     "text": "Rules r09, r04, r11 are declared.",
+     "role": "given",
+     "block": "n11",
+     "asserting": true
+    },
+    {
+     "id": "n21.1",
+     "text": "Rules r01, r02, r15 are declared.",
+     "role": "given",
+     "block": "n21",
+     "asserting": true
+    },
+    {
+     "id": "r08.1",
+     "text": "If unit1 is cleared (payment settled), then unit5 is balanced.",
+     "role": "given",
+     "block": "r08",
+     "asserting": true
+    },
+    {
+     "id": "r09.1",
+     "text": "If unit3 is ready (packing completed) and unit5 is ready (packing completed), then unit5 is weighed-in.",
+     "role": "given",
+     "block": "r09",
+     "asserting": true
+    },
+    {
+     "id": "r03.1",
+     "text": "If unit5 is mounted and unit5 is routed and unit5 is rated, then unit3 is ready (packing completed).",
+     "role": "given",
+     "block": "r03",
+     "asserting": true
+    },
+    {
+     "id": "r03.2",
+     "text": "If unit5 is tied and unit5 is boxed, then unit3 is ready (packing completed).",
+     "role": "given",
+     "block": "r03",
+     "asserting": true
+    },
+    {
+     "id": "r01.1",
+     "text": "If unit5 is weighed-in, then unit3 is sound (casing intact).",
+     "role": "given",
+     "block": "r01",
+     "asserting": true
+    },
+    {
+     "id": "r15.1",
+     "text": "If unit3 is stable (shape retained) and unit5 is stacked, then unit1 is stable (temperature constant).",
+     "role": "given",
+     "block": "r15",
+     "asserting": true
+    },
+    {
+     "id": "r15.2",
+     "text": "If unit3 is stable (shape retained) and unit5 is checked, then unit1 is stable (shape retained).",
+     "role": "given",
+     "block": "r15",
+     "asserting": true
+    },
+    {
+     "id": "r15.3",
+     "text": "If unit3 is stable (shape retained) and unit5 is coded, then unit5 is stable (temperature constant).",
+     "role": "given",
+     "block": "r15",
+     "asserting": true
+    },
+    {
+     "id": "r15.4",
+     "text": "If unit3 is stable (shape retained) and unit5 is scanned, then unit5 is stable (shape retained).",
+     "role": "given",
+     "block": "r15",
+     "asserting": true
+    },
+    {
+     "id": "r11.1",
+     "text": "If unit3 is stable (temperature constant), then unit3 is stable (shape retained).",
+     "role": "given",
+     "block": "r11",
+     "asserting": true
+    },
+    {
+     "id": "r04.1",
+     "text": "If unit5 is logged, then unit3 is cleared (inspection passed).",
+     "role": "given",
+     "block": "r04",
+     "asserting": true
+    },
+    {
+     "id": "r00.1",
+     "text": "If unit5 is bundled and unit5 is retained and unit5 is packed, then unit3 is ready (staffing arranged).",
+     "role": "given",
+     "block": "r00",
+     "asserting": true
+    },
+    {
+     "id": "r00.2",
+     "text": "If unit5 is tied and unit5 is boxed, then unit3 is ready (staffing arranged).",
+     "role": "given",
+     "block": "r00",
+     "asserting": true
+    },
+    {
+     "id": "r00.3",
+     "text": "Lot unit5 supplied sample unit1.",
+     "role": "given",
+     "block": "r00",
+     "asserting": true
+    },
+    {
+     "id": "r12.1",
+     "text": "If unit3 is cleared (payment settled), then unit1 is cleared (payment settled).",
+     "role": "given",
+     "block": "r12",
+     "asserting": true
+    },
+    {
+     "id": "r13.1",
+     "text": "If unit5 is balanced, then unit3 is stable (temperature constant).",
+     "role": "given",
+     "block": "r13",
+     "asserting": true
+    },
+    {
+     "id": "r07.1",
+     "text": "If unit3 is sound (signal audible), then unit5 is sound (signal audible).",
+     "role": "given",
+     "block": "r07",
+     "asserting": true
+    },
+    {
+     "id": "r05.1",
+     "text": "If unit5 is stable (shape retained), then unit5 is calibrated.",
+     "role": "given",
+     "block": "r05",
+     "asserting": true
+    },
+    {
+     "id": "r05.2",
+     "text": "If unit5 is tied and unit5 is boxed, then unit5 is calibrated.",
+     "role": "given",
+     "block": "r05",
+     "asserting": true
+    },
+    {
+     "id": "r02.1",
+     "text": "If unit3 is cleared (inspection passed), then unit3 is cleared (payment settled).",
+     "role": "given",
+     "block": "r02",
+     "asserting": true
+    },
+    {
+     "id": "r06.1",
+     "text": "If unit3 is ready (staffing arranged) and unit3 is ready (packing completed), then unit5 is ready (packing completed).",
+     "role": "given",
+     "block": "r06",
+     "asserting": true
+    },
+    {
+     "id": "r14.1",
+     "text": "If unit3 is sound (casing intact), then unit3 is sound (signal audible).",
+     "role": "given",
+     "block": "r14",
+     "asserting": true
+    },
+    {
+     "id": "r10.1",
+     "text": "If unit5 is sound (signal audible), then unit5 is logged.",
+     "role": "given",
+     "block": "r10",
+     "asserting": true
+    },
+    {
+     "id": "n18.1",
+     "text": "Because unit5 is bundled and unit5 is retained and unit5 is packed, unit3 is ready.",
+     "role": "claimed",
+     "block": "n18",
+     "asserting": true
+    },
+    {
+     "id": "n18.2",
+     "text": "The checks that unit5 is stacked and unit5 is checked and unit5 is scanned would imply that unit1 is stable and unit1 is stable and unit5 is stable, respectively.",
+     "role": "claimed",
+     "block": "n18",
+     "asserting": true
+    },
+    {
+     "id": "n07.1",
+     "text": "Since unit5 is mounted and unit5 is routed and unit5 is rated, it follows that unit3 is ready.",
+     "role": "claimed",
+     "block": "n07",
+     "asserting": true
+    },
+    {
+     "id": "n03.1",
+     "text": "Given that unit3 is ready and unit3 is ready, we infer that unit5 is ready.",
+     "role": "claimed",
+     "block": "n03",
+     "asserting": true
+    },
+    {
+     "id": "n08.1",
+     "text": "It follows that unit5 is weighed-in because unit3 is ready and the immediately preceding ready result holds.",
+     "role": "claimed",
+     "block": "n08",
+     "asserting": true
+    },
+    {
+     "id": "n16.1",
+     "text": "Because unit5 is weighed-in, unit3 is sound.",
+     "role": "claimed",
+     "block": "n16",
+     "asserting": true
+    },
+    {
+     "id": "n12.1",
+     "text": "Since unit3 is sound, it follows that unit3 is sound.",
+     "role": "claimed",
+     "block": "n12",
+     "asserting": true
+    },
+    {
+     "id": "n04.1",
+     "text": "Given that unit3 is sound, we infer that unit5 is sound.",
+     "role": "claimed",
+     "block": "n04",
+     "asserting": true
+    },
+    {
+     "id": "n20.1",
+     "text": "It follows that unit5 is logged because the immediately preceding sound result holds.",
+     "role": "claimed",
+     "block": "n20",
+     "asserting": true
+    },
+    {
+     "id": "n10.1",
+     "text": "Because unit5 is logged, unit3 is cleared.",
+     "role": "claimed",
+     "block": "n10",
+     "asserting": true
+    },
+    {
+     "id": "n02.1",
+     "text": "Since unit3 is cleared, it follows that unit3 is cleared.",
+     "role": "claimed",
+     "block": "n02",
+     "asserting": true
+    },
+    {
+     "id": "n17.1",
+     "text": "Given that unit3 is cleared, we infer that unit1 is cleared.",
+     "role": "claimed",
+     "block": "n17",
+     "asserting": true
+    },
+    {
+     "id": "n00.1",
+     "text": "It follows that unit5 is balanced because the immediately preceding cleared result holds.",
+     "role": "claimed",
+     "block": "n00",
+     "asserting": true
+    },
+    {
+     "id": "n13.1",
+     "text": "Because unit5 is balanced, unit3 is stable.",
+     "role": "claimed",
+     "block": "n13",
+     "asserting": true
+    },
+    {
+     "id": "n01.1",
+     "text": "Since unit3 is stable, it follows that unit3 is stable.",
+     "role": "claimed",
+     "block": "n01",
+     "asserting": true
+    },
+    {
+     "id": "n15.1",
+     "text": "Given that unit3 is stable and unit5 is coded, we infer that unit5 is stable.",
+     "role": "claimed",
+     "block": "n15",
+     "asserting": true
+    },
+    {
+     "id": "n14.1",
+     "text": "It follows that unit5 is calibrated because the immediately preceding stable result holds.",
+     "role": "claimed",
+     "block": "n14",
+     "asserting": true
+    }
+   ]
+  },
+  "targets": [
+   {
+    "id": "t_n14",
+    "sentence": "n14.1"
+   }
+  ],
+  "options": {
+   "premise_suggestions": false,
+   "max_proof_steps": 10000,
+   "max_domain_size": 2,
+   "max_models": 2000,
+   "max_evaluations": 100000,
+   "proposer_k": 3,
+   "propose_repair_rounds": 1
+  },
+  "metadata": {
+   "p5_item_id": "i0e03b71bf431d179be0530712161e8af",
+   "p5_root": "n14",
+   "p5_paragraph_parents": {
+    "n18": [
+     "n09"
+    ],
+    "n07": [
+     "n09"
+    ],
+    "n03": [
+     "n18",
+     "n07"
+    ],
+    "n08": [
+     "n07",
+     "n03"
+    ],
+    "n16": [
+     "n07",
+     "n08"
+    ],
+    "n12": [
+     "n16"
+    ],
+    "n04": [
+     "n03",
+     "n12"
+    ],
+    "n20": [
+     "n04"
+    ],
+    "n10": [
+     "n16",
+     "n20"
+    ],
+    "n02": [
+     "n10"
+    ],
+    "n17": [
+     "n02"
+    ],
+    "n00": [
+     "n07",
+     "n17"
+    ],
+    "n13": [
+     "n00"
+    ],
+    "n01": [
+     "n13"
+    ],
+    "n15": [
+     "n17",
+     "n01"
+    ],
+    "n14": [
+     "n17",
+     "n15"
+    ]
+   },
+   "eval": {
+    "author": "opus",
+    "arm": "A4",
+    "split": "dev",
+    "prompt_version": "ve-assist-eval-prompts@2"
+   }
+  },
+  "created": "2026-09-23T04:05:26+00:00",
+  "config_digest": "a34bc865bc36197d69a1ac6c7ca9bca2258a2ae89a5f36ca697d47283f322296"
+ },
+ "events": [
+  {
+   "seq": 0,
+   "action": "sentences",
+   "args": {},
+   "time": "2026-09-23T04:05:26+00:00",
+   "result": {
+    "ok": true,
+    "sentences": [
+     {
+      "id": "n05.1",
+      "role": "given",
+      "text": "Rules r00, r14, r12, r05 are declared.",
+      "asserting": true
+     },
+     {
+      "id": "n06.1",
+      "role": "given",
+      "text": "Rules r03, r07, r08 are declared.",
+      "asserting": true
+     },
+     {
+      "id": "n19.1",
+      "role": "given",
+      "text": "Rules r06, r10, r13 are declared.",
+      "asserting": true
+     },
+     {
+      "id": "n09.1",
+      "role": "given",
+      "text": "unit5 is bundled; unit5 is retained; unit5 is packed; unit5 is mounted; unit5 is routed; unit5 is rated; unit5 is coded.",
+      "asserting": true
+     },
+     {
+      "id": "n09.2",
+      "role": "given",
+      "text": "The checks that unit5 is stacked and unit5 is checked and unit5 is scanned remain unassumed.",
+      "asserting": true
+     },
+     {
+      "id": "n11.1",
+      "role": "given",
+      "text": "Rules r09, r04, r11 are declared.",
+      "asserting": true
+     },
+     {
+      "id": "n21.1",
+      "role": "given",
+      "text": "Rules r01, r02, r15 are declared.",
+      "asserting": true
+     },
+     {
+      "id": "r08.1",
+      "role": "given",
+      "text": "If unit1 is cleared (payment settled), then unit5 is balanced.",
+      "asserting": true
+     },
+     {
+      "id": "r09.1",
+      "role": "given",
+      "text": "If unit3 is ready (packing completed) and unit5 is ready (packing completed), then unit5 is weighed-in.",
+      "asserting": true
+     },
+     {
+      "id": "r03.1",
+      "role": "given",
+      "text": "If unit5 is mounted and unit5 is routed and unit5 is rated, then unit3 is ready (packing completed).",
+      "asserting": true
+     },
+     {
+      "id": "r03.2",
+      "role": "given",
+      "text": "If unit5 is tied and unit5 is boxed, then unit3 is ready (packing completed).",
+      "asserting": true
+     },
+     {
+      "id": "r01.1",
+      "role": "given",
+      "text": "If unit5 is weighed-in, then unit3 is sound (casing intact).",
+      "asserting": true
+     },
+     {
+      "id": "r15.1",
+      "role": "given",
+      "text": "If unit3 is stable (shape retained) and unit5 is stacked, then unit1 is stable (temperature constant).",
+      "asserting": true
+     },
+     {
+      "id": "r15.2",
+      "role": "given",
+      "text": "If unit3 is stable (shape retained) and unit5 is checked, then unit1 is stable (shape retained).",
+      "asserting": true
+     },
+     {
+      "id": "r15.3",
+      "role": "given",
+      "text": "If unit3 is stable (shape retained) and unit5 is coded, then unit5 is stable (temperature constant).",
+      "asserting": true
+     },
+     {
+      "id": "r15.4",
+      "role": "given",
+      "text": "If unit3 is stable (shape retained) and unit5 is scanned, then unit5 is stable (shape retained).",
+      "asserting": true
+     },
+     {
+      "id": "r11.1",
+      "role": "given",
+      "text": "If unit3 is stable (temperature constant), then unit3 is stable (shape retained).",
+      "asserting": true
+     },
+     {
+      "id": "r04.1",
+      "role": "given",
+      "text": "If unit5 is logged, then unit3 is cleared (inspection passed).",
+      "asserting": true
+     },
+     {
+      "id": "r00.1",
+      "role": "given",
+      "text": "If unit5 is bundled and unit5 is retained and unit5 is packed, then unit3 is ready (staffing arranged).",
+      "asserting": true
+     },
+     {
+      "id": "r00.2",
+      "role": "given",
+      "text": "If unit5 is tied and unit5 is boxed, then unit3 is ready (staffing arranged).",
+      "asserting": true
+     },
+     {
+      "id": "r00.3",
+      "role": "given",
+      "text": "Lot unit5 supplied sample unit1.",
+      "asserting": true
+     },
+     {
+      "id": "r12.1",
+      "role": "given",
+      "text": "If unit3 is cleared (payment settled), then unit1 is cleared (payment settled).",
+      "asserting": true
+     },
+     {
+      "id": "r13.1",
+      "role": "given",
+      "text": "If unit5 is balanced, then unit3 is stable (temperature constant).",
+      "asserting": true
+     },
+     {
+      "id": "r07.1",
+      "role": "given",
+      "text": "If unit3 is sound (signal audible), then unit5 is sound (signal audible).",
+      "asserting": true
+     },
+     {
+      "id": "r05.1",
+      "role": "given",
+      "text": "If unit5 is stable (shape retained), then unit5 is calibrated.",
+      "asserting": true
+     },
+     {
+      "id": "r05.2",
+      "role": "given",
+      "text": "If unit5 is tied and unit5 is boxed, then unit5 is calibrated.",
+      "asserting": true
+     },
+     {
+      "id": "r02.1",
+      "role": "given",
+      "text": "If unit3 is cleared (inspection passed), then unit3 is cleared (payment settled).",
+      "asserting": true
+     },
+     {
+      "id": "r06.1",
+      "role": "given",
+      "text": "If unit3 is ready (staffing arranged) and unit3 is ready (packing completed), then unit5 is ready (packing completed).",
+      "asserting": true
+     },
+     {
+      "id": "r14.1",
+      "role": "given",
+      "text": "If unit3 is sound (casing intact), then unit3 is sound (signal audible).",
+      "asserting": true
+     },
+     {
+      "id": "r10.1",
+      "role": "given",
+      "text": "If unit5 is sound (signal audible), then unit5 is logged.",
+      "asserting": true
+     },
+     {
+      "id": "n18.1",
+      "role": "claimed",
+      "text": "Because unit5 is bundled and unit5 is retained and unit5 is packed, unit3 is ready.",
+      "asserting": true
+     },
+     {
+      "id": "n18.2",
+      "role": "claimed",
+      "text": "The checks that unit5 is stacked and unit5 is checked and unit5 is scanned would imply that unit1 is stable and unit1 is stable and unit5 is stable, respectively.",
+      "asserting": true
+     },
+     {
+      "id": "n07.1",
+      "role": "claimed",
+      "text": "Since unit5 is mounted and unit5 is routed and unit5 is rated, it follows that unit3 is ready.",
+      "asserting": true
+     },
+     {
+      "id": "n03.1",
+      "role": "claimed",
+      "text": "Given that unit3 is ready and unit3 is ready, we infer that unit5 is ready.",
+      "asserting": true
+     },
+     {
+      "id": "n08.1",
+      "role": "claimed",
+      "text": "It follows that unit5 is weighed-in because unit3 is ready and the immediately preceding ready result holds.",
+      "asserting": true
+     },
+     {
+      "id": "n16.1",
+      "role": "claimed",
+      "text": "Because unit5 is weighed-in, unit3 is sound.",
+      "asserting": true
+     },
+     {
+      "id": "n12.1",
+      "role": "claimed",
+      "text": "Since unit3 is sound, it follows that unit3 is sound.",
+      "asserting": true
+     },
+     {
+      "id": "n04.1",
+      "role": "claimed",
+      "text": "Given that unit3 is sound, we infer that unit5 is sound.",
+      "asserting": true
+     },
+     {
+      "id": "n20.1",
+      "role": "claimed",
+      "text": "It follows that unit5 is logged because the immediately preceding sound result holds.",
+      "asserting": true
+     },
+     {
+      "id": "n10.1",
+      "role": "claimed",
+      "text": "Because unit5 is logged, unit3 is cleared.",
+      "asserting": true
+     },
+     {
+      "id": "n02.1",
+      "role": "claimed",
+      "text": "Since unit3 is cleared, it follows that unit3 is cleared.",
+      "asserting": true
+     },
+     {
+      "id": "n17.1",
+      "role": "claimed",
+      "text": "Given that unit3 is cleared, we infer that unit1 is cleared.",
+      "asserting": true
+     },
+     {
+      "id": "n00.1",
+      "role": "claimed",
+      "text": "It follows that unit5 is balanced because the immediately preceding cleared result holds.",
+      "asserting": true
+     },
+     {
+      "id": "n13.1",
+      "role": "claimed",
+      "text": "Because unit5 is balanced, unit3 is stable.",
+      "asserting": true
+     },
+     {
+      "id": "n01.1",
+      "role": "claimed",
+      "text": "Since unit3 is stable, it follows that unit3 is stable.",
+      "asserting": true
+     },
+     {
+      "id": "n15.1",
+      "role": "claimed",
+      "text": "Given that unit3 is stable and unit5 is coded, we infer that unit5 is stable.",
+      "asserting": true
+     },
+     {
+      "id": "n14.1",
+      "role": "claimed",
+      "text": "It follows that unit5 is calibrated because the immediately preceding stable result holds.",
+      "asserting": true
+     }
+    ],
+    "targets": [
+     {
+      "id": "t_n14",
+      "sentence": {
+       "id": "n14.1",
+       "role": "claimed",
+       "text": "It follows that unit5 is calibrated because the immediately preceding stable result holds."
+      },
+      "frozen": false
+     }
+    ],
+    "vocabulary": {
+     "sorts": {
+      "entity": "A named dossier entity."
+     },
+     "predicates": {
+      "bagged": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "bagged: bag fitted (R25)"
+      },
+      "balanced": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "balanced: balance checked (R02)"
+      },
+      "boxed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "boxed: box fitted (R03)"
+      },
+      "bundled": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "bundled: bundle formed (R15)"
+      },
+      "calibrated": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "calibrated: calibration recorded (R26)"
+      },
+      "checked": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "checked: check completed (R33)"
+      },
+      "cleared_inspection_passed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "cleared: inspection passed (R17)"
+      },
+      "cleared_payment_settled": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "cleared: payment settled (R16)"
+      },
+      "clipped": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "clipped: clip attached (R06)"
+      },
+      "coded": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "coded: identifier assigned (R19)"
+      },
+      "cooled": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "cooled: temperature reduced (R08)"
+      },
+      "counted": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "counted: quantity tallied (R21)"
+      },
+      "dried": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "dried: moisture removed (R12)"
+      },
+      "filed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "filed: document stored (R34)"
+      },
+      "loaded": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "loaded: loading completed (R04)"
+      },
+      "logged": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "logged: entry recorded (R07)"
+      },
+      "marked": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "marked: mark applied (R30)"
+      },
+      "mounted": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "mounted: mount fitted (R09)"
+      },
+      "numbered": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "numbered: number assigned (R28)"
+      },
+      "packed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "packed: container filled (R32)"
+      },
+      "photographed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "photographed: image recorded (R29)"
+      },
+      "processed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "processed: processing completed (R13)"
+      },
+      "rated": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "rated: grade recorded (R40)"
+      },
+      "ready_packing_completed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "ready: packing completed (R14)"
+      },
+      "ready_staffing_arranged": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "ready: staffing arranged (R18)"
+      },
+      "received": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "received: receipt recorded (R11)"
+      },
+      "registered": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "registered: registration recorded (R01)"
+      },
+      "released": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "released: release recorded (R23)"
+      },
+      "retained": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "retained: retention recorded (R35)"
+      },
+      "routed": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "routed: route assigned (R20)"
+      },
+      "scanned": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "scanned: barcode read (R38)"
+      },
+      "shelved": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "shelved: shelf assigned (R24)"
+      },
+      "sound_casing_intact": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "sound: casing intact (R36)"
+      },
+      "sound_signal_audible": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "sound: signal audible (R37)"
+      },
+      "stable_shape_retained": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "stable: shape retained (R10)"
+      },
+      "stable_temperature_constant": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "stable: temperature constant (R05)"
+      },
+      "stacked": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "stacked: stack formed (R39)"
+      },
+      "stamped": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "stamped: stamp applied (R27)"
+      },
+      "supplied": {
+       "arguments": [
+        "entity",
+        "entity"
+       ],
+       "gloss": "Lot supplied sample."
+      },
+      "tied": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "tied: tie attached (R22)"
+      },
+      "weighed_in": {
+       "arguments": [
+        "entity"
+       ],
+       "gloss": "weighed-in: arrival mass recorded (R31)"
+      }
+     },
+     "constants": {
+      "unit1": "entity",
+      "unit3": "entity",
+      "unit5": "entity"
+     }
+    }
+   },
+   "result_chars": 10391
+  },
+  {
+   "seq": 1,
+   "action": "record_usage",
+   "args": {
+    "role": "author",
+    "input_tokens": 7304,
+    "output_tokens": 1640
+   },
+   "time": "2026-09-23T04:05:39+00:00",
+   "tokens": {
+    "author": {
+     "input_tokens": 7304,
+     "output_tokens": 1640,
+     "calls": 1
+    }
+   },
+   "result": {
+    "ok": true,
+    "recorded": "author"
+   },
+   "result_chars": 34
+  },
+  {
+   "seq": 2,
+   "action": "freeze_target",
+   "args": {
+    "target": "t_n14",
+    "text": "@unit5 is calibrated."
+   },
+   "time": "2026-09-23T04:05:39+00:00",
+   "result": {
+    "ok": true,
+    "target": "t_n14",
+    "sentence": {
+     "id": "n14.1",
+     "role": "claimed",
+     "text": "It follows that unit5 is calibrated because the immediately preceding stable result holds."
+    },
+    "text": "@unit5 is calibrated.",
+    "paraphrase": "\"unit5\" is calibrated.",
+    "surface": "strict"
+   },
+   "result_chars": 277
+  },
+  {
+   "seq": 3,
+   "action": "add_node",
+   "args": {
+    "name": "f_facts",
+    "text": "(@unit5 is bundled) and ((@unit5 is retained) and ((@unit5 is packed) and ((@unit5 is mounted) and ((@unit5 is routed) and ((@unit5 is rated) and (@unit5 is coded))))))."
+   },
+   "time": "2026-09-23T04:05:39+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "f_facts",
+     "kind": "assumption",
+     "text": "(@unit5 is bundled) and ((@unit5 is retained) and ((@unit5 is packed) and ((@unit5 is mounted) and ((@unit5 is routed) and ((@unit5 is rated) and (@unit5 is coded)))))).",
+     "paraphrase": "All of the following hold:\n  (a) \"unit5\" is bundled;\n  (b) all of the following hold:\n    (i) \"unit5\" is retained;\n    (ii) all of the following hold:\n      (a) \"unit5\" is packed;\n      (b) all of the following hold:\n        (i) \"unit5\" is mounted;\n        (ii) all of the following hold:\n          (a) \"unit5\" is routed;\n          (b) both \"unit5\" is rated and \"unit5\" is coded.",
+     "anchors": [],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 721
+  },
+  {
+   "seq": 4,
+   "action": "add_node",
+   "args": {
+    "name": "a_r00",
+    "text": "if ((@unit5 is bundled) and ((@unit5 is retained) and (@unit5 is packed))), then (@unit3 is ready_staffing_arranged).",
+    "anchors": [
+     "r00.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:39+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r00",
+     "kind": "assumption",
+     "text": "if ((@unit5 is bundled) and ((@unit5 is retained) and (@unit5 is packed))), then (@unit3 is ready_staffing_arranged).",
+     "paraphrase": "If all of the following hold:\n  (a) \"unit5\" is bundled;\n  (b) both \"unit5\" is retained and \"unit5\" is packed, then \"unit3\" is classified as \"ready_staffing_arranged\".",
+     "anchors": [
+      {
+       "id": "r00.1",
+       "role": "given",
+       "text": "If unit5 is bundled and unit5 is retained and unit5 is packed, then unit3 is ready (staffing arranged)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 589
+  },
+  {
+   "seq": 5,
+   "action": "add_node",
+   "args": {
+    "name": "a_r03",
+    "text": "if ((@unit5 is mounted) and ((@unit5 is routed) and (@unit5 is rated))), then (@unit3 is ready_packing_completed).",
+    "anchors": [
+     "r03.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:39+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r03",
+     "kind": "assumption",
+     "text": "if ((@unit5 is mounted) and ((@unit5 is routed) and (@unit5 is rated))), then (@unit3 is ready_packing_completed).",
+     "paraphrase": "If all of the following hold:\n  (a) \"unit5\" is mounted;\n  (b) both \"unit5\" is routed and \"unit5\" is rated, then \"unit3\" is classified as \"ready_packing_completed\".",
+     "anchors": [
+      {
+       "id": "r03.1",
+       "role": "given",
+       "text": "If unit5 is mounted and unit5 is routed and unit5 is rated, then unit3 is ready (packing completed)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 580
+  },
+  {
+   "seq": 6,
+   "action": "add_node",
+   "args": {
+    "name": "a_r06",
+    "text": "if ((@unit3 is ready_staffing_arranged) and (@unit3 is ready_packing_completed)), then (@unit5 is ready_packing_completed).",
+    "anchors": [
+     "r06.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:39+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r06",
+     "kind": "assumption",
+     "text": "if ((@unit3 is ready_staffing_arranged) and (@unit3 is ready_packing_completed)), then (@unit5 is ready_packing_completed).",
+     "paraphrase": "If both \"unit3\" is classified as \"ready_staffing_arranged\" and \"unit3\" is classified as \"ready_packing_completed\", then \"unit5\" is classified as \"ready_packing_completed\".",
+     "anchors": [
+      {
+       "id": "r06.1",
+       "role": "given",
+       "text": "If unit3 is ready (staffing arranged) and unit3 is ready (packing completed), then unit5 is ready (packing completed)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 615
+  },
+  {
+   "seq": 7,
+   "action": "add_node",
+   "args": {
+    "name": "a_r09",
+    "text": "if ((@unit3 is ready_packing_completed) and (@unit5 is ready_packing_completed)), then (@unit5 is weighed_in).",
+    "anchors": [
+     "r09.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:39+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r09",
+     "kind": "assumption",
+     "text": "if ((@unit3 is ready_packing_completed) and (@unit5 is ready_packing_completed)), then (@unit5 is weighed_in).",
+     "paraphrase": "If both \"unit3\" is classified as \"ready_packing_completed\" and \"unit5\" is classified as \"ready_packing_completed\", then \"unit5\" is classified as \"weighed_in\".",
+     "anchors": [
+      {
+       "id": "r09.1",
+       "role": "given",
+       "text": "If unit3 is ready (packing completed) and unit5 is ready (packing completed), then unit5 is weighed-in."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 574
+  },
+  {
+   "seq": 8,
+   "action": "add_node",
+   "args": {
+    "name": "a_r01",
+    "text": "if (@unit5 is weighed_in), then (@unit3 is sound_casing_intact).",
+    "anchors": [
+     "r01.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:39+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r01",
+     "kind": "assumption",
+     "text": "if (@unit5 is weighed_in), then (@unit3 is sound_casing_intact).",
+     "paraphrase": "If \"unit5\" is classified as \"weighed_in\", then \"unit3\" is classified as \"sound_casing_intact\".",
+     "anchors": [
+      {
+       "id": "r01.1",
+       "role": "given",
+       "text": "If unit5 is weighed-in, then unit3 is sound (casing intact)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 417
+  },
+  {
+   "seq": 9,
+   "action": "add_node",
+   "args": {
+    "name": "a_r14",
+    "text": "if (@unit3 is sound_casing_intact), then (@unit3 is sound_signal_audible).",
+    "anchors": [
+     "r14.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:39+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r14",
+     "kind": "assumption",
+     "text": "if (@unit3 is sound_casing_intact), then (@unit3 is sound_signal_audible).",
+     "paraphrase": "If \"unit3\" is classified as \"sound_casing_intact\", then \"unit3\" is classified as \"sound_signal_audible\".",
+     "anchors": [
+      {
+       "id": "r14.1",
+       "role": "given",
+       "text": "If unit3 is sound (casing intact), then unit3 is sound (signal audible)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 449
+  },
+  {
+   "seq": 10,
+   "action": "add_node",
+   "args": {
+    "name": "a_r07",
+    "text": "if (@unit3 is sound_signal_audible), then (@unit5 is sound_signal_audible).",
+    "anchors": [
+     "r07.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:39+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r07",
+     "kind": "assumption",
+     "text": "if (@unit3 is sound_signal_audible), then (@unit5 is sound_signal_audible).",
+     "paraphrase": "If \"unit3\" is classified as \"sound_signal_audible\", then \"unit5\" is classified as \"sound_signal_audible\".",
+     "anchors": [
+      {
+       "id": "r07.1",
+       "role": "given",
+       "text": "If unit3 is sound (signal audible), then unit5 is sound (signal audible)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 452
+  },
+  {
+   "seq": 11,
+   "action": "add_node",
+   "args": {
+    "name": "a_r10",
+    "text": "if (@unit5 is sound_signal_audible), then (@unit5 is logged).",
+    "anchors": [
+     "r10.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:39+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r10",
+     "kind": "assumption",
+     "text": "if (@unit5 is sound_signal_audible), then (@unit5 is logged).",
+     "paraphrase": "If \"unit5\" is classified as \"sound_signal_audible\", then \"unit5\" is logged.",
+     "anchors": [
+      {
+       "id": "r10.1",
+       "role": "given",
+       "text": "If unit5 is sound (signal audible), then unit5 is logged."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 390
+  },
+  {
+   "seq": 12,
+   "action": "record_usage",
+   "args": {
+    "role": "author",
+    "input_tokens": 10714,
+    "output_tokens": 1567
+   },
+   "time": "2026-09-23T04:05:53+00:00",
+   "tokens": {
+    "author": {
+     "input_tokens": 10714,
+     "output_tokens": 1567,
+     "calls": 1
+    }
+   },
+   "result": {
+    "ok": true,
+    "recorded": "author"
+   },
+   "result_chars": 34
+  },
+  {
+   "seq": 13,
+   "action": "rewrite",
+   "args": {
+    "name": "f_facts",
+    "anchors": [
+     "n09.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:53+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "f_facts",
+     "kind": "assumption",
+     "text": "(@unit5 is bundled) and ((@unit5 is retained) and ((@unit5 is packed) and ((@unit5 is mounted) and ((@unit5 is routed) and ((@unit5 is rated) and (@unit5 is coded)))))).",
+     "paraphrase": "All of the following hold:\n  (a) \"unit5\" is bundled;\n  (b) all of the following hold:\n    (i) \"unit5\" is retained;\n    (ii) all of the following hold:\n      (a) \"unit5\" is packed;\n      (b) all of the following hold:\n        (i) \"unit5\" is mounted;\n        (ii) all of the following hold:\n          (a) \"unit5\" is routed;\n          (b) both \"unit5\" is rated and \"unit5\" is coded.",
+     "anchors": [
+      {
+       "id": "n09.1",
+       "role": "given",
+       "text": "unit5 is bundled; unit5 is retained; unit5 is packed; unit5 is mounted; unit5 is routed; unit5 is rated; unit5 is coded."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    },
+    "invalidated_checks": [
+     "f_facts"
+    ]
+   },
+   "result_chars": 920
+  },
+  {
+   "seq": 14,
+   "action": "add_node",
+   "args": {
+    "name": "a_r04",
+    "text": "if (@unit5 is logged), then (@unit3 is cleared_inspection_passed).",
+    "anchors": [
+     "r04.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:53+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r04",
+     "kind": "assumption",
+     "text": "if (@unit5 is logged), then (@unit3 is cleared_inspection_passed).",
+     "paraphrase": "If \"unit5\" is logged, then \"unit3\" is classified as \"cleared_inspection_passed\".",
+     "anchors": [
+      {
+       "id": "r04.1",
+       "role": "given",
+       "text": "If unit5 is logged, then unit3 is cleared (inspection passed)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 405
+  },
+  {
+   "seq": 15,
+   "action": "add_node",
+   "args": {
+    "name": "a_r02",
+    "text": "if (@unit3 is cleared_inspection_passed), then (@unit3 is cleared_payment_settled).",
+    "anchors": [
+     "r02.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:53+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r02",
+     "kind": "assumption",
+     "text": "if (@unit3 is cleared_inspection_passed), then (@unit3 is cleared_payment_settled).",
+     "paraphrase": "If \"unit3\" is classified as \"cleared_inspection_passed\", then \"unit3\" is classified as \"cleared_payment_settled\".",
+     "anchors": [
+      {
+       "id": "r02.1",
+       "role": "given",
+       "text": "If unit3 is cleared (inspection passed), then unit3 is cleared (payment settled)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 476
+  },
+  {
+   "seq": 16,
+   "action": "add_node",
+   "args": {
+    "name": "a_r12",
+    "text": "if (@unit3 is cleared_payment_settled), then (@unit1 is cleared_payment_settled).",
+    "anchors": [
+     "r12.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:53+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r12",
+     "kind": "assumption",
+     "text": "if (@unit3 is cleared_payment_settled), then (@unit1 is cleared_payment_settled).",
+     "paraphrase": "If \"unit3\" is classified as \"cleared_payment_settled\", then \"unit1\" is classified as \"cleared_payment_settled\".",
+     "anchors": [
+      {
+       "id": "r12.1",
+       "role": "given",
+       "text": "If unit3 is cleared (payment settled), then unit1 is cleared (payment settled)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 470
+  },
+  {
+   "seq": 17,
+   "action": "add_node",
+   "args": {
+    "name": "a_r08",
+    "text": "if (@unit1 is cleared_payment_settled), then (@unit5 is balanced).",
+    "anchors": [
+     "r08.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:53+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r08",
+     "kind": "assumption",
+     "text": "if (@unit1 is cleared_payment_settled), then (@unit5 is balanced).",
+     "paraphrase": "If \"unit1\" is classified as \"cleared_payment_settled\", then \"unit5\" is balanced.",
+     "anchors": [
+      {
+       "id": "r08.1",
+       "role": "given",
+       "text": "If unit1 is cleared (payment settled), then unit5 is balanced."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 405
+  },
+  {
+   "seq": 18,
+   "action": "add_node",
+   "args": {
+    "name": "a_r13",
+    "text": "if (@unit5 is balanced), then (@unit3 is stable_temperature_constant).",
+    "anchors": [
+     "r13.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:53+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r13",
+     "kind": "assumption",
+     "text": "if (@unit5 is balanced), then (@unit3 is stable_temperature_constant).",
+     "paraphrase": "If \"unit5\" is balanced, then \"unit3\" is classified as \"stable_temperature_constant\".",
+     "anchors": [
+      {
+       "id": "r13.1",
+       "role": "given",
+       "text": "If unit5 is balanced, then unit3 is stable (temperature constant)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 417
+  },
+  {
+   "seq": 19,
+   "action": "add_node",
+   "args": {
+    "name": "a_r11",
+    "text": "if (@unit3 is stable_temperature_constant), then (@unit3 is stable_shape_retained).",
+    "anchors": [
+     "r11.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:53+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r11",
+     "kind": "assumption",
+     "text": "if (@unit3 is stable_temperature_constant), then (@unit3 is stable_shape_retained).",
+     "paraphrase": "If \"unit3\" is classified as \"stable_temperature_constant\", then \"unit3\" is classified as \"stable_shape_retained\".",
+     "anchors": [
+      {
+       "id": "r11.1",
+       "role": "given",
+       "text": "If unit3 is stable (temperature constant), then unit3 is stable (shape retained)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 476
+  },
+  {
+   "seq": 20,
+   "action": "add_node",
+   "args": {
+    "name": "a_r15_3",
+    "text": "if ((@unit3 is stable_shape_retained) and (@unit5 is coded)), then (@unit5 is stable_temperature_constant).",
+    "anchors": [
+     "r15.3"
+    ]
+   },
+   "time": "2026-09-23T04:05:53+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r15_3",
+     "kind": "assumption",
+     "text": "if ((@unit3 is stable_shape_retained) and (@unit5 is coded)), then (@unit5 is stable_temperature_constant).",
+     "paraphrase": "If both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is coded, then \"unit5\" is classified as \"stable_temperature_constant\".",
+     "anchors": [
+      {
+       "id": "r15.3",
+       "role": "given",
+       "text": "If unit3 is stable (shape retained) and unit5 is coded, then unit5 is stable (temperature constant)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 549
+  },
+  {
+   "seq": 21,
+   "action": "add_node",
+   "args": {
+    "name": "a_r05_1",
+    "text": "if (@unit5 is stable_shape_retained), then (@unit5 is calibrated).",
+    "anchors": [
+     "r05.1"
+    ]
+   },
+   "time": "2026-09-23T04:05:53+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r05_1",
+     "kind": "assumption",
+     "text": "if (@unit5 is stable_shape_retained), then (@unit5 is calibrated).",
+     "paraphrase": "If \"unit5\" is classified as \"stable_shape_retained\", then \"unit5\" is calibrated.",
+     "anchors": [
+      {
+       "id": "r05.1",
+       "role": "given",
+       "text": "If unit5 is stable (shape retained), then unit5 is calibrated."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 407
+  },
+  {
+   "seq": 22,
+   "action": "add_node",
+   "args": {
+    "name": "a_r05_2",
+    "text": "if ((@unit5 is tied) and (@unit5 is boxed)), then (@unit5 is calibrated).",
+    "anchors": [
+     "r05.2"
+    ]
+   },
+   "time": "2026-09-23T04:05:53+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r05_2",
+     "kind": "assumption",
+     "text": "if ((@unit5 is tied) and (@unit5 is boxed)), then (@unit5 is calibrated).",
+     "paraphrase": "If both \"unit5\" is tied and \"unit5\" is boxed, then \"unit5\" is calibrated.",
+     "anchors": [
+      {
+       "id": "r05.2",
+       "role": "given",
+       "text": "If unit5 is tied and unit5 is boxed, then unit5 is calibrated."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 407
+  },
+  {
+   "seq": 23,
+   "action": "record_usage",
+   "args": {
+    "role": "author",
+    "input_tokens": 13980,
+    "output_tokens": 1554
+   },
+   "time": "2026-09-23T04:06:06+00:00",
+   "tokens": {
+    "author": {
+     "input_tokens": 13980,
+     "output_tokens": 1554,
+     "calls": 1
+    }
+   },
+   "result": {
+    "ok": true,
+    "recorded": "author"
+   },
+   "result_chars": 34
+  },
+  {
+   "seq": 24,
+   "action": "add_node",
+   "args": {
+    "name": "s_n18_1",
+    "text": "@unit3 is ready_staffing_arranged.",
+    "anchors": [
+     "n18.1"
+    ],
+    "parents": [
+     "f_facts",
+     "a_r00"
+    ]
+   },
+   "time": "2026-09-23T04:06:06+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n18_1",
+     "kind": "step",
+     "text": "@unit3 is ready_staffing_arranged.",
+     "paraphrase": "\"unit3\" is classified as \"ready_staffing_arranged\".",
+     "anchors": [
+      {
+       "id": "n18.1",
+       "role": "claimed",
+       "text": "Because unit5 is bundled and unit5 is retained and unit5 is packed, unit3 is ready."
+      }
+     ],
+     "parents": [
+      "f_facts",
+      "a_r00"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 401
+  },
+  {
+   "seq": 25,
+   "action": "add_node",
+   "args": {
+    "name": "s_n07",
+    "text": "@unit3 is ready_packing_completed.",
+    "anchors": [
+     "n07.1"
+    ],
+    "parents": [
+     "f_facts",
+     "a_r03"
+    ]
+   },
+   "time": "2026-09-23T04:06:06+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n07",
+     "kind": "step",
+     "text": "@unit3 is ready_packing_completed.",
+     "paraphrase": "\"unit3\" is classified as \"ready_packing_completed\".",
+     "anchors": [
+      {
+       "id": "n07.1",
+       "role": "claimed",
+       "text": "Since unit5 is mounted and unit5 is routed and unit5 is rated, it follows that unit3 is ready."
+      }
+     ],
+     "parents": [
+      "f_facts",
+      "a_r03"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 410
+  },
+  {
+   "seq": 26,
+   "action": "add_node",
+   "args": {
+    "name": "s_n03",
+    "text": "@unit5 is ready_packing_completed.",
+    "anchors": [
+     "n03.1"
+    ],
+    "parents": [
+     "s_n18_1",
+     "s_n07",
+     "a_r06"
+    ]
+   },
+   "time": "2026-09-23T04:06:06+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n03",
+     "kind": "step",
+     "text": "@unit5 is ready_packing_completed.",
+     "paraphrase": "\"unit5\" is classified as \"ready_packing_completed\".",
+     "anchors": [
+      {
+       "id": "n03.1",
+       "role": "claimed",
+       "text": "Given that unit3 is ready and unit3 is ready, we infer that unit5 is ready."
+      }
+     ],
+     "parents": [
+      "s_n18_1",
+      "s_n07",
+      "a_r06"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 400
+  },
+  {
+   "seq": 27,
+   "action": "add_node",
+   "args": {
+    "name": "s_n08",
+    "text": "@unit5 is weighed_in.",
+    "anchors": [
+     "n08.1"
+    ],
+    "parents": [
+     "s_n07",
+     "s_n03",
+     "a_r09"
+    ]
+   },
+   "time": "2026-09-23T04:06:06+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n08",
+     "kind": "step",
+     "text": "@unit5 is weighed_in.",
+     "paraphrase": "\"unit5\" is classified as \"weighed_in\".",
+     "anchors": [
+      {
+       "id": "n08.1",
+       "role": "claimed",
+       "text": "It follows that unit5 is weighed-in because unit3 is ready and the immediately preceding ready result holds."
+      }
+     ],
+     "parents": [
+      "s_n07",
+      "s_n03",
+      "a_r09"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 405
+  },
+  {
+   "seq": 28,
+   "action": "add_node",
+   "args": {
+    "name": "s_n16",
+    "text": "@unit3 is sound_casing_intact.",
+    "anchors": [
+     "n16.1"
+    ],
+    "parents": [
+     "s_n08",
+     "a_r01"
+    ]
+   },
+   "time": "2026-09-23T04:06:06+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n16",
+     "kind": "step",
+     "text": "@unit3 is sound_casing_intact.",
+     "paraphrase": "\"unit3\" is classified as \"sound_casing_intact\".",
+     "anchors": [
+      {
+       "id": "n16.1",
+       "role": "claimed",
+       "text": "Because unit5 is weighed-in, unit3 is sound."
+      }
+     ],
+     "parents": [
+      "s_n08",
+      "a_r01"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 350
+  },
+  {
+   "seq": 29,
+   "action": "add_node",
+   "args": {
+    "name": "s_n12",
+    "text": "@unit3 is sound_signal_audible.",
+    "anchors": [
+     "n12.1"
+    ],
+    "parents": [
+     "s_n16",
+     "a_r14"
+    ]
+   },
+   "time": "2026-09-23T04:06:06+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n12",
+     "kind": "step",
+     "text": "@unit3 is sound_signal_audible.",
+     "paraphrase": "\"unit3\" is classified as \"sound_signal_audible\".",
+     "anchors": [
+      {
+       "id": "n12.1",
+       "role": "claimed",
+       "text": "Since unit3 is sound, it follows that unit3 is sound."
+      }
+     ],
+     "parents": [
+      "s_n16",
+      "a_r14"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 361
+  },
+  {
+   "seq": 30,
+   "action": "add_node",
+   "args": {
+    "name": "s_n04",
+    "text": "@unit5 is sound_signal_audible.",
+    "anchors": [
+     "n04.1"
+    ],
+    "parents": [
+     "s_n12",
+     "a_r07"
+    ]
+   },
+   "time": "2026-09-23T04:06:06+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n04",
+     "kind": "step",
+     "text": "@unit5 is sound_signal_audible.",
+     "paraphrase": "\"unit5\" is classified as \"sound_signal_audible\".",
+     "anchors": [
+      {
+       "id": "n04.1",
+       "role": "claimed",
+       "text": "Given that unit3 is sound, we infer that unit5 is sound."
+      }
+     ],
+     "parents": [
+      "s_n12",
+      "a_r07"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 364
+  },
+  {
+   "seq": 31,
+   "action": "add_node",
+   "args": {
+    "name": "s_n20",
+    "text": "@unit5 is logged.",
+    "anchors": [
+     "n20.1"
+    ],
+    "parents": [
+     "s_n04",
+     "a_r10"
+    ]
+   },
+   "time": "2026-09-23T04:06:06+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n20",
+     "kind": "step",
+     "text": "@unit5 is logged.",
+     "paraphrase": "\"unit5\" is logged.",
+     "anchors": [
+      {
+       "id": "n20.1",
+       "role": "claimed",
+       "text": "It follows that unit5 is logged because the immediately preceding sound result holds."
+      }
+     ],
+     "parents": [
+      "s_n04",
+      "a_r10"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 347
+  },
+  {
+   "seq": 32,
+   "action": "add_node",
+   "args": {
+    "name": "s_n10",
+    "text": "@unit3 is cleared_inspection_passed.",
+    "anchors": [
+     "n10.1"
+    ],
+    "parents": [
+     "s_n20",
+     "a_r04"
+    ]
+   },
+   "time": "2026-09-23T04:06:06+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n10",
+     "kind": "step",
+     "text": "@unit3 is cleared_inspection_passed.",
+     "paraphrase": "\"unit3\" is classified as \"cleared_inspection_passed\".",
+     "anchors": [
+      {
+       "id": "n10.1",
+       "role": "claimed",
+       "text": "Because unit5 is logged, unit3 is cleared."
+      }
+     ],
+     "parents": [
+      "s_n20",
+      "a_r04"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 360
+  },
+  {
+   "seq": 33,
+   "action": "add_node",
+   "args": {
+    "name": "s_n02",
+    "text": "@unit3 is cleared_payment_settled.",
+    "anchors": [
+     "n02.1"
+    ],
+    "parents": [
+     "s_n10",
+     "a_r02"
+    ]
+   },
+   "time": "2026-09-23T04:06:06+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n02",
+     "kind": "step",
+     "text": "@unit3 is cleared_payment_settled.",
+     "paraphrase": "\"unit3\" is classified as \"cleared_payment_settled\".",
+     "anchors": [
+      {
+       "id": "n02.1",
+       "role": "claimed",
+       "text": "Since unit3 is cleared, it follows that unit3 is cleared."
+      }
+     ],
+     "parents": [
+      "s_n10",
+      "a_r02"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 371
+  },
+  {
+   "seq": 34,
+   "action": "record_usage",
+   "args": {
+    "role": "author",
+    "input_tokens": 16798,
+    "output_tokens": 1599
+   },
+   "time": "2026-09-23T04:06:20+00:00",
+   "tokens": {
+    "author": {
+     "input_tokens": 16798,
+     "output_tokens": 1599,
+     "calls": 1
+    }
+   },
+   "result": {
+    "ok": true,
+    "recorded": "author"
+   },
+   "result_chars": 34
+  },
+  {
+   "seq": 35,
+   "action": "add_node",
+   "args": {
+    "name": "s_n17",
+    "text": "@unit1 is cleared_payment_settled.",
+    "anchors": [
+     "n17.1"
+    ],
+    "parents": [
+     "s_n02",
+     "a_r12"
+    ]
+   },
+   "time": "2026-09-23T04:06:20+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n17",
+     "kind": "step",
+     "text": "@unit1 is cleared_payment_settled.",
+     "paraphrase": "\"unit1\" is classified as \"cleared_payment_settled\".",
+     "anchors": [
+      {
+       "id": "n17.1",
+       "role": "claimed",
+       "text": "Given that unit3 is cleared, we infer that unit1 is cleared."
+      }
+     ],
+     "parents": [
+      "s_n02",
+      "a_r12"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 374
+  },
+  {
+   "seq": 36,
+   "action": "add_node",
+   "args": {
+    "name": "s_n00",
+    "text": "@unit5 is balanced.",
+    "anchors": [
+     "n00.1"
+    ],
+    "parents": [
+     "s_n17",
+     "a_r08"
+    ]
+   },
+   "time": "2026-09-23T04:06:20+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n00",
+     "kind": "step",
+     "text": "@unit5 is balanced.",
+     "paraphrase": "\"unit5\" is balanced.",
+     "anchors": [
+      {
+       "id": "n00.1",
+       "role": "claimed",
+       "text": "It follows that unit5 is balanced because the immediately preceding cleared result holds."
+      }
+     ],
+     "parents": [
+      "s_n17",
+      "a_r08"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 355
+  },
+  {
+   "seq": 37,
+   "action": "add_node",
+   "args": {
+    "name": "s_n13",
+    "text": "@unit3 is stable_temperature_constant.",
+    "anchors": [
+     "n13.1"
+    ],
+    "parents": [
+     "s_n00",
+     "a_r13"
+    ]
+   },
+   "time": "2026-09-23T04:06:20+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n13",
+     "kind": "step",
+     "text": "@unit3 is stable_temperature_constant.",
+     "paraphrase": "\"unit3\" is classified as \"stable_temperature_constant\".",
+     "anchors": [
+      {
+       "id": "n13.1",
+       "role": "claimed",
+       "text": "Because unit5 is balanced, unit3 is stable."
+      }
+     ],
+     "parents": [
+      "s_n00",
+      "a_r13"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 365
+  },
+  {
+   "seq": 38,
+   "action": "add_node",
+   "args": {
+    "name": "s_n01",
+    "text": "@unit3 is stable_shape_retained.",
+    "anchors": [
+     "n01.1"
+    ],
+    "parents": [
+     "s_n13",
+     "a_r11"
+    ]
+   },
+   "time": "2026-09-23T04:06:20+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n01",
+     "kind": "step",
+     "text": "@unit3 is stable_shape_retained.",
+     "paraphrase": "\"unit3\" is classified as \"stable_shape_retained\".",
+     "anchors": [
+      {
+       "id": "n01.1",
+       "role": "claimed",
+       "text": "Since unit3 is stable, it follows that unit3 is stable."
+      }
+     ],
+     "parents": [
+      "s_n13",
+      "a_r11"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 365
+  },
+  {
+   "seq": 39,
+   "action": "add_node",
+   "args": {
+    "name": "s_n15",
+    "text": "@unit5 is stable_temperature_constant.",
+    "anchors": [
+     "n15.1"
+    ],
+    "parents": [
+     "s_n01",
+     "f_facts",
+     "a_r15_3"
+    ]
+   },
+   "time": "2026-09-23T04:06:20+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n15",
+     "kind": "step",
+     "text": "@unit5 is stable_temperature_constant.",
+     "paraphrase": "\"unit5\" is classified as \"stable_temperature_constant\".",
+     "anchors": [
+      {
+       "id": "n15.1",
+       "role": "claimed",
+       "text": "Given that unit3 is stable and unit5 is coded, we infer that unit5 is stable."
+      }
+     ],
+     "parents": [
+      "s_n01",
+      "f_facts",
+      "a_r15_3"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 412
+  },
+  {
+   "seq": 40,
+   "action": "add_node",
+   "args": {
+    "name": "s_n14",
+    "text": "@unit5 is calibrated.",
+    "anchors": [
+     "n14.1"
+    ],
+    "parents": [
+     "s_n15",
+     "a_r05_1"
+    ]
+   },
+   "time": "2026-09-23T04:06:20+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n14",
+     "kind": "step",
+     "text": "@unit5 is calibrated.",
+     "paraphrase": "\"unit5\" is calibrated.",
+     "anchors": [
+      {
+       "id": "n14.1",
+       "role": "claimed",
+       "text": "It follows that unit5 is calibrated because the immediately preceding stable result holds."
+      }
+     ],
+     "parents": [
+      "s_n15",
+      "a_r05_1"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked",
+     "matches_targets": [
+      "t_n14"
+     ]
+    }
+   },
+   "result_chars": 392
+  },
+  {
+   "seq": 41,
+   "action": "add_node",
+   "args": {
+    "name": "a_r15_1",
+    "text": "if ((@unit3 is stable_shape_retained) and (@unit5 is stacked)), then (@unit1 is stable_temperature_constant).",
+    "anchors": [
+     "r15.1"
+    ]
+   },
+   "time": "2026-09-23T04:06:20+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r15_1",
+     "kind": "assumption",
+     "text": "if ((@unit3 is stable_shape_retained) and (@unit5 is stacked)), then (@unit1 is stable_temperature_constant).",
+     "paraphrase": "If both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is stacked, then \"unit1\" is classified as \"stable_temperature_constant\".",
+     "anchors": [
+      {
+       "id": "r15.1",
+       "role": "given",
+       "text": "If unit3 is stable (shape retained) and unit5 is stacked, then unit1 is stable (temperature constant)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 555
+  },
+  {
+   "seq": 42,
+   "action": "add_node",
+   "args": {
+    "name": "a_r15_2",
+    "text": "if ((@unit3 is stable_shape_retained) and (@unit5 is checked)), then (@unit1 is stable_shape_retained).",
+    "anchors": [
+     "r15.2"
+    ]
+   },
+   "time": "2026-09-23T04:06:20+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r15_2",
+     "kind": "assumption",
+     "text": "if ((@unit3 is stable_shape_retained) and (@unit5 is checked)), then (@unit1 is stable_shape_retained).",
+     "paraphrase": "If both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is checked, then \"unit1\" is classified as \"stable_shape_retained\".",
+     "anchors": [
+      {
+       "id": "r15.2",
+       "role": "given",
+       "text": "If unit3 is stable (shape retained) and unit5 is checked, then unit1 is stable (shape retained)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 537
+  },
+  {
+   "seq": 43,
+   "action": "add_node",
+   "args": {
+    "name": "a_r15_4",
+    "text": "if ((@unit3 is stable_shape_retained) and (@unit5 is scanned)), then (@unit5 is stable_shape_retained).",
+    "anchors": [
+     "r15.4"
+    ]
+   },
+   "time": "2026-09-23T04:06:20+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r15_4",
+     "kind": "assumption",
+     "text": "if ((@unit3 is stable_shape_retained) and (@unit5 is scanned)), then (@unit5 is stable_shape_retained).",
+     "paraphrase": "If both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is scanned, then \"unit5\" is classified as \"stable_shape_retained\".",
+     "anchors": [
+      {
+       "id": "r15.4",
+       "role": "given",
+       "text": "If unit3 is stable (shape retained) and unit5 is scanned, then unit5 is stable (shape retained)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 537
+  },
+  {
+   "seq": 44,
+   "action": "add_node",
+   "args": {
+    "name": "s_n18_2",
+    "text": "(if ((@unit3 is stable_shape_retained) and (@unit5 is stacked)), then (@unit1 is stable_temperature_constant)) and ((if ((@unit3 is stable_shape_retained) and (@unit5 is checked)), then (@unit1 is stable_shape_retained)) and (if ((@unit3 is stable_shape_retained) and (@unit5 is scanned)), then (@unit5 is stable_shape_retained))).",
+    "anchors": [
+     "n18.2"
+    ],
+    "parents": [
+     "a_r15_1",
+     "a_r15_2",
+     "a_r15_4"
+    ]
+   },
+   "time": "2026-09-23T04:06:20+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "s_n18_2",
+     "kind": "step",
+     "text": "(if ((@unit3 is stable_shape_retained) and (@unit5 is stacked)), then (@unit1 is stable_temperature_constant)) and ((if ((@unit3 is stable_shape_retained) and (@unit5 is checked)), then (@unit1 is stable_shape_retained)) and (if ((@unit3 is stable_shape_retained) and (@unit5 is scanned)), then (@unit5 is stable_shape_retained))).",
+     "paraphrase": "All of the following hold:\n  (a) if both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is stacked, then \"unit1\" is classified as \"stable_temperature_constant\";\n  (b) all of the following hold:\n    (i) if both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is checked, then \"unit1\" is classified as \"stable_shape_retained\";\n    (ii) if both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is scanned, then \"unit5\" is classified as \"stable_shape_retained\".",
+     "anchors": [
+      {
+       "id": "n18.2",
+       "role": "claimed",
+       "text": "The checks that unit5 is stacked and unit5 is checked and unit5 is scanned would imply that unit1 is stable and unit1 is stable and unit5 is stable, respectively."
+      }
+     ],
+     "parents": [
+      "a_r15_1",
+      "a_r15_2",
+      "a_r15_4"
+     ],
+     "origin": "hand-written",
+     "check": "unchecked"
+    }
+   },
+   "result_chars": 1265
+  },
+  {
+   "seq": 45,
+   "action": "record_usage",
+   "args": {
+    "role": "author",
+    "input_tokens": 20434,
+    "output_tokens": 387
+   },
+   "time": "2026-09-23T04:06:26+00:00",
+   "tokens": {
+    "author": {
+     "input_tokens": 20434,
+     "output_tokens": 387,
+     "calls": 1
+    }
+   },
+   "result": {
+    "ok": true,
+    "recorded": "author"
+   },
+   "result_chars": 34
+  },
+  {
+   "seq": 46,
+   "action": "check_step",
+   "args": {
+    "name": "s_n18_1"
+   },
+   "time": "2026-09-23T04:06:26+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n18_1",
+    "status": "follows",
+    "parents": [
+     "f_facts",
+     "a_r00"
+    ],
+    "conclusion": "@unit3 is ready_staffing_arranged.",
+    "conclusion_paraphrase": "\"unit3\" is classified as \"ready_staffing_arranged\".",
+    "certificate_digest": "887a33a7f243aeff6dc3972fba5a7bc1d298f496bf7b3bd2047e77ac18e0298a"
+   },
+   "result_chars": 311
+  },
+  {
+   "seq": 47,
+   "action": "check_step",
+   "args": {
+    "name": "s_n07"
+   },
+   "time": "2026-09-23T04:06:26+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n07",
+    "status": "follows",
+    "parents": [
+     "f_facts",
+     "a_r03"
+    ],
+    "conclusion": "@unit3 is ready_packing_completed.",
+    "conclusion_paraphrase": "\"unit3\" is classified as \"ready_packing_completed\".",
+    "certificate_digest": "953358b9c0350b69a9f21ffa0dd1066774fe304c1b12d89f767aee42b7139f54"
+   },
+   "result_chars": 309
+  },
+  {
+   "seq": 48,
+   "action": "check_step",
+   "args": {
+    "name": "s_n03"
+   },
+   "time": "2026-09-23T04:06:26+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n03",
+    "status": "follows",
+    "parents": [
+     "s_n18_1",
+     "s_n07",
+     "a_r06"
+    ],
+    "conclusion": "@unit5 is ready_packing_completed.",
+    "conclusion_paraphrase": "\"unit5\" is classified as \"ready_packing_completed\".",
+    "certificate_digest": "46532862b15a6db126d61db587f15b81c1fe89b35a1a353ec34b7c64df404c05"
+   },
+   "result_chars": 318
+  },
+  {
+   "seq": 49,
+   "action": "check_step",
+   "args": {
+    "name": "s_n08"
+   },
+   "time": "2026-09-23T04:06:26+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n08",
+    "status": "follows",
+    "parents": [
+     "s_n07",
+     "s_n03",
+     "a_r09"
+    ],
+    "conclusion": "@unit5 is weighed_in.",
+    "conclusion_paraphrase": "\"unit5\" is classified as \"weighed_in\".",
+    "certificate_digest": "c30840131119684b7f1ee49129dd60feb80b71f244eab247e4eb5b8cd668cc87"
+   },
+   "result_chars": 290
+  },
+  {
+   "seq": 50,
+   "action": "check_step",
+   "args": {
+    "name": "s_n16"
+   },
+   "time": "2026-09-23T04:06:26+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n16",
+    "status": "follows",
+    "parents": [
+     "s_n08",
+     "a_r01"
+    ],
+    "conclusion": "@unit3 is sound_casing_intact.",
+    "conclusion_paraphrase": "\"unit3\" is classified as \"sound_casing_intact\".",
+    "certificate_digest": "c10c95ac53380c8fdb9a6bb901d554b3ca8d424ccef1221ff377f381c14d1d51"
+   },
+   "result_chars": 299
+  },
+  {
+   "seq": 51,
+   "action": "check_step",
+   "args": {
+    "name": "s_n12"
+   },
+   "time": "2026-09-23T04:06:26+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n12",
+    "status": "follows",
+    "parents": [
+     "s_n16",
+     "a_r14"
+    ],
+    "conclusion": "@unit3 is sound_signal_audible.",
+    "conclusion_paraphrase": "\"unit3\" is classified as \"sound_signal_audible\".",
+    "certificate_digest": "18e494dd8867b14fd5d0c6d653e7aaf4808c1ef7d521e316bcec7069948a117e"
+   },
+   "result_chars": 301
+  },
+  {
+   "seq": 52,
+   "action": "check_step",
+   "args": {
+    "name": "s_n04"
+   },
+   "time": "2026-09-23T04:06:26+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n04",
+    "status": "follows",
+    "parents": [
+     "s_n12",
+     "a_r07"
+    ],
+    "conclusion": "@unit5 is sound_signal_audible.",
+    "conclusion_paraphrase": "\"unit5\" is classified as \"sound_signal_audible\".",
+    "certificate_digest": "13ad0bcbc27065271207f582be9a113d58aa36cf6b6f4ba9c36114ac9282521c"
+   },
+   "result_chars": 301
+  },
+  {
+   "seq": 53,
+   "action": "check_step",
+   "args": {
+    "name": "s_n20"
+   },
+   "time": "2026-09-23T04:06:26+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n20",
+    "status": "follows",
+    "parents": [
+     "s_n04",
+     "a_r10"
+    ],
+    "conclusion": "@unit5 is logged.",
+    "conclusion_paraphrase": "\"unit5\" is logged.",
+    "certificate_digest": "0d24f2709ba25b57a6ef7a74c0bd2cb8da1aeee1d544e500d07432c53381394c"
+   },
+   "result_chars": 255
+  },
+  {
+   "seq": 54,
+   "action": "check_step",
+   "args": {
+    "name": "s_n10"
+   },
+   "time": "2026-09-23T04:06:26+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n10",
+    "status": "follows",
+    "parents": [
+     "s_n20",
+     "a_r04"
+    ],
+    "conclusion": "@unit3 is cleared_inspection_passed.",
+    "conclusion_paraphrase": "\"unit3\" is classified as \"cleared_inspection_passed\".",
+    "certificate_digest": "999a8491af2d7f4e70e766f2497f38272becafc2eb29e52041a4e481286838e0"
+   },
+   "result_chars": 311
+  },
+  {
+   "seq": 55,
+   "action": "check_step",
+   "args": {
+    "name": "s_n02"
+   },
+   "time": "2026-09-23T04:06:26+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n02",
+    "status": "follows",
+    "parents": [
+     "s_n10",
+     "a_r02"
+    ],
+    "conclusion": "@unit3 is cleared_payment_settled.",
+    "conclusion_paraphrase": "\"unit3\" is classified as \"cleared_payment_settled\".",
+    "certificate_digest": "0f48a53a740a4fe83f37d83b6a2842ebdc05b0585c1ed46ec981f4dece2a5dab"
+   },
+   "result_chars": 307
+  },
+  {
+   "seq": 56,
+   "action": "record_usage",
+   "args": {
+    "role": "author",
+    "input_tokens": 22518,
+    "output_tokens": 655
+   },
+   "time": "2026-09-23T04:06:33+00:00",
+   "tokens": {
+    "author": {
+     "input_tokens": 22518,
+     "output_tokens": 655,
+     "calls": 1
+    }
+   },
+   "result": {
+    "ok": true,
+    "recorded": "author"
+   },
+   "result_chars": 34
+  },
+  {
+   "seq": 57,
+   "action": "check_step",
+   "args": {
+    "name": "s_n17"
+   },
+   "time": "2026-09-23T04:06:33+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n17",
+    "status": "follows",
+    "parents": [
+     "s_n02",
+     "a_r12"
+    ],
+    "conclusion": "@unit1 is cleared_payment_settled.",
+    "conclusion_paraphrase": "\"unit1\" is classified as \"cleared_payment_settled\".",
+    "certificate_digest": "569525ec86a50196b50f3628ecf143d3a4d0fc9c9ece709da842743a902717e7"
+   },
+   "result_chars": 307
+  },
+  {
+   "seq": 58,
+   "action": "check_step",
+   "args": {
+    "name": "s_n00"
+   },
+   "time": "2026-09-23T04:06:33+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n00",
+    "status": "follows",
+    "parents": [
+     "s_n17",
+     "a_r08"
+    ],
+    "conclusion": "@unit5 is balanced.",
+    "conclusion_paraphrase": "\"unit5\" is balanced.",
+    "certificate_digest": "193922a0ff63cd5687cac3c60d3f4a1b1ecf657d5bfab427ed28395c6a315a9a"
+   },
+   "result_chars": 259
+  },
+  {
+   "seq": 59,
+   "action": "check_step",
+   "args": {
+    "name": "s_n13"
+   },
+   "time": "2026-09-23T04:06:33+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n13",
+    "status": "follows",
+    "parents": [
+     "s_n00",
+     "a_r13"
+    ],
+    "conclusion": "@unit3 is stable_temperature_constant.",
+    "conclusion_paraphrase": "\"unit3\" is classified as \"stable_temperature_constant\".",
+    "certificate_digest": "88960db3b5c1a4e0e11f9131a4aca0de2dd40dbcf392655375729c1a1a3f6b7e"
+   },
+   "result_chars": 315
+  },
+  {
+   "seq": 60,
+   "action": "check_step",
+   "args": {
+    "name": "s_n01"
+   },
+   "time": "2026-09-23T04:06:33+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n01",
+    "status": "follows",
+    "parents": [
+     "s_n13",
+     "a_r11"
+    ],
+    "conclusion": "@unit3 is stable_shape_retained.",
+    "conclusion_paraphrase": "\"unit3\" is classified as \"stable_shape_retained\".",
+    "certificate_digest": "375d938bbc3eab1bb447ad2dd4059026ae8e2dcda23424a9af89975f38b8f5db"
+   },
+   "result_chars": 303
+  },
+  {
+   "seq": 61,
+   "action": "check_step",
+   "args": {
+    "name": "s_n15"
+   },
+   "time": "2026-09-23T04:06:33+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n15",
+    "status": "follows",
+    "parents": [
+     "s_n01",
+     "f_facts",
+     "a_r15_3"
+    ],
+    "conclusion": "@unit5 is stable_temperature_constant.",
+    "conclusion_paraphrase": "\"unit5\" is classified as \"stable_temperature_constant\".",
+    "certificate_digest": "706446ada8fd5c51c9a7bef5ac9835739a45ce0a732598d0337584bf79638119"
+   },
+   "result_chars": 328
+  },
+  {
+   "seq": 62,
+   "action": "check_step",
+   "args": {
+    "name": "s_n14"
+   },
+   "time": "2026-09-23T04:06:33+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n14",
+    "status": "countermodel",
+    "parents": [
+     "s_n15",
+     "a_r05_1"
+    ],
+    "conclusion": "@unit5 is calibrated.",
+    "conclusion_paraphrase": "\"unit5\" is calibrated.",
+    "countermodel": {
+     "entities": {
+      "entity": [
+       "unit1",
+       "unit3",
+       "unit5"
+      ]
+     },
+     "true": [
+      "unit5 is stable_temperature_constant"
+     ],
+     "false": [
+      "unit5 is calibrated",
+      "unit5 is stable_shape_retained"
+     ],
+     "reading": "Every parent is true in this model and the step's conclusion is false."
+    },
+    "model_id": "2c7aca728524bc68f80979ed118b281016f70ec29412229eaaec7ae7dc9d6a3b"
+   },
+   "result_chars": 534
+  },
+  {
+   "seq": 63,
+   "action": "check_step",
+   "args": {
+    "name": "s_n18_2"
+   },
+   "time": "2026-09-23T04:06:33+00:00",
+   "result": {
+    "ok": true,
+    "node": "s_n18_2",
+    "status": "follows",
+    "parents": [
+     "a_r15_1",
+     "a_r15_2",
+     "a_r15_4"
+    ],
+    "conclusion": "(if ((@unit3 is stable_shape_retained) and (@unit5 is stacked)), then (@unit1 is stable_temperature_constant)) and ((if ((@unit3 is stable_shape_retained) and (@unit5 is checked)), then (@unit1 is stable_shape_retained)) and (if ((@unit3 is stable_shape_retained) and (@unit5 is scanned)), then (@unit5 is stable_shape_retained))).",
+    "conclusion_paraphrase": "All of the following hold:\n  (a) if both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is stacked, then \"unit1\" is classified as \"stable_temperature_constant\";\n  (b) all of the following hold:\n    (i) if both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is checked, then \"unit1\" is classified as \"stable_shape_retained\";\n    (ii) if both \"unit3\" is classified as \"stable_shape_retained\" and \"unit5\" is scanned, then \"unit5\" is classified as \"stable_shape_retained\".",
+    "certificate_digest": "aba49b418ba02fd064bd684eeca7d0bd1cecd4ee71f2e2a97578dc964b56a985"
+   },
+   "result_chars": 1096
+  },
+  {
+   "seq": 64,
+   "action": "waive",
+   "args": {
+    "sentence": "n05.1",
+    "reason": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+   },
+   "time": "2026-09-23T04:06:33+00:00",
+   "result": {
+    "ok": true,
+    "waived": "n05.1",
+    "reason": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+   },
+   "result_chars": 139
+  },
+  {
+   "seq": 65,
+   "action": "waive",
+   "args": {
+    "sentence": "n06.1",
+    "reason": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+   },
+   "time": "2026-09-23T04:06:33+00:00",
+   "result": {
+    "ok": true,
+    "waived": "n06.1",
+    "reason": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+   },
+   "result_chars": 139
+  },
+  {
+   "seq": 66,
+   "action": "waive",
+   "args": {
+    "sentence": "n19.1",
+    "reason": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+   },
+   "time": "2026-09-23T04:06:33+00:00",
+   "result": {
+    "ok": true,
+    "waived": "n19.1",
+    "reason": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+   },
+   "result_chars": 139
+  },
+  {
+   "seq": 67,
+   "action": "record_usage",
+   "args": {
+    "role": "author",
+    "input_tokens": 24935,
+    "output_tokens": 731
+   },
+   "time": "2026-09-23T04:06:41+00:00",
+   "tokens": {
+    "author": {
+     "input_tokens": 24935,
+     "output_tokens": 731,
+     "calls": 1
+    }
+   },
+   "result": {
+    "ok": true,
+    "recorded": "author"
+   },
+   "result_chars": 34
+  },
+  {
+   "seq": 68,
+   "action": "waive",
+   "args": {
+    "sentence": "n11.1",
+    "reason": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+   },
+   "time": "2026-09-23T04:06:41+00:00",
+   "result": {
+    "ok": true,
+    "waived": "n11.1",
+    "reason": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+   },
+   "result_chars": 139
+  },
+  {
+   "seq": 69,
+   "action": "waive",
+   "args": {
+    "sentence": "n21.1",
+    "reason": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+   },
+   "time": "2026-09-23T04:06:41+00:00",
+   "result": {
+    "ok": true,
+    "waived": "n21.1",
+    "reason": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+   },
+   "result_chars": 139
+  },
+  {
+   "seq": 70,
+   "action": "waive",
+   "args": {
+    "sentence": "n09.2",
+    "reason": "States that stacked/checked/scanned are not assumed; asserts no fact to formalise (n18.2 treats them hypothetically)."
+   },
+   "time": "2026-09-23T04:06:41+00:00",
+   "result": {
+    "ok": true,
+    "waived": "n09.2",
+    "reason": "States that stacked/checked/scanned are not assumed; asserts no fact to formalise (n18.2 treats them hypothetically)."
+   },
+   "result_chars": 162
+  },
+  {
+   "seq": 71,
+   "action": "add_node",
+   "args": {
+    "name": "a_r03_2",
+    "text": "if ((@unit5 is tied) and (@unit5 is boxed)), then (@unit3 is ready_packing_completed).",
+    "anchors": [
+     "r03.2"
+    ]
+   },
+   "time": "2026-09-23T04:06:41+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r03_2",
+     "kind": "assumption",
+     "text": "if ((@unit5 is tied) and (@unit5 is boxed)), then (@unit3 is ready_packing_completed).",
+     "paraphrase": "If both \"unit5\" is tied and \"unit5\" is boxed, then \"unit3\" is classified as \"ready_packing_completed\".",
+     "anchors": [
+      {
+       "id": "r03.2",
+       "role": "given",
+       "text": "If unit5 is tied and unit5 is boxed, then unit3 is ready (packing completed)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 466
+  },
+  {
+   "seq": 72,
+   "action": "add_node",
+   "args": {
+    "name": "a_r00_2",
+    "text": "if ((@unit5 is tied) and (@unit5 is boxed)), then (@unit3 is ready_staffing_arranged).",
+    "anchors": [
+     "r00.2"
+    ]
+   },
+   "time": "2026-09-23T04:06:41+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r00_2",
+     "kind": "assumption",
+     "text": "if ((@unit5 is tied) and (@unit5 is boxed)), then (@unit3 is ready_staffing_arranged).",
+     "paraphrase": "If both \"unit5\" is tied and \"unit5\" is boxed, then \"unit3\" is classified as \"ready_staffing_arranged\".",
+     "anchors": [
+      {
+       "id": "r00.2",
+       "role": "given",
+       "text": "If unit5 is tied and unit5 is boxed, then unit3 is ready (staffing arranged)."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 466
+  },
+  {
+   "seq": 73,
+   "action": "add_node",
+   "args": {
+    "name": "a_r00_3",
+    "text": "@unit5 supplied @unit1.",
+    "anchors": [
+     "r00.3"
+    ]
+   },
+   "time": "2026-09-23T04:06:41+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "a_r00_3",
+     "kind": "assumption",
+     "text": "@unit5 supplied @unit1.",
+     "paraphrase": "\"unit5\" has the recorded relation \"supplied\" to \"unit1\".",
+     "anchors": [
+      {
+       "id": "r00.3",
+       "role": "given",
+       "text": "Lot unit5 supplied sample unit1."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written"
+    }
+   },
+   "result_chars": 310
+  },
+  {
+   "seq": 74,
+   "action": "status",
+   "args": {},
+   "time": "2026-09-23T04:06:41+00:00",
+   "result": {
+    "ok": true,
+    "success": false,
+    "failures": [
+     "target t_n14: graph replay status Incomplete",
+     "1 unproved step(s)"
+    ],
+    "targets": [
+     {
+      "id": "t_n14",
+      "sentence": {
+       "id": "n14.1",
+       "role": "claimed",
+       "text": "It follows that unit5 is calibrated because the immediately preceding stable result holds."
+      },
+      "frozen": true,
+      "text": "@unit5 is calibrated.",
+      "paraphrase": "\"unit5\" is calibrated.",
+      "node": "s_n14",
+      "replay": "Incomplete",
+      "certified": false,
+      "support": [
+       "s_n14",
+       "a_r05_1",
+       "s_n15",
+       "a_r15_3",
+       "f_facts",
+       "s_n01",
+       "a_r11",
+       "s_n13",
+       "a_r13",
+       "s_n00",
+       "a_r08",
+       "s_n17",
+       "a_r12",
+       "s_n02",
+       "a_r02",
+       "s_n10",
+       "a_r04",
+       "s_n20",
+       "a_r10",
+       "s_n04",
+       "a_r07",
+       "s_n12",
+       "a_r14",
+       "s_n16",
+       "a_r01",
+       "s_n08",
+       "a_r09",
+       "s_n03",
+       "a_r06",
+       "s_n07",
+       "a_r03",
+       "s_n18_1",
+       "a_r00"
+      ],
+      "assumptions": [
+       "a_r05_1",
+       "a_r15_3",
+       "f_facts",
+       "a_r11",
+       "a_r13",
+       "a_r08",
+       "a_r12",
+       "a_r02",
+       "a_r04",
+       "a_r10",
+       "a_r07",
+       "a_r14",
+       "a_r01",
+       "a_r09",
+       "a_r06",
+       "a_r03",
+       "a_r00"
+      ]
+     }
+    ],
+    "unproved_steps": [
+     {
+      "node": "s_n14",
+      "check": "countermodel",
+      "parents": [
+       "s_n15",
+       "a_r05_1"
+      ]
+     }
+    ],
+    "unanchored_assumptions": [],
+    "coverage": {
+     "covered": 41,
+     "waived": 6,
+     "uncovered": [],
+     "sentences": [
+      {
+       "sentence": "n05.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+      },
+      {
+       "sentence": "n06.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+      },
+      {
+       "sentence": "n19.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+      },
+      {
+       "sentence": "n09.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "f_facts"
+       ]
+      },
+      {
+       "sentence": "n09.2",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "States that stacked/checked/scanned are not assumed; asserts no fact to formalise (n18.2 treats them hypothetically)."
+      },
+      {
+       "sentence": "n11.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+      },
+      {
+       "sentence": "n21.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+      },
+      {
+       "sentence": "r08.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r08"
+       ]
+      },
+      {
+       "sentence": "r09.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r09"
+       ]
+      },
+      {
+       "sentence": "r03.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r03"
+       ]
+      },
+      {
+       "sentence": "r03.2",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r03_2"
+       ]
+      },
+      {
+       "sentence": "r01.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r01"
+       ]
+      },
+      {
+       "sentence": "r15.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r15_1"
+       ]
+      },
+      {
+       "sentence": "r15.2",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r15_2"
+       ]
+      },
+      {
+       "sentence": "r15.3",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r15_3"
+       ]
+      },
+      {
+       "sentence": "r15.4",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r15_4"
+       ]
+      },
+      {
+       "sentence": "r11.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r11"
+       ]
+      },
+      {
+       "sentence": "r04.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r04"
+       ]
+      },
+      {
+       "sentence": "r00.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r00"
+       ]
+      },
+      {
+       "sentence": "r00.2",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r00_2"
+       ]
+      },
+      {
+       "sentence": "r00.3",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r00_3"
+       ]
+      },
+      {
+       "sentence": "r12.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r12"
+       ]
+      },
+      {
+       "sentence": "r13.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r13"
+       ]
+      },
+      {
+       "sentence": "r07.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r07"
+       ]
+      },
+      {
+       "sentence": "r05.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r05_1"
+       ]
+      },
+      {
+       "sentence": "r05.2",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r05_2"
+       ]
+      },
+      {
+       "sentence": "r02.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r02"
+       ]
+      },
+      {
+       "sentence": "r06.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r06"
+       ]
+      },
+      {
+       "sentence": "r14.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r14"
+       ]
+      },
+      {
+       "sentence": "r10.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r10"
+       ]
+      },
+      {
+       "sentence": "n18.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n18_1"
+       ]
+      },
+      {
+       "sentence": "n18.2",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n18_2"
+       ]
+      },
+      {
+       "sentence": "n07.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n07"
+       ]
+      },
+      {
+       "sentence": "n03.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n03"
+       ]
+      },
+      {
+       "sentence": "n08.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n08"
+       ]
+      },
+      {
+       "sentence": "n16.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n16"
+       ]
+      },
+      {
+       "sentence": "n12.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n12"
+       ]
+      },
+      {
+       "sentence": "n04.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n04"
+       ]
+      },
+      {
+       "sentence": "n20.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n20"
+       ]
+      },
+      {
+       "sentence": "n10.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n10"
+       ]
+      },
+      {
+       "sentence": "n02.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n02"
+       ]
+      },
+      {
+       "sentence": "n17.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n17"
+       ]
+      },
+      {
+       "sentence": "n00.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n00"
+       ]
+      },
+      {
+       "sentence": "n13.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n13"
+       ]
+      },
+      {
+       "sentence": "n01.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n01"
+       ]
+      },
+      {
+       "sentence": "n15.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n15"
+       ]
+      },
+      {
+       "sentence": "n14.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n14"
+       ]
+      }
+     ]
+    },
+    "renamed_conclusions": [],
+    "provenance": {
+     "hand-written": 41,
+     "proposer-verbatim": 0,
+     "proposer-edited": 0,
+     "suggestion-verbatim": 0,
+     "suggestion-edited": 0
+    },
+    "declared": {},
+    "usage": {
+     "tokens": {
+      "author": {
+       "input_tokens": 116683,
+       "output_tokens": 8133,
+       "calls": 7
+      }
+     },
+     "actions": {
+      "sentences": 1,
+      "record_usage": 7,
+      "freeze_target": 1,
+      "add_node": 41,
+      "rewrite": 1,
+      "check_step": 17,
+      "waive": 6
+     },
+     "events": 74,
+     "rejected_actions": 0,
+     "tool_result_chars": 37794
+    }
+   },
+   "result_chars": 6044
+  },
+  {
+   "seq": 75,
+   "action": "record_usage",
+   "args": {
+    "role": "author",
+    "input_tokens": 29387,
+    "output_tokens": 273
+   },
+   "time": "2026-09-23T04:06:46+00:00",
+   "tokens": {
+    "author": {
+     "input_tokens": 29387,
+     "output_tokens": 273,
+     "calls": 1
+    }
+   },
+   "result": {
+    "ok": true,
+    "recorded": "author"
+   },
+   "result_chars": 34
+  },
+  {
+   "seq": 76,
+   "action": "status",
+   "args": {},
+   "time": "2026-09-23T04:06:46+00:00",
+   "result": {
+    "ok": true,
+    "success": false,
+    "failures": [
+     "target t_n14: graph replay status Incomplete",
+     "1 unproved step(s)"
+    ],
+    "targets": [
+     {
+      "id": "t_n14",
+      "sentence": {
+       "id": "n14.1",
+       "role": "claimed",
+       "text": "It follows that unit5 is calibrated because the immediately preceding stable result holds."
+      },
+      "frozen": true,
+      "text": "@unit5 is calibrated.",
+      "paraphrase": "\"unit5\" is calibrated.",
+      "node": "s_n14",
+      "replay": "Incomplete",
+      "certified": false,
+      "support": [
+       "s_n14",
+       "a_r05_1",
+       "s_n15",
+       "a_r15_3",
+       "f_facts",
+       "s_n01",
+       "a_r11",
+       "s_n13",
+       "a_r13",
+       "s_n00",
+       "a_r08",
+       "s_n17",
+       "a_r12",
+       "s_n02",
+       "a_r02",
+       "s_n10",
+       "a_r04",
+       "s_n20",
+       "a_r10",
+       "s_n04",
+       "a_r07",
+       "s_n12",
+       "a_r14",
+       "s_n16",
+       "a_r01",
+       "s_n08",
+       "a_r09",
+       "s_n03",
+       "a_r06",
+       "s_n07",
+       "a_r03",
+       "s_n18_1",
+       "a_r00"
+      ],
+      "assumptions": [
+       "a_r05_1",
+       "a_r15_3",
+       "f_facts",
+       "a_r11",
+       "a_r13",
+       "a_r08",
+       "a_r12",
+       "a_r02",
+       "a_r04",
+       "a_r10",
+       "a_r07",
+       "a_r14",
+       "a_r01",
+       "a_r09",
+       "a_r06",
+       "a_r03",
+       "a_r00"
+      ]
+     }
+    ],
+    "unproved_steps": [
+     {
+      "node": "s_n14",
+      "check": "countermodel",
+      "parents": [
+       "s_n15",
+       "a_r05_1"
+      ]
+     }
+    ],
+    "unanchored_assumptions": [],
+    "coverage": {
+     "covered": 41,
+     "waived": 6,
+     "uncovered": [],
+     "sentences": [
+      {
+       "sentence": "n05.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+      },
+      {
+       "sentence": "n06.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+      },
+      {
+       "sentence": "n19.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+      },
+      {
+       "sentence": "n09.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "f_facts"
+       ]
+      },
+      {
+       "sentence": "n09.2",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "States that stacked/checked/scanned are not assumed; asserts no fact to formalise (n18.2 treats them hypothetically)."
+      },
+      {
+       "sentence": "n11.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+      },
+      {
+       "sentence": "n21.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "Only declares which rules exist; the rules themselves are formalised from their own sentences."
+      },
+      {
+       "sentence": "r08.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r08"
+       ]
+      },
+      {
+       "sentence": "r09.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r09"
+       ]
+      },
+      {
+       "sentence": "r03.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r03"
+       ]
+      },
+      {
+       "sentence": "r03.2",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r03_2"
+       ]
+      },
+      {
+       "sentence": "r01.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r01"
+       ]
+      },
+      {
+       "sentence": "r15.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r15_1"
+       ]
+      },
+      {
+       "sentence": "r15.2",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r15_2"
+       ]
+      },
+      {
+       "sentence": "r15.3",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r15_3"
+       ]
+      },
+      {
+       "sentence": "r15.4",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r15_4"
+       ]
+      },
+      {
+       "sentence": "r11.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r11"
+       ]
+      },
+      {
+       "sentence": "r04.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r04"
+       ]
+      },
+      {
+       "sentence": "r00.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r00"
+       ]
+      },
+      {
+       "sentence": "r00.2",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r00_2"
+       ]
+      },
+      {
+       "sentence": "r00.3",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r00_3"
+       ]
+      },
+      {
+       "sentence": "r12.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r12"
+       ]
+      },
+      {
+       "sentence": "r13.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r13"
+       ]
+      },
+      {
+       "sentence": "r07.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r07"
+       ]
+      },
+      {
+       "sentence": "r05.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r05_1"
+       ]
+      },
+      {
+       "sentence": "r05.2",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r05_2"
+       ]
+      },
+      {
+       "sentence": "r02.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r02"
+       ]
+      },
+      {
+       "sentence": "r06.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r06"
+       ]
+      },
+      {
+       "sentence": "r14.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r14"
+       ]
+      },
+      {
+       "sentence": "r10.1",
+       "role": "given",
+       "state": "covered",
+       "nodes": [
+        "a_r10"
+       ]
+      },
+      {
+       "sentence": "n18.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n18_1"
+       ]
+      },
+      {
+       "sentence": "n18.2",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n18_2"
+       ]
+      },
+      {
+       "sentence": "n07.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n07"
+       ]
+      },
+      {
+       "sentence": "n03.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n03"
+       ]
+      },
+      {
+       "sentence": "n08.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n08"
+       ]
+      },
+      {
+       "sentence": "n16.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n16"
+       ]
+      },
+      {
+       "sentence": "n12.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n12"
+       ]
+      },
+      {
+       "sentence": "n04.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n04"
+       ]
+      },
+      {
+       "sentence": "n20.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n20"
+       ]
+      },
+      {
+       "sentence": "n10.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n10"
+       ]
+      },
+      {
+       "sentence": "n02.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n02"
+       ]
+      },
+      {
+       "sentence": "n17.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n17"
+       ]
+      },
+      {
+       "sentence": "n00.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n00"
+       ]
+      },
+      {
+       "sentence": "n13.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n13"
+       ]
+      },
+      {
+       "sentence": "n01.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n01"
+       ]
+      },
+      {
+       "sentence": "n15.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n15"
+       ]
+      },
+      {
+       "sentence": "n14.1",
+       "role": "claimed",
+       "state": "covered",
+       "nodes": [
+        "s_n14"
+       ]
+      }
+     ]
+    },
+    "renamed_conclusions": [],
+    "provenance": {
+     "hand-written": 41,
+     "proposer-verbatim": 0,
+     "proposer-edited": 0,
+     "suggestion-verbatim": 0,
+     "suggestion-edited": 0
+    },
+    "declared": {},
+    "usage": {
+     "tokens": {
+      "author": {
+       "input_tokens": 146070,
+       "output_tokens": 8406,
+       "calls": 8
+      }
+     },
+     "actions": {
+      "sentences": 1,
+      "record_usage": 8,
+      "freeze_target": 1,
+      "add_node": 41,
+      "rewrite": 1,
+      "check_step": 17,
+      "waive": 6,
+      "status": 1
+     },
+     "events": 76,
+     "rejected_actions": 0,
+     "tool_result_chars": 43872
+    }
+   },
+   "result_chars": 6057
+  }
+ ]
+}

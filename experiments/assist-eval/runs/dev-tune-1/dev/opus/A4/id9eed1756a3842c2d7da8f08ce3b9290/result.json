@@ -1,0 +1,71 @@
+{
+ "item_id": "id9eed1756a3842c2d7da8f08ce3b9290",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A4",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "s_n00"
+  ],
+  "note": "n00.1 concludes unit3 is audited from the preceding clear result (unit5 is clear: optically transparent). r04.1 requires unit4 to be clear (optically transparent). Nothing given establishes that: r10.1 would need unit4 to be numbered, which n09.2 leaves unassumed, and r04.2 needs staged and inspected, which are not given. The checker returned a countermodel. The target t_n02 depends on this step; all other steps are certified."
+ },
+ "turns": 8,
+ "tool_calls": 67,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.6826064",
+  "proposer": "0",
+  "total": "0.6826064"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n02: graph replay status Incomplete",
+   "1 unproved step(s)"
+  ],
+  "targets": [
+   {
+    "id": "t_n02",
+    "text": "@unit1 is dried.",
+    "certified": false,
+    "reason": null,
+    "replay": "Incomplete",
+    "node": "s_n02"
+   }
+  ],
+  "unproved_steps": [
+   {
+    "node": "s_n00",
+    "check": "countermodel",
+    "parents": [
+     "s_n19",
+     "r04_1"
+    ]
+   }
+  ],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "covered": 40,
+  "waived": 7,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 40,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 69.0,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

@@ -1,0 +1,71 @@
+{
+ "item_id": "ib301f2aab289831d1ddf47088674e53c",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A4",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "n14_1"
+  ],
+  "note": "Every step from n18.1 through n15.1 checks as following from its parents, and so does n18.2. The final step n14.1 does not follow and has a countermodel. Its stated reason is n15.1, which establishes that unit1 is stable (shape retained). Rule r05.1 only gives 'unit5 is calibrated' when unit5 is stable (shape retained). The given rules offer two ways to make unit5 stable (shape retained) or calibrated. The first is r15.4, which needs unit5 scanned, and n09.2 explicitly leaves that unassumed. The second is r05.2, which needs unit5 tied and boxed, and no given sentence states either. So the target does not follow from the given premises."
+ },
+ "turns": 8,
+ "tool_calls": 67,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.6898114",
+  "proposer": "0",
+  "total": "0.6898114"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n14: graph replay status Incomplete",
+   "1 unproved step(s)"
+  ],
+  "targets": [
+   {
+    "id": "t_n14",
+    "text": "@unit5 is calibrated.",
+    "certified": false,
+    "reason": null,
+    "replay": "Incomplete",
+    "node": "n14_1"
+   }
+  ],
+  "unproved_steps": [
+   {
+    "node": "n14_1",
+    "check": "countermodel",
+    "parents": [
+     "n15_1",
+     "r05_1"
+    ]
+   }
+  ],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "covered": 37,
+  "waived": 10,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 37,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 73.8,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

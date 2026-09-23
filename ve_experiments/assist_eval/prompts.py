@@ -11,7 +11,7 @@ import json
 
 from ve.assist.proposer import GRAMMAR
 
-PROMPT_VERSION = "ve-assist-eval-prompts@2"
+PROMPT_VERSION = "ve-assist-eval-prompts@3"
 
 TASK = """You are formalising an English argument into Verifiable English (VE), a small
 first-order logic with a checker. You receive the argument split into
@@ -30,9 +30,15 @@ What a finished formalisation contains:
    it must follow logically from its parents, and the checker certifies this
    (or returns a countermodel: a situation where every parent is true and the
    step is false).
-3. COVERAGE: every asserting sentence (given or claimed) is covered by a node
-   anchored to it, or explicitly waived with a reason (e.g. a sentence that only
-   says which rules are declared, or a fact the argument never uses).
+3. COVERAGE: every claimed sentence is DERIVED: a certified step anchored to
+   it states its conclusion. A claimed sentence may never be waived. Every
+   given sentence is covered by a node anchored to it, or WAIVED with a reason
+   when no statement can or need state it: a sentence that only lists which
+   rules are declared, a sentence saying which checks remain unassumed, or a
+   fact or rule the argument never uses. The checker's status lists any waiver
+   as a failure ("asserting sentence(s) waived"); in this task that failure
+   ALONE is acceptable when every waived sentence is given, and each waiver is
+   audited.
 4. A certified chain from anchored assumptions to a step that states each
    frozen target exactly.
 
@@ -64,10 +70,12 @@ must be listed as a parent of any step that uses it.
 TOOLS_ARM = """You act through the tools listed below. Suggested order: freeze_target
 for every target, then add assumption nodes for the given sentences you need,
 then add step nodes for the claimed sentences with their parents and
-check_step each one; waive sentences that need no formalisation; call status
-to see what is still missing. When status reports success, or when you have
-a faithful formalisation with a step you believe does not follow, call
-finish. You may issue several tool calls per turn; they run in order.
+check_step each one; waive given sentences that need no formalisation; call
+status to see what is still missing. When status reports success, or its only
+failure is the waiver line for given sentences, call finish with "complete"
+(the harness refuses "complete" otherwise);
+when you have a faithful formalisation with a step you believe does not
+follow, call finish with "gap". You may issue several tool calls per turn; they run in order.
 """
 
 DOCUMENT_ARM = """You have no interactive tools. Each turn, write the COMPLETE formalisation as
@@ -76,8 +84,8 @@ first document (they cannot change later), adds every node, runs the checker
 on every step and returns diagnostics: parse errors, per-step results
 (follows / countermodel with the model / unknown), unanchored assumptions and
 uncovered sentences. Then write a corrected COMPLETE document. The session
-ends when a document passes every check, when you include "finish", or when
-the budget runs out.
+ends when a document passes every check (apart from waivers of given
+sentences), when you include "finish", or when the budget runs out.
 
 Document format (JSON, no comments):
 {"targets": {"<target id>": "<VE statement>"},
@@ -89,7 +97,8 @@ Document format (JSON, no comments):
 """
 
 FINISH_TOOL = {"name": "finish", "description": (
-    "End the session. verdict 'complete' when status reports success; 'gap' when your faithful "
+    "End the session. verdict 'complete' when status reports success or its only failure is the waiver "
+    "line for given sentences; 'gap' when your faithful "
     "formalisation has step(s) that do not follow (name them in gap_steps)."),
     "input_schema": {"type": "object", "properties": {
         "verdict": {"type": "string", "enum": ["complete", "gap"]},
@@ -181,7 +190,8 @@ For each unit judge fidelity only:
   this sentence's content correctly; a statement that states only some other
   sentence's conclusion does not formalise this one (unfaithful).
 - A waiver is "acceptable" if the sentence asserts nothing the argument's
-  reasoning relies on (e.g. a list of declared rule names, a fact never used).
+  reasoning relies on (e.g. a list of declared rule names, a statement of which
+  checks remain unassumed, a fact never used).
 Use "unfaithful"/"unacceptable" when something is wrong, "unclear" only when
 the sentence itself is too ambiguous to judge.
 

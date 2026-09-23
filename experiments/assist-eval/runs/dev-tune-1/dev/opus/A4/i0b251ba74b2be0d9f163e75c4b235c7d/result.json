@@ -1,0 +1,71 @@
+{
+ "item_id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A4",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "s_n02"
+  ],
+  "note": "n02.1 infers 'unit0 is documented' from the immediately preceding clear result, n04.1: unit0 is clear (optically transparent). The only relevant rule, r01.1, requires unit2 to be clear (optically transparent). That is not derivable: r11.4 needs unit0 listed, which is unassumed, and r01.2 needs unit2 dated and tied, which is never given. The checker returns a countermodel for s_n02. Every other step is certified, including all steps downstream of s_n02 through to the target 'unit0 is bundled', but the target is not certified because it depends on s_n02."
+ },
+ "turns": 8,
+ "tool_calls": 70,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.7348564",
+  "proposer": "0",
+  "total": "0.7348564"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n08: graph replay status Incomplete",
+   "1 unproved step(s)"
+  ],
+  "targets": [
+   {
+    "id": "t_n08",
+    "text": "@unit0 is bundled.",
+    "certified": false,
+    "reason": null,
+    "replay": "Incomplete",
+    "node": "s_n08"
+   }
+  ],
+  "unproved_steps": [
+   {
+    "node": "s_n02",
+    "check": "countermodel",
+    "parents": [
+     "s_n04",
+     "r01a"
+    ]
+   }
+  ],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "covered": 37,
+  "waived": 10,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 39,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 77.9,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

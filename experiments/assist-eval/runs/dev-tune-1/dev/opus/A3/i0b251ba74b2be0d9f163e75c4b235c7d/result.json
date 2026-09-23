@@ -1,0 +1,71 @@
+{
+ "item_id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A3",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "s_n02"
+  ],
+  "note": "n02.1 infers 'unit0 is documented' from the preceding result 'unit0 is clear (optically transparent)'. r01.1 requires unit2 to be clear (optically transparent), and r01.2 requires unit2 to be dated and tied; neither is established. r11.4 would yield unit2 clear only if unit0 is listed, which n19.2 leaves unassumed. The checker returned a countermodel. All other steps are certified; the target depends on s_n02."
+ },
+ "turns": 8,
+ "tool_calls": 68,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.728398",
+  "proposer": "0",
+  "total": "0.728398"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n08: graph replay status Incomplete",
+   "1 unproved step(s)"
+  ],
+  "targets": [
+   {
+    "id": "t_n08",
+    "text": "@unit0 is bundled.",
+    "certified": false,
+    "reason": null,
+    "replay": "Incomplete",
+    "node": "s_n08"
+   }
+  ],
+  "unproved_steps": [
+   {
+    "node": "s_n02",
+    "check": "countermodel",
+    "parents": [
+     "s_n04",
+     "r01_1"
+    ]
+   }
+  ],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "covered": 37,
+  "waived": 10,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 37,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 72.7,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

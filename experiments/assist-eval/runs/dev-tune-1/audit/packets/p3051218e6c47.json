@@ -1,0 +1,721 @@
+{
+ "packet": "p3051218e6c47",
+ "sentences": [
+  {
+   "id": "n10.1",
+   "role": "given",
+   "text": "Rules r02, r11, r08 are declared."
+  },
+  {
+   "id": "n12.1",
+   "role": "given",
+   "text": "Rules r01, r06, r14 are declared."
+  },
+  {
+   "id": "n13.1",
+   "role": "given",
+   "text": "Rules r09, r10, r12 are declared."
+  },
+  {
+   "id": "n09.1",
+   "role": "given",
+   "text": "Rules r05, r13, r07, r00 are declared."
+  },
+  {
+   "id": "n17.1",
+   "role": "given",
+   "text": "unit2 is bagged; unit2 is logged; unit2 is listed; unit2 is stored; unit2 is routed; unit2 is shipped; unit2 is queued."
+  },
+  {
+   "id": "n17.2",
+   "role": "given",
+   "text": "The checks that unit2 is documented and unit2 is boxed and unit2 is retained remain unassumed."
+  },
+  {
+   "id": "n11.1",
+   "role": "given",
+   "text": "Rules r15, r03, r04 are declared."
+  },
+  {
+   "id": "r15.1",
+   "role": "given",
+   "text": "If unit4 is stored, then unit7 is active (power connected)."
+  },
+  {
+   "id": "r03.1",
+   "role": "given",
+   "text": "If unit7 is clear (contamination absent), then unit7 is clear (optically transparent)."
+  },
+  {
+   "id": "r01.1",
+   "role": "given",
+   "text": "If unit2 is stored and unit2 is routed and unit2 is shipped, then unit7 is ready (staffing arranged)."
+  },
+  {
+   "id": "r01.2",
+   "role": "given",
+   "text": "If unit3 is audited and unit3 is scheduled, then unit7 is ready (staffing arranged)."
+  },
+  {
+   "id": "r14.1",
+   "role": "given",
+   "text": "If unit3 is clear (optically transparent), then unit6 is shipped."
+  },
+  {
+   "id": "r14.2",
+   "role": "given",
+   "text": "If unit3 is audited and unit3 is scheduled, then unit6 is shipped."
+  },
+  {
+   "id": "r08.1",
+   "role": "given",
+   "text": "If unit6 is shipped, then unit7 is open (account enabled)."
+  },
+  {
+   "id": "r00.1",
+   "role": "given",
+   "text": "If unit2 is open (seal removed), then unit5 is stored."
+  },
+  {
+   "id": "r12.1",
+   "role": "given",
+   "text": "If unit7 is open (account enabled), then unit7 is open (seal removed)."
+  },
+  {
+   "id": "r05.1",
+   "role": "given",
+   "text": "If unit2 is bagged and unit2 is logged and unit2 is listed, then unit7 is ready (packing completed)."
+  },
+  {
+   "id": "r05.2",
+   "role": "given",
+   "text": "If unit3 is audited and unit3 is scheduled, then unit7 is ready (packing completed)."
+  },
+  {
+   "id": "r05.3",
+   "role": "given",
+   "text": "The sample from lot unit2 is unit3."
+  },
+  {
+   "id": "r06.1",
+   "role": "given",
+   "text": "If unit7 is active (registry current), then unit3 is active (registry current)."
+  },
+  {
+   "id": "r04.1",
+   "role": "given",
+   "text": "If unit7 is open (seal removed), then unit2 is open (seal removed)."
+  },
+  {
+   "id": "r11.1",
+   "role": "given",
+   "text": "If unit3 is active (registry current), then unit6 is logged."
+  },
+  {
+   "id": "r13.1",
+   "role": "given",
+   "text": "If unit7 is active (power connected), then unit7 is active (registry current)."
+  },
+  {
+   "id": "r02.1",
+   "role": "given",
+   "text": "If unit7 is ready (packing completed) and unit7 is ready (staffing arranged), then unit2 is ready (staffing arranged)."
+  },
+  {
+   "id": "r10.1",
+   "role": "given",
+   "text": "If unit6 is logged, then unit7 is clear (contamination absent)."
+  },
+  {
+   "id": "r07.1",
+   "role": "given",
+   "text": "If unit7 is clear (optically transparent) and unit2 is documented, then unit3 is clear (contamination absent)."
+  },
+  {
+   "id": "r07.2",
+   "role": "given",
+   "text": "If unit7 is clear (optically transparent) and unit2 is queued, then unit3 is clear (optically transparent)."
+  },
+  {
+   "id": "r07.3",
+   "role": "given",
+   "text": "If unit7 is clear (optically transparent) and unit2 is boxed, then unit2 is clear (contamination absent)."
+  },
+  {
+   "id": "r07.4",
+   "role": "given",
+   "text": "If unit7 is clear (optically transparent) and unit2 is retained, then unit2 is clear (optically transparent)."
+  },
+  {
+   "id": "r09.1",
+   "role": "given",
+   "text": "If unit7 is ready (staffing arranged) and unit2 is ready (staffing arranged), then unit4 is stored."
+  },
+  {
+   "id": "n00.1",
+   "role": "claimed",
+   "text": "Because unit2 is bagged and unit2 is logged and unit2 is listed, unit7 is ready."
+  },
+  {
+   "id": "n02.1",
+   "role": "claimed",
+   "text": "Since unit2 is stored and unit2 is routed and unit2 is shipped, it follows that unit7 is ready."
+  },
+  {
+   "id": "n07.1",
+   "role": "claimed",
+   "text": "Given that unit7 is ready and unit7 is ready, we infer that unit2 is ready."
+  },
+  {
+   "id": "n16.1",
+   "role": "claimed",
+   "text": "It follows that unit4 is stored because unit7 is ready and the immediately preceding ready result holds."
+  },
+  {
+   "id": "n05.1",
+   "role": "claimed",
+   "text": "Because unit4 is stored, unit7 is active."
+  },
+  {
+   "id": "n20.1",
+   "role": "claimed",
+   "text": "Since unit7 is active, it follows that unit7 is active."
+  },
+  {
+   "id": "n06.1",
+   "role": "claimed",
+   "text": "Given that unit7 is active, we infer that unit3 is active."
+  },
+  {
+   "id": "n03.1",
+   "role": "claimed",
+   "text": "It follows that unit6 is logged because the immediately preceding active result holds."
+  },
+  {
+   "id": "n14.1",
+   "role": "claimed",
+   "text": "Because unit6 is logged, unit7 is clear."
+  },
+  {
+   "id": "n21.1",
+   "role": "claimed",
+   "text": "Since unit7 is clear, it follows that unit7 is clear."
+  },
+  {
+   "id": "n21.2",
+   "role": "claimed",
+   "text": "The checks that unit2 is documented and unit2 is boxed and unit2 is retained would establish that unit3 is clear and unit2 is clear and unit2 is clear, respectively."
+  },
+  {
+   "id": "n01.1",
+   "role": "claimed",
+   "text": "Given that unit7 is clear and unit2 is queued, we infer that unit3 is clear."
+  },
+  {
+   "id": "n15.1",
+   "role": "claimed",
+   "text": "It follows that unit6 is shipped because the immediately preceding clear result holds."
+  },
+  {
+   "id": "n08.1",
+   "role": "claimed",
+   "text": "Because unit6 is shipped, unit7 is open."
+  },
+  {
+   "id": "n18.1",
+   "role": "claimed",
+   "text": "Since unit7 is open, it follows that unit7 is open."
+  },
+  {
+   "id": "n04.1",
+   "role": "claimed",
+   "text": "Given that unit7 is open, we infer that unit2 is open."
+  },
+  {
+   "id": "n19.1",
+   "role": "claimed",
+   "text": "It follows that unit5 is stored because the immediately preceding open result holds."
+  }
+ ],
+ "glossary": {
+  "active_power_connected": "active: power connected (R14)",
+  "active_registry_current": "active: registry current (R09)",
+  "audited": "audited: audit completed (R08)",
+  "bagged": "bagged: bag fitted (R17)",
+  "boxed": "boxed: box fitted (R05)",
+  "clear_contamination_absent": "clear: contamination absent (R16)",
+  "clear_optically_transparent": "clear: optically transparent (R19)",
+  "documented": "documented: documentation stored (R11)",
+  "listed": "listed: catalogue entry made (R03)",
+  "logged": "logged: entry recorded (R04)",
+  "open_account_enabled": "open: account enabled (R01)",
+  "open_seal_removed": "open: seal removed (R02)",
+  "queued": "queued: place assigned (R07)",
+  "ready_packing_completed": "ready: packing completed (R18)",
+  "ready_staffing_arranged": "ready: staffing arranged (R06)",
+  "retained": "retained: retention recorded (R10)",
+  "routed": "routed: route assigned (R13)",
+  "scheduled": "scheduled: time assigned (R20)",
+  "shipped": "shipped: departure recorded (R12)",
+  "stored": "stored: location assigned (R15)"
+ },
+ "units": [
+  {
+   "unit": "u1",
+   "kind": "waiver",
+   "sentence": "n10.1",
+   "role": "given",
+   "text": "Rules r02, r11, r08 are declared.",
+   "waiver_reason": "Only lists which rules are declared."
+  },
+  {
+   "unit": "u2",
+   "kind": "waiver",
+   "sentence": "n12.1",
+   "role": "given",
+   "text": "Rules r01, r06, r14 are declared.",
+   "waiver_reason": "Only lists which rules are declared."
+  },
+  {
+   "unit": "u3",
+   "kind": "waiver",
+   "sentence": "n13.1",
+   "role": "given",
+   "text": "Rules r09, r10, r12 are declared.",
+   "waiver_reason": "Only lists which rules are declared."
+  },
+  {
+   "unit": "u4",
+   "kind": "waiver",
+   "sentence": "n09.1",
+   "role": "given",
+   "text": "Rules r05, r13, r07, r00 are declared.",
+   "waiver_reason": "Only lists which rules are declared."
+  },
+  {
+   "unit": "u5",
+   "kind": "formalised",
+   "sentence": "n17.1",
+   "role": "given",
+   "text": "unit2 is bagged; unit2 is logged; unit2 is listed; unit2 is stored; unit2 is routed; unit2 is shipped; unit2 is queued.",
+   "formalisation": [
+    "\"unit2\" is bagged.",
+    "\"unit2\" is logged.",
+    "\"unit2\" is listed.",
+    "\"unit2\" is stored.",
+    "\"unit2\" is routed.",
+    "\"unit2\" is shipped.",
+    "\"unit2\" is queued."
+   ]
+  },
+  {
+   "unit": "u6",
+   "kind": "waiver",
+   "sentence": "n17.2",
+   "role": "given",
+   "text": "The checks that unit2 is documented and unit2 is boxed and unit2 is retained remain unassumed.",
+   "waiver_reason": "States that some checks are not assumed; asserts no fact."
+  },
+  {
+   "unit": "u7",
+   "kind": "waiver",
+   "sentence": "n11.1",
+   "role": "given",
+   "text": "Rules r15, r03, r04 are declared.",
+   "waiver_reason": "Only lists which rules are declared."
+  },
+  {
+   "unit": "u8",
+   "kind": "formalised",
+   "sentence": "r15.1",
+   "role": "given",
+   "text": "If unit4 is stored, then unit7 is active (power connected).",
+   "formalisation": [
+    "If \"unit4\" is stored, then \"unit7\" is classified as \"active_power_connected\"."
+   ]
+  },
+  {
+   "unit": "u9",
+   "kind": "formalised",
+   "sentence": "r03.1",
+   "role": "given",
+   "text": "If unit7 is clear (contamination absent), then unit7 is clear (optically transparent).",
+   "formalisation": [
+    "If \"unit7\" is classified as \"clear_contamination_absent\", then \"unit7\" is classified as \"clear_optically_transparent\"."
+   ]
+  },
+  {
+   "unit": "u10",
+   "kind": "formalised",
+   "sentence": "r01.1",
+   "role": "given",
+   "text": "If unit2 is stored and unit2 is routed and unit2 is shipped, then unit7 is ready (staffing arranged).",
+   "formalisation": [
+    "If all of the following hold:\n  (a) \"unit2\" is stored;\n  (b) both \"unit2\" is routed and \"unit2\" is shipped, then \"unit7\" is classified as \"ready_staffing_arranged\"."
+   ]
+  },
+  {
+   "unit": "u11",
+   "kind": "waiver",
+   "sentence": "r01.2",
+   "role": "given",
+   "text": "If unit3 is audited and unit3 is scheduled, then unit7 is ready (staffing arranged).",
+   "waiver_reason": "Alternative rule the argument never uses."
+  },
+  {
+   "unit": "u12",
+   "kind": "formalised",
+   "sentence": "r14.1",
+   "role": "given",
+   "text": "If unit3 is clear (optically transparent), then unit6 is shipped.",
+   "formalisation": [
+    "If \"unit3\" is classified as \"clear_optically_transparent\", then \"unit6\" is shipped."
+   ]
+  },
+  {
+   "unit": "u13",
+   "kind": "waiver",
+   "sentence": "r14.2",
+   "role": "given",
+   "text": "If unit3 is audited and unit3 is scheduled, then unit6 is shipped.",
+   "waiver_reason": "Alternative rule the argument never uses."
+  },
+  {
+   "unit": "u14",
+   "kind": "formalised",
+   "sentence": "r08.1",
+   "role": "given",
+   "text": "If unit6 is shipped, then unit7 is open (account enabled).",
+   "formalisation": [
+    "If \"unit6\" is shipped, then \"unit7\" is classified as \"open_account_enabled\"."
+   ]
+  },
+  {
+   "unit": "u15",
+   "kind": "formalised",
+   "sentence": "r00.1",
+   "role": "given",
+   "text": "If unit2 is open (seal removed), then unit5 is stored.",
+   "formalisation": [
+    "If \"unit2\" is classified as \"open_seal_removed\", then \"unit5\" is stored."
+   ]
+  },
+  {
+   "unit": "u16",
+   "kind": "formalised",
+   "sentence": "r12.1",
+   "role": "given",
+   "text": "If unit7 is open (account enabled), then unit7 is open (seal removed).",
+   "formalisation": [
+    "If \"unit7\" is classified as \"open_account_enabled\", then \"unit7\" is classified as \"open_seal_removed\"."
+   ]
+  },
+  {
+   "unit": "u17",
+   "kind": "formalised",
+   "sentence": "r05.1",
+   "role": "given",
+   "text": "If unit2 is bagged and unit2 is logged and unit2 is listed, then unit7 is ready (packing completed).",
+   "formalisation": [
+    "If all of the following hold:\n  (a) \"unit2\" is bagged;\n  (b) both \"unit2\" is logged and \"unit2\" is listed, then \"unit7\" is classified as \"ready_packing_completed\"."
+   ]
+  },
+  {
+   "unit": "u18",
+   "kind": "waiver",
+   "sentence": "r05.2",
+   "role": "given",
+   "text": "If unit3 is audited and unit3 is scheduled, then unit7 is ready (packing completed).",
+   "waiver_reason": "Alternative rule the argument never uses."
+  },
+  {
+   "unit": "u19",
+   "kind": "waiver",
+   "sentence": "r05.3",
+   "role": "given",
+   "text": "The sample from lot unit2 is unit3.",
+   "waiver_reason": "Sample relation the argument never uses."
+  },
+  {
+   "unit": "u20",
+   "kind": "formalised",
+   "sentence": "r06.1",
+   "role": "given",
+   "text": "If unit7 is active (registry current), then unit3 is active (registry current).",
+   "formalisation": [
+    "If \"unit7\" is classified as \"active_registry_current\", then \"unit3\" is classified as \"active_registry_current\"."
+   ]
+  },
+  {
+   "unit": "u21",
+   "kind": "formalised",
+   "sentence": "r04.1",
+   "role": "given",
+   "text": "If unit7 is open (seal removed), then unit2 is open (seal removed).",
+   "formalisation": [
+    "If \"unit7\" is classified as \"open_seal_removed\", then \"unit2\" is classified as \"open_seal_removed\"."
+   ]
+  },
+  {
+   "unit": "u22",
+   "kind": "formalised",
+   "sentence": "r11.1",
+   "role": "given",
+   "text": "If unit3 is active (registry current), then unit6 is logged.",
+   "formalisation": [
+    "If \"unit3\" is classified as \"active_registry_current\", then \"unit6\" is logged."
+   ]
+  },
+  {
+   "unit": "u23",
+   "kind": "formalised",
+   "sentence": "r13.1",
+   "role": "given",
+   "text": "If unit7 is active (power connected), then unit7 is active (registry current).",
+   "formalisation": [
+    "If \"unit7\" is classified as \"active_power_connected\", then \"unit7\" is classified as \"active_registry_current\"."
+   ]
+  },
+  {
+   "unit": "u24",
+   "kind": "formalised",
+   "sentence": "r02.1",
+   "role": "given",
+   "text": "If unit7 is ready (packing completed) and unit7 is ready (staffing arranged), then unit2 is ready (staffing arranged).",
+   "formalisation": [
+    "If both \"unit7\" is classified as \"ready_packing_completed\" and \"unit7\" is classified as \"ready_staffing_arranged\", then \"unit2\" is classified as \"ready_staffing_arranged\"."
+   ]
+  },
+  {
+   "unit": "u25",
+   "kind": "formalised",
+   "sentence": "r10.1",
+   "role": "given",
+   "text": "If unit6 is logged, then unit7 is clear (contamination absent).",
+   "formalisation": [
+    "If \"unit6\" is logged, then \"unit7\" is classified as \"clear_contamination_absent\"."
+   ]
+  },
+  {
+   "unit": "u26",
+   "kind": "formalised",
+   "sentence": "r07.1",
+   "role": "given",
+   "text": "If unit7 is clear (optically transparent) and unit2 is documented, then unit3 is clear (contamination absent).",
+   "formalisation": [
+    "If both \"unit7\" is classified as \"clear_optically_transparent\" and \"unit2\" is documented, then \"unit3\" is classified as \"clear_contamination_absent\"."
+   ]
+  },
+  {
+   "unit": "u27",
+   "kind": "formalised",
+   "sentence": "r07.2",
+   "role": "given",
+   "text": "If unit7 is clear (optically transparent) and unit2 is queued, then unit3 is clear (optically transparent).",
+   "formalisation": [
+    "If both \"unit7\" is classified as \"clear_optically_transparent\" and \"unit2\" is queued, then \"unit3\" is classified as \"clear_optically_transparent\"."
+   ]
+  },
+  {
+   "unit": "u28",
+   "kind": "formalised",
+   "sentence": "r07.3",
+   "role": "given",
+   "text": "If unit7 is clear (optically transparent) and unit2 is boxed, then unit2 is clear (contamination absent).",
+   "formalisation": [
+    "If both \"unit7\" is classified as \"clear_optically_transparent\" and \"unit2\" is boxed, then \"unit2\" is classified as \"clear_contamination_absent\"."
+   ]
+  },
+  {
+   "unit": "u29",
+   "kind": "formalised",
+   "sentence": "r07.4",
+   "role": "given",
+   "text": "If unit7 is clear (optically transparent) and unit2 is retained, then unit2 is clear (optically transparent).",
+   "formalisation": [
+    "If both \"unit7\" is classified as \"clear_optically_transparent\" and \"unit2\" is retained, then \"unit2\" is classified as \"clear_optically_transparent\"."
+   ]
+  },
+  {
+   "unit": "u30",
+   "kind": "formalised",
+   "sentence": "r09.1",
+   "role": "given",
+   "text": "If unit7 is ready (staffing arranged) and unit2 is ready (staffing arranged), then unit4 is stored.",
+   "formalisation": [
+    "If both \"unit7\" is classified as \"ready_staffing_arranged\" and \"unit2\" is classified as \"ready_staffing_arranged\", then \"unit4\" is stored."
+   ]
+  },
+  {
+   "unit": "u31",
+   "kind": "formalised",
+   "sentence": "n00.1",
+   "role": "claimed",
+   "text": "Because unit2 is bagged and unit2 is logged and unit2 is listed, unit7 is ready.",
+   "formalisation": [
+    "\"unit7\" is classified as \"ready_packing_completed\"."
+   ]
+  },
+  {
+   "unit": "u32",
+   "kind": "formalised",
+   "sentence": "n02.1",
+   "role": "claimed",
+   "text": "Since unit2 is stored and unit2 is routed and unit2 is shipped, it follows that unit7 is ready.",
+   "formalisation": [
+    "\"unit7\" is classified as \"ready_staffing_arranged\"."
+   ]
+  },
+  {
+   "unit": "u33",
+   "kind": "formalised",
+   "sentence": "n07.1",
+   "role": "claimed",
+   "text": "Given that unit7 is ready and unit7 is ready, we infer that unit2 is ready.",
+   "formalisation": [
+    "\"unit2\" is classified as \"ready_staffing_arranged\"."
+   ]
+  },
+  {
+   "unit": "u34",
+   "kind": "formalised",
+   "sentence": "n16.1",
+   "role": "claimed",
+   "text": "It follows that unit4 is stored because unit7 is ready and the immediately preceding ready result holds.",
+   "formalisation": [
+    "\"unit4\" is stored."
+   ]
+  },
+  {
+   "unit": "u35",
+   "kind": "formalised",
+   "sentence": "n05.1",
+   "role": "claimed",
+   "text": "Because unit4 is stored, unit7 is active.",
+   "formalisation": [
+    "\"unit7\" is classified as \"active_power_connected\"."
+   ]
+  },
+  {
+   "unit": "u36",
+   "kind": "formalised",
+   "sentence": "n20.1",
+   "role": "claimed",
+   "text": "Since unit7 is active, it follows that unit7 is active.",
+   "formalisation": [
+    "\"unit7\" is classified as \"active_registry_current\"."
+   ]
+  },
+  {
+   "unit": "u37",
+   "kind": "formalised",
+   "sentence": "n06.1",
+   "role": "claimed",
+   "text": "Given that unit7 is active, we infer that unit3 is active.",
+   "formalisation": [
+    "\"unit3\" is classified as \"active_registry_current\"."
+   ]
+  },
+  {
+   "unit": "u38",
+   "kind": "formalised",
+   "sentence": "n03.1",
+   "role": "claimed",
+   "text": "It follows that unit6 is logged because the immediately preceding active result holds.",
+   "formalisation": [
+    "\"unit6\" is logged."
+   ]
+  },
+  {
+   "unit": "u39",
+   "kind": "formalised",
+   "sentence": "n14.1",
+   "role": "claimed",
+   "text": "Because unit6 is logged, unit7 is clear.",
+   "formalisation": [
+    "\"unit7\" is classified as \"clear_contamination_absent\"."
+   ]
+  },
+  {
+   "unit": "u40",
+   "kind": "formalised",
+   "sentence": "n21.1",
+   "role": "claimed",
+   "text": "Since unit7 is clear, it follows that unit7 is clear.",
+   "formalisation": [
+    "\"unit7\" is classified as \"clear_optically_transparent\"."
+   ]
+  },
+  {
+   "unit": "u41",
+   "kind": "formalised",
+   "sentence": "n21.2",
+   "role": "claimed",
+   "text": "The checks that unit2 is documented and unit2 is boxed and unit2 is retained would establish that unit3 is clear and unit2 is clear and unit2 is clear, respectively.",
+   "formalisation": [
+    "All of the following hold:\n  (a) if \"unit2\" is documented, then \"unit3\" is classified as \"clear_contamination_absent\";\n  (b) all of the following hold:\n    (i) if \"unit2\" is boxed, then \"unit2\" is classified as \"clear_contamination_absent\";\n    (ii) if \"unit2\" is retained, then \"unit2\" is classified as \"clear_optically_transparent\"."
+   ]
+  },
+  {
+   "unit": "u42",
+   "kind": "formalised",
+   "sentence": "n01.1",
+   "role": "claimed",
+   "text": "Given that unit7 is clear and unit2 is queued, we infer that unit3 is clear.",
+   "formalisation": [
+    "\"unit3\" is classified as \"clear_optically_transparent\"."
+   ]
+  },
+  {
+   "unit": "u43",
+   "kind": "formalised",
+   "sentence": "n15.1",
+   "role": "claimed",
+   "text": "It follows that unit6 is shipped because the immediately preceding clear result holds.",
+   "formalisation": [
+    "\"unit6\" is shipped."
+   ]
+  },
+  {
+   "unit": "u44",
+   "kind": "formalised",
+   "sentence": "n08.1",
+   "role": "claimed",
+   "text": "Because unit6 is shipped, unit7 is open.",
+   "formalisation": [
+    "\"unit7\" is classified as \"open_account_enabled\"."
+   ]
+  },
+  {
+   "unit": "u45",
+   "kind": "formalised",
+   "sentence": "n18.1",
+   "role": "claimed",
+   "text": "Since unit7 is open, it follows that unit7 is open.",
+   "formalisation": [
+    "\"unit7\" is classified as \"open_seal_removed\"."
+   ]
+  },
+  {
+   "unit": "u46",
+   "kind": "formalised",
+   "sentence": "n04.1",
+   "role": "claimed",
+   "text": "Given that unit7 is open, we infer that unit2 is open.",
+   "formalisation": [
+    "\"unit2\" is classified as \"open_seal_removed\"."
+   ]
+  },
+  {
+   "unit": "u47",
+   "kind": "formalised",
+   "sentence": "n19.1",
+   "role": "claimed",
+   "text": "It follows that unit5 is stored because the immediately preceding open result holds.",
+   "formalisation": [
+    "(frozen conclusion) \"unit5\" is stored.",
+    "\"unit5\" is stored."
+   ]
+  }
+ ]
+}

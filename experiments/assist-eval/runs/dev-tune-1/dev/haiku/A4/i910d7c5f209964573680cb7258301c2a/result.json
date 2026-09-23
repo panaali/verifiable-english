@@ -1,0 +1,103 @@
+{
+ "item_id": "i910d7c5f209964573680cb7258301c2a",
+ "split": "dev",
+ "author": "haiku",
+ "arm": "A4",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "step_n15_1"
+  ],
+  "note": "The step step_n15_1 (unit6 is shipped) cannot be proved. It requires rule r14.1, which needs clear_optically_transparent(@unit3) as its antecedent. However, the argument only establishes clear_contamination_absent(@unit3). These are different senses of the 'clear' predicate. Rule r07.2 could provide the required fact if unit2 were queued, but queued(@unit2) remains unassumed per n17.2. This creates an insurmountable logical gap preventing the completion of the chain to the conclusion that unit5 is stored."
+ },
+ "turns": 7,
+ "tool_calls": 11,
+ "protocol_errors": 3,
+ "spent_usd": {
+  "author": "0.22158875",
+  "proposer": "0",
+  "total": "0.22158875"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n19: target not frozen",
+   "40 asserting sentence(s) neither covered nor waived"
+  ],
+  "targets": [
+   {
+    "id": "t_n19",
+    "text": null,
+    "certified": false,
+    "reason": "target not frozen",
+    "replay": null,
+    "node": null
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "n17.1",
+   "r15.1",
+   "r03.1",
+   "r01.1",
+   "r01.2",
+   "r14.1",
+   "r14.2",
+   "r08.1",
+   "r00.1",
+   "r12.1",
+   "r05.1",
+   "r05.2",
+   "r05.3",
+   "r06.1",
+   "r04.1",
+   "r11.1",
+   "r13.1",
+   "r02.1",
+   "r10.1",
+   "r07.1",
+   "r07.2",
+   "r07.3",
+   "r07.4",
+   "r09.1",
+   "n00.1",
+   "n02.1",
+   "n07.1",
+   "n16.1",
+   "n05.1",
+   "n20.1",
+   "n06.1",
+   "n03.1",
+   "n14.1",
+   "n21.1",
+   "n01.1",
+   "n15.1",
+   "n08.1",
+   "n18.1",
+   "n04.1",
+   "n19.1"
+  ],
+  "covered": 0,
+  "waived": 7,
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 0,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 149.2,
+ "prompt_version": "ve-assist-eval-prompts@2"
+}

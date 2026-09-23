@@ -208,16 +208,23 @@ class GeminiAuthor:
 
     @staticmethod
     def _margin(count):
-        return count + count // 50 + 256
+        # Vertex countTokens under-counts function declarations: dev-tune-1's first A3 call counted
+        # ~3.5k tokens but was billed 4,004, which exceeded the per-call cap and HALTED the run ledger
+        # (every later Gemini call and every Gemini audit then failed). 5% + 2,048 covers the tool list.
+        return count + count // 20 + 2048
 
     def turn(self, history, call_id, parse_calls=True):
-        from ve_experiments.paid import PreflightError
+        from ve_experiments.paid import BudgetExceeded, InfrastructureError, PreflightError
         count = self._count(history, call_id)
         if self._margin(count) > self.max_input_tokens:
             raise AuthorAbort(f"context {count} tokens exceeds the {self.max_input_tokens} cap")
         request = self.request(history, call_id, self._margin(count))
         try:
             reply = self.client.call(request)
+        except BudgetExceeded as exc:
+            raise AuthorAbort(f"run cap: {exc}") from exc
+        except InfrastructureError as exc:
+            raise AuthorAbort(f"infrastructure: {exc}") from exc
         except PreflightError as exc:
             raise AuthorAbort(f"paid ledger: {exc}") from exc
         cost = gemini_cost(reply.input_tokens, reply.billed_output_tokens)
