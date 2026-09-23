@@ -17,3 +17,18 @@ one rule mistranscribed (dropped exception, widened scope) so the certificate is
 Primary: false approval when the transcription is sabotaged (the monitor must catch the mistranscription), honest
 completion. Hypothesis: the anchored English paraphrase makes mistranscriptions easier to catch than JSON edges.
 Refutation: (c) not better than (b) by a preregistered margin, or honest completion drops.
+
+## After review (2026-09-23): Astra xhigh and Opus xhigh both "revise before spending". Adopted:
+Part 1: item is the unit; exact paired tests (McNemar on pre-declared per-item binaries; sign-flip permutation on
+per-item means) primary; paired non-inferiority bound (Tango/Newcombe or item-cluster bootstrap), >= 80 honest items or a
+15pp margin; more independent policies over repeats (vary topology, identifiers, path lengths, families; held-out
+templates); SEMANTIC near-misses (aliases, group vs member, role vs user), not only one-hex-digit binding; surface-feature
+leakage classifier near chance; disjoint seeds; drop haiku-script (null already shown); add opus-raw at higher effort.
+Part 2 REPLACED: universal rule-level claims under permitted policy changes ("no contractor can ever read a confidential
+resource under any grants these rules allow"), checked by closure induction; competent non-VE baseline = Datalog/Z3
+verifier (not snapshot BFS); expected VE ~ Z3 on verdicts, VE's edge = small proved checker, reported honestly; no
+English-helps-models hypothesis. Sabotage: generate gold rules, mutate one semantic rule in the direction that makes a
+false "cannot" claim true (added exception, narrowed scope, dropped inheritance, negation flip), same mutation rendered
+into every arm, validity checked independently; headroom gate >= 15% false approval first.
+Next step (no model calls): offline paired-power analysis, validated mutation set, leakage classifier, closure@0
+feasibility for "unless" (negated guards under closed-world tags), then re-review.
