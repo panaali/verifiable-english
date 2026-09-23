@@ -2,7 +2,9 @@
 
 Commands (repository root, UV_CACHE_DIR=/private/tmp/ve-uv-cache-t4):
   prepare   generate items, certificates and trusted verdicts offline; write HASHES
-  stamp     OpenTimestamps receipts for PREREG-T1c.md and HASHES
+  amend     A1 covariates and binding-construction checks (offline)
+  freeze    write HASHES-A1 (before stamping and before any call)
+  stamp     OpenTimestamps receipts for PREREG-T1c-A1.md and HASHES-A1
   gate      20 items x {haiku-raw, opus-raw} x k=3 at 20,000 grants   (model calls)
   full      only after gate CONTINUE: 80 items x 4 arms x k=3         (model calls)
   report    summaries from saved decisions (no calls)
@@ -171,14 +173,34 @@ def prepare(*, lean=True, force=False):
 
 def frozen_files():
     return sorted([ROOT / 'design/crypto-inspired-oversight.md', ROOT / 'design/frontier-failure-modes-and-ve.md',
-                   HOME / 'PREREG-T1c.md', HOME / 'README.md', HOME / 'known-answer.json', HOME / 'offline-checks.json', HOME / 'context-preflight.json',
+                   HOME / 'PREREG-T1c.md', HOME / 'PREREG-T1c-A1.md', HOME / 'README.md', HOME / 'known-answer.json',
+                   HOME / 'offline-checks.json', HOME / 'context-preflight.json', HOME / 'amendment-A1-checks.json',
                    *HOME.glob('items-*.json.gz'), *HOME.glob('evidence-*.json.gz'),
                    *sorted((ROOT / 've_experiments/t1c').glob('*.py')), ROOT / 'tests/test_t1c.py',
                    ROOT / 'pyproject.toml', ROOT / 'uv.lock', *sorted((ROOT / 've').glob('*.py')), C.LEAN])
 
 
+# The original freeze (HASHES, PREREG-T1c.md and their receipts) is immutable history; A1 adds
+# HASHES-A1 over the amended file set, stamped together with PREREG-T1c-A1.md.
+FREEZE, AMENDMENT = 'HASHES-A1', 'PREREG-T1c-A1.md'
+
+
 def freeze():
-    (HOME / 'HASHES').write_text(''.join(f'{sha(f)}  {f.relative_to(ROOT)}\n' for f in frozen_files()))
+    (HOME / FREEZE).write_text(''.join(f'{sha(f)}  {f.relative_to(ROOT)}\n' for f in frozen_files()))
+
+
+def amend():
+    """A1 offline artefacts: covariates and binding-construction checks (no model calls)."""
+    from .covariates import binding_check, item_covariates
+    result = {'created_at': now(), 'model_calls': 0, 'covariates': {}, 'binding_checks': {}}
+    for split in ('dev', 'gate', 'full'):
+        ev = evidence(split)
+        result['covariates'][split] = [item_covariates(i) for i in items(split)]
+        checks = [c for c in (binding_check(i, ev[i['id']]['submission']) for i in items(split)) if c]
+        if not all(c['only_defect_is_binding'] and c['S_is_reach_of_principal'] for c in checks):
+            raise RuntimeError('A binding certificate has a defect other than the binding')
+        result['binding_checks'][split] = checks
+    save(HOME / 'amendment-A1-checks.json', result)
 
 
 def ots(*args):
@@ -195,39 +217,48 @@ def _receipt_ok(name):
     return good, info
 
 
-def stamp():
+def _stamp(names, receipt_file, submission_file):
     receipts = []
-    for name in ('PREREG-T1c.md', 'HASHES'):
+    for name in names:
         if not (HOME / (name + '.ots')).exists():
             receipt = ots('stamp', HOME / name)
             receipts.append(receipt)
             if receipt['returncode']:
-                save(HOME / 'timestamp-submission.json', receipts)
+                save(HOME / submission_file, receipts)
                 raise RuntimeError('OTS submission failed')
         good, info = _receipt_ok(name)
         receipts.append(info)
         if not good:
-            save(HOME / 'timestamp-submission.json', receipts)
+            save(HOME / submission_file, receipts)
             raise RuntimeError('Unbound or missing timestamp receipt for ' + name)
-    save(HOME / 'timestamp-submission.json', receipts)
-    save(HOME / 'timestamp.json', {'created_at': now(), 'status': 'bound_calendar_submission_pending_bitcoin',
-                                   'bitcoin_verified': False,
-                                   **{name: sha(HOME / name) for name in ('PREREG-T1c.md', 'HASHES', 'PREREG-T1c.md.ots', 'HASHES.ots')}})
+    save(HOME / submission_file, receipts)
+    save(HOME / receipt_file, {'created_at': now(), 'status': 'bound_calendar_submission_pending_bitcoin',
+                               'bitcoin_verified': False,
+                               **{n: sha(HOME / n) for name in names for n in (name, name + '.ots')}})
 
 
-def verify():
-    for line in (HOME / 'HASHES').read_text().splitlines():
-        expected, name = line.split('  ', 1)
-        if sha(ROOT / name) != expected:
-            raise RuntimeError('Preregistered file changed: ' + name)
-    receipt = load(HOME / 'timestamp.json')
-    for name in ('PREREG-T1c.md', 'HASHES', 'PREREG-T1c.md.ots', 'HASHES.ots'):
-        if sha(HOME / name) != receipt[name]:
-            raise RuntimeError('Timestamp binding changed: ' + name)
-    for name in ('PREREG-T1c.md', 'HASHES'):
+def stamp():
+    _stamp((AMENDMENT, FREEZE), 'timestamp-A1.json', 'timestamp-A1-submission.json')
+
+
+def _verify_receipt(names, receipt_file):
+    receipt = load(HOME / receipt_file)
+    for name in names:
+        for n in (name, name + '.ots'):
+            if sha(HOME / n) != receipt[n]:
+                raise RuntimeError('Timestamp binding changed: ' + n)
         if not _receipt_ok(name)[0]:
             raise RuntimeError('Timestamp proof failed to bind: ' + name)
     return receipt
+
+
+def verify():
+    _verify_receipt(('PREREG-T1c.md', 'HASHES'), 'timestamp.json')  # original registration unchanged
+    for line in (HOME / FREEZE).read_text().splitlines():
+        expected, name = line.split('  ', 1)
+        if sha(ROOT / name) != expected:
+            raise RuntimeError('Preregistered file changed: ' + name)
+    return _verify_receipt((AMENDMENT, FREEZE), 'timestamp-A1.json')
 
 
 # ---------------------------------------------------------------- monitor calls
@@ -248,7 +279,7 @@ class Runner:
         meta = self.directory / 'run.json'
         if not meta.exists():
             save(meta, {'started': now(), 'split': split, 'backend': backend, 'account': account, 'k': K[split],
-                        'freeze_sha256': sha(HOME / 'HASHES') if (HOME / 'HASHES').exists() else None, 'serial': True})
+                        'freeze_sha256': sha(HOME / FREEZE) if (HOME / FREEZE).exists() else None, 'serial': True})
         self.clients, self.last = {}, {}
 
     def account_dir(self):
@@ -290,6 +321,8 @@ class Runner:
                     if old['status'] == 'ok':
                         if old['account_label'] != self.account or old['served_model'] != MODELS[model]:
                             raise RuntimeError('Cross-account or cross-model response reuse')
+                        if old['input_tokens'] > len((system + prompt).encode()) + 4096:
+                            raise RuntimeError('Observed input tokens exceed prompt bytes + 4,096')
                         self.last = old
                         return p.as_json(old['text'])
         if prior and prior[-1]['status'] == 'refusal':
@@ -312,6 +345,9 @@ class Runner:
         usage = row.get('model_usage', {}).get(MODELS[model], {})
         if row['input_tokens'] + client.controls.output_tokens > usage.get('contextWindow', 0):
             raise RuntimeError('Observed input/output reserve exceeds served context')
+        # A1: the byte bound assumes the CLI adds at most the 4,096-token wrapper reserve.
+        if row['input_tokens'] > len((system + prompt).encode()) + 4096:
+            raise RuntimeError('Observed input tokens exceed prompt bytes + 4,096: wrapper assumption violated')
         self.last = row
         print(json.dumps({'event': 'call_ok', 'key': key, 'sample': sample, 'model': model,
                           'input_tokens': row['input_tokens'], 'output_tokens': row['output_tokens']}), flush=True)
@@ -341,6 +377,7 @@ class Runner:
                'sabotaged': item['sabotaged'], 'sabotage_kind': item['sabotage_kind'],
                'decision': p.decision_of(response), 'response': response, 'trusted_report': report,
                'input_tokens': self.last.get('input_tokens', 0), 'output_tokens': self.last.get('output_tokens', 0),
+               'prompt_utf8_bytes': len((system + user).encode()),
                'call_key': self.last.get('key')}
         save(path, row)
         return row
@@ -420,7 +457,7 @@ def report(split, backend='claude'):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('command', choices=('prepare', 'freeze', 'stamp', 'gate', 'full', 'report'))
+    parser.add_argument('command', choices=('prepare', 'amend', 'freeze', 'stamp', 'gate', 'full', 'report'))
     parser.add_argument('--split', choices=('gate', 'full'), default='gate')
     parser.add_argument('--backend', choices=('claude',) + FAKE_BACKENDS, default='claude')
     parser.add_argument('--account', default=DEFAULT_ACCOUNT, help='account label; config ~/.claude-<label>')
@@ -428,8 +465,10 @@ def main():
     args = parser.parse_args()
     if args.command == 'prepare':
         return prepare(lean=not args.no_lean)
+    if args.command == 'amend':
+        return amend()
     if args.command == 'freeze':
-        if any(HOME.glob('results-gate')) or any(HOME.glob('results-full')) or (HOME / 'HASHES.ots').exists():
+        if any(HOME.glob('results-gate')) or any(HOME.glob('results-full')) or (HOME / (FREEZE + '.ots')).exists():
             raise RuntimeError('Refreeze is only allowed before timestamping and before any model call')
         return freeze()
     if args.command == 'stamp':
