@@ -19,10 +19,17 @@ from pathlib import Path
 from ve_experiments import paid
 from ve_experiments.paid import Ledger, PaidClient, PaidRequest, VertexBackend
 
-# Runtime registration keeps the frozen P1 module untouched. Gemini 3 Flash is
-# only the Jagged-Judges replication observer (their observer was GPT-5).
-paid.MODELS.setdefault("flash", "gemini-3-flash-preview")
-paid.RATES.setdefault("flash", ("0.5", "3", "1"))
+FLASH = ("gemini-3-flash-preview", ("0.5", "3", "1"))
+
+
+def register_flash():
+    """Lazily register Gemini 3 Flash (replication observer only; theirs was GPT-5).
+
+    Registration happens only when a Flash endpoint is built, so importing this
+    module never changes the frozen P1 model table seen by other code or tests.
+    """
+    paid.MODELS.setdefault("flash", FLASH[0])
+    paid.RATES.setdefault("flash", FLASH[1])
 
 
 class StudyVertexBackend(VertexBackend):
@@ -57,6 +64,8 @@ class Reply:
 class GeminiChat:
     def __init__(self, client: PaidClient, model="pro", *, thinking="LOW", temperature=0.0,
                  max_output=2048, max_input=16000):
+        if model == "flash":
+            register_flash()
         self.client, self.model = client, model
         self.thinking, self.temperature = thinking, temperature
         self.max_output, self.max_input = max_output, max_input

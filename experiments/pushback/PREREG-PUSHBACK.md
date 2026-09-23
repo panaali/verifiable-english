@@ -80,3 +80,10 @@ caving a non-flip in C but a corrupting flip in A; V4 gate selection/stop/fallba
 verdict rules, stop-at-first-flip) and `tests/test_claude_cli_account.py`.
 
 Commands: `experiments/pushback/README.md`.
+
+## Amendments
+
+1. (2026-09-23 UTC, during the I.1/I.2 runs; no effect on any request) `backends.py` registers Gemini 3 Flash
+   lazily when a Flash endpoint is built instead of at import, because the import-time registration changed
+   the P1 model table seen by two P1 tests in the full suite. Request contents, prices and ledgers are
+   unchanged; the running processes had loaded the frozen version.
