@@ -13,14 +13,15 @@ from conformance.order import environment
 from test_lean_conformance import lean_executable  # noqa: F401  (fixture)
 from ve import (FiniteModel, evaluate, find_countermodel, meaning_id, parse, parse_english,
                 print_document, prove_entailment, check_entailment_certificate)
-from ve.ast import (Add, Bottom, Const, Document, Eq, Forall, Le, Lt, Num, Scale, Top, Unary,
-                    formula_from_data, formula_to_data)
+from ve.ast import (Add, Bottom, Const, Document, Eq, Forall, Le, Lt, Not, Num, Scale, Top, Unary,
+                    check_formula, document_from_data, formula_from_data, formula_to_data)
 from ve.english import render_english
 from ve.entailment import _binding
 from ve.environment import Environment
 from ve.errors import (ResourceLimit, SyntaxError, TypeMismatch, UnknownSymbol, UnsupportedProfile,
                        VEError)
 from ve.search import check_countermodel
+from ve.wire import digest
 
 ENV = environment()
 N, M, ONE = Const("n"), Const("m"), Num(1)
@@ -247,6 +248,49 @@ def test_english_at_least_is_never_a_counting_quantifier():
             parse_english(ENV, text)
 
 
+def _nested_additions(count):
+    term = N
+    for _ in range(count):
+        term = Add(term, ONE)
+    return term
+
+
+def test_term_depth_is_budgeted_separately_and_round_trips():
+    # 63 nested additions (term height 64) under Not(Le(t, 0)): the checker accepts
+    # it, so the wire decoder must accept its serialization too.
+    formula = Not(Le(_nested_additions(63), Num(0)))
+    check_formula(ENV, formula)
+    assert formula_from_data(ENV, formula_to_data(ENV, formula)) == formula
+    assert document_from_data(ENV, [formula_to_data(ENV, formula)]).formulas == (formula,)
+    # One more level exceeds the shared term budget in the checker and decoder alike.
+    deeper = Not(Le(_nested_additions(64), Num(0)))
+    with pytest.raises(ResourceLimit):
+        check_formula(ENV, deeper)
+    data = formula_to_data(ENV, formula)
+    data[1][1] = ["add", data[1][1], ["num", "1"]]
+    with pytest.raises(ResourceLimit):
+        formula_from_data(ENV, data)
+    # Formula depth and term depth are independent budgets.
+    wrapped = formula
+    for _ in range(62):
+        wrapped = Not(wrapped)
+    assert formula_from_data(ENV, formula_to_data(ENV, wrapped)) == wrapped
+
+
+def test_english_integer_terms_round_trip_beyond_four_brackets():
+    text = "[[[[[n + 1] + 1] + 1] + 1] + 1] is at most 0."
+    document = parse_english(ENV, text)
+    assert document.formulas == (Le(_nested_additions(5), Num(0)),)
+    assert parse_english(ENV, render_english(document, ENV)) == document
+    for count in (5, 20, 63):
+        document = Document((Not(Le(_nested_additions(count), Num(0))),))
+        assert parse_english(ENV, render_english(document, ENV)) == document
+    with pytest.raises(ResourceLimit):
+        parse_english(ENV, "[" * 64 + "n" + " + 1]" * 64 + " is at most 0.")
+    with pytest.raises(VEError):
+        parse_english(ENV, "[[n + 1] + 1 is at most 0.")
+
+
 # ------------------------------------------------------------------------ Lean
 
 def _invoke(executable, cases, command="order"):
@@ -282,3 +326,54 @@ def test_lean_differential_corpus(lean_executable):
     assert report["lean_rejected"] == report["python_rejected"] >= 1000
     assert report["lean_refutes"] == report["countermodels_checked"] > 0
     assert report["evaluation_agreements"] == report["evaluation_cases"] == 120
+
+
+def test_lean_order_route_rejects_malformed_declarations(lean_executable):
+    # Declaration objects, descriptions and display metadata are validated as in
+    # Python even when the certificate bindings are recomputed for the bad input.
+    certificate = _prove([Top()], Top())
+    base = corpus.envelope("well-formed", ENV, [Top()], Top(), certificate)
+    mutations = {
+        "sort-not-object": lambda v: v["sorts"].__setitem__("item", "not a declaration object"),
+        "empty-description": lambda v: v["sorts"]["item"].__setitem__("description", ""),
+        "extra-sort-field": lambda v: v["sorts"]["item"].__setitem__("colour", "red"),
+        "bad-sort-display": lambda v: v["sorts"]["item"].__setitem__("verbalisation", {"singular": "item"}),
+        "empty-verbalisation": lambda v: v["predicates"]["p"].__setitem__("verbalisation", ""),
+        "long-verbalisation": lambda v: v["predicates"]["p"].__setitem__("verbalisation", "x" * 257),
+        "extra-predicate-field": lambda v: v["predicates"]["p"].__setitem__("note", "x"),
+        "predicate-not-object": lambda v: v["predicates"].__setitem__("p", ["item"]),
+        "constant-display": lambda v: v["constants"]["a"].__setitem__("verbalisation", "a"),
+        "constant-no-description": lambda v: v["constants"]["a"].pop("description"),
+    }
+    cases = [base]
+    for name, mutate in mutations.items():
+        case = copy.deepcopy(base)
+        case["id"] = name
+        mutate(case["environment"]["vocabulary"])
+        with pytest.raises(VEError):
+            Environment(case["environment"])
+        environment_id = digest("ve-environment-v0.1-order\n", case["environment"])
+        meaning = lambda ast: digest("ve-meaning-v0.1-order\n", {"environment_id": environment_id, "ast": ast})
+        case["certificate"] = {**case["certificate"], "environment_id": environment_id,
+                               "premise_meaning_ids": [meaning(a) for a in case["premises"]],
+                               "conclusion_meaning_id": meaning(case["conclusion"])}
+        cases.append(case)
+    rows = _invoke(lean_executable, cases)
+    assert rows[0]["valid"] is True, rows[0]
+    for row in rows[1:]:
+        assert row["valid"] is False and row["status"] == "error", row
+
+
+def test_lean_order_term_depth_matches_python(lean_executable):
+    formula = Not(Le(_nested_additions(63), Num(0)))
+    certificate = _prove([formula], formula)
+    accepted = corpus.envelope("depth-63", ENV, [formula], formula, certificate)
+    rejected = copy.deepcopy(accepted)
+    rejected["id"] = "depth-64"
+    for ast in (*rejected["premises"], rejected["conclusion"]):
+        ast[1][1] = ["add", ast[1][1], ["num", "1"]]
+    with pytest.raises(ResourceLimit):
+        document_from_data(ENV, rejected["premises"])
+    rows = _invoke(lean_executable, [accepted, rejected])
+    assert rows[0]["valid"] is True, rows[0]
+    assert rows[1]["valid"] is False and "term depth" in rows[1]["error"], rows[1]

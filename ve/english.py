@@ -40,7 +40,25 @@ _RESERVED = _LOGICAL_WORDS | _EXTRA_RESERVED
 _COMPARISON_WORDS = frozenset('less more than least most same'.split())
 _COMPARISONS = (('{0} is less than {1}', ast.Lt, False), ('{0} is at most {1}', ast.Le, False),
                 ('{0} is more than {1}', ast.Lt, True), ('{0} is at least {1}', ast.Le, True))
-_INT_NESTING = 4
+# Integer slots match any bracket depth: outermost bracket groups are masked
+# (length-preserving) before regex matching, and the exact term text is then
+# checked by `int_syntax` and parsed by `int_term`, which budgets term depth
+# exactly as the type checker does (MAX_DEPTH), so every renderable integer
+# term of a valid AST parses back.
+_INT_MASK = '\x00'
+
+
+def _mask_brackets(source):
+    """Replace the interior of each balanced outermost [...] group by _INT_MASK."""
+    chars, stack = list(source), []
+    for index, char in enumerate(source):
+        if char == '[':
+            stack.append(index)
+        elif char == ']' and stack:
+            open_ = stack.pop()
+            if not stack:
+                chars[open_ + 1:index] = _INT_MASK * (index - open_ - 1)
+    return ''.join(chars)
 
 
 # Function words cannot establish a semantic connection to a declaration.
@@ -523,6 +541,9 @@ class EnglishParser:
         if not terms:
             term_pattern = r'(?!)'
         int_pattern = self.int_pattern() if order else None
+        if order and getattr(self, '_masked_for', None) is not self.source:
+            self._masked_for, self._masked = self.source, _mask_brackets(self.source)
+        subject = self._masked if order else self.source
 
         def slots(name, omitted):
             """Per-placeholder patterns: integer slots take bracketed integer terms."""
@@ -565,21 +586,27 @@ class EnglishParser:
             parts = re.split(r'(\{[01]\})', template)
             pattern = ''.join(('(' + (term_pattern if slot is None else slot[int(part[1])]) + ')')
                               if part in ('{0}', '{1}') else _content_pattern(part) for part in parts)
-            match = re.compile(pattern).match(self.source, start)
+            match = re.compile(pattern).match(subject, start)
             if not match:
                 continue
             end = match.end()
             if end < len(self.source) and re.match(r'[A-Za-z0-9_]', self.source[end]):
                 continue
+            groups = [self.source[a:b] for a, b in (match.span(g) for g in range(1, len(match.groups()) + 1))]
+            if slot not in (None, False):
+                offset = 1 if omitted == 'subject' else 0
+                if not all(self.int_syntax(t) for i, t in enumerate(groups)
+                           if slot[i + offset] is int_pattern):
+                    continue
             # Whitespace in a term can be edited; its binding is lexical, not textual.
             if slot is None:
                 args = [next(value for ref, value in terms.items() if re.fullmatch(term_literal(ref), t))
-                        for t in match.groups()]
+                        for t in groups]
             else:
                 offset = 1 if omitted == 'subject' else 0
                 args = [self.int_term(t) if slot[i + offset] is int_pattern else
                         next(value for ref, value in terms.items() if re.fullmatch(term_literal(ref), t))
-                        for i, t in enumerate(match.groups())]
+                        for i, t in enumerate(groups)]
             if omitted == 'subject': args.insert(0, ast.Var(0))
             elif omitted == 'object': args.append(ast.Var(0))
             if type(name) is tuple:
@@ -616,16 +643,48 @@ class EnglishParser:
         return {text: name for name, text in self.words.constants.items()
                 if self.env.constants[name].sort == ast.INT_SORT}
 
-    def int_pattern(self):
-        """Bracketed integer terms, at most _INT_NESTING brackets deep."""
+    def int_leaf(self):
         constants = sorted(self.int_constants(), key=lambda t: -len(t))
-        leaf = r'(?:-?(?:0|[1-9][0-9]*)(?![0-9])' + ''.join(
+        return r'(?:-?(?:0|[1-9][0-9]*)(?![0-9])' + ''.join(
             '|' + re.escape(t) + (r'(?![A-Za-z0-9_])' if t[-1:].isalnum() or t[-1:] == '_' else '')
             for t in constants) + ')'
-        pattern = '-*' + leaf
-        for _ in range(_INT_NESTING):
-            pattern = '-*(?:' + leaf + r'|\[' + pattern + r' [-+*] ' + pattern + r'\])'
-        return pattern
+
+    def int_pattern(self):
+        """An integer term over the bracket-masked source: a leaf or one masked bracket group."""
+        return '-*(?:' + self.int_leaf() + r'|\[' + _INT_MASK + r'*\])'
+
+    def int_syntax(self, text):
+        """The exact integer-term shape (any depth) that the frozen grammar admits."""
+        leaf = re.compile(self.int_leaf())
+        position = 0
+
+        def term(depth):
+            # depth is the AST term depth int_term will build (Scale(-1, t) per
+            # prefix minus, Add(t, Scale(-1, u)) for [t - u]), bounded as in the checker.
+            nonlocal position
+            while text.startswith('-', position) and not text[position + 1:position + 2].isdigit():
+                position += 1
+                depth += 1
+            if depth > MAX_DEPTH:
+                self.error(f'Arithmetic term exceeds {MAX_DEPTH} nesting levels.', ResourceLimit)
+            match = leaf.match(text, position)
+            if match:
+                position = match.end()
+                return True
+            if not text.startswith('[', position):
+                return False
+            position += 1
+            if not term(depth + 1):
+                return False
+            operator = text[position:position + 3]
+            if operator not in (' + ', ' - ', ' * '):
+                return False
+            position += 3
+            if not term(depth + (2 if operator == ' - ' else 1)) or not text.startswith(']', position):
+                return False
+            position += 1
+            return True
+        return term(1) and position == len(text)
 
     def int_term(self, text):
         """Parse an integer term with the canonical (frozen) term grammar."""
