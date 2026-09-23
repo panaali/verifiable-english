@@ -1327,3 +1327,301 @@ def test_astra_rr2_shared_calls_ledger_requires_a_trusted_session_id():
                               trusted_session_id=s.session_id)["problems"]
     assert "session_id differs from the independently trusted session id" in problems
     assert any("never recorded" in p for p in problems)
+
+
+# ---------------------------------------------------------------- Astra fix-review 3: outcome is a function of the graph
+
+C_FORMULA = "(@web is reviewed) or (@web is deployed)"
+D_FORMULA = "(@api is deployed) or ((@web is safe) and (@web is deployed))"
+BASE_NODES = [("rule", "if (@api is reviewed), then (@api is safe).", ["p1.1"], []),
+              ("fact", "@api is reviewed.", ["p1.2"], []),
+              ("webfact", "@web is reviewed.", ["p1.3"], []),
+              ("goal", "@api is safe.", ["p2.1"], ["rule", "fact"]),
+              ("web_ok", "@web is safe.", ["p2.2"], ["web_rule", "webfact"]),
+              ("web_rule", "if (@web is reviewed), then (@web is safe).", ["p1.1"], [])]
+GRAPH_SPECS = {
+    "plain": {"text": TEXT, "nodes": BASE_NODES[:2] + [BASE_NODES[3]]},
+    "plain_universal": {"text": TEXT, "nodes": [
+        ("rule", "for every service s, (if (s is reviewed), then (s is safe)).", ["p1.1"], [])]
+        + BASE_NODES[1:2] + [BASE_NODES[3]]},
+    "two_claims": {"nodes": BASE_NODES},
+    # Astra's probe: an earlier certified step anchored to p2.2 derives C and D from the UNANCHORED C and
+    # the given-anchored D; a legitimate web proof competes with it.
+    "competing_bad": {"nodes": BASE_NODES + [
+        ("c", C_FORMULA + ".", [], []), ("d", D_FORMULA + ".", ["p1.3"], []),
+        ("early", f"({C_FORMULA}) and ({D_FORMULA}).", ["p2.2"], ["c", "d"])]},
+    # Two legitimate witnesses for the same claim, plus an idle unanchored parent: must succeed.
+    "competing_good": {"nodes": BASE_NODES + [
+        ("extra", "@web is deployed.", [], []),
+        ("web_again", "@web is safe.", ["p2.2"], ["webfact", "web_rule", "extra"])]},
+    # A restating witness next to a legitimate one: the restatement never counts, never blocks.
+    "restated_and_real": {"nodes": BASE_NODES + [
+        ("restated", "@web is safe.", ["p1.3"], []),
+        ("echo", "@web is safe.", ["p2.2"], ["restated"])]},
+    "restated_only": {"nodes": BASE_NODES[:4] + [BASE_NODES[5],
+        ("restated", "@web is safe.", ["p1.3"], []),
+        ("echo", "@web is safe.", ["p2.2"], ["restated"])]},
+}
+
+
+def _graph_session(spec, budget, seed=None, **options):
+    """Build a spec with nodes inserted in a random topological order and steps checked in random order."""
+    import random
+    rng = random.Random(seed)
+    s = AssistSession.create(ENV, source_from_text(spec.get("text", TEXT2)), [{"id": "t_main", "sentence": "p2.1"}],
+                             options={"max_proof_steps": budget, **options})
+    ok = lambda r: (r["ok"] or pytest.fail(json.dumps(r))) and r
+    ok(s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."}))
+    pending = list(spec["nodes"])
+    if seed is not None:
+        rng.shuffle(pending)
+    while pending:
+        ready = [row for row in pending if all(p in s.nodes for p in row[3])]
+        row = rng.choice(ready) if seed is not None else ready[0]
+        pending.remove(row)
+        name, text, anchors, parents = row
+        ok(s.apply("add_node", {"name": name, "text": text, "anchors": anchors, "parents": parents}))
+    steps = [n for n in s.nodes if s.nodes[n].kind == "step"]
+    if seed is not None:
+        rng.shuffle(steps)
+    for n in steps:
+        s.apply("check_step", {"name": n})
+    return s
+
+
+def test_astra_fix3_competing_witness_blocks_success_at_every_budget():
+    """Astra's probe (max_evaluations=0): success used to hold at proof budgets 3-5 and fail at 6+."""
+    for budget in (0, 1, 2, 3, 4, 5, 6, 8, 30, 10_000):
+        s = _graph_session(GRAPH_SPECS["competing_bad"], budget, max_evaluations=0)
+        status = s.apply("status")
+        assert not status["success"], (budget, status["failures"])
+        if s.checks.get("early", {}).get("status") == "follows":
+            assert any(f.startswith("step early:") for f in status["failures"]), (budget, status["failures"])
+        # Full ledger replay reproduces the same outcome.
+        replayed = AssistSession.from_ledger(json.loads(json.dumps(s.to_ledger())))
+        assert replayed.apply("status")["success"] is False
+    high = _graph_session(GRAPH_SPECS["competing_bad"], 10_000).apply("status")
+    assert "step early: its anchored assumptions alone do not entail it (it needs unanchored c)" in high["failures"]
+    assert any(f.startswith("load-bearing unanchored assumption c") for f in high["failures"])
+
+
+def test_astra_fix3_every_witness_is_reported_and_restatements_never_count():
+    good = _graph_session(GRAPH_SPECS["competing_good"], 10_000).apply("status")
+    assert good["success"], good["failures"]
+    row = next(r for r in good["coverage"]["sentences"] if r["sentence"] == "p2.2")
+    assert row["derived_by"] == ["web_again", "web_ok"]
+    assert _graph_session(GRAPH_SPECS["restated_and_real"], 10_000).apply("status")["success"]
+    only = _graph_session(GRAPH_SPECS["restated_only"], 10_000).apply("status")
+    assert not only["success"] and only["coverage"]["underived"] == ["p2.2"]
+
+
+def test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget():
+    """Success is a function of the graph: identical under every insertion/check order, and monotone in
+    the proof budget (with and without countermodel search), including competing witnesses."""
+    budgets = (0, 2, 3, 4, 5, 6, 10, 10_000)
+    for name, spec in GRAPH_SPECS.items():
+        for extra in ({}, {"max_evaluations": 0}):
+            row = []
+            for budget in budgets:
+                outcomes = {_graph_session(spec, budget, seed, **extra).apply("status")["success"]
+                            for seed in (None, 1, 2, 3, 4)}
+                assert len(outcomes) == 1, (name, extra, budget, "order-dependent")
+                row.append(outcomes.pop())
+            first = row.index(True) if True in row else len(row)
+            assert all(row[first:]), (name, extra, dict(zip(budgets, row)))
+            expected = name in ("plain", "plain_universal", "two_claims", "competing_good", "restated_and_real")
+            assert row[-1] is expected, (name, extra, row)
+
+
+# ---------------------------------------------------------------- Astra fix-review 3: usage, retries, credentials
+
+def _raw(records):
+    return "\n".join(json.dumps(r) for r in records)
+
+
+def _run_streams(monkeypatch, outcomes):
+    """Replace the CLI process with a sequence of (stdout, exit code) outcomes or exceptions."""
+    import subprocess
+    import ve_experiments.claude_cli as cc
+    outcomes = iter(outcomes)
+
+    def run(*a, **k):
+        outcome = next(outcomes)
+        if isinstance(outcome, BaseException):
+            raise outcome
+        return subprocess.CompletedProcess(a, outcome[1], outcome[0], "")
+    monkeypatch.setattr(cc.subprocess, "run", run)
+    monkeypatch.setattr(cc.time, "sleep", lambda seconds: None)
+
+
+def _session_with(proposer):
+    s = new_session()
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.proposer = proposer
+    return s
+
+
+def test_astra_fix3_result_without_usage_cannot_erase_assistant_usage(tmp_path, monkeypatch):
+    import ve_experiments.claude_cli as cc
+    from ve.assist import verify_session
+    model = cc.MODELS["sonnet"]
+    assistant = {"type": "assistant", "message": {
+        "id": "m1", "model": model, "content": [{"type": "text", "text": GOOD_REPLY}],
+        "usage": {"input_tokens": 900, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 150,
+                  "output_tokens": 7}}}
+    no_usage = _stream(model, model, text=GOOD_REPLY)
+    no_usage = [no_usage[0], assistant, {k: v for k, v in no_usage[2].items() if k != "usage"}]
+    zero_usage = [no_usage[0], assistant, {**no_usage[2], "usage": {
+        "input_tokens": 0, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "output_tokens": 0}}]
+    proposer = _fake_cli(tmp_path, monkeypatch, [])
+    _run_streams(monkeypatch, [(_raw(no_usage), 0), (_raw(zero_usage), 0)])
+    s = _session_with(proposer)
+    assert not s.apply("propose", {"sentence": "p1.2", "k": 1})["ok"]  # result lacks usage: rejected
+    assert s.apply("propose", {"sentence": "p1.2", "k": 1})["ok"]      # result reports zeros: accepted
+    rows = [json.loads(l) for l in (tmp_path / "calls.jsonl").read_text().splitlines()]
+    finals = [r for r in rows if r["status"] != "started"]
+    assert [(r["status"], r["input_tokens"], r["output_tokens"]) for r in finals] == [("error", 1050, 7), ("ok", 1050, 7)]
+    assert s.usage()["tokens"]["proposer"] == {"input_tokens": 2100, "output_tokens": 14, "calls": 2}
+    ledger = json.loads(json.dumps(s.to_ledger()))
+    good = verify_session(ledger, calls=rows)
+    assert good["ok"], good["problems"]
+    # The reviewer's outcome (both ledgers lose the counts consistently) is caught from the usage sources.
+    erased = json.loads(json.dumps(rows))
+    for r in erased:
+        if r["status"] == "error":
+            r["input_tokens"], r["output_tokens"] = 0, 0
+    tampered = json.loads(json.dumps(ledger))
+    tampered["events"][1]["model_calls"][0].update(input_tokens=0, output_tokens=0)
+    tampered["events"][1]["tokens"]["proposer"].update(input_tokens=0, output_tokens=0)
+    problems = verify_session(tampered, calls=erased)["problems"]
+    assert any("counted usage (0, 0) differs from its reported usage (1050, 7)" in p for p in problems), problems
+
+
+def test_astra_fix3_infrastructure_failure_then_call_budget_keeps_usage_and_key(tmp_path, monkeypatch):
+    import ve_experiments.claude_cli as cc
+    from ve.assist import verify_session
+    model = cc.MODELS["sonnet"]
+    proposer = _fake_cli(tmp_path, monkeypatch, [])
+    proposer.client.infrastructure_retries, proposer.client.max_calls = True, 1
+    _run_streams(monkeypatch, [(_raw(_infra_stream(model)), 1)])
+    with pytest.raises(cc.EndpointError, match="Call budget exhausted") as caught:
+        proposer("sys", "prompt", "direct")
+    usage = caught.value.usage
+    assert usage["input_tokens"] == 900 and usage["call_key"] and usage["prior_attempts"] == []
+    # Through a session: the spent tokens and the key are recorded, and the session verifies.
+    (tmp_path / "calls.jsonl").unlink()
+    _run_streams(monkeypatch, [(_raw(_infra_stream(model)), 1)])
+    s = _session_with(proposer)
+    result = s.apply("propose", {"sentence": "p1.2", "k": 1})
+    assert not result["ok"] and "Call budget exhausted" in result["error"]["message"]
+    call = s.events[-1]["model_calls"][0]
+    assert call["input_tokens"] == 900 and call["call_key"] and "attempts" not in call
+    assert s.usage()["tokens"]["proposer"]["input_tokens"] == 900
+    ledger = json.loads(json.dumps(s.to_ledger()))
+    good = verify_session(ledger, calls=tmp_path / "calls.jsonl")
+    assert good["ok"], good["problems"]
+    # A further propose is rejected before any call: recorded as not started, and still verifies.
+    assert not s.apply("propose", {"sentence": "p1.2", "k": 1})["ok"]
+    assert s.events[-1]["model_calls"][0]["not_started"] is True
+    good = verify_session(json.loads(json.dumps(s.to_ledger())), calls=tmp_path / "calls.jsonl")
+    assert good["ok"], good["problems"]
+    # Hiding the spend behind "not started" is caught.
+    forged = json.loads(json.dumps(ledger))
+    forged["events"][-1]["model_calls"][0].update(not_started=True, input_tokens=0)
+    forged["events"][-1]["tokens"]["proposer"]["input_tokens"] = 0
+    assert not verify_session(forged, calls=tmp_path / "calls.jsonl")["ok"]
+
+
+def test_astra_fix3_resuming_after_exhausted_retries_loads_prior_attempts_from_the_ledger(tmp_path, monkeypatch):
+    import ve_experiments.claude_cli as cc
+    from ve.assist import verify_session
+    model = cc.MODELS["sonnet"]
+    tries = 1 + len(cc.RETRY_BACKOFF)
+    proposer = _fake_cli(tmp_path, monkeypatch, [])
+    proposer.client.infrastructure_retries = True
+    good_stream = _raw(_stream(model, model, text=GOOD_REPLY))
+    _run_streams(monkeypatch, [(_raw(_infra_stream(model)), 1)] * tries + [(good_stream, 0)])
+    with pytest.raises(cc.InfrastructurePaused) as caught:
+        proposer("sys", "prompt", "resumable")
+    assert caught.value.usage["input_tokens"] == 900 and len(caught.value.usage["prior_attempts"]) == tries - 1
+    # Resuming the same key (a fresh client, as after a restart) reports every earlier attempt.
+    again = _fake_cli(tmp_path, monkeypatch, [])
+    again.client.infrastructure_retries = True
+    _run_streams(monkeypatch, [(good_stream, 0)])
+    reply = again("sys", "prompt", "resumable")
+    assert reply["prior_attempts"] == [{"input_tokens": 900, "output_tokens": 0}] * tries
+    # A legitimate session whose propose paused, then succeeded on a new call, verifies cleanly.
+    (tmp_path / "calls.jsonl").unlink()
+    _run_streams(monkeypatch, [(_raw(_infra_stream(model)), 1)] * tries + [(good_stream, 0)])
+    s = _session_with(proposer)
+    assert not s.apply("propose", {"sentence": "p1.2", "k": 1})["ok"]
+    assert len(s.events[-1]["model_calls"][0]["attempts"]) == tries - 1
+    assert s.apply("propose", {"sentence": "p1.2", "k": 1})["ok"]
+    assert s.usage()["tokens"]["proposer"]["input_tokens"] == 900 * (tries + 1)
+    good = verify_session(json.loads(json.dumps(s.to_ledger())), calls=tmp_path / "calls.jsonl")
+    assert good["ok"], good["problems"]
+
+
+def _escaped(secret, how):
+    """The secret as it could appear inside a JSON string in the raw stream."""
+    if how == "first_char":
+        return "\\u%04x" % ord(secret[0]) + secret[1:]
+    if how == "all_upper_hex":
+        return "".join("\\u%04X" % ord(c) for c in secret)
+    return secret.replace("-", "\\u002d").replace("f", "\\u0066")
+
+
+def _assert_secret_absent(path, secret, *values):
+    text = path.read_text()
+    assert secret not in text
+    for line in text.splitlines():
+        row = json.loads(line)
+        assert "raw_stream" not in row
+        assert secret not in json.dumps(row, ensure_ascii=False)
+    for value in values:
+        assert secret not in json.dumps(value, ensure_ascii=False, default=str)
+
+
+@pytest.mark.parametrize("how", ["first_char", "all_upper_hex", "mixed"])
+def test_astra_fix3_json_escaped_credentials_never_persist(tmp_path, monkeypatch, how):
+    import hashlib
+    import subprocess
+    import ve_experiments.claude_cli as cc
+    secret, model = "oauth-fake-9f8e7d6c5b4a", cc.MODELS["sonnet"]
+    enc = _escaped(secret, how)
+    assert json.loads(f'"{enc}"') == secret and secret not in enc
+
+    def stream(served=model, text="echo TOKEN"):
+        records = _stream(model, served, text=text)
+        records[0]["session_id"] = "TOKEN"
+        records[2]["modelUsage"] = {served: {"note": "TOKEN"}}
+        return _raw(records).replace("TOKEN", enc)
+    proposer = _fake_cli(tmp_path, monkeypatch, [], secret=secret)
+    calls = tmp_path / "calls.jsonl"
+    # Success path.
+    raw = stream()
+    _run_streams(monkeypatch, [(raw, 0)])
+    row = proposer.client.sample("ok", "sys", "prompt")
+    assert row["text"] == "echo [REDACTED]" and row["init"]["session_id"] == "[REDACTED]"
+    assert row["raw_stream_sha256"] == hashlib.sha256(raw.encode()).hexdigest()
+    assert row["stream_records"][0]["session_id"] == "[REDACTED]"
+    _assert_secret_absent(calls, secret, row)
+    # Model-mismatch path: the token is the served "model", also a modelUsage key.
+    _run_streams(monkeypatch, [(stream(served="TOKEN"), 0)])
+    with pytest.raises(cc.EndpointError, match="Served model mismatch") as caught:
+        proposer.client.sample("mismatch", "sys", "prompt")
+    _assert_secret_absent(calls, secret, str(caught.value), caught.value.usage)
+    # Timeout path: the partial stream arrives as bytes on the exception.
+    partial = stream().splitlines()[:2]
+    _run_streams(monkeypatch, [subprocess.TimeoutExpired(["claude"], 180, output="\n".join(partial).encode())])
+    with pytest.raises(cc.EndpointError) as caught:
+        proposer.client.sample("timeout", "sys", "prompt")
+    _assert_secret_absent(calls, secret, str(caught.value), caught.value.usage)
+    last = json.loads(calls.read_text().splitlines()[-1])
+    assert last["raw_stream_sha256"] == hashlib.sha256("\n".join(partial).encode()).hexdigest()
+    # Through a session, neither the result nor the session ledger carries it.
+    _run_streams(monkeypatch, [(stream(served="TOKEN"), 0)])
+    s = _session_with(proposer)
+    result = s.apply("propose", {"sentence": "p1.2", "k": 1})
+    assert not result["ok"]
+    assert secret not in json.dumps(result, ensure_ascii=False) and secret not in json.dumps(s.to_ledger())

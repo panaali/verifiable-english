@@ -114,8 +114,15 @@ Concepts:
   under the same call key (infrastructure retries) are carried in the
   recorded call and counted in the session's token totals, which must equal
   the calls ledger's totals; a `started` row with no outcome fails
-  verification. Usage is taken from the stream even when it ends without a
-  result record (EOF or timeout), from its assistant messages. The default
+  verification. Earlier attempts are read from the calls ledger itself, so
+  resuming a paused key reports every attempt, and a call rejected before it
+  starts (e.g. by `max_calls`) after a failed attempt still reports that
+  attempt's tokens and key. Counted usage is the field-wise maximum of the
+  result record and the assistant messages, so a result without usage never
+  erases reported tokens; each calls-ledger row keeps both sources and
+  `verify_session` recomputes the count from them. The raw stream is never
+  persisted: rows keep its SHA-256 and its JSON records, decoded and then
+  sanitized recursively (so JSON-escaped credentials cannot survive). The default
   assumes a dedicated calls ledger held by the evaluator (every row counts).
   A shared calls ledger is attributable only through an independently trusted
   session id, so `verify_session(..., dedicated_calls=False)` is refused
@@ -128,13 +135,17 @@ Concepts:
 has a step whose certified support graph replays through `check_argument`;
 every step is certified; every asserting `claimed` sentence is *derived* (a
 certified step anchored to it, with a fully certified support in which no
-single assumption already states it); every asserting `given` sentence is
+single assumption already states it); every *witness* -- each certified step
+that states a target or is anchored to a claimed sentence -- is evaluated,
+not only the first found, and each must be entailed by the anchored
+assumptions of its support alone (a witness that needs an unanchored
+assumption blocks success whatever other witnesses exist); every asserting `given` sentence is
 covered by a node; no asserting sentence is waived at all -- waiving ANY
 asserting sentence blocks success, even one that is already covered or
 derived (waivers of non-asserting sentences are recorded and harmless); no
 unanchored assumption is load-bearing; no declared vocabulary carries a
 target; no target is vacuous or of unknown vacuity; and the assumptions of
-every target and every deriving step are consistent.
+every target and every witness are consistent.
 
 Every fidelity check fails closed. Each entailment, consistency, vacuity,
 derivation, load-bearing and carrier question is decided as `yes`, `no`
@@ -144,7 +155,9 @@ and `unknown` never counts as passing: `status` lists it as a failure marked
 "undecided within budget (fail closed)". Raising or lowering
 `max_proof_steps` can therefore turn an undecided item into a decided one,
 but never a failing item into a success, and success at one budget implies
-success at every larger budget.
+success at every larger budget. The outcome is a function of the graph:
+premises are passed to every search in canonical order and witnesses are
+evaluated in name order, so node insertion order never changes it.
 
 The proposer and premise suggestions are separate ablations:
 

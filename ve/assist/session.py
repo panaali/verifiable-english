@@ -313,7 +313,10 @@ class AssistSession:
         raising or lowering the proof budget can only turn ``unknown`` into a decision, never flip a
         decided answer, and never turn a failing item into a success.
         """
-        premises = tuple(premises)
+        # Canonical premise order (sorted, deduplicated): a verdict is a function of the premise SET,
+        # never of node insertion order.
+        premises = tuple(sorted({self._canonical(p): p for p in premises}.items()))
+        premises = tuple(p for _, p in premises)
         if type(conclusion) is ast.Top:
             return "yes"
         try:
@@ -852,7 +855,9 @@ class AssistSession:
         if not matches:
             return None, "no step node states the frozen target", None
         certified = [n for n in matches if self.checks.get(n.name, {}).get("status") == "follows"]
-        root = (certified or matches)[0]
+        # Deterministic in the graph (by name), never by insertion order; every other matching step is
+        # still evaluated by status as a witness.
+        root = min(certified or matches, key=lambda n: n.name)
         support = self._support(root.name)
         claims = tuple(Claim.create(self.env, n, print_formula(self.env, self.nodes[n].formula) + ".\n")
                        for n in support)
@@ -920,19 +925,35 @@ class AssistSession:
                                 "fail closed)")
             targets.append(view)
         steps = [n for n in self.nodes.values() if n.kind == "step"]
-        # A claimed sentence is DERIVED when a certified step anchored to it has a fully certified support
-        # and no single assumption in that support already states it. Covering it with an idle node, or
-        # waiving it, never counts. Deriving steps join the load-bearing analysis like target supports.
+        # Outcome is a FUNCTION OF THE GRAPH: every certified step that states a frozen target or is anchored
+        # to a claimed sentence is a WITNESS, and ALL witnesses are evaluated (never "the first found"), in
+        # name order. Each witness joins the load-bearing analysis, has its assumptions checked for
+        # consistency, and must be entailed by its ANCHORED assumptions alone (decided by ``_decide``): a
+        # witness that needs an unanchored assumption blocks success whatever other witnesses exist.
+        witnesses = self._witnesses()
+        dependence = {}
+        for w in witnesses:
+            support = self._support(w)
+            support_all.update(support)
+            leaves = [n for n in support if self.nodes[n].kind == "assumption"]
+            failures += self._consistency_failures(f"step {w}", leaves)
+            verdict, loose = self._anchored_entailment(w)
+            dependence[w] = {"verdict": verdict, "unanchored_assumptions": loose}
+            if verdict == "no":
+                failures.append(f"step {w}: its anchored assumptions alone do not entail it (it needs "
+                                f"unanchored {', '.join(loose)})")
+            elif verdict == "unknown":
+                failures.append(f"step {w}: undecided within budget whether its anchored assumptions alone "
+                                f"entail it (unanchored {', '.join(loose) or 'none'}; fail closed)")
+        # A claimed sentence is DERIVED when some witness anchored to it is independent of unanchored
+        # assumptions (decided) and no single assumption in its support already states it (decided "no").
+        # Covering it with an idle node, restating it, or waiving it never counts.
         derived, derivation_unknown = {}, {}
         for sid in self.sentence_order:
             if self.sentences[sid]["role"] == "claimed" and self.sentences[sid]["asserting"]:
-                witness, undecided = self._derivation(sid)
-                if witness is not None:
-                    derived[sid] = witness
-                    support_all.update(self._support(witness))
-                    failures += self._consistency_failures(
-                        f"claimed sentence {sid}",
-                        [n for n in self._support(witness) if self.nodes[n].kind == "assumption"])
+                by, undecided = self._derivation(sid, dependence)
+                if by:
+                    derived[sid] = by
                 elif undecided:
                     derivation_unknown[sid] = undecided
         unproved = [{"node": n.name, "check": self.checks.get(n.name, {}).get("status", "unchecked"),
@@ -996,8 +1017,8 @@ class AssistSession:
                             f"{', '.join(underived)}")
         for sid, rows in derivation_unknown.items():
             if sid in underived:
-                failures.append(f"claimed sentence {sid}: undecided within budget whether a single assumption "
-                                f"already states it ({'; '.join(rows)}; fail closed)")
+                failures.append(f"claimed sentence {sid}: undecided within budget whether it is derived "
+                                f"({'; '.join(rows)}; fail closed)")
         if waived:
             failures.append(f"{len(waived)} asserting sentence(s) waived (a waiver is reported, never success): "
                             f"{', '.join(waived)}")
@@ -1034,27 +1055,48 @@ class AssistSession:
                 "renamed_conclusions": renamed, "provenance": origins,
                 "declared": self.declared, "usage": self.usage()}
 
-    def _derivation(self, sid):
-        """``(step, undecided)``: the certified step that derives claimed sentence ``sid`` (or None),
-        and, when none does, the candidate steps rejected only because it is undecided within budget
-        whether a single support assumption already states the claim (fail closed)."""
-        follows = lambda n: self.checks.get(n, {}).get("status") == "follows"
-        undecided = []
-        for node in self.nodes.values():
-            if node.kind != "step" or sid not in node.anchors or not follows(node.name):
+    def _witnesses(self):
+        """Every certified step that states a frozen target or is anchored to a claimed sentence, by name."""
+        targets = [row["formula"] for row in self.targets.values() if row["formula"] is not None]
+        return sorted(n.name for n in self.nodes.values()
+                      if n.kind == "step" and self.checks.get(n.name, {}).get("status") == "follows"
+                      and (n.formula in targets or any(self.sentences[a]["role"] == "claimed" for a in n.anchors)))
+
+    def _anchored_entailment(self, name):
+        """``(verdict, unanchored)``: do the ANCHORED assumptions under step ``name`` alone entail it?
+
+        ``yes`` without search when its support is fully certified and every assumption is anchored (the
+        certified chain is the proof); otherwise decided by ``_decide`` on the anchored assumptions only.
+        An uncertified step in the support makes the chain no proof: ``unknown`` (fail closed)."""
+        support = [self.nodes[n] for n in self._support(name)]
+        loose = sorted(m.name for m in support if m.kind == "assumption" and self._anchor_state(m) != "anchored")
+        if not all(self.checks.get(m.name, {}).get("status") == "follows" for m in support if m.kind == "step"):
+            return "unknown", loose
+        if not loose:
+            return "yes", loose
+        anchored = [m.formula for m in support if m.kind == "assumption" and m.name not in loose]
+        return self._decide(anchored, self.nodes[name].formula), loose
+
+    def _derivation(self, sid, dependence):
+        """``(steps, undecided)``: EVERY witness that derives claimed sentence ``sid`` (sorted), and, when
+        none does, the witnesses rejected only because a decision is still undecided within budget."""
+        derived, undecided = [], []
+        for name in sorted(n.name for n in self.nodes.values() if sid in n.anchors):
+            if name not in dependence:  # not a certified step
                 continue
-            support = [self.nodes[n] for n in self._support(node.name)]
-            if not all(follows(m.name) for m in support if m.kind == "step"):
+            node = self.nodes[name]
+            verdicts = {m: self._decide([self.nodes[m].formula], node.formula)
+                        for m in self._support(name) if self.nodes[m].kind == "assumption"}
+            if dependence[name]["verdict"] == "no" or any(v == "yes" for v in verdicts.values()):
                 continue
-            verdicts = {m.name: self._decide([m.formula], node.formula) for m in support if m.kind == "assumption"}
-            if any(v == "yes" for v in verdicts.values()):
-                continue
-            unknown = [m for m, v in verdicts.items() if v == "unknown"]
+            unknown = sorted(m for m, v in verdicts.items() if v == "unknown")
+            if dependence[name]["verdict"] == "unknown":
+                unknown.append("independence of unanchored assumptions")
             if unknown:
-                undecided.append(f"{node.name}: {', '.join(unknown)}")
+                undecided.append(f"{name}: {', '.join(unknown)}")
                 continue
-            return node.name, []
-        return None, undecided
+            derived.append(name)
+        return derived, [] if derived else undecided
 
     def _consistency_failures(self, label, names, view=None):
         """Assumptions ``names`` must be decided consistent; contradictory or undecided fails."""
@@ -1101,7 +1143,7 @@ class AssistSession:
             group = list(suspects)
             # Drop ordinary assumptions before declared carriers, so a carrier stays in the witness set.
             # A member is dropped only when the rest is PROVED to still entail the target.
-            for member in sorted(group, key=lambda g: g.name in names):
+            for member in sorted(group, key=lambda g: (g.name in names, g.name)):  # graph order, not insertion
                 rest = [g for g in group if g is not member]
                 if self._decide([g.formula for g in rest], row["formula"]) == "yes":
                     group = rest
