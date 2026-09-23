@@ -16,18 +16,23 @@ Sample status (frozen):
   ENDPOINT_ERROR  the call started but failed for an endpoint or infrastructure reason (incl. timeout)
   (excluded)      a usage-limit rejection that produced no model output: no sample status; the sample is
                   retried later on the same account in a new ledger segment
-INVALID samples are model outcomes: they count as errors in the primary error rate, never in a
-directional numerator (false approval / false rejection). ENDPOINT_ERROR samples are excluded from the
-available-case item means. An item with no model outcome counts as error 0.
+Gate estimate (the only one that gates): the CONSERVATIVE item error = wrong / k, where `wrong` counts the
+item's parsed YES/NO answers that differ from the reference and k = 3 is the number of scheduled samples. Every
+scheduled response that is not a parsed wrong answer (correct, ENDPOINT_ERROR, UNPARSED, TRUNCATED, missing)
+counts as not wrong, and the denominator is always k. No mix of non-answers can therefore raise the estimate:
+it rests on actual wrong YES/NO answers alone.
 
-Primary (effort=high only): mean item error over the non-edge items (tag `edge`: D26, D42), clustered
-by artefact. PASS needs the point estimate >= 0.15 AND every preregistered robustness condition:
-  * >= 0.15 with every ENDPOINT_ERROR imputed as correct (missingness can never create a pass);
-  * >= 0.15 with the INVALID samples excluded (formatting can never create a pass);
-  * >= 0.15 with the planted edits excluded; errors on >= 5 artefacts; >= 0.15 in every
-    leave-one-artefact-out analysis.
-A PASS whose 95% cluster-bootstrap lower bound is < 0.15 is a WEAK PASS. A t-interval over artefact
-means is reported. The low-effort arm is descriptive: a pass at low effort alone does not count.
+Primary (effort=high only): mean conservative item error over the non-edge items (tag `edge`: D26, D42),
+clustered by artefact. PASS needs the point estimate >= 0.15 AND every preregistered robustness condition,
+all on the same conservative estimate: >= 0.15 with the planted edits excluded; wrong answers on >= 5
+artefacts; >= 0.15 in every leave-one-artefact-out analysis. A PASS whose 95% cluster-bootstrap lower bound
+(conservative estimate) is < 0.15 is a WEAK PASS. A t-interval over artefact means is reported. The
+low-effort arm is descriptive: a pass at low effort alone does not count.
+
+Descriptive only (never gate): the available-case error (INVALID counts as an error, ENDPOINT_ERROR samples
+excluded; an item with no model outcome counts as 0), the valid-only error (INVALID excluded), the error with
+ENDPOINT_ERROR imputed as correct and INVALID as an error, and the joint estimate (ENDPOINT_ERROR correct,
+INVALID excluded). INVALID samples never enter a directional numerator (false approval / false rejection).
 
 Ledger audit (also run by run_raw.py before every call and after each one): every row carries the frozen
 account, SYSTEM, prompt, controls, endpoint controls and binary; no stream shows billing outside the
@@ -427,15 +432,14 @@ def item_stats(records, items, gt, k=K):
         other = "NO" if ref == "YES" else "YES"
         out[iid] = dict(
             n_model=len(model), n_valid=len(valid), n_invalid=len(model) - len(valid),
-            n_endpoint_error=st.count("ENDPOINT_ERROR"),
-            # primary: invalid counts as an error
-            error=(wrong_valid + len(model) - len(valid)) / len(model) if model else None,
+            n_endpoint_error=st.count("ENDPOINT_ERROR"), n_wrong=wrong_valid,
+            # GATE: conservative. Only parsed wrong YES/NO answers count; every other scheduled response
+            # (correct, ENDPOINT_ERROR, INVALID, missing) is not wrong; the denominator is always k
+            error=wrong_valid / k,
+            # descriptive only below
+            error_available_case=(wrong_valid + len(model) - len(valid)) / len(model) if model else None,
             error_valid_only=wrong_valid / len(valid) if valid else None,
-            # missingness sensitivity: every scheduled sample in the denominator; ENDPOINT_ERROR (and any
-            # missing sample) imputed as correct
             error_missing_as_correct=(wrong_valid + len(model) - len(valid)) / k,
-            # joint sensitivity: both corrections at once. INVALID samples leave the denominator and every
-            # ENDPOINT_ERROR (or missing sample) stays in it as a correct answer: wrong_valid / (k - n_invalid)
             error_joint=wrong_valid / (k - (len(model) - len(valid))) if k > len(model) - len(valid) else None,
             # directional: the numerator needs an actual YES/NO opposite to the reference
             wrong_direction=valid.count(other) / len(model) if model else None,
@@ -527,7 +531,7 @@ def summary(stats, ids, field="error"):
     if not ids:
         return None
     return dict(items=len(ids), mean=r4(mean_over(stats, ids, field, None)),
-                items_without_data=sorted(i for i in ids if stats[i][field] is None))
+                items_without_model_outcome=sorted(i for i in ids if stats[i]["n_model"] == 0))
 
 
 def analyse_arm(records, items, gt, arm, n_scheduled, k=K):
@@ -545,7 +549,7 @@ def analyse_arm(records, items, gt, arm, n_scheduled, k=K):
 
     by_cluster = defaultdict(list)
     for i in primary_ids:
-        by_cluster[cluster[i]].append(stats[i]["error"] or 0.0)
+        by_cluster[cluster[i]].append(stats[i]["error"])   # conservative: never None
     point = est(primary_ids)
     lo, hi = cluster_boot(by_cluster)
     art_means = [sum(v) / len(v) for _, v in sorted(by_cluster.items())]
@@ -556,13 +560,12 @@ def analyse_arm(records, items, gt, arm, n_scheduled, k=K):
     loao_min_c = min(loao, key=loao.get)
     total_err = sum(sum(v) for v in by_cluster.values())
     top_share = max(sum(v) for v in by_cluster.values()) / total_err if total_err else None
-    valid_only = mean_over(stats, primary_ids, "error_valid_only", 0.0)
-    imputed = mean_over(stats, primary_ids, "error_missing_as_correct", 0.0)
-    joint = mean_over(stats, primary_ids, "error_joint", 0.0)
+    available = est(primary_ids, "error_available_case")
+    valid_only = est(primary_ids, "error_valid_only")
+    imputed = est(primary_ids, "error_missing_as_correct")
+    joint = est(primary_ids, "error_joint")
+    # every robustness condition uses the conservative estimate (field "error")
     robust = dict(
-        endpoint_errors_imputed_correct=dict(error=r4(imputed), holds=imputed >= GATE),
-        invalid_excluded=dict(error=r4(valid_only), holds=valid_only >= GATE),
-        endpoint_errors_correct_and_invalid_excluded=dict(error=r4(joint), holds=joint >= GATE),
         planted_edits_excluded=dict(items=len(no_edits), error=r4(est(no_edits)), holds=est(no_edits) >= GATE),
         artefacts_with_errors=dict(n=len(err_artefacts), artefacts=err_artefacts,
                                    holds=len(err_artefacts) >= MIN_ERROR_ARTEFACTS),
@@ -586,16 +589,19 @@ def analyse_arm(records, items, gt, arm, n_scheduled, k=K):
         endpoint_errors=dict(n=counts["ENDPOINT_ERROR"], stop_threshold=max_endpoint_errors(n_scheduled)),
         items_without_model_outcome=no_outcome,
         primary=dict(
-            definition="mean item error over the non-edge items; INVALID counts as error; an item without "
-                       "a model outcome counts as 0; clustered by artefact",
+            definition="mean conservative item error (parsed wrong YES/NO answers / 3 scheduled samples; "
+                       "correct, ENDPOINT_ERROR, INVALID and missing count as not wrong) over the non-edge items, "
+                       "clustered by artefact",
             items=len(primary_ids), artefacts=len(by_cluster), error=r4(point),
             ci95_cluster_bootstrap=[r4(lo), r4(hi)],
             artefact_mean_t_interval=dict(mean_of_artefact_means=r4(t_mean), ci95=[r4(x) for x in t_ci]),
-            error_mass_share_of_top_artefact=r4(top_share),
-            invalid_excluded_sensitivity=r4(valid_only),
-            endpoint_errors_imputed_correct=r4(imputed),
-            joint_sensitivity=r4(joint)),
+            error_mass_share_of_top_artefact=r4(top_share)),
         robustness=robust,
+        descriptive_estimates_not_gating=dict(
+            available_case_invalid_as_error=r4(available),
+            invalid_excluded=r4(valid_only),
+            endpoint_errors_imputed_correct_invalid_as_error=r4(imputed),
+            joint_endpoint_errors_correct_invalid_excluded=r4(joint)),
         key_secondary_false_approval_restriction_NO=direction("restriction", "NO"),
         direction_split=dict(
             restriction_NO_false_approval=direction("restriction", "NO"),

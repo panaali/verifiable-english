@@ -23,8 +23,8 @@ earlier VE preregistrations; a pending calendar receipt suffices). Nothing is pu
 (outside runs/); the frozen commit is an ancestor of HEAD and nothing under experiments/D-gate, ve or
 ve_experiments changed since it (apart from FREEZE.json, the stamp files and runs/); every frozen hash,
 SYSTEM, the model id, the `claude` binary, the host controls, --account and the account-UUID hash match;
-FREEZE-STAMP.txt and its .ots are committed, name the committed FREEZE.json, and the .ots deserializes,
-commits to the stamp file's SHA-256 and carries a pending calendar or completed Bitcoin attestation; and every repository module loaded by the endpoint lies under those paths.
+FREEZE-STAMP.txt and its .ots are committed, name the committed FREEZE.json, and the .ots deserializes
+with the pinned opentimestamps library (absent: the run refuses), commits to the stamp file's SHA-256 and carries a pending calendar or completed Bitcoin attestation; and every repository module loaded by the endpoint lies under those paths.
 
 Execution rules (frozen):
 * One fresh process per sample through ClaudeCLI; no infrastructure retries; a started sample is
@@ -87,8 +87,6 @@ RUNS = f"{REL}/runs/"
 STAMP = f"{REL}/FREEZE-STAMP.txt"
 OTS = f"{STAMP}.ots"
 OTS_CMD = ("uvx", "--from", "opentimestamps-client", "ots", "stamp")
-# OpenTimestamps detached-proof header: magic, major version 1, file-hash op sha256 (0x08), then the digest
-OTS_MAGIC = b"\x00OpenTimestamps\x00\x00Proof\x00\xbf\x89\xe2\xe8\x84\xe8\x92\x94"
 
 
 class Stop(Exception):
@@ -171,112 +169,47 @@ def freeze(account):
           "stamp files before running")
 
 
-OTS_PENDING = bytes.fromhex("83dfe30d2ef90c8e")
-OTS_BITCOIN = bytes.fromhex("0588960d73d71901")
-OTS_UNARY = {0x02, 0x03, 0x08, 0x67, 0xf2, 0xf3}   # sha1 ripemd160 sha256 keccak256 reverse hexlify
-OTS_BINARY = {0xf0, 0xf1}                          # append prepend (varbytes argument)
-
-
 class OtsError(ValueError):
-    pass
+    """The proof is malformed or does not bind the stamped file."""
 
 
-class _Reader:
-    def __init__(self, b):
-        self.b, self.i = b, 0
-
-    def bytes(self, n):
-        if self.i + n > len(self.b):
-            raise OtsError("truncated proof")
-        out, self.i = self.b[self.i:self.i + n], self.i + n
-        return out
-
-    def varuint(self):
-        v, shift = 0, 0
-        while True:
-            c = self.bytes(1)[0]
-            v |= (c & 0x7f) << shift
-            if not c & 0x80:
-                return v
-            shift += 7
-            if shift > 63:
-                raise OtsError("varuint too long")
-
-    def varbytes(self, max_len):
-        n = self.varuint()
-        if n > max_len:
-            raise OtsError("varbytes too long")
-        return self.bytes(n)
+class OtsLibraryMissing(RuntimeError):
+    """The pinned opentimestamps library is not installed: OpenTimestamps validation fails closed."""
 
 
-def _ots_attestations_manual(r, depth=0):
-    """Parse one serialized Timestamp (the OpenTimestamps tree format) and return its attestation kinds."""
-    if depth > 256:
-        raise OtsError("timestamp tree too deep")
-    found = []
-
-    def branch(tag):
-        if tag == 0x00:
-            atag = r.bytes(8)
-            payload = _Reader(r.varbytes(8192))
-            if atag == OTS_PENDING:
-                uri = payload.varbytes(1000)
-                if not uri.startswith(b"https://") or payload.i != len(payload.b):
-                    raise OtsError("malformed pending attestation")
-                found.append(("pending", uri.decode("ascii")))
-            elif atag == OTS_BITCOIN:
-                found.append(("bitcoin", payload.varuint()))
-            else:
-                found.append(("unknown", atag.hex()))
-        elif tag in OTS_BINARY:
-            r.varbytes(4096)
-            found.extend(_ots_attestations_manual(r, depth + 1))
-        elif tag in OTS_UNARY:
-            found.extend(_ots_attestations_manual(r, depth + 1))
-        else:
-            raise OtsError(f"unknown op tag 0x{tag:02x}")
-
-    tag = r.bytes(1)[0]
-    while tag == 0xff:
-        branch(r.bytes(1)[0])
-        tag = r.bytes(1)[0]
-    branch(tag)
-    return found
-
-
-def ots_attestations(proof, data):
-    """Deserialize the detached OpenTimestamps proof `proof` (bytes) for `data` (bytes) and return its attestations
-    as (kind, detail) pairs. Raises OtsError unless the proof is well formed and commits to SHA-256(data). Uses the
-    opentimestamps library when it is installed and otherwise parses the serialization directly."""
-    digest = hashlib.sha256(data).digest()
+def _ots_library():
     try:
         from opentimestamps.core.notary import BitcoinBlockHeaderAttestation, PendingAttestation
         from opentimestamps.core.op import OpSHA256
         from opentimestamps.core.serialize import BytesDeserializationContext
         from opentimestamps.core.timestamp import DetachedTimestampFile
-    except ImportError:
-        r = _Reader(proof)
-        if r.bytes(len(OTS_MAGIC)) != OTS_MAGIC or r.varuint() != 1:
-            raise OtsError("not an OpenTimestamps v1 proof")
-        if r.bytes(1) != b"\x08" or r.bytes(32) != digest:
-            raise OtsError("the proof is not for the SHA-256 of the stamped file")
-        found = _ots_attestations_manual(r)
-        if r.i != len(proof):
-            raise OtsError("trailing bytes after the timestamp")
-        return found
+    except ImportError as e:
+        raise OtsLibraryMissing(
+            "the opentimestamps library (pinned in pyproject.toml) is required to validate the freeze stamp; "
+            "run `uv sync` and use `uv run`. There is no fallback parser: the run refuses.") from e
+    return BitcoinBlockHeaderAttestation, PendingAttestation, OpSHA256, BytesDeserializationContext, DetachedTimestampFile
+
+
+def ots_attestations(proof, data):
+    """Deserialize the detached OpenTimestamps proof `proof` (bytes) for `data` (bytes) with the pinned
+    opentimestamps library and return its attestations as (kind, detail) pairs. Raises OtsError unless the proof
+    deserializes completely (no trailing bytes) and commits to SHA-256(data); raises OtsLibraryMissing (fail
+    closed) if the library is absent."""
+    bitcoin_att, pending_att, op_sha256, ctx_cls, dtf_cls = _ots_library()
+    digest = hashlib.sha256(data).digest()
     try:
-        dtf = DetachedTimestampFile.deserialize(BytesDeserializationContext(proof))
+        dtf = dtf_cls.deserialize(ctx_cls(proof))   # asserts EOF; checks attestation payloads and pending URIs
     except Exception as e:  # the library raises several deserialization error types
-        raise OtsError(f"malformed proof: {e}") from e
-    if not isinstance(dtf.file_hash_op, OpSHA256) or dtf.file_digest != digest:
+        raise OtsError(f"malformed proof: {e!r}") from e
+    if not isinstance(dtf.file_hash_op, op_sha256) or dtf.file_digest != digest:
         raise OtsError("the proof is not for the SHA-256 of the stamped file")
     out = []
     for _, att in dtf.timestamp.all_attestations():
-        if isinstance(att, PendingAttestation):
+        if isinstance(att, pending_att):
             if not att.uri.startswith("https://"):
-                raise OtsError("malformed pending attestation")
+                raise OtsError("pending attestation without an https calendar URI")
             out.append(("pending", att.uri))
-        elif isinstance(att, BitcoinBlockHeaderAttestation):
+        elif isinstance(att, bitcoin_att):
             out.append(("bitcoin", att.height))
         else:
             out.append(("unknown", att.TAG.hex()))

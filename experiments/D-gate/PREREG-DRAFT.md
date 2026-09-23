@@ -1,10 +1,13 @@
 # PREREG DRAFT: D gate (raw Opus 5.5 on universal properties of real Cedar and Kubernetes policies)
 
-Status: DRAFT v4, not frozen. No model call has been made. v2 addressed the first Astra xhigh and Opus xhigh reviews;
+Status: DRAFT v5, not frozen. No model call has been made. v2 addressed the first Astra xhigh and Opus xhigh reviews;
 v3 addresses both re-reviews (both FIX FIRST): missingness and formatting gates, truncation from stream evidence,
 the stop-rule bypasses, the account UUID, the OpenTimestamps step and cross-day drift. v4 addresses the third
 reviews (both FIX FIRST): a joint missingness-and-formatting gate, a deserialized OpenTimestamps check, the D-1
-citation and a more tolerant final-line parser. Before any call:
+citation and a more tolerant final-line parser. v5 addresses the fourth reviews (both FIX FIRST): INVALID responses
+could still shrink the joint denominator, and the robustness conditions used available-case means. The gate is now a
+single conservative estimate (parsed wrong answers ÷ all scheduled responses) used by every gating condition, and
+the OpenTimestamps check requires the pinned `opentimestamps` library (no hand-written parser). Before any call:
 1. Both reviewers re-review this draft.
 2. `run_raw.py freeze --account <label>` runs on a clean committed tree. It writes `FREEZE.json` with the commit, the
    SHA-256 of every frozen input, and the execution identity (below). `FREEZE.json` is committed.
@@ -12,15 +15,20 @@ citation and a more tolerant final-line parser. Before any call:
    stamps it with OpenTimestamps (`ots stamp`, as in the earlier VE preregistrations; a pending calendar receipt
    suffices, no Bitcoin claim). Both files are committed. Nothing is pushed.
 4. `run_raw.py run` refuses to call the model unless every freeze check passes, including the committed stamp and a
-   `.ots` receipt that binds it. The receipt is deserialized: it must commit to the stamp file's SHA-256 and carry a
-   pending calendar attestation or a completed Bitcoin timestamp. A header without a timestamp fails.
+   `.ots` receipt that binds it. The receipt is deserialized by the `opentimestamps` library, pinned in
+   `pyproject.toml` (`opentimestamps==0.4.5`); if it is absent the run refuses (there is no fallback parser). The
+   whole file must deserialize with no trailing bytes, including each attestation payload and a valid https
+   calendar URI; it must commit to the stamp file's SHA-256 and carry a pending calendar attestation or a completed
+   Bitcoin timestamp. A header without a timestamp fails.
 
 **Metric amendment (recorded; PLAN-FRONTIER amendment D-1).** PLAN-FRONTIER's table row for D states the gate as
-false approval (FA) < 15%. Amendment D-1 in PLAN-FRONTIER (commit c56cb55) replaces that with the **total error
-rate** on the non-edge items (the Gate below), and this preregistration applies it. Reason: 25 of the 41 primary
-items are not restriction-NO items, where FA is not defined, and a verifier fixes errors in both directions. FA on
-the 16 restriction-NO items is kept as the key secondary. The formatting and joint gates below go beyond D-1; they
-are stricter, never looser.
+false approval (FA) < 15%. Amendment D-1 in PLAN-FRONTIER (commit c56cb55 on the `ve-integration` branch; it is not
+an ancestor of this branch) replaces that with the **overall error rate** on the non-edge items, and this
+preregistration applies it. Reason: 25 of the 41 primary items are not restriction-NO items, where FA is not defined,
+and a verifier fixes errors in both directions. FA on the 16 restriction-NO items is kept as the key secondary. The
+gate below is stricter than D-1, never looser: it counts only parsed wrong YES/NO answers, over every scheduled
+response. D-1's required sensitivity (missing responses count as correct) is built into it, and so are D-1's
+robustness conditions (no planted edits, ≥ 5 artefacts, leave-one-artefact-out) and its weak-pass rule.
 
 ## Question and hypothesis
 
@@ -28,8 +36,9 @@ Does a frontier model deciding universal properties of real access-control polic
 would fix? PLAN-FRONTIER §7 names this D: a headroom gate at zero cost. The plan's own scale thesis expects it to
 fail.
 
-* **Gate (primary):** Opus 5.5's raw error rate at `effort=high` over the 41 non-edge items is at least 15%, and the
-  preregistered robustness conditions hold (see Scoring).
+* **Gate (primary):** Opus 5.5's conservative raw error rate at `effort=high` over the 41 non-edge items (parsed
+  wrong YES/NO answers ÷ all 123 scheduled responses) is at least 15%, and the preregistered robustness conditions
+  hold on that same estimate (see Scoring).
 * **Pass:** the D follow-up (§3 of the plan: the closure × order gate theorem and background-axiom templates) may be
   planned. A pass is not itself a VE benefit claim.
 * **Fail (< 15%):** the model is at ceiling on *this sample*. The fail closes only this sample: 29 small upstream
@@ -171,38 +180,34 @@ fail.
   * no sample was started twice.
 
   A stopped arm, or one whose endpoint errors exceed the threshold, gets no verdict.
-* **Error.**
-  * Sample error: the answer differs from the reference answer, or the sample is INVALID.
-  * ENDPOINT_ERROR samples are excluded (available-case item means).
-  * Item error: the mean over the item's remaining samples.
-  * An item with no model outcome is reported by id and counts as error 0.
-  * Available-case means alone can let endpoint errors raise an item's error. Two reviewer examples show this:
-    9.8% to 19.5%, and 14.63% to 19.51%, each with 12 endpoint errors. A single correction is not enough: the
-    two failure types can mask each other. With 18 wrong answers, 3 INVALID and 12 endpoint errors, the
-    missingness and formatting estimates are 17.07% and 19.51%, but applying both corrections gives 14.63%. So a
-    required gate condition applies **both at once** (see the Gate rule). Neither missingness, nor formatting
-    failures, nor the two combined can create a pass: every passing condition then rests on actual wrong YES/NO
-    answers alone.
-* **Primary statistic:** the mean item error over the 41 non-edge items at `effort=high`, clustered by artefact.
-  * 95% cluster bootstrap over the 28 artefacts (10,000 resamples, seed 0).
+* **Gate estimate (conservative; the only estimate that gates).**
+  * Item error = (parsed `YES`/`NO` answers that differ from the reference) ÷ 3, the number of scheduled samples.
+  * Every scheduled response that is not a parsed wrong answer counts as **not wrong**: a correct answer,
+    `ENDPOINT_ERROR`, `UNPARSED`, `TRUNCATED`, or a missing response. The denominator is always all scheduled
+    primary responses (41 × 3 = 123), never shrunk.
+  * Why: the reviews found, round after round, that available-case, valid-only and joint estimates let a mix of
+    non-answers raise the estimate (12 endpoint errors took 9.8% to 19.5%; 12 items [wrong, UNPARSED, UNPARSED]
+    reached 29.3% on 9.8% wrong answers; INVALID samples shrank the joint denominator). Under this estimate no mix of
+    non-answers can create a pass: the numerator counts only actual wrong answers and the denominator is fixed.
+* **Descriptive estimates (reported, never gating):**
+  * available case: INVALID counts as an error, ENDPOINT_ERROR samples are excluded, and an item with no model
+    outcome counts as 0;
+  * INVALID excluded (valid-only item means);
+  * ENDPOINT_ERROR imputed as correct with INVALID counted as an error;
+  * joint: ENDPOINT_ERROR imputed as correct and INVALID excluded.
+* **Primary statistic:** the mean conservative item error over the 41 non-edge items at `effort=high`, clustered by
+  artefact.
+  * 95% cluster bootstrap over the 28 artefacts (10,000 resamples, seed 0), on the conservative estimate.
   * Also reported: a 95% Student-t interval over the artefact means, and the error share of the top artefact.
-* **Gate rule (high effort only).** PASS iff all seven hold:
+* **Gate rule (high effort only).** PASS iff all four hold, each on the conservative estimate:
   * the point estimate is ≥ 0.15;
-  * **missingness:** with every ENDPOINT_ERROR imputed as correct (item error = errors ÷ 3 scheduled samples), the
-    estimate is ≥ 0.15;
-  * **formatting:** with the INVALID samples excluded (valid-only item means; an item without a valid sample counts
-    as 0), the estimate is ≥ 0.15;
-  * **joint (missingness and formatting together):** with every ENDPOINT_ERROR (every missing scheduled response)
-    imputed as correct and the INVALID samples excluded, the estimate is ≥ 0.15. Item error = wrong valid answers ÷
-    (3 − INVALID samples); an item whose three samples are all INVALID counts as 0. Only this condition closes the
-    combined case: each single gate still lets the other failure type raise the estimate;
-  * with the planted edits excluded, the error is still ≥ 0.15;
-  * errors fall on at least 5 artefacts;
+  * with the planted edits excluded, it is still ≥ 0.15;
+  * parsed wrong answers fall on at least 5 artefacts;
   * every leave-one-artefact-out estimate is ≥ 0.15.
 
   If the estimate is ≥ 0.15 but a robustness condition fails, the result is FAIL and the failed conditions are
-  named. A pass whose cluster-bootstrap lower bound is below 0.15 is a **WEAK PASS**: the follow-up must first
-  replicate on new artefacts. The low-effort arm gets no gate.
+  named. A pass whose cluster-bootstrap lower bound (conservative estimate) is below 0.15 is a **WEAK PASS**: the
+  follow-up must first replicate on new artefacts. The low-effort arm gets no gate.
 * **Key secondary: false approval on the restriction-NO items** (16 items). This is the rate of actual `YES`
   answers where the reference is NO and access must be denied. INVALID samples are never in a directional
   numerator. They stay in the denominator, and a sensitivity analysis drops them.
