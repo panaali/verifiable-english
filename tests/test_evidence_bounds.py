@@ -85,7 +85,8 @@ def test_min_leaf_is_not_an_upper_bound_on_the_root():
 @settings(max_examples=200, deadline=None)
 @given(SEEDS, st.integers(1, 7))
 def test_frechet_bound_is_attained(seed, n):
-    """Given only the marginals and one entailment, 1 - sum doubt is the best possible bound."""
+    """Given only the marginals and one entailment, 1 - sum doubt is the best possible bound.
+    Case sum doubt <= 1: attained by pairwise disjoint failure events."""
     rng = np.random.default_rng(seed)
     doubts = rng.dirichlet(np.ones(n + 1))[:n] * rng.uniform(0, 1)  # sum of doubts <= 1
     # outcomes: one failure region per leaf (pairwise disjoint), plus "all leaves hold"
@@ -94,6 +95,82 @@ def test_frechet_bound_is_attained(seed, n):
     R = np.logical_and.reduce(leaves)  # R = AND L, the least root the entailment permits
     ps = [P(w, L) for L in leaves]
     assert abs(P(w, R) - frechet_lb(ps)) < 1e-9
+
+
+@settings(max_examples=200, deadline=None)
+@given(SEEDS, st.integers(2, 7))
+def test_frechet_bound_is_attained_when_doubt_exceeds_one(seed, n):
+    """Case sum doubt > 1: the bound is 0; disjoint failures cannot exist (they would need mass > 1),
+    so zero is attained by failure arcs laid end to end around [0, 1), which cover the space."""
+    rng = np.random.default_rng(seed)
+    doubts = rng.uniform(0, 1, n)
+    if doubts.sum() <= 1:
+        doubts = doubts / doubts.sum() * rng.uniform(1.0001, n)
+        doubts = np.minimum(doubts, 1.0)
+    if doubts.sum() <= 1:
+        doubts[0] = 1.0
+    starts = np.concatenate([[0.0], np.cumsum(doubts)[:-1]]) % 1.0
+    ends = (starts + doubts) % 1.0
+    cuts = np.unique(np.concatenate([[0.0, 1.0], starts, ends]))
+    w = np.diff(cuts)
+    mids = (cuts[:-1] + cuts[1:]) / 2
+
+    def fails(i):
+        a, d = starts[i], doubts[i]
+        return ((mids - a) % 1.0) < d
+
+    leaves = [~fails(i) for i in range(n)]
+    R = np.logical_and.reduce(leaves)  # R = AND L
+    ps = [P(w, L) for L in leaves]
+    assert all(abs(p - (1 - d)) < 1e-9 for p, d in zip(ps, doubts))
+    assert frechet_lb(ps) == 0.0
+    assert P(w, R) < 1e-9  # attained: the failure events cover the space
+
+
+# ---------------------------------------------------------------- §2.6 calibration of the bound
+
+
+def test_marginal_leaf_calibration_does_not_validate_selected_bounds():
+    """Reviewer's counterexample. Three equally likely strata; forecasts per stratum and true leaf
+    frequencies. Each leaf is marginally calibrated, yet among roots with LB >= 0.8 the root holds
+    only 60% of the time."""
+    forecasts = [(0.9, 0.9), (0.9, 0.1), (0.1, 0.9)]
+    freqs = [(0.8, 0.8), (1.0, 0.1), (0.1, 1.0)]
+    # marginal calibration of each leaf: P(L_i | f_i = v) = v
+    for i in range(2):
+        for v in {f[i] for f in forecasts}:
+            cells = [k for k, f in enumerate(forecasts) if f[i] == v]
+            assert math.isclose(sum(freqs[k][i] for k in cells) / len(cells), v)
+    selected = [k for k, f in enumerate(forecasts) if frechet_lb(f) >= 0.8 - EPS]
+    assert selected == [0]
+    # stratum 0 as a finite space with disjoint failures: fail L1 .2, fail L2 .2, both hold .6
+    w = np.array([0.2, 0.2, 0.6])
+    L1 = np.array([False, True, True])
+    L2 = np.array([True, False, True])
+    assert math.isclose(P(w, L1), freqs[0][0]) and math.isclose(P(w, L2), freqs[0][1])
+    R = L1 & L2
+    assert math.isclose(P(w, R), 0.6) and P(w, R) < frechet_lb(forecasts[0]) - 0.1
+
+
+@settings(max_examples=200, deadline=None)
+@given(SEEDS, st.integers(1, 5), st.integers(2, 8), st.sampled_from([0.6, 0.7, 0.8, 0.9]))
+def test_conditionally_valid_leaves_validate_selected_bounds(seed, n, strata, t):
+    """If in every forecast cell each leaf's true probability is >= its forecast low, then among
+    roots selected by LB >= t the root holds with frequency >= t (in expectation)."""
+    rng = np.random.default_rng(seed)
+    weight = rng.dirichlet(np.ones(strata))
+    num = den = 0.0
+    for k in range(strata):
+        m = int(rng.integers(2, 20))
+        w = rand_space(rng, m)
+        leaves = [rand_event(rng, m, rng.uniform(0.7, 1.0)) for _ in range(n)]
+        R = entailed_root(rng, np.logical_and.reduce(leaves))
+        lows = [P(w, L) * rng.uniform(0.9, 1.0) for L in leaves]  # conditionally valid in cell k
+        if frechet_lb(lows) >= t:
+            num += weight[k] * P(w, R)
+            den += weight[k]
+    if den > 0:
+        assert num / den + EPS >= t
 
 
 # ---------------------------------------------------------------- §2.4 graphs, shared leaves
@@ -314,6 +391,16 @@ def test_unknown_atoms_kept_possible_is_sound(seed, k):
         assert lp_feasible(relaxed, lo2, hi2) == lp_feasible(possible, lo2, hi2)
 
 
+def test_feasible_with_no_unknown_is_not_necessarily_tight():
+    """Zero UNKNOWN atoms makes feasibility exact, but 'coherent (tight)' also needs every endpoint
+    unchanged by narrowing. Claims A, B with A ⊆ B certified: atom (A, not B) is impossible."""
+    atoms = [(1, 1), (0, 1), (0, 0)]
+    lo, hi = np.array([0.5, 0.4]), np.array([0.6, 0.9])
+    assert lp_feasible(atoms, lo, hi)  # avoids sure loss, exactly
+    mn_b, _ = lp_range(atoms, lo, hi, 1)
+    assert mn_b > lo[1] + 0.05  # lo_B narrows from 0.4 to 0.5: not tight
+
+
 def test_treating_unknown_as_impossible_is_unsound():
     # One claim A; both atoms really possible; oracle returns UNKNOWN on the not-A atom.
     lo = hi = np.array([0.5])
@@ -332,7 +419,12 @@ def test_design_document_numbers():
     assert math.isclose((1 - p[2]) + (1 - p[4]), 0.21) and 0.21 <= doubt
     S = [0, 1, 3, 5, 6]
     part = math.prod(p[i] for i in S) + p[2] + p[4] - 2
-    assert round(part, 3) == 0.685 and round(math.prod(p), 3) == 0.716
+    assert math.isclose(part, 0.6846039564, abs_tol=1e-10)
+    # printed lower bounds must be rounded DOWN: 0.684, never 0.685
+    assert math.floor(part * 1000) / 1000 == 0.684 and 0.684 <= part < 0.685
+    full = math.prod(p)
+    assert math.isclose(full, 0.716398848, abs_tol=1e-9) and math.floor(full * 1000) / 1000 == 0.716
+    assert part - frechet_lb(p) < 0.005
     # §3 worked example: credit dispute
     q = [0.98, 0.98, 0.85, 0.90, 0.95]
     assert math.isclose(frechet_lb(q), 0.66)
