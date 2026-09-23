@@ -80,3 +80,5 @@
 {"item": "l08_addressbook_lookup", "event": "end", "t": 1790119029.9, "iso": "2026-09-22T16:17:09", "note": ""}
 {"item": "c15_hotel_static", "event": "diff_fix", "t": 1790120211.5, "iso": "2026-09-22T16:36:51", "note": "set-valued in: non-entity member is a type error (policy skipped); caught by differential test at N=300"}
 {"item": "c17_sales_static", "event": "diff_fix", "t": 1790120211.5, "iso": "2026-09-22T16:36:51", "note": "same bug class as c15 (in over a set with a non-entity member before a later || disjunct); found by review after the c15 catch, not by the test"}
+{"item": "c21_tax_preparer", "event": "diff_fix", "t": 1790121898.2, "iso": "2026-09-22T17:04:58", "note": "record equality ignored extra keys in assigned_orgs members (found by cross-family review; encoding gained nattrs_<n>; formula adds type_record + nattrs_3); caught by targeted record_extra_key perturbations"}
+{"item": "c20_tags_n_roles", "event": "diff_fix", "t": 1790121898.2, "iso": "2026-09-22T17:04:58", "note": "non-set tag value makes .contains/.containsAll a type error; containsAll ignored entity members; found by the new targeted record_extra_key perturbations"}

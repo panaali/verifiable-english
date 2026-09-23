@@ -101,6 +101,8 @@ def cedar_facts(world: dict, request: dict, bindings: dict) -> tuple[FactBase, d
     es_<a>(o, e)          member of an entity/record set attribute
     ss_<a>(o, v)          member of a string/long set attribute
     type_record(r)        r is an anonymous record node
+    nattrs_<n>(r)         record node r has exactly n attributes (record equality needs equal key
+                          sets; added after review found c21 blind to extra keys)
     Constants: principal, action, resource, context (entity), plus the author's
     bindings.json constants (Cedar UIDs or literal values).
     """
@@ -151,6 +153,7 @@ def cedar_facts(world: dict, request: dict, bindings: dict) -> tuple[FactBase, d
         fb.fact("type_record", r)
         for k, v in fields.items():
             attr(r, k, v)
+        fb.fact(f"nattrs_{len(fields)}", r)
         return r
 
     for e in world["entities"]:
@@ -271,6 +274,8 @@ def iam_facts(world: dict, request: dict, bindings: dict) -> tuple[FactBase, dic
     action_pat / resource_pat(stmt, str)      (Action|NotAction and Resource|NotResource lists)
     stmt_cond(stmt, cond); cond_op(cond, str operator name); cond_key(cond, str); cond_value(cond, str)
     ctx(str key, str value): request context
+    Context-key names are case-insensitive in IAM, so every key name (cond_key, ctx and the
+    ${var} names below) is encoded lower-cased; values keep their case.
     ADAPTER-COMPUTED (string matching VE cannot express, counted as opaque):
       action_glob(str pattern): pattern matches the request action (case-insensitive * ? glob)
       resource_glob(str pattern): pattern, after ${var} substitution from context, matches the
@@ -288,7 +293,7 @@ def iam_facts(world: dict, request: dict, bindings: dict) -> tuple[FactBase, dic
     def aslist(x):
         return x if isinstance(x, list) else [x]
 
-    ctx = request.get("context", {})
+    ctx = {str(k).lower(): v for k, v in request.get("context", {}).items()}
     for pi, pol in enumerate(world["policies"]):
         for si, stmt in enumerate(aslist(pol["Statement"])):
             t = fb.add("stmt", st(f"{pi}_{si}"))
@@ -304,8 +309,8 @@ def iam_facts(world: dict, request: dict, bindings: dict) -> tuple[FactBase, dic
                         if pred == "resource_pat":
                             sub, ok = p, True
                             for var in re.findall(r"\$\{([^}]*)\}", p):
-                                if var in ctx:
-                                    sub = sub.replace("${" + var + "}", ctx[var])
+                                if var.lower() in ctx:
+                                    sub = sub.replace("${" + var + "}", ctx[var.lower()])
                                 else:
                                     ok = False
                             if ok and glob(sub, request["resource"], False):
@@ -315,7 +320,7 @@ def iam_facts(world: dict, request: dict, bindings: dict) -> tuple[FactBase, dic
                     c = fb.add("cond", cn(f"{pi}_{si}_{ci}_{key}"))
                     fb.fact("stmt_cond", t, c)
                     fb.fact("cond_op", c, s(op))
-                    fb.fact("cond_key", c, s(key))
+                    fb.fact("cond_key", c, s(key.lower()))
                     for v in aslist(values):
                         fb.fact("cond_value", c, s(v))
     for k, v in ctx.items():
@@ -408,7 +413,7 @@ def _known_predicate(family: str, p: str, bindings: dict) -> bool:
     """A declared predicate may be empty in a given world; accept convention names."""
     if p in bindings.get("empty_ok", []):
         return True
-    conv = {"cedar": r"(parent|type_\w+|has_\w+|ea_\w+|sa_\w+|bt_\w+|bf_\w+|es_\w+|ss_\w+|type_record)",
+    conv = {"cedar": r"(parent|type_\w+|has_\w+|ea_\w+|sa_\w+|bt_\w+|bf_\w+|es_\w+|ss_\w+|type_record|nattrs_\d+)",
             "k8s": r"(is_role|is_clusterrole|role_name|role_ns|role_label|has_aggregation|role_selector|sel_label|role_rule|"
                    r"rule_verb|rule_group|rule_resource|rule_resname|is_rolebinding|is_clusterrolebinding|binding_ns|"
                    r"ref_role|ref_clusterrole|ref_name|subject_user|subject_group|req_group)",
@@ -773,6 +778,90 @@ def perturb_alloy(item, rng):
     return q, inst, ["redraw"]
 
 
+N_TARGETED = int(__import__("os").environ.get("P3_NT", "100"))
+
+
+def _recase(rng, text: str) -> str:
+    return rng.choice([str.upper, str.lower, str.swapcase,
+                       lambda t: "".join(c.upper() if rng.random() < 0.5 else c.lower() for c in t)])(text)
+
+
+def _recase_policy_keys(rng, pol):
+    """Re-case condition-key names and ${var} names inside Resource/NotResource."""
+    for stmt in (pol["Statement"] if isinstance(pol["Statement"], list) else [pol["Statement"]]):
+        for op, kv in list(stmt.get("Condition", {}).items()):
+            stmt["Condition"][op] = {(_recase(rng, k) if rng.random() < 0.7 else k): v for k, v in kv.items()}
+        for key in ("Resource", "NotResource"):
+            if key in stmt:
+                sub = lambda m: "${" + _recase(rng, m.group(1)) + "}"  # noqa: E731
+                stmt[key] = ([re.sub(r"\$\{([^}]*)\}", sub, p) for p in stmt[key]] if isinstance(stmt[key], list)
+                             else re.sub(r"\$\{([^}]*)\}", sub, stmt[key]))
+
+
+def _record_slots(world, request):
+    """Every record value (not entity refs / extension values) in entity attributes or the
+    request context, including records inside sets and nested records."""
+    out = []
+
+    def walk(v):
+        if isinstance(v, dict) and "__entity" not in v and "__extn" not in v:
+            out.append(v)
+            for x in v.values():
+                walk(x)
+        elif isinstance(v, list):
+            for x in v:
+                walk(x)
+    for e in world["entities"]:
+        for v in e["attrs"].values():
+            walk(v)
+    for v in (request.get("context") or {}).values():
+        walk(v)
+    return out
+
+
+def targeted_perturbations(item, n=N_TARGETED):
+    """Perturbations aimed at two semantics the random generator never exercised (found in
+    review): IAM context-key names are case-insensitive (re-case keys in the request context
+    and in the policy's condition keys / ${var} names); Cedar record equality needs identical
+    key sets (add an extra key to a record, including records inside sets). Half start from an
+    ordinary perturbation, half from an item question unchanged. Items without records (Cedar)
+    or of other families get none."""
+    rng = random.Random(f"{SEED}-{item['id']}-targeted")
+    out = []
+    fam = item["family"]
+    if fam == "iam":
+        for _ in range(n):
+            if rng.random() < 0.5:
+                w, r, ops = perturb_iam(item, rng)
+            else:
+                q = rng.choice(item["questions"])
+                w, r, ops = copy.deepcopy(item["world"]), copy.deepcopy(q["request"]), []
+            r["context"] = {(_recase(rng, k) if rng.random() < 0.7 else k): v for k, v in r["context"].items()}
+            for pol in w["policies"]:
+                _recase_policy_keys(rng, pol)
+            out.append({"world": w, "request": r, "ops": ops + ["key_case"], "q": {}})
+    elif fam == "cedar" and any(_record_slots(item["world"], q["request"]) for q in item["questions"]):
+        ptext = re.sub(r"//[^\n]*", "", item["sources"].get("source.cedar", ""))
+        extra = ["extra"] + sorted(set(re.findall(r"\.([A-Za-z_]\w*)\b(?!\s*\()", ptext)) |
+                                   set(re.findall(r"\b([A-Za-z_]\w*)\s*:", ptext)))  # attribute and record-literal names
+        while len(out) < n:
+            if rng.random() < 0.5:
+                w, r, ops = perturb_cedar(item, rng)
+            else:
+                q = rng.choice(item["questions"])
+                w, r, ops = copy.deepcopy(item["world"]), copy.deepcopy(q["request"]), []
+            slots = _record_slots(w, r)
+            if not slots:
+                continue
+            rec = rng.choice(slots)
+            k = next((k for k in rng.sample(extra, len(extra)) if k not in rec), None)
+            if k is None:
+                continue
+            rec[k] = rng.choice(["x", True, 3, rng.choice(sorted(set(policy_strings(item))) or ["x"])])
+            out.append({"world": w, "request": r, "ops": ops + ["record_extra_key"], "q": {}})
+    return out
+
+
 def perturbations(item, n=N_PERTURB):
     rng = random.Random(f"{SEED}-{item['id']}")
     out = []
@@ -823,7 +912,7 @@ def diff_item(item_id: str, n=N_PERTURB, verbose=False) -> dict:
                      "recorded": q.get("recorded_decision"), **({"detail": ve["detail"]} if "detail" in ve else {}),
                      **{k: v for k, v in ve.items() if k.startswith(("prove", "countermodel"))}})
     pert = []
-    for p in perturbations(item, n):
+    for p in perturbations(item, n) + targeted_perturbations(item):
         q = p["q"] or {}
         ve = ve_answer(item, env, doc, bindings, q, p["world"], p["request"])
         ref = ref_answer(item, q, p["world"], p["request"])
@@ -834,11 +923,14 @@ def diff_item(item_id: str, n=N_PERTURB, verbose=False) -> dict:
                      "question": q.get("description")})
     o_ok = sum(r["ve"] == r["ref"] for r in orig)
     p_ok = sum(r["ve"] == r["ref"] for r in pert)
+    tgt = [r for r in pert if r["ops"][-1:] in (["key_case"], ["record_extra_key"])]
     rec = [r for r in orig if r["recorded"] in ("allow", "deny")]
     return {"item": item_id, "family": item["family"], "stage": "ok",
             "original": {"agree": o_ok, "total": len(orig)},
             "perturbed": {"agree": p_ok, "total": len(pert),
                           "ref_true": sum(bool(r["ref"]) for r in pert)},
+            "targeted": {"agree": sum(r["ve"] == r["ref"] for r in tgt), "total": len(tgt),
+                         "ref_true": sum(bool(r["ref"]) for r in tgt)},
             "reference_vs_recorded": {"agree": sum((r["ref"] is True) == (r["recorded"] == "allow") for r in rec),
                                       "total": len(rec)},
             "faithful": o_ok == len(orig) and p_ok == len(pert),

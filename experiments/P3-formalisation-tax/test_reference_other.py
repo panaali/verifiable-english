@@ -198,6 +198,27 @@ def test_iam():
     assert not i([c({"Bool": {"m": "true"}})], ireq("x:Y", m="false"))
     assert not i([c({"Bool": {"m": "true"}})], ireq("x:Y"))
     assert i([c({"BoolIfExists": {"m": "false"}})], ireq("x:Y"))
+    # context-key and policy-variable names are case-insensitive (values are not)
+    assert i([c({"StringEquals": {"AWS:UserName": "al"}})], ireq("x:Y", **{"aws:username": "al"}))
+    assert i([c({"StringEquals": {"aws:username": "al"}})], ireq("x:Y", **{"AWS:USERNAME": "al"}))
+    assert not i([c({"StringEquals": {"AWS:UserName": "al"}})], ireq("x:Y", **{"aws:username": "AL"}))
+    assert not i([c({"StringNotEquals": {"AWS:UserName": "al"}})], ireq("x:Y", **{"aws:username": "al"}))
+    assert not i([c({"Null": {"AWS:UserName": "true"}})], ireq("x:Y", **{"aws:username": "al"}))
+    assert i([s("iam:*", "arn:aws:iam::*:user/${AWS:UserName}")],
+             ireq("iam:GetUser", "arn:aws:iam::1:user/al", **{"aws:username": "al"}))
+    assert i([s("iam:*", "arn:aws:iam::*:user/${aws:username}")],
+             ireq("iam:GetUser", "arn:aws:iam::1:user/al", **{"Aws:UserName": "al"}))
+    assert i([c({"StringLike": {"k": "${AWS:username}/*"}})], ireq("x:Y", k="al/x", **{"aws:UserName": "al"}))
+    # reviewer's w02 regression: re-casing the condition key must not flip the decision
+    w02 = load(os.path.join(HERE, "items", "w02_deny_requested_region"))
+    pols = w02["world"]["policies"]
+    upper = json.loads(json.dumps(pols).replace('"aws:RequestedRegion"', '"AWS:REQUESTEDREGION"'))
+    assert upper != pols
+    for q in w02["questions"]:
+        for ctx_case in (str, str.upper, str.lower):
+            r = dict(q["request"], context={ctx_case(k): v for k, v in q["request"]["context"].items()})
+            assert i(upper, r) == i(pols, r) == i(pols, q["request"]), (q["description"], ctx_case)
+    assert any(i(pols, q["request"]) for q in w02["questions"])
     assert i([c({"BoolIfExists": {"m": "false"}})], ireq("x:Y", m="false"))
     assert not i([c({"BoolIfExists": {"m": "false"}})], ireq("x:Y", m="true"))
     assert i([c({"StringEqualsIfExists": {"k": "a"}})], ireq("x:Y"))

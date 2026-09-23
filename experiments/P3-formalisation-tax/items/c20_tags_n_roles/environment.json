@@ -88,6 +88,105 @@
      "value"
     ],
     "description": "Member of string-set field stage."
+   },
+   "sa_production_status": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar attribute production_status (a type error for .contains)."
+   },
+   "bt_production_status": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "production_status is Boolean true (a type error)."
+   },
+   "bf_production_status": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "production_status is Boolean false (a type error)."
+   },
+   "ea_production_status": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "production_status is an entity or record (a type error)."
+   },
+   "es_production_status": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record member of set attribute production_status."
+   },
+   "sa_country": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar attribute country (a type error for .contains)."
+   },
+   "bt_country": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "country is Boolean true (a type error)."
+   },
+   "bf_country": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "country is Boolean false (a type error)."
+   },
+   "ea_country": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "country is an entity or record (a type error)."
+   },
+   "es_country": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record member of set attribute country."
+   },
+   "sa_stage": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "Scalar attribute stage (a type error for .contains)."
+   },
+   "bt_stage": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "stage is Boolean true (a type error)."
+   },
+   "bf_stage": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "stage is Boolean false (a type error)."
+   },
+   "ea_stage": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "stage is an entity or record (a type error)."
+   },
+   "es_stage": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity/record member of set attribute stage."
    }
   },
   "constants": {

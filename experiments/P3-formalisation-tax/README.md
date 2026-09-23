@@ -53,11 +53,11 @@ sources from the pinned clones (`data/README.md`) and from files fetched into
 
 | Script | Output | What |
 |---|---|---|
-| `harness.py diff <ids>` | stdout | VE vs reference on the item's questions and on `P3_N` (default 300) seeded perturbations of the world (Cedar: request fields, parent edges, attributes, context, policy-aware links; K8s: request fields, subjects, namespaces, labels, verbs; IAM: action/resource/context; Alloy: tuple toggles and random redraws). |
+| `harness.py diff <ids>` | stdout | VE vs reference on the item's questions and on `P3_N` (default 300) seeded perturbations of the world (Cedar: request fields, parent edges, attributes, context, policy-aware links; K8s: request fields, subjects, namespaces, labels, verbs; IAM: action/resource/context; Alloy: tuple toggles and random redraws), plus `P3_NT` (default 100) targeted perturbations added after review (IAM: re-cased context-key and `${var}` names; Cedar items with records: an extra key added to a record). |
 | `mutation.py` | `mutation_results.json` | Test power: up to 25 syntactic mutants per item (rtc↔tc, swapped direction, closure→edge, and↔or, dropped conjunct/disjunct/negation, ∃↔∀, →consequent); killed if the same differential test disagrees. Survivors classified with VE itself (proved equivalent / finite distinguishing model / unknown). |
 | `write_naive.py`, `naive.py` | `naive_results.json` | 14 hand-written realistic mistranslations (ignoring Cedar error semantics, `in` as `==`, one-level aggregation, IAM missing-key rules, ...): does the differential test catch them? |
 | `proofs.py` | `proof_results.json` | Prove/countermodel arm: property questions ("can anyone outside the group be allowed?", "is a private document viewable only by its owner?", `check NoSelfGrandpa`, `ring ⇒ weaklyConnected`, ...) with replayed certificates, cross-checked by the reference (sampling or exhaustive bounded enumeration). |
-| `make_review_packets.py` + review agents | `review_packets/answers/`, `arms_usage.json` | Structured review without VE on 8 sampled items (10 questions each); fresh agents read the source and answer. |
+| `make_review_packets.py` + review agents | `review_packets/answers/`, `arms_usage.json` | Structured review without VE on 8 sampled items (10 questions each for the 7 Cedar/K8s/IAM items, 5 for Alloy `l07`: 75 in all); fresh agents read the source and answer. |
 | independent authors | `items/<id>/agent/`, `arms_usage.json` | Fresh agents author VE for the same 8 items from `AUTHORING_GUIDE.md` alone (paired with the review arm). |
 | `nversion.py` | `nversion_results.json` | My formalisation vs the independent author's on 2,000 perturbed worlds per item; the reference arbitrates disagreements. |
 | `summarize.py` | `results.json` | Everything above plus coverage (`coverage.py`) and authoring cost (`authoring_log.jsonl`, via `log.py`/`snap.sh`). |
@@ -67,6 +67,7 @@ Reproduce (sequentially, from this directory; no network, no paid API):
 ```sh
 export UV_CACHE_DIR=/private/tmp/ve-uv-cache-p3
 uv run python test_reference_cedar.py && uv run python test_reference_other.py
+uv run python test_harness_regressions.py   # review regressions: IAM key case, c21/c20 records
 P3_N=300 uv run python mutation.py      # ~20 min
 python3 write_naive.py && P3_N=300 uv run python naive.py
 P3_N=300 uv run python proofs.py

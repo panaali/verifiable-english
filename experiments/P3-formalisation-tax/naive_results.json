@@ -124,8 +124,8 @@
   "variant": "negated-operator-missing-key",
   "description": "StringNotEquals with the key absent treated as not matching (AWS: it matches).",
   "item_questions_wrong": 1,
-  "perturbations_wrong": 74,
-  "perturbations": 300,
+  "perturbations_wrong": 93,
+  "perturbations": 400,
   "caught": true,
   "caught_by_item_questions_alone": true
  },
@@ -134,8 +134,8 @@
   "variant": "ifexists-ignored",
   "description": "BoolIfExists treated as Bool (missing key -> false).",
   "item_questions_wrong": 0,
-  "perturbations_wrong": 9,
-  "perturbations": 300,
+  "perturbations_wrong": 12,
+  "perturbations": 400,
   "caught": true,
   "caught_by_item_questions_alone": false
  }

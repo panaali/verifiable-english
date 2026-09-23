@@ -1,9 +1,10 @@
 """Structured-review arm: packets for reviewers who answer from the source alone (no VE).
 
 For each sampled item, write review_packets/<id>.json with the verbatim source, the
-world, and 10 questions: the item's own questions plus request variants from the
-harness perturbation generator restricted to the item's own world (Cedar/K8s/IAM:
-request fields only; Alloy: the item's instances). Answers are hidden; the key is
+world, and its questions: for Cedar/K8s/IAM, 10 (the item's own questions plus request
+variants from the harness perturbation generator restricted to the item's own world,
+request fields only); for Alloy, only the item's own instance questions (5 for l07), so
+the 8 packets hold 75 questions. Answers are hidden; the key is
 in review_packets/keys.json (reference answers)."""
 import copy, json, random
 import harness as H, reference
