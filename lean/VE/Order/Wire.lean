@@ -1,4 +1,5 @@
 import VE.Order.Tableau
+import VE.Order.ModelCheck
 import VE.CertificateWire
 
 /-! The order@0 wire adapter, reached only through the separate `order`
@@ -12,20 +13,12 @@ Integer values are canonical decimal strings. Serialization and hash identity
 correspondence are tested boundary code, not premises of tableau soundness. -/
 namespace VE.Order.Wire
 open Lean
-open VE.Bridge (exactFields stringField strings fields lookup identifier reserved generatedName)
+open VE.Bridge (exactFields stringField strings fields identifier reserved generatedName)
 
 def orderLanguage : String := "ve.core@0.1"
 def orderProfiles : List String := ["order@0", "relational-fol@0"]
 def orderRevision : String := "ve-v0.1-order-2026-09-22"
 def maxNumeralChars : Nat := 40
-
-structure Vocabulary where
-  sorts : List String
-  predicates : List (String × List SortName)
-  constants : List (String × SortName)
-
-def Vocabulary.environment (v : Vocabulary) : Environment :=
-  ⟨v.sorts, lookup v.predicates, lookup v.constants⟩
 
 /-- Canonical decimal: optional minus, no leading zeros, no "-0", bounded length. -/
 def decodeInt (s : String) : Except String Int := do
@@ -129,7 +122,9 @@ def decodeValue (domains : List (String × List String)) (s : SortName) (j : Jso
       throw "dangling or wrong-sort value"
     return .inl (sort, text)
 
-def decodeModel (v : Vocabulary) (j : Json) : Except String (FiniteModel Entity) := do
+/-- Decode wire tables into `ModelData`; admissibility is then decided by the
+proved `validModel?` gate (ModelCheck.validModel_iff), not by this decoder. -/
+def decodeModel (v : Vocabulary) (j : Json) : Except String (ModelData Entity) := do
   exactFields j ["complete", "domains", "constants", "relations"]
   unless (← (← j.getObjVal? "complete").getBool?) do throw "complete must be true"
   let ds ← j.getObjVal? "domains"
@@ -155,10 +150,13 @@ def decodeModel (v : Vocabulary) (j : Json) : Except String (FiniteModel Entity)
     pure (p, rows)
   if (relations.map (fun p => p.2.length)).foldl (· + ·) 0 > 100000 then
     throw "ResourceLimit: tuple count"
-  pure {
-    domains := fun s => ((lookup domains s).getD []).map (s, ·)
-    constants := lookup constants
-    relations := fun p => (lookup relations p).getD [] }
+  pure ⟨domains.map (fun (s, xs) => (s, xs.map (s, ·))), constants, relations⟩
+
+/-- Decoded and admissible: every successful result passes `validModel?`. -/
+def decodeValidModel (v : Vocabulary) (j : Json) : Except String (ModelData Entity) := do
+  let d ← decodeModel v j
+  unless validModel? v d do throw "model is not semantically admissible"
+  pure d
 
 /-! Certificates (checker ve-order-farkas-checker@1). -/
 
@@ -240,10 +238,10 @@ def runCase (j : Json) : Except String Json := do
   let E := v.environment
   let kind ← stringField j "kind"
   if kind == "evaluate" then
-    let m ← decodeModel v (← j.getObjVal? "model")
+    let d ← decodeValidModel v (← j.getObjVal? "model")
     let fs ← decodeFormulas E (← j.getObjVal? "ast")
     if fs.isEmpty then throw "empty document"
-    let values := fs.map (fun a => a.eval m [])
+    let values := fs.map (fun a => a.eval d.toModel [])
     return Json.mkObj [("id", .str id), ("status", .str "ok"), ("values", toJson values)]
   let ps ← decodeFormulas E (← j.getObjVal? "premises")
   let c ← decodeFormula 64 (← j.getObjVal? "conclusion")
@@ -251,9 +249,9 @@ def runCase (j : Json) : Except String Json := do
   if ((c :: ps).map formulaNodes).foldl (· + ·) 0 > 10000 then
     throw "ResourceLimit: AST node count"
   if kind == "countermodel" then
-    let m ← decodeModel v (← j.getObjVal? "model")
+    let d ← decodeModel v (← j.getObjVal? "model")
     return Json.mkObj [("id", .str id), ("status", .str "ok"),
-      ("refutes", .bool (countermodelCheck m ps c))]
+      ("refutes", .bool (checkCountermodel v d ps c))]
   unless kind == "certificate" do throw "unknown case kind"
   let certificate ← decodeCertificate (← j.getObjVal? "certificate")
   let environmentId ← environmentId environment

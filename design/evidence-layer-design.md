@@ -5,9 +5,11 @@ assesses leaves and has no machine-checked deduction. Neither half is worth much
 graph over unassessed leaves is a conditional nobody should read as approval, and a probability table
 over unrelated propositions is a mood. Joined, VE's claim graph says *which* leaves matter and *how
 they compose*, and the evidence layer says *how strongly each is supported and why* — and the join
-buys three things that neither side has today: a **sound lower bound** on the root, a **coherence
-checker** that uses VE's entailment oracle to constrain probabilities mechanically, and an
-**adversarial update ledger** that makes a premature estimate a protocol violation rather than a habit.
+buys three things that neither side has today: a **lower bound on the root that is sound relative to
+the leaf assessments** (if the leaf probabilities are right, the bound is right; it can never be an
+upper bound), a **coherence checker** that uses VE's entailment oracle to constrain probabilities
+mechanically, and an **adversarial update ledger** that makes a premature estimate a protocol
+violation rather than a habit. §2.9 separates what is proved from what is assumed.
 
 ---
 
@@ -128,12 +130,37 @@ cap.
 ### 2.2 How a leaf gets a probability
 
 Per leaf L: (i) a **prior** with a stated basis from a fixed enum (reference class / structural /
-uniform-over-declared-alternatives), (ii) records partitioned into independence groups, (iii) one
-likelihood ratio *per group*, not per record — ten reprints of one wire story are one group and update
-once, (iv) the posterior as the product of group LRs against the prior odds, (v) if the assessor cannot
-justify point values, an **interval** [lo, hi] propagated by interval arithmetic on odds. Interval
-output is the default; point values require a `reliability_reason` of machine-generated log or party
-admission.
+uniform-over-declared-alternatives), (ii) records partitioned into independence groups by originator,
+(iii) one likelihood ratio *per group*, not per record — ten reprints of one wire story are one group
+and update once, (iv) a posterior, computed as below, (v) if the assessor cannot justify point values,
+an **interval** [lo, hi]. Interval output is the default; point values require a `reliability_reason`
+of machine-generated log or party admission.
+
+**When LRs may be multiplied.** Bayes gives, for evidence groups G₁…G_g,
+
+> O(L | G₁…G_g) = O(L) · P(G₁…G_g | L) / P(G₁…G_g | ¬L).
+
+The right-hand side factorises into ∏ⱼ LRⱼ with LRⱼ = P(Gⱼ | L)/P(Gⱼ | ¬L) when the groups are
+**conditionally independent given L and given ¬L**. Distinct originators do not establish this. Two
+originators can share a cause other than L (the same rumour, instrument, misreading or draft); the
+search that found the second can depend on the first; and ¬L is a composite hypothesis, so
+independence given ¬L is a claim about every way L could be false. `tests/test_evidence_bounds.py`
+has a two-originator example with a shared cause independent of L: the product gives 0.73, the true
+posterior is 0.61. Grouping by originator removes one known failure (reprints). It does not certify
+the rest. So:
+
+- The product over groups is allowed only for groups covered by a **conditional-independence claim**
+  `CI(G_a, G_b, … | L)`. That claim is a first-class object: it has its own basis (for example,
+  "separate physical access, no communication channel before the date"), its own records, a status,
+  and it can be attacked with `challenge-evidence(…, independence)`. It is listed among the judgment
+  items in the report.
+- Without that claim, the checker does not multiply. The assessor supplies **one joint LR interval**
+  for the dependent groups, judged over the combined evidence. The only mechanical alternative is the
+  Fréchet interval on the joint likelihoods, P(G_a∧G_b | h) ∈ [max(0, P(G_a|h)+P(G_b|h)−1),
+  min(P(G_a|h), P(G_b|h))]. For specific evidence the likelihoods are small, so the lower end is 0
+  and the LR interval is [0, ∞], which is vacuous. The checker says so; it does not substitute a product.
+- Intervals propagate through odds by monotonicity: with prior odds in [o⁻, o⁺] and each admitted LR
+  in [ℓⱼ⁻, ℓⱼ⁺], posterior odds lie in [o⁻∏ℓⱼ⁻, o⁺∏ℓⱼ⁺], then map through p = o/(1+o).
 
 **Adversarial search obligation.** Each side must log queries run, sources returned, and sources
 *rejected with a reason*, in a `search_record`. A leaf carries a flag `disconfirming_search : bool`,
@@ -159,13 +186,48 @@ from an authoring norm into a check. Over a set of assessed claims A₁…A_k in
 | Σ P(Aᵢ) = 1 | exclusive **and** `entails(E, ⊤, ⋁Aᵢ)` | certificate of exhaustiveness |
 | P(root) ≥ Fréchet lower bound of its leaves | certified derivation | §2.4 |
 
-**Implementation.** For k ≤ ~12 assessed claims, build the atom table: for each of the 2^k sign
-patterns ask the model finder whether the conjunction is satisfiable. Coherence is then exact LP
-feasibility over atom masses (de Finetti), and interval assessments are box constraints. Above k = 12,
-fall back to the pairwise and triple constraints above — a sound relaxation, since dropping constraints
-can only *reduce* reported violations. **An `UNKNOWN` from the oracle drops the constraint; it never
-asserts one.** The oracle's measured `UNKNOWN` rate is 2.0% (8/400,
-`/Users/seyran/code/ve-integration/experiments/oracle/results/summary.json`).
+**What "coherent" means for intervals.** An assessment gives each claim Aᵢ an interval [loᵢ, hiᵢ].
+An *atom* is a sign pattern over A₁…A_k (each claim true or false). A probability over the environment
+E's models induces masses on the atoms consistent with E. Two properties, in increasing strength:
+
+- **Avoids sure loss.** Some probability P on the E-consistent atoms has loᵢ ≤ P(Aᵢ) ≤ hiᵢ for every
+  i. This is LP feasibility over atom masses (de Finetti; Walley for intervals). Failure means a
+  bookmaker can combine bets you call acceptable into a loss in every model of E.
+- **Coherent (tight).** Every endpoint is attained. loᵢ equals the minimum of P(Aᵢ) over the feasible
+  set, and hiᵢ equals the maximum. The checker computes these minima and maxima, which is the
+  *narrowing* that §1.4 asks for (Walley's natural extension). It reports the narrowed intervals and
+  marks the assessment tight only if nothing narrowed.
+
+**Implementation, and how UNKNOWN is handled.** For k ≤ ~12 assessed claims, build the atom table.
+For each of the 2^k sign patterns the oracle returns one of three statuses:
+
+| Atom status | Evidence | Treatment in the LP |
+|---|---|---|
+| POSSIBLE | a model (replayable witness) | variable ≥ 0 |
+| IMPOSSIBLE | a certified refutation (tableau certificate that E entails the negated pattern) | removed |
+| UNKNOWN | no model found within the search bounds and no refutation certificate | **variable ≥ 0: kept possible** |
+
+An atom leaves the LP only when its impossibility is certified. "No model up to domain size d" is
+UNKNOWN, not IMPOSSIBLE. The feasible region is therefore a superset of the true one, and this has
+three consequences, all checked in `tests/test_evidence_bounds.py`:
+
+1. **A reported violation is genuine.** If the relaxed LP is infeasible, the exact one is too.
+2. **Narrowed intervals are outer approximations.** They never exclude a value the true constraints
+   allow. Root lower bounds computed by the same LP are sound for the same reason.
+3. **"No violation found" certifies coherence only when no atom is UNKNOWN.** Only then is the LP
+   exact. Otherwise the report says "no violation found; u atoms UNKNOWN, kept possible" and does not
+   say "coherent".
+
+Treating an UNKNOWN atom as impossible is unsound in the other direction. It shrinks the feasible
+region, which produces false violations, over-narrow intervals and inflated root bounds. With a
+single claim at [0.5, 0.5] and its ¬A atom UNKNOWN, dropping that atom forces P(A) = 1 and reports a
+violation that does not exist. Above k = 12, the checker falls back to the pairwise and triple
+constraints in the table. A constraint is used only when its trigger is certified, never on UNKNOWN.
+This is a relaxation of the atom LP, so consequences 1–3 still hold, and "no violation found" is never
+upgraded to "coherent". The oracle's measured `UNKNOWN` rate is 2.0% (8/400,
+`/Users/seyran/code/ve-integration/experiments/oracle/results/summary.json`). That audit used three
+predicates and domains of size ≤ 2, with all eight UNKNOWNs in one template, so the rate should be
+re-measured at realistic vocabulary sizes before anyone relies on it.
 
 **Reporting and repair.** A violation is reported as the *minimal infeasible subset* of constraints
 plus the offending assessments, and the LP's nearest coherent projection is offered as a suggestion,
@@ -180,45 +242,97 @@ exhaustiveness certificate, and the check gets stronger; it never becomes a chec
 
 ### 2.4 Propagation to the root
 
-Let leaves L₁…L_n carry a VE certificate for `Entails(E, {L₁…L_n}, C)`. As events, ⋀Lᵢ ⊆ C, so
+**Semantics.** A VE certificate for `Entails(E, {L₁…L_n}, C)` means that every model of E satisfying
+all Lᵢ satisfies C. As events under any probability on E's models, ⋀Lᵢ ⊆ C. Every statement below
+follows from this inclusion plus the leaf marginals. None of them says anything about whether the
+marginals are right.
 
-> **P(C) ≥ P(⋀Lᵢ) ≥ max(0, Σ P(Lᵢ) − (n−1))**   (Fréchet–Hoeffding lower bound)
+**Single derivation: lower bound only.** By monotonicity and Boole's inequality (the Fréchet lower
+bound for a conjunction),
 
-and the conjunction is at most min P(Lᵢ). This is the **only** sound statement without a dependence
-assumption. Under *declared* independence P(⋀Lᵢ) = ∏P(Lᵢ), which is larger; it is reported as a second
-line labelled assumption-dependent, never as the bound. With intervals, compute the bound from the lows.
+> **P(C) ≥ P(⋀Lᵢ) ≥ max(0, 1 − Σᵢ (1 − P(Lᵢ)))**
 
-**The bound is vacuous when the doubt budget Σ(1 − P(Lᵢ)) ≥ 1.** Seven leaves at 0.95 give 0.65; seven
-at 0.85 give 0. This is exactly where **prover-estimator debate**'s stability assumption shows up. In
-that protocol an estimator assigns probabilities to subclaims and the completeness guarantee requires
-that small changes in subclaim probabilities cause only small changes upstream. VE makes the
-sensitivity computable rather than assumed: ∂LB/∂P(Lᵢ) = 1 for every leaf in the active Fréchet
-regime, so the bound is maximally unstable — one leaf moving 0.05 moves the root bound 0.05, and n
-leaves each moving 0.05 destroys it. The design's response is to *report* the regime: the checker
-states whether the bound is Fréchet-active, how many leaves it has, and the doubt budget, and refuses
-to print a lower bound above 0 without also printing n.
+With interval assessments, use the lower ends loᵢ; the bound is monotone in each marginal. Given only
+the marginals and this one entailment, the bound is **tight**: it is attained when the leaves fail on
+disjoint events and C = ⋀Lᵢ (tested). There is **no upper bound on P(C) from the leaves**. The inclusion
+runs one way, so C can have probability 1 however doubtful the leaves are. The familiar
+P(⋀Lᵢ) ≤ minᵢ P(Lᵢ) bounds the *conjunction*, not C. It bounds C only if C is certified
+**equivalent** to ⋀Lᵢ (`compare = EQUIVALENT`), and then P(C) = P(⋀Lᵢ) ≤ minᵢ P(Lᵢ). An earlier draft
+printed "P(R) ≤ min leaf" as a bound on the root. That was wrong, and it is retracted.
 
-**Alternative derivations.** Two certified derivations D₁, D₂ of the same C give C ⊇ (⋀L) ∪ (⋀M), so
-soundly **P(C) ≥ max(LB(D₁), LB(D₂))**. Only if the two leaf sets are disjoint *and* declared
-independent may one report 1 − (1−p₁)(1−p₂), labelled as such. Shared leaves forbid it; the checker
-detects sharing mechanically.
+**The doubt budget.** Define d = Σᵢ (1 − loᵢ), counting each distinct leaf once. The bound is 1 − d
+and is vacuous when d ≥ 1. Seven leaves at 0.95 give 0.65; seven at 0.85 give 0. This is exactly where
+**prover-estimator debate**'s stability assumption shows up. In that protocol an estimator assigns
+probabilities to subclaims, and the completeness guarantee requires small changes in subclaim
+probabilities to cause only small changes upstream. VE makes the sensitivity computable rather than
+assumed. While d < 1, ∂LB/∂loᵢ = 1 for every leaf: one leaf moving 0.05 moves the bound 0.05, and n
+leaves each moving 0.05 move it 0.05n. (This is sensitivity of a worst-case bound. It is not an
+empirical measurement of PE stability.) The checker reports the regime, n and d beside every bound. It
+never prints a positive lower bound without n.
 
-**Countermodels and refuted leaves.** A countermodel on an edge removes that derivation from the
-disjunction; the root's lower bound falls to the max over the survivors, possibly 0. A leaf assessed at
-0 does the same. Neither produces an **upper** bound on P(C) — the debate project's no-promotion rule
-(`inference-protocol.md` §4.3), now arithmetic. Upper bounds have exactly one source: a certified
-derivation of ¬C from leaves M, giving P(C) ≤ 1 − LB(M).
+**Certified graphs and shared leaves.** Let G be a DAG in which each internal node has one or more
+certified derivations from its children. Entailment composes: if S ⊨ C₁, S′ ⊨ C₂ and {C₁, C₂} ⊨ R,
+then S ∪ S′ ⊨ R. Choosing one derivation at every internal node reachable from R therefore yields a
+**leaf support** S with ⋀S ⊆ R. Then:
+
+- **Flattened bound (the one the checker prints):** P(R) ≥ max over supports S of
+  max(0, 1 − Σ_{L∈S} (1 − lo_L)), where S is a *set*, so a leaf shared by two branches is counted once.
+- **Node-by-node recursion**, LB(C) = max over derivations of max(0, 1 − Σ over children (1 − LB(child))),
+  is also sound. But it counts a shared leaf's doubt once per path, so it is never tighter than the
+  flattened bound (tested). It is a fallback when the number of supports is too large to enumerate.
+- **Tight bound:** min P(R) subject to the leaf intervals and all certified inclusions. This is the
+  §2.3 atom LP with R added, and it applies when k is small. UNKNOWN atoms stay possible, so the LP
+  value is still a sound lower bound.
+
+**Alternative derivations.** Two certified supports S₁, S₂ of R give R ⊇ (⋀S₁) ∪ (⋀S₂), so
+P(R) ≥ max(LB(S₁), LB(S₂)). That is the sound combination. The noisy-OR 1 − (1 − p₁)(1 − p₂), with
+pⱼ = LB(Sⱼ), needs the two derivation events to be independent, which is a separate claim (below).
+Sharing a leaf does not merely weaken that claim; it typically makes the formula false. If both
+supports need L at 0.5 and everything else is certain, P(R) can be 0.5 while noisy-OR gives 0.75
+(tested). The checker detects shared leaves mechanically and refuses noisy-OR when they exist.
+
+**Refutations and upper bounds.** A countermodel on an edge removes that derivation. The root's lower
+bound falls to the maximum over the surviving supports, possibly 0. A leaf assessed at 0 does the
+same. Neither produces an upper bound, which is the debate project's no-promotion rule
+(`inference-protocol.md` §4.3), now arithmetic. Upper bounds come only from the other direction:
+a certified derivation of ¬R from a support M gives P(R) ≤ 1 − LB(M), and a certified R ⊨ B gives
+P(R) ≤ hi_B.
+
+**Independence, and how it must be supported.** Independence raises the bound, and that is why it has
+to be earned rather than declared.
+
+- *What is needed.* The product line P(⋀Lᵢ) = ∏ P(Lᵢ) needs **mutual** independence of the leaf events.
+  Pairwise independence is not enough for n ≥ 3. The independence must hold under the same measure
+  that produced the marginals, which is the assessor's probability *given the evidence*. Two
+  physically unrelated facts become dependent if one record bears on both. If only a block B of
+  leaves is supported as mutually independent, the sound partial bound is
+  max(0, ∏_{i∈B} loᵢ + Σ_{i∉B} loᵢ − |leaves ∉ B|) (tested). Independence of whole derivations for
+  noisy-OR is a separate claim about the derivation events.
+- *How it is supported.* An independence claim `IND(L_a, L_b, …)` is an assessed object like a leaf.
+  It has a basis (structural: disjoint mechanisms, no shared inputs), records, a status and an update
+  ledger, and it can be challenged. The report prints the independence line as a **conditional**,
+  "if IND-j holds, P(R) ≥ x", labelled `[ASSUMPTION]` and never as the headline. It is not averaged
+  with the Fréchet line, and no probability of IND-j is multiplied in.
+- *What is checked mechanically (necessary conditions only).* The checker refuses an independence
+  claim over leaves that share an evidence independence group. It also refuses one over leaves
+  related by a certified entailment or exclusivity while both marginals lie strictly between 0 and 1:
+  A ⊆ B gives P(A∧B) = P(A) ≠ P(A)P(B) (tested), and exclusivity gives P(A∧B) = 0. It refuses one over
+  a set that contains the same leaf twice through different branches. Passing these checks does not
+  establish independence.
 
 ### 2.5 Mechanical versus judgment
 
 **Mechanical:** digest recomputation; quote-in-snapshot (byte span matches); scope-subsumption of the
 record's scope by the leaf's declared scope; retrieval/publication time ordering and `time_basis`
 enum; independence-group membership consistency; every leaf has ≥1 assessment; every assessment has
-≥1 record; `disconfirming_search` flag present; coherence constraints (§2.3); Fréchet arithmetic and
-sensitivity; alternative-derivation leaf-sharing; graph acyclicity and certificate replay (already VE).
+≥1 record; `disconfirming_search` flag present; coherence constraints (§2.3) with UNKNOWN atoms kept
+possible and counted; Fréchet arithmetic, flattened supports and sensitivity; alternative-derivation
+leaf-sharing; necessary-condition refusals for independence claims (§2.4); LR products only over
+groups covered by a CI claim (§2.2); graph acyclicity and certificate replay (already VE).
 
 **Judgment, permanently:** reliability priors; whether the passage is *relevant* to the leaf;
-likelihood ratios; whether two sources are genuinely independent; whether the root is the question that
+likelihood ratios; whether evidence groups are conditionally independent given L and ¬L; whether
+leaves are mutually independent; whether the root is the question that
 was asked; whether the English rendering is faithful. The report must print these in a separate
 column, and the presentation leads with the leaf set, never with the certified-edge count
 (`ve-protocol-design.md` §2.6).
@@ -227,8 +341,10 @@ column, and the presentation leads with the leaf set, never with the certified-e
 
 1. **Post-cutoff resolved questions.** Propositions with a public outcome after the model's cutoff,
    with a frozen document snapshot from before resolution. Score Brier and ECE on leaves and roots.
-   Lower-bound validity is testable frequentistically: among roots with LB ≥ 0.8, at least 80% must
-   resolve true. `docs/runs/evidence-1/RESULTS.md` contains a ready-made instance — *Trump v. Barbara*,
+   Lower-bound validity is testable frequentistically, though only in expectation and only if the
+   leaf probabilities are calibrated: then among roots with LB ≥ 0.8, at least about 80% should
+   resolve true. A shortfall points to miscalibrated leaves (or a faulty checker), not to faulty
+   Fréchet arithmetic. `docs/runs/evidence-1/RESULTS.md` contains a ready-made instance — *Trump v. Barbara*,
    decided 30 June 2026, post-freeze, verified, found by one agent and not searched for by the other.
 2. **Synthetic worlds.** Sample a latent world from a Bayes net, emit documents with known reliability
    and known duplication structure, compute the exact posterior by enumeration. Ground truth for every
@@ -271,6 +387,27 @@ Honest caveat: two cases and one run, all single-family, with no control arm, sh
 
 A move without its artefact is not a move (VE's existing rule).
 
+### 2.9 What is proved vs assumed
+
+"Proved" means it holds for every probability measure on E's models, given the certificates. The
+"tested" rows are checked on random finite probability spaces by `tests/test_evidence_bounds.py`.
+
+| Statement | Status | Rests on |
+|---|---|---|
+| P(R) ≥ P(⋀Lᵢ) ≥ 1 − Σ(1 − loᵢ) for a certified derivation | proved; tested | certificate replay; leaf lows being true lower ends |
+| That bound is the best possible from marginals plus one entailment | proved; tested | none beyond the above |
+| No upper bound on P(R) from its leaves; min leaf bounds only ⋀Lᵢ | proved; counterexample tested | none |
+| Flattened support bound (shared leaves counted once) ≥ node-by-node recursion; both sound | proved; tested | entailment composition |
+| P(R) ≥ max over certified derivations | proved; tested | none beyond the above |
+| P(R) ≤ 1 − LB(M) from a certified derivation of ¬R | proved | same as the lower bound, for M |
+| Noisy-OR over derivations | **assumed**; false with shared leaves (tested) | a supported independence claim on derivation events |
+| Product of leaf marginals (or the partial-block bound) | **assumed**; sound if the premise holds (tested) | mutual independence under the evidence-conditioned measure, supported as its own claim |
+| Product of group LRs | **assumed**; exact under CI (tested); wrong for distinct originators with a common cause (tested) | CI given L and given ¬L, supported as its own claim |
+| A reported coherence violation is real | proved; tested | certified refutations only remove atoms |
+| "No violation found" means coherent | only when 0 atoms are UNKNOWN; otherwise not claimed | exhaustive atom decision |
+| Leaf priors, LRs, reliability, relevance, faithfulness | **judgment** | assessor and challenge rounds |
+| The checker computes all of the above correctly | **assumed** (Python replay) | the Lean item in §6 is pending |
+
 ---
 
 ## 3. One system
@@ -279,24 +416,34 @@ A move without its artefact is not a move (VE's existing rule).
 prior, prior_basis, groups: [(group_id, lr_lo, lr_hi)], posterior_lo, posterior_hi, status:
 provisional|settled|contested, update_ledger, search_record_ids, disconfirming_search}`. `Evidence`
 gains the §2.1 fields. New `SearchRecord {queries, results, rejections_with_reason, executor, time}`.
-New `Bound {root, derivation_id, leaf_ids, lb_frechet, ub_min, lb_independent, doubt_budget,
-sensitivities}`. `ArgumentResult` gains `bounds`, `coherence_report`, `assessment_gaps`.
+New `Bound {root, support_leaf_ids, lb_frechet, doubt_budget, n_leaves, sensitivities,
+lb_conditional: [(independence_claim_id, value)], ub_refutation | null}`. There is no "min leaf"
+field: that number bounds the conjunction, not the root. New `IndependenceClaim` and `CIClaim` share
+`Assessment`'s status, ledger and records. `ArgumentResult` gains `bounds`, `coherence_report`, `assessment_gaps`.
 
 **What the checker reports.**
 
 ```
-root: R   derivations: 1 certified (7 leaves), 1 gap (countermodel m3)
-bound:  P(R) >= 0.62  (Frechet, 7 leaves, doubt budget 0.38 -- ACTIVE regime, d(LB)/d(P_i) = 1)
-        P(R) >= 0.71  under declared independence of leaves {1,2,4,6,7}   [ASSUMPTION]
-        P(R) <= 0.88  (min leaf)      no certified derivation of not-R: no upper bound from refutation
-uncertainty: leaves 3 (0.72) and 5 (0.78) contribute 0.50 of the doubt budget
+root: R   derivations: 1 certified (7 distinct leaves), 1 gap (countermodel m3)
+leaf lows: L1 .97  L2 .98  L3 .88  L4 .99  L5 .91  L6 .97  L7 .98
+bound:  P(R) >= 0.68  (Frechet, 7 leaves, doubt budget 0.32 -- ACTIVE regime, d(LB)/d(lo_i) = 1)
+        IF IND-1 (leaves {1,2,4,6,7} mutually independent) THEN P(R) >= 0.685   [ASSUMPTION]
+           (independence of all 7 would give 0.716: not printed, no IND claim covers L3, L5)
+upper:  none -- no certified derivation of not-R  (min leaf 0.88 bounds the conjunction, not R)
+uncertainty: leaves 3 (0.88) and 5 (0.91) contribute 0.21 of the 0.32 doubt budget
 records: 19 evidence records, 4 independence groups; 3 records fail scope-subsumption (L5)
-coherence: satisfied (14 constraints; 2 dropped, oracle UNKNOWN)
+coherence: no violation found (8 claims, 256 atoms: 201 possible, 53 certified impossible,
+           2 UNKNOWN kept possible) -- NOT certified coherent while UNKNOWN > 0
 gaps: 2 leaves have no disconfirming search on record (L2, L6)
       1 request-search unanswered (L3, round 2)
       1 assessment still provisional (L5)
-judgment items not checked: 7 reliability priors, 4 independence declarations, 9 likelihood ratios
+judgment items not checked: 7 reliability priors, 1 independence claim (IND-1), 2 CI claims,
+                            9 likelihood ratios
 ```
+
+Here the independence assumption buys 0.005. With small doubts, the Fréchet bound and the product
+are close (1 − d against roughly e^(−d)). Independence matters only when the doubt budget is large,
+and that is exactly where it is most tempting and least supported.
 
 **Worked example — the credit dispute** (only material in `case-credit-dispute-agent-run.md`). Root R:
 *"The Navier–Stokes manuscript publicly available at 18:28:48 UTC on 8 Sep 2026 omitted the
@@ -310,8 +457,12 @@ Córdoba–Martínez-Zoroa prior work, and a version citing it was publicly avai
 | L4 | that work is *relevant* prior work | 0.90 | interpretive; supported by the revised paper's own explanation; matches the run's 85–95% |
 | L5 | the two captures are the same document | 0.95 | identity leaf, invisible in the prose version |
 
-Fréchet: Σ = 4.66, n = 5 ⇒ **P(R) ≥ 0.66**, ≤ 0.90; under declared independence 0.70. Sensitivity says
-L3 is the buy: an authenticated publication log moving L3 to 0.95 lifts the bound to 0.76 — and the
+Fréchet: doubt budget d = 0.02 + 0.02 + 0.15 + 0.10 + 0.05 = 0.34, n = 5 ⇒ **P(R) ≥ 0.66**. There
+is **no upper bound**: 0.85 (the minimum leaf) bounds the conjunction of the leaves, not R, and no
+derivation of ¬R is on file. The independence line (the product would be 0.70) is **refused
+mechanically**. L1, L2 and L5 all rest on the same archive, which is one evidence independence group,
+so their correctness is plausibly correlated (a compromised archive falsifies all three). Sensitivity
+says L3 is the buy: an authenticated publication log moving L3 to 0.95 lifts the bound to 0.76. The
 run's own "decisive missing evidence" list independently names provenance records. Contrast the
 headline claim *"unpublished technical content materially helped OpenAI"*, given 10–40% in the same
 file: under this layer it has **no certified derivation at all**, so it gets a direct assessment with
@@ -417,7 +568,7 @@ is an approval.
 | Evidence-record schema + wire validation; digest, quote-in-snapshot, scope-subsumption, time-basis linters | 1.5 d |
 | `Assessment`, update ledger, `SearchRecord`; status machine (provisional/settled/contested) | 1.5 d |
 | Coherence checker: atom table via model finder, LP feasibility, minimal infeasible subset, nearest-coherent projection, pairwise fallback | 3 d |
-| Bound engine: Fréchet, independence line, alternative-derivation max, leaf-sharing detection, sensitivities, doubt budget | 1.5 d |
+| Bound engine: flattened supports, Fréchet, conditional independence lines, alternative-derivation max, leaf-sharing detection, independence refusals, sensitivities, doubt budget; `IndependenceClaim`/`CIClaim` objects | 2 d |
 | Checker report §3 + "judgment items not checked" column | 1 d |
 | New debate moves in the runner; obligation tracking for unanswered `request-search` | 2 d |
 | E-A world generator, exact posterior, duplication/misleading injectors | 3 d |
