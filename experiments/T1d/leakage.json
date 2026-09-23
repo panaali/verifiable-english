@@ -1,0 +1,748 @@
+{
+ "created_at": "2026-09-23T13:16:52.335534+00:00",
+ "model_calls": 0,
+ "criterion": "near chance: every classifier AUC <= 0.60 and its bootstrap 95% CI includes 0.5 (pooled audit+full items, honest vs sabotaged, surface features only)",
+ "audits": {
+  "all_sabotaged": {
+   "n_positive": 260,
+   "n_negative": 310,
+   "positive_kinds": [
+    "alias",
+    "char_principal",
+    "char_resource",
+    "group_member",
+    "leak",
+    "role_user"
+   ],
+   "features": [
+    "total_lines",
+    "total_bytes",
+    "identifiers",
+    "mean_targets_per_line",
+    "max_targets_per_line",
+    "principal_out",
+    "principal_in",
+    "resource_in",
+    "source_only_ids",
+    "twins_of_principal",
+    "twins_of_resource",
+    "claim_chars",
+    "set_size",
+    "set_out_facts",
+    "statement_chars",
+    "principal_line_pos",
+    "resource_first_pos",
+    "family=delegation",
+    "family=folders",
+    "family=k8s",
+    "family=orgchart",
+    "family=rbac4",
+    "family=teams",
+    "scheme=hex",
+    "scheme=numeric",
+    "scheme=names",
+    "scheme=paths",
+    "shape=uniform",
+    "shape=powerlaw",
+    "shape=hierarchical",
+    "shape=community"
+   ],
+   "models": {
+    "logistic": {
+     "auc": 0.5075,
+     "ci95": [
+      0.4591,
+      0.5541
+     ],
+     "permutation_p": 0.3366,
+     "null_auc_mean": 0.4938,
+     "null_auc_q95": 0.5415
+    },
+    "random_forest": {
+     "auc": 0.4751,
+     "ci95": [
+      0.4266,
+      0.5236
+     ],
+     "permutation_p": 0.7327,
+     "null_auc_mean": 0.4973,
+     "null_auc_q95": 0.5463
+    }
+   },
+   "univariate_auc": {
+    "identifiers": 0.5389,
+    "resource_in": 0.5363,
+    "set_out_facts": 0.5288,
+    "twins_of_resource": 0.5219,
+    "twins_of_principal": 0.5184,
+    "source_only_ids": 0.5182,
+    "resource_first_pos": 0.5178,
+    "principal_out": 0.5117,
+    "max_targets_per_line": 0.5074,
+    "set_size": 0.5071,
+    "total_bytes": 0.507,
+    "claim_chars": 0.5068,
+    "statement_chars": 0.5031,
+    "mean_targets_per_line": 0.5017,
+    "principal_line_pos": 0.5007,
+    "total_lines": 0.5004,
+    "principal_in": 0.5
+   }
+  },
+  "binding": {
+   "n_positive": 200,
+   "n_negative": 310,
+   "positive_kinds": [
+    "alias",
+    "char_principal",
+    "char_resource",
+    "group_member",
+    "role_user"
+   ],
+   "features": [
+    "total_lines",
+    "total_bytes",
+    "identifiers",
+    "mean_targets_per_line",
+    "max_targets_per_line",
+    "principal_out",
+    "principal_in",
+    "resource_in",
+    "source_only_ids",
+    "twins_of_principal",
+    "twins_of_resource",
+    "claim_chars",
+    "set_size",
+    "set_out_facts",
+    "statement_chars",
+    "principal_line_pos",
+    "resource_first_pos",
+    "family=delegation",
+    "family=folders",
+    "family=k8s",
+    "family=orgchart",
+    "family=rbac4",
+    "family=teams",
+    "scheme=hex",
+    "scheme=numeric",
+    "scheme=names",
+    "scheme=paths",
+    "shape=uniform",
+    "shape=powerlaw",
+    "shape=hierarchical",
+    "shape=community"
+   ],
+   "models": {
+    "logistic": {
+     "auc": 0.5136,
+     "ci95": [
+      0.4642,
+      0.5644
+     ],
+     "permutation_p": 0.3871,
+     "null_auc_mean": 0.4994,
+     "null_auc_q95": 0.5527
+    },
+    "random_forest": {
+     "auc": 0.463,
+     "ci95": [
+      0.4137,
+      0.5147
+     ],
+     "permutation_p": 1.0,
+     "null_auc_mean": 0.5034,
+     "null_auc_q95": 0.5469
+    }
+   },
+   "univariate_auc": {
+    "resource_in": 0.5475,
+    "identifiers": 0.5368,
+    "set_out_facts": 0.5355,
+    "resource_first_pos": 0.5225,
+    "twins_of_principal": 0.5179,
+    "twins_of_resource": 0.5176,
+    "source_only_ids": 0.5162,
+    "total_bytes": 0.5096,
+    "max_targets_per_line": 0.5065,
+    "claim_chars": 0.5048,
+    "principal_line_pos": 0.5036,
+    "total_lines": 0.5029,
+    "principal_out": 0.5018,
+    "set_size": 0.5009,
+    "mean_targets_per_line": 0.5008,
+    "statement_chars": 0.5001,
+    "principal_in": 0.5
+   }
+  },
+  "semantic": {
+   "n_positive": 120,
+   "n_negative": 310,
+   "positive_kinds": [
+    "alias",
+    "group_member",
+    "role_user"
+   ],
+   "features": [
+    "total_lines",
+    "total_bytes",
+    "identifiers",
+    "mean_targets_per_line",
+    "max_targets_per_line",
+    "principal_out",
+    "principal_in",
+    "resource_in",
+    "source_only_ids",
+    "twins_of_principal",
+    "twins_of_resource",
+    "claim_chars",
+    "set_size",
+    "set_out_facts",
+    "statement_chars",
+    "principal_line_pos",
+    "resource_first_pos",
+    "family=delegation",
+    "family=folders",
+    "family=k8s",
+    "family=orgchart",
+    "family=rbac4",
+    "family=teams",
+    "scheme=hex",
+    "scheme=numeric",
+    "scheme=names",
+    "scheme=paths",
+    "shape=uniform",
+    "shape=powerlaw",
+    "shape=hierarchical",
+    "shape=community"
+   ],
+   "models": {
+    "logistic": {
+     "auc": 0.4848,
+     "ci95": [
+      0.4242,
+      0.5486
+     ],
+     "permutation_p": 0.6774,
+     "null_auc_mean": 0.5058,
+     "null_auc_q95": 0.5692
+    },
+    "random_forest": {
+     "auc": 0.5216,
+     "ci95": [
+      0.4621,
+      0.5831
+     ],
+     "permutation_p": 0.3226,
+     "null_auc_mean": 0.4994,
+     "null_auc_q95": 0.5364
+    }
+   },
+   "univariate_auc": {
+    "identifiers": 0.5587,
+    "set_out_facts": 0.5458,
+    "principal_out": 0.5429,
+    "resource_in": 0.5391,
+    "twins_of_resource": 0.5222,
+    "source_only_ids": 0.5195,
+    "claim_chars": 0.5152,
+    "set_size": 0.5139,
+    "principal_line_pos": 0.5132,
+    "twins_of_principal": 0.511,
+    "total_bytes": 0.5101,
+    "statement_chars": 0.5073,
+    "resource_first_pos": 0.506,
+    "total_lines": 0.5044,
+    "max_targets_per_line": 0.5023,
+    "mean_targets_per_line": 0.5008,
+    "principal_in": 0.5
+   }
+  },
+  "leak": {
+   "n_positive": 60,
+   "n_negative": 310,
+   "positive_kinds": [
+    "leak"
+   ],
+   "features": [
+    "total_lines",
+    "total_bytes",
+    "identifiers",
+    "mean_targets_per_line",
+    "max_targets_per_line",
+    "principal_out",
+    "principal_in",
+    "resource_in",
+    "source_only_ids",
+    "twins_of_principal",
+    "twins_of_resource",
+    "claim_chars",
+    "set_size",
+    "set_out_facts",
+    "statement_chars",
+    "principal_line_pos",
+    "resource_first_pos",
+    "family=delegation",
+    "family=folders",
+    "family=k8s",
+    "family=orgchart",
+    "family=rbac4",
+    "family=teams",
+    "scheme=hex",
+    "scheme=numeric",
+    "scheme=names",
+    "scheme=paths",
+    "shape=uniform",
+    "shape=powerlaw",
+    "shape=hierarchical",
+    "shape=community"
+   ],
+   "models": {
+    "logistic": {
+     "auc": 0.3692,
+     "ci95": [
+      0.2966,
+      0.4442
+     ],
+     "permutation_p": 1.0,
+     "null_auc_mean": 0.501,
+     "null_auc_q95": 0.5796
+    },
+    "random_forest": {
+     "auc": 0.3683,
+     "ci95": [
+      0.2964,
+      0.4449
+     ],
+     "permutation_p": 1.0,
+     "null_auc_mean": 0.5112,
+     "null_auc_q95": 0.5872
+    }
+   },
+   "univariate_auc": {
+    "identifiers": 0.5459,
+    "principal_out": 0.5446,
+    "twins_of_resource": 0.5362,
+    "set_size": 0.528,
+    "source_only_ids": 0.5248,
+    "twins_of_principal": 0.5202,
+    "claim_chars": 0.5132,
+    "statement_chars": 0.5132,
+    "max_targets_per_line": 0.5104,
+    "mean_targets_per_line": 0.5099,
+    "principal_line_pos": 0.509,
+    "total_lines": 0.508,
+    "set_out_facts": 0.5063,
+    "resource_first_pos": 0.502,
+    "total_bytes": 0.5016,
+    "resource_in": 0.5009,
+    "principal_in": 0.5
+   }
+  },
+  "char_principal": {
+   "n_positive": 40,
+   "n_negative": 310,
+   "positive_kinds": [
+    "char_principal"
+   ],
+   "features": [
+    "total_lines",
+    "total_bytes",
+    "identifiers",
+    "mean_targets_per_line",
+    "max_targets_per_line",
+    "principal_out",
+    "principal_in",
+    "resource_in",
+    "source_only_ids",
+    "twins_of_principal",
+    "twins_of_resource",
+    "claim_chars",
+    "set_size",
+    "set_out_facts",
+    "statement_chars",
+    "principal_line_pos",
+    "resource_first_pos",
+    "family=delegation",
+    "family=folders",
+    "family=k8s",
+    "family=orgchart",
+    "family=rbac4",
+    "family=teams",
+    "scheme=hex",
+    "scheme=numeric",
+    "scheme=names",
+    "scheme=paths",
+    "shape=uniform",
+    "shape=powerlaw",
+    "shape=hierarchical",
+    "shape=community"
+   ],
+   "models": {
+    "logistic": {
+     "auc": 0.4957,
+     "ci95": [
+      0.3825,
+      0.6017
+     ],
+     "permutation_p": 0.4516,
+     "null_auc_mean": 0.4824,
+     "null_auc_q95": 0.5814
+    },
+    "random_forest": {
+     "auc": 0.4347,
+     "ci95": [
+      0.3433,
+      0.5319
+     ],
+     "permutation_p": 0.8387,
+     "null_auc_mean": 0.4846,
+     "null_auc_q95": 0.558
+    }
+   },
+   "univariate_auc": {
+    "set_size": 0.598,
+    "resource_in": 0.5879,
+    "principal_out": 0.5817,
+    "resource_first_pos": 0.5573,
+    "twins_of_principal": 0.5449,
+    "source_only_ids": 0.5294,
+    "set_out_facts": 0.5274,
+    "twins_of_resource": 0.5176,
+    "identifiers": 0.512,
+    "total_lines": 0.5111,
+    "mean_targets_per_line": 0.5073,
+    "principal_line_pos": 0.5043,
+    "max_targets_per_line": 0.5036,
+    "total_bytes": 0.5035,
+    "claim_chars": 0.5029,
+    "statement_chars": 0.5029,
+    "principal_in": 0.5
+   }
+  },
+  "char_resource": {
+   "n_positive": 40,
+   "n_negative": 310,
+   "positive_kinds": [
+    "char_resource"
+   ],
+   "features": [
+    "total_lines",
+    "total_bytes",
+    "identifiers",
+    "mean_targets_per_line",
+    "max_targets_per_line",
+    "principal_out",
+    "principal_in",
+    "resource_in",
+    "source_only_ids",
+    "twins_of_principal",
+    "twins_of_resource",
+    "claim_chars",
+    "set_size",
+    "set_out_facts",
+    "statement_chars",
+    "principal_line_pos",
+    "resource_first_pos",
+    "family=delegation",
+    "family=folders",
+    "family=k8s",
+    "family=orgchart",
+    "family=rbac4",
+    "family=teams",
+    "scheme=hex",
+    "scheme=numeric",
+    "scheme=names",
+    "scheme=paths",
+    "shape=uniform",
+    "shape=powerlaw",
+    "shape=hierarchical",
+    "shape=community"
+   ],
+   "models": {
+    "logistic": {
+     "auc": 0.3857,
+     "ci95": [
+      0.2991,
+      0.48
+     ],
+     "permutation_p": 0.9677,
+     "null_auc_mean": 0.4935,
+     "null_auc_q95": 0.5776
+    },
+    "random_forest": {
+     "auc": 0.3948,
+     "ci95": [
+      0.3126,
+      0.4827
+     ],
+     "permutation_p": 1.0,
+     "null_auc_mean": 0.4994,
+     "null_auc_q95": 0.5723
+    }
+   },
+   "univariate_auc": {
+    "set_out_facts": 0.5676,
+    "principal_out": 0.5559,
+    "principal_line_pos": 0.5534,
+    "set_size": 0.5521,
+    "resource_first_pos": 0.5374,
+    "resource_in": 0.5322,
+    "max_targets_per_line": 0.5295,
+    "identifiers": 0.5198,
+    "claim_chars": 0.5185,
+    "statement_chars": 0.5185,
+    "total_lines": 0.5165,
+    "total_bytes": 0.5142,
+    "twins_of_principal": 0.5113,
+    "source_only_ids": 0.5067,
+    "mean_targets_per_line": 0.5057,
+    "twins_of_resource": 0.5037,
+    "principal_in": 0.5
+   }
+  },
+  "alias": {
+   "n_positive": 40,
+   "n_negative": 310,
+   "positive_kinds": [
+    "alias"
+   ],
+   "features": [
+    "total_lines",
+    "total_bytes",
+    "identifiers",
+    "mean_targets_per_line",
+    "max_targets_per_line",
+    "principal_out",
+    "principal_in",
+    "resource_in",
+    "source_only_ids",
+    "twins_of_principal",
+    "twins_of_resource",
+    "claim_chars",
+    "set_size",
+    "set_out_facts",
+    "statement_chars",
+    "principal_line_pos",
+    "resource_first_pos",
+    "family=delegation",
+    "family=folders",
+    "family=k8s",
+    "family=orgchart",
+    "family=rbac4",
+    "family=teams",
+    "scheme=hex",
+    "scheme=numeric",
+    "scheme=names",
+    "scheme=paths",
+    "shape=uniform",
+    "shape=powerlaw",
+    "shape=hierarchical",
+    "shape=community"
+   ],
+   "models": {
+    "logistic": {
+     "auc": 0.4887,
+     "ci95": [
+      0.3945,
+      0.5828
+     ],
+     "permutation_p": 0.6129,
+     "null_auc_mean": 0.4975,
+     "null_auc_q95": 0.5968
+    },
+    "random_forest": {
+     "auc": 0.4317,
+     "ci95": [
+      0.3361,
+      0.5318
+     ],
+     "permutation_p": 0.8387,
+     "null_auc_mean": 0.5175,
+     "null_auc_q95": 0.6258
+    }
+   },
+   "univariate_auc": {
+    "identifiers": 0.631,
+    "source_only_ids": 0.577,
+    "resource_in": 0.5696,
+    "resource_first_pos": 0.5508,
+    "principal_line_pos": 0.5456,
+    "twins_of_principal": 0.5444,
+    "principal_out": 0.5443,
+    "twins_of_resource": 0.5298,
+    "statement_chars": 0.5258,
+    "claim_chars": 0.5256,
+    "set_out_facts": 0.5255,
+    "max_targets_per_line": 0.5152,
+    "total_lines": 0.5148,
+    "mean_targets_per_line": 0.5113,
+    "set_size": 0.5045,
+    "total_bytes": 0.5011,
+    "principal_in": 0.5
+   }
+  },
+  "group_member": {
+   "n_positive": 40,
+   "n_negative": 310,
+   "positive_kinds": [
+    "group_member"
+   ],
+   "features": [
+    "total_lines",
+    "total_bytes",
+    "identifiers",
+    "mean_targets_per_line",
+    "max_targets_per_line",
+    "principal_out",
+    "principal_in",
+    "resource_in",
+    "source_only_ids",
+    "twins_of_principal",
+    "twins_of_resource",
+    "claim_chars",
+    "set_size",
+    "set_out_facts",
+    "statement_chars",
+    "principal_line_pos",
+    "resource_first_pos",
+    "family=delegation",
+    "family=folders",
+    "family=k8s",
+    "family=orgchart",
+    "family=rbac4",
+    "family=teams",
+    "scheme=hex",
+    "scheme=numeric",
+    "scheme=names",
+    "scheme=paths",
+    "shape=uniform",
+    "shape=powerlaw",
+    "shape=hierarchical",
+    "shape=community"
+   ],
+   "models": {
+    "logistic": {
+     "auc": 0.5003,
+     "ci95": [
+      0.4016,
+      0.5964
+     ],
+     "permutation_p": 0.6774,
+     "null_auc_mean": 0.5256,
+     "null_auc_q95": 0.5932
+    },
+    "random_forest": {
+     "auc": 0.482,
+     "ci95": [
+      0.3892,
+      0.5762
+     ],
+     "permutation_p": 0.6129,
+     "null_auc_mean": 0.4901,
+     "null_auc_q95": 0.5826
+    }
+   },
+   "univariate_auc": {
+    "set_out_facts": 0.6477,
+    "set_size": 0.6003,
+    "identifiers": 0.5588,
+    "resource_in": 0.5542,
+    "twins_of_resource": 0.5453,
+    "resource_first_pos": 0.5419,
+    "twins_of_principal": 0.5306,
+    "principal_line_pos": 0.5305,
+    "principal_out": 0.5296,
+    "source_only_ids": 0.5247,
+    "total_bytes": 0.5231,
+    "claim_chars": 0.5187,
+    "max_targets_per_line": 0.5086,
+    "statement_chars": 0.5079,
+    "mean_targets_per_line": 0.5025,
+    "total_lines": 0.5002,
+    "principal_in": 0.5
+   }
+  },
+  "role_user": {
+   "n_positive": 40,
+   "n_negative": 310,
+   "positive_kinds": [
+    "role_user"
+   ],
+   "features": [
+    "total_lines",
+    "total_bytes",
+    "identifiers",
+    "mean_targets_per_line",
+    "max_targets_per_line",
+    "principal_out",
+    "principal_in",
+    "resource_in",
+    "source_only_ids",
+    "twins_of_principal",
+    "twins_of_resource",
+    "claim_chars",
+    "set_size",
+    "set_out_facts",
+    "statement_chars",
+    "principal_line_pos",
+    "resource_first_pos",
+    "family=delegation",
+    "family=folders",
+    "family=k8s",
+    "family=orgchart",
+    "family=rbac4",
+    "family=teams",
+    "scheme=hex",
+    "scheme=numeric",
+    "scheme=names",
+    "scheme=paths",
+    "shape=uniform",
+    "shape=powerlaw",
+    "shape=hierarchical",
+    "shape=community"
+   ],
+   "models": {
+    "logistic": {
+     "auc": 0.2567,
+     "ci95": [
+      0.1714,
+      0.3413
+     ],
+     "permutation_p": 1.0,
+     "null_auc_mean": 0.5147,
+     "null_auc_q95": 0.6154
+    },
+    "random_forest": {
+     "auc": 0.4532,
+     "ci95": [
+      0.3612,
+      0.5474
+     ],
+     "permutation_p": 0.7419,
+     "null_auc_mean": 0.4969,
+     "null_auc_q95": 0.5851
+    }
+   },
+   "univariate_auc": {
+    "set_size": 0.5632,
+    "principal_out": 0.5548,
+    "twins_of_principal": 0.5418,
+    "set_out_facts": 0.5358,
+    "total_lines": 0.5279,
+    "principal_line_pos": 0.5244,
+    "max_targets_per_line": 0.5169,
+    "identifiers": 0.5136,
+    "mean_targets_per_line": 0.5114,
+    "resource_first_pos": 0.5092,
+    "twins_of_resource": 0.5085,
+    "total_bytes": 0.5084,
+    "resource_in": 0.5066,
+    "source_only_ids": 0.5062,
+    "statement_chars": 0.5041,
+    "claim_chars": 0.5012,
+    "principal_in": 0.5
+   }
+  }
+ },
+ "passes": true
+}
