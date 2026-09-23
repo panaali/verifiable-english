@@ -77,7 +77,10 @@ Concepts:
 - **Frozen targets.** Each target sentence gets a formal statement through
   `freeze_target` before any node is added or any vocabulary is declared. It
   can never change afterwards. A target the prover derives from no premises
-  (such as `true.`) is rejected as vacuous.
+  (such as `true.`, or a conjunction of tautologies, checked conjunct by
+  conjunct) is rejected as vacuous. If that check runs out of budget, the
+  target's vacuity is `unknown` and the item can never succeed (fail closed);
+  a target entailed by tautological assumptions alone also fails.
 - **Nodes.** A node is one VE statement, anchored to the sentence(s) it
   formalises. A node with no parents is an assumption. A node with parents is
   a step, and `check_step` must certify it.
@@ -89,27 +92,39 @@ Concepts:
 - **Declarations.** `declare` requires a gloss. It blocks near-duplicates of
   existing vocabulary (the `ve propose` gate) and names or glosses that restate
   a target sentence until the author acknowledges each flag. `status` also flags
-  new vocabulary that carries a target: the assumptions using declared symbols,
-  together with the unanchored assumptions, entail it without the anchored
-  premises.
+  new vocabulary that carries a target: the assumptions using declared symbols
+  (predicates, constants or sorts), together with the unanchored assumptions,
+  entail it without the anchored premises.
 - **Ledger.** The session file is an append-only ledger of every action,
   including rejected ones. For each action it records the result, the node
   provenance (`hand-written`, `proposer-verbatim`/`-edited`,
-  `suggestion-verbatim`/`-edited`), the proposer's tokens, and author tokens
+  `suggestion-verbatim`/`-edited`; a node typed by hand whose formula equals a
+  shown candidate or suggestion is still marked as proposer/suggestion
+  derived), the proposer's tokens, and author tokens
   (via `record_usage`). Every CLI command replays the ledger and fails if any
   recorded result does not reproduce, if the configuration does not match its
   `config_digest`, or if recorded token totals differ from the recorded calls.
   Failed proposer calls are logged with the tokens they spent and can be
   retried. An evaluator should also run `ve.assist.verify_session(ledger,
   item=DOSSIER, calls=CALLS_LEDGER)`, which rebuilds the configuration from
-  the dossier and matches every recorded model call against the claude CLI
-  calls ledger.
+  the dossier and matches every recorded model call, failed ones included,
+  against the claude CLI calls ledger (tokens, models, account, and the event
+  that made the call), and reports calls-ledger rows the session never
+  recorded. Calls are named by the session's fixed `session_id`, so editing
+  metadata and re-digesting the configuration cannot hide them. Errors and
+  backend-reported fields are redacted of anything that looks like a
+  credential before they are logged or returned.
 
 `status` reports `success` only when all of the following hold: every target
 has a step whose certified support graph replays through `check_argument`;
-every step is certified; every asserting sentence is covered or explicitly
-waived; no unanchored assumption is load-bearing; no declared vocabulary
-carries a target; and the target's assumptions are consistent.
+every step is certified; every asserting `claimed` sentence is *derived* (a
+certified step anchored to it, with a fully certified support in which no
+single assumption already states it); every asserting `given` sentence is
+covered by a node; no asserting sentence is waived (waivers are recorded with
+their reasons and counted, but a waived asserting sentence never counts as
+success); no unanchored assumption is load-bearing; no declared vocabulary
+carries a target; no target is vacuous or of unknown vacuity; and the
+target's assumptions are consistent.
 
 The proposer and premise suggestions are separate ablations:
 
@@ -155,12 +170,12 @@ $ python -m ve assist rewrite demo.json goal --parent rule --parent fact
 $ python -m ve assist check demo.json goal
 goal: FOLLOWS  (rule, fact => @api is safe.)
 $ python -m ve assist status demo.json
-NOT YET: 1 asserting sentence(s) neither covered nor waived
-$ python -m ve assist waive demo.json p1.3 'Background fact; the conclusion does not use it.'
+NOT YET: 1 given sentence(s) not covered by any node: p1.3
+$ python -m ve assist add demo.json background '@web is deployed.' --anchor p1.3
 $ python -m ve assist status demo.json
 SUCCESS
 target t_p2_1: certified (graph replays)
-coverage: 3 covered, 1 waived, 0 uncovered
+coverage: 1 claimed derived, 3 given covered, 0 waived, 0 uncovered, 0 claimed underived
 $ python -m ve assist replay demo.json
 ledger replays: 11 events reproduce
 ```

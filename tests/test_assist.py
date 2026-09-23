@@ -181,7 +181,7 @@ def test_waivers_and_coverage():
     assert not s.apply("waive", {"sentence": "p1.1", "reason": ""})["ok"]
     s.apply("waive", {"sentence": "p1.1", "reason": "restated elsewhere"})
     cov = s.apply("status")["coverage"]
-    assert cov["waived"] == 1 and cov["uncovered"] == ["p1.2", "p2.1"]
+    assert cov["waived"] == 1 and cov["uncovered"] == ["p1.2"] and cov["underived"] == ["p2.1"]
 
 
 def test_declare_requires_gloss_and_gates_near_duplicates():
@@ -510,7 +510,8 @@ def test_review2_given_anchored_assumption_that_alone_implies_target_is_flagged(
     s.apply("add_node", {"name": "fact", "text": "(@api is reviewed) and (@api is safe).", "anchors": ["p1.2"]})
     s.apply("add_node", {"name": "goal", "text": "@api is safe.", "anchors": ["p2.1"], "parents": ["fact"]})
     status = _status_after(s)
-    assert status["failures"] == ["assumption fact alone entails target t_main"]
+    assert status["failures"] == ["1 claimed sentence(s) not derived by a certified step: p2.1",
+                                  "assumption fact alone entails target t_main"]
 
 
 def test_review3_target_must_be_a_claimed_sentence():
@@ -750,3 +751,259 @@ def test_review9_error_path_redacts_parsed_stream_and_reports_usage(tmp_path, mo
     assert secret not in written and "[REDACTED]" in written
     with pytest.raises(ValueError):
         ClaudeProposer(tmp_path / "x.jsonl", model="gpt")
+
+
+# ---------------------------------------------------------------- regression tests: cross-family review (Astra)
+
+TEXT2 = """[given] Every reviewed service is safe. The API is reviewed. The web front end is reviewed.
+
+[claimed] So the API is safe. So the web front end is safe.
+
+[context] This paragraph is commentary."""
+
+
+def _two_claims(**options):
+    s = AssistSession.create(ENV, source_from_text(TEXT2), [{"id": "t_main", "sentence": "p2.1"}], options=options)
+    ok = lambda r: (r["ok"] or pytest.fail(json.dumps(r))) and r
+    ok(s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."}))
+    ok(s.apply("add_node", {"name": "rule", "anchors": ["p1.1"],
+                            "text": "for every service s, (if (s is reviewed), then (s is safe))."}))
+    ok(s.apply("add_node", {"name": "fact", "text": "@api is reviewed.", "anchors": ["p1.2"]}))
+    ok(s.apply("add_node", {"name": "webfact", "text": "@web is reviewed.", "anchors": ["p1.3"]}))
+    ok(s.apply("add_node", {"name": "goal", "text": "@api is safe.", "anchors": ["p2.1"], "parents": ["rule", "fact"]}))
+    assert s.apply("check_step", {"name": "goal"})["status"] == "follows"
+    return s
+
+
+def test_astra3_waived_second_claimed_sentence_is_not_success():
+    s = _two_claims()
+    assert s.apply("waive", {"sentence": "p2.2", "reason": "obvious from the first claim"})["ok"]
+    status = s.apply("status")
+    assert not status["success"]
+    assert any("waived" in f and "p2.2" in f for f in status["failures"])
+    assert status["waivers"] == [{"sentence": "p2.2", "role": "claimed", "asserting": True,
+                                  "reason": "obvious from the first claim", "counts_against_success": True}]
+    assert status["coverage"]["waived"] == 1
+
+
+def test_astra3_idle_covered_claimed_sentence_is_not_success():
+    s = _two_claims()
+    s.apply("add_node", {"name": "idle", "text": "@web is safe.", "anchors": ["p2.2"]})
+    status = s.apply("status")
+    assert not status["success"] and status["coverage"]["underived"] == ["p2.2"]
+    # Restating the claim as a given-anchored assumption and "deriving" it from that is not a derivation.
+    s.apply("add_node", {"name": "restated", "text": "@web is safe.", "anchors": ["p1.3"]})
+    s.apply("add_node", {"name": "web_goal", "text": "@web is safe.", "anchors": ["p2.2"], "parents": ["restated"]})
+    assert s.apply("check_step", {"name": "web_goal"})["status"] == "follows"
+    assert s.apply("status")["coverage"]["underived"] == ["p2.2"]
+    # A real derivation succeeds; a waiver of a non-asserting sentence is reported but harmless.
+    s.apply("add_node", {"name": "web_ok", "text": "@web is safe.", "anchors": ["p2.2"], "parents": ["rule", "webfact"]})
+    assert s.apply("check_step", {"name": "web_ok"})["status"] == "follows"
+    s.apply("remove_node", {"name": "idle"})
+    s.apply("waive", {"sentence": "p3.1", "reason": "commentary only"})
+    status = s.apply("status")
+    assert status["success"], status["failures"]
+    assert status["coverage"]["derived"] == 2 and status["waivers"][0]["counts_against_success"] is False
+
+
+def test_astra3_claim_derived_through_claim_only_assumption_is_load_bearing():
+    s = _two_claims()
+    s.apply("add_node", {"name": "cheat", "text": "if (@web is reviewed), then (@web is safe).", "anchors": ["p2.2"]})
+    s.apply("add_node", {"name": "web_goal", "text": "@web is safe.", "anchors": ["p2.2"],
+                         "parents": ["webfact", "cheat"]})
+    assert s.apply("check_step", {"name": "web_goal"})["status"] == "follows"
+    status = s.apply("status")
+    assert "load-bearing unanchored assumption cheat" in status["failures"] and not status["success"]
+
+
+def test_astra4_reviewer_probe_tautological_conjunction_is_rejected_conjunctwise():
+    s = new_session(max_proof_steps=3)
+    target = "((@api is safe) or (not (@api is safe))) and ((@web is safe) or (not (@web is safe)))."
+    r = s.apply("freeze_target", {"target": "t_main", "text": target})
+    assert not r["ok"] and "vacuous" in r["error"]["message"]
+
+
+def test_astra4_tautological_given_assumptions_and_unknown_vacuity_fail_closed(monkeypatch):
+    s = new_session(max_proof_steps=3)
+    # Simulate the reviewer's case: the direct empty-premise check exhausts its budget.
+    monkeypatch.setattr(s, "_validity", lambda formula: "unknown")
+    target = "((@api is safe) or (not (@api is safe))) and ((@web is safe) or (not (@web is safe)))."
+    r = s.apply("freeze_target", {"target": "t_main", "text": target})
+    assert r["ok"] and "fail closed" in r["warning"]
+    s.apply("add_node", {"name": "a", "text": "(@api is safe) or (not (@api is safe)).", "anchors": ["p1.1"]})
+    s.apply("add_node", {"name": "b", "text": "(@web is safe) or (not (@web is safe)).", "anchors": ["p1.2"]})
+    s.apply("add_node", {"name": "goal", "text": target, "anchors": ["p2.1"], "parents": ["a", "b"]})
+    status = _status_after(s)
+    assert not status["success"]
+    assert "target t_main: provable from tautological assumptions only (a, b)" in status["failures"]
+    assert any("vacuity unknown" in f for f in status["failures"])
+
+
+def test_astra4_exhausted_empty_premise_search_is_unknown_never_success():
+    s = new_session(max_proof_steps=0, max_models=0, max_evaluations=0)
+    r = s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    assert r["ok"] and s.targets["t_main"]["vacuity"] == "unknown"
+    status = s.apply("status")
+    assert status["targets"][0]["vacuity"] == "unknown"
+    assert any("vacuity unknown" in f for f in status["failures"]) and not status["success"]
+
+
+def test_astra5_declared_sort_is_a_carrier():
+    s = new_session()
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    r = s.apply("declare", {"name": "gamma", "kind": "sort", "gloss": "An unrelated marker kind for testing."})
+    assert r["ok"], r
+    s.apply("add_node", {"name": "some", "anchors": ["p1.1"], "text": "there exists gamma g, (@api is reviewed)."})
+    s.apply("add_node", {"name": "all_g", "anchors": ["p1.2"],
+                         "text": "for every gamma g, (if (@api is reviewed), then (@api is safe))."})
+    s.apply("add_node", {"name": "goal", "text": "@api is safe.", "anchors": ["p2.1"], "parents": ["some", "all_g"]})
+    status = _status_after(s)
+    assert status["renamed_conclusions"] == [{"target": "t_main", "assumptions": ["some", "all_g"]}]
+    assert not status["success"]
+
+
+class LedgeredFailingProposer(LedgeredProposer):
+    """Writes a failed calls-ledger row that spent 900 input tokens, as ClaudeCLI does."""
+
+    def __call__(self, system, prompt, item):
+        from ve_experiments.claude_cli import EndpointError
+        key = f"key-{len(self.rows)}"
+        self.rows.append({"key": key, "item_id": item, "status": "error", "system": system, "prompt": prompt,
+                          "input_tokens": 900, "output_tokens": 3, "served_model": "fake-haiku",
+                          "account_label": "test", "controls": {"model": self.model_id}})
+        exc = EndpointError("Truncated or non-final response")
+        exc.usage = {"input_tokens": 900, "output_tokens": 3, "model": "fake-haiku", "account_label": "test",
+                     "call_key": key}
+        raise exc
+
+
+def _p5_session():
+    built = source_from_p5(P5_ITEM)
+    return AssistSession.create(built["environment"], built["source"], built["targets"], metadata=built["metadata"])
+
+
+def test_astra6_verify_compares_failed_call_rows():
+    from ve.assist import verify_session
+    s = _p5_session()
+    s.proposer = LedgeredFailingProposer([])
+    assert not s.apply("propose", {"sentence": "n00.1", "k": 1})["ok"]
+    rows, ledger = s.proposer.rows, json.loads(json.dumps(s.to_ledger()))
+    assert verify_session(ledger, item=P5_ITEM, calls=rows)["ok"]
+    forged = json.loads(json.dumps(ledger))
+    call = forged["events"][-1]["model_calls"][0]
+    call.update(input_tokens=0, output_tokens=0, model="forged-model", account_label="someone-else")
+    forged["events"][-1]["tokens"]["proposer"].update(input_tokens=0, output_tokens=0)
+    assert AssistSession.from_ledger(forged)  # internally consistent ...
+    problems = verify_session(forged, item=P5_ITEM, calls=rows)["problems"]  # ... but not against the calls
+    for field in ("input_tokens", "output_tokens", "model", "account_label"):
+        assert f"event 0: {field} differs from the calls ledger" in problems
+
+
+def test_astra6_hand_written_copy_of_a_candidate_keeps_proposer_provenance():
+    s = _proposed_session()
+    s.apply("add_node", {"name": "fact", "text": "@api is reviewed.", "anchors": ["p1.2"]})  # retyped, not accepted
+    view = s.apply("show", {"name": "fact"})["node"]
+    assert view["origin"] == "proposer-verbatim" and view["source_ref"] == "q1.1"
+    assert s.apply("status")["provenance"]["hand-written"] == 0
+    replayed = AssistSession.from_ledger(json.loads(json.dumps(s.to_ledger())))
+    assert replayed.nodes["fact"].origin == "proposer-verbatim"
+
+
+def test_astra6_deleted_propose_event_detected_after_metadata_edit():
+    from ve.assist import verify_session
+    from ve.assist.session import config_digest
+    s = _p5_session()
+    s.proposer = LedgeredProposer(['{"candidates": [{"ve": "@unit1 is sealed."}]}'])
+    assert s.apply("propose", {"sentence": "n00.1", "k": 1})["ok"]
+    s.apply("sentences")
+    rows, ledger = s.proposer.rows, json.loads(json.dumps(s.to_ledger()))
+    assert verify_session(ledger, item=P5_ITEM, calls=rows)["ok"]
+    forged = json.loads(json.dumps(ledger))
+    forged["config"]["metadata"]["note"] = "edited"
+    forged["config"]["config_digest"] = config_digest(forged["config"])
+    del forged["events"][0]
+    forged["events"][0]["seq"] = 0
+    assert AssistSession.from_ledger(forged)
+    for dedicated in (True, False):
+        problems = verify_session(forged, item=P5_ITEM, calls=rows, dedicated_calls=dedicated)["problems"]
+        assert any("never recorded" in p for p in problems), problems
+    # A call moved to another event (events reordered) no longer matches its calls-ledger binding.
+    moved = json.loads(json.dumps(ledger))
+    moved["events"][0]["model_calls"][0]["item_id"] = "elsewhere"
+    problems = verify_session(moved, item=P5_ITEM, calls=rows)["problems"]
+    assert any("bound to a different session or event" in p for p in problems)
+
+
+def _fake_cli(tmp_path, monkeypatch, records, secret="sk-SECRET-TOKEN-123"):
+    import subprocess
+    import ve_experiments.claude_cli as cc
+    from ve_experiments.assist_haiku import ClaudeProposer
+    fake = tmp_path / "claude"
+    fake.write_text("#!/bin/sh\n")
+    stream = "\n".join(json.dumps(r) for r in records)
+    monkeypatch.setattr(cc.shutil, "which", lambda name: str(fake))
+    monkeypatch.setattr(cc.subprocess, "check_output", lambda *a, **k: cc.Controls().cli_version)
+    monkeypatch.setattr(cc.subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(a, 0, stream, ""))
+    monkeypatch.setattr(cc, "oauth_token", lambda config=None: secret)
+    monkeypatch.setattr(cc, "check_context_date", lambda controls: None)
+    return ClaudeProposer(tmp_path / "calls.jsonl", model="sonnet", working_directory=str(tmp_path / "empty"))
+
+
+def _stream(model, served, stop_reason="end_turn", text="ok"):
+    return [{"type": "system", "subtype": "init", "model": model, "tools": [], "mcp_servers": [], "agents": []},
+            {"type": "assistant", "message": {"id": "m1", "model": served, "content": [{"type": "text", "text": text}]}},
+            {"type": "result", "subtype": "success", "is_error": False, "num_turns": 1, "result": text,
+             "stop_reason": stop_reason, "modelUsage": {served: {}},
+             "usage": {"input_tokens": 900, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0,
+                       "output_tokens": 7}}]
+
+
+def test_astra7_truncated_response_keeps_its_reported_usage(tmp_path, monkeypatch):
+    import ve_experiments.claude_cli as cc
+    model = cc.MODELS["sonnet"]
+    proposer = _fake_cli(tmp_path, monkeypatch, _stream(model, model, stop_reason="max_tokens"))
+    with pytest.raises(cc.EndpointError, match="Truncated") as caught:
+        proposer("sys", "prompt", "item")
+    assert caught.value.usage["input_tokens"] == 900 and caught.value.usage["output_tokens"] == 7
+    assert caught.value.usage["model"] == model
+    row = json.loads((tmp_path / "calls.jsonl").read_text().splitlines()[-1])
+    assert row["status"] == "error" and row["input_tokens"] == 900 and row["output_tokens"] == 7
+
+
+def test_astra9_token_echoed_as_served_model_never_escapes(tmp_path, monkeypatch):
+    import ve_experiments.claude_cli as cc
+    secret = "oauth-fake-9f8e7d6c5b4a"
+    model = cc.MODELS["sonnet"]
+    proposer = _fake_cli(tmp_path, monkeypatch, _stream(model, secret), secret=secret)
+    with pytest.raises(cc.EndpointError, match="Served model mismatch") as caught:
+        proposer("sys", "prompt", "item")
+    assert secret not in str(caught.value) and caught.value.__context__ is None
+    assert caught.value.__cause__ is None and secret not in json.dumps(caught.value.usage)
+    assert secret not in (tmp_path / "calls.jsonl").read_text()
+    # Through a session: neither the returned error nor the session ledger carries it.
+    s = new_session()
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.proposer = proposer
+    result = s.apply("propose", {"sentence": "p1.2", "k": 1})
+    assert not result["ok"] and secret not in json.dumps(result)
+    assert secret not in json.dumps(s.to_ledger())
+
+
+def test_astra9_proposer_redacts_credential_like_values_in_errors_and_model_fields():
+    from ve.assist.proposer import redact_secrets
+    leak = "sk-ant-oat01-AbCdEf0123456789xyz"
+
+    class Leaky:
+        model_id = "claude-haiku-4-5-20251001"
+
+        def __call__(self, system, prompt, item):
+            exc = RuntimeError(f"auth failed with token={leak} and Bearer {leak}")
+            exc.usage = {"input_tokens": 5, "output_tokens": 0, "model": leak, "account_label": leak}
+            raise exc
+    s = new_session()
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.proposer = Leaky()
+    result = s.apply("propose", {"sentence": "p1.2", "k": 1})
+    assert not result["ok"] and "[REDACTED]" in result["error"]["message"]
+    assert "AbCdEf0123456789" not in json.dumps(s.to_ledger())
+    assert redact_secrets("model claude-haiku-4-5-20251001 ok") == "model claude-haiku-4-5-20251001 ok"
