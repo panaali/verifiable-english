@@ -60,8 +60,27 @@ consequence relation.
 | `entails_v0` | If the mapped v0 premises entail the embedded v0 conclusion in the expanded order environment, the original premises entail the original conclusion in v0. Thus this expansion creates no new entailments between old claims. |
 | `certificate_profile_gate` | For every JSON vocabulary, the unchanged closure environment decoder returns the unsupported-version/profiles error on the proposed order-only envelope. |
 | `combined_profile_gate` | For every JSON vocabulary, that same decoder returns that error on the proposed closure-plus-order envelope. |
+| `validModel_iff` | For every finite order vocabulary (declaration lists) and every finite model table set over any object type with decidable equality, `validModel?` returns true exactly when the tables' finite presentation is admissible (`FiniteModel.Valid`) for the vocabulary's environment. No uniqueness, lexical or `$int` assumption is needed. |
+| `checkCountermodel_iff` | The end-to-end countermodel gate returns true exactly when the tables are admissible, every premise denotes true and the conclusion denotes false. |
+| `checkCountermodel_sound` | If the end-to-end gate accepts finite tables, the premises do not entail the conclusion over all admissible structures in the tables' universe. There is no validity hypothesis. |
+| `domainCheck_iff`, `tupleCheck_iff`, `lookup_mem`, `lookup_isSome` | Helper lemmas: executable sort and signature membership agree with `Structure.domain` and `TupleTyped`; first-entry lookup agrees with list membership. |
+| `closure_decode_profiles` | For every JSON value, if the closure environment decoder succeeds, its `language` is `ve.core@0.1` and its declared `profiles` decode to exactly `["closure@0", "relational-fol@0"]`. |
+| `v0_decode_profiles` | For every JSON value, if the v0 environment decoder succeeds, its `language` is `ve.core@0`, its singular `profile` is `relational-fol@0`, and it has no `profiles` field (also for raw objects with repeated keys). |
+| `decode_profiles_accepted`, `v0_runCase_profiles`, `closure_runCase_profiles`, `certificate_runCase_profiles` | Success of either decoder, of each evaluation `runCase`, and of the certificate `runCase` (both branches of its `language` dispatch) implies `ProfilesAccepted` for the case's environment. |
+| `profile_gate` | For every JSON case, if the certificate route or the evaluation route (`runEvaluationCase`, the `language` dispatch used by `ve_conformance`) succeeds, the case's environment satisfies `ProfilesAccepted`: exactly the closure profile list, or v0 without a `profiles` field. |
+| `order_not_accepted`, `order_profile_gate` | An environment whose declared `profiles` contain `order@0` never satisfies `ProfilesAccepted`; hence every case declaring `order@0` fails on both routes, whatever its other fields. |
+| `runEvaluationCaseReported_eq` | The binary's evaluation route through `runEvaluationCaseReported` equals the previous inline `language` dispatch. |
+| `ProfileGate.bind_ok`, `ProfileGate.exactFields_keys`, `ProfileGate.getObjVal_mem`, `ProfileGate.impl_get_mem`, `ProfileGate.nodup_length_le` | Helper lemmas for the gate: `Except` bind inversion; `exactFields` admits no unexpected key; any key found by `getObjVal?` is listed by `fields`, for arbitrary (not necessarily well-formed) JSON object trees. |
 
-The last two theorems concern the exact decoder used by the existing v0.1
+`validModel?` and `checkCountermodel` (in `ModelCheck.lean`) close review
+finding 1: `Environment` and `FiniteModel` hold functions, so validity is decided
+over their finite wire form, `Vocabulary` and `ModelData`, as in v0's
+`Bridge.ModelData`. No order JSON decoder exists yet; a future decoder that
+produces these tables inherits `checkCountermodel_sound` with no further proof
+obligation. `ProfileGate.lean` closes review finding 2 and generalizes the two
+point theorems below, which are kept unchanged.
+
+The `certificate_profile_gate` and `combined_profile_gate` theorems concern the exact decoder used by the existing v0.1
 certificate route. Runtime regressions additionally exercise the complete
 certificate entry point, with an accepted v0 certificate as control, both
 profile lists, two revisions, and three checker-version tags. All order cases

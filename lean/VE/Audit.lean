@@ -1,5 +1,7 @@
 import VE.Order.Conservativity
 import VE.Order.Gate
+import VE.Order.ModelCheck
+import VE.Order.ProfileGate
 import VE.Closure.Bridge
 import VE.CertificateWire
 import VE.TableauChecks
@@ -266,6 +268,28 @@ import Iceberg
 #print axioms VE.Order.numerals_distinct
 #print axioms VE.Order.term_defined
 #print axioms VE.Order.tupleTyped_expand
+#print axioms VE.Order.ProfileGate.bind_ok
+#print axioms VE.Order.ProfileGate.exactFields_keys
+#print axioms VE.Order.ProfileGate.getObjVal_mem
+#print axioms VE.Order.ProfileGate.impl_get_mem
+#print axioms VE.Order.ProfileGate.nodup_length_le
+#print axioms VE.Order.certificate_runCase_profiles
+#print axioms VE.Order.checkCountermodel_iff
+#print axioms VE.Order.checkCountermodel_sound
+#print axioms VE.Order.closure_decode_profiles
+#print axioms VE.Order.closure_runCase_profiles
+#print axioms VE.Order.decode_profiles_accepted
+#print axioms VE.Order.domainCheck_iff
+#print axioms VE.Order.lookup_isSome
+#print axioms VE.Order.lookup_mem
+#print axioms VE.Order.order_not_accepted
+#print axioms VE.Order.order_profile_gate
+#print axioms VE.Order.profile_gate
+#print axioms VE.Order.runEvaluationCaseReported_eq
+#print axioms VE.Order.tupleCheck_iff
+#print axioms VE.Order.v0_decode_profiles
+#print axioms VE.Order.v0_runCase_profiles
+#print axioms VE.Order.validModel_iff
 
 #print axioms VE.Closure.Tableau.induct_sound
 #print axioms VE.Closure.closure_induction
