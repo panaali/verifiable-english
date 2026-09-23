@@ -1,0 +1,47 @@
+{
+ "packet": "p0507aa977915",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on the alternative rule involving staging and inspection to establish audible sound.\"},{\"unit\":\"u2\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supplies the wrapped-to-clear conditional asserted in n18.2, so the argument relies on it.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on the alternative rule involving staging and inspection to establish the audit.\"},{\"unit\":\"u4\",\"verdict\":\"unacceptable\",\"reason\":\"This sentence asserts three substantive conditional conclusions, and alleged non-derivability does not justify waiving their formalisation.\"}]}",
+ "auditor_tokens": 4181,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u2",
+   "sentence": "r10.4",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supplies the wrapped-to-clear conditional asserted in n18.2, so the argument relies on it."
+  },
+  {
+   "unit": "u4",
+   "sentence": "n18.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This sentence asserts three substantive conditional conclusions, and alleged non-derivability does not justify waiving their formalisation."
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on the alternative rule involving staging and inspection to establish audible sound."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "unacceptable",
+   "reason": "This rule supplies the wrapped-to-clear conditional asserted in n18.2, so the argument relies on it."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on the alternative rule involving staging and inspection to establish the audit."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "unacceptable",
+   "reason": "This sentence asserts three substantive conditional conclusions, and alleged non-derivability does not justify waiving their formalisation."
+  }
+ }
+}

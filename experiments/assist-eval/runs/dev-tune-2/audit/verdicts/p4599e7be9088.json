@@ -1,0 +1,36 @@
+{
+ "packet": "p4599e7be9088",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.032853",
+ "reply": "{\"units\": [{\"unit\": \"u1\", \"verdict\": \"faithful\", \"reason\": \"All seven atomic facts about unit4 are stated exactly, with nothing added or dropped.\"}, {\"unit\": \"u2\", \"verdict\": \"faithful\", \"reason\": \"The three-way conjunction (grouped as a pair plus a third) implies unit0 sound in the signal-audible sense, which matches the rule.\"}, {\"unit\": \"u3\", \"verdict\": \"faithful\", \"reason\": \"The clipped, logged and shipped conjunction for unit4 implies unit0 sound in the casing-intact sense, which matches the rule.\"}, {\"unit\": \"u4\", \"verdict\": \"faithful\", \"reason\": \"Both sound senses of unit0 imply unit4 sound in the signal-audible sense, matching the rule's senses and direction.\"}, {\"unit\": \"u5\", \"verdict\": \"faithful\", \"reason\": \"The claimed conclusion 'unit1 is dried' is stated, and its reason (unit5 open) may appear elsewhere.\"}]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "All seven atomic facts about unit4 are stated exactly, with nothing added or dropped."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "The three-way conjunction (grouped as a pair plus a third) implies unit0 sound in the signal-audible sense, which matches the rule."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "faithful",
+   "reason": "The clipped, logged and shipped conjunction for unit4 implies unit0 sound in the casing-intact sense, which matches the rule."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "Both sound senses of unit0 imply unit4 sound in the signal-audible sense, matching the rule's senses and direction."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "The claimed conclusion 'unit1 is dried' is stated, and its reason (unit5 open) may appear elsewhere."
+  }
+ }
+}

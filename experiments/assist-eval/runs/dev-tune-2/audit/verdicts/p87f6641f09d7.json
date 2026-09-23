@@ -1,0 +1,246 @@
+{
+ "packet": "p87f6641f09d7",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.106413",
+ "reply": "{\"units\": [\n{\"unit\": \"u1\", \"verdict\": \"acceptable\", \"reason\": \"This is a declared rule list and asserts nothing the reasoning relies on.\"},\n{\"unit\": \"u2\", \"verdict\": \"acceptable\", \"reason\": \"This is a declared rule list and asserts nothing the reasoning relies on.\"},\n{\"unit\": \"u3\", \"verdict\": \"acceptable\", \"reason\": \"This is a declared rule list and asserts nothing the reasoning relies on.\"},\n{\"unit\": \"u4\", \"verdict\": \"acceptable\", \"reason\": \"This is a declared rule list and asserts nothing the reasoning relies on.\"},\n{\"unit\": \"u5\", \"verdict\": \"faithful\", \"reason\": \"All seven facts about unit2 are stated exactly.\"},\n{\"unit\": \"u6\", \"verdict\": \"acceptable\", \"reason\": \"It only states which checks remain unassumed.\"},\n{\"unit\": \"u7\", \"verdict\": \"acceptable\", \"reason\": \"This is a declared rule list and asserts nothing the reasoning relies on.\"},\n{\"unit\": \"u8\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct sense and direction.\"},\n{\"unit\": \"u9\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u10\", \"verdict\": \"faithful\", \"reason\": \"The three-way conjunction is regrouped equivalently and the conclusion sense is correct.\"},\n{\"unit\": \"u11\", \"verdict\": \"acceptable\", \"reason\": \"unit3 is never shown to be audited or scheduled, so the argument never uses this rule.\"},\n{\"unit\": \"u12\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct sense and direction.\"},\n{\"unit\": \"u13\", \"verdict\": \"acceptable\", \"reason\": \"unit3 is never shown to be audited or scheduled, so the argument never uses this rule.\"},\n{\"unit\": \"u14\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct sense and direction.\"},\n{\"unit\": \"u15\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct sense and direction.\"},\n{\"unit\": \"u16\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u17\", \"verdict\": \"faithful\", \"reason\": \"The conjunction is regrouped equivalently and the conclusion sense is correct.\"},\n{\"unit\": \"u18\", \"verdict\": \"acceptable\", \"reason\": \"unit3 is never shown to be audited or scheduled, so the argument never uses this rule.\"},\n{\"unit\": \"u19\", \"verdict\": \"acceptable\", \"reason\": \"The sample fact is never used in the reasoning.\"},\n{\"unit\": \"u20\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u21\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u22\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct sense and direction.\"},\n{\"unit\": \"u23\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u24\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u25\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct sense and direction.\"},\n{\"unit\": \"u26\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u27\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u28\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u29\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u30\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u31\", \"verdict\": \"faithful\", \"reason\": \"r05.1 establishes ready (packing completed) from the stated reasons.\"},\n{\"unit\": \"u32\", \"verdict\": \"faithful\", \"reason\": \"r01.1 establishes ready (staffing arranged) from the stated reasons.\"},\n{\"unit\": \"u33\", \"verdict\": \"faithful\", \"reason\": \"r02.1 yields that unit2 is ready (staffing arranged).\"},\n{\"unit\": \"u34\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit4 is stored follows via r09.1.\"},\n{\"unit\": \"u35\", \"verdict\": \"faithful\", \"reason\": \"r15.1 gives active (power connected).\"},\n{\"unit\": \"u36\", \"verdict\": \"faithful\", \"reason\": \"r13.1 gives active (registry current).\"},\n{\"unit\": \"u37\", \"verdict\": \"faithful\", \"reason\": \"r06.1 gives that unit3 is active (registry current).\"},\n{\"unit\": \"u38\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit6 is logged follows via r11.1.\"},\n{\"unit\": \"u39\", \"verdict\": \"faithful\", \"reason\": \"r10.1 gives clear (contamination absent).\"},\n{\"unit\": \"u40\", \"verdict\": \"faithful\", \"reason\": \"r03.1 gives clear (optically transparent).\"},\n{\"unit\": \"u41\", \"verdict\": \"faithful\", \"reason\": \"The three check-to-conclusion implications have the correct senses from r07.1, r07.3 and r07.4, with unit7's clarity already established.\"},\n{\"unit\": \"u42\", \"verdict\": \"faithful\", \"reason\": \"r07.2 gives that unit3 is clear (optically transparent).\"},\n{\"unit\": \"u43\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit6 is shipped follows via r14.1.\"},\n{\"unit\": \"u44\", \"verdict\": \"faithful\", \"reason\": \"r08.1 gives open (account enabled).\"},\n{\"unit\": \"u45\", \"verdict\": \"faithful\", \"reason\": \"r12.1 gives open (seal removed).\"},\n{\"unit\": \"u46\", \"verdict\": \"faithful\", \"reason\": \"r04.1 gives that unit2 is open (seal removed).\"},\n{\"unit\": \"u47\", \"verdict\": \"faithful\", \"reason\": \"Both statements say that unit5 is stored, which follows via r00.1.\"}\n]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "This is a declared rule list and asserts nothing the reasoning relies on."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "This is a declared rule list and asserts nothing the reasoning relies on."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "This is a declared rule list and asserts nothing the reasoning relies on."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "This is a declared rule list and asserts nothing the reasoning relies on."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "All seven facts about unit2 are stated exactly."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "It only states which checks remain unassumed."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "This is a declared rule list and asserts nothing the reasoning relies on."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct sense and direction."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The three-way conjunction is regrouped equivalently and the conclusion sense is correct."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "acceptable",
+   "reason": "unit3 is never shown to be audited or scheduled, so the argument never uses this rule."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct sense and direction."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "acceptable",
+   "reason": "unit3 is never shown to be audited or scheduled, so the argument never uses this rule."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct sense and direction."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct sense and direction."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The conjunction is regrouped equivalently and the conclusion sense is correct."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "acceptable",
+   "reason": "unit3 is never shown to be audited or scheduled, so the argument never uses this rule."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "acceptable",
+   "reason": "The sample fact is never used in the reasoning."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct sense and direction."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct sense and direction."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "r05.1 establishes ready (packing completed) from the stated reasons."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "r01.1 establishes ready (staffing arranged) from the stated reasons."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "r02.1 yields that unit2 is ready (staffing arranged)."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit4 is stored follows via r09.1."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "r15.1 gives active (power connected)."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "r13.1 gives active (registry current)."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "r06.1 gives that unit3 is active (registry current)."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit6 is logged follows via r11.1."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "r10.1 gives clear (contamination absent)."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "r03.1 gives clear (optically transparent)."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "The three check-to-conclusion implications have the correct senses from r07.1, r07.3 and r07.4, with unit7's clarity already established."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "r07.2 gives that unit3 is clear (optically transparent)."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit6 is shipped follows via r14.1."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "r08.1 gives open (account enabled)."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "r12.1 gives open (seal removed)."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "r04.1 gives that unit2 is open (seal removed)."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "Both statements say that unit5 is stored, which follows via r00.1."
+  }
+ }
+}

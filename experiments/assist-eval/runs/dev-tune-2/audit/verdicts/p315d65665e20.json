@@ -1,0 +1,37 @@
+{
+ "packet": "p315d65665e20",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"faithful\",\"reason\":\"Both duplicate statements preserve the entities, audible-signal senses, conditions, and checked conclusion.\"},{\"unit\":\"u2\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves all three conditions and concludes that unit1 is sound in the signal-audible sense.\"},{\"unit\":\"u3\",\"verdict\":\"faithful\",\"reason\":\"The statement preserves all three conditions and concludes that unit1 is sound in the casing-intact sense.\"},{\"unit\":\"u4\",\"verdict\":\"faithful\",\"reason\":\"Both duplicate statements preserve the two distinct sound senses in the conditions and the signal-audible conclusion for unit0.\"},{\"unit\":\"u5\",\"verdict\":\"faithful\",\"reason\":\"The statement correctly formalises the bundled conclusion, while the stated reason may appear elsewhere.\"}]}",
+ "auditor_tokens": 7169,
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "Both duplicate statements preserve the entities, audible-signal senses, conditions, and checked conclusion."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "The statement preserves all three conditions and concludes that unit1 is sound in the signal-audible sense."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "faithful",
+   "reason": "The statement preserves all three conditions and concludes that unit1 is sound in the casing-intact sense."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "Both duplicate statements preserve the two distinct sound senses in the conditions and the signal-audible conclusion for unit0."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "The statement correctly formalises the bundled conclusion, while the stated reason may appear elsewhere."
+  }
+ }
+}

@@ -1,0 +1,136 @@
+{
+ "packet": "p4eef97260be9",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"faithful\",\"reason\":\"All seven facts about unit2 are preserved.\"},{\"unit\":\"u2\",\"verdict\":\"faithful\",\"reason\":\"The condition, entities, and power-connected sense of active are preserved.\"},{\"unit\":\"u3\",\"verdict\":\"faithful\",\"reason\":\"The implication correctly connects contamination absence to optical transparency for unit7.\"},{\"unit\":\"u4\",\"verdict\":\"faithful\",\"reason\":\"All three conditions and the staffing-arranged conclusion for unit7 are preserved.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on the audited-and-scheduled alternative for shipping unit6.\"},{\"unit\":\"u6\",\"verdict\":\"faithful\",\"reason\":\"All three conditions and the packing-completed conclusion for unit7 are preserved.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on the audited-and-scheduled alternative for unit7's packing readiness.\"},{\"unit\":\"u8\",\"verdict\":\"acceptable\",\"reason\":\"The sample relationship is not used in the argument's reasoning.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves both entities and the registry-current sense of active.\"},{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"The registry-current condition for unit3 and logged conclusion for unit6 are preserved.\"},{\"unit\":\"u11\",\"verdict\":\"faithful\",\"reason\":\"The implication correctly connects power-connected activity to registry-current activity for unit7.\"},{\"unit\":\"u12\",\"verdict\":\"faithful\",\"reason\":\"Both distinct readiness conditions and unit2's staffing-arranged conclusion are preserved.\"},{\"unit\":\"u13\",\"verdict\":\"faithful\",\"reason\":\"The logged condition for unit6 and contamination-absent conclusion for unit7 are preserved.\"},{\"unit\":\"u14\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the documented-check inference explicitly asserted in n21.2.\"},{\"unit\":\"u15\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the boxed-check inference explicitly asserted in n21.2.\"},{\"unit\":\"u16\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the retained-check inference explicitly asserted in n21.2.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"Both staffing-arranged conditions and the stored conclusion for unit4 are preserved.\"},{\"unit\":\"u18\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence asserts three conditional inferences within the argument, rather than merely identifying unassumed checks.\"},{\"unit\":\"u19\",\"verdict\":\"faithful\",\"reason\":\"The formalisation correctly states the conclusion that unit5 is stored, with its reason allowed to appear elsewhere.\"}]}",
+ "auditor_tokens": 8379,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u14",
+   "sentence": "r07.1",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the documented-check inference explicitly asserted in n21.2."
+  },
+  {
+   "unit": "u15",
+   "sentence": "r07.3",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the boxed-check inference explicitly asserted in n21.2."
+  },
+  {
+   "unit": "u16",
+   "sentence": "r07.4",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the retained-check inference explicitly asserted in n21.2."
+  },
+  {
+   "unit": "u18",
+   "sentence": "n21.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "The sentence asserts three conditional inferences within the argument, rather than merely identifying unassumed checks."
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "All seven facts about unit2 are preserved."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "The condition, entities, and power-connected sense of active are preserved."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "faithful",
+   "reason": "The implication correctly connects contamination absence to optical transparency for unit7."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "All three conditions and the staffing-arranged conclusion for unit7 are preserved."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on the audited-and-scheduled alternative for shipping unit6."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "faithful",
+   "reason": "All three conditions and the packing-completed conclusion for unit7 are preserved."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on the audited-and-scheduled alternative for unit7's packing readiness."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "acceptable",
+   "reason": "The sample relationship is not used in the argument's reasoning."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The implication preserves both entities and the registry-current sense of active."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The registry-current condition for unit3 and logged conclusion for unit6 are preserved."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "The implication correctly connects power-connected activity to registry-current activity for unit7."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "Both distinct readiness conditions and unit2's staffing-arranged conclusion are preserved."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The logged condition for unit6 and contamination-absent conclusion for unit7 are preserved."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the documented-check inference explicitly asserted in n21.2."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the boxed-check inference explicitly asserted in n21.2."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the retained-check inference explicitly asserted in n21.2."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "Both staffing-arranged conditions and the stored conclusion for unit4 are preserved."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "unacceptable",
+   "reason": "The sentence asserts three conditional inferences within the argument, rather than merely identifying unassumed checks."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly states the conclusion that unit5 is stored, with its reason allowed to appear elsewhere."
+  }
+ }
+}

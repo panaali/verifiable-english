@@ -1,0 +1,36 @@
+{
+ "packet": "pc47027c1b0e4",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.035333",
+ "reply": "{\"units\": [{\"unit\": \"u1\", \"verdict\": \"faithful\", \"reason\": \"All seven atomic facts about unit5 are stated, with nothing added or dropped.\"}, {\"unit\": \"u2\", \"verdict\": \"faithful\", \"reason\": \"The conjunction of mounted, routed and rated for unit5 implies that unit3 is ready_packing_completed, with the correct sense and direction.\"}, {\"unit\": \"u3\", \"verdict\": \"faithful\", \"reason\": \"The conjunction of bundled, retained and packed for unit5 implies that unit3 is ready_staffing_arranged, with the correct sense and direction.\"}, {\"unit\": \"u4\", \"verdict\": \"faithful\", \"reason\": \"Both readiness senses for unit3 imply that unit5 is ready_packing_completed, matching the sentence exactly.\"}, {\"unit\": \"u5\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit5 is calibrated is stated, and the reasons may appear elsewhere.\"}]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "All seven atomic facts about unit5 are stated, with nothing added or dropped."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "The conjunction of mounted, routed and rated for unit5 implies that unit3 is ready_packing_completed, with the correct sense and direction."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "faithful",
+   "reason": "The conjunction of bundled, retained and packed for unit5 implies that unit3 is ready_staffing_arranged, with the correct sense and direction."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "Both readiness senses for unit3 imply that unit5 is ready_packing_completed, matching the sentence exactly."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit5 is calibrated is stated, and the reasons may appear elsewhere."
+  }
+ }
+}

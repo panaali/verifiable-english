@@ -1,0 +1,246 @@
+{
+ "packet": "p054b693e9e26",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.107938",
+ "reply": "{\"units\": [\n{\"unit\": \"u1\", \"verdict\": \"acceptable\", \"reason\": \"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\": \"u2\", \"verdict\": \"faithful\", \"reason\": \"The nested conjunction states all seven facts about unit4 and nothing more.\"},\n{\"unit\": \"u3\", \"verdict\": \"acceptable\", \"reason\": \"It only says which checks remain unassumed and asserts nothing the reasoning uses.\"},\n{\"unit\": \"u4\", \"verdict\": \"acceptable\", \"reason\": \"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\": \"u5\", \"verdict\": \"acceptable\", \"reason\": \"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\": \"u6\", \"verdict\": \"acceptable\", \"reason\": \"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\": \"u7\", \"verdict\": \"acceptable\", \"reason\": \"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\": \"u8\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same senses and the same direction of the implication.\"},\n{\"unit\": \"u9\", \"verdict\": \"faithful\", \"reason\": \"The antecedent is correct and the consequent uses the seal-removed sense.\"},\n{\"unit\": \"u10\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same senses and the same direction of the implication.\"},\n{\"unit\": \"u11\", \"verdict\": \"faithful\", \"reason\": \"All three conditions are kept and the consequent uses the signal-audible sense.\"},\n{\"unit\": \"u12\", \"verdict\": \"acceptable\", \"reason\": \"Staged and inspected are never given, so the argument never uses this rule.\"},\n{\"unit\": \"u13\", \"verdict\": \"faithful\", \"reason\": \"All three conditions are kept and the consequent uses the casing-intact sense.\"},\n{\"unit\": \"u14\", \"verdict\": \"acceptable\", \"reason\": \"Staged and inspected are never given, so the argument never uses this rule.\"},\n{\"unit\": \"u15\", \"verdict\": \"acceptable\", \"reason\": \"The sample relation between unit4 and unit5 is never used in the reasoning.\"},\n{\"unit\": \"u16\", \"verdict\": \"faithful\", \"reason\": \"The conditions, consequent and senses all match the sentence.\"},\n{\"unit\": \"u17\", \"verdict\": \"faithful\", \"reason\": \"The conditions, consequent and senses all match the sentence.\"},\n{\"unit\": \"u18\", \"verdict\": \"faithful\", \"reason\": \"The conditions, consequent and senses all match the sentence.\"},\n{\"unit\": \"u19\", \"verdict\": \"faithful\", \"reason\": \"The conditions, consequent and senses all match the sentence.\"},\n{\"unit\": \"u20\", \"verdict\": \"faithful\", \"reason\": \"The implication and the contamination-absent sense both match the sentence.\"},\n{\"unit\": \"u21\", \"verdict\": \"faithful\", \"reason\": \"The implication and the account-enabled sense both match the sentence.\"},\n{\"unit\": \"u22\", \"verdict\": \"faithful\", \"reason\": \"Both conditions and the consequent use the correct senses.\"},\n{\"unit\": \"u23\", \"verdict\": \"faithful\", \"reason\": \"The implication and the signal-audible sense both match the sentence.\"},\n{\"unit\": \"u24\", \"verdict\": \"faithful\", \"reason\": \"The implication and the account-enabled sense both match the sentence.\"},\n{\"unit\": \"u25\", \"verdict\": \"faithful\", \"reason\": \"The implication and the registry-current sense both match the sentence.\"},\n{\"unit\": \"u26\", \"verdict\": \"faithful\", \"reason\": \"The implication and the power-connected sense both match the sentence.\"},\n{\"unit\": \"u27\", \"verdict\": \"faithful\", \"reason\": \"The implication and the registry-current sense both match the sentence.\"},\n{\"unit\": \"u28\", \"verdict\": \"faithful\", \"reason\": \"The implication and both active senses match the sentence.\"},\n{\"unit\": \"u29\", \"verdict\": \"faithful\", \"reason\": \"The implication and the optically-transparent sense both match the sentence.\"},\n{\"unit\": \"u30\", \"verdict\": \"acceptable\", \"reason\": \"Staged and inspected are never given, so the argument never uses this rule.\"},\n{\"unit\": \"u31\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish sound via r08.1, which gives the casing-intact sense.\"},\n{\"unit\": \"u32\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish sound via r12.1, which gives the signal-audible sense.\"},\n{\"unit\": \"u33\", \"verdict\": \"faithful\", \"reason\": \"Rule r14.1 yields unit4 sound in the signal-audible sense.\"},\n{\"unit\": \"u34\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit7 is dried is correct.\"},\n{\"unit\": \"u35\", \"verdict\": \"faithful\", \"reason\": \"Rule r09.1 yields unit0 active in the power-connected sense.\"},\n{\"unit\": \"u36\", \"verdict\": \"faithful\", \"reason\": \"It states the three respective implications, using the senses that r10.2, r10.3 and r10.4 give.\"},\n{\"unit\": \"u37\", \"verdict\": \"faithful\", \"reason\": \"Rule r01.1 gives the registry-current sense from the power-connected sense.\"},\n{\"unit\": \"u38\", \"verdict\": \"faithful\", \"reason\": \"Rule r07.1 yields unit5 active in the registry-current sense.\"},\n{\"unit\": \"u39\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit3 is logged is correct.\"},\n{\"unit\": \"u40\", \"verdict\": \"faithful\", \"reason\": \"Rule r05.1 yields unit0 clear in the contamination-absent sense.\"},\n{\"unit\": \"u41\", \"verdict\": \"faithful\", \"reason\": \"Rule r11.1 yields unit0 clear in the optically-transparent sense.\"},\n{\"unit\": \"u42\", \"verdict\": \"faithful\", \"reason\": \"Rule r10.1 yields unit4 clear in the optically-transparent sense.\"},\n{\"unit\": \"u43\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit3 is audited is correct.\"},\n{\"unit\": \"u44\", \"verdict\": \"faithful\", \"reason\": \"Rule r00.1 yields unit0 open in the seal-removed sense.\"},\n{\"unit\": \"u45\", \"verdict\": \"faithful\", \"reason\": \"Rule r15.1 yields unit0 open in the account-enabled sense.\"},\n{\"unit\": \"u46\", \"verdict\": \"faithful\", \"reason\": \"Rule r03.1 yields unit5 open in the account-enabled sense.\"},\n{\"unit\": \"u47\", \"verdict\": \"faithful\", \"reason\": \"Both statements say unit1 is dried, which is the conclusion.\"}\n]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "The nested conjunction states all seven facts about unit4 and nothing more."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "It only says which checks remain unassumed and asserts nothing the reasoning uses."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "It keeps the same senses and the same direction of the implication."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The antecedent is correct and the consequent uses the seal-removed sense."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "It keeps the same senses and the same direction of the implication."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "All three conditions are kept and the consequent uses the signal-audible sense."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "acceptable",
+   "reason": "Staged and inspected are never given, so the argument never uses this rule."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "All three conditions are kept and the consequent uses the casing-intact sense."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "acceptable",
+   "reason": "Staged and inspected are never given, so the argument never uses this rule."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "acceptable",
+   "reason": "The sample relation between unit4 and unit5 is never used in the reasoning."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The conditions, consequent and senses all match the sentence."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The conditions, consequent and senses all match the sentence."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The conditions, consequent and senses all match the sentence."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "The conditions, consequent and senses all match the sentence."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The implication and the contamination-absent sense both match the sentence."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The implication and the account-enabled sense both match the sentence."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "Both conditions and the consequent use the correct senses."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The implication and the signal-audible sense both match the sentence."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The implication and the account-enabled sense both match the sentence."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The implication and the registry-current sense both match the sentence."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "The implication and the power-connected sense both match the sentence."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The implication and the registry-current sense both match the sentence."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "The implication and both active senses match the sentence."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The implication and the optically-transparent sense both match the sentence."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "acceptable",
+   "reason": "Staged and inspected are never given, so the argument never uses this rule."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish sound via r08.1, which gives the casing-intact sense."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish sound via r12.1, which gives the signal-audible sense."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "Rule r14.1 yields unit4 sound in the signal-audible sense."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit7 is dried is correct."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "Rule r09.1 yields unit0 active in the power-connected sense."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "It states the three respective implications, using the senses that r10.2, r10.3 and r10.4 give."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "Rule r01.1 gives the registry-current sense from the power-connected sense."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "Rule r07.1 yields unit5 active in the registry-current sense."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit3 is logged is correct."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "Rule r05.1 yields unit0 clear in the contamination-absent sense."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "Rule r11.1 yields unit0 clear in the optically-transparent sense."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "Rule r10.1 yields unit4 clear in the optically-transparent sense."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit3 is audited is correct."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "Rule r00.1 yields unit0 open in the seal-removed sense."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "Rule r15.1 yields unit0 open in the account-enabled sense."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "Rule r03.1 yields unit5 open in the account-enabled sense."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "Both statements say unit1 is dried, which is the conclusion."
+  }
+ }
+}

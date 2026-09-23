@@ -1,0 +1,152 @@
+{
+ "packet": "p3384adb23e62",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u2\",\"verdict\":\"faithful\",\"reason\":\"All seven stated properties of unit4 are preserved.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only identifies checks that remain unassumed.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit0 and both specified clear senses.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the audited premise and the seal-removed conclusion for their respective entities.\"},{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"The implication correctly runs from seal removed to account enabled for unit0.\"},{\"unit\":\"u11\",\"verdict\":\"acceptable\",\"reason\":\"The sample relationship is not used by the stated reasoning.\"},{\"unit\":\"u12\",\"verdict\":\"faithful\",\"reason\":\"Both premises and the optically transparent conclusion about unit5 are preserved.\"},{\"unit\":\"u13\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the logged premise and the contamination-absent conclusion.\"},{\"unit\":\"u14\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit5's account-enabled condition and unit1's dried conclusion.\"},{\"unit\":\"u15\",\"verdict\":\"faithful\",\"reason\":\"Both distinct sound premises about unit0 and the signal-audible conclusion about unit4 are preserved.\"},{\"unit\":\"u16\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves the specified sound sense and both entities.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"The implication correctly transfers the account-enabled property from unit0 to unit5.\"},{\"unit\":\"u18\",\"verdict\":\"faithful\",\"reason\":\"The implication correctly transfers the registry-current property from unit0 to unit5.\"},{\"unit\":\"u19\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit7's dried premise and unit0's power-connected conclusion.\"},{\"unit\":\"u20\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit5's registry-current premise and unit3's logged conclusion.\"},{\"unit\":\"u21\",\"verdict\":\"faithful\",\"reason\":\"The implication correctly runs from power connected to registry current for unit0.\"},{\"unit\":\"u22\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves unit4's optical transparency as the condition for unit3 being audited.\"},{\"unit\":\"u23\",\"verdict\":\"acceptable\",\"reason\":\"These conditional observations about unassumed checks are not used in the subsequent stated reasoning.\"},{\"unit\":\"u24\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states the claimed conclusion that unit3 is audited, as permitted for a conclusion with reasons.\"},{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"Seal removed is the open sense supported by the stated audited reason through r00.1.\"},{\"unit\":\"u26\",\"verdict\":\"faithful\",\"reason\":\"Account enabled is the open sense supported by the preceding seal-removed result through r15.1.\"},{\"unit\":\"u27\",\"verdict\":\"faithful\",\"reason\":\"The account-enabled conclusion about unit5 matches the sense supported by r03.1.\"},{\"unit\":\"u28\",\"verdict\":\"faithful\",\"reason\":\"Both statements express the same claimed conclusion that unit1 is dried.\"}]}",
+ "auditor_tokens": 9237,
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "All seven stated properties of unit4 are preserved."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only identifies checks that remain unassumed."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit0 and both specified clear senses."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The implication preserves the audited premise and the seal-removed conclusion for their respective entities."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The implication correctly runs from seal removed to account enabled for unit0."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "acceptable",
+   "reason": "The sample relationship is not used by the stated reasoning."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "Both premises and the optically transparent conclusion about unit5 are preserved."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The implication preserves the logged premise and the contamination-absent conclusion."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit5's account-enabled condition and unit1's dried conclusion."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "Both distinct sound premises about unit0 and the signal-audible conclusion about unit4 are preserved."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The implication preserves the specified sound sense and both entities."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The implication correctly transfers the account-enabled property from unit0 to unit5."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The implication correctly transfers the registry-current property from unit0 to unit5."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit7's dried premise and unit0's power-connected conclusion."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit5's registry-current premise and unit3's logged conclusion."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The implication correctly runs from power connected to registry current for unit0."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The implication preserves unit4's optical transparency as the condition for unit3 being audited."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "acceptable",
+   "reason": "These conditional observations about unassumed checks are not used in the subsequent stated reasoning."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The formalisation states the claimed conclusion that unit3 is audited, as permitted for a conclusion with reasons."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "Seal removed is the open sense supported by the stated audited reason through r00.1."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "Account enabled is the open sense supported by the preceding seal-removed result through r15.1."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The account-enabled conclusion about unit5 matches the sense supported by r03.1."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "Both statements express the same claimed conclusion that unit1 is dried."
+  }
+ }
+}

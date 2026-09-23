@@ -1,0 +1,150 @@
+{
+ "item_id": "i1789fdf8e853490fb1b6731e85d63b13",
+ "split": "dev",
+ "author": "gemini",
+ "arm": "A2",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "n16_2"
+  ],
+  "note": "n16.2 is a counterfactual claim that cannot be derived."
+ },
+ "turns": 2,
+ "tool_calls": 0,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.08400",
+  "proposer": "0",
+  "total": "0.08400"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "tool_success_strict": false,
+ "verification": {
+  "ok": true,
+  "problems": [],
+  "attempts_failing": []
+ },
+ "proposer_model": null,
+ "account": "saeedi.danial",
+ "status": {
+  "success": false,
+  "failures": [
+   "1 unproved step(s)",
+   "1 claimed sentence(s) not derived by a certified step: n16.2",
+   "13 asserting sentence(s) waived (a waiver is reported, never success): n06.1, n11.1, n18.1, n03.1, n09.1, n19.2, r11.1, r11.2, r11.3, r08.2, r06.2, r06.3, r01.2"
+  ],
+  "targets": [
+   {
+    "id": "t_n08",
+    "text": "@unit0 is bundled.",
+    "certified": true,
+    "reason": null,
+    "replay": "Checked",
+    "node": "n08_1"
+   }
+  ],
+  "unproved_steps": [
+   {
+    "node": "n16_2",
+    "check": "countermodel",
+    "parents": [
+     "n16_1"
+    ]
+   }
+  ],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "underived": [
+   "n16.2"
+  ],
+  "covered": 17,
+  "derived": 16,
+  "waived": 13,
+  "waivers": [
+   {
+    "sentence": "n06.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n11.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n18.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n03.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n09.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n19.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r11.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r11.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r11.3",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r08.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r06.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r06.3",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r01.2",
+    "role": "given",
+    "counts_against_success": true
+   }
+  ],
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 34,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 39.0,
+ "prompt_version": "ve-assist-eval-prompts@3"
+}

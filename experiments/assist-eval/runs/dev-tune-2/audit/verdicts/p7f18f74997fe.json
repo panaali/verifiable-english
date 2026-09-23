@@ -1,0 +1,17 @@
+{
+ "packet": "p7f18f74997fe",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence states conditional consequences of unassumed checks that the argument’s reasoning does not rely on.\"}]}",
+ "auditor_tokens": 6287,
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence states conditional consequences of unassumed checks that the argument’s reasoning does not rely on."
+  }
+ }
+}

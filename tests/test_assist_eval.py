@@ -382,6 +382,8 @@ def test_audit_run_logs_errors_and_report_attributes_failures(tmp_path):
     assert audit.attribute(ok, {"pass": False}, cls, unclear).startswith("audit-fail: audit disagreement")
     assert audit.attribute({**ok, "stop_reason": "budget"}, {"pass": True}, cls, {}) == "budget"
     assert audit.attribute(ok, {"pass": True}, cls, {}) == "tool refusal"
+    empty = {"pass": False, "problems": [{"unit": None, "verdict": None, "reason": "empty packet"}]}
+    assert audit.attribute(ok, empty, cls, {}) == "author: nothing formalised"
     assert audit.attribute({**ok, "stop_reason": "abort: x"}, None, cls, {}) == "infrastructure"
 
 
@@ -398,7 +400,7 @@ def test_empty_packet_fails_without_an_auditor_call(tmp_path):
 
 def test_gemini_margin_covers_undercounted_tool_declarations():
     # dev-tune-1: counted ~3.5k, billed 4,004 -> the old 2% + 256 margin halted the run ledger
-    assert GeminiAuthor._margin(3520) >= 4004
+    assert GeminiAuthor._margin(3520) >= 4004 and GeminiAuthor._margin(6345) >= 9337
 
 
 def test_finish_complete_is_refused_until_status_succeeds(tmp_path):

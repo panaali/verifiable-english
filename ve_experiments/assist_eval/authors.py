@@ -208,10 +208,11 @@ class GeminiAuthor:
 
     @staticmethod
     def _margin(count):
-        # Vertex countTokens under-counts function declarations: dev-tune-1's first A3 call counted
-        # ~3.5k tokens but was billed 4,004, which exceeded the per-call cap and HALTED the run ledger
-        # (every later Gemini call and every Gemini audit then failed). 5% + 2,048 covers the tool list.
-        return count + count // 20 + 2048
+        # Vertex countTokens under-counts function declarations AND function-call/response parts:
+        # dev-tune-1 counted ~3.5k and was billed 4,004; dev-tune-2 counted ~6.3k and was billed 9,337.
+        # A billed count above the reservation HALTS the run ledger (sticky for model pro). Reserve twice
+        # the count plus 4,096; the turn aborts (context) when that exceeds the input cap.
+        return 2 * count + 4096
 
     def turn(self, history, call_id, parse_calls=True):
         from ve_experiments.paid import BudgetExceeded, InfrastructureError, PreflightError

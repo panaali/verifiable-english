@@ -1,0 +1,247 @@
+{
+ "packet": "p647bb72a8655",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u4\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states exactly the seven given properties of unit5.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"The sentence identifies unassumed checks without asserting them.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rules.\"},{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the entities, payment-settled sense, and implication direction.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"Both packing-completed conditions and the weighed-in conclusion are preserved.\"},{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"All three conditions and unit3's packing-completed conclusion are preserved.\"},{\"unit\":\"u11\",\"verdict\":\"faithful\",\"reason\":\"The tied and boxed conditions imply the specified packing-completed conclusion.\"},{\"unit\":\"u12\",\"verdict\":\"faithful\",\"reason\":\"The weighed-in condition implies unit3's soundness in the casing-intact sense.\"},{\"unit\":\"u13\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions and unit1's temperature-constant conclusion.\"},{\"unit\":\"u14\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions and unit1's shape-retained conclusion.\"},{\"unit\":\"u15\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions and unit5's temperature-constant conclusion.\"},{\"unit\":\"u16\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions and unit5's shape-retained conclusion.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"The implication correctly runs from temperature constancy to shape retention for unit3.\"},{\"unit\":\"u18\",\"verdict\":\"faithful\",\"reason\":\"The logged condition implies unit3's clearance in the inspection-passed sense.\"},{\"unit\":\"u19\",\"verdict\":\"faithful\",\"reason\":\"All three conditions and unit3's staffing-arranged conclusion are preserved.\"},{\"unit\":\"u20\",\"verdict\":\"faithful\",\"reason\":\"Both conditions and unit3's staffing-arranged conclusion are preserved.\"},{\"unit\":\"u21\",\"verdict\":\"faithful\",\"reason\":\"The supplied relation correctly runs from lot unit5 to sample unit1.\"},{\"unit\":\"u22\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves payment-settled clearance from unit3 to unit1.\"},{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"The balanced condition implies unit3's stability in the temperature-constant sense.\"},{\"unit\":\"u24\",\"verdict\":\"faithful\",\"reason\":\"The implication preserves signal-audible soundness from unit3 to unit5.\"},{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"Unit5's shape-retained stability correctly implies its calibration.\"},{\"unit\":\"u26\",\"verdict\":\"faithful\",\"reason\":\"Both tied and boxed conditions correctly imply unit5's calibration.\"},{\"unit\":\"u27\",\"verdict\":\"faithful\",\"reason\":\"The implication correctly runs from inspection-passed to payment-settled clearance for unit3.\"},{\"unit\":\"u28\",\"verdict\":\"faithful\",\"reason\":\"Both specified readiness senses for unit3 imply packing-completed readiness for unit5.\"},{\"unit\":\"u29\",\"verdict\":\"faithful\",\"reason\":\"The implication correctly runs from casing-intact to signal-audible soundness for unit3.\"},{\"unit\":\"u30\",\"verdict\":\"faithful\",\"reason\":\"Unit5's signal-audible soundness correctly implies that unit5 is logged.\"},{\"unit\":\"u31\",\"verdict\":\"faithful\",\"reason\":\"The conclusion uses the staffing-arranged sense supported by the stated reasons through r00.1.\"},{\"unit\":\"u32\",\"verdict\":\"faithful\",\"reason\":\"The three conditionals preserve the respective checks, target entities, and stability senses specified by r15.1 through r15.3.\"},{\"unit\":\"u33\",\"verdict\":\"faithful\",\"reason\":\"The conclusion uses the packing-completed sense supported by the stated reasons through r03.1.\"},{\"unit\":\"u34\",\"verdict\":\"faithful\",\"reason\":\"The conclusion uses the packing-completed sense supported by the two readiness premises through r06.1.\"},{\"unit\":\"u35\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states the weighed-in conclusion supported by the readiness reasons.\"},{\"unit\":\"u36\",\"verdict\":\"faithful\",\"reason\":\"The conclusion uses the casing-intact sense supported by the weighed-in reason through r01.1.\"},{\"unit\":\"u37\",\"verdict\":\"faithful\",\"reason\":\"The conclusion uses the signal-audible sense supported by the preceding casing-intact result through r14.1.\"},{\"unit\":\"u38\",\"verdict\":\"faithful\",\"reason\":\"The conclusion uses unit5's signal-audible sense supported by unit3's soundness through r07.1.\"},{\"unit\":\"u39\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states the logged conclusion supported by the preceding sound result.\"},{\"unit\":\"u40\",\"verdict\":\"faithful\",\"reason\":\"The conclusion uses the inspection-passed sense supported by the logged reason through r04.1.\"},{\"unit\":\"u41\",\"verdict\":\"faithful\",\"reason\":\"The conclusion uses the payment-settled sense supported by the preceding inspection-passed result through r02.1.\"},{\"unit\":\"u42\",\"verdict\":\"faithful\",\"reason\":\"The conclusion uses unit1's payment-settled sense supported by unit3's clearance through r12.1.\"},{\"unit\":\"u43\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states the balanced conclusion supported by the preceding clearance result.\"},{\"unit\":\"u44\",\"verdict\":\"faithful\",\"reason\":\"The conclusion uses the temperature-constant sense supported by the balanced reason through r13.1.\"},{\"unit\":\"u45\",\"verdict\":\"faithful\",\"reason\":\"The conclusion uses the shape-retained sense supported by the preceding temperature-constant result through r11.1.\"},{\"unit\":\"u46\",\"verdict\":\"faithful\",\"reason\":\"The conclusion uses unit5's shape-retained sense supported by unit3's stability and unit5's scanning through r15.4.\"},{\"unit\":\"u47\",\"verdict\":\"faithful\",\"reason\":\"Both statements express the same calibration conclusion, and their repetition adds no content.\"}]}",
+ "auditor_tokens": 12010,
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "The formalisation states exactly the seven given properties of unit5."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The sentence identifies unassumed checks without asserting them."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rules."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the entities, payment-settled sense, and implication direction."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "Both packing-completed conditions and the weighed-in conclusion are preserved."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "All three conditions and unit3's packing-completed conclusion are preserved."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "The tied and boxed conditions imply the specified packing-completed conclusion."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The weighed-in condition implies unit3's soundness in the casing-intact sense."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions and unit1's temperature-constant conclusion."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions and unit1's shape-retained conclusion."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions and unit5's temperature-constant conclusion."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions and unit5's shape-retained conclusion."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The implication correctly runs from temperature constancy to shape retention for unit3."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The logged condition implies unit3's clearance in the inspection-passed sense."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "All three conditions and unit3's staffing-arranged conclusion are preserved."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "Both conditions and unit3's staffing-arranged conclusion are preserved."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The supplied relation correctly runs from lot unit5 to sample unit1."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The implication preserves payment-settled clearance from unit3 to unit1."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The balanced condition implies unit3's stability in the temperature-constant sense."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The implication preserves signal-audible soundness from unit3 to unit5."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "Unit5's shape-retained stability correctly implies its calibration."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "Both tied and boxed conditions correctly imply unit5's calibration."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The implication correctly runs from inspection-passed to payment-settled clearance for unit3."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "Both specified readiness senses for unit3 imply packing-completed readiness for unit5."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The implication correctly runs from casing-intact to signal-audible soundness for unit3."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "Unit5's signal-audible soundness correctly implies that unit5 is logged."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The conclusion uses the staffing-arranged sense supported by the stated reasons through r00.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The three conditionals preserve the respective checks, target entities, and stability senses specified by r15.1 through r15.3."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The conclusion uses the packing-completed sense supported by the stated reasons through r03.1."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The conclusion uses the packing-completed sense supported by the two readiness premises through r06.1."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "The formalisation states the weighed-in conclusion supported by the readiness reasons."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "The conclusion uses the casing-intact sense supported by the weighed-in reason through r01.1."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "The conclusion uses the signal-audible sense supported by the preceding casing-intact result through r14.1."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "The conclusion uses unit5's signal-audible sense supported by unit3's soundness through r07.1."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "The formalisation states the logged conclusion supported by the preceding sound result."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "The conclusion uses the inspection-passed sense supported by the logged reason through r04.1."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "The conclusion uses the payment-settled sense supported by the preceding inspection-passed result through r02.1."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "The conclusion uses unit1's payment-settled sense supported by unit3's clearance through r12.1."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The formalisation states the balanced conclusion supported by the preceding clearance result."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "The conclusion uses the temperature-constant sense supported by the balanced reason through r13.1."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "The conclusion uses the shape-retained sense supported by the preceding temperature-constant result through r11.1."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "The conclusion uses unit5's shape-retained sense supported by unit3's stability and unit5's scanning through r15.4."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "Both statements express the same calibration conclusion, and their repetition adds no content."
+  }
+ }
+}

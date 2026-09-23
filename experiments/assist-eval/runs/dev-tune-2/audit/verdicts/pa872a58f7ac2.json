@@ -1,0 +1,111 @@
+{
+ "packet": "pa872a58f7ac2",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"This declaration list adds no substantive premise used in the reasoning.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"This sentence identifies checks left unassumed rather than asserting premises used in the reasoning.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"This declaration list adds no substantive premise used in the reasoning.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"This declaration list adds no substantive premise used in the reasoning.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"This declaration list adds no substantive premise used in the reasoning.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"This declaration list adds no substantive premise used in the reasoning.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on this alternative rule involving staged and inspected conditions.\"},{\"unit\":\"u8\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on this alternative rule involving staged and inspected conditions.\"},{\"unit\":\"u9\",\"verdict\":\"acceptable\",\"reason\":\"The sample provenance fact is not used in the argument's reasoning.\"},{\"unit\":\"u10\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the bagged conditional claimed in n18.2 even though bagged remains unassumed.\"},{\"unit\":\"u11\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the tracked conditional claimed in n18.2 even though tracked remains unassumed.\"},{\"unit\":\"u12\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the wrapped conditional claimed in n18.2 even though wrapped remains unassumed.\"},{\"unit\":\"u13\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on this alternative rule involving staged and inspected conditions.\"},{\"unit\":\"u14\",\"verdict\":\"unacceptable\",\"reason\":\"This sentence asserts conditional conclusions within the argument, and leaving their antecedents unassumed does not justify omitting them.\"}]}",
+ "auditor_tokens": 5108,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u10",
+   "sentence": "r10.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the bagged conditional claimed in n18.2 even though bagged remains unassumed."
+  },
+  {
+   "unit": "u11",
+   "sentence": "r10.3",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the tracked conditional claimed in n18.2 even though tracked remains unassumed."
+  },
+  {
+   "unit": "u12",
+   "sentence": "r10.4",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the wrapped conditional claimed in n18.2 even though wrapped remains unassumed."
+  },
+  {
+   "unit": "u14",
+   "sentence": "n18.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This sentence asserts conditional conclusions within the argument, and leaving their antecedents unassumed does not justify omitting them."
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "This declaration list adds no substantive premise used in the reasoning."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "This sentence identifies checks left unassumed rather than asserting premises used in the reasoning."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "This declaration list adds no substantive premise used in the reasoning."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "This declaration list adds no substantive premise used in the reasoning."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "This declaration list adds no substantive premise used in the reasoning."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "This declaration list adds no substantive premise used in the reasoning."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on this alternative rule involving staged and inspected conditions."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on this alternative rule involving staged and inspected conditions."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "acceptable",
+   "reason": "The sample provenance fact is not used in the argument's reasoning."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the bagged conditional claimed in n18.2 even though bagged remains unassumed."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the tracked conditional claimed in n18.2 even though tracked remains unassumed."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the wrapped conditional claimed in n18.2 even though wrapped remains unassumed."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on this alternative rule involving staged and inspected conditions."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "unacceptable",
+   "reason": "This sentence asserts conditional conclusions within the argument, and leaving their antecedents unassumed does not justify omitting them."
+  }
+ }
+}

@@ -1,0 +1,177 @@
+{
+ "item_id": "i910d7c5f209964573680cb7258301c2a",
+ "split": "dev",
+ "author": "gemini",
+ "arm": "A3",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "n15_1"
+  ],
+  "note": "n15.1 requires unit3 to be clear_optically_transparent, but n01.1 only establishes clear_contamination_absent."
+ },
+ "turns": 42,
+ "tool_calls": 56,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.846798",
+  "proposer": "0",
+  "total": "0.846798"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "tool_success_strict": false,
+ "verification": {
+  "ok": true,
+  "problems": []
+ },
+ "proposer_model": null,
+ "account": "saeedi.danial",
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n19: no step node states the frozen target",
+   "1 unproved step(s)",
+   "6 claimed sentence(s) not derived by a certified step: n21.2, n15.1, n08.1, n18.1, n04.1, n19.1",
+   "17 asserting sentence(s) waived (a waiver is reported, never success): n10.1, n12.1, n13.1, n09.1, n17.2, n11.1, r01.2, r14.2, r08.1, r00.1, r12.1, r05.2, r05.3, r04.1, r07.2, r07.3, r07.4"
+  ],
+  "targets": [
+   {
+    "id": "t_n19",
+    "text": "@unit5 is stored.",
+    "certified": false,
+    "reason": "no step node states the frozen target",
+    "replay": null,
+    "node": null
+   }
+  ],
+  "unproved_steps": [
+   {
+    "node": "n15_1",
+    "check": "countermodel",
+    "parents": [
+     "n01_1",
+     "r14_1"
+    ]
+   }
+  ],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "underived": [
+   "n21.2",
+   "n15.1",
+   "n08.1",
+   "n18.1",
+   "n04.1",
+   "n19.1"
+  ],
+  "covered": 13,
+  "derived": 11,
+  "waived": 17,
+  "waivers": [
+   {
+    "sentence": "n10.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n12.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n13.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n09.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n17.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n11.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r01.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r14.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r08.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r00.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r12.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r05.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r05.3",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r04.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r07.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r07.3",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r07.4",
+    "role": "given",
+    "counts_against_success": true
+   }
+  ],
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 25,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "restart": 0,
+ "elapsed_s": 228.2,
+ "prompt_version": "ve-assist-eval-prompts@3"
+}

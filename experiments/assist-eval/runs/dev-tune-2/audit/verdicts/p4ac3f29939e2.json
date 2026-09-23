@@ -1,0 +1,176 @@
+{
+ "packet": "p4ac3f29939e2",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.087008",
+ "reply": "{\"units\": [\n{\"unit\": \"u1\", \"verdict\": \"faithful\", \"reason\": \"The seven atomic facts about unit2 are each stated exactly as in the sentence.\"},\n{\"unit\": \"u2\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same antecedent, the same consequent and the power-connected sense.\"},\n{\"unit\": \"u3\", \"verdict\": \"faithful\", \"reason\": \"The conditional from contamination absent to optically transparent for unit7 is correctly rendered.\"},\n{\"unit\": \"u4\", \"verdict\": \"faithful\", \"reason\": \"The three-way conjunction is regrouped without changing its meaning and leads to staffing arranged for unit7.\"},\n{\"unit\": \"u5\", \"verdict\": \"faithful\", \"reason\": \"The conditional is correct, with unit3 optically transparent leading to unit6 shipped.\"},\n{\"unit\": \"u6\", \"verdict\": \"faithful\", \"reason\": \"The conditional is correct, with unit6 shipped leading to unit7 in the account enabled sense.\"},\n{\"unit\": \"u7\", \"verdict\": \"faithful\", \"reason\": \"The conditional is correct, with unit2 seal removed leading to unit5 stored.\"},\n{\"unit\": \"u8\", \"verdict\": \"faithful\", \"reason\": \"The conditional is correct, with unit7 account enabled leading to unit7 seal removed.\"},\n{\"unit\": \"u9\", \"verdict\": \"faithful\", \"reason\": \"The three-way conjunction is regrouped without changing its meaning and leads to packing completed for unit7.\"},\n{\"unit\": \"u10\", \"verdict\": \"faithful\", \"reason\": \"The registry current conditional from unit7 to unit3 is correct.\"},\n{\"unit\": \"u11\", \"verdict\": \"faithful\", \"reason\": \"The seal removed conditional from unit7 to unit2 is correct.\"},\n{\"unit\": \"u12\", \"verdict\": \"faithful\", \"reason\": \"The conditional is correct, with unit3 registry current leading to unit6 logged.\"},\n{\"unit\": \"u13\", \"verdict\": \"faithful\", \"reason\": \"The conditional from power connected to registry current for unit7 is correct.\"},\n{\"unit\": \"u14\", \"verdict\": \"faithful\", \"reason\": \"Both unit7 ready senses and the conclusion that unit2 is ready (staffing arranged) are correct.\"},\n{\"unit\": \"u15\", \"verdict\": \"faithful\", \"reason\": \"The conditional is correct, with unit6 logged leading to unit7 contamination absent.\"},\n{\"unit\": \"u16\", \"verdict\": \"faithful\", \"reason\": \"The conjunctive conditional that yields unit2 optically transparent is correct.\"},\n{\"unit\": \"u17\", \"verdict\": \"faithful\", \"reason\": \"The conjunction of the two staffing arranged facts leading to unit4 stored is correct.\"},\n{\"unit\": \"u18\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish packing completed via r05.1, so that is an acceptable sense.\"},\n{\"unit\": \"u19\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish staffing arranged via r01.1, so that is an acceptable sense.\"},\n{\"unit\": \"u20\", \"verdict\": \"faithful\", \"reason\": \"Via r02.1, unit2 ready is staffing arranged.\"},\n{\"unit\": \"u21\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit4 is stored is stated.\"},\n{\"unit\": \"u22\", \"verdict\": \"faithful\", \"reason\": \"Unit4 stored establishes power connected via r15.1.\"},\n{\"unit\": \"u23\", \"verdict\": \"faithful\", \"reason\": \"The conclusion is registry current, which is derivable from power connected via r13.1.\"},\n{\"unit\": \"u24\", \"verdict\": \"faithful\", \"reason\": \"Via r06.1, unit3 active is registry current.\"},\n{\"unit\": \"u25\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit6 is logged is stated.\"},\n{\"unit\": \"u26\", \"verdict\": \"faithful\", \"reason\": \"Unit6 logged establishes contamination absent via r10.1.\"},\n{\"unit\": \"u27\", \"verdict\": \"faithful\", \"reason\": \"The conclusion is optically transparent, which is derivable via r03.1.\"},\n{\"unit\": \"u28\", \"verdict\": \"faithful\", \"reason\": \"Via r07.4, unit2 clear is optically transparent.\"},\n{\"unit\": \"u29\", \"verdict\": \"faithful\", \"reason\": \"The sentence's conclusion, that unit6 is shipped, is stated as written; judging whether the reasoning holds is outside a fidelity check.\"},\n{\"unit\": \"u30\", \"verdict\": \"faithful\", \"reason\": \"Unit6 shipped establishes account enabled via r08.1.\"},\n{\"unit\": \"u31\", \"verdict\": \"faithful\", \"reason\": \"The conclusion is seal removed, which is derivable via r12.1.\"},\n{\"unit\": \"u32\", \"verdict\": \"faithful\", \"reason\": \"Via r04.1, unit2 open is seal removed.\"},\n{\"unit\": \"u33\", \"verdict\": \"faithful\", \"reason\": \"Both statements state the conclusion that unit5 is stored.\"}\n]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "The seven atomic facts about unit2 are each stated exactly as in the sentence."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "It keeps the same antecedent, the same consequent and the power-connected sense."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "faithful",
+   "reason": "The conditional from contamination absent to optically transparent for unit7 is correctly rendered."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "The three-way conjunction is regrouped without changing its meaning and leads to staffing arranged for unit7."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "The conditional is correct, with unit3 optically transparent leading to unit6 shipped."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "faithful",
+   "reason": "The conditional is correct, with unit6 shipped leading to unit7 in the account enabled sense."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "faithful",
+   "reason": "The conditional is correct, with unit2 seal removed leading to unit5 stored."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The conditional is correct, with unit7 account enabled leading to unit7 seal removed."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The three-way conjunction is regrouped without changing its meaning and leads to packing completed for unit7."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The registry current conditional from unit7 to unit3 is correct."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "The seal removed conditional from unit7 to unit2 is correct."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The conditional is correct, with unit3 registry current leading to unit6 logged."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The conditional from power connected to registry current for unit7 is correct."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "Both unit7 ready senses and the conclusion that unit2 is ready (staffing arranged) are correct."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The conditional is correct, with unit6 logged leading to unit7 contamination absent."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The conjunctive conditional that yields unit2 optically transparent is correct."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The conjunction of the two staffing arranged facts leading to unit4 stored is correct."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish packing completed via r05.1, so that is an acceptable sense."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish staffing arranged via r01.1, so that is an acceptable sense."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "Via r02.1, unit2 ready is staffing arranged."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit4 is stored is stated."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "Unit4 stored establishes power connected via r15.1."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The conclusion is registry current, which is derivable from power connected via r13.1."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "Via r06.1, unit3 active is registry current."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit6 is logged is stated."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "Unit6 logged establishes contamination absent via r10.1."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The conclusion is optically transparent, which is derivable via r03.1."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "Via r07.4, unit2 clear is optically transparent."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The sentence's conclusion, that unit6 is shipped, is stated as written; judging whether the reasoning holds is outside a fidelity check."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "Unit6 shipped establishes account enabled via r08.1."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The conclusion is seal removed, which is derivable via r12.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "Via r04.1, unit2 open is seal removed."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "Both statements state the conclusion that unit5 is stored."
+  }
+ }
+}

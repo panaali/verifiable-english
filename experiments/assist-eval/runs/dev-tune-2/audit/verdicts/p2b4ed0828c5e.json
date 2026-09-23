@@ -1,0 +1,246 @@
+{
+ "packet": "p2b4ed0828c5e",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.100378",
+ "reply": "{\"units\":[\n{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\":\"u5\",\"verdict\":\"faithful\",\"reason\":\"All seven facts about unit2 are stated, with nothing added.\"},\n{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only records which checks remain unassumed.\"},\n{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"The conditional matches, with the sense power connected.\"},\n{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"The conditional matches, with the correct senses on both sides.\"},\n{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"The three-way conjunction and the staffing-arranged conclusion are both preserved.\"},\n{\"unit\":\"u11\",\"verdict\":\"acceptable\",\"reason\":\"This rule is not used in the argument's chain.\"},\n{\"unit\":\"u12\",\"verdict\":\"faithful\",\"reason\":\"The conditional matches, with the sense optically transparent.\"},\n{\"unit\":\"u13\",\"verdict\":\"acceptable\",\"reason\":\"This rule is not used in the argument's chain.\"},\n{\"unit\":\"u14\",\"verdict\":\"faithful\",\"reason\":\"The conditional matches, with the sense account enabled.\"},\n{\"unit\":\"u15\",\"verdict\":\"faithful\",\"reason\":\"The conditional matches, with the sense seal removed.\"},\n{\"unit\":\"u16\",\"verdict\":\"faithful\",\"reason\":\"The conditional matches, with the correct senses on both sides.\"},\n{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"The three-way conjunction and the packing-completed conclusion are both preserved.\"},\n{\"unit\":\"u18\",\"verdict\":\"acceptable\",\"reason\":\"This rule is not used in the argument's chain.\"},\n{\"unit\":\"u19\",\"verdict\":\"acceptable\",\"reason\":\"The sample fact is never used.\"},\n{\"unit\":\"u20\",\"verdict\":\"faithful\",\"reason\":\"The conditional matches, with the sense registry current.\"},\n{\"unit\":\"u21\",\"verdict\":\"faithful\",\"reason\":\"The conditional matches, with the sense seal removed.\"},\n{\"unit\":\"u22\",\"verdict\":\"faithful\",\"reason\":\"The conditional matches.\"},\n{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"The conditional matches, with the correct senses on both sides.\"},\n{\"unit\":\"u24\",\"verdict\":\"faithful\",\"reason\":\"The conjunction and the conclusion match, with the correct senses.\"},\n{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"The conditional matches, with the sense contamination absent.\"},\n{\"unit\":\"u26\",\"verdict\":\"acceptable\",\"reason\":\"This rule is not used, since unit2 documented is never assumed.\"},\n{\"unit\":\"u27\",\"verdict\":\"acceptable\",\"reason\":\"This rule is not used, since unit2 queued is never assumed.\"},\n{\"unit\":\"u28\",\"verdict\":\"acceptable\",\"reason\":\"This rule is not used, since unit2 boxed is never assumed.\"},\n{\"unit\":\"u29\",\"verdict\":\"faithful\",\"reason\":\"The conjunction and the conclusion match, with the correct senses.\"},\n{\"unit\":\"u30\",\"verdict\":\"faithful\",\"reason\":\"The conjunction and the conclusion match.\"},\n{\"unit\":\"u31\",\"verdict\":\"faithful\",\"reason\":\"The stated reasons establish ready (packing completed) via r05.1.\"},\n{\"unit\":\"u32\",\"verdict\":\"faithful\",\"reason\":\"The stated reasons establish ready (staffing arranged) via r01.1.\"},\n{\"unit\":\"u33\",\"verdict\":\"faithful\",\"reason\":\"By r02.1, unit2 is ready (staffing arranged).\"},\n{\"unit\":\"u34\",\"verdict\":\"faithful\",\"reason\":\"The conclusion that unit4 is stored is stated.\"},\n{\"unit\":\"u35\",\"verdict\":\"faithful\",\"reason\":\"By r15.1, unit7 is active (power connected).\"},\n{\"unit\":\"u36\",\"verdict\":\"faithful\",\"reason\":\"By r13.1, unit7 is active (registry current).\"},\n{\"unit\":\"u37\",\"verdict\":\"faithful\",\"reason\":\"By r06.1, unit3 is active (registry current).\"},\n{\"unit\":\"u38\",\"verdict\":\"faithful\",\"reason\":\"The conclusion that unit6 is logged is stated.\"},\n{\"unit\":\"u39\",\"verdict\":\"faithful\",\"reason\":\"By r10.1, unit7 is clear (contamination absent).\"},\n{\"unit\":\"u40\",\"verdict\":\"faithful\",\"reason\":\"By r03.1, unit7 is clear (optically transparent).\"},\n{\"unit\":\"u41\",\"verdict\":\"acceptable\",\"reason\":\"These counterfactual claims about unassumed checks are not relied upon by the chain.\"},\n{\"unit\":\"u42\",\"verdict\":\"faithful\",\"reason\":\"By r07.4, unit2 is clear (optically transparent).\"},\n{\"unit\":\"u43\",\"verdict\":\"faithful\",\"reason\":\"The conclusion that unit6 is shipped is stated; the reasons may appear elsewhere.\"},\n{\"unit\":\"u44\",\"verdict\":\"faithful\",\"reason\":\"By r08.1, unit7 is open (account enabled).\"},\n{\"unit\":\"u45\",\"verdict\":\"faithful\",\"reason\":\"By r12.1, unit7 is open (seal removed).\"},\n{\"unit\":\"u46\",\"verdict\":\"faithful\",\"reason\":\"By r04.1, unit2 is open (seal removed).\"},\n{\"unit\":\"u47\",\"verdict\":\"faithful\",\"reason\":\"Both statements assert that unit5 is stored, which is the conclusion.\"}\n]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "All seven facts about unit2 are stated, with nothing added."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence only records which checks remain unassumed."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The conditional matches, with the sense power connected."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The conditional matches, with the correct senses on both sides."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The three-way conjunction and the staffing-arranged conclusion are both preserved."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "acceptable",
+   "reason": "This rule is not used in the argument's chain."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The conditional matches, with the sense optically transparent."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "acceptable",
+   "reason": "This rule is not used in the argument's chain."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "The conditional matches, with the sense account enabled."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The conditional matches, with the sense seal removed."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The conditional matches, with the correct senses on both sides."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The three-way conjunction and the packing-completed conclusion are both preserved."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "acceptable",
+   "reason": "This rule is not used in the argument's chain."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "acceptable",
+   "reason": "The sample fact is never used."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The conditional matches, with the sense registry current."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The conditional matches, with the sense seal removed."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The conditional matches."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The conditional matches, with the correct senses on both sides."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The conjunction and the conclusion match, with the correct senses."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The conditional matches, with the sense contamination absent."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "acceptable",
+   "reason": "This rule is not used, since unit2 documented is never assumed."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "acceptable",
+   "reason": "This rule is not used, since unit2 queued is never assumed."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "acceptable",
+   "reason": "This rule is not used, since unit2 boxed is never assumed."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The conjunction and the conclusion match, with the correct senses."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The conjunction and the conclusion match."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish ready (packing completed) via r05.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish ready (staffing arranged) via r01.1."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "By r02.1, unit2 is ready (staffing arranged)."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit4 is stored is stated."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "By r15.1, unit7 is active (power connected)."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "By r13.1, unit7 is active (registry current)."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "By r06.1, unit3 is active (registry current)."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit6 is logged is stated."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "By r10.1, unit7 is clear (contamination absent)."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "By r03.1, unit7 is clear (optically transparent)."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "acceptable",
+   "reason": "These counterfactual claims about unassumed checks are not relied upon by the chain."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "By r07.4, unit2 is clear (optically transparent)."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit6 is shipped is stated; the reasons may appear elsewhere."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "By r08.1, unit7 is open (account enabled)."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "By r12.1, unit7 is open (seal removed)."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "By r04.1, unit2 is open (seal removed)."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "Both statements assert that unit5 is stored, which is the conclusion."
+  }
+ }
+}

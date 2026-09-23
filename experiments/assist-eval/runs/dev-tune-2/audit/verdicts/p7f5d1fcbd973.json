@@ -1,0 +1,86 @@
+{
+ "packet": "p7f5d1fcbd973",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.058803",
+ "reply": "{\"units\": [\n{\"unit\": \"u1\", \"verdict\": \"faithful\", \"reason\": \"All seven atomic facts about unit0 (sized, wrapped-up, released, reviewed, staged, registered, numbered) are stated, with nothing added.\"},\n{\"unit\": \"u2\", \"verdict\": \"faithful\", \"reason\": \"The conjunction of unit1 clear (optically transparent) and unit0 numbered implies unit0 clear (optically transparent), with the correct senses and direction.\"},\n{\"unit\": \"u3\", \"verdict\": \"faithful\", \"reason\": \"unit1 open (seal removed) implies unit1 open (account enabled), with the correct senses.\"},\n{\"unit\": \"u4\", \"verdict\": \"faithful\", \"reason\": \"unit1 open (account enabled) implies unit0 open (account enabled), as stated.\"},\n{\"unit\": \"u5\", \"verdict\": \"faithful\", \"reason\": \"unit0 packed implies unit1 ready (staffing arranged), with the correct sense.\"},\n{\"unit\": \"u6\", \"verdict\": \"faithful\", \"reason\": \"unit0 documented implies unit1 open (seal removed), with the correct sense.\"},\n{\"unit\": \"u7\", \"verdict\": \"faithful\", \"reason\": \"unit1 and unit0 both sound (signal audible) imply unit0 checked, as stated.\"},\n{\"unit\": \"u8\", \"verdict\": \"faithful\", \"reason\": \"The nested conjunction of reviewed, staged and registered for unit0 implies unit1 sound (signal audible), matching the sentence.\"},\n{\"unit\": \"u9\", \"verdict\": \"faithful\", \"reason\": \"The nested conjunction of sized, wrapped-up and released for unit0 implies unit1 sound (casing intact), matching the sentence.\"},\n{\"unit\": \"u10\", \"verdict\": \"faithful\", \"reason\": \"unit2 clear (optically transparent) implies unit0 documented, as stated.\"},\n{\"unit\": \"u11\", \"verdict\": \"faithful\", \"reason\": \"unit1 clear (contamination absent) implies unit1 clear (optically transparent), with the correct senses and direction.\"},\n{\"unit\": \"u12\", \"verdict\": \"faithful\", \"reason\": \"unit1 sound (casing intact) and unit1 sound (signal audible) imply unit0 sound (signal audible), as stated.\"},\n{\"unit\": \"u13\", \"verdict\": \"faithful\", \"reason\": \"unit0 open (account enabled) implies unit0 packed, as stated.\"},\n{\"unit\": \"u14\", \"verdict\": \"faithful\", \"reason\": \"unit0 checked implies unit1 clear (contamination absent), with the correct sense.\"},\n{\"unit\": \"u15\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit0 is bundled matches the claimed sentence's conclusion.\"}\n]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "All seven atomic facts about unit0 (sized, wrapped-up, released, reviewed, staged, registered, numbered) are stated, with nothing added."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "The conjunction of unit1 clear (optically transparent) and unit0 numbered implies unit0 clear (optically transparent), with the correct senses and direction."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "faithful",
+   "reason": "unit1 open (seal removed) implies unit1 open (account enabled), with the correct senses."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "unit1 open (account enabled) implies unit0 open (account enabled), as stated."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "unit0 packed implies unit1 ready (staffing arranged), with the correct sense."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "faithful",
+   "reason": "unit0 documented implies unit1 open (seal removed), with the correct sense."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "faithful",
+   "reason": "unit1 and unit0 both sound (signal audible) imply unit0 checked, as stated."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The nested conjunction of reviewed, staged and registered for unit0 implies unit1 sound (signal audible), matching the sentence."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The nested conjunction of sized, wrapped-up and released for unit0 implies unit1 sound (casing intact), matching the sentence."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "unit2 clear (optically transparent) implies unit0 documented, as stated."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "unit1 clear (contamination absent) implies unit1 clear (optically transparent), with the correct senses and direction."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "unit1 sound (casing intact) and unit1 sound (signal audible) imply unit0 sound (signal audible), as stated."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "unit0 open (account enabled) implies unit0 packed, as stated."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "unit0 checked implies unit1 clear (contamination absent), with the correct sense."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit0 is bundled matches the claimed sentence's conclusion."
+  }
+ }
+}

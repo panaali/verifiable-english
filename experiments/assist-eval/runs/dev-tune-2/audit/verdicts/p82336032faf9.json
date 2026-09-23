@@ -1,0 +1,141 @@
+{
+ "packet": "p82336032faf9",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.071768",
+ "reply": "{\"units\": [\n{\"unit\": \"u1\", \"verdict\": \"faithful\", \"reason\": \"All seven facts about unit4 are stated exactly.\"},\n{\"unit\": \"u2\", \"verdict\": \"faithful\", \"reason\": \"The conditional uses the correct senses and direction.\"},\n{\"unit\": \"u3\", \"verdict\": \"faithful\", \"reason\": \"The three conjuncts and the signal-audible conclusion are preserved; the grouping is logically equivalent.\"},\n{\"unit\": \"u4\", \"verdict\": \"faithful\", \"reason\": \"The three conjuncts and the casing-intact conclusion are preserved.\"},\n{\"unit\": \"u5\", \"verdict\": \"faithful\", \"reason\": \"The antecedents and the contamination-absent conclusion match.\"},\n{\"unit\": \"u6\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches with the correct sense.\"},\n{\"unit\": \"u7\", \"verdict\": \"faithful\", \"reason\": \"Both antecedent senses and the conclusion sense match.\"},\n{\"unit\": \"u8\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches with the correct sense.\"},\n{\"unit\": \"u9\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches with the registry-current sense.\"},\n{\"unit\": \"u10\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches with the power-connected sense.\"},\n{\"unit\": \"u11\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches.\"},\n{\"unit\": \"u12\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches with the correct senses.\"},\n{\"unit\": \"u13\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches with the optically-transparent sense.\"},\n{\"unit\": \"u14\", \"verdict\": \"faithful\", \"reason\": \"Casing intact is the sense established by r08.1 from the stated reasons.\"},\n{\"unit\": \"u15\", \"verdict\": \"faithful\", \"reason\": \"Signal audible is the sense established by r12.1 from the stated reasons.\"},\n{\"unit\": \"u16\", \"verdict\": \"faithful\", \"reason\": \"Unit4 signal audible follows via r14.1 from the two sound results.\"},\n{\"unit\": \"u17\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit7 is dried matches.\"},\n{\"unit\": \"u18\", \"verdict\": \"faithful\", \"reason\": \"Power connected is the sense established by r09.1.\"},\n{\"unit\": \"u19\", \"verdict\": \"faithful\", \"reason\": \"Registry current is the sense established by r01.1 from power connected.\"},\n{\"unit\": \"u20\", \"verdict\": \"faithful\", \"reason\": \"Registry current for unit5 follows via r07.1.\"},\n{\"unit\": \"u21\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit3 is logged matches.\"},\n{\"unit\": \"u22\", \"verdict\": \"faithful\", \"reason\": \"Contamination absent is the sense established by r05.1.\"},\n{\"unit\": \"u23\", \"verdict\": \"faithful\", \"reason\": \"Optically transparent is the sense established by r11.1.\"},\n{\"unit\": \"u24\", \"verdict\": \"faithful\", \"reason\": \"Contamination absent for unit4 is the sense established by r10.3 from the stated reasons.\"},\n{\"unit\": \"u25\", \"verdict\": \"faithful\", \"reason\": \"The stated conclusion, that unit3 is audited, is formalised exactly.\"},\n{\"unit\": \"u26\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit1 is dried matches.\"}\n]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "All seven facts about unit4 are stated exactly."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "The conditional uses the correct senses and direction."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "faithful",
+   "reason": "The three conjuncts and the signal-audible conclusion are preserved; the grouping is logically equivalent."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "The three conjuncts and the casing-intact conclusion are preserved."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "The antecedents and the contamination-absent conclusion match."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "faithful",
+   "reason": "The conditional matches with the correct sense."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "faithful",
+   "reason": "Both antecedent senses and the conclusion sense match."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The conditional matches with the correct sense."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The conditional matches with the registry-current sense."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The conditional matches with the power-connected sense."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "The conditional matches."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The conditional matches with the correct senses."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The conditional matches with the optically-transparent sense."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "Casing intact is the sense established by r08.1 from the stated reasons."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "Signal audible is the sense established by r12.1 from the stated reasons."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "Unit4 signal audible follows via r14.1 from the two sound results."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit7 is dried matches."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "Power connected is the sense established by r09.1."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "Registry current is the sense established by r01.1 from power connected."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "Registry current for unit5 follows via r07.1."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit3 is logged matches."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "Contamination absent is the sense established by r05.1."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "Optically transparent is the sense established by r11.1."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "Contamination absent for unit4 is the sense established by r10.3 from the stated reasons."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The stated conclusion, that unit3 is audited, is formalised exactly."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit1 is dried matches."
+  }
+ }
+}

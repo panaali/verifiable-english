@@ -1,0 +1,246 @@
+{
+ "packet": "p192acf288601",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.112098",
+ "reply": "{\"units\": [\n{\"unit\": \"u1\", \"verdict\": \"acceptable\", \"reason\": \"This sentence only declares rule names, and the reasoning does not rely on it.\"},\n{\"unit\": \"u2\", \"verdict\": \"acceptable\", \"reason\": \"This sentence only declares rule names, and the reasoning does not rely on it.\"},\n{\"unit\": \"u3\", \"verdict\": \"acceptable\", \"reason\": \"This sentence only declares rule names, and the reasoning does not rely on it.\"},\n{\"unit\": \"u4\", \"verdict\": \"faithful\", \"reason\": \"All seven facts about unit5 are stated, with nothing added or dropped.\"},\n{\"unit\": \"u5\", \"verdict\": \"acceptable\", \"reason\": \"It only says which checks remain unassumed, and no step depends on it.\"},\n{\"unit\": \"u6\", \"verdict\": \"acceptable\", \"reason\": \"This sentence only declares rule names, and the reasoning does not rely on it.\"},\n{\"unit\": \"u7\", \"verdict\": \"acceptable\", \"reason\": \"This sentence only declares rule names, and the reasoning does not rely on it.\"},\n{\"unit\": \"u8\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches the sentence, with the payment-settled sense and the correct direction.\"},\n{\"unit\": \"u9\", \"verdict\": \"faithful\", \"reason\": \"The conjunction of the two packing-completed conditions implying unit5 weighed-in is correctly stated.\"},\n{\"unit\": \"u10\", \"verdict\": \"faithful\", \"reason\": \"The three conditions and the packing-completed conclusion are correctly stated.\"},\n{\"unit\": \"u11\", \"verdict\": \"acceptable\", \"reason\": \"This alternative rule is not used, because the tied and boxed conditions never arise in the argument.\"},\n{\"unit\": \"u12\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches the sentence, with the casing-intact sense.\"},\n{\"unit\": \"u13\", \"verdict\": \"faithful\", \"reason\": \"The conditions and the temperature-constant conclusion for unit1 match the sentence.\"},\n{\"unit\": \"u14\", \"verdict\": \"faithful\", \"reason\": \"The conditions and the shape-retained conclusion for unit1 match the sentence.\"},\n{\"unit\": \"u15\", \"verdict\": \"faithful\", \"reason\": \"The conditions and the temperature-constant conclusion for unit5 match the sentence.\"},\n{\"unit\": \"u16\", \"verdict\": \"faithful\", \"reason\": \"The conditions and the shape-retained conclusion for unit5 match the sentence.\"},\n{\"unit\": \"u17\", \"verdict\": \"faithful\", \"reason\": \"The implication from the temperature-constant sense to the shape-retained sense is correctly stated.\"},\n{\"unit\": \"u18\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches the sentence, with the inspection-passed sense.\"},\n{\"unit\": \"u19\", \"verdict\": \"faithful\", \"reason\": \"The three conditions and the staffing-arranged conclusion are correctly stated.\"},\n{\"unit\": \"u20\", \"verdict\": \"acceptable\", \"reason\": \"This alternative rule is not used, because the tied and boxed conditions never arise in the argument.\"},\n{\"unit\": \"u21\", \"verdict\": \"acceptable\", \"reason\": \"The supplied-sample fact is never used in the reasoning.\"},\n{\"unit\": \"u22\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches the sentence, with the payment-settled sense for both units.\"},\n{\"unit\": \"u23\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches the sentence, with the temperature-constant sense.\"},\n{\"unit\": \"u24\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches the sentence, with the signal-audible sense for both units.\"},\n{\"unit\": \"u25\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches the sentence, with the shape-retained sense.\"},\n{\"unit\": \"u26\", \"verdict\": \"acceptable\", \"reason\": \"This alternative rule is not used, because the tied and boxed conditions never arise in the argument.\"},\n{\"unit\": \"u27\", \"verdict\": \"faithful\", \"reason\": \"The implication from inspection-passed to payment-settled is correctly stated.\"},\n{\"unit\": \"u28\", \"verdict\": \"faithful\", \"reason\": \"The two conditions and the conclusion match the sentence, with the correct senses.\"},\n{\"unit\": \"u29\", \"verdict\": \"faithful\", \"reason\": \"The implication from casing-intact to signal-audible is correctly stated.\"},\n{\"unit\": \"u30\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches the sentence, with the signal-audible sense.\"},\n{\"unit\": \"u31\", \"verdict\": \"faithful\", \"reason\": \"The staffing-arranged sense is the one that r00.1 establishes from the stated reasons.\"},\n{\"unit\": \"u32\", \"verdict\": \"faithful\", \"reason\": \"The three implications match the respective consequents, with the senses given by r15.1 to r15.3.\"},\n{\"unit\": \"u33\", \"verdict\": \"faithful\", \"reason\": \"The packing-completed sense is the one that r03.1 establishes from the stated reasons.\"},\n{\"unit\": \"u34\", \"verdict\": \"faithful\", \"reason\": \"Via r06.1, unit5 is ready in the packing-completed sense.\"},\n{\"unit\": \"u35\", \"verdict\": \"faithful\", \"reason\": \"The conclusion unit5 weighed-in is correctly stated.\"},\n{\"unit\": \"u36\", \"verdict\": \"faithful\", \"reason\": \"The casing-intact sense follows via r01.1.\"},\n{\"unit\": \"u37\", \"verdict\": \"faithful\", \"reason\": \"The signal-audible sense follows via r14.1.\"},\n{\"unit\": \"u38\", \"verdict\": \"faithful\", \"reason\": \"Via r07.1, unit5 is sound in the signal-audible sense.\"},\n{\"unit\": \"u39\", \"verdict\": \"faithful\", \"reason\": \"The conclusion unit5 logged is correctly stated.\"},\n{\"unit\": \"u40\", \"verdict\": \"faithful\", \"reason\": \"The inspection-passed sense follows via r04.1.\"},\n{\"unit\": \"u41\", \"verdict\": \"faithful\", \"reason\": \"The payment-settled sense follows via r02.1.\"},\n{\"unit\": \"u42\", \"verdict\": \"faithful\", \"reason\": \"Via r12.1, unit1 is cleared in the payment-settled sense.\"},\n{\"unit\": \"u43\", \"verdict\": \"faithful\", \"reason\": \"The conclusion unit5 balanced is correctly stated.\"},\n{\"unit\": \"u44\", \"verdict\": \"faithful\", \"reason\": \"The temperature-constant sense follows via r13.1.\"},\n{\"unit\": \"u45\", \"verdict\": \"faithful\", \"reason\": \"The shape-retained sense follows via r11.1.\"},\n{\"unit\": \"u46\", \"verdict\": \"faithful\", \"reason\": \"Via r15.4, unit5 is stable in the shape-retained sense.\"},\n{\"unit\": \"u47\", \"verdict\": \"faithful\", \"reason\": \"The conclusion unit5 calibrated is correctly stated.\"}\n]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "This sentence only declares rule names, and the reasoning does not rely on it."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "This sentence only declares rule names, and the reasoning does not rely on it."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "This sentence only declares rule names, and the reasoning does not rely on it."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "All seven facts about unit5 are stated, with nothing added or dropped."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "It only says which checks remain unassumed, and no step depends on it."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "This sentence only declares rule names, and the reasoning does not rely on it."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "This sentence only declares rule names, and the reasoning does not rely on it."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The conditional matches the sentence, with the payment-settled sense and the correct direction."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The conjunction of the two packing-completed conditions implying unit5 weighed-in is correctly stated."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The three conditions and the packing-completed conclusion are correctly stated."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "acceptable",
+   "reason": "This alternative rule is not used, because the tied and boxed conditions never arise in the argument."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The conditional matches the sentence, with the casing-intact sense."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The conditions and the temperature-constant conclusion for unit1 match the sentence."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "The conditions and the shape-retained conclusion for unit1 match the sentence."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The conditions and the temperature-constant conclusion for unit5 match the sentence."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The conditions and the shape-retained conclusion for unit5 match the sentence."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The implication from the temperature-constant sense to the shape-retained sense is correctly stated."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The conditional matches the sentence, with the inspection-passed sense."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "The three conditions and the staffing-arranged conclusion are correctly stated."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "acceptable",
+   "reason": "This alternative rule is not used, because the tied and boxed conditions never arise in the argument."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "acceptable",
+   "reason": "The supplied-sample fact is never used in the reasoning."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The conditional matches the sentence, with the payment-settled sense for both units."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The conditional matches the sentence, with the temperature-constant sense."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The conditional matches the sentence, with the signal-audible sense for both units."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The conditional matches the sentence, with the shape-retained sense."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "acceptable",
+   "reason": "This alternative rule is not used, because the tied and boxed conditions never arise in the argument."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The implication from inspection-passed to payment-settled is correctly stated."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "The two conditions and the conclusion match the sentence, with the correct senses."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The implication from casing-intact to signal-audible is correctly stated."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The conditional matches the sentence, with the signal-audible sense."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The staffing-arranged sense is the one that r00.1 establishes from the stated reasons."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The three implications match the respective consequents, with the senses given by r15.1 to r15.3."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The packing-completed sense is the one that r03.1 establishes from the stated reasons."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "Via r06.1, unit5 is ready in the packing-completed sense."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "The conclusion unit5 weighed-in is correctly stated."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "The casing-intact sense follows via r01.1."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "The signal-audible sense follows via r14.1."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "Via r07.1, unit5 is sound in the signal-audible sense."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "The conclusion unit5 logged is correctly stated."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "The inspection-passed sense follows via r04.1."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "The payment-settled sense follows via r02.1."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "Via r12.1, unit1 is cleared in the payment-settled sense."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The conclusion unit5 balanced is correctly stated."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "The temperature-constant sense follows via r13.1."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "The shape-retained sense follows via r11.1."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "Via r15.4, unit5 is stable in the shape-retained sense."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "The conclusion unit5 calibrated is correctly stated."
+  }
+ }
+}

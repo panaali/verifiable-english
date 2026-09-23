@@ -1,0 +1,116 @@
+{
+ "item_id": "id9eed1756a3842c2d7da8f08ce3b9290",
+ "split": "dev",
+ "author": "haiku",
+ "arm": "A4",
+ "stop_reason": "budget",
+ "finish": null,
+ "turns": 26,
+ "tool_calls": 14,
+ "protocol_errors": 21,
+ "spent_usd": {
+  "author": "1.91988000",
+  "proposer": "0",
+  "total": "1.91988000"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "tool_success_strict": false,
+ "verification": {
+  "ok": true,
+  "problems": []
+ },
+ "proposer_model": "haiku",
+ "account": "saeedi.danial",
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n02: target not frozen",
+   "30 given sentence(s) not covered by any node: n08.1, n09.1, n09.2, n12.1, n10.1, n14.1, n16.1, r11.1, r00.1, r15.1, r12.1, r12.2, r08.1, r08.2, r08.3, r10.1, r10.2, r10.3, r10.4, r05.1, r02.1, r14.1, r06.1, r03.1, r07.1, r09.1, r13.1, r01.1, r04.1, r04.2",
+   "17 claimed sentence(s) not derived by a certified step: n07.1, n04.1, n20.1, n15.1, n18.1, n18.2, n13.1, n17.1, n06.1, n11.1, n01.1, n19.1, n00.1, n21.1, n03.1, n05.1, n02.1"
+  ],
+  "targets": [
+   {
+    "id": "t_n02",
+    "text": null,
+    "certified": false,
+    "reason": "target not frozen",
+    "replay": null,
+    "node": null
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "n08.1",
+   "n09.1",
+   "n09.2",
+   "n12.1",
+   "n10.1",
+   "n14.1",
+   "n16.1",
+   "r11.1",
+   "r00.1",
+   "r15.1",
+   "r12.1",
+   "r12.2",
+   "r08.1",
+   "r08.2",
+   "r08.3",
+   "r10.1",
+   "r10.2",
+   "r10.3",
+   "r10.4",
+   "r05.1",
+   "r02.1",
+   "r14.1",
+   "r06.1",
+   "r03.1",
+   "r07.1",
+   "r09.1",
+   "r13.1",
+   "r01.1",
+   "r04.1",
+   "r04.2"
+  ],
+  "underived": [
+   "n07.1",
+   "n04.1",
+   "n20.1",
+   "n15.1",
+   "n18.1",
+   "n18.2",
+   "n13.1",
+   "n17.1",
+   "n06.1",
+   "n11.1",
+   "n01.1",
+   "n19.1",
+   "n00.1",
+   "n21.1",
+   "n03.1",
+   "n05.1",
+   "n02.1"
+  ],
+  "covered": 0,
+  "derived": 0,
+  "waived": 0,
+  "waivers": [],
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 0,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 556.8,
+ "prompt_version": "ve-assist-eval-prompts@3"
+}

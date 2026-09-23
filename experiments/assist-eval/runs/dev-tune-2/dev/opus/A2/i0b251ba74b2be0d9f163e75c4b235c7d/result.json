@@ -1,0 +1,131 @@
+{
+ "item_id": "i0b251ba74b2be0d9f163e75c4b235c7d",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A2",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "s_n02"
+  ],
+  "note": "n02.1 infers unit0 documented from the preceding clear result (unit0 clear, optically transparent), but r01.1 requires unit2 clear (optically transparent) and r01.2 requires unit2 dated and tied; neither is established."
+ },
+ "turns": 1,
+ "tool_calls": 0,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.101211",
+  "proposer": "0",
+  "total": "0.101211"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "tool_success_strict": false,
+ "verification": {
+  "ok": true,
+  "problems": [],
+  "attempts_failing": []
+ },
+ "proposer_model": null,
+ "account": "saeedi.danial",
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n08: no step node states the frozen target",
+   "1 given sentence(s) not covered by any node: n19.1",
+   "17 claimed sentence(s) not derived by a certified step: n12.1, n13.1, n07.1, n05.1, n15.1, n16.1, n16.2, n04.1, n02.1, n17.1, n01.1, n21.1, n10.1, n14.1, n20.1, n00.1, n08.1",
+   "7 asserting sentence(s) waived (a waiver is reported, never success): n06.1, n11.1, n18.1, n03.1, n09.1, n19.2, r06.3"
+  ],
+  "targets": [
+   {
+    "id": "t_n08",
+    "text": "@unit0 is bundled.",
+    "certified": false,
+    "reason": "no step node states the frozen target",
+    "replay": null,
+    "node": null
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "n19.1"
+  ],
+  "underived": [
+   "n12.1",
+   "n13.1",
+   "n07.1",
+   "n05.1",
+   "n15.1",
+   "n16.1",
+   "n16.2",
+   "n04.1",
+   "n02.1",
+   "n17.1",
+   "n01.1",
+   "n21.1",
+   "n10.1",
+   "n14.1",
+   "n20.1",
+   "n00.1",
+   "n08.1"
+  ],
+  "covered": 22,
+  "derived": 0,
+  "waived": 7,
+  "waivers": [
+   {
+    "sentence": "n06.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n11.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n18.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n03.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n09.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n19.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r06.3",
+    "role": "given",
+    "counts_against_success": true
+   }
+  ],
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 22,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 29.7,
+ "prompt_version": "ve-assist-eval-prompts@3"
+}

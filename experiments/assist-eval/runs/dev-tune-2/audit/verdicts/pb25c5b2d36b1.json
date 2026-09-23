@@ -1,0 +1,99 @@
+{
+ "packet": "pb25c5b2d36b1",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"This sentence only lists declared rules whose contents are stated separately.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"This sentence only lists declared rules whose contents are stated separately.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"This sentence only lists declared rules whose contents are stated separately.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"This sentence only lists declared rules whose contents are stated separately.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"This sentence identifies checks that remain unassumed rather than asserting facts used as premises.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"This sentence only lists declared rules whose contents are stated separately.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on the alternative rule using audited and scheduled premises.\"},{\"unit\":\"u8\",\"verdict\":\"acceptable\",\"reason\":\"The stated reason for the shipping conclusion is a clear result, so this alternative rule is unused.\"},{\"unit\":\"u9\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on the alternative rule using audited and scheduled premises.\"},{\"unit\":\"u10\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not use the sample relationship between unit2 and unit3.\"},{\"unit\":\"u11\",\"verdict\":\"unacceptable\",\"reason\":\"Claim n21.2 relies on this rule to say that the documented check would establish that unit3 is clear of contamination.\"},{\"unit\":\"u12\",\"verdict\":\"unacceptable\",\"reason\":\"Claim n21.2 relies on this rule to say that the queued check would establish that unit3 is optically transparent.\"},{\"unit\":\"u13\",\"verdict\":\"unacceptable\",\"reason\":\"Claim n21.2 relies on this rule to say that the boxed check would establish that unit2 is clear of contamination.\"}]}",
+ "auditor_tokens": 7061,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u11",
+   "sentence": "r07.1",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "Claim n21.2 relies on this rule to say that the documented check would establish that unit3 is clear of contamination."
+  },
+  {
+   "unit": "u12",
+   "sentence": "r07.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "Claim n21.2 relies on this rule to say that the queued check would establish that unit3 is optically transparent."
+  },
+  {
+   "unit": "u13",
+   "sentence": "r07.3",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "Claim n21.2 relies on this rule to say that the boxed check would establish that unit2 is clear of contamination."
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "This sentence only lists declared rules whose contents are stated separately."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "This sentence only lists declared rules whose contents are stated separately."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "This sentence only lists declared rules whose contents are stated separately."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "This sentence only lists declared rules whose contents are stated separately."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "This sentence identifies checks that remain unassumed rather than asserting facts used as premises."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "This sentence only lists declared rules whose contents are stated separately."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on the alternative rule using audited and scheduled premises."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "acceptable",
+   "reason": "The stated reason for the shipping conclusion is a clear result, so this alternative rule is unused."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on the alternative rule using audited and scheduled premises."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "acceptable",
+   "reason": "The argument does not use the sample relationship between unit2 and unit3."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "unacceptable",
+   "reason": "Claim n21.2 relies on this rule to say that the documented check would establish that unit3 is clear of contamination."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "unacceptable",
+   "reason": "Claim n21.2 relies on this rule to say that the queued check would establish that unit3 is optically transparent."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "unacceptable",
+   "reason": "Claim n21.2 relies on this rule to say that the boxed check would establish that unit2 is clear of contamination."
+  }
+ }
+}

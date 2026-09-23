@@ -1,0 +1,206 @@
+{
+ "packet": "p4c2fb10794ea",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"faithful\",\"reason\":\"All seven facts about unit4 are preserved.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u5\",\"verdict\":\"faithful\",\"reason\":\"Both clear senses, the entity, and the implication direction are preserved.\"},{\"unit\":\"u6\",\"verdict\":\"faithful\",\"reason\":\"The audited condition and seal-removed conclusion concern the correct entities.\"},{\"unit\":\"u7\",\"verdict\":\"faithful\",\"reason\":\"The implication correctly connects seal removal to account enablement for unit0.\"},{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"All three conditions and the signal-audible conclusion are preserved.\"},{\"unit\":\"u9\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on this alternative staged-and-inspected rule.\"},{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"All three conditions and the casing-intact conclusion are preserved.\"},{\"unit\":\"u11\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on this alternative staged-and-inspected rule.\"},{\"unit\":\"u12\",\"verdict\":\"acceptable\",\"reason\":\"No stated inference relies on the sample relationship.\"},{\"unit\":\"u13\",\"verdict\":\"faithful\",\"reason\":\"Both conditions and the optically-transparent conclusion for unit4 are preserved.\"},{\"unit\":\"u14\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the bagged conditional claimed in n18.2 even though bagging remains unassumed.\"},{\"unit\":\"u15\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the tracked conditional claimed in n18.2 even though tracking remains unassumed.\"},{\"unit\":\"u16\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the wrapped conditional claimed in n18.2 even though wrapping remains unassumed.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"The logged condition and contamination-absent conclusion are preserved for the correct entities.\"},{\"unit\":\"u18\",\"verdict\":\"faithful\",\"reason\":\"Account enablement for unit5 correctly implies that unit1 is dried.\"},{\"unit\":\"u19\",\"verdict\":\"faithful\",\"reason\":\"Both distinct sound conditions for unit0 and the signal-audible conclusion for unit4 are preserved.\"},{\"unit\":\"u20\",\"verdict\":\"faithful\",\"reason\":\"The signal-audible condition for unit4 correctly implies that unit7 is dried.\"},{\"unit\":\"u21\",\"verdict\":\"faithful\",\"reason\":\"The account-enabled sense and implication from unit0 to unit5 are preserved.\"},{\"unit\":\"u22\",\"verdict\":\"faithful\",\"reason\":\"The registry-current sense and implication from unit0 to unit5 are preserved.\"},{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"The dried condition for unit7 and power-connected conclusion for unit0 are preserved.\"},{\"unit\":\"u24\",\"verdict\":\"faithful\",\"reason\":\"The registry-current condition for unit5 correctly implies that unit3 is logged.\"},{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"The implication correctly connects power connection to registry currency for unit0.\"},{\"unit\":\"u26\",\"verdict\":\"faithful\",\"reason\":\"Optical transparency for unit4 correctly implies that unit3 is audited.\"},{\"unit\":\"u27\",\"verdict\":\"acceptable\",\"reason\":\"The stated reasoning uses the clear result rather than this alternative staged-and-inspected rule.\"},{\"unit\":\"u28\",\"verdict\":\"faithful\",\"reason\":\"The stated clipped, logged, and shipped reasons establish the casing-intact sense through r08.1.\"},{\"unit\":\"u29\",\"verdict\":\"faithful\",\"reason\":\"The stated dried, scanned, and audited reasons establish the signal-audible sense through r12.1.\"},{\"unit\":\"u30\",\"verdict\":\"faithful\",\"reason\":\"The two sound results for unit0 support the signal-audible conclusion for unit4 through r14.1.\"},{\"unit\":\"u31\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states the sentence's dried conclusion for unit7.\"},{\"unit\":\"u32\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence asserts three conditional inferences, which remain substantive claims despite their antecedents being unassumed.\"},{\"unit\":\"u33\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states the sentence's dried conclusion for unit1.\"}]}",
+ "auditor_tokens": 9770,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u14",
+   "sentence": "r10.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the bagged conditional claimed in n18.2 even though bagging remains unassumed."
+  },
+  {
+   "unit": "u15",
+   "sentence": "r10.3",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the tracked conditional claimed in n18.2 even though tracking remains unassumed."
+  },
+  {
+   "unit": "u16",
+   "sentence": "r10.4",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the wrapped conditional claimed in n18.2 even though wrapping remains unassumed."
+  },
+  {
+   "unit": "u32",
+   "sentence": "n18.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "The sentence asserts three conditional inferences, which remain substantive claims despite their antecedents being unassumed."
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "All seven facts about unit4 are preserved."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "Both clear senses, the entity, and the implication direction are preserved."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "faithful",
+   "reason": "The audited condition and seal-removed conclusion concern the correct entities."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "faithful",
+   "reason": "The implication correctly connects seal removal to account enablement for unit0."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "All three conditions and the signal-audible conclusion are preserved."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on this alternative staged-and-inspected rule."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "All three conditions and the casing-intact conclusion are preserved."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on this alternative staged-and-inspected rule."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "acceptable",
+   "reason": "No stated inference relies on the sample relationship."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "Both conditions and the optically-transparent conclusion for unit4 are preserved."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the bagged conditional claimed in n18.2 even though bagging remains unassumed."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the tracked conditional claimed in n18.2 even though tracking remains unassumed."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the wrapped conditional claimed in n18.2 even though wrapping remains unassumed."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The logged condition and contamination-absent conclusion are preserved for the correct entities."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "Account enablement for unit5 correctly implies that unit1 is dried."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "Both distinct sound conditions for unit0 and the signal-audible conclusion for unit4 are preserved."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The signal-audible condition for unit4 correctly implies that unit7 is dried."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The account-enabled sense and implication from unit0 to unit5 are preserved."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The registry-current sense and implication from unit0 to unit5 are preserved."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The dried condition for unit7 and power-connected conclusion for unit0 are preserved."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The registry-current condition for unit5 correctly implies that unit3 is logged."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The implication correctly connects power connection to registry currency for unit0."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "Optical transparency for unit4 correctly implies that unit3 is audited."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "acceptable",
+   "reason": "The stated reasoning uses the clear result rather than this alternative staged-and-inspected rule."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "The stated clipped, logged, and shipped reasons establish the casing-intact sense through r08.1."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The stated dried, scanned, and audited reasons establish the signal-audible sense through r12.1."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The two sound results for unit0 support the signal-audible conclusion for unit4 through r14.1."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The formalisation states the sentence's dried conclusion for unit7."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "unacceptable",
+   "reason": "The sentence asserts three conditional inferences, which remain substantive claims despite their antecedents being unassumed."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The formalisation states the sentence's dried conclusion for unit1."
+  }
+ }
+}

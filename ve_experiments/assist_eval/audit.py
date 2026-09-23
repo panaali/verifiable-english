@@ -194,7 +194,9 @@ def judge(packet, reply_text):
 def make_auditor(who, out, account):
     if who == "codex":
         return CodexAuditor(out / "codex-audit-calls.jsonl")
-    return ClaudeTextAuthor("opus", out / "opus-audit-calls.jsonl", account=account)
+    # one calls ledger per Claude account (the endpoint refuses mixed accounts in one ledger)
+    name = "opus-audit-calls.jsonl" if account == "saeedi.danial" else f"opus-audit-calls.{account or 'main'}.jsonl"
+    return ClaudeTextAuthor("opus", out / name, account=account)
 
 
 def run_audit(run_dir, *, account=None, auditors=None):
@@ -285,6 +287,8 @@ def attribute(result, verdict, cls, origins):
     if verdict is None:
         return "unaudited"
     if not verdict["pass"]:
+        if any(p.get("reason") == "empty packet" for p in verdict.get("problems", [])):
+            return "author: nothing formalised"
         rows = list(origins.values())
         if any("proposer-verbatim" in r["origins"] for r in rows):
             return "audit-fail: proposer candidate accepted unchanged"

@@ -1,0 +1,162 @@
+{
+ "packet": "p2202e69dc160",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sentence identifies checks that remain unassumed without asserting them.\"},{\"unit\":\"u7\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions, the entities, the specified clear senses, and the implication direction.\"},{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions and the contamination-absent conclusion about unit2.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions and the optically-transparent conclusion about unit0.\"},{\"unit\":\"u10\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions and the optically-transparent conclusion about unit2.\"},{\"unit\":\"u11\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the implication from seal removed to account enabled for unit1.\"},{\"unit\":\"u12\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the account-enabled implication from unit1 to unit0.\"},{\"unit\":\"u13\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the packed condition on unit0 and the staffing-arranged conclusion about unit1.\"},{\"unit\":\"u14\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the packing-completed condition and bundled conclusion for unit0.\"},{\"unit\":\"u15\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the documented condition on unit0 and the seal-removed conclusion about unit1.\"},{\"unit\":\"u16\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both signal-audible conditions and the checked conclusion about unit0.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three conditions on unit0 and the signal-audible conclusion about unit1.\"},{\"unit\":\"u18\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions on unit2 and the signal-audible conclusion about unit1.\"},{\"unit\":\"u19\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three conditions on unit0 and the casing-intact conclusion about unit1.\"},{\"unit\":\"u20\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions on unit2 and the casing-intact conclusion about unit1.\"},{\"unit\":\"u21\",\"verdict\":\"acceptable\",\"reason\":\"The sample relation is not used by the argument's reasoning.\"},{\"unit\":\"u22\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the optically-transparent condition on unit2 and the documented conclusion about unit0.\"},{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions on unit2 and the documented conclusion about unit0.\"},{\"unit\":\"u24\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the implication from contamination absent to optically transparent for unit1.\"},{\"unit\":\"u25\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both distinct sound conditions on unit1 and the signal-audible conclusion about unit0.\"},{\"unit\":\"u26\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the packing-completed implication from unit1 to unit0.\"},{\"unit\":\"u27\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the implication from staffing arranged to packing completed for unit1.\"},{\"unit\":\"u28\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the account-enabled condition and packed conclusion for unit0.\"},{\"unit\":\"u29\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the checked condition on unit0 and the contamination-absent conclusion about unit1.\"},{\"unit\":\"u30\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states the exact bundled conclusion about unit0, with reasons permitted to appear elsewhere.\"}]}",
+ "auditor_tokens": 10157,
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence identifies checks that remain unassumed without asserting them."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions, the entities, the specified clear senses, and the implication direction."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions and the contamination-absent conclusion about unit2."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions and the optically-transparent conclusion about unit0."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions and the optically-transparent conclusion about unit2."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the implication from seal removed to account enabled for unit1."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the account-enabled implication from unit1 to unit0."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the packed condition on unit0 and the staffing-arranged conclusion about unit1."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the packing-completed condition and bundled conclusion for unit0."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the documented condition on unit0 and the seal-removed conclusion about unit1."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both signal-audible conditions and the checked conclusion about unit0."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three conditions on unit0 and the signal-audible conclusion about unit1."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions on unit2 and the signal-audible conclusion about unit1."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three conditions on unit0 and the casing-intact conclusion about unit1."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions on unit2 and the casing-intact conclusion about unit1."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "acceptable",
+   "reason": "The sample relation is not used by the argument's reasoning."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the optically-transparent condition on unit2 and the documented conclusion about unit0."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions on unit2 and the documented conclusion about unit0."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the implication from contamination absent to optically transparent for unit1."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both distinct sound conditions on unit1 and the signal-audible conclusion about unit0."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the packing-completed implication from unit1 to unit0."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the implication from staffing arranged to packing completed for unit1."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the account-enabled condition and packed conclusion for unit0."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the checked condition on unit0 and the contamination-absent conclusion about unit1."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The formalisation states the exact bundled conclusion about unit0, with reasons permitted to appear elsewhere."
+  }
+ }
+}

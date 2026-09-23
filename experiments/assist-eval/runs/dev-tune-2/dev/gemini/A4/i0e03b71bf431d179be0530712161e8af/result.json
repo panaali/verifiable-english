@@ -1,0 +1,243 @@
+{
+ "item_id": "i0e03b71bf431d179be0530712161e8af",
+ "split": "dev",
+ "author": "gemini",
+ "arm": "A4",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "n14_1"
+  ],
+  "note": ""
+ },
+ "turns": 5,
+ "tool_calls": 41,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.126230",
+  "proposer": "0",
+  "total": "0.126230"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "tool_success_strict": false,
+ "verification": {
+  "ok": true,
+  "problems": []
+ },
+ "proposer_model": "haiku",
+ "account": "saeedi.danial",
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n14: graph replay status Incomplete",
+   "16 unproved step(s)",
+   "13 given sentence(s) not covered by any node: n05.1, n06.1, n19.1, n09.2, n11.1, n21.1, r03.2, r15.1, r15.2, r15.4, r00.2, r00.3, r05.2",
+   "17 claimed sentence(s) not derived by a certified step: n18.1, n18.2, n07.1, n03.1, n08.1, n16.1, n12.1, n04.1, n20.1, n10.1, n02.1, n17.1, n00.1, n13.1, n01.1, n15.1, n14.1"
+  ],
+  "targets": [
+   {
+    "id": "t_n14",
+    "text": "@unit5 is calibrated.",
+    "certified": false,
+    "reason": null,
+    "replay": "Incomplete",
+    "node": "n14_1"
+   }
+  ],
+  "unproved_steps": [
+   {
+    "node": "n18_1",
+    "check": "unchecked",
+    "parents": [
+     "n09_1_bundled",
+     "n09_1_retained",
+     "n09_1_packed",
+     "r00_1"
+    ]
+   },
+   {
+    "node": "n07_1",
+    "check": "unchecked",
+    "parents": [
+     "n09_1_mounted",
+     "n09_1_routed",
+     "n09_1_rated",
+     "r03_1"
+    ]
+   },
+   {
+    "node": "n03_1",
+    "check": "unchecked",
+    "parents": [
+     "n18_1",
+     "n07_1",
+     "r06_1"
+    ]
+   },
+   {
+    "node": "n08_1",
+    "check": "unchecked",
+    "parents": [
+     "n07_1",
+     "n03_1",
+     "r09_1"
+    ]
+   },
+   {
+    "node": "n16_1",
+    "check": "unchecked",
+    "parents": [
+     "n08_1",
+     "r01_1"
+    ]
+   },
+   {
+    "node": "n12_1",
+    "check": "unchecked",
+    "parents": [
+     "n16_1",
+     "r14_1"
+    ]
+   },
+   {
+    "node": "n04_1",
+    "check": "unchecked",
+    "parents": [
+     "n12_1",
+     "r07_1"
+    ]
+   },
+   {
+    "node": "n20_1",
+    "check": "unchecked",
+    "parents": [
+     "n04_1",
+     "r10_1"
+    ]
+   },
+   {
+    "node": "n10_1",
+    "check": "unchecked",
+    "parents": [
+     "n20_1",
+     "r04_1"
+    ]
+   },
+   {
+    "node": "n02_1",
+    "check": "unchecked",
+    "parents": [
+     "n10_1",
+     "r02_1"
+    ]
+   },
+   {
+    "node": "n17_1",
+    "check": "unchecked",
+    "parents": [
+     "n02_1",
+     "r12_1"
+    ]
+   },
+   {
+    "node": "n00_1",
+    "check": "unchecked",
+    "parents": [
+     "n17_1",
+     "r08_1"
+    ]
+   },
+   {
+    "node": "n13_1",
+    "check": "unchecked",
+    "parents": [
+     "n00_1",
+     "r13_1"
+    ]
+   },
+   {
+    "node": "n01_1",
+    "check": "unchecked",
+    "parents": [
+     "n13_1",
+     "r11_1"
+    ]
+   },
+   {
+    "node": "n15_1",
+    "check": "unchecked",
+    "parents": [
+     "n01_1",
+     "n09_1_coded",
+     "r15_3"
+    ]
+   },
+   {
+    "node": "n14_1",
+    "check": "unchecked",
+    "parents": [
+     "n15_1",
+     "r05_1"
+    ]
+   }
+  ],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "n05.1",
+   "n06.1",
+   "n19.1",
+   "n09.2",
+   "n11.1",
+   "n21.1",
+   "r03.2",
+   "r15.1",
+   "r15.2",
+   "r15.4",
+   "r00.2",
+   "r00.3",
+   "r05.2"
+  ],
+  "underived": [
+   "n18.1",
+   "n18.2",
+   "n07.1",
+   "n03.1",
+   "n08.1",
+   "n16.1",
+   "n12.1",
+   "n04.1",
+   "n20.1",
+   "n10.1",
+   "n02.1",
+   "n17.1",
+   "n00.1",
+   "n13.1",
+   "n01.1",
+   "n15.1",
+   "n14.1"
+  ],
+  "covered": 17,
+  "derived": 0,
+  "waived": 0,
+  "waivers": [],
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 39,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "restart": 0,
+ "elapsed_s": 41.3,
+ "prompt_version": "ve-assist-eval-prompts@3"
+}

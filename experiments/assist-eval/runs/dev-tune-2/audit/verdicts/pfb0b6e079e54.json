@@ -1,0 +1,162 @@
+{
+ "packet": "pfb0b6e079e54",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sentence identifies checks that remain unassumed rather than asserting facts used in the reasoning.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sentence only lists declared rule names.\"},{\"unit\":\"u7\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both entities, the payment-settled sense, and the implication's direction.\"},{\"unit\":\"u8\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both packing-completed conditions and the weighed-in conclusion for unit5.\"},{\"unit\":\"u9\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three conditions on unit5 and the packing-completed conclusion for unit3.\"},{\"unit\":\"u10\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on the alternative rule requiring unit5 to be tied and boxed.\"},{\"unit\":\"u11\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the weighed-in condition for unit5 and the casing-intact conclusion for unit3.\"},{\"unit\":\"u12\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions and the temperature-constant conclusion for unit1.\"},{\"unit\":\"u13\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions and the shape-retained conclusion for unit1.\"},{\"unit\":\"u14\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions and the temperature-constant conclusion for unit5.\"},{\"unit\":\"u15\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both conditions and the shape-retained conclusion for unit5.\"},{\"unit\":\"u16\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the implication from temperature constant to shape retained for unit3.\"},{\"unit\":\"u17\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the logged condition for unit5 and the inspection-passed conclusion for unit3.\"},{\"unit\":\"u18\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves all three conditions on unit5 and the staffing-arranged conclusion for unit3.\"},{\"unit\":\"u19\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on the alternative rule requiring unit5 to be tied and boxed.\"},{\"unit\":\"u20\",\"verdict\":\"acceptable\",\"reason\":\"The supplied-sample fact is not used in the argument's reasoning.\"},{\"unit\":\"u21\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the payment-settled sense for both entities and the implication from unit3 to unit1.\"},{\"unit\":\"u22\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the balanced condition for unit5 and the temperature-constant conclusion for unit3.\"},{\"unit\":\"u23\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the signal-audible sense and the implication from unit3 to unit5.\"},{\"unit\":\"u24\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the shape-retained condition and calibrated conclusion for unit5.\"},{\"unit\":\"u25\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on the alternative calibration rule requiring unit5 to be tied and boxed.\"},{\"unit\":\"u26\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the implication from inspection passed to payment settled for unit3.\"},{\"unit\":\"u27\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves both distinct readiness conditions for unit3 and the packing-completed conclusion for unit5.\"},{\"unit\":\"u28\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the implication from casing intact to signal audible for unit3.\"},{\"unit\":\"u29\",\"verdict\":\"faithful\",\"reason\":\"The formalisation preserves the signal-audible condition and logged conclusion for unit5.\"},{\"unit\":\"u30\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states the exact calibrated conclusion for unit5, as permitted for a conclusion given with reasons.\"}]}",
+ "auditor_tokens": 9716,
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sentence identifies checks that remain unassumed rather than asserting facts used in the reasoning."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sentence only lists declared rule names."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both entities, the payment-settled sense, and the implication's direction."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both packing-completed conditions and the weighed-in conclusion for unit5."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three conditions on unit5 and the packing-completed conclusion for unit3."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on the alternative rule requiring unit5 to be tied and boxed."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the weighed-in condition for unit5 and the casing-intact conclusion for unit3."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions and the temperature-constant conclusion for unit1."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions and the shape-retained conclusion for unit1."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions and the temperature-constant conclusion for unit5."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both conditions and the shape-retained conclusion for unit5."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the implication from temperature constant to shape retained for unit3."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the logged condition for unit5 and the inspection-passed conclusion for unit3."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves all three conditions on unit5 and the staffing-arranged conclusion for unit3."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on the alternative rule requiring unit5 to be tied and boxed."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "acceptable",
+   "reason": "The supplied-sample fact is not used in the argument's reasoning."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the payment-settled sense for both entities and the implication from unit3 to unit1."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the balanced condition for unit5 and the temperature-constant conclusion for unit3."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the signal-audible sense and the implication from unit3 to unit5."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the shape-retained condition and calibrated conclusion for unit5."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on the alternative calibration rule requiring unit5 to be tied and boxed."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the implication from inspection passed to payment settled for unit3."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves both distinct readiness conditions for unit3 and the packing-completed conclusion for unit5."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the implication from casing intact to signal audible for unit3."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The formalisation preserves the signal-audible condition and logged conclusion for unit5."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The formalisation states the exact calibrated conclusion for unit5, as permitted for a conclusion given with reasons."
+  }
+ }
+}

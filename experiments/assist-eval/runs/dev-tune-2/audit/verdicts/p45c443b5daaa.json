@@ -1,0 +1,81 @@
+{
+ "packet": "p45c443b5daaa",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"This alternative rule is not used by any stated inference.\"},{\"unit\":\"u2\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the stacked-to-stable conditional asserted in n18.2.\"},{\"unit\":\"u3\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the checked-to-stable conditional asserted in n18.2.\"},{\"unit\":\"u4\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the coded-to-stable conditional asserted in n18.2.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"This alternative rule is not used by any stated inference.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The supplied fact is not used in the argument's reasoning.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"This alternative rule is not used by any stated inference.\"},{\"unit\":\"u8\",\"verdict\":\"unacceptable\",\"reason\":\"The sentence asserts three substantive conditional inferences, which remain reasoning claims even though their antecedents are unassumed.\"}]}",
+ "auditor_tokens": 6979,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u2",
+   "sentence": "r15.1",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the stacked-to-stable conditional asserted in n18.2."
+  },
+  {
+   "unit": "u3",
+   "sentence": "r15.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the checked-to-stable conditional asserted in n18.2."
+  },
+  {
+   "unit": "u4",
+   "sentence": "r15.3",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the coded-to-stable conditional asserted in n18.2."
+  },
+  {
+   "unit": "u8",
+   "sentence": "n18.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "The sentence asserts three substantive conditional inferences, which remain reasoning claims even though their antecedents are unassumed."
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "This alternative rule is not used by any stated inference."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the stacked-to-stable conditional asserted in n18.2."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the checked-to-stable conditional asserted in n18.2."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the coded-to-stable conditional asserted in n18.2."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "This alternative rule is not used by any stated inference."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The supplied fact is not used in the argument's reasoning."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "This alternative rule is not used by any stated inference."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "unacceptable",
+   "reason": "The sentence asserts three substantive conditional inferences, which remain reasoning claims even though their antecedents are unassumed."
+  }
+ }
+}

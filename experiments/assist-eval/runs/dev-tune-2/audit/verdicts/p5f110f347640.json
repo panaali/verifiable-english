@@ -1,0 +1,268 @@
+{
+ "packet": "p5f110f347640",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.111293",
+ "reply": "{\"units\": [\n{\"unit\": \"u1\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the argument does not rely on it.\"},\n{\"unit\": \"u2\", \"verdict\": \"faithful\", \"reason\": \"All seven facts about unit4 are stated with the correct predicates.\"},\n{\"unit\": \"u3\", \"verdict\": \"acceptable\", \"reason\": \"This only says which checks remain unassumed, and nothing is derived from it.\"},\n{\"unit\": \"u4\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the argument does not rely on it.\"},\n{\"unit\": \"u5\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the argument does not rely on it.\"},\n{\"unit\": \"u6\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the argument does not rely on it.\"},\n{\"unit\": \"u7\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the argument does not rely on it.\"},\n{\"unit\": \"u8\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same implication, direction and senses (contamination absent to optically transparent).\"},\n{\"unit\": \"u9\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same implication, with open in the seal-removed sense.\"},\n{\"unit\": \"u10\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same implication, from seal removed to account enabled.\"},\n{\"unit\": \"u11\", \"verdict\": \"faithful\", \"reason\": \"The three-way conjunction correctly implies unit0 sound in the signal-audible sense.\"},\n{\"unit\": \"u12\", \"verdict\": \"acceptable\", \"reason\": \"The staged/inspected route is never used, since those facts are not given.\"},\n{\"unit\": \"u13\", \"verdict\": \"faithful\", \"reason\": \"The three-way conjunction correctly implies unit0 sound in the casing-intact sense.\"},\n{\"unit\": \"u14\", \"verdict\": \"acceptable\", \"reason\": \"The staged/inspected route is never used.\"},\n{\"unit\": \"u15\", \"verdict\": \"acceptable\", \"reason\": \"The sample fact is never used in the reasoning.\"},\n{\"unit\": \"u16\", \"verdict\": \"unacceptable\", \"reason\": \"Claimed sentence n18.2 relies on this rule for its 'numbered implies unit4 clear' part.\"},\n{\"unit\": \"u17\", \"verdict\": \"unacceptable\", \"reason\": \"Claimed sentence n18.2 relies on this rule for its 'bagged implies unit5 clear' part.\"},\n{\"unit\": \"u18\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same conditions and conclusion, with the correct senses.\"},\n{\"unit\": \"u19\", \"verdict\": \"unacceptable\", \"reason\": \"Claimed sentence n18.2 relies on this rule for its 'wrapped implies unit5 clear' part.\"},\n{\"unit\": \"u20\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same implication, with clear in the contamination-absent sense.\"},\n{\"unit\": \"u21\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same implication, from open (account enabled) to unit1 dried.\"},\n{\"unit\": \"u22\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same conjunction of two senses implying unit4 signal audible.\"},\n{\"unit\": \"u23\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same implication.\"},\n{\"unit\": \"u24\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same implication, with the correct senses.\"},\n{\"unit\": \"u25\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same implication, with the correct senses.\"},\n{\"unit\": \"u26\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same implication, with active in the power-connected sense.\"},\n{\"unit\": \"u27\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same implication.\"},\n{\"unit\": \"u28\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same implication, from power connected to registry current.\"},\n{\"unit\": \"u29\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same implication, with clear in the optically-transparent sense.\"},\n{\"unit\": \"u30\", \"verdict\": \"acceptable\", \"reason\": \"The staged/inspected route is never used.\"},\n{\"unit\": \"u31\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish unit0 casing intact via r08.1.\"},\n{\"unit\": \"u32\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish unit0 signal audible via r12.1.\"},\n{\"unit\": \"u33\", \"verdict\": \"faithful\", \"reason\": \"Via r14.1, the conclusion is unit4 signal audible.\"},\n{\"unit\": \"u34\", \"verdict\": \"faithful\", \"reason\": \"It states unit7 dried, matching the sentence's conclusion.\"},\n{\"unit\": \"u35\", \"verdict\": \"faithful\", \"reason\": \"Via r09.1, unit7 dried yields unit0 active in the power-connected sense.\"},\n{\"unit\": \"u36\", \"verdict\": \"faithful\", \"reason\": \"The three conditionals match r10.1, r10.2 and r10.4 in the right order, with correct senses, given that unit0 clear is already established.\"},\n{\"unit\": \"u37\", \"verdict\": \"faithful\", \"reason\": \"Via r01.1, the conclusion is unit0 registry current.\"},\n{\"unit\": \"u38\", \"verdict\": \"faithful\", \"reason\": \"Via r07.1, the conclusion is unit5 registry current.\"},\n{\"unit\": \"u39\", \"verdict\": \"faithful\", \"reason\": \"It states unit3 logged, matching the sentence's conclusion.\"},\n{\"unit\": \"u40\", \"verdict\": \"faithful\", \"reason\": \"Via r05.1, the conclusion is unit0 contamination absent.\"},\n{\"unit\": \"u41\", \"verdict\": \"faithful\", \"reason\": \"Via r11.1, the conclusion is unit0 optically transparent.\"},\n{\"unit\": \"u42\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish unit4 contamination absent via r10.3.\"},\n{\"unit\": \"u43\", \"verdict\": \"faithful\", \"reason\": \"It states unit3 audited, matching the sentence's conclusion.\"},\n{\"unit\": \"u44\", \"verdict\": \"faithful\", \"reason\": \"Via r00.1, the conclusion is unit0 seal removed.\"},\n{\"unit\": \"u45\", \"verdict\": \"faithful\", \"reason\": \"Via r15.1, the conclusion is unit0 account enabled.\"},\n{\"unit\": \"u46\", \"verdict\": \"faithful\", \"reason\": \"Via r03.1, the conclusion is unit5 account enabled.\"},\n{\"unit\": \"u47\", \"verdict\": \"faithful\", \"reason\": \"It states unit1 dried, matching the sentence's conclusion.\"}\n]}",
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u16",
+   "sentence": "r10.1",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "Claimed sentence n18.2 relies on this rule for its 'numbered implies unit4 clear' part."
+  },
+  {
+   "unit": "u17",
+   "sentence": "r10.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "Claimed sentence n18.2 relies on this rule for its 'bagged implies unit5 clear' part."
+  },
+  {
+   "unit": "u19",
+   "sentence": "r10.4",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "Claimed sentence n18.2 relies on this rule for its 'wrapped implies unit5 clear' part."
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the argument does not rely on it."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "All seven facts about unit4 are stated with the correct predicates."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "This only says which checks remain unassumed, and nothing is derived from it."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the argument does not rely on it."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the argument does not rely on it."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the argument does not rely on it."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the argument does not rely on it."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "It keeps the same implication, direction and senses (contamination absent to optically transparent)."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "It keeps the same implication, with open in the seal-removed sense."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "It keeps the same implication, from seal removed to account enabled."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "The three-way conjunction correctly implies unit0 sound in the signal-audible sense."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "acceptable",
+   "reason": "The staged/inspected route is never used, since those facts are not given."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The three-way conjunction correctly implies unit0 sound in the casing-intact sense."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "acceptable",
+   "reason": "The staged/inspected route is never used."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "acceptable",
+   "reason": "The sample fact is never used in the reasoning."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "unacceptable",
+   "reason": "Claimed sentence n18.2 relies on this rule for its 'numbered implies unit4 clear' part."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "unacceptable",
+   "reason": "Claimed sentence n18.2 relies on this rule for its 'bagged implies unit5 clear' part."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "It keeps the same conditions and conclusion, with the correct senses."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "unacceptable",
+   "reason": "Claimed sentence n18.2 relies on this rule for its 'wrapped implies unit5 clear' part."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "It keeps the same implication, with clear in the contamination-absent sense."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "It keeps the same implication, from open (account enabled) to unit1 dried."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "It keeps the same conjunction of two senses implying unit4 signal audible."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "It keeps the same implication."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "It keeps the same implication, with the correct senses."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "It keeps the same implication, with the correct senses."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "It keeps the same implication, with active in the power-connected sense."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "It keeps the same implication."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "It keeps the same implication, from power connected to registry current."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "It keeps the same implication, with clear in the optically-transparent sense."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "acceptable",
+   "reason": "The staged/inspected route is never used."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish unit0 casing intact via r08.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish unit0 signal audible via r12.1."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "Via r14.1, the conclusion is unit4 signal audible."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "It states unit7 dried, matching the sentence's conclusion."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "Via r09.1, unit7 dried yields unit0 active in the power-connected sense."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "The three conditionals match r10.1, r10.2 and r10.4 in the right order, with correct senses, given that unit0 clear is already established."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "Via r01.1, the conclusion is unit0 registry current."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "Via r07.1, the conclusion is unit5 registry current."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "It states unit3 logged, matching the sentence's conclusion."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "Via r05.1, the conclusion is unit0 contamination absent."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "Via r11.1, the conclusion is unit0 optically transparent."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish unit4 contamination absent via r10.3."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "It states unit3 audited, matching the sentence's conclusion."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "Via r00.1, the conclusion is unit0 seal removed."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "Via r15.1, the conclusion is unit0 account enabled."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "Via r03.1, the conclusion is unit5 account enabled."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "It states unit1 dried, matching the sentence's conclusion."
+  }
+ }
+}

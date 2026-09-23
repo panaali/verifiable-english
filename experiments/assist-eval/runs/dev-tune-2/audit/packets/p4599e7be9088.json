@@ -1,0 +1,320 @@
+{
+ "packet": "p4599e7be9088",
+ "sentences": [
+  {
+   "id": "n08.1",
+   "role": "given",
+   "text": "Rules r06, r05, r15 are declared."
+  },
+  {
+   "id": "n09.1",
+   "role": "given",
+   "text": "unit4 is clipped; unit4 is logged; unit4 is shipped; unit4 is dried; unit4 is scanned; unit4 is audited; unit4 is tracked."
+  },
+  {
+   "id": "n09.2",
+   "role": "given",
+   "text": "The checks that unit4 is numbered and unit4 is bagged and unit4 is wrapped remain unassumed."
+  },
+  {
+   "id": "n12.1",
+   "role": "given",
+   "text": "Rules r08, r01, r10, r02 are declared."
+  },
+  {
+   "id": "n10.1",
+   "role": "given",
+   "text": "Rules r12, r07, r04 are declared."
+  },
+  {
+   "id": "n14.1",
+   "role": "given",
+   "text": "Rules r09, r11, r03 are declared."
+  },
+  {
+   "id": "n16.1",
+   "role": "given",
+   "text": "Rules r14, r13, r00 are declared."
+  },
+  {
+   "id": "r11.1",
+   "role": "given",
+   "text": "If unit0 is clear (contamination absent), then unit0 is clear (optically transparent)."
+  },
+  {
+   "id": "r00.1",
+   "role": "given",
+   "text": "If unit3 is audited, then unit0 is open (seal removed)."
+  },
+  {
+   "id": "r15.1",
+   "role": "given",
+   "text": "If unit0 is open (seal removed), then unit0 is open (account enabled)."
+  },
+  {
+   "id": "r12.1",
+   "role": "given",
+   "text": "If unit4 is dried and unit4 is scanned and unit4 is audited, then unit0 is sound (signal audible)."
+  },
+  {
+   "id": "r12.2",
+   "role": "given",
+   "text": "If unit4 is staged and unit4 is inspected, then unit0 is sound (signal audible)."
+  },
+  {
+   "id": "r08.1",
+   "role": "given",
+   "text": "If unit4 is clipped and unit4 is logged and unit4 is shipped, then unit0 is sound (casing intact)."
+  },
+  {
+   "id": "r08.2",
+   "role": "given",
+   "text": "If unit4 is staged and unit4 is inspected, then unit0 is sound (casing intact)."
+  },
+  {
+   "id": "r08.3",
+   "role": "given",
+   "text": "The sample from lot unit4 is unit5."
+  },
+  {
+   "id": "r10.1",
+   "role": "given",
+   "text": "If unit0 is clear (optically transparent) and unit4 is numbered, then unit4 is clear (optically transparent)."
+  },
+  {
+   "id": "r10.2",
+   "role": "given",
+   "text": "If unit0 is clear (optically transparent) and unit4 is bagged, then unit5 is clear (contamination absent)."
+  },
+  {
+   "id": "r10.3",
+   "role": "given",
+   "text": "If unit0 is clear (optically transparent) and unit4 is tracked, then unit4 is clear (contamination absent)."
+  },
+  {
+   "id": "r10.4",
+   "role": "given",
+   "text": "If unit0 is clear (optically transparent) and unit4 is wrapped, then unit5 is clear (optically transparent)."
+  },
+  {
+   "id": "r05.1",
+   "role": "given",
+   "text": "If unit3 is logged, then unit0 is clear (contamination absent)."
+  },
+  {
+   "id": "r02.1",
+   "role": "given",
+   "text": "If unit5 is open (account enabled), then unit1 is dried."
+  },
+  {
+   "id": "r14.1",
+   "role": "given",
+   "text": "If unit0 is sound (casing intact) and unit0 is sound (signal audible), then unit4 is sound (signal audible)."
+  },
+  {
+   "id": "r06.1",
+   "role": "given",
+   "text": "If unit4 is sound (signal audible), then unit7 is dried."
+  },
+  {
+   "id": "r03.1",
+   "role": "given",
+   "text": "If unit0 is open (account enabled), then unit5 is open (account enabled)."
+  },
+  {
+   "id": "r07.1",
+   "role": "given",
+   "text": "If unit0 is active (registry current), then unit5 is active (registry current)."
+  },
+  {
+   "id": "r09.1",
+   "role": "given",
+   "text": "If unit7 is dried, then unit0 is active (power connected)."
+  },
+  {
+   "id": "r13.1",
+   "role": "given",
+   "text": "If unit5 is active (registry current), then unit3 is logged."
+  },
+  {
+   "id": "r01.1",
+   "role": "given",
+   "text": "If unit0 is active (power connected), then unit0 is active (registry current)."
+  },
+  {
+   "id": "r04.1",
+   "role": "given",
+   "text": "If unit4 is clear (optically transparent), then unit3 is audited."
+  },
+  {
+   "id": "r04.2",
+   "role": "given",
+   "text": "If unit4 is staged and unit4 is inspected, then unit3 is audited."
+  },
+  {
+   "id": "n07.1",
+   "role": "claimed",
+   "text": "Because unit4 is clipped and unit4 is logged and unit4 is shipped, unit0 is sound."
+  },
+  {
+   "id": "n04.1",
+   "role": "claimed",
+   "text": "Since unit4 is dried and unit4 is scanned and unit4 is audited, it follows that unit0 is sound."
+  },
+  {
+   "id": "n20.1",
+   "role": "claimed",
+   "text": "Given that unit0 is sound and unit0 is sound, we infer that unit4 is sound."
+  },
+  {
+   "id": "n15.1",
+   "role": "claimed",
+   "text": "It follows that unit7 is dried because the immediately preceding sound result holds."
+  },
+  {
+   "id": "n18.1",
+   "role": "claimed",
+   "text": "Because unit7 is dried, unit0 is active."
+  },
+  {
+   "id": "n18.2",
+   "role": "claimed",
+   "text": "The checks that unit4 is numbered and unit4 is bagged and unit4 is wrapped would imply that unit4 is clear and unit5 is clear and unit5 is clear, respectively."
+  },
+  {
+   "id": "n13.1",
+   "role": "claimed",
+   "text": "Since unit0 is active, it follows that unit0 is active."
+  },
+  {
+   "id": "n17.1",
+   "role": "claimed",
+   "text": "Given that unit0 is active, we infer that unit5 is active."
+  },
+  {
+   "id": "n06.1",
+   "role": "claimed",
+   "text": "It follows that unit3 is logged because the immediately preceding active result holds."
+  },
+  {
+   "id": "n11.1",
+   "role": "claimed",
+   "text": "Because unit3 is logged, unit0 is clear."
+  },
+  {
+   "id": "n01.1",
+   "role": "claimed",
+   "text": "Since unit0 is clear, it follows that unit0 is clear."
+  },
+  {
+   "id": "n19.1",
+   "role": "claimed",
+   "text": "Given that unit0 is clear and unit4 is tracked, we infer that unit4 is clear."
+  },
+  {
+   "id": "n00.1",
+   "role": "claimed",
+   "text": "It follows that unit3 is audited because the immediately preceding clear result holds."
+  },
+  {
+   "id": "n21.1",
+   "role": "claimed",
+   "text": "Because unit3 is audited, unit0 is open."
+  },
+  {
+   "id": "n03.1",
+   "role": "claimed",
+   "text": "Since unit0 is open, it follows that unit0 is open."
+  },
+  {
+   "id": "n05.1",
+   "role": "claimed",
+   "text": "Given that unit0 is open, we infer that unit5 is open."
+  },
+  {
+   "id": "n02.1",
+   "role": "claimed",
+   "text": "It follows that unit1 is dried because the immediately preceding open result holds."
+  }
+ ],
+ "glossary": {
+  "active_power_connected": "active: power connected (R07)",
+  "active_registry_current": "active: registry current (R09)",
+  "audited": "audited: audit completed (R13)",
+  "bagged": "bagged: bag fitted (R04)",
+  "clear_contamination_absent": "clear: contamination absent (R17)",
+  "clear_optically_transparent": "clear: optically transparent (R02)",
+  "clipped": "clipped: clip attached (R03)",
+  "dried": "dried: moisture removed (R08)",
+  "inspected": "inspected: inspection completed (R06)",
+  "logged": "logged: entry recorded (R20)",
+  "numbered": "numbered: number assigned (R19)",
+  "open_account_enabled": "open: account enabled (R10)",
+  "open_seal_removed": "open: seal removed (R15)",
+  "scanned": "scanned: barcode read (R18)",
+  "shipped": "shipped: departure recorded (R16)",
+  "sound_casing_intact": "sound: casing intact (R11)",
+  "sound_signal_audible": "sound: signal audible (R05)",
+  "staged": "staged: staging completed (R12)",
+  "tracked": "tracked: tracking enabled (R14)",
+  "wrapped": "wrapped: cover fitted (R01)"
+ },
+ "units": [
+  {
+   "unit": "u1",
+   "kind": "formalised",
+   "sentence": "n09.1",
+   "role": "given",
+   "text": "unit4 is clipped; unit4 is logged; unit4 is shipped; unit4 is dried; unit4 is scanned; unit4 is audited; unit4 is tracked.",
+   "formalisation": [
+    "\"unit4\" is clipped.",
+    "\"unit4\" is logged.",
+    "\"unit4\" is shipped.",
+    "\"unit4\" is dried.",
+    "\"unit4\" is scanned.",
+    "\"unit4\" is audited.",
+    "\"unit4\" is tracked."
+   ]
+  },
+  {
+   "unit": "u2",
+   "kind": "formalised",
+   "sentence": "r12.1",
+   "role": "given",
+   "text": "If unit4 is dried and unit4 is scanned and unit4 is audited, then unit0 is sound (signal audible).",
+   "formalisation": [
+    "If all of the following hold:\n  (a) both \"unit4\" is dried and \"unit4\" is scanned;\n  (b) \"unit4\" is audited, then \"unit0\" is classified as \"sound_signal_audible\"."
+   ]
+  },
+  {
+   "unit": "u3",
+   "kind": "formalised",
+   "sentence": "r08.1",
+   "role": "given",
+   "text": "If unit4 is clipped and unit4 is logged and unit4 is shipped, then unit0 is sound (casing intact).",
+   "formalisation": [
+    "If all of the following hold:\n  (a) both \"unit4\" is clipped and \"unit4\" is logged;\n  (b) \"unit4\" is shipped, then \"unit0\" is classified as \"sound_casing_intact\"."
+   ]
+  },
+  {
+   "unit": "u4",
+   "kind": "formalised",
+   "sentence": "r14.1",
+   "role": "given",
+   "text": "If unit0 is sound (casing intact) and unit0 is sound (signal audible), then unit4 is sound (signal audible).",
+   "formalisation": [
+    "If both \"unit0\" is classified as \"sound_casing_intact\" and \"unit0\" is classified as \"sound_signal_audible\", then \"unit4\" is classified as \"sound_signal_audible\"."
+   ]
+  },
+  {
+   "unit": "u5",
+   "kind": "formalised",
+   "sentence": "n02.1",
+   "role": "claimed",
+   "text": "It follows that unit1 is dried because the immediately preceding open result holds.",
+   "formalisation": [
+    "(frozen conclusion) \"unit1\" is dried."
+   ]
+  }
+ ]
+}

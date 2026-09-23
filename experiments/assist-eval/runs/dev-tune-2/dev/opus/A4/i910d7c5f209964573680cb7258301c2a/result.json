@@ -1,0 +1,148 @@
+{
+ "item_id": "i910d7c5f209964573680cb7258301c2a",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A4",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "s15"
+  ],
+  "note": "n15.1 infers unit6 shipped from the preceding clear result, which is unit3 clear (contamination absent), from r07.1. Rule r14.1 requires unit3 clear (optically transparent): a sense switch. No given route establishes it: r07.2 needs unit2 queued, which is unassumed per n17.2, and r14.2 needs unit3 audited and scheduled, which is not given. The remaining steps follow locally, but the target depends on s15."
+ },
+ "turns": 8,
+ "tool_calls": 68,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.6902262",
+  "proposer": "0",
+  "total": "0.6902262"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "tool_success_strict": false,
+ "verification": {
+  "ok": true,
+  "problems": []
+ },
+ "proposer_model": "haiku",
+ "account": "saeedi.danial",
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n19: graph replay status Incomplete",
+   "step s04: undecided within budget whether its anchored assumptions alone entail it (unanchored none; fail closed)",
+   "step s08: undecided within budget whether its anchored assumptions alone entail it (unanchored none; fail closed)",
+   "step s18: undecided within budget whether its anchored assumptions alone entail it (unanchored none; fail closed)",
+   "step s19: undecided within budget whether its anchored assumptions alone entail it (unanchored none; fail closed)",
+   "1 unproved step(s)",
+   "5 claimed sentence(s) not derived by a certified step: n15.1, n08.1, n18.1, n04.1, n19.1",
+   "claimed sentence n08.1: undecided within budget whether it is derived (s08: independence of unanchored assumptions; fail closed)",
+   "claimed sentence n18.1: undecided within budget whether it is derived (s18: independence of unanchored assumptions; fail closed)",
+   "claimed sentence n04.1: undecided within budget whether it is derived (s04: independence of unanchored assumptions; fail closed)",
+   "claimed sentence n19.1: undecided within budget whether it is derived (s19: independence of unanchored assumptions; fail closed)",
+   "10 asserting sentence(s) waived (a waiver is reported, never success): n10.1, n12.1, n13.1, n09.1, n17.2, n11.1, r01.2, r14.2, r05.2, r05.3"
+  ],
+  "targets": [
+   {
+    "id": "t_n19",
+    "text": "@unit5 is stored.",
+    "certified": false,
+    "reason": null,
+    "replay": "Incomplete",
+    "node": "s19"
+   }
+  ],
+  "unproved_steps": [
+   {
+    "node": "s15",
+    "check": "countermodel",
+    "parents": [
+     "s01",
+     "r14_1"
+    ]
+   }
+  ],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "underived": [
+   "n15.1",
+   "n08.1",
+   "n18.1",
+   "n04.1",
+   "n19.1"
+  ],
+  "covered": 20,
+  "derived": 12,
+  "waived": 10,
+  "waivers": [
+   {
+    "sentence": "n10.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n12.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n13.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n09.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n11.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n17.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r01.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r14.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r05.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r05.3",
+    "role": "given",
+    "counts_against_success": true
+   }
+  ],
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 37,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 76.4,
+ "prompt_version": "ve-assist-eval-prompts@3"
+}

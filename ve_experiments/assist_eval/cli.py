@@ -143,7 +143,8 @@ def run(args, split, authors, arms, only=None):
                 author = make_author(author_name, out, args)
                 result = SessionRun(item, split=split, author_name=author_name, author=author, arm=arm,
                                     out_dir=out, limits=limits(args), account=account_label(args),
-                                    proposer_model=args.proposer_model).run()
+                                    proposer_model=args.proposer_model,
+                                    restart=len(list(out.glob("result.aborted-*.json")))).run()
                 print(json.dumps({k: result[k] for k in ("item_id", "author", "arm", "stop_reason", "turns",
                                                          "tool_calls", "spent_usd", "tool_success")}), flush=True)
                 if str(result["stop_reason"]).startswith(("abort: infrastructure", "abort: paid ledger")):

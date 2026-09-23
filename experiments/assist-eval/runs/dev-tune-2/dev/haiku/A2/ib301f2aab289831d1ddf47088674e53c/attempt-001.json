@@ -1,0 +1,727 @@
+{
+ "format": "ve.assist-session@1",
+ "config": {
+  "format": "ve.assist-session@1",
+  "tool_version": "ve-assist@1",
+  "session_id": "9cc39c463a11739d",
+  "environment": {
+   "language": "ve.core@0",
+   "profile": "relational-fol@0",
+   "spec_revision": "ve-v0-draft-2026-09-20",
+   "vocabulary": {
+    "sorts": {
+     "entity": {
+      "description": "A named dossier entity."
+     }
+    },
+    "predicates": {
+     "bagged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "bagged: bag fitted (R28)"
+     },
+     "balanced": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "balanced: balance checked (R08)"
+     },
+     "boxed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "boxed: box fitted (R40)"
+     },
+     "bundled": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "bundled: bundle formed (R07)"
+     },
+     "calibrated": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "calibrated: calibration recorded (R25)"
+     },
+     "checked": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "checked: check completed (R29)"
+     },
+     "cleared_inspection_passed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "cleared: inspection passed (R14)"
+     },
+     "cleared_payment_settled": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "cleared: payment settled (R32)"
+     },
+     "clipped": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "clipped: clip attached (R38)"
+     },
+     "coded": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "coded: identifier assigned (R22)"
+     },
+     "cooled": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "cooled: temperature reduced (R27)"
+     },
+     "counted": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "counted: quantity tallied (R09)"
+     },
+     "dried": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "dried: moisture removed (R10)"
+     },
+     "filed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "filed: document stored (R17)"
+     },
+     "loaded": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "loaded: loading completed (R30)"
+     },
+     "logged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "logged: entry recorded (R24)"
+     },
+     "marked": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "marked: mark applied (R36)"
+     },
+     "mounted": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "mounted: mount fitted (R19)"
+     },
+     "numbered": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "numbered: number assigned (R23)"
+     },
+     "packed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "packed: container filled (R02)"
+     },
+     "photographed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "photographed: image recorded (R35)"
+     },
+     "processed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "processed: processing completed (R13)"
+     },
+     "rated": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "rated: grade recorded (R20)"
+     },
+     "ready_packing_completed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "ready: packing completed (R12)"
+     },
+     "ready_staffing_arranged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "ready: staffing arranged (R03)"
+     },
+     "received": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "received: receipt recorded (R04)"
+     },
+     "registered": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "registered: registration recorded (R11)"
+     },
+     "released": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "released: release recorded (R39)"
+     },
+     "retained": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "retained: retention recorded (R31)"
+     },
+     "routed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "routed: route assigned (R26)"
+     },
+     "scanned": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "scanned: barcode read (R06)"
+     },
+     "shelved": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "shelved: shelf assigned (R37)"
+     },
+     "sound_casing_intact": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "sound: casing intact (R05)"
+     },
+     "sound_signal_audible": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "sound: signal audible (R18)"
+     },
+     "stable_shape_retained": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "stable: shape retained (R15)"
+     },
+     "stable_temperature_constant": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "stable: temperature constant (R33)"
+     },
+     "stacked": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "stacked: stack formed (R21)"
+     },
+     "stamped": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "stamped: stamp applied (R16)"
+     },
+     "supplied": {
+      "arguments": [
+       "entity",
+       "entity"
+      ],
+      "description": "Lot supplied sample."
+     },
+     "tied": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "tied: tie attached (R01)"
+     },
+     "weighed_in": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "weighed-in: arrival mass recorded (R34)"
+     }
+    },
+    "constants": {
+     "unit1": {
+      "sort": "entity",
+      "description": "unit1"
+     },
+     "unit3": {
+      "sort": "entity",
+      "description": "unit3"
+     },
+     "unit5": {
+      "sort": "entity",
+      "description": "unit5"
+     }
+    }
+   }
+  },
+  "english_vocabulary": null,
+  "source": {
+   "sentences": [
+    {
+     "id": "n05.1",
+     "text": "Rules r00, r14, r12, r05 are declared.",
+     "role": "given",
+     "block": "n05",
+     "asserting": true
+    },
+    {
+     "id": "n06.1",
+     "text": "Rules r03, r07, r08 are declared.",
+     "role": "given",
+     "block": "n06",
+     "asserting": true
+    },
+    {
+     "id": "n19.1",
+     "text": "Rules r06, r10, r13 are declared.",
+     "role": "given",
+     "block": "n19",
+     "asserting": true
+    },
+    {
+     "id": "n09.1",
+     "text": "unit5 is bundled; unit5 is retained; unit5 is packed; unit5 is mounted; unit5 is routed; unit5 is rated; unit5 is checked.",
+     "role": "given",
+     "block": "n09",
+     "asserting": true
+    },
+    {
+     "id": "n09.2",
+     "text": "The checks that unit5 is stacked and unit5 is coded and unit5 is scanned remain unassumed.",
+     "role": "given",
+     "block": "n09",
+     "asserting": true
+    },
+    {
+     "id": "n11.1",
+     "text": "Rules r09, r04, r11 are declared.",
+     "role": "given",
+     "block": "n11",
+     "asserting": true
+    },
+    {
+     "id": "n21.1",
+     "text": "Rules r01, r02, r15 are declared.",
+     "role": "given",
+     "block": "n21",
+     "asserting": true
+    },
+    {
+     "id": "r08.1",
+     "text": "If unit1 is cleared (payment settled), then unit5 is balanced.",
+     "role": "given",
+     "block": "r08",
+     "asserting": true
+    },
+    {
+     "id": "r09.1",
+     "text": "If unit3 is ready (packing completed) and unit5 is ready (packing completed), then unit5 is weighed-in.",
+     "role": "given",
+     "block": "r09",
+     "asserting": true
+    },
+    {
+     "id": "r03.1",
+     "text": "If unit5 is mounted and unit5 is routed and unit5 is rated, then unit3 is ready (packing completed).",
+     "role": "given",
+     "block": "r03",
+     "asserting": true
+    },
+    {
+     "id": "r03.2",
+     "text": "If unit5 is tied and unit5 is boxed, then unit3 is ready (packing completed).",
+     "role": "given",
+     "block": "r03",
+     "asserting": true
+    },
+    {
+     "id": "r01.1",
+     "text": "If unit5 is weighed-in, then unit3 is sound (casing intact).",
+     "role": "given",
+     "block": "r01",
+     "asserting": true
+    },
+    {
+     "id": "r15.1",
+     "text": "If unit3 is stable (shape retained) and unit5 is stacked, then unit1 is stable (temperature constant).",
+     "role": "given",
+     "block": "r15",
+     "asserting": true
+    },
+    {
+     "id": "r15.2",
+     "text": "If unit3 is stable (shape retained) and unit5 is checked, then unit1 is stable (shape retained).",
+     "role": "given",
+     "block": "r15",
+     "asserting": true
+    },
+    {
+     "id": "r15.3",
+     "text": "If unit3 is stable (shape retained) and unit5 is coded, then unit5 is stable (temperature constant).",
+     "role": "given",
+     "block": "r15",
+     "asserting": true
+    },
+    {
+     "id": "r15.4",
+     "text": "If unit3 is stable (shape retained) and unit5 is scanned, then unit5 is stable (shape retained).",
+     "role": "given",
+     "block": "r15",
+     "asserting": true
+    },
+    {
+     "id": "r11.1",
+     "text": "If unit3 is stable (temperature constant), then unit3 is stable (shape retained).",
+     "role": "given",
+     "block": "r11",
+     "asserting": true
+    },
+    {
+     "id": "r04.1",
+     "text": "If unit5 is logged, then unit3 is cleared (inspection passed).",
+     "role": "given",
+     "block": "r04",
+     "asserting": true
+    },
+    {
+     "id": "r00.1",
+     "text": "If unit5 is bundled and unit5 is retained and unit5 is packed, then unit3 is ready (staffing arranged).",
+     "role": "given",
+     "block": "r00",
+     "asserting": true
+    },
+    {
+     "id": "r00.2",
+     "text": "If unit5 is tied and unit5 is boxed, then unit3 is ready (staffing arranged).",
+     "role": "given",
+     "block": "r00",
+     "asserting": true
+    },
+    {
+     "id": "r00.3",
+     "text": "Lot unit5 supplied sample unit1.",
+     "role": "given",
+     "block": "r00",
+     "asserting": true
+    },
+    {
+     "id": "r12.1",
+     "text": "If unit3 is cleared (payment settled), then unit1 is cleared (payment settled).",
+     "role": "given",
+     "block": "r12",
+     "asserting": true
+    },
+    {
+     "id": "r13.1",
+     "text": "If unit5 is balanced, then unit3 is stable (temperature constant).",
+     "role": "given",
+     "block": "r13",
+     "asserting": true
+    },
+    {
+     "id": "r07.1",
+     "text": "If unit3 is sound (signal audible), then unit5 is sound (signal audible).",
+     "role": "given",
+     "block": "r07",
+     "asserting": true
+    },
+    {
+     "id": "r05.1",
+     "text": "If unit5 is stable (shape retained), then unit5 is calibrated.",
+     "role": "given",
+     "block": "r05",
+     "asserting": true
+    },
+    {
+     "id": "r05.2",
+     "text": "If unit5 is tied and unit5 is boxed, then unit5 is calibrated.",
+     "role": "given",
+     "block": "r05",
+     "asserting": true
+    },
+    {
+     "id": "r02.1",
+     "text": "If unit3 is cleared (inspection passed), then unit3 is cleared (payment settled).",
+     "role": "given",
+     "block": "r02",
+     "asserting": true
+    },
+    {
+     "id": "r06.1",
+     "text": "If unit3 is ready (staffing arranged) and unit3 is ready (packing completed), then unit5 is ready (packing completed).",
+     "role": "given",
+     "block": "r06",
+     "asserting": true
+    },
+    {
+     "id": "r14.1",
+     "text": "If unit3 is sound (casing intact), then unit3 is sound (signal audible).",
+     "role": "given",
+     "block": "r14",
+     "asserting": true
+    },
+    {
+     "id": "r10.1",
+     "text": "If unit5 is sound (signal audible), then unit5 is logged.",
+     "role": "given",
+     "block": "r10",
+     "asserting": true
+    },
+    {
+     "id": "n18.1",
+     "text": "Because unit5 is bundled and unit5 is retained and unit5 is packed, unit3 is ready.",
+     "role": "claimed",
+     "block": "n18",
+     "asserting": true
+    },
+    {
+     "id": "n18.2",
+     "text": "The checks that unit5 is stacked and unit5 is coded and unit5 is scanned would imply that unit1 is stable and unit5 is stable and unit5 is stable, respectively.",
+     "role": "claimed",
+     "block": "n18",
+     "asserting": true
+    },
+    {
+     "id": "n07.1",
+     "text": "Since unit5 is mounted and unit5 is routed and unit5 is rated, it follows that unit3 is ready.",
+     "role": "claimed",
+     "block": "n07",
+     "asserting": true
+    },
+    {
+     "id": "n03.1",
+     "text": "Given that unit3 is ready and unit3 is ready, we infer that unit5 is ready.",
+     "role": "claimed",
+     "block": "n03",
+     "asserting": true
+    },
+    {
+     "id": "n08.1",
+     "text": "It follows that unit5 is weighed-in because unit3 is ready and the immediately preceding ready result holds.",
+     "role": "claimed",
+     "block": "n08",
+     "asserting": true
+    },
+    {
+     "id": "n16.1",
+     "text": "Because unit5 is weighed-in, unit3 is sound.",
+     "role": "claimed",
+     "block": "n16",
+     "asserting": true
+    },
+    {
+     "id": "n12.1",
+     "text": "Since unit3 is sound, it follows that unit3 is sound.",
+     "role": "claimed",
+     "block": "n12",
+     "asserting": true
+    },
+    {
+     "id": "n04.1",
+     "text": "Given that unit3 is sound, we infer that unit5 is sound.",
+     "role": "claimed",
+     "block": "n04",
+     "asserting": true
+    },
+    {
+     "id": "n20.1",
+     "text": "It follows that unit5 is logged because the immediately preceding sound result holds.",
+     "role": "claimed",
+     "block": "n20",
+     "asserting": true
+    },
+    {
+     "id": "n10.1",
+     "text": "Because unit5 is logged, unit3 is cleared.",
+     "role": "claimed",
+     "block": "n10",
+     "asserting": true
+    },
+    {
+     "id": "n02.1",
+     "text": "Since unit3 is cleared, it follows that unit3 is cleared.",
+     "role": "claimed",
+     "block": "n02",
+     "asserting": true
+    },
+    {
+     "id": "n17.1",
+     "text": "Given that unit3 is cleared, we infer that unit1 is cleared.",
+     "role": "claimed",
+     "block": "n17",
+     "asserting": true
+    },
+    {
+     "id": "n00.1",
+     "text": "It follows that unit5 is balanced because the immediately preceding cleared result holds.",
+     "role": "claimed",
+     "block": "n00",
+     "asserting": true
+    },
+    {
+     "id": "n13.1",
+     "text": "Because unit5 is balanced, unit3 is stable.",
+     "role": "claimed",
+     "block": "n13",
+     "asserting": true
+    },
+    {
+     "id": "n01.1",
+     "text": "Since unit3 is stable, it follows that unit3 is stable.",
+     "role": "claimed",
+     "block": "n01",
+     "asserting": true
+    },
+    {
+     "id": "n15.1",
+     "text": "Given that unit3 is stable and unit5 is checked, we infer that unit1 is stable.",
+     "role": "claimed",
+     "block": "n15",
+     "asserting": true
+    },
+    {
+     "id": "n14.1",
+     "text": "It follows that unit5 is calibrated because the immediately preceding stable result holds.",
+     "role": "claimed",
+     "block": "n14",
+     "asserting": true
+    }
+   ]
+  },
+  "targets": [
+   {
+    "id": "t_n14",
+    "sentence": "n14.1"
+   }
+  ],
+  "options": {
+   "premise_suggestions": false,
+   "max_proof_steps": 10000,
+   "max_domain_size": 2,
+   "max_models": 2000,
+   "max_evaluations": 100000,
+   "proposer_k": 3,
+   "propose_repair_rounds": 1
+  },
+  "metadata": {
+   "p5_item_id": "ib301f2aab289831d1ddf47088674e53c",
+   "p5_root": "n14",
+   "p5_paragraph_parents": {
+    "n18": [
+     "n09"
+    ],
+    "n07": [
+     "n09"
+    ],
+    "n03": [
+     "n18",
+     "n07"
+    ],
+    "n08": [
+     "n07",
+     "n03"
+    ],
+    "n16": [
+     "n07",
+     "n08"
+    ],
+    "n12": [
+     "n16"
+    ],
+    "n04": [
+     "n03",
+     "n12"
+    ],
+    "n20": [
+     "n04"
+    ],
+    "n10": [
+     "n16",
+     "n20"
+    ],
+    "n02": [
+     "n10"
+    ],
+    "n17": [
+     "n02"
+    ],
+    "n00": [
+     "n07",
+     "n17"
+    ],
+    "n13": [
+     "n00"
+    ],
+    "n01": [
+     "n13"
+    ],
+    "n15": [
+     "n17",
+     "n01"
+    ],
+    "n14": [
+     "n17",
+     "n15"
+    ]
+   },
+   "eval": {
+    "author": "haiku",
+    "arm": "A2",
+    "split": "dev",
+    "prompt_version": "ve-assist-eval-prompts@3"
+   }
+  },
+  "created": "2026-09-23T08:42:51+00:00",
+  "config_digest": "9b9fad92028772203eb0971c077dfd65f71cd7ce9c04b0c319f84773a46e2d69"
+ },
+ "events": [
+  {
+   "seq": 0,
+   "action": "freeze_target",
+   "args": {
+    "target": "t_n14",
+    "text": "calibrated(@unit5)"
+   },
+   "time": "2026-09-23T08:42:51+00:00",
+   "result": {
+    "ok": false,
+    "error": {
+     "code": "UnboundVariable",
+     "message": "unbound variable 'calibrated'",
+     "span": {
+      "start": 0,
+      "end": 10,
+      "line": 1,
+      "column": 1
+     }
+    }
+   },
+   "result_chars": 152
+  }
+ ]
+}

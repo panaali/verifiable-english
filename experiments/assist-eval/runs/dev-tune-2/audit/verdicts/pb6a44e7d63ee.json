@@ -1,0 +1,246 @@
+{
+ "packet": "pb6a44e7d63ee",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.107248",
+ "reply": "{\"units\": [\n{\"unit\": \"u1\", \"verdict\": \"acceptable\", \"reason\": \"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\": \"u2\", \"verdict\": \"acceptable\", \"reason\": \"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\": \"u3\", \"verdict\": \"acceptable\", \"reason\": \"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\": \"u4\", \"verdict\": \"acceptable\", \"reason\": \"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\": \"u5\", \"verdict\": \"acceptable\", \"reason\": \"This is a list of declared rule names, which the reasoning does not rely on.\"},\n{\"unit\": \"u6\", \"verdict\": \"faithful\", \"reason\": \"All seven facts about unit0 are stated as given.\"},\n{\"unit\": \"u7\", \"verdict\": \"acceptable\", \"reason\": \"This only records which checks remain unassumed.\"},\n{\"unit\": \"u8\", \"verdict\": \"faithful\", \"reason\": \"Same conditions, conclusion and senses as the sentence.\"},\n{\"unit\": \"u9\", \"verdict\": \"faithful\", \"reason\": \"Same conditions, conclusion and senses as the sentence.\"},\n{\"unit\": \"u10\", \"verdict\": \"faithful\", \"reason\": \"Same conditions, conclusion and senses as the sentence.\"},\n{\"unit\": \"u11\", \"verdict\": \"faithful\", \"reason\": \"Same conditions, conclusion and senses as the sentence.\"},\n{\"unit\": \"u12\", \"verdict\": \"faithful\", \"reason\": \"Correct senses and direction.\"},\n{\"unit\": \"u13\", \"verdict\": \"faithful\", \"reason\": \"Correct senses and direction.\"},\n{\"unit\": \"u14\", \"verdict\": \"faithful\", \"reason\": \"Correct sense and direction.\"},\n{\"unit\": \"u15\", \"verdict\": \"faithful\", \"reason\": \"Correct sense and direction.\"},\n{\"unit\": \"u16\", \"verdict\": \"faithful\", \"reason\": \"Correct sense and direction.\"},\n{\"unit\": \"u17\", \"verdict\": \"faithful\", \"reason\": \"Both conditions and the conclusion match the sentence.\"},\n{\"unit\": \"u18\", \"verdict\": \"faithful\", \"reason\": \"The three-way conjunction is regrouped equivalently and the conclusion sense is correct.\"},\n{\"unit\": \"u19\", \"verdict\": \"acceptable\", \"reason\": \"This rule about dated and tied is never used in the argument.\"},\n{\"unit\": \"u20\", \"verdict\": \"faithful\", \"reason\": \"The conjunction is regrouped equivalently and the conclusion is casing intact.\"},\n{\"unit\": \"u21\", \"verdict\": \"acceptable\", \"reason\": \"This rule is never used in the argument.\"},\n{\"unit\": \"u22\", \"verdict\": \"acceptable\", \"reason\": \"The sample fact is never used in the argument.\"},\n{\"unit\": \"u23\", \"verdict\": \"faithful\", \"reason\": \"Correct sense and direction.\"},\n{\"unit\": \"u24\", \"verdict\": \"acceptable\", \"reason\": \"This rule is never used in the argument.\"},\n{\"unit\": \"u25\", \"verdict\": \"faithful\", \"reason\": \"Correct senses and direction.\"},\n{\"unit\": \"u26\", \"verdict\": \"faithful\", \"reason\": \"Correct senses and direction.\"},\n{\"unit\": \"u27\", \"verdict\": \"faithful\", \"reason\": \"Correct senses and direction.\"},\n{\"unit\": \"u28\", \"verdict\": \"faithful\", \"reason\": \"Correct senses and direction.\"},\n{\"unit\": \"u29\", \"verdict\": \"faithful\", \"reason\": \"Correct sense and direction.\"},\n{\"unit\": \"u30\", \"verdict\": \"faithful\", \"reason\": \"Correct sense and direction.\"},\n{\"unit\": \"u31\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish casing intact via r06.1.\"},\n{\"unit\": \"u32\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish signal audible via r08.1.\"},\n{\"unit\": \"u33\", \"verdict\": \"faithful\", \"reason\": \"Via r14.1, unit0 is sound in the signal-audible sense.\"},\n{\"unit\": \"u34\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit0 is checked is stated.\"},\n{\"unit\": \"u35\", \"verdict\": \"faithful\", \"reason\": \"Via r09.1, unit1 is clear in the contamination-absent sense.\"},\n{\"unit\": \"u36\", \"verdict\": \"faithful\", \"reason\": \"Via r02.1, unit1 is clear in the optically-transparent sense.\"},\n{\"unit\": \"u37\", \"verdict\": \"faithful\", \"reason\": \"Given unit1's transparency from n16.1, the three conditionals match r11.1 to r11.3 with the correct senses.\"},\n{\"unit\": \"u38\", \"verdict\": \"faithful\", \"reason\": \"Via r11.4, unit2 is clear in the optically-transparent sense.\"},\n{\"unit\": \"u39\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit0 is documented is stated.\"},\n{\"unit\": \"u40\", \"verdict\": \"faithful\", \"reason\": \"Via r13.1, unit1 is open in the seal-removed sense.\"},\n{\"unit\": \"u41\", \"verdict\": \"faithful\", \"reason\": \"Via r00.1, unit1 is open in the account-enabled sense.\"},\n{\"unit\": \"u42\", \"verdict\": \"faithful\", \"reason\": \"Via r10.1, unit0 is open in the account-enabled sense.\"},\n{\"unit\": \"u43\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit0 is packed is stated.\"},\n{\"unit\": \"u44\", \"verdict\": \"faithful\", \"reason\": \"Via r12.1, unit1 is ready in the staffing-arranged sense.\"},\n{\"unit\": \"u45\", \"verdict\": \"faithful\", \"reason\": \"Via r03.1, unit1 is ready in the packing-completed sense.\"},\n{\"unit\": \"u46\", \"verdict\": \"faithful\", \"reason\": \"Via r07.1, unit0 is ready in the packing-completed sense.\"},\n{\"unit\": \"u47\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit0 is bundled is stated.\"}\n]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "This is a list of declared rule names, which the reasoning does not rely on."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "faithful",
+   "reason": "All seven facts about unit0 are stated as given."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "This only records which checks remain unassumed."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "Same conditions, conclusion and senses as the sentence."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "Same conditions, conclusion and senses as the sentence."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "Same conditions, conclusion and senses as the sentence."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "Same conditions, conclusion and senses as the sentence."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "Correct senses and direction."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "Correct senses and direction."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "Correct sense and direction."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "Correct sense and direction."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "Correct sense and direction."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "Both conditions and the conclusion match the sentence."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The three-way conjunction is regrouped equivalently and the conclusion sense is correct."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "acceptable",
+   "reason": "This rule about dated and tied is never used in the argument."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The conjunction is regrouped equivalently and the conclusion is casing intact."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "acceptable",
+   "reason": "This rule is never used in the argument."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "acceptable",
+   "reason": "The sample fact is never used in the argument."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "Correct sense and direction."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "acceptable",
+   "reason": "This rule is never used in the argument."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "Correct senses and direction."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "Correct senses and direction."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "Correct senses and direction."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "Correct senses and direction."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "Correct sense and direction."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "Correct sense and direction."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish casing intact via r06.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish signal audible via r08.1."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "Via r14.1, unit0 is sound in the signal-audible sense."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit0 is checked is stated."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "Via r09.1, unit1 is clear in the contamination-absent sense."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "Via r02.1, unit1 is clear in the optically-transparent sense."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "Given unit1's transparency from n16.1, the three conditionals match r11.1 to r11.3 with the correct senses."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "Via r11.4, unit2 is clear in the optically-transparent sense."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit0 is documented is stated."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "Via r13.1, unit1 is open in the seal-removed sense."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "Via r00.1, unit1 is open in the account-enabled sense."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "Via r10.1, unit0 is open in the account-enabled sense."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit0 is packed is stated."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "Via r12.1, unit1 is ready in the staffing-arranged sense."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "Via r03.1, unit1 is ready in the packing-completed sense."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "Via r07.1, unit0 is ready in the packing-completed sense."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit0 is bundled is stated."
+  }
+ }
+}

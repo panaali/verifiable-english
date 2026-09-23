@@ -1,0 +1,246 @@
+{
+ "packet": "p0282fbd63643",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.117953",
+ "reply": "{\"units\": [\n{\"unit\": \"u1\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the reasoning does not rely on it.\"},\n{\"unit\": \"u2\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the reasoning does not rely on it.\"},\n{\"unit\": \"u3\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the reasoning does not rely on it.\"},\n{\"unit\": \"u4\", \"verdict\": \"faithful\", \"reason\": \"It states all seven facts about unit5 exactly.\"},\n{\"unit\": \"u5\", \"verdict\": \"acceptable\", \"reason\": \"This only says which checks remain unassumed; it asserts no premise the reasoning uses.\"},\n{\"unit\": \"u6\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the reasoning does not rely on it.\"},\n{\"unit\": \"u7\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the reasoning does not rely on it.\"},\n{\"unit\": \"u8\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the right sense (payment settled) and the right direction.\"},\n{\"unit\": \"u9\", \"verdict\": \"faithful\", \"reason\": \"Both packing-completed conditions lead to unit5 being weighed-in, as stated.\"},\n{\"unit\": \"u10\", \"verdict\": \"faithful\", \"reason\": \"The three conditions on unit5 lead to unit3 being ready (packing completed), as stated.\"},\n{\"unit\": \"u11\", \"verdict\": \"acceptable\", \"reason\": \"The rule is unused, since tied and boxed are never established.\"},\n{\"unit\": \"u12\", \"verdict\": \"faithful\", \"reason\": \"Weighed-in leads to unit3 being sound (casing intact), in the right direction.\"},\n{\"unit\": \"u13\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u14\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u15\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u16\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u17\", \"verdict\": \"faithful\", \"reason\": \"Temperature constant leads to shape retained for unit3, as stated.\"},\n{\"unit\": \"u18\", \"verdict\": \"faithful\", \"reason\": \"Logged leads to cleared (inspection passed), as stated.\"},\n{\"unit\": \"u19\", \"verdict\": \"faithful\", \"reason\": \"The three conditions lead to unit3 being ready (staffing arranged), as stated.\"},\n{\"unit\": \"u20\", \"verdict\": \"acceptable\", \"reason\": \"The rule is unused, since tied and boxed are never established.\"},\n{\"unit\": \"u21\", \"verdict\": \"acceptable\", \"reason\": \"The 'supplied' fact is never used in the reasoning.\"},\n{\"unit\": \"u22\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u23\", \"verdict\": \"faithful\", \"reason\": \"Balanced leads to unit3 being stable (temperature constant), as stated.\"},\n{\"unit\": \"u24\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u25\", \"verdict\": \"faithful\", \"reason\": \"Unit5 stable (shape retained) leads to calibrated, as stated.\"},\n{\"unit\": \"u26\", \"verdict\": \"acceptable\", \"reason\": \"The rule is unused, since tied and boxed are never established.\"},\n{\"unit\": \"u27\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u28\", \"verdict\": \"faithful\", \"reason\": \"Both unit3 readiness senses lead to unit5 being ready (packing completed), as stated.\"},\n{\"unit\": \"u29\", \"verdict\": \"faithful\", \"reason\": \"The conditional has the correct senses and direction.\"},\n{\"unit\": \"u30\", \"verdict\": \"faithful\", \"reason\": \"Unit5 sound (signal audible) leads to logged, as stated.\"},\n{\"unit\": \"u31\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish 'ready' in the staffing-arranged sense via r00.1.\"},\n{\"unit\": \"u32\", \"verdict\": \"faithful\", \"reason\": \"The three conditionals match the respective consequents of r15.1, r15.3 and r15.4, with senses that the rules establish.\"},\n{\"unit\": \"u33\", \"verdict\": \"faithful\", \"reason\": \"The reasons establish 'ready' in the packing-completed sense via r03.1.\"},\n{\"unit\": \"u34\", \"verdict\": \"faithful\", \"reason\": \"Unit5 ready (packing completed) follows via r06.1.\"},\n{\"unit\": \"u35\", \"verdict\": \"faithful\", \"reason\": \"It states the conclusion that unit5 is weighed-in.\"},\n{\"unit\": \"u36\", \"verdict\": \"faithful\", \"reason\": \"The casing-intact sense follows via r01.1.\"},\n{\"unit\": \"u37\", \"verdict\": \"faithful\", \"reason\": \"The signal-audible sense follows from casing intact via r14.1.\"},\n{\"unit\": \"u38\", \"verdict\": \"faithful\", \"reason\": \"Unit5 sound (signal audible) follows via r07.1.\"},\n{\"unit\": \"u39\", \"verdict\": \"faithful\", \"reason\": \"It states the conclusion that unit5 is logged.\"},\n{\"unit\": \"u40\", \"verdict\": \"faithful\", \"reason\": \"The inspection-passed sense follows via r04.1.\"},\n{\"unit\": \"u41\", \"verdict\": \"faithful\", \"reason\": \"The payment-settled sense follows via r02.1.\"},\n{\"unit\": \"u42\", \"verdict\": \"faithful\", \"reason\": \"Unit1 cleared (payment settled) follows via r12.1.\"},\n{\"unit\": \"u43\", \"verdict\": \"faithful\", \"reason\": \"It states the conclusion that unit5 is balanced.\"},\n{\"unit\": \"u44\", \"verdict\": \"faithful\", \"reason\": \"The temperature-constant sense follows via r13.1.\"},\n{\"unit\": \"u45\", \"verdict\": \"faithful\", \"reason\": \"The shape-retained sense follows via r11.1.\"},\n{\"unit\": \"u46\", \"verdict\": \"faithful\", \"reason\": \"Unit1 stable (shape retained) follows via r15.2 together with 'checked'.\"},\n{\"unit\": \"u47\", \"verdict\": \"faithful\", \"reason\": \"It states the claimed conclusion that unit5 is calibrated.\"}\n]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the reasoning does not rely on it."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the reasoning does not rely on it."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the reasoning does not rely on it."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "It states all seven facts about unit5 exactly."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "This only says which checks remain unassumed; it asserts no premise the reasoning uses."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the reasoning does not rely on it."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the reasoning does not rely on it."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The conditional has the right sense (payment settled) and the right direction."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "Both packing-completed conditions lead to unit5 being weighed-in, as stated."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The three conditions on unit5 lead to unit3 being ready (packing completed), as stated."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "acceptable",
+   "reason": "The rule is unused, since tied and boxed are never established."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "Weighed-in leads to unit3 being sound (casing intact), in the right direction."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "Temperature constant leads to shape retained for unit3, as stated."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "Logged leads to cleared (inspection passed), as stated."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "The three conditions lead to unit3 being ready (staffing arranged), as stated."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "acceptable",
+   "reason": "The rule is unused, since tied and boxed are never established."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "acceptable",
+   "reason": "The 'supplied' fact is never used in the reasoning."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "Balanced leads to unit3 being stable (temperature constant), as stated."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "Unit5 stable (shape retained) leads to calibrated, as stated."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "acceptable",
+   "reason": "The rule is unused, since tied and boxed are never established."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "Both unit3 readiness senses lead to unit5 being ready (packing completed), as stated."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The conditional has the correct senses and direction."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "Unit5 sound (signal audible) leads to logged, as stated."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish 'ready' in the staffing-arranged sense via r00.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The three conditionals match the respective consequents of r15.1, r15.3 and r15.4, with senses that the rules establish."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The reasons establish 'ready' in the packing-completed sense via r03.1."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "Unit5 ready (packing completed) follows via r06.1."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "It states the conclusion that unit5 is weighed-in."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "The casing-intact sense follows via r01.1."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "The signal-audible sense follows from casing intact via r14.1."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "Unit5 sound (signal audible) follows via r07.1."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "It states the conclusion that unit5 is logged."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "The inspection-passed sense follows via r04.1."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "The payment-settled sense follows via r02.1."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "Unit1 cleared (payment settled) follows via r12.1."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "It states the conclusion that unit5 is balanced."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "The temperature-constant sense follows via r13.1."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "The shape-retained sense follows via r11.1."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "Unit1 stable (shape retained) follows via r15.2 together with 'checked'."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "It states the claimed conclusion that unit5 is calibrated."
+  }
+ }
+}

@@ -1,0 +1,133 @@
+{
+ "item_id": "id9eed1756a3842c2d7da8f08ce3b9290",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A3",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "s_n00"
+  ],
+  "note": "n00.1 infers 'unit3 is audited' from the preceding clear result, which is 'unit5 is clear (optically transparent)'. The only rules concluding 'unit3 is audited' need 'unit4 is clear (optically transparent)' (r04.1) or 'unit4 is staged and inspected' (r04.2). Neither is established: unit4's transparency would need 'unit4 is numbered', which remains unassumed. The countermodel confirms this, so the target t_n02 does not follow. The later steps are certified relative to s_n00."
+ },
+ "turns": 7,
+ "tool_calls": 67,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.5422662",
+  "proposer": "0",
+  "total": "0.5422662"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "tool_success_strict": false,
+ "verification": {
+  "ok": true,
+  "problems": []
+ },
+ "proposer_model": null,
+ "account": "saeedi.danial",
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n02: graph replay status Incomplete",
+   "step s_n02: undecided within budget whether its anchored assumptions alone entail it (unanchored none; fail closed)",
+   "step s_n03: undecided within budget whether its anchored assumptions alone entail it (unanchored none; fail closed)",
+   "step s_n05: undecided within budget whether its anchored assumptions alone entail it (unanchored none; fail closed)",
+   "step s_n21: undecided within budget whether its anchored assumptions alone entail it (unanchored none; fail closed)",
+   "1 unproved step(s)",
+   "5 claimed sentence(s) not derived by a certified step: n00.1, n21.1, n03.1, n05.1, n02.1",
+   "claimed sentence n21.1: undecided within budget whether it is derived (s_n21: independence of unanchored assumptions; fail closed)",
+   "claimed sentence n03.1: undecided within budget whether it is derived (s_n03: independence of unanchored assumptions; fail closed)",
+   "claimed sentence n05.1: undecided within budget whether it is derived (s_n05: independence of unanchored assumptions; fail closed)",
+   "claimed sentence n02.1: undecided within budget whether it is derived (s_n02: independence of unanchored assumptions; fail closed)",
+   "7 asserting sentence(s) waived (a waiver is reported, never success): n08.1, n09.2, n12.1, n10.1, n14.1, n16.1, r08.3"
+  ],
+  "targets": [
+   {
+    "id": "t_n02",
+    "text": "@unit1 is dried.",
+    "certified": false,
+    "reason": null,
+    "replay": "Incomplete",
+    "node": "s_n02"
+   }
+  ],
+  "unproved_steps": [
+   {
+    "node": "s_n00",
+    "check": "countermodel",
+    "parents": [
+     "s_n19",
+     "r04a"
+    ]
+   }
+  ],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "underived": [
+   "n00.1",
+   "n21.1",
+   "n03.1",
+   "n05.1",
+   "n02.1"
+  ],
+  "covered": 23,
+  "derived": 12,
+  "waived": 7,
+  "waivers": [
+   {
+    "sentence": "n08.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n12.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n10.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n14.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n16.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n09.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r08.3",
+    "role": "given",
+    "counts_against_success": true
+   }
+  ],
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 40,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 60.3,
+ "prompt_version": "ve-assist-eval-prompts@3"
+}

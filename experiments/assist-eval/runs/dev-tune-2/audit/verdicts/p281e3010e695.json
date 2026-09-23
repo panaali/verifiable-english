@@ -1,0 +1,36 @@
+{
+ "packet": "p281e3010e695",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.032868",
+ "reply": "{\"units\": [{\"unit\": \"u1\", \"verdict\": \"faithful\", \"reason\": \"Each of the seven listed facts about unit4 is stated as a separate atomic statement, with nothing added or dropped.\"}, {\"unit\": \"u2\", \"verdict\": \"faithful\", \"reason\": \"The three conjoined conditions on unit4 are all present and correctly imply that unit0 is sound in the signal-audible sense.\"}, {\"unit\": \"u3\", \"verdict\": \"faithful\", \"reason\": \"The three conjoined conditions on unit4 are all present and correctly imply that unit0 is sound in the casing-intact sense.\"}, {\"unit\": \"u4\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons (clipped, logged, shipped) establish soundness via r08.1, which gives the casing-intact sense, so choosing that sense is correct.\"}, {\"unit\": \"u5\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit1 is dried is stated correctly, and it follows from unit5 being open in the account-enabled sense via r02.1.\"}]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "Each of the seven listed facts about unit4 is stated as a separate atomic statement, with nothing added or dropped."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "The three conjoined conditions on unit4 are all present and correctly imply that unit0 is sound in the signal-audible sense."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "faithful",
+   "reason": "The three conjoined conditions on unit4 are all present and correctly imply that unit0 is sound in the casing-intact sense."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "The stated reasons (clipped, logged, shipped) establish soundness via r08.1, which gives the casing-intact sense, so choosing that sense is correct."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit1 is dried is stated correctly, and it follows from unit5 being open in the account-enabled sense via r02.1."
+  }
+ }
+}

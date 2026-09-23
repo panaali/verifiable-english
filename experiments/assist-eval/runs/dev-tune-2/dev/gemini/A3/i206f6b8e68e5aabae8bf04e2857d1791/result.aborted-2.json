@@ -1,0 +1,282 @@
+{
+ "item_id": "i206f6b8e68e5aabae8bf04e2857d1791",
+ "split": "dev",
+ "author": "gemini",
+ "arm": "A3",
+ "stop_reason": "abort: infrastructure: ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}; infrastructure retry limit exhausted",
+ "finish": null,
+ "turns": 7,
+ "tool_calls": 52,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.168318",
+  "proposer": "0",
+  "total": "0.168318"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "tool_success_strict": false,
+ "verification": {
+  "ok": true,
+  "problems": []
+ },
+ "proposer_model": null,
+ "account": "saeedi.danial",
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n02: graph replay status Incomplete",
+   "16 unproved step(s)",
+   "2 given sentence(s) not covered by any node: r10.4, r04.2",
+   "17 claimed sentence(s) not derived by a certified step: n07.1, n04.1, n20.1, n15.1, n18.1, n18.2, n13.1, n17.1, n06.1, n11.1, n01.1, n19.1, n00.1, n21.1, n03.1, n05.1, n02.1",
+   "11 asserting sentence(s) waived (a waiver is reported, never success): n08.1, n09.2, n12.1, n10.1, n14.1, n16.1, r12.2, r08.2, r08.3, r10.2, r10.3"
+  ],
+  "targets": [
+   {
+    "id": "t_n02",
+    "text": "@unit1 is dried.",
+    "certified": false,
+    "reason": null,
+    "replay": "Incomplete",
+    "node": "n02_1"
+   }
+  ],
+  "unproved_steps": [
+   {
+    "node": "n07_1",
+    "check": "unchecked",
+    "parents": [
+     "n09_1_1",
+     "n09_1_2",
+     "n09_1_3",
+     "r08_1"
+    ]
+   },
+   {
+    "node": "n04_1",
+    "check": "unchecked",
+    "parents": [
+     "n09_1_4",
+     "n09_1_5",
+     "n09_1_6",
+     "r12_1"
+    ]
+   },
+   {
+    "node": "n20_1",
+    "check": "unchecked",
+    "parents": [
+     "n07_1",
+     "n04_1",
+     "r14_1"
+    ]
+   },
+   {
+    "node": "n15_1",
+    "check": "unchecked",
+    "parents": [
+     "n20_1",
+     "r06_1"
+    ]
+   },
+   {
+    "node": "n18_1",
+    "check": "unchecked",
+    "parents": [
+     "n15_1",
+     "r09_1"
+    ]
+   },
+   {
+    "node": "n13_1",
+    "check": "unchecked",
+    "parents": [
+     "n18_1",
+     "r01_1"
+    ]
+   },
+   {
+    "node": "n17_1",
+    "check": "unchecked",
+    "parents": [
+     "n13_1",
+     "r07_1"
+    ]
+   },
+   {
+    "node": "n06_1",
+    "check": "unchecked",
+    "parents": [
+     "n17_1",
+     "r13_1"
+    ]
+   },
+   {
+    "node": "n11_1",
+    "check": "unchecked",
+    "parents": [
+     "n06_1",
+     "r05_1"
+    ]
+   },
+   {
+    "node": "n01_1",
+    "check": "unchecked",
+    "parents": [
+     "n11_1",
+     "r11_1"
+    ]
+   },
+   {
+    "node": "n19_1",
+    "check": "unchecked",
+    "parents": [
+     "n01_1",
+     "n09_1_7",
+     "r10_1"
+    ]
+   },
+   {
+    "node": "n00_1",
+    "check": "unchecked",
+    "parents": [
+     "n19_1",
+     "r04_1"
+    ]
+   },
+   {
+    "node": "n21_1",
+    "check": "unchecked",
+    "parents": [
+     "n00_1",
+     "r00_1"
+    ]
+   },
+   {
+    "node": "n03_1",
+    "check": "unchecked",
+    "parents": [
+     "n21_1",
+     "r15_1"
+    ]
+   },
+   {
+    "node": "n05_1",
+    "check": "unchecked",
+    "parents": [
+     "n03_1",
+     "r03_1"
+    ]
+   },
+   {
+    "node": "n02_1",
+    "check": "unchecked",
+    "parents": [
+     "n05_1",
+     "r02_1"
+    ]
+   }
+  ],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "r10.4",
+   "r04.2"
+  ],
+  "underived": [
+   "n07.1",
+   "n04.1",
+   "n20.1",
+   "n15.1",
+   "n18.1",
+   "n18.2",
+   "n13.1",
+   "n17.1",
+   "n06.1",
+   "n11.1",
+   "n01.1",
+   "n19.1",
+   "n00.1",
+   "n21.1",
+   "n03.1",
+   "n05.1",
+   "n02.1"
+  ],
+  "covered": 17,
+  "derived": 0,
+  "waived": 11,
+  "waivers": [
+   {
+    "sentence": "n08.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n09.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n12.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n10.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n14.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n16.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r12.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r08.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r08.3",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r10.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r10.3",
+    "role": "given",
+    "counts_against_success": true
+   }
+  ],
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 39,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "restart": 1,
+ "elapsed_s": 111.8,
+ "prompt_version": "ve-assist-eval-prompts@3"
+}

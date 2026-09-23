@@ -1,0 +1,105 @@
+{
+ "item_id": "i206f6b8e68e5aabae8bf04e2857d1791",
+ "split": "dev",
+ "author": "opus",
+ "arm": "A4",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "complete",
+  "gap_steps": [],
+  "note": "All claimed sentences derived by certified steps; target t_n02 certified. The only failure is waivers of given sentences: five rule-declaration lists (n08.1, n12.1, n10.1, n14.1, n16.1), the unassumed-checks note (n09.2), and the unused sample/lot fact (r08.3), which has no vocabulary predicate."
+ },
+ "turns": 9,
+ "tool_calls": 68,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.8088426",
+  "proposer": "0",
+  "total": "0.8088426"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": true,
+ "tool_success_strict": false,
+ "verification": {
+  "ok": true,
+  "problems": []
+ },
+ "proposer_model": "haiku",
+ "account": "saeedi.danial",
+ "status": {
+  "success": false,
+  "failures": [
+   "7 asserting sentence(s) waived (a waiver is reported, never success): n08.1, n09.2, n12.1, n10.1, n14.1, n16.1, r08.3"
+  ],
+  "targets": [
+   {
+    "id": "t_n02",
+    "text": "@unit1 is dried.",
+    "certified": true,
+    "reason": null,
+    "replay": "Checked",
+    "node": "s_n02"
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [],
+  "underived": [],
+  "covered": 23,
+  "derived": 17,
+  "waived": 7,
+  "waivers": [
+   {
+    "sentence": "n08.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n12.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n10.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n14.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n16.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n09.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "r08.3",
+    "role": "given",
+    "counts_against_success": true
+   }
+  ],
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 40,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 71.0,
+ "prompt_version": "ve-assist-eval-prompts@3"
+}

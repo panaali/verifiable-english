@@ -1,0 +1,81 @@
+{
+ "packet": "p7d78fba41946",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"acceptable\",\"reason\":\"This sentence only lists declared rule names.\"},{\"unit\":\"u2\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on this alternative rule with staged and inspected conditions.\"},{\"unit\":\"u3\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on this alternative rule with staged and inspected conditions.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The sample relationship is not used in the argument's reasoning.\"},{\"unit\":\"u5\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the numbered-to-clear conditional asserted in n18.2 even though numbered remains unassumed.\"},{\"unit\":\"u6\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the bagged-to-clear conditional asserted in n18.2 even though bagged remains unassumed.\"},{\"unit\":\"u7\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the tracked-to-clear conditional asserted in n18.2 even though tracked remains unassumed.\"},{\"unit\":\"u8\",\"verdict\":\"unacceptable\",\"reason\":\"This sentence asserts three substantive conditional inferences rather than merely describing unassumed checks.\"}]}",
+ "auditor_tokens": 6639,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u5",
+   "sentence": "r10.1",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the numbered-to-clear conditional asserted in n18.2 even though numbered remains unassumed."
+  },
+  {
+   "unit": "u6",
+   "sentence": "r10.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the bagged-to-clear conditional asserted in n18.2 even though bagged remains unassumed."
+  },
+  {
+   "unit": "u7",
+   "sentence": "r10.3",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the tracked-to-clear conditional asserted in n18.2 even though tracked remains unassumed."
+  },
+  {
+   "unit": "u8",
+   "sentence": "n18.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This sentence asserts three substantive conditional inferences rather than merely describing unassumed checks."
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "This sentence only lists declared rule names."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on this alternative rule with staged and inspected conditions."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on this alternative rule with staged and inspected conditions."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The sample relationship is not used in the argument's reasoning."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the numbered-to-clear conditional asserted in n18.2 even though numbered remains unassumed."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the bagged-to-clear conditional asserted in n18.2 even though bagged remains unassumed."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the tracked-to-clear conditional asserted in n18.2 even though tracked remains unassumed."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "unacceptable",
+   "reason": "This sentence asserts three substantive conditional inferences rather than merely describing unassumed checks."
+  }
+ }
+}

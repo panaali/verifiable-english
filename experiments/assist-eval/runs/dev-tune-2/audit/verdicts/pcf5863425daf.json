@@ -1,0 +1,17 @@
+{
+ "packet": "pcf5863425daf",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"faithful\",\"reason\":\"The formalisation correctly states the conclusion that unit5 is calibrated; the supporting reason may appear elsewhere.\"}]}",
+ "auditor_tokens": 6061,
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "The formalisation correctly states the conclusion that unit5 is calibrated; the supporting reason may appear elsewhere."
+  }
+ }
+}

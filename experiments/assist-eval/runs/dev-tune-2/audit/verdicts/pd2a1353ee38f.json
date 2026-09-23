@@ -1,0 +1,16 @@
+{
+ "packet": "pd2a1353ee38f",
+ "auditor": null,
+ "auditor_model": null,
+ "cost_usd": "0",
+ "reply": null,
+ "pass": false,
+ "problems": [
+  {
+   "unit": null,
+   "verdict": null,
+   "reason": "empty packet"
+  }
+ ],
+ "units": {}
+}

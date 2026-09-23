@@ -1,0 +1,21 @@
+{
+ "packet": "p08316491dd19",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.027293",
+ "reply": "{\"units\": [{\"unit\": \"u1\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit5 is open is correctly formalised in the account-enabled sense, which is the only sense the stated reason can establish (unit0 open (account enabled) via r03.1).\"}, {\"unit\": \"u2\", \"verdict\": \"faithful\", \"reason\": \"Both statements say only that unit1 is dried, which matches the sentence's conclusion (from unit5 open (account enabled) via r02.1), and nothing is added or dropped.\"}]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit5 is open is correctly formalised in the account-enabled sense, which is the only sense the stated reason can establish (unit0 open (account enabled) via r03.1)."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "Both statements say only that unit1 is dried, which matches the sentence's conclusion (from unit5 open (account enabled) via r02.1), and nothing is added or dropped."
+  }
+ }
+}

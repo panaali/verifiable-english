@@ -1,0 +1,2334 @@
+{
+ "format": "ve.assist-session@1",
+ "config": {
+  "format": "ve.assist-session@1",
+  "tool_version": "ve-assist@1",
+  "session_id": "779d9ef4c5998eae",
+  "environment": {
+   "language": "ve.core@0",
+   "profile": "relational-fol@0",
+   "spec_revision": "ve-v0-draft-2026-09-20",
+   "vocabulary": {
+    "sorts": {
+     "entity": {
+      "description": "A named dossier entity."
+     }
+    },
+    "predicates": {
+     "active_power_connected": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "active: power connected (R02)"
+     },
+     "active_registry_current": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "active: registry current (R20)"
+     },
+     "audited": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "audited: audit completed (R15)"
+     },
+     "bagged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "bagged: bag fitted (R19)"
+     },
+     "clear_contamination_absent": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "clear: contamination absent (R14)"
+     },
+     "clear_optically_transparent": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "clear: optically transparent (R03)"
+     },
+     "clipped": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "clipped: clip attached (R17)"
+     },
+     "dried": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "dried: moisture removed (R11)"
+     },
+     "inspected": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "inspected: inspection completed (R12)"
+     },
+     "logged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "logged: entry recorded (R08)"
+     },
+     "numbered": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "numbered: number assigned (R16)"
+     },
+     "open_account_enabled": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "open: account enabled (R13)"
+     },
+     "open_seal_removed": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "open: seal removed (R09)"
+     },
+     "scanned": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "scanned: barcode read (R05)"
+     },
+     "shipped": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "shipped: departure recorded (R04)"
+     },
+     "sound_casing_intact": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "sound: casing intact (R07)"
+     },
+     "sound_signal_audible": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "sound: signal audible (R10)"
+     },
+     "staged": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "staged: staging completed (R06)"
+     },
+     "tracked": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "tracked: tracking enabled (R18)"
+     },
+     "wrapped": {
+      "arguments": [
+       "entity"
+      ],
+      "description": "wrapped: cover fitted (R01)"
+     }
+    },
+    "constants": {
+     "unit0": {
+      "sort": "entity",
+      "description": "unit0"
+     },
+     "unit1": {
+      "sort": "entity",
+      "description": "unit1"
+     },
+     "unit3": {
+      "sort": "entity",
+      "description": "unit3"
+     },
+     "unit4": {
+      "sort": "entity",
+      "description": "unit4"
+     },
+     "unit5": {
+      "sort": "entity",
+      "description": "unit5"
+     },
+     "unit7": {
+      "sort": "entity",
+      "description": "unit7"
+     }
+    }
+   }
+  },
+  "english_vocabulary": null,
+  "source": {
+   "sentences": [
+    {
+     "id": "n08.1",
+     "text": "Rules r06, r05, r15 are declared.",
+     "role": "given",
+     "block": "n08",
+     "asserting": true
+    },
+    {
+     "id": "n09.1",
+     "text": "unit4 is clipped; unit4 is logged; unit4 is shipped; unit4 is dried; unit4 is scanned; unit4 is audited; unit4 is wrapped.",
+     "role": "given",
+     "block": "n09",
+     "asserting": true
+    },
+    {
+     "id": "n09.2",
+     "text": "The checks that unit4 is numbered and unit4 is bagged and unit4 is tracked remain unassumed.",
+     "role": "given",
+     "block": "n09",
+     "asserting": true
+    },
+    {
+     "id": "n12.1",
+     "text": "Rules r08, r01, r10, r02 are declared.",
+     "role": "given",
+     "block": "n12",
+     "asserting": true
+    },
+    {
+     "id": "n10.1",
+     "text": "Rules r12, r07, r04 are declared.",
+     "role": "given",
+     "block": "n10",
+     "asserting": true
+    },
+    {
+     "id": "n14.1",
+     "text": "Rules r09, r11, r03 are declared.",
+     "role": "given",
+     "block": "n14",
+     "asserting": true
+    },
+    {
+     "id": "n16.1",
+     "text": "Rules r14, r13, r00 are declared.",
+     "role": "given",
+     "block": "n16",
+     "asserting": true
+    },
+    {
+     "id": "r11.1",
+     "text": "If unit0 is clear (contamination absent), then unit0 is clear (optically transparent).",
+     "role": "given",
+     "block": "r11",
+     "asserting": true
+    },
+    {
+     "id": "r00.1",
+     "text": "If unit3 is audited, then unit0 is open (seal removed).",
+     "role": "given",
+     "block": "r00",
+     "asserting": true
+    },
+    {
+     "id": "r15.1",
+     "text": "If unit0 is open (seal removed), then unit0 is open (account enabled).",
+     "role": "given",
+     "block": "r15",
+     "asserting": true
+    },
+    {
+     "id": "r12.1",
+     "text": "If unit4 is dried and unit4 is scanned and unit4 is audited, then unit0 is sound (signal audible).",
+     "role": "given",
+     "block": "r12",
+     "asserting": true
+    },
+    {
+     "id": "r12.2",
+     "text": "If unit4 is staged and unit4 is inspected, then unit0 is sound (signal audible).",
+     "role": "given",
+     "block": "r12",
+     "asserting": true
+    },
+    {
+     "id": "r08.1",
+     "text": "If unit4 is clipped and unit4 is logged and unit4 is shipped, then unit0 is sound (casing intact).",
+     "role": "given",
+     "block": "r08",
+     "asserting": true
+    },
+    {
+     "id": "r08.2",
+     "text": "If unit4 is staged and unit4 is inspected, then unit0 is sound (casing intact).",
+     "role": "given",
+     "block": "r08",
+     "asserting": true
+    },
+    {
+     "id": "r08.3",
+     "text": "The sample from lot unit4 is unit5.",
+     "role": "given",
+     "block": "r08",
+     "asserting": true
+    },
+    {
+     "id": "r10.1",
+     "text": "If unit0 is clear (optically transparent) and unit4 is numbered, then unit4 is clear (optically transparent).",
+     "role": "given",
+     "block": "r10",
+     "asserting": true
+    },
+    {
+     "id": "r10.2",
+     "text": "If unit0 is clear (optically transparent) and unit4 is bagged, then unit5 is clear (contamination absent).",
+     "role": "given",
+     "block": "r10",
+     "asserting": true
+    },
+    {
+     "id": "r10.3",
+     "text": "If unit0 is clear (optically transparent) and unit4 is tracked, then unit4 is clear (contamination absent).",
+     "role": "given",
+     "block": "r10",
+     "asserting": true
+    },
+    {
+     "id": "r10.4",
+     "text": "If unit0 is clear (optically transparent) and unit4 is wrapped, then unit5 is clear (optically transparent).",
+     "role": "given",
+     "block": "r10",
+     "asserting": true
+    },
+    {
+     "id": "r05.1",
+     "text": "If unit3 is logged, then unit0 is clear (contamination absent).",
+     "role": "given",
+     "block": "r05",
+     "asserting": true
+    },
+    {
+     "id": "r02.1",
+     "text": "If unit5 is open (account enabled), then unit1 is dried.",
+     "role": "given",
+     "block": "r02",
+     "asserting": true
+    },
+    {
+     "id": "r14.1",
+     "text": "If unit0 is sound (casing intact) and unit0 is sound (signal audible), then unit4 is sound (signal audible).",
+     "role": "given",
+     "block": "r14",
+     "asserting": true
+    },
+    {
+     "id": "r06.1",
+     "text": "If unit4 is sound (signal audible), then unit7 is dried.",
+     "role": "given",
+     "block": "r06",
+     "asserting": true
+    },
+    {
+     "id": "r03.1",
+     "text": "If unit0 is open (account enabled), then unit5 is open (account enabled).",
+     "role": "given",
+     "block": "r03",
+     "asserting": true
+    },
+    {
+     "id": "r07.1",
+     "text": "If unit0 is active (registry current), then unit5 is active (registry current).",
+     "role": "given",
+     "block": "r07",
+     "asserting": true
+    },
+    {
+     "id": "r09.1",
+     "text": "If unit7 is dried, then unit0 is active (power connected).",
+     "role": "given",
+     "block": "r09",
+     "asserting": true
+    },
+    {
+     "id": "r13.1",
+     "text": "If unit5 is active (registry current), then unit3 is logged.",
+     "role": "given",
+     "block": "r13",
+     "asserting": true
+    },
+    {
+     "id": "r01.1",
+     "text": "If unit0 is active (power connected), then unit0 is active (registry current).",
+     "role": "given",
+     "block": "r01",
+     "asserting": true
+    },
+    {
+     "id": "r04.1",
+     "text": "If unit4 is clear (optically transparent), then unit3 is audited.",
+     "role": "given",
+     "block": "r04",
+     "asserting": true
+    },
+    {
+     "id": "r04.2",
+     "text": "If unit4 is staged and unit4 is inspected, then unit3 is audited.",
+     "role": "given",
+     "block": "r04",
+     "asserting": true
+    },
+    {
+     "id": "n07.1",
+     "text": "Because unit4 is clipped and unit4 is logged and unit4 is shipped, unit0 is sound.",
+     "role": "claimed",
+     "block": "n07",
+     "asserting": true
+    },
+    {
+     "id": "n04.1",
+     "text": "Since unit4 is dried and unit4 is scanned and unit4 is audited, it follows that unit0 is sound.",
+     "role": "claimed",
+     "block": "n04",
+     "asserting": true
+    },
+    {
+     "id": "n20.1",
+     "text": "Given that unit0 is sound and unit0 is sound, we infer that unit4 is sound.",
+     "role": "claimed",
+     "block": "n20",
+     "asserting": true
+    },
+    {
+     "id": "n15.1",
+     "text": "It follows that unit7 is dried because the immediately preceding sound result holds.",
+     "role": "claimed",
+     "block": "n15",
+     "asserting": true
+    },
+    {
+     "id": "n18.1",
+     "text": "Because unit7 is dried, unit0 is active.",
+     "role": "claimed",
+     "block": "n18",
+     "asserting": true
+    },
+    {
+     "id": "n18.2",
+     "text": "The checks that unit4 is numbered and unit4 is bagged and unit4 is tracked would imply that unit4 is clear and unit5 is clear and unit4 is clear, respectively.",
+     "role": "claimed",
+     "block": "n18",
+     "asserting": true
+    },
+    {
+     "id": "n13.1",
+     "text": "Since unit0 is active, it follows that unit0 is active.",
+     "role": "claimed",
+     "block": "n13",
+     "asserting": true
+    },
+    {
+     "id": "n17.1",
+     "text": "Given that unit0 is active, we infer that unit5 is active.",
+     "role": "claimed",
+     "block": "n17",
+     "asserting": true
+    },
+    {
+     "id": "n06.1",
+     "text": "It follows that unit3 is logged because the immediately preceding active result holds.",
+     "role": "claimed",
+     "block": "n06",
+     "asserting": true
+    },
+    {
+     "id": "n11.1",
+     "text": "Because unit3 is logged, unit0 is clear.",
+     "role": "claimed",
+     "block": "n11",
+     "asserting": true
+    },
+    {
+     "id": "n01.1",
+     "text": "Since unit0 is clear, it follows that unit0 is clear.",
+     "role": "claimed",
+     "block": "n01",
+     "asserting": true
+    },
+    {
+     "id": "n19.1",
+     "text": "Given that unit0 is clear and unit4 is wrapped, we infer that unit5 is clear.",
+     "role": "claimed",
+     "block": "n19",
+     "asserting": true
+    },
+    {
+     "id": "n00.1",
+     "text": "It follows that unit3 is audited because the immediately preceding clear result holds.",
+     "role": "claimed",
+     "block": "n00",
+     "asserting": true
+    },
+    {
+     "id": "n21.1",
+     "text": "Because unit3 is audited, unit0 is open.",
+     "role": "claimed",
+     "block": "n21",
+     "asserting": true
+    },
+    {
+     "id": "n03.1",
+     "text": "Since unit0 is open, it follows that unit0 is open.",
+     "role": "claimed",
+     "block": "n03",
+     "asserting": true
+    },
+    {
+     "id": "n05.1",
+     "text": "Given that unit0 is open, we infer that unit5 is open.",
+     "role": "claimed",
+     "block": "n05",
+     "asserting": true
+    },
+    {
+     "id": "n02.1",
+     "text": "It follows that unit1 is dried because the immediately preceding open result holds.",
+     "role": "claimed",
+     "block": "n02",
+     "asserting": true
+    }
+   ]
+  },
+  "targets": [
+   {
+    "id": "t_n02",
+    "sentence": "n02.1"
+   }
+  ],
+  "options": {
+   "premise_suggestions": false,
+   "max_proof_steps": 10000,
+   "max_domain_size": 2,
+   "max_models": 2000,
+   "max_evaluations": 100000,
+   "proposer_k": 3,
+   "propose_repair_rounds": 1
+  },
+  "metadata": {
+   "p5_item_id": "id9eed1756a3842c2d7da8f08ce3b9290",
+   "p5_root": "n02",
+   "p5_paragraph_parents": {
+    "n07": [
+     "n09"
+    ],
+    "n04": [
+     "n09"
+    ],
+    "n20": [
+     "n07",
+     "n04"
+    ],
+    "n15": [
+     "n20"
+    ],
+    "n18": [
+     "n04",
+     "n15"
+    ],
+    "n13": [
+     "n07",
+     "n18"
+    ],
+    "n17": [
+     "n13"
+    ],
+    "n06": [
+     "n20",
+     "n17"
+    ],
+    "n11": [
+     "n06"
+    ],
+    "n01": [
+     "n11"
+    ],
+    "n19": [
+     "n06",
+     "n01"
+    ],
+    "n00": [
+     "n18",
+     "n19"
+    ],
+    "n21": [
+     "n00"
+    ],
+    "n03": [
+     "n21"
+    ],
+    "n05": [
+     "n06",
+     "n03"
+    ],
+    "n02": [
+     "n11",
+     "n05"
+    ]
+   },
+   "eval": {
+    "author": "gemini",
+    "arm": "A2",
+    "split": "dev",
+    "prompt_version": "ve-assist-eval-prompts@3"
+   }
+  },
+  "created": "2026-09-23T12:20:17+00:00",
+  "config_digest": "6c79b52cf3e72003a6f0a2aca308d13919574807e828f7e66f2962b1e1ab0a10"
+ },
+ "events": [
+  {
+   "seq": 0,
+   "action": "freeze_target",
+   "args": {
+    "target": "t_n02",
+    "text": "@unit1 is dried."
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "target": "t_n02",
+    "sentence": {
+     "id": "n02.1",
+     "role": "claimed",
+     "text": "It follows that unit1 is dried because the immediately preceding open result holds."
+    },
+    "text": "@unit1 is dried.",
+    "paraphrase": "\"unit1\" is dried.",
+    "surface": "strict",
+    "origin": "hand-written"
+   },
+   "result_chars": 286
+  },
+  {
+   "seq": 1,
+   "action": "add_node",
+   "args": {
+    "name": "n02_1",
+    "text": "@unit1 is dried.",
+    "anchors": [
+     "n02.1"
+    ],
+    "parents": []
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "node": {
+     "name": "n02_1",
+     "kind": "assumption",
+     "text": "@unit1 is dried.",
+     "paraphrase": "\"unit1\" is dried.",
+     "anchors": [
+      {
+       "id": "n02.1",
+       "role": "claimed",
+       "text": "It follows that unit1 is dried because the immediately preceding open result holds."
+      }
+     ],
+     "parents": [],
+     "origin": "hand-written",
+     "matches_targets": [
+      "t_n02"
+     ]
+    }
+   },
+   "result_chars": 341
+  },
+  {
+   "seq": 2,
+   "action": "waive",
+   "args": {
+    "sentence": "n08.1",
+    "reason": "rule list"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "n08.1",
+    "reason": "rule list"
+   },
+   "result_chars": 54
+  },
+  {
+   "seq": 3,
+   "action": "waive",
+   "args": {
+    "sentence": "n09.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "n09.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 4,
+   "action": "waive",
+   "args": {
+    "sentence": "n09.2",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "n09.2",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 5,
+   "action": "waive",
+   "args": {
+    "sentence": "n12.1",
+    "reason": "rule list"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "n12.1",
+    "reason": "rule list"
+   },
+   "result_chars": 54
+  },
+  {
+   "seq": 6,
+   "action": "waive",
+   "args": {
+    "sentence": "n10.1",
+    "reason": "rule list"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "n10.1",
+    "reason": "rule list"
+   },
+   "result_chars": 54
+  },
+  {
+   "seq": 7,
+   "action": "waive",
+   "args": {
+    "sentence": "n14.1",
+    "reason": "rule list"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "n14.1",
+    "reason": "rule list"
+   },
+   "result_chars": 54
+  },
+  {
+   "seq": 8,
+   "action": "waive",
+   "args": {
+    "sentence": "n16.1",
+    "reason": "rule list"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "n16.1",
+    "reason": "rule list"
+   },
+   "result_chars": 54
+  },
+  {
+   "seq": 9,
+   "action": "waive",
+   "args": {
+    "sentence": "r11.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r11.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 10,
+   "action": "waive",
+   "args": {
+    "sentence": "r00.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r00.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 11,
+   "action": "waive",
+   "args": {
+    "sentence": "r15.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r15.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 12,
+   "action": "waive",
+   "args": {
+    "sentence": "r12.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r12.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 13,
+   "action": "waive",
+   "args": {
+    "sentence": "r12.2",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r12.2",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 14,
+   "action": "waive",
+   "args": {
+    "sentence": "r08.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r08.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 15,
+   "action": "waive",
+   "args": {
+    "sentence": "r08.2",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r08.2",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 16,
+   "action": "waive",
+   "args": {
+    "sentence": "r08.3",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r08.3",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 17,
+   "action": "waive",
+   "args": {
+    "sentence": "r10.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r10.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 18,
+   "action": "waive",
+   "args": {
+    "sentence": "r10.2",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r10.2",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 19,
+   "action": "waive",
+   "args": {
+    "sentence": "r10.3",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r10.3",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 20,
+   "action": "waive",
+   "args": {
+    "sentence": "r10.4",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r10.4",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 21,
+   "action": "waive",
+   "args": {
+    "sentence": "r05.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r05.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 22,
+   "action": "waive",
+   "args": {
+    "sentence": "r02.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r02.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 23,
+   "action": "waive",
+   "args": {
+    "sentence": "r14.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r14.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 24,
+   "action": "waive",
+   "args": {
+    "sentence": "r06.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r06.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 25,
+   "action": "waive",
+   "args": {
+    "sentence": "r03.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r03.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 26,
+   "action": "waive",
+   "args": {
+    "sentence": "r07.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r07.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 27,
+   "action": "waive",
+   "args": {
+    "sentence": "r09.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r09.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 28,
+   "action": "waive",
+   "args": {
+    "sentence": "r13.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r13.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 29,
+   "action": "waive",
+   "args": {
+    "sentence": "r01.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r01.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 30,
+   "action": "waive",
+   "args": {
+    "sentence": "r04.1",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r04.1",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 31,
+   "action": "waive",
+   "args": {
+    "sentence": "r04.2",
+    "reason": "unneeded"
+   },
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "waived": "r04.2",
+    "reason": "unneeded"
+   },
+   "result_chars": 53
+  },
+  {
+   "seq": 32,
+   "action": "status",
+   "args": {},
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "success": false,
+    "failures": [
+     "target t_n02: no step node states the frozen target",
+     "17 claimed sentence(s) not derived by a certified step: n07.1, n04.1, n20.1, n15.1, n18.1, n18.2, n13.1, n17.1, n06.1, n11.1, n01.1, n19.1, n00.1, n21.1, n03.1, n05.1, n02.1",
+     "30 asserting sentence(s) waived (a waiver is reported, never success): n08.1, n09.1, n09.2, n12.1, n10.1, n14.1, n16.1, r11.1, r00.1, r15.1, r12.1, r12.2, r08.1, r08.2, r08.3, r10.1, r10.2, r10.3, r10.4, r05.1, r02.1, r14.1, r06.1, r03.1, r07.1, r09.1, r13.1, r01.1, r04.1, r04.2",
+     "assumption n02_1 alone entails target t_n02"
+    ],
+    "targets": [
+     {
+      "id": "t_n02",
+      "sentence": {
+       "id": "n02.1",
+       "role": "claimed",
+       "text": "It follows that unit1 is dried because the immediately preceding open result holds."
+      },
+      "frozen": true,
+      "text": "@unit1 is dried.",
+      "paraphrase": "\"unit1\" is dried.",
+      "vacuity": "invalid",
+      "certified": false,
+      "reason": "no step node states the frozen target"
+     }
+    ],
+    "unproved_steps": [],
+    "unanchored_assumptions": [
+     {
+      "node": "n02_1",
+      "anchor_state": "anchored_to_claim_only",
+      "text": "@unit1 is dried.",
+      "paraphrase": "\"unit1\" is dried.",
+      "supports_target": false,
+      "load_bearing": false,
+      "needed_by": []
+     }
+    ],
+    "coverage": {
+     "covered": 0,
+     "derived": 0,
+     "waived": 30,
+     "uncovered": [],
+     "underived": [
+      "n07.1",
+      "n04.1",
+      "n20.1",
+      "n15.1",
+      "n18.1",
+      "n18.2",
+      "n13.1",
+      "n17.1",
+      "n06.1",
+      "n11.1",
+      "n01.1",
+      "n19.1",
+      "n00.1",
+      "n21.1",
+      "n03.1",
+      "n05.1",
+      "n02.1"
+     ],
+     "sentences": [
+      {
+       "sentence": "n08.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "rule list"
+      },
+      {
+       "sentence": "n09.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "n09.2",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "n12.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "rule list"
+      },
+      {
+       "sentence": "n10.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "rule list"
+      },
+      {
+       "sentence": "n14.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "rule list"
+      },
+      {
+       "sentence": "n16.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "rule list"
+      },
+      {
+       "sentence": "r11.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r00.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r15.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r12.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r12.2",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r08.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r08.2",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r08.3",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r10.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r10.2",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r10.3",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r10.4",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r05.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r02.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r14.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r06.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r03.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r07.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r09.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r13.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r01.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r04.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r04.2",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "n07.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n04.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n20.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n15.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n18.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n18.2",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n13.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n17.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n06.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n11.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n01.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n19.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n00.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n21.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n03.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n05.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n02.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": [
+        "n02_1"
+       ]
+      }
+     ]
+    },
+    "waivers": [
+     {
+      "sentence": "n08.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "rule list",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "n09.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "n09.2",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "n12.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "rule list",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "n10.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "rule list",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "n14.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "rule list",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "n16.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "rule list",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r11.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r00.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r15.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r12.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r12.2",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r08.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r08.2",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r08.3",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r10.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r10.2",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r10.3",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r10.4",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r05.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r02.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r14.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r06.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r03.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r07.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r09.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r13.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r01.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r04.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r04.2",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     }
+    ],
+    "renamed_conclusions": [],
+    "provenance": {
+     "hand-written": 1,
+     "proposer-verbatim": 0,
+     "proposer-edited": 0,
+     "suggestion-verbatim": 0,
+     "suggestion-edited": 0
+    },
+    "declared": {},
+    "usage": {
+     "tokens": {},
+     "actions": {
+      "freeze_target": 1,
+      "add_node": 1,
+      "waive": 30
+     },
+     "events": 32,
+     "rejected_actions": 0,
+     "tool_result_chars": 2222
+    }
+   },
+   "result_chars": 9324
+  },
+  {
+   "seq": 33,
+   "action": "status",
+   "args": {},
+   "time": "2026-09-23T12:20:17+00:00",
+   "result": {
+    "ok": true,
+    "success": false,
+    "failures": [
+     "target t_n02: no step node states the frozen target",
+     "17 claimed sentence(s) not derived by a certified step: n07.1, n04.1, n20.1, n15.1, n18.1, n18.2, n13.1, n17.1, n06.1, n11.1, n01.1, n19.1, n00.1, n21.1, n03.1, n05.1, n02.1",
+     "30 asserting sentence(s) waived (a waiver is reported, never success): n08.1, n09.1, n09.2, n12.1, n10.1, n14.1, n16.1, r11.1, r00.1, r15.1, r12.1, r12.2, r08.1, r08.2, r08.3, r10.1, r10.2, r10.3, r10.4, r05.1, r02.1, r14.1, r06.1, r03.1, r07.1, r09.1, r13.1, r01.1, r04.1, r04.2",
+     "assumption n02_1 alone entails target t_n02"
+    ],
+    "targets": [
+     {
+      "id": "t_n02",
+      "sentence": {
+       "id": "n02.1",
+       "role": "claimed",
+       "text": "It follows that unit1 is dried because the immediately preceding open result holds."
+      },
+      "frozen": true,
+      "text": "@unit1 is dried.",
+      "paraphrase": "\"unit1\" is dried.",
+      "vacuity": "invalid",
+      "certified": false,
+      "reason": "no step node states the frozen target"
+     }
+    ],
+    "unproved_steps": [],
+    "unanchored_assumptions": [
+     {
+      "node": "n02_1",
+      "anchor_state": "anchored_to_claim_only",
+      "text": "@unit1 is dried.",
+      "paraphrase": "\"unit1\" is dried.",
+      "supports_target": false,
+      "load_bearing": false,
+      "needed_by": []
+     }
+    ],
+    "coverage": {
+     "covered": 0,
+     "derived": 0,
+     "waived": 30,
+     "uncovered": [],
+     "underived": [
+      "n07.1",
+      "n04.1",
+      "n20.1",
+      "n15.1",
+      "n18.1",
+      "n18.2",
+      "n13.1",
+      "n17.1",
+      "n06.1",
+      "n11.1",
+      "n01.1",
+      "n19.1",
+      "n00.1",
+      "n21.1",
+      "n03.1",
+      "n05.1",
+      "n02.1"
+     ],
+     "sentences": [
+      {
+       "sentence": "n08.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "rule list"
+      },
+      {
+       "sentence": "n09.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "n09.2",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "n12.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "rule list"
+      },
+      {
+       "sentence": "n10.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "rule list"
+      },
+      {
+       "sentence": "n14.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "rule list"
+      },
+      {
+       "sentence": "n16.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "rule list"
+      },
+      {
+       "sentence": "r11.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r00.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r15.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r12.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r12.2",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r08.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r08.2",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r08.3",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r10.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r10.2",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r10.3",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r10.4",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r05.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r02.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r14.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r06.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r03.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r07.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r09.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r13.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r01.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r04.1",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "r04.2",
+       "role": "given",
+       "state": "waived",
+       "nodes": [],
+       "waiver": "unneeded"
+      },
+      {
+       "sentence": "n07.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n04.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n20.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n15.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n18.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n18.2",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n13.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n17.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n06.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n11.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n01.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n19.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n00.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n21.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n03.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n05.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": []
+      },
+      {
+       "sentence": "n02.1",
+       "role": "claimed",
+       "state": "underived",
+       "nodes": [
+        "n02_1"
+       ]
+      }
+     ]
+    },
+    "waivers": [
+     {
+      "sentence": "n08.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "rule list",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "n09.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "n09.2",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "n12.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "rule list",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "n10.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "rule list",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "n14.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "rule list",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "n16.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "rule list",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r11.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r00.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r15.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r12.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r12.2",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r08.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r08.2",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r08.3",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r10.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r10.2",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r10.3",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r10.4",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r05.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r02.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r14.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r06.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r03.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r07.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r09.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r13.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r01.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r04.1",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     },
+     {
+      "sentence": "r04.2",
+      "role": "given",
+      "asserting": true,
+      "reason": "unneeded",
+      "counts_against_success": true
+     }
+    ],
+    "renamed_conclusions": [],
+    "provenance": {
+     "hand-written": 1,
+     "proposer-verbatim": 0,
+     "proposer-edited": 0,
+     "suggestion-verbatim": 0,
+     "suggestion-edited": 0
+    },
+    "declared": {},
+    "usage": {
+     "tokens": {},
+     "actions": {
+      "freeze_target": 1,
+      "add_node": 1,
+      "waive": 30,
+      "status": 1
+     },
+     "events": 33,
+     "rejected_actions": 0,
+     "tool_result_chars": 11546
+    }
+   },
+   "result_chars": 9338
+  }
+ ]
+}

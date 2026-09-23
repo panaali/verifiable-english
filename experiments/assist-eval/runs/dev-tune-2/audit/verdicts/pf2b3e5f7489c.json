@@ -1,0 +1,246 @@
+{
+ "packet": "pf2b3e5f7489c",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.116403",
+ "reply": "{\"units\": [\n{\"unit\": \"u1\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the reasoning relies on nothing in it.\"},\n{\"unit\": \"u2\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the reasoning relies on nothing in it.\"},\n{\"unit\": \"u3\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the reasoning relies on nothing in it.\"},\n{\"unit\": \"u4\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the reasoning relies on nothing in it.\"},\n{\"unit\": \"u5\", \"verdict\": \"acceptable\", \"reason\": \"This only lists declared rule names; the reasoning relies on nothing in it.\"},\n{\"unit\": \"u6\", \"verdict\": \"faithful\", \"reason\": \"The conjunction states all seven facts about unit0 (sized, wrapped-up, released, reviewed, staged, registered, inspected).\"},\n{\"unit\": \"u7\", \"verdict\": \"acceptable\", \"reason\": \"It only says which checks remain unassumed.\"},\n{\"unit\": \"u8\", \"verdict\": \"acceptable\", \"reason\": \"The rule needs unit0 to be bagged, which is unassumed, so the main chain never uses it.\"},\n{\"unit\": \"u9\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same antecedents and consequent, with the optically-transparent and contamination-absent senses where the sentence names them.\"},\n{\"unit\": \"u10\", \"verdict\": \"acceptable\", \"reason\": \"The rule needs unit0 to be numbered, which is unassumed, so the main chain never uses it.\"},\n{\"unit\": \"u11\", \"verdict\": \"acceptable\", \"reason\": \"The rule needs unit0 to be listed, which is unassumed, so the main chain never uses it.\"},\n{\"unit\": \"u12\", \"verdict\": \"faithful\", \"reason\": \"It is the same implication, with the seal-removed and account-enabled senses correctly placed.\"},\n{\"unit\": \"u13\", \"verdict\": \"faithful\", \"reason\": \"It is the same implication, using the account-enabled sense on both sides.\"},\n{\"unit\": \"u14\", \"verdict\": \"faithful\", \"reason\": \"It is the same implication, with the staffing-arranged sense in the consequent.\"},\n{\"unit\": \"u15\", \"verdict\": \"faithful\", \"reason\": \"It is the same implication, with the packing-completed sense in the antecedent.\"},\n{\"unit\": \"u16\", \"verdict\": \"faithful\", \"reason\": \"It is the same implication, with the seal-removed sense in the consequent.\"},\n{\"unit\": \"u17\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same conjunctive antecedent in the signal-audible sense and the same conclusion that unit0 is checked.\"},\n{\"unit\": \"u18\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same three conditions on unit0 and concludes unit1 is sound in the signal-audible sense.\"},\n{\"unit\": \"u19\", \"verdict\": \"acceptable\", \"reason\": \"Nothing establishes that unit2 is dated or tied, so the rule is never used.\"},\n{\"unit\": \"u20\", \"verdict\": \"faithful\", \"reason\": \"It keeps the same three conditions on unit0 and concludes unit1 is sound in the casing-intact sense.\"},\n{\"unit\": \"u21\", \"verdict\": \"acceptable\", \"reason\": \"Nothing establishes that unit2 is dated or tied, so the rule is never used.\"},\n{\"unit\": \"u22\", \"verdict\": \"acceptable\", \"reason\": \"No step of the reasoning relies on the fact that the sample from lot unit0 is unit2.\"},\n{\"unit\": \"u23\", \"verdict\": \"faithful\", \"reason\": \"It is the same implication, with the optically-transparent sense for unit2.\"},\n{\"unit\": \"u24\", \"verdict\": \"acceptable\", \"reason\": \"Nothing establishes that unit2 is dated or tied, so the rule is never used.\"},\n{\"unit\": \"u25\", \"verdict\": \"faithful\", \"reason\": \"It is the same implication, with the contamination-absent and optically-transparent senses correctly placed.\"},\n{\"unit\": \"u26\", \"verdict\": \"faithful\", \"reason\": \"It keeps the casing-intact and signal-audible antecedents and concludes unit0 is sound in the signal-audible sense.\"},\n{\"unit\": \"u27\", \"verdict\": \"faithful\", \"reason\": \"It is the same implication, using the packing-completed sense on both sides.\"},\n{\"unit\": \"u28\", \"verdict\": \"faithful\", \"reason\": \"It is the same implication, with the staffing-arranged and packing-completed senses correctly placed.\"},\n{\"unit\": \"u29\", \"verdict\": \"faithful\", \"reason\": \"It is the same implication, with the account-enabled sense in the antecedent.\"},\n{\"unit\": \"u30\", \"verdict\": \"faithful\", \"reason\": \"It is the same implication, with the contamination-absent sense in the consequent.\"},\n{\"unit\": \"u31\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish unit1 sound only in the casing-intact sense, via r06.1.\"},\n{\"unit\": \"u32\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish unit1 sound only in the signal-audible sense, via r08.1.\"},\n{\"unit\": \"u33\", \"verdict\": \"faithful\", \"reason\": \"The two stated sound results give unit0 sound in the signal-audible sense, via r14.1.\"},\n{\"unit\": \"u34\", \"verdict\": \"faithful\", \"reason\": \"The formalisation states the conclusion that unit0 is checked.\"},\n{\"unit\": \"u35\", \"verdict\": \"faithful\", \"reason\": \"Being checked establishes unit1 clear in the contamination-absent sense, via r09.1.\"},\n{\"unit\": \"u36\", \"verdict\": \"faithful\", \"reason\": \"The contamination-absent result gives unit1 clear in the optically-transparent sense, via r02.1.\"},\n{\"unit\": \"u37\", \"verdict\": \"acceptable\", \"reason\": \"It only describes what the unassumed checks would establish, and the reasoning does not rely on it.\"},\n{\"unit\": \"u38\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons can only establish unit2 clear in the contamination-absent sense, via r11.2.\"},\n{\"unit\": \"u39\", \"verdict\": \"faithful\", \"reason\": \"The formalisation states the conclusion that unit0 is documented.\"},\n{\"unit\": \"u40\", \"verdict\": \"faithful\", \"reason\": \"Being documented gives unit1 open in the seal-removed sense, via r13.1.\"},\n{\"unit\": \"u41\", \"verdict\": \"faithful\", \"reason\": \"The seal-removed result gives unit1 open in the account-enabled sense, via r00.1.\"},\n{\"unit\": \"u42\", \"verdict\": \"faithful\", \"reason\": \"The stated reason gives unit0 open in the account-enabled sense, via r10.1.\"},\n{\"unit\": \"u43\", \"verdict\": \"faithful\", \"reason\": \"The formalisation states the conclusion that unit0 is packed.\"},\n{\"unit\": \"u44\", \"verdict\": \"faithful\", \"reason\": \"Being packed gives unit1 ready in the staffing-arranged sense, via r12.1.\"},\n{\"unit\": \"u45\", \"verdict\": \"faithful\", \"reason\": \"The staffing-arranged result gives unit1 ready in the packing-completed sense, via r03.1.\"},\n{\"unit\": \"u46\", \"verdict\": \"faithful\", \"reason\": \"The stated reason gives unit0 ready in the packing-completed sense, via r07.1.\"},\n{\"unit\": \"u47\", \"verdict\": \"faithful\", \"reason\": \"Both statements say that unit0 is bundled, which is the sentence's conclusion.\"}\n]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the reasoning relies on nothing in it."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the reasoning relies on nothing in it."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the reasoning relies on nothing in it."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the reasoning relies on nothing in it."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "This only lists declared rule names; the reasoning relies on nothing in it."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "faithful",
+   "reason": "The conjunction states all seven facts about unit0 (sized, wrapped-up, released, reviewed, staged, registered, inspected)."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "It only says which checks remain unassumed."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "acceptable",
+   "reason": "The rule needs unit0 to be bagged, which is unassumed, so the main chain never uses it."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "It keeps the same antecedents and consequent, with the optically-transparent and contamination-absent senses where the sentence names them."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "acceptable",
+   "reason": "The rule needs unit0 to be numbered, which is unassumed, so the main chain never uses it."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "acceptable",
+   "reason": "The rule needs unit0 to be listed, which is unassumed, so the main chain never uses it."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "It is the same implication, with the seal-removed and account-enabled senses correctly placed."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "It is the same implication, using the account-enabled sense on both sides."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "It is the same implication, with the staffing-arranged sense in the consequent."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "It is the same implication, with the packing-completed sense in the antecedent."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "It is the same implication, with the seal-removed sense in the consequent."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "It keeps the same conjunctive antecedent in the signal-audible sense and the same conclusion that unit0 is checked."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "It keeps the same three conditions on unit0 and concludes unit1 is sound in the signal-audible sense."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "acceptable",
+   "reason": "Nothing establishes that unit2 is dated or tied, so the rule is never used."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "It keeps the same three conditions on unit0 and concludes unit1 is sound in the casing-intact sense."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "acceptable",
+   "reason": "Nothing establishes that unit2 is dated or tied, so the rule is never used."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "acceptable",
+   "reason": "No step of the reasoning relies on the fact that the sample from lot unit0 is unit2."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "It is the same implication, with the optically-transparent sense for unit2."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "acceptable",
+   "reason": "Nothing establishes that unit2 is dated or tied, so the rule is never used."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "It is the same implication, with the contamination-absent and optically-transparent senses correctly placed."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "It keeps the casing-intact and signal-audible antecedents and concludes unit0 is sound in the signal-audible sense."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "It is the same implication, using the packing-completed sense on both sides."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "It is the same implication, with the staffing-arranged and packing-completed senses correctly placed."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "It is the same implication, with the account-enabled sense in the antecedent."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "It is the same implication, with the contamination-absent sense in the consequent."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish unit1 sound only in the casing-intact sense, via r06.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish unit1 sound only in the signal-audible sense, via r08.1."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The two stated sound results give unit0 sound in the signal-audible sense, via r14.1."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The formalisation states the conclusion that unit0 is checked."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "Being checked establishes unit1 clear in the contamination-absent sense, via r09.1."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "The contamination-absent result gives unit1 clear in the optically-transparent sense, via r02.1."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "acceptable",
+   "reason": "It only describes what the unassumed checks would establish, and the reasoning does not rely on it."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "The stated reasons can only establish unit2 clear in the contamination-absent sense, via r11.2."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "The formalisation states the conclusion that unit0 is documented."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "Being documented gives unit1 open in the seal-removed sense, via r13.1."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "The seal-removed result gives unit1 open in the account-enabled sense, via r00.1."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "The stated reason gives unit0 open in the account-enabled sense, via r10.1."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The formalisation states the conclusion that unit0 is packed."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "Being packed gives unit1 ready in the staffing-arranged sense, via r12.1."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "The staffing-arranged result gives unit1 ready in the packing-completed sense, via r03.1."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "The stated reason gives unit0 ready in the packing-completed sense, via r07.1."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "Both statements say that unit0 is bundled, which is the sentence's conclusion."
+  }
+ }
+}

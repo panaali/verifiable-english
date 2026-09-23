@@ -234,7 +234,7 @@ def evaluate_document(item, doc, frozen, *, author, split, attempt):
 
 class SessionRun:
     def __init__(self, item, *, split, author_name, author, arm, out_dir, limits=Limits(),
-                 account=None, proposer_factory=None, proposer_model=DEFAULT_PROPOSER):
+                 account=None, proposer_factory=None, proposer_model=DEFAULT_PROPOSER, restart=0):
         if arm not in ARMS:
             raise ValueError(f"unknown arm {arm}")
         self.item, self.split, self.author_name, self.author, self.arm = item, split, author_name, author, arm
@@ -244,6 +244,8 @@ class SessionRun:
         self.turns = self.tool_calls = self.protocol_errors = 0
         self.history = []
         self.session = new_session(item, author=author_name, arm=arm, split=split)
+        self.restart = restart  # > 0: fresh author call ids after an infrastructure abort (the paid ledger
+        # refuses an identity whose infrastructure retries are exhausted)
         self.proposer = None
         self.account, self.proposer_model = account, proposer_model if ARMS[arm]["proposer"] else None
         self.calls_path = self.out / "proposer-calls.jsonl"
@@ -344,7 +346,8 @@ class SessionRun:
                 if not self.affordable(need):
                     reason = "budget"
                     break
-                call_id = f"assist-eval/{self.split}/{self.author_name}/{self.arm}/{self.item['id']}/t{self.turns + 1}"
+                call_id = f"assist-eval/{self.split}/{self.author_name}/{self.arm}/{self.item['id']}/t{self.turns + 1}" + (
+                    f"/restart{self.restart}" if self.restart else "")
                 turn = self.author.turn(self.history, call_id, parse_calls=self.arm != "A2")
                 self.turns += 1
                 self.spent["author"] += turn.cost
@@ -384,7 +387,7 @@ class SessionRun:
                   "verification": verification, "proposer_model": self.proposer_model,
                   "account": self.account,
                   "status": compact_status(status) if status else None,
-                  "elapsed_s": round(time.monotonic() - start, 1), "prompt_version": prompts.PROMPT_VERSION}
+                  "restart": self.restart, "elapsed_s": round(time.monotonic() - start, 1), "prompt_version": prompts.PROMPT_VERSION}
         self._write("result.json", result)
         return result
 

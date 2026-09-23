@@ -1,0 +1,176 @@
+{
+ "packet": "p8668181e5b40",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.088423",
+ "reply": "{\"units\": [\n{\"unit\": \"u1\", \"verdict\": \"faithful\", \"reason\": \"All seven stated facts about unit5 are listed exactly.\"},\n{\"unit\": \"u2\", \"verdict\": \"faithful\", \"reason\": \"Same condition (unit1 cleared, payment settled) and the same conclusion, in the same direction.\"},\n{\"unit\": \"u3\", \"verdict\": \"faithful\", \"reason\": \"The conjunction of the two ready (packing completed) conditions implies weighed-in, as stated.\"},\n{\"unit\": \"u4\", \"verdict\": \"faithful\", \"reason\": \"The nested conjunction of mounted, routed and rated is equivalent to the stated three-part condition, with the correct sense in the conclusion.\"},\n{\"unit\": \"u5\", \"verdict\": \"faithful\", \"reason\": \"Weighed-in implies unit3 sound (casing intact), as stated.\"},\n{\"unit\": \"u6\", \"verdict\": \"faithful\", \"reason\": \"Matches r15.3 with the correct senses on both sides.\"},\n{\"unit\": \"u7\", \"verdict\": \"faithful\", \"reason\": \"Matches r11.1 with the correct senses and direction.\"},\n{\"unit\": \"u8\", \"verdict\": \"faithful\", \"reason\": \"Logged implies unit3 cleared (inspection passed), as stated.\"},\n{\"unit\": \"u9\", \"verdict\": \"faithful\", \"reason\": \"The three-part condition correctly implies ready (staffing arranged).\"},\n{\"unit\": \"u10\", \"verdict\": \"faithful\", \"reason\": \"Matches r12.1 with the correct sense and direction.\"},\n{\"unit\": \"u11\", \"verdict\": \"faithful\", \"reason\": \"Balanced implies unit3 stable (temperature constant), as stated.\"},\n{\"unit\": \"u12\", \"verdict\": \"faithful\", \"reason\": \"Matches r07.1 with the correct sense and direction.\"},\n{\"unit\": \"u13\", \"verdict\": \"faithful\", \"reason\": \"Stable (shape retained) implies calibrated, as stated.\"},\n{\"unit\": \"u14\", \"verdict\": \"faithful\", \"reason\": \"Matches r02.1 with the correct senses and direction.\"},\n{\"unit\": \"u15\", \"verdict\": \"faithful\", \"reason\": \"Both ready senses of unit3 imply unit5 ready (packing completed), as stated.\"},\n{\"unit\": \"u16\", \"verdict\": \"faithful\", \"reason\": \"Matches r14.1 with the correct senses and direction.\"},\n{\"unit\": \"u17\", \"verdict\": \"faithful\", \"reason\": \"Sound (signal audible) implies logged, as stated.\"},\n{\"unit\": \"u18\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish ready (staffing arranged) via r00.1.\"},\n{\"unit\": \"u19\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish ready (packing completed) via r03.1.\"},\n{\"unit\": \"u20\", \"verdict\": \"faithful\", \"reason\": \"r06.1 yields unit5 ready (packing completed).\"},\n{\"unit\": \"u21\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit5 is weighed-in is stated correctly.\"},\n{\"unit\": \"u22\", \"verdict\": \"faithful\", \"reason\": \"r01.1 yields sound (casing intact).\"},\n{\"unit\": \"u23\", \"verdict\": \"faithful\", \"reason\": \"r14.1 yields unit3 sound (signal audible) from casing intact.\"},\n{\"unit\": \"u24\", \"verdict\": \"faithful\", \"reason\": \"r07.1 yields unit5 sound (signal audible).\"},\n{\"unit\": \"u25\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit5 is logged is stated correctly.\"},\n{\"unit\": \"u26\", \"verdict\": \"faithful\", \"reason\": \"r04.1 yields cleared (inspection passed).\"},\n{\"unit\": \"u27\", \"verdict\": \"faithful\", \"reason\": \"r02.1 yields cleared (payment settled).\"},\n{\"unit\": \"u28\", \"verdict\": \"faithful\", \"reason\": \"r12.1 yields unit1 cleared (payment settled).\"},\n{\"unit\": \"u29\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit5 is balanced is stated correctly.\"},\n{\"unit\": \"u30\", \"verdict\": \"faithful\", \"reason\": \"r13.1 yields unit3 stable (temperature constant).\"},\n{\"unit\": \"u31\", \"verdict\": \"faithful\", \"reason\": \"r11.1 yields unit3 stable (shape retained).\"},\n{\"unit\": \"u32\", \"verdict\": \"faithful\", \"reason\": \"r15.3 with unit3 shape retained and coded yields unit5 stable (temperature constant).\"},\n{\"unit\": \"u33\", \"verdict\": \"faithful\", \"reason\": \"The conclusion that unit5 is calibrated is stated correctly; the reasons may appear elsewhere.\"}\n]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "All seven stated facts about unit5 are listed exactly."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "Same condition (unit1 cleared, payment settled) and the same conclusion, in the same direction."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "faithful",
+   "reason": "The conjunction of the two ready (packing completed) conditions implies weighed-in, as stated."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "The nested conjunction of mounted, routed and rated is equivalent to the stated three-part condition, with the correct sense in the conclusion."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "Weighed-in implies unit3 sound (casing intact), as stated."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "faithful",
+   "reason": "Matches r15.3 with the correct senses on both sides."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "faithful",
+   "reason": "Matches r11.1 with the correct senses and direction."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "Logged implies unit3 cleared (inspection passed), as stated."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The three-part condition correctly implies ready (staffing arranged)."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "Matches r12.1 with the correct sense and direction."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "Balanced implies unit3 stable (temperature constant), as stated."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "Matches r07.1 with the correct sense and direction."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "Stable (shape retained) implies calibrated, as stated."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "Matches r02.1 with the correct senses and direction."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "Both ready senses of unit3 imply unit5 ready (packing completed), as stated."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "Matches r14.1 with the correct senses and direction."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "Sound (signal audible) implies logged, as stated."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish ready (staffing arranged) via r00.1."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish ready (packing completed) via r03.1."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "r06.1 yields unit5 ready (packing completed)."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit5 is weighed-in is stated correctly."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "r01.1 yields sound (casing intact)."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "r14.1 yields unit3 sound (signal audible) from casing intact."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "r07.1 yields unit5 sound (signal audible)."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit5 is logged is stated correctly."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "r04.1 yields cleared (inspection passed)."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "r02.1 yields cleared (payment settled)."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "r12.1 yields unit1 cleared (payment settled)."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit5 is balanced is stated correctly."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "r13.1 yields unit3 stable (temperature constant)."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "r11.1 yields unit3 stable (shape retained)."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "r15.3 with unit3 shape retained and coded yields unit5 stable (temperature constant)."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The conclusion that unit5 is calibrated is stated correctly; the reasons may appear elsewhere."
+  }
+ }
+}

@@ -1,0 +1,122 @@
+{
+ "item_id": "i248c407facd1841580333a6d67d5af90",
+ "split": "dev",
+ "author": "haiku",
+ "arm": "A4",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "step_n15_1"
+  ],
+  "note": "The argument contains a logical gap at step n15.1. Unit6 cannot be established as shipped because neither rule r14.1 (which requires unit3 clear optically transparent, needing unit2 queued which is unassumed) nor r14.2 (which requires unit3 audited and scheduled, not given) can be satisfied from the given facts."
+ },
+ "turns": 13,
+ "tool_calls": 15,
+ "protocol_errors": 4,
+ "spent_usd": {
+  "author": "0.36190000",
+  "proposer": "0",
+  "total": "0.36190000"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "tool_success_strict": false,
+ "verification": {
+  "ok": true,
+  "problems": []
+ },
+ "proposer_model": "haiku",
+ "account": "saeedi.danial",
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n19: no step node states the frozen target",
+   "30 given sentence(s) not covered by any node: n10.1, n12.1, n13.1, n09.1, n17.1, n17.2, n11.1, r15.1, r03.1, r01.1, r01.2, r14.1, r14.2, r08.1, r00.1, r12.1, r05.1, r05.2, r05.3, r06.1, r04.1, r11.1, r13.1, r02.1, r10.1, r07.1, r07.2, r07.3, r07.4, r09.1",
+   "17 claimed sentence(s) not derived by a certified step: n00.1, n02.1, n07.1, n16.1, n05.1, n20.1, n06.1, n03.1, n14.1, n21.1, n21.2, n01.1, n15.1, n08.1, n18.1, n04.1, n19.1"
+  ],
+  "targets": [
+   {
+    "id": "t_n19",
+    "text": "@unit5 is stored.",
+    "certified": false,
+    "reason": "no step node states the frozen target",
+    "replay": null,
+    "node": null
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "n10.1",
+   "n12.1",
+   "n13.1",
+   "n09.1",
+   "n17.1",
+   "n17.2",
+   "n11.1",
+   "r15.1",
+   "r03.1",
+   "r01.1",
+   "r01.2",
+   "r14.1",
+   "r14.2",
+   "r08.1",
+   "r00.1",
+   "r12.1",
+   "r05.1",
+   "r05.2",
+   "r05.3",
+   "r06.1",
+   "r04.1",
+   "r11.1",
+   "r13.1",
+   "r02.1",
+   "r10.1",
+   "r07.1",
+   "r07.2",
+   "r07.3",
+   "r07.4",
+   "r09.1"
+  ],
+  "underived": [
+   "n00.1",
+   "n02.1",
+   "n07.1",
+   "n16.1",
+   "n05.1",
+   "n20.1",
+   "n06.1",
+   "n03.1",
+   "n14.1",
+   "n21.1",
+   "n21.2",
+   "n01.1",
+   "n15.1",
+   "n08.1",
+   "n18.1",
+   "n04.1",
+   "n19.1"
+  ],
+  "covered": 0,
+  "derived": 0,
+  "waived": 0,
+  "waivers": [],
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 0,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 262.9,
+ "prompt_version": "ve-assist-eval-prompts@3"
+}

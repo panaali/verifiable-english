@@ -1,0 +1,146 @@
+{
+ "item_id": "ie1d380d54c4e8787526c42f06324257e",
+ "split": "dev",
+ "author": "haiku",
+ "arm": "A2",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "n00"
+  ],
+  "note": "The argument cannot be completed because unit3 being audited cannot be established. Rule r04.1 requires unit4 to be clear_optically_transparent, which requires unit4 to be numbered (via r10.1). However, unit4 being numbered is explicitly listed as an unassumed check (n09.2). This breaks the chain needed to derive that unit3 is audited, which in turn prevents deriving that unit0 is open, and ultimately prevents deriving that unit1 is dried."
+ },
+ "turns": 3,
+ "tool_calls": 0,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.0899615",
+  "proposer": "0",
+  "total": "0.0899615"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "tool_success_strict": false,
+ "verification": {
+  "ok": true,
+  "problems": [],
+  "attempts_failing": []
+ },
+ "proposer_model": null,
+ "account": "saeedi.danial",
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n02: no step node states the frozen target",
+   "12 given sentence(s) not covered by any node: r00.1, r15.1, r12.2, r08.2, r08.3, r10.1, r10.2, r10.4, r02.1, r03.1, r04.1, r04.2",
+   "1 claimed sentence(s) not derived by a certified step: n02.1",
+   "11 asserting sentence(s) waived (a waiver is reported, never success): n08.1, n09.2, n12.1, n10.1, n14.1, n16.1, n18.2, n00.1, n21.1, n03.1, n05.1"
+  ],
+  "targets": [
+   {
+    "id": "t_n02",
+    "text": "@unit1 is dried.",
+    "certified": false,
+    "reason": "no step node states the frozen target",
+    "replay": null,
+    "node": null
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "r00.1",
+   "r15.1",
+   "r12.2",
+   "r08.2",
+   "r08.3",
+   "r10.1",
+   "r10.2",
+   "r10.4",
+   "r02.1",
+   "r03.1",
+   "r04.1",
+   "r04.2"
+  ],
+  "underived": [
+   "n02.1"
+  ],
+  "covered": 12,
+  "derived": 11,
+  "waived": 11,
+  "waivers": [
+   {
+    "sentence": "n08.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n09.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n12.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n10.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n14.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n16.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n18.2",
+    "role": "claimed",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n00.1",
+    "role": "claimed",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n21.1",
+    "role": "claimed",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n03.1",
+    "role": "claimed",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n05.1",
+    "role": "claimed",
+    "counts_against_success": true
+   }
+  ],
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 29,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 129.5,
+ "prompt_version": "ve-assist-eval-prompts@3"
+}

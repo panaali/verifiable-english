@@ -1,0 +1,246 @@
+{
+ "packet": "p2552bfc90a4f",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.113018",
+ "reply": "{\"units\": [\n{\"unit\": \"u1\", \"verdict\": \"acceptable\", \"reason\": \"This only lists which rule names are declared, and the argument's reasoning does not rely on it.\"},\n{\"unit\": \"u2\", \"verdict\": \"acceptable\", \"reason\": \"This only lists which rule names are declared, and the argument's reasoning does not rely on it.\"},\n{\"unit\": \"u3\", \"verdict\": \"acceptable\", \"reason\": \"This only lists which rule names are declared, and the argument's reasoning does not rely on it.\"},\n{\"unit\": \"u4\", \"verdict\": \"acceptable\", \"reason\": \"This only lists which rule names are declared, and the argument's reasoning does not rely on it.\"},\n{\"unit\": \"u5\", \"verdict\": \"acceptable\", \"reason\": \"This only lists which rule names are declared, and the argument's reasoning does not rely on it.\"},\n{\"unit\": \"u6\", \"verdict\": \"faithful\", \"reason\": \"The paraphrase states all seven facts about unit0 with the correct predicates.\"},\n{\"unit\": \"u7\", \"verdict\": \"acceptable\", \"reason\": \"This only says which checks remain unassumed and asserts nothing the reasoning relies on.\"},\n{\"unit\": \"u8\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches in its entities, senses and direction.\"},\n{\"unit\": \"u9\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches in its entities, senses and direction.\"},\n{\"unit\": \"u10\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches in its entities, senses and direction.\"},\n{\"unit\": \"u11\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches in its entities, senses and direction.\"},\n{\"unit\": \"u12\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches, going from seal removed to account enabled for unit1.\"},\n{\"unit\": \"u13\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches for the account enabled sense.\"},\n{\"unit\": \"u14\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches, concluding ready in the staffing arranged sense.\"},\n{\"unit\": \"u15\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches, with ready in the packing completed sense.\"},\n{\"unit\": \"u16\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches, concluding open in the seal removed sense.\"},\n{\"unit\": \"u17\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches, with both conditions in the signal audible sense.\"},\n{\"unit\": \"u18\", \"verdict\": \"faithful\", \"reason\": \"The three conditions and the signal audible conclusion match the sentence.\"},\n{\"unit\": \"u19\", \"verdict\": \"acceptable\", \"reason\": \"Neither dated nor tied is ever established, so this rule is never used.\"},\n{\"unit\": \"u20\", \"verdict\": \"faithful\", \"reason\": \"The three conditions and the casing intact conclusion match the sentence.\"},\n{\"unit\": \"u21\", \"verdict\": \"acceptable\", \"reason\": \"Neither dated nor tied is ever established, so this rule is never used.\"},\n{\"unit\": \"u22\", \"verdict\": \"acceptable\", \"reason\": \"The sample relation is never used in the reasoning.\"},\n{\"unit\": \"u23\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches, with clear in the optically transparent sense.\"},\n{\"unit\": \"u24\", \"verdict\": \"acceptable\", \"reason\": \"Neither dated nor tied is ever established, so this rule is never used.\"},\n{\"unit\": \"u25\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches, going from contamination absent to optically transparent.\"},\n{\"unit\": \"u26\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches in its senses and direction.\"},\n{\"unit\": \"u27\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches for the packing completed sense.\"},\n{\"unit\": \"u28\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches, going from staffing arranged to packing completed.\"},\n{\"unit\": \"u29\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches in its entities, sense and direction.\"},\n{\"unit\": \"u30\", \"verdict\": \"faithful\", \"reason\": \"The conditional matches, concluding clear in the contamination absent sense.\"},\n{\"unit\": \"u31\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish sound in the casing intact sense via r06.1.\"},\n{\"unit\": \"u32\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish sound in the signal audible sense via r08.1.\"},\n{\"unit\": \"u33\", \"verdict\": \"faithful\", \"reason\": \"The two unit1 sound senses yield unit0 sound in the signal audible sense via r14.1.\"},\n{\"unit\": \"u34\", \"verdict\": \"faithful\", \"reason\": \"The conclusion 'unit0 is checked' is correctly stated.\"},\n{\"unit\": \"u35\", \"verdict\": \"faithful\", \"reason\": \"'unit0 is checked' yields unit1 clear in the contamination absent sense via r09.1.\"},\n{\"unit\": \"u36\", \"verdict\": \"faithful\", \"reason\": \"Contamination absent yields optically transparent for unit1 via r02.1.\"},\n{\"unit\": \"u37\", \"verdict\": \"faithful\", \"reason\": \"The three check-to-clear implications, with the r11 senses, are stated in context where unit1 is clear.\"},\n{\"unit\": \"u38\", \"verdict\": \"faithful\", \"reason\": \"Via r11.4, unit1 being clear and unit0 being listed yields unit2 clear in the optically transparent sense.\"},\n{\"unit\": \"u39\", \"verdict\": \"faithful\", \"reason\": \"The conclusion 'unit0 is documented' is correctly stated.\"},\n{\"unit\": \"u40\", \"verdict\": \"faithful\", \"reason\": \"'unit0 is documented' yields unit1 open in the seal removed sense via r13.1.\"},\n{\"unit\": \"u41\", \"verdict\": \"faithful\", \"reason\": \"Seal removed yields account enabled for unit1 via r00.1.\"},\n{\"unit\": \"u42\", \"verdict\": \"faithful\", \"reason\": \"unit1 being open in the account enabled sense yields the same for unit0 via r10.1.\"},\n{\"unit\": \"u43\", \"verdict\": \"faithful\", \"reason\": \"The conclusion 'unit0 is packed' is correctly stated.\"},\n{\"unit\": \"u44\", \"verdict\": \"faithful\", \"reason\": \"'unit0 is packed' yields unit1 ready in the staffing arranged sense via r12.1.\"},\n{\"unit\": \"u45\", \"verdict\": \"faithful\", \"reason\": \"Staffing arranged yields packing completed for unit1 via r03.1.\"},\n{\"unit\": \"u46\", \"verdict\": \"faithful\", \"reason\": \"unit1 being ready in the packing completed sense yields the same for unit0 via r07.1.\"},\n{\"unit\": \"u47\", \"verdict\": \"faithful\", \"reason\": \"Both statements say 'unit0 is bundled', which matches the sentence's conclusion.\"}\n]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "acceptable",
+   "reason": "This only lists which rule names are declared, and the argument's reasoning does not rely on it."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "acceptable",
+   "reason": "This only lists which rule names are declared, and the argument's reasoning does not rely on it."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "acceptable",
+   "reason": "This only lists which rule names are declared, and the argument's reasoning does not rely on it."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "This only lists which rule names are declared, and the argument's reasoning does not rely on it."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "This only lists which rule names are declared, and the argument's reasoning does not rely on it."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "faithful",
+   "reason": "The paraphrase states all seven facts about unit0 with the correct predicates."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "This only says which checks remain unassumed and asserts nothing the reasoning relies on."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "The conditional matches in its entities, senses and direction."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The conditional matches in its entities, senses and direction."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "The conditional matches in its entities, senses and direction."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "The conditional matches in its entities, senses and direction."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "The conditional matches, going from seal removed to account enabled for unit1."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "The conditional matches for the account enabled sense."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "The conditional matches, concluding ready in the staffing arranged sense."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "The conditional matches, with ready in the packing completed sense."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "The conditional matches, concluding open in the seal removed sense."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "The conditional matches, with both conditions in the signal audible sense."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The three conditions and the signal audible conclusion match the sentence."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "acceptable",
+   "reason": "Neither dated nor tied is ever established, so this rule is never used."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "The three conditions and the casing intact conclusion match the sentence."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "acceptable",
+   "reason": "Neither dated nor tied is ever established, so this rule is never used."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "acceptable",
+   "reason": "The sample relation is never used in the reasoning."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "The conditional matches, with clear in the optically transparent sense."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "acceptable",
+   "reason": "Neither dated nor tied is ever established, so this rule is never used."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The conditional matches, going from contamination absent to optically transparent."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "The conditional matches in its senses and direction."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "The conditional matches for the packing completed sense."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "The conditional matches, going from staffing arranged to packing completed."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The conditional matches in its entities, sense and direction."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "The conditional matches, concluding clear in the contamination absent sense."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish sound in the casing intact sense via r06.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish sound in the signal audible sense via r08.1."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "The two unit1 sound senses yield unit0 sound in the signal audible sense via r14.1."
+  },
+  "u34": {
+   "unit": "u34",
+   "verdict": "faithful",
+   "reason": "The conclusion 'unit0 is checked' is correctly stated."
+  },
+  "u35": {
+   "unit": "u35",
+   "verdict": "faithful",
+   "reason": "'unit0 is checked' yields unit1 clear in the contamination absent sense via r09.1."
+  },
+  "u36": {
+   "unit": "u36",
+   "verdict": "faithful",
+   "reason": "Contamination absent yields optically transparent for unit1 via r02.1."
+  },
+  "u37": {
+   "unit": "u37",
+   "verdict": "faithful",
+   "reason": "The three check-to-clear implications, with the r11 senses, are stated in context where unit1 is clear."
+  },
+  "u38": {
+   "unit": "u38",
+   "verdict": "faithful",
+   "reason": "Via r11.4, unit1 being clear and unit0 being listed yields unit2 clear in the optically transparent sense."
+  },
+  "u39": {
+   "unit": "u39",
+   "verdict": "faithful",
+   "reason": "The conclusion 'unit0 is documented' is correctly stated."
+  },
+  "u40": {
+   "unit": "u40",
+   "verdict": "faithful",
+   "reason": "'unit0 is documented' yields unit1 open in the seal removed sense via r13.1."
+  },
+  "u41": {
+   "unit": "u41",
+   "verdict": "faithful",
+   "reason": "Seal removed yields account enabled for unit1 via r00.1."
+  },
+  "u42": {
+   "unit": "u42",
+   "verdict": "faithful",
+   "reason": "unit1 being open in the account enabled sense yields the same for unit0 via r10.1."
+  },
+  "u43": {
+   "unit": "u43",
+   "verdict": "faithful",
+   "reason": "The conclusion 'unit0 is packed' is correctly stated."
+  },
+  "u44": {
+   "unit": "u44",
+   "verdict": "faithful",
+   "reason": "'unit0 is packed' yields unit1 ready in the staffing arranged sense via r12.1."
+  },
+  "u45": {
+   "unit": "u45",
+   "verdict": "faithful",
+   "reason": "Staffing arranged yields packing completed for unit1 via r03.1."
+  },
+  "u46": {
+   "unit": "u46",
+   "verdict": "faithful",
+   "reason": "unit1 being ready in the packing completed sense yields the same for unit0 via r07.1."
+  },
+  "u47": {
+   "unit": "u47",
+   "verdict": "faithful",
+   "reason": "Both statements say 'unit0 is bundled', which matches the sentence's conclusion."
+  }
+ }
+}

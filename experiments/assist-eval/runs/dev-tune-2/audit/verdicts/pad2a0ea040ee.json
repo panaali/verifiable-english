@@ -1,0 +1,17 @@
+{
+ "packet": "pad2a0ea040ee",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states the sentence’s conclusion that unit5 is stored; its stated reason need not be included.\"}]}",
+ "auditor_tokens": 5811,
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "The formalisation states the sentence’s conclusion that unit5 is stored; its stated reason need not be included."
+  }
+ }
+}

@@ -1,0 +1,214 @@
+{
+ "item_id": "ie1d380d54c4e8787526c42f06324257e",
+ "split": "dev",
+ "author": "gemini",
+ "arm": "A4",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "n00_1"
+  ],
+  "note": ""
+ },
+ "turns": 8,
+ "tool_calls": 35,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.203638",
+  "proposer": "0",
+  "total": "0.203638"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "tool_success_strict": false,
+ "verification": {
+  "ok": true,
+  "problems": []
+ },
+ "proposer_model": "haiku",
+ "account": "saeedi.danial",
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n02: no step node states the frozen target",
+   "12 unproved step(s)",
+   "17 given sentence(s) not covered by any node: n08.1, n09.2, n12.1, n10.1, n14.1, n16.1, r00.1, r15.1, r12.2, r08.2, r08.3, r10.1, r10.2, r10.4, r02.1, r03.1, r04.2",
+   "17 claimed sentence(s) not derived by a certified step: n07.1, n04.1, n20.1, n15.1, n18.1, n18.2, n13.1, n17.1, n06.1, n11.1, n01.1, n19.1, n00.1, n21.1, n03.1, n05.1, n02.1"
+  ],
+  "targets": [
+   {
+    "id": "t_n02",
+    "text": "@unit1 is dried.",
+    "certified": false,
+    "reason": "no step node states the frozen target",
+    "replay": null,
+    "node": null
+   }
+  ],
+  "unproved_steps": [
+   {
+    "node": "n07_1",
+    "check": "unchecked",
+    "parents": [
+     "n09_1_clipped",
+     "n09_1_logged",
+     "n09_1_shipped",
+     "r08_1"
+    ]
+   },
+   {
+    "node": "n04_1",
+    "check": "unchecked",
+    "parents": [
+     "n09_1_dried",
+     "n09_1_scanned",
+     "n09_1_audited",
+     "r12_1"
+    ]
+   },
+   {
+    "node": "n20_1",
+    "check": "unchecked",
+    "parents": [
+     "n07_1",
+     "n04_1",
+     "r14_1"
+    ]
+   },
+   {
+    "node": "n15_1",
+    "check": "unchecked",
+    "parents": [
+     "n20_1",
+     "r06_1"
+    ]
+   },
+   {
+    "node": "n18_1",
+    "check": "unchecked",
+    "parents": [
+     "n15_1",
+     "r09_1"
+    ]
+   },
+   {
+    "node": "n13_1",
+    "check": "unchecked",
+    "parents": [
+     "n18_1",
+     "r01_1"
+    ]
+   },
+   {
+    "node": "n17_1",
+    "check": "unchecked",
+    "parents": [
+     "n13_1",
+     "r07_1"
+    ]
+   },
+   {
+    "node": "n06_1",
+    "check": "unchecked",
+    "parents": [
+     "n17_1",
+     "r13_1"
+    ]
+   },
+   {
+    "node": "n11_1",
+    "check": "unchecked",
+    "parents": [
+     "n06_1",
+     "r05_1"
+    ]
+   },
+   {
+    "node": "n01_1",
+    "check": "unchecked",
+    "parents": [
+     "n11_1",
+     "r11_1"
+    ]
+   },
+   {
+    "node": "n19_1",
+    "check": "unchecked",
+    "parents": [
+     "n01_1",
+     "n09_1_tracked",
+     "r10_3"
+    ]
+   },
+   {
+    "node": "n00_1",
+    "check": "countermodel",
+    "parents": [
+     "n19_1",
+     "r04_1"
+    ]
+   }
+  ],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "n08.1",
+   "n09.2",
+   "n12.1",
+   "n10.1",
+   "n14.1",
+   "n16.1",
+   "r00.1",
+   "r15.1",
+   "r12.2",
+   "r08.2",
+   "r08.3",
+   "r10.1",
+   "r10.2",
+   "r10.4",
+   "r02.1",
+   "r03.1",
+   "r04.2"
+  ],
+  "underived": [
+   "n07.1",
+   "n04.1",
+   "n20.1",
+   "n15.1",
+   "n18.1",
+   "n18.2",
+   "n13.1",
+   "n17.1",
+   "n06.1",
+   "n11.1",
+   "n01.1",
+   "n19.1",
+   "n00.1",
+   "n21.1",
+   "n03.1",
+   "n05.1",
+   "n02.1"
+  ],
+  "covered": 13,
+  "derived": 0,
+  "waived": 0,
+  "waivers": [],
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 31,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "restart": 0,
+ "elapsed_s": 48.8,
+ "prompt_version": "ve-assist-eval-prompts@3"
+}

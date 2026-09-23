@@ -1,0 +1,152 @@
+{
+ "item_id": "i0e03b71bf431d179be0530712161e8af",
+ "split": "dev",
+ "author": "haiku",
+ "arm": "A4",
+ "stop_reason": "finish",
+ "finish": {
+  "verdict": "gap",
+  "gap_steps": [
+   "s_n14_1"
+  ],
+  "note": "s_n14_1 attempts to apply r05.1 (which requires @unit5 is stable_shape_retained) to s_n15_1 (which establishes @unit5 is stable_temperature_constant). These are different senses of 'stable'. The rule r15.4 could derive the shape_retained sense, but it requires @unit5 is scanned, which n09.2 declares remains unassumed. No other rule can derive @unit5 is stable_shape_retained given the available facts."
+ },
+ "turns": 3,
+ "tool_calls": 10,
+ "protocol_errors": 0,
+ "spent_usd": {
+  "author": "0.09597125",
+  "proposer": "0",
+  "total": "0.09597125"
+ },
+ "budget_usd": 2.0,
+ "limits": {
+  "budget_usd": 2.0,
+  "max_turns": 60,
+  "max_tool_calls": 250,
+  "calls_per_turn": 10
+ },
+ "tool_success": false,
+ "tool_success_strict": false,
+ "verification": {
+  "ok": true,
+  "problems": []
+ },
+ "proposer_model": "haiku",
+ "account": "saeedi.danial",
+ "status": {
+  "success": false,
+  "failures": [
+   "target t_n14: no step node states the frozen target",
+   "24 given sentence(s) not covered by any node: n09.1, r08.1, r09.1, r03.1, r03.2, r01.1, r15.1, r15.2, r15.3, r15.4, r11.1, r04.1, r00.1, r00.2, r00.3, r12.1, r13.1, r07.1, r05.1, r05.2, r02.1, r06.1, r14.1, r10.1",
+   "16 claimed sentence(s) not derived by a certified step: n18.1, n07.1, n03.1, n08.1, n16.1, n12.1, n04.1, n20.1, n10.1, n02.1, n17.1, n00.1, n13.1, n01.1, n15.1, n14.1",
+   "7 asserting sentence(s) waived (a waiver is reported, never success): n05.1, n06.1, n19.1, n09.2, n11.1, n21.1, n18.2"
+  ],
+  "targets": [
+   {
+    "id": "t_n14",
+    "text": "@unit5 is calibrated.",
+    "certified": false,
+    "reason": "no step node states the frozen target",
+    "replay": null,
+    "node": null
+   }
+  ],
+  "unproved_steps": [],
+  "unanchored_assumptions": [],
+  "uncovered": [
+   "n09.1",
+   "r08.1",
+   "r09.1",
+   "r03.1",
+   "r03.2",
+   "r01.1",
+   "r15.1",
+   "r15.2",
+   "r15.3",
+   "r15.4",
+   "r11.1",
+   "r04.1",
+   "r00.1",
+   "r00.2",
+   "r00.3",
+   "r12.1",
+   "r13.1",
+   "r07.1",
+   "r05.1",
+   "r05.2",
+   "r02.1",
+   "r06.1",
+   "r14.1",
+   "r10.1"
+  ],
+  "underived": [
+   "n18.1",
+   "n07.1",
+   "n03.1",
+   "n08.1",
+   "n16.1",
+   "n12.1",
+   "n04.1",
+   "n20.1",
+   "n10.1",
+   "n02.1",
+   "n17.1",
+   "n00.1",
+   "n13.1",
+   "n01.1",
+   "n15.1",
+   "n14.1"
+  ],
+  "covered": 0,
+  "derived": 0,
+  "waived": 7,
+  "waivers": [
+   {
+    "sentence": "n05.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n06.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n19.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n11.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n21.1",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n09.2",
+    "role": "given",
+    "counts_against_success": true
+   },
+   {
+    "sentence": "n18.2",
+    "role": "claimed",
+    "counts_against_success": true
+   }
+  ],
+  "renamed_conclusions": [],
+  "provenance": {
+   "hand-written": 0,
+   "proposer-verbatim": 0,
+   "proposer-edited": 0,
+   "suggestion-verbatim": 0,
+   "suggestion-edited": 0
+  }
+ },
+ "elapsed_s": 144.7,
+ "prompt_version": "ve-assist-eval-prompts@3"
+}

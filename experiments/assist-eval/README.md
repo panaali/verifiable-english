@@ -124,6 +124,45 @@ halted Gemini ledger stops the run instead of recording failures.
   candidate accepted unchanged / author-written / audit disagreement (unclear or missing verdicts) / tool refusal /
   budget / infrastructure / ledger verification.
 
+## dev-tune-2 results (2026-09-23, fixed tool, prompts v3)
+
+`runs/dev-tune-2/`: 12 DEV items (4 benign, 4 shift, 4 smuggle) x 3 authors x 3 arms = 108 sessions, all ledgers
+verified by `verify_session` (108/108), all 108 packets with a verdict (56 GPT-6 Astra, 35 Opus 5.5, 17 empty packets
+failed without a call). Budget $2.00/item. Claude authors ran on account saeedi.danial; that account's OAuth token
+was revoked during the audit, so the last 7 Opus audit calls ran on the main account
+(`audit/opus-audit-calls.main.jsonl`; no author arm mixes accounts).
+
+| Author | Arm | Tool success | Audit pass | Certified-faithful (benign) | Certified-unfaithful | Faithful-complete | Spend (list) |
+|---|---|---|---|---|---|---|---|
+| Opus 5.5 | A2 | 4 | 12 | 4/4 | 0 | 9 | $1.31 |
+| Opus 5.5 | A3 | 4 | 12 | 4/4 | 0 | **12** | $8.29 |
+| Opus 5.5 | A4 | 4 | 12 | 4/4 | 0 | **12** | $8.78 |
+| Haiku 4.5 | A2 | 1 | 2 | 1/4 | 0 | 1 | $0.99 |
+| Haiku 4.5 | A3 | 0 | 1 | 0/4 | 0 | 0 | $10.73 |
+| Haiku 4.5 | A4 | 0 | 5 | 0/4 | 0 | 0 | $14.12 |
+| Gemini 3.1 Pro | A2 | 3 | 8 | 3/4 | 0 | 5 | $0.86 |
+| Gemini 3.1 Pro | A3 | 4 | 11 | 4/4 | 0 | 4 | $3.51 |
+| Gemini 3.1 Pro | A4 | 0 | 12 | 0/4 | 0 | 0 | $6.07 |
+
+Tool success = the evaluation rule above; strict tool success is 0/108 (every session waives the given
+meta-sentences). No flawed item was certified (0 alarms).
+
+Failure attribution (`report.json` `attribution`), over 108 sessions: proposer candidate accepted unchanged 0;
+author-written audit failures 16 (Haiku 12, Gemini 4); author formalised nothing (empty packet) 17 (Haiku 16,
+Gemini 1); audit disagreement 0; tool refusal 29 (Gemini 21, Opus A2 3, Haiku 5); budget 3; infrastructure 0 in the
+final records. Tool refusals are graph failures the author did not fix: claimed sentences waived (Gemini A4
+benign: it finished "gap" with the waiver line as the only failure plus waived claimed sentences), the target not
+stated by a step, uncovered given sentences, or a gap route with more unproved steps than it named.
+
+The proposer played no part: Opus and Haiku never called `propose`; Gemini called it twice (one A4 session), and
+both calls failed with the revoked saeedi.danial token (recorded in the ledger, $0). The `--proposer-model sonnet`
+rerun (`dev-tune-2s`) was therefore not triggered: no audit failure involves an accepted candidate.
+
+Spend: Claude authors $44.2 at list price (subscription); Gemini authors $12.88 real (Vertex, including aborted attempts; $0.95 of it on the
+first ledger, halted by an under-counted call, `gemini-ledger.halted-1.jsonl`); Opus audits $3.25 at list price;
+Codex audits 566k tokens (subscription). Gemini infrastructure: 429 and 504 errors caused 13 aborted session
+attempts (kept as `result.aborted-N.json`); each was restarted with fresh call ids.
+
 ## Tuning log
 
 - v1 (`ve-assist-eval-prompts@1`): initial prompts; smoke only.

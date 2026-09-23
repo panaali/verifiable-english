@@ -1,0 +1,176 @@
+{
+ "packet": "pf356d200d4e7",
+ "auditor": "opus",
+ "auditor_model": "claude-opus-5-5",
+ "cost_usd": "0.091413",
+ "reply": "{\"units\": [\n{\"unit\": \"u1\", \"verdict\": \"faithful\", \"reason\": \"All seven atomic facts about unit5 are stated exactly.\"},\n{\"unit\": \"u2\", \"verdict\": \"faithful\", \"reason\": \"Same antecedent sense (payment settled), same consequent and same direction.\"},\n{\"unit\": \"u3\", \"verdict\": \"faithful\", \"reason\": \"Both conjuncts use the packing-completed sense, and the conclusion is weighed_in.\"},\n{\"unit\": \"u4\", \"verdict\": \"faithful\", \"reason\": \"The three-way conjunction is regrouped without changing its meaning, and the consequent is ready_packing_completed.\"},\n{\"unit\": \"u5\", \"verdict\": \"faithful\", \"reason\": \"Weighed_in implies unit3 sound_casing_intact, as stated.\"},\n{\"unit\": \"u6\", \"verdict\": \"faithful\", \"reason\": \"Conditions and conclusion match, with the shape-retained sense throughout.\"},\n{\"unit\": \"u7\", \"verdict\": \"faithful\", \"reason\": \"Temperature constant implies shape retained for unit3, as stated.\"},\n{\"unit\": \"u8\", \"verdict\": \"faithful\", \"reason\": \"Logged implies unit3 cleared_inspection_passed, as stated.\"},\n{\"unit\": \"u9\", \"verdict\": \"faithful\", \"reason\": \"The three-way conjunction is regrouped without changing its meaning, and the consequent is ready_staffing_arranged.\"},\n{\"unit\": \"u10\", \"verdict\": \"faithful\", \"reason\": \"Payment settled for unit3 implies payment settled for unit1, as stated.\"},\n{\"unit\": \"u11\", \"verdict\": \"faithful\", \"reason\": \"Balanced implies unit3 stable_temperature_constant, as stated.\"},\n{\"unit\": \"u12\", \"verdict\": \"faithful\", \"reason\": \"Signal-audible sense is used on both sides with the correct entities.\"},\n{\"unit\": \"u13\", \"verdict\": \"faithful\", \"reason\": \"Unit5 stable_shape_retained implies unit5 calibrated, as stated.\"},\n{\"unit\": \"u14\", \"verdict\": \"faithful\", \"reason\": \"Inspection passed implies payment settled for unit3, as stated.\"},\n{\"unit\": \"u15\", \"verdict\": \"faithful\", \"reason\": \"Both unit3 readiness senses imply unit5 ready_packing_completed, as stated.\"},\n{\"unit\": \"u16\", \"verdict\": \"faithful\", \"reason\": \"Casing intact implies signal audible for unit3, as stated.\"},\n{\"unit\": \"u17\", \"verdict\": \"faithful\", \"reason\": \"Unit5 signal audible implies unit5 logged, as stated.\"},\n{\"unit\": \"u18\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish ready (staffing arranged) via r00.1.\"},\n{\"unit\": \"u19\", \"verdict\": \"faithful\", \"reason\": \"The stated reasons establish ready (packing completed) via r03.1.\"},\n{\"unit\": \"u20\", \"verdict\": \"faithful\", \"reason\": \"Via r06.1 the two unit3 readiness facts yield unit5 ready (packing completed).\"},\n{\"unit\": \"u21\", \"verdict\": \"faithful\", \"reason\": \"The conclusion is unit5 weighed_in, matching r09.1.\"},\n{\"unit\": \"u22\", \"verdict\": \"faithful\", \"reason\": \"Weighed-in establishes sound (casing intact) via r01.1.\"},\n{\"unit\": \"u23\", \"verdict\": \"faithful\", \"reason\": \"Casing intact yields signal audible via r14.1, so the chosen sense is correct.\"},\n{\"unit\": \"u24\", \"verdict\": \"faithful\", \"reason\": \"Unit3 signal audible yields unit5 signal audible via r07.1.\"},\n{\"unit\": \"u25\", \"verdict\": \"faithful\", \"reason\": \"The conclusion unit5 logged matches the sentence.\"},\n{\"unit\": \"u26\", \"verdict\": \"faithful\", \"reason\": \"Logged yields cleared (inspection passed) via r04.1.\"},\n{\"unit\": \"u27\", \"verdict\": \"faithful\", \"reason\": \"Inspection passed yields payment settled via r02.1.\"},\n{\"unit\": \"u28\", \"verdict\": \"faithful\", \"reason\": \"Unit3 payment settled yields unit1 payment settled via r12.1.\"},\n{\"unit\": \"u29\", \"verdict\": \"faithful\", \"reason\": \"The conclusion unit5 balanced matches the sentence.\"},\n{\"unit\": \"u30\", \"verdict\": \"faithful\", \"reason\": \"Balanced yields stable (temperature constant) via r13.1.\"},\n{\"unit\": \"u31\", \"verdict\": \"faithful\", \"reason\": \"Temperature constant yields shape retained via r11.1.\"},\n{\"unit\": \"u32\", \"verdict\": \"faithful\", \"reason\": \"Via r15.2 with checked, this yields unit1 stable (shape retained).\"},\n{\"unit\": \"u33\", \"verdict\": \"faithful\", \"reason\": \"Both statements state the sentence's conclusion, unit5 calibrated, and nothing more.\"}\n]}",
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "All seven atomic facts about unit5 are stated exactly."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "Same antecedent sense (payment settled), same consequent and same direction."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "faithful",
+   "reason": "Both conjuncts use the packing-completed sense, and the conclusion is weighed_in."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "faithful",
+   "reason": "The three-way conjunction is regrouped without changing its meaning, and the consequent is ready_packing_completed."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "faithful",
+   "reason": "Weighed_in implies unit3 sound_casing_intact, as stated."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "faithful",
+   "reason": "Conditions and conclusion match, with the shape-retained sense throughout."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "faithful",
+   "reason": "Temperature constant implies shape retained for unit3, as stated."
+  },
+  "u8": {
+   "unit": "u8",
+   "verdict": "faithful",
+   "reason": "Logged implies unit3 cleared_inspection_passed, as stated."
+  },
+  "u9": {
+   "unit": "u9",
+   "verdict": "faithful",
+   "reason": "The three-way conjunction is regrouped without changing its meaning, and the consequent is ready_staffing_arranged."
+  },
+  "u10": {
+   "unit": "u10",
+   "verdict": "faithful",
+   "reason": "Payment settled for unit3 implies payment settled for unit1, as stated."
+  },
+  "u11": {
+   "unit": "u11",
+   "verdict": "faithful",
+   "reason": "Balanced implies unit3 stable_temperature_constant, as stated."
+  },
+  "u12": {
+   "unit": "u12",
+   "verdict": "faithful",
+   "reason": "Signal-audible sense is used on both sides with the correct entities."
+  },
+  "u13": {
+   "unit": "u13",
+   "verdict": "faithful",
+   "reason": "Unit5 stable_shape_retained implies unit5 calibrated, as stated."
+  },
+  "u14": {
+   "unit": "u14",
+   "verdict": "faithful",
+   "reason": "Inspection passed implies payment settled for unit3, as stated."
+  },
+  "u15": {
+   "unit": "u15",
+   "verdict": "faithful",
+   "reason": "Both unit3 readiness senses imply unit5 ready_packing_completed, as stated."
+  },
+  "u16": {
+   "unit": "u16",
+   "verdict": "faithful",
+   "reason": "Casing intact implies signal audible for unit3, as stated."
+  },
+  "u17": {
+   "unit": "u17",
+   "verdict": "faithful",
+   "reason": "Unit5 signal audible implies unit5 logged, as stated."
+  },
+  "u18": {
+   "unit": "u18",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish ready (staffing arranged) via r00.1."
+  },
+  "u19": {
+   "unit": "u19",
+   "verdict": "faithful",
+   "reason": "The stated reasons establish ready (packing completed) via r03.1."
+  },
+  "u20": {
+   "unit": "u20",
+   "verdict": "faithful",
+   "reason": "Via r06.1 the two unit3 readiness facts yield unit5 ready (packing completed)."
+  },
+  "u21": {
+   "unit": "u21",
+   "verdict": "faithful",
+   "reason": "The conclusion is unit5 weighed_in, matching r09.1."
+  },
+  "u22": {
+   "unit": "u22",
+   "verdict": "faithful",
+   "reason": "Weighed-in establishes sound (casing intact) via r01.1."
+  },
+  "u23": {
+   "unit": "u23",
+   "verdict": "faithful",
+   "reason": "Casing intact yields signal audible via r14.1, so the chosen sense is correct."
+  },
+  "u24": {
+   "unit": "u24",
+   "verdict": "faithful",
+   "reason": "Unit3 signal audible yields unit5 signal audible via r07.1."
+  },
+  "u25": {
+   "unit": "u25",
+   "verdict": "faithful",
+   "reason": "The conclusion unit5 logged matches the sentence."
+  },
+  "u26": {
+   "unit": "u26",
+   "verdict": "faithful",
+   "reason": "Logged yields cleared (inspection passed) via r04.1."
+  },
+  "u27": {
+   "unit": "u27",
+   "verdict": "faithful",
+   "reason": "Inspection passed yields payment settled via r02.1."
+  },
+  "u28": {
+   "unit": "u28",
+   "verdict": "faithful",
+   "reason": "Unit3 payment settled yields unit1 payment settled via r12.1."
+  },
+  "u29": {
+   "unit": "u29",
+   "verdict": "faithful",
+   "reason": "The conclusion unit5 balanced matches the sentence."
+  },
+  "u30": {
+   "unit": "u30",
+   "verdict": "faithful",
+   "reason": "Balanced yields stable (temperature constant) via r13.1."
+  },
+  "u31": {
+   "unit": "u31",
+   "verdict": "faithful",
+   "reason": "Temperature constant yields shape retained via r11.1."
+  },
+  "u32": {
+   "unit": "u32",
+   "verdict": "faithful",
+   "reason": "Via r15.2 with checked, this yields unit1 stable (shape retained)."
+  },
+  "u33": {
+   "unit": "u33",
+   "verdict": "faithful",
+   "reason": "Both statements state the sentence's conclusion, unit5 calibrated, and nothing more."
+  }
+ }
+}

@@ -1,0 +1,22 @@
+{
+ "packet": "p5f05bd9158b8",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"faithful\",\"reason\":\"The seven statements preserve all seven asserted properties of unit0 with the correct senses.\"},{\"unit\":\"u2\",\"verdict\":\"faithful\",\"reason\":\"The formalisation states the asserted conclusion that unit0 is bundled, as permitted for a conclusion stated with reasons.\"}]}",
+ "auditor_tokens": 6531,
+ "pass": true,
+ "problems": [],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "faithful",
+   "reason": "The seven statements preserve all seven asserted properties of unit0 with the correct senses."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "faithful",
+   "reason": "The formalisation states the asserted conclusion that unit0 is bundled, as permitted for a conclusion stated with reasons."
+  }
+ }
+}

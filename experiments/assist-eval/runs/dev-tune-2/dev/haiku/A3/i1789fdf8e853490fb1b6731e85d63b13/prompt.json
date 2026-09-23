@@ -1,0 +1,337 @@
+{
+ "system": "You are formalising an English argument into Verifiable English (VE), a small\nfirst-order logic with a checker. You receive the argument split into\nnumbered SENTENCES, each with a role:\n- given: the text states it as a premise (declared rules, records, facts);\n- claimed: the argument asserts it as a conclusion; it must be derived;\n- context: needs nothing.\nTARGET sentences are the argument's final conclusion(s).\n\nWhat a finished formalisation contains:\n1. The frozen TARGET: the formal statement of each target sentence, written\n   first and never changed afterwards.\n2. NODES. Each node is ONE VE statement anchored to the sentence id(s) it\n   formalises. A node without parents is an assumption; an assumption must be\n   anchored to a GIVEN sentence that states it. A node with parents is a step:\n   it must follow logically from its parents, and the checker certifies this\n   (or returns a countermodel: a situation where every parent is true and the\n   step is false).\n3. COVERAGE: every claimed sentence is DERIVED: a certified step anchored to\n   it states its conclusion. A claimed sentence may never be waived. Every\n   given sentence is covered by a node anchored to it, or WAIVED with a reason\n   when no statement can or need state it: a sentence that only lists which\n   rules are declared, a sentence saying which checks remain unassumed, or a\n   fact or rule the argument never uses. The checker's status lists any waiver\n   as a failure (\"asserting sentence(s) waived\"); in this task that failure\n   ALONE is acceptable when every waived sentence is given, and each waiver is\n   audited.\n4. A certified chain from anchored assumptions to a step that states each\n   frozen target exactly.\n\nFidelity is your responsibility and is audited independently, sentence by\nsentence: each node must say what its sentence says, no more and no less.\nGive every claimed sentence its OWN step node stating exactly what that\nsentence concludes (with that sentence's reasons as parents); do not skip\nintermediate conclusions or anchor one node to several sentences it does not\nfully state. Where a word has several\nsenses (several predicates), the given sentences name the sense; a claimed\nsentence may leave it open. Then choose the sense that the sentence's own\nstated reasons (and the given records they rely on) actually establish. Do\nnot switch to another sense just because a later step needs it; a step that\nneeds a different sense of the same word is a gap. Never add a premise that\nno given sentence states: an unanchored assumption that a certified step\ndepends on fails the item. The argument itself MAY be flawed. If a claimed\nstep does not follow when faithfully formalised, do not force it: leave it\nunproved and finish with verdict \"gap\", naming the step node(s).\n\nVE strict syntax (exact spacing and parentheses; every compound operand is parenthesised):\n  F ::= true | false\n      | T is UNARY                      e.g. @pebble is marked\n      | T BINARY T                      e.g. @lot1 supplied @pebble\n      | T equals T\n      | not (F)\n      | (F) and (F)      | (F) or (F)   binary only: (A) and ((B) and (C))\n      | if (F), then (F)\n      | for every SORT v, (F)  | there exists SORT v, (F)\n  T ::= variable | @constant\nExamples (unrelated vocabulary, do not copy symbols):\n  if ((@pebble is marked) and (@pebble is round)), then (@stone is marked).\n  for every rock r, (if (r is marked), then (r is round)).\nNever add extra parentheses: each operand gets exactly one pair, e.g.\n  if ((@a is p) and (@b is q)), then (@c is r).   not   if (((@a is p) and (@b is q))), then ((@c is r)).\nUse ONLY the sorts, predicates and constants listed in the materials.\nConstants are written with @ (e.g. @unit5). A statement ends with a period.\nA step's parents are node names; a rule node (an 'if ... then' assumption)\nmust be listed as a parent of any step that uses it.\n\nYou act through the tools listed below. Suggested order: freeze_target\nfor every target, then add assumption nodes for the given sentences you need,\nthen add step nodes for the claimed sentences with their parents and\ncheck_step each one; waive given sentences that need no formalisation; call\nstatus to see what is still missing. When status reports success, or its only\nfailure is the waiver line for given sentences, call finish with \"complete\"\n(the harness refuses \"complete\" otherwise);\nwhen you have a faithful formalisation with a step you believe does not\nfollow, call finish with \"gap\". You may issue several tool calls per turn; they run in order.\n\nTool-call protocol (text): this endpoint has no native tools. To act, end\nyour reply with ONE fenced JSON block, exactly:\n```json\n{\"calls\": [{\"tool\": \"<tool name>\", \"arguments\": {...}}, ...]}\n```\nwith 1 to 10 calls, run in order. Keep any prose before the block short.\nThe harness returns each call's JSON result in the next message. Tools\n(name, description, JSON schema of arguments):\n{\"name\": \"sentences\", \"description\": \"List the source sentences (id, role given/claimed/context), the targets, and the vocabulary (sorts, predicates with glosses, constants).\", \"arguments\": {\"type\": \"object\", \"properties\": {}, \"required\": [], \"additionalProperties\": false}}\n{\"name\": \"freeze_target\", \"description\": \"Commit the formal statement of a target sentence. Irreversible; must be done for every target before any node is added.\", \"arguments\": {\"type\": \"object\", \"properties\": {\"target\": {\"type\": \"string\"}, \"text\": {\"type\": \"string\", \"description\": \"One VE statement.\"}, \"surface\": {\"type\": \"string\", \"enum\": [\"auto\", \"strict\", \"english\"], \"description\": \"Input language: strict VE, the controlled English surface, or auto (strict first).\"}}, \"required\": [\"target\"], \"additionalProperties\": false}}\n{\"name\": \"add_node\", \"description\": \"Add one node (one VE statement). No parents = an assumption; with parents = a step that check_step must certify. Anchor it to the sentence id(s) it formalises. An assumption is anchored only by a 'given' sentence.\", \"arguments\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\", \"description\": \"New node name [a-z][a-z0-9_]*.\"}, \"text\": {\"type\": \"string\", \"description\": \"One VE statement (omit to accept a candidate verbatim).\"}, \"anchors\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}, \"description\": \"Sentence ids this node formalises.\"}, \"parents\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}, \"description\": \"Existing node names this step follows from.\"}, \"surface\": {\"type\": \"string\", \"enum\": [\"auto\", \"strict\", \"english\"], \"description\": \"Input language: strict VE, the controlled English surface, or auto (strict first).\"}}, \"required\": [\"name\"], \"additionalProperties\": false}}\n{\"name\": \"rewrite\", \"description\": \"Change a node's statement, anchors and/or parents. Invalidates its check and its children's checks.\", \"arguments\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"text\": {\"type\": \"string\"}, \"anchors\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}, \"parents\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}, \"surface\": {\"type\": \"string\", \"enum\": [\"auto\", \"strict\", \"english\"], \"description\": \"Input language: strict VE, the controlled English surface, or auto (strict first).\"}}, \"required\": [\"name\"], \"additionalProperties\": false}}\n{\"name\": \"remove_node\", \"description\": \"Remove a node that is not a parent of another node.\", \"arguments\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}}, \"required\": [\"name\"], \"additionalProperties\": false}}\n{\"name\": \"declare\", \"description\": \"Declare a new predicate, constant or sort. A gloss (what it means) is required. Near-duplicates of existing vocabulary and names/glosses restating a target conclusion are blocked until acknowledged by flag.\", \"arguments\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"gloss\": {\"type\": \"string\"}, \"kind\": {\"type\": \"string\", \"enum\": [\"predicate\", \"constant\", \"sort\"]}, \"arguments\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}, \"description\": \"Predicate argument sorts (1 or 2).\"}, \"sort\": {\"type\": \"string\", \"description\": \"Sort of a constant.\"}, \"verbalisation\": {\"type\": \"string\", \"description\": \"Optional English template, e.g. '{0} is sealed'.\"}, \"acknowledge\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}, \"description\": \"Flags from a blocked declaration you accept.\"}}, \"required\": [\"name\", \"gloss\"], \"additionalProperties\": false}}\n{\"name\": \"check_step\", \"description\": \"Check whether a step follows from its parents. Returns 'follows' (a replayed certificate), 'countermodel' (a checked model where every parent is true and the conclusion false), or 'unknown'.\", \"arguments\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\", \"description\": \"Step node to check.\"}, \"invariants\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}, \"description\": \"Optional closure-induction invariants (strict VE).\"}}, \"required\": [\"name\"], \"additionalProperties\": false}}\n{\"name\": \"status\", \"description\": \"Summarise progress: target certification (graph replay), unproved steps, unanchored assumptions and whether they are load-bearing, sentence coverage/waivers, renamed-conclusion flags, provenance counts and token usage. 'success' is true only when everything passes.\", \"arguments\": {\"type\": \"object\", \"properties\": {}, \"required\": [], \"additionalProperties\": false}}\n{\"name\": \"waive\", \"description\": \"Explicitly mark a sentence as not formalised, with a reason. The waiver is reported; waiving ANY asserting sentence blocks 'success', even one already covered or derived (every claimed sentence must be derived by a certified step, every given sentence covered).\", \"arguments\": {\"type\": \"object\", \"properties\": {\"sentence\": {\"type\": \"string\"}, \"reason\": {\"type\": \"string\"}}, \"required\": [\"sentence\", \"reason\"], \"additionalProperties\": false}}\n{\"name\": \"show\", \"description\": \"Show all nodes (or one node, with history) with their deterministic English paraphrase.\", \"arguments\": {\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}}, \"required\": [], \"additionalProperties\": false}}\n{\"name\": \"paraphrase\", \"description\": \"Parse a VE statement without adding it; return canonical text and paraphrase.\", \"arguments\": {\"type\": \"object\", \"properties\": {\"text\": {\"type\": \"string\"}, \"surface\": {\"type\": \"string\", \"enum\": [\"auto\", \"strict\", \"english\"], \"description\": \"Input language: strict VE, the controlled English surface, or auto (strict first).\"}}, \"required\": [\"text\"], \"additionalProperties\": false}}\n{\"name\": \"compare\", \"description\": \"Compare two statements (node names, target ids, candidate ids, or VE text): equivalent / a_stronger / b_stronger / incomparable, with checked distinguishing models.\", \"arguments\": {\"type\": \"object\", \"properties\": {\"a\": {\"type\": \"string\"}, \"b\": {\"type\": \"string\"}}, \"required\": [\"a\", \"b\"], \"additionalProperties\": false}}\n{\"name\": \"finish\", \"description\": \"End the session. verdict 'complete' when status reports success or its only failure is the waiver line for given sentences; 'gap' when your faithful formalisation has step(s) that do not follow (name them in gap_steps).\", \"arguments\": {\"type\": \"object\", \"properties\": {\"verdict\": {\"type\": \"string\", \"enum\": [\"complete\", \"gap\"]}, \"gap_steps\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}, \"note\": {\"type\": \"string\"}}, \"required\": [\"verdict\"], \"additionalProperties\": false}}\n",
+ "opening": "SENTENCES (id [role] text):\n  n06.1 [given] Rules r09, r00, r07 are declared.\n  n11.1 [given] Rules r05, r13, r03 are declared.\n  n18.1 [given] Rules r08, r11, r15 are declared.\n  n03.1 [given] Rules r06, r02, r10, r04 are declared.\n  n09.1 [given] Rules r14, r01, r12 are declared.\n  n19.1 [given] unit0 is sized; unit0 is wrapped-up; unit0 is released; unit0 is reviewed; unit0 is staged; unit0 is registered; unit0 is listed.\n  n19.2 [given] The checks that unit0 is bagged and unit0 is inspected and unit0 is numbered remain unassumed.\n  r11.1 [given] If unit1 is clear (optically transparent) and unit0 is bagged, then unit0 is clear (contamination absent).\n  r11.2 [given] If unit1 is clear (optically transparent) and unit0 is inspected, then unit2 is clear (contamination absent).\n  r11.3 [given] If unit1 is clear (optically transparent) and unit0 is numbered, then unit0 is clear (optically transparent).\n  r11.4 [given] If unit1 is clear (optically transparent) and unit0 is listed, then unit2 is clear (optically transparent).\n  r00.1 [given] If unit1 is open (seal removed), then unit1 is open (account enabled).\n  r10.1 [given] If unit1 is open (account enabled), then unit0 is open (account enabled).\n  r12.1 [given] If unit0 is packed, then unit1 is ready (staffing arranged).\n  r04.1 [given] If unit0 is ready (packing completed), then unit0 is bundled.\n  r13.1 [given] If unit0 is documented, then unit1 is open (seal removed).\n  r05.1 [given] If unit1 is sound (signal audible) and unit0 is sound (signal audible), then unit0 is checked.\n  r08.1 [given] If unit0 is reviewed and unit0 is staged and unit0 is registered, then unit1 is sound (signal audible).\n  r08.2 [given] If unit2 is dated and unit2 is tied, then unit1 is sound (signal audible).\n  r06.1 [given] If unit0 is sized and unit0 is wrapped-up and unit0 is released, then unit1 is sound (casing intact).\n  r06.2 [given] If unit2 is dated and unit2 is tied, then unit1 is sound (casing intact).\n  r06.3 [given] The sample from lot unit0 is unit2.\n  r01.1 [given] If unit2 is clear (optically transparent), then unit0 is documented.\n  r01.2 [given] If unit2 is dated and unit2 is tied, then unit0 is documented.\n  r02.1 [given] If unit1 is clear (contamination absent), then unit1 is clear (optically transparent).\n  r14.1 [given] If unit1 is sound (casing intact) and unit1 is sound (signal audible), then unit0 is sound (signal audible).\n  r07.1 [given] If unit1 is ready (packing completed), then unit0 is ready (packing completed).\n  r03.1 [given] If unit1 is ready (staffing arranged), then unit1 is ready (packing completed).\n  r15.1 [given] If unit0 is open (account enabled), then unit0 is packed.\n  r09.1 [given] If unit0 is checked, then unit1 is clear (contamination absent).\n  n12.1 [claimed] Because unit0 is sized and unit0 is wrapped-up and unit0 is released, unit1 is sound.\n  n13.1 [claimed] Since unit0 is reviewed and unit0 is staged and unit0 is registered, it follows that unit1 is sound.\n  n07.1 [claimed] Given that unit1 is sound and unit1 is sound, we infer that unit0 is sound.\n  n05.1 [claimed] It follows that unit0 is checked because unit1 is sound and the immediately preceding sound result holds.\n  n15.1 [claimed] Because unit0 is checked, unit1 is clear.\n  n16.1 [claimed] Since unit1 is clear, it follows that unit1 is clear.\n  n16.2 [claimed] The checks that unit0 is bagged and unit0 is inspected and unit0 is numbered would establish that unit0 is clear and unit2 is clear and unit0 is clear, respectively.\n  n04.1 [claimed] Given that unit1 is clear and unit0 is listed, we infer that unit2 is clear.\n  n02.1 [claimed] It follows that unit0 is documented because the immediately preceding clear result holds.\n  n17.1 [claimed] Because unit0 is documented, unit1 is open.\n  n01.1 [claimed] Since unit1 is open, it follows that unit1 is open.\n  n21.1 [claimed] Given that unit1 is open, we infer that unit0 is open.\n  n10.1 [claimed] It follows that unit0 is packed because the immediately preceding open result holds.\n  n14.1 [claimed] Because unit0 is packed, unit1 is ready.\n  n20.1 [claimed] Since unit1 is ready, it follows that unit1 is ready.\n  n00.1 [claimed] Given that unit1 is ready, we infer that unit0 is ready.\n  n08.1 [claimed] It follows that unit0 is bundled because the immediately preceding ready result holds.\nTARGETS:\n  t_n08 -> sentence n08.1: It follows that unit0 is bundled because the immediately preceding ready result holds.\nVOCABULARY:\n  sorts: entity (A named dossier entity.)\n  predicates (name(argument sorts): gloss):\n    audited(entity): audited: audit completed (R37)\n    bagged(entity): bagged: bag fitted (R53)\n    booked(entity): booked: transport reserved (R09)\n    boxed(entity): boxed: box fitted (R17)\n    bundled(entity): bundled: bundle formed (R59)\n    calibrated(entity): calibrated: calibration recorded (R06)\n    checked(entity): checked: check completed (R55)\n    clear_contamination_absent(entity): clear: contamination absent (R24)\n    clear_optically_transparent(entity): clear: optically transparent (R35)\n    clipped(entity): clipped: clip attached (R25)\n    coded(entity): coded: identifier assigned (R54)\n    cooled(entity): cooled: temperature reduced (R40)\n    dated(entity): dated: date recorded (R39)\n    documented(entity): documented: documentation stored (R43)\n    dried(entity): dried: moisture removed (R04)\n    filed(entity): filed: document stored (R48)\n    inspected(entity): inspected: inspection completed (R10)\n    labelled(entity): labelled: label attached (R03)\n    listed(entity): listed: catalogue entry made (R49)\n    loaded(entity): loaded: loading completed (R32)\n    logged(entity): logged: entry recorded (R30)\n    marked(entity): marked: mark applied (R46)\n    measured(entity): measured: measurement recorded (R26)\n    mounted(entity): mounted: mount fitted (R52)\n    numbered(entity): numbered: number assigned (R45)\n    open_account_enabled(entity): open: account enabled (R47)\n    open_seal_removed(entity): open: seal removed (R07)\n    packed(entity): packed: container filled (R27)\n    photographed(entity): photographed: image recorded (R57)\n    processed(entity): processed: processing completed (R13)\n    queued(entity): queued: place assigned (R22)\n    rated(entity): rated: grade recorded (R01)\n    ready_packing_completed(entity): ready: packing completed (R44)\n    ready_staffing_arranged(entity): ready: staffing arranged (R36)\n    received(entity): received: receipt recorded (R50)\n    registered(entity): registered: registration recorded (R42)\n    released(entity): released: release recorded (R20)\n    retained(entity): retained: retention recorded (R31)\n    reviewed(entity): reviewed: review completed (R28)\n    scheduled(entity): scheduled: time assigned (R14)\n    sealed(entity): sealed: packaging intact (R60)\n    secured(entity): secured: fastener fitted (R56)\n    shelved(entity): shelved: shelf assigned (R18)\n    shipped(entity): shipped: departure recorded (R16)\n    sized(entity): sized: dimensions measured (R38)\n    sorted(entity): sorted: contents ordered (R41)\n    sound_casing_intact(entity): sound: casing intact (R29)\n    sound_signal_audible(entity): sound: signal audible (R11)\n    stacked(entity): stacked: stack formed (R21)\n    staged(entity): staged: staging completed (R02)\n    stamped(entity): stamped: stamp applied (R12)\n    stored(entity): stored: location assigned (R33)\n    tagged(entity): tagged: tag attached (R19)\n    tested(entity): tested: test completed (R58)\n    tied(entity): tied: tie attached (R51)\n    tracked(entity): tracked: tracking enabled (R05)\n    unloaded(entity): unloaded: unloading completed (R34)\n    weighed(entity): weighed: mass measured (R23)\n    weighed_in(entity): weighed-in: arrival mass recorded (R08)\n    wrapped_up(entity): wrapped-up: handling completed (R15)\n  constants: @unit0 (entity), @unit1 (entity), @unit2 (entity)",
+ "tools": [
+  {
+   "name": "sentences",
+   "description": "List the source sentences (id, role given/claimed/context), the targets, and the vocabulary (sorts, predicates with glosses, constants).",
+   "input_schema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "freeze_target",
+   "description": "Commit the formal statement of a target sentence. Irreversible; must be done for every target before any node is added.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "target": {
+      "type": "string"
+     },
+     "text": {
+      "type": "string",
+      "description": "One VE statement."
+     },
+     "surface": {
+      "type": "string",
+      "enum": [
+       "auto",
+       "strict",
+       "english"
+      ],
+      "description": "Input language: strict VE, the controlled English surface, or auto (strict first)."
+     }
+    },
+    "required": [
+     "target"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "add_node",
+   "description": "Add one node (one VE statement). No parents = an assumption; with parents = a step that check_step must certify. Anchor it to the sentence id(s) it formalises. An assumption is anchored only by a 'given' sentence.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string",
+      "description": "New node name [a-z][a-z0-9_]*."
+     },
+     "text": {
+      "type": "string",
+      "description": "One VE statement (omit to accept a candidate verbatim)."
+     },
+     "anchors": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "description": "Sentence ids this node formalises."
+     },
+     "parents": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "description": "Existing node names this step follows from."
+     },
+     "surface": {
+      "type": "string",
+      "enum": [
+       "auto",
+       "strict",
+       "english"
+      ],
+      "description": "Input language: strict VE, the controlled English surface, or auto (strict first)."
+     }
+    },
+    "required": [
+     "name"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "rewrite",
+   "description": "Change a node's statement, anchors and/or parents. Invalidates its check and its children's checks.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "text": {
+      "type": "string"
+     },
+     "anchors": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "parents": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "surface": {
+      "type": "string",
+      "enum": [
+       "auto",
+       "strict",
+       "english"
+      ],
+      "description": "Input language: strict VE, the controlled English surface, or auto (strict first)."
+     }
+    },
+    "required": [
+     "name"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "remove_node",
+   "description": "Remove a node that is not a parent of another node.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "name"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "declare",
+   "description": "Declare a new predicate, constant or sort. A gloss (what it means) is required. Near-duplicates of existing vocabulary and names/glosses restating a target conclusion are blocked until acknowledged by flag.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "gloss": {
+      "type": "string"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "predicate",
+       "constant",
+       "sort"
+      ]
+     },
+     "arguments": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "description": "Predicate argument sorts (1 or 2)."
+     },
+     "sort": {
+      "type": "string",
+      "description": "Sort of a constant."
+     },
+     "verbalisation": {
+      "type": "string",
+      "description": "Optional English template, e.g. '{0} is sealed'."
+     },
+     "acknowledge": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "description": "Flags from a blocked declaration you accept."
+     }
+    },
+    "required": [
+     "name",
+     "gloss"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "check_step",
+   "description": "Check whether a step follows from its parents. Returns 'follows' (a replayed certificate), 'countermodel' (a checked model where every parent is true and the conclusion false), or 'unknown'.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string",
+      "description": "Step node to check."
+     },
+     "invariants": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "description": "Optional closure-induction invariants (strict VE)."
+     }
+    },
+    "required": [
+     "name"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "status",
+   "description": "Summarise progress: target certification (graph replay), unproved steps, unanchored assumptions and whether they are load-bearing, sentence coverage/waivers, renamed-conclusion flags, provenance counts and token usage. 'success' is true only when everything passes.",
+   "input_schema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "waive",
+   "description": "Explicitly mark a sentence as not formalised, with a reason. The waiver is reported; waiving ANY asserting sentence blocks 'success', even one already covered or derived (every claimed sentence must be derived by a certified step, every given sentence covered).",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "sentence": {
+      "type": "string"
+     },
+     "reason": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "sentence",
+     "reason"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "show",
+   "description": "Show all nodes (or one node, with history) with their deterministic English paraphrase.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string"
+     }
+    },
+    "required": [],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "paraphrase",
+   "description": "Parse a VE statement without adding it; return canonical text and paraphrase.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "text": {
+      "type": "string"
+     },
+     "surface": {
+      "type": "string",
+      "enum": [
+       "auto",
+       "strict",
+       "english"
+      ],
+      "description": "Input language: strict VE, the controlled English surface, or auto (strict first)."
+     }
+    },
+    "required": [
+     "text"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "compare",
+   "description": "Compare two statements (node names, target ids, candidate ids, or VE text): equivalent / a_stronger / b_stronger / incomparable, with checked distinguishing models.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "a": {
+      "type": "string"
+     },
+     "b": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "a",
+     "b"
+    ],
+    "additionalProperties": false
+   }
+  },
+  {
+   "name": "finish",
+   "description": "End the session. verdict 'complete' when status reports success or its only failure is the waiver line for given sentences; 'gap' when your faithful formalisation has step(s) that do not follow (name them in gap_steps).",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "verdict": {
+      "type": "string",
+      "enum": [
+       "complete",
+       "gap"
+      ]
+     },
+     "gap_steps": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "note": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "verdict"
+    ],
+    "additionalProperties": false
+   }
+  }
+ ]
+}

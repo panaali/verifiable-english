@@ -1,0 +1,69 @@
+{
+ "packet": "pff19300b83b9",
+ "auditor": "codex",
+ "auditor_model": "gpt-6-astra",
+ "cost_usd": "0",
+ "reply": "{\"units\":[{\"unit\":\"u1\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the bagged conditional claim in n16.2 even though bagged is unassumed.\"},{\"unit\":\"u2\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the inspected conditional claim in n16.2 even though inspected is unassumed.\"},{\"unit\":\"u3\",\"verdict\":\"unacceptable\",\"reason\":\"This rule supports the numbered conditional claim in n16.2 even though numbered is unassumed.\"},{\"unit\":\"u4\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on the dated-and-tied route to audible sound.\"},{\"unit\":\"u5\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on the dated-and-tied route to intact casing.\"},{\"unit\":\"u6\",\"verdict\":\"acceptable\",\"reason\":\"The sample relation is not used in the argument's reasoning.\"},{\"unit\":\"u7\",\"verdict\":\"acceptable\",\"reason\":\"The argument does not rely on the dated-and-tied route to documentation.\"}]}",
+ "auditor_tokens": 7011,
+ "pass": false,
+ "problems": [
+  {
+   "unit": "u1",
+   "sentence": "r11.1",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the bagged conditional claim in n16.2 even though bagged is unassumed."
+  },
+  {
+   "unit": "u2",
+   "sentence": "r11.2",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the inspected conditional claim in n16.2 even though inspected is unassumed."
+  },
+  {
+   "unit": "u3",
+   "sentence": "r11.3",
+   "kind": "waiver",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the numbered conditional claim in n16.2 even though numbered is unassumed."
+  }
+ ],
+ "units": {
+  "u1": {
+   "unit": "u1",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the bagged conditional claim in n16.2 even though bagged is unassumed."
+  },
+  "u2": {
+   "unit": "u2",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the inspected conditional claim in n16.2 even though inspected is unassumed."
+  },
+  "u3": {
+   "unit": "u3",
+   "verdict": "unacceptable",
+   "reason": "This rule supports the numbered conditional claim in n16.2 even though numbered is unassumed."
+  },
+  "u4": {
+   "unit": "u4",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on the dated-and-tied route to audible sound."
+  },
+  "u5": {
+   "unit": "u5",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on the dated-and-tied route to intact casing."
+  },
+  "u6": {
+   "unit": "u6",
+   "verdict": "acceptable",
+   "reason": "The sample relation is not used in the argument's reasoning."
+  },
+  "u7": {
+   "unit": "u7",
+   "verdict": "acceptable",
+   "reason": "The argument does not rely on the dated-and-tied route to documentation."
+  }
+ }
+}
