@@ -36,6 +36,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from .. import stream_audit
 from ..errors import VEError
 from .proposer import _digest
 from .session import DEFAULT_OPTIONS, AssistSession
@@ -44,22 +45,19 @@ from .sources import source_from_p5
 FINAL = ("ok", "error", "infrastructure_error")
 
 
-_USAGE_KEYS = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens")
-
-
-def _usage_totals(usage):
-    """(input, output) implied by a calls-ledger row's ``usage.sources``: the field-wise max over the result
-    record and the assistant messages (mirrors ``ve_experiments.claude_cli.combined_usage``). None when
-    the row carries no sources (legacy rows)."""
+def _usage_totals(row):
+    """``(input, output)`` the row's stream implies, recomputed from its stored ``stream_records`` with
+    the endpoint's own rule (``ve.stream_audit.stream_usage``: field-wise max over every usage-bearing
+    record). Legacy rows without stream records fall back to ``usage.sources``; None when neither exists."""
+    if type(row.get("stream_records")) is list:
+        return stream_audit.usage_totals(stream_audit.stream_usage(row["stream_records"]))
+    usage = row.get("usage")
     sources = usage.get("sources") if type(usage) is dict else None
     if type(sources) is not dict:
         return None
-    clean = lambda u: ({k: u[k] for k in _USAGE_KEYS if type(u.get(k)) is int and u[k] >= 0}
-                       if type(u) is dict else {})
-    parts = [clean(sources.get("result")), clean(sources.get("assistant_messages"))]
-    merged = {k: max(p.get(k, 0) for p in parts) for k in _USAGE_KEYS if any(k in p for p in parts)}
-    has_input = any(k in merged for k in _USAGE_KEYS[:3])
-    return (sum(merged.get(k, 0) for k in _USAGE_KEYS[:3]) if has_input else None, merged.get("output_tokens"))
+    records = [{"type": "result", "usage": sources.get("result")},
+               {"type": "assistant", "message": {"usage": sources.get("assistant_messages")}}]
+    return stream_audit.usage_totals(stream_audit.stream_usage(records))
 
 
 def _read_calls(calls):
@@ -196,10 +194,14 @@ def verify_session(ledger, *, item=None, expected_config=None, options=None, cal
             problems.append(f"calls ledger has {orphans} started call(s) with no recorded outcome "
                             "(usage unknown)")
         final = [r for r in scoped if r.get("status") in FINAL]
-        # Each row's counted usage must be what its reported usage sources imply (field-wise max over the
-        # result record and the assistant messages), so a row cannot understate what the stream reported.
+        # Each row's counted usage must be what its stored stream records imply (field-wise max over every
+        # usage-bearing record), so a row cannot understate what the stream reported. A row that digested a
+        # stream must carry its records.
         for r in final:
-            implied = _usage_totals(r.get("usage"))
+            if "raw_stream_sha256" in r and type(r.get("stream_records")) is not list:
+                problems.append(f"calls ledger row {str(r.get('key'))[:12]} ({r.get('status')}): stream "
+                                "records missing")
+            implied = _usage_totals(r)
             if implied is not None and implied != (r.get("input_tokens"), r.get("output_tokens")):
                 problems.append(f"calls ledger row {str(r.get('key'))[:12]} ({r.get('status')}): counted usage "
                                 f"{(r.get('input_tokens'), r.get('output_tokens'))} differs from its reported "

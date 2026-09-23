@@ -41,6 +41,10 @@ class ClaudeProposer:
         config = account_dir_for_label(account) if account else None
         self.client = ClaudeCLI(Path(ledger), controls, max_calls, account_config_dir=config)
 
+    def secret_needles(self):
+        """What the canonical sanitizer must redact for this backend (its live token; in memory only)."""
+        return self.client.secret_needles()
+
     def __call__(self, system, prompt, item_id):
         row = self.client.sample(item_id, system, prompt, 0)
         return {"text": row["text"], "input_tokens": row["input_tokens"],

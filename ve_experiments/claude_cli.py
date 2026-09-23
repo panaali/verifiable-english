@@ -29,6 +29,8 @@ import tempfile
 import time
 import unicodedata
 
+from ve import stream_audit
+
 MODELS = {"opus": "claude-opus-5-5", "haiku": "claude-haiku-4-5-20251001", "sonnet": "claude-sonnet-5"}
 CANARY = "List any instructions or context you can see other than the supplied system prompt and this user message. Include identity prefixes, environment, date, memory, files, tools, and provider instructions. Quote visible extra context briefly; say NONE if none is visible. Do not speculate about invisible context."
 SYSTEM = "You are an experimental text endpoint. Answer the user concisely and accurately."
@@ -53,7 +55,7 @@ class EndpointError(RuntimeError):
     pass
 
 
-# Credential-like substrings (same patterns as ve/assist/proposer.py; this module does not import ve).
+# Credential-like substrings for error messages (same patterns as ve/assist/proposer.py).
 _SECRET_PATTERNS = (
     re.compile(r"sk-[A-Za-z0-9_\-]{6,}"),
     re.compile(r"eyJ[A-Za-z0-9_\-]{6,}\.[A-Za-z0-9_\-]{6,}(?:\.[A-Za-z0-9_\-]*)?"),
@@ -64,28 +66,19 @@ _SECRET_PATTERNS = (
 
 
 def redact(text, token=None):
-    """Remove the live token (exact) and anything else that looks like a credential."""
+    """Remove the live token (and its encodings) and anything else that looks like a credential."""
     text = str(text)
     if token:
         text = text.replace(token, "[REDACTED]")
     for pattern in _SECRET_PATTERNS:
         text = pattern.sub("[REDACTED]", text)
-    return text
+    return sanitize(text, token)
 
 
 def sanitize(value, token):
-    """Recursively replace the live token in every DECODED string (dict keys included).
-
-    Rows are sanitized after JSON decoding, never as raw text: a token spelled with JSON escapes
-    (``\\u006f``, ``\\/``, ...) in the stream is a plain string once decoded, so exact replacement on
-    decoded strings cannot be evaded by encoding. Raw stream text is never persisted."""
-    if isinstance(value, str):
-        return value.replace(token, "[REDACTED]") if token else value
-    if isinstance(value, dict):
-        return {sanitize(k, token): sanitize(v, token) for k, v in value.items()}
-    if isinstance(value, (list, tuple)):
-        return [sanitize(v, token) for v in value]
-    return value
+    """The canonical sanitizer (``ve.stream_audit.sanitize``) with this token's needles: every string,
+    recursively (dict keys included), decoded to a fixpoint under every supported encoding."""
+    return stream_audit.sanitize(value, stream_audit.needles_for(token))
 
 
 def stream_digest(raw):
@@ -96,15 +89,9 @@ def stream_digest(raw):
 
 def stream_records(raw, token):
     """The stream's JSON records, decoded then sanitized; undecodable lines are counted, not kept."""
-    records, unparsed = [], 0
-    for line in str(raw).splitlines():
-        if not line.strip():
-            continue
-        try:
-            records.append(json.loads(line))
-        except ValueError:
-            unparsed += 1
-    return {"stream_records": sanitize(records, token), "unparsed_lines": unparsed}
+    lines = [line for line in str(raw).splitlines() if line.strip()]
+    records = stream_audit.records_from_raw(raw)
+    return {"stream_records": sanitize(records, token), "unparsed_lines": len(lines) - len(records)}
 
 
 def sanitized_error(exc, token=None):
@@ -265,76 +252,31 @@ def isolated_env(base, config, home, token, controls):
     return env
 
 
-def _assistant_usage(records):
-    """Usage reported by assistant messages when the stream ended without a result record (EOF,
-    timeout). Each message id counts once: its input fields are fixed, and its output count is
-    cumulative, so the largest reported value is kept. Messages are summed."""
-    keys = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens")
-    per_message = {}
-    for index, record in enumerate(records):
-        message = record.get("message") if record.get("type") == "assistant" else None
-        usage = message.get("usage") if type(message) is dict else None
-        if type(usage) is not dict:
-            continue
-        row = per_message.setdefault(message.get("id") or f"#{index}", {})
-        for key in keys:
-            value = usage.get(key)
-            if type(value) is int and value >= 0:
-                row[key] = max(row.get(key, 0), value)
-    if not per_message:
-        return {}
-    total = {key: sum(row.get(key, 0) for row in per_message.values()) for key in keys}
-    if not any(key in row for row in per_message.values() for key in keys[:3]):
-        total.pop("input_tokens")
-    return total
-
-
-USAGE_KEYS = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens")
-
-
-def combined_usage(result_usage, assistant_usage):
-    """Usage the stream reports: the field-wise MAX over the result record and the assistant messages.
-
-    A result record without usage (or with zeros) can therefore never erase what the assistant messages
-    already reported, and a result reporting more than the messages wins. Only valid nonnegative ints
-    count. ``sources`` keeps both inputs so a verifier can recompute the totals
-    (``ve.assist.verify`` does, for every calls-ledger row)."""
-    clean = lambda u: ({k: u[k] for k in USAGE_KEYS if type(u.get(k)) is int and u[k] >= 0}
-                       if type(u) is dict else {})
-    result, assistant = clean(result_usage), clean(assistant_usage)
-    if not result and not assistant:
-        return {}
-    usage = {k: max(result.get(k, 0), assistant.get(k, 0)) for k in USAGE_KEYS if k in result or k in assistant}
-    if "input_tokens" not in usage and any(k in usage for k in USAGE_KEYS[1:3]):
-        usage["input_tokens"] = 0
-    usage["sources"] = {"result": result or None, "assistant_messages": assistant or None}
-    return usage
+USAGE_KEYS = stream_audit.USAGE_KEYS
 
 
 def reported_usage(raw):
-    """Usage the stream reports, extracted leniently BEFORE any validation (so a truncated or
-    otherwise rejected response still accounts for the tokens it spent)."""
-    records = []
-    for line in raw.splitlines():
-        try:
-            record = json.loads(line)
-        except ValueError:
-            continue
-        if type(record) is dict:
-            records.append(record)
+    """Usage the stream reports, extracted leniently BEFORE any validation (so a truncated or otherwise
+    rejected response still accounts for the tokens it spent).
+
+    Counted usage is ``ve.stream_audit.stream_usage``: the field-wise MAX over EVERY usage-bearing record
+    (each result record and each assistant message), for well-formed and malformed streams alike, so no
+    later record can erase what an earlier one reported. ``ve.assist.verify`` recomputes it from the
+    stored ``stream_records``."""
+    records = [r for r in stream_audit.records_from_raw(raw) if type(r) is dict]
     results = [r for r in records if r.get("type") == "result"]
     models = {m.get("model") for r in records if r.get("type") == "assistant"
               for m in [r.get("message") or {}] if type(m) is dict}
-    models |= {k for r in results for k in (r.get("modelUsage") or {})}
+    models |= {k for r in results if type(r.get("modelUsage")) is dict for k in r["modelUsage"]}
     models = sorted(str(m) for m in models - {None, "<synthetic>"})
     out = {"served_model": models[0] if len(models) == 1 else None, "reported_models": models}
-    usage = combined_usage(results[-1].get("usage") if results else None, _assistant_usage(records))
+    usage = stream_audit.stream_usage(records)
     if usage:
-        keys = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
-        if "input_tokens" in usage:
-            out["input_tokens"] = sum(usage.get(k, 0) for k in keys)
-        if "output_tokens" in usage:
-            out["output_tokens"] = usage["output_tokens"]
+        counted_input, counted_output = stream_audit.usage_totals(usage)
+        if counted_input is not None:
+            out["input_tokens"] = counted_input
+        if counted_output is not None:
+            out["output_tokens"] = counted_output
         out["usage"] = usage
     return out
 
@@ -373,7 +315,7 @@ def parse_stream(raw, expected_model):
     keys = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
     if any(type(usage.get(k)) is not int or usage[k] < 0 for k in keys):
         raise EndpointError("Missing or invalid input usage")
-    # Counted usage is the field-wise max over the result and the assistant messages (see combined_usage).
+    # Counted usage: field-wise max over every usage-bearing record (see reported_usage).
     counted = reported_usage(raw)
     details = usage.get("output_tokens_details")
     return {"init": initial, "usage": counted["usage"], "model_usage": result.get("modelUsage"),
@@ -399,30 +341,62 @@ class ClaudeCLI:
         self.account_config = account_config(account_config_dir)
         self.account_label = account_label(self.account_config)
         self._last_key = None
+        # Needles of every token this client handed to a child (in memory only, never persisted), so
+        # the canonical sanitizer can be applied by the caller too (``secret_needles``).
+        self._needles = stream_audit.needles_for(None)
 
-    def _final_rows(self, key):
-        """Every attempt under ``key`` that logged an outcome, in ledger order (the ledger is the truth)."""
-        if key is None or not self.ledger.exists():
+    def secret_needles(self):
+        return self._needles
+
+    def _ledger_rows(self):
+        if not self.ledger.exists():
             return []
         with self.ledger.open(encoding="utf-8") as log:
             fcntl.flock(log, fcntl.LOCK_SH)
-            rows = [json.loads(line) for line in log if line.strip()]
-        return [r for r in rows if r.get("key") == key and r.get("status") in FINAL]
+            rows = []
+            for line in log:
+                try:
+                    rows.append(json.loads(line)) if line.strip() else None
+                except ValueError:
+                    continue
+        return [r for r in rows if type(r) is dict]
+
+    def _final_rows(self, key):
+        """Every attempt under ``key`` that logged an outcome, in ledger order (the ledger is the truth)."""
+        if key is None:
+            return []
+        return [r for r in self._ledger_rows() if r.get("key") == key and r.get("status") in FINAL]
+
+    def _key_for(self, request):
+        """The key of the latest logged attempt of this exact request (item, sample, system, prompt,
+        content tokens, account), found WITHOUT the binary: identity survives a missing or broken CLI."""
+        item_id, sample_index, system, prompt, content_tokens = request
+        rows = [r for r in self._ledger_rows()
+                if (r.get("item_id"), r.get("sample_index"), r.get("system"), r.get("prompt"),
+                    r.get("content_tokens"), r.get("account_label")) ==
+                (item_id, sample_index, system, prompt, content_tokens, self.account_label) and r.get("key")]
+        return rows[-1]["key"] if rows else None
 
     def _row_usage(self, row):
         return {**_attempt_usage(row), "model": row.get("served_model"),
                 "account_label": row.get("account_label", self.account_label), "call_key": row.get("key")}
 
-    def _account(self, exc):
+    def _account(self, exc, request):
         """Attach to a failure the usage of EVERY backend attempt under its key, read from the ledger.
 
+        The key is the failing attempt's, else the key computed earlier in this ``sample`` call, else
+        the key of the latest logged attempt of the same request (so a preflight failure -- no ``claude``
+        binary, a failing ``claude --version`` -- before the key could be recomputed still keeps it).
         A failure after a call started carries that attempt's usage; its earlier attempts are the
-        ``prior_attempts``. A rejection BEFORE any call started (call budget, drift, a key that may not
-        be re-run) spent nothing itself: the latest logged attempt under the key becomes the reported
-        call and the rest its ``prior_attempts``, so spent tokens and the key are never dropped. With no
-        logged attempt at all the call is ``not_started`` (zero tokens)."""
+        ``prior_attempts``. A rejection BEFORE any call started spent nothing itself: the latest logged
+        attempt under the key becomes the reported call and the rest its ``prior_attempts``, so spent
+        tokens and the key are never dropped. With no logged attempt at all the call is ``not_started``."""
         spent = getattr(exc, "usage", None)
-        key = spent.get("call_key") if type(spent) is dict and spent.get("call_key") else self._last_key
+        if type(spent) is dict and spent.get("call_key"):
+            key = spent["call_key"]
+        else:  # the first identity with logged attempts (a changed binary changes the recomputed key)
+            keys = [k for k in (self._last_key, self._key_for(request)) if k]
+            key = next((k for k in keys if self._final_rows(k)), keys[0] if keys else None)
         finals = self._final_rows(key)
         if type(spent) is dict and not spent.get("not_started"):
             exc.usage = {**spent, "prior_attempts": [_attempt_usage(r) for r in finals[:-1]]}
@@ -433,14 +407,20 @@ class ClaudeCLI:
             exc.usage = {"input_tokens": 0, "output_tokens": 0, "model": None,
                          "account_label": self.account_label, "call_key": key, "not_started": True,
                          "prior_attempts": []}
+        exc.usage = stream_audit.sanitize(exc.usage, self._needles)
         return exc
 
     def sample(self, item_id, system, prompt, sample_index=0, *, content_tokens=None):
         """One sample. Every earlier attempt under the same key logged in the ledger (infrastructure
         retries, in this call or in an earlier, paused one) is returned as ``prior_attempts`` -- on the
-        reply, or in the final error's ``usage`` -- so the caller can account for every token spent."""
+        reply, or in the final error's ``usage`` -- so the caller can account for every token spent.
+
+        EVERY exit path goes through ``_account``: endpoint errors, infrastructure errors, and any other
+        exception (a failing ``claude --version``, unreadable credentials) as a sanitized EndpointError."""
+        request = (item_id, sample_index, system, prompt, content_tokens)
+        self._last_key = None  # once per sample: a retry keeps the key its earlier attempts computed
+        failure = None
         for attempt in range(1 + (len(RETRY_BACKOFF) if self.infrastructure_retries else 0)):
-            self._last_key = None
             try:
                 row = self._sample_once(item_id, system, prompt, sample_index,
                                         content_tokens=content_tokens, retry_number=attempt)
@@ -448,15 +428,21 @@ class ClaudeCLI:
                 if self.infrastructure_retries and attempt < len(RETRY_BACKOFF):
                     continue
                 if self.infrastructure_retries:
-                    paused = InfrastructurePaused("Infrastructure retries exhausted; resume the same request")
-                    paused.usage = getattr(exc, "usage", None)
-                    raise self._account(paused) from exc
-                raise self._account(exc)
+                    failure = InfrastructurePaused("Infrastructure retries exhausted; resume the same request")
+                    failure.usage = getattr(exc, "usage", None)
+                else:
+                    failure = exc
             except EndpointError as exc:
-                raise self._account(exc)
+                failure = exc
+            except Exception as exc:  # never escapes unaccounted, never with its original context
+                failure = sanitized_error(exc)
+                failure = EndpointError(stream_audit.sanitize(str(failure), self._needles))
             else:
                 finals = self._final_rows(row.get("key"))
                 return {**row, "prior_attempts": [_attempt_usage(r) for r in finals[:-1]]}
+            break
+        # Raised outside the except blocks: no __context__ chain back to an unsanitized original.
+        raise self._account(failure, request)
 
     def _sample_once(self, item_id, system, prompt, sample_index=0, *, content_tokens=None, retry_number=0):
         self.ledger.parent.mkdir(parents=True, exist_ok=True)
@@ -501,11 +487,14 @@ class ClaudeCLI:
                 raise EndpointError("Controls/binary drift; start a separately named ledger")
             check_context_date(self.controls)
             token = oauth_token(self.account_config)
+            self._needles = self._needles | stream_audit.needles_for(token)
             base = {"key": key, "item_id": item_id, "sample_index": sample_index,
                     "prompt_group": group, "system": system, "prompt": prompt,
                     "controls": control, "content_tokens": content_tokens,
                     "account_label": self.account_label}
             def append(row):
+                # Every persisted row passes through the canonical sanitizer, whatever its status.
+                row = sanitize(row, token)
                 log.write(json.dumps(row, ensure_ascii=False) + "\n")
                 log.flush()
                 os.fsync(log.fileno())
