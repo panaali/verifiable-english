@@ -1,0 +1,8 @@
+# T1d draft pins (NOT a freeze; not timestamped). Recomputed and timestamped at freeze.
+ve_last_commit_touching_ve  eb6804305248bc723a83ee0c13af96f8e4604a27
+ve_tree_at_draft            e0ce8688eee6b1b9a0b32a65baad5e53393604cd
+solvers/pyproject.toml      sha256 c560078e5d66972518d3dcf7abd8cd7826b2284964ca028c525d686a3846f504
+solvers/uv.lock             sha256 db56a69104c619d16441c0329210df59cae0456a34ae8cfe6632b77e63f95109
+z3-solver                   5.1.0.0 (wheel hashes in solvers/uv.lock)
+cvc5                        1.4.0 (wheel hashes in solvers/uv.lock)
+run_command                 PYTHONPATH=. uv run --project experiments/T1d/solvers --locked python -m ve_experiments.t1d.part2

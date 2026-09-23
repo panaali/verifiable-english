@@ -126,11 +126,27 @@ def test_closed_world_unless_snapshot_certifies_and_negation_flip_forgery_fails(
     assert forged is None or not forged['python_replay_valid']
 
 
-def test_z3_chc_matches_validator():
+def test_z3_chc_and_ground_checks_match_validator():
     pytest.importorskip('z3')
+    pytest.importorskip('cvc5')
     from ve_experiments.t1d import z3check
     for i in range(3):
         gold, _, mutant = _gold_and_mutant(R.SEED_BASE + i)
         for rs in (gold, mutant):
-            assert z3check.chc_verdict(rs) == R.validate(rs)['claim_true']
-        assert z3check.fol_verdict(gold, timeout_ms=3000) is False  # counterexample found
+            truth = R.validate(rs)['claim_true']
+            assert z3check.chc_verdict(rs) == truth
+            dnf, _ = R.invariant_dnf(rs)
+            for solver in ('z3', 'cvc5'):
+                g = z3check.ground_check(rs, dnf, solver)
+                assert g['verdict'] == ('proved' if truth else 'unknown')  # never refutes
+
+
+def test_mutant_certificate_rebound_to_gold_fails_logically_at_the_mutated_rule():
+    from ve_experiments.t1d.part2 import rebind_regression
+    for kind in ('added_exception', 'negation_flip'):
+        gold, desc, mutant = _gold_and_mutant(kinds=(kind,))
+        ve = R.ve_certify_built(mutant)
+        assert ve['built'] and ve['python_replay_valid']
+        rb = rebind_regression(gold, desc, ve['certificate'])
+        assert not rb['python_valid'] and rb['logical_failure'] and rb['located']['at_mutated_rule']
+        assert rb['lean_valid'] in (False, None)

@@ -1,37 +1,59 @@
-"""T1d Part 2 feasibility (offline, no model calls).
+"""T1d Part 2 (v3): an OFFLINE verification comparison for universal rule-level claims. No model
+calls and no model-monitor study (dropped after the second review: a monitor holding the gold rules
+can diff or re-run CHC, and every honest item would carry a label-revealing diff).
 
-    UV_CACHE_DIR=/private/tmp/ve-uv-cache-t1d \
-      uv run --with z3-solver==5.1.0.0 python -m ve_experiments.t1d.part2
+    PYTHONPATH=. UV_CACHE_DIR=/private/tmp/ve-uv-cache-t1d \\
+      uv run --project experiments/T1d/solvers --locked python -m ve_experiments.t1d.part2
 
-Writes experiments/T1d/part2-feasibility.json:
-* 30 generated rule sets (seeds SEED_BASE + attempt), gold claim FALSE, each with one accepted
-  mutant (claim TRUE) of an assigned type (cycled over the four mutation types; a rule set with
-  no valid mutant of its type is skipped and logged); per type, the acceptance rate over all
-  candidate single-rule mutations.
-* For every claim instance: validator verdict, concrete witness + BFS (false claims), Z3 CHC
-  verdict (primary baseline), Z3 FOL+TransitiveClosure verdict (secondary; unknown expected),
-  VE certification (untrusted builder, Python and Lean replay), forged-certificate rejection on
-  false claims, and non-replay of the mutant's certificate against the gold rule set.
-* A documented attempt with the generic `prove_entailment` search on the first mutants.
-* Closed-world "unless" snapshots: separating-set certificates with negated guards and tag
-  completion axioms (Python and Lean replay), plus a forged (negation-flip) variant.
+Writes experiments/T1d/part2-verification.json and part2-claims.jsonl.gz (every claim row).
+
+Claims. Gold rule sets are generated from seeds SEED_BASE + attempt (claim FALSE by the independent
+validator); every single-rule mutation candidate of every type is enumerated for every attempted gold
+set. Selection uses the independent validator ONLY (v2 also required Z3 agreement, which selected
+for agreement). The first N_RULESETS gold sets with a validator-true candidate of the assigned type
+form the "selected" sample, but ALL attempted claims are denominators:
+  golds       every attempted gold claim (false);
+  candidates  every mutation candidate of every attempted gold set (true or false by the validator).
+
+Verifiers, each reported as proved / refuted / unknown on every claim (VE and the ground check can
+only prove; failure is "unknown", never "false"):
+  validator   pure Python over tag vectors (reference; no ve, no solver);
+  z3_chc      Z3 Spacer over constrained Horn clauses (a decider);
+  ground_z3, ground_cvc5  ground inductiveness of the SAME DNF invariant VE uses (three queries);
+  ve          closure@0 certificate from the dedicated untrusted builder, replayed in Python and, for
+              every Python-valid certificate, by the Lean-proved checker.
+Timing is end to end: VE and ground times include invariant construction. Every claim where a
+definite verdict contradicts the validator is logged (candidate-level disagreement log).
+
+Regressions on the selected sample: forged certificates for the false gold claims must not replay;
+the mutant's certificate, REBOUND to the gold inputs (binding fields replaced, so the input check
+passes), must fail logically (not at the binding) in Python and in Lean, and the Python failure must
+be located at the mutated rule: the failing branch holds the gold's mutated edge case, or the failing
+expansion is a disjunction node that contains it; for a dropped rule (which reshapes the step
+disjunction) the failure must be in the step-case analysis. The v2 check stopped at the binding.
+Also kept from v2: the generic `prove_entailment` attempt and the closed-world "unless" snapshots.
 """
 from __future__ import annotations
 
 from collections import Counter
 from datetime import datetime, timezone
+import gzip
 import json
+import multiprocessing
 from pathlib import Path
 import random
+import subprocess
 import time
 
 from . import rules as R
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / 'experiments/T1d/part2-feasibility.json'
+OUT = ROOT / 'experiments/T1d/part2-verification.json'
+CLAIMS = ROOT / 'experiments/T1d/part2-claims.jsonl.gz'
 N_RULESETS = 30
 N_SNAPSHOTS = 16
 GENERIC_SEARCH = {'rulesets': 3, 'max_steps': 200_000}
+VERIFIERS = ('z3_chc', 'ground_z3', 'ground_cvc5', 've')
 
 
 def _lean(name, env, ps, g, cert):
@@ -45,99 +67,197 @@ def _trace_depth(node):
     return 1 + max([_trace_depth(c) for c in node.get('children', [])] or [0])
 
 
-def claim_row(rs, name, z3):
-    from ve import check_entailment_certificate
+def verify(args):
+    """Every verifier on one claim (worker process). Returns (row, certificate or None)."""
+    name, rs, lean = args
+    from . import z3check as Z
     row = {'name': name}
     v = R.validate(rs)
-    row['validator_claim_true'] = v['claim_true']
+    row['validator'] = 'true' if v['claim_true'] else 'false'
     if not v['claim_true']:
-        w = R.witness_state(rs, v['witness_types'], v['witness_rules'])
-        row['witness_length'] = len(v['witness_rules'])
-        row['witness_bfs_violation'] = w['violation_by_bfs']
+        row['witness_bfs_violation'] = R.witness_state(rs, v['witness_types'], v['witness_rules'])['violation_by_bfs']
     t = time.time()
-    row['z3_chc_claim_true'] = z3.chc_verdict(rs)
-    row['z3_chc_seconds'] = round(time.time() - t, 3)
+    chc = Z.chc_verdict(rs)
+    row['z3_chc'] = {True: 'proved', False: 'refuted', None: 'unknown'}[chc]
+    row['z3_chc_seconds'] = round(time.time() - t, 4)
     t = time.time()
-    row['z3_fol_claim_true'] = z3.fol_verdict(rs)
-    row['z3_fol_seconds'] = round(time.time() - t, 3)
     dnf, which = R.invariant_dnf(rs)
-    row['invariant'] = {'kind': which, 'cubes': len(dnf), 'literals': sum(len(c) for c in dnf)}
+    inv_s = time.time() - t
+    row['invariant'] = {'kind': which, 'cubes': len(dnf), 'literals': sum(len(c) for c in dnf), 'seconds': round(inv_s, 4)}
+    for solver in ('z3', 'cvc5'):
+        g = Z.ground_check(rs, dnf, solver)
+        row[f'ground_{solver}'] = g['verdict']
+        row[f'ground_{solver}_queries'] = g['queries']
+        row[f'ground_{solver}_seconds'] = round(inv_s + g['seconds'], 4)
     ve = R.ve_certify_built(rs, dnf)
-    row['ve_certificate_built'] = ve['built']
+    row['ve_python'] = bool(ve['built'] and ve['python_replay_valid'])
+    row['ve_seconds'] = round(inv_s + ve['build_seconds'] + ve.get('replay_seconds', 0), 4)
+    cert = None
     if ve['built']:
-        row['ve_python_replay_valid'] = ve['python_replay_valid']
-        row['ve_python_replay_steps'] = ve['python_replay_steps']
-        row['ve_lean_replay_valid'] = _lean(name, ve['env'], ve['premises'], ve['goal'], ve['certificate'])
+        row['ve_replay_steps'] = ve['python_replay_steps']
         row['ve_trace_depth'] = _trace_depth(ve['certificate']['trace'])
-        row['ve_build_seconds'] = ve['build_seconds']
+        cert = ve['certificate']
     else:
-        row['ve_build_failure'] = ve['reason']
-    row['ve_certified'] = bool(ve['built'] and ve['python_replay_valid'] and row.get('ve_lean_replay_valid') is not False)
-    if not v['claim_true']:
-        forged = R.ve_certify_built(rs, dnf, forge=True)
-        row['forged'] = {'forged_leaves': forged.get('forged_leaves'),
-                         'python_replay_valid': forged['python_replay_valid'],
-                         'python_replay_status': forged.get('python_replay_status'),
-                         'lean_replay_valid': _lean(name + '-forged', forged['env'], forged['premises'],
-                                                    forged['goal'], forged['certificate'])}
-    return row, ve
+        row['ve_failure'] = ve['reason']
+    row['ve_lean'] = _lean(name, ve['env'], ve['premises'], ve['goal'], cert) if (lean and row['ve_python']) else None
+    row['ve'] = 'proved' if row['ve_python'] and row['ve_lean'] is not False else 'unknown'
+    return row, cert
 
+
+def tally(rows):
+    """proved / refuted / unknown per verifier, split by the validator's verdict."""
+    out = {}
+    for truth in ('true', 'false'):
+        sub = [r for r in rows if r['validator'] == truth]
+        out[f'validator_{truth}'] = {'n': len(sub), **{v: dict(sorted(Counter(r[v] for r in sub).items()))
+                                                      for v in VERIFIERS}}
+    return out
+
+
+def disagreements(rows):
+    """Definite verdicts that contradict the validator (proved on a false claim, refuted on a true one)."""
+    bad = []
+    for r in rows:
+        for v in VERIFIERS:
+            if (r[v] == 'proved' and r['validator'] == 'false') or (r[v] == 'refuted' and r['validator'] == 'true'):
+                bad.append({'name': r['name'], 'verifier': v, 'verdict': r[v], 'validator': r['validator']})
+    return bad
+
+
+# ------------------------------------------------------------------ mutant rebinding regression
+
+def _disjunction_nodes(formula, target):
+    """(Or-tree nodes of the gold step disjunction that contain `target`, all its Or-tree nodes)."""
+    from ve.ast import Or
+    nodes, every = [], []
+
+    def walk(f):
+        if f == target:
+            return True
+        if type(f) is Or:
+            every.append(f)
+            hit = walk(f.left) | walk(f.right)
+            if hit:
+                nodes.append(f)
+            return hit
+        return False
+    walk(formula)
+    return nodes, every
+
+
+def rebind_regression(gold, desc, cert):
+    from ve.entailment import (CLOSURE_CHECKER_VERSION, _binding, _initial_branch, _Replayer,
+                               check_entailment_certificate)
+    env, gp, gg = R.ve_env(), R.premises(gold), R.goal(gold)
+    rebound = {**cert, **_binding(env, tuple(gp), gg)}
+    chk = check_entailment_certificate(env, gp, gg, rebound, max_steps=2_000_000)
+    binding_failure = any(s in chk.detail for s in ('bound to different inputs', 'wire schema'))
+    failure = {}
+
+    class Locate(_Replayer):
+        def replay(self, branch, node, depth=0):
+            try:
+                super().replay(branch, node, depth)
+            except Exception:
+                if not failure:  # the deepest failing node is recorded first
+                    failure.update(branch=branch, node=node if isinstance(node, dict) else {})
+                raise
+    located = None
+    try:
+        Locate(2_000_000, env.closure, env=env, induction=rebound['checker_version'] == CLOSURE_CHECKER_VERSION).replay(
+            _initial_branch(env, tuple(gp), gg), rebound['trace'])
+    except Exception:
+        case = R.step_case(gold['rules'][desc['rule']])
+        nodes, every = _disjunction_nodes(R.step_body(gold).formula, case)
+        branch, node = failure['branch'], failure['node']
+        strict = any(it.formula == case for it in branch.formulas)
+        at = node.get('at')
+        expanded = branch.formulas[at].formula if isinstance(at, int) and 0 <= at < len(branch.formulas) else None
+        shape = expanded is not None and any(expanded == n for n in nodes)
+        in_step = expanded is not None and any(expanded == n for n in every)
+        cases = {R.step_case(r) for r in gold['rules']}
+        any_case = any(it.formula in cases for it in branch.formulas)
+        # Literal mutations: the failing branch must hold the gold's mutated case (or the failing split
+        # is a disjunction node containing it). A dropped rule changes the SHAPE of the step
+        # disjunction, so the mutant's case analysis no longer lines up with the gold's; there the
+        # failure must be at a split of the step disjunction or on a branch holding one of its cases.
+        dropped = desc['kind'] == 'dropped_inheritance'
+        located = {'failing_rule': node.get('rule'), 'expanded_formula': type(expanded).__name__,
+                   'branch_holds_mutated_case': strict, 'failing_expansion_is_disjunction_containing_it': shape,
+                   'failing_expansion_in_step_disjunction': in_step, 'branch_holds_a_step_case': any_case,
+                   'at_mutated_rule': bool(strict or shape or (dropped and (in_step or any_case)))}
+    return {'python_valid': chk.valid, 'python_status': chk.status, 'python_detail': chk.detail[:160],
+            'logical_failure': (not chk.valid) and chk.status == 'InvalidCertificate' and not binding_failure,
+            'located': located, 'lean_valid': _lean(gold['id'] + '-rebound', env, gp, gg, rebound)}
+
+
+# ------------------------------------------------------------------ run
 
 def run():
-    from . import z3check as z3
-    rows, skipped = [], []
-    type_stats = {k: Counter() for k in R.MUTATIONS}
-    attempt = 0
+    from . import z3check as Z
     t_start = time.time()
-    while len(rows) < N_RULESETS:
+    attempts, selected, skipped = [], [], []
+    attempt = 0
+    while len(selected) < N_RULESETS:
         seed = R.SEED_BASE + attempt
         attempt += 1
-        kind = R.MUTATIONS[len(rows) % len(R.MUTATIONS)]
+        kind = R.MUTATIONS[len(selected) % len(R.MUTATIONS)]
         gold = R.generate(seed)
-        if z3.chc_verdict(gold) is not False:
-            skipped.append({'seed': seed, 'reason': 'Z3 does not confirm the gold claim is false'})
-            continue
-        chosen = {}
+        cands = []
         for k in R.MUTATIONS:
-            rng = random.Random(seed * 7 + R.MUTATIONS.index(k))
-            ch, tried, accepted = R.mutate(gold, k, rng, z3_verdict=z3.chc_verdict)
-            type_stats[k]['gold_rule_sets'] += 1
-            type_stats[k]['candidates'] += tried
-            type_stats[k]['accepted_candidates'] += accepted
-            type_stats[k]['rule_sets_with_valid_mutant'] += ch is not None
-            chosen[k] = ch
-        if chosen[kind] is None:
-            skipped.append({'seed': seed, 'reason': f'no valid {kind} mutant'})
-            continue
-        desc, mutant = chosen[kind]
-        gold_row, _ = claim_row(gold, gold['id'] + '-gold', z3)
-        mut_row, mut_ve = claim_row(mutant, gold['id'] + '-mutant', z3)
-        # The mutant's certificate is valid only relative to the mutant.
-        from ve import check_entailment_certificate
-        cross = None
-        if mut_ve['built']:
-            gp, gg = R.premises(gold), R.goal(gold)
-            chk = check_entailment_certificate(R.ve_env(), gp, gg, mut_ve['certificate'], max_steps=2_000_000)
-            cross = {'python_replay_valid': chk.valid, 'status': chk.status, 'detail': chk.detail[:160],
-                     'lean_replay_valid': _lean(gold['id'] + '-cross', R.ve_env(), gp, gg, mut_ve['certificate'])}
-        english_gold, english_mut = R.render_english(gold).splitlines(), R.render_english(mutant).splitlines()
-        rows.append({'id': gold['id'], 'seed': seed, 'claim': gold['claim'], 'rules': len(gold['rules']),
-                     'constraints': len(gold['constraints']),
-                     'negated_guards_in_gold': sum(not p for r in gold['rules'] for _, p in r['src'] + r['dst']),
-                     'mutation': desc, 'gold': gold_row, 'mutant': mut_row,
-                     'mutant_certificate_against_gold': cross,
-                     'english_lines_changed': sum(a != b for a, b in zip(english_gold, english_mut))
-                     + abs(len(english_gold) - len(english_mut)),
-                     'render_bytes': {'json': len(R.render_json(gold)), 'english': len(R.render_english(gold)),
-                                      've': len(R.render_ve(gold))},
-                     'gold_ruleset': gold, 'mutant_ruleset': mutant})
-        print(len(rows), gold['id'], kind, mut_row['ve_certified'], flush=True)
-    part2_seconds = round(time.time() - t_start, 1)
+            order = R.candidates(gold, k)
+            random.Random(seed * 7 + R.MUTATIONS.index(k)).shuffle(order)
+            cands.extend((k, i, d, m) for i, (d, m) in enumerate(order))
+        # Selection by the validator only: the first (shuffled) validator-true candidate of the assigned type.
+        choice = next(((i, d, m) for k, i, d, m in cands if k == kind and R.validate(m)['claim_true']), None)
+        attempts.append({'seed': seed, 'gold': gold, 'candidates': cands, 'assigned': kind, 'chosen': choice})
+        if choice is None:
+            skipped.append({'seed': seed, 'reason': f'no validator-true {kind} mutant'})
+        else:
+            selected.append(len(attempts) - 1)
+    print('attempts', attempt, 'selected', len(selected), flush=True)
 
-    # Generic search, documented: the same claims with the library's own proof search.
+    jobs = []
+    for a in attempts:
+        gid = a['gold']['id']
+        jobs.append((f'{gid}-gold', a['gold'], True))
+        jobs.extend((f'{gid}-{k}-{i}', m, True) for k, i, _, m in a['candidates'])
+    rows, certs = {}, {}
+    with multiprocessing.get_context('fork').Pool(9) as pool:
+        for n, (row, cert) in enumerate(pool.imap_unordered(verify, jobs, chunksize=8)):
+            rows[row['name']] = row
+            if cert is not None and row['ve_python']:
+                certs[row['name']] = cert
+            if n % 1000 == 0:
+                print('verified', n, '/', len(jobs), flush=True)
+    gold_rows = [rows[f"{a['gold']['id']}-gold"] for a in attempts]
+    cand_rows = [rows[f"{a['gold']['id']}-{k}-{i}"] for a in attempts for k, i, _, _ in a['candidates']]
+
+    sel = []
+    for idx in selected:
+        a = attempts[idx]
+        gold = a['gold']
+        i, desc, mutant = a['chosen']
+        gid = gold['id']
+        mname = f"{gid}-{a['assigned']}-{i}"
+        grow, mrow = rows[f'{gid}-gold'], rows[mname]
+        dnf, _ = R.invariant_dnf(gold)
+        forged = R.ve_certify_built(gold, dnf, forge=True)
+        forged_row = {'forged_leaves': forged.get('forged_leaves'), 'python_valid': forged['python_replay_valid'],
+                      'lean_valid': _lean(gid + '-forged', forged['env'], forged['premises'], forged['goal'],
+                                          forged['certificate'])}
+        rebind = rebind_regression(gold, desc, certs[mname]) if mrow['ve'] == 'proved' else None
+        sel.append({'id': gid, 'seed': a['seed'], 'claim': gold['claim'], 'rules': len(gold['rules']),
+                    'mutation': desc, 'mutant_name': mname, 'gold': grow, 'mutant': mrow,
+                    'forged_gold_certificate': forged_row, 'mutant_rebound_to_gold': rebind,
+                    'gold_ruleset': gold, 'mutant_ruleset': mutant})
+        print(len(sel), gid, desc['kind'], mrow['ve'], rebind and rebind['logical_failure'],
+              rebind and rebind['located'] and rebind['located']['at_mutated_rule'], flush=True)
+    verification_seconds = round(time.time() - t_start, 1)
+
     from ve import prove_entailment
     generic = []
-    for r in rows[:GENERIC_SEARCH['rulesets']]:
+    for r in sel[:GENERIC_SEARCH['rulesets']]:
         m = r['mutant_ruleset']
         dnf, _ = R.invariant_dnf(m)
         t = time.time()
@@ -145,7 +265,6 @@ def run():
                                max_steps=GENERIC_SEARCH['max_steps'])
         generic.append({'id': r['id'], 'status': res.status, 'steps': res.steps, 'seconds': round(time.time() - t, 1)})
 
-    # Closed-world "unless" snapshots.
     snaps = []
     for i in range(N_SNAPSHOTS):
         s = R.generate_snapshot(R.SNAP_SEED + i)
@@ -155,43 +274,54 @@ def run():
                       for r in R.SNAP_RULES]
         try:
             row = R.certify_snapshot(s)
-            env, ps, g, S = R.snapshot_encoding(s)
         except R.OpenBranch as e:
             row = {'id': s['id'], 'python_replay_valid': False, 'lean_replay_valid': False, 'failure': str(e)}
         row['negated_guard_essential'] = s['resource'] in R._snap_reach(facts, tags, no_negated, s['principal'])
         row['forged_negation_flip'] = R.forged_snapshot(s)
         snaps.append(row)
 
-    true_rows = [r['mutant'] for r in rows]
-    false_rows = [r['gold'] for r in rows]
-    all_rows = true_rows + false_rows
-    ve_verdict = lambda c: True if c['ve_certified'] else None  # VE certifies or is silent
+    sel_true, sel_false = [r['mutant'] for r in sel], [r['gold'] for r in sel]
+    rebinds = [(r['mutation']['kind'], r['mutant_rebound_to_gold']) for r in sel if r['mutant_rebound_to_gold']]
+    at_rule = lambda rb: bool(rb['located'] and rb['located']['at_mutated_rule'])
+
+    def timing(rs, key):
+        xs = sorted(r[key] for r in rs)
+        return {'median': xs[len(xs) // 2], 'max': xs[-1]}
+    all_rows = list(rows.values())
     summary = {
-        'rule_sets': len(rows), 'attempts': attempt, 'skipped': len(skipped),
-        'claims_true_mutants': len(true_rows), 'claims_false_gold': len(false_rows),
-        'validator_z3chc_agreement': sum(c['validator_claim_true'] == c['z3_chc_claim_true'] for c in all_rows) / len(all_rows),
-        'witness_bfs_confirms_false_gold': sum(bool(c.get('witness_bfs_violation')) for c in false_rows) / len(false_rows),
-        've_certification_rate_true_claims': sum(c['ve_certified'] for c in true_rows) / len(true_rows),
-        've_certified_false_claims': sum(c['ve_certified'] for c in false_rows),
-        'forged_certificates_rejected_python': sum(not c['forged']['python_replay_valid'] for c in false_rows) / len(false_rows),
-        'forged_certificates_rejected_lean': sum(c['forged']['lean_replay_valid'] is False for c in false_rows) / len(false_rows),
-        've_vs_z3chc_agreement': sum((c['ve_certified'] and c['z3_chc_claim_true'] is True)
-                                     or (not c['ve_certified'] and c['z3_chc_claim_true'] is False)
-                                     for c in all_rows) / len(all_rows),
-        'mutant_certificate_rejected_against_gold': sum(r['mutant_certificate_against_gold'] is not None
-                                                        and not r['mutant_certificate_against_gold']['python_replay_valid']
-                                                        for r in rows) / len(rows),
-        'z3_fol_verdicts': {'true_claims': dict(Counter(str(c['z3_fol_claim_true']) for c in true_rows)),
-                            'false_claims': dict(Counter(str(c['z3_fol_claim_true']) for c in false_rows))},
-        'mutation_types_assigned': dict(Counter(r['mutation']['kind'] for r in rows)),
-        'mutation_acceptance': {k: {**v, 'candidate_acceptance_rate': round(v['accepted_candidates'] / max(1, v['candidates']), 3),
-                                    'rule_set_rate': round(v['rule_sets_with_valid_mutant'] / max(1, v['gold_rule_sets']), 3)}
-                                for k, v in type_stats.items()},
-        've_python_replay_steps_max': max(c.get('ve_python_replay_steps', 0) for c in true_rows),
-        've_trace_depth_max': max(c.get('ve_trace_depth', 0) for c in true_rows),
-        've_build_seconds_max': max(c.get('ve_build_seconds', 0) for c in true_rows),
-        'z3_chc_seconds_max': max(c['z3_chc_seconds'] for c in all_rows),
-        'part2_seconds': part2_seconds,
+        'attempts': attempt, 'selected_rule_sets': len(sel), 'skipped': len(skipped),
+        'claims_evaluated': len(rows), 'selection': 'independent validator only (no solver in the selection)',
+        'selected_60': tally(sel_true + sel_false),
+        'all_attempted_gold_claims': tally(gold_rows),
+        'all_mutation_candidates': tally(cand_rows),
+        'all_claims': tally(all_rows),
+        'disagreements_with_validator': disagreements(all_rows),
+        've_python_valid_but_lean_invalid': sum(r['ve_python'] and r['ve_lean'] is False for r in all_rows),
+        've_python_valid_lean_not_run': sum(r['ve_python'] and r['ve_lean'] is None for r in all_rows),
+        'witness_bfs_confirms_every_false_claim': all(r.get('witness_bfs_violation') for r in all_rows
+                                                      if r['validator'] == 'false'),
+        'forged_gold_certificates_rejected': {
+            'python': sum(not r['forged_gold_certificate']['python_valid'] for r in sel),
+            'lean': sum(r['forged_gold_certificate']['lean_valid'] is False for r in sel), 'of': len(sel)},
+        'mutant_rebound_to_gold': {
+            'checked': len(rebinds),
+            'python_rejected': sum(not rb['python_valid'] for _, rb in rebinds),
+            'python_logical_failure_not_binding': sum(rb['logical_failure'] for _, rb in rebinds),
+            'python_failure_at_mutated_rule': sum(at_rule(rb) for _, rb in rebinds),
+            'lean_rejected': sum(rb['lean_valid'] is False for _, rb in rebinds),
+            'by_mutation': {k: {'n': sum(kk == k for kk, _ in rebinds),
+                                'at_mutated_rule': sum(at_rule(rb) for kk, rb in rebinds if kk == k)}
+                            for k in R.MUTATIONS}},
+        'mutation_types_selected': dict(Counter(r['mutation']['kind'] for r in sel)),
+        'candidate_acceptance_by_validator': {
+            k: {'candidates': sum(1 for a in attempts for kk, *_ in a['candidates'] if kk == k),
+                'validator_true': sum(rows[f"{a['gold']['id']}-{kk}-{i}"]['validator'] == 'true'
+                                      for a in attempts for kk, i, _, _ in a['candidates'] if kk == k)}
+            for k in R.MUTATIONS},
+        'seconds_end_to_end_selected_true_claims': {v: timing(sel_true, f'{v}_seconds') for v in VERIFIERS},
+        've_replay_steps_max': max((r.get('ve_replay_steps', 0) for r in all_rows if r['ve_python']), default=0),
+        've_trace_depth_max': max((r.get('ve_trace_depth', 0) for r in all_rows if r['ve_python']), default=0),
+        'verification_seconds': verification_seconds,
         'generic_prove_entailment': generic,
         'closed_world_unless': {
             'snapshots': len(snaps),
@@ -200,19 +330,27 @@ def run():
             'negated_guard_essential': sum(s['negated_guard_essential'] for s in snaps),
             'forged_negation_flip_rejected': sum(1 for s in snaps if s['forged_negation_flip']
                                                  and not s['forged_negation_flip']['python_replay_valid']),
-            'forged_negation_flip_constructed': sum(1 for s in snaps if s['forged_negation_flip']),
-            'set_size_range': [min(s.get('set_size', 0) for s in snaps), max(s.get('set_size', 0) for s in snaps)]},
+            'forged_negation_flip_constructed': sum(1 for s in snaps if s['forged_negation_flip'])},
     }
     result = {'created_at': datetime.now(timezone.utc).isoformat(), 'model_calls': 0,
-              'z3_version': z3.Z3_VERSION, 'seed_base': R.SEED_BASE, 'snapshot_seed': R.SNAP_SEED,
-              'summary': summary, 'skipped': skipped, 'rows': rows, 'snapshots': snaps,
-              'example_renderings': {'id': rows[0]['id'], 'json': R.render_json(rows[0]['gold_ruleset']),
-                                     'english': R.render_english(rows[0]['gold_ruleset']),
-                                     've': R.render_ve(rows[0]['gold_ruleset'])}}
+              'solvers': {'z3': Z.Z3_VERSION, 'cvc5': Z.CVC5_VERSION, 'project': 'experiments/T1d/solvers (uv.lock)'},
+              've_commit': ve_commit(), 'seed_base': R.SEED_BASE, 'snapshot_seed': R.SNAP_SEED,
+              'summary': summary, 'skipped': skipped, 'selected': sel, 'snapshots': snaps,
+              'claims_file': CLAIMS.name}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(result, indent=1, sort_keys=True, default=list) + '\n')
-    print(json.dumps(summary, indent=1, default=list))
+    with gzip.open(CLAIMS, 'wt') as f:  # every claim row (the candidate-level log), one JSON per line
+        for r in sorted(all_rows, key=lambda r: r['name']):
+            f.write(json.dumps(r, sort_keys=True) + '\n')
+    print(json.dumps({k: v for k, v in summary.items() if k != 'generic_prove_entailment'}, indent=1, default=list))
     return result
+
+
+def ve_commit():
+    """The last commit that touched ve/ (the checker used), its tree hash, and whether ve/ is clean."""
+    git = lambda *a: subprocess.run(['git', *a], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    return {'last_commit_touching_ve': git('log', '-1', '--format=%H', '--', 've'),
+            've_tree': git('rev-parse', 'HEAD:ve'), 've_dirty': bool(git('status', '--porcelain', '--', 've'))}
 
 
 if __name__ == '__main__':

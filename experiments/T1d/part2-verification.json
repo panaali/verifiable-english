@@ -1,43 +1,50 @@
 {
- "created_at": "2026-09-23T12:40:55.691693+00:00",
- "example_renderings": {
-  "english": "Tag axioms: every entity is exactly one of user, group, role, resource; contractor entities are users; employee entities are users; suspended entities are users; external entities are groups; restricted entities are groups; privileged entities are roles; temporary entities are roles; confidential entities are resources; public entities are resources; archived entities are resources; nothing is both contractor and employee or both confidential and public.\nPermitted change: a \"member_of\" fact may link a user or group to a group.\nPermitted change: a \"holds\" fact may link a user or group to a role.\nPermitted change: an \"inherits\" fact may link a role to a role.\nPermitted change: a \"grants\" fact may link a role to a resource.\nPermitted change: a \"sponsored_by\" fact may link a user to a group.\nPermitted change: an \"owns\" fact may link a user or group to a resource.\nPermitted change: a \"delegates_to\" fact may link a role to a role or user.\nPermitted change: no \"inherits\" fact may link a source that is not privileged to a destination that is not privileged.\nRule 1: a \"holds\" fact gives the source the access of the destination, unless the source is restricted or the destination is privileged.\nRule 2: a \"delegates_to\" fact gives the source the access of the destination, unless the destination is suspended.\nRule 3: a \"member_of\" fact gives the source the access of the destination.\nRule 4: a \"sponsored_by\" fact gives the source the access of the destination.\nRule 5: an \"inherits\" fact gives the source the access of the destination, unless the destination is privileged.\nRule 6: a \"grants\" fact gives the source the access of the destination when the source is temporary, unless the destination is public.\nClaim: under every permitted policy, no suspended entity can reach a confidential entity by a chain of one or more rule steps.",
-  "id": "454849f00e1b",
-  "json": "{\n \"claim\": [\n  \"suspended\",\n  \"confidential\"\n ],\n \"constraints\": [\n  {\n   \"dst\": [\n    \"privileged\",\n    false\n   ],\n   \"relation\": \"inherits\",\n   \"src\": [\n    \"privileged\",\n    false\n   ]\n  }\n ],\n \"rules\": [\n  {\n   \"dst\": [\n    [\n     \"privileged\",\n     false\n    ]\n   ],\n   \"relation\": \"holds\",\n   \"src\": [\n    [\n     \"restricted\",\n     false\n    ]\n   ]\n  },\n  {\n   \"dst\": [\n    [\n     \"suspended\",\n     false\n    ]\n   ],\n   \"relation\": \"delegates_to\",\n   \"src\": []\n  },\n  {\n   \"dst\": [],\n   \"relation\": \"member_of\",\n   \"src\": []\n  },\n  {\n   \"dst\": [],\n   \"relation\": \"sponsored_by\",\n   \"src\": []\n  },\n  {\n   \"dst\": [\n    [\n     \"privileged\",\n     false\n    ]\n   ],\n   \"relation\": \"inherits\",\n   \"src\": []\n  },\n  {\n   \"dst\": [\n    [\n     \"public\",\n     false\n    ]\n   ],\n   \"relation\": \"grants\",\n   \"src\": [\n    [\n     \"temporary\",\n     true\n    ]\n   ]\n  }\n ]\n}",
-  "ve": "for every entity x0, (((x0 is user) or (x0 is group)) or ((x0 is role) or (x0 is resource))).\nfor every entity x0, (not ((x0 is user) and (x0 is group))).\nfor every entity x0, (not ((x0 is user) and (x0 is role))).\nfor every entity x0, (not ((x0 is user) and (x0 is resource))).\nfor every entity x0, (not ((x0 is group) and (x0 is role))).\nfor every entity x0, (not ((x0 is group) and (x0 is resource))).\nfor every entity x0, (not ((x0 is role) and (x0 is resource))).\nfor every entity x0, (if (x0 is contractor), then (x0 is user)).\nfor every entity x0, (if (x0 is employee), then (x0 is user)).\nfor every entity x0, (if (x0 is suspended), then (x0 is user)).\nfor every entity x0, (if (x0 is external), then (x0 is group)).\nfor every entity x0, (if (x0 is restricted), then (x0 is group)).\nfor every entity x0, (if (x0 is privileged), then (x0 is role)).\nfor every entity x0, (if (x0 is temporary), then (x0 is role)).\nfor every entity x0, (if (x0 is confidential), then (x0 is resource)).\nfor every entity x0, (if (x0 is public), then (x0 is resource)).\nfor every entity x0, (if (x0 is archived), then (x0 is resource)).\nfor every entity x0, (not ((x0 is contractor) and (x0 is employee))).\nfor every entity x0, (not ((x0 is confidential) and (x0 is public))).\nfor every entity x0, (for every entity x1, (if (x0 member_of x1), then (((x0 is user) or (x0 is group)) and (x1 is group)))).\nfor every entity x0, (for every entity x1, (if (x0 holds x1), then (((x0 is user) or (x0 is group)) and (x1 is role)))).\nfor every entity x0, (for every entity x1, (if (x0 inherits x1), then ((x0 is role) and (x1 is role)))).\nfor every entity x0, (for every entity x1, (if (x0 grants x1), then ((x0 is role) and (x1 is resource)))).\nfor every entity x0, (for every entity x1, (if (x0 sponsored_by x1), then ((x0 is user) and (x1 is group)))).\nfor every entity x0, (for every entity x1, (if (x0 owns x1), then (((x0 is user) or (x0 is group)) and (x1 is resource)))).\nfor every entity x0, (for every entity x1, (if (x0 delegates_to x1), then ((x0 is role) and ((x1 is role) or (x1 is user))))).\nfor every entity x0, (for every entity x1, (if (x0 inherits x1), then (not ((not (x0 is privileged)) and (not (x1 is privileged)))))).\nfor every entity x0, (if (x0 is suspended), then (for every entity x1, (if (x1 is confidential), then (not (tc[entity x2, x3 | ((((x2 holds x3) and ((not (x2 is restricted)) and (not (x3 is privileged)))) or (((x2 delegates_to x3) and (not (x3 is suspended))) or (x2 member_of x3))) or ((x2 sponsored_by x3) or (((x2 inherits x3) and (not (x3 is privileged))) or ((x2 grants x3) and ((x2 is temporary) and (not (x3 is public)))))))](x0, x1)))))).\n"
- },
+ "claims_file": "part2-claims.jsonl.gz",
+ "created_at": "2026-09-23T15:14:20.410235+00:00",
  "model_calls": 0,
- "rows": [
+ "seed_base": 202610010100,
+ "selected": [
   {
    "claim": [
     "suspended",
     "confidential"
    ],
-   "constraints": 1,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0326,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0083,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0042
     },
     "name": "454849f00e1b-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0252,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.01,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.009
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.9733
    },
    "gold_ruleset": {
     "claim": [
@@ -124,30 +131,53 @@
    },
    "id": "454849f00e1b",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0085,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0081,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0043
     },
-    "name": "454849f00e1b-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.057,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 144,
-    "ve_python_replay_valid": true,
+    "name": "454849f00e1b-added_exception-27",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 144,
+    "ve_seconds": 0.0783,
     "ve_trace_depth": 82,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.011,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.019
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0072
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "454849f00e1b-added_exception-27",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Binary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -245,12 +275,6 @@
     "rule": 5,
     "side": "dst"
    },
-   "negated_guards_in_gold": 5,
-   "render_bytes": {
-    "english": 1845,
-    "json": 864,
-    "ve": 2665
-   },
    "rules": 6,
    "seed": 202610010100
   },
@@ -259,31 +283,42 @@
     "suspended",
     "confidential"
    ],
-   "constraints": 2,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0094,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0102,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0037
     },
     "name": "5a7358c8f139-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0147,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.01,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.012
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0087
    },
    "gold_ruleset": {
     "claim": [
@@ -366,30 +401,53 @@
    },
    "id": "5a7358c8f139",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0112,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0138,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0062
     },
-    "name": "5a7358c8f139-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.054,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 139,
-    "ve_python_replay_valid": true,
+    "name": "5a7358c8f139-narrowed_scope-15",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 139,
+    "ve_seconds": 0.0822,
     "ve_trace_depth": 80,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.012,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.012
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0071
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "5a7358c8f139-narrowed_scope-15",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Binary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -484,12 +542,6 @@
     "rule": 0,
     "side": "dst"
    },
-   "negated_guards_in_gold": 3,
-   "render_bytes": {
-    "english": 1806,
-    "json": 834,
-    "ve": 2704
-   },
    "rules": 5,
    "seed": 202610010101
   },
@@ -498,31 +550,42 @@
     "contractor",
     "confidential"
    ],
-   "constraints": 2,
-   "english_lines_changed": 3,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0112,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0106,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0057
     },
     "name": "e5fff167448f-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0207,
     "witness_bfs_violation": true,
-    "witness_length": 3,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.013,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.014
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0148
    },
    "gold_ruleset": {
     "claim": [
@@ -630,30 +693,53 @@
    },
    "id": "e5fff167448f",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0075,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0097,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0037
     },
-    "name": "e5fff167448f-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.053,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 128,
-    "ve_python_replay_valid": true,
+    "name": "e5fff167448f-dropped_inheritance-4",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 128,
+    "ve_seconds": 0.0717,
     "ve_trace_depth": 72,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.006,
-    "z3_fol_claim_true": true,
-    "z3_fol_seconds": 0.006
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0043
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "e5fff167448f-dropped_inheritance-4",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": false,
+     "expanded_formula": "Or",
+     "failing_expansion_in_step_disjunction": true,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "wrong tableau branch count",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -754,12 +840,6 @@
     "relation": "member_of",
     "rule": 5
    },
-   "negated_guards_in_gold": 4,
-   "render_bytes": {
-    "english": 2059,
-    "json": 1093,
-    "ve": 2826
-   },
    "rules": 7,
    "seed": 202610010106
   },
@@ -768,31 +848,42 @@
     "suspended",
     "confidential"
    ],
-   "constraints": 1,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0137,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0097,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0047
     },
     "name": "ec8799aa98c2-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0167,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.011,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.01
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0104
    },
    "gold_ruleset": {
     "claim": [
@@ -904,30 +995,53 @@
    },
    "id": "ec8799aa98c2",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0098,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.008,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0045
     },
-    "name": "ec8799aa98c2-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.06,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 148,
-    "ve_python_replay_valid": true,
+    "name": "ec8799aa98c2-negation_flip-3",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 148,
+    "ve_seconds": 0.0865,
     "ve_trace_depth": 80,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.012,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.02
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0077
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "ec8799aa98c2-negation_flip-3",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "NoneType",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "close"
+    },
+    "logical_failure": true,
+    "python_detail": "open or malformed close node",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -1046,12 +1160,6 @@
     "rule": 2,
     "side": "dst"
    },
-   "negated_guards_in_gold": 7,
-   "render_bytes": {
-    "english": 2045,
-    "json": 1106,
-    "ve": 2791
-   },
    "rules": 7,
    "seed": 202610010109
   },
@@ -1060,31 +1168,42 @@
     "contractor",
     "archived"
    ],
-   "constraints": 3,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
     },
+    "ground_cvc5_seconds": 0.0085,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0097,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 4
+     "literals": 4,
+     "seconds": 0.0032
     },
     "name": "9fcf6178858a-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0112,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.01,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.011
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0089
    },
    "gold_ruleset": {
     "claim": [
@@ -1188,30 +1307,53 @@
    },
    "id": "9fcf6178858a",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0083,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0087,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0036
     },
-    "name": "9fcf6178858a-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.04,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 100,
-    "ve_python_replay_valid": true,
+    "name": "9fcf6178858a-added_exception-8",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 100,
+    "ve_seconds": 0.0606,
     "ve_trace_depth": 52,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.006,
-    "z3_fol_claim_true": true,
-    "z3_fol_seconds": 0.006
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0045
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "9fcf6178858a-added_exception-8",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Unary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -1327,12 +1469,6 @@
     "rule": 2,
     "side": "src"
    },
-   "negated_guards_in_gold": 2,
-   "render_bytes": {
-    "english": 1954,
-    "json": 1020,
-    "ve": 2838
-   },
    "rules": 5,
    "seed": 202610010110
   },
@@ -1341,31 +1477,42 @@
     "external",
     "confidential"
    ],
-   "constraints": 3,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0104,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0109,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 0
+     "literals": 0,
+     "seconds": 0.0053
     },
     "name": "a775ecd82713-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0133,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.01,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.016
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0089
    },
    "gold_ruleset": {
     "claim": [
@@ -1504,30 +1651,53 @@
    },
    "id": "a775ecd82713",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0116,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0116,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0051
     },
-    "name": "a775ecd82713-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.063,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 144,
-    "ve_python_replay_valid": true,
+    "name": "a775ecd82713-narrowed_scope-15",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 144,
+    "ve_seconds": 0.0911,
     "ve_trace_depth": 78,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.007,
-    "z3_fol_claim_true": true,
-    "z3_fol_seconds": 0.007
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0044
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "a775ecd82713-narrowed_scope-15",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Binary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -1677,12 +1847,6 @@
     "rule": 0,
     "side": "src"
    },
-   "negated_guards_in_gold": 8,
-   "render_bytes": {
-    "english": 2333,
-    "json": 1410,
-    "ve": 3055
-   },
    "rules": 8,
    "seed": 202610010111
   },
@@ -1691,31 +1855,42 @@
     "contractor",
     "archived"
    ],
-   "constraints": 2,
-   "english_lines_changed": 2,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
     },
+    "ground_cvc5_seconds": 0.013,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0123,
     "invariant": {
      "cubes": 2,
      "kind": "backward_complement",
-     "literals": 6
+     "literals": 6,
+     "seconds": 0.0078
     },
     "name": "aa6b32762e2c-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0188,
     "witness_bfs_violation": true,
-    "witness_length": 3,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.013,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.018
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0128
    },
    "gold_ruleset": {
     "claim": [
@@ -1818,30 +1993,53 @@
    },
    "id": "aa6b32762e2c",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0096,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0117,
     "invariant": {
      "cubes": 2,
      "kind": "forward",
-     "literals": 4
+     "literals": 4,
+     "seconds": 0.0043
     },
-    "name": "aa6b32762e2c-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.136,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 355,
-    "ve_python_replay_valid": true,
+    "name": "aa6b32762e2c-dropped_inheritance-0",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 355,
+    "ve_seconds": 0.1663,
     "ve_trace_depth": 93,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.018,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.021
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0131
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "aa6b32762e2c-dropped_inheritance-0",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": false,
+     "branch_holds_mutated_case": false,
+     "expanded_formula": "Or",
+     "failing_expansion_in_step_disjunction": true,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "wrong tableau branch count",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -1937,12 +2135,6 @@
     "relation": "inherits",
     "rule": 5
    },
-   "negated_guards_in_gold": 4,
-   "render_bytes": {
-    "english": 1983,
-    "json": 1020,
-    "ve": 2799
-   },
    "rules": 6,
    "seed": 202610010152
   },
@@ -1951,31 +2143,42 @@
     "suspended",
     "confidential"
    ],
-   "constraints": 2,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0098,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0126,
     "invariant": {
      "cubes": 3,
      "kind": "forward",
-     "literals": 3
+     "literals": 3,
+     "seconds": 0.0044
     },
     "name": "1aa86335f893-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0134,
     "witness_bfs_violation": true,
-    "witness_length": 3,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.014,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.017
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0169
    },
    "gold_ruleset": {
     "claim": [
@@ -2088,30 +2291,53 @@
    },
    "id": "1aa86335f893",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0102,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0087,
     "invariant": {
      "cubes": 2,
      "kind": "backward_complement",
-     "literals": 3
+     "literals": 3,
+     "seconds": 0.0046
     },
-    "name": "1aa86335f893-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.134,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 347,
-    "ve_python_replay_valid": true,
+    "name": "1aa86335f893-negation_flip-7",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 347,
+    "ve_seconds": 0.2766,
     "ve_trace_depth": 97,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.019,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.02
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.013
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "1aa86335f893-negation_flip-7",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "NoneType",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "close"
+    },
+    "logical_failure": true,
+    "python_detail": "open or malformed close node",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -2231,12 +2457,6 @@
     "rule": 2,
     "side": "dst"
    },
-   "negated_guards_in_gold": 2,
-   "render_bytes": {
-    "english": 2075,
-    "json": 1119,
-    "ve": 2822
-   },
    "rules": 7,
    "seed": 202610010155
   },
@@ -2245,31 +2465,42 @@
     "external",
     "confidential"
    ],
-   "constraints": 2,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
     },
+    "ground_cvc5_seconds": 0.0096,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0113,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 4
+     "literals": 4,
+     "seconds": 0.0053
     },
     "name": "19998f2c801c-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0133,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.011,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.01
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0095
    },
    "gold_ruleset": {
     "claim": [
@@ -2392,30 +2623,53 @@
    },
    "id": "19998f2c801c",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0099,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0124,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0052
     },
-    "name": "19998f2c801c-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.06,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 140,
-    "ve_python_replay_valid": true,
+    "name": "19998f2c801c-added_exception-18",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 140,
+    "ve_seconds": 0.0862,
     "ve_trace_depth": 77,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.013,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.028
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0101
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "19998f2c801c-added_exception-18",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "NoneType",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "close"
+    },
+    "logical_failure": true,
+    "python_detail": "open or malformed close node",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -2549,12 +2803,6 @@
     "rule": 4,
     "side": "dst"
    },
-   "negated_guards_in_gold": 5,
-   "render_bytes": {
-    "english": 2192,
-    "json": 1237,
-    "ve": 2889
-   },
    "rules": 8,
    "seed": 202610010157
   },
@@ -2563,31 +2811,42 @@
     "external",
     "confidential"
    ],
-   "constraints": 3,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0082,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0093,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 0
+     "literals": 0,
+     "seconds": 0.0044
     },
     "name": "8ed03a2060fb-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0114,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.011,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.016
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0094
    },
    "gold_ruleset": {
     "claim": [
@@ -2701,30 +2960,53 @@
    },
    "id": "8ed03a2060fb",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0153,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.017,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 3
+     "literals": 3,
+     "seconds": 0.0108
     },
-    "name": "8ed03a2060fb-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.061,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 158,
-    "ve_python_replay_valid": true,
+    "name": "8ed03a2060fb-narrowed_scope-10",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 158,
+    "ve_seconds": 0.0978,
     "ve_trace_depth": 77,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.019,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.02
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0095
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "8ed03a2060fb-narrowed_scope-10",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Binary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -2850,12 +3132,6 @@
     "rule": 0,
     "side": "src"
    },
-   "negated_guards_in_gold": 3,
-   "render_bytes": {
-    "english": 2136,
-    "json": 1165,
-    "ve": 2921
-   },
    "rules": 7,
    "seed": 202610010158
   },
@@ -2864,31 +3140,42 @@
     "suspended",
     "confidential"
    ],
-   "constraints": 2,
-   "english_lines_changed": 2,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0118,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0106,
     "invariant": {
      "cubes": 4,
      "kind": "forward",
-     "literals": 6
+     "literals": 6,
+     "seconds": 0.0057
     },
     "name": "ec427eaa106b-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0157,
     "witness_bfs_violation": true,
-    "witness_length": 3,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.012,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.011
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0113
    },
    "gold_ruleset": {
     "claim": [
@@ -2986,30 +3273,53 @@
    },
    "id": "ec427eaa106b",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.008,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0108,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0042
     },
-    "name": "ec427eaa106b-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.049,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 123,
-    "ve_python_replay_valid": true,
+    "name": "ec427eaa106b-dropped_inheritance-1",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 123,
+    "ve_seconds": 0.0732,
     "ve_trace_depth": 74,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.006,
-    "z3_fol_claim_true": true,
-    "z3_fol_seconds": 0.006
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0047
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "ec427eaa106b-dropped_inheritance-1",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": false,
+     "branch_holds_mutated_case": false,
+     "expanded_formula": "Or",
+     "failing_expansion_in_step_disjunction": true,
+     "failing_expansion_is_disjunction_containing_it": true,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "wrong tableau branch count",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -3095,12 +3405,6 @@
     "relation": "sponsored_by",
     "rule": 4
    },
-   "negated_guards_in_gold": 3,
-   "render_bytes": {
-    "english": 1910,
-    "json": 971,
-    "ve": 2786
-   },
    "rules": 5,
    "seed": 202610010168
   },
@@ -3109,31 +3413,42 @@
     "suspended",
     "confidential"
    ],
-   "constraints": 3,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0111,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0121,
     "invariant": {
      "cubes": 2,
      "kind": "forward",
-     "literals": 2
+     "literals": 2,
+     "seconds": 0.0052
     },
     "name": "61ab321c8663-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0152,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.01,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.008
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0092
    },
    "gold_ruleset": {
     "claim": [
@@ -3262,30 +3577,53 @@
    },
    "id": "61ab321c8663",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0103,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.011,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0053
     },
-    "name": "61ab321c8663-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.065,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 150,
-    "ve_python_replay_valid": true,
+    "name": "61ab321c8663-negation_flip-3",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 150,
+    "ve_seconds": 0.0903,
     "ve_trace_depth": 81,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.013,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.018
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.008
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "61ab321c8663-negation_flip-3",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "NoneType",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "close"
+    },
+    "logical_failure": true,
+    "python_detail": "open or malformed close node",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -3421,12 +3759,6 @@
     "rule": 8,
     "side": "dst"
    },
-   "negated_guards_in_gold": 3,
-   "render_bytes": {
-    "english": 2332,
-    "json": 1356,
-    "ve": 3005
-   },
    "rules": 9,
    "seed": 202610010170
   },
@@ -3435,31 +3767,42 @@
     "contractor",
     "confidential"
    ],
-   "constraints": 2,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0077,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0084,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0034
     },
     "name": "09327cb730a6-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0104,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.01,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.01
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0102
    },
    "gold_ruleset": {
     "claim": [
@@ -3547,30 +3890,53 @@
    },
    "id": "09327cb730a6",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0073,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0074,
     "invariant": {
      "cubes": 2,
      "kind": "forward",
-     "literals": 2
+     "literals": 2,
+     "seconds": 0.0034
     },
-    "name": "09327cb730a6-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.081,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 211,
-    "ve_python_replay_valid": true,
+    "name": "09327cb730a6-added_exception-8",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 211,
+    "ve_seconds": 0.0994,
     "ve_trace_depth": 80,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.016,
-    "z3_fol_claim_true": true,
-    "z3_fol_seconds": 0.006
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0092
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "09327cb730a6-added_exception-8",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Unary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -3670,12 +4036,6 @@
     "rule": 0,
     "side": "src"
    },
-   "negated_guards_in_gold": 1,
-   "render_bytes": {
-    "english": 1830,
-    "json": 867,
-    "ve": 2707
-   },
    "rules": 5,
    "seed": 202610010172
   },
@@ -3684,31 +4044,42 @@
     "suspended",
     "confidential"
    ],
-   "constraints": 3,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0142,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0146,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0086
     },
     "name": "5e27c229cc0a-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0206,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.01,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.008
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0104
    },
    "gold_ruleset": {
     "claim": [
@@ -3802,30 +4173,53 @@
    },
    "id": "5e27c229cc0a",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0076,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0079,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0039
     },
-    "name": "5e27c229cc0a-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.057,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 142,
-    "ve_python_replay_valid": true,
+    "name": "5e27c229cc0a-narrowed_scope-9",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 142,
+    "ve_seconds": 0.0779,
     "ve_trace_depth": 84,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.012,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.02
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.008
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "5e27c229cc0a-narrowed_scope-9",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "NoneType",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "close"
+    },
+    "logical_failure": true,
+    "python_detail": "open or malformed close node",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -3930,12 +4324,6 @@
     "rule": 2,
     "side": "dst"
    },
-   "negated_guards_in_gold": 4,
-   "render_bytes": {
-    "english": 1919,
-    "json": 952,
-    "ve": 2830
-   },
    "rules": 5,
    "seed": 202610010173
   },
@@ -3944,31 +4332,42 @@
     "suspended",
     "confidential"
    ],
-   "constraints": 3,
-   "english_lines_changed": 5,
+   "forged_gold_certificate": {
+    "forged_leaves": 2,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 2,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
     },
+    "ground_cvc5_seconds": 0.0085,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0084,
     "invariant": {
      "cubes": 2,
      "kind": "backward_complement",
-     "literals": 8
+     "literals": 8,
+     "seconds": 0.0041
     },
     "name": "baae471c992e-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0141,
     "witness_bfs_violation": true,
-    "witness_length": 3,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.013,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.018
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0145
    },
    "gold_ruleset": {
     "claim": [
@@ -4067,30 +4466,53 @@
    },
    "id": "baae471c992e",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0081,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0076,
     "invariant": {
      "cubes": 3,
      "kind": "forward",
-     "literals": 9
+     "literals": 9,
+     "seconds": 0.0036
     },
-    "name": "baae471c992e-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.701,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 1597,
-    "ve_python_replay_valid": true,
+    "name": "baae471c992e-dropped_inheritance-2",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 1597,
+    "ve_seconds": 0.7476,
     "ve_trace_depth": 103,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.017,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.012
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.012
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "baae471c992e-dropped_inheritance-2",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Binary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -4187,12 +4609,6 @@
     "relation": "member_of",
     "rule": 1
    },
-   "negated_guards_in_gold": 3,
-   "render_bytes": {
-    "english": 1963,
-    "json": 1000,
-    "ve": 2858
-   },
    "rules": 5,
    "seed": 202610010188
   },
@@ -4201,31 +4617,42 @@
     "external",
     "confidential"
    ],
-   "constraints": 3,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
     },
+    "ground_cvc5_seconds": 0.0098,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0102,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 4
+     "literals": 4,
+     "seconds": 0.0053
     },
     "name": "7d9859f20c6a-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0133,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.01,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.011
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0089
    },
    "gold_ruleset": {
     "claim": [
@@ -4359,30 +4786,53 @@
    },
    "id": "7d9859f20c6a",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0108,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0116,
     "invariant": {
      "cubes": 2,
      "kind": "forward",
-     "literals": 2
+     "literals": 2,
+     "seconds": 0.0055
     },
-    "name": "7d9859f20c6a-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.113,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 265,
-    "ve_python_replay_valid": true,
+    "name": "7d9859f20c6a-negation_flip-8",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 265,
+    "ve_seconds": 0.1535,
     "ve_trace_depth": 89,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.015,
-    "z3_fol_claim_true": true,
-    "z3_fol_seconds": 0.007
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0104
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "7d9859f20c6a-negation_flip-8",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "NoneType",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "close"
+    },
+    "logical_failure": true,
+    "python_detail": "open or malformed close node",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -4523,12 +4973,6 @@
     "rule": 0,
     "side": "src"
    },
-   "negated_guards_in_gold": 6,
-   "render_bytes": {
-    "english": 2310,
-    "json": 1363,
-    "ve": 3038
-   },
    "rules": 8,
    "seed": 202610010190
   },
@@ -4537,31 +4981,42 @@
     "suspended",
     "confidential"
    ],
-   "constraints": 1,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0086,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0089,
     "invariant": {
      "cubes": 2,
      "kind": "forward",
-     "literals": 2
+     "literals": 2,
+     "seconds": 0.0047
     },
     "name": "904bf3fc570e-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0117,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.011,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.014
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0087
    },
    "gold_ruleset": {
     "claim": [
@@ -4643,30 +5098,53 @@
    },
    "id": "904bf3fc570e",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0093,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0096,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.005
     },
-    "name": "904bf3fc570e-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.053,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 137,
-    "ve_python_replay_valid": true,
+    "name": "904bf3fc570e-added_exception-23",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 137,
+    "ve_seconds": 0.185,
     "ve_trace_depth": 78,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.012,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.015
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0078
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "904bf3fc570e-added_exception-23",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Binary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -4760,12 +5238,6 @@
     "rule": 2,
     "side": "dst"
    },
-   "negated_guards_in_gold": 4,
-   "render_bytes": {
-    "english": 1842,
-    "json": 830,
-    "ve": 2620
-   },
    "rules": 7,
    "seed": 202610010193
   },
@@ -4774,31 +5246,42 @@
     "external",
     "confidential"
    ],
-   "constraints": 1,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
     },
+    "ground_cvc5_seconds": 0.0109,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0103,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 4
+     "literals": 4,
+     "seconds": 0.0043
     },
     "name": "915f524fe868-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0123,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.011,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.011
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0099
    },
    "gold_ruleset": {
     "claim": [
@@ -4910,30 +5393,53 @@
    },
    "id": "915f524fe868",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.008,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0104,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0041
     },
-    "name": "915f524fe868-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.063,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 150,
-    "ve_python_replay_valid": true,
+    "name": "915f524fe868-narrowed_scope-6",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 150,
+    "ve_seconds": 0.0821,
     "ve_trace_depth": 83,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.012,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.017
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0075
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "915f524fe868-narrowed_scope-6",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Binary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -5056,12 +5562,6 @@
     "rule": 1,
     "side": "dst"
    },
-   "negated_guards_in_gold": 4,
-   "render_bytes": {
-    "english": 2030,
-    "json": 1098,
-    "ve": 2768
-   },
    "rules": 7,
    "seed": 202610010194
   },
@@ -5070,31 +5570,42 @@
     "contractor",
     "public"
    ],
-   "constraints": 2,
-   "english_lines_changed": 2,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0096,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0102,
     "invariant": {
      "cubes": 2,
      "kind": "forward",
-     "literals": 2
+     "literals": 2,
+     "seconds": 0.0052
     },
     "name": "dae127167cd5-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0202,
     "witness_bfs_violation": true,
-    "witness_length": 3,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.013,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.009
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0146
    },
    "gold_ruleset": {
     "claim": [
@@ -5237,30 +5748,53 @@
    },
    "id": "dae127167cd5",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0095,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0095,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0043
     },
-    "name": "dae127167cd5-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.059,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 131,
-    "ve_python_replay_valid": true,
+    "name": "dae127167cd5-dropped_inheritance-0",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 131,
+    "ve_seconds": 0.0793,
     "ve_trace_depth": 70,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.007,
-    "z3_fol_claim_true": true,
-    "z3_fol_seconds": 0.007
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0062
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "dae127167cd5-dropped_inheritance-0",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": false,
+     "expanded_formula": "Or",
+     "failing_expansion_in_step_disjunction": true,
+     "failing_expansion_is_disjunction_containing_it": true,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "wrong tableau branch count",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -5401,12 +5935,6 @@
     "relation": "member_of",
     "rule": 8
    },
-   "negated_guards_in_gold": 6,
-   "render_bytes": {
-    "english": 2352,
-    "json": 1433,
-    "ve": 2989
-   },
    "rules": 9,
    "seed": 202610010201
   },
@@ -5415,31 +5943,42 @@
     "external",
     "confidential"
    ],
-   "constraints": 3,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
     },
+    "ground_cvc5_seconds": 0.0086,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.01,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 4
+     "literals": 4,
+     "seconds": 0.0045
     },
     "name": "3caec316fc53-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0125,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.011,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.012
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0093
    },
    "gold_ruleset": {
     "claim": [
@@ -5553,30 +6092,53 @@
    },
    "id": "3caec316fc53",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0101,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0117,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0049
     },
-    "name": "3caec316fc53-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.055,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 133,
-    "ve_python_replay_valid": true,
+    "name": "3caec316fc53-negation_flip-0",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 133,
+    "ve_seconds": 0.0799,
     "ve_trace_depth": 75,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.012,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.02
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0092
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "3caec316fc53-negation_flip-0",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "NoneType",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "close"
+    },
+    "logical_failure": true,
+    "python_detail": "open or malformed close node",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -5697,12 +6259,6 @@
     "rule": 4,
     "side": "dst"
    },
-   "negated_guards_in_gold": 6,
-   "render_bytes": {
-    "english": 2073,
-    "json": 1137,
-    "ve": 2919
-   },
    "rules": 6,
    "seed": 202610010204
   },
@@ -5711,31 +6267,42 @@
     "contractor",
     "confidential"
    ],
-   "constraints": 1,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0126,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0089,
     "invariant": {
      "cubes": 3,
      "kind": "forward",
-     "literals": 4
+     "literals": 4,
+     "seconds": 0.0046
     },
     "name": "82e574e8ad0e-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0126,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.01,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.013
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.01
    },
    "gold_ruleset": {
     "claim": [
@@ -5822,30 +6389,53 @@
    },
    "id": "82e574e8ad0e",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0097,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0099,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0046
     },
-    "name": "82e574e8ad0e-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.054,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 138,
-    "ve_python_replay_valid": true,
+    "name": "82e574e8ad0e-added_exception-2",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 138,
+    "ve_seconds": 0.0796,
     "ve_trace_depth": 77,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.012,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.012
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0076
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "82e574e8ad0e-added_exception-2",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "NoneType",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "close"
+    },
+    "logical_failure": true,
+    "python_detail": "open or malformed close node",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -5944,12 +6534,6 @@
     "rule": 4,
     "side": "dst"
    },
-   "negated_guards_in_gold": 5,
-   "render_bytes": {
-    "english": 1841,
-    "json": 863,
-    "ve": 2659
-   },
    "rules": 6,
    "seed": 202610010205
   },
@@ -5958,31 +6542,42 @@
     "contractor",
     "confidential"
    ],
-   "constraints": 1,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
     },
+    "ground_cvc5_seconds": 0.0083,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0103,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 4
+     "literals": 4,
+     "seconds": 0.0042
     },
     "name": "67a4acaadcca-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0122,
     "witness_bfs_violation": true,
-    "witness_length": 3,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.014,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.011
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0144
    },
    "gold_ruleset": {
     "claim": [
@@ -6079,30 +6674,53 @@
    },
    "id": "67a4acaadcca",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0131,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0104,
     "invariant": {
      "cubes": 2,
      "kind": "forward",
-     "literals": 2
+     "literals": 2,
+     "seconds": 0.0066
     },
-    "name": "67a4acaadcca-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.082,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 201,
-    "ve_python_replay_valid": true,
+    "name": "67a4acaadcca-narrowed_scope-4",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 201,
+    "ve_seconds": 0.1136,
     "ve_trace_depth": 76,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.015,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.02
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0103
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "67a4acaadcca-narrowed_scope-4",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Binary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -6210,12 +6828,6 @@
     "rule": 6,
     "side": "src"
    },
-   "negated_guards_in_gold": 2,
-   "render_bytes": {
-    "english": 1935,
-    "json": 962,
-    "ve": 2682
-   },
    "rules": 7,
    "seed": 202610010206
   },
@@ -6224,31 +6836,42 @@
     "contractor",
     "public"
    ],
-   "constraints": 1,
-   "english_lines_changed": 2,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0085,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0094,
     "invariant": {
      "cubes": 3,
      "kind": "forward",
-     "literals": 5
+     "literals": 5,
+     "seconds": 0.0039
     },
     "name": "18d252c50528-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0129,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.01,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.012
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0102
    },
    "gold_ruleset": {
     "claim": [
@@ -6335,30 +6958,53 @@
    },
    "id": "18d252c50528",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0108,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0155,
     "invariant": {
      "cubes": 3,
      "kind": "forward",
-     "literals": 6
+     "literals": 6,
+     "seconds": 0.0035
     },
-    "name": "18d252c50528-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.188,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 504,
-    "ve_python_replay_valid": true,
+    "name": "18d252c50528-dropped_inheritance-1",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 504,
+    "ve_seconds": 0.2105,
     "ve_trace_depth": 96,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.017,
-    "z3_fol_claim_true": true,
-    "z3_fol_seconds": 0.007
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0142
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "18d252c50528-dropped_inheritance-1",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": false,
+     "branch_holds_mutated_case": false,
+     "expanded_formula": "Or",
+     "failing_expansion_in_step_disjunction": true,
+     "failing_expansion_is_disjunction_containing_it": true,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "wrong tableau branch count",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -6433,12 +7079,6 @@
     "relation": "sponsored_by",
     "rule": 4
    },
-   "negated_guards_in_gold": 3,
-   "render_bytes": {
-    "english": 1780,
-    "json": 833,
-    "ve": 2640
-   },
    "rules": 5,
    "seed": 202610010227
   },
@@ -6447,31 +7087,42 @@
     "suspended",
     "confidential"
    ],
-   "constraints": 3,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0107,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0109,
     "invariant": {
      "cubes": 2,
      "kind": "forward",
-     "literals": 3
+     "literals": 3,
+     "seconds": 0.0051
     },
     "name": "9293f274da77-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0191,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.011,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.009
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0166
    },
    "gold_ruleset": {
     "claim": [
@@ -6610,30 +7261,53 @@
    },
    "id": "9293f274da77",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0093,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0091,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0051
     },
-    "name": "9293f274da77-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.06,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 145,
-    "ve_python_replay_valid": true,
+    "name": "9293f274da77-negation_flip-1",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 145,
+    "ve_seconds": 0.0911,
     "ve_trace_depth": 78,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.013,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.02
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0093
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "9293f274da77-negation_flip-1",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "NoneType",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "close"
+    },
+    "logical_failure": true,
+    "python_detail": "open or malformed close node",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -6779,12 +7453,6 @@
     "rule": 5,
     "side": "dst"
    },
-   "negated_guards_in_gold": 5,
-   "render_bytes": {
-    "english": 2313,
-    "json": 1393,
-    "ve": 3028
-   },
    "rules": 8,
    "seed": 202610010229
   },
@@ -6793,31 +7461,42 @@
     "contractor",
     "archived"
    ],
-   "constraints": 3,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
     },
+    "ground_cvc5_seconds": 0.009,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0102,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 4
+     "literals": 4,
+     "seconds": 0.0042
     },
     "name": "8c978eb9d7bc-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0132,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.01,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.017
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0091
    },
    "gold_ruleset": {
     "claim": [
@@ -6936,30 +7615,53 @@
    },
    "id": "8c978eb9d7bc",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0082,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.008,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0044
     },
-    "name": "8c978eb9d7bc-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.056,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 137,
-    "ve_python_replay_valid": true,
+    "name": "8c978eb9d7bc-added_exception-23",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 137,
+    "ve_seconds": 0.0834,
     "ve_trace_depth": 76,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.032,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.019
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0077
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "8c978eb9d7bc-added_exception-23",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Binary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -7089,12 +7791,6 @@
     "rule": 2,
     "side": "dst"
    },
-   "negated_guards_in_gold": 2,
-   "render_bytes": {
-    "english": 2177,
-    "json": 1218,
-    "ve": 2949
-   },
    "rules": 7,
    "seed": 202610010231
   },
@@ -7103,31 +7799,42 @@
     "contractor",
     "confidential"
    ],
-   "constraints": 1,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
     },
+    "ground_cvc5_seconds": 0.0096,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "sat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0095,
     "invariant": {
      "cubes": 2,
      "kind": "backward_complement",
-     "literals": 8
+     "literals": 8,
+     "seconds": 0.0053
     },
     "name": "b366e944b658-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0143,
     "witness_bfs_violation": true,
-    "witness_length": 3,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.015,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.013
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0116
    },
    "gold_ruleset": {
     "claim": [
@@ -7229,30 +7936,53 @@
    },
    "id": "b366e944b658",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.008,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0087,
     "invariant": {
      "cubes": 2,
      "kind": "forward",
-     "literals": 4
+     "literals": 4,
+     "seconds": 0.0037
     },
-    "name": "b366e944b658-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.097,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 229,
-    "ve_python_replay_valid": true,
+    "name": "b366e944b658-narrowed_scope-0",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 229,
+    "ve_seconds": 0.1267,
     "ve_trace_depth": 84,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.015,
-    "z3_fol_claim_true": true,
-    "z3_fol_seconds": 0.006
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.009
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "b366e944b658-narrowed_scope-0",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Binary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -7365,12 +8095,6 @@
     "rule": 2,
     "side": "src"
    },
-   "negated_guards_in_gold": 2,
-   "render_bytes": {
-    "english": 1925,
-    "json": 988,
-    "ve": 2714
-   },
    "rules": 6,
    "seed": 202610010232
   },
@@ -7379,31 +8103,42 @@
     "contractor",
     "public"
    ],
-   "constraints": 3,
-   "english_lines_changed": 4,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0105,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0113,
     "invariant": {
      "cubes": 4,
      "kind": "forward",
-     "literals": 6
+     "literals": 6,
+     "seconds": 0.0056
     },
     "name": "db63d16762b9-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0146,
     "witness_bfs_violation": true,
-    "witness_length": 3,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.013,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.016
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0146
    },
    "gold_ruleset": {
     "claim": [
@@ -7502,30 +8237,53 @@
    },
    "id": "db63d16762b9",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0095,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.009,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0044
     },
-    "name": "db63d16762b9-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.05,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 122,
-    "ve_python_replay_valid": true,
+    "name": "db63d16762b9-dropped_inheritance-0",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 122,
+    "ve_seconds": 0.0704,
     "ve_trace_depth": 72,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.007,
-    "z3_fol_claim_true": true,
-    "z3_fol_seconds": 0.007
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0049
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "db63d16762b9-dropped_inheritance-0",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "NoneType",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "close"
+    },
+    "logical_failure": true,
+    "python_detail": "open or malformed close node",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -7617,12 +8375,6 @@
     "relation": "sponsored_by",
     "rule": 2
    },
-   "negated_guards_in_gold": 2,
-   "render_bytes": {
-    "english": 1952,
-    "json": 1001,
-    "ve": 2844
-   },
    "rules": 5,
    "seed": 202610010239
   },
@@ -7631,31 +8383,42 @@
     "contractor",
     "archived"
    ],
-   "constraints": 3,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0383,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0407,
     "invariant": {
      "cubes": 2,
      "kind": "forward",
-     "literals": 2
+     "literals": 2,
+     "seconds": 0.0295
     },
     "name": "a34a5416cec8-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0455,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.011,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.016
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0094
    },
    "gold_ruleset": {
     "claim": [
@@ -7784,30 +8547,53 @@
    },
    "id": "a34a5416cec8",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0094,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0092,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0053
     },
-    "name": "a34a5416cec8-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.064,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 157,
-    "ve_python_replay_valid": true,
+    "name": "a34a5416cec8-negation_flip-2",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 157,
+    "ve_seconds": 0.0933,
     "ve_trace_depth": 87,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.014,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.018
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0085
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "a34a5416cec8-negation_flip-2",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "NoneType",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "close"
+    },
+    "logical_failure": true,
+    "python_detail": "open or malformed close node",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -7943,12 +8729,6 @@
     "rule": 4,
     "side": "src"
    },
-   "negated_guards_in_gold": 4,
-   "render_bytes": {
-    "english": 2304,
-    "json": 1326,
-    "ve": 2980
-   },
    "rules": 9,
    "seed": 202610010241
   },
@@ -7957,31 +8737,42 @@
     "suspended",
     "confidential"
    ],
-   "constraints": 1,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0088,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0085,
     "invariant": {
      "cubes": 4,
      "kind": "forward",
-     "literals": 6
+     "literals": 6,
+     "seconds": 0.0041
     },
     "name": "d0d14671f9ad-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0121,
     "witness_bfs_violation": true,
-    "witness_length": 2,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.01,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.012
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0086
    },
    "gold_ruleset": {
     "claim": [
@@ -8073,30 +8864,53 @@
    },
    "id": "d0d14671f9ad",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.009,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0087,
     "invariant": {
      "cubes": 2,
      "kind": "backward_complement",
-     "literals": 4
+     "literals": 4,
+     "seconds": 0.0042
     },
-    "name": "d0d14671f9ad-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.165,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 411,
-    "ve_python_replay_valid": true,
+    "name": "d0d14671f9ad-added_exception-13",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 411,
+    "ve_seconds": 0.1892,
     "ve_trace_depth": 98,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.015,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.013
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.012
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "d0d14671f9ad-added_exception-13",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Binary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -8200,12 +9014,6 @@
     "rule": 5,
     "side": "dst"
    },
-   "negated_guards_in_gold": 2,
-   "render_bytes": {
-    "english": 1876,
-    "json": 912,
-    "ve": 2678
-   },
    "rules": 6,
    "seed": 202610010242
   },
@@ -8214,31 +9022,42 @@
     "contractor",
     "public"
    ],
-   "constraints": 3,
-   "english_lines_changed": 1,
+   "forged_gold_certificate": {
+    "forged_leaves": 1,
+    "lean_valid": false,
+    "python_valid": false
+   },
    "gold": {
-    "forged": {
-     "forged_leaves": 1,
-     "lean_replay_valid": false,
-     "python_replay_status": "InvalidCertificate",
-     "python_replay_valid": false
+    "ground_cvc5": "unknown",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
     },
+    "ground_cvc5_seconds": 0.0124,
+    "ground_z3": "unknown",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "sat"
+    },
+    "ground_z3_seconds": 0.0172,
     "invariant": {
      "cubes": 1,
      "kind": "forward",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.0071
     },
     "name": "3a7c9f50b1f7-gold",
-    "validator_claim_true": false,
-    "ve_build_failure": "open branch: the invariant does not close this case",
-    "ve_certificate_built": false,
-    "ve_certified": false,
+    "validator": "false",
+    "ve": "unknown",
+    "ve_failure": "open branch: the invariant does not close this case",
+    "ve_lean": null,
+    "ve_python": false,
+    "ve_seconds": 0.0161,
     "witness_bfs_violation": true,
-    "witness_length": 3,
-    "z3_chc_claim_true": false,
-    "z3_chc_seconds": 0.013,
-    "z3_fol_claim_true": false,
-    "z3_fol_seconds": 0.024
+    "z3_chc": "refuted",
+    "z3_chc_seconds": 0.0152
    },
    "gold_ruleset": {
     "claim": [
@@ -8392,30 +9211,53 @@
    },
    "id": "3a7c9f50b1f7",
    "mutant": {
+    "ground_cvc5": "proved",
+    "ground_cvc5_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_cvc5_seconds": 0.0114,
+    "ground_z3": "proved",
+    "ground_z3_queries": {
+     "consecution": "unsat",
+     "initiation": "unsat",
+     "safety": "unsat"
+    },
+    "ground_z3_seconds": 0.0117,
     "invariant": {
      "cubes": 1,
      "kind": "backward_complement",
-     "literals": 1
+     "literals": 1,
+     "seconds": 0.007
     },
-    "name": "3a7c9f50b1f7-mutant",
-    "validator_claim_true": true,
-    "ve_build_seconds": 0.07,
-    "ve_certificate_built": true,
-    "ve_certified": true,
-    "ve_lean_replay_valid": true,
-    "ve_python_replay_steps": 151,
-    "ve_python_replay_valid": true,
+    "name": "3a7c9f50b1f7-narrowed_scope-42",
+    "validator": "true",
+    "ve": "proved",
+    "ve_lean": true,
+    "ve_python": true,
+    "ve_replay_steps": 151,
+    "ve_seconds": 0.099,
     "ve_trace_depth": 79,
-    "z3_chc_claim_true": true,
-    "z3_chc_seconds": 0.013,
-    "z3_fol_claim_true": null,
-    "z3_fol_seconds": 5.02
+    "z3_chc": "proved",
+    "z3_chc_seconds": 0.0091
    },
-   "mutant_certificate_against_gold": {
-    "detail": "certificate is stale or bound to different inputs",
-    "lean_replay_valid": false,
-    "python_replay_valid": false,
-    "status": "InvalidCertificate"
+   "mutant_name": "3a7c9f50b1f7-narrowed_scope-42",
+   "mutant_rebound_to_gold": {
+    "lean_valid": false,
+    "located": {
+     "at_mutated_rule": true,
+     "branch_holds_a_step_case": true,
+     "branch_holds_mutated_case": true,
+     "expanded_formula": "Binary",
+     "failing_expansion_in_step_disjunction": false,
+     "failing_expansion_is_disjunction_containing_it": false,
+     "failing_rule": "expand"
+    },
+    "logical_failure": true,
+    "python_detail": "literal cannot be expanded",
+    "python_status": "InvalidCertificate",
+    "python_valid": false
    },
    "mutant_ruleset": {
     "claim": [
@@ -8581,476 +9423,469 @@
     "rule": 5,
     "side": "dst"
    },
-   "negated_guards_in_gold": 6,
-   "render_bytes": {
-    "english": 2519,
-    "json": 1571,
-    "ve": 3114
-   },
    "rules": 10,
    "seed": 202610010244
   }
  ],
- "seed_base": 202610010100,
  "skipped": [
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010102
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010103
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010104
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010105
   },
   {
-   "reason": "no valid negation_flip mutant",
+   "reason": "no validator-true negation_flip mutant",
    "seed": 202610010107
   },
   {
-   "reason": "no valid negation_flip mutant",
+   "reason": "no validator-true negation_flip mutant",
    "seed": 202610010108
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010112
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010113
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010114
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010115
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010116
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010117
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010118
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010119
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010120
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010121
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010122
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010123
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010124
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010125
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010126
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010127
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010128
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010129
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010130
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010131
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010132
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010133
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010134
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010135
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010136
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010137
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010138
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010139
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010140
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010141
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010142
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010143
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010144
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010145
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010146
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010147
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010148
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010149
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010150
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010151
   },
   {
-   "reason": "no valid negation_flip mutant",
+   "reason": "no validator-true negation_flip mutant",
    "seed": 202610010153
   },
   {
-   "reason": "no valid negation_flip mutant",
+   "reason": "no validator-true negation_flip mutant",
    "seed": 202610010154
   },
   {
-   "reason": "no valid added_exception mutant",
+   "reason": "no validator-true added_exception mutant",
    "seed": 202610010156
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010159
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010160
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010161
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010162
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010163
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010164
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010165
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010166
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010167
   },
   {
-   "reason": "no valid negation_flip mutant",
+   "reason": "no validator-true negation_flip mutant",
    "seed": 202610010169
   },
   {
-   "reason": "no valid added_exception mutant",
+   "reason": "no validator-true added_exception mutant",
    "seed": 202610010171
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010174
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010175
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010176
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010177
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010178
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010179
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010180
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010181
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010182
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010183
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010184
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010185
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010186
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010187
   },
   {
-   "reason": "no valid negation_flip mutant",
+   "reason": "no validator-true negation_flip mutant",
    "seed": 202610010189
   },
   {
-   "reason": "no valid added_exception mutant",
+   "reason": "no validator-true added_exception mutant",
    "seed": 202610010191
   },
   {
-   "reason": "no valid added_exception mutant",
+   "reason": "no validator-true added_exception mutant",
    "seed": 202610010192
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010195
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010196
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010197
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010198
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010199
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010200
   },
   {
-   "reason": "no valid negation_flip mutant",
+   "reason": "no validator-true negation_flip mutant",
    "seed": 202610010202
   },
   {
-   "reason": "no valid negation_flip mutant",
+   "reason": "no validator-true negation_flip mutant",
    "seed": 202610010203
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010207
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010208
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010209
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010210
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010211
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010212
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010213
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010214
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010215
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010216
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010217
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010218
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010219
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010220
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010221
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010222
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010223
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010224
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010225
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010226
   },
   {
-   "reason": "no valid negation_flip mutant",
+   "reason": "no validator-true negation_flip mutant",
    "seed": 202610010228
   },
   {
-   "reason": "no valid added_exception mutant",
+   "reason": "no validator-true added_exception mutant",
    "seed": 202610010230
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010233
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010234
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010235
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010236
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010237
   },
   {
-   "reason": "no valid dropped_inheritance mutant",
+   "reason": "no validator-true dropped_inheritance mutant",
    "seed": 202610010238
   },
   {
-   "reason": "no valid negation_flip mutant",
+   "reason": "no validator-true negation_flip mutant",
    "seed": 202610010240
   },
   {
-   "reason": "no valid narrowed_scope mutant",
+   "reason": "no validator-true narrowed_scope mutant",
    "seed": 202610010243
   }
  ],
@@ -9333,105 +10168,247 @@
    "trace_depth": 58
   }
  ],
+ "solvers": {
+  "cvc5": "1.4.0",
+  "project": "experiments/T1d/solvers (uv.lock)",
+  "z3": "5.1.0.0"
+ },
  "summary": {
+  "all_attempted_gold_claims": {
+   "validator_false": {
+    "ground_cvc5": {
+     "unknown": 145
+    },
+    "ground_z3": {
+     "unknown": 145
+    },
+    "n": 145,
+    "ve": {
+     "unknown": 145
+    },
+    "z3_chc": {
+     "refuted": 145
+    }
+   },
+   "validator_true": {
+    "ground_cvc5": {},
+    "ground_z3": {},
+    "n": 0,
+    "ve": {},
+    "z3_chc": {}
+   }
+  },
+  "all_claims": {
+   "validator_false": {
+    "ground_cvc5": {
+     "unknown": 10880
+    },
+    "ground_z3": {
+     "unknown": 10880
+    },
+    "n": 10880,
+    "ve": {
+     "unknown": 10880
+    },
+    "z3_chc": {
+     "refuted": 10880
+    }
+   },
+   "validator_true": {
+    "ground_cvc5": {
+     "proved": 475
+    },
+    "ground_z3": {
+     "proved": 475
+    },
+    "n": 475,
+    "ve": {
+     "proved": 475
+    },
+    "z3_chc": {
+     "proved": 475
+    }
+   }
+  },
+  "all_mutation_candidates": {
+   "validator_false": {
+    "ground_cvc5": {
+     "unknown": 10735
+    },
+    "ground_z3": {
+     "unknown": 10735
+    },
+    "n": 10735,
+    "ve": {
+     "unknown": 10735
+    },
+    "z3_chc": {
+     "refuted": 10735
+    }
+   },
+   "validator_true": {
+    "ground_cvc5": {
+     "proved": 475
+    },
+    "ground_z3": {
+     "proved": 475
+    },
+    "n": 475,
+    "ve": {
+     "proved": 475
+    },
+    "z3_chc": {
+     "proved": 475
+    }
+   }
+  },
   "attempts": 145,
-  "claims_false_gold": 30,
-  "claims_true_mutants": 30,
+  "candidate_acceptance_by_validator": {
+   "added_exception": {
+    "candidates": 4809,
+    "validator_true": 143
+   },
+   "dropped_inheritance": {
+    "candidates": 540,
+    "validator_true": 11
+   },
+   "narrowed_scope": {
+    "candidates": 4809,
+    "validator_true": 272
+   },
+   "negation_flip": {
+    "candidates": 1052,
+    "validator_true": 49
+   }
+  },
+  "claims_evaluated": 11355,
   "closed_world_unless": {
    "certified_python_and_lean": 15,
    "forged_negation_flip_constructed": 13,
    "forged_negation_flip_rejected": 13,
    "negated_guard_essential": 16,
-   "set_size_range": [
-    1,
-    7
-   ],
    "snapshots": 16
   },
-  "forged_certificates_rejected_lean": 1.0,
-  "forged_certificates_rejected_python": 1.0,
+  "disagreements_with_validator": [],
+  "forged_gold_certificates_rejected": {
+   "lean": 30,
+   "of": 30,
+   "python": 30
+  },
   "generic_prove_entailment": [
    {
     "id": "454849f00e1b",
-    "seconds": 7.1,
+    "seconds": 6.8,
     "status": "ResourceLimit",
     "steps": 200000
    },
    {
     "id": "5a7358c8f139",
-    "seconds": 6.2,
+    "seconds": 6.0,
     "status": "ResourceLimit",
     "steps": 200000
    },
    {
     "id": "e5fff167448f",
-    "seconds": 102.8,
+    "seconds": 107.7,
     "status": "ResourceLimit",
     "steps": 200000
    }
   ],
-  "mutant_certificate_rejected_against_gold": 1.0,
-  "mutation_acceptance": {
-   "added_exception": {
-    "accepted_candidates": 143,
-    "candidate_acceptance_rate": 0.03,
-    "candidates": 4809,
-    "gold_rule_sets": 145,
-    "rule_set_rate": 0.641,
-    "rule_sets_with_valid_mutant": 93
+  "mutant_rebound_to_gold": {
+   "by_mutation": {
+    "added_exception": {
+     "at_mutated_rule": 8,
+     "n": 8
+    },
+    "dropped_inheritance": {
+     "at_mutated_rule": 7,
+     "n": 7
+    },
+    "narrowed_scope": {
+     "at_mutated_rule": 8,
+     "n": 8
+    },
+    "negation_flip": {
+     "at_mutated_rule": 7,
+     "n": 7
+    }
    },
-   "dropped_inheritance": {
-    "accepted_candidates": 11,
-    "candidate_acceptance_rate": 0.02,
-    "candidates": 540,
-    "gold_rule_sets": 145,
-    "rule_set_rate": 0.076,
-    "rule_sets_with_valid_mutant": 11
-   },
-   "narrowed_scope": {
-    "accepted_candidates": 272,
-    "candidate_acceptance_rate": 0.057,
-    "candidates": 4809,
-    "gold_rule_sets": 145,
-    "rule_set_rate": 0.766,
-    "rule_sets_with_valid_mutant": 111
-   },
-   "negation_flip": {
-    "accepted_candidates": 49,
-    "candidate_acceptance_rate": 0.047,
-    "candidates": 1052,
-    "gold_rule_sets": 145,
-    "rule_set_rate": 0.29,
-    "rule_sets_with_valid_mutant": 42
-   }
+   "checked": 30,
+   "lean_rejected": 30,
+   "python_failure_at_mutated_rule": 30,
+   "python_logical_failure_not_binding": 30,
+   "python_rejected": 30
   },
-  "mutation_types_assigned": {
+  "mutation_types_selected": {
    "added_exception": 8,
    "dropped_inheritance": 7,
    "narrowed_scope": 8,
    "negation_flip": 7
   },
-  "part2_seconds": 141.3,
-  "rule_sets": 30,
-  "skipped": 115,
-  "validator_z3chc_agreement": 1.0,
-  "ve_build_seconds_max": 0.701,
-  "ve_certification_rate_true_claims": 1.0,
-  "ve_certified_false_claims": 0,
-  "ve_python_replay_steps_max": 1597,
-  "ve_trace_depth_max": 103,
-  "ve_vs_z3chc_agreement": 1.0,
-  "witness_bfs_confirms_false_gold": 1.0,
-  "z3_chc_seconds_max": 0.032,
-  "z3_fol_verdicts": {
-   "false_claims": {
-    "False": 30
+  "seconds_end_to_end_selected_true_claims": {
+   "ground_cvc5": {
+    "max": 0.0153,
+    "median": 0.0095
    },
-   "true_claims": {
-    "None": 20,
-    "True": 10
+   "ground_z3": {
+    "max": 0.017,
+    "median": 0.0097
+   },
+   "ve": {
+    "max": 0.7476,
+    "median": 0.0911
+   },
+   "z3_chc": {
+    "max": 0.0142,
+    "median": 0.0085
    }
-  }
+  },
+  "selected_60": {
+   "validator_false": {
+    "ground_cvc5": {
+     "unknown": 30
+    },
+    "ground_z3": {
+     "unknown": 30
+    },
+    "n": 30,
+    "ve": {
+     "unknown": 30
+    },
+    "z3_chc": {
+     "refuted": 30
+    }
+   },
+   "validator_true": {
+    "ground_cvc5": {
+     "proved": 30
+    },
+    "ground_z3": {
+     "proved": 30
+    },
+    "n": 30,
+    "ve": {
+     "proved": 30
+    },
+    "z3_chc": {
+     "proved": 30
+    }
+   }
+  },
+  "selected_rule_sets": 30,
+  "selection": "independent validator only (no solver in the selection)",
+  "skipped": 115,
+  "ve_python_valid_but_lean_invalid": 0,
+  "ve_python_valid_lean_not_run": 0,
+  "ve_replay_steps_max": 3126,
+  "ve_trace_depth_max": 118,
+  "verification_seconds": 68.2,
+  "witness_bfs_confirms_every_false_claim": true
  },
- "z3_version": "5.1.0.0"
+ "ve_commit": {
+  "last_commit_touching_ve": "eb6804305248bc723a83ee0c13af96f8e4604a27",
+  "ve_dirty": false,
+  "ve_tree": "e0ce8688eee6b1b9a0b32a65baad5e53393604cd"
+ }
 }

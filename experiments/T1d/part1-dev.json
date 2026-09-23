@@ -1,5 +1,5 @@
 {
- "created_at": "2026-09-23T13:53:05.937825+00:00",
+ "created_at": "2026-09-23T15:16:13.035190+00:00",
  "model_calls": 0,
  "rows": [
   {
@@ -16,20 +16,15 @@
     "claim_chars": 36,
     "claim_directory_pos": 0.3425414364640884,
     "directory_entries": 543,
+    "display_bytes_masked": 165,
+    "display_fields": 4,
     "identifiers": 1836,
-    "invariant_chars": 45,
     "max_targets_per_line": 2,
     "mean_targets_per_line": 2.0,
     "resource_first_pos": 0.8862672487136461,
     "resource_in": 30,
-    "set_facts": 297,
-    "set_first_pos_mean": 0.5128937219442308,
-    "set_json_bytes": 2614,
-    "set_max_out": 10,
-    "set_mean_out": 1.4776119402985075,
-    "set_size": 201,
     "source_only_ids": 138,
-    "system_bytes": 1227,
+    "system_bytes_masked": 1288,
     "twins_of_account": 1,
     "twins_of_resource": 1,
     "user_bytes": 482125,
@@ -44,11 +39,11 @@
    "principal_in_set": false,
    "prompt_bytes": {
     "raw": 482483,
-    "ve": 486280
+    "ve": 483707
    },
    "prompt_sha256": {
     "raw": "63ecef85175e372d88588e36cfdcda0acda4347b51f86de6fcd264ec2fd157d3",
-    "ve": "90a1b05c2dc37e0e8c3eaabc24faf0735c920c96af8397c6356bc006634a481b"
+    "ve": "a77f756aaef7ead2a8c944f7ff50f75b7c6270034a69008619792002a9585f04"
    },
    "python_replay": "Valid",
    "replay_steps": 4153,
@@ -81,20 +76,15 @@
     "claim_chars": 33,
     "claim_directory_pos": 0.5124153498871332,
     "directory_entries": 443,
+    "display_bytes_masked": 165,
+    "display_fields": 4,
     "identifiers": 1848,
-    "invariant_chars": 45,
     "max_targets_per_line": 19,
     "mean_targets_per_line": 6.381620931716656,
     "resource_first_pos": 0.8925812466702184,
     "resource_in": 32,
-    "set_facts": 345,
-    "set_first_pos_mean": 0.5365447681712293,
-    "set_json_bytes": 2040,
-    "set_max_out": 16,
-    "set_mean_out": 1.6911764705882353,
-    "set_size": 204,
     "source_only_ids": 58,
-    "system_bytes": 1220,
+    "system_bytes_masked": 1288,
     "twins_of_account": 2,
     "twins_of_resource": 1,
     "user_bytes": 176283,
@@ -109,11 +99,11 @@
    "principal_in_set": true,
    "prompt_bytes": {
     "raw": 176641,
-    "ve": 179843
+    "ve": 177844
    },
    "prompt_sha256": {
     "raw": "c9d17344cc6d30c2dee8a1483ade4e5ad2631fc21712b777fa04b1675c8dc647",
-    "ve": "a2eda81ca2b6105961f6f4dc10c0629a7e95f01748ef412174c82c6e62d70903"
+    "ve": "0828ca5daa679fea347b6c51f2a3b05b8f98eb8b182198726d028a0bece48a99"
    },
    "python_replay": "Valid",
    "replay_steps": 4671,
@@ -146,20 +136,15 @@
     "claim_chars": 35,
     "claim_directory_pos": 0.019553072625698324,
     "directory_entries": 716,
+    "display_bytes_masked": 165,
+    "display_fields": 4,
     "identifiers": 2470,
-    "invariant_chars": 45,
     "max_targets_per_line": 18,
     "mean_targets_per_line": 4.588208304657031,
     "resource_first_pos": 0.8035330559619605,
     "resource_in": 45,
-    "set_facts": 246,
-    "set_first_pos_mean": 0.5946535412811795,
-    "set_json_bytes": 1530,
-    "set_max_out": 8,
-    "set_mean_out": 1.607843137254902,
-    "set_size": 153,
     "source_only_ids": 59,
-    "system_bytes": 1220,
+    "system_bytes_masked": 1288,
     "twins_of_account": 2,
     "twins_of_resource": 2,
     "user_bytes": 192032,
@@ -174,11 +159,11 @@
    "principal_in_set": false,
    "prompt_bytes": {
     "raw": 192390,
-    "ve": 195082
+    "ve": 193593
    },
    "prompt_sha256": {
     "raw": "3c2298e24c3e4a1e6be74a24557e582a049ccb94b7d5c617492d4f772c0767ef",
-    "ve": "670e28d3da6184d3ed2c929fe5fa164b89ab4b4084630d0fe026afa177a6be5b"
+    "ve": "4f6eec8678ecab7e4bd81f0ef89f2dc76d2008412a631ddd935c2876e7a2705c"
    },
    "python_replay": "Valid",
    "replay_steps": 3269,
@@ -211,20 +196,15 @@
     "claim_chars": 36,
     "claim_directory_pos": 0.6048689138576779,
     "directory_entries": 534,
+    "display_bytes_masked": 165,
+    "display_fields": 4,
     "identifiers": 2213,
-    "invariant_chars": 45,
     "max_targets_per_line": 2,
     "mean_targets_per_line": 2.0,
     "resource_first_pos": 0.8772942960911735,
     "resource_in": 27,
-    "set_facts": 321,
-    "set_first_pos_mean": 0.5264354424115303,
-    "set_json_bytes": 2426,
-    "set_max_out": 14,
-    "set_mean_out": 1.5891089108910892,
-    "set_size": 202,
     "source_only_ids": 82,
-    "system_bytes": 1227,
+    "system_bytes_masked": 1288,
     "twins_of_account": 2,
     "twins_of_resource": 2,
     "user_bytes": 445912,
@@ -239,11 +219,11 @@
    "principal_in_set": true,
    "prompt_bytes": {
     "raw": 446270,
-    "ve": 449875
+    "ve": 447490
    },
    "prompt_sha256": {
     "raw": "296f631ea3214220ab42ff56242466f80056b176a4c7cc65457f4e70084cebf3",
-    "ve": "fd8049d7cc6e0c10258619ed99cfbb501c6ed0619bd50945b3dd89917549e606"
+    "ve": "77e531aa0e1c38905c01bc5b47ff4d28fa97942ed06feca03a935e688a371a3f"
    },
    "python_replay": "InvalidCertificate",
    "replay_steps": 0,
@@ -276,20 +256,15 @@
     "claim_chars": 32,
     "claim_directory_pos": 0.6270627062706271,
     "directory_entries": 606,
+    "display_bytes_masked": 165,
+    "display_fields": 4,
     "identifiers": 1932,
-    "invariant_chars": 45,
     "max_targets_per_line": 18,
     "mean_targets_per_line": 5.595970900951315,
     "resource_first_pos": 0.9180300659173899,
     "resource_in": 17,
-    "set_facts": 285,
-    "set_first_pos_mean": 0.5639141206500162,
-    "set_json_bytes": 1770,
-    "set_max_out": 11,
-    "set_mean_out": 1.6101694915254237,
-    "set_size": 177,
     "source_only_ids": 49,
-    "system_bytes": 1220,
+    "system_bytes_masked": 1288,
     "twins_of_account": 2,
     "twins_of_resource": 2,
     "user_bytes": 183384,
@@ -304,11 +279,11 @@
    "principal_in_set": false,
    "prompt_bytes": {
     "raw": 183742,
-    "ve": 186674
+    "ve": 184945
    },
    "prompt_sha256": {
     "raw": "589a246bdce7acd9a277730fd0a1d440e02289166aaff5151bf830083d642a57",
-    "ve": "23f073c64002c1bc8ae24967cc1ec88f745b1cd223b5c4957678854126a9dc72"
+    "ve": "dc40ba49ad9357bac20a32e02433d857304620ea0dd0cad444b6c0caeeeff876"
    },
    "python_replay": "Valid",
    "replay_steps": 3851,
@@ -341,20 +316,15 @@
     "claim_chars": 35,
     "claim_directory_pos": 0.8205479452054795,
     "directory_entries": 730,
+    "display_bytes_masked": 165,
+    "display_fields": 4,
     "identifiers": 2473,
-    "invariant_chars": 45,
     "max_targets_per_line": 23,
     "mean_targets_per_line": 4.75511174512601,
     "resource_first_pos": 0.8307990699387633,
     "resource_in": 41,
-    "set_facts": 232,
-    "set_first_pos_mean": 0.4891287845616937,
-    "set_json_bytes": 1530,
-    "set_max_out": 9,
-    "set_mean_out": 1.5163398692810457,
-    "set_size": 153,
     "source_only_ids": 95,
-    "system_bytes": 1220,
+    "system_bytes_masked": 1288,
     "twins_of_account": 1,
     "twins_of_resource": 1,
     "user_bytes": 191124,
@@ -369,11 +339,11 @@
    "principal_in_set": true,
    "prompt_bytes": {
     "raw": 191482,
-    "ve": 194174
+    "ve": 192685
    },
    "prompt_sha256": {
     "raw": "53c007edecf95e0a7298733963ad1f1b0ed4a9d7a88f27ebf283bf4ec0d49ad1",
-    "ve": "8e411c05f2b3c3fe0b95c843705e0107cd909cc2c4acc62624336d78193a73e9"
+    "ve": "6fbf2566d8488e828560c8b78f3ab23fd6f9c3d7d5b4138a020e67c628763f14"
    },
    "python_replay": "Valid",
    "replay_steps": 3146,
@@ -406,20 +376,15 @@
     "claim_chars": 36,
     "claim_directory_pos": 0.6132075471698113,
     "directory_entries": 848,
+    "display_bytes_masked": 165,
+    "display_fields": 4,
     "identifiers": 3169,
-    "invariant_chars": 45,
     "max_targets_per_line": 2,
     "mean_targets_per_line": 2.0,
     "resource_first_pos": 0.8832752018965915,
     "resource_in": 39,
-    "set_facts": 242,
-    "set_first_pos_mean": 0.3845771755228276,
-    "set_json_bytes": 1952,
-    "set_max_out": 14,
-    "set_mean_out": 1.6133333333333333,
-    "set_size": 150,
     "source_only_ids": 681,
-    "system_bytes": 1227,
+    "system_bytes_masked": 1288,
     "twins_of_account": 1,
     "twins_of_resource": 1,
     "user_bytes": 492453,
@@ -434,11 +399,11 @@
    "principal_in_set": true,
    "prompt_bytes": {
     "raw": 492811,
-    "ve": 495946
+    "ve": 494035
    },
    "prompt_sha256": {
     "raw": "3c6ed9a18efb3d01344ed3b8043d90d0d608c5875f17d4ec8f20ea462d5a602c",
-    "ve": "2acee6144e2dd5759ff711bccaa2bbf500eb3cfcde304643795e988a1a779580"
+    "ve": "0c448fd89ba46a94c35f76e16a21d4e492bc6db6e3320fc8d09614dea451e656"
    },
    "python_replay": "Valid",
    "replay_steps": 3196,
@@ -471,20 +436,15 @@
     "claim_chars": 37,
     "claim_directory_pos": 0.6165413533834586,
     "directory_entries": 399,
+    "display_bytes_masked": 165,
+    "display_fields": 4,
     "identifiers": 1793,
-    "invariant_chars": 45,
     "max_targets_per_line": 2,
     "mean_targets_per_line": 2.0,
     "resource_first_pos": 0.8326495784693821,
     "resource_in": 42,
-    "set_facts": 313,
-    "set_first_pos_mean": 0.46394000148835723,
-    "set_json_bytes": 2407,
-    "set_max_out": 14,
-    "set_mean_out": 1.691891891891892,
-    "set_size": 185,
     "source_only_ids": 46,
-    "system_bytes": 1227,
+    "system_bytes_masked": 1288,
     "twins_of_account": 1,
     "twins_of_resource": 1,
     "user_bytes": 481706,
@@ -499,11 +459,11 @@
    "principal_in_set": true,
    "prompt_bytes": {
     "raw": 482064,
-    "ve": 485654
+    "ve": 483288
    },
    "prompt_sha256": {
     "raw": "3f17d8d5519cf9c0f50c6bf627f1c74a447c377de23f5e184a21b4e6c92b6876",
-    "ve": "8b77e20d1d5e2bad86502fc6d921f98f24bb0f4638703af98be10465f76496c8"
+    "ve": "38ba13af9b51c78323ac2f3853cec30a60578036bf06579710d72ff83db8f7a5"
    },
    "python_replay": "Valid",
    "replay_steps": 4198,
@@ -536,20 +496,15 @@
     "claim_chars": 36,
     "claim_directory_pos": 0.9869067103109657,
     "directory_entries": 611,
+    "display_bytes_masked": 165,
+    "display_fields": 4,
     "identifiers": 2151,
-    "invariant_chars": 45,
     "max_targets_per_line": 1,
     "mean_targets_per_line": 1.0,
     "resource_first_pos": 0.8413443865288002,
     "resource_in": 24,
-    "set_facts": 302,
-    "set_first_pos_mean": 0.4920287292966805,
-    "set_json_bytes": 2394,
-    "set_max_out": 13,
-    "set_mean_out": 1.7159090909090908,
-    "set_size": 176,
     "source_only_ids": 75,
-    "system_bytes": 1225,
+    "system_bytes_masked": 1288,
     "twins_of_account": 1,
     "twins_of_resource": 1,
     "user_bytes": 441051,
@@ -564,11 +519,11 @@
    "principal_in_set": true,
    "prompt_bytes": {
     "raw": 441409,
-    "ve": 444980
+    "ve": 442627
    },
    "prompt_sha256": {
     "raw": "4fe8d08081716172073e404331760769a0f39d8d4ac57e7f983449cc9a6a2658",
-    "ve": "085c8fc435b193267dce3bd52baa21262300bc360264e5f1e380cf8e8ca214fc"
+    "ve": "0d79cc537d81bac1380fa9db63a5e87bd52d8c39ced7ffb519e8c980fd325d87"
    },
    "python_replay": "Valid",
    "replay_steps": 3990,
@@ -601,20 +556,15 @@
     "claim_chars": 33,
     "claim_directory_pos": 0.4512683578104139,
     "directory_entries": 749,
+    "display_bytes_masked": 165,
+    "display_fields": 4,
     "identifiers": 2927,
-    "invariant_chars": 45,
     "max_targets_per_line": 19,
     "mean_targets_per_line": 3.854307188282906,
     "resource_first_pos": 0.847842170160296,
     "resource_in": 37,
-    "set_facts": 254,
-    "set_first_pos_mean": 0.5310200017572817,
-    "set_json_bytes": 1804,
-    "set_max_out": 7,
-    "set_mean_out": 1.548780487804878,
-    "set_size": 164,
     "source_only_ids": 346,
-    "system_bytes": 1222,
+    "system_bytes_masked": 1288,
     "twins_of_account": 1,
     "twins_of_resource": 1,
     "user_bytes": 225368,
@@ -629,11 +579,11 @@
    "principal_in_set": false,
    "prompt_bytes": {
     "raw": 225726,
-    "ve": 228698
+    "ve": 226935
    },
    "prompt_sha256": {
     "raw": "e3e6e2dbe9d819d4e24977e9b262a9a3e4d3c6cc9dd266d329baf2cf02deef64",
-    "ve": "faf6262ca0a05331f1bd91fe8561703964d5ec6810e07fd5de58f4ef1c05f40e"
+    "ve": "b1b764845667e6792a9f165dae714531dea3b38c1b075c717107409211f30443"
    },
    "python_replay": "Valid",
    "replay_steps": 3440,
@@ -666,20 +616,15 @@
     "claim_chars": 37,
     "claim_directory_pos": 0.6673151750972762,
     "directory_entries": 514,
+    "display_bytes_masked": 165,
+    "display_fields": 4,
     "identifiers": 1835,
-    "invariant_chars": 45,
     "max_targets_per_line": 2,
     "mean_targets_per_line": 2.0,
     "resource_first_pos": 0.8813905410280365,
     "resource_in": 31,
-    "set_facts": 309,
-    "set_first_pos_mean": 0.5087865718857819,
-    "set_json_bytes": 2402,
-    "set_max_out": 15,
-    "set_mean_out": 1.545,
-    "set_size": 200,
     "source_only_ids": 58,
-    "system_bytes": 1225,
+    "system_bytes_masked": 1288,
     "twins_of_account": 2,
     "twins_of_resource": 1,
     "user_bytes": 446697,
@@ -694,11 +639,11 @@
    "principal_in_set": true,
    "prompt_bytes": {
     "raw": 447055,
-    "ve": 450634
+    "ve": 448273
    },
    "prompt_sha256": {
     "raw": "559c9b570577a50fbc86b2b2429836009edd651a2ea41cf21b7cbe53cd6ceddb",
-    "ve": "c826eecaf7c29e5ede8ed4103f6984d104dd328424aa76d8768fe7195831d4c6"
+    "ve": "abdc93600fc393d9239b0bc1d0e6c9cc9904c8ca532bea0cb3a43127e7234ae9"
    },
    "python_replay": "Valid",
    "replay_steps": 4278,
@@ -731,20 +676,15 @@
     "claim_chars": 36,
     "claim_directory_pos": 0.5044883303411131,
     "directory_entries": 557,
+    "display_bytes_masked": 165,
+    "display_fields": 4,
     "identifiers": 2631,
-    "invariant_chars": 45,
     "max_targets_per_line": 2,
     "mean_targets_per_line": 2.0,
     "resource_first_pos": 0.8521308413807132,
     "resource_in": 14,
-    "set_facts": 321,
-    "set_first_pos_mean": 0.5385773908603195,
-    "set_json_bytes": 2342,
-    "set_max_out": 11,
-    "set_mean_out": 1.646153846153846,
-    "set_size": 195,
     "source_only_ids": 37,
-    "system_bytes": 1225,
+    "system_bytes_masked": 1288,
     "twins_of_account": 1,
     "twins_of_resource": 3,
     "user_bytes": 447940,
@@ -759,11 +699,11 @@
    "principal_in_set": true,
    "prompt_bytes": {
     "raw": 448298,
-    "ve": 451817
+    "ve": 449516
    },
    "prompt_sha256": {
     "raw": "9a5c441fd097d6f8be6b8c0be81fd63d20b4d63eac9e878b4ef62697ca3d1e71",
-    "ve": "f25a4491371bb727bebadac71560733bc0686b0ecb983f24c5b7aec98b737644"
+    "ve": "68dd107a9ddf0731d9cacb01cf26d5659bfc58661f03681c7925c510bbb130f9"
    },
    "python_replay": "Valid",
    "replay_steps": 4345,

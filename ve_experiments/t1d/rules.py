@@ -25,6 +25,15 @@ So the claim is false iff the abstract graph has a path of length >= 1 from a T1
 
 Generation, validation, mutation and rendering use only the standard library and `ve` for encoding
 and printing; the validator never imports `ve` or z3.
+
+Trust (v3). TRUSTED, new code in this file: `premises()` and `goal()` (with `step_body`/`step_case`),
+the encoding of a rule set into the VE premises and goal that the checker replays against; an error
+there would make VE certify the wrong statement. They are checked by the renderer round trip
+(tests), by the mutant-rebinding regression (a mutant's trace, rebound to the gold inputs, must fail
+logically at the mutated rule) and by agreement with the independent validator on every attempted
+claim. Also trusted: `validate` (the reference verdict). UNTRUSTED: `invariant_dnf`, `dnf_cover`
+and the dedicated certificate builder (`build_certificate`); nothing they emit is believed
+without replay.
 """
 from __future__ import annotations
 
@@ -374,16 +383,21 @@ def _lit(lit, var):
     return atom if lit[1] else Not(atom)
 
 
+def step_case(rule):
+    """TRUSTED: one edge rule as a formula over Var(1) (source) and Var(0) (destination)."""
+    from ve.ast import Binary, Var
+    return _conj([Binary(rule['relation'], Var(1), Var(0))] + [_lit(l, 1) for l in rule['src']]
+                 + [_lit(l, 0) for l in rule['dst']])
+
+
 def step_body(rs):
-    """Body edge: Var(1) is the source, Var(0) the destination."""
-    from ve.ast import Binary, Body, Var
-    cases = [_conj([Binary(r['relation'], Var(1), Var(0))] + [_lit(l, 1) for l in r['src']]
-                   + [_lit(l, 0) for l in r['dst']]) for r in rs['rules']]
-    return Body('entity', _disj(cases))
+    """TRUSTED. Body edge: Var(1) is the source, Var(0) the destination."""
+    from ve.ast import Body
+    return Body('entity', _disj([step_case(r) for r in rs['rules']]))
 
 
 def premises(rs):
-    """Tag axioms and admin constraints (the permitted-change envelope), as closed formulas."""
+    """TRUSTED. Tag axioms and admin constraints (the permitted-change envelope), as closed formulas."""
     from ve.ast import And, Binary, Bottom, Forall, Implies, Not, Or, Unary, Var
     ps = []
     ps.append(Forall('entity', _disj([Unary(k, Var(0)) for k in KINDS])))
@@ -404,6 +418,7 @@ def premises(rs):
 
 
 def goal(rs):
+    """TRUSTED. forall u. T1(u) -> forall x. T2(x) -> not tc+[step](u, x)."""
     from ve.ast import Forall, Implies, Not, Reach, Unary, Var
     t1, t2 = rs['claim']
     return Forall('entity', Implies(Unary(t1, Var(0)), Forall('entity', Implies(
