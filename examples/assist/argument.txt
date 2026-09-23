@@ -1,0 +1,5 @@
+[given] Every reviewed service is safe. The API is reviewed. The web front end is deployed.
+
+[claimed] So the API is safe.
+
+[context] The inventory was exported on Monday.
