@@ -56,24 +56,24 @@ evidence-layer maths corrected; paper v1 (rev2, mostly negative); P1, P3, iceber
 
 | Work | Where | Note |
 |---|---|---|
-| Numbers profile (Python `order@0`, Farkas rule) | `opus/numbers` | round 1 of [PLAN-EXPAND](PLAN-EXPAND.md) |
-| Pushback L6 gate (Opus persuader) | `opus/pushback`, account saeedi.danial | decides the primary endpoint |
-| `ve assist` dev tuning + loophole fixes | `opus/assist-eval` | results before the fix are provisional |
-| T1c gate | `opus/t4` (`experiments/T1c`), account danielsaeedi37 | preregistered + timestamped |
-| Opus re-reviews of Gemini-only merges | done: order-proofs MERGE-OK; assist FIX NEEDED | lead: never trust Gemini alone |
+| T1d v4 (claim A): leak, stats and harness fixes | `opus/t1d` | then re-review of the implemented design, freeze, stamp, run |
+| `ve assist` dev tuning 2 | `opus/assist-eval` | audit stage; Astra audits Claude items, Opus audits the rest |
 
-## 4. Queue (priority order)
+## 4. Queue (priority order; adopted 2026-09-23 from [PLAN-FRONTIER](PLAN-FRONTIER.md) section 7)
+
+Frontier claims are protocol effects; language expansion alone is not expected to show a frontier benefit.
 
 | # | Study | Spec | Gate / refuted if |
 |---|---|---|---|
-| 1 | Pushback study | [PLAN-PUSHBACK](PLAN-PUSHBACK.md) | arm-A wrong-way flips < 10% -> residual becomes primary; lock must beat decomposition-only (C-D0) and not harm correct updating (10pp) |
-| 2 | T1c separating certificates, 5,000/20,000 grants | [PLAN-V5-DEMO](PLAN-V5-DEMO.md), `experiments/T1c/PREREG-T1c.md` on `opus/t4` | continue if FA >= 15% or honest <= 80%; else ceiling |
-| 3 | `ve assist` held-out evaluation (12 P5 scored items; proposer Haiku, then Sonnet 5/Opus if proposer-caused failures) | [PLAN-ASSIST](PLAN-ASSIST.md) | success = replays + certified + blind fidelity audit; if Haiku+tool ~ Opus+tool the proposer does the work |
-| 4 | Obfuscation pilot, class F: diagnostics only (Astra: "conditional go for diagnostics, not comparative claims"); consolidate one preregistration; programmatic mutations required before any spend | [PLAN-OBFUSCATION](PLAN-OBFUSCATION.md) | G1: judge alone must be fooled at N=32; G2: honest prover >= 70%; VE must beat debate by 10pp at matched cost, else "relocated" |
-| 5 | Numbers round 1, then round 2 (lemma citation, conservative definitions) | [PLAN-EXPAND](PLAN-EXPAND.md) | tests green; Lean soundness; >= 500 cases Python=Lean; cross-family review |
-| 6 | Lean proof of English-surface unambiguity | [PLAN-EXPAND](PLAN-EXPAND.md) | after round 1 grammar settles |
-| 7 | Paper rev3 (Astra writes, after Sep 26 21:34) | `paper/` | both frontier reviews |
-| 8 | Grant | `~/code/manage-agents/grants/` | paused: the lead will ask when needed (2026-09-22) |
+| A | T1d: robust T1c (fresh subjects, leakage audit, high effort secondary) | [PLAN-T1D](PLAN-T1D.md) Part 1 | lower FA and honest completion NI at 10pp; harm or NI failure refutes; non-rejection inconclusive |
+| D | Cedar/K8s universal-property headroom gate (29 artefacts, clustered) | [PLAN-FRONTIER](PLAN-FRONTIER.md) | items, ground truth and reference verifier fixed before spend; raw error < 15% closes this sample |
+| B | T1e: untrusted agent's own verification (VE vs script vs Datalog), same semantic mutation in every arm | [PLAN-FRONTIER](PLAN-FRONTIER.md) | authoring gate: audited held-out fidelity >= 80%; refuted if CI excludes a 10pp gain |
+| - | `ve assist` held-out evaluation (optional B arm) | [PLAN-ASSIST](PLAN-ASSIST.md) | replays + certified + blind fidelity audit |
+| C | Persuasion/injection vs the bridge (replaces the pushback study as specified) | [PLAN-FRONTIER](PLAN-FRONTIER.md) | after B; items correct in both arms; eligible-item gate |
+| - | Obfuscation class F: G0/G1 diagnostics only | [PLAN-OBFUSCATION](PLAN-OBFUSCATION.md) | diagnostics, no comparative claims |
+| - | Language track (parallel, off critical path): numbers round 2, English-surface proof | [PLAN-EXPAND](PLAN-EXPAND.md) | tests green; Lean soundness; cross-family review |
+| - | Paper rev3 (Astra) | `paper/` | after A |
+| - | Grant | `~/code/manage-agents/grants/` | paused: the lead will ask when needed |
 
 Every study: plan reviewed by two frontier models (Astra xhigh + Opus xhigh; Opus substitutes while Codex is out)
 before spend; preregistered and timestamped; baselines; pilots capped at $40.
@@ -95,6 +95,8 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 
 | Item | Why |
 |---|---|
+| Pushback study as specified ([PLAN-PUSHBACK](PLAN-PUSHBACK.md)) | L1 0/23, L6 0/24 flips on formal items; redesigned as claim C |
+| Mixed-property audit | verdicts would show parity; may return as a cost/reuse audit |
 | P5 scored run | VE authoring infeasible one-shot (0/12 twice); revisit via `ve assist` |
 | T1b full study | ~14,000 serial calls; question folded into T1c; Opus safeguard refused sabotaged code (now programmatic mutation) |
 | Independent-formaliser pilot ([PLAN-IF](PLAN-IF.md)) | BBM items are ordering puzzles; checker = answer key; only the no-VE headroom check remains queued |
