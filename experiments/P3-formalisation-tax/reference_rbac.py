@@ -200,8 +200,8 @@ def _glob_regex(pattern: str, context: dict | None, ignore_case: bool) -> re.Pat
                     inner, d = inner.strip(), d.strip()
                     if len(d) >= 2 and d[0] == d[-1] == "'":
                         default = d[1:-1]
-                if inner in context:
-                    out.append(re.escape(str(context[inner])))
+                if inner.lower() in context:
+                    out.append(re.escape(str(context[inner.lower()])))
                 elif default is not None:
                     out.append(re.escape(default))
                 else:
@@ -232,7 +232,7 @@ def action_matches(pattern: str, action: str) -> bool:
 def resource_matches(pattern: str, resource: str, context: dict) -> bool:
     if pattern == "*":
         return True
-    return bool(_glob_regex(pattern, context, False).match(resource))
+    return bool(_glob_regex(pattern, fold_context(context), False).match(resource))
 
 
 def _str(v):
@@ -247,6 +247,7 @@ def _single_condition(op: str, key: str, values, context: dict) -> bool:
     if base.startswith("ForAnyValue:") or base.startswith("ForAllValues:"):
         raise NotImplementedError(f"set operator {op}")
     vals = [_str(v) for v in _as_list(values)]
+    key = key.lower()  # context keys are folded by fold_context
     present = key in context
 
     if base == "Null":
@@ -313,12 +314,20 @@ def _subst_var(m, context):
     inner = m.group(1).strip()
     if inner in ("*", "?", "$"):
         return inner
-    if inner in context:
-        return str(context[inner])
+    if inner.lower() in context:
+        return str(context[inner.lower()])
     raise _MissingVariable(inner)
 
 
+def fold_context(context: dict) -> dict:
+    """Context key names (and so policy-variable names) are case-insensitive in IAM:
+    "aws:SourceIP" is equivalent to "AWS:SourceIp" (User Guide, Condition element and
+    Variables pages). Lookups use the lower-cased name; values are untouched."""
+    return {str(k).lower(): v for k, v in (context or {}).items()}
+
+
 def conditions_hold(cond: dict | None, context: dict) -> bool:
+    context = fold_context(context)
     for op, block in (cond or {}).items():
         for key, values in block.items():
             if not _single_condition(op, key, values, context):
@@ -329,7 +338,7 @@ def conditions_hold(cond: dict | None, context: dict) -> bool:
 def statement_matches(stmt: dict, request: dict) -> bool:
     action = request["action"]
     resource = request["resource"]
-    context = request.get("context") or {}
+    context = fold_context(request.get("context"))
     if "Action" in stmt:
         if not any(action_matches(p, action) for p in _as_list(stmt["Action"])):
             return False

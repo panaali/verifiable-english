@@ -41,10 +41,15 @@ COVERAGE = {
                             "reified": ["2 linked templates instantiated; 4 unlinked templates contribute nothing"]},
     "c19_streaming": {"units": [C, A, A, C, C, C], "error_semantics": ["unless {isEarlyAccess && ...} with missing attribute"], "opaque": ["now < releaseDate", "Oscar window", "releaseDate.offset(-24h)",
                                                           "local time-of-day window"], "reified": ["subscription/profile records"]},
-    "c20_tags_n_roles": {"units": [B, B], "reified": ["record keyed by role name", "containsAll as a universal"]},
+    "c20_tags_n_roles": {"units": [B, B], "reified": ["record keyed by role name", "containsAll as a universal"],
+                         "error_semantics": [".contains/.containsAll on a non-set tag (repaired after review)"],
+                         "gaps": ["containsAll over record-valued set members compares record nodes by identity, not "
+                                  "structurally (never exercised; the schema has Set<String>)"]},
     "c21_tax_preparer": {"units": [B, B, B], "error_semantics": ["forbid unless {X && Y}: evaluates-without-error guards"], "reified": ["set of records", "template link", "context.consent record"],
-                         "gaps": ["record equality also requires no extra keys in the member record; not expressible over an open "
-                                  "attribute vocabulary (never exercised: perturbations do not add keys to set members)"]},
+                         "reified_after_review": ["record key set via the encoding's nattrs_<n> tag (the first pass ignored extra keys; "
+                                                  "the review found two disagreements)"],
+                         "gaps": ["record-literal fields are compared as string/long values only (Boolean/entity-valued "
+                                  "organization, serviceline or location never exercised; the schema has String)"]},
     "c22_photoapp": {"units": [A, A, A, B, A, A], "error_semantics": ["forbid unless {resource.owner == principal} with missing owner"], "reified": ["context.judgingSession"]},
     "c23_gitapp": {"units": [A] * 5},
     "k01_pod_reader": {"units": [A, A]},
@@ -55,6 +60,7 @@ COVERAGE = {
     "k06_configmap_updater": {"units": [A]},
     "k07_subresource_wildcard": {"units": [B, A], "reified": ["resource/subresource path string joined by the adapter"],
                                  "gaps": ["'*/sub' resource forms (not in the item)", "nonResourceURLs (not in the item)"]},
+    # IAM context-key names are case-insensitive; the encoding lower-cases them (fixed after review).
     "w01_s3_rw_bucket": {"units": [C, C], "opaque": ["action glob", "resource glob"]},
     "w02_deny_requested_region": {"units": [C], "opaque": ["action glob (NotAction)"]},
     "w03_mfa_selfmanage": {"units": [C] * 5, "opaque": ["action glob", "resource glob with ${aws:username}"],

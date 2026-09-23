@@ -9,7 +9,9 @@
   },
   "questions": 221,
   "perturbations_per_item": 300,
-  "faithful_first_pass_author_me": "39/40",
+  "targeted_perturbations_per_item": 100,
+  "targeted_perturbations_total": 800,
+  "faithful_first_pass_author_me": "37/40",
   "faithful_after_repair_author_me": "40/40",
   "faithful_and_fully_expressible": "34/40",
   "faithful_by_family": {
@@ -42,20 +44,20 @@
    "mean_expressible_fraction": 0.858
   },
   "authoring_me": {
-   "repair_iterations_total": 2,
+   "repair_iterations_total": 4,
    "checker_errors_before_first_pass": 0,
    "wall_clock_seconds_total": 526.4,
    "wall_clock_seconds_median_nonreuse": 13.5,
-   "artefact_tokens_median": 1026.5
+   "artefact_tokens_median": 1065.5
   },
   "mutation_adequacy": {
    "mutants": 813,
-   "killed": 539,
-   "kill_rate": 0.663,
-   "killed_by_item_questions_alone": 406,
+   "killed": 536,
+   "kill_rate": 0.659,
+   "killed_by_item_questions_alone": 405,
    "survivors_equivalent": 6,
-   "survivors_distinguishable": 59,
-   "survivors_unknown": 209
+   "survivors_distinguishable": 54,
+   "survivors_unknown": 217
   },
   "naive_variants": {
    "caught": "11/14",
@@ -90,7 +92,7 @@
     "id": "c13-private-owner-only-raw",
     "prove": "ResourceLimit",
     "prove_steps": 50000,
-    "prove_seconds": 18.74,
+    "prove_seconds": 20.41,
     "certificate_replayed": null,
     "countermodel": "Found",
     "ve_verdict": false,
@@ -114,7 +116,7 @@
     "id": "c14-bob-push-by-chain",
     "prove": "Found",
     "prove_steps": 3194,
-    "prove_seconds": 3.83,
+    "prove_seconds": 4.2,
     "certificate_replayed": true,
     "countermodel": null,
     "ve_verdict": true,
@@ -126,7 +128,7 @@
     "id": "k05-admin-gets-view-rule-3-levels",
     "prove": "ResourceLimit",
     "prove_steps": 50000,
-    "prove_seconds": 43.46,
+    "prove_seconds": 47.93,
     "certificate_replayed": null,
     "countermodel": "ResourceLimit",
     "ve_verdict": null,
@@ -150,7 +152,7 @@
     "id": "l-ring-implies-weakly-connected",
     "prove": "ResourceLimit",
     "prove_steps": 50000,
-    "prove_seconds": 14.49,
+    "prove_seconds": 14.56,
     "certificate_replayed": null,
     "countermodel": "NotFound",
     "ve_verdict": null,
@@ -174,7 +176,7 @@
     "id": "l-tree-implies-weakly-connected-typed",
     "prove": "ResourceLimit",
     "prove_steps": 50000,
-    "prove_seconds": 1.43,
+    "prove_seconds": 1.69,
     "certificate_replayed": null,
     "countermodel": "NotFound",
     "ve_verdict": null,
@@ -186,7 +188,7 @@
     "id": "l-ring-implies-weakly-connected-typed",
     "prove": "ResourceLimit",
     "prove_steps": 50000,
-    "prove_seconds": 14.69,
+    "prove_seconds": 14.47,
     "certificate_replayed": null,
     "countermodel": "NotFound",
     "ve_verdict": null,
@@ -387,6 +389,11 @@
      "total": 300,
      "ref_true": 55
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 4,
      "total": 4
@@ -411,6 +418,11 @@
      "agree": 300,
      "total": 300,
      "ref_true": 55
+    },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
     },
     "reference_vs_recorded": {
      "agree": 4,
@@ -480,6 +492,11 @@
      "total": 300,
      "ref_true": 68
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -505,6 +522,11 @@
      "total": 300,
      "ref_true": 68
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -514,7 +536,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.26,
+    "seconds": 0.25,
     "mismatches": []
    },
    "coverage": {
@@ -573,6 +595,11 @@
      "total": 300,
      "ref_true": 79
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -582,7 +609,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.26,
+    "seconds": 0.28,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -597,6 +624,11 @@
      "agree": 300,
      "total": 300,
      "ref_true": 79
+    },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
     },
     "reference_vs_recorded": {
      "agree": 3,
@@ -666,6 +698,11 @@
      "total": 300,
      "ref_true": 72
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 4,
      "total": 4
@@ -675,7 +712,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.28,
+    "seconds": 0.29,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -690,6 +727,11 @@
      "agree": 300,
      "total": 300,
      "ref_true": 72
+    },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
     },
     "reference_vs_recorded": {
      "agree": 4,
@@ -759,6 +801,11 @@
      "total": 300,
      "ref_true": 175
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 4,
      "total": 4
@@ -783,6 +830,11 @@
      "agree": 300,
      "total": 300,
      "ref_true": 175
+    },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
     },
     "reference_vs_recorded": {
      "agree": 4,
@@ -836,6 +888,11 @@
      "total": 300,
      "ref_true": 175
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 4,
      "total": 4
@@ -876,6 +933,11 @@
      "total": 300,
      "ref_true": 170
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 4,
      "total": 4
@@ -901,6 +963,11 @@
      "total": 300,
      "ref_true": 170
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 4,
      "total": 4
@@ -910,7 +977,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.29,
+    "seconds": 0.28,
     "mismatches": []
    },
    "coverage": {
@@ -969,6 +1036,11 @@
      "total": 300,
      "ref_true": 86
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -978,7 +1050,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.41,
+    "seconds": 0.42,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -993,6 +1065,11 @@
      "agree": 300,
      "total": 300,
      "ref_true": 86
+    },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
     },
     "reference_vs_recorded": {
      "agree": 3,
@@ -1065,6 +1142,11 @@
      "total": 300,
      "ref_true": 165
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -1090,6 +1172,11 @@
      "total": 300,
      "ref_true": 165
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -1099,7 +1186,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.31,
+    "seconds": 0.3,
     "mismatches": []
    },
    "coverage": {
@@ -1158,6 +1245,11 @@
      "total": 300,
      "ref_true": 155
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 4,
      "total": 4
@@ -1167,7 +1259,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 1.09,
+    "seconds": 1.1,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -1183,6 +1275,11 @@
      "total": 300,
      "ref_true": 155
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 4,
      "total": 4
@@ -1192,7 +1289,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 1.11,
+    "seconds": 1.07,
     "mismatches": []
    },
    "coverage": {
@@ -1251,6 +1348,11 @@
      "total": 300,
      "ref_true": 157
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -1260,7 +1362,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.35,
+    "seconds": 0.37,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -1276,6 +1378,11 @@
      "total": 300,
      "ref_true": 157
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -1285,7 +1392,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.36,
+    "seconds": 0.35,
     "mismatches": []
    },
    "coverage": {
@@ -1331,6 +1438,11 @@
      "total": 300,
      "ref_true": 157
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -1340,7 +1452,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.37,
+    "seconds": 0.39,
     "mismatches": []
    }
   },
@@ -1367,9 +1479,14 @@
      "total": 8
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 72
+     "agree": 400,
+     "total": 400,
+     "ref_true": 104
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 32
     },
     "reference_vs_recorded": {
      "agree": 8,
@@ -1380,7 +1497,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.51,
+    "seconds": 0.67,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -1392,9 +1509,14 @@
      "total": 8
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 72
+     "agree": 400,
+     "total": 400,
+     "ref_true": 104
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 32
     },
     "reference_vs_recorded": {
      "agree": 8,
@@ -1405,7 +1527,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.52,
+    "seconds": 0.66,
     "mismatches": []
    },
    "coverage": {
@@ -1472,6 +1594,11 @@
      "total": 300,
      "ref_true": 121
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 5,
      "total": 5
@@ -1481,7 +1608,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.86,
+    "seconds": 0.84,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -1497,6 +1624,11 @@
      "total": 300,
      "ref_true": 121
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 5,
      "total": 5
@@ -1506,7 +1638,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.83,
+    "seconds": 0.81,
     "mismatches": []
    },
    "coverage": {
@@ -1554,6 +1686,11 @@
      "total": 300,
      "ref_true": 121
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 5,
      "total": 5
@@ -1563,7 +1700,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.96,
+    "seconds": 0.98,
     "mismatches": []
    }
   },
@@ -1595,6 +1732,11 @@
      "total": 300,
      "ref_true": 162
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 7,
      "total": 7
@@ -1604,7 +1746,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.9,
+    "seconds": 0.86,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -1620,6 +1762,11 @@
      "total": 300,
      "ref_true": 162
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 7,
      "total": 7
@@ -1629,7 +1776,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.87,
+    "seconds": 0.85,
     "mismatches": []
    },
    "coverage": {
@@ -1685,9 +1832,14 @@
      "total": 6
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 152
+     "agree": 400,
+     "total": 400,
+     "ref_true": 215
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 63
     },
     "reference_vs_recorded": {
      "agree": 6,
@@ -1698,7 +1850,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 1.4,
+    "seconds": 1.79,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -1710,9 +1862,14 @@
      "total": 6
     },
     "perturbed": {
-     "agree": 299,
-     "total": 300,
-     "ref_true": 152
+     "agree": 399,
+     "total": 400,
+     "ref_true": 215
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 63
     },
     "reference_vs_recorded": {
      "agree": 6,
@@ -1723,7 +1880,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.83,
+    "seconds": 1.14,
     "mismatches": [
      {
       "ve": true,
@@ -1802,6 +1959,11 @@
      "total": 300,
      "ref_true": 156
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 6,
      "total": 6
@@ -1827,6 +1989,11 @@
      "total": 300,
      "ref_true": 156
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 6,
      "total": 6
@@ -1836,7 +2003,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.58,
+    "seconds": 0.6,
     "mismatches": []
    },
    "coverage": {
@@ -1899,6 +2066,11 @@
      "total": 300,
      "ref_true": 144
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -1908,7 +2080,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 1.35,
+    "seconds": 1.37,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -1924,6 +2096,11 @@
      "total": 300,
      "ref_true": 144
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -1933,7 +2110,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 1.01,
+    "seconds": 1.04,
     "mismatches": []
    },
    "coverage": {
@@ -1985,6 +2162,11 @@
      "total": 300,
      "ref_true": 144
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -1994,7 +2176,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 1.3,
+    "seconds": 1.27,
     "mismatches": []
    }
   },
@@ -2026,6 +2208,11 @@
      "total": 300,
      "ref_true": 159
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -2035,7 +2222,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.92,
+    "seconds": 0.95,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -2051,6 +2238,11 @@
      "total": 300,
      "ref_true": 159
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
@@ -2060,7 +2252,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.95,
+    "seconds": 0.97,
     "mismatches": []
    },
    "coverage": {
@@ -2123,9 +2315,14 @@
      "total": 8
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 129
+     "agree": 400,
+     "total": 400,
+     "ref_true": 180
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 51
     },
     "reference_vs_recorded": {
      "agree": 8,
@@ -2136,7 +2333,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.69,
+    "seconds": 0.9,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -2148,9 +2345,14 @@
      "total": 8
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 129
+     "agree": 400,
+     "total": 400,
+     "ref_true": 180
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 51
     },
     "reference_vs_recorded": {
      "agree": 8,
@@ -2161,7 +2363,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.7,
+    "seconds": 0.96,
     "mismatches": []
    },
    "coverage": {
@@ -2229,9 +2431,14 @@
      "total": 3
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 137
+     "agree": 400,
+     "total": 400,
+     "ref_true": 190
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 53
     },
     "reference_vs_recorded": {
      "agree": 3,
@@ -2242,7 +2449,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.76,
+    "seconds": 1.31,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -2254,21 +2461,36 @@
      "total": 3
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 137
+     "agree": 399,
+     "total": 400,
+     "ref_true": 190
+    },
+    "targeted": {
+     "agree": 99,
+     "total": 100,
+     "ref_true": 53
     },
     "reference_vs_recorded": {
      "agree": 3,
      "total": 3
     },
-    "faithful": true,
+    "faithful": false,
     "statuses": [
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.77,
-    "mismatches": []
+    "seconds": 1.05,
+    "mismatches": [
+     {
+      "ve": true,
+      "ve_status": "Satisfied",
+      "ref": false,
+      "ops": [
+       "record_extra_key"
+      ],
+      "question": null
+     }
+    ]
    },
    "coverage": {
     "units": 2,
@@ -2281,25 +2503,33 @@
     "reified": [
      "record keyed by role name",
      "containsAll as a universal"
+    ],
+    "error_semantics": [
+     ".contains/.containsAll on a non-set tag (repaired after review)"
+    ],
+    "gaps": [
+     "containsAll over record-valued set members compares record nodes by identity, not structurally (never exercised; the schema has Set<String>)"
     ]
    },
    "authoring": {
     "seconds": 20.0,
     "reuse": false,
-    "artefact_chars": 5234,
-    "artefact_tokens_est": 1308,
+    "artefact_chars": 10106,
+    "artefact_tokens_est": 2526,
     "source_chars": 3620,
-    "first_pass_unchanged": true,
-    "repair_iterations": 0,
-    "repairs": []
+    "first_pass_unchanged": false,
+    "repair_iterations": 1,
+    "repairs": [
+     "non-set tag value makes .contains/.containsAll a type error; containsAll ignored entity members; found by the new targeted record_extra_key perturbations"
+    ]
    },
    "mutation": {
     "mutants": 25,
-    "killed": 19,
-    "killed_by_item_questions_alone": 8,
+    "killed": 13,
+    "killed_by_item_questions_alone": 9,
     "survivors_equivalent": 0,
-    "survivors_distinguishable": 4,
-    "survivors_unknown": 2
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 12
    },
    "agent_author": null
   },
@@ -2327,9 +2557,14 @@
      "total": 5
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 109
+     "agree": 400,
+     "total": 400,
+     "ref_true": 146
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 37
     },
     "reference_vs_recorded": {
      "agree": 5,
@@ -2340,7 +2575,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.56,
+    "seconds": 0.78,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -2352,21 +2587,55 @@
      "total": 5
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 109
+     "agree": 383,
+     "total": 400,
+     "ref_true": 146
+    },
+    "targeted": {
+     "agree": 83,
+     "total": 100,
+     "ref_true": 37
     },
     "reference_vs_recorded": {
      "agree": 5,
      "total": 5
     },
-    "faithful": true,
+    "faithful": false,
     "statuses": [
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.55,
-    "mismatches": []
+    "seconds": 0.77,
+    "mismatches": [
+     {
+      "ve": true,
+      "ve_status": "Satisfied",
+      "ref": false,
+      "ops": [
+       "record_extra_key"
+      ],
+      "question": null
+     },
+     {
+      "ve": true,
+      "ve_status": "Satisfied",
+      "ref": false,
+      "ops": [
+       "principal",
+       "record_extra_key"
+      ],
+      "question": null
+     },
+     {
+      "ve": true,
+      "ve_status": "Satisfied",
+      "ref": false,
+      "ops": [
+       "record_extra_key"
+      ],
+      "question": null
+     }
+    ]
    },
    "coverage": {
     "units": 3,
@@ -2384,27 +2653,32 @@
      "template link",
      "context.consent record"
     ],
+    "reified_after_review": [
+     "record key set via the encoding's nattrs_<n> tag (the first pass ignored extra keys; the review found two disagreements)"
+    ],
     "gaps": [
-     "record equality also requires no extra keys in the member record; not expressible over an open attribute vocabulary (never exercised: perturbations do not add keys to set members)"
+     "record-literal fields are compared as string/long values only (Boolean/entity-valued organization, serviceline or location never exercised; the schema has String)"
     ]
    },
    "authoring": {
     "seconds": 26.4,
     "reuse": false,
-    "artefact_chars": 3948,
-    "artefact_tokens_est": 987,
+    "artefact_chars": 4261,
+    "artefact_tokens_est": 1065,
     "source_chars": 1011,
-    "first_pass_unchanged": true,
-    "repair_iterations": 0,
-    "repairs": []
+    "first_pass_unchanged": false,
+    "repair_iterations": 1,
+    "repairs": [
+     "record equality ignored extra keys in assigned_orgs members (found by cross-family review; encoding gained nattrs_<n>; formula adds type_record + nattrs_3); caught by targeted record_extra_key perturbations"
+    ]
    },
    "mutation": {
     "mutants": 25,
-    "killed": 21,
-    "killed_by_item_questions_alone": 12,
+    "killed": 24,
+    "killed_by_item_questions_alone": 10,
     "survivors_equivalent": 1,
-    "survivors_distinguishable": 1,
-    "survivors_unknown": 2
+    "survivors_distinguishable": 0,
+    "survivors_unknown": 0
    },
    "agent_author": null
   },
@@ -2436,6 +2710,11 @@
      "total": 300,
      "ref_true": 158
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 16,
      "total": 16
@@ -2445,7 +2724,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.65,
+    "seconds": 0.64,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -2461,6 +2740,11 @@
      "total": 300,
      "ref_true": 158
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 16,
      "total": 16
@@ -2470,7 +2754,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.67,
+    "seconds": 0.68,
     "mismatches": []
    },
    "coverage": {
@@ -2536,6 +2820,11 @@
      "total": 300,
      "ref_true": 168
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 10,
      "total": 10
@@ -2545,7 +2834,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.55,
+    "seconds": 0.56,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -2560,6 +2849,11 @@
      "agree": 300,
      "total": 300,
      "ref_true": 168
+    },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
     },
     "reference_vs_recorded": {
      "agree": 10,
@@ -2630,6 +2924,11 @@
      "total": 300,
      "ref_true": 47
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -2654,6 +2953,11 @@
      "agree": 300,
      "total": 300,
      "ref_true": 47
+    },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -2724,6 +3028,11 @@
      "total": 300,
      "ref_true": 52
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -2733,7 +3042,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.48,
+    "seconds": 0.49,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -2748,6 +3057,11 @@
      "agree": 300,
      "total": 300,
      "ref_true": 52
+    },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -2818,6 +3132,11 @@
      "total": 300,
      "ref_true": 88
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -2827,7 +3146,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.49,
+    "seconds": 0.51,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -2843,6 +3162,11 @@
      "total": 300,
      "ref_true": 88
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -2852,7 +3176,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.5,
+    "seconds": 0.48,
     "mismatches": []
    },
    "coverage": {
@@ -2911,6 +3235,11 @@
      "total": 300,
      "ref_true": 95
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -2920,7 +3249,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.6,
+    "seconds": 0.59,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -2936,6 +3265,11 @@
      "total": 300,
      "ref_true": 95
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -2945,7 +3279,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.6,
+    "seconds": 0.61,
     "mismatches": []
    },
    "coverage": {
@@ -3008,6 +3342,11 @@
      "total": 300,
      "ref_true": 130
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3017,7 +3356,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 1.19,
+    "seconds": 1.16,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -3033,6 +3372,11 @@
      "total": 300,
      "ref_true": 130
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3042,7 +3386,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 1.18,
+    "seconds": 1.17,
     "mismatches": []
    },
    "coverage": {
@@ -3088,6 +3432,11 @@
      "total": 300,
      "ref_true": 130
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3097,7 +3446,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 1.18,
+    "seconds": 1.14,
     "mismatches": []
    }
   },
@@ -3128,6 +3477,11 @@
      "total": 300,
      "ref_true": 52
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3137,7 +3491,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.49,
+    "seconds": 0.5,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -3152,6 +3506,11 @@
      "agree": 300,
      "total": 300,
      "ref_true": 52
+    },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -3221,6 +3580,11 @@
      "total": 300,
      "ref_true": 87
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3246,6 +3610,11 @@
      "total": 300,
      "ref_true": 87
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3255,7 +3624,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.58,
+    "seconds": 0.57,
     "mismatches": []
    },
    "coverage": {
@@ -3305,6 +3674,11 @@
      "total": 300,
      "ref_true": 87
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3314,7 +3688,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 1.11,
+    "seconds": 1.07,
     "mismatches": []
    }
   },
@@ -3343,6 +3717,11 @@
      "total": 300,
      "ref_true": 101
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3352,7 +3731,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.24,
+    "seconds": 0.25,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -3368,6 +3747,11 @@
      "total": 300,
      "ref_true": 101
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3377,7 +3761,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.24,
+    "seconds": 0.25,
     "mismatches": []
    },
    "coverage": {
@@ -3434,6 +3818,11 @@
      "total": 300,
      "ref_true": 30
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3458,6 +3847,11 @@
      "agree": 300,
      "total": 300,
      "ref_true": 30
+    },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -3525,6 +3919,11 @@
      "total": 300,
      "ref_true": 115
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3550,6 +3949,11 @@
      "agree": 300,
      "total": 300,
      "ref_true": 115
+    },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -3619,6 +4023,11 @@
      "total": 300,
      "ref_true": 215
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3628,7 +4037,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.37,
+    "seconds": 0.54,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -3644,6 +4053,11 @@
      "total": 300,
      "ref_true": 215
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3653,7 +4067,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.38,
+    "seconds": 0.39,
     "mismatches": []
    },
    "coverage": {
@@ -3710,6 +4124,11 @@
      "total": 300,
      "ref_true": 18
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3719,7 +4138,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.29,
+    "seconds": 0.31,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -3735,6 +4154,11 @@
      "total": 300,
      "ref_true": 18
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3744,7 +4168,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.29,
+    "seconds": 0.3,
     "mismatches": []
    },
    "coverage": {
@@ -3803,6 +4227,11 @@
      "total": 300,
      "ref_true": 66
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3812,7 +4241,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.57,
+    "seconds": 0.56,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -3827,6 +4256,11 @@
      "agree": 300,
      "total": 300,
      "ref_true": 66
+    },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -3895,6 +4329,11 @@
      "total": 300,
      "ref_true": 25
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3920,6 +4359,11 @@
      "total": 300,
      "ref_true": 25
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3929,7 +4373,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 1.24,
+    "seconds": 1.22,
     "mismatches": []
    },
    "coverage": {
@@ -3976,6 +4420,11 @@
      "total": 300,
      "ref_true": 25
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -3985,7 +4434,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 1.32,
+    "seconds": 1.26,
     "mismatches": []
    }
   },
@@ -4014,6 +4463,11 @@
      "total": 300,
      "ref_true": 81
     },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
+    },
     "reference_vs_recorded": {
      "agree": 0,
      "total": 0
@@ -4023,7 +4477,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.35,
+    "seconds": 0.37,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -4038,6 +4492,11 @@
      "agree": 300,
      "total": 300,
      "ref_true": 81
+    },
+    "targeted": {
+     "agree": 0,
+     "total": 0,
+     "ref_true": 0
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -4104,9 +4563,14 @@
      "total": 8
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 80
+     "agree": 400,
+     "total": 400,
+     "ref_true": 120
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 40
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -4117,7 +4581,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.37,
+    "seconds": 0.53,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -4129,9 +4593,14 @@
      "total": 8
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 80
+     "agree": 400,
+     "total": 400,
+     "ref_true": 120
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 40
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -4142,7 +4611,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.39,
+    "seconds": 0.5,
     "mismatches": []
    },
    "coverage": {
@@ -4203,9 +4672,14 @@
      "total": 8
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 160
+     "agree": 400,
+     "total": 400,
+     "ref_true": 206
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 46
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -4216,7 +4690,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.49,
+    "seconds": 0.64,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -4228,9 +4702,14 @@
      "total": 8
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 160
+     "agree": 400,
+     "total": 400,
+     "ref_true": 206
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 46
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -4241,7 +4720,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.5,
+    "seconds": 0.65,
     "mismatches": []
    },
    "coverage": {
@@ -4297,9 +4776,14 @@
      "total": 9
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 60
+     "agree": 400,
+     "total": 400,
+     "ref_true": 100
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 40
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -4310,7 +4794,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.65,
+    "seconds": 0.86,
     "mismatches": []
    },
    "differential_first_pass": {
@@ -4322,9 +4806,14 @@
      "total": 9
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 60
+     "agree": 400,
+     "total": 400,
+     "ref_true": 100
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 40
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -4335,7 +4824,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.67,
+    "seconds": 0.88,
     "mismatches": []
    },
    "coverage": {
@@ -4381,9 +4870,14 @@
      "total": 9
     },
     "perturbed": {
-     "agree": 300,
-     "total": 300,
-     "ref_true": 60
+     "agree": 400,
+     "total": 400,
+     "ref_true": 100
+    },
+    "targeted": {
+     "agree": 100,
+     "total": 100,
+     "ref_true": 40
     },
     "reference_vs_recorded": {
      "agree": 0,
@@ -4394,7 +4888,7 @@
      "Satisfied",
      "Violated"
     ],
-    "seconds": 0.66,
+    "seconds": 0.83,
     "mismatches": []
    }
   }
@@ -4525,8 +5019,8 @@
    "variant": "negated-operator-missing-key",
    "description": "StringNotEquals with the key absent treated as not matching (AWS: it matches).",
    "item_questions_wrong": 1,
-   "perturbations_wrong": 74,
-   "perturbations": 300,
+   "perturbations_wrong": 93,
+   "perturbations": 400,
    "caught": true,
    "caught_by_item_questions_alone": true
   },
@@ -4535,8 +5029,8 @@
    "variant": "ifexists-ignored",
    "description": "BoolIfExists treated as Bool (missing key -> false).",
    "item_questions_wrong": 0,
-   "perturbations_wrong": 9,
-   "perturbations": 300,
+   "perturbations_wrong": 12,
+   "perturbations": 400,
    "caught": true,
    "caught_by_item_questions_alone": false
   }
@@ -4599,7 +5093,7 @@
    "question": "Is a private document viewable only by its owner? (no background axioms)",
    "prove": "ResourceLimit",
    "prove_steps": 50000,
-   "prove_seconds": 18.74,
+   "prove_seconds": 20.41,
    "countermodel": "Found",
    "countermodel_seconds": 0.0,
    "ve_verdict": false,
@@ -4669,7 +5163,7 @@
    "question": "From the recorded group chain (4 parent edges), is the push allowed? (open-world proof, not evaluation)",
    "prove": "Found",
    "prove_steps": 3194,
-   "prove_seconds": 3.83,
+   "prove_seconds": 4.2,
    "certificate_replayed": true,
    "ve_verdict": true,
    "reference": {
@@ -4684,9 +5178,9 @@
    "question": "Does a user bound to admin get a rule aggregated only into view (view -> edit -> admin)?",
    "prove": "ResourceLimit",
    "prove_steps": 50000,
-   "prove_seconds": 43.46,
+   "prove_seconds": 47.93,
    "countermodel": "ResourceLimit",
-   "countermodel_seconds": 128.24,
+   "countermodel_seconds": 134.96,
    "ve_verdict": null,
    "reference": {
     "verdict": true,
@@ -4716,7 +5210,7 @@
    "question": "util/graph: does ring[r] imply weaklyConnected[r]? (valid in all structures; needs closure monotonicity)",
    "prove": "ResourceLimit",
    "prove_steps": 50000,
-   "prove_seconds": 14.49,
+   "prove_seconds": 14.56,
    "countermodel": "NotFound",
    "countermodel_seconds": 0.6,
    "ve_verdict": null,
@@ -4774,9 +5268,9 @@
    "question": "Same, adding the Alloy typing r: node->node as a premise",
    "prove": "ResourceLimit",
    "prove_steps": 50000,
-   "prove_seconds": 1.43,
+   "prove_seconds": 1.69,
    "countermodel": "NotFound",
-   "countermodel_seconds": 0.57,
+   "countermodel_seconds": 0.56,
    "ve_verdict": null,
    "reference": {
     "verdict": true,
@@ -4790,9 +5284,9 @@
    "question": "ring => weaklyConnected with the typing premise",
    "prove": "ResourceLimit",
    "prove_steps": 50000,
-   "prove_seconds": 14.69,
+   "prove_seconds": 14.47,
    "countermodel": "NotFound",
-   "countermodel_seconds": 0.56,
+   "countermodel_seconds": 0.55,
    "ve_verdict": null,
    "reference": {
     "verdict": true,

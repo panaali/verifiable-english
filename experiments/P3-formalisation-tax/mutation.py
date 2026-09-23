@@ -86,7 +86,7 @@ def test_cases(item, env, doc, bindings, n):
         w, r = H.question_world(item, q)
         cases.append(("item", H.build_model(env, item["family"], w, r, bindings, item["id"]),
                       q, H.ref_answer(item, q, w, r)))
-    for p in H.perturbations(item, n):
+    for p in H.perturbations(item, n) + H.targeted_perturbations(item):
         q = p["q"] or {}
         cases.append(("perturbed", H.build_model(env, item["family"], p["world"], p["request"], bindings, item["id"]),
                       q, H.ref_answer(item, q, p["world"], p["request"])))
