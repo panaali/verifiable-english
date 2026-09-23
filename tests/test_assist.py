@@ -445,12 +445,15 @@ def test_redundant_parentheses_from_the_proposer_are_normalised_and_flagged():
     assert r["candidates"][0]["text"] == fixed
 
 
-def test_haiku_backend_configuration_without_calling_a_model(tmp_path):
-    from ve_experiments.assist_haiku import DEFAULT_ACCOUNT, HaikuProposer
+def test_haiku_backend_configuration_without_calling_a_model(tmp_path, monkeypatch):
+    from ve_experiments.assist_haiku import ClaudeProposer, HaikuProposer
     from ve_experiments.claude_cli import MODELS, command, isolated_env
+    monkeypatch.delenv("VE_ASSIST_CLAUDE_ACCOUNT", raising=False)
+    monkeypatch.delenv("VE_CLAUDE_ACCOUNT_CONFIG_DIR", raising=False)
     proposer = HaikuProposer(tmp_path / "calls.jsonl", max_calls=10)
     client = proposer.client
-    assert DEFAULT_ACCOUNT == "saeedi.danial" and client.account_label == "saeedi.danial"
+    assert HaikuProposer is ClaudeProposer and proposer.model == "haiku"
+    assert client.account_label == "lead-main"  # no personal default account
     assert client.controls.model == MODELS["haiku"] and client.max_calls == 10
     argv = command("claude", client.controls, "sys", tmp_path / "mcp.json")
     assert "--effort" not in argv and argv[argv.index("--model") + 1] == "claude-haiku-4-5-20251001"
@@ -463,3 +466,287 @@ def test_invalid_arguments_are_rejected_and_logged():
     r = s.apply("freeze_target", {"target": "t_main", "txt": "@api is safe."})
     assert r["error"]["code"] == "AssistError" and "Invalid arguments" in r["error"]["message"]
     assert len(s.events) == 1
+
+
+# ---------------------------------------------------------------- regression tests: code review loopholes
+
+def _status_after(s, goal="goal"):
+    assert s.apply("check_step", {"name": goal})["status"] == "follows"
+    return s.apply("status")
+
+
+def test_review1_duplicate_unanchored_assumptions_cannot_hide_each_other():
+    s = new_session()
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.apply("add_node", {"name": "fact", "text": "@api is reviewed.", "anchors": ["p1.2"]})
+    for name in ("bridge1", "bridge2"):
+        s.apply("add_node", {"name": name, "text": "if (@api is reviewed), then (@api is safe)."})
+    s.apply("add_node", {"name": "goal", "text": "@api is safe.", "anchors": ["p2.1"],
+                         "parents": ["fact", "bridge1", "bridge2"]})
+    s.apply("waive", {"sentence": "p1.1", "reason": "restated by the bridges"})
+    status = _status_after(s)
+    rows = {r["node"]: r for r in status["unanchored_assumptions"]}
+    assert rows["bridge1"]["load_bearing"] and rows["bridge2"]["load_bearing"]
+    assert not status["success"]
+
+
+def test_review2_claimed_anchor_plus_given_anchor_is_claim_only():
+    s = new_session()
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.apply("add_node", {"name": "fact", "text": "@api is reviewed.", "anchors": ["p1.2"]})
+    s.apply("add_node", {"name": "cheat", "text": "@api is safe.", "anchors": ["p2.1", "p1.1"]})
+    s.apply("add_node", {"name": "goal", "text": "@api is safe.", "anchors": ["p2.1"], "parents": ["fact", "cheat"]})
+    status = _status_after(s)
+    row = status["unanchored_assumptions"][0]
+    assert row["node"] == "cheat" and row["anchor_state"] == "anchored_to_claim_only" and row["load_bearing"]
+    assert not status["success"] and "assumption cheat alone entails target t_main" in status["failures"]
+
+
+def test_review2_given_anchored_assumption_that_alone_implies_target_is_flagged():
+    s = new_session()
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.apply("add_node", {"name": "rule", "anchors": ["p1.1"],
+                         "text": "for every service s, (if (s is reviewed), then (s is safe))."})
+    s.apply("add_node", {"name": "fact", "text": "(@api is reviewed) and (@api is safe).", "anchors": ["p1.2"]})
+    s.apply("add_node", {"name": "goal", "text": "@api is safe.", "anchors": ["p2.1"], "parents": ["fact"]})
+    status = _status_after(s)
+    assert status["failures"] == ["assumption fact alone entails target t_main"]
+
+
+def test_review3_target_must_be_a_claimed_sentence():
+    from ve.assist import AssistError
+    with pytest.raises(AssistError, match="must be a claimed sentence"):
+        AssistSession.create(ENV, source_from_text(TEXT), [{"id": "t", "sentence": "p1.2"}])
+
+
+def test_review3_untagged_plain_text_defaults_to_claimed_not_given():
+    source = source_from_text("Every reviewed service is safe. The API is reviewed.\n\nSo the API is safe.")
+    assert {r["role"] for r in source["sentences"]} == {"claimed"}
+    s = AssistSession.create(ENV, source, [{"id": "t_main", "sentence": "p2.1"}])
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.apply("add_node", {"name": "rule", "anchors": ["p1.1"],
+                         "text": "for every service s, (if (s is reviewed), then (s is safe))."})
+    s.apply("add_node", {"name": "fact", "text": "@api is reviewed.", "anchors": ["p1.2"]})
+    s.apply("add_node", {"name": "goal", "text": "@api is safe.", "anchors": ["p2.1"], "parents": ["rule", "fact"]})
+    status = _status_after(s)
+    assert {r["anchor_state"] for r in status["unanchored_assumptions"]} == {"anchored_to_claim_only"}
+    assert not status["success"]
+
+
+def test_review4_vacuous_target_is_rejected():
+    s = new_session()
+    for text in ("true.", "(@api is safe) or (not (@api is safe))."):
+        r = s.apply("freeze_target", {"target": "t_main", "text": text})
+        assert not r["ok"] and "vacuous" in r["error"]["message"]
+    from ve.assist import AssistError
+    with pytest.raises(AssistError, match="vacuous"):
+        AssistSession.create(ENV, source_from_text(TEXT), [{"id": "t", "sentence": "p2.1", "formula": "true."}])
+
+
+def test_review5_declare_requires_frozen_targets():
+    s = new_session()
+    r = s.apply("declare", {"name": "okay", "gloss": "Cleared for release by ops.", "arguments": ["service"]})
+    assert not r["ok"] and "Freeze every target" in r["error"]["message"]
+    assert "okay" not in s.env.predicates
+
+
+def test_review5_renamed_conclusion_through_an_ordinary_assumption_chain():
+    s = new_session()
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    assert s.apply("declare", {"name": "gamma", "gloss": "An unrelated marker for testing.",
+                               "arguments": ["service"]})["ok"]
+    s.apply("add_node", {"name": "carrier", "anchors": ["p1.1"],
+                         "text": "(@api is gamma) and (if (@api is gamma), then (@web is reviewed))."})
+    s.apply("add_node", {"name": "ordinary", "text": "if (@web is reviewed), then (@api is safe)."})
+    s.apply("add_node", {"name": "fact", "text": "@api is reviewed.", "anchors": ["p1.2"]})
+    s.apply("add_node", {"name": "goal", "text": "@api is safe.", "anchors": ["p2.1"],
+                         "parents": ["carrier", "ordinary"]})
+    status = _status_after(s)
+    assert status["renamed_conclusions"] == [{"target": "t_main", "assumptions": ["carrier", "ordinary"]}]
+    assert not status["success"]
+
+
+def _proposed_session(proposer=None):
+    s = new_session()
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.proposer = proposer or FakeProposer(['{"candidates": [{"ve": "@api is reviewed."}]}'])
+    assert s.apply("propose", {"sentence": "p1.2", "k": 1})["ok"]
+    return s
+
+
+def test_review6_config_digest_is_checked_on_load():
+    ledger = json.loads(json.dumps(_proposed_session().to_ledger()))
+    ledger["config"]["targets"][0]["formula"] = "@web is safe."
+    with pytest.raises(LedgerReplayError, match="config_digest"):
+        AssistSession.from_ledger(ledger)
+    ledger = json.loads(json.dumps(new_session().to_ledger()))
+    ledger["config"]["source"]["sentences"][2]["role"] = "given"
+    with pytest.raises(LedgerReplayError, match="config_digest"):
+        AssistSession.from_ledger(ledger, verify=False)
+
+
+def test_review6_token_totals_are_recomputed_not_copied():
+    ledger = json.loads(json.dumps(_proposed_session().to_ledger()))
+    ledger["events"][1]["tokens"]["proposer"]["input_tokens"] = 1
+    with pytest.raises(LedgerReplayError, match="tokens"):
+        AssistSession.from_ledger(ledger, verify=False)
+    ledger = json.loads(json.dumps(_proposed_session().to_ledger()))
+    ledger["events"][1]["model_calls"][0]["input_tokens"] = -500
+    with pytest.raises(LedgerReplayError):
+        AssistSession.from_ledger(ledger, verify=False)
+
+
+def test_review6_forged_rejected_by_api_event_is_refused():
+    s = new_session()
+    call_tool(s, "nope", {})
+    ledger = json.loads(json.dumps(s.to_ledger()))
+    assert AssistSession.from_ledger(ledger)
+    ledger["events"][0]["tokens"] = {"author": {"input_tokens": -500, "output_tokens": 0, "calls": 1}}
+    with pytest.raises(LedgerReplayError, match="API rejection"):
+        AssistSession.from_ledger(ledger, verify=False)
+    ledger["events"][0].pop("tokens")
+    ledger["events"][0]["result"] = {"ok": True}
+    with pytest.raises(LedgerReplayError, match="API rejection"):
+        AssistSession.from_ledger(ledger, verify=False)
+
+
+class LedgeredProposer(FakeProposer):
+    """Fake backend that writes a claude-CLI-style calls ledger."""
+    model_id = "claude-haiku-4-5-20251001"
+
+    def __init__(self, replies):
+        super().__init__(replies)
+        self.rows = []
+
+    def __call__(self, system, prompt, item):
+        reply = super().__call__(system, prompt, item)
+        key = f"key-{len(self.rows)}"
+        self.rows.append({"key": key, "item_id": item, "status": "ok", "system": system, "prompt": prompt,
+                          "text": reply["text"], "input_tokens": 1000, "output_tokens": 50,
+                          "served_model": "fake-haiku", "account_label": "test",
+                          "controls": {"model": self.model_id}})
+        return {**reply, "call_key": key}
+
+
+def test_review6_verify_session_rebuilds_config_and_matches_calls_ledger():
+    from ve.assist import verify_session
+    built = source_from_p5(P5_ITEM)
+    s = AssistSession.create(built["environment"], built["source"], built["targets"], metadata=built["metadata"])
+    s.proposer = LedgeredProposer(['{"candidates": [{"ve": "@unit1 is sealed."}]}'])
+    assert s.apply("propose", {"sentence": "n00.1", "k": 1})["ok"]
+    assert s.events[-1]["model_calls"][0]["requested_model"] == "claude-haiku-4-5-20251001"
+    rows = s.proposer.rows
+    ledger = json.loads(json.dumps(s.to_ledger()))
+    good = verify_session(ledger, item=P5_ITEM, calls=rows)
+    assert good["ok"], good["problems"]
+    # Forged config with a recomputed digest: replays, but differs from the dossier.
+    from ve.assist.session import config_digest
+    fresh = AssistSession.create(built["environment"], built["source"], built["targets"], metadata=built["metadata"])
+    forged = json.loads(json.dumps(fresh.to_ledger()))
+    forged["config"]["source"]["sentences"][0]["text"] = "unit1 is sealed and every unit is ready."
+    forged["config"]["config_digest"] = config_digest(forged["config"])
+    assert AssistSession.from_ledger(forged, verify=False)
+    assert "config source differs from the rebuilt configuration" in verify_session(forged, item=P5_ITEM)["problems"]
+    # Consistently lowered tokens: replays, but disagrees with the calls ledger.
+    cheaper = json.loads(json.dumps(ledger))
+    cheaper["events"][-1]["model_calls"][0]["input_tokens"] = 10
+    cheaper["events"][-1]["tokens"]["proposer"]["input_tokens"] = 10
+    assert AssistSession.from_ledger(cheaper)
+    assert any("input_tokens differs" in p for p in verify_session(cheaper, item=P5_ITEM, calls=rows)["problems"])
+    # A call the session never recorded (hidden spend) is reported.
+    extra = rows + [{**rows[0], "key": "key-hidden"}]
+    assert any("never recorded" in p for p in verify_session(ledger, item=P5_ITEM, calls=extra)["problems"])
+
+
+class FailingProposer:
+    model_id = "claude-haiku-4-5-20251001"
+
+    def __init__(self):
+        self.items = []
+
+    def __call__(self, system, prompt, item):
+        from ve_experiments.claude_cli import EndpointError
+        self.items.append(item)
+        exc = EndpointError("Input overhead drift for identical content")
+        exc.usage = {"input_tokens": 900, "output_tokens": 12, "model": "claude-haiku-4-5-20251001",
+                     "account_label": "test", "call_key": "k1"}
+        raise exc
+
+
+def test_review7_backend_error_is_logged_with_spent_usage_and_retryable():
+    s = new_session()
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.proposer = failing = FailingProposer()
+    r = call_tool(s, "propose", {"sentence": "p1.2", "k": 1})
+    assert not r["ok"] and r["error"]["code"] == "ProposerBackendError"
+    assert s.events[-1]["tokens"]["proposer"] == {"input_tokens": 900, "output_tokens": 12, "calls": 1}
+    assert s.usage()["tokens"]["proposer"]["input_tokens"] == 900
+    s.proposer = FakeProposer(['{"candidates": [{"ve": "@api is reviewed."}]}'])
+    assert s.apply("propose", {"sentence": "p1.2", "k": 1})["ok"]
+    assert s.proposer.calls[0][2] != failing.items[0]  # fresh backend key for the retry
+    replayed = AssistSession.from_ledger(json.loads(json.dumps(s.to_ledger())))
+    assert replayed.usage()["tokens"]["proposer"]["input_tokens"] == 1900
+
+
+def test_review7_cli_backend_error_is_logged_not_a_traceback(tmp_path, capsys, monkeypatch):
+    import ve.assist.cli as cli
+    env = tmp_path / "env.json"
+    env.write_text(json.dumps(ENV))
+    text = tmp_path / "arg.txt"
+    text.write_text(TEXT)
+    session = tmp_path / "s.json"
+    run_cli(capsys, "new", session, "--env", env, "--text", text, "--target", "p2.1")
+    run_cli(capsys, "freeze", session, "t_p2_1", "@api is safe.")
+    monkeypatch.setattr(cli, "_proposer", lambda args: FailingProposer())
+    code, out = run_cli(capsys, "propose", session, "p1.2")
+    assert code == 2 and "ProposerBackendError" in out
+    events = json.loads(session.read_text())["events"]
+    assert events[-1]["tokens"]["proposer"]["input_tokens"] == 900
+    code, out = run_cli(capsys, "call", session, "status", "{}")
+    assert code == 0 and '"input_tokens": 900' in out
+
+
+def test_review8_failed_propose_does_not_make_the_session_unloadable():
+    s = new_session()
+    assert not s.apply("propose", {"sentence": "p1.2"})["ok"]  # no backend configured
+    replayed = AssistSession.from_ledger(json.loads(json.dumps(s.to_ledger())))
+    assert len(replayed.events) == 1
+
+
+def test_review9_error_path_redacts_parsed_stream_and_reports_usage(tmp_path, monkeypatch):
+    import subprocess
+    import ve_experiments.claude_cli as cc
+    from ve_experiments.assist_haiku import ClaudeProposer
+    secret, model = "sk-SECRET-TOKEN-123", cc.MODELS["sonnet"]
+    fake = tmp_path / "claude"
+    fake.write_text("#!/bin/sh\n")
+    stream = "\n".join(json.dumps(r) for r in [
+        {"type": "system", "subtype": "init", "model": model, "tools": [], "mcp_servers": [], "agents": []},
+        {"type": "assistant", "message": {"id": "m1", "model": model,
+                                          "content": [{"type": "text", "text": "echo " + secret}]}},
+        {"type": "result", "subtype": "success", "is_error": False, "num_turns": 1, "result": "echo " + secret,
+         "stop_reason": "end_turn", "modelUsage": {model: {}},
+         "usage": {"input_tokens": 900, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0,
+                   "output_tokens": 7}}])
+    dates = iter([None, cc.EndpointError("Injected context date would drift")])
+
+    def date_check(controls):
+        outcome = next(dates)
+        if outcome:
+            raise outcome
+    monkeypatch.setattr(cc.shutil, "which", lambda name: str(fake))
+    monkeypatch.setattr(cc.subprocess, "check_output", lambda *a, **k: cc.Controls().cli_version)
+    monkeypatch.setattr(cc.subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(a, 0, stream, ""))
+    monkeypatch.setattr(cc, "oauth_token", lambda config=None: secret)
+    monkeypatch.setattr(cc, "check_context_date", date_check)
+    monkeypatch.setenv("VE_ASSIST_CLAUDE_ACCOUNT", "work")
+    proposer = ClaudeProposer(tmp_path / "calls.jsonl", model="sonnet",
+                              working_directory=str(tmp_path / "empty"))
+    assert proposer.client.account_label == "work" and proposer.model_id == "claude-sonnet-5"
+    with pytest.raises(cc.EndpointError) as caught:
+        proposer("sys", "prompt", "item")
+    assert caught.value.usage["input_tokens"] == 900 and caught.value.usage["model"] == model
+    written = (tmp_path / "calls.jsonl").read_text()
+    assert secret not in written and "[REDACTED]" in written
+    with pytest.raises(ValueError):
+        ClaudeProposer(tmp_path / "x.jsonl", model="gpt")

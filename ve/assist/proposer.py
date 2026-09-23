@@ -143,6 +143,10 @@ def extract_candidates(text):
     return out, None
 
 
+class ProposerBackendError(VEError):
+    code = "ProposerBackendError"
+
+
 def _call(session, purpose, system, prompt, item):
     recorded = session.recorded_model_call()
     if recorded is not None:
@@ -152,13 +156,28 @@ def _call(session, purpose, system, prompt, item):
     else:
         if session.proposer is None:
             raise VEError("No proposer backend is configured for this session")
-        reply = session.proposer(system, prompt, item)
-        call = {"purpose": purpose, "prompt_version": PROMPT_VERSION,
-                "prompt_digest": _digest([system, prompt]), "text": reply["text"],
-                "input_tokens": reply.get("input_tokens"), "output_tokens": reply.get("output_tokens"),
-                "model": reply.get("model"), "account_label": reply.get("account_label"),
-                "call_key": reply.get("call_key")}
+        base = {"purpose": purpose, "prompt_version": PROMPT_VERSION, "prompt_digest": _digest([system, prompt]),
+                "requested_model": getattr(session.proposer, "model_id", None), "item_id": item}
+        try:
+            reply = session.proposer(system, prompt, item)
+        except Exception as exc:  # the backend boundary: log the failure and the usage actually spent
+            spent = getattr(exc, "usage", None) or {}
+            call = {**base, "failed": True, "text": None,
+                    "error": f"{type(exc).__name__}: {str(exc)[:300]}",
+                    "input_tokens": spent.get("input_tokens"), "output_tokens": spent.get("output_tokens"),
+                    "model": spent.get("model"), "account_label": spent.get("account_label"),
+                    "call_key": spent.get("call_key")}
+        else:
+            call = {**base, "text": reply["text"],
+                    "input_tokens": reply.get("input_tokens"), "output_tokens": reply.get("output_tokens"),
+                    "model": reply.get("model"), "account_label": reply.get("account_label"),
+                    "call_key": reply.get("call_key")}
     session._model_calls.append(call)
+    if call.get("failed"):
+        raise ProposerBackendError("Proposer backend failed (usage recorded; propose again to retry): "
+                                   + str(call.get("error")))
+    if not isinstance(call.get("text"), str):
+        raise VEError("Recorded model call has no reply text")
     return call
 
 
@@ -170,7 +189,9 @@ def run_propose(session, sentence, k=None, note=None):
         raise VEError("k must be 1, 2 or 3")
     pid = f"q{len(session.proposals) + 1}"
     prompt = build_prompt(session, sentence, k, note)
-    item = f"{session.config.get('config_digest', 'session')[:16]}/{pid}"
+    # The event sequence number makes every propose attempt a fresh backend key, so a failed
+    # call can be retried (the endpoint refuses to re-run a key that started or failed).
+    item = f"{session.config.get('config_digest', 'session')[:16]}/{pid}/e{session._seq}"
     valid, dropped = [], []
     raw_prompt = prompt
     for round_number in range(1 + session.options["propose_repair_rounds"]):
