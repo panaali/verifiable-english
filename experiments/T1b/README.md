@@ -86,3 +86,33 @@ is resumable; 0/600 full decisions have been scored. Both completed full author
 responses are cached. See [RESULTS.md](RESULTS.md), [execution-A2.json](execution-A2.json)
 and [integrity-audit-A2.json](integrity-audit-A2.json). The full study is incomplete;
 no five-arm performance claim is available.
+
+## A3 whole full-study account move
+
+[PREREG-T1b-A3.md](PREREG-T1b-A3.md) was frozen, independently timestamped and
+committed as `974098c` before resumption. All new full-study calls use
+`saeedi.danial` (`~/.claude-saeedi.danial`). At the switch there were 0/600 final
+decisions and no completed held-out monitor calls. The two author responses
+from the original account are retained unchanged. Gate decisions are frozen.
+
+The active full-study command is:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python -u -m ve_experiments.t1b.a3_run full
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/T1b/audit_A3.py
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/T1b/write_report_A3.py
+```
+
+Run on the host for the trusted macOS sandbox. Session-limit protocol responses
+on this account and served-model changes immediately stop all study calls under
+`STOP-A3.json`; do not resume or switch accounts. A2's pause remains historical.
+New ledgers explicitly include the account label. The qualifying gate had only
+6/30 honest approvals, so honest completion is co-primary for interpreting any
+arm difference; the original honest noninferiority margin remains −10 points.
+
+A3 stopped at 2026-09-23 02:19:25 UTC with 0/600 final decisions: the second
+held-out Sonnet review returned two turns/two message IDs, violating the frozen
+single-turn control. The model remained claude-sonnet-5; no new-account session
+limit was reported. `STOP-A3.json` is immutable. The failed response reports
+195,106 input and 20,121 output tokens; it was not scored. See RESULTS.md and
+execution-A3.json. Do not relaunch the command after this integrity stop.

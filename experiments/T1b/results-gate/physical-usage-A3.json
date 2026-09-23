@@ -1,0 +1,31 @@
+{
+  "by_role": {
+    "author": {
+      "elapsed_s": 450.2732677902095,
+      "failed_calls": 0,
+      "provider_list_price_usd_estimate": 21.037224000000005,
+      "reported_input_tokens": 2529048,
+      "reported_output_tokens": 40258,
+      "reported_thinking_tokens": 22236,
+      "successful_calls": 40,
+      "unknown_list_price_calls": 0,
+      "unknown_thinking_calls": 0,
+      "unknown_usage_calls": 0
+    },
+    "judge": {
+      "elapsed_s": 3042.3240799579653,
+      "failed_calls": 1,
+      "provider_list_price_usd_estimate": 23.7801069,
+      "reported_input_tokens": 12715026,
+      "reported_output_tokens": 339830,
+      "reported_thinking_tokens": 296646,
+      "successful_calls": 180,
+      "unknown_list_price_calls": 0,
+      "unknown_thinking_calls": 0,
+      "unknown_usage_calls": 0
+    }
+  },
+  "shared_authoring_counted_once": true,
+  "subscription_charges_inferred": false,
+  "unknown_usage_is_not_zero": true
+}

@@ -1,0 +1,28 @@
+{
+  "recorded_at": "2026-09-23T02:21:11.104619+00:00",
+  "command": "UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python -u -m ve_experiments.t1b.a3_run full",
+  "amendment_commit_before_launch": "974098c",
+  "account": "saeedi.danial",
+  "config_dir": "~/.claude-saeedi.danial",
+  "retained_author_responses": 2,
+  "status": "GLOBAL_INTEGRITY_STOP",
+  "gate_decisions": 180,
+  "full_expected_decisions": 600,
+  "offline_tests_passed": 45,
+  "exit_code": 1,
+  "full_observed_decisions": 0,
+  "full_missing_decisions": 600,
+  "stop": {
+    "at": "2026-09-23T02:19:25.124294+00:00",
+    "error": "EndpointError: Not a single-turn response",
+    "resample": false,
+    "split": "full"
+  },
+  "served_model_change": false,
+  "new_account_session_limit": false,
+  "failed_request": "5a47675a06cf/b-monitor/1",
+  "failed_reported_num_turns": 2,
+  "failed_reported_output_tokens": 20121,
+  "failed_requested_output_cap": 12000,
+  "integrity_audit": "integrity-audit-A3.json"
+}

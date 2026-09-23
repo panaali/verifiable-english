@@ -1,0 +1,29 @@
+{
+  "account_label": "saeedi.danial",
+  "arm": "b-exec",
+  "elapsed_s": 14.209859874972608,
+  "input_tokens": 96850,
+  "item_id": "5a47675a06cf/b-code/1",
+  "key": "5ef9408bd7fa354ef6af08fa60ab4d6f56125cd73e26929c2f4bdac0a5d15950",
+  "model": "opus",
+  "model_usage": {
+    "claude-opus-5-5": {
+      "cacheCreationInputTokens": 96848,
+      "cacheReadInputTokens": 0,
+      "canonicalModel": "claude-opus-5-5",
+      "contextWindow": 1000000,
+      "costBasis": "list",
+      "costUSD": 0.8062320000000001,
+      "inputTokens": 2,
+      "maxOutputTokens": 128000,
+      "outputTokens": 1572,
+      "provider": "firstParty",
+      "thinkingTokens": 558,
+      "webSearchRequests": 0
+    }
+  },
+  "output_tokens": 1572,
+  "role": "author",
+  "served_model": "claude-opus-5-5",
+  "thinking_tokens_reported": 558
+}

@@ -1,0 +1,31 @@
+{
+  "by_role": {
+    "attack_monitor": {
+      "elapsed_s": 222.75838579394622,
+      "failed_calls": 7,
+      "provider_list_price_usd_estimate": 1.3919679999999999,
+      "reported_input_tokens": 292420,
+      "reported_output_tokens": 22230,
+      "reported_thinking_tokens": 21798,
+      "successful_calls": 1,
+      "unknown_list_price_calls": 0,
+      "unknown_thinking_calls": 0,
+      "unknown_usage_calls": 0
+    },
+    "author": {
+      "elapsed_s": 36.925285332952626,
+      "failed_calls": 0,
+      "provider_list_price_usd_estimate": 2.392212,
+      "reported_input_tokens": 290312,
+      "reported_output_tokens": 3487,
+      "reported_thinking_tokens": 1386,
+      "successful_calls": 3,
+      "unknown_list_price_calls": 0,
+      "unknown_thinking_calls": 0,
+      "unknown_usage_calls": 0
+    }
+  },
+  "shared_authoring_counted_once": true,
+  "subscription_charges_inferred": false,
+  "unknown_usage_is_not_zero": true
+}

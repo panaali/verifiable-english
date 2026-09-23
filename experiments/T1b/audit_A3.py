@@ -41,7 +41,14 @@ def main():
                 assert previous['backoff_s'] in (30,60,120,240,480)
                 assert (datetime.fromisoformat(r['timestamp'])-datetime.fromisoformat(previous['timestamp'])).total_seconds() >= previous['backoff_s']
             history[r['key']]=r
-        assert all(infrastructure_failure(r.get('raw_stream',''),r['controls']['model'],r.get('error','')) for r in failed)
+        integrity_failures=[r for r in failed if not infrastructure_failure(r.get('raw_stream',''),r['controls']['model'],r.get('error',''))]
+        if integrity_failures:
+            assert (HOME/'STOP-A3.json').exists(), 'Non-infrastructure failure requires immutable global stop'
+        result.setdefault('failure_classification', {})[split] = {
+            'infrastructure_attempts':len(failed)-len(integrity_failures),
+            'integrity_failures':len(integrity_failures),
+            'session_limit_attempts':sum('session limit' in r.get('raw_stream','').lower() for r in failed),
+        }
         successful_logical={(r['item_id'],r['sample_index']) for r in completed.values()}
         infrastructure_attempts=[]
         for r in failed:
@@ -79,8 +86,9 @@ def main():
             u['unknown_usage_calls']+=inp is None or out is None
             u['provider_list_price_usd_estimate']+=price or 0
             u['unknown_list_price_calls']+=price is None
-            u['reported_thinking_tokens']+=r.get('thinking_tokens_reported') or 0
-            u['unknown_thinking_calls']+=r.get('thinking_tokens_reported') is None
+            thinking = r.get('thinking_tokens_reported') if r['status']=='ok' else usage.get('output_tokens_details',{}).get('thinking_tokens')
+            u['reported_thinking_tokens']+=thinking or 0
+            u['unknown_thinking_calls']+=thinking is None
         save(directory/'physical-usage-A3.json',{'by_role':usage_by_role,'unknown_usage_is_not_zero':True,'subscription_charges_inferred':False,'shared_authoring_counted_once':True})
         snapshot=load(HOME/'resume-A3.json')
         a3_timestamp=load(HOME/'timestamp-A3.json')['created_at']

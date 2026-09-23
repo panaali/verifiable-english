@@ -1,0 +1,29 @@
+{
+  "account_label": "saeedi.danial",
+  "arm": "b-exec",
+  "elapsed_s": 23.563887541997246,
+  "input_tokens": 97314,
+  "item_id": "5a47675a06cf/b-monitor/0",
+  "key": "bdda5a76725d240a43f6657b7529cd38873f2a8f0241f840ca9c77c705cddf8e",
+  "model": "sonnet",
+  "model_usage": {
+    "claude-sonnet-5": {
+      "cacheCreationInputTokens": 97312,
+      "cacheReadInputTokens": 0,
+      "canonicalModel": "claude-sonnet-5",
+      "contextWindow": 1000000,
+      "costBasis": "list",
+      "costUSD": 0.410342,
+      "inputTokens": 2,
+      "maxOutputTokens": 64000,
+      "outputTokens": 2109,
+      "provider": "firstParty",
+      "thinkingTokens": 1941,
+      "webSearchRequests": 0
+    }
+  },
+  "output_tokens": 2109,
+  "role": "attack_monitor",
+  "served_model": "claude-sonnet-5",
+  "thinking_tokens_reported": 1941
+}
