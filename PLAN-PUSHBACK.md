@@ -47,3 +47,19 @@ residual, e.g. translation faithfulness); WildGuard calibration slice to show ou
 there); second arm = holistic verdict vs VE-leaf decomposition with a named catch-all judgement predicate; residual
 reported honestly (equal flips on the residual = VE only relocated the problem). Reviews for this revision: Opus 5.5
 xhigh and, while Codex is exhausted (resets Sep 26 21:34), Gemini 3.1 Pro as the cross-family reviewer.
+
+## Revision 2 reviews (Opus xhigh, Gemini 3.1 Pro): both "proceed with changes". Final design:
+- A locked signed verdict makes checked-part flips 0 by construction: primary endpoint = wrong-way flips of the SYSTEM's
+  final verdict (checker verdict x judge's residual verdict), plus residual flips; dissent text secondary.
+- Residual: V4 = translation faithfulness (judge sees the VE formalisation; PLANTED mistranslations on a subset, else
+  "faithful" is always right); T1 = entity grounding/mapping only (inputs are compiled mechanically) -> T1 is a demo,
+  outside the statistics.
+- Arms: A holistic, no checker; D0 decomposed (fixed decomposition + fixed combination rule + named catch-all), no
+  checker; C decomposed + locked signed verdict. D0-A = decomposition effect; C-D0 = lock effect (relocation test: same
+  residual question with/without checker). Same total persuader budget per item; persuader may attack any leaf.
+- Pressure L1 and L6 primary (10 turns); fixed persuader model/budget across arms, reported.
+- Revision-1 fixes still apply: mixed items, corrective pushback on wrong-initial/planted items (non-inferiority 10pp),
+  forged look-signed verdicts in the user channel.
+- Gate: arm-A pilot on 40 V4 items, Gemini; if wrong-way flips < 10%, the residual becomes the primary endpoint.
+- WildGuard = implementation check of the ladder only (Gemini, their prompts/persuader/flip definition), ~100 items.
+- n: ~80 items per judge for the primary (30%->10%), ~160 harm items; judges Gemini 3.1 Pro and Opus 5.5 (+ Sonnet 5).
