@@ -18,3 +18,19 @@ Evaluation: re-run P5's 12 dev items as a feasibility probe with tool-using agen
 tool-call and token budgets, success = all edges certified and the graph replays; report success rate, cost, and a
 fidelity check (does the certified graph say what the prose says, independent audit). If >= 50%, give the P5 VE arm a
 fair dev run with the tool, cost charged. Human use: document the CLI for the lead.
+
+## After review (2026-09-22): Opus xhigh and Gemini 3.1 Pro both "build it, with changes"
+
+Adopted: the author owns fidelity; every accepted node is logged as proposer-verbatim / edited / hand-written; every
+node is ANCHORED to the sentence it formalises and every asserting sentence is covered or explicitly waived; premises
+not anchored in the prose are "unanchored assumptions" and a load-bearing one fails the item; target conclusions are
+FROZEN from the prose before the session; `declare` requires a gloss and a check that the new predicate is not the
+conclusion renamed; missing-premise suggestions are ablated separately (they can assume the gap away); a blind
+cross-family fidelity audit compares prose to the deterministic paraphrase without seeing proof status; "certified but
+unfaithful" is a headline number. Evaluation arms at matched TOTAL budget (author + proposer): (1) P5 one-shot (existing
+result), (2) checker-feedback-only retries, (3) interactive tool without proposer, (4) full tool; authors Gemini 3.1 Pro
+(comparison with P5), Opus 5.5, and Haiku 4.5 (if Haiku+tool ~ Opus+tool, the proposer is doing the work). Success =
+replays + all edges certified + fidelity audit passes + no load-bearing unanchored premise. Tool version, prompts and
+threshold hashed before the run; items not used for tuning are the evaluation set (use P5 dev items for tuning only if
+the evaluation uses held-out P5 items). Build order: tool without proposer first, then `propose`, then premise
+suggestions, then the human CLI.
