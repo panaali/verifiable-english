@@ -1,5 +1,7 @@
 import VE.Order.Conservativity
 import VE.Order.Gate
+import VE.Order.ModelCheck
+import VE.Order.ProfileGate
 
 namespace VE.Order.Checks
 
@@ -49,5 +51,33 @@ def model : FiniteModel Nat where
 #guard !(Formula.ex "empty" .top).eval model []
 #guard countermodelCheck model [.lt (.const "n") (.num 0)] (.le (.num 0) (.const "n"))
 #guard !countermodelCheck model [.lt (.num 0) (.const "n")] .bottom
+
+/-- The same model and environment as finite wire tables. -/
+def vocabulary : Vocabulary where
+  sorts := ["item", "empty"]
+  constants := [("object", .user "item"), ("n", .int), ("alias", .int), ("m", .int)]
+  predicates := [("value", [.user "item", .int]), ("marked", [.int])]
+
+def data : ModelData Nat where
+  domains := [("item", [0, 1]), ("empty", [])]
+  constants := [("n", .inr (-7)), ("alias", .inr (-7)), ("m", .inr 3), ("object", .inl 0)]
+  relations := [("value", [[.inl 0, .inr (-7)], [.inl 1, .inr 3]]), ("marked", [[.inr 3]])]
+
+#guard validModel? vocabulary data
+#guard !validModel? vocabulary {data with constants := data.constants.drop 1}
+#guard !validModel? vocabulary {data with constants := [("object", .inr 0)] ++ data.constants}
+#guard !validModel? vocabulary {data with relations := [("marked", [[.inl 0]])]}
+#guard !validModel? vocabulary {data with relations := [("ghost", [[.inr 1]])]}
+#guard validModel? vocabulary {data with relations := [("ghost", [])]}
+#guard checkCountermodel vocabulary data [.lt (.const "n") (.num 0)] (.le (.num 0) (.const "n"))
+#guard !checkCountermodel vocabulary {data with constants := []} [.top] .bottom
+
+/-- The validity hypothesis of `countermodel_sound` is satisfiable. -/
+example : data.toModel.Valid vocabulary.environment :=
+  (validModel_iff vocabulary data).mp (by decide)
+
+example : ¬ Entails.{0} vocabulary.environment [.lt (.const "n") (.num 0)]
+    (.le (.num 0) (.const "n")) :=
+  checkCountermodel_sound vocabulary data _ _ (by decide)
 
 end VE.Order.Checks
