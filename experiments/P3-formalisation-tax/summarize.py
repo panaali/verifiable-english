@@ -25,7 +25,7 @@ def load(name, default=None):
 
 
 def brief(r):
-    keep = ("item", "family", "stage", "error", "original", "perturbed", "reference_vs_recorded", "faithful", "statuses", "seconds")
+    keep = ("item", "family", "stage", "error", "original", "perturbed", "targeted", "reference_vs_recorded", "faithful", "statuses", "seconds")
     out = {k: r[k] for k in keep if k in r}
     out["mismatches"] = [{k: m[k] for k in m if k not in ("world", "request")} for m in r.get("mismatches", [])][:3]
     return out
@@ -143,6 +143,8 @@ def main():
         "items": len(items), "by_family": {f: sum(x["family"] == f for x in items) for f in fam},
         "questions": sum(x["questions"] for x in items),
         "perturbations_per_item": H.N_PERTURB,
+        "targeted_perturbations_per_item": H.N_TARGETED,
+        "targeted_perturbations_total": sum((x["differential"].get("targeted") or {}).get("total", 0) for x in items),
         "faithful_first_pass_author_me": rate([x["differential_first_pass"].get("faithful") is True for x in items]),
         "faithful_after_repair_author_me": rate(faithful),
         "faithful_and_fully_expressible": rate(pure),

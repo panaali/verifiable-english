@@ -94,6 +94,18 @@
      "entity"
     ],
     "description": "Attribute location present."
+   },
+   "type_record": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Anonymous record node."
+   },
+   "nattrs_3": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Record node with exactly 3 attributes (record equality: no extra keys)."
    }
   },
   "constants": {

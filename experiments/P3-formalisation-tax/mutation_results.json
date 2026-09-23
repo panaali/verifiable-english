@@ -2327,117 +2327,134 @@
   "family": "cedar",
   "mutants": 25,
   "survivors_equivalent": 0,
-  "survivors_distinguishable": 4,
-  "survivors_unknown": 2,
-  "killed": 19,
-  "killed_by_item_questions_alone": 8,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 12,
+  "killed": 13,
+  "killed_by_item_questions_alone": 9,
   "rows": [
    {
-    "operator": "drop-right-conjunct",
-    "path": "left.right.right.right.right.body",
-    "killed": false,
-    "killed_by_item_questions": false,
-    "survivor_class": "distinguishable"
+    "operator": "exists->forall",
+    "path": "left.right.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
    },
    {
-    "operator": "drop-left-disjunct",
-    "path": "right.right.right.right.right.body.right.body.right.right.body.right.right.right",
+    "operator": "drop-right-conjunct",
+    "path": "right.right.right.right.right.body.right.body.right.right.body.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-disjunct",
+    "path": "left.right.right.right.left.body.right.body.right.right.body.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.right.right.left.body.right.body.right.right.body.right.right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "or->and",
+    "path": "left.right.right.left.body.right.body.right.right.body.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-negation",
+    "path": "left.right.right.left.body.right.body.right.right.body.right.right.left.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.right.right.left.body.right.body.right.right.body.right.right.left.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.right.left.body.right.body.right.right.body.right.right.right.right.left.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-negation",
+    "path": "left.right.right.left.body.right.body.right.right.body.right.right.left.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.right.right.right.right.body.right.body.right.right.body.right.right.left.right.right",
     "killed": false,
     "killed_by_item_questions": false,
     "survivor_class": "unknown"
    },
    {
     "operator": "drop-left-conjunct",
-    "path": "left.right.right.right.left.body.right.body.right.right.body",
-    "killed": true,
-    "killed_by_item_questions": false
-   },
-   {
-    "operator": "or->and",
-    "path": "right.right.right.right.left.body.right.body.right.right.body.right.right.right",
-    "killed": false,
-    "killed_by_item_questions": false,
-    "survivor_class": "distinguishable"
-   },
-   {
-    "operator": "drop-left-disjunct",
-    "path": "left.right.right.left.body.right.body.right",
-    "killed": false,
-    "killed_by_item_questions": false,
-    "survivor_class": "distinguishable"
-   },
-   {
-    "operator": "drop-right-conjunct",
-    "path": "left.right.right.left.body.right.body",
-    "killed": true,
-    "killed_by_item_questions": false
-   },
-   {
-    "operator": "or->and",
-    "path": "right.right.right.left.body.right.body.right.right.body.right",
-    "killed": true,
-    "killed_by_item_questions": true
-   },
-   {
-    "operator": "and->or",
-    "path": "right.right.right.right",
-    "killed": true,
-    "killed_by_item_questions": false
-   },
-   {
-    "operator": "or->and",
-    "path": "left.right.right.left.body.right.body.right",
-    "killed": true,
-    "killed_by_item_questions": true
-   },
-   {
-    "operator": "drop-right-disjunct",
-    "path": "left.right.right.right.left.body.right.body.right.right.body.right",
-    "killed": true,
-    "killed_by_item_questions": true
-   },
-   {
-    "operator": "and->or",
-    "path": "right.right.right.left.body.right.body.right.right.body",
-    "killed": true,
-    "killed_by_item_questions": false
-   },
-   {
-    "operator": "drop-left-disjunct",
-    "path": "left.right.right.right.right.body.right.body.right.right.body.right.right.right",
+    "path": "left.right.right.right.left.body.right.body.right.right.body.right.right.right.right",
     "killed": false,
     "killed_by_item_questions": false,
     "survivor_class": "unknown"
    },
    {
     "operator": "and->or",
-    "path": "left.right",
-    "killed": true,
-    "killed_by_item_questions": false
+    "path": "right.right.right.left.body.right.body.right.right.body.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
    },
    {
-    "operator": "and->or",
-    "path": "right.right",
-    "killed": true,
-    "killed_by_item_questions": true
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.right.right.body.right.body.right.right.body.right.right.right.right.left",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
    },
    {
     "operator": "exists->forall",
-    "path": "right.right.right.left",
+    "path": "left.right.right.left",
     "killed": true,
     "killed_by_item_questions": true
    },
    {
-    "operator": "and->or",
-    "path": "left.right.right.left.body",
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.right.right.body.right.body.right.right.body.right.right.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "right.right.right",
     "killed": true,
     "killed_by_item_questions": false
    },
    {
     "operator": "drop-right-conjunct",
-    "path": "left.right.right.right.left.body.right.body.right.right.body",
+    "path": "right.right.right.right.right.body.right.body.right.right.body.right.right.right.right",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right.left.body.right.body.right.right.body.right.right",
     "killed": true,
     "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-negation",
+    "path": "left.right.right.right.left.body.right.body.right.right.body.right.right.left.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
    },
    {
     "operator": "or->and",
@@ -2446,47 +2463,36 @@
     "killed_by_item_questions": true
    },
    {
-    "operator": "drop-right-conjunct",
-    "path": "left.right.right.right.left.body",
+    "operator": "and->or",
+    "path": "left.right.right.right.left.body.right.body.right.right.body",
     "killed": true,
     "killed_by_item_questions": false
    },
    {
     "operator": "and->or",
-    "path": "right.right.right.right.right.body.right.body",
+    "path": "right.right.right.right.left.body.right.body.right.right.body.right.right.right.right.left.right.right",
     "killed": false,
     "killed_by_item_questions": false,
-    "survivor_class": "distinguishable"
+    "survivor_class": "unknown"
    },
    {
-    "operator": "and->or",
-    "path": "right.right.right",
+    "operator": "drop-right-conjunct",
+    "path": "right.right",
     "killed": true,
     "killed_by_item_questions": false
+   },
+   {
+    "operator": "implies->consequent",
+    "path": "right.right.right.left.body.right.body.right.right.body.right.right.right.right.right.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
    },
    {
     "operator": "exists->forall",
-    "path": "right.right.right.right.left.body.right",
-    "killed": true,
-    "killed_by_item_questions": true
-   },
-   {
-    "operator": "drop-left-conjunct",
-    "path": "right.right.right.left.body.right.body.right.right.body",
-    "killed": true,
-    "killed_by_item_questions": false
-   },
-   {
-    "operator": "drop-right-disjunct",
-    "path": "left.right.right.left.body.right.body.right.right.body.right.right",
-    "killed": true,
-    "killed_by_item_questions": true
-   },
-   {
-    "operator": "drop-right-conjunct",
-    "path": "left.right.right.left.body.right.body.right.right.body",
-    "killed": true,
-    "killed_by_item_questions": false
+    "path": "right.right.right.left.body.right.body.right.right.body.right.right.left.left.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "unknown"
    }
   ]
  },
@@ -2495,137 +2501,92 @@
   "family": "cedar",
   "mutants": 25,
   "survivors_equivalent": 1,
-  "survivors_distinguishable": 1,
-  "survivors_unknown": 2,
-  "killed": 21,
-  "killed_by_item_questions_alone": 12,
+  "survivors_distinguishable": 0,
+  "survivors_unknown": 0,
+  "killed": 24,
+  "killed_by_item_questions_alone": 10,
   "rows": [
    {
-    "operator": "drop-left-conjunct",
-    "path": "right.body.right.right.left.body.body.body.right",
-    "killed": true,
-    "killed_by_item_questions": false
-   },
-   {
-    "operator": "and->or",
-    "path": "right.body",
-    "killed": true,
-    "killed_by_item_questions": true
-   },
-   {
-    "operator": "drop-left-conjunct",
-    "path": "right.body",
-    "killed": false,
-    "killed_by_item_questions": false,
-    "survivor_class": "equivalent"
-   },
-   {
-    "operator": "drop-left-conjunct",
-    "path": "left.left.right.body.right.right.left.body",
-    "killed": true,
-    "killed_by_item_questions": false
-   },
-   {
     "operator": "exists->forall",
-    "path": "right.body.right.left.left",
-    "killed": true,
-    "killed_by_item_questions": true
-   },
-   {
-    "operator": "drop-negation",
-    "path": "right.body.right.right.right.right",
-    "killed": true,
-    "killed_by_item_questions": true
-   },
-   {
-    "operator": "or->and",
-    "path": "right.body.right.right",
-    "killed": true,
-    "killed_by_item_questions": true
-   },
-   {
-    "operator": "exists->forall",
-    "path": "right.body.right.right.left.body",
+    "path": "right.body.right.right.left.body.body",
     "killed": true,
     "killed_by_item_questions": true
    },
    {
     "operator": "drop-right-conjunct",
+    "path": "left.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
     "path": "left.right.right",
     "killed": true,
     "killed_by_item_questions": false
    },
    {
-    "operator": "exists->forall",
-    "path": "right.body.right.right.right.left.left",
+    "operator": "and->or",
+    "path": "left.left.right.body.right.right.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right",
     "killed": true,
     "killed_by_item_questions": true
    },
    {
     "operator": "drop-right-conjunct",
-    "path": "left.left.right.body.right.right.left.body",
-    "killed": false,
-    "killed_by_item_questions": false,
-    "survivor_class": "unknown"
-   },
-   {
-    "operator": "and->or",
     "path": "right.body.right.right.right.left",
     "killed": true,
     "killed_by_item_questions": false
    },
    {
-    "operator": "drop-right-disjunct",
-    "path": "right.body.right.right",
-    "killed": true,
-    "killed_by_item_questions": true
-   },
-   {
-    "operator": "drop-left-conjunct",
-    "path": "right.body.right",
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.left",
     "killed": true,
     "killed_by_item_questions": false
    },
    {
-    "operator": "exists->forall",
-    "path": "left.left.right.body.right.left.body",
+    "operator": "drop-right-conjunct",
+    "path": "right.body.right.left.left.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.left.right.body.right.right.right.right.body",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right.right.right",
     "killed": true,
     "killed_by_item_questions": true
    },
    {
     "operator": "drop-left-conjunct",
-    "path": "left.left.right.body",
+    "path": "left.left.right.body.right.right.left.body.body.right",
     "killed": true,
-    "killed_by_item_questions": true
+    "killed_by_item_questions": false
    },
    {
-    "operator": "drop-right-conjunct",
+    "operator": "and->or",
     "path": "right.body.right.right.left.body.body.body.right",
     "killed": true,
     "killed_by_item_questions": false
    },
    {
     "operator": "drop-left-conjunct",
-    "path": "left.left.right.body.right.right",
+    "path": "right.body.right.right.right",
     "killed": true,
     "killed_by_item_questions": false
    },
    {
     "operator": "drop-right-conjunct",
-    "path": "left.left.right.body.right",
-    "killed": true,
-    "killed_by_item_questions": true
-   },
-   {
-    "operator": "drop-left-conjunct",
-    "path": "right.body.right.right.right.left",
-    "killed": false,
-    "killed_by_item_questions": false,
-    "survivor_class": "distinguishable"
-   },
-   {
-    "operator": "and->or",
-    "path": "right.body.right",
+    "path": "right.body.right.right.right",
     "killed": true,
     "killed_by_item_questions": true
    },
@@ -2636,23 +2597,65 @@
     "killed_by_item_questions": false
    },
    {
-    "operator": "and->or",
+    "operator": "drop-negation",
+    "path": "right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.left.right.body.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
     "path": "left.left.right.body",
     "killed": true,
     "killed_by_item_questions": true
    },
    {
-    "operator": "drop-left-conjunct",
-    "path": "left.right.right",
-    "killed": false,
-    "killed_by_item_questions": false,
-    "survivor_class": "unknown"
+    "operator": "exists->forall",
+    "path": "right.body.right.right.left.body",
+    "killed": true,
+    "killed_by_item_questions": true
    },
    {
     "operator": "drop-left-conjunct",
-    "path": "left.left.right.body.right.left.body.body.right",
+    "path": "left.left.right.body.right.right.left.body.body",
     "killed": true,
     "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.left.right.body.right",
+    "killed": true,
+    "killed_by_item_questions": true
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right.right.right.left",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-right-conjunct",
+    "path": "left.right.right",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "and->or",
+    "path": "right.body.right.right.left.body.body.body",
+    "killed": true,
+    "killed_by_item_questions": false
+   },
+   {
+    "operator": "drop-left-conjunct",
+    "path": "right.body",
+    "killed": false,
+    "killed_by_item_questions": false,
+    "survivor_class": "equivalent"
    }
   ]
  },
