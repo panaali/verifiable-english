@@ -16,10 +16,11 @@ persisted or returned passes through :func:`sanitize`, which
    candidate parser would read) as a structure, and re-serialises it only if that changed
    something, so a reply stays usable with the echoed value redacted;
 3. then decodes the result to a FIXPOINT under every supported encoding -- backslash escapes
-   (``\\uXXXX``, ``\\xXX``, ``\\/`` ...: JSON strings inside JSON, at any depth), percent-
-   encoding, HTML entities, Unicode NFKC, base64 / base64url and hex chunks of plausible
-   length, composed in any order -- and if ANY decoded view still contains a needle (or the
-   fixpoint cannot be reached within bounds), the whole string is replaced by ``[REDACTED]``.
+   (``\\uXXXX``, ``\\xXX``, octal ``\\157``, ``\\/`` ...: JSON strings inside JSON, at any
+   depth), percent-encoding, HTML entities, Unicode NFKC, base64 / base64url (also wrapped across
+   lines) and hex chunks of plausible length, composed in any order -- and if ANY decoded view
+   still contains a needle (or the fixpoint cannot be reached within bounds), the whole string
+   is replaced by ``[REDACTED]``.
 
 Step 3 is the gate that closes the class: the output of :func:`sanitize` never exposes a
 needle under any composition of the supported decodings, and :func:`sanitize` is idempotent.
@@ -46,9 +47,11 @@ REDACTED = "[REDACTED]"
 KNOWN_PREFIXES = ("sk-ant-",)
 MAX_VIEWS = 512
 
-_ESCAPE = re.compile(r"\\(u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8}|x[0-9a-fA-F]{2}|[\\/\"'bfnrt])")
+_ESCAPE = re.compile(r"\\(u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8}|x[0-9a-fA-F]{2}|[0-7]{1,3}|[\\/\"'bfnrt])")
 _SIMPLE = {"\\": "\\", "/": "/", '"': '"', "'": "'", "b": "\b", "f": "\f", "n": "\n", "r": "\r", "t": "\t"}
 _B64_CHUNK = re.compile(r"[A-Za-z0-9+/_\-]{12,}={0,2}")
+# Base64 wrapped across lines (MIME / PEM style): runs of the alphabet joined by line breaks.
+_B64_WRAPPED = re.compile(r"[A-Za-z0-9+/_\-]{2,}(?:[ \t]*\r?\n[ \t]*[A-Za-z0-9+/_\-]{2,})+={0,2}")
 _HEX_CHUNK = re.compile(r"(?:[0-9a-fA-F]{2}){8,}")
 _JSON_SPAN = re.compile(r"\{.*\}", re.S)
 
@@ -75,6 +78,8 @@ def _unescape(text):
                 return chr(int(body[1:], 16))
             except (ValueError, OverflowError):
                 return match.group(0)
+        if body[0] in "01234567":  # C / Python / shell octal escape, e.g. \157 == "o"
+            return chr(int(body, 8))
         return _SIMPLE[body]
     return _ESCAPE.sub(one, text)
 
@@ -97,7 +102,9 @@ def _bytes_text(data):
 
 def _base64(text):
     out = []
-    for chunk in _B64_CHUNK.findall(text):
+    chunks = _B64_CHUNK.findall(text)
+    chunks += [c for c in (re.sub(r"\s+", "", w) for w in _B64_WRAPPED.findall(text)) if len(c) >= 12]
+    for chunk in chunks:
         body = chunk.rstrip("=").replace("-", "+").replace("_", "/")
         for offset in range(4):
             part = body[offset:]

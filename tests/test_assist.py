@@ -1796,3 +1796,59 @@ def test_astra_fix4_encoded_credentials_never_persist_on_any_path(tmp_path, monk
     good = verify_session(ledger, calls=[json.loads(l) for l in calls.read_text().splitlines()
                                          if not json.loads(l)["item_id"].startswith("direct")])
     assert good["ok"], good["problems"]
+
+
+# ---------------------------------------------------------------- Astra fix-review 5
+
+MALFORMED_RECORDS = {
+    "json_null": None,
+    "array_record": [{"type": "result"}],
+    "message_null": {"type": "assistant", "message": None},
+    "model_usage_null": {"type": "result", "subtype": "success", "modelUsage": None},
+    "array_valued_model": {"type": "assistant", "message": {"id": "m1", "model": ["a", "b"], "content": []}},
+}
+
+
+@pytest.mark.parametrize("shape", list(MALFORMED_RECORDS))
+def test_astra_fix5_malformed_record_keeps_usage_and_writes_final_row(tmp_path, monkeypatch, shape):
+    """A malformed record appended to a complete 900/7 stream is an endpoint error that still logs its final
+    row with the usage seen (never not_started), and the untampered session verifies."""
+    import ve_experiments.claude_cli as cc
+    from ve.assist import verify_session
+    model = cc.MODELS["sonnet"]
+    records = _stream(model, model, text=GOOD_REPLY)
+    raw = _raw(records) + "\n" + json.dumps(MALFORMED_RECORDS[shape])
+    # Classification and usage extraction are total over the malformed stream.
+    assert cc.infrastructure_failure(raw, model) is None
+    assert (cc.reported_usage(raw)["input_tokens"], cc.reported_usage(raw)["output_tokens"]) == (900, 7)
+    proposer = _fake_cli(tmp_path, monkeypatch, [])
+    _run_streams(monkeypatch, [(raw, 0)])
+    s = _session_with(proposer)
+    assert not s.apply("propose", {"sentence": "p1.2", "k": 1})["ok"]
+    rows = [json.loads(l) for l in (tmp_path / "calls.jsonl").read_text().splitlines()]
+    assert [r["status"] for r in rows] == ["started", "error"], rows
+    assert (rows[-1]["input_tokens"], rows[-1]["output_tokens"]) == (900, 7)
+    call = s.events[-1]["model_calls"][0]
+    assert (call["input_tokens"], call["output_tokens"]) == (900, 7) and not call.get("not_started"), call
+    assert s.usage()["tokens"]["proposer"] == {"input_tokens": 900, "output_tokens": 7, "calls": 1}
+    result = verify_session(json.loads(json.dumps(s.to_ledger())), calls=tmp_path / "calls.jsonl")
+    assert result["ok"], result["problems"]
+
+
+@pytest.mark.parametrize("how", ["octal_escape", "base64_wrapped"])
+def test_astra_fix5_octal_and_wrapped_base64_credentials_are_redacted(how):
+    import base64
+    from ve import stream_audit
+    needles = stream_audit.needles_for(FAKE_TOKEN)
+    if how == "octal_escape":
+        enc = "\\%03o" % ord(FAKE_TOKEN[0]) + FAKE_TOKEN[1:]
+    else:
+        b64 = base64.b64encode(FAKE_TOKEN.encode()).decode()
+        enc = "\n".join(b64[i:i + 8] for i in range(0, len(b64), 8))
+    for text in (enc, "reading: " + enc + " end", json.dumps({"candidates": [{"reading": enc}]})):
+        assert stream_audit.exposes(text, needles)
+        clean = stream_audit.sanitize(text, needles)
+        assert not stream_audit.exposes(clean, needles) and stream_audit.sanitize(clean, needles) == clean
+    # Ordinary multi-line prose and octal-free text are untouched.
+    prose = "The API\nis reviewed\nand safe."
+    assert stream_audit.sanitize(prose, needles) == prose
