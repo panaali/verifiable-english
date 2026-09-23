@@ -170,3 +170,10 @@ grant-scale plan. Starting evidence: 11 checked rational-algebra lemmas in exper
 Package 3b result (2026-09-22): [ICEBERG direct proof and measured ledger](experiments/obfuscated-arguments/iceberg/README.md).
 The ideal rational root is checked, including finite-history no-spill and an explicit air-mass tolerance;
 independent physical-model review and the matched VE-versus-interface/debate experiments remain open.
+
+## Cryptography-inspired ideas (2026-09-22)
+
+See `design/crypto-inspired-oversight.md`. Top three: separating certificates for "cannot access" claims in T1
+(checking cheap, redoing expensive: the asymmetry where a frontier benefit is plausible); signed checker verdicts
+(P1 showed judges cannot detect forgeries); meaning_id commitments before cross-examination as a P5 arm. Also the
+proof-carrying-actions direction (agents prove a tool call complies before it runs).
