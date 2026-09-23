@@ -22,6 +22,7 @@ import json
 import os
 import platform
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
@@ -50,6 +51,40 @@ def check_context_date(controls):
 
 class EndpointError(RuntimeError):
     pass
+
+
+# Credential-like substrings (same patterns as ve/assist/proposer.py; this module does not import ve).
+_SECRET_PATTERNS = (
+    re.compile(r"sk-[A-Za-z0-9_\-]{6,}"),
+    re.compile(r"eyJ[A-Za-z0-9_\-]{6,}\.[A-Za-z0-9_\-]{6,}(?:\.[A-Za-z0-9_\-]*)?"),
+    re.compile(r"(?i)\bbearer\s+[^\s'\",;\]]+"),
+    re.compile(r"(?i)\b([a-z_]*(?:token|secret|password|api_?key|credential)[a-z_]*)\s*[:=]\s*[^\s'\",;\]]{8,}"),
+    re.compile(r"(?<![A-Za-z0-9_\-])(?=[A-Za-z0-9_\-]*[0-9])(?=[A-Za-z0-9_\-]*[A-Za-z])[A-Za-z0-9_\-]{32,}"),
+)
+
+
+def redact(text, token=None):
+    """Remove the live token (exact) and anything else that looks like a credential."""
+    text = str(text)
+    if token:
+        text = text.replace(token, "[REDACTED]")
+    for pattern in _SECRET_PATTERNS:
+        text = pattern.sub("[REDACTED]", text)
+    return text
+
+
+def sanitized_error(exc, token=None):
+    """A fresh exception safe to propagate: same class for endpoint errors, redacted message, no
+    traceback/context chain back to the original (which may carry credentials)."""
+    message = redact(exc, token)
+    if isinstance(exc, EndpointError):
+        try:
+            clean = type(exc)(message)
+        except Exception:
+            clean = EndpointError(message)
+    else:
+        clean = EndpointError(f"{type(exc).__name__}: {message}")
+    return clean
 
 
 class InfrastructureError(EndpointError):
@@ -194,6 +229,35 @@ def isolated_env(base, config, home, token, controls):
         env.update(MAX_THINKING_TOKENS=str(controls.thinking_tokens),
                    CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING="1")
     return env
+
+
+def reported_usage(raw):
+    """Usage the stream reports, extracted leniently BEFORE any validation (so a truncated or
+    otherwise rejected response still accounts for the tokens it spent)."""
+    records = []
+    for line in raw.splitlines():
+        try:
+            record = json.loads(line)
+        except ValueError:
+            continue
+        if type(record) is dict:
+            records.append(record)
+    results = [r for r in records if r.get("type") == "result"]
+    models = {m.get("model") for r in records if r.get("type") == "assistant"
+              for m in [r.get("message") or {}] if type(m) is dict}
+    models |= {k for r in results for k in (r.get("modelUsage") or {})}
+    models = sorted(str(m) for m in models - {None, "<synthetic>"})
+    out = {"served_model": models[0] if len(models) == 1 else None, "reported_models": models}
+    usage = (results[-1].get("usage") if results else None) or {}
+    if type(usage) is dict:
+        keys = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
+        values = [usage.get(k, 0) for k in keys]
+        if usage.get("input_tokens") is not None and all(type(v) is int and v >= 0 for v in values):
+            out["input_tokens"] = sum(values)
+        if type(usage.get("output_tokens")) is int and usage["output_tokens"] >= 0:
+            out["output_tokens"] = usage["output_tokens"]
+        out["usage"] = usage
+    return out
 
 
 def parse_stream(raw, expected_model):
@@ -360,22 +424,32 @@ class ClaudeCLI:
                         raw = raw.replace(token, "[REDACTED]")
                     if infrastructure_failure(raw, self.controls.model, str(exc)) or isinstance(exc, ConnectionError):
                         exc = InfrastructureError("connection error or empty timed-out stream")
+                # Usage is taken from the stream even when validation rejected it (e.g. truncation).
+                parsed = parsed or reported_usage(raw)
+                if parsed.get("served_model") is not None:
+                    parsed = {**parsed, "served_model": redact(parsed["served_model"], token)}
+                if parsed.get("reported_models"):
+                    parsed = {**parsed, "reported_models": [redact(m, token) for m in parsed["reported_models"]]}
                 failed = {**base, **parsed, "status": "infrastructure_error" if isinstance(exc, InfrastructureError) else "error",
                           "classification": "INFRASTRUCTURE" if isinstance(exc, InfrastructureError) else "ENDPOINT",
                           "counts_as_sample": False, "retry_number": retry_number,
-                          "timestamp": now(), "error": str(exc).replace(token, "[REDACTED]"),
+                          "timestamp": now(), "error": redact(exc, token),
                           "raw_stream": raw, "elapsed_s": time.monotonic()-start}
                 # Parsed stream fields (init, text, usage) are redacted exactly as on the success path.
                 failed = json.loads(json.dumps(failed).replace(token, "[REDACTED]"))
                 append(failed)
-                # Callers (e.g. ve assist) log the usage actually spent by a call that then failed.
-                try:
-                    exc.usage = {"input_tokens": failed.get("input_tokens"), "output_tokens": failed.get("output_tokens"),
-                                 "model": failed.get("served_model"), "account_label": self.account_label,
+                # The caller gets a sanitized copy (never the original, whose message or context may
+                # echo credentials), carrying the usage actually spent so it can be logged.
+                failure = sanitized_error(exc, token)
+                failure.usage = {"input_tokens": failed.get("input_tokens"),
+                                 "output_tokens": failed.get("output_tokens"),
+                                 "model": failed.get("served_model"),
+                                 "account_label": self.account_label,
                                  "call_key": key}
-                except AttributeError:
-                    pass
-                raise exc
+            else:
+                failure = None
+            if failure is not None:
+                raise failure
             # Defence in depth against accidental credential echo in model protocol data.
             row = json.loads(json.dumps(row).replace(token, "[REDACTED]"))
             append(row)

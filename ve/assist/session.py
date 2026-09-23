@@ -16,11 +16,13 @@ author's responsibility and is audited outside the tool.
 from __future__ import annotations
 
 from copy import deepcopy
+import dataclasses
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 import hashlib
 import inspect
 import json
+import secrets
 import warnings
 
 from .. import ast
@@ -100,6 +102,29 @@ def _predicates_of(formula, found=None):
     return found
 
 
+def _symbols_of(formula):
+    """Every vocabulary symbol a formula uses: predicates, relations, constants and quantified sorts."""
+    found, pending = set(), [formula]
+    while pending:
+        node = pending.pop()
+        if type(node) is ast.Const:
+            found.add(node.name)
+            continue
+        for item in dataclasses.fields(node):
+            value = getattr(node, item.name)
+            if item.name in ("predicate", "relation", "sort") and type(value) is str:
+                found.add(value)
+            elif dataclasses.is_dataclass(value):
+                pending.append(value)
+    return found
+
+
+def _conjuncts(formula):
+    if type(formula) is ast.And:
+        return _conjuncts(formula.left) + _conjuncts(formula.right)
+    return [formula]
+
+
 def _constants_of(formula, found=None):
     found = set() if found is None else found
     pending = [formula]
@@ -161,8 +186,9 @@ class AssistSession:
                                  "frozen_by": None}
             if row.get("formula"):
                 formula, _ = self._parse(row["formula"], "auto")
-                self._reject_vacuous(tid, formula)
-                self.targets[tid].update(formula=formula, text=self._canonical(formula), frozen_by="config")
+                vacuity = self._reject_vacuous(tid, formula)
+                self.targets[tid].update(formula=formula, text=self._canonical(formula), frozen_by="config",
+                                         vacuity=vacuity)
         if not self.targets:
             raise AssistError("A session needs at least one target sentence")
         self.nodes: dict[str, Node] = {}
@@ -182,13 +208,20 @@ class AssistSession:
     @classmethod
     def create(cls, environment, source, targets, *, english_vocabulary=None, options=None, metadata=None):
         env = environment if isinstance(environment, dict) else environment.to_dict()
-        config = {"format": SESSION_FORMAT, "tool_version": TOOL_VERSION, "environment": env,
+        # session_id names this session's backend calls (item ids in the calls ledger). It is fixed at
+        # creation and survives metadata edits, so calls cannot be orphaned by re-digesting the config.
+        config = {"format": SESSION_FORMAT, "tool_version": TOOL_VERSION, "session_id": secrets.token_hex(8),
+                  "environment": env,
                   "english_vocabulary": english_vocabulary, "source": source, "targets": targets,
                   "options": options or {}, "metadata": metadata or {}, "created": _now()}
         session = cls(config)
         session.config["options"] = dict(session.options)
         session.config["config_digest"] = config_digest(session.config)
         return session
+
+    @property
+    def session_id(self):
+        return self.config.get("session_id") or str(self.config.get("config_digest", "session"))[:16]
 
     # ------------------------------------------------------------------ helpers
     def _canonical(self, formula):
@@ -262,10 +295,58 @@ class AssistSession:
         return view
 
     def _reject_vacuous(self, tid, formula):
-        """A target the prover derives from no premises at all certifies nothing."""
-        if self._entails((), formula):
+        """A target valid on its own certifies nothing. Returns ``invalid`` (a real claim) or ``unknown``
+        (the check ran out of budget: the target may be frozen but the item can never succeed)."""
+        vacuity = self._validity(formula)
+        if vacuity == "valid":
             raise AssistError(f"Target {tid} is provable from no premises (vacuous); freeze the sentence's "
                               "actual claim")
+        return vacuity
+
+    def _proved_alone(self, formula):
+        """Found / NotFound / ResourceLimit for ``formula`` from no premises (errors count as ResourceLimit)."""
+        if type(formula) is ast.Top:
+            return "Found"
+        try:
+            return prove_entailment(self.env, (), formula, max_steps=self.options["max_proof_steps"]).status
+        except (ValueError, VEError):
+            return "ResourceLimit"
+
+    def _validity(self, formula):
+        """``valid`` / ``invalid`` / ``unknown`` from no premises, conjunct by conjunct. Fails closed:
+        ``invalid`` needs a saturated open tableau (not closure@0) or a checked countermodel."""
+        parts = []
+        for part in _conjuncts(formula):
+            status = self._proved_alone(part)
+            if status == "Found":
+                parts.append("valid")
+                continue
+            if status == "NotFound" and not self.env.closure:
+                return "invalid"
+            budget = self._budget()
+            found, model = ground_countermodel(self.env, (), part)
+            if found == "Unsupported":
+                model = find_countermodel(self.env, (), part, max_domain_size=budget["max_domain_size"],
+                                          max_models=budget["max_models"],
+                                          max_evaluations=budget["max_evaluations"]).model
+            if model is not None and check_countermodel(self.env, (), part, model,
+                                                        max_evaluations=budget["max_evaluations"]).valid:
+                return "invalid"
+            parts.append("unknown")
+        return "valid" if all(p == "valid" for p in parts) else "unknown"
+
+    def _tautology(self, formula):
+        """Proved valid from no premises, conjunct by conjunct (no countermodel search)."""
+        return all(self._proved_alone(part) == "Found" for part in _conjuncts(formula))
+
+    def _offered(self, formula):
+        """The candidate or suggestion (kind, id) whose formula this is, if any: provenance is bound to
+        content, so retyping an offered formula by hand cannot erase that the proposer supplied it."""
+        for kind, pool in (("proposer", self.candidates), ("suggestion", self.suggestions)):
+            for ref, row in pool.items():
+                if row["formula"] == formula:
+                    return kind, ref
+        return None
 
     def _require_frozen(self):
         missing = [t for t, row in self.targets.items() if row["formula"] is None]
@@ -328,7 +409,8 @@ class AssistSession:
         except VEError as exc:
             result = {"ok": False, "error": exc.to_dict()}
         except RuntimeError as exc:  # a backend failure must still be logged, never lost
-            result = {"ok": False, "error": {"code": "BackendError", "message": str(exc)[:500]}}
+            from .proposer import redact_secrets
+            result = {"ok": False, "error": {"code": "BackendError", "message": redact_secrets(str(exc))[:500]}}
         finally:
             self._leftover_calls = len(self._replaying) if self._replaying is not None else 0
             self._replaying = None
@@ -364,13 +446,20 @@ class AssistSession:
         if self.nodes:
             raise AssistError("Targets must be frozen before any node is added")
         formula, used = self._parse(text, surface)
-        self._reject_vacuous(target, formula)
+        vacuity = self._reject_vacuous(target, formula)
         origin = "hand-written"
         if candidate is not None:
             origin = "proposer-verbatim" if formula == self.candidates[candidate]["formula"] else "proposer-edited"
-        row.update(formula=formula, text=self._canonical(formula), frozen_by="author", origin=origin)
-        return {"target": target, "sentence": self._sentence_view(row["sentence"]), "text": row["text"],
-                "paraphrase": self.paraphrase_formula(formula), "surface": used}
+        elif self._offered(formula):
+            origin = self._offered(formula)[0] + "-verbatim"
+        row.update(formula=formula, text=self._canonical(formula), frozen_by="author", origin=origin,
+                   vacuity=vacuity)
+        result = {"target": target, "sentence": self._sentence_view(row["sentence"]), "text": row["text"],
+                  "paraphrase": self.paraphrase_formula(formula), "surface": used, "origin": origin}
+        if vacuity == "unknown":
+            result["warning"] = ("Could not decide within budget whether this target is provable from no "
+                                 "premises; the item cannot succeed (fail closed).")
+        return result
 
     def _do_add_node(self, name, text=None, anchors=(), parents=(), candidate=None, suggestion=None,
                      surface="auto"):
@@ -398,6 +487,9 @@ class AssistSession:
                 raise AssistError("add_node needs text, a candidate, or a suggestion")
             formula, _ = self._parse(text, surface)
             origin = "hand-written"
+            offered = self._offered(formula)
+            if offered:
+                origin, ref = offered[0] + "-verbatim", offered[1]
         self.nodes[name] = Node(name, formula, self._canonical(formula), anchors, parents, origin, ref)
         return {"node": self.node_view(name)}
 
@@ -423,8 +515,12 @@ class AssistSession:
             raise AssistError("Rewrite changes nothing")
         node.history.append({"text": node.text, "anchors": list(node.anchors), "parents": list(node.parents),
                              "origin": node.origin})
-        if formula != node.formula and node.origin.endswith("-verbatim"):
-            node.origin = node.origin.replace("-verbatim", "-edited")
+        if formula != node.formula:
+            offered = self._offered(formula)
+            if offered:
+                node.origin, node.source_ref = offered[0] + "-verbatim", offered[1]
+            elif node.origin.endswith("-verbatim"):
+                node.origin = node.origin.replace("-verbatim", "-edited")
         node.formula, node.text, node.anchors, node.parents = formula, self._canonical(formula), new_anchors, new_parents
         self._invalidate(name)
         return {"node": self.node_view(name), "invalidated_checks": sorted(
@@ -665,7 +761,8 @@ class AssistSession:
         row = self.targets[tid]
         view = {"id": tid, "sentence": self._sentence_view(row["sentence"]), "frozen": row["formula"] is not None}
         if row["formula"] is not None:
-            view.update(text=row["text"], paraphrase=self.paraphrase_formula(row["formula"]))
+            view.update(text=row["text"], paraphrase=self.paraphrase_formula(row["formula"]),
+                        vacuity=row.get("vacuity", "invalid"))
         return view
 
     def _do_paraphrase(self, text, surface="auto"):
@@ -790,8 +887,28 @@ class AssistSession:
                 if leaves and self._entails(leaves, ast.Bottom()):
                     view["inconsistent_assumptions"] = True
                     failures.append(f"target {tid}: its assumptions are jointly contradictory")
+                # Vacuity through the graph: tautological assumptions add nothing, so a target they
+                # entail on their own is vacuous even when the direct empty-premise check ran out of budget.
+                trivial = [n for n in sorted(result.remaining_assumptions) if self._tautology(self.nodes[n].formula)]
+                if trivial and self._entails([self.nodes[n].formula for n in trivial], self.targets[tid]["formula"]):
+                    view["vacuous"] = True
+                    failures.append(f"target {tid}: provable from tautological assumptions only "
+                                    f"({', '.join(trivial)})")
+            if view["frozen"] and view.get("vacuity") == "unknown":
+                failures.append(f"target {tid}: vacuity unknown (the empty-premise check exhausted its budget; "
+                                "fail closed)")
             targets.append(view)
         steps = [n for n in self.nodes.values() if n.kind == "step"]
+        # A claimed sentence is DERIVED when a certified step anchored to it has a fully certified support
+        # and no single assumption in that support already states it. Covering it with an idle node, or
+        # waiving it, never counts. Deriving steps join the load-bearing analysis like target supports.
+        derived = {}
+        for sid in self.sentence_order:
+            if self.sentences[sid]["role"] == "claimed" and self.sentences[sid]["asserting"]:
+                witness = self._derivation(sid)
+                if witness is not None:
+                    derived[sid] = witness
+                    support_all.update(self._support(witness))
         unproved = [{"node": n.name, "check": self.checks.get(n.name, {}).get("status", "unchecked"),
                      "parents": list(n.parents)} for n in steps
                     if self.checks.get(n.name, {}).get("status") != "follows"]
@@ -822,19 +939,32 @@ class AssistSession:
             unanchored.append(row)
             if needed_by:
                 failures.append(f"load-bearing unanchored assumption {n.name}")
-        coverage, uncovered = [], []
+        coverage, uncovered, underived, waived = [], [], [], []
         for sid in self.sentence_order:
             s = self.sentences[sid]
             if not s["asserting"]:
                 continue
             by = [n.name for n in self.nodes.values() if sid in n.anchors]
-            state = "covered" if by else "waived" if sid in self.waivers else "uncovered"
+            if s["role"] == "claimed":
+                state = "derived" if sid in derived else "waived" if sid in self.waivers else "underived"
+            else:
+                state = "covered" if by else "waived" if sid in self.waivers else "uncovered"
             coverage.append({"sentence": sid, "role": s["role"], "state": state, "nodes": by,
+                             **({"derived_by": derived[sid]} if state == "derived" else {}),
                              **({"waiver": self.waivers[sid]} if state == "waived" else {})})
-            if state == "uncovered":
-                uncovered.append(sid)
+            {"uncovered": uncovered, "underived": underived, "waived": waived}.get(state, []).append(sid)
         if uncovered:
-            failures.append(f"{len(uncovered)} asserting sentence(s) neither covered nor waived")
+            failures.append(f"{len(uncovered)} given sentence(s) not covered by any node: {', '.join(uncovered)}")
+        if underived:
+            failures.append(f"{len(underived)} claimed sentence(s) not derived by a certified step: "
+                            f"{', '.join(underived)}")
+        if waived:
+            failures.append(f"{len(waived)} asserting sentence(s) waived (a waiver is reported, never success): "
+                            f"{', '.join(waived)}")
+        waivers = [{"sentence": sid, "role": self.sentences[sid]["role"],
+                    "asserting": self.sentences[sid]["asserting"], "reason": reason,
+                    "counts_against_success": sid in waived}
+                   for sid, reason in self.waivers.items()]
         for tid, row in self.targets.items():
             if row["formula"] is None:
                 continue
@@ -848,15 +978,32 @@ class AssistSession:
         return {"success": not failures, "failures": failures, "targets": targets,
                 "unproved_steps": unproved, "unanchored_assumptions": unanchored,
                 "coverage": {"covered": sum(r["state"] == "covered" for r in coverage),
+                             "derived": sum(r["state"] == "derived" for r in coverage),
                              "waived": sum(r["state"] == "waived" for r in coverage),
-                             "uncovered": uncovered, "sentences": coverage},
+                             "uncovered": uncovered, "underived": underived, "sentences": coverage},
+                "waivers": waivers,
                 "renamed_conclusions": renamed, "provenance": origins,
                 "declared": self.declared, "usage": self.usage()}
+
+    def _derivation(self, sid):
+        """The certified step that derives claimed sentence ``sid``, or None."""
+        follows = lambda n: self.checks.get(n, {}).get("status") == "follows"
+        for node in self.nodes.values():
+            if node.kind != "step" or sid not in node.anchors or not follows(node.name):
+                continue
+            support = [self.nodes[n] for n in self._support(node.name)]
+            if not all(follows(m.name) for m in support if m.kind == "step"):
+                continue
+            if any(self._entails([m.formula], node.formula) for m in support if m.kind == "assumption"):
+                continue
+            return node.name
+        return None
 
     def _renamed_conclusions(self):
         """Declared vocabulary that carries a target.
 
-        The suspect assumptions are every assumption that mentions a declared symbol plus every
+        The suspect assumptions are every assumption that mentions a declared symbol (predicate,
+        constant or sort) plus every
         assumption not anchored to given prose. If they jointly entail a target WITHOUT the anchored,
         undeclared premises, the target was carried in, not derived; the reported set is a minimal
         entailing subset (so chains through ordinary assumptions are caught, not only pairs).
@@ -864,8 +1011,7 @@ class AssistSession:
         if not self.declared:
             return []
         declared = set(self.declared)
-        carriers = [n for n in self.nodes.values() if n.kind == "assumption"
-                    and (_predicates_of(n.formula) | _constants_of(n.formula)) & declared]
+        carriers = [n for n in self.nodes.values() if n.kind == "assumption" and _symbols_of(n.formula) & declared]
         if not carriers:
             return []
         names = {n.name for n in carriers}

@@ -110,9 +110,14 @@ def render(command, result):
             lines.append(f"unanchored assumption {row['node']} [{row['anchor_state']}]"
                          + (" LOAD-BEARING for " + ", ".join(row["needed_by"]) if row["load_bearing"] else ""))
         cov = result["coverage"]
-        lines.append(f"coverage: {cov['covered']} covered, {cov['waived']} waived, "
-                     f"{len(cov['uncovered'])} uncovered" + (f" ({', '.join(cov['uncovered'])})"
-                                                            if cov["uncovered"] else ""))
+        lines.append(f"coverage: {cov['derived']} claimed derived, {cov['covered']} given covered, "
+                     f"{cov['waived']} waived, {len(cov['uncovered'])} uncovered"
+                     + (f" ({', '.join(cov['uncovered'])})" if cov["uncovered"] else "")
+                     + f", {len(cov['underived'])} claimed underived"
+                     + (f" ({', '.join(cov['underived'])})" if cov["underived"] else ""))
+        for row in result["waivers"]:
+            lines.append(f"waiver {row['sentence']} [{row['role']}]: {row['reason']}"
+                         + (" (blocks success)" if row["counts_against_success"] else ""))
         for row in result["renamed_conclusions"]:
             lines.append(f"renamed conclusion: {row['assumptions']} entail {row['target']}")
         lines.append("provenance: " + ", ".join(f"{k} {v}" for k, v in result["provenance"].items() if v))

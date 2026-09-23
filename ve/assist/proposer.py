@@ -53,6 +53,27 @@ when the sentence genuinely admits different readings (scope, conditional vs
 asserted). Different candidates must differ in meaning."""
 
 
+# Anything that looks like a credential is redacted from every logged or returned error and from
+# backend-reported identity fields (a token echoed as a "model name" must not reach the ledger).
+# The same patterns live in ve_experiments/claude_cli.py, which does not import ve.
+_SECRET_PATTERNS = (
+    re.compile(r"sk-[A-Za-z0-9_\-]{6,}"),                                    # API / OAuth keys
+    re.compile(r"eyJ[A-Za-z0-9_\-]{6,}\.[A-Za-z0-9_\-]{6,}(?:\.[A-Za-z0-9_\-]*)?"),  # JWTs
+    re.compile(r"(?i)\bbearer\s+[^\s'\",;\]]+"),
+    re.compile(r"(?i)\b([a-z_]*(?:token|secret|password|api_?key|credential)[a-z_]*)\s*[:=]\s*[^\s'\",;\]]{8,}"),
+    re.compile(r"(?<![A-Za-z0-9_\-])(?=[A-Za-z0-9_\-]*[0-9])(?=[A-Za-z0-9_\-]*[A-Za-z])[A-Za-z0-9_\-]{32,}"),
+)
+
+
+def redact_secrets(value):
+    """Return ``value`` (any str; other types pass through) with credential-like substrings replaced."""
+    if not isinstance(value, str):
+        return value
+    for pattern in _SECRET_PATTERNS:
+        value = pattern.sub("[REDACTED]", value)
+    return value
+
+
 def _digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
@@ -161,11 +182,14 @@ def _call(session, purpose, system, prompt, item):
         try:
             reply = session.proposer(system, prompt, item)
         except Exception as exc:  # the backend boundary: log the failure and the usage actually spent
-            spent = getattr(exc, "usage", None) or {}
+            spent = getattr(exc, "usage", None)
+            spent = spent if type(spent) is dict else {}
+            tokens = {k: spent.get(k) if type(spent.get(k)) is int and spent.get(k) >= 0 else None
+                      for k in ("input_tokens", "output_tokens")}
             call = {**base, "failed": True, "text": None,
-                    "error": f"{type(exc).__name__}: {str(exc)[:300]}",
-                    "input_tokens": spent.get("input_tokens"), "output_tokens": spent.get("output_tokens"),
-                    "model": spent.get("model"), "account_label": spent.get("account_label"),
+                    "error": redact_secrets(f"{type(exc).__name__}: {str(exc)}")[:300],
+                    **tokens, "model": redact_secrets(spent.get("model")),
+                    "account_label": redact_secrets(spent.get("account_label")),
                     "call_key": spent.get("call_key")}
         else:
             call = {**base, "text": reply["text"],
@@ -191,7 +215,7 @@ def run_propose(session, sentence, k=None, note=None):
     prompt = build_prompt(session, sentence, k, note)
     # The event sequence number makes every propose attempt a fresh backend key, so a failed
     # call can be retried (the endpoint refuses to re-run a key that started or failed).
-    item = f"{session.config.get('config_digest', 'session')[:16]}/{pid}/e{session._seq}"
+    item = f"{session.session_id}/{pid}/e{session._seq}"
     valid, dropped = [], []
     raw_prompt = prompt
     for round_number in range(1 + session.options["propose_repair_rounds"]):
