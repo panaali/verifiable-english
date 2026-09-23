@@ -14,7 +14,8 @@ named reference verifier. All four are here. **No model has been called.** The d
 | `build_items.py`, `ground_truth.py`, `render_prompts.py` | Rebuild everything (see Reproduce) |
 | `domain_check.py`, `domain_check.json` | Native `cedar authorize` replay of the reviewers' dangling-entity counterexamples (§3) |
 | `run_raw.py`, `analyze.py` | The freeze, the raw-arm runner (refuses to run until frozen) and the preregistered analysis |
-| `../../tests/test_dgate.py` | Offline tests: parsing, reconciliation, statistics, stop rules, resume, freeze checks |
+| `FREEZE.json`, `FREEZE-STAMP.txt(.ots)` | Written by `run_raw.py freeze` and `stamp` at the freeze (OpenTimestamps receipt); not yet present |
+| `../../tests/test_dgate.py` | Offline tests: parsing, truncation evidence, reconciliation, gates (incl. the reviewers' missingness cases), stop rules, recovery, usage-limit retries, cross-day drift, freeze, account and stamp checks |
 
 ## 1. Artefact inventory (29 = 22 Cedar + 7 Kubernetes)
 

@@ -46,8 +46,30 @@ def study():
     texts = {i: f"prompt {i}" for i in ids}
     prompts = {i: sha(t) for i, t in texts.items()}
     frozen = dict(k=3, account_label="acct", system_sha256=sha(SYSTEM), model=MODEL, claude_binary_sha256="bin",
-                  arms={"high": dict(model=MODEL, effort="high", timeout_s=900)})
+                  arms={"high": dict(model=MODEL, effort="high", timeout_s=900, output_tokens=32000)},
+                  endpoint_controls=dict(backend_revision=4, host_system="Darwin", host_release="25.3.0",
+                                         shell="/bin/sh", locale="en_US.UTF-8", timezone="UTC"))
     return ids, texts, prompts, frozen
+
+
+REJECTED = {"type": "rate_limit_event", "rate_limit_info": {"status": "rejected"}}
+OPUS_MSG = {"type": "assistant", "message": {"model": MODEL, "id": "m1", "content": [{"type": "text", "text": "Let"}]}}
+SYNTH_MAX = {"type": "assistant", "message": {"model": "<synthetic>", "id": "m2", "content": [
+    {"type": "text", "text": "API Error: Claude's response exceeded the 32000 output token maximum. To configure "
+                             "this behavior, set the CLAUDE_CODE_MAX_OUTPUT_TOKENS environment variable."}]}}
+ERROR_ROWS = {
+    "error": ("CLI exit 1", dict(stream_records=[], reported_models=[])),
+    # the pinned CLI's truncation: real Opus output then a <synthetic> max-output-tokens message (rejected by
+    # claude_cli as a served-model mismatch, not as "Truncated ...")
+    "truncated": ("Served model mismatch: ['<synthetic>', 'claude-opus-5-5']",
+                  dict(stream_records=[OPUS_MSG, SYNTH_MAX], served_model=MODEL, reported_models=[MODEL],
+                       output_tokens=32000)),
+    "quota": ("CLI exit 1", dict(stream_records=[REJECTED], served_model=None, reported_models=[])),
+    "quota_after_output": ("CLI exit 1", dict(stream_records=[OPUS_MSG, REJECTED], served_model=MODEL,
+                                              reported_models=[MODEL], output_tokens=40)),
+    "mixed": ("Served model mismatch", dict(stream_records=[OPUS_MSG], served_model=None,
+                                            reported_models=[MODEL, "claude-sonnet-5"])),
+}
 
 
 class FakeClient:
@@ -58,12 +80,15 @@ class FakeClient:
         self.tick = tick  # advances the fake clock after each call
         self.calls = []
 
+    input_tokens = staticmethod(lambda item: 100)
+
     def _row(self, item, s, prompt, system, status, **extra):
         return dict(key=f"{item}#{s}", item_id=item, sample_index=s, system=system, prompt=prompt,
                     account_label=self.frozen["account_label"], status=status,
                     timestamp=self.clock().isoformat(),
-                    controls=dict(self.frozen["arms"]["high"], context_date=self.day,
-                                  binary_sha256=self.frozen["claude_binary_sha256"]), **extra)
+                    controls=dict(self.frozen["arms"]["high"], **self.frozen["endpoint_controls"],
+                                  context_date=self.day, binary_sha256=self.frozen["claude_binary_sha256"]),
+                    **extra)
 
     def _write(self, row):
         with open(self.ledger, "a") as f:
@@ -83,21 +108,18 @@ class FakeClient:
             exc.usage = {"not_started": True, "call_key": None}
             raise exc
         self._write(self._row(item, s, prompt, system, "started"))
-        if kind in ("error", "truncated", "quota"):
-            msg = {"error": "CLI exit 1", "truncated": "Truncated or non-final response",
-                   "quota": "CLI exit 1"}[kind]
-            recs = ([{"type": "rate_limit_event", "rate_limit_info": {"status": "rejected"}}]
-                    if kind == "quota" else [])
-            self._write(self._row(item, s, prompt, system, "error", error=msg, stream_records=recs,
-                                  served_model=MODEL if kind == "truncated" else None))
+        if kind in ERROR_ROWS:
+            msg, extra = ERROR_ROWS[kind]
+            self._write(self._row(item, s, prompt, system, "error", error=msg, **extra))
             exc = EndpointError(msg)
             exc.usage = {"call_key": f"{item}#{s}"}
             raise exc
-        init = {"type": "system", "subtype": "init", "apiKeySource": "none" if kind != "paid" else "ANTHROPIC_API_KEY"}
+        init = {"type": "system", "subtype": "init", "model": MODEL,
+                "apiKeySource": "none" if kind != "paid" else "ANTHROPIC_API_KEY"}
         served = MODEL if kind != "othermodel" else "claude-sonnet-5"
         text = {"yes": "ok\nANSWER: YES", "no": "ANSWER: NO\n", "junk": "I think so."}.get(kind, "ANSWER: YES")
         row = self._row(item, s, prompt, system, "ok", text=text, served_model=served, stop_reason="end_turn",
-                        stream_records=[init])
+                        stream_records=[init], input_tokens=self.input_tokens(item))
         self._write(row)
         return row
 
@@ -110,9 +132,9 @@ def make_runner(tmp_path, study, behaviour, start=datetime(2026, 9, 23, 12, 0, t
     def tick():
         clock["t"] += timedelta(seconds=30)
 
-    def client_for_day(day, ledger):
-        clients.setdefault(day, FakeClient(ledger, day, frozen, behaviour, lambda: clock["t"], tick))
-        return clients[day]
+    def client_for_day(day, ledger):  # one client per ledger segment, as in run_raw.main
+        clients.setdefault(Path(ledger).name, FakeClient(ledger, day, frozen, behaviour, lambda: clock["t"], tick))
+        return clients[Path(ledger).name]
 
     def sleep(s):
         clock["t"] += timedelta(seconds=s)
@@ -136,9 +158,17 @@ def calls(clients):
     ("  ANSWER:  NO  ", "NO"),
     ("ANSWER: YES\nOn reflection the answer is no.", "UNPARSED"),   # an earlier answer line never counts
     ("ANSWER: YES\nANSWER: NO", "NO"),
-    ("**ANSWER: YES**", "UNPARSED"),
+    ("**ANSWER: YES**", "YES"),                                      # markdown emphasis tolerated
+    ("reasoning\n**ANSWER:** NO", "NO"),
+    ("_ANSWER: NO_", "NO"),
+    ("`ANSWER: YES`", "YES"),
+    ("ANSWER: YES.", "YES"),                                          # trailing punctuation tolerated
+    ("**ANSWER: NO.**", "NO"),
+    ("ANSWER: NO!", "NO"),
+    ("**ANSWER: YES**\nThough I am not sure.", "UNPARSED"),          # still the final line only
     ("answer: yes", "UNPARSED"),
-    ("ANSWER: YES.", "UNPARSED"),
+    ("ANSWER: YES, probably", "UNPARSED"),
+    ("ANSWER: YESNO", "UNPARSED"),
     ("ANSWER: MAYBE", "UNPARSED"),
     ("", "UNPARSED"),
     (None, "UNPARSED"),
@@ -147,12 +177,59 @@ def test_parse_final_nonempty_line_only(text, expected):
     assert A.parse(text) == expected
 
 
+CTRL = {"model": MODEL, "output_tokens": 32000}
+
+
+def err(error="CLI exit 1", **kw):
+    return dict(status="error", error=error, controls=CTRL, **kw)
+
+
 def test_ledger_classification_separates_truncation_from_infrastructure():
     assert A.classify_ledger_final({"status": "ok", "text": "x\nANSWER: NO"}) == "NO"
     assert A.classify_ledger_final({"status": "ok", "text": "no answer"}) == "UNPARSED"
-    assert A.classify_ledger_final({"status": "error", "error": "Truncated or non-final response"}) == "TRUNCATED"
-    assert A.classify_ledger_final({"status": "error", "error": "CLI exit 1"}) == "ENDPOINT_ERROR"
-    assert A.classify_ledger_final({"status": "infrastructure_error", "error": "connection error"}) == "ENDPOINT_ERROR"
+    assert A.classify_ledger_final(err()) == "ENDPOINT_ERROR"
+    assert A.classify_ledger_final(dict(err(), status="infrastructure_error")) == "ENDPOINT_ERROR"
+
+
+def test_truncation_is_classified_from_stream_evidence_not_error_text():
+    opus = dict(reported_models=[MODEL], served_model=MODEL)
+    # the error text alone is not evidence
+    assert A.classify_ledger_final(err("Truncated or non-final response")) == "ENDPOINT_ERROR"
+    # the pinned CLI's synthetic max-output-tokens message after real Opus output (a served-model mismatch)
+    row = err("Served model mismatch: ['<synthetic>', 'claude-opus-5-5']", stream_records=[OPUS_MSG, SYNTH_MAX], **opus)
+    assert A.classify_ledger_final(row) == "TRUNCATED"
+    assert A.truncation_evidence(row) == ["synthetic max-output-tokens message"]
+    # stop_reason max_tokens on the result or on an assistant message
+    res = {"type": "result", "subtype": "success", "stop_reason": "max_tokens", "modelUsage": {MODEL: {}}}
+    assert A.classify_ledger_final(err("Truncated or non-final response", stream_records=[OPUS_MSG, res], **opus)) == "TRUNCATED"
+    msg = {"type": "assistant", "message": dict(OPUS_MSG["message"], stop_reason="max_tokens")}
+    assert A.classify_ledger_final(err("Not a single-turn response", stream_records=[msg], **opus)) == "TRUNCATED"
+    # output tokens at the cap
+    row = err("Not a single-turn response", stream_records=[OPUS_MSG], output_tokens=32000, **opus)
+    assert A.truncation_evidence(row) == ["output tokens 32000 at the cap 32000"]
+    assert A.classify_ledger_final(dict(row, output_tokens=31999)) == "ENDPOINT_ERROR"
+    # no output from the frozen model, or another model involved: never a model outcome
+    assert A.classify_ledger_final(err(stream_records=[SYNTH_MAX])) == "ENDPOINT_ERROR"
+    other = {"type": "assistant", "message": dict(OPUS_MSG["message"], model="claude-sonnet-5")}
+    row = err(stream_records=[other, SYNTH_MAX], served_model=None, reported_models=["claude-sonnet-5"])
+    assert A.classify_ledger_final(row) == "ENDPOINT_ERROR"
+
+
+def test_quota_rejection_without_output_is_excluded_not_an_endpoint_error():
+    assert A.classify_ledger_final(err(stream_records=[REJECTED])) == "QUOTA_EXCLUDED"
+    assert A.classify_ledger_final(err("You've hit your limit")) == "QUOTA_EXCLUDED"
+    after = err(stream_records=[OPUS_MSG, REJECTED], served_model=MODEL, reported_models=[MODEL], output_tokens=40)
+    assert A.classify_ledger_final(after) == "ENDPOINT_ERROR"
+
+
+def test_model_identity_rejects_none_with_mixed_or_foreign_reported_models():
+    assert A.model_problems(err(served_model=None, reported_models=[]), MODEL) == []
+    assert A.model_problems(err(served_model=None, reported_models=[MODEL]), MODEL) == []
+    assert A.model_problems(err(served_model=None, reported_models=[MODEL, "claude-sonnet-5"]), MODEL)
+    assert A.model_problems(err(served_model=None, reported_models=["claude-sonnet-5"]), MODEL)
+    foreign = {"type": "assistant", "message": {"model": "claude-haiku-4-5-20251001", "content": []}}
+    assert A.model_problems(err(served_model=None, reported_models=[], stream_records=[foreign]), MODEL)
+    assert A.model_problems({"status": "ok", "served_model": None}, MODEL)
 
 
 # ------------------------------------------------------------------------------------------------
@@ -321,6 +398,74 @@ def test_item_without_samples_is_reported_and_counts_zero(real):
     assert out["primary"]["error"] == round(9 / 41, 4)   # kept in the denominator as 0
 
 
+def originals_on_distinct_artefacts(items, n):
+    out, seen = [], set()
+    for i in items:
+        if "edge" not in items[i]["tags"] and items[i]["variant"] == "original" and items[i]["cluster"] not in seen:
+            out.append(i)
+            seen.add(items[i]["cluster"])
+    assert len(out) >= n
+    return out[:n]
+
+
+def only_failing(out):
+    return sorted(k for k, v in out["robustness"].items() if not v["holds"])
+
+
+def test_opus_review_case_twelve_endpoint_errors_now_fail(real):
+    """Opus re-review B1: 12 endpoint errors (within the stop threshold) turned a 9.8% FAIL into 19.5%."""
+    items, gt, _ = real
+    pick = originals_on_distinct_artefacts(items, 12)
+    st = all_correct(items, gt)
+    for i in pick[:6]:   # 2 endpoint errors and 1 wrong answer each
+        st.update({(i, 0): flip(gt, i), (i, 1): "ENDPOINT_ERROR", (i, 2): "ENDPOINT_ERROR"})
+    for i in pick[6:]:   # 1 wrong answer in 3
+        st[(i, 0)] = flip(gt, i)
+    out = A.analyse_arm(records_from(st), items, gt, "high", 129)
+    assert out["endpoint_errors"]["n"] == 12 <= out["endpoint_errors"]["stop_threshold"]
+    assert out["primary"]["error"] == round(8 / 41, 4)                       # 0.1951 as run
+    assert out["primary"]["endpoint_errors_imputed_correct"] == round(4 / 41, 4)
+    assert only_failing(out) == ["endpoint_errors_imputed_correct"]           # every other condition holds
+    assert out["gate"].startswith("FAIL: the point estimate") and "endpoint_errors_imputed_correct" in out["gate"]
+
+
+def test_astra_review_case_14_63_to_19_51_now_fails(real):
+    """Astra re-review B2: replacing 12 correct responses with endpoint errors moved 14.63% FAIL to 19.51%."""
+    items, gt, _ = real
+    pick = originals_on_distinct_artefacts(items, 14)
+    st = all_correct(items, gt)
+    for i in pick[:12]:
+        st[(i, 0)] = flip(gt, i)
+    for i in pick[12:]:
+        st.update({(i, s): flip(gt, i) for s in range(3)})
+    before = A.analyse_arm(records_from(st), items, gt, "high", 129)
+    assert before["primary"]["error"] == round(6 / 41, 4) == 0.1463 and before["gate"].startswith("FAIL (closes")
+    for i in pick[:12]:
+        st[(i, 1)] = "ENDPOINT_ERROR"                                         # a correct response lost
+    out = A.analyse_arm(records_from(st), items, gt, "high", 129)
+    assert out["primary"]["error"] == round(8 / 41, 4) == 0.1951
+    assert out["primary"]["endpoint_errors_imputed_correct"] == 0.1463
+    assert only_failing(out) == ["endpoint_errors_imputed_correct"]
+    assert out["gate"].startswith("FAIL") and "WEAK" not in out["gate"] and out["gate"] != "PASS"
+
+
+def test_formatting_alone_cannot_create_a_pass(real):
+    """Opus re-review B2: a pass that vanishes when INVALID samples are excluded is a FAIL, not a note."""
+    items, gt, _ = real
+    pick = originals_on_distinct_artefacts(items, 12)
+    st = all_correct(items, gt)
+    st.update({(i, s): "UNPARSED" for i in pick[:9] for s in range(3)})      # formatting failures
+    st.update({(i, s): flip(gt, i) for i in pick[9:] for s in range(3)})       # real errors
+    out = A.analyse_arm(records_from(st), items, gt, "high", 129)
+    assert out["primary"]["error"] == round(12 / 41, 4) and out["primary"]["ci95_cluster_bootstrap"][0] >= 0.15
+    assert out["primary"]["invalid_excluded_sensitivity"] == round(3 / 41, 4)
+    assert only_failing(out) == ["invalid_excluded"]
+    assert out["gate"].startswith("FAIL") and "invalid_excluded" in out["gate"]
+    # the same errors as real wrong answers pass
+    st.update({(i, s): flip(gt, i) for i in pick[:9] for s in range(3)})
+    assert A.analyse_arm(records_from(st), items, gt, "high", 129)["gate"] == "PASS"
+
+
 def test_t_quantile_and_interval():
     assert abs(A.t_quantile(0.975, 27) - 2.0518) < 1e-3
     assert abs(A.t_quantile(0.975, 10) - 2.2281) < 1e-3
@@ -404,18 +549,122 @@ def test_runner_truncation_is_a_model_outcome_and_quota_aborts(tmp_path, study):
     records, _ = A.reconcile(answers, ledgers, study[2], study[3], "high")
     assert {records[("X0", s)]["status"] for s in range(3)} == {"TRUNCATED"}
     assert {records[("X1", s)]["status"] for s in range(3)} == {"UNPARSED"}
-    runner, clients, _ = make_runner(tmp_path / "q", study, lambda i, s: "quota" if i == "X1" else "yes")
+
+
+def test_runner_quota_rejection_without_output_is_excluded_and_retried(tmp_path, study):
+    runner, clients, _ = make_runner(tmp_path, study, lambda i, s: "quota" if (i, s) == ("X1", 0) else "yes")
     with pytest.raises(R.Abort, match="usage limit"):
         runner.run(study[1], SYSTEM)
-    answers, _, _ = A.load_arm(tmp_path / "q" / "high")
+    answers, ledgers, _ = A.load_arm(tmp_path / "high")
+    assert len(answers) == 3                                      # no row for the rejected sample
+    records, orphans = A.reconcile(answers, ledgers, study[2], study[3], "high", allow_incomplete=True)
+    assert ("X1", 0) not in records and not orphans
+    with pytest.raises(A.DataError, match="incomplete"):        # the analysis refuses until it is retried
+        A.reconcile(answers, ledgers, study[2], study[3], "high")
+    # after the reset: the same sample is retried (same account) in a fresh segment; not an endpoint error
+    runner2, clients2, _ = make_runner(tmp_path, study, lambda i, s: "yes")
+    runner2.run(study[1], SYSTEM)
+    assert calls(clients2)[0] == ("X1", 0) and sorted(clients2) == ["ledger-2026-09-23-q1.jsonl"]
+    answers, ledgers, _ = A.load_arm(tmp_path / "high")
+    records, _ = A.reconcile(answers, ledgers, study[2], study[3], "high")
+    assert records[("X1", 0)]["status"] == "YES" and records[("X1", 0)]["ledger"] == "ledger-2026-09-23-q1.jsonl"
+    assert not any(r["status"] == "ENDPOINT_ERROR" for r in records.values())
+    assert A.quota_excluded_attempts(ledgers) == 1
+
+
+def test_runner_quota_rejection_after_output_is_recorded_and_aborts(tmp_path, study):
+    runner, clients, _ = make_runner(tmp_path, study, lambda i, s: "quota_after_output" if i == "X1" else "yes")
+    with pytest.raises(R.Abort, match="usage limit"):
+        runner.run(study[1], SYSTEM)
+    answers, _, _ = A.load_arm(tmp_path / "high")
     assert len(answers) == 4 and answers[-1]["status"] == "ENDPOINT_ERROR"
+
+
+def test_a_replay_that_is_not_an_excluded_quota_rejection_is_refused(tmp_path, study):
+    runner, clients, _ = make_runner(tmp_path, study, lambda i, s: "error" if (i, s) == ("X1", 0) else "yes")
+    runner.run(study[1], SYSTEM)
+    answers, ledgers, _ = A.load_arm(tmp_path / "high")
+    (name, rows), = ledgers.items()
+    again = [r for r in rows if (r["item_id"], r["sample_index"]) == ("X1", 0)]
+    with pytest.raises(A.DataError, match="replay"):
+        A.reconcile(answers, {name: rows, "ledger-2026-09-23-q1.jsonl": again}, study[2], study[3], "high")
+
+
+@pytest.mark.parametrize("kind", ["paid", "othermodel", "mixed"])
+def test_recovery_rechecks_billing_and_model_before_any_call(tmp_path, study, kind):
+    """A crash after a bad call's ledger outcome but before its stop: the resumed run must stop, not call."""
+    runner, clients, _ = make_runner(tmp_path, study, lambda i, s: kind if (i, s) == ("X1", 1) else "yes")
+    with pytest.raises(R.Stop):
+        runner.run(study[1], SYSTEM)
+    (tmp_path / "high" / "STOP.json").unlink()                  # the stop was never written (crash)
+    path = tmp_path / "high" / "answers.jsonl"
+    path.write_text("".join(line + "\n" for line in path.read_text().splitlines()[:-1]))
+    runner2, clients2, _ = make_runner(tmp_path, study, lambda i, s: "yes")
+    with pytest.raises(R.Stop, match="billing" if kind == "paid" else "served model"):
+        runner2.run(study[1], SYSTEM)
+    assert not calls(clients2) and (tmp_path / "high" / "STOP.json").exists()
+
+
+def test_mixed_reported_models_with_served_none_stop_the_run_and_the_analysis(tmp_path, study):
+    runner, clients, _ = make_runner(tmp_path, study, lambda i, s: "mixed" if (i, s) == ("X2", 0) else "yes")
+    with pytest.raises(R.Stop, match="served model"):
+        runner.run(study[1], SYSTEM)
+    assert len(calls(clients)) == 7
+    answers, ledgers, _ = A.load_arm(tmp_path / "high")
+    with pytest.raises(A.DataError, match="served model differs"):
+        A.reconcile(answers, ledgers, study[2], study[3], "high", allow_incomplete=True)
+
+
+def test_drift_is_checked_against_the_baseline_across_daily_ledgers(tmp_path, study):
+    """Input tokens and endpoint controls are compared with the first segment, not reset each UTC day."""
+    start = datetime(2026, 9, 23, 23, 40, tzinfo=timezone.utc)
+    runner, clients, _ = make_runner(tmp_path, study, lambda i, s: "yes", start=start)
+    runner.run(study[1], SYSTEM)
+    answers, ledgers, _ = A.load_arm(tmp_path / "high")
+    A.reconcile(answers, ledgers, study[2], study[3], "high")
+    day1, day2 = "ledger-2026-09-23.jsonl", "ledger-2026-09-24.jsonl"
+    # X0#0 moved to day 2 with a 1-token overhead shift: consistent within day 2, but not with X0's baseline
+    # (its first successful call, X0#1 on day 1). A per-day check would never compare the two.
+    rows1 = ledgers[day1]
+    x0 = [r for r in rows1 if (r["item_id"], r["sample_index"]) == ("X0", 0)]
+    moved = [dict(r, controls=dict(r["controls"], context_date="2026-09-24"),
+                  timestamp="2026-09-24T00:30:00+00:00", input_tokens=101 if r["status"] == "ok" else None) for r in x0]
+    bad = {day1: [r for r in rows1 if r not in x0], day2: moved + ledgers[day2]}
+    answers2 = [dict(a, ledger=day2) if (a["id"], a["sample"]) == ("X0", 0) else a for a in answers]
+    with pytest.raises(A.DataError, match="input tokens 101 drift from the baseline 100"):
+        A.reconcile(answers2, bad, study[2], study[3], "high")
+    same = {day1: bad[day1], day2: [dict(r, input_tokens=100) if r["status"] == "ok" else r for r in bad[day2]]}
+    A.reconcile(answers2, same, study[2], study[3], "high")
+    # a host update between days changes the endpoint controls: drift from the frozen baseline
+    host = dict(ledgers, **{day2: [dict(r, controls=dict(r["controls"], host_release="26.0.0")) for r in ledgers[day2]]})
+    with pytest.raises(A.DataError, match="control drift from the frozen baseline"):
+        A.reconcile(answers, host, study[2], study[3], "high")
+
+
+def test_runner_stops_on_cross_day_input_drift(tmp_path, study):
+    start = datetime(2026, 9, 23, 23, 40, tzinfo=timezone.utc)
+    runner, clients, _ = make_runner(tmp_path, study, lambda i, s: "yes", start=start)
+    orig = FakeClient._row
+    try:
+
+        def row(self, item, s, prompt, system, status, **extra):
+            if status == "ok" and self.day == "2026-09-24":
+                extra["input_tokens"] = 101
+            return orig(self, item, s, prompt, system, status, **extra)
+        FakeClient._row = row
+        with pytest.raises(R.Stop, match="drift"):
+            runner.run(study[1], SYSTEM)
+    finally:
+        FakeClient._row = orig
+    stop = json.loads((tmp_path / "high" / "STOP.json").read_text())
+    assert any("drift from the baseline" in p for p in stop["problems"])
 
 
 def test_runner_waits_for_utc_midnight_and_starts_a_new_segment(tmp_path, study):
     start = datetime(2026, 9, 23, 23, 40, tzinfo=timezone.utc)   # 20 min left; timeout 900 s + 120 s margin
     runner, clients, clock = make_runner(tmp_path, study, lambda i, s: "yes", start=start)
     runner.run(study[1], SYSTEM)
-    assert sorted(clients) == ["2026-09-23", "2026-09-24"]
+    assert sorted(clients) == ["ledger-2026-09-23.jsonl", "ledger-2026-09-24.jsonl"]
     answers, ledgers, _ = A.load_arm(tmp_path / "high")
     assert sorted(ledgers) == ["ledger-2026-09-23.jsonl", "ledger-2026-09-24.jsonl"]
     A.reconcile(answers, ledgers, study[2], study[3], "high")
@@ -457,11 +706,32 @@ def repo(tmp_path, monkeypatch):
     monkeypatch.setattr(R, "claude_binary", lambda: ("claude", "binsha", R.frozen_arm("high")["cli_version"]))
     import ve_experiments.claude_cli as cc
     (tmp_path / "acct").mkdir()
+    (tmp_path / "acct" / ".claude.json").write_text(json.dumps({"oauthAccount": {"accountUuid": ACCOUNT_UUID}}))
     monkeypatch.setattr(cc, "account_dir_for_label", lambda label: tmp_path / label)
     R.freeze("acct")
     _git(root, "add", "-A")
     _git(root, "commit", "-q", "-m", "freeze")
+    R.stamp(run=fake_ots)
+    _git(root, "add", "-A")
+    _git(root, "commit", "-q", "-m", "timestamp the freeze")
     return root
+
+
+ACCOUNT_UUID = "0b7d3c1e-1111-4222-8333-444455556666"
+
+
+def fake_ots(cmd, **_):
+    """Stands in for `ots stamp FILE`: writes FILE.ots with a real OpenTimestamps header for FILE's SHA-256."""
+    assert tuple(cmd[:-1]) == R.OTS_CMD
+    f = Path(cmd[-1])
+    Path(f"{f}.ots").write_bytes(R.OTS_MAGIC + b"\x01\x08" + hashlib.sha256(f.read_bytes()).digest() + b"\xf0\x10pending")
+    return subprocess.CompletedProcess(cmd, 0, "", "")
+
+
+def test_ots_header_parser_matches_an_earlier_ve_receipt():
+    root = Path(__file__).resolve().parent.parent / "experiments" / "T1c"
+    assert R.ots_binds((root / "HASHES.ots").read_bytes(), (root / "HASHES").read_bytes())
+    assert not R.ots_binds((root / "HASHES.ots").read_bytes(), b"other")
 
 
 def test_freeze_record(repo):
@@ -471,6 +741,58 @@ def test_freeze_record(repo):
     assert len(fr["frozen_commit"]) == 40 and fr["claude_binary_sha256"] == "binsha"
     assert fr["arms"]["high"]["effort"] == "high" and "context_date" not in fr["arms"]["high"]
     assert R.check_freeze("acct", "high")["account_label"] == "acct"
+    assert fr["account_uuid_sha256"] == sha(f"claude-oauth-account:{ACCOUNT_UUID}")
+    assert ACCOUNT_UUID not in (repo / R.REL / "FREEZE.json").read_text()      # only the hash is kept
+    assert fr["endpoint_controls"] == R.endpoint_controls()
+
+
+def test_freeze_checks_the_oauth_account_uuid(repo, tmp_path):
+    (tmp_path / "acct" / ".claude.json").write_text(json.dumps({"oauthAccount": {"accountUuid": "other-uuid"}}))
+    with pytest.raises(SystemExit, match="OAuth account UUID") as e:
+        R.check_freeze("acct", "high")
+    assert "other-uuid" not in str(e.value)
+    (tmp_path / "acct" / ".claude.json").unlink()
+    with pytest.raises(SystemExit, match="OAuth account UUID"):
+        R.check_freeze("acct", "high")
+
+
+def test_freeze_refuses_without_account_uuid(repo, tmp_path, monkeypatch):
+    import ve_experiments.claude_cli as cc
+    (tmp_path / "bare").mkdir()
+    monkeypatch.setattr(cc, "account_dir_for_label", lambda label: tmp_path / label)
+    with pytest.raises(SystemExit, match="no OAuth account UUID"):
+        R.freeze("bare")
+
+
+def test_run_requires_the_committed_opentimestamps_stamp(repo):
+    stamp_file, ots = repo / R.STAMP, repo / R.OTS
+    text = stamp_file.read_text()
+    assert text.splitlines()[0].split()[0] == R.sha_file(repo / R.REL / "FREEZE.json")
+    assert text.splitlines()[1].split()[0] == R.freeze_commit()
+    # a tampered receipt
+    ots.write_bytes(ots.read_bytes()[:40] + b"\x00" * 24 + ots.read_bytes()[64:])
+    _git(repo, "commit", "-q", "-am", "tamper")
+    with pytest.raises(SystemExit, match="does not bind"):
+        R.check_freeze("acct", "high")
+    # no receipt at all
+    _git(repo, "rm", "-q", R.OTS)
+    _git(repo, "commit", "-q", "-m", "drop receipt")
+    with pytest.raises(SystemExit, match="missing or not committed"):
+        R.check_freeze("acct", "high")
+
+
+def test_stamp_must_name_the_current_freeze(repo):
+    fz = repo / R.REL / "FREEZE.json"
+    fz.write_text(fz.read_text().replace('"k": 3', '"k": 4'))
+    _git(repo, "commit", "-q", "-am", "edit the freeze after stamping")
+    with pytest.raises(SystemExit, match="does not name the current FREEZE.json"):
+        R.check_freeze("acct", "high")
+
+
+def test_stamp_refuses_an_uncommitted_freeze(repo):
+    (repo / R.REL / "FREEZE.json").write_text("{}\n")
+    with pytest.raises(SystemExit, match="clean committed tree"):
+        R.stamp(run=fake_ots)
 
 
 def test_freeze_rejects_wrong_account(repo):

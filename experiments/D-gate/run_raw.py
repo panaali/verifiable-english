@@ -1,19 +1,30 @@
 """D gate raw arm: Opus 5.5 answers each item from the artefact alone (PREREG-DRAFT.md).
 
-NOT RUN YET. Two commands:
+NOT RUN YET. Freeze procedure, then run (no model call before `run --execute`):
 
-    python experiments/D-gate/run_raw.py freeze --account <label>        # writes FREEZE.json; no model call
+    python experiments/D-gate/run_raw.py freeze --account <label>   # writes FREEZE.json
+    git add experiments/D-gate/FREEZE.json && git commit -m "D gate: freeze"
+    python experiments/D-gate/run_raw.py stamp                      # FREEZE-STAMP.txt + OpenTimestamps .ots
+    git add experiments/D-gate/FREEZE-STAMP.txt* && git commit -m "D gate: timestamp the freeze"
     python experiments/D-gate/run_raw.py run --account <label> --arm high --execute
 
 `freeze` needs a clean committed tree. It records the commit and the SHA-256 of every frozen input
 (the study files, `ve_experiments/claude_cli.py` and its endpoint dependency `ve/stream_audit.py`),
-the SYSTEM prompt, the model, the account label (never a credential), the `claude` binary and version,
-and the per-arm controls. Commit FREEZE.json afterwards.
+the SYSTEM prompt, the model, the account label and the SHA-256 of the account's OAuth account UUID
+(read from the CLI's account metadata `<config>/.claude.json` oauthAccount.accountUuid; only the hash is
+kept or printed, never a credential), the `claude` binary and version, the per-arm controls, and the
+endpoint controls every ledger row carries (host, shell, locale, timezone, backend revision).
+
+`stamp` needs FREEZE.json committed and a clean tree. It writes FREEZE-STAMP.txt (the SHA-256 of
+FREEZE.json and the commit that froze it) and stamps it with OpenTimestamps (`ots stamp`, as in the
+earlier VE preregistrations; a pending calendar receipt suffices). Nothing is pushed.
 
 `run` refuses to call the model unless: --execute is given; FREEZE.json exists; the tree is clean
 (outside runs/); the frozen commit is an ancestor of HEAD and nothing under experiments/D-gate, ve or
-ve_experiments changed since it; every frozen hash, SYSTEM, the model id, the `claude` binary and
---account match; and every repository module loaded by the endpoint lies under those paths.
+ve_experiments changed since it (apart from FREEZE.json, the stamp files and runs/); every frozen hash,
+SYSTEM, the model id, the `claude` binary, the host controls, --account and the account-UUID hash match;
+FREEZE-STAMP.txt and its .ots are committed, name the committed FREEZE.json, and the .ots binds the
+stamp file's SHA-256; and every repository module loaded by the endpoint lies under those paths.
 
 Execution rules (frozen):
 * One fresh process per sample through ClaudeCLI; no infrastructure retries; a started sample is
@@ -23,11 +34,18 @@ Execution rules (frozen):
   identical apart from context_date), and no call starts within timeout_s + 120 s of UTC midnight:
   the runner waits for the new day and continues in a new segment. Resume reconciles every segment,
   so no sample is started twice.
-* Every call's served model must be the frozen model, and its stream must show subscription billing
-  (init apiKeySource "none", no rate-limit record with isUsingOverage true). Otherwise: STOP.
+* Every call's served model must be the frozen model (served_model=None only when reported_models is
+  empty or exactly the frozen model and the stream names no other model), and its stream must show
+  subscription billing (init apiKeySource "none", no rate-limit record with isUsingOverage true).
+  Otherwise: STOP. The whole ledger (every daily segment) is audited against the frozen baseline before
+  the first call of every run -- so a crash between a billed call and its stop still stops the arm --
+  and again after every call (billing, model identity, controls and input-token drift, see analyze.py).
 * A global error (the endpoint refused before starting the call: budget, drift, date, credentials,
   CLI version) aborts the run without writing any per-sample row.
-* A usage-limit rejection records that sample and aborts the run (resume after the reset).
+* A usage-limit rejection that produced no model output is excluded: no answers row, not an
+  ENDPOINT_ERROR; the run aborts and, after the reset, the same account retries that sample in a new
+  segment ledger-<date>-q<n>.jsonl (the endpoint never reuses a key within one ledger file). A usage-limit
+  rejection after model output records the sample (ENDPOINT_ERROR or TRUNCATED) and aborts.
 * Stop rule: once ENDPOINT_ERROR samples exceed 10% of the arm's scheduled samples, the run writes
   STOP.json and stops; a stopped arm is never resumed and gets no verdict.
 """
@@ -36,6 +54,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import platform
 import subprocess
 import sys
 import time
@@ -65,6 +84,11 @@ FROZEN_FILES = tuple(f"{REL}/{n}" for n in (
     "ve_experiments/claude_cli.py", "ve/stream_audit.py")
 COVERED_PATHS = (REL, "ve", "ve_experiments")
 RUNS = f"{REL}/runs/"
+STAMP = f"{REL}/FREEZE-STAMP.txt"
+OTS = f"{STAMP}.ots"
+OTS_CMD = ("uvx", "--from", "opentimestamps-client", "ots", "stamp")
+# OpenTimestamps detached-proof header: magic, major version 1, file-hash op sha256 (0x08), then the digest
+OTS_MAGIC = b"\x00OpenTimestamps\x00\x00Proof\x00\xbf\x89\xe2\xe8\x84\xe8\x92\x94"
 
 
 class Stop(Exception):
@@ -99,6 +123,22 @@ def frozen_arm(arm):
     return c
 
 
+def endpoint_controls():
+    """The non-arm controls claude_cli adds to every ledger row (claude_cli.py _sample_once, frozen by hash)."""
+    return dict(backend_revision=4, host_system=platform.system(), host_release=platform.release(),
+                shell="/bin/sh", locale="en_US.UTF-8", timezone="UTC")
+
+
+def account_uuid_sha256(config_dir):
+    """SHA-256 of the OAuth account UUID in the CLI's account metadata (<config>/.claude.json), or None.
+    The UUID is an identifier, not a credential; only its hash is returned, stored or printed."""
+    try:
+        uuid = json.loads((Path(config_dir) / ".claude.json").read_text())["oauthAccount"]["accountUuid"]
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+    return A.sha256_text(f"claude-oauth-account:{uuid}") if isinstance(uuid, str) and uuid else None
+
+
 def claude_binary():
     import shutil
     exe = shutil.which("claude")
@@ -113,23 +153,82 @@ def freeze(account):
         sys.exit("freeze needs a clean committed tree:\n" + "\n".join(dirty_paths()))
     if not account_dir_for_label(account).is_dir():
         sys.exit(f"no config directory for account {account!r}")
+    uuid_sha = account_uuid_sha256(account_dir_for_label(account))
+    if uuid_sha is None:
+        sys.exit(f"no OAuth account UUID in the account metadata of {account!r}; log in with that account first")
     _, bsha, version = claude_binary()
     arms = {a: frozen_arm(a) for a in ARMS}
     if any(c["cli_version"] != version for c in arms.values()):
         sys.exit(f"installed claude {version!r} differs from the pinned Controls.cli_version")
     out = dict(frozen_commit=git("rev-parse", "HEAD").stdout.strip(), frozen_at=datetime.now(timezone.utc).isoformat(),
-               account_label=account, model=MODELS["opus"], k=K, system_sha256=A.sha256_text(SYSTEM),
-               claude_binary_sha256=bsha, cli_version=version, arms=arms,
+               account_label=account, account_uuid_sha256=uuid_sha, model=MODELS["opus"], k=K, system_sha256=A.sha256_text(SYSTEM),
+               claude_binary_sha256=bsha, cli_version=version, arms=arms, endpoint_controls=endpoint_controls(),
                files={f: sha_file(ROOT / f) for f in FROZEN_FILES}, covered_paths=list(COVERED_PATHS),
                context_date_policy="per-UTC-day ledger segments; no call starts within timeout_s + "
                                    f"{MIDNIGHT_MARGIN_S} s of UTC midnight")
     (HERE / "FREEZE.json").write_text(json.dumps(out, indent=1) + "\n")
-    print(f"FREEZE.json written for commit {out['frozen_commit']}; commit it (and timestamp it) before running")
+    print(f"FREEZE.json written for commit {out['frozen_commit']}; commit it, then run `stamp` and commit the "
+          "stamp files before running")
+
+
+def ots_binds(proof, data):
+    """The detached OpenTimestamps proof `proof` (bytes) is for the SHA-256 of `data` (bytes)."""
+    head = len(OTS_MAGIC)
+    return (proof[:head] == OTS_MAGIC and proof[head:head + 2] == b"\x01\x08"
+            and proof[head + 2:head + 34] == hashlib.sha256(data).digest())
+
+
+def freeze_commit():
+    """The commit that last changed FREEZE.json."""
+    return git("log", "-n", "1", "--format=%H", "--", f"{REL}/FREEZE.json").stdout.strip()
+
+
+def stamp_text():
+    return f"{sha_file(HERE / 'FREEZE.json')}  {REL}/FREEZE.json\n{freeze_commit()}  freeze-commit\n"
+
+
+def stamp(run=subprocess.run):
+    """Write FREEZE-STAMP.txt and stamp it with OpenTimestamps (network: OTS calendars; no model call)."""
+    if dirty_paths():
+        sys.exit("stamp needs a clean committed tree:\n" + "\n".join(dirty_paths()))
+    if git("ls-files", "--error-unmatch", f"{REL}/FREEZE.json").returncode or not freeze_commit():
+        sys.exit("commit FREEZE.json first")
+    path = ROOT / STAMP
+    path.write_text(stamp_text())
+    (ROOT / OTS).unlink(missing_ok=True)
+    proc = run([*OTS_CMD, str(path)], capture_output=True, text=True, timeout=300)
+    if proc.returncode or not (ROOT / OTS).exists() or not ots_binds((ROOT / OTS).read_bytes(), path.read_bytes()):
+        sys.exit(f"ots stamp failed (exit {proc.returncode}): {proc.stderr.strip()[:500]}")
+    print(f"{STAMP} and {OTS} written; commit both before running (do not push from here)")
+
+
+def stamp_problems():
+    """The freeze is timestamped: FREEZE-STAMP.txt and its .ots are committed, name the committed FREEZE.json
+    and the commit that froze it, and the .ots binds the stamp file."""
+    for f in (STAMP, OTS):
+        if not (ROOT / f).exists() or git("ls-files", "--error-unmatch", f).returncode:
+            return [f"{f} missing or not committed: run `stamp` and commit its output before any call"]
+    out = []
+    lines = [line.split() for line in (ROOT / STAMP).read_text().splitlines()]
+    if len(lines) != 2 or [len(x) for x in lines] != [2, 2] or lines[0][1] != f"{REL}/FREEZE.json" \
+            or lines[1][1] != "freeze-commit":
+        return [f"{STAMP} is malformed"]
+    (h, _), (commit, _) = lines
+    if h != sha_file(HERE / "FREEZE.json"):
+        out.append(f"{STAMP} does not name the current FREEZE.json")
+    shown = subprocess.run(["git", "-C", str(ROOT), "show", f"{commit}:{REL}/FREEZE.json"], capture_output=True)
+    if shown.returncode or hashlib.sha256(shown.stdout).hexdigest() != h:
+        out.append(f"{STAMP} names a commit that does not contain this FREEZE.json")
+    elif git("merge-base", "--is-ancestor", commit, "HEAD").returncode:
+        out.append("the stamped freeze commit is not an ancestor of HEAD")
+    if not ots_binds((ROOT / OTS).read_bytes(), (ROOT / STAMP).read_bytes()):
+        out.append(f"{OTS} does not bind {STAMP}")
+    return out
 
 
 def check_freeze(account, arm):
     """Every freeze condition, or exit. Returns the frozen record."""
-    from ve_experiments.claude_cli import MODELS, SYSTEM
+    from ve_experiments.claude_cli import MODELS, SYSTEM, account_dir_for_label
     f = HERE / "FREEZE.json"
     if not f.exists():
         sys.exit("FREEZE.json missing: the prereg is not frozen; no model calls")
@@ -142,7 +241,7 @@ def check_freeze(account, arm):
     if git("merge-base", "--is-ancestor", frozen["frozen_commit"], "HEAD").returncode:
         problems.append("the frozen commit is not an ancestor of HEAD")
     elif git("diff", "--quiet", frozen["frozen_commit"], "HEAD", "--", *COVERED_PATHS,
-             f":!{REL}/FREEZE.json", f":!{RUNS}").returncode:
+             f":!{REL}/FREEZE.json", f":!{STAMP}", f":!{OTS}", f":!{RUNS}").returncode:
         problems.append("files under the covered paths changed since the frozen commit")
     for name, h in frozen["files"].items():
         if sha_file(ROOT / name) != h:
@@ -155,6 +254,11 @@ def check_freeze(account, arm):
         problems.append("model id changed")
     if account != frozen["account_label"]:
         problems.append(f"--account {account!r} is not the frozen account")
+    elif account_uuid_sha256(account_dir_for_label(account)) != frozen.get("account_uuid_sha256"):
+        problems.append("the OAuth account UUID of --account differs from the frozen one (hash compared)")
+    if endpoint_controls() != frozen.get("endpoint_controls"):
+        problems.append("host/endpoint controls differ from the freeze")
+    problems.extend(stamp_problems())
     if frozen_arm(arm) != frozen["arms"].get(arm):
         problems.append(f"controls for arm {arm} differ from the freeze")
     _, bsha, version = claude_binary()
@@ -175,27 +279,8 @@ def check_freeze(account, arm):
 # Per-call checks
 # ------------------------------------------------------------------------------------------------
 
-def billing_signals(stream_records):
-    """Evidence of billing outside the subscription in a call's stream (empty list if none)."""
-    out = []
-    for r in stream_records or []:
-        if not isinstance(r, dict):
-            continue
-        if r.get("type") == "system" and r.get("subtype") == "init" and r.get("apiKeySource") != "none":
-            out.append(f"init apiKeySource={r.get('apiKeySource')!r}")
-        info = r.get("rate_limit_info") if r.get("type") == "rate_limit_event" else None
-        if isinstance(info, dict) and info.get("isUsingOverage"):
-            out.append("rate_limit_event isUsingOverage=true")
-    return out
-
-
-def quota_rejected(stream_records, error):
-    info = [r.get("rate_limit_info") for r in stream_records or []
-            if isinstance(r, dict) and r.get("type") == "rate_limit_event"]
-    if any(isinstance(i, dict) and i.get("status") == "rejected" for i in info):
-        return True
-    e = str(error or "").lower()
-    return any(s in e for s in ("usage limit", "hit your limit", "rate limit", "rate_limit"))
+billing_signals = A.billing_signals      # shared with the analysis (frozen in analyze.py)
+quota_rejected = A.quota_rejected
 
 
 def seconds_to_utc_midnight(now):
@@ -240,6 +325,30 @@ class Runner:
     def prompt_text(self, iid):
         return self.prompt_texts[iid]
 
+    def segment_for(self, day, ledgers):
+        """ledger-<day>.jsonl, or ledger-<day>-q<n>.jsonl after n excluded usage-limit rejections that day
+        (a retried sample needs a ledger file in which its key is unused)."""
+        n = sum(1 for name, rows in ledgers.items() if A.segment_order(name)[0] == day
+                for r in rows if r.get("status") in A.FINAL_LEDGER and A.quota_excluded(r))
+        return f"ledger-{day}.jsonl" if n == 0 else f"ledger-{day}-q{n}.jsonl"
+
+    def check_ledgers(self, ledgers=None):
+        """Audit every ledger segment against the frozen baseline; any problem stops the arm."""
+        if ledgers is None:
+            ledgers = A.load_arm(self.dir)[1]
+        problems = A.audit(ledgers, self.prompts, self.frozen, self.arm)
+        if not problems:
+            return ledgers
+        if any("billing outside the subscription" in p for p in problems):
+            reason = "billing outside the subscription"
+        elif any("served model differs" in p for p in problems):
+            reason = "served model differs from the frozen model"
+        elif any("drift" in p for p in problems):
+            reason = "drift from the frozen baseline"
+        else:
+            reason = "ledger check against the freeze failed"
+        self.stop(reason, problems=problems[:20])
+
     # -- main loop
     def run(self, prompt_texts, system):
         self.prompt_texts = prompt_texts
@@ -247,9 +356,10 @@ class Runner:
         if (self.dir / "STOP.json").exists():
             raise Stop("STOP.json exists: this arm stopped under a stop rule and is never resumed")
         answers, ledgers, _ = A.load_arm(self.dir)
+        self.check_ledgers(ledgers)  # before any further call: a crash may have hidden a billed or foreign call
         records, orphans = A.reconcile(answers, ledgers, self.prompts, self.frozen, self.arm, allow_incomplete=True)
         idx = A.ledger_index(ledgers, self.prompts, self.frozen, self.arm, [])
-        for ident in orphans:  # started earlier, answers row lost (crash): derive it, never replay
+        for ident in orphans:  # outcome logged earlier, answers row lost (crash): derive it, never replay
             status, key, segment, error = A.ledger_status(idx[ident])
             records[ident] = self.record(ident, status, key, segment, error=error, recovered_from_ledger=True)
             self.log(json.dumps({"event": "recovered", "id": ident[0], "sample": ident[1], "status": status}))
@@ -274,7 +384,7 @@ class Runner:
             self.log(json.dumps({"event": "waiting_for_utc_midnight", "seconds": round(wait) + 60}))
             self.sleep(wait + 60)
         day = self.now().date().isoformat()
-        segment = f"ledger-{day}.jsonl"
+        segment = self.segment_for(day, A.load_arm(self.dir)[1])
         client = self.client_for_day(day, self.dir / segment)
         try:
             reply = client.sample(ident[0], system, self.prompt_text(ident[0]), ident[1])
@@ -283,15 +393,20 @@ class Runner:
             if usage.get("not_started") or usage.get("rejected_before_start") or not usage.get("call_key"):
                 raise Abort(f"global endpoint error before the call started: {exc}") from None
             row = self.ledger_final(segment, usage["call_key"]) or {}
+            if row and A.quota_excluded(row):
+                self.check_ledgers()
+                raise Abort("subscription usage limit reached before any model output: the sample is excluded "
+                            "and retried after the reset on the same account") from None
             status = A.classify_ledger_final(row) if row else "ENDPOINT_ERROR"
-            served = row.get("served_model")
             rec = self.record(ident, status, usage["call_key"], segment, error=str(exc)[:500],
-                              served_model=served, output_tokens=row.get("output_tokens"))
+                              served_model=row.get("served_model"), output_tokens=row.get("output_tokens"))
             signals = billing_signals(row.get("stream_records"))
             if signals:
                 self.stop("billing outside the subscription", signals=signals, sample=list(ident))
-            if served not in (None, self.frozen["model"]):
-                self.stop("served model differs from the frozen model", served_model=served, sample=list(ident))
+            bad = A.model_problems(row, self.frozen["model"]) if row else []
+            if bad:
+                self.stop("served model differs from the frozen model", problems=bad, sample=list(ident))
+            self.check_ledgers()
             if quota_rejected(row.get("stream_records"), row.get("error")):
                 raise Abort("subscription usage limit reached; resume after the reset")
             return rec
@@ -304,8 +419,10 @@ class Runner:
         signals = billing_signals(reply.get("stream_records"))
         if signals:
             self.stop("billing outside the subscription", signals=signals, sample=list(ident))
-        if served != self.frozen["model"]:
-            self.stop("served model differs from the frozen model", served_model=served, sample=list(ident))
+        bad = A.model_problems(dict(reply, status="ok"), self.frozen["model"])
+        if bad:
+            self.stop("served model differs from the frozen model", problems=bad, sample=list(ident))
+        self.check_ledgers()
         return rec
 
 
@@ -314,6 +431,7 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     f = sub.add_parser("freeze")
     f.add_argument("--account", required=True)
+    sub.add_parser("stamp")
     r = sub.add_parser("run")
     r.add_argument("--account", required=True)
     r.add_argument("--arm", choices=sorted(ARMS), required=True)
@@ -321,6 +439,8 @@ def main():
     a = ap.parse_args()
     if a.cmd == "freeze":
         return freeze(a.account)
+    if a.cmd == "stamp":
+        return stamp()
     if not a.execute:
         sys.exit("dry: pass --execute to call the model (only after the freeze and both reviews)")
     from ve_experiments.claude_cli import ClaudeCLI, SYSTEM, account_dir_for_label
@@ -331,11 +451,11 @@ def main():
     assert all(A.sha256_text(texts[i]) == prompts[i] for i in prompts)
     clients = {}
 
-    def client_for_day(day, ledger):
-        if day not in clients:
-            clients[day] = ClaudeCLI(ledger, arm_controls(a.arm, day), max_calls=len(prompts) * frozen["k"],
-                                     account_config_dir=account_dir_for_label(a.account))
-        return clients[day]
+    def client_for_day(day, ledger):  # one client per ledger segment
+        if ledger not in clients:
+            clients[ledger] = ClaudeCLI(ledger, arm_controls(a.arm, day), max_calls=len(prompts) * frozen["k"],
+                                        account_config_dir=account_dir_for_label(a.account))
+        return clients[ledger]
 
     runner = Runner(a.arm, HERE / "runs" / a.arm, prompts, frozen, client_for_day)
     try:

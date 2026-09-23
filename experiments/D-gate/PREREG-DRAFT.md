@@ -1,12 +1,22 @@
 # PREREG DRAFT: D gate (raw Opus 5.5 on universal properties of real Cedar and Kubernetes policies)
 
-Status: DRAFT v2, not frozen. No model call has been made. Revised after the Astra xhigh and Opus xhigh reviews
-(both FIX FIRST); every A and B finding is addressed below. Before any call:
+Status: DRAFT v3, not frozen. No model call has been made. v2 addressed the first Astra xhigh and Opus xhigh reviews;
+v3 addresses both re-reviews (both FIX FIRST): missingness and formatting gates, truncation from stream evidence,
+the stop-rule bypasses, the account UUID, the OpenTimestamps step and cross-day drift. Before any call:
 1. Both reviewers re-review this draft.
 2. `run_raw.py freeze --account <label>` runs on a clean committed tree. It writes `FREEZE.json` with the commit, the
-   SHA-256 of every frozen input, and the execution identity (below). `run_raw.py run` refuses to call the model
-   unless every freeze check passes.
-3. `FREEZE.json` is committed and timestamped.
+   SHA-256 of every frozen input, and the execution identity (below). `FREEZE.json` is committed.
+3. `run_raw.py stamp` writes `FREEZE-STAMP.txt` (the SHA-256 of `FREEZE.json` and the commit that froze it) and
+   stamps it with OpenTimestamps (`ots stamp`, as in the earlier VE preregistrations; a pending calendar receipt
+   suffices, no Bitcoin claim). Both files are committed. Nothing is pushed.
+4. `run_raw.py run` refuses to call the model unless every freeze check passes, including the committed stamp and a
+   `.ots` receipt that binds it.
+
+**Metric amendment (recorded).** PLAN-FRONTIER's table row for D states the gate as false approval (FA) < 15%. This
+preregistration replaces that with the **total error rate** on the non-edge items (the Gate below). Reason: 25 of
+the 41 primary items are not restriction-NO items, where FA is not defined, and a verifier fixes errors in both
+directions. FA on the 16 restriction-NO items is kept as the key secondary. This overrides the plan's D row for this
+gate.
 
 ## Question and hypothesis
 
@@ -64,7 +74,11 @@ fail.
   * the commit, taken from a clean tree;
   * the SHA-256 of the study files and of `claude_cli.py` and `ve/stream_audit.py`;
   * the SHA-256 of `SYSTEM`, the model id, the per-arm controls, and the `claude` binary hash and version;
-  * the account label (never a credential).
+  * the account label and the SHA-256 of the OAuth account UUID. The UUID is read from the CLI's account metadata
+    (`<config>/.claude.json`, `oauthAccount.accountUuid`). Only its hash is stored or printed. It binds the config
+    directory whose token the endpoint uses. It is not token introspection, which would need a network call;
+  * the endpoint controls that every ledger row carries: host system and release, shell, locale, timezone, backend
+    revision.
 
   `run` then requires all of the following:
   * a clean tree (outside `runs/`);
@@ -72,11 +86,16 @@ fail.
   * the frozen commit an ancestor of HEAD, with nothing under `experiments/D-gate`, `ve` or `ve_experiments`
     changed since it;
   * every hash equal;
-  * `--account` equal to the frozen account;
+  * `--account` equal to the frozen account, with the same account-UUID hash;
+  * the host and endpoint controls equal to the freeze;
+  * `FREEZE-STAMP.txt` and its `.ots` committed, naming the committed `FREEZE.json` and its commit, with the `.ots`
+    binding the stamp file's SHA-256;
   * every repository module loaded under those paths.
 * **One subscription account** for the whole study, both arms. Every ledger row must carry it.
 * **Every call:** the served model must equal the frozen model. `claude_cli` checks it, and so do the runner and
-  the analysis.
+  the analysis. A failed call may have `served_model = None`. This is accepted only when `reported_models` is empty
+  or exactly the frozen model and the stored stream names no other model. Otherwise the run STOPs (execution and
+  recovery) and the analysis refuses the data.
 * **Primary configuration:** `effort=high`, no thinking cap, 32k output tokens, 900 s timeout.
 * **Secondary configuration:** the T1c monitor setting, `effort=low` with 1,024 thinking tokens. It is descriptive
   only: **a pass at low effort alone does not count.**
@@ -92,6 +111,10 @@ fail.
 * A started sample is never replayed. There are no infrastructure retries.
 * A **global error** is a refusal before the call starts: budget, controls or binary drift, date, credentials, or
   CLI version. It aborts the run and writes no per-sample row. The run may be resumed.
+* **Ledger audit before every call.** Before its first call, every run audits the whole ledger (all daily
+  segments) against the frozen baseline. This covers the recovery after a crash. The audit checks billing, model
+  identity, identity fields, controls and input tokens. It runs again after every call. Any problem writes
+  `STOP.json`. A crash between a billed call and its stop therefore still stops the arm before any further call.
 * **Resume** skips every sample that has an answers row. A sample that the ledger shows as started but that has no
   answers row, for example after a crash, gets its row derived from the ledger:
   * the logged outcome, if there is one;
@@ -103,20 +126,32 @@ fail.
   * a rate-limit record with `isUsingOverage: true`.
 
   A served-model mismatch does the same.
-* **Usage limit.** A rejection from the subscription's usage limit records that sample, then aborts. Resume after
-  the reset.
+* **Usage limit.** A usage-limit rejection that produced no model output is **excluded**. It has no answers row and
+  is not an `ENDPOINT_ERROR`. The run aborts. After the reset the same account retries that sample in a new ledger
+  segment, `ledger-<date>-q<n>.jsonl`, because the endpoint never reuses a call key within one ledger file. Only an
+  excluded rejection may precede a sample's final attempt; any other repeated start is a replay and the analysis
+  refuses it. A usage-limit rejection after model output records the sample, then aborts. The number of excluded
+  rejections is reported.
+* **Drift across days.** Drift is checked against the frozen baseline, not per daily ledger. Every row's controls
+  must equal the frozen arm and endpoint controls; only `context_date` follows the segment. Each item's input tokens
+  must equal its baseline, which is its first successful call in any segment. An endpoint drift error is also
+  treated as drift. Drift stops the run, and the analysis refuses drifted data.
 * **Endpoint-error stop.** Once `ENDPOINT_ERROR` samples exceed 10% of an arm's scheduled samples (more than 12 of
   129), the runner writes `STOP.json` and stops. A stopped arm is never resumed and gets no gate verdict. A new
   attempt needs an amended, re-frozen preregistration.
 
 ## Scoring and analysis (`analyze.py`)
 
-* **Parsing.** The answer is the final nonempty line only, and it must be exactly `ANSWER: YES` or `ANSWER: NO`
-  (surrounding whitespace allowed). An earlier answer line never counts.
+* **Parsing.** The answer is the final nonempty line only, and it must be `ANSWER: YES` or `ANSWER: NO`.
+  Surrounding whitespace, markdown emphasis (`*`, `_`, backticks, e.g. `**ANSWER: YES**` or `**ANSWER:** NO`) and
+  trailing punctuation (e.g. `ANSWER: NO.`) are tolerated. An earlier answer line never counts.
 * **Sample status:**
   * `YES` or `NO`;
   * `UNPARSED`: a complete reply without a final answer line;
-  * `TRUNCATED`: the reply stopped without a final turn, for example at the token limit;
+  * `TRUNCATED`: the frozen model produced output but hit the output-token limit. This is read from the stored stream
+    records: a `stop_reason` of `max_tokens`, a `<synthetic>` max-output-tokens message (the pinned CLI's truncation
+    signal, which `claude_cli` rejects as a served-model mismatch), or output tokens at the cap. The error text alone
+    is not evidence;
   * `ENDPOINT_ERROR`: an endpoint or infrastructure failure, including a timeout.
 
   UNPARSED and TRUNCATED together are **INVALID**. Truncation is a model outcome, not an infrastructure failure.
@@ -134,13 +169,20 @@ fail.
   * Sample error: the answer differs from the reference answer, or the sample is INVALID.
   * ENDPOINT_ERROR samples are excluded (available-case item means).
   * Item error: the mean over the item's remaining samples.
-  * An item with no model outcome is reported by id and counts as error 0 in every gate statistic, so missingness
+  * An item with no model outcome is reported by id and counts as error 0.
+  * Available-case means alone can let endpoint errors raise an item's error. Two reviewer examples show this:
+    9.8% to 19.5%, and 14.63% to 19.51%, each with 12 endpoint errors. So a required gate condition also imputes
+    every ENDPOINT_ERROR (every missing scheduled response) as correct (see the Gate rule). Missingness therefore
     can never create a pass.
 * **Primary statistic:** the mean item error over the 41 non-edge items at `effort=high`, clustered by artefact.
   * 95% cluster bootstrap over the 28 artefacts (10,000 resamples, seed 0).
   * Also reported: a 95% Student-t interval over the artefact means, and the error share of the top artefact.
-* **Gate rule (high effort only).** PASS iff all four hold:
+* **Gate rule (high effort only).** PASS iff all six hold:
   * the point estimate is ≥ 0.15;
+  * **missingness:** with every ENDPOINT_ERROR imputed as correct (item error = errors ÷ 3 scheduled samples), the
+    estimate is ≥ 0.15;
+  * **formatting:** with the INVALID samples excluded (valid-only item means; an item without a valid sample counts
+    as 0), the estimate is ≥ 0.15;
   * with the planted edits excluded, the error is still ≥ 0.15;
   * errors fall on at least 5 artefacts;
   * every leave-one-artefact-out estimate is ≥ 0.15.
@@ -158,7 +200,7 @@ fail.
   * guarantee-YES wrong NO.
 * **Other analyses,** descriptive:
   * the low-effort configuration;
-  * the primary statistic with INVALID samples excluded (a pass that disappears there is flagged in the verdict);
+  * the number of excluded usage-limit rejections;
   * original items vs planted edits;
   * Cedar vs Kubernetes;
   * error by VE coverage category (README §4);

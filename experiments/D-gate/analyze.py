@@ -7,20 +7,33 @@ samples (43 items x K=3) against the ledger identities, and refuses to analyse i
 unreconcilable data (exit 2). An arm stopped under a stop rule (runs/<arm>/STOP.json) gets no verdict.
 
 Sample status (frozen):
-  YES / NO        the final nonempty line of the reply is exactly `ANSWER: YES` or `ANSWER: NO`
-  UNPARSED        a complete reply whose final nonempty line is not an answer line      } INVALID
-  TRUNCATED       the reply stopped without a final turn (e.g. the output-token limit)  }
+  YES / NO        the final nonempty line of the reply is `ANSWER: YES` or `ANSWER: NO`, tolerating markdown
+                  emphasis (`**ANSWER: YES**`) and trailing punctuation (`ANSWER: NO.`); earlier lines never count
+  UNPARSED        a complete reply whose final nonempty line is not an answer line          } INVALID
+  TRUNCATED       the frozen model produced output but hit the output-token limit: shown by  }
+                  the stream records (stop_reason max_tokens, a `<synthetic>` max-output-tokens message) or by
+                  output tokens at the cap -- never by the error text alone
   ENDPOINT_ERROR  the call started but failed for an endpoint or infrastructure reason (incl. timeout)
+  (excluded)      a usage-limit rejection that produced no model output: no sample status; the sample is
+                  retried later on the same account in a new ledger segment
 INVALID samples are model outcomes: they count as errors in the primary error rate, never in a
-directional numerator (false approval / false rejection), and a sensitivity analysis excludes them.
-ENDPOINT_ERROR samples are excluded (available-case item means). An item with no model outcome is
-listed and counts as error 0 in every gate statistic (missingness can never create a pass).
+directional numerator (false approval / false rejection). ENDPOINT_ERROR samples are excluded from the
+available-case item means. An item with no model outcome counts as error 0.
 
 Primary (effort=high only): mean item error over the non-edge items (tag `edge`: D26, D42), clustered
-by artefact. Gate: PASS needs the point estimate >= 0.15 AND (robustness, preregistered) >= 0.15 with the
-planted edits excluded, errors on >= 5 artefacts, and >= 0.15 in every leave-one-artefact-out analysis.
+by artefact. PASS needs the point estimate >= 0.15 AND every preregistered robustness condition:
+  * >= 0.15 with every ENDPOINT_ERROR imputed as correct (missingness can never create a pass);
+  * >= 0.15 with the INVALID samples excluded (formatting can never create a pass);
+  * >= 0.15 with the planted edits excluded; errors on >= 5 artefacts; >= 0.15 in every
+    leave-one-artefact-out analysis.
 A PASS whose 95% cluster-bootstrap lower bound is < 0.15 is a WEAK PASS. A t-interval over artefact
 means is reported. The low-effort arm is descriptive: a pass at low effort alone does not count.
+
+Ledger audit (also run by run_raw.py before every call and after each one): every row carries the frozen
+account, SYSTEM, prompt, controls, endpoint controls and binary; no stream shows billing outside the
+subscription; no row reports a model other than the frozen one (served_model=None is accepted only when
+reported_models is empty or exactly the frozen model); and each item's input tokens equal its baseline (its
+first successful call in any segment), so drift is checked across daily ledgers, not per day.
 """
 from __future__ import annotations
 
@@ -44,10 +57,15 @@ VALID = ("YES", "NO")
 INVALID = ("UNPARSED", "TRUNCATED")
 MODEL_OUTCOMES = VALID + INVALID
 STATUSES = MODEL_OUTCOMES + ("ENDPOINT_ERROR",)
-TRUNCATION_ERROR = "Truncated or non-final response"
 FINAL_LEDGER = ("ok", "error", "infrastructure_error")
-LEDGER_NAME = re.compile(r"^ledger-(\d{4}-\d{2}-\d{2})\.jsonl$")
+# ledger-<UTC date>.jsonl; ledger-<UTC date>-q<n>.jsonl after the n-th excluded usage-limit rejection that day
+LEDGER_NAME = re.compile(r"^ledger-(\d{4}-\d{2}-\d{2})(?:-q([1-9]\d*))?\.jsonl$")
 ANSWER_LINE = re.compile(r"ANSWER:[ \t]*(YES|NO)")
+MARKDOWN_EMPHASIS = re.compile(r"[*_`]")
+TRAILING_PUNCTUATION = re.compile(r"[.!;:,]+$")
+MAX_TOKENS_TEXT = re.compile(r"max[_ ]?output[_ ]?tokens|output[- ]token (?:maximum|limit)|max_tokens", re.I)
+SYNTHETIC = "<synthetic>"
+DRIFT_ERRORS = ("Input overhead drift", "Absolute input overhead drift", "Controls/binary drift")
 
 
 class DataError(Exception):
@@ -59,19 +77,121 @@ class DataError(Exception):
 # ------------------------------------------------------------------------------------------------
 
 def parse(text):
-    """The answer on the final nonempty line, else UNPARSED. Earlier answer lines never count."""
+    """The answer on the final nonempty line, else UNPARSED. Earlier answer lines never count. The final
+    line may carry markdown emphasis (`**ANSWER: YES**`, `**ANSWER:** NO`) and trailing punctuation."""
     lines = [line.strip() for line in (text or "").splitlines() if line.strip()]
     if not lines:
         return "UNPARSED"
-    m = ANSWER_LINE.fullmatch(lines[-1])
+    last = TRAILING_PUNCTUATION.sub("", MARKDOWN_EMPHASIS.sub("", lines[-1]).strip()).strip()
+    m = ANSWER_LINE.fullmatch(last)
     return m.group(1) if m else "UNPARSED"
 
 
+def _records(row):
+    return [r for r in (row.get("stream_records") or []) if isinstance(r, dict)]
+
+
+def _assistants(row):
+    return [r["message"] for r in _records(row) if r.get("type") == "assistant" and isinstance(r.get("message"), dict)]
+
+
+def stream_models(row):
+    """Every model name the stored stream reports (assistant messages, result modelUsage, init), without
+    the CLI's `<synthetic>` placeholder."""
+    out = {m.get("model") for m in _assistants(row) if isinstance(m.get("model"), str)}
+    for r in _records(row):
+        if r.get("type") == "result" and isinstance(r.get("modelUsage"), dict):
+            out.update(k for k in r["modelUsage"] if isinstance(k, str))
+        if r.get("subtype") == "init" and isinstance(r.get("model"), str):
+            out.add(r["model"])
+    return out - {SYNTHETIC}
+
+
+def model_problems(row, model):
+    """Evidence that a model other than `model` served (or was requested for) this call. served_model=None is
+    accepted only when reported_models is empty or exactly [model] and the stream names no other model."""
+    out = []
+    served, reported = row.get("served_model"), row.get("reported_models") or []
+    if row.get("status") == "ok" and served != model:
+        out.append(f"served model {served!r}")
+    elif served not in (None, model):
+        out.append(f"served model {served!r}")
+    if any(m != model for m in reported):
+        out.append(f"reported models {sorted(map(str, reported))}")
+    other = stream_models(row) - {model}
+    if other:
+        out.append(f"stream models {sorted(other)}")
+    return out
+
+
+def billing_signals(stream_records):
+    """Evidence of billing outside the subscription in a call's stream (empty list if none)."""
+    out = []
+    for r in stream_records or []:
+        if not isinstance(r, dict):
+            continue
+        if r.get("type") == "system" and r.get("subtype") == "init" and r.get("apiKeySource") != "none":
+            out.append(f"init apiKeySource={r.get('apiKeySource')!r}")
+        info = r.get("rate_limit_info") if r.get("type") == "rate_limit_event" else None
+        if isinstance(info, dict) and info.get("isUsingOverage"):
+            out.append("rate_limit_event isUsingOverage=true")
+    return out
+
+
+def quota_rejected(stream_records, error):
+    info = [r.get("rate_limit_info") for r in stream_records or []
+            if isinstance(r, dict) and r.get("type") == "rate_limit_event"]
+    if any(isinstance(i, dict) and i.get("status") == "rejected" for i in info):
+        return True
+    e = str(error or "").lower()
+    return any(s in e for s in ("usage limit", "hit your limit", "rate limit", "rate_limit"))
+
+
+def model_output(row):
+    """The call produced model output: a real (non-synthetic) assistant message, a reported model, or
+    output tokens."""
+    return bool(any(m.get("model") != SYNTHETIC for m in _assistants(row)) or row.get("reported_models")
+                or row.get("served_model") or (row.get("output_tokens") or 0) > 0)
+
+
+def quota_excluded(row):
+    """A usage-limit rejection with no model output: no sample status (retried later, same account)."""
+    return (row.get("status") in ("error", "infrastructure_error") and not model_output(row)
+            and quota_rejected(row.get("stream_records"), row.get("error")))
+
+
+def truncation_evidence(row):
+    """Structured evidence that the frozen model's reply hit the output-token limit (empty if none)."""
+    model = (row.get("controls") or {}).get("model")
+    if model is None or model_problems(row, model):
+        return []
+    if not (any(m.get("model") == model for m in _assistants(row)) or row.get("reported_models") == [model]):
+        return []  # the frozen model produced nothing: not a model outcome
+    ev = []
+    for r in _records(row):
+        msg = r.get("message") if r.get("type") == "assistant" and isinstance(r.get("message"), dict) else {}
+        if r.get("stop_reason") == "max_tokens" or msg.get("stop_reason") == "max_tokens":
+            ev.append("stop_reason max_tokens")
+        if r.get("type") == "result" and r.get("subtype") == "error_max_tokens":
+            ev.append("result subtype error_max_tokens")
+        if msg.get("model") == SYNTHETIC:
+            text = " ".join(str(b.get("text", "")) for b in msg.get("content") or [] if isinstance(b, dict))
+            if MAX_TOKENS_TEXT.search(text):
+                ev.append("synthetic max-output-tokens message")
+    cap = (row.get("controls") or {}).get("output_tokens")
+    if isinstance(cap, int) and isinstance(row.get("output_tokens"), int) and row["output_tokens"] >= cap:
+        ev.append(f"output tokens {row['output_tokens']} at the cap {cap}")
+    return sorted(set(ev))
+
+
 def classify_ledger_final(row):
-    """Status of a sample from its final ledger row (claude_cli statuses ok/error/infrastructure_error)."""
+    """Status of a sample from its final ledger row (claude_cli statuses ok/error/infrastructure_error).
+    QUOTA_EXCLUDED is not a sample status: the sample has no outcome yet."""
     if row["status"] == "ok":
         return parse(row.get("text"))
-    if row["status"] == "error" and str(row.get("error", "")).startswith(TRUNCATION_ERROR):
+    if quota_excluded(row):
+        return "QUOTA_EXCLUDED"
+    if row["status"] == "error" and truncation_evidence(row):
         return "TRUNCATED"
     return "ENDPOINT_ERROR"
 
@@ -116,14 +236,33 @@ def load_arm(arm_dir):
     return answers, ledgers, stop
 
 
+def segment_order(name):
+    """Chronological order of ledger segments: (UTC date, n) for ledger-<date>[-q<n>].jsonl."""
+    m = LEDGER_NAME.match(name)
+    return m.group(1), int(m.group(2) or 0)
+
+
+def expected_controls(frozen, arm, day):
+    """The full control record every ledger row of this arm must carry on UTC day `day` (the frozen
+    baseline: arm controls, endpoint controls and binary; only context_date follows the segment)."""
+    return {**frozen["arms"][arm], **frozen["endpoint_controls"], "binary_sha256": frozen["claude_binary_sha256"],
+            "context_date": day}
+
+
 def ledger_index(ledgers, prompts, frozen, arm, problems):
-    """Per (item, sample): the started rows and final rows across every daily segment, after
-    checking each row's identity against the frozen inputs."""
-    fc = frozen["arms"][arm]
-    idx = defaultdict(lambda: {"started": [], "final": []})
-    for name, rows in ledgers.items():
-        day = LEDGER_NAME.match(name).group(1)
-        for r in rows:
+    """Per (item, sample): its attempts [{start, final, segment}] in chronological order across every
+    ledger segment, after checking each row against the frozen baseline. Problems are appended; billing
+    problems contain "billing outside the subscription", model problems "served model", drift "drift"."""
+    if "endpoint_controls" not in frozen:
+        problems.append("FREEZE.json has no endpoint_controls baseline")
+        return {}
+    idx = defaultdict(list)
+    baseline_input = {}
+    for name in sorted(ledgers, key=segment_order):
+        day = segment_order(name)[0]
+        want = expected_controls(frozen, arm, day)
+        open_calls = {}
+        for r in ledgers[name]:
             where = f"{name}: {r.get('item_id')}#{r.get('sample_index')} {r.get('status')}"
             ident = (r.get("item_id"), r.get("sample_index"))
             if ident[0] not in prompts or ident[1] not in range(frozen["k"]):
@@ -136,21 +275,42 @@ def ledger_index(ledgers, prompts, frozen, arm, problems):
             if sha256_text(r.get("prompt") or "") != prompts[ident[0]]:
                 problems.append(f"{where}: prompt differs from prompts.jsonl")
             c = r.get("controls") or {}
-            for k, v in fc.items():
-                if c.get(k) != v:
-                    problems.append(f"{where}: control {k}={c.get(k)!r}, frozen {v!r}")
-            if c.get("binary_sha256") != frozen["claude_binary_sha256"]:
-                problems.append(f"{where}: claude binary differs from the frozen one")
             if c.get("context_date") != day:
                 problems.append(f"{where}: context_date {c.get('context_date')} is not the segment date {day}")
+            if c.get("binary_sha256") != frozen["claude_binary_sha256"]:
+                problems.append(f"{where}: claude binary differs from the frozen one")
+            for k in sorted(set(c) | set(want)):
+                if k not in ("context_date", "binary_sha256") and c.get(k) != want.get(k):
+                    problems.append(f"{where}: control drift from the frozen baseline: {k}={c.get(k)!r}, "
+                                    f"frozen {want.get(k)!r}")
             if r.get("status") == "started":
                 if str(r.get("timestamp", ""))[:10] != day:
                     problems.append(f"{where}: started on {str(r.get('timestamp'))[:10]}, outside its segment")
-                idx[ident]["started"].append(dict(r, _segment=name))
+                if r.get("key") in open_calls:
+                    problems.append(f"{where}: started twice under one key in one segment (replay)")
+                att = dict(start=r, final=None, segment=name)
+                open_calls[r.get("key")] = att
+                idx[ident].append(att)
             elif r.get("status") in FINAL_LEDGER:
-                if r["status"] == "ok" and r.get("served_model") != frozen["model"]:
-                    problems.append(f"{where}: served model {r.get('served_model')!r}")
-                idx[ident]["final"].append(dict(r, _segment=name))
+                att = open_calls.get(r.get("key"))
+                if att is None or att["start"]["item_id"] != ident[0] or att["start"]["sample_index"] != ident[1]:
+                    problems.append(f"{where}: ledger outcome without a start")
+                    continue
+                if att["final"] is not None:
+                    problems.append(f"{where}: two outcomes for one call")
+                att["final"] = r
+                signals = billing_signals(r.get("stream_records"))
+                if signals:
+                    problems.append(f"{where}: billing outside the subscription: {signals}")
+                for m in model_problems(r, frozen["model"]):
+                    problems.append(f"{where}: served model differs from the frozen model: {m}")
+                if r["status"] != "ok" and str(r.get("error", "")).startswith(DRIFT_ERRORS):
+                    problems.append(f"{where}: endpoint drift check fired: {r.get('error')}")
+                if r["status"] == "ok":
+                    base = baseline_input.setdefault(ident[0], (r.get("input_tokens"), name))
+                    if r.get("input_tokens") != base[0]:
+                        problems.append(f"{where}: input tokens {r.get('input_tokens')} drift from the baseline "
+                                        f"{base[0]} ({base[1]})")
             elif r.get("status") == "retry_scheduled":
                 problems.append(f"{where}: infrastructure retries are not allowed in this study")
             else:
@@ -158,20 +318,36 @@ def ledger_index(ledgers, prompts, frozen, arm, problems):
     return idx
 
 
-def ledger_status(entry):
-    """(status, key, segment, error) implied by a sample's ledger rows (exactly one start)."""
-    start = entry["started"][0]
-    finals = [f for f in entry["final"] if f.get("key") == start.get("key")]
-    if not finals:
-        return "ENDPOINT_ERROR", start.get("key"), start["_segment"], "interrupted: started, no outcome logged"
-    f = finals[-1]
-    return classify_ledger_final(f), f.get("key"), f["_segment"], f.get("error")
+def attempt_status(att):
+    """(status, key, segment, error) of one attempt; status QUOTA_EXCLUDED means no outcome yet."""
+    start, final = att["start"], att["final"]
+    if final is None:
+        return "ENDPOINT_ERROR", start.get("key"), att["segment"], "interrupted: started, no outcome logged"
+    return classify_ledger_final(final), final.get("key"), att["segment"], final.get("error")
+
+
+def ledger_status(attempts):
+    """(status, key, segment, error) implied by a sample's attempts: the last attempt decides; every earlier
+    attempt must be an excluded usage-limit rejection (else the sample was replayed: status REPLAY). A last
+    attempt that is itself excluded leaves the sample PENDING."""
+    if any(attempt_status(a)[0] != "QUOTA_EXCLUDED" for a in attempts[:-1]):
+        return "REPLAY", None, None, None
+    status, key, segment, error = attempt_status(attempts[-1])
+    return ("PENDING" if status == "QUOTA_EXCLUDED" else status), key, segment, error
+
+
+def audit(ledgers, prompts, frozen, arm):
+    """Every ledger problem (identity, billing, model, drift from the frozen baseline)."""
+    problems = []
+    ledger_index(ledgers, prompts, frozen, arm, problems)
+    return problems
 
 
 def reconcile(answers, ledgers, prompts, frozen, arm, allow_incomplete=False):
     """Check the answers against the schedule and the ledger. Returns (records, orphans):
-    records[(id, s)] = the answers row; orphans = scheduled samples the ledger shows as started but
-    with no answers row (only with allow_incomplete, for the runner's resume). Raises DataError."""
+    records[(id, s)] = the answers row; orphans = scheduled samples whose ledger outcome is final but that
+    have no answers row (only with allow_incomplete, for the runner's resume). A sample whose last attempt
+    was an excluded usage-limit rejection is pending (the runner retries it). Raises DataError."""
     problems = []
     sched = schedule(list(prompts), frozen["k"])
     sset = set(sched)
@@ -189,28 +365,29 @@ def reconcile(answers, ledgers, prompts, frozen, arm, allow_incomplete=False):
         else:
             records[ident] = r
     idx = ledger_index(ledgers, prompts, frozen, arm, problems)
-    orphans = []
+    orphans, pending = [], []
     for ident in sched:
-        entry = idx.get(ident)
+        attempts = idx.get(ident) or []
         rec = records.get(ident)
-        n_start = len(entry["started"]) if entry else 0
-        if n_start > 1:
-            problems.append(f"{ident}: started {n_start} times in the ledger (replay)")
+        if not attempts:
+            if rec is not None:
+                problems.append(f"{ident}: answers row without a ledger start")
             continue
-        if entry and not entry["started"] and entry["final"]:
-            problems.append(f"{ident}: ledger outcome without a start")
+        status, key, segment, _ = ledger_status(attempts)
+        if status == "REPLAY":
+            problems.append(f"{ident}: started {len(attempts)} times in the ledger (replay)")
+            continue
+        if status == "PENDING":
+            if rec is not None:
+                problems.append(f"{ident}: answers row for an excluded usage-limit rejection")
+            pending.append(ident)
             continue
         if rec is None:
-            if n_start == 1:
-                if allow_incomplete:
-                    orphans.append(ident)
-                else:
-                    problems.append(f"{ident}: started in the ledger but no answers row")
+            if allow_incomplete:
+                orphans.append(ident)
+            else:
+                problems.append(f"{ident}: started in the ledger but no answers row")
             continue
-        if n_start == 0:
-            problems.append(f"{ident}: answers row without a ledger start")
-            continue
-        status, key, segment, _ = ledger_status(entry)
         if rec["status"] != status:
             problems.append(f"{ident}: answers status {rec['status']} but the ledger implies {status}")
         if rec.get("key") != key or rec.get("ledger") != segment:
@@ -224,6 +401,10 @@ def reconcile(answers, ledgers, prompts, frozen, arm, allow_incomplete=False):
     if problems:
         raise DataError("; ".join(problems[:20]) + (f" (+{len(problems) - 20} more)" if len(problems) > 20 else ""))
     return records, orphans
+
+
+def quota_excluded_attempts(ledgers):
+    return sum(1 for rows in ledgers.values() for r in rows if r.get("status") in FINAL_LEDGER and quota_excluded(r))
 
 
 # ------------------------------------------------------------------------------------------------
@@ -245,6 +426,9 @@ def item_stats(records, items, gt, k=K):
             # primary: invalid counts as an error
             error=(wrong_valid + len(model) - len(valid)) / len(model) if model else None,
             error_valid_only=wrong_valid / len(valid) if valid else None,
+            # missingness sensitivity: every scheduled sample in the denominator; ENDPOINT_ERROR (and any
+            # missing sample) imputed as correct
+            error_missing_as_correct=(wrong_valid + len(model) - len(valid)) / k,
             # directional: the numerator needs an actual YES/NO opposite to the reference
             wrong_direction=valid.count(other) / len(model) if model else None,
             wrong_direction_valid_only=valid.count(other) / len(valid) if valid else None)
@@ -365,7 +549,10 @@ def analyse_arm(records, items, gt, arm, n_scheduled, k=K):
     total_err = sum(sum(v) for v in by_cluster.values())
     top_share = max(sum(v) for v in by_cluster.values()) / total_err if total_err else None
     valid_only = mean_over(stats, primary_ids, "error_valid_only", 0.0)
+    imputed = mean_over(stats, primary_ids, "error_missing_as_correct", 0.0)
     robust = dict(
+        endpoint_errors_imputed_correct=dict(error=r4(imputed), holds=imputed >= GATE),
+        invalid_excluded=dict(error=r4(valid_only), holds=valid_only >= GATE),
         planted_edits_excluded=dict(items=len(no_edits), error=r4(est(no_edits)), holds=est(no_edits) >= GATE),
         artefacts_with_errors=dict(n=len(err_artefacts), artefacts=err_artefacts,
                                    holds=len(err_artefacts) >= MIN_ERROR_ARTEFACTS),
@@ -395,7 +582,8 @@ def analyse_arm(records, items, gt, arm, n_scheduled, k=K):
             ci95_cluster_bootstrap=[r4(lo), r4(hi)],
             artefact_mean_t_interval=dict(mean_of_artefact_means=r4(t_mean), ci95=[r4(x) for x in t_ci]),
             error_mass_share_of_top_artefact=r4(top_share),
-            invalid_excluded_sensitivity=r4(valid_only)),
+            invalid_excluded_sensitivity=r4(valid_only),
+            endpoint_errors_imputed_correct=r4(imputed)),
         robustness=robust,
         key_secondary_false_approval_restriction_NO=direction("restriction", "NO"),
         direction_split=dict(
@@ -413,13 +601,13 @@ def analyse_arm(records, items, gt, arm, n_scheduled, k=K):
         all_items_including_edge=r4(est(list(items))),
         per_item={i: item_row(i) for i in items})
     if arm == "high":
-        out["gate"] = verdict(point, lo, robust, valid_only)
+        out["gate"] = verdict(point, lo, robust)
     else:
         out["gate"] = "not applicable: secondary configuration (descriptive); a pass at low effort alone does not count"
     return out
 
 
-def verdict(point, lo, robust, valid_only):
+def verdict(point, lo, robust):
     failed = [k for k, v in robust.items() if not v["holds"]]
     if point < GATE:
         v = "FAIL (closes this sample only)"
@@ -429,8 +617,6 @@ def verdict(point, lo, robust, valid_only):
         v = "WEAK PASS (cluster-bootstrap lower bound < 0.15: replicate on new artefacts first)"
     else:
         v = "PASS"
-    if v.startswith(("PASS", "WEAK")) and valid_only < GATE:
-        v += "; note: below the gate when INVALID samples are excluded"
     return v
 
 
@@ -471,6 +657,7 @@ def main(argv=None):
             report[arm] = dict(gate="NO VERDICT: endpoint errors exceed the stop threshold", endpoint_errors=errs)
             continue
         report[arm] = analyse_arm(records, items, gt, arm, n, frozen["k"])
+        report[arm]["usage_limit_rejections_excluded_and_retried"] = quota_excluded_attempts(ledgers)
     print(json.dumps(report, indent=1))
 
 
