@@ -34,3 +34,22 @@ All original T1 HASHES entries were verified unchanged. The largest raw
 wrapper tokens gives a conservative 189,538 bound, below Haiku's 200,000.
 Full c packet fit requires a native count when its byte upper bound is too large.
 These checks never truncate source data or infer subscription charges.
+
+## Explicit A1 continuation
+
+The initial launch stopped on supplementary Haiku canonical metadata before
+scoring. [PREREG-T1b-A1.md](PREREG-T1b-A1.md) independently freezes and timestamps
+the exact shorthand equivalence; the original stop and response are preserved.
+The original served ID matches the pinned dated model. A1 reuses that response
+without resampling. Its active commands are:
+
+```sh
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python -m ve_experiments.t1b.amendment_run all
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/T1b/audit.py
+UV_CACHE_DIR=/private/tmp/ve-uv-cache-v4 uv run python experiments/T1b/write_report.py
+```
+
+A new `STOP-A1.json` is an immutable active global stop. Never delete either
+stop file or change frozen code to force continuation. The standalone audit and
+report scripts make no model calls. A 5,000-record honest VE closure/coverage
+check also passed offline before continuation.

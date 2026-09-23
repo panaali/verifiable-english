@@ -4,7 +4,7 @@ import json
 from ve_experiments.claude_cli import MODELS, parse_stream
 from ve_experiments.t1b.materials import packet
 from ve_experiments.t1b.protocol import JUDGE_SYSTEM
-from ve_experiments.t1b.run import HOME, ROOT, CELLS, load, save, sha, verify, passing_cells
+from ve_experiments.t1b.amendment_run import HOME, ROOT, CELLS, load, save, sha, verify, passing_cells
 
 
 def main():
@@ -49,14 +49,21 @@ def main():
                 assert row['system']==JUDGE_SYSTEM
                 assert row['prompt']==packet(item)+'\nUNTRUSTED SUBMISSION:\n'+json.dumps({'claim':item['claim']})
                 assert not score['trusted_report']
-        result['splits'][split]={'expected_decisions':len(expected),'observed_decisions':len(observed),'complete':observed==expected,
+        costs=[load(f) for f in (directory/'costs').glob('*.json')]
+        assert {c['key'] for c in costs}==set(completed)
+        if (HOME/'STOP-A1.json').exists():
+            stopped=load(HOME/'STOP-A1.json')['at']
+            assert all(r['timestamp']<=stopped for r in started)
+        result['splits'][split]={'costs_cover_all_successful_calls':True,'expected_decisions':len(expected),'observed_decisions':len(observed),'complete':observed==expected,
             'started_calls':len(started),'successful_calls':len(completed),'failed_calls':len(failed),
             'all_observed_slots_valid_unique':True,'all_raw_arm_prompts_exact':True,'protocol_streams_replayed':True,
             'served_models':sorted({r['served_model'] for r in completed.values()}),
             'first_intent':min((r['timestamp'] for r in started),default=None),
             'last_result':max((r['timestamp'] for r in completed.values()),default=None),
             'failed_errors':[r.get('error') for r in failed]}
-    result['stop']=load(HOME/'STOP.json') if (HOME/'STOP.json').exists() else None
+    result['original_metadata_stop']=load(HOME/'STOP.json')
+    result['active_stop']=load(HOME/'STOP-A1.json') if (HOME/'STOP-A1.json').exists() else None
+    result['amendment']='PREREG-T1b-A1.md; canonical shorthand only, original responses reused'
     result['provenance_checks_passed']=True
     save(HOME/'integrity-audit.json',result)
     print(json.dumps(result,indent=2))

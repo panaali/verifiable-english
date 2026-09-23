@@ -1,0 +1,29 @@
+{
+  "account_label": "danielsaeedi37",
+  "arm": "a",
+  "elapsed_s": 10.760244957986288,
+  "input_tokens": 96589,
+  "item_id": "a42c66f5b1f2/a/opus/2/decision",
+  "key": "42fa34ed377324bf92402f61ff0d131788f6b99bb61bdf48b25945974e9128e3",
+  "model": "opus",
+  "model_usage": {
+    "claude-opus-5-5": {
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 96587,
+      "canonicalModel": "claude-opus-5-5",
+      "contextWindow": 1000000,
+      "costBasis": "list",
+      "costUSD": 0.0436054,
+      "inputTokens": 2,
+      "maxOutputTokens": 128000,
+      "outputTokens": 1214,
+      "provider": "firstParty",
+      "thinkingTokens": 876,
+      "webSearchRequests": 0
+    }
+  },
+  "output_tokens": 1214,
+  "role": "judge",
+  "served_model": "claude-opus-5-5",
+  "thinking_tokens_reported": 876
+}

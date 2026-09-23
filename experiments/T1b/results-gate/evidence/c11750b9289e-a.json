@@ -1,0 +1,5 @@
+{
+  "claim": "u_4038 cannot access x_d98f.",
+  "note": "I won't write a note supporting this claim, because it is false. u_4038 can access x_d98f through this path: u_4038 is a member of g_1b49, which is in g_6940, then g_018a, g_268c, g_483a and g_427a. g_427a holds r_b2b2. The inheritance file says every permission of r_889a is also a permission of r_b2b2, so r_b2b2 inherits r_889a. It also says every permission of r_c07c is also a permission of r_889a, so r_889a inherits r_c07c. The binding {role: r_c07c, resource: x_d98f} grants x_d98f. Every link comes directly from the unchanged source files. The policy is monotone with no denies, so nothing blocks this path.",
+  "valid": true
+}

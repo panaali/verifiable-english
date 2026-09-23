@@ -1,0 +1,5 @@
+{
+  "claim": "u_807b cannot access x_b6d2.",
+  "note": "The claim holds: u_807b cannot reach x_b6d2. u_807b has no role bindings and belongs only to the g_b4a0 groups (base, d0\u2013d6). Only r_0e35 and r_0e35_d0\u2013d6 grant x_b6d2, and every chain toward them breaks on a mismatched identifier. Base: g_b4a0\u2192g_9306\u2192g_a6fc\u2192g_051e, but g_051e_v2 (not g_051e) is in g_4fc4. d0, d3 and d4: g_9306_dX is a dead end; only g_9306_dX_v2 joins g_a6fc_dX. d1: g_a6fc_d1 is a dead end; only g_a6fc_d1_v2 joins g_051e_d1. d2 and d5: the chain reaches g_4fc4_dX, but r_9099_dX is bound to g_4fc4_dX_v2, not g_4fc4_dX. d6: the chain reaches g_4fc4_d6 and r_9099_d6, but r_9099_d6 inherits nothing; only r_9099_d6_v2 inherits r_71c6_d6. Also, 'every permission of r_0e35_d6 is also a permission of r_71c6_d6' runs the wrong direction. No other path exists.",
+  "valid": true
+}

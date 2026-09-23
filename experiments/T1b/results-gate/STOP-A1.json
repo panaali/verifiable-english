@@ -1,0 +1,7 @@
+{
+  "at": "2026-09-23T00:06:45.580353+00:00",
+  "error": "InfrastructureError: synthetic placeholder without a served model",
+  "item_id": "32f4c84f554a/a/haiku/1/decision",
+  "resample": false,
+  "role": "judge"
+}

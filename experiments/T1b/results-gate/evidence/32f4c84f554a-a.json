@@ -1,0 +1,5 @@
+{
+  "claim": "u_d54c cannot access x_7b90.",
+  "note": "The audit supports the claim that u_d54c cannot access x_7b90. u_d54c's only memberships are the suffixed chains g_1ffb_dN\u2192g_2aad_dN\u2192g_6e74_dN\u2192g_a8d7_dN, plus g_1ffb. Each suffixed group binds only r_7825_dN. The inheritance file never connects r_7825_dN back to r_5641_dN. Its statements run the other way: permissions of r_5641_dN are also permissions of r_7825_dN. The _v2 variants, such as r_7825_d3_v2 and g_6e74_d1_v2, are distinct identifiers that no principal holds, so they break the d1 and d3 chains. For the unsuffixed branch, the r_7825/r_5641/r_2ce8 statements are phrased as 'every permission of X is also a permission of Y.' Read as containment in that direction, they propagate r_2ce8's grants outward, not r_f16b's resource x_7b90 down to r_7825 holders. No binding grants r_f16b or any r_f16b_dN directly to a principal reachable from u_d54c. Because the policy is monotone with no wildcards, no qualifying directed path exists, and the claim is correct.",
+  "valid": true
+}

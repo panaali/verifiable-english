@@ -1,0 +1,41 @@
+{
+  "active_stop": {
+    "at": "2026-09-23T00:06:45.580825+00:00",
+    "error": "InfrastructureError: synthetic placeholder without a served model",
+    "resample": false,
+    "split": "gate"
+  },
+  "amendment": "PREREG-T1b-A1.md; canonical shorthand only, original responses reused",
+  "freeze_verified": true,
+  "original_metadata_stop": {
+    "at": "2026-09-22T23:47:32.789329+00:00",
+    "error": "RuntimeError: Served canonical model changed",
+    "resample": false,
+    "split": "gate"
+  },
+  "original_t1_unchanged": true,
+  "provenance_checks_passed": true,
+  "splits": {
+    "gate": {
+      "all_observed_slots_valid_unique": true,
+      "all_raw_arm_prompts_exact": true,
+      "complete": false,
+      "costs_cover_all_successful_calls": true,
+      "expected_decisions": 180,
+      "failed_calls": 1,
+      "failed_errors": [
+        "synthetic placeholder without a served model"
+      ],
+      "first_intent": "2026-09-22T23:47:05.453340+00:00",
+      "last_result": "2026-09-23T00:05:29.677647+00:00",
+      "observed_decisions": 19,
+      "protocol_streams_replayed": true,
+      "served_models": [
+        "claude-haiku-4-5-20251001",
+        "claude-opus-5-5"
+      ],
+      "started_calls": 25,
+      "successful_calls": 24
+    }
+  }
+}
