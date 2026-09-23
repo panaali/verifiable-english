@@ -1,0 +1,44 @@
+[
+  {
+    "at": "2026-09-23T02:14:53.117043+00:00",
+    "command": [
+      "uvx",
+      "--from",
+      "opentimestamps-client",
+      "ots",
+      "stamp",
+      "/Users/seyran/code/ve-codex-v4/experiments/T1b/PREREG-T1b-A3.md"
+    ],
+    "returncode": 0,
+    "stderr": "Submitting to remote calendar https://a.pool.opentimestamps.org\nSubmitting to remote calendar https://b.pool.opentimestamps.org\nSubmitting to remote calendar https://a.pool.eternitywall.com\nSubmitting to remote calendar https://ots.btc.catallaxy.com\n",
+    "stdout": ""
+  },
+  {
+    "at": "2026-09-23T02:14:53.295202+00:00",
+    "command": [
+      "uvx",
+      "--from",
+      "opentimestamps-client",
+      "ots",
+      "info",
+      "/Users/seyran/code/ve-codex-v4/experiments/T1b/PREREG-T1b-A3.md.ots"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "File sha256 hash: e4ce27ab4e4155687b27c31ff2436591917a202a2693d27e4d28bfab3bb247c5\nTimestamp:\nappend 3c441be6b0f5c1adbdde863ac152e4e4\nsha256\n -> append aa9c8b075c225bfb\n    sha256\n    append bed593c8becb998562a5b217387ee371\n    sha256\n    append cc3a6a57120f3c8584171eb36f02669250ff43cee4b4c3318f43e9b889645b73\n    sha256\n    append d00002a2de452b5a26a601f1dc97ef49c71f3cac3fcf710fc737685a5d13d06e\n    sha256\n    prepend 6ab3361c\n    append 78a7a0f25bab2383\n    verify PendingAttestation('https://alice.btc.calendar.opentimestamps.org')\n -> append af9385662c44b656909f8906c8088074\n    sha256\n    append 487a205c9bea68334086343cbecaf624e78e9f249ee0c75effbe62b06e81d970\n    sha256\n    prepend 35d669e3c08ee911cbaf3c76b474abdfc66fbb2b7a98ebf7f5a38aa186e1f9a4\n    sha256\n    prepend 6ab3361b\n    append f907d8adeaabaec3\n    verify PendingAttestation('https://btc.calendar.catallaxy.com')\n -> append b7e2507f567c7834\n    sha256\n    append cbedc2b178bcdbdbda75b678e8f8d1aa\n    sha256\n    prepend 1644e32b35813f8d788a7939660369ee5e1286514245842a3e89113eba258421\n    sha256\n    append 74172b0512cb37fc9570a12453fd8ec7086e443108c831c2c018871a5682a0b6\n    sha256\n    prepend 6ab3361c\n    append 5dc8b381bb23acec\n    verify PendingAttestation('https://bob.btc.calendar.opentimestamps.org')\n -> append c7b6cd03da56f7becca373620d91febd\n    sha256\n    append 23dbb95a63de0733d36b9c473043d914568b93def8cee65f7953ff98cb19363c\n    sha256\n    append 621e0acc4b4bc5cb335120e25ae36c52e61d78c91ac52f1d1b5a869b2752eba7\n    sha256\n    append 9f2a7ea3b47f434b61a535d576ae0d97f7aa00b771ae61202d6e21556bf160b5\n    sha256\n    prepend 6ab3361d\n    append 150e3a75b9e007b1\n    verify PendingAttestation('https://finney.calendar.eternitywall.com')\n\n"
+  },
+  {
+    "at": "2026-09-23T02:14:54.939952+00:00",
+    "command": [
+      "uvx",
+      "--from",
+      "opentimestamps-client",
+      "ots",
+      "stamp",
+      "/Users/seyran/code/ve-codex-v4/experiments/T1b/HASHES-A3"
+    ],
+    "returncode": 0,
+    "stderr": "Submitting to remote calendar https://a.pool.opentimestamps.org\nSubmitting to remote calendar https://b.pool.opentimestamps.org\nSubmitting to remote calendar https://a.pool.eternitywall.com\nSubmitting to remote calendar https://ots.btc.catallaxy.com\n",
+    "stdout": ""
+  }
+]
