@@ -61,8 +61,8 @@ complexity bound are not. Body relations are evaluated for all domain pairs
 per outer valuation. The reference bridge has no evaluation work-budget theorem.
 
 The extended checker is in `TableauExtended*.lean`, with semantic helper proofs
-in `Closure/Substitution.lean`, `Closure/Congruence.lean` and
-`Closure/PathRules.lean`. Its headline theorem is:
+in `Closure/Substitution.lean`, `Closure/Congruence.lean`,
+`Closure/PathRules.lean` and `Closure/Induction.lean`. Its headline theorem is:
 
 ```lean
 VE.Closure.Tableau.checkCertificate_sound
@@ -84,12 +84,38 @@ The proof `checkCertificate_sound_v0` specializes this extended result to
 `VE.Entails` on embedded v0 formulas by `conservativity`. The four original files
 `Tableau.lean`, `TableauClosure.lean`, `TableauChecker.lean`, `TableauChecks.lean`
 and the original `VE.Tableau.checkCertificate_sound` statement remain unchanged.
-The adapter preserves v0 version-1/version-2 handling; closure envelopes require
-`ve-tableau-closure-checker@0`, even for Reach-free queries. Both checkers reject
+The adapter preserves v0 version-1/version-2 handling; closure envelopes accept
+`ve-tableau-closure-checker@0` and `ve-tableau-closure-checker@1`, even for Reach-free queries. Both checkers reject
 when fuel is exhausted; the wire depth limit remains 124 expansions.
 
-The implementation has no general induction or cyclic rule. Monotonicity under
-a universal inclusion and symmetric-relation reversal are not implemented.
+Version `@1` adds `closure-induct@1`; `@0` retains exactly its previous rules.
+An induction node names a positive path, its sort, and a supplied unary formula
+`P` whose index 0 is the induction variable. Remaining free indices refer to
+that path's captured bindings. The checker type-checks `P` and reconstructs
+three children: the branch plus `not P(x)`, plus the negation of
+`forall a,b. (P(a) and E(a,b) -> P(b))`, and plus `P(y)`. Every child must close.
+No submitted base proof, preservation claim, or derived endpoint formula is
+trusted without replay. The same node supports Named/Body and plus/star paths.
+The branch theorem `Tableau.induct_sound` is used by `replay_sound`, so the
+headline theorem above covers the new rule without an extra soundness premise.
+
+The underlying finite-path theorem, verbatim inside `namespace VE.Closure`, is:
+
+```lean
+theorem reachable_induction {α : Type u} {R : α → α → Prop} (k : Kind)
+    (P : α → Prop) (x : α) (base : P x)
+    (step : ∀ a b, P a → R a b → P b) :
+    ∀ y, Reachable k R x y → P y
+```
+
+`closure_induction` lifts this to formula denotation with capture-safe
+substitution through arbitrary quantifiers and nested Body binders. The theorem
+above has no logical axiom dependencies; the complete certificate theorem uses
+only the existing standard allowlist (`propext`, `Classical.choice`, `Quot.sound`).
+There is still no cyclic-proof acceptance or completeness claim. T9 and T9e
+now have independently replayed [induction certificates](../usecases/closure-induction/README.md).
+Search without invariant hints, and symmetric-relation reversal, retain their
+previous limitations.
 The reviewer regression results and certificate/forgery counts are retained in
 `conformance/certificates-report.json`. The extended claim-graph theorem has not
 been proved; argument UI Lean labels identify actual deduction-certificate replay.

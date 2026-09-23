@@ -3,8 +3,8 @@
 Ranked by (how often it blocked something in this paper or in `boundary.md`) ×
 (how much of ordinary mathematics it unlocks). Each entry gives the smallest
 concrete example that hit it, why v0/v0.1 cannot express it, and a syntax and
-semantics sketch. The sketches are **design proposals**, not implemented
-features, and none of them has a soundness proof.
+semantics sketch. The original sketches are **design proposals**; the dated
+G5 update below records the subsequent proved closure-induction implementation.
 
 A recurring theme: the gaps that block *statements* (G1–G3) are mostly cheap and
 well understood; the gaps that block *proofs* (G4, G5) are the ones that decide
@@ -128,6 +128,13 @@ hidden definitions or inference rules").
 ---
 
 ## G5. Induction (and least-fixed-point reasoning generally) — blocked T9 and T9e; decisive for mathematics
+
+**2026-09-22 update:** the closure-specific rule is implemented and proved sound
+in Lean. Both T9 and T9e now have Python/Lean-accepted certificates in the
+[induction supplement](../closure-induction/README.md). The original certificates,
+results and no-invariant search regressions are retained unchanged as historical
+evidence. The discussion below describes the original gap; arithmetic induction
+and cyclic proof acceptance remain outside the implementation.
 
 **Smallest example.** T9: *r ⊆ s* and *s* transitive imply `tc[r] ⊆ s`. Every
 mathematician proves this by induction on path length; `closure@0` implements

@@ -421,3 +421,12 @@ reference operations on identical inputs. A concrete work plan is:
 A completed source proof would still leave the extraction/toolchain assumptions,
 external models, compiler, IO and machine execution within their declared trust
 boundary. No P8 gate is claimed by this implementation.
+
+## Closure induction certificate boundary (2026-09-22)
+
+Rust implements closure syntax, typing, identity, finite evaluation and
+countermodel search. It has no tableau certificate representation, certificate
+checker, or `check-certificate` command for either v0 or closure. The new
+`ve-tableau-closure-checker@1` / `closure-induct@1` format is implemented by Python
+and the proved Lean replayer only. No Rust parity implementation is required
+for an existing checker, and no Rust proof-certification claim is made.

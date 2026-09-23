@@ -1,4 +1,4 @@
-import VE.TableauExtendedExtra
+import VE.TableauExtendedInduction
 
 namespace VE.Closure.Tableau
 universe u
@@ -164,7 +164,7 @@ theorem step_sound {E : Environment} {S : Structure} (hS : S.Admissible E)
     · contradiction
 
 /-- Fuel counts depth, not successful logical steps. Exhaustion rejects. -/
-def replay (E : Environment) (compound : Bool := false) : Nat → Branch → Trace → Bool
+def replay (E : Environment) (compound : Bool := false) (induction : Bool := false) : Nat → Branch → Trace → Bool
   | 0, _, _ => false
   | fuel + 1, b, t =>
     b.scoped && b.known E && match t with
@@ -172,11 +172,15 @@ def replay (E : Environment) (compound : Bool := false) : Nat → Branch → Tra
       | .expand rule index parameter children =>
         match step E b rule index parameter with
         | none => false
-        | some bs => checkChildren (replay E compound fuel) bs children
+        | some bs => checkChildren (replay E compound induction fuel) bs children
+      | .induct index s P children =>
+        induction && match induct E b index s P with
+        | none => false
+        | some bs => checkChildren (replay E compound induction fuel) bs children
 
 theorem replay_sound {E : Environment} {S : Structure} (hS : S.Admissible E)
-    (compound : Bool) (fuel : Nat) (b : Branch) (ρ : Assignment S) (hρ : Assignment.Typed S b ρ)
-    (hh : b.Holds S ρ) (t : Trace) (hc : replay E compound fuel b t = true) : False := by
+    (compound induction : Bool) (fuel : Nat) (b : Branch) (ρ : Assignment S) (hρ : Assignment.Typed S b ρ)
+    (hh : b.Holds S ρ) (t : Trace) (hc : replay E compound induction fuel b t = true) : False := by
   induction fuel generalizing b ρ t with
   | zero => contradiction
   | succ fuel ih =>
@@ -193,10 +197,20 @@ theorem replay_sound {E : Environment} {S : Structure} (hS : S.Admissible E)
       cases hn : step E b rule index parameter with
       | none => simp [replay, hn] at hc
       | some bs =>
-        have hchildren : checkChildren (replay E compound fuel) bs children = true := by
+        have hchildren : checkChildren (replay E compound induction fuel) bs children = true := by
           simpa [hn] using hc'.2
         obtain ⟨child, hm, σ, ht, hh⟩ := step_sound hS b ρ hρ hs hk hh rule index parameter bs hn
-        obtain ⟨t, hc⟩ := checkChildren_member (replay E compound fuel) bs children hchildren child hm
+        obtain ⟨t, hc⟩ := checkChildren_member (replay E compound induction fuel) bs children hchildren child hm
+        exact ih child σ ht hh t hc
+    | induct index s P children =>
+      have hc'' := (Bool.and_eq_true_iff.mp hc'.2).2
+      cases hn : induct E b index s P with
+      | none => simp [hn] at hc''
+      | some bs =>
+        have hchildren : checkChildren (replay E compound induction fuel) bs children = true := by
+          simpa [hn] using hc''
+        obtain ⟨child,hm,σ,ht,hh⟩ := induct_sound hS b ρ hρ hh index s P bs hn
+        obtain ⟨t,hc⟩ := checkChildren_member (replay E compound induction fuel) bs children hchildren child hm
         exact ih child σ ht hh t hc
 
 def initial (premises : List Formula) (conclusion : Formula) : Branch :=
@@ -206,9 +220,10 @@ def initial (premises : List Formula) (conclusion : Formula) : Branch :=
 additional gate. All constructors and all equality rules are supported. -/
 def checkCertificate (E : Environment) (premises : List Formula) (conclusion : Formula)
     (c : Certificate) : Bool :=
-  (c.checker_version == "ve-tableau-closure-checker@0") &&
+  (c.checker_version == "ve-tableau-closure-checker@0" ||
+    c.checker_version == "ve-tableau-closure-checker@1") &&
     premises.all (fun f => f.check E []) && conclusion.check E [] &&
-    replay E true 125 (initial premises conclusion) c.trace
+    replay E true (c.checker_version == "ve-tableau-closure-checker@1") 125 (initial premises conclusion) c.trace
 
 /-- Sound over every admissible structure at every universe, including empty
 sorts and an empty common carrier. There is no certificate-soundness premise. -/
@@ -219,9 +234,10 @@ theorem checkCertificate_sound (E : Environment) (premises : List Formula)
   intro S hS hp
   apply Classical.byContradiction
   intro hn
-  have hr : replay E true 125 (initial premises conclusion) c.trace = true :=
+  have hr : replay E true (c.checker_version == "ve-tableau-closure-checker@1") 125
+      (initial premises conclusion) c.trace = true :=
     (Bool.and_eq_true_iff.mp hc).2
-  apply replay_sound hS _ _ (initial premises conclusion) (fun _ => none) _ _ c.trace hr
+  apply replay_sound hS _ _ _ (initial premises conclusion) (fun _ => none) _ _ c.trace hr
   · intro i s hi
     simp [initial] at hi
   · intro a ha
