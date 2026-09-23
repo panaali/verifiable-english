@@ -303,41 +303,52 @@ class AssistSession:
                               "actual claim")
         return vacuity
 
-    def _proved_alone(self, formula):
-        """Found / NotFound / ResourceLimit for ``formula`` from no premises (errors count as ResourceLimit)."""
-        if type(formula) is ast.Top:
-            return "Found"
-        try:
-            return prove_entailment(self.env, (), formula, max_steps=self.options["max_proof_steps"]).status
-        except (ValueError, VEError):
-            return "ResourceLimit"
+    def _decide(self, premises, conclusion):
+        """Does ``premises`` entail ``conclusion``? ``yes`` / ``no`` / ``unknown``.
 
-    def _validity(self, formula):
-        """``valid`` / ``invalid`` / ``unknown`` from no premises, conjunct by conjunct. Fails closed:
-        ``invalid`` needs a saturated open tableau (not closure@0) or a checked countermodel."""
-        parts = []
-        for part in _conjuncts(formula):
-            status = self._proved_alone(part)
-            if status == "Found":
-                parts.append("valid")
-                continue
-            if status == "NotFound" and not self.env.closure:
-                return "invalid"
-            budget = self._budget()
-            found, model = ground_countermodel(self.env, (), part)
+        The single interpretation point for every fidelity search. ``yes`` needs a Found proof;
+        ``no`` needs a saturated open tableau (no closure) or a checked countermodel. Anything
+        else -- an exhausted proof budget (ResourceLimit), a prover error, no countermodel within
+        budget -- is ``unknown``, and every caller treats ``unknown`` as blocking success. So
+        raising or lowering the proof budget can only turn ``unknown`` into a decision, never flip a
+        decided answer, and never turn a failing item into a success.
+        """
+        premises = tuple(premises)
+        if type(conclusion) is ast.Top:
+            return "yes"
+        try:
+            status = prove_entailment(self.env, premises, conclusion,
+                                      max_steps=self.options["max_proof_steps"]).status
+        except (ValueError, VEError):
+            status = "ResourceLimit"
+        if status == "Found":
+            return "yes"
+        if status == "NotFound" and not self.env.closure:
+            return "no"
+        budget = self._budget()
+        try:
+            found, model = ground_countermodel(self.env, premises, conclusion)
             if found == "Unsupported":
-                model = find_countermodel(self.env, (), part, max_domain_size=budget["max_domain_size"],
+                model = find_countermodel(self.env, premises, conclusion,
+                                          max_domain_size=budget["max_domain_size"],
                                           max_models=budget["max_models"],
                                           max_evaluations=budget["max_evaluations"]).model
-            if model is not None and check_countermodel(self.env, (), part, model,
+            if model is not None and check_countermodel(self.env, premises, conclusion, model,
                                                         max_evaluations=budget["max_evaluations"]).valid:
-                return "invalid"
-            parts.append("unknown")
-        return "valid" if all(p == "valid" for p in parts) else "unknown"
+                return "no"
+        except (ValueError, VEError):
+            pass
+        return "unknown"
 
-    def _tautology(self, formula):
-        """Proved valid from no premises, conjunct by conjunct (no countermodel search)."""
-        return all(self._proved_alone(part) == "Found" for part in _conjuncts(formula))
+    def _validity(self, formula):
+        """``valid`` / ``invalid`` / ``unknown`` from no premises, conjunct by conjunct (fails closed)."""
+        parts = []
+        for part in _conjuncts(formula):
+            verdict = self._decide((), part)
+            if verdict == "no":
+                return "invalid"
+            parts.append("valid" if verdict == "yes" else "unknown")
+        return "valid" if all(p == "valid" for p in parts) else "unknown"
 
     def _offered(self, formula):
         """The candidate or suggestion (kind, id) whose formula this is, if any: provenance is bound to
@@ -416,9 +427,11 @@ class AssistSession:
             self._replaying = None
         if self._model_calls:
             event["model_calls"] = self._model_calls
+            # Earlier failed attempts of the same backend call (retries) spent tokens too.
+            spent = lambda c, k: (c.get(k) or 0) + sum(a.get(k) or 0 for a in c.get("attempts", ()))
             event["tokens"] = {"proposer": {
-                "input_tokens": sum(c.get("input_tokens") or 0 for c in self._model_calls),
-                "output_tokens": sum(c.get("output_tokens") or 0 for c in self._model_calls),
+                "input_tokens": sum(spent(c, "input_tokens") for c in self._model_calls),
+                "output_tokens": sum(spent(c, "output_tokens") for c in self._model_calls),
                 "calls": len(self._model_calls)}}
         if action == "record_usage" and result["ok"]:
             event["tokens"] = {args["role"]: {"input_tokens": args.get("input_tokens", 0),
@@ -645,9 +658,8 @@ class AssistSession:
             if replay.valid:
                 record.update(status="follows", certificate=proof.certificate,
                               certificate_digest=_sha(proof.certificate), replay_steps=replay.steps)
-                contradiction = prove_entailment(self.env, premises, ast.Bottom(),
-                                                 max_steps=budget["max_proof_steps"])
-                if contradiction.status == "Found":
+                # Informational only: status decides consistency of every support fail-closed.
+                if self._entails(premises, ast.Bottom()):
                     record["contradictory_parents"] = True
                 return record
             record["prover"]["replay"] = replay.status
@@ -860,6 +872,9 @@ class AssistSession:
         return graph, None, root.name
 
     def _entails(self, premises, conclusion):
+        """Positive-only proof search (True only on a Found proof). Used for suggestions and
+        comparisons; never interpret False as "not entailed" in a check success depends on: use
+        ``_decide``, which reports an exhausted search as ``unknown``."""
         try:
             return prove_entailment(self.env, tuple(premises), conclusion,
                                     max_steps=self.options["max_proof_steps"]).status == "Found"
@@ -883,17 +898,23 @@ class AssistSession:
                             support=support, assumptions=list(result.remaining_assumptions))
                 if result.status != "Checked":
                     failures.append(f"target {tid}: graph replay status {result.status}")
-                leaves = [self.nodes[n].formula for n in result.remaining_assumptions]
-                if leaves and self._entails(leaves, ast.Bottom()):
-                    view["inconsistent_assumptions"] = True
-                    failures.append(f"target {tid}: its assumptions are jointly contradictory")
+                failures += self._consistency_failures(f"target {tid}", result.remaining_assumptions, view)
                 # Vacuity through the graph: tautological assumptions add nothing, so a target they
                 # entail on their own is vacuous even when the direct empty-premise check ran out of budget.
-                trivial = [n for n in sorted(result.remaining_assumptions) if self._tautology(self.nodes[n].formula)]
-                if trivial and self._entails([self.nodes[n].formula for n in trivial], self.targets[tid]["formula"]):
-                    view["vacuous"] = True
-                    failures.append(f"target {tid}: provable from tautological assumptions only "
-                                    f"({', '.join(trivial)})")
+                # An assumption whose validity is undecided counts as possibly tautological (fail closed).
+                verdicts = {n: self._validity(self.nodes[n].formula) for n in sorted(result.remaining_assumptions)}
+                trivial = [n for n, v in verdicts.items() if v != "invalid"]
+                if trivial:
+                    verdict = self._decide([self.nodes[n].formula for n in trivial], self.targets[tid]["formula"])
+                    undecided = [n for n in trivial if verdicts[n] == "unknown"]
+                    if verdict == "yes" and not undecided:
+                        view["vacuous"] = True
+                        failures.append(f"target {tid}: provable from tautological assumptions only "
+                                        f"({', '.join(trivial)})")
+                    elif verdict != "no":
+                        view["vacuous"] = "unknown"
+                        failures.append(f"target {tid}: vacuity through assumptions undecided within budget "
+                                        f"({', '.join(trivial)} may be tautologies that entail it; fail closed)")
             if view["frozen"] and view.get("vacuity") == "unknown":
                 failures.append(f"target {tid}: vacuity unknown (the empty-premise check exhausted its budget; "
                                 "fail closed)")
@@ -902,13 +923,18 @@ class AssistSession:
         # A claimed sentence is DERIVED when a certified step anchored to it has a fully certified support
         # and no single assumption in that support already states it. Covering it with an idle node, or
         # waiving it, never counts. Deriving steps join the load-bearing analysis like target supports.
-        derived = {}
+        derived, derivation_unknown = {}, {}
         for sid in self.sentence_order:
             if self.sentences[sid]["role"] == "claimed" and self.sentences[sid]["asserting"]:
-                witness = self._derivation(sid)
+                witness, undecided = self._derivation(sid)
                 if witness is not None:
                     derived[sid] = witness
                     support_all.update(self._support(witness))
+                    failures += self._consistency_failures(
+                        f"claimed sentence {sid}",
+                        [n for n in self._support(witness) if self.nodes[n].kind == "assumption"])
+                elif undecided:
+                    derivation_unknown[sid] = undecided
         unproved = [{"node": n.name, "check": self.checks.get(n.name, {}).get("status", "unchecked"),
                      "parents": list(n.parents)} for n in steps
                     if self.checks.get(n.name, {}).get("status") != "follows"]
@@ -916,7 +942,7 @@ class AssistSession:
             failures.append(f"{len(unproved)} unproved step(s)")
         # Load-bearing: a certified step whose anchored parents ALONE (every unanchored parent removed at
         # once, so duplicates cannot hide each other) no longer entail it needs its unanchored parents.
-        needs = {}
+        needs, undecided_needs = {}, {}
         for s in steps:
             if s.name not in support_all or self.checks.get(s.name, {}).get("status") != "follows":
                 continue
@@ -924,9 +950,11 @@ class AssistSession:
             if not loose:
                 continue
             anchored = [self.nodes[p].formula for p in s.parents if self._is_anchored_parent(p)]
-            if not self._entails(anchored, s.formula):
+            verdict = self._decide(anchored, s.formula)
+            if verdict != "yes":  # "unknown" counts as needed (fail closed)
                 for p in loose:
                     needs.setdefault(p, []).append(s.name)
+                    undecided_needs.setdefault(p, []).extend([s.name] if verdict == "unknown" else [])
         unanchored = []
         for n in self.nodes.values():
             if n.kind != "assumption" or self._anchor_state(n) == "anchored":
@@ -936,9 +964,13 @@ class AssistSession:
                    "paraphrase": self.paraphrase_formula(n.formula),
                    "supports_target": n.name in support_all, "load_bearing": bool(needed_by),
                    "needed_by": needed_by}
+            if undecided_needs.get(n.name):
+                row["load_bearing_undecided_for"] = undecided_needs[n.name]
             unanchored.append(row)
             if needed_by:
-                failures.append(f"load-bearing unanchored assumption {n.name}")
+                failures.append(f"load-bearing unanchored assumption {n.name}"
+                                + (" (undecided within budget; fail closed)"
+                                   if set(needed_by) <= set(undecided_needs.get(n.name, ())) else ""))
         coverage, uncovered, underived, waived = [], [], [], []
         for sid in self.sentence_order:
             s = self.sentences[sid]
@@ -946,11 +978,15 @@ class AssistSession:
                 continue
             by = [n.name for n in self.nodes.values() if sid in n.anchors]
             if s["role"] == "claimed":
-                state = "derived" if sid in derived else "waived" if sid in self.waivers else "underived"
+                state = "derived" if sid in derived else "underived"
             else:
-                state = "covered" if by else "waived" if sid in self.waivers else "uncovered"
+                state = "covered" if by else "uncovered"
+            # Waiving ANY asserting sentence blocks success, even one that is already covered or derived.
+            state = "waived" if sid in self.waivers else state
             coverage.append({"sentence": sid, "role": s["role"], "state": state, "nodes": by,
-                             **({"derived_by": derived[sid]} if state == "derived" else {}),
+                             **({"derived_by": derived[sid]} if sid in derived else {}),
+                             **({"derivation_undecided": derivation_unknown[sid]}
+                                if sid in derivation_unknown else {}),
                              **({"waiver": self.waivers[sid]} if state == "waived" else {})})
             {"uncovered": uncovered, "underived": underived, "waived": waived}.get(state, []).append(sid)
         if uncovered:
@@ -958,6 +994,10 @@ class AssistSession:
         if underived:
             failures.append(f"{len(underived)} claimed sentence(s) not derived by a certified step: "
                             f"{', '.join(underived)}")
+        for sid, rows in derivation_unknown.items():
+            if sid in underived:
+                failures.append(f"claimed sentence {sid}: undecided within budget whether a single assumption "
+                                f"already states it ({'; '.join(rows)}; fail closed)")
         if waived:
             failures.append(f"{len(waived)} asserting sentence(s) waived (a waiver is reported, never success): "
                             f"{', '.join(waived)}")
@@ -969,10 +1009,19 @@ class AssistSession:
             if row["formula"] is None:
                 continue
             for n in self.nodes.values():
-                if n.kind == "assumption" and self._entails([n.formula], row["formula"]):
+                if n.kind != "assumption":
+                    continue
+                verdict = self._decide([n.formula], row["formula"])
+                if verdict == "yes":
                     failures.append(f"assumption {n.name} alone entails target {tid}")
+                elif verdict == "unknown":
+                    failures.append(f"assumption {n.name}: undecided within budget whether it alone entails "
+                                    f"target {tid} (fail closed)")
         renamed = self._renamed_conclusions()
         failures += [f"declared vocabulary carries target {r['target']} ({', '.join(r['assumptions'])})"
+                     if not r.get("undecided") else
+                     f"declared vocabulary may carry target {r['target']} ({', '.join(r['assumptions'])}): "
+                     "undecided within budget (fail closed)"
                      for r in renamed]
         origins = {o: sum(1 for n in self.nodes.values() if n.origin == o) for o in ORIGINS}
         return {"success": not failures, "failures": failures, "targets": targets,
@@ -986,18 +1035,40 @@ class AssistSession:
                 "declared": self.declared, "usage": self.usage()}
 
     def _derivation(self, sid):
-        """The certified step that derives claimed sentence ``sid``, or None."""
+        """``(step, undecided)``: the certified step that derives claimed sentence ``sid`` (or None),
+        and, when none does, the candidate steps rejected only because it is undecided within budget
+        whether a single support assumption already states the claim (fail closed)."""
         follows = lambda n: self.checks.get(n, {}).get("status") == "follows"
+        undecided = []
         for node in self.nodes.values():
             if node.kind != "step" or sid not in node.anchors or not follows(node.name):
                 continue
             support = [self.nodes[n] for n in self._support(node.name)]
             if not all(follows(m.name) for m in support if m.kind == "step"):
                 continue
-            if any(self._entails([m.formula], node.formula) for m in support if m.kind == "assumption"):
+            verdicts = {m.name: self._decide([m.formula], node.formula) for m in support if m.kind == "assumption"}
+            if any(v == "yes" for v in verdicts.values()):
                 continue
-            return node.name
-        return None
+            unknown = [m for m, v in verdicts.items() if v == "unknown"]
+            if unknown:
+                undecided.append(f"{node.name}: {', '.join(unknown)}")
+                continue
+            return node.name, []
+        return None, undecided
+
+    def _consistency_failures(self, label, names, view=None):
+        """Assumptions ``names`` must be decided consistent; contradictory or undecided fails."""
+        leaves = [self.nodes[n].formula for n in sorted(names)]
+        if not leaves:
+            return []
+        verdict = self._decide(leaves, ast.Bottom())
+        if view is not None and verdict != "no":
+            view["inconsistent_assumptions"] = True if verdict == "yes" else "unknown"
+        if verdict == "yes":
+            return [f"{label}: its assumptions are jointly contradictory"]
+        if verdict == "unknown":
+            return [f"{label}: consistency of its assumptions undecided within budget (fail closed)"]
+        return []
 
     def _renamed_conclusions(self):
         """Declared vocabulary that carries a target.
@@ -1019,13 +1090,20 @@ class AssistSession:
                     and (n.name in names or self._anchor_state(n) != "anchored")]
         found = []
         for tid, row in self.targets.items():
-            if row["formula"] is None or not self._entails([g.formula for g in suspects], row["formula"]):
+            if row["formula"] is None:
+                continue
+            verdict = self._decide([g.formula for g in suspects], row["formula"])
+            if verdict == "no":
+                continue
+            if verdict == "unknown":
+                found.append({"target": tid, "assumptions": [g.name for g in suspects], "undecided": True})
                 continue
             group = list(suspects)
             # Drop ordinary assumptions before declared carriers, so a carrier stays in the witness set.
+            # A member is dropped only when the rest is PROVED to still entail the target.
             for member in sorted(group, key=lambda g: g.name in names):
                 rest = [g for g in group if g is not member]
-                if self._entails([g.formula for g in rest], row["formula"]):
+                if self._decide([g.formula for g in rest], row["formula"]) == "yes":
                     group = rest
             if any(g.name in names for g in group):
                 found.append({"target": tid, "assumptions": [g.name for g in group]})
@@ -1134,10 +1212,15 @@ class AssistSession:
         call = self._replaying.pop(0)
         if type(call) is not dict or not isinstance(call.get("prompt_digest"), str):
             raise LedgerReplayError("Recorded model call is malformed")
-        for key in ("input_tokens", "output_tokens"):
-            value = call.get(key)
-            if value is not None and (type(value) is not int or value < 0):
-                raise LedgerReplayError("Recorded model call has invalid token counts")
+        attempts = call.get("attempts", [])
+        if type(attempts) is not list or not all(type(a) is dict and set(a) == {"input_tokens", "output_tokens"}
+                                                 for a in attempts):
+            raise LedgerReplayError("Recorded model call has malformed retry attempts")
+        for row in (call, *attempts):
+            for key in ("input_tokens", "output_tokens"):
+                value = row.get(key)
+                if value is not None and (type(value) is not int or value < 0):
+                    raise LedgerReplayError("Recorded model call has invalid token counts")
         return call
 
     @property

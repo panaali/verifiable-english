@@ -168,6 +168,15 @@ class ProposerBackendError(VEError):
     code = "ProposerBackendError"
 
 
+def _attempts(value):
+    """Earlier failed attempts of the same backend call (infrastructure retries): their token usage."""
+    if type(value) is not list:
+        return []
+    clean = lambda v: v if type(v) is int and v >= 0 else None
+    return [{"input_tokens": clean(a.get("input_tokens")), "output_tokens": clean(a.get("output_tokens"))}
+            for a in value if type(a) is dict]
+
+
 def _call(session, purpose, system, prompt, item):
     recorded = session.recorded_model_call()
     if recorded is not None:
@@ -191,11 +200,15 @@ def _call(session, purpose, system, prompt, item):
                     **tokens, "model": redact_secrets(spent.get("model")),
                     "account_label": redact_secrets(spent.get("account_label")),
                     "call_key": spent.get("call_key")}
+            attempts = _attempts(spent.get("prior_attempts"))
         else:
             call = {**base, "text": reply["text"],
                     "input_tokens": reply.get("input_tokens"), "output_tokens": reply.get("output_tokens"),
                     "model": reply.get("model"), "account_label": reply.get("account_label"),
                     "call_key": reply.get("call_key")}
+            attempts = _attempts(reply.get("prior_attempts"))
+        if attempts:
+            call["attempts"] = attempts
     session._model_calls.append(call)
     if call.get("failed"):
         raise ProposerBackendError("Proposer backend failed (usage recorded; propose again to retry): "

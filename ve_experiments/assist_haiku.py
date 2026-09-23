@@ -45,7 +45,8 @@ class ClaudeProposer:
         row = self.client.sample(item_id, system, prompt, 0)
         return {"text": row["text"], "input_tokens": row["input_tokens"],
                 "output_tokens": row["output_tokens"], "model": row["served_model"],
-                "account_label": row["account_label"], "call_key": row["key"]}
+                "account_label": row["account_label"], "call_key": row["key"],
+                "prior_attempts": row.get("prior_attempts", [])}
 
 
 HaikuProposer = ClaudeProposer  # backward-compatible name; the default model is Haiku 4.5

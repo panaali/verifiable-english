@@ -73,8 +73,8 @@ def tool_schemas(*, proposer=False, premise_suggestions=False):
               "assumptions and whether they are load-bearing, sentence coverage/waivers, renamed-conclusion "
               "flags, provenance counts and token usage. 'success' is true only when everything passes.", {}),
         _tool("waive", "Explicitly mark a sentence as not formalised, with a reason. The waiver is reported; "
-              "a waived asserting sentence blocks 'success' (every claimed sentence must be derived by a "
-              "certified step, every given sentence covered).",
+              "waiving ANY asserting sentence blocks 'success', even one already covered or derived (every "
+              "claimed sentence must be derived by a certified step, every given sentence covered).",
               {"sentence": _STR, "reason": _STR}, ["sentence", "reason"]),
         _tool("show", "Show all nodes (or one node, with history) with their deterministic English paraphrase.",
               {"name": _STR}),

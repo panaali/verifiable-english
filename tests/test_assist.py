@@ -830,6 +830,7 @@ def test_astra4_tautological_given_assumptions_and_unknown_vacuity_fail_closed(m
     target = "((@api is safe) or (not (@api is safe))) and ((@web is safe) or (not (@web is safe)))."
     r = s.apply("freeze_target", {"target": "t_main", "text": target})
     assert r["ok"] and "fail closed" in r["warning"]
+    monkeypatch.undo()  # only the target's empty-premise check was exhausted
     s.apply("add_node", {"name": "a", "text": "(@api is safe) or (not (@api is safe)).", "anchors": ["p1.1"]})
     s.apply("add_node", {"name": "b", "text": "(@web is safe) or (not (@web is safe)).", "anchors": ["p1.2"]})
     s.apply("add_node", {"name": "goal", "text": target, "anchors": ["p2.1"], "parents": ["a", "b"]})
@@ -925,7 +926,8 @@ def test_astra6_deleted_propose_event_detected_after_metadata_edit():
     forged["events"][0]["seq"] = 0
     assert AssistSession.from_ledger(forged)
     for dedicated in (True, False):
-        problems = verify_session(forged, item=P5_ITEM, calls=rows, dedicated_calls=dedicated)["problems"]
+        problems = verify_session(forged, item=P5_ITEM, calls=rows, dedicated_calls=dedicated,
+                                  trusted_session_id=s.session_id)["problems"]
         assert any("never recorded" in p for p in problems), problems
     # A call moved to another event (events reordered) no longer matches its calls-ledger binding.
     moved = json.loads(json.dumps(ledger))
@@ -1007,3 +1009,321 @@ def test_astra9_proposer_redacts_credential_like_values_in_errors_and_model_fiel
     assert not result["ok"] and "[REDACTED]" in result["error"]["message"]
     assert "AbCdEf0123456789" not in json.dumps(s.to_ledger())
     assert redact_secrets("model claude-haiku-4-5-20251001 ok") == "model claude-haiku-4-5-20251001 ok"
+
+
+# ---------------------------------------------------------------- Astra re-review 2: fail closed on exhausted search
+
+def _deep_conjunction_session(budget):
+    """Astra probe (#3): the second claim sits inside an eight-level conjunction in ONE given-anchored
+    assumption and is peeled off through certified steps."""
+    s = AssistSession.create(ENV, source_from_text(TEXT2), [{"id": "t_main", "sentence": "p2.1"}],
+                             options={"max_proof_steps": budget})
+    ok = lambda r: (r["ok"] or pytest.fail(json.dumps(r))) and r
+    ok(s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."}))
+    ok(s.apply("add_node", {"name": "rule", "anchors": ["p1.1"], "text": "if (@api is reviewed), then (@api is safe)."}))
+    ok(s.apply("add_node", {"name": "fact", "text": "@api is reviewed.", "anchors": ["p1.2"]}))
+    ok(s.apply("add_node", {"name": "goal", "text": "@api is safe.", "anchors": ["p2.1"], "parents": ["rule", "fact"]}))
+    layers = ["@web is safe"]
+    for _ in range(8):
+        layers.append(f"(@web is reviewed) and ({layers[-1]})")
+    ok(s.apply("add_node", {"name": "big", "text": layers[-1] + ".", "anchors": ["p1.3"]}))
+    prev = "big"
+    for k, text in enumerate(reversed(layers[:-1])):
+        ok(s.apply("add_node", {"name": f"peel{k}", "text": text + ".", "parents": [prev],
+                                "anchors": ["p2.2"] if text == "@web is safe" else []}))
+        prev = f"peel{k}"
+    for n in list(s.nodes):
+        if s.nodes[n].kind == "step":
+            s.apply("check_step", {"name": n})
+    return s
+
+
+def _carrier_chain_session(budget, first="audited"):
+    """Astra probe (#5): given-anchored G, G->D, D->E, E->O, O->T in declared predicates. With
+    ``first="reviewed"`` the start fact is undeclared vocabulary and the chain is a legitimate derivation."""
+    s = new_session(max_proof_steps=budget)
+    ok = lambda r: (r["ok"] or pytest.fail(json.dumps(r))) and r
+    ok(s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."}))
+    for name, gloss in (("audited", "Has passed an external audit."), ("certified", "Holds a vendor certificate."),
+                        ("logged", "Writes entries to the audit log."), ("archived", "Has its records stored offsite.")):
+        ok(s.apply("declare", {"name": name, "kind": "predicate", "arguments": ["service"], "gloss": gloss}))
+    ok(s.apply("add_node", {"name": "g", "text": f"@api is {first}.", "anchors": ["p1.2"]}))
+    chain = [first, "certified", "logged", "archived", "safe"]
+    prev = "g"
+    for i, (a, b) in enumerate(zip(chain, chain[1:])):
+        ok(s.apply("add_node", {"name": f"r{i}", "text": f"if (@api is {a}), then (@api is {b}).", "anchors": ["p1.1"]}))
+        ok(s.apply("add_node", {"name": f"s{i}", "text": f"@api is {b}.", "parents": [prev, f"r{i}"],
+                                "anchors": ["p2.1"] if b == "safe" else []}))
+        ok(s.apply("check_step", {"name": f"s{i}"}))
+        prev = f"s{i}"
+    return s
+
+
+def _idle_loose_parent_session(budget):
+    """A successful item whose step has an unanchored, NOT load-bearing parent (exercises that check)."""
+    s = new_session(max_proof_steps=budget)
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.apply("add_node", {"name": "rule", "anchors": ["p1.1"],
+                         "text": "for every service s, (if (s is reviewed), then (s is safe))."})
+    s.apply("add_node", {"name": "fact", "text": "@api is reviewed.", "anchors": ["p1.2"]})
+    s.apply("add_node", {"name": "extra", "text": "@web is deployed."})
+    s.apply("add_node", {"name": "goal", "text": "@api is safe.", "anchors": ["p2.1"], "parents": ["rule", "fact", "extra"]})
+    s.apply("check_step", {"name": "goal"})
+    return s
+
+
+def _plain_success(budget):
+    s = new_session(max_proof_steps=budget)
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.apply("add_node", {"name": "rule", "anchors": ["p1.1"],
+                         "text": "for every service s, (if (s is reviewed), then (s is safe))."})
+    s.apply("add_node", {"name": "fact", "text": "@api is reviewed", "anchors": ["p1.2"]})
+    s.apply("add_node", {"name": "goal", "text": "@api is safe.", "anchors": ["p2.1"], "parents": ["rule", "fact"]})
+    s.apply("check_step", {"name": "goal"})  # a low budget may leave it unproved
+    return s
+
+
+def _two_claims_derived(budget):
+    s = AssistSession.create(ENV, source_from_text(TEXT2), [{"id": "t_main", "sentence": "p2.1"}],
+                             options={"max_proof_steps": budget})
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.apply("add_node", {"name": "rule", "anchors": ["p1.1"],
+                         "text": "for every service s, (if (s is reviewed), then (s is safe))."})
+    s.apply("add_node", {"name": "fact", "text": "@api is reviewed.", "anchors": ["p1.2"]})
+    s.apply("add_node", {"name": "webfact", "text": "@web is reviewed.", "anchors": ["p1.3"]})
+    s.apply("add_node", {"name": "goal", "text": "@api is safe.", "anchors": ["p2.1"], "parents": ["rule", "fact"]})
+    s.apply("add_node", {"name": "web_ok", "text": "@web is safe.", "anchors": ["p2.2"], "parents": ["rule", "webfact"]})
+    for n in ("goal", "web_ok"):
+        s.apply("check_step", {"name": n})
+    return s
+
+
+BUDGET_ITEMS = {"deep_conjunction": _deep_conjunction_session, "carrier_chain": _carrier_chain_session,
+                "legit_chain": lambda b: _carrier_chain_session(b, first="reviewed"),
+                "idle_loose_parent": _idle_loose_parent_session, "plain": _plain_success,
+                "two_claims": _two_claims_derived}
+BUDGETS = (0, 1, 2, 3, 4, 6, 10, 30, 10_000)
+
+
+def test_astra_rr2_deep_conjunction_claim_is_never_derived_at_any_budget():
+    for budget in (3, 10_000):
+        status = _deep_conjunction_session(budget).apply("status")
+        assert not status["success"] and status["coverage"]["underived"] == ["p2.2"], (budget, status["failures"])
+    assert any("undecided within budget" in f and "big" in f
+               for f in _deep_conjunction_session(3).apply("status")["failures"])
+
+
+def test_astra_rr2_carrier_chain_is_flagged_or_undecided_never_success():
+    low, high = (_carrier_chain_session(b).apply("status") for b in (3, 10_000))
+    assert not low["success"] and not high["success"]
+    assert any("may carry target t_main" in f and "fail closed" in f for f in low["failures"])
+    assert high["renamed_conclusions"] == [{"target": "t_main", "assumptions": ["g", "r0", "r1", "r2", "r3"]}]
+    # Full ledger replay preserves the (non-)success.
+    replayed = AssistSession.from_ledger(json.loads(json.dumps(_carrier_chain_session(3).to_ledger())))
+    assert not replayed.apply("status")["success"]
+
+
+def test_astra_rr2_property_success_is_monotone_in_the_proof_budget():
+    """For every item, success at budget b implies success at every larger budget."""
+    table = {name: [build(b).apply("status")["success"] for b in BUDGETS] for name, build in BUDGET_ITEMS.items()}
+    for name, row in table.items():
+        first = row.index(True) if True in row else len(row)
+        assert all(row[first:]), (name, dict(zip(BUDGETS, row)))
+    # Non-trivial: the legitimate items succeed at the default budget; the probes never do.
+    assert table["legit_chain"][-1] and table["plain"][-1] and table["two_claims"][-1] and table["idle_loose_parent"][-1]
+    assert not any(table["deep_conjunction"]) and not any(table["carrier_chain"])
+
+
+def test_astra_rr2_property_any_inconclusive_fidelity_search_is_non_success(monkeypatch):
+    """Every fidelity decision in status goes through _decide; forcing any ONE of them to 'unknown'
+    (an exhausted search) makes a successful item fail, with a visible reason -- except the per-assumption
+    tautology classification, whose 'unknown' only widens the set a decided vacuity check then examines."""
+    import ve.assist.session as mod
+    for name in ("plain", "two_claims", "idle_loose_parent", "legit_chain"):
+        s = BUDGET_ITEMS[name](10_000)
+        assert s.apply("status")["success"], name
+        calls, original = [], mod.AssistSession._decide
+        in_validity = []
+        real_validity = mod.AssistSession._validity
+
+        def validity(self, formula):
+            in_validity.append(True)
+            try:
+                return real_validity(self, formula)
+            finally:
+                in_validity.pop()
+
+        def record(self, premises, conclusion):
+            calls.append(bool(in_validity))
+            return original(self, premises, conclusion)
+        monkeypatch.setattr(mod.AssistSession, "_validity", validity)
+        monkeypatch.setattr(mod.AssistSession, "_decide", record)
+        s.apply("status")
+        classification = list(calls)
+        assert len(classification) > 0
+        for index, exempt in enumerate(classification):
+            counter = iter(range(10_000))
+
+            def forced(self, premises, conclusion, index=index):
+                return "unknown" if next(counter) == index else original(self, premises, conclusion)
+            monkeypatch.setattr(mod.AssistSession, "_decide", forced)
+            status = s.apply("status")
+            if not exempt:
+                assert not status["success"], (name, index)
+                assert any("undecided" in f or "unknown" in f or "fail closed" in f or "load-bearing" in f
+                           for f in status["failures"]), (name, index, status["failures"])
+        monkeypatch.setattr(mod.AssistSession, "_decide", original)
+        monkeypatch.setattr(mod.AssistSession, "_validity", real_validity)
+    # Every search exhausted at once (prover ResourceLimit, no countermodel within budget): never success.
+    s = BUDGET_ITEMS["plain"](10_000)
+
+    class Exhausted:
+        status, model, steps = "ResourceLimit", None, 0
+    monkeypatch.setattr(mod, "prove_entailment", lambda *a, **k: Exhausted())
+    monkeypatch.setattr(mod, "ground_countermodel", lambda *a, **k: ("Unsupported", None))
+    monkeypatch.setattr(mod, "find_countermodel", lambda *a, **k: Exhausted())
+    status = s.apply("status")
+    assert not status["success"] and any("fail closed" in f for f in status["failures"])
+
+
+# ---------------------------------------------------------------- Astra re-review 2: accounting, waivers, shared ledgers
+
+GOOD_REPLY = '{"candidates": [{"ve": "@api is reviewed."}]}'
+P5_REPLY = '{"candidates": [{"ve": "@unit1 is sealed."}]}'
+
+
+def _infra_stream(model):
+    """A connection failure after the API reported usage (900 input tokens)."""
+    return [{"type": "system", "subtype": "init", "model": model, "tools": [], "mcp_servers": [], "agents": []},
+            {"type": "result", "subtype": "error_during_execution", "is_error": True, "num_turns": 1,
+             "result": "API Error: Connection error.", "modelUsage": {model: {}},
+             "usage": {"input_tokens": 900, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0,
+                       "output_tokens": 0}}]
+
+
+def test_astra_rr2_orphan_started_row_fails_verification():
+    from ve.assist import verify_session
+    s = _p5_session()
+    ledger = json.loads(json.dumps(s.to_ledger()))
+    orphan = {"key": "k-orphan", "item_id": f"{s.session_id}/q1/e0/r0", "status": "started",
+              "account_label": "test", "controls": {"model": "claude-haiku-4-5-20251001"}}
+    result = verify_session(ledger, item=P5_ITEM, calls=[orphan])
+    assert not result["ok"] and result["calls"]["unresolved_started"] == 1
+    assert any("started call(s) with no recorded outcome" in p for p in result["problems"])
+    # A started row followed by its outcome is resolved (only the outcome's usage matters).
+    s.proposer = LedgeredProposer([P5_REPLY])
+    assert s.apply("propose", {"sentence": "n00.1", "k": 1})["ok"]
+    rows = [{**s.proposer.rows[0], "status": "started"}, s.proposer.rows[0]]
+    assert verify_session(json.loads(json.dumps(s.to_ledger())), item=P5_ITEM, calls=rows)["ok"]
+
+
+def test_astra_rr2_failed_attempt_before_success_is_counted_in_session_totals(tmp_path, monkeypatch):
+    import subprocess
+    import ve_experiments.claude_cli as cc
+    from ve.assist import verify_session
+    model = cc.MODELS["sonnet"]
+    proposer = _fake_cli(tmp_path, monkeypatch, [])
+    streams = iter([("\n".join(json.dumps(r) for r in _infra_stream(model)), 1),
+                    ("\n".join(json.dumps(r) for r in _stream(model, model, text=GOOD_REPLY)), 0)])
+
+    def run(*a, **k):
+        out, code = next(streams)
+        return subprocess.CompletedProcess(a, code, out, "")
+    monkeypatch.setattr(cc.subprocess, "run", run)
+    monkeypatch.setattr(cc.time, "sleep", lambda seconds: None)
+    proposer.client.infrastructure_retries = True
+    s = new_session()
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.proposer = proposer
+    assert s.apply("propose", {"sentence": "p1.2", "k": 1})["ok"]
+    call = s.events[-1]["model_calls"][0]
+    assert call["attempts"] == [{"input_tokens": 900, "output_tokens": 0}]
+    assert s.usage()["tokens"]["proposer"]["input_tokens"] == 1800
+    ledger, calls = json.loads(json.dumps(s.to_ledger())), tmp_path / "calls.jsonl"
+    good = verify_session(ledger, calls=calls)
+    assert good["ok"], good["problems"]
+    assert AssistSession.from_ledger(ledger).usage()["tokens"]["proposer"]["input_tokens"] == 1800
+    # The reviewer's probe: the failed attempt dropped from the session (totals consistently lowered).
+    hidden = json.loads(json.dumps(ledger))
+    hidden["events"][-1]["model_calls"][0].pop("attempts")
+    hidden["events"][-1]["tokens"]["proposer"]["input_tokens"] = 900
+    assert AssistSession.from_ledger(hidden)
+    problems = verify_session(hidden, calls=calls)["problems"]
+    assert any("1 earlier attempt(s) under this key but the session accounts for 0" in p for p in problems)
+    assert any("input_tokens total (900) differs from the calls ledger total (1800)" in p for p in problems)
+
+
+def test_astra_rr2_incomplete_stream_usage_from_assistant_messages(tmp_path, monkeypatch):
+    import subprocess
+    import ve_experiments.claude_cli as cc
+    model = cc.MODELS["sonnet"]
+    records = [{"type": "system", "subtype": "init", "model": model, "tools": [], "mcp_servers": [], "agents": []},
+               {"type": "assistant", "message": {"id": "m1", "model": model, "content": [{"type": "text", "text": "par"}],
+                                                 "usage": {"input_tokens": 900, "cache_creation_input_tokens": 0,
+                                                           "cache_read_input_tokens": 150, "output_tokens": 3}}},
+               {"type": "assistant", "message": {"id": "m1", "model": model, "content": [{"type": "text", "text": "tial"}],
+                                                 "usage": {"input_tokens": 900, "cache_creation_input_tokens": 0,
+                                                           "cache_read_input_tokens": 150, "output_tokens": 7}}}]
+    # EOF: the stream simply ends without a result record.
+    proposer = _fake_cli(tmp_path, monkeypatch, records)
+    with pytest.raises(cc.EndpointError) as caught:
+        proposer("sys", "prompt", "item-eof")
+    assert caught.value.usage["input_tokens"] == 1050 and caught.value.usage["output_tokens"] == 7
+    row = json.loads((tmp_path / "calls.jsonl").read_text().splitlines()[-1])
+    assert row["input_tokens"] == 1050 and row["output_tokens"] == 7
+    # Timeout: the partial stream arrives on the exception.
+    stream = "\n".join(json.dumps(r) for r in records)
+
+    def timeout(*a, **k):
+        raise subprocess.TimeoutExpired(a[0], 180, output=stream)
+    monkeypatch.setattr(cc.subprocess, "run", timeout)
+    with pytest.raises(cc.EndpointError) as caught:
+        proposer("sys", "prompt", "item-timeout")
+    assert caught.value.usage["input_tokens"] == 1050 and caught.value.usage["output_tokens"] == 7
+    # Through a session, the spent tokens reach the totals.
+    s = new_session()
+    s.apply("freeze_target", {"target": "t_main", "text": "@api is safe."})
+    s.proposer = proposer
+    assert not s.apply("propose", {"sentence": "p1.2", "k": 1})["ok"]
+    assert s.usage()["tokens"]["proposer"] == {"input_tokens": 1050, "output_tokens": 7, "calls": 1}
+
+
+def test_astra_rr2_waiving_an_already_covered_asserting_sentence_blocks_success():
+    s = new_session()
+    build_success(s)
+    assert s.apply("status")["success"]
+    assert s.apply("waive", {"sentence": "p1.2", "reason": "already covered, waived anyway"})["ok"]
+    status = s.apply("status")
+    assert not status["success"] and any("waived" in f and "p1.2" in f for f in status["failures"])
+    assert status["waivers"][0]["counts_against_success"] is True
+    # The same holds for a derived claimed sentence.
+    two = _two_claims_derived(10_000)
+    two.apply("waive", {"sentence": "p2.2", "reason": "derived, waived anyway"})
+    status = two.apply("status")
+    assert not status["success"] and status["coverage"]["waived"] == 1
+
+
+def test_astra_rr2_shared_calls_ledger_requires_a_trusted_session_id():
+    from ve.assist import verify_session
+    s = _p5_session()
+    s.proposer = LedgeredProposer([P5_REPLY])
+    assert s.apply("propose", {"sentence": "n00.1", "k": 1})["ok"]
+    rows, ledger = s.proposer.rows, json.loads(json.dumps(s.to_ledger()))
+    assert verify_session(ledger, item=P5_ITEM, calls=rows)["ok"]
+    refused = verify_session(ledger, item=P5_ITEM, calls=rows, dedicated_calls=False)
+    assert not refused["ok"] and any("shared calls ledger refused" in p for p in refused["problems"])
+    assert verify_session(ledger, item=P5_ITEM, calls=rows, dedicated_calls=False,
+                          trusted_session_id=s.session_id)["ok"]
+    # The reviewer's forged-id probe: the propose event is deleted and the ledger's session_id changed,
+    # so the real rows no longer carry "its" prefix. A trusted id exposes both.
+    from ve.assist.session import config_digest
+    forged = json.loads(json.dumps(ledger))
+    del forged["events"][0]
+    forged["config"]["session_id"] = "0000000000000000"
+    forged["config"]["config_digest"] = config_digest(forged["config"])
+    assert AssistSession.from_ledger(forged)
+    assert not verify_session(forged, item=P5_ITEM, calls=rows, dedicated_calls=False)["ok"]
+    problems = verify_session(forged, item=P5_ITEM, calls=rows, dedicated_calls=False,
+                              trusted_session_id=s.session_id)["problems"]
+    assert "session_id differs from the independently trusted session id" in problems
+    assert any("never recorded" in p for p in problems)
