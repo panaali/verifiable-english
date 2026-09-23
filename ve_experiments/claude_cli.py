@@ -2,7 +2,7 @@
 
 Changes from the v4 copy: CLAUDE_CODE_NO_MODEL_FALLBACK=1 is always set, an
 ``effort`` of None omits --effort, and ``account_dir_for_label`` resolves an
-account label (e.g. saeedi.danial) to its ~/.claude-<label> config directory.
+account label (e.g. work) to its ~/.claude-<label> config directory.
 
  One fresh process per attempt; infrastructure retries are opt-in.
 
@@ -360,11 +360,21 @@ class ClaudeCLI:
                         raw = raw.replace(token, "[REDACTED]")
                     if infrastructure_failure(raw, self.controls.model, str(exc)) or isinstance(exc, ConnectionError):
                         exc = InfrastructureError("connection error or empty timed-out stream")
-                append({**base, **parsed, "status": "infrastructure_error" if isinstance(exc, InfrastructureError) else "error",
-                        "classification": "INFRASTRUCTURE" if isinstance(exc, InfrastructureError) else "ENDPOINT",
-                        "counts_as_sample": False, "retry_number": retry_number,
-                        "timestamp": now(), "error": str(exc).replace(token, "[REDACTED]"),
-                        "raw_stream": raw, "elapsed_s": time.monotonic()-start})
+                failed = {**base, **parsed, "status": "infrastructure_error" if isinstance(exc, InfrastructureError) else "error",
+                          "classification": "INFRASTRUCTURE" if isinstance(exc, InfrastructureError) else "ENDPOINT",
+                          "counts_as_sample": False, "retry_number": retry_number,
+                          "timestamp": now(), "error": str(exc).replace(token, "[REDACTED]"),
+                          "raw_stream": raw, "elapsed_s": time.monotonic()-start}
+                # Parsed stream fields (init, text, usage) are redacted exactly as on the success path.
+                failed = json.loads(json.dumps(failed).replace(token, "[REDACTED]"))
+                append(failed)
+                # Callers (e.g. ve assist) log the usage actually spent by a call that then failed.
+                try:
+                    exc.usage = {"input_tokens": failed.get("input_tokens"), "output_tokens": failed.get("output_tokens"),
+                                 "model": failed.get("served_model"), "account_label": self.account_label,
+                                 "call_key": key}
+                except AttributeError:
+                    pass
                 raise exc
             # Defence in depth against accidental credential echo in model protocol data.
             row = json.loads(json.dumps(row).replace(token, "[REDACTED]"))

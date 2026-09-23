@@ -70,25 +70,40 @@ Concepts:
 
 - **Sentences.** Each source sentence has an id and a role. A `given` sentence
   states a premise. A `claimed` sentence asserts a conclusion, which must be
-  derived. A `context` sentence needs no coverage.
+  derived. A `context` sentence needs no coverage. Every target sentence must
+  be `claimed`. In plain-text sources, untagged paragraphs are `claimed`, not
+  `given`, so intermediate conclusions never anchor assumptions by default; tag
+  premise paragraphs `[given]`.
 - **Frozen targets.** Each target sentence gets a formal statement through
-  `freeze_target` before any node is added. It can never change afterwards.
+  `freeze_target` before any node is added or any vocabulary is declared. It
+  can never change afterwards. A target the prover derives from no premises
+  (such as `true.`) is rejected as vacuous.
 - **Nodes.** A node is one VE statement, anchored to the sentence(s) it
   formalises. A node with no parents is an assumption. A node with parents is
   a step, and `check_step` must certify it.
-- **Unanchored assumptions.** An assumption with no anchor to a `given`
-  sentence is unanchored. If one is *load-bearing* (a certified step no longer
-  follows without it), the item fails.
+- **Unanchored assumptions.** An assumption is anchored only if it has a
+  `given` anchor and no `claimed` anchor. Unanchored assumptions are
+  *load-bearing* when a certified step no longer follows from its anchored
+  parents alone (all unanchored parents removed at once), and the item then
+  fails. Any assumption that alone entails a target also fails the item.
 - **Declarations.** `declare` requires a gloss. It blocks near-duplicates of
   existing vocabulary (the `ve propose` gate) and names or glosses that restate
   a target sentence until the author acknowledges each flag. `status` also flags
-  new vocabulary whose assumptions alone entail a target.
+  new vocabulary that carries a target: the assumptions using declared symbols,
+  together with the unanchored assumptions, entail it without the anchored
+  premises.
 - **Ledger.** The session file is an append-only ledger of every action,
   including rejected ones. For each action it records the result, the node
   provenance (`hand-written`, `proposer-verbatim`/`-edited`,
   `suggestion-verbatim`/`-edited`), the proposer's tokens, and author tokens
   (via `record_usage`). Every CLI command replays the ledger and fails if any
-  recorded result does not reproduce.
+  recorded result does not reproduce, if the configuration does not match its
+  `config_digest`, or if recorded token totals differ from the recorded calls.
+  Failed proposer calls are logged with the tokens they spent and can be
+  retried. An evaluator should also run `ve.assist.verify_session(ledger,
+  item=DOSSIER, calls=CALLS_LEDGER)`, which rebuilds the configuration from
+  the dossier and matches every recorded model call against the claude CLI
+  calls ledger.
 
 `status` reports `success` only when all of the following hold: every target
 has a step whose certified support graph replays through `check_argument`;
@@ -98,8 +113,10 @@ carries a target; and the target's assumptions are consistent.
 
 The proposer and premise suggestions are separate ablations:
 
-- **`propose SENTENCE`** asks Claude Haiku 4.5 (claude CLI backend, account
-  `saeedi.danial` by default, no model fallback) for 1–3 candidates. Each
+- **`propose SENTENCE`** asks a Claude model (`--proposer-model haiku|sonnet|opus`,
+  Haiku 4.5 by default; claude CLI backend, no model fallback; account from
+  `--account LABEL` or `$VE_ASSIST_CLAUDE_ACCOUNT`) for 1–3 candidates. The
+  requested and served model ids are recorded with each call. Each
   candidate is parsed, type-checked and paraphrased, and each differing pair
   gets a checked distinguishing model. Accepting a candidate is a separate,
   explicit step.

@@ -58,6 +58,11 @@ def _sha(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
+def config_digest(config):
+    """Digest of a session configuration (everything except the creation time and the digest itself)."""
+    return _sha({k: v for k, v in config.items() if k not in ("created", "config_digest")})
+
+
 def _ident(name, label="name"):
     if not valid_identifier(name) or name in RESERVED:
         raise AssistError(f"Invalid {label} {name!r}: use [a-z][a-z0-9_]*, not a reserved word")
@@ -147,12 +152,16 @@ class AssistSession:
             tid = _ident(row.get("id"), "target id")
             if row.get("sentence") not in self.sentences:
                 raise AssistError(f"Target {tid} names an unknown sentence {row.get('sentence')!r}")
+            if self.sentences[row["sentence"]]["role"] != "claimed":
+                raise AssistError(f"Target {tid} must be a claimed sentence; {row['sentence']} is "
+                                  f"{self.sentences[row['sentence']]['role']!r}")
             if tid in self.targets:
                 raise AssistError(f"Duplicate target id {tid}")
             self.targets[tid] = {"id": tid, "sentence": row["sentence"], "formula": None, "text": None,
                                  "frozen_by": None}
             if row.get("formula"):
                 formula, _ = self._parse(row["formula"], "auto")
+                self._reject_vacuous(tid, formula)
                 self.targets[tid].update(formula=formula, text=self._canonical(formula), frozen_by="config")
         if not self.targets:
             raise AssistError("A session needs at least one target sentence")
@@ -166,6 +175,8 @@ class AssistSession:
         self.events: list[dict] = []
         self.proposer = None  # injected callable, see ve.assist.proposer
         self._replaying = None
+        self._leftover_calls = 0
+        self._seq = None
 
     # ------------------------------------------------------------------ creation
     @classmethod
@@ -176,7 +187,7 @@ class AssistSession:
                   "options": options or {}, "metadata": metadata or {}, "created": _now()}
         session = cls(config)
         session.config["options"] = dict(session.options)
-        session.config["config_digest"] = _sha({k: v for k, v in session.config.items() if k != "created"})
+        session.config["config_digest"] = config_digest(session.config)
         return session
 
     # ------------------------------------------------------------------ helpers
@@ -250,6 +261,12 @@ class AssistSession:
             view["matches_targets"] = matches
         return view
 
+    def _reject_vacuous(self, tid, formula):
+        """A target the prover derives from no premises at all certifies nothing."""
+        if self._entails((), formula):
+            raise AssistError(f"Target {tid} is provable from no premises (vacuous); freeze the sentence's "
+                              "actual claim")
+
     def _require_frozen(self):
         missing = [t for t, row in self.targets.items() if row["formula"] is None]
         if missing:
@@ -293,17 +310,27 @@ class AssistSession:
             raise AssistError("Arguments must be an object")
         handler = getattr(self, "_do_" + action)
         event = {"seq": len(self.events), "action": action, "args": args, "time": _now()}
+        self._seq = event["seq"]
         self._model_calls = []
-        self._replaying = list(_recorded.get("model_calls", [])) if _recorded else None
+        recorded_calls = _recorded.get("model_calls", []) if _recorded else []
+        if type(recorded_calls) is not list:
+            raise LedgerReplayError("Recorded model_calls must be a list")
+        self._replaying = list(recorded_calls) if _recorded is not None else None
+        self._leftover_calls = 0
         try:
             try:
                 inspect.signature(handler).bind(**args)
             except TypeError as exc:
                 raise AssistError(f"Invalid arguments for {action}: {exc}") from exc
             result = {"ok": True, **handler(**args)}
+        except LedgerReplayError:
+            raise
         except VEError as exc:
             result = {"ok": False, "error": exc.to_dict()}
+        except RuntimeError as exc:  # a backend failure must still be logged, never lost
+            result = {"ok": False, "error": {"code": "BackendError", "message": str(exc)[:500]}}
         finally:
+            self._leftover_calls = len(self._replaying) if self._replaying is not None else 0
             self._replaying = None
         if self._model_calls:
             event["model_calls"] = self._model_calls
@@ -337,6 +364,7 @@ class AssistSession:
         if self.nodes:
             raise AssistError("Targets must be frozen before any node is added")
         formula, used = self._parse(text, surface)
+        self._reject_vacuous(target, formula)
         origin = "hand-written"
         if candidate is not None:
             origin = "proposer-verbatim" if formula == self.candidates[candidate]["formula"] else "proposer-edited"
@@ -417,6 +445,8 @@ class AssistSession:
         """Add vocabulary through the ``ve propose``-style gates. Gloss required."""
         from ..english import EnglishVocabulary
         from ..english_phrases import BLOCKED, content_tokens, nearest
+        # Targets are frozen in the original vocabulary, never in newly invented words.
+        self._require_frozen()
         _ident(name, "symbol")
         if kind not in ("predicate", "constant", "sort"):
             raise AssistError("kind must be predicate, constant or sort")
@@ -691,12 +721,18 @@ class AssistSession:
         return found
 
     def _anchor_state(self, node):
+        """``anchored`` only when every anchor is given: an anchor to any claimed sentence means the
+        assumption states (part of) a conclusion, which must be derived, not assumed."""
         roles = {self.sentences[a]["role"] for a in node.anchors}
-        if "given" in roles:
-            return "anchored"
         if "claimed" in roles:
             return "anchored_to_claim_only"
+        if "given" in roles:
+            return "anchored"
         return "unanchored"
+
+    def _is_anchored_parent(self, name):
+        node = self.nodes[name]
+        return node.kind == "step" or self._anchor_state(node) == "anchored"
 
     def target_graph(self, tid):
         """Build the checked ArgumentGraph for one target, or (None, reason)."""
@@ -761,17 +797,24 @@ class AssistSession:
                     if self.checks.get(n.name, {}).get("status") != "follows"]
         if unproved:
             failures.append(f"{len(unproved)} unproved step(s)")
+        # Load-bearing: a certified step whose anchored parents ALONE (every unanchored parent removed at
+        # once, so duplicates cannot hide each other) no longer entail it needs its unanchored parents.
+        needs = {}
+        for s in steps:
+            if s.name not in support_all or self.checks.get(s.name, {}).get("status") != "follows":
+                continue
+            loose = [p for p in s.parents if not self._is_anchored_parent(p)]
+            if not loose:
+                continue
+            anchored = [self.nodes[p].formula for p in s.parents if self._is_anchored_parent(p)]
+            if not self._entails(anchored, s.formula):
+                for p in loose:
+                    needs.setdefault(p, []).append(s.name)
         unanchored = []
         for n in self.nodes.values():
             if n.kind != "assumption" or self._anchor_state(n) == "anchored":
                 continue
-            needed_by = []
-            for s in steps:
-                if n.name in s.parents and s.name in support_all and \
-                        self.checks.get(s.name, {}).get("status") == "follows":
-                    rest = [self.nodes[p].formula for p in s.parents if p != n.name]
-                    if not self._entails(rest, s.formula):
-                        needed_by.append(s.name)
+            needed_by = needs.get(n.name, [])
             row = {"node": n.name, "anchor_state": self._anchor_state(n), "text": n.text,
                    "paraphrase": self.paraphrase_formula(n.formula),
                    "supports_target": n.name in support_all, "load_bearing": bool(needed_by),
@@ -792,6 +835,12 @@ class AssistSession:
                 uncovered.append(sid)
         if uncovered:
             failures.append(f"{len(uncovered)} asserting sentence(s) neither covered nor waived")
+        for tid, row in self.targets.items():
+            if row["formula"] is None:
+                continue
+            for n in self.nodes.values():
+                if n.kind == "assumption" and self._entails([n.formula], row["formula"]):
+                    failures.append(f"assumption {n.name} alone entails target {tid}")
         renamed = self._renamed_conclusions()
         failures += [f"declared vocabulary carries target {r['target']} ({', '.join(r['assumptions'])})"
                      for r in renamed]
@@ -805,21 +854,35 @@ class AssistSession:
                 "declared": self.declared, "usage": self.usage()}
 
     def _renamed_conclusions(self):
-        """Declared symbols whose assumptions alone (singly or in pairs) entail a target."""
+        """Declared vocabulary that carries a target.
+
+        The suspect assumptions are every assumption that mentions a declared symbol plus every
+        assumption not anchored to given prose. If they jointly entail a target WITHOUT the anchored,
+        undeclared premises, the target was carried in, not derived; the reported set is a minimal
+        entailing subset (so chains through ordinary assumptions are caught, not only pairs).
+        """
         if not self.declared:
             return []
         declared = set(self.declared)
         carriers = [n for n in self.nodes.values() if n.kind == "assumption"
                     and (_predicates_of(n.formula) | _constants_of(n.formula)) & declared]
+        if not carriers:
+            return []
+        names = {n.name for n in carriers}
+        suspects = [n for n in self.nodes.values() if n.kind == "assumption"
+                    and (n.name in names or self._anchor_state(n) != "anchored")]
         found = []
         for tid, row in self.targets.items():
-            if row["formula"] is None:
+            if row["formula"] is None or not self._entails([g.formula for g in suspects], row["formula"]):
                 continue
-            groups = [(a,) for a in carriers] + [(a, b) for i, a in enumerate(carriers) for b in carriers[i + 1:]]
-            for group in groups:
-                if self._entails([g.formula for g in group], row["formula"]):
-                    found.append({"target": tid, "assumptions": [g.name for g in group]})
-                    break
+            group = list(suspects)
+            # Drop ordinary assumptions before declared carriers, so a carrier stays in the witness set.
+            for member in sorted(group, key=lambda g: g.name in names):
+                rest = [g for g in group if g is not member]
+                if self._entails([g.formula for g in rest], row["formula"]):
+                    group = rest
+            if any(g.name in names for g in group):
+                found.append({"target": tid, "assumptions": [g.name for g in group]})
         return found
 
     def usage(self):
@@ -859,28 +922,78 @@ class AssistSession:
 
     @classmethod
     def from_ledger(cls, data, *, verify=True):
-        """Rebuild by replaying every event; recorded model outputs are reused, never re-requested."""
-        if data.get("format") != SESSION_FORMAT:
+        """Rebuild by replaying every event; recorded model outputs are reused, never re-requested.
+
+        Integrity checks run whether or not ``verify`` is set: the configuration must match its
+        ``config_digest``; token totals are recomputed from the recorded calls (never copied from the
+        file); every recorded model call must be consumed; ``rejected_by_api`` events must have the
+        exact shape ``log_rejection`` writes. ``verify`` additionally requires every result to reproduce.
+        This proves internal consistency only: an evaluator must also rebuild the configuration from
+        its own materials and compare the calls ledger (``ve.assist.verify.verify_session``).
+        """
+        if type(data) is not dict or data.get("format") != SESSION_FORMAT:
             raise LedgerReplayError("Not a ve assist ledger")
-        session = cls(data["config"])
-        for event in data["events"]:
-            if event.get("rejected_by_api"):
-                session.events.append(deepcopy(event))
+        config = data.get("config")
+        if type(config) is not dict or not isinstance(config.get("config_digest"), str):
+            raise LedgerReplayError("Ledger configuration has no config_digest")
+        if config_digest(config) != config["config_digest"]:
+            raise LedgerReplayError("Ledger configuration does not match its config_digest")
+        events = data.get("events")
+        if type(events) is not list:
+            raise LedgerReplayError("Ledger events must be a list")
+        session = cls(config)
+        for index, event in enumerate(events):
+            if type(event) is not dict or event.get("seq") != index:
+                raise LedgerReplayError(f"Ledger event {index} is malformed or out of sequence")
+            if "rejected_by_api" in event:
+                session._replay_rejection(event)
                 continue
-            result = session.apply(event["action"], event["args"], _recorded=event)
+            if type(event.get("args")) is not dict:
+                raise LedgerReplayError(f"Ledger event {index} has no argument object")
+            result = session.apply(event.get("action"), event["args"], _recorded=event)
             replayed = session.events[-1]
             replayed["time"] = event.get("time", replayed["time"])
-            if "model_calls" in event:
-                replayed["model_calls"] = event["model_calls"]
-                replayed["tokens"] = event.get("tokens", replayed.get("tokens"))
-            if verify and json.loads(json.dumps(result)) != event["result"]:
-                raise LedgerReplayError(f"Ledger event {event['seq']} ({event['action']}) does not replay")
+            if session._leftover_calls:
+                raise LedgerReplayError(f"Ledger event {index} records model calls the replay never used")
+            for key in ("model_calls", "tokens"):
+                if event.get(key) != replayed.get(key):
+                    raise LedgerReplayError(f"Ledger event {index} ({event.get('action')}): recorded {key} "
+                                            "do not match the replay")
+            if verify and json.loads(json.dumps(result)) != event.get("result"):
+                raise LedgerReplayError(f"Ledger event {index} ({event.get('action')}) does not replay")
         return session
 
+    REJECTION_KEYS = {"seq", "action", "args", "time", "rejected_by_api", "result", "result_chars"}
+
+    def _replay_rejection(self, event):
+        """Accept a pre-dispatch rejection only in the exact shape ``log_rejection`` writes."""
+        result = event.get("result")
+        error = result.get("error") if type(result) is dict else None
+        if (set(event) != self.REJECTION_KEYS or event["rejected_by_api"] is not True
+                or type(event["action"]) is not str or type(event["args"]) is not dict
+                or result != {"ok": False, "error": error} or type(error) is not dict
+                or set(error) != {"code", "message"} or not all(type(v) is str for v in error.values())
+                or event["result_chars"] != len(json.dumps(result, ensure_ascii=False))):
+            raise LedgerReplayError(f"Ledger event {event['seq']} is not a valid API rejection")
+        self.events.append(deepcopy(event))
+
     def recorded_model_call(self):
-        """During replay, the next recorded model call (or None when live)."""
-        if self._replaying is None:
-            return None
+        """During replay, the next recorded model call; None when live or when none remain.
+
+        A replayed session has no backend, so running out of recorded calls reproduces exactly the
+        live "no backend" failure; the result comparison then detects a truncated ledger.
+        """
         if not self._replaying:
-            raise LedgerReplayError("Ledger has fewer recorded model calls than the replay needs")
-        return self._replaying.pop(0)
+            return None
+        call = self._replaying.pop(0)
+        if type(call) is not dict or not isinstance(call.get("prompt_digest"), str):
+            raise LedgerReplayError("Recorded model call is malformed")
+        for key in ("input_tokens", "output_tokens"):
+            value = call.get(key)
+            if value is not None and (type(value) is not int or value < 0):
+                raise LedgerReplayError("Recorded model call has invalid token counts")
+        return call
+
+    @property
+    def replaying(self):
+        return self._replaying is not None
