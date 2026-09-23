@@ -1,0 +1,1 @@
+(@action equals @view) and (there exists entity a, (there exists entity o, (there exists value d, ((@resource ea_account a) and ((a ea_owner o) and ((o sa_department d) and (@principal sa_department d))))))).

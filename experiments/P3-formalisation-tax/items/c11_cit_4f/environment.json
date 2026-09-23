@@ -1,0 +1,54 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "A Cedar entity UID, record node, or the request context node."
+   }
+  },
+  "predicates": {
+   "ea_account": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute account."
+   },
+   "ea_owner": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Entity attribute owner."
+   },
+   "has_owner": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "Attribute owner is present."
+   },
+   "es_admins": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "Member of the entity-set attribute admins."
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "The request principal."
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "The request resource."
+   }
+  }
+ }
+}

@@ -1,0 +1,46 @@
+{
+ "constants": {
+  "a_createdocument": {
+   "entity": "Action::\"CreateDocument\""
+  },
+  "a_viewdocument": {
+   "entity": "Action::\"ViewDocument\""
+  },
+  "a_modifydocument": {
+   "entity": "Action::\"ModifyDocument\""
+  },
+  "a_editisprivate": {
+   "entity": "Action::\"EditIsPrivate\""
+  },
+  "a_addtoshareacl": {
+   "entity": "Action::\"AddToShareACL\""
+  },
+  "a_editpublicaccess": {
+   "entity": "Action::\"EditPublicAccess\""
+  },
+  "a_deletedocument": {
+   "entity": "Action::\"DeleteDocument\""
+  },
+  "a_creategroup": {
+   "entity": "Action::\"CreateGroup\""
+  },
+  "a_modifygroup": {
+   "entity": "Action::\"ModifyGroup\""
+  },
+  "a_deletegroup": {
+   "entity": "Action::\"DeleteGroup\""
+  },
+  "drive": {
+   "entity": "Drive::\"drive\""
+  },
+  "public": {
+   "entity": "Public::\"public\""
+  },
+  "s_view": {
+   "value": "view"
+  },
+  "s_edit": {
+   "value": "edit"
+  }
+ }
+}

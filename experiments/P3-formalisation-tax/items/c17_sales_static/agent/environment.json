@@ -1,0 +1,302 @@
+{
+ "language": "ve.core@0.1",
+ "profiles": [
+  "closure@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+  "sorts": {
+   "entity": {
+    "description": "Cedar entities and record nodes"
+   },
+   "value": {
+    "description": "scalar values"
+   }
+  },
+  "predicates": {
+   "parent": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "immediate parent edge (child, parent)"
+   },
+   "type_record": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "anonymous record node"
+   },
+   "has_viewers": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "attribute viewers present"
+   },
+   "es_viewers": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "member of set attribute viewers"
+   },
+   "ea_viewers": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "entity/record-valued attribute viewers"
+   },
+   "has_editors": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "attribute editors present"
+   },
+   "es_editors": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "member of set attribute editors"
+   },
+   "ea_editors": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "entity/record-valued attribute editors"
+   },
+   "has_viewermarkets": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "attribute viewermarkets present"
+   },
+   "es_viewermarkets": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "member of set attribute viewermarkets"
+   },
+   "ea_viewermarkets": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "entity/record-valued attribute viewermarkets"
+   },
+   "has_editormarkets": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "attribute editormarkets present"
+   },
+   "es_editormarkets": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "member of set attribute editormarkets"
+   },
+   "ea_editormarkets": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "entity/record-valued attribute editormarkets"
+   },
+   "ss_editors": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "scalar member of set attribute editors"
+   },
+   "sa_editors": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "scalar attribute editors"
+   },
+   "bt_editors": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "boolean attribute editors true"
+   },
+   "bf_editors": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "boolean attribute editors false"
+   },
+   "ss_viewers": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "scalar member of set attribute viewers"
+   },
+   "ss_viewermarkets": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "scalar member of set attribute viewermarkets"
+   },
+   "ss_editormarkets": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "scalar member of set attribute editormarkets"
+   },
+   "has_owner": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "owner present"
+   },
+   "ea_owner": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "owner value"
+   },
+   "has_job": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "job present"
+   },
+   "ea_job": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "job value"
+   },
+   "has_customerid": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "customerId present"
+   },
+   "sa_customerid": {
+    "arguments": [
+     "entity",
+     "value"
+    ],
+    "description": "customerId scalar value"
+   },
+   "ea_customerid": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "customerId entity/record value"
+   },
+   "bt_customerid": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "customerId true"
+   },
+   "bf_customerid": {
+    "arguments": [
+     "entity"
+    ],
+    "description": "customerId false"
+   },
+   "ea_target": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "context.target value"
+   },
+   "ea_targetuser": {
+    "arguments": [
+     "entity",
+     "entity"
+    ],
+    "description": "context.targetUser value"
+   }
+  },
+  "constants": {
+   "principal": {
+    "sort": "entity",
+    "description": "request principal"
+   },
+   "action": {
+    "sort": "entity",
+    "description": "request action"
+   },
+   "resource": {
+    "sort": "entity",
+    "description": "request resource"
+   },
+   "context": {
+    "sort": "entity",
+    "description": "request context"
+   },
+   "job_internal": {
+    "sort": "entity",
+    "description": "Job::\"internal\""
+   },
+   "job_customer": {
+    "sort": "entity",
+    "description": "Job::\"customer\""
+   },
+   "job_distributor": {
+    "sort": "entity",
+    "description": "Job::\"distributor\""
+   },
+   "a_ext_prez_view": {
+    "sort": "entity",
+    "description": "Action::\"ExternalPrezViewActions\""
+   },
+   "a_int_prez_view": {
+    "sort": "entity",
+    "description": "Action::\"InternalPrezViewActions\""
+   },
+   "a_prez_edit": {
+    "sort": "entity",
+    "description": "Action::\"PrezEditActions\""
+   },
+   "a_grant_view_prez": {
+    "sort": "entity",
+    "description": "Action::\"grantViewAccessToPresentation\""
+   },
+   "a_grant_edit_prez": {
+    "sort": "entity",
+    "description": "Action::\"grantEditAccessToPresentation\""
+   },
+   "a_market_tmpl_view": {
+    "sort": "entity",
+    "description": "Action::\"MarketTemplateViewActions\""
+   },
+   "a_int_tmpl_view": {
+    "sort": "entity",
+    "description": "Action::\"InternalTemplateViewActions\""
+   },
+   "a_tmpl_edit": {
+    "sort": "entity",
+    "description": "Action::\"TemplateEditActions\""
+   },
+   "a_grant_view_tmpl": {
+    "sort": "entity",
+    "description": "Action::\"grantViewAccessToTemplate\""
+   },
+   "a_grant_edit_tmpl": {
+    "sort": "entity",
+    "description": "Action::\"grantEditAccessToTemplate\""
+   }
+  }
+ }
+}

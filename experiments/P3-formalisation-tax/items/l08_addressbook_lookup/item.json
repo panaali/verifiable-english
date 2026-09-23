@@ -1,0 +1,353 @@
+{
+ "family": "alloy",
+ "synthetic": false,
+ "question": "Does the target paragraph hold in each finite instance (or: do the facts entail the assertion)?",
+ "provenance": {
+  "repository": "AlloyTools/models",
+  "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+  "licence": "Apache-2.0",
+  "path": "software-abstractions-book/chapter2/addressBook3a.als",
+  "note": "Model text verbatim; instances synthetic. Question formula 't in lookup[b, n]' is written for this experiment over the source's fun lookup."
+ },
+ "questions": [
+  {
+   "description": "direct",
+   "target": {
+    "kind": "formula",
+    "text": "t in lookup[b, n]",
+    "note": "membership in the source's lookup function"
+   },
+   "instance": {
+    "sigs": {
+     "Target": [
+      "a1",
+      "a2",
+      "al",
+      "g1",
+      "g2"
+     ],
+     "Addr": [
+      "a1",
+      "a2"
+     ],
+     "Name": [
+      "al",
+      "g1",
+      "g2"
+     ],
+     "Alias": [
+      "al"
+     ],
+     "Group": [
+      "g1",
+      "g2"
+     ],
+     "Book": [
+      "b0"
+     ]
+    },
+    "fields": {
+     "names": [
+      [
+       "b0",
+       "al"
+      ]
+     ],
+     "addr": [
+      [
+       "b0",
+       "al",
+       "a1"
+      ]
+     ]
+    },
+    "bindings": {
+     "b": "b0",
+     "n": "al",
+     "t": "a1"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "via group",
+   "target": {
+    "kind": "formula",
+    "text": "t in lookup[b, n]",
+    "note": "membership in the source's lookup function"
+   },
+   "instance": {
+    "sigs": {
+     "Target": [
+      "a1",
+      "a2",
+      "al",
+      "g1",
+      "g2"
+     ],
+     "Addr": [
+      "a1",
+      "a2"
+     ],
+     "Name": [
+      "al",
+      "g1",
+      "g2"
+     ],
+     "Alias": [
+      "al"
+     ],
+     "Group": [
+      "g1",
+      "g2"
+     ],
+     "Book": [
+      "b0"
+     ]
+    },
+    "fields": {
+     "names": [
+      [
+       "b0",
+       "g1"
+      ],
+      [
+       "b0",
+       "al"
+      ]
+     ],
+     "addr": [
+      [
+       "b0",
+       "g1",
+       "al"
+      ],
+      [
+       "b0",
+       "al",
+       "a2"
+      ]
+     ]
+    },
+    "bindings": {
+     "b": "b0",
+     "n": "g1",
+     "t": "a2"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "two hops groups",
+   "target": {
+    "kind": "formula",
+    "text": "t in lookup[b, n]",
+    "note": "membership in the source's lookup function"
+   },
+   "instance": {
+    "sigs": {
+     "Target": [
+      "a1",
+      "a2",
+      "al",
+      "g1",
+      "g2"
+     ],
+     "Addr": [
+      "a1",
+      "a2"
+     ],
+     "Name": [
+      "al",
+      "g1",
+      "g2"
+     ],
+     "Alias": [
+      "al"
+     ],
+     "Group": [
+      "g1",
+      "g2"
+     ],
+     "Book": [
+      "b0"
+     ]
+    },
+    "fields": {
+     "names": [
+      [
+       "b0",
+       "g2"
+      ],
+      [
+       "b0",
+       "g1"
+      ],
+      [
+       "b0",
+       "al"
+      ]
+     ],
+     "addr": [
+      [
+       "b0",
+       "g2",
+       "g1"
+      ],
+      [
+       "b0",
+       "g1",
+       "al"
+      ],
+      [
+       "b0",
+       "al",
+       "a1"
+      ]
+     ]
+    },
+    "bindings": {
+     "b": "b0",
+     "n": "g2",
+     "t": "a1"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "not reachable",
+   "target": {
+    "kind": "formula",
+    "text": "t in lookup[b, n]",
+    "note": "membership in the source's lookup function"
+   },
+   "instance": {
+    "sigs": {
+     "Target": [
+      "a1",
+      "a2",
+      "al",
+      "g1",
+      "g2"
+     ],
+     "Addr": [
+      "a1",
+      "a2"
+     ],
+     "Name": [
+      "al",
+      "g1",
+      "g2"
+     ],
+     "Alias": [
+      "al"
+     ],
+     "Group": [
+      "g1",
+      "g2"
+     ],
+     "Book": [
+      "b0"
+     ]
+    },
+    "fields": {
+     "names": [
+      [
+       "b0",
+       "g1"
+      ],
+      [
+       "b0",
+       "al"
+      ]
+     ],
+     "addr": [
+      [
+       "b0",
+       "g1",
+       "a1"
+      ],
+      [
+       "b0",
+       "al",
+       "a2"
+      ]
+     ]
+    },
+    "bindings": {
+     "b": "b0",
+     "n": "g1",
+     "t": "a2"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "name itself not an address",
+   "target": {
+    "kind": "formula",
+    "text": "t in lookup[b, n]",
+    "note": "membership in the source's lookup function"
+   },
+   "instance": {
+    "sigs": {
+     "Target": [
+      "a1",
+      "a2",
+      "al",
+      "g1",
+      "g2"
+     ],
+     "Addr": [
+      "a1",
+      "a2"
+     ],
+     "Name": [
+      "al",
+      "g1",
+      "g2"
+     ],
+     "Alias": [
+      "al"
+     ],
+     "Group": [
+      "g1",
+      "g2"
+     ],
+     "Book": [
+      "b0"
+     ]
+    },
+    "fields": {
+     "names": [
+      [
+       "b0",
+       "g1"
+      ],
+      [
+       "b0",
+       "al"
+      ]
+     ],
+     "addr": [
+      [
+       "b0",
+       "g1",
+       "al"
+      ]
+     ]
+    },
+    "bindings": {
+     "b": "b0",
+     "n": "g1",
+     "t": "al"
+    }
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "l08_addressbook_lookup",
+ "source_files": {
+  "source.als": "e4f482f20a3c10e8e1e002f69d68fad545c25189d896c4664d67a2eae756ced0"
+ }
+}

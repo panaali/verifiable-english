@@ -1,0 +1,294 @@
+{
+ "id": "c17_sales_static",
+ "family": "cedar",
+ "task": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "sources": {
+  "source.cedar": "// PRESENTATION POLICIES\n@id(\"external-prez-view\")\npermit (\n  principal,\n  action in Action::\"ExternalPrezViewActions\",\n  resource\n)\nwhen { principal in resource.viewers };\n\n@id(\"internal-prez-view\")\npermit (\n  principal,\n  action in Action::\"InternalPrezViewActions\",\n  resource\n)\nwhen { principal.job == Job::\"internal\" && principal in resource.viewers };\n\n// Authorizes edit actions generally, but these limited with forbid policies\n@id(\"prez-edit\")\npermit (\n  principal,\n  action in Action::\"PrezEditActions\",\n  resource\n)\nwhen { resource.owner == principal || principal in resource.editors };\n\n// only permit sharing to non-customers\n@id(\"limit-prez-view-customer\")\nforbid (\n  principal,\n  action == Action::\"grantViewAccessToPresentation\",\n  resource\n)\nunless\n{\n  context.target.job != Job::\"customer\" ||\n  (principal.job == Job::\"distributor\" &&\n   principal.customerId == context.target.customerId)\n};\n\n// forbid sharing editor access to non-internal users\n@id(\"limit-prez-edit-to-internal\")\nforbid (\n  principal,\n  action == Action::\"grantEditAccessToPresentation\",\n  resource\n)\nwhen { context.target.job != Job::\"internal\" };\n\n// TEMPLATE POLICIES\n@id(\"market-template-view\")\npermit (\n  principal,\n  action in Action::\"MarketTemplateViewActions\",\n  resource\n)\nwhen { principal in resource.viewerMarkets };\n\n@id(\"internal-template-view\")\npermit (\n  principal,\n  action in Action::\"InternalTemplateViewActions\",\n  resource\n)\nwhen { principal.job == Job::\"internal\" && principal in resource.viewers };\n\n// Authorizes edit actions generally, but these limited with forbid policies\n@id(\"template-edit\")\npermit (\n  principal,\n  action in Action::\"TemplateEditActions\",\n  resource\n)\nwhen\n{\n  resource.owner == principal ||\n  principal in resource.editors ||\n  principal in resource.editorMarkets\n};\n\n// only permit sharing by internal users to non-customers\n@id(\"limit-template-grant-view\")\nforbid (\n  principal,\n  action == Action::\"grantViewAccessToTemplate\",\n  resource\n)\nwhen\n{\n  context has targetUser &&\n  context.targetUser.job == Job::\"customer\" &&\n  (principal.job != Job::\"distributor\" ||\n   principal.customerId != context.targetUser.customerId)\n};\n\n// forbid sharing editor access to non-internal users\n@id(\"limit-template-grant-edit-internal\")\nforbid (\n  principal,\n  action == Action::\"grantEditAccessToTemplate\",\n  resource\n)\nwhen\n{\n  context has targetUser && context.targetUser.job != Job::\"internal\"\n// context.targetMarket always Ok, no matter the market\n};\n"
+ },
+ "world": {
+  "entities": [
+   {
+    "uid": "User::\"Alice\"",
+    "attrs": {
+     "job": {
+      "__entity": "Job::\"internal\""
+     },
+     "customerId": "1AYZ"
+    },
+    "parents": [
+     "Market::\"YoungAdult\""
+    ]
+   },
+   {
+    "uid": "Market::\"YoungAdult\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "User::\"Bob\"",
+    "attrs": {
+     "job": {
+      "__entity": "Job::\"customer\""
+     },
+     "customerId": "1AYZ"
+    },
+    "parents": [
+     "Market::\"YoungAdult\""
+    ]
+   },
+   {
+    "uid": "User::\"Charlie\"",
+    "attrs": {
+     "job": {
+      "__entity": "Job::\"distributor\""
+     },
+     "customerId": "1AYZ"
+    },
+    "parents": []
+   },
+   {
+    "uid": "Presentation::\"proposal\"",
+    "attrs": {
+     "owner": {
+      "__entity": "User::\"Alice\""
+     },
+     "viewers": [
+      {
+       "__entity": "User::\"Bob\""
+      }
+     ],
+     "editors": []
+    },
+    "parents": []
+   },
+   {
+    "uid": "Action::\"InternalPrezViewActions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"ExternalPrezViewActions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"PrezEditActions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"viewPresentation\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"InternalPrezViewActions\"",
+     "Action::\"ExternalPrezViewActions\"",
+     "Action::\"PrezEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"removeSelfAccessFromPresentation\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"InternalPrezViewActions\"",
+     "Action::\"ExternalPrezViewActions\"",
+     "Action::\"PrezEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"duplicatePresentation\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"InternalPrezViewActions\"",
+     "Action::\"PrezEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"editPresentation\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"PrezEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"grantViewAccessToPresentation\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"PrezEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"grantEditAccessToPresentation\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"PrezEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"InternalTemplateViewActions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"MarketTemplateViewActions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"TemplateEditActions\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"viewTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"InternalTemplateViewActions\"",
+     "Action::\"TemplateEditActions\"",
+     "Action::\"MarketTemplateViewActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"duplicateTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"InternalTemplateViewActions\"",
+     "Action::\"TemplateEditActions\"",
+     "Action::\"MarketTemplateViewActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"removeSelfAccessFromTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"InternalTemplateViewActions\"",
+     "Action::\"TemplateEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"editTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"TemplateEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"removeOthersAccessToTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"TemplateEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"grantViewAccessToTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"TemplateEditActions\""
+    ]
+   },
+   {
+    "uid": "Action::\"grantEditAccessToTemplate\"",
+    "attrs": {},
+    "parents": [
+     "Action::\"TemplateEditActions\""
+    ]
+   }
+  ],
+  "linked": []
+ },
+ "questions": [
+  {
+   "n": 0,
+   "request": {
+    "principal": "User::\"Alice\"",
+    "action": "Action::\"viewPresentation\"",
+    "resource": "Presentation::\"proposal\"",
+    "context": {}
+   }
+  },
+  {
+   "n": 1,
+   "request": {
+    "principal": "User::\"Bob\"",
+    "action": "Action::\"viewPresentation\"",
+    "resource": "Presentation::\"proposal\"",
+    "context": {}
+   }
+  },
+  {
+   "n": 2,
+   "request": {
+    "principal": "User::\"Charlie\"",
+    "action": "Action::\"viewPresentation\"",
+    "resource": "Presentation::\"proposal\"",
+    "context": {}
+   }
+  },
+  {
+   "n": 3,
+   "request": {
+    "principal": "User::\"Charlie\"",
+    "action": "Action::\"viewPresentation\"",
+    "resource": "Action::\"grantEditAccessToTemplate\"",
+    "context": {}
+   }
+  },
+  {
+   "n": 4,
+   "request": {
+    "principal": "User::\"Bob\"",
+    "action": "Action::\"viewTemplate\"",
+    "resource": "User::\"Alice\"",
+    "context": {}
+   }
+  },
+  {
+   "n": 5,
+   "request": {
+    "principal": "Action::\"grantEditAccessToTemplate\"",
+    "action": "Action::\"viewPresentation\"",
+    "resource": "Presentation::\"proposal\"",
+    "context": {}
+   }
+  },
+  {
+   "n": 6,
+   "request": {
+    "principal": "User::\"Charlie\"",
+    "action": "Action::\"PrezEditActions\"",
+    "resource": "Presentation::\"proposal\"",
+    "context": {}
+   }
+  },
+  {
+   "n": 7,
+   "request": {
+    "principal": "User::\"Charlie\"",
+    "action": "Action::\"viewPresentation\"",
+    "resource": "Presentation::\"proposal\"",
+    "context": {
+     "targetMarket": {
+      "__entity": "Action::\"InternalTemplateViewActions\""
+     }
+    }
+   }
+  },
+  {
+   "n": 8,
+   "request": {
+    "principal": "User::\"Charlie\"",
+    "action": "Action::\"grantEditAccessToPresentation\"",
+    "resource": "Presentation::\"proposal\"",
+    "context": {}
+   }
+  },
+  {
+   "n": 9,
+   "request": {
+    "principal": "Action::\"removeSelfAccessFromTemplate\"",
+    "action": "Action::\"viewPresentation\"",
+    "resource": "Presentation::\"proposal\"",
+    "context": {}
+   }
+  }
+ ]
+}

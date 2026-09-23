@@ -1,0 +1,249 @@
+{
+ "family": "cedar",
+ "synthetic": false,
+ "provenance": {
+  "repository": "cedar-policy/cedar-examples",
+  "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+  "licence": "Apache-2.0",
+  "policy_path": "cedar-example-use-cases/hotel_chains/static/policies.cedar",
+  "entities_path": "cedar-example-use-cases/hotel_chains/static/entities.json",
+  "schema_path": "cedar-example-use-cases/hotel_chains/static/policies.cedarschema",
+  "requests": "cedar-example-use-cases/hotel_chains/static/ALLOW, cedar-example-use-cases/hotel_chains/static/DENY",
+  "schema_used_for_action_hierarchy": true
+ },
+ "question": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "world": {
+  "entities": [
+   {
+    "uid": "User::\"Alice\"",
+    "attrs": {
+     "viewPermissions": {
+      "hotelReservations": [
+       {
+        "__entity": "Hotel::\"G\""
+       }
+      ],
+      "propertyReservations": []
+     },
+     "memberPermissions": {
+      "hotelReservations": [],
+      "propertyReservations": [
+       {
+        "__entity": "Property::\"Green\""
+       }
+      ]
+     },
+     "hotelAdminPermissions": [],
+     "propertyAdminPermissions": []
+    },
+    "parents": []
+   },
+   {
+    "uid": "User::\"Bob\"",
+    "attrs": {
+     "viewPermissions": {
+      "hotelReservations": [],
+      "propertyReservations": []
+     },
+     "memberPermissions": {
+      "hotelReservations": [],
+      "propertyReservations": []
+     },
+     "hotelAdminPermissions": [
+      {
+       "__entity": "Hotel::\"R\""
+      }
+     ],
+     "propertyAdminPermissions": [
+      {
+       "__entity": "Property::\"Green\""
+      }
+     ]
+    },
+    "parents": []
+   },
+   {
+    "uid": "Hotel::\"R\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Hotel::\"G\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Property::\"Red\"",
+    "attrs": {},
+    "parents": [
+     "Hotel::\"R\""
+    ]
+   },
+   {
+    "uid": "Property::\"Green\"",
+    "attrs": {},
+    "parents": [
+     "Hotel::\"G\""
+    ]
+   },
+   {
+    "uid": "Property::\"Gray\"",
+    "attrs": {},
+    "parents": [
+     "Hotel::\"G\""
+    ]
+   },
+   {
+    "uid": "Reservation::\"Green-Res1\"",
+    "attrs": {},
+    "parents": [
+     "Property::\"Green\"",
+     "Hotel::\"G\""
+    ]
+   },
+   {
+    "uid": "Reservation::\"Gray-Res1\"",
+    "attrs": {},
+    "parents": [
+     "Property::\"Gray\"",
+     "Hotel::\"G\""
+    ]
+   },
+   {
+    "uid": "Reservation::\"Red-Res1\"",
+    "attrs": {},
+    "parents": [
+     "Property::\"Red\"",
+     "Hotel::\"R\""
+    ]
+   },
+   {
+    "uid": "Action::\"viewReservation\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"updateReservation\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"grantAccessReservation\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"createReservation\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"viewProperty\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"updateProperty\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"grantAccessProperty\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"createProperty\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"createHotel\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"viewHotel\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"updateHotel\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"grantAccessHotel\"",
+    "attrs": {},
+    "parents": []
+   }
+  ],
+  "linked": []
+ },
+ "questions": [
+  {
+   "description": "ALLOW/alice_update_green.json",
+   "request": {
+    "principal": "User::\"Alice\"",
+    "action": "Action::\"updateReservation\"",
+    "resource": "Reservation::\"Green-Res1\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/alice_view_gray.json",
+   "request": {
+    "principal": "User::\"Alice\"",
+    "action": "Action::\"viewReservation\"",
+    "resource": "Reservation::\"Gray-Res1\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/bob_update_red.json",
+   "request": {
+    "principal": "User::\"Bob\"",
+    "action": "Action::\"updateProperty\"",
+    "resource": "Property::\"Red\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/bob_view_green.json",
+   "request": {
+    "principal": "User::\"Bob\"",
+    "action": "Action::\"viewReservation\"",
+    "resource": "Reservation::\"Green-Res1\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "DENY/alice_update_gray.json",
+   "request": {
+    "principal": "User::\"Alice\"",
+    "action": "Action::\"updateReservation\"",
+    "resource": "Reservation::\"Gray-Res1\"",
+    "context": {}
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "DENY/bob_update_gray.json",
+   "request": {
+    "principal": "User::\"Bob\"",
+    "action": "Action::\"updateProperty\"",
+    "resource": "Property::\"Gray\"",
+    "context": {}
+   },
+   "recorded_decision": "deny"
+  }
+ ],
+ "id": "c15_hotel_static",
+ "source_files": {
+  "source.cedar": "203331bcbd016f2f243e2b1d639da056dced169b3b75f4a5f8fa90f7d5f6408b"
+ }
+}

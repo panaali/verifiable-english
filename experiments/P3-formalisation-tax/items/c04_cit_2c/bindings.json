@@ -1,0 +1,19 @@
+{
+ "constants": {
+  "alice": {
+   "entity": "User::\"alice\""
+  },
+  "view": {
+   "entity": "Action::\"view\""
+  },
+  "edit": {
+   "entity": "Action::\"edit\""
+  },
+  "comment": {
+   "entity": "Action::\"comment\""
+  },
+  "jane_vacation": {
+   "entity": "Album::\"jane_vacation\""
+  }
+ }
+}

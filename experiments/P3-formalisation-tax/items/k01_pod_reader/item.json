@@ -1,0 +1,166 @@
+{
+ "family": "k8s",
+ "synthetic": false,
+ "question": "Does Kubernetes RBAC authorize each request given these RBAC objects?",
+ "provenance": {
+  "repository": "kubernetes/website",
+  "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+  "licence": "CC-BY-4.0",
+  "paths": [
+   "content/en/examples/access/simple-role.yaml",
+   "content/en/examples/access/simple-rolebinding-with-role.yaml"
+  ],
+  "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+ },
+ "world": {
+  "objects": [
+   {
+    "kind": "Role",
+    "metadata": {
+     "namespace": "default",
+     "name": "pod-reader"
+    },
+    "rules": [
+     {
+      "apiGroups": [
+       ""
+      ],
+      "resources": [
+       "pods"
+      ],
+      "verbs": [
+       "get",
+       "watch",
+       "list"
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "RoleBinding",
+    "metadata": {
+     "name": "read-pods",
+     "namespace": "default"
+    },
+    "subjects": [
+     {
+      "kind": "User",
+      "name": "jane",
+      "apiGroup": "rbac.authorization.k8s.io"
+     }
+    ],
+    "roleRef": {
+     "kind": "Role",
+     "name": "pod-reader",
+     "apiGroup": "rbac.authorization.k8s.io"
+    }
+   }
+  ]
+ },
+ "questions": [
+  {
+   "description": "k01-0",
+   "request": {
+    "user": "jane",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "",
+    "namespace": "default",
+    "name": "web-1"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k01-1",
+   "request": {
+    "user": "jane",
+    "groups": [],
+    "verb": "watch",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "",
+    "namespace": "default",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k01-2",
+   "request": {
+    "user": "jane",
+    "groups": [],
+    "verb": "list",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "",
+    "namespace": "kube-system",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k01-3",
+   "request": {
+    "user": "jane",
+    "groups": [],
+    "verb": "delete",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "",
+    "namespace": "default",
+    "name": "web-1"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k01-4",
+   "request": {
+    "user": "jane",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "log",
+    "namespace": "default",
+    "name": "web-1"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k01-5",
+   "request": {
+    "user": "bob",
+    "groups": [
+     "jane"
+    ],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "",
+    "namespace": "default",
+    "name": "web-1"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k01-6",
+   "request": {
+    "user": "jane",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "apps",
+    "resource": "pods",
+    "subresource": "",
+    "namespace": "default",
+    "name": "web-1"
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "k01_pod_reader",
+ "source_files": {
+  "source.yaml": "a7d6628d3398b181101eedd237ccf4d8840bda9bf23d8a3c8568f03284e4a9f9"
+ }
+}

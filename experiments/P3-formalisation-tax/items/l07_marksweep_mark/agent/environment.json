@@ -1,0 +1,23 @@
+{"language": "ve.core@0.1", "profiles": ["closure@0", "relational-fol@0"],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+   "sorts": {
+     "atom": {"description": "Alloy atoms (Nodes and HeapStates)"},
+     "tuple": {"description": "reified tuples of ternary fields"}
+   },
+   "predicates": {
+     "sig_node": {"arguments": ["atom"], "description": "atom is a Node"},
+     "sig_heapstate": {"arguments": ["atom"], "description": "atom is a HeapState"},
+     "f_marked": {"arguments": ["atom", "atom"], "description": "HeapState h marks Node n"},
+     "t_left_1": {"arguments": ["tuple", "atom"], "description": "left tuple's HeapState"},
+     "t_left_2": {"arguments": ["tuple", "atom"], "description": "left tuple's source Node"},
+     "t_left_3": {"arguments": ["tuple", "atom"], "description": "left tuple's target Node"},
+     "t_right_1": {"arguments": ["tuple", "atom"], "description": "right tuple's HeapState"},
+     "t_right_2": {"arguments": ["tuple", "atom"], "description": "right tuple's source Node"},
+     "t_right_3": {"arguments": ["tuple", "atom"], "description": "right tuple's target Node"}
+   },
+   "constants": {
+     "hs": {"sort": "atom", "description": "pre-state HeapState"},
+     "from": {"sort": "atom", "description": "root Node to mark from"},
+     "hs_p": {"sort": "atom", "description": "post-state HeapState hs\""}
+   }}}

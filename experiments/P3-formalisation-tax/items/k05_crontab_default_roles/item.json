@@ -1,0 +1,290 @@
+{
+ "family": "k8s",
+ "synthetic": false,
+ "question": "Does Kubernetes RBAC authorize each request given these RBAC objects?",
+ "provenance": {
+  "repository": "kubernetes/website",
+  "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+  "licence": "CC-BY-4.0",
+  "paths": [
+   "content/en/docs/reference/access-authn-authz/rbac.md#aggregated-clusterroles",
+   "content/en/docs/reference/access-authn-authz/rbac.md#user-facing-roles"
+  ],
+  "note": "CronTab ClusterRoles verbatim; admin/edit/view aggregation skeleton from upstream bootstrap policy, rules omitted (synthetic); bindings synthetic."
+ },
+ "world": {
+  "objects": [
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "aggregate-cron-tabs-edit",
+     "labels": {
+      "rbac.authorization.k8s.io/aggregate-to-admin": "true",
+      "rbac.authorization.k8s.io/aggregate-to-edit": "true"
+     }
+    },
+    "rules": [
+     {
+      "apiGroups": [
+       "stable.example.com"
+      ],
+      "resources": [
+       "crontabs"
+      ],
+      "verbs": [
+       "get",
+       "list",
+       "watch",
+       "create",
+       "update",
+       "patch",
+       "delete"
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "aggregate-cron-tabs-view",
+     "labels": {
+      "rbac.authorization.k8s.io/aggregate-to-view": "true"
+     }
+    },
+    "rules": [
+     {
+      "apiGroups": [
+       "stable.example.com"
+      ],
+      "resources": [
+       "crontabs"
+      ],
+      "verbs": [
+       "get",
+       "list",
+       "watch"
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "admin"
+    },
+    "aggregationRule": {
+     "clusterRoleSelectors": [
+      {
+       "matchLabels": {
+        "rbac.authorization.k8s.io/aggregate-to-admin": "true"
+       }
+      }
+     ]
+    },
+    "synthetic": true
+   },
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "edit",
+     "labels": {
+      "rbac.authorization.k8s.io/aggregate-to-admin": "true"
+     }
+    },
+    "aggregationRule": {
+     "clusterRoleSelectors": [
+      {
+       "matchLabels": {
+        "rbac.authorization.k8s.io/aggregate-to-edit": "true"
+       }
+      }
+     ]
+    },
+    "synthetic": true
+   },
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "view",
+     "labels": {
+      "rbac.authorization.k8s.io/aggregate-to-edit": "true"
+     }
+    },
+    "aggregationRule": {
+     "clusterRoleSelectors": [
+      {
+       "matchLabels": {
+        "rbac.authorization.k8s.io/aggregate-to-view": "true"
+       }
+      }
+     ]
+    },
+    "synthetic": true
+   },
+   {
+    "kind": "RoleBinding",
+    "metadata": {
+     "name": "ana-admin",
+     "namespace": "team-a"
+    },
+    "subjects": [
+     {
+      "kind": "User",
+      "name": "ana",
+      "apiGroup": "rbac.authorization.k8s.io"
+     }
+    ],
+    "roleRef": {
+     "kind": "ClusterRole",
+     "name": "admin",
+     "apiGroup": "rbac.authorization.k8s.io"
+    },
+    "synthetic": true
+   },
+   {
+    "kind": "RoleBinding",
+    "metadata": {
+     "name": "ed-edit",
+     "namespace": "team-a"
+    },
+    "subjects": [
+     {
+      "kind": "User",
+      "name": "ed",
+      "apiGroup": "rbac.authorization.k8s.io"
+     }
+    ],
+    "roleRef": {
+     "kind": "ClusterRole",
+     "name": "edit",
+     "apiGroup": "rbac.authorization.k8s.io"
+    },
+    "synthetic": true
+   },
+   {
+    "kind": "RoleBinding",
+    "metadata": {
+     "name": "vic-view",
+     "namespace": "team-a"
+    },
+    "subjects": [
+     {
+      "kind": "User",
+      "name": "vic",
+      "apiGroup": "rbac.authorization.k8s.io"
+     }
+    ],
+    "roleRef": {
+     "kind": "ClusterRole",
+     "name": "view",
+     "apiGroup": "rbac.authorization.k8s.io"
+    },
+    "synthetic": true
+   }
+  ]
+ },
+ "questions": [
+  {
+   "description": "k05-0",
+   "request": {
+    "user": "ana",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-a",
+    "name": "nightly"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k05-1",
+   "request": {
+    "user": "ana",
+    "groups": [],
+    "verb": "delete",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-a",
+    "name": "nightly"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k05-2",
+   "request": {
+    "user": "ed",
+    "groups": [],
+    "verb": "create",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-a",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k05-3",
+   "request": {
+    "user": "vic",
+    "groups": [],
+    "verb": "list",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-a",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k05-4",
+   "request": {
+    "user": "vic",
+    "groups": [],
+    "verb": "create",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-a",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k05-5",
+   "request": {
+    "user": "vic",
+    "groups": [],
+    "verb": "list",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-b",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k05-6",
+   "request": {
+    "user": "ana",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-a",
+    "name": "nightly"
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "k05_crontab_default_roles",
+ "source_files": {
+  "source.yaml": "834547ec6923ae4e6c1d453817bca15b5b3bd2319e2dcd9deae0dd4994f774f8"
+ }
+}

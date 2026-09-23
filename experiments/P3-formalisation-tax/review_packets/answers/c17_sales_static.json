@@ -1,0 +1,16 @@
+{
+  "answers": [
+    {"n": 0, "answer": true, "why": "prez-edit: viewPresentation in PrezEditActions and resource.owner == Alice; no forbid applies to viewPresentation"},
+    {"n": 1, "answer": true, "why": "external-prez-view: Bob in proposal.viewers [Bob]"},
+    {"n": 2, "answer": false, "why": "Charlie not in viewers, not owner, editors empty; no permit satisfied"},
+    {"n": 3, "answer": false, "why": "resource is an Action entity with no attrs; every permit errors on resource.viewers/owner and is skipped"},
+    {"n": 4, "answer": false, "why": "resource User::Alice lacks viewerMarkets/owner (errors); internal-template-view false since Bob is customer"},
+    {"n": 5, "answer": false, "why": "Action principal not in viewers [Bob], not owner, editors empty; internal-prez-view errors on principal.job"},
+    {"n": 6, "answer": false, "why": "action PrezEditActions only matches prez-edit (reflexive in); Charlie not owner and editors empty"},
+    {"n": 7, "answer": false, "why": "same as n=2; extra context irrelevant to permits"},
+    {"n": 8, "answer": false, "why": "prez-edit false for Charlie (not owner/editor); forbid errors on missing context.target but no permit anyway"},
+    {"n": 9, "answer": false, "why": "Action principal not in viewers/editors nor owner; internal-prez-view errors on principal.job"}
+  ],
+  "confidence": "high",
+  "notes": "Treated `principal in <set>` as true iff principal is in (reflexively/transitively) some element of the set. Error-raising policies are skipped per the stated semantics; no request here hinges on a forbid firing."
+}

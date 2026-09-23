@@ -1,0 +1,291 @@
+[
+ {
+  "id": "c02-only-group-members",
+  "item": "c02_cit_2a",
+  "question": "Can anyone outside UserGroup jane_friends (transitively) be allowed?",
+  "prove": "Found",
+  "prove_steps": 2,
+  "prove_seconds": 0.0,
+  "certificate_replayed": true,
+  "ve_verdict": true,
+  "reference": {
+   "verdict": true,
+   "method": "sampled 300 perturbed worlds: no counterexample (68 allowed worlds met the antecedent)",
+   "support": 68
+  },
+  "agrees": true
+ },
+ {
+  "id": "c03-only-photo94",
+  "item": "c03_cit_2b",
+  "question": "Is VacationPhoto94.jpg the only resource Alice may view? (expected: no)",
+  "prove": "NotFound",
+  "prove_steps": 5,
+  "prove_seconds": 0.0,
+  "countermodel": "Found",
+  "countermodel_seconds": 0.0,
+  "ve_verdict": false,
+  "countermodel_model": {
+   "domains": {
+    "entity": [
+     "e0",
+     "e1"
+    ]
+   },
+   "constants": {
+    "action": "e0",
+    "alice": "e0",
+    "jane_vacation": "e0",
+    "photo94": "e1",
+    "principal": "e0",
+    "resource": "e0",
+    "view": "e0"
+   },
+   "relations": {}
+  },
+  "reference": {
+   "verdict": false,
+   "method": "sampled 300 perturbed worlds: counterexample found",
+   "support": 29
+  },
+  "agrees": true
+ },
+ {
+  "id": "c13-private-owner-only-raw",
+  "item": "c13_document_cloud",
+  "question": "Is a private document viewable only by its owner? (no background axioms)",
+  "prove": "ResourceLimit",
+  "prove_steps": 50000,
+  "prove_seconds": 18.74,
+  "countermodel": "Found",
+  "countermodel_seconds": 0.0,
+  "ve_verdict": false,
+  "countermodel_model": {
+   "domains": {
+    "entity": [
+     "e0"
+    ],
+    "value": [
+     "e0"
+    ]
+   },
+   "constants": {
+    "action": "e0",
+    "add_to_share_acl": "e0",
+    "context": "e0",
+    "create_document": "e0",
+    "create_group": "e0",
+    "delete_document": "e0",
+    "delete_group": "e0",
+    "drive": "e0",
+    "edit_is_private": "e0",
+    "edit_public_access": "e0",
+    "modify_document": "e0",
+    "modify_group": "e0",
+    "principal": "e0",
+    "public": "e0",
+    "resource": "e0",
+    "s_edit": "e0",
+    "s_view": "e0",
+    "view_document": "e0"
+   },
+   "relations": {
+    "bt_isprivate": [
+     [
+      "e0"
+     ]
+    ]
+   }
+  },
+  "reference": {
+   "verdict": true,
+   "method": "400 perturbed worlds forced to the antecedent (arbitrary stores): no counterexample",
+   "support": 131
+  },
+  "agrees": false
+ },
+ {
+  "id": "c13-private-owner-only-schema-axioms",
+  "item": "c13_document_cloud",
+  "question": "Is a private document viewable only by its owner? (with schema axioms: distinct action UIDs, actions have no parents, owner present and unique, Boolean exclusivity)",
+  "prove": "Found",
+  "prove_steps": 146,
+  "prove_seconds": 0.12,
+  "certificate_replayed": true,
+  "ve_verdict": true,
+  "reference": {
+   "verdict": true,
+   "method": "400 perturbed worlds forced to the antecedent (schema-valid): no counterexample",
+   "support": 131
+  },
+  "agrees": true
+ },
+ {
+  "id": "c14-bob-push-by-chain",
+  "item": "c14_github",
+  "question": "From the recorded group chain (4 parent edges), is the push allowed? (open-world proof, not evaluation)",
+  "prove": "Found",
+  "prove_steps": 3194,
+  "prove_seconds": 3.83,
+  "certificate_replayed": true,
+  "ve_verdict": true,
+  "reference": {
+   "verdict": true,
+   "method": "recorded Cedar decision ALLOW/query_bob_push_secret.json and the reference on the item store"
+  },
+  "agrees": true
+ },
+ {
+  "id": "k05-admin-gets-view-rule-3-levels",
+  "item": "k05_crontab_default_roles",
+  "question": "Does a user bound to admin get a rule aggregated only into view (view -> edit -> admin)?",
+  "prove": "ResourceLimit",
+  "prove_steps": 50000,
+  "prove_seconds": 43.46,
+  "countermodel": "ResourceLimit",
+  "countermodel_seconds": 128.24,
+  "ve_verdict": null,
+  "reference": {
+   "verdict": true,
+   "method": "reference_rbac on the item world with cron-tabs-edit's aggregate-to-admin/edit labels removed (view-only path)",
+   "reference_answer_view_only_world": true
+  },
+  "agrees": null
+ },
+ {
+  "id": "l03-noselfgrandpa",
+  "item": "l03_grandpa1_noselfgrandpa",
+  "question": "check NoSelfGrandpa (grandpa1.als): do the facts entail the assertion?",
+  "prove": "Found",
+  "prove_steps": 83,
+  "prove_seconds": 0.03,
+  "certificate_replayed": true,
+  "ve_verdict": true,
+  "reference": {
+   "verdict": true,
+   "method": "reference bounded check, scope 3"
+  },
+  "agrees": true
+ },
+ {
+  "id": "l-ring-implies-weakly-connected",
+  "item": "l05_graph_ring",
+  "question": "util/graph: does ring[r] imply weaklyConnected[r]? (valid in all structures; needs closure monotonicity)",
+  "prove": "ResourceLimit",
+  "prove_steps": 50000,
+  "prove_seconds": 14.49,
+  "countermodel": "NotFound",
+  "countermodel_seconds": 0.6,
+  "ve_verdict": null,
+  "reference": {
+   "verdict": true,
+   "method": "exhaustive, all 531 graphs with <= 3 nodes"
+  },
+  "agrees": null
+ },
+ {
+  "id": "l-tree-implies-weakly-connected",
+  "item": "l06_graph_tree",
+  "question": "util/graph: does tree[r] imply weaklyConnected[r]? (true for finite graphs only)",
+  "prove": "ResourceLimit",
+  "prove_steps": 50000,
+  "prove_seconds": 1.29,
+  "countermodel": "Found",
+  "countermodel_seconds": 0.04,
+  "ve_verdict": false,
+  "countermodel_model": {
+   "domains": {
+    "atom": [
+     "e0",
+     "e1",
+     "e2"
+    ]
+   },
+   "constants": {},
+   "relations": {
+    "f_edges": [
+     [
+      "e0",
+      "e1"
+     ]
+    ],
+    "sig_node": [
+     [
+      "e1"
+     ],
+     [
+      "e2"
+     ]
+    ]
+   }
+  },
+  "reference": {
+   "verdict": true,
+   "method": "exhaustive, all 531 graphs with <= 3 nodes"
+  },
+  "agrees": false
+ },
+ {
+  "id": "l-tree-implies-weakly-connected-typed",
+  "item": "l06_graph_tree",
+  "question": "Same, adding the Alloy typing r: node->node as a premise",
+  "prove": "ResourceLimit",
+  "prove_steps": 50000,
+  "prove_seconds": 1.43,
+  "countermodel": "NotFound",
+  "countermodel_seconds": 0.57,
+  "ve_verdict": null,
+  "reference": {
+   "verdict": true,
+   "method": "exhaustive, all 531 graphs with <= 3 nodes"
+  },
+  "agrees": null
+ },
+ {
+  "id": "l-ring-implies-weakly-connected-typed",
+  "item": "l05_graph_ring",
+  "question": "ring => weaklyConnected with the typing premise",
+  "prove": "ResourceLimit",
+  "prove_steps": 50000,
+  "prove_seconds": 14.69,
+  "countermodel": "NotFound",
+  "countermodel_seconds": 0.56,
+  "ve_verdict": null,
+  "reference": {
+   "verdict": true,
+   "method": "exhaustive, all 531 graphs with <= 3 nodes"
+  },
+  "agrees": null
+ },
+ {
+  "id": "l-weakly-connected-implies-ring",
+  "item": "l04_graph_weakly_connected",
+  "question": "util/graph: does weaklyConnected[r] imply ring[r]? (expected: no)",
+  "prove": "NotFound",
+  "prove_steps": 14,
+  "prove_seconds": 0.0,
+  "countermodel": "Found",
+  "countermodel_seconds": 0.0,
+  "ve_verdict": false,
+  "countermodel_model": {
+   "domains": {
+    "atom": [
+     "e0"
+    ]
+   },
+   "constants": {},
+   "relations": {
+    "sig_node": [
+     [
+      "e0"
+     ]
+    ]
+   }
+  },
+  "reference": {
+   "verdict": false,
+   "method": "exhaustive, graphs with <= 3 nodes: counterexample []"
+  },
+  "agrees": true
+ }
+]

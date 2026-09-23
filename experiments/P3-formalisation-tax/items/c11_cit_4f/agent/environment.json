@@ -1,0 +1,15 @@
+{"language": "ve.core@0.1", "profiles": ["closure@0", "relational-fol@0"],
+ "spec_revision": "ve-v0.1-closure-2026-09-21",
+ "vocabulary": {
+   "sorts": {"entity": {"description": "Cedar entities, record nodes and the context node"}},
+   "predicates": {
+     "has_account": {"arguments": ["entity"], "description": "attribute account is present on the entity/record"},
+     "ea_account": {"arguments": ["entity", "entity"], "description": "entity- or record-valued attribute account"},
+     "has_owner": {"arguments": ["entity"], "description": "attribute owner is present on the entity/record"},
+     "ea_owner": {"arguments": ["entity", "entity"], "description": "entity- or record-valued attribute owner"},
+     "es_admins": {"arguments": ["entity", "entity"], "description": "member of the entity-set attribute admins"}
+   },
+   "constants": {
+     "principal": {"sort": "entity", "description": "request principal"},
+     "resource": {"sort": "entity", "description": "request resource"}
+   }}}

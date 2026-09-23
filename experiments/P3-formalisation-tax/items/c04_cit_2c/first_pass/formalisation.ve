@@ -1,0 +1,1 @@
+(@principal equals @alice) and (((rtc[parent](@action, @view)) or ((rtc[parent](@action, @edit)) or (rtc[parent](@action, @comment)))) and (rtc[parent](@resource, @jane_vacation))).

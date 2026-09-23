@@ -1,0 +1,1 @@
+(there exists entity a, ((@resource ea_account a) and (a ea_owner @principal))) or ((not (there exists entity a, ((@resource ea_account a) and (not (a is has_owner))))) and (@resource es_admins @principal)).

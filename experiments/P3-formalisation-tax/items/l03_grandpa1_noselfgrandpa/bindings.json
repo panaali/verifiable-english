@@ -1,0 +1,12 @@
+{
+ "statement_for": {
+  "assert": 0
+ },
+ "check": {
+  "premises": [
+   1
+  ],
+  "conclusion": 0,
+  "max_domain": 3
+ }
+}

@@ -1,0 +1,112 @@
+{
+ "constants": {
+  "sr_log": {
+   "value": "log"
+  },
+  "sw_log": {
+   "value": "*/log"
+  },
+  "sr_exec": {
+   "value": "exec"
+  },
+  "sw_exec": {
+   "value": "*/exec"
+  },
+  "sr_status": {
+   "value": "status"
+  },
+  "sw_status": {
+   "value": "*/status"
+  },
+  "sr_scale": {
+   "value": "scale"
+  },
+  "sw_scale": {
+   "value": "*/scale"
+  },
+  "sr_attach": {
+   "value": "attach"
+  },
+  "sw_attach": {
+   "value": "*/attach"
+  },
+  "sr_portforward": {
+   "value": "portforward"
+  },
+  "sw_portforward": {
+   "value": "*/portforward"
+  },
+  "sr_proxy": {
+   "value": "proxy"
+  },
+  "sw_proxy": {
+   "value": "*/proxy"
+  },
+  "sr_eviction": {
+   "value": "eviction"
+  },
+  "sw_eviction": {
+   "value": "*/eviction"
+  },
+  "sr_binding": {
+   "value": "binding"
+  },
+  "sw_binding": {
+   "value": "*/binding"
+  },
+  "sr_finalize": {
+   "value": "finalize"
+  },
+  "sw_finalize": {
+   "value": "*/finalize"
+  },
+  "sr_approval": {
+   "value": "approval"
+  },
+  "sw_approval": {
+   "value": "*/approval"
+  },
+  "sr_ephemeralcontainers": {
+   "value": "ephemeralcontainers"
+  },
+  "sw_ephemeralcontainers": {
+   "value": "*/ephemeralcontainers"
+  },
+  "sr_token": {
+   "value": "token"
+  },
+  "sw_token": {
+   "value": "*/token"
+  },
+  "sr_resize": {
+   "value": "resize"
+  },
+  "sw_resize": {
+   "value": "*/resize"
+  },
+  "sr_ephemeral": {
+   "value": "ephemeral"
+  },
+  "sw_ephemeral": {
+   "value": "*/ephemeral"
+  },
+  "sr_rollback": {
+   "value": "rollback"
+  },
+  "sw_rollback": {
+   "value": "*/rollback"
+  },
+  "sr_spec": {
+   "value": "spec"
+  },
+  "sw_spec": {
+   "value": "*/spec"
+  },
+  "sr_metrics": {
+   "value": "metrics"
+  },
+  "sw_metrics": {
+   "value": "*/metrics"
+  }
+ }
+}

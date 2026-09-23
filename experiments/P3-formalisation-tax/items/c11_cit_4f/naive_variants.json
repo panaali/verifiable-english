@@ -1,0 +1,7 @@
+[
+ {
+  "name": "ignore-error-semantics",
+  "description": "`A || B` as plain disjunction; an erroring left operand should skip the policy.",
+  "ve": "(there exists entity a, ((@resource ea_account a) and (a ea_owner @principal))) or (@resource es_admins @principal).\n"
+ }
+]

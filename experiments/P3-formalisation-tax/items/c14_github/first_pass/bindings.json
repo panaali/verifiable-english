@@ -1,0 +1,37 @@
+{
+ "constants": {
+  "pull": {
+   "entity": "Action::\"pull\""
+  },
+  "fork": {
+   "entity": "Action::\"fork\""
+  },
+  "delete_issue": {
+   "entity": "Action::\"delete_issue\""
+  },
+  "edit_issue": {
+   "entity": "Action::\"edit_issue\""
+  },
+  "assign_issue": {
+   "entity": "Action::\"assign_issue\""
+  },
+  "push": {
+   "entity": "Action::\"push\""
+  },
+  "add_reader": {
+   "entity": "Action::\"add_reader\""
+  },
+  "add_triager": {
+   "entity": "Action::\"add_triager\""
+  },
+  "add_writer": {
+   "entity": "Action::\"add_writer\""
+  },
+  "add_maintainer": {
+   "entity": "Action::\"add_maintainer\""
+  },
+  "add_admin": {
+   "entity": "Action::\"add_admin\""
+  }
+ }
+}

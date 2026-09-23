@@ -1,0 +1,311 @@
+{
+ "id": "k05_crontab_default_roles",
+ "family": "k8s",
+ "task": "Does Kubernetes RBAC authorize each request given these RBAC objects?",
+ "sources": {
+  "source.yaml": "apiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: aggregate-cron-tabs-edit\n  labels:\n    # Add these permissions to the \"admin\" and \"edit\" default roles.\n    rbac.authorization.k8s.io/aggregate-to-admin: \"true\"\n    rbac.authorization.k8s.io/aggregate-to-edit: \"true\"\nrules:\n- apiGroups: [\"stable.example.com\"]\n  resources: [\"crontabs\"]\n  verbs: [\"get\", \"list\", \"watch\", \"create\", \"update\", \"patch\", \"delete\"]\n---\nkind: ClusterRole\napiVersion: rbac.authorization.k8s.io/v1\nmetadata:\n  name: aggregate-cron-tabs-view\n  labels:\n    # Add these permissions to the \"view\" default role.\n    rbac.authorization.k8s.io/aggregate-to-view: \"true\"\nrules:\n- apiGroups: [\"stable.example.com\"]\n  resources: [\"crontabs\"]\n  verbs: [\"get\", \"list\", \"watch\"]\n"
+ },
+ "world": {
+  "objects": [
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "aggregate-cron-tabs-edit",
+     "labels": {
+      "rbac.authorization.k8s.io/aggregate-to-admin": "true",
+      "rbac.authorization.k8s.io/aggregate-to-edit": "true"
+     }
+    },
+    "rules": [
+     {
+      "apiGroups": [
+       "stable.example.com"
+      ],
+      "resources": [
+       "crontabs"
+      ],
+      "verbs": [
+       "get",
+       "list",
+       "watch",
+       "create",
+       "update",
+       "patch",
+       "delete"
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "aggregate-cron-tabs-view",
+     "labels": {
+      "rbac.authorization.k8s.io/aggregate-to-view": "true"
+     }
+    },
+    "rules": [
+     {
+      "apiGroups": [
+       "stable.example.com"
+      ],
+      "resources": [
+       "crontabs"
+      ],
+      "verbs": [
+       "get",
+       "list",
+       "watch"
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "admin"
+    },
+    "aggregationRule": {
+     "clusterRoleSelectors": [
+      {
+       "matchLabels": {
+        "rbac.authorization.k8s.io/aggregate-to-admin": "true"
+       }
+      }
+     ]
+    },
+    "synthetic": true
+   },
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "edit",
+     "labels": {
+      "rbac.authorization.k8s.io/aggregate-to-admin": "true"
+     }
+    },
+    "aggregationRule": {
+     "clusterRoleSelectors": [
+      {
+       "matchLabels": {
+        "rbac.authorization.k8s.io/aggregate-to-edit": "true"
+       }
+      }
+     ]
+    },
+    "synthetic": true
+   },
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "view",
+     "labels": {
+      "rbac.authorization.k8s.io/aggregate-to-edit": "true"
+     }
+    },
+    "aggregationRule": {
+     "clusterRoleSelectors": [
+      {
+       "matchLabels": {
+        "rbac.authorization.k8s.io/aggregate-to-view": "true"
+       }
+      }
+     ]
+    },
+    "synthetic": true
+   },
+   {
+    "kind": "RoleBinding",
+    "metadata": {
+     "name": "ana-admin",
+     "namespace": "team-a"
+    },
+    "subjects": [
+     {
+      "kind": "User",
+      "name": "ana",
+      "apiGroup": "rbac.authorization.k8s.io"
+     }
+    ],
+    "roleRef": {
+     "kind": "ClusterRole",
+     "name": "admin",
+     "apiGroup": "rbac.authorization.k8s.io"
+    },
+    "synthetic": true
+   },
+   {
+    "kind": "RoleBinding",
+    "metadata": {
+     "name": "ed-edit",
+     "namespace": "team-a"
+    },
+    "subjects": [
+     {
+      "kind": "User",
+      "name": "ed",
+      "apiGroup": "rbac.authorization.k8s.io"
+     }
+    ],
+    "roleRef": {
+     "kind": "ClusterRole",
+     "name": "edit",
+     "apiGroup": "rbac.authorization.k8s.io"
+    },
+    "synthetic": true
+   },
+   {
+    "kind": "RoleBinding",
+    "metadata": {
+     "name": "vic-view",
+     "namespace": "team-a"
+    },
+    "subjects": [
+     {
+      "kind": "User",
+      "name": "vic",
+      "apiGroup": "rbac.authorization.k8s.io"
+     }
+    ],
+    "roleRef": {
+     "kind": "ClusterRole",
+     "name": "view",
+     "apiGroup": "rbac.authorization.k8s.io"
+    },
+    "synthetic": true
+   }
+  ]
+ },
+ "questions": [
+  {
+   "n": 0,
+   "request": {
+    "user": "ana",
+    "groups": [],
+    "verb": "get",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-a",
+    "name": "nightly"
+   }
+  },
+  {
+   "n": 1,
+   "request": {
+    "user": "ana",
+    "groups": [],
+    "verb": "delete",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-a",
+    "name": "nightly"
+   }
+  },
+  {
+   "n": 2,
+   "request": {
+    "user": "ed",
+    "groups": [],
+    "verb": "create",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-a",
+    "name": ""
+   }
+  },
+  {
+   "n": 3,
+   "request": {
+    "user": "vic",
+    "groups": [],
+    "verb": "list",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-a",
+    "name": ""
+   }
+  },
+  {
+   "n": 4,
+   "request": {
+    "user": "vic",
+    "groups": [],
+    "verb": "create",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-a",
+    "name": ""
+   }
+  },
+  {
+   "n": 5,
+   "request": {
+    "user": "vic",
+    "groups": [],
+    "verb": "list",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-b",
+    "name": ""
+   }
+  },
+  {
+   "n": 6,
+   "request": {
+    "user": "ed",
+    "groups": [],
+    "verb": "delete",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-b",
+    "name": ""
+   }
+  },
+  {
+   "n": 7,
+   "request": {
+    "user": "ana",
+    "groups": [],
+    "verb": "patch",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-a",
+    "name": "nightly"
+   }
+  },
+  {
+   "n": 8,
+   "request": {
+    "user": "vic",
+    "groups": [],
+    "verb": "watch",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "",
+    "name": ""
+   }
+  },
+  {
+   "n": 9,
+   "request": {
+    "user": "ana",
+    "groups": [],
+    "verb": "delete",
+    "apiGroup": "stable.example.com",
+    "resource": "crontabs",
+    "subresource": "",
+    "namespace": "team-b",
+    "name": "nightly"
+   }
+  }
+ ]
+}

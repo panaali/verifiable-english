@@ -1,0 +1,354 @@
+{
+ "family": "cedar",
+ "synthetic": false,
+ "provenance": {
+  "repository": "cedar-policy/cedar-examples",
+  "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+  "licence": "Apache-2.0",
+  "policy_path": "cedar-example-use-cases/github_example/policies.cedar",
+  "entities_path": "cedar-example-use-cases/github_example/entities.json",
+  "schema_path": "cedar-example-use-cases/github_example/policies.cedarschema",
+  "requests": "cedar-example-use-cases/github_example/ALLOW, cedar-example-use-cases/github_example/DENY",
+  "schema_used_for_action_hierarchy": true
+ },
+ "question": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "world": {
+  "entities": [
+   {
+    "uid": "User::\"alice\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"common_knowledge_writers\"",
+     "UserGroup::\"uncommon_knowledge_writers\""
+    ]
+   },
+   {
+    "uid": "User::\"jane\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"common_knowledge_maintainers\"",
+     "Team::\"team_that_can_read_everything\""
+    ]
+   },
+   {
+    "uid": "User::\"bob\"",
+    "attrs": {},
+    "parents": [
+     "Organization::\"tiny_corp_owners\""
+    ]
+   },
+   {
+    "uid": "Repository::\"common_knowledge\"",
+    "attrs": {
+     "readers": {
+      "__entity": "UserGroup::\"common_knowledge_readers\""
+     },
+     "triagers": {
+      "__entity": "UserGroup::\"common_knowledge_triagers\""
+     },
+     "writers": {
+      "__entity": "UserGroup::\"common_knowledge_writers\""
+     },
+     "maintainers": {
+      "__entity": "UserGroup::\"common_knowledge_maintainers\""
+     },
+     "admins": {
+      "__entity": "UserGroup::\"common_knowledge_admins\""
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "UserGroup::\"common_knowledge_readers\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "UserGroup::\"common_knowledge_triagers\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"common_knowledge_readers\""
+    ]
+   },
+   {
+    "uid": "UserGroup::\"common_knowledge_writers\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"common_knowledge_triagers\""
+    ]
+   },
+   {
+    "uid": "UserGroup::\"common_knowledge_maintainers\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"common_knowledge_writers\""
+    ]
+   },
+   {
+    "uid": "UserGroup::\"common_knowledge_admins\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"common_knowledge_maintainers\""
+    ]
+   },
+   {
+    "uid": "Repository::\"secret\"",
+    "attrs": {
+     "readers": {
+      "__entity": "UserGroup::\"secret_readers\""
+     },
+     "triagers": {
+      "__entity": "UserGroup::\"secret_triagers\""
+     },
+     "writers": {
+      "__entity": "UserGroup::\"secret_writers\""
+     },
+     "maintainers": {
+      "__entity": "UserGroup::\"secret_maintainers\""
+     },
+     "admins": {
+      "__entity": "UserGroup::\"secret_admins\""
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "UserGroup::\"secret_readers\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "UserGroup::\"secret_triagers\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"secret_readers\""
+    ]
+   },
+   {
+    "uid": "UserGroup::\"secret_writers\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"secret_triagers\""
+    ]
+   },
+   {
+    "uid": "UserGroup::\"secret_maintainers\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"secret_writers\""
+    ]
+   },
+   {
+    "uid": "UserGroup::\"secret_admins\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"secret_maintainers\""
+    ]
+   },
+   {
+    "uid": "Repository::\"uncommon_knowledge\"",
+    "attrs": {
+     "readers": {
+      "__entity": "UserGroup::\"uncommon_knowledge_readers\""
+     },
+     "triagers": {
+      "__entity": "UserGroup::\"uncommon_knowledge_triagers\""
+     },
+     "writers": {
+      "__entity": "UserGroup::\"uncommon_knowledge_writers\""
+     },
+     "maintainers": {
+      "__entity": "UserGroup::\"uncommon_knowledge_maintainers\""
+     },
+     "admins": {
+      "__entity": "UserGroup::\"uncommon_knowledge_admins\""
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "UserGroup::\"uncommon_knowledge_readers\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "UserGroup::\"uncommon_knowledge_triagers\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"uncommon_knowledge_readers\""
+    ]
+   },
+   {
+    "uid": "UserGroup::\"uncommon_knowledge_writers\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"uncommon_knowledge_triagers\""
+    ]
+   },
+   {
+    "uid": "UserGroup::\"uncommon_knowledge_maintainers\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"uncommon_knowledge_writers\""
+    ]
+   },
+   {
+    "uid": "UserGroup::\"uncommon_knowledge_admins\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"uncommon_knowledge_maintainers\""
+    ]
+   },
+   {
+    "uid": "Team::\"team_that_can_read_everything\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"common_knowledge_readers\"",
+     "UserGroup::\"secret_readers\"",
+     "UserGroup::\"uncommon_knowledge_readers\""
+    ]
+   },
+   {
+    "uid": "Organization::\"tiny_corp_owners\"",
+    "attrs": {},
+    "parents": [
+     "UserGroup::\"common_knowledge_admins\"",
+     "UserGroup::\"secret_admins\"",
+     "UserGroup::\"uncommon_knowledge_admins\""
+    ]
+   },
+   {
+    "uid": "Action::\"push\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"pull\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"fork\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"assign_issue\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"delete_issue\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"edit_issue\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"add_reader\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"add_writer\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"add_maintainer\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"add_admin\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"add_triager\"",
+    "attrs": {},
+    "parents": []
+   }
+  ],
+  "linked": []
+ },
+ "questions": [
+  {
+   "description": "ALLOW/query_alice_read_common_knowledge.json",
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"pull\"",
+    "resource": "Repository::\"common_knowledge\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/query_alice_read_uncommon_knowledge.json",
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"pull\"",
+    "resource": "Repository::\"uncommon_knowledge\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/query_alice_write_uncommon_knowledge.json",
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"push\"",
+    "resource": "Repository::\"uncommon_knowledge\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/query_bob_push_secret.json",
+   "request": {
+    "principal": "User::\"bob\"",
+    "action": "Action::\"push\"",
+    "resource": "Repository::\"secret\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "ALLOW/query_jane_read_secret.json",
+   "request": {
+    "principal": "User::\"jane\"",
+    "action": "Action::\"pull\"",
+    "resource": "Repository::\"secret\"",
+    "context": {}
+   },
+   "recorded_decision": "allow"
+  },
+  {
+   "description": "DENY/query_alice_read_secret.json",
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"pull\"",
+    "resource": "Repository::\"secret\"",
+    "context": {}
+   },
+   "recorded_decision": "deny"
+  },
+  {
+   "description": "DENY/query_alice_write_secret.json",
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"push\"",
+    "resource": "Repository::\"secret\"",
+    "context": {}
+   },
+   "recorded_decision": "deny"
+  }
+ ],
+ "id": "c14_github",
+ "source_files": {
+  "source.cedar": "c5abfcb7f6a0bf87b38b21ea96caafba3df182e418a9af452517107800ffccb5"
+ }
+}

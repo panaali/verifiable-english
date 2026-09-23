@@ -1,0 +1,74 @@
+[
+ {
+  "item": "c05_cit_3a",
+  "worlds": 2000,
+  "disagreements": 0,
+  "author_wrong": 0,
+  "agent_wrong": 0,
+  "author_chars": 69,
+  "agent_chars": 73
+ },
+ {
+  "item": "c11_cit_4f",
+  "worlds": 2000,
+  "disagreements": 0,
+  "author_wrong": 0,
+  "agent_wrong": 0,
+  "author_chars": 208,
+  "agent_chars": 326
+ },
+ {
+  "item": "c13_document_cloud",
+  "worlds": 2000,
+  "disagreements": 0,
+  "author_wrong": 0,
+  "agent_wrong": 0,
+  "author_chars": 2155,
+  "agent_chars": 3101
+ },
+ {
+  "item": "c17_sales_static",
+  "worlds": 2000,
+  "disagreements": 0,
+  "author_wrong": 0,
+  "agent_wrong": 0,
+  "author_chars": 5453,
+  "agent_chars": 5656
+ },
+ {
+  "item": "k05_crontab_default_roles",
+  "worlds": 2000,
+  "disagreements": 0,
+  "author_wrong": 0,
+  "agent_wrong": 0,
+  "author_chars": 1082,
+  "agent_chars": 1132
+ },
+ {
+  "item": "k07_subresource_wildcard",
+  "worlds": 2000,
+  "disagreements": 0,
+  "author_wrong": 0,
+  "agent_wrong": 0,
+  "author_chars": 1082,
+  "agent_chars": 2695
+ },
+ {
+  "item": "l07_marksweep_mark",
+  "worlds": 2000,
+  "disagreements": 0,
+  "author_wrong": 0,
+  "agent_wrong": 0,
+  "author_chars": 1283,
+  "agent_chars": 1691
+ },
+ {
+  "item": "w03_mfa_selfmanage",
+  "worlds": 2000,
+  "disagreements": 0,
+  "author_wrong": 0,
+  "agent_wrong": 0,
+  "author_chars": 2292,
+  "agent_chars": 2444
+ }
+]

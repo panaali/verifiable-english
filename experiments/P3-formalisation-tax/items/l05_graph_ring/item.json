@@ -1,0 +1,227 @@
+{
+ "family": "alloy",
+ "synthetic": false,
+ "question": "Does the target paragraph hold in each finite instance (or: do the facts entail the assertion)?",
+ "provenance": {
+  "repository": "AlloyTools/models",
+  "commit": "886447d3369a9036aa4c3b49a82d7c557ab2e5f9",
+  "licence": "Apache-2.0",
+  "path": "utilities/types/graph.als",
+  "note": "Model text verbatim; instances synthetic."
+ },
+ "questions": [
+  {
+   "description": "4-ring",
+   "target": {
+    "kind": "pred",
+    "name": "ring",
+    "args": [
+     "r"
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "node": [
+      "n0",
+      "n1",
+      "n2",
+      "n3"
+     ]
+    },
+    "fields": {
+     "edges": [
+      [
+       "n0",
+       "n1"
+      ],
+      [
+       "n1",
+       "n2"
+      ],
+      [
+       "n2",
+       "n3"
+      ],
+      [
+       "n3",
+       "n0"
+      ]
+     ]
+    },
+    "bindings": {
+     "r": "edges"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "two 2-rings",
+   "target": {
+    "kind": "pred",
+    "name": "ring",
+    "args": [
+     "r"
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "node": [
+      "n0",
+      "n1",
+      "n2",
+      "n3"
+     ]
+    },
+    "fields": {
+     "edges": [
+      [
+       "n0",
+       "n1"
+      ],
+      [
+       "n1",
+       "n0"
+      ],
+      [
+       "n2",
+       "n3"
+      ],
+      [
+       "n3",
+       "n2"
+      ]
+     ]
+    },
+    "bindings": {
+     "r": "edges"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "branch",
+   "target": {
+    "kind": "pred",
+    "name": "ring",
+    "args": [
+     "r"
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "node": [
+      "n0",
+      "n1",
+      "n2",
+      "n3"
+     ]
+    },
+    "fields": {
+     "edges": [
+      [
+       "n0",
+       "n1"
+      ],
+      [
+       "n0",
+       "n2"
+      ],
+      [
+       "n1",
+       "n2"
+      ],
+      [
+       "n2",
+       "n3"
+      ],
+      [
+       "n3",
+       "n0"
+      ]
+     ]
+    },
+    "bindings": {
+     "r": "edges"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "self loop singleton",
+   "target": {
+    "kind": "pred",
+    "name": "ring",
+    "args": [
+     "r"
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "node": [
+      "n0"
+     ]
+    },
+    "fields": {
+     "edges": [
+      [
+       "n0",
+       "n0"
+      ]
+     ]
+    },
+    "bindings": {
+     "r": "edges"
+    }
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "rho shape",
+   "target": {
+    "kind": "pred",
+    "name": "ring",
+    "args": [
+     "r"
+    ]
+   },
+   "instance": {
+    "sigs": {
+     "node": [
+      "n0",
+      "n1",
+      "n2",
+      "n3"
+     ]
+    },
+    "fields": {
+     "edges": [
+      [
+       "n0",
+       "n1"
+      ],
+      [
+       "n1",
+       "n2"
+      ],
+      [
+       "n2",
+       "n3"
+      ],
+      [
+       "n3",
+       "n1"
+      ]
+     ]
+    },
+    "bindings": {
+     "r": "edges"
+    }
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "l05_graph_ring",
+ "source_files": {
+  "source.als": "a050d2bdbc49eebf40c6ff23689e5f6be933c8ca07face761c99b2772c6d9a59"
+ }
+}

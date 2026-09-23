@@ -1,0 +1,192 @@
+{
+ "family": "k8s",
+ "synthetic": false,
+ "question": "Does Kubernetes RBAC authorize each request given these RBAC objects?",
+ "provenance": {
+  "repository": "kubernetes/website",
+  "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+  "licence": "CC-BY-4.0",
+  "paths": [
+   "content/en/docs/reference/access-authn-authz/rbac.md#aggregated-clusterroles"
+  ],
+  "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+ },
+ "world": {
+  "objects": [
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "monitoring"
+    },
+    "aggregationRule": {
+     "clusterRoleSelectors": [
+      {
+       "matchLabels": {
+        "rbac.example.com/aggregate-to-monitoring": "true"
+       }
+      }
+     ]
+    }
+   },
+   {
+    "kind": "ClusterRole",
+    "metadata": {
+     "name": "monitoring-endpointslices",
+     "labels": {
+      "rbac.example.com/aggregate-to-monitoring": "true"
+     }
+    },
+    "rules": [
+     {
+      "apiGroups": [
+       ""
+      ],
+      "resources": [
+       "services",
+       "pods"
+      ],
+      "verbs": [
+       "get",
+       "list",
+       "watch"
+      ]
+     },
+     {
+      "apiGroups": [
+       "discovery.k8s.io"
+      ],
+      "resources": [
+       "endpointslices"
+      ],
+      "verbs": [
+       "get",
+       "list",
+       "watch"
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "ClusterRoleBinding",
+    "metadata": {
+     "name": "sre-monitoring"
+    },
+    "subjects": [
+     {
+      "kind": "Group",
+      "name": "sre",
+      "apiGroup": "rbac.authorization.k8s.io"
+     }
+    ],
+    "roleRef": {
+     "kind": "ClusterRole",
+     "name": "monitoring",
+     "apiGroup": "rbac.authorization.k8s.io"
+    },
+    "synthetic": true
+   }
+  ]
+ },
+ "questions": [
+  {
+   "description": "k04-0",
+   "request": {
+    "user": "sam",
+    "groups": [
+     "sre"
+    ],
+    "verb": "list",
+    "apiGroup": "discovery.k8s.io",
+    "resource": "endpointslices",
+    "subresource": "",
+    "namespace": "default",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k04-1",
+   "request": {
+    "user": "sam",
+    "groups": [
+     "sre"
+    ],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "",
+    "namespace": "prod",
+    "name": "api-0"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k04-2",
+   "request": {
+    "user": "sam",
+    "groups": [
+     "sre"
+    ],
+    "verb": "delete",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "",
+    "namespace": "prod",
+    "name": "api-0"
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k04-3",
+   "request": {
+    "user": "sam",
+    "groups": [
+     "sre"
+    ],
+    "verb": "list",
+    "apiGroup": "",
+    "resource": "endpointslices",
+    "subresource": "",
+    "namespace": "prod",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k04-4",
+   "request": {
+    "user": "sam",
+    "groups": [
+     "sre"
+    ],
+    "verb": "watch",
+    "apiGroup": "",
+    "resource": "services",
+    "subresource": "",
+    "namespace": "",
+    "name": ""
+   },
+   "recorded_decision": null
+  },
+  {
+   "description": "k04-5",
+   "request": {
+    "user": "tom",
+    "groups": [
+     "dev"
+    ],
+    "verb": "get",
+    "apiGroup": "",
+    "resource": "pods",
+    "subresource": "",
+    "namespace": "prod",
+    "name": "api-0"
+   },
+   "recorded_decision": null
+  }
+ ],
+ "id": "k04_monitoring_aggregation",
+ "source_files": {
+  "source.yaml": "9712356004da6d939ae3339b7dee6886264d43f13bcdf1e819f2f7e12ca18f4e"
+ }
+}

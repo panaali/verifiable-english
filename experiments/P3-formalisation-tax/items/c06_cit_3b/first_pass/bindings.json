@@ -1,0 +1,19 @@
+{
+ "constants": {
+  "alice": {
+   "entity": "User::\"alice\""
+  },
+  "list_albums": {
+   "entity": "Action::\"listAlbums\""
+  },
+  "list_photos": {
+   "entity": "Action::\"listPhotos\""
+  },
+  "view": {
+   "entity": "Action::\"view\""
+  },
+  "jane": {
+   "entity": "Account::\"jane\""
+  }
+ }
+}

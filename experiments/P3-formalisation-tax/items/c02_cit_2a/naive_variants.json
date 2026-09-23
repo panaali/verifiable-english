@@ -1,0 +1,7 @@
+[
+ {
+  "name": "in-as-direct-edge",
+  "description": "`principal in UserGroup` as a single parent edge (no transitive membership).",
+  "ve": "(@principal parent @jane_friends) and ((@action equals @view) and (@resource equals @photo94)).\n"
+ }
+]

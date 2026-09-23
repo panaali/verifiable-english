@@ -1,0 +1,82 @@
+{"item": "c01_cit_1a", "event": "start", "t": 1790118503.8, "iso": "2026-09-22T16:08:23", "note": ""}
+{"item": "c01_cit_1a", "event": "end", "t": 1790118527.3, "iso": "2026-09-22T16:08:47", "note": ""}
+{"item": "c02_cit_2a", "event": "start", "t": 1790118527.3, "iso": "2026-09-22T16:08:47", "note": ""}
+{"item": "c03_cit_2b", "event": "start", "t": 1790118538.6, "iso": "2026-09-22T16:08:58", "note": ""}
+{"item": "c04_cit_2c", "event": "start", "t": 1790118538.6, "iso": "2026-09-22T16:08:58", "note": ""}
+{"item": "c05_cit_3a", "event": "start", "t": 1790118538.7, "iso": "2026-09-22T16:08:58", "note": ""}
+{"item": "c06_cit_3b", "event": "start", "t": 1790118538.7, "iso": "2026-09-22T16:08:58", "note": ""}
+{"item": "c02_cit_2a", "event": "end", "t": 1790118563.1, "iso": "2026-09-22T16:09:23", "note": ""}
+{"item": "c03_cit_2b", "event": "end", "t": 1790118563.2, "iso": "2026-09-22T16:09:23", "note": ""}
+{"item": "c04_cit_2c", "event": "end", "t": 1790118563.2, "iso": "2026-09-22T16:09:23", "note": ""}
+{"item": "c05_cit_3a", "event": "end", "t": 1790118563.2, "iso": "2026-09-22T16:09:23", "note": ""}
+{"item": "c06_cit_3b", "event": "end", "t": 1790118563.3, "iso": "2026-09-22T16:09:23", "note": ""}
+{"item": "c08_cit_4a", "event": "start", "t": 1790118603.2, "iso": "2026-09-22T16:10:03", "note": ""}
+{"item": "c09_cit_4d", "event": "start", "t": 1790118603.3, "iso": "2026-09-22T16:10:03", "note": ""}
+{"item": "c10_cit_4e", "event": "start", "t": 1790118603.3, "iso": "2026-09-22T16:10:03", "note": ""}
+{"item": "c11_cit_4f", "event": "start", "t": 1790118603.3, "iso": "2026-09-22T16:10:03", "note": ""}
+{"item": "c12_cit_5b", "event": "start", "t": 1790118603.4, "iso": "2026-09-22T16:10:03", "note": ""}
+{"item": "c08_cit_4a", "event": "end", "t": 1790118644.6, "iso": "2026-09-22T16:10:44", "note": ""}
+{"item": "c09_cit_4d", "event": "end", "t": 1790118644.6, "iso": "2026-09-22T16:10:44", "note": ""}
+{"item": "c10_cit_4e", "event": "end", "t": 1790118644.6, "iso": "2026-09-22T16:10:44", "note": ""}
+{"item": "c11_cit_4f", "event": "end", "t": 1790118644.7, "iso": "2026-09-22T16:10:44", "note": ""}
+{"item": "c12_cit_5b", "event": "end", "t": 1790118644.7, "iso": "2026-09-22T16:10:44", "note": ""}
+{"item": "c13_document_cloud", "event": "start", "t": 1790118649.6, "iso": "2026-09-22T16:10:49", "note": ""}
+{"item": "c13_document_cloud", "event": "end", "t": 1790118683.9, "iso": "2026-09-22T16:11:23", "note": ""}
+{"item": "c14_github", "event": "start", "t": 1790118693.8, "iso": "2026-09-22T16:11:33", "note": ""}
+{"item": "c14_github", "event": "end", "t": 1790118693.8, "iso": "2026-09-22T16:11:33", "note": ""}
+{"item": "c15_hotel_static", "event": "start", "t": 1790118697.3, "iso": "2026-09-22T16:11:37", "note": ""}
+{"item": "c15_hotel_static", "event": "end", "t": 1790118718.0, "iso": "2026-09-22T16:11:57", "note": ""}
+{"item": "c16_hotel_templated", "event": "start", "t": 1790118718.3, "iso": "2026-09-22T16:11:58", "note": ""}
+{"item": "c16_hotel_templated", "event": "end", "t": 1790118728.3, "iso": "2026-09-22T16:12:08", "note": ""}
+{"item": "c17_sales_static", "event": "start", "t": 1790118728.6, "iso": "2026-09-22T16:12:08", "note": ""}
+{"item": "c17_sales_static", "event": "end", "t": 1790118773.3, "iso": "2026-09-22T16:12:53", "note": ""}
+{"item": "c18_sales_templated", "event": "start", "t": 1790118777.8, "iso": "2026-09-22T16:12:57", "note": ""}
+{"item": "c18_sales_templated", "event": "end", "t": 1790118795.3, "iso": "2026-09-22T16:13:15", "note": ""}
+{"item": "c19_streaming", "event": "start", "t": 1790118795.6, "iso": "2026-09-22T16:13:15", "note": ""}
+{"item": "c19_streaming", "event": "end", "t": 1790118827.4, "iso": "2026-09-22T16:13:47", "note": ""}
+{"item": "c20_tags_n_roles", "event": "start", "t": 1790118831.5, "iso": "2026-09-22T16:13:51", "note": ""}
+{"item": "c20_tags_n_roles", "event": "end", "t": 1790118847.4, "iso": "2026-09-22T16:14:07", "note": ""}
+{"item": "c21_tax_preparer", "event": "start", "t": 1790118861.8, "iso": "2026-09-22T16:14:21", "note": ""}
+{"item": "c21_tax_preparer", "event": "end", "t": 1790118873.8, "iso": "2026-09-22T16:14:33", "note": ""}
+{"item": "c22_photoapp", "event": "start", "t": 1790118876.8, "iso": "2026-09-22T16:14:36", "note": ""}
+{"item": "c22_photoapp", "event": "end", "t": 1790118894.6, "iso": "2026-09-22T16:14:54", "note": ""}
+{"item": "c23_gitapp", "event": "start", "t": 1790118894.7, "iso": "2026-09-22T16:14:54", "note": ""}
+{"item": "c23_gitapp", "event": "end", "t": 1790118894.7, "iso": "2026-09-22T16:14:54", "note": ""}
+{"item": "k01_pod_reader", "event": "start", "t": 1790118933.1, "iso": "2026-09-22T16:15:33", "note": ""}
+{"item": "k01_pod_reader", "event": "end", "t": 1790118938.1, "iso": "2026-09-22T16:15:38", "note": ""}
+{"item": "k02_secret_reader_rolebinding", "event": "start", "t": 1790118938.1, "iso": "2026-09-22T16:15:38", "note": "reuse of k01 authorizer formalisation"}
+{"item": "k02_secret_reader_rolebinding", "event": "end", "t": 1790118938.2, "iso": "2026-09-22T16:15:38", "note": ""}
+{"item": "k03_secret_reader_global", "event": "start", "t": 1790118938.2, "iso": "2026-09-22T16:15:38", "note": "reuse of k01 authorizer formalisation"}
+{"item": "k03_secret_reader_global", "event": "end", "t": 1790118938.2, "iso": "2026-09-22T16:15:38", "note": ""}
+{"item": "k04_monitoring_aggregation", "event": "start", "t": 1790118938.3, "iso": "2026-09-22T16:15:38", "note": "reuse of k01 authorizer formalisation"}
+{"item": "k04_monitoring_aggregation", "event": "end", "t": 1790118938.3, "iso": "2026-09-22T16:15:38", "note": ""}
+{"item": "k05_crontab_default_roles", "event": "start", "t": 1790118938.3, "iso": "2026-09-22T16:15:38", "note": "reuse of k01 authorizer formalisation"}
+{"item": "k05_crontab_default_roles", "event": "end", "t": 1790118938.4, "iso": "2026-09-22T16:15:38", "note": ""}
+{"item": "k06_configmap_updater", "event": "start", "t": 1790118938.4, "iso": "2026-09-22T16:15:38", "note": "reuse of k01 authorizer formalisation"}
+{"item": "k06_configmap_updater", "event": "end", "t": 1790118938.5, "iso": "2026-09-22T16:15:38", "note": ""}
+{"item": "k07_subresource_wildcard", "event": "start", "t": 1790118938.5, "iso": "2026-09-22T16:15:38", "note": "reuse of k01 authorizer formalisation"}
+{"item": "k07_subresource_wildcard", "event": "end", "t": 1790118938.5, "iso": "2026-09-22T16:15:38", "note": ""}
+{"item": "w01_s3_rw_bucket", "event": "start", "t": 1790118961.4, "iso": "2026-09-22T16:16:01", "note": ""}
+{"item": "w01_s3_rw_bucket", "event": "end", "t": 1790118961.5, "iso": "2026-09-22T16:16:01", "note": ""}
+{"item": "w02_deny_requested_region", "event": "start", "t": 1790118961.5, "iso": "2026-09-22T16:16:01", "note": "reuse of w01 evaluation-logic formalisation"}
+{"item": "w02_deny_requested_region", "event": "end", "t": 1790118961.6, "iso": "2026-09-22T16:16:01", "note": ""}
+{"item": "w03_mfa_selfmanage", "event": "start", "t": 1790118961.6, "iso": "2026-09-22T16:16:01", "note": "reuse of w01 evaluation-logic formalisation"}
+{"item": "w03_mfa_selfmanage", "event": "end", "t": 1790118961.6, "iso": "2026-09-22T16:16:01", "note": ""}
+{"item": "l01_genealogy_biology", "event": "start", "t": 1790119015.5, "iso": "2026-09-22T16:16:55", "note": ""}
+{"item": "l02_grandpa1_fact", "event": "start", "t": 1790119015.5, "iso": "2026-09-22T16:16:55", "note": ""}
+{"item": "l03_grandpa1_noselfgrandpa", "event": "start", "t": 1790119015.5, "iso": "2026-09-22T16:16:55", "note": ""}
+{"item": "l04_graph_weakly_connected", "event": "start", "t": 1790119015.6, "iso": "2026-09-22T16:16:55", "note": ""}
+{"item": "l01_genealogy_biology", "event": "end", "t": 1790119015.7, "iso": "2026-09-22T16:16:55", "note": ""}
+{"item": "l02_grandpa1_fact", "event": "end", "t": 1790119015.7, "iso": "2026-09-22T16:16:55", "note": ""}
+{"item": "l03_grandpa1_noselfgrandpa", "event": "end", "t": 1790119015.7, "iso": "2026-09-22T16:16:55", "note": ""}
+{"item": "l04_graph_weakly_connected", "event": "end", "t": 1790119015.7, "iso": "2026-09-22T16:16:55", "note": ""}
+{"item": "l05_graph_ring", "event": "start", "t": 1790119029.6, "iso": "2026-09-22T16:17:09", "note": ""}
+{"item": "l06_graph_tree", "event": "start", "t": 1790119029.7, "iso": "2026-09-22T16:17:09", "note": ""}
+{"item": "l07_marksweep_mark", "event": "start", "t": 1790119029.7, "iso": "2026-09-22T16:17:09", "note": ""}
+{"item": "l08_addressbook_lookup", "event": "start", "t": 1790119029.7, "iso": "2026-09-22T16:17:09", "note": ""}
+{"item": "l05_graph_ring", "event": "end", "t": 1790119029.8, "iso": "2026-09-22T16:17:09", "note": ""}
+{"item": "l06_graph_tree", "event": "end", "t": 1790119029.8, "iso": "2026-09-22T16:17:09", "note": ""}
+{"item": "l07_marksweep_mark", "event": "end", "t": 1790119029.9, "iso": "2026-09-22T16:17:09", "note": ""}
+{"item": "l08_addressbook_lookup", "event": "end", "t": 1790119029.9, "iso": "2026-09-22T16:17:09", "note": ""}
+{"item": "c15_hotel_static", "event": "diff_fix", "t": 1790120211.5, "iso": "2026-09-22T16:36:51", "note": "set-valued in: non-entity member is a type error (policy skipped); caught by differential test at N=300"}
+{"item": "c17_sales_static", "event": "diff_fix", "t": 1790120211.5, "iso": "2026-09-22T16:36:51", "note": "same bug class as c15 (in over a set with a non-entity member before a later || disjunct); found by review after the c15 catch, not by the test"}

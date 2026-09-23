@@ -1,0 +1,1 @@
+(@principal equals @alice) and (((rtc[parent](@action, @list_albums)) or ((rtc[parent](@action, @list_photos)) or (rtc[parent](@action, @view)))) and (rtc[parent](@resource, @jane))).

@@ -1,0 +1,7 @@
+[
+ {
+  "name": "one-direction-equality",
+  "description": "`wife = ~husband` as the inclusion wife in ~husband only.",
+  "ve": "(not (there exists atom p, ((p is sig_person) and (tc[atom a, b | ((a f_mother b) or (a f_father b))](p, p))))) and (for every atom x, (for every atom y, (if (x f_wife y), then (y f_husband x)))).\n"
+ }
+]

@@ -1,0 +1,293 @@
+{
+ "id": "c13_document_cloud",
+ "family": "cedar",
+ "task": "Does the Cedar authorizer allow each request under this policy set and entity store?",
+ "sources": {
+  "source.cedar": "permit (\n  principal,\n  action == Action::\"CreateDocument\",\n  resource == Drive::\"drive\"\n);\n\npermit (\n  principal,\n  action == Action::\"ViewDocument\",\n  resource\n)\nwhen { principal == resource.owner };\n\npermit (\n  principal,\n  action == Action::\"ViewDocument\",\n  resource\n)\nwhen { principal in resource.viewACL }\nunless { resource.isPrivate };\n\npermit (\n  principal == Public::\"public\",\n  action == Action::\"ViewDocument\",\n  resource\n)\nwhen { resource.publicAccess == \"view\" || resource.publicAccess == \"edit\" }\nunless { resource.isPrivate };\n\npermit (\n  principal,\n  action == Action::\"ViewDocument\",\n  resource\n)\nwhen { principal == resource.owner };\n\npermit (\n  principal,\n  action == Action::\"ModifyDocument\",\n  resource\n)\nwhen { principal == resource.owner };\n\npermit (\n  principal,\n  action == Action::\"ModifyDocument\",\n  resource\n)\nwhen { principal in resource.modifyACL }\nunless { resource.isPrivate };\n\npermit (\n  principal == Public::\"public\",\n  action == Action::\"ViewDocument\",\n  resource\n)\nwhen { resource.publicAccess == \"edit\" }\nunless { resource.isPrivate };\n\npermit (\n  principal,\n  action in\n    [Action::\"EditIsPrivate\",\n     Action::\"AddToShareACL\",\n     Action::\"EditPublicAccess\"],\n  resource\n)\nwhen { principal == resource.owner };\n\npermit (\n  principal,\n  action in [Action::\"AddToShareACL\", Action::\"EditPublicAccess\"],\n  resource\n)\nwhen { principal in resource.manageACL };\n\npermit (\n  principal,\n  action == Action::\"CreateGroup\",\n  resource == Drive::\"drive\"\n);\n\npermit (\n  principal,\n  action in [Action::\"ModifyGroup\", Action::\"DeleteGroup\"],\n  resource\n)\nwhen { principal == resource.owner };\n\nforbid (\n  principal,\n  action in\n    [Action::\"ViewDocument\",\n     Action::\"ModifyDocument\",\n     Action::\"EditIsPrivate\",\n     Action::\"AddToShareACL\",\n     Action::\"EditPublicAccess\",\n     Action::\"DeleteDocument\"],\n  resource\n)\nwhen\n{\n  principal has blocked &&\n  (resource.owner.blocked.contains(principal) ||\n   principal.blocked.contains(resource.owner))\n};\n\nforbid (principal, action, resource)\nwhen { !context.is_authenticated };\n\nforbid (principal, action, resource)\nwhen\n{\n  resource has owner &&\n  principal != resource.owner &&\n  resource has isPrivate &&\n  resource.isPrivate\n};\n"
+ },
+ "world": {
+  "entities": [
+   {
+    "uid": "User::\"alice\"",
+    "attrs": {
+     "personalGroup": {
+      "__entity": "Group::\"alice_personal\""
+     },
+     "blocked": [
+      {
+       "__entity": "User::\"bob\""
+      }
+     ]
+    },
+    "parents": [
+     "Group::\"alice_personal\""
+    ]
+   },
+   {
+    "uid": "User::\"bob\"",
+    "attrs": {
+     "personalGroup": {
+      "__entity": "Group::\"bob_personal\""
+     },
+     "blocked": []
+    },
+    "parents": [
+     "Group::\"bob_personal\""
+    ]
+   },
+   {
+    "uid": "User::\"charlie\"",
+    "attrs": {
+     "personalGroup": {
+      "__entity": "Group::\"charlie_personal\""
+     },
+     "blocked": []
+    },
+    "parents": [
+     "Group::\"charlie_personal\""
+    ]
+   },
+   {
+    "uid": "Group::\"alice_personal\"",
+    "attrs": {
+     "owner": {
+      "__entity": "User::\"alice\""
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "Group::\"bob_personal\"",
+    "attrs": {
+     "owner": {
+      "__entity": "User::\"bob\""
+     }
+    },
+    "parents": [
+     "DocumentShare::\"alice_public_view\""
+    ]
+   },
+   {
+    "uid": "Group::\"charlie_personal\"",
+    "attrs": {
+     "owner": {
+      "__entity": "User::\"charlie\""
+     }
+    },
+    "parents": [
+     "DocumentShare::\"alice_public_view\""
+    ]
+   },
+   {
+    "uid": "Document::\"alice_public\"",
+    "attrs": {
+     "owner": {
+      "__entity": "User::\"alice\""
+     },
+     "isPrivate": false,
+     "publicAccess": "view",
+     "viewACL": {
+      "__entity": "DocumentShare::\"alice_public_view\""
+     },
+     "modifyACL": {
+      "__entity": "Document::\"alice_public_modify\""
+     },
+     "manageACL": {
+      "__entity": "Document::\"alice_public_manage\""
+     }
+    },
+    "parents": []
+   },
+   {
+    "uid": "DocumentShare::\"alice_public_view\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "DocumentShare::\"alice_public_modify\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "DocumentShare::\"alice_public_manage\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Public::\"unauthenticated\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Drive::\"drive\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"DeleteGroup\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"ModifyGroup\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"CreateGroup\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"ViewDocument\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"AddToShareACL\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"DeleteDocument\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"EditIsPrivate\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"EditPublicAccess\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"ModifyDocument\"",
+    "attrs": {},
+    "parents": []
+   },
+   {
+    "uid": "Action::\"CreateDocument\"",
+    "attrs": {},
+    "parents": []
+   }
+  ],
+  "linked": []
+ },
+ "questions": [
+  {
+   "n": 0,
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"CreateDocument\"",
+    "resource": "Drive::\"drive\"",
+    "context": {
+     "is_authenticated": true
+    }
+   }
+  },
+  {
+   "n": 1,
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"ViewDocument\"",
+    "resource": "Document::\"alice_public\"",
+    "context": {
+     "is_authenticated": true
+    }
+   }
+  },
+  {
+   "n": 2,
+   "request": {
+    "principal": "User::\"charlie\"",
+    "action": "Action::\"ViewDocument\"",
+    "resource": "Document::\"alice_public\"",
+    "context": {
+     "is_authenticated": true
+    }
+   }
+  },
+  {
+   "n": 3,
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"CreateDocument\"",
+    "resource": "Drive::\"drive\"",
+    "context": {
+     "is_authenticated": false
+    }
+   }
+  },
+  {
+   "n": 4,
+   "request": {
+    "principal": "User::\"bob\"",
+    "action": "Action::\"ViewDocument\"",
+    "resource": "Document::\"alice_public\"",
+    "context": {
+     "is_authenticated": true
+    }
+   }
+  },
+  {
+   "n": 5,
+   "request": {
+    "principal": "User::\"bob\"",
+    "action": "Action::\"ViewDocument\"",
+    "resource": "Document::\"alice_public\"",
+    "context": {
+     "is_authenticated": {
+      "__entity": "Action::\"CreateDocument\""
+     }
+    }
+   }
+  },
+  {
+   "n": 6,
+   "request": {
+    "principal": "Drive::\"drive\"",
+    "action": "Action::\"CreateDocument\"",
+    "resource": "Drive::\"drive\"",
+    "context": {
+     "is_authenticated": false
+    }
+   }
+  },
+  {
+   "n": 7,
+   "request": {
+    "principal": "User::\"alice\"",
+    "action": "Action::\"CreateGroup\"",
+    "resource": "Document::\"alice_public\"",
+    "context": {
+     "is_authenticated": true
+    }
+   }
+  },
+  {
+   "n": 8,
+   "request": {
+    "principal": "Action::\"ModifyDocument\"",
+    "action": "Action::\"CreateDocument\"",
+    "resource": "Drive::\"drive\"",
+    "context": {
+     "is_authenticated": true
+    }
+   }
+  },
+  {
+   "n": 9,
+   "request": {
+    "principal": "DocumentShare::\"alice_public_modify\"",
+    "action": "Action::\"ViewDocument\"",
+    "resource": "Group::\"bob_personal\"",
+    "context": {
+     "is_authenticated": true
+    }
+   }
+  }
+ ]
+}
