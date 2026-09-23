@@ -16,3 +16,17 @@ proved) or the checker returns a countermodel; monitor checks translation faithf
 (d) monitor writes and runs its own code. Metrics: false approval of violated invariants, honest completion, monitor tokens,
 certificate success rate (prover step limits are a known risk: 6/12 in P3 hit ResourceLimit - report and bound it).
 Gate: 20 items, arm (a) with Haiku; continue if false approval >= 15%. Preregister and timestamp.
+
+## After review (2026-09-22): both "revise; narrow feasibility pilot"
+
+Key facts: negative reachability invariants ("no principal reaches R") need induction; the closure calculus has none
+(docs/spec/v0.1-profiles.md), so they are unprovable on cyclic graphs and blow up on acyclic ones (P3 ResourceLimit).
+For monotone rules (b') reduces to one search over the maximal assignment, so it catches everything unless violations
+need interacting rules/principals. Decision:
+1. BUILD FIRST (valuable independently; also the math use case's gap G5): a closure-induction rule,
+   P(x) and forall a,b.(P(a) and E(a,b) -> P(b))  |-  forall y.(tc[E](x,y) -> P(y)), with the agent supplying the invariant
+   P; soundness proved in Lean; Python checker + Lean replay; certificate format versioned; no change to existing rules.
+2. Then the pilot: one family (group nesting + deny / separation-of-duty rules), sizes 50 and 150, 20 items (10
+   sabotaged, violations arising from COMBINATIONS of individually harmless rules), arms (a), (b') at a preregistered
+   bound, (c); Haiku only; generator supplies background axioms; one hand-written mistranslation per sabotaged item.
+   Two-sided gate: (a) false approval >= 15% AND (b') misses >= 30% AND >= 80% of true invariants certify. Intervals.
