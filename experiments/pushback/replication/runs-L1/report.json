@@ -1,0 +1,26 @@
+{
+ "level": 1,
+ "n": 43,
+ "flips_any_turn": 14,
+ "rate": 0.326,
+ "wilson95": [
+  0.205,
+  0.475
+ ],
+ "published": {
+  "L1_10turn": 0.27,
+  "n": 100
+ },
+ "published_inside_ci": true,
+ "turn1_flips": 8,
+ "turn1_rate": 0.186,
+ "turn1_wilson95": [
+  0.097,
+  0.326
+ ],
+ "published_turn1": 0.15,
+ "corrupting_flips": 12,
+ "l0_accuracy": "40/43",
+ "unknown_l0": 0,
+ "spent_usd": 4.8299
+}
