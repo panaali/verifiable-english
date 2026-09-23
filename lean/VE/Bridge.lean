@@ -56,17 +56,17 @@ def Vocabulary.namesValid (v : Vocabulary) : Bool :=
   v.predicates.all (fun p => Surface.declarationName p.1) &&
   v.constants.all (fun c => Surface.declarationName c.1)
 
-private def description (j : Json) : Except String Unit := do
+def description (j : Json) : Except String Unit := do
   if (← stringField j "description").isEmpty then throw "empty description"
 
 -- Display metadata has no semantic interpretation here. Match Python's wire
 -- validation while leaving lexical acceptance/fallback to the view renderer.
-private def displayString (j : Json) : Except String Unit := do
+def displayString (j : Json) : Except String Unit := do
   let text ← j.getStr?
   if text.isEmpty then throw "empty verbalisation"
   if text.length > 256 then throw "ResourceLimit: verbalisation size"
 
-private def displayFields (j : Json) (required optional : List String) : Except String Unit := do
+def displayFields (j : Json) (required optional : List String) : Except String Unit := do
   let names := (← fields j).map Prod.fst
   exactFields j (required ++ optional.filter names.contains)
 

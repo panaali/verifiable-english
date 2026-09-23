@@ -74,6 +74,38 @@ def envelope (profiles : List String) : Json := Json.mkObj [
 #guard (Wire.decodeEnvironment (envelope ["order@0", "relational-fol@0"])).toBool
 #guard !(Wire.decodeEnvironment (envelope ["closure@0", "order@0", "relational-fol@0"])).toBool
 #guard !(Wire.decodeEnvironment (envelope ["relational-fol@0", "order@0"])).toBool
+-- Declaration objects are validated as in Python and the v0/closure adapters.
+open Lean in
+def withSort (entry : Json) : Json := Json.mkObj [
+  ("language", .str "ve.core@0.1"),
+  ("profiles", toJson ["order@0", "relational-fol@0"]),
+  ("spec_revision", .str "ve-v0.1-order-2026-09-22"),
+  ("vocabulary", Json.mkObj [("sorts", Json.mkObj [("item", entry)]),
+    ("predicates", Json.mkObj []), ("constants", Json.mkObj [])])]
+
+open Lean in
+#guard (Wire.decodeEnvironment (withSort (Json.mkObj [("description", .str "I")]))).toBool
+open Lean in
+#guard !(Wire.decodeEnvironment (withSort (.str "not a declaration object"))).toBool
+open Lean in
+#guard !(Wire.decodeEnvironment (withSort (Json.mkObj [("description", .str "")]))).toBool
+open Lean in
+#guard !(Wire.decodeEnvironment (withSort (Json.mkObj [("description", .str "I"),
+  ("colour", .str "red")]))).toBool
+
+-- Term depth is budgeted separately from formula depth: height 64 decodes, 65 does not.
+open Lean in
+def nestedAdd : Nat → Json
+  | 0 => Json.arr #[.str "const", .str "c"]
+  | n + 1 => Json.arr #[.str "add", nestedAdd n, Json.arr #[.str "num", .str "1"]]
+
+open Lean in
+def notLe (n : Nat) : Json :=
+  Json.arr #[.str "not", Json.arr #[.str "le", nestedAdd n, Json.arr #[.str "num", .str "0"]]]
+
+#guard (Wire.decodeFormula 64 (notLe 63)).toBool
+#guard !(Wire.decodeFormula 64 (notLe 64)).toBool
+
 #guard (match Wire.decodeInt "-12" with | .ok z => z == -12 | .error _ => false)
 #guard !(Wire.decodeInt "-0").toBool
 #guard !(Wire.decodeInt "007").toBool

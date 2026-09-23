@@ -50,12 +50,30 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
       throw s!"invalid or reserved declaration: {name}"
   if sorts.length > 32 || predicates.length > 256 then
     throw "ResourceLimit: vocabulary size"
+  -- Declaration objects, descriptions, display metadata and permitted fields
+  -- are validated exactly as the v0 and closure@0 adapters (and Python) do;
+  -- only the `$int` sort is additionally admitted in signatures.
+  for (_, entry) in sorts do
+    VE.Bridge.displayFields entry ["description"] ["verbalisation"]
+    VE.Bridge.description entry
+    if let .ok words := entry.getObjVal? "verbalisation" then
+      exactFields words ["singular", "plural"]
+      VE.Bridge.displayString (← words.getObjVal? "singular")
+      VE.Bridge.displayString (← words.getObjVal? "plural")
   let sortNames := sorts.map Prod.fst
   let ps ← predicates.mapM fun (p, entry) => do
+    VE.Bridge.displayFields entry ["arguments", "description"]
+      ["verbalisation", "negative_verbalisation"]
+    VE.Bridge.description entry
+    for key in ["verbalisation", "negative_verbalisation"] do
+      if let .ok words := entry.getObjVal? key then
+        VE.Bridge.displayString words
     let ss ← strings (← entry.getObjVal? "arguments")
     unless ss.length == 1 || ss.length == 2 do throw s!"invalid signature: {p}"
     pure (p, ← ss.mapM (decodeSortName sortNames))
   let cs ← constants.mapM fun (c, entry) => do
+    exactFields entry ["sort", "description"]
+    VE.Bridge.description entry
     pure (c, ← decodeSortName sortNames (← stringField entry "sort"))
   pure ⟨sortNames, ps, cs⟩
 
@@ -73,7 +91,9 @@ def decodeTerm : Nat → Json → Except String Term
 def decodeFormula : Nat → Json → Except String Formula
   | 0, _ => throw "ResourceLimit: formula depth exceeds 64"
   | n + 1, j => do
-    let term := decodeTerm 66
+    -- Term depth is budgeted separately from formula depth, exactly as the
+    -- Python type checker and wire decoder do: each term has height <= 64.
+    let term := decodeTerm 64
     match (← j.getArr?).toList with
     | [.str "top"] => return .top
     | [.str "bottom"] => return .bottom

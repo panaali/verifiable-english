@@ -352,8 +352,11 @@ class _Decoder:
         self.nodes = 0
 
     def decode(self, data, depth=1, term=False):
+        # Formula depth and term depth are separate budgets, matching the type
+        # checker (_Checker.term restarts at depth 1 under each atom) and the
+        # Lean order decoder; every AST the checker accepts round-trips.
         self.nodes += 1
-        if self.nodes > MAX_NODES or depth > MAX_DEPTH + (1 if term else 0):
+        if self.nodes > MAX_NODES or depth > MAX_DEPTH:
             raise ResourceLimit("AST exceeds depth or node budget")
         if type(data) is not list or not data or type(data[0]) is not str:
             raise SyntaxError("AST nodes must be nonempty tagged JSON arrays")
@@ -377,16 +380,16 @@ class _Decoder:
         if tag == "scale":
             return Scale(decimal_from_wire(data[1]), self.decode(data[2], depth + 1, True))
         if tag in ("lt", "le"):
-            return (Lt if tag == "lt" else Le)(self.decode(data[1], depth + 1, True),
-                                               self.decode(data[2], depth + 1, True))
+            return (Lt if tag == "lt" else Le)(self.decode(data[1], 1, True),
+                                               self.decode(data[2], 1, True))
         if tag in ("top", "bottom"):
             return Top() if tag == "top" else Bottom()
         if tag == "unary":
-            return Unary(data[1], self.decode(data[2], depth + 1, True))
+            return Unary(data[1], self.decode(data[2], 1, True))
         if tag == "binary":
-            return Binary(data[1], self.decode(data[2], depth + 1, True), self.decode(data[3], depth + 1, True))
+            return Binary(data[1], self.decode(data[2], 1, True), self.decode(data[3], 1, True))
         if tag == "eq":
-            return Eq(self.decode(data[1], depth + 1, True), self.decode(data[2], depth + 1, True))
+            return Eq(self.decode(data[1], 1, True), self.decode(data[2], 1, True))
         if tag == "reach":
             edge = data[2]
             if type(edge) is not list or not edge or type(edge[0]) is not str:
@@ -397,8 +400,8 @@ class _Decoder:
                 edge = Body(edge[1], self.decode(edge[2], depth + 1))
             else:
                 raise SyntaxError("Unknown Reach edge tag or incorrect arity")
-            return Reach(data[1], edge, self.decode(data[3], depth + 1, True),
-                         self.decode(data[4], depth + 1, True))
+            return Reach(data[1], edge, self.decode(data[3], 1, True),
+                         self.decode(data[4], 1, True))
         if tag == "not":
             return Not(self.decode(data[1], depth + 1))
         if tag in ("and", "or", "implies"):
