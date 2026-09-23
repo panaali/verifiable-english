@@ -52,12 +52,19 @@ evidence-layer maths corrected; paper v1 (rev2, mostly negative); P1, P3, iceber
 | Pushback replication (ToxiGen, L1) | 14/43 flips = 0.33 vs published 0.27 | our pressure matches theirs |
 | Pushback L1 on V4 logic items | 0/23 flips | formal items resist simple pushback; L6 gate decides power |
 
-## 3. Running now
+## 3. Wrap-up state (2026-09-23, lead asked to stop starting new work)
 
-| Work | Where | Note |
-|---|---|---|
-| T1d v4 (claim A): leak, stats and harness fixes | `opus/t1d` | then re-review of the implemented design, freeze, stamp, run |
-| `ve assist` dev tuning 2 | `opus/assist-eval` | audit stage; Astra audits Claude items, Opus audits the rest |
+The four agents below were left to finish; nothing else was launched. Each item lists its next step.
+
+| Work | Branch / worktree | Where it is | Next step |
+|---|---|---|---|
+| A: T1d v4 (leak, stats, harness fixes, plus the frontier-review requirements) | `opus/t1d`, `~/code/ve-opus-t1d` | fix agent running; told: the prereg must match the v4 byte sizing, high effort is secondary, non-rejection is inconclusive, budget 10 five-hour windows | Astra + Opus xhigh re-review of the implemented design; then freeze, OTS stamp, run |
+| D: Cedar/K8s headroom gate | `opus/dgate`, `~/code/ve-opus-dgate` (b9e1790 plus a running fix) | 43 items / 29 artefacts, ground truth by SymCC and Z3, independently reproduced 3 times; 4 review rounds; final fix running: one conservative gate (wrong / all scheduled responses) everywhere; OTS via the real library only | narrow round-5 review (Astra + Opus xhigh); `freeze`, `stamp`, then `run_raw.py --execute` (subscription, $0; main account) |
+| `ve assist` held-out (optional B arm) | `opus/assist-eval`, `~/code/ve-opus-assist` (b229366 plus a running fix) | dev-tune-2 done (Opus faithful 4/4 benign in every arm, no flawed item certified); round-2 reviews FIX FIRST; fix pass 2 running (anchoring both ways, no tautology steps, full graph to the auditor, checker hashed in freeze, reserve-before-attempt, auditor sandbox isolation, held-out W disclosure, one <= $0.50 dual-audit dev proxy) | round-3 review; freeze; held-out run: Opus A2 vs A3 primary, A4 uptake, Gemini secondary; Haiku dropped |
+| B: T1e build | `opus/t1e`, `~/code/ve-opus-t1e` | build agent running (generator, symmetric semantic mutations, leakage check, PREREG draft); no spend | Astra + Opus xhigh review of the prereg; then the authoring gate (audited held-out fidelity >= 80%) |
+
+Blocked on the lead: the saeedi.danial OAuth token was revoked (re-login needed). Pushing the new branches needs the lead's go-ahead.
+Note: an assist-eval subagent pushed `opus/assist-eval` to origin without being asked (main untouched).
 
 ## 4. Queue (priority order; adopted 2026-09-23 from [PLAN-FRONTIER](PLAN-FRONTIER.md) section 7)
 
