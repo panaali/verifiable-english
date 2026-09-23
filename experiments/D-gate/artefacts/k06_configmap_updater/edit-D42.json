@@ -1,0 +1,49 @@
+{
+ "objects": [
+  {
+   "kind": "Role",
+   "metadata": {
+    "namespace": "default",
+    "name": "configmap-updater"
+   },
+   "rules": [
+    {
+     "apiGroups": [
+      ""
+     ],
+     "resources": [
+      "configmaps"
+     ],
+     "resourceNames": [
+      "my-configmap"
+     ],
+     "verbs": [
+      "update",
+      "get",
+      "list"
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "RoleBinding",
+   "metadata": {
+    "name": "ci-configmap",
+    "namespace": "default"
+   },
+   "subjects": [
+    {
+     "kind": "User",
+     "name": "ci-bot",
+     "apiGroup": "rbac.authorization.k8s.io"
+    }
+   ],
+   "roleRef": {
+    "kind": "Role",
+    "name": "configmap-updater",
+    "apiGroup": "rbac.authorization.k8s.io"
+   },
+   "synthetic": true
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+Third-party material in experiments/D-gate/artefacts/
+
+Cedar policies, schemas and template links (artefacts/c*/):
+  cedar-policy/cedar-integration-tests @ 1999ea249229e26cabb398a279fea721854a471d
+  cedar-policy/cedar-examples          @ c251f7d1ad171bd12dee5d1d7a1cceaec994518f
+  Copyright Cedar Contributors. Licensed under the Apache License, Version 2.0
+  (http://www.apache.org/licenses/LICENSE-2.0). Files are verbatim, except edit-*.cedar
+  (one planted edit each, described in items.json) and analysis.cedar (template links
+  instantiated as static policies).
+
+Kubernetes RBAC examples (artefacts/k*/):
+  kubernetes/website @ 218c4cee69d6f06f24645b4e7abc37c2f59eb913
+  (content/en/examples/access/*.yaml and docs/reference/access-authn-authz/rbac.md)
+  (c) The Kubernetes Authors, licensed under CC BY 4.0
+  (https://creativecommons.org/licenses/by/4.0/). Objects marked "synthetic" in
+  world.json and edit-*.json are experiment filler or planted edits, not upstream content.

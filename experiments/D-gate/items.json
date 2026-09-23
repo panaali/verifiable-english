@@ -1,0 +1,1896 @@
+[
+ {
+  "id": "D01",
+  "artefact": "c01_cit_1a",
+  "cluster": "c01_cit_1a",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every allowed request exactly User::\"alice\" performing Action::\"view\" on Photo::\"VacationPhoto94.jpg\"? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c01_cit_1a/source.cedar",
+   "schema": "artefacts/c01_cit_1a/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c01_cit_1a/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal == User::\"alice\" && action == Action::\"view\" && resource == Photo::\"VacationPhoto94.jpg\" };",
+   "environments": [
+    [
+     "User",
+     "Action::\"addPhoto\"",
+     "Album"
+    ],
+    [
+     "User",
+     "Action::\"comment\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"delete\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"edit\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"listAlbums\"",
+     "Account"
+    ],
+    [
+     "User",
+     "Action::\"listPhotos\"",
+     "Album"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Video"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Video"
+    ]
+   ]
+  },
+  "tags": [
+   "control"
+  ],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D02",
+  "artefact": "c02_cit_2a",
+  "cluster": "c02_cit_2a",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every principal that is ever allowed any action a (direct or transitive) member of UserGroup::\"jane_friends\"? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c02_cit_2a/source.cedar",
+   "schema": "artefacts/c02_cit_2a/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c02_cit_2a/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal in UserGroup::\"jane_friends\" };",
+   "environments": [
+    [
+     "User",
+     "Action::\"addPhoto\"",
+     "Album"
+    ],
+    [
+     "User",
+     "Action::\"comment\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"delete\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"edit\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"listAlbums\"",
+     "Account"
+    ],
+    [
+     "User",
+     "Action::\"listPhotos\"",
+     "Album"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Video"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Video"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D03",
+  "artefact": "c02_cit_2a",
+  "cluster": "c02_cit_2a",
+  "family": "cedar",
+  "variant": "planted-edit",
+  "edit_description": "scope widened to any principal; group test moved into a condition that also admits Administrators",
+  "question": "Is every principal that is ever allowed any action a (direct or transitive) member of UserGroup::\"jane_friends\"? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c02_cit_2a/edit-D03.cedar",
+   "schema": "artefacts/c02_cit_2a/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c02_cit_2a/edit-D03.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal in UserGroup::\"jane_friends\" };",
+   "environments": [
+    [
+     "User",
+     "Action::\"addPhoto\"",
+     "Album"
+    ],
+    [
+     "User",
+     "Action::\"comment\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"delete\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"edit\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"listAlbums\"",
+     "Account"
+    ],
+    [
+     "User",
+     "Action::\"listPhotos\"",
+     "Album"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Video"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Video"
+    ]
+   ]
+  },
+  "tags": [
+   "planted-edit"
+  ],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D04",
+  "artefact": "c03_cit_2b",
+  "cluster": "c03_cit_2b",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every resource that User::\"alice\" is ever allowed to view a Photo (never a Video)? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c03_cit_2b/source.cedar",
+   "schema": "artefacts/c03_cit_2b/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c03_cit_2b/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { resource is Photo };",
+   "environments": [
+    [
+     "User",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Video"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Video"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D05",
+  "artefact": "c04_cit_2c",
+  "cluster": "c04_cit_2c",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every allowed request whose resource is a Video an Action::\"view\" request? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c04_cit_2c/source.cedar",
+   "schema": "artefacts/c04_cit_2c/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c04_cit_2c/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { !(resource is Video) || action == Action::\"view\" };",
+   "environments": [
+    [
+     "User",
+     "Action::\"addPhoto\"",
+     "Album"
+    ],
+    [
+     "User",
+     "Action::\"comment\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"delete\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"edit\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"listAlbums\"",
+     "Account"
+    ],
+    [
+     "User",
+     "Action::\"listPhotos\"",
+     "Album"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Video"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Video"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D06",
+  "artefact": "c05_cit_3a",
+  "cluster": "c05_cit_3a",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is it true that no Administrator is ever allowed any action? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c05_cit_3a/source.cedar",
+   "schema": "artefacts/c05_cit_3a/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c05_cit_3a/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { !(principal is Administrator) };",
+   "environments": [
+    [
+     "User",
+     "Action::\"addPhoto\"",
+     "Album"
+    ],
+    [
+     "User",
+     "Action::\"comment\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"delete\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"edit\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"listAlbums\"",
+     "Account"
+    ],
+    [
+     "User",
+     "Action::\"listPhotos\"",
+     "Album"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Video"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Video"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D07",
+  "artefact": "c06_cit_3b",
+  "cluster": "c06_cit_3b",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is it true that User::\"alice\" is never allowed Action::\"listAlbums\"? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c06_cit_3b/source.cedar",
+   "schema": "artefacts/c06_cit_3b/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c06_cit_3b/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { action != Action::\"listAlbums\" };",
+   "environments": [
+    [
+     "User",
+     "Action::\"addPhoto\"",
+     "Album"
+    ],
+    [
+     "User",
+     "Action::\"comment\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"delete\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"edit\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"listAlbums\"",
+     "Account"
+    ],
+    [
+     "User",
+     "Action::\"listPhotos\"",
+     "Album"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Video"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Video"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D08",
+  "artefact": "c06_cit_3b",
+  "cluster": "c06_cit_3b",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every resource that User::\"alice\" is allowed to view outside Account::\"bob\" (not a descendant of it)? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c06_cit_3b/source.cedar",
+   "schema": "artefacts/c06_cit_3b/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c06_cit_3b/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { !(resource in Account::\"bob\") };",
+   "environments": [
+    [
+     "User",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "User",
+     "Action::\"view\"",
+     "Video"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Photo"
+    ],
+    [
+     "Administrator",
+     "Action::\"view\"",
+     "Video"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D09",
+  "artefact": "c08_cit_4a",
+  "cluster": "c08_cit_4a",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every User whose department is \"HardwareEngineering\" and whose jobLevel is at least 5 allowed Action::\"listPhotos\" on Album::\"device_prototypes\" itself? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c08_cit_4a/source.cedar",
+   "schema": "artefacts/c08_cit_4a/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "if",
+   "policies": "artefacts/c08_cit_4a/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal.department == \"HardwareEngineering\" && principal.jobLevel >= 5 && resource == Album::\"device_prototypes\" };",
+   "environments": [
+    [
+     "User",
+     "Action::\"listPhotos\"",
+     "Album"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0 x order@0",
+   "note": "jobLevel >= 5 together with the `in Album` hierarchy; order@0 is built but gated off and the closure x order gate theorem is pending"
+  }
+ },
+ {
+  "id": "D10",
+  "artefact": "c09_cit_4d",
+  "cluster": "c09_cit_4d",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "For every Account, is the Account's owner allowed Action::\"listAlbums\" on that Account? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c09_cit_4d/source.cedar",
+   "schema": "artefacts/c09_cit_4d/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "if",
+   "policies": "artefacts/c09_cit_4d/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal == resource.owner };",
+   "environments": [
+    [
+     "User",
+     "Action::\"listAlbums\"",
+     "Account"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0 + hand-encoded Cedar error/`has` guards",
+   "note": "Account has no `account` attribute: the `has` guard decides the answer"
+  }
+ },
+ {
+  "id": "D11",
+  "artefact": "c10_cit_4e",
+  "cluster": "c10_cit_4e",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every User allowed to view every Photo whose account they own (principal == resource.account.owner)? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c10_cit_4e/source.cedar",
+   "schema": "artefacts/c10_cit_4e/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "if",
+   "policies": "artefacts/c10_cit_4e/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal == resource.account.owner };",
+   "environments": [
+    [
+     "User",
+     "Action::\"view\"",
+     "Photo"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D12",
+  "artefact": "c11_cit_4f",
+  "cluster": "c11_cit_4f",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every User who is listed in an Account's `admins` allowed Action::\"delete\" on every Photo whose `account` is that Account? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c11_cit_4f/source.cedar",
+   "schema": "artefacts/c11_cit_4f/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "if",
+   "policies": "artefacts/c11_cit_4f/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { resource.account.admins.contains(principal) };",
+   "environments": [
+    [
+     "User",
+     "Action::\"delete\"",
+     "Photo"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0 + hand-encoded Cedar error/`has` guards",
+   "note": "Photo.account.admins vs Photo.admins; `has account` guard"
+  }
+ },
+ {
+  "id": "D13",
+  "artefact": "c12_cit_5b",
+  "cluster": "c12_cit_5b",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every allowed Action::\"addPhoto\" request for a photo larger than 1 MB (filesize_mb > 1) made by a member of UserGroup::\"AVTeam\"? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c12_cit_5b/source.cedar",
+   "schema": "artefacts/c12_cit_5b/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c12_cit_5b/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { context.photo.filesize_mb <= 1 || principal in UserGroup::\"AVTeam\" };",
+   "environments": [
+    [
+     "User",
+     "Action::\"addPhoto\"",
+     "Album"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0 x order@0",
+   "note": "filesize_mb <= 1 / <= 100 together with `in UserGroup` and `in Account`; gated as D09"
+  }
+ },
+ {
+  "id": "D14",
+  "artefact": "c13_document_cloud",
+  "cluster": "c13_document_cloud",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every allowed request of any kind on a Document whose isPrivate is true made by that Document's owner? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c13_document_cloud/source.cedar",
+   "schema": "artefacts/c13_document_cloud/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c13_document_cloud/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { !resource.isPrivate || principal == resource.owner };",
+   "environments": [
+    [
+     "User",
+     "Action::\"AddToShareACL\"",
+     "Document"
+    ],
+    [
+     "User",
+     "Action::\"DeleteDocument\"",
+     "Document"
+    ],
+    [
+     "User",
+     "Action::\"EditIsPrivate\"",
+     "Document"
+    ],
+    [
+     "User",
+     "Action::\"EditPublicAccess\"",
+     "Document"
+    ],
+    [
+     "User",
+     "Action::\"ModifyDocument\"",
+     "Document"
+    ],
+    [
+     "User",
+     "Action::\"ViewDocument\"",
+     "Document"
+    ],
+    [
+     "Public",
+     "Action::\"ViewDocument\"",
+     "Document"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0 + hand-encoded Cedar error/`has` guards",
+   "note": "`has owner` / `has isPrivate` guards; P3 needed schema axioms to prove this property (146 steps)"
+  }
+ },
+ {
+  "id": "D15",
+  "artefact": "c13_document_cloud",
+  "cluster": "c13_document_cloud",
+  "family": "cedar",
+  "variant": "planted-edit",
+  "edit_description": "the last policy (forbid non-owners on private documents) deleted",
+  "question": "Is every allowed request of any kind on a Document whose isPrivate is true made by that Document's owner? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c13_document_cloud/edit-D15.cedar",
+   "schema": "artefacts/c13_document_cloud/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c13_document_cloud/edit-D15.cedar",
+   "property_policy": "permit (principal, action, resource) when { !resource.isPrivate || principal == resource.owner };",
+   "environments": [
+    [
+     "User",
+     "Action::\"AddToShareACL\"",
+     "Document"
+    ],
+    [
+     "User",
+     "Action::\"DeleteDocument\"",
+     "Document"
+    ],
+    [
+     "User",
+     "Action::\"EditIsPrivate\"",
+     "Document"
+    ],
+    [
+     "User",
+     "Action::\"EditPublicAccess\"",
+     "Document"
+    ],
+    [
+     "User",
+     "Action::\"ModifyDocument\"",
+     "Document"
+    ],
+    [
+     "User",
+     "Action::\"ViewDocument\"",
+     "Document"
+    ],
+    [
+     "Public",
+     "Action::\"ViewDocument\"",
+     "Document"
+    ]
+   ]
+  },
+  "tags": [
+   "planted-edit"
+  ],
+  "ve_coverage": {
+   "category": "closure@0 + hand-encoded Cedar error/`has` guards",
+   "note": "as D14"
+  }
+ },
+ {
+  "id": "D16",
+  "artefact": "c14_github",
+  "cluster": "c14_github",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every principal allowed Action::\"edit_issue\" on an Issue either in the issue's repository writers group or the issue's reporter? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c14_github/source.cedar",
+   "schema": "artefacts/c14_github/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c14_github/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal in resource.repo.writers || principal == resource.reporter };",
+   "environments": [
+    [
+     "User",
+     "Action::\"edit_issue\"",
+     "Issue"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D17",
+  "artefact": "c14_github",
+  "cluster": "c14_github",
+  "family": "cedar",
+  "variant": "planted-edit",
+  "edit_description": "writers edit_issue policy now tests resource.repo.readers",
+  "question": "Is every principal allowed Action::\"edit_issue\" on an Issue either in the issue's repository writers group or the issue's reporter? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c14_github/edit-D17.cedar",
+   "schema": "artefacts/c14_github/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c14_github/edit-D17.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal in resource.repo.writers || principal == resource.reporter };",
+   "environments": [
+    [
+     "User",
+     "Action::\"edit_issue\"",
+     "Issue"
+    ]
+   ]
+  },
+  "tags": [
+   "planted-edit"
+  ],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D18",
+  "artefact": "c15_hotel_static",
+  "cluster": "c15_hotel_static",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every User whose hotelAdminPermissions contains Hotel H allowed Action::\"grantAccessHotel\" on H? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c15_hotel_static/source.cedar",
+   "schema": "artefacts/c15_hotel_static/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "if",
+   "policies": "artefacts/c15_hotel_static/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal.hotelAdminPermissions.contains(resource) };",
+   "environments": [
+    [
+     "User",
+     "Action::\"grantAccessHotel\"",
+     "Hotel"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D19",
+  "artefact": "c15_hotel_static",
+  "cluster": "c15_hotel_static",
+  "family": "cedar",
+  "variant": "planted-edit",
+  "edit_description": "parentheses added to the last admin condition",
+  "question": "Is every User whose hotelAdminPermissions contains Hotel H allowed Action::\"grantAccessHotel\" on H? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c15_hotel_static/edit-D19.cedar",
+   "schema": "artefacts/c15_hotel_static/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "if",
+   "policies": "artefacts/c15_hotel_static/edit-D19.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal.hotelAdminPermissions.contains(resource) };",
+   "environments": [
+    [
+     "User",
+     "Action::\"grantAccessHotel\"",
+     "Hotel"
+    ]
+   ]
+  },
+  "tags": [
+   "planted-edit"
+  ],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D20",
+  "artefact": "c16_hotel_templated",
+  "cluster": "c16_hotel_templated",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "With exactly the six upstream template links, is it true that User::\"Alice\" is never allowed Action::\"createReservation\"? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it. Exactly the template links shown exist (they are the upstream links); a template without a link has no effect.",
+  "shown_to_model": {
+   "policy": "artefacts/c16_hotel_templated/source.cedar",
+   "schema": "artefacts/c16_hotel_templated/schema.cedarschema",
+   "template_links": [
+    {
+     "template_id": "ViewReservation",
+     "link_id": "AliceViewG",
+     "args": {
+      "?principal": "User::\"Alice\"",
+      "?resource": "Hotel::\"G\""
+     }
+    },
+    {
+     "template_id": "MemberReservation",
+     "link_id": "AliceMemberGreen",
+     "args": {
+      "?principal": "User::\"Alice\"",
+      "?resource": "Property::\"Green\""
+     }
+    },
+    {
+     "template_id": "AdminReservation",
+     "link_id": "BobAdminRRes",
+     "args": {
+      "?principal": "User::\"Bob\"",
+      "?resource": "Hotel::\"R\""
+     }
+    },
+    {
+     "template_id": "AdminPropertyOrHotel",
+     "link_id": "BobAdminRProp",
+     "args": {
+      "?principal": "User::\"Bob\"",
+      "?resource": "Hotel::\"R\""
+     }
+    },
+    {
+     "template_id": "AdminReservation",
+     "link_id": "BobAdminGreenRes",
+     "args": {
+      "?principal": "User::\"Bob\"",
+      "?resource": "Property::\"Green\""
+     }
+    },
+    {
+     "template_id": "AdminPropertyOrHotel",
+     "link_id": "BobAdminGreenProp",
+     "args": {
+      "?principal": "User::\"Bob\"",
+      "?resource": "Property::\"Green\""
+     }
+    }
+   ]
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c16_hotel_templated/analysis.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal != User::\"Alice\" };",
+   "environments": [
+    [
+     "User",
+     "Action::\"createReservation\"",
+     "Property"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D21",
+  "artefact": "c17_sales_static",
+  "cluster": "c17_sales_static",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every allowed Action::\"grantEditAccessToTemplate\" request one whose context has a targetUser whose job is Job::\"internal\"? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c17_sales_static/source.cedar",
+   "schema": "artefacts/c17_sales_static/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c17_sales_static/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { context has targetUser && context.targetUser.job == Job::\"internal\" };",
+   "environments": [
+    [
+     "User",
+     "Action::\"grantEditAccessToTemplate\"",
+     "Template"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0 + hand-encoded Cedar error/`has` guards",
+   "note": "optional `targetUser` (`context has targetUser`)"
+  }
+ },
+ {
+  "id": "D22",
+  "artefact": "c17_sales_static",
+  "cluster": "c17_sales_static",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every allowed Action::\"grantViewAccessToPresentation\" request whose target has job Job::\"customer\" made by a distributor (job Job::\"distributor\") with the same customerId as the target? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c17_sales_static/source.cedar",
+   "schema": "artefacts/c17_sales_static/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c17_sales_static/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { context.target.job != Job::\"customer\" || (principal.job == Job::\"distributor\" && principal.customerId == context.target.customerId) };",
+   "environments": [
+    [
+     "User",
+     "Action::\"grantViewAccessToPresentation\"",
+     "Presentation"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D23",
+  "artefact": "c18_sales_templated",
+  "cluster": "c18_sales_templated",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "With exactly the two upstream template links, is User::\"Bob\" allowed Action::\"viewPresentation\" on Presentation::\"proposal\" whatever his job? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it. Exactly the template links shown exist (they are the upstream links); a template without a link has no effect.",
+  "shown_to_model": {
+   "policy": "artefacts/c18_sales_templated/source.cedar",
+   "schema": "artefacts/c18_sales_templated/schema.cedarschema",
+   "template_links": [
+    {
+     "template_id": "external-prez-view",
+     "link_id": "BobView",
+     "args": {
+      "?principal": "User::\"Bob\"",
+      "?resource": "Presentation::\"proposal\""
+     }
+    },
+    {
+     "template_id": "internal-prez-view",
+     "link_id": "BobViewInternal",
+     "args": {
+      "?principal": "User::\"Bob\"",
+      "?resource": "Presentation::\"proposal\""
+     }
+    }
+   ]
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "if",
+   "policies": "artefacts/c18_sales_templated/analysis.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal == User::\"Bob\" && resource == Presentation::\"proposal\" };",
+   "environments": [
+    [
+     "User",
+     "Action::\"viewPresentation\"",
+     "Presentation"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D24",
+  "artefact": "c18_sales_templated",
+  "cluster": "c18_sales_templated",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "With exactly the two upstream template links, is User::\"Bob\" allowed Action::\"duplicatePresentation\" on Presentation::\"proposal\" whatever his job? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it. Exactly the template links shown exist (they are the upstream links); a template without a link has no effect.",
+  "shown_to_model": {
+   "policy": "artefacts/c18_sales_templated/source.cedar",
+   "schema": "artefacts/c18_sales_templated/schema.cedarschema",
+   "template_links": [
+    {
+     "template_id": "external-prez-view",
+     "link_id": "BobView",
+     "args": {
+      "?principal": "User::\"Bob\"",
+      "?resource": "Presentation::\"proposal\""
+     }
+    },
+    {
+     "template_id": "internal-prez-view",
+     "link_id": "BobViewInternal",
+     "args": {
+      "?principal": "User::\"Bob\"",
+      "?resource": "Presentation::\"proposal\""
+     }
+    }
+   ]
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "if",
+   "policies": "artefacts/c18_sales_templated/analysis.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal == User::\"Bob\" && resource == Presentation::\"proposal\" };",
+   "environments": [
+    [
+     "User",
+     "Action::\"duplicatePresentation\"",
+     "Presentation"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D25",
+  "artefact": "c19_streaming",
+  "cluster": "c19_streaming",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is it true that no FreeMember is ever allowed to watch an early-access Show before its releaseDate (context.now.datetime < resource.releaseDate)? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c19_streaming/source.cedar",
+   "schema": "artefacts/c19_streaming/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c19_streaming/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { !(resource.isEarlyAccess && context.now.datetime < resource.releaseDate) };",
+   "environments": [
+    [
+     "FreeMember",
+     "Action::\"watch\"",
+     "Show"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "order@0 + datetime adapter",
+   "note": "datetime comparison only (no hierarchy); VE has no datetime type, so datetimes become integers through an OPAQUE-style adapter"
+  }
+ },
+ {
+  "id": "D26",
+  "artefact": "c19_streaming",
+  "cluster": "c19_streaming",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every allowed watch request by a Subscriber whose profile isKid made at a local time (datetime offset by localTimeOffset, time of day) between 06:00 and 21:00 inclusive? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c19_streaming/source.cedar",
+   "schema": "artefacts/c19_streaming/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c19_streaming/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { !principal.profile.isKid || (duration(\"6h\") <= context.now.datetime.offset(context.now.localTimeOffset).toTime() && context.now.datetime.offset(context.now.localTimeOffset).toTime() <= duration(\"21h\")) };",
+   "environments": [
+    [
+     "Subscriber",
+     "Action::\"watch\"",
+     "Movie"
+    ],
+    [
+     "Subscriber",
+     "Action::\"watch\"",
+     "Show"
+    ]
+   ]
+  },
+  "tags": [
+   "edge-error-semantics"
+  ],
+  "ve_coverage": {
+   "category": "not expressible",
+   "note": "datetime.offset(...).toTime() is arithmetic modulo one day, and the answer turns on 64-bit overflow errors that make the forbid policy error and be ignored"
+  }
+ },
+ {
+  "id": "D27",
+  "artefact": "c19_streaming",
+  "cluster": "c19_streaming",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every allowed Action::\"rent\" request made at a time (context.now.datetime) at or after 2025-02-02T19:00:00-0500 and before 2025-03-02T19:00:00-0500? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c19_streaming/source.cedar",
+   "schema": "artefacts/c19_streaming/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c19_streaming/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { context.now.datetime >= datetime(\"2025-02-02T19:00:00-0500\") && context.now.datetime < datetime(\"2025-03-02T19:00:00-0500\") };",
+   "environments": [
+    [
+     "FreeMember",
+     "Action::\"rent\"",
+     "Movie"
+    ],
+    [
+     "Subscriber",
+     "Action::\"rent\"",
+     "Movie"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "order@0 + datetime adapter",
+   "note": "datetime literal bounds; as D25"
+  }
+ },
+ {
+  "id": "D28",
+  "artefact": "c20_tags_n_roles",
+  "cluster": "c20_tags_n_roles",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every principal ever allowed Action::\"DeleteWorkspace\" in Role::\"Role-A\"? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c20_tags_n_roles/source.cedar",
+   "schema": "artefacts/c20_tags_n_roles/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c20_tags_n_roles/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { principal in Role::\"Role-A\" };",
+   "environments": [
+    [
+     "User",
+     "Action::\"DeleteWorkspace\"",
+     "Workspace"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0 + hand-encoded Cedar error/`has` guards",
+   "note": "optional record attributes and Set<String> containsAll in the policy (P3 c20 needed a type-error guard)"
+  }
+ },
+ {
+  "id": "D29",
+  "artefact": "c21_tax_preparer",
+  "cluster": "c21_tax_preparer",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "With exactly the upstream template link, is every allowed viewDocument request one whose context.consent.client is the document's owner? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it. Exactly the template links shown exist (they are the upstream links); a template without a link has no effect.",
+  "shown_to_model": {
+   "policy": "artefacts/c21_tax_preparer/source.cedar",
+   "schema": "artefacts/c21_tax_preparer/schema.cedarschema",
+   "template_links": [
+    {
+     "template_id": "adhoc-access",
+     "link_id": "AliceView",
+     "args": {
+      "?principal": "Taxpreparer::Professional::\"Alice\"",
+      "?resource": "Taxpreparer::Document::\"DEF\""
+     }
+    }
+   ]
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c21_tax_preparer/analysis.cedar",
+   "property_policy": "permit (principal, action, resource) when { context.consent.client == resource.owner };",
+   "environments": [
+    [
+     "Taxpreparer::Professional",
+     "Taxpreparer::Action::\"viewDocument\"",
+     "Taxpreparer::Document"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D30",
+  "artefact": "c21_tax_preparer",
+  "cluster": "c21_tax_preparer",
+  "family": "cedar",
+  "variant": "planted-edit",
+  "edit_description": "consent forbid's `unless` conjunction changed to a disjunction",
+  "question": "With exactly the upstream template link, is every allowed viewDocument request one whose context.consent.client is the document's owner? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it. Exactly the template links shown exist (they are the upstream links); a template without a link has no effect.",
+  "shown_to_model": {
+   "policy": "artefacts/c21_tax_preparer/edit-D30.cedar",
+   "schema": "artefacts/c21_tax_preparer/schema.cedarschema",
+   "template_links": [
+    {
+     "template_id": "adhoc-access",
+     "link_id": "AliceView",
+     "args": {
+      "?principal": "Taxpreparer::Professional::\"Alice\"",
+      "?resource": "Taxpreparer::Document::\"DEF\""
+     }
+    }
+   ]
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c21_tax_preparer/edit-D30.analysis.cedar",
+   "property_policy": "permit (principal, action, resource) when { context.consent.client == resource.owner };",
+   "environments": [
+    [
+     "Taxpreparer::Professional",
+     "Taxpreparer::Action::\"viewDocument\"",
+     "Taxpreparer::Document"
+    ]
+   ]
+  },
+  "tags": [
+   "planted-edit"
+  ],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D31",
+  "artefact": "c22_photoapp",
+  "cluster": "c22_photoapp",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every allowed request on a Photo whose labels contain \"private\" made by that Photo's owner? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c22_photoapp/source.cedar",
+   "schema": "artefacts/c22_photoapp/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c22_photoapp/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { !resource.labels.contains(\"private\") || principal == resource.owner };",
+   "environments": [
+    [
+     "PhotoApp::User",
+     "PhotoApp::Action::\"deletePhoto\"",
+     "PhotoApp::Photo"
+    ],
+    [
+     "PhotoApp::User",
+     "PhotoApp::Action::\"editPhoto\"",
+     "PhotoApp::Photo"
+    ],
+    [
+     "PhotoApp::User",
+     "PhotoApp::Action::\"viewPhoto\"",
+     "PhotoApp::Photo"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0 + hand-encoded Cedar error/`has` guards",
+   "note": "optional `subjects`; string-literal set membership reified as a label predicate"
+  }
+ },
+ {
+  "id": "D32",
+  "artefact": "c22_photoapp",
+  "cluster": "c22_photoapp",
+  "family": "cedar",
+  "variant": "planted-edit",
+  "edit_description": "scope of the label_private forbid widened from `resource in PhotoApp::Application::\"PhotoApp\"` to any resource",
+  "question": "Is every allowed request on a Photo whose labels contain \"private\" made by that Photo's owner? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c22_photoapp/edit-D32.cedar",
+   "schema": "artefacts/c22_photoapp/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c22_photoapp/edit-D32.cedar",
+   "property_policy": "permit (principal, action, resource) when { !resource.labels.contains(\"private\") || principal == resource.owner };",
+   "environments": [
+    [
+     "PhotoApp::User",
+     "PhotoApp::Action::\"deletePhoto\"",
+     "PhotoApp::Photo"
+    ],
+    [
+     "PhotoApp::User",
+     "PhotoApp::Action::\"editPhoto\"",
+     "PhotoApp::Photo"
+    ],
+    [
+     "PhotoApp::User",
+     "PhotoApp::Action::\"viewPhoto\"",
+     "PhotoApp::Photo"
+    ]
+   ]
+  },
+  "tags": [
+   "planted-edit"
+  ],
+  "ve_coverage": {
+   "category": "closure@0 + hand-encoded Cedar error/`has` guards",
+   "note": "as D31"
+  }
+ },
+ {
+  "id": "D33",
+  "artefact": "c23_gitapp",
+  "cluster": "c23_gitapp",
+  "family": "cedar",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every User listed in a Repo's `admins` allowed GitApp::Action::\"addRepoAdmin\" on that Repo? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c23_gitapp/source.cedar",
+   "schema": "artefacts/c23_gitapp/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "if",
+   "policies": "artefacts/c23_gitapp/source.cedar",
+   "property_policy": "permit (principal, action, resource) when { resource.admins.contains(principal) };",
+   "environments": [
+    [
+     "GitApp::User",
+     "GitApp::Action::\"addRepoAdmin\"",
+     "GitApp::Repo"
+    ]
+   ]
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0 + hand-encoded Cedar error/`has` guards",
+   "note": "optional `contributors`/`reporters`"
+  }
+ },
+ {
+  "id": "D34",
+  "artefact": "c23_gitapp",
+  "cluster": "c23_gitapp",
+  "family": "cedar",
+  "variant": "planted-edit",
+  "edit_description": "the contributors_Repo policy's condition now tests `reporters`",
+  "question": "Is every principal allowed GitApp::Action::\"pushRepo\" on a Repo listed in that Repo's `admins` or `contributors`? Answer YES or NO.",
+  "domain": "All authorization requests and entity stores that are valid for the stated Cedar schema (any number of entities, any attribute values of the declared types, any parent edges the schema's `in` declarations allow; request context as declared per action; action entities and action groups exactly as declared in the schema). Cedar 4 semantics: default deny, any applicable forbid overrides every permit, and a policy whose condition raises an error (e.g. missing attribute, overflow) is ignored.",
+  "assumptions": "The schema shown is the artefact's upstream schema, verbatim, and every entity store is valid for it.",
+  "shown_to_model": {
+   "policy": "artefacts/c23_gitapp/edit-D34.cedar",
+   "schema": "artefacts/c23_gitapp/schema.cedarschema",
+   "template_links": null
+  },
+  "verifier": {
+   "name": "Cedar SymCC (cedar-policy-cli 4.13.0 `cedar symcc`, cvc5 1.4.0)",
+   "kind": "only_if",
+   "policies": "artefacts/c23_gitapp/edit-D34.cedar",
+   "property_policy": "permit (principal, action, resource) when { resource.admins.contains(principal) || (resource has contributors && resource.contributors.contains(principal)) };",
+   "environments": [
+    [
+     "GitApp::User",
+     "GitApp::Action::\"pushRepo\"",
+     "GitApp::Repo"
+    ]
+   ]
+  },
+  "tags": [
+   "planted-edit"
+  ],
+  "ve_coverage": {
+   "category": "closure@0 + hand-encoded Cedar error/`has` guards",
+   "note": "as D33"
+  }
+ },
+ {
+  "id": "D35",
+  "artefact": "k01_pod_reader",
+  "cluster": "k01_pod_reader",
+  "family": "k8s",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is it true that no request for a pod subresource (e.g. pods/log) is ever allowed? Answer YES or NO.",
+  "domain": "All Kubernetes resource requests (any user name, any list of groups, any verb, API group, resource, subresource (possibly empty; resource and subresource contain no '/'), namespace (empty for cluster-scoped or all-namespace requests) and object name (empty when the request names no object; get, update, patch and delete requests name one, and list and watch requests may name one through a metadata.name field selector)); non-resource URLs are excluded. RBAC authorizer semantics: allow iff some binding's subject matches and some rule of the bound role matches; RoleBindings apply only to requests in their own namespace.",
+  "assumptions": "Closed world: exactly the listed RBAC objects exist. No bootstrap roles or bindings (e.g. cluster-admin bound to system:masters), no other authorizer. The ClusterRole aggregation controller has converged (an aggregated ClusterRole's rules are the union of the rules of every other ClusterRole whose labels match one of its selectors, transitively).",
+  "shown_to_model": {
+   "policy": "artefacts/k01_pod_reader/world.json",
+   "render": "YAML, one document per object, synthetic flags removed"
+  },
+  "verifier": {
+   "name": "Z3 5.1.0 (z3-solver, string theory) over a direct Python encoding of the RBAC authorizer",
+   "policies": "artefacts/k01_pod_reader/world.json",
+   "property": "Implies(allowed, sub == '')"
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D36",
+  "artefact": "k02_secret_reader_rolebinding",
+  "cluster": "k02_secret_reader_rolebinding",
+  "family": "k8s",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every allowed request made in namespace \"development\" (in particular, no all-namespace or cluster-scoped request is allowed)? Answer YES or NO.",
+  "domain": "All Kubernetes resource requests (any user name, any list of groups, any verb, API group, resource, subresource (possibly empty; resource and subresource contain no '/'), namespace (empty for cluster-scoped or all-namespace requests) and object name (empty when the request names no object; get, update, patch and delete requests name one, and list and watch requests may name one through a metadata.name field selector)); non-resource URLs are excluded. RBAC authorizer semantics: allow iff some binding's subject matches and some rule of the bound role matches; RoleBindings apply only to requests in their own namespace.",
+  "assumptions": "Closed world: exactly the listed RBAC objects exist. No bootstrap roles or bindings (e.g. cluster-admin bound to system:masters), no other authorizer. The ClusterRole aggregation controller has converged (an aggregated ClusterRole's rules are the union of the rules of every other ClusterRole whose labels match one of its selectors, transitively).",
+  "shown_to_model": {
+   "policy": "artefacts/k02_secret_reader_rolebinding/world.json",
+   "render": "YAML, one document per object, synthetic flags removed"
+  },
+  "verifier": {
+   "name": "Z3 5.1.0 (z3-solver, string theory) over a direct Python encoding of the RBAC authorizer",
+   "policies": "artefacts/k02_secret_reader_rolebinding/world.json",
+   "property": "Implies(allowed, ns == 'development')"
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D37",
+  "artefact": "k03_secret_reader_global",
+  "cluster": "k03_secret_reader_global",
+  "family": "k8s",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every member of group \"manager\" allowed to list secrets (core API group, no subresource) across all namespaces, i.e. with an empty namespace? Answer YES or NO.",
+  "domain": "All Kubernetes resource requests (any user name, any list of groups, any verb, API group, resource, subresource (possibly empty; resource and subresource contain no '/'), namespace (empty for cluster-scoped or all-namespace requests) and object name (empty when the request names no object; get, update, patch and delete requests name one, and list and watch requests may name one through a metadata.name field selector)); non-resource URLs are excluded. RBAC authorizer semantics: allow iff some binding's subject matches and some rule of the bound role matches; RoleBindings apply only to requests in their own namespace.",
+  "assumptions": "Closed world: exactly the listed RBAC objects exist. No bootstrap roles or bindings (e.g. cluster-admin bound to system:masters), no other authorizer. The ClusterRole aggregation controller has converged (an aggregated ClusterRole's rules are the union of the rules of every other ClusterRole whose labels match one of its selectors, transitively).",
+  "shown_to_model": {
+   "policy": "artefacts/k03_secret_reader_global/world.json",
+   "render": "YAML, one document per object, synthetic flags removed"
+  },
+  "verifier": {
+   "name": "Z3 5.1.0 (z3-solver, string theory) over a direct Python encoding of the RBAC authorizer",
+   "policies": "artefacts/k03_secret_reader_global/world.json",
+   "property": "Implies(And(grp('manager'), verb == 'list', api == '', res == 'secrets', sub == '', ns == '', name == ''), allowed)"
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D38",
+  "artefact": "k04_monitoring_aggregation",
+  "cluster": "k04_monitoring_aggregation",
+  "family": "k8s",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is it true that no request on secrets (any verb, any namespace) is ever allowed? Answer YES or NO.",
+  "domain": "All Kubernetes resource requests (any user name, any list of groups, any verb, API group, resource, subresource (possibly empty; resource and subresource contain no '/'), namespace (empty for cluster-scoped or all-namespace requests) and object name (empty when the request names no object; get, update, patch and delete requests name one, and list and watch requests may name one through a metadata.name field selector)); non-resource URLs are excluded. RBAC authorizer semantics: allow iff some binding's subject matches and some rule of the bound role matches; RoleBindings apply only to requests in their own namespace.",
+  "assumptions": "Closed world: exactly the listed RBAC objects exist. No bootstrap roles or bindings (e.g. cluster-admin bound to system:masters), no other authorizer. The ClusterRole aggregation controller has converged (an aggregated ClusterRole's rules are the union of the rules of every other ClusterRole whose labels match one of its selectors, transitively).",
+  "shown_to_model": {
+   "policy": "artefacts/k04_monitoring_aggregation/world.json",
+   "render": "YAML, one document per object, synthetic flags removed"
+  },
+  "verifier": {
+   "name": "Z3 5.1.0 (z3-solver, string theory) over a direct Python encoding of the RBAC authorizer",
+   "policies": "artefacts/k04_monitoring_aggregation/world.json",
+   "property": "Implies(allowed, res != 'secrets')"
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": "aggregation is a closure whose edge contains a label-subset test; P3's k05 aggregation proof hit ResourceLimit, so certification is untested"
+  }
+ },
+ {
+  "id": "D39",
+  "artefact": "k04_monitoring_aggregation",
+  "cluster": "k04_monitoring_aggregation",
+  "family": "k8s",
+  "variant": "planted-edit",
+  "edit_description": "a new ClusterRole secret-reader (get/list/watch on secrets) carrying the label rbac.example.com/aggregate-to-monitoring: \"true\" is added",
+  "question": "Is it true that no request on secrets (any verb, any namespace) is ever allowed? Answer YES or NO.",
+  "domain": "All Kubernetes resource requests (any user name, any list of groups, any verb, API group, resource, subresource (possibly empty; resource and subresource contain no '/'), namespace (empty for cluster-scoped or all-namespace requests) and object name (empty when the request names no object; get, update, patch and delete requests name one, and list and watch requests may name one through a metadata.name field selector)); non-resource URLs are excluded. RBAC authorizer semantics: allow iff some binding's subject matches and some rule of the bound role matches; RoleBindings apply only to requests in their own namespace.",
+  "assumptions": "Closed world: exactly the listed RBAC objects exist. No bootstrap roles or bindings (e.g. cluster-admin bound to system:masters), no other authorizer. The ClusterRole aggregation controller has converged (an aggregated ClusterRole's rules are the union of the rules of every other ClusterRole whose labels match one of its selectors, transitively).",
+  "shown_to_model": {
+   "policy": "artefacts/k04_monitoring_aggregation/edit-D39.json",
+   "render": "YAML, one document per object, synthetic flags removed"
+  },
+  "verifier": {
+   "name": "Z3 5.1.0 (z3-solver, string theory) over a direct Python encoding of the RBAC authorizer",
+   "policies": "artefacts/k04_monitoring_aggregation/edit-D39.json",
+   "property": "Implies(allowed, res != 'secrets')"
+  },
+  "tags": [
+   "planted-edit"
+  ],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": "as D38"
+  }
+ },
+ {
+  "id": "D40",
+  "artefact": "k05_crontab_default_roles",
+  "cluster": "k05_crontab_default_roles",
+  "family": "k8s",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every allowed request to delete crontabs made by user \"ana\" (bound to admin)? Answer YES or NO.",
+  "domain": "All Kubernetes resource requests (any user name, any list of groups, any verb, API group, resource, subresource (possibly empty; resource and subresource contain no '/'), namespace (empty for cluster-scoped or all-namespace requests) and object name (empty when the request names no object; get, update, patch and delete requests name one, and list and watch requests may name one through a metadata.name field selector)); non-resource URLs are excluded. RBAC authorizer semantics: allow iff some binding's subject matches and some rule of the bound role matches; RoleBindings apply only to requests in their own namespace.",
+  "assumptions": "Closed world: exactly the listed RBAC objects exist. No bootstrap roles or bindings (e.g. cluster-admin bound to system:masters), no other authorizer. The ClusterRole aggregation controller has converged (an aggregated ClusterRole's rules are the union of the rules of every other ClusterRole whose labels match one of its selectors, transitively).",
+  "shown_to_model": {
+   "policy": "artefacts/k05_crontab_default_roles/world.json",
+   "render": "YAML, one document per object, synthetic flags removed"
+  },
+  "verifier": {
+   "name": "Z3 5.1.0 (z3-solver, string theory) over a direct Python encoding of the RBAC authorizer",
+   "policies": "artefacts/k05_crontab_default_roles/world.json",
+   "property": "Implies(And(allowed, verb == 'delete', res == 'crontabs'), user == 'ana')"
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": "as D38 (k05 itself)"
+  }
+ },
+ {
+  "id": "D41",
+  "artefact": "k05_crontab_default_roles",
+  "cluster": "k05_crontab_default_roles",
+  "family": "k8s",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every allowed request made by user \"vic\" (bound to view) a get, list or watch? Answer YES or NO.",
+  "domain": "All Kubernetes resource requests (any user name, any list of groups, any verb, API group, resource, subresource (possibly empty; resource and subresource contain no '/'), namespace (empty for cluster-scoped or all-namespace requests) and object name (empty when the request names no object; get, update, patch and delete requests name one, and list and watch requests may name one through a metadata.name field selector)); non-resource URLs are excluded. RBAC authorizer semantics: allow iff some binding's subject matches and some rule of the bound role matches; RoleBindings apply only to requests in their own namespace.",
+  "assumptions": "Closed world: exactly the listed RBAC objects exist. No bootstrap roles or bindings (e.g. cluster-admin bound to system:masters), no other authorizer. The ClusterRole aggregation controller has converged (an aggregated ClusterRole's rules are the union of the rules of every other ClusterRole whose labels match one of its selectors, transitively).",
+  "shown_to_model": {
+   "policy": "artefacts/k05_crontab_default_roles/world.json",
+   "render": "YAML, one document per object, synthetic flags removed"
+  },
+  "verifier": {
+   "name": "Z3 5.1.0 (z3-solver, string theory) over a direct Python encoding of the RBAC authorizer",
+   "policies": "artefacts/k05_crontab_default_roles/world.json",
+   "property": "Implies(And(allowed, user == 'vic'), Or(verb == 'get', verb == 'list', verb == 'watch'))"
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": "as D38 (k05 itself)"
+  }
+ },
+ {
+  "id": "D42",
+  "artefact": "k06_configmap_updater",
+  "cluster": "k06_configmap_updater",
+  "family": "k8s",
+  "variant": "planted-edit",
+  "edit_description": "verb \"list\" added to the configmap-updater rule (resourceNames kept)",
+  "question": "Is it true that user \"ci-bot\" is never allowed to list configmaps? Answer YES or NO.",
+  "domain": "All Kubernetes resource requests (any user name, any list of groups, any verb, API group, resource, subresource (possibly empty; resource and subresource contain no '/'), namespace (empty for cluster-scoped or all-namespace requests) and object name (empty when the request names no object; get, update, patch and delete requests name one, and list and watch requests may name one through a metadata.name field selector)); non-resource URLs are excluded. RBAC authorizer semantics: allow iff some binding's subject matches and some rule of the bound role matches; RoleBindings apply only to requests in their own namespace.",
+  "assumptions": "Closed world: exactly the listed RBAC objects exist. No bootstrap roles or bindings (e.g. cluster-admin bound to system:masters), no other authorizer. The ClusterRole aggregation controller has converged (an aggregated ClusterRole's rules are the union of the rules of every other ClusterRole whose labels match one of its selectors, transitively).",
+  "shown_to_model": {
+   "policy": "artefacts/k06_configmap_updater/edit-D42.json",
+   "render": "YAML, one document per object, synthetic flags removed"
+  },
+  "verifier": {
+   "name": "Z3 5.1.0 (z3-solver, string theory) over a direct Python encoding of the RBAC authorizer",
+   "policies": "artefacts/k06_configmap_updater/edit-D42.json",
+   "property": "Implies(And(allowed, user == 'ci-bot'), verb != 'list')"
+  },
+  "tags": [
+   "planted-edit"
+  ],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ },
+ {
+  "id": "D43",
+  "artefact": "k07_subresource_wildcard",
+  "cluster": "k07_subresource_wildcard",
+  "family": "k8s",
+  "variant": "original",
+  "edit_description": null,
+  "question": "Is every allowed request that names a subresource a request for pods/log in the core API group? Answer YES or NO.",
+  "domain": "All Kubernetes resource requests (any user name, any list of groups, any verb, API group, resource, subresource (possibly empty; resource and subresource contain no '/'), namespace (empty for cluster-scoped or all-namespace requests) and object name (empty when the request names no object; get, update, patch and delete requests name one, and list and watch requests may name one through a metadata.name field selector)); non-resource URLs are excluded. RBAC authorizer semantics: allow iff some binding's subject matches and some rule of the bound role matches; RoleBindings apply only to requests in their own namespace.",
+  "assumptions": "Closed world: exactly the listed RBAC objects exist. No bootstrap roles or bindings (e.g. cluster-admin bound to system:masters), no other authorizer. The ClusterRole aggregation controller has converged (an aggregated ClusterRole's rules are the union of the rules of every other ClusterRole whose labels match one of its selectors, transitively).",
+  "shown_to_model": {
+   "policy": "artefacts/k07_subresource_wildcard/world.json",
+   "render": "YAML, one document per object, synthetic flags removed"
+  },
+  "verifier": {
+   "name": "Z3 5.1.0 (z3-solver, string theory) over a direct Python encoding of the RBAC authorizer",
+   "policies": "artefacts/k07_subresource_wildcard/world.json",
+   "property": "Implies(And(allowed, sub != ''), And(res == 'pods', sub == 'log', api == ''))"
+  },
+  "tags": [],
+  "ve_coverage": {
+   "category": "closure@0",
+   "note": ""
+  }
+ }
+]

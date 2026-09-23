@@ -1,0 +1,1589 @@
+{
+ "verifiers": {
+  "cedar": {
+   "name": "Cedar SymCC via `cedar symcc implies`",
+   "cli": "cedar-policy-cli 4.13.0",
+   "cvc5": "cvc5 1.4.0 [git b432cd7 on branch HEAD]",
+   "per_query_timeout_s": 120
+  },
+  "k8s": {
+   "name": "Z3 via Python encoding (ground_truth.py:k8s_encode)",
+   "z3": "5.1.0",
+   "crosscheck": "P3 reference_rbac.k8s_authorize replays every counterexample; 3,000 steered samples per item (seed 0) evaluate the property with that reference"
+  }
+ },
+ "items": [
+  {
+   "id": "D01",
+   "artefact": "c01_cit_1a",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.1,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"addPhoto\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"comment\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"delete\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"edit\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"listAlbums\"",
+      "Account"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"listPhotos\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D02",
+   "artefact": "c02_cit_2a",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.11,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"addPhoto\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"comment\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"delete\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"edit\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"listAlbums\"",
+      "Account"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"listPhotos\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D03",
+   "artefact": "c02_cit_2a",
+   "variant": "planted-edit",
+   "answer": "NO",
+   "seconds": 0.12,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"addPhoto\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"comment\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"delete\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"edit\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"listAlbums\"",
+      "Account"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"listPhotos\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: Administrator::\"\", action: Action::\"view\", resource: Photo::\"VacationPhoto94.jpg\"\ncontext: {authenticated: false, confidence_score: decimal(\"0.0000\"), source_ip: ip(\"0.0.0.0/32\")}\nentities: [\n  Action::\"addPhoto\",\n  UserGroup::\"jane_friends\",\n  Action::\"comment\",\n  Action::\"listPhotos\",\n  Photo::\"VacationPhoto94.jpg\",\n  Action::\"edit\",\n  Administrator::\"\",\n  Action::\"delete\",\n  Action::\"view\",\n  Action::\"listAlbums\",\n]"
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: Administrator::\"\", action: Action::\"view\", resource: Photo::\"VacationPhoto94.jpg\"\ncontext: {authenticated: false, confidence_score: decimal(\"0.0000\"), source_ip: ip(\"0.0.0.0/32\")}\nentities: [\n  Action::\"addPhoto\",\n  UserGroup::\"jane_friends\",\n  Action::\"comment\",\n  Action::\"listPhotos\",\n  Photo::\"VacationPhoto94.jpg\",\n  Action::\"edit\",\n  Administrator::\"\",\n  Action::\"delete\",\n  Action::\"view\",\n  Action::\"listAlbums\",\n]"
+  },
+  {
+   "id": "D04",
+   "artefact": "c03_cit_2b",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 0.05,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"alice\", action: Action::\"view\", resource: Video::\"\"\ncontext: {authenticated: false, confidence_score: decimal(\"0.0000\"), source_ip: ip(\"0.0.0.0/32\")}\nentities: [\n  Action::\"listAlbums\",\n  Action::\"listPhotos\",\n  Action::\"comment\",\n  Action::\"delete\",\n  Action::\"addPhoto\",\n  User::\"alice\",\n  Video::\"\" in [Album::\"jane_vacation\"],\n  Action::\"view\",\n  Album::\"jane_vacation\",\n  Action::\"edit\",\n]"
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"alice\", action: Action::\"view\", resource: Video::\"\"\ncontext: {authenticated: false, confidence_score: decimal(\"0.0000\"), source_ip: ip(\"0.0.0.0/32\")}\nentities: [\n  Action::\"listAlbums\",\n  Action::\"listPhotos\",\n  Action::\"comment\",\n  Action::\"delete\",\n  Action::\"addPhoto\",\n  User::\"alice\",\n  Video::\"\" in [Album::\"jane_vacation\"],\n  Action::\"view\",\n  Album::\"jane_vacation\",\n  Action::\"edit\",\n]"
+  },
+  {
+   "id": "D05",
+   "artefact": "c04_cit_2c",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.11,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"addPhoto\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"comment\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"delete\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"edit\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"listAlbums\"",
+      "Account"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"listPhotos\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D06",
+   "artefact": "c05_cit_3a",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 0.12,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"addPhoto\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"comment\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"delete\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"edit\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"listAlbums\"",
+      "Account"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"listPhotos\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: Administrator::\"\", action: Action::\"view\", resource: Photo::\"\"\ncontext: {authenticated: false, confidence_score: decimal(\"0.0000\"), source_ip: ip(\"0.0.0.0/32\")}\nentities: [\n  Action::\"edit\",\n  Action::\"addPhoto\",\n  Action::\"view\",\n  Action::\"listAlbums\",\n  Action::\"delete\",\n  Administrator::\"\",\n  Photo::\"\" in [Album::\"jane_vacation\"],\n  Action::\"listPhotos\",\n  Action::\"comment\",\n  Album::\"jane_vacation\",\n]"
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: Administrator::\"\", action: Action::\"view\", resource: Video::\"\"\ncontext: {authenticated: false, confidence_score: decimal(\"0.0000\"), source_ip: ip(\"0.0.0.0/32\")}\nentities: [\n  Action::\"delete\",\n  Action::\"edit\",\n  Album::\"jane_vacation\",\n  Action::\"listAlbums\",\n  Action::\"listPhotos\",\n  Action::\"view\",\n  Action::\"comment\",\n  Action::\"addPhoto\",\n  Video::\"\" in [Album::\"jane_vacation\"],\n  Administrator::\"\",\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: Administrator::\"\", action: Action::\"view\", resource: Photo::\"\"\ncontext: {authenticated: false, confidence_score: decimal(\"0.0000\"), source_ip: ip(\"0.0.0.0/32\")}\nentities: [\n  Action::\"edit\",\n  Action::\"addPhoto\",\n  Action::\"view\",\n  Action::\"listAlbums\",\n  Action::\"delete\",\n  Administrator::\"\",\n  Photo::\"\" in [Album::\"jane_vacation\"],\n  Action::\"listPhotos\",\n  Action::\"comment\",\n  Album::\"jane_vacation\",\n]"
+  },
+  {
+   "id": "D07",
+   "artefact": "c06_cit_3b",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 0.17,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"addPhoto\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"comment\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"delete\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.03
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"edit\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"listAlbums\"",
+      "Account"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"alice\", action: Action::\"listAlbums\", resource: Account::\"jane\"\ncontext: {authenticated: false, confidence_score: decimal(\"0.0000\"), source_ip: ip(\"0.0.0.0/32\")}\nentities: [\n  Action::\"edit\",\n  Account::\"jane\",\n  Action::\"listAlbums\",\n  Action::\"comment\",\n  Action::\"view\",\n  Action::\"addPhoto\",\n  Action::\"listPhotos\",\n  User::\"alice\",\n  Action::\"delete\",\n]"
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"listPhotos\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"alice\", action: Action::\"listAlbums\", resource: Account::\"jane\"\ncontext: {authenticated: false, confidence_score: decimal(\"0.0000\"), source_ip: ip(\"0.0.0.0/32\")}\nentities: [\n  Action::\"edit\",\n  Account::\"jane\",\n  Action::\"listAlbums\",\n  Action::\"comment\",\n  Action::\"view\",\n  Action::\"addPhoto\",\n  Action::\"listPhotos\",\n  User::\"alice\",\n  Action::\"delete\",\n]"
+  },
+  {
+   "id": "D08",
+   "artefact": "c06_cit_3b",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 0.07,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"alice\", action: Action::\"view\", resource: Photo::\"\"\ncontext: {authenticated: false, confidence_score: decimal(\"0.0000\"), source_ip: ip(\"0.0.0.0/32\")}\nentities: [\n  Action::\"addPhoto\",\n  Action::\"listAlbums\",\n  Photo::\"\" in [Account::\"jane\", Account::\"bob\"],\n  Account::\"jane\",\n  Action::\"delete\",\n  Action::\"listPhotos\",\n  Action::\"comment\",\n  Action::\"view\",\n  Action::\"edit\",\n  User::\"alice\",\n  Account::\"bob\",\n]"
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"alice\", action: Action::\"view\", resource: Video::\"\"\ncontext: {authenticated: false, confidence_score: decimal(\"0.0000\"), source_ip: ip(\"0.0.0.0/32\")}\nentities: [\n  Action::\"addPhoto\",\n  Action::\"delete\",\n  Action::\"edit\",\n  Action::\"listAlbums\",\n  Account::\"bob\",\n  Action::\"listPhotos\",\n  User::\"alice\",\n  Account::\"jane\",\n  Action::\"view\",\n  Action::\"comment\",\n  Video::\"\" in [Account::\"bob\", Account::\"jane\"],\n]"
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "Administrator",
+      "Action::\"view\"",
+      "Video"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"alice\", action: Action::\"view\", resource: Photo::\"\"\ncontext: {authenticated: false, confidence_score: decimal(\"0.0000\"), source_ip: ip(\"0.0.0.0/32\")}\nentities: [\n  Action::\"addPhoto\",\n  Action::\"listAlbums\",\n  Photo::\"\" in [Account::\"jane\", Account::\"bob\"],\n  Account::\"jane\",\n  Action::\"delete\",\n  Action::\"listPhotos\",\n  Action::\"comment\",\n  Action::\"view\",\n  Action::\"edit\",\n  User::\"alice\",\n  Account::\"bob\",\n]"
+  },
+  {
+   "id": "D09",
+   "artefact": "c08_cit_4a",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"listPhotos\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D10",
+   "artefact": "c09_cit_4d",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 0.03,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"listAlbums\"",
+      "Account"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.03,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"\", action: Action::\"listAlbums\", resource: Account::\"\"\ncontext: {authenticated: false}\nentities: [\n  User::\"\" {\n    department: \"\",\n    jobLevel: 0,\n  },\n  Action::\"listPhotos\",\n  Action::\"view\",\n  Action::\"addPhoto\",\n  Action::\"edit\",\n  Action::\"comment\",\n  Action::\"listAlbums\",\n  Action::\"delete\",\n  Account::\"\" {\n    admins: [],\n    owner: User::\"\",\n    private: false,\n  },\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"\", action: Action::\"listAlbums\", resource: Account::\"\"\ncontext: {authenticated: false}\nentities: [\n  User::\"\" {\n    department: \"\",\n    jobLevel: 0,\n  },\n  Action::\"listPhotos\",\n  Action::\"view\",\n  Action::\"addPhoto\",\n  Action::\"edit\",\n  Action::\"comment\",\n  Action::\"listAlbums\",\n  Action::\"delete\",\n  Account::\"\" {\n    admins: [],\n    owner: User::\"\",\n    private: false,\n  },\n]"
+  },
+  {
+   "id": "D11",
+   "artefact": "c10_cit_4e",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.03,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"view\"",
+      "Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D12",
+   "artefact": "c11_cit_4f",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"delete\"",
+      "Photo"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"\", action: Action::\"delete\", resource: Photo::\"\"\ncontext: {authenticated: false}\nentities: [\n  Action::\"comment\",\n  User::\"A\" {\n    department: \"\",\n    jobLevel: 0,\n  },\n  Account::\"\" {\n    admins: [User::\"\"],\n    owner: User::\"A\",\n    private: true,\n  },\n  Action::\"listPhotos\",\n  Action::\"delete\",\n  Action::\"view\",\n  Photo::\"\" {\n    account: Account::\"\",\n    admins: [],\n    private: true,\n  },\n  User::\"\" {\n    department: \"\",\n    jobLevel: 0,\n  },\n  Action::\"edit\",\n  Action::\"addPhoto\",\n  Action::\"listAlbums\",\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"\", action: Action::\"delete\", resource: Photo::\"\"\ncontext: {authenticated: false}\nentities: [\n  Action::\"comment\",\n  User::\"A\" {\n    department: \"\",\n    jobLevel: 0,\n  },\n  Account::\"\" {\n    admins: [User::\"\"],\n    owner: User::\"A\",\n    private: true,\n  },\n  Action::\"listPhotos\",\n  Action::\"delete\",\n  Action::\"view\",\n  Photo::\"\" {\n    account: Account::\"\",\n    admins: [],\n    private: true,\n  },\n  User::\"\" {\n    department: \"\",\n    jobLevel: 0,\n  },\n  Action::\"edit\",\n  Action::\"addPhoto\",\n  Action::\"listAlbums\",\n]"
+  },
+  {
+   "id": "D13",
+   "artefact": "c12_cit_5b",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"addPhoto\"",
+      "Album"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D14",
+   "artefact": "c13_document_cloud",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.13,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"AddToShareACL\"",
+      "Document"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"DeleteDocument\"",
+      "Document"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"EditIsPrivate\"",
+      "Document"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"EditPublicAccess\"",
+      "Document"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"ModifyDocument\"",
+      "Document"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"ViewDocument\"",
+      "Document"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    },
+    {
+     "env": [
+      "Public",
+      "Action::\"ViewDocument\"",
+      "Document"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D15",
+   "artefact": "c13_document_cloud",
+   "variant": "planted-edit",
+   "answer": "NO",
+   "seconds": 0.2,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"AddToShareACL\"",
+      "Document"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"\", action: Action::\"AddToShareACL\", resource: Document::\"\"\ncontext: {is_authenticated: true}\nentities: [\n  Public::\"public\",\n  User::\"\" in [DocumentShare::\"\"] {\n    blocked: [],\n    personalGroup: Group::\"\",\n  },\n  Action::\"ModifyDocument\",\n  Document::\"\" {\n    isPrivate: true,\n    manageACL: DocumentShare::\"\",\n    modifyACL: DocumentShare::\"A\",\n    owner: User::\"A\",\n    publicAccess: \"\",\n    viewACL: DocumentShare::\"B\",\n  },\n  DocumentShare::\"A\",\n  Action::\"DeleteGroup\",\n  Action::\"ModifyGroup\",\n  DocumentShare::\"\",\n  Group::\"A\" {\n    owner: User::\"\",\n  },\n  Action::\"ViewDocument\",\n  Action::\"EditIsPrivate\",\n  Action::\"CreateDocument\",\n  Action::\"EditPublicAccess\",\n  Group::\"\" {\n    owner: User::\"\",\n  },\n  DocumentShare::\"B\",\n  Action::\"AddToShareACL\",\n  Action::\"CreateGroup\",\n  Action::\"DeleteDocument\",\n  User::\"A\" in [DocumentShare::\"\"] {\n    blocked: [],\n    personalGroup: Group::\"A\",\n  },\n]"
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"DeleteDocument\"",
+      "Document"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"EditIsPrivate\"",
+      "Document"
+     ],
+     "result": "holds",
+     "seconds": 0.04
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"EditPublicAccess\"",
+      "Document"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.05,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"\", action: Action::\"EditPublicAccess\", resource: Document::\"\"\ncontext: {is_authenticated: true}\nentities: [\n  Group::\"A\" {\n    owner: User::\"\",\n  },\n  Action::\"EditIsPrivate\",\n  Action::\"AddToShareACL\",\n  User::\"A\" in [DocumentShare::\"\"] {\n    blocked: [],\n    personalGroup: Group::\"A\",\n  },\n  Action::\"ViewDocument\",\n  DocumentShare::\"A\",\n  Action::\"ModifyDocument\",\n  Document::\"\" {\n    isPrivate: true,\n    manageACL: DocumentShare::\"\",\n    modifyACL: DocumentShare::\"A\",\n    owner: User::\"A\",\n    publicAccess: \"\",\n    viewACL: DocumentShare::\"B\",\n  },\n  DocumentShare::\"B\",\n  Action::\"DeleteDocument\",\n  Action::\"CreateDocument\",\n  Action::\"DeleteGroup\",\n  Action::\"ModifyGroup\",\n  Group::\"\" {\n    owner: User::\"\",\n  },\n  Action::\"EditPublicAccess\",\n  DocumentShare::\"\",\n  Action::\"CreateGroup\",\n  Public::\"public\",\n  User::\"\" in [DocumentShare::\"\"] {\n    blocked: [],\n    personalGroup: Group::\"\",\n  },\n]"
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"ModifyDocument\"",
+      "Document"
+     ],
+     "result": "holds",
+     "seconds": 0.04
+    },
+    {
+     "env": [
+      "User",
+      "Action::\"ViewDocument\"",
+      "Document"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    },
+    {
+     "env": [
+      "Public",
+      "Action::\"ViewDocument\"",
+      "Document"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"\", action: Action::\"AddToShareACL\", resource: Document::\"\"\ncontext: {is_authenticated: true}\nentities: [\n  Public::\"public\",\n  User::\"\" in [DocumentShare::\"\"] {\n    blocked: [],\n    personalGroup: Group::\"\",\n  },\n  Action::\"ModifyDocument\",\n  Document::\"\" {\n    isPrivate: true,\n    manageACL: DocumentShare::\"\",\n    modifyACL: DocumentShare::\"A\",\n    owner: User::\"A\",\n    publicAccess: \"\",\n    viewACL: DocumentShare::\"B\",\n  },\n  DocumentShare::\"A\",\n  Action::\"DeleteGroup\",\n  Action::\"ModifyGroup\",\n  DocumentShare::\"\",\n  Group::\"A\" {\n    owner: User::\"\",\n  },\n  Action::\"ViewDocument\",\n  Action::\"EditIsPrivate\",\n  Action::\"CreateDocument\",\n  Action::\"EditPublicAccess\",\n  Group::\"\" {\n    owner: User::\"\",\n  },\n  DocumentShare::\"B\",\n  Action::\"AddToShareACL\",\n  Action::\"CreateGroup\",\n  Action::\"DeleteDocument\",\n  User::\"A\" in [DocumentShare::\"\"] {\n    blocked: [],\n    personalGroup: Group::\"A\",\n  },\n]"
+  },
+  {
+   "id": "D16",
+   "artefact": "c14_github",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"edit_issue\"",
+      "Issue"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D17",
+   "artefact": "c14_github",
+   "variant": "planted-edit",
+   "answer": "NO",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"edit_issue\"",
+      "Issue"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"\", action: Action::\"edit_issue\", resource: Issue::\"\"\ncontext: {}\nentities: [\n  Action::\"assign_issue\",\n  Action::\"edit_issue\",\n  User::\"\" in [UserGroup::\"\"],\n  Action::\"add_writer\",\n  User::\"A\",\n  Action::\"add_admin\",\n  UserGroup::\"C\",\n  Action::\"delete_issue\",\n  Issue::\"\" {\n    repo: Repository::\"\",\n    reporter: User::\"A\",\n  },\n  Action::\"fork\",\n  Action::\"push\",\n  UserGroup::\"\",\n  UserGroup::\"A\",\n  UserGroup::\"B\",\n  Action::\"add_reader\",\n  UserGroup::\"D\",\n  Repository::\"\" {\n    admins: UserGroup::\"B\",\n    maintainers: UserGroup::\"C\",\n    readers: UserGroup::\"\",\n    triagers: UserGroup::\"D\",\n    writers: UserGroup::\"A\",\n  },\n  Action::\"add_triager\",\n  Action::\"pull\",\n  Action::\"add_maintainer\",\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"\", action: Action::\"edit_issue\", resource: Issue::\"\"\ncontext: {}\nentities: [\n  Action::\"assign_issue\",\n  Action::\"edit_issue\",\n  User::\"\" in [UserGroup::\"\"],\n  Action::\"add_writer\",\n  User::\"A\",\n  Action::\"add_admin\",\n  UserGroup::\"C\",\n  Action::\"delete_issue\",\n  Issue::\"\" {\n    repo: Repository::\"\",\n    reporter: User::\"A\",\n  },\n  Action::\"fork\",\n  Action::\"push\",\n  UserGroup::\"\",\n  UserGroup::\"A\",\n  UserGroup::\"B\",\n  Action::\"add_reader\",\n  UserGroup::\"D\",\n  Repository::\"\" {\n    admins: UserGroup::\"B\",\n    maintainers: UserGroup::\"C\",\n    readers: UserGroup::\"\",\n    triagers: UserGroup::\"D\",\n    writers: UserGroup::\"A\",\n  },\n  Action::\"add_triager\",\n  Action::\"pull\",\n  Action::\"add_maintainer\",\n]"
+  },
+  {
+   "id": "D18",
+   "artefact": "c15_hotel_static",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.01,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"grantAccessHotel\"",
+      "Hotel"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D19",
+   "artefact": "c15_hotel_static",
+   "variant": "planted-edit",
+   "answer": "NO",
+   "seconds": 0.01,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"grantAccessHotel\"",
+      "Hotel"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.01,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"\", action: Action::\"grantAccessHotel\", resource: Hotel::\"\"\ncontext: {}\nentities: [\n  User::\"\" {\n    hotelAdminPermissions: [Hotel::\"\"],\n    memberPermissions: {\"hotelReservations\": [], \"propertyReservations\": []},\n    propertyAdminPermissions: [],\n    viewPermissions: {\"hotelReservations\": [], \"propertyReservations\": [Property::\"\"]},\n  },\n  Action::\"createReservation\",\n  Action::\"updateProperty\",\n  Property::\"\",\n  Action::\"viewProperty\",\n  Hotel::\"\",\n  Action::\"updateHotel\",\n  Action::\"createHotel\",\n  Action::\"updateReservation\",\n  Action::\"grantAccessReservation\",\n  Action::\"createProperty\",\n  Action::\"grantAccessHotel\",\n  Action::\"viewHotel\",\n  Action::\"viewReservation\",\n  Action::\"grantAccessProperty\",\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"\", action: Action::\"grantAccessHotel\", resource: Hotel::\"\"\ncontext: {}\nentities: [\n  User::\"\" {\n    hotelAdminPermissions: [Hotel::\"\"],\n    memberPermissions: {\"hotelReservations\": [], \"propertyReservations\": []},\n    propertyAdminPermissions: [],\n    viewPermissions: {\"hotelReservations\": [], \"propertyReservations\": [Property::\"\"]},\n  },\n  Action::\"createReservation\",\n  Action::\"updateProperty\",\n  Property::\"\",\n  Action::\"viewProperty\",\n  Hotel::\"\",\n  Action::\"updateHotel\",\n  Action::\"createHotel\",\n  Action::\"updateReservation\",\n  Action::\"grantAccessReservation\",\n  Action::\"createProperty\",\n  Action::\"grantAccessHotel\",\n  Action::\"viewHotel\",\n  Action::\"viewReservation\",\n  Action::\"grantAccessProperty\",\n]"
+  },
+  {
+   "id": "D20",
+   "artefact": "c16_hotel_templated",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"createReservation\"",
+      "Property"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"Alice\", action: Action::\"createReservation\", resource: Property::\"Green\"\ncontext: {}\nentities: [\n  Action::\"createReservation\",\n  Action::\"viewReservation\",\n  User::\"Alice\",\n  Action::\"viewProperty\",\n  Property::\"Green\",\n  Action::\"viewHotel\",\n  Action::\"grantAccessReservation\",\n  Action::\"grantAccessHotel\",\n  Action::\"createProperty\",\n  Hotel::\"R\",\n  Action::\"updateProperty\",\n  Action::\"updateHotel\",\n  Action::\"createHotel\",\n  Action::\"updateReservation\",\n  Action::\"grantAccessProperty\",\n  User::\"Bob\",\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"Alice\", action: Action::\"createReservation\", resource: Property::\"Green\"\ncontext: {}\nentities: [\n  Action::\"createReservation\",\n  Action::\"viewReservation\",\n  User::\"Alice\",\n  Action::\"viewProperty\",\n  Property::\"Green\",\n  Action::\"viewHotel\",\n  Action::\"grantAccessReservation\",\n  Action::\"grantAccessHotel\",\n  Action::\"createProperty\",\n  Hotel::\"R\",\n  Action::\"updateProperty\",\n  Action::\"updateHotel\",\n  Action::\"createHotel\",\n  Action::\"updateReservation\",\n  Action::\"grantAccessProperty\",\n  User::\"Bob\",\n]"
+  },
+  {
+   "id": "D21",
+   "artefact": "c17_sales_static",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"grantEditAccessToTemplate\"",
+      "Template"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"\", action: Action::\"grantEditAccessToTemplate\", resource: Template::\"\"\ncontext: {}\nentities: [\n  Template::\"\" {\n    editorMarkets: [Market::\"\"],\n    editors: [],\n    owner: User::\"A\",\n    viewerMarkets: [Market::\"A\"],\n    viewers: [User::\"\"],\n  },\n  Action::\"ExternalPrezViewActions\",\n  Action::\"viewTemplate\" in [Action::\"MarketTemplateViewActions\", Action::\"InternalTemplateViewActions\", Action::\"TemplateEditActions\"],\n  Market::\"\",\n  Job::\"\",\n  Action::\"InternalPrezViewActions\",\n  Action::\"MarketTemplateViewActions\",\n  Action::\"editPresentation\" in [Action::\"PrezEditActions\"],\n  Action::\"removeSelfAccessFromTemplate\" in [Action::\"TemplateEditActions\", Action::\"InternalTemplateViewActions\"],\n  Action::\"grantEditAccessToTemplate\" in [Action::\"TemplateEditActions\"],\n  Action::\"viewPresentation\" in [Action::\"ExternalPrezViewActions\", Action::\"PrezEditActions\", Action::\"InternalPrezViewActions\"],\n  User::\"\" in [Market::\"\"] {\n    customerId: \"\",\n    job: Job::\"\",\n  },\n  Action::\"grantViewAccessToTemplate\" in [Action::\"TemplateEditActions\"],\n  Action::\"TemplateEditActions\",\n  User::\"A\" in [Market::\"\"] {\n    customerId: \"\",\n    job: Job::\"\",\n  },\n  Action::\"removeSelfAccessFromPresentation\" in [Action::\"InternalPrezViewActions\", Action::\"ExternalPrezViewActions\", Action::\"PrezEditActions\"],\n  Action::\"grantViewAccessToPresentation\" in [Action::\"PrezEditActions\"],\n  Action::\"duplicatePresentation\" in [Action::\"InternalPrezViewActions\", Action::\"PrezEditActions\"],\n  Action::\"InternalTemplateViewActions\",\n  Action::\"editTemplate\" in [Action::\"TemplateEditActions\"],\n  Action::\"removeOthersAccessToTemplate\" in [Action::\"TemplateEditActions\"],\n  Job::\"internal\",\n  Market::\"A\",\n  Action::\"PrezEditActions\",\n  Action::\"grantEditAccessToPresentation\" in [Action::\"PrezEditActions\"],\n  Action::\"duplicateTemplate\" in [Action::\"TemplateEditActions\", Action::\"MarketTemplateViewActions\", Action::\"InternalTemplateViewActions\"],\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"\", action: Action::\"grantEditAccessToTemplate\", resource: Template::\"\"\ncontext: {}\nentities: [\n  Template::\"\" {\n    editorMarkets: [Market::\"\"],\n    editors: [],\n    owner: User::\"A\",\n    viewerMarkets: [Market::\"A\"],\n    viewers: [User::\"\"],\n  },\n  Action::\"ExternalPrezViewActions\",\n  Action::\"viewTemplate\" in [Action::\"MarketTemplateViewActions\", Action::\"InternalTemplateViewActions\", Action::\"TemplateEditActions\"],\n  Market::\"\",\n  Job::\"\",\n  Action::\"InternalPrezViewActions\",\n  Action::\"MarketTemplateViewActions\",\n  Action::\"editPresentation\" in [Action::\"PrezEditActions\"],\n  Action::\"removeSelfAccessFromTemplate\" in [Action::\"TemplateEditActions\", Action::\"InternalTemplateViewActions\"],\n  Action::\"grantEditAccessToTemplate\" in [Action::\"TemplateEditActions\"],\n  Action::\"viewPresentation\" in [Action::\"ExternalPrezViewActions\", Action::\"PrezEditActions\", Action::\"InternalPrezViewActions\"],\n  User::\"\" in [Market::\"\"] {\n    customerId: \"\",\n    job: Job::\"\",\n  },\n  Action::\"grantViewAccessToTemplate\" in [Action::\"TemplateEditActions\"],\n  Action::\"TemplateEditActions\",\n  User::\"A\" in [Market::\"\"] {\n    customerId: \"\",\n    job: Job::\"\",\n  },\n  Action::\"removeSelfAccessFromPresentation\" in [Action::\"InternalPrezViewActions\", Action::\"ExternalPrezViewActions\", Action::\"PrezEditActions\"],\n  Action::\"grantViewAccessToPresentation\" in [Action::\"PrezEditActions\"],\n  Action::\"duplicatePresentation\" in [Action::\"InternalPrezViewActions\", Action::\"PrezEditActions\"],\n  Action::\"InternalTemplateViewActions\",\n  Action::\"editTemplate\" in [Action::\"TemplateEditActions\"],\n  Action::\"removeOthersAccessToTemplate\" in [Action::\"TemplateEditActions\"],\n  Job::\"internal\",\n  Market::\"A\",\n  Action::\"PrezEditActions\",\n  Action::\"grantEditAccessToPresentation\" in [Action::\"PrezEditActions\"],\n  Action::\"duplicateTemplate\" in [Action::\"TemplateEditActions\", Action::\"MarketTemplateViewActions\", Action::\"InternalTemplateViewActions\"],\n]"
+  },
+  {
+   "id": "D22",
+   "artefact": "c17_sales_static",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"grantViewAccessToPresentation\"",
+      "Presentation"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D23",
+   "artefact": "c18_sales_templated",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.01,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"viewPresentation\"",
+      "Presentation"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D24",
+   "artefact": "c18_sales_templated",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"duplicatePresentation\"",
+      "Presentation"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"Bob\", action: Action::\"duplicatePresentation\", resource: Presentation::\"proposal\"\ncontext: {}\nentities: [\n  Action::\"ExternalPrezViewActions\",\n  Action::\"grantViewAccessToPresentation\" in [Action::\"PrezEditActions\"],\n  Action::\"grantViewAccessToTemplate\" in [Action::\"TemplateEditActions\"],\n  Job::\"internal\",\n  Action::\"viewTemplate\" in [Action::\"TemplateEditActions\", Action::\"InternalTemplateViewActions\", Action::\"MarketTemplateViewActions\"],\n  User::\"\" {\n    customerId: \"A\",\n    job: Job::\"\",\n  },\n  Action::\"removeSelfAccessFromPresentation\" in [Action::\"PrezEditActions\", Action::\"ExternalPrezViewActions\", Action::\"InternalPrezViewActions\"],\n  Action::\"InternalTemplateViewActions\",\n  Action::\"grantEditAccessToPresentation\" in [Action::\"PrezEditActions\"],\n  Action::\"TemplateEditActions\",\n  Presentation::\"proposal\" {\n    owner: User::\"\",\n  },\n  Action::\"MarketTemplateViewActions\",\n  Action::\"PrezEditActions\",\n  Action::\"removeSelfAccessFromTemplate\" in [Action::\"TemplateEditActions\", Action::\"InternalTemplateViewActions\"],\n  Action::\"grantEditAccessToTemplate\" in [Action::\"TemplateEditActions\"],\n  Action::\"duplicateTemplate\" in [Action::\"TemplateEditActions\", Action::\"InternalTemplateViewActions\", Action::\"MarketTemplateViewActions\"],\n  Action::\"removeOthersAccessToTemplate\" in [Action::\"TemplateEditActions\"],\n  Job::\"\",\n  User::\"Bob\" {\n    customerId: \"A\",\n    job: Job::\"\",\n  },\n  Action::\"viewPresentation\" in [Action::\"ExternalPrezViewActions\", Action::\"InternalPrezViewActions\", Action::\"PrezEditActions\"],\n  Action::\"editPresentation\" in [Action::\"PrezEditActions\"],\n  Action::\"InternalPrezViewActions\",\n  Action::\"duplicatePresentation\" in [Action::\"InternalPrezViewActions\", Action::\"PrezEditActions\"],\n  Action::\"editTemplate\" in [Action::\"TemplateEditActions\"],\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: User::\"Bob\", action: Action::\"duplicatePresentation\", resource: Presentation::\"proposal\"\ncontext: {}\nentities: [\n  Action::\"ExternalPrezViewActions\",\n  Action::\"grantViewAccessToPresentation\" in [Action::\"PrezEditActions\"],\n  Action::\"grantViewAccessToTemplate\" in [Action::\"TemplateEditActions\"],\n  Job::\"internal\",\n  Action::\"viewTemplate\" in [Action::\"TemplateEditActions\", Action::\"InternalTemplateViewActions\", Action::\"MarketTemplateViewActions\"],\n  User::\"\" {\n    customerId: \"A\",\n    job: Job::\"\",\n  },\n  Action::\"removeSelfAccessFromPresentation\" in [Action::\"PrezEditActions\", Action::\"ExternalPrezViewActions\", Action::\"InternalPrezViewActions\"],\n  Action::\"InternalTemplateViewActions\",\n  Action::\"grantEditAccessToPresentation\" in [Action::\"PrezEditActions\"],\n  Action::\"TemplateEditActions\",\n  Presentation::\"proposal\" {\n    owner: User::\"\",\n  },\n  Action::\"MarketTemplateViewActions\",\n  Action::\"PrezEditActions\",\n  Action::\"removeSelfAccessFromTemplate\" in [Action::\"TemplateEditActions\", Action::\"InternalTemplateViewActions\"],\n  Action::\"grantEditAccessToTemplate\" in [Action::\"TemplateEditActions\"],\n  Action::\"duplicateTemplate\" in [Action::\"TemplateEditActions\", Action::\"InternalTemplateViewActions\", Action::\"MarketTemplateViewActions\"],\n  Action::\"removeOthersAccessToTemplate\" in [Action::\"TemplateEditActions\"],\n  Job::\"\",\n  User::\"Bob\" {\n    customerId: \"A\",\n    job: Job::\"\",\n  },\n  Action::\"viewPresentation\" in [Action::\"ExternalPrezViewActions\", Action::\"InternalPrezViewActions\", Action::\"PrezEditActions\"],\n  Action::\"editPresentation\" in [Action::\"PrezEditActions\"],\n  Action::\"InternalPrezViewActions\",\n  Action::\"duplicatePresentation\" in [Action::\"InternalPrezViewActions\", Action::\"PrezEditActions\"],\n  Action::\"editTemplate\" in [Action::\"TemplateEditActions\"],\n]"
+  },
+  {
+   "id": "D25",
+   "artefact": "c19_streaming",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "FreeMember",
+      "Action::\"watch\"",
+      "Show"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: FreeMember::\"\", action: Action::\"watch\", resource: Show::\"\"\ncontext: {now: {datetime: datetime(\"1970-01-01\").offset(duration(\"-9223372036854775807ms\")), localTimeOffset: duration(\"0ms\")}}\nentities: [\n  Action::\"watch\",\n  FreeMember::\"\",\n  Show::\"\" {\n    isEarlyAccess: true,\n    isFree: true,\n    releaseDate: datetime(\"1970-01-01\").offset(duration(\"9223372036854775807ms\")),\n  },\n  Action::\"rent\",\n  Action::\"buy\",\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: FreeMember::\"\", action: Action::\"watch\", resource: Show::\"\"\ncontext: {now: {datetime: datetime(\"1970-01-01\").offset(duration(\"-9223372036854775807ms\")), localTimeOffset: duration(\"0ms\")}}\nentities: [\n  Action::\"watch\",\n  FreeMember::\"\",\n  Show::\"\" {\n    isEarlyAccess: true,\n    isFree: true,\n    releaseDate: datetime(\"1970-01-01\").offset(duration(\"9223372036854775807ms\")),\n  },\n  Action::\"rent\",\n  Action::\"buy\",\n]"
+  },
+  {
+   "id": "D26",
+   "artefact": "c19_streaming",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 0.05,
+   "queries": [
+    {
+     "env": [
+      "Subscriber",
+      "Action::\"watch\"",
+      "Movie"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: Subscriber::\"\", action: Action::\"watch\", resource: Movie::\"\"\ncontext: {now: {datetime: datetime(\"1970-01-01\").offset(duration(\"-9223372036854775808ms\")), localTimeOffset: duration(\"-1ms\")}}\nentities: [\n  Action::\"rent\",\n  Movie::\"\" {\n    isFree: true,\n    isOscarNominated: true,\n    needsRentOrBuy: false,\n  },\n  Subscriber::\"\" {\n    profile: {\"isKid\": true},\n    subscription: {\"tier\": \"\"},\n  },\n  Action::\"watch\",\n  Action::\"buy\",\n]"
+    },
+    {
+     "env": [
+      "Subscriber",
+      "Action::\"watch\"",
+      "Show"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: Subscriber::\"\", action: Action::\"watch\", resource: Show::\"\"\ncontext: {now: {datetime: datetime(\"1970-01-01\").offset(duration(\"-4611686018427387904ms\")), localTimeOffset: duration(\"-4611686018427387905ms\")}}\nentities: [\n  Show::\"\" {\n    isEarlyAccess: true,\n    isFree: true,\n    releaseDate: datetime(\"1970-01-01\").offset(duration(\"-9223372036768375809ms\")),\n  },\n  Action::\"watch\",\n  Action::\"buy\",\n  Action::\"rent\",\n  Subscriber::\"\" {\n    profile: {\"isKid\": true},\n    subscription: {\"tier\": \"premium\"},\n  },\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: Subscriber::\"\", action: Action::\"watch\", resource: Movie::\"\"\ncontext: {now: {datetime: datetime(\"1970-01-01\").offset(duration(\"-9223372036854775808ms\")), localTimeOffset: duration(\"-1ms\")}}\nentities: [\n  Action::\"rent\",\n  Movie::\"\" {\n    isFree: true,\n    isOscarNominated: true,\n    needsRentOrBuy: false,\n  },\n  Subscriber::\"\" {\n    profile: {\"isKid\": true},\n    subscription: {\"tier\": \"\"},\n  },\n  Action::\"watch\",\n  Action::\"buy\",\n]"
+  },
+  {
+   "id": "D27",
+   "artefact": "c19_streaming",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "FreeMember",
+      "Action::\"rent\"",
+      "Movie"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "Subscriber",
+      "Action::\"rent\"",
+      "Movie"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D28",
+   "artefact": "c20_tags_n_roles",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "User",
+      "Action::\"DeleteWorkspace\"",
+      "Workspace"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D29",
+   "artefact": "c21_tax_preparer",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "Taxpreparer::Professional",
+      "Taxpreparer::Action::\"viewDocument\"",
+      "Taxpreparer::Document"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D30",
+   "artefact": "c21_tax_preparer",
+   "variant": "planted-edit",
+   "answer": "NO",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "Taxpreparer::Professional",
+      "Taxpreparer::Action::\"viewDocument\"",
+      "Taxpreparer::Document"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: Taxpreparer::Professional::\"\", action: Taxpreparer::Action::\"viewDocument\", resource: Taxpreparer::Document::\"\"\ncontext: {consent: {client: Taxpreparer::Client::\"A\", team_region_list: [\"\"]}}\nentities: [\n  Taxpreparer::Client::\"\" {\n    organization: \"B\",\n  },\n  Taxpreparer::Document::\"\" {\n    location: \"A\",\n    owner: Taxpreparer::Client::\"\",\n    serviceline: \"C\",\n  },\n  Taxpreparer::Document::\"DEF\" {\n    location: \"A\",\n    owner: Taxpreparer::Client::\"\",\n    serviceline: \"C\",\n  },\n  Taxpreparer::Professional::\"\" {\n    assigned_orgs: [{\"location\": \"A\", \"organization\": \"B\", \"serviceline\": \"C\"}],\n    location: \"\",\n  },\n  Taxpreparer::Professional::\"Alice\" {\n    assigned_orgs: [{\"location\": \"A\", \"organization\": \"B\", \"serviceline\": \"C\"}],\n    location: \"\",\n  },\n  Taxpreparer::Client::\"A\" {\n    organization: \"B\",\n  },\n  Taxpreparer::Action::\"viewDocument\",\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: Taxpreparer::Professional::\"\", action: Taxpreparer::Action::\"viewDocument\", resource: Taxpreparer::Document::\"\"\ncontext: {consent: {client: Taxpreparer::Client::\"A\", team_region_list: [\"\"]}}\nentities: [\n  Taxpreparer::Client::\"\" {\n    organization: \"B\",\n  },\n  Taxpreparer::Document::\"\" {\n    location: \"A\",\n    owner: Taxpreparer::Client::\"\",\n    serviceline: \"C\",\n  },\n  Taxpreparer::Document::\"DEF\" {\n    location: \"A\",\n    owner: Taxpreparer::Client::\"\",\n    serviceline: \"C\",\n  },\n  Taxpreparer::Professional::\"\" {\n    assigned_orgs: [{\"location\": \"A\", \"organization\": \"B\", \"serviceline\": \"C\"}],\n    location: \"\",\n  },\n  Taxpreparer::Professional::\"Alice\" {\n    assigned_orgs: [{\"location\": \"A\", \"organization\": \"B\", \"serviceline\": \"C\"}],\n    location: \"\",\n  },\n  Taxpreparer::Client::\"A\" {\n    organization: \"B\",\n  },\n  Taxpreparer::Action::\"viewDocument\",\n]"
+  },
+  {
+   "id": "D31",
+   "artefact": "c22_photoapp",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 0.04,
+   "queries": [
+    {
+     "env": [
+      "PhotoApp::User",
+      "PhotoApp::Action::\"deletePhoto\"",
+      "PhotoApp::Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "PhotoApp::User",
+      "PhotoApp::Action::\"editPhoto\"",
+      "PhotoApp::Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "PhotoApp::User",
+      "PhotoApp::Action::\"viewPhoto\"",
+      "PhotoApp::Photo"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: PhotoApp::User::\"JohnDoe\", action: PhotoApp::Action::\"viewPhoto\", resource: PhotoApp::Photo::\"\"\ncontext: {judgingSession: true}\nentities: [\n  PhotoApp::Album::\"DoePhotos\",\n  PhotoApp::Action::\"editPhoto\",\n  PhotoApp::Action::\"viewPhoto\",\n  PhotoApp::Album::\"JaneVacation\",\n  PhotoApp::Action::\"deletePhoto\",\n  PhotoApp::User::\"JohnDoe\" in [PhotoApp::Role::\"PhotoJudge\"],\n  PhotoApp::Role::\"PhotoJudge\",\n  PhotoApp::UserGroup::\"DoeFamily\",\n  PhotoApp::User::\"\" in [PhotoApp::Role::\"PhotoJudge\"],\n  PhotoApp::Application::\"PhotoApp\",\n  PhotoApp::Photo::\"\" in [PhotoApp::Album::\"JaneVacation\"] {\n    labels: [\"contest\", \"private\"],\n    owner: PhotoApp::User::\"\",\n    subjects: [PhotoApp::User::\"JohnDoe\"],\n  },\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: PhotoApp::User::\"JohnDoe\", action: PhotoApp::Action::\"viewPhoto\", resource: PhotoApp::Photo::\"\"\ncontext: {judgingSession: true}\nentities: [\n  PhotoApp::Album::\"DoePhotos\",\n  PhotoApp::Action::\"editPhoto\",\n  PhotoApp::Action::\"viewPhoto\",\n  PhotoApp::Album::\"JaneVacation\",\n  PhotoApp::Action::\"deletePhoto\",\n  PhotoApp::User::\"JohnDoe\" in [PhotoApp::Role::\"PhotoJudge\"],\n  PhotoApp::Role::\"PhotoJudge\",\n  PhotoApp::UserGroup::\"DoeFamily\",\n  PhotoApp::User::\"\" in [PhotoApp::Role::\"PhotoJudge\"],\n  PhotoApp::Application::\"PhotoApp\",\n  PhotoApp::Photo::\"\" in [PhotoApp::Album::\"JaneVacation\"] {\n    labels: [\"contest\", \"private\"],\n    owner: PhotoApp::User::\"\",\n    subjects: [PhotoApp::User::\"JohnDoe\"],\n  },\n]"
+  },
+  {
+   "id": "D32",
+   "artefact": "c22_photoapp",
+   "variant": "planted-edit",
+   "answer": "YES",
+   "seconds": 0.04,
+   "queries": [
+    {
+     "env": [
+      "PhotoApp::User",
+      "PhotoApp::Action::\"deletePhoto\"",
+      "PhotoApp::Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    },
+    {
+     "env": [
+      "PhotoApp::User",
+      "PhotoApp::Action::\"editPhoto\"",
+      "PhotoApp::Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.02
+    },
+    {
+     "env": [
+      "PhotoApp::User",
+      "PhotoApp::Action::\"viewPhoto\"",
+      "PhotoApp::Photo"
+     ],
+     "result": "holds",
+     "seconds": 0.01
+    }
+   ],
+   "counterexample": null
+  },
+  {
+   "id": "D33",
+   "artefact": "c23_gitapp",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "GitApp::User",
+      "GitApp::Action::\"addRepoAdmin\"",
+      "GitApp::Repo"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.01,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: GitApp::User::\"\", action: GitApp::Action::\"addRepoAdmin\", resource: GitApp::Repo::\"\"\ncontext: {}\nentities: [\n  GitApp::Action::\"addRepoAdmin\",\n  GitApp::Action::\"pushRepo\",\n  GitApp::Application::\"GitApp\",\n  GitApp::Repo::\"\" {\n    admins: [GitApp::User::\"\"],\n    reporters: [],\n  },\n  GitApp::Action::\"forkRepo\",\n  GitApp::Action::\"pullRepo\",\n  GitApp::User::\"\",\n  GitApp::Action::\"addRepoReporter\",\n  GitApp::Action::\"closeIssue\",\n  GitApp::Action::\"assignIssue\",\n  GitApp::Action::\"editIssue\",\n  GitApp::Action::\"addIssue\",\n  GitApp::Action::\"addRepoContributor\",\n  GitApp::Action::\"deleteIssue\",\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: GitApp::User::\"\", action: GitApp::Action::\"addRepoAdmin\", resource: GitApp::Repo::\"\"\ncontext: {}\nentities: [\n  GitApp::Action::\"addRepoAdmin\",\n  GitApp::Action::\"pushRepo\",\n  GitApp::Application::\"GitApp\",\n  GitApp::Repo::\"\" {\n    admins: [GitApp::User::\"\"],\n    reporters: [],\n  },\n  GitApp::Action::\"forkRepo\",\n  GitApp::Action::\"pullRepo\",\n  GitApp::User::\"\",\n  GitApp::Action::\"addRepoReporter\",\n  GitApp::Action::\"closeIssue\",\n  GitApp::Action::\"assignIssue\",\n  GitApp::Action::\"editIssue\",\n  GitApp::Action::\"addIssue\",\n  GitApp::Action::\"addRepoContributor\",\n  GitApp::Action::\"deleteIssue\",\n]"
+  },
+  {
+   "id": "D34",
+   "artefact": "c23_gitapp",
+   "variant": "planted-edit",
+   "answer": "NO",
+   "seconds": 0.02,
+   "queries": [
+    {
+     "env": [
+      "GitApp::User",
+      "GitApp::Action::\"pushRepo\"",
+      "GitApp::Repo"
+     ],
+     "result": "does_not_hold",
+     "seconds": 0.02,
+     "output": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: GitApp::User::\"\", action: GitApp::Action::\"pushRepo\", resource: GitApp::Repo::\"\"\ncontext: {}\nentities: [\n  GitApp::Action::\"pullRepo\",\n  GitApp::Repo::\"\" in [GitApp::Application::\"GitApp\"] {\n    admins: [],\n    reporters: [GitApp::User::\"\"],\n  },\n  GitApp::User::\"\",\n  GitApp::Action::\"deleteIssue\",\n  GitApp::Action::\"closeIssue\",\n  GitApp::Action::\"addRepoAdmin\",\n  GitApp::Action::\"forkRepo\",\n  GitApp::Application::\"GitApp\",\n  GitApp::Action::\"addRepoContributor\",\n  GitApp::Action::\"editIssue\",\n  GitApp::Action::\"pushRepo\",\n  GitApp::Action::\"addRepoReporter\",\n  GitApp::Action::\"addIssue\",\n  GitApp::Action::\"assignIssue\",\n]"
+    }
+   ],
+   "counterexample": "✗ Policy set 1 implies policy set 2: DOES NOT HOLD\n  Counterexample found:\nprincipal: GitApp::User::\"\", action: GitApp::Action::\"pushRepo\", resource: GitApp::Repo::\"\"\ncontext: {}\nentities: [\n  GitApp::Action::\"pullRepo\",\n  GitApp::Repo::\"\" in [GitApp::Application::\"GitApp\"] {\n    admins: [],\n    reporters: [GitApp::User::\"\"],\n  },\n  GitApp::User::\"\",\n  GitApp::Action::\"deleteIssue\",\n  GitApp::Action::\"closeIssue\",\n  GitApp::Action::\"addRepoAdmin\",\n  GitApp::Action::\"forkRepo\",\n  GitApp::Application::\"GitApp\",\n  GitApp::Action::\"addRepoContributor\",\n  GitApp::Action::\"editIssue\",\n  GitApp::Action::\"pushRepo\",\n  GitApp::Action::\"addRepoReporter\",\n  GitApp::Action::\"addIssue\",\n  GitApp::Action::\"assignIssue\",\n]"
+  },
+  {
+   "id": "D35",
+   "artefact": "k01_pod_reader",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.62,
+   "solver_result": "unsat",
+   "solver_seconds": 0.0,
+   "grid_crosscheck": {
+    "samples": 3000,
+    "seed": 0,
+    "allowed_by_reference": 874,
+    "violations_found": 0
+   }
+  },
+  {
+   "id": "D36",
+   "artefact": "k02_secret_reader_rolebinding",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.71,
+   "solver_result": "unsat",
+   "solver_seconds": 0.0,
+   "grid_crosscheck": {
+    "samples": 3000,
+    "seed": 0,
+    "allowed_by_reference": 876,
+    "violations_found": 0
+   }
+  },
+  {
+   "id": "D37",
+   "artefact": "k03_secret_reader_global",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 1.42,
+   "solver_result": "unsat",
+   "solver_seconds": 0.0,
+   "grid_crosscheck": {
+    "samples": 3000,
+    "seed": 0,
+    "allowed_by_reference": 1211,
+    "violations_found": 0
+   }
+  },
+  {
+   "id": "D38",
+   "artefact": "k04_monitoring_aggregation",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 0.92,
+   "solver_result": "unsat",
+   "solver_seconds": 0.01,
+   "grid_crosscheck": {
+    "samples": 3000,
+    "seed": 0,
+    "allowed_by_reference": 1156,
+    "violations_found": 0
+   }
+  },
+  {
+   "id": "D39",
+   "artefact": "k04_monitoring_aggregation",
+   "variant": "planted-edit",
+   "answer": "NO",
+   "seconds": 1.06,
+   "solver_result": "sat",
+   "solver_seconds": 0.01,
+   "counterexample": {
+    "request": {
+     "user": "",
+     "verb": "get",
+     "name": "",
+     "apiGroup": "",
+     "subresource": "",
+     "resource": "secrets",
+     "namespace": "",
+     "groups": [
+      "manager",
+      "sre"
+     ]
+    },
+    "allowed_z3": true,
+    "allowed_reference": true
+   },
+   "crosscheck": "agree",
+   "grid_crosscheck": {
+    "samples": 3000,
+    "seed": 0,
+    "allowed_by_reference": 1154,
+    "violations_found": 383
+   }
+  },
+  {
+   "id": "D40",
+   "artefact": "k05_crontab_default_roles",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 1.83,
+   "solver_result": "sat",
+   "solver_seconds": 0.0,
+   "counterexample": {
+    "request": {
+     "user": "ed",
+     "verb": "delete",
+     "name": "",
+     "apiGroup": "stable.example.com",
+     "subresource": "",
+     "resource": "crontabs",
+     "namespace": "team-a",
+     "groups": []
+    },
+    "allowed_z3": true,
+    "allowed_reference": true
+   },
+   "crosscheck": "agree",
+   "grid_crosscheck": {
+    "samples": 3000,
+    "seed": 0,
+    "allowed_by_reference": 841,
+    "violations_found": 19
+   }
+  },
+  {
+   "id": "D41",
+   "artefact": "k05_crontab_default_roles",
+   "variant": "original",
+   "answer": "YES",
+   "seconds": 1.29,
+   "solver_result": "unsat",
+   "solver_seconds": 0.0,
+   "grid_crosscheck": {
+    "samples": 3000,
+    "seed": 0,
+    "allowed_by_reference": 841,
+    "violations_found": 0
+   }
+  },
+  {
+   "id": "D42",
+   "artefact": "k06_configmap_updater",
+   "variant": "planted-edit",
+   "answer": "NO",
+   "seconds": 0.64,
+   "solver_result": "sat",
+   "solver_seconds": 0.08,
+   "counterexample": {
+    "request": {
+     "user": "ci-bot",
+     "verb": "list",
+     "name": "my-configmap",
+     "apiGroup": "",
+     "subresource": "",
+     "resource": "configmaps",
+     "namespace": "default",
+     "groups": []
+    },
+    "allowed_z3": true,
+    "allowed_reference": true
+   },
+   "crosscheck": "agree",
+   "grid_crosscheck": {
+    "samples": 3000,
+    "seed": 0,
+    "allowed_by_reference": 751,
+    "violations_found": 265
+   }
+  },
+  {
+   "id": "D43",
+   "artefact": "k07_subresource_wildcard",
+   "variant": "original",
+   "answer": "NO",
+   "seconds": 1.29,
+   "solver_result": "sat",
+   "solver_seconds": 0.05,
+   "counterexample": {
+    "request": {
+     "user": "lee",
+     "verb": "platform",
+     "name": "",
+     "apiGroup": "example.com",
+     "subresource": "A",
+     "resource": "",
+     "namespace": "default",
+     "groups": [
+      "manager",
+      "platform"
+     ]
+    },
+    "allowed_z3": true,
+    "allowed_reference": true
+   },
+   "crosscheck": "agree",
+   "grid_crosscheck": {
+    "samples": 3000,
+    "seed": 0,
+    "allowed_by_reference": 1243,
+    "violations_found": 112
+   }
+  }
+ ]
+}

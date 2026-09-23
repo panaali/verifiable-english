@@ -1,0 +1,643 @@
+{
+ "c01_cit_1a": {
+  "id": "c01_cit_1a",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-integration-tests",
+   "commit": "1999ea249229e26cabb398a279fea721854a471d",
+   "licence": "Apache-2.0",
+   "policy_path": "tests/example_use_cases/policies_1a.cedar",
+   "entities_path": "sample-data/sandbox_a/entities.json",
+   "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+   "test_path": "tests/example_use_cases/1a.json"
+  },
+  "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "ece726b16ea3c9ab36269d80107185555b1eaf42942835248c68e0ddd3d02cee",
+   "schema.cedarschema": "7cb33c1a488aac0fd788d208c554d884dc5d21469fd12d1af5d517ade66a2257"
+  }
+ },
+ "c02_cit_2a": {
+  "id": "c02_cit_2a",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-integration-tests",
+   "commit": "1999ea249229e26cabb398a279fea721854a471d",
+   "licence": "Apache-2.0",
+   "policy_path": "tests/example_use_cases/policies_2a.cedar",
+   "entities_path": "sample-data/sandbox_a/entities.json",
+   "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+   "test_path": "tests/example_use_cases/2a.json"
+  },
+  "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "bfde4fe97ca881f88b1d5cff9a198e767118879ae0f77c3512d0ac9c5b660daf",
+   "schema.cedarschema": "7cb33c1a488aac0fd788d208c554d884dc5d21469fd12d1af5d517ade66a2257"
+  }
+ },
+ "c03_cit_2b": {
+  "id": "c03_cit_2b",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-integration-tests",
+   "commit": "1999ea249229e26cabb398a279fea721854a471d",
+   "licence": "Apache-2.0",
+   "policy_path": "tests/example_use_cases/policies_2b.cedar",
+   "entities_path": "sample-data/sandbox_a/entities.json",
+   "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+   "test_path": "tests/example_use_cases/2b.json"
+  },
+  "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "3d8f159f8c065bc9b3ccecb5ad49f04503751eac932b11c49275ebc74248b949",
+   "schema.cedarschema": "7cb33c1a488aac0fd788d208c554d884dc5d21469fd12d1af5d517ade66a2257"
+  }
+ },
+ "c04_cit_2c": {
+  "id": "c04_cit_2c",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-integration-tests",
+   "commit": "1999ea249229e26cabb398a279fea721854a471d",
+   "licence": "Apache-2.0",
+   "policy_path": "tests/example_use_cases/policies_2c.cedar",
+   "entities_path": "sample-data/sandbox_a/entities.json",
+   "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+   "test_path": "tests/example_use_cases/2c.json"
+  },
+  "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "34aa36fb8fe227cabf26d9781b08e42bdb5580a293416beac0f9af67e0b3fb29",
+   "schema.cedarschema": "7cb33c1a488aac0fd788d208c554d884dc5d21469fd12d1af5d517ade66a2257"
+  }
+ },
+ "c05_cit_3a": {
+  "id": "c05_cit_3a",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-integration-tests",
+   "commit": "1999ea249229e26cabb398a279fea721854a471d",
+   "licence": "Apache-2.0",
+   "policy_path": "tests/example_use_cases/policies_3a.cedar",
+   "entities_path": "sample-data/sandbox_a/entities.json",
+   "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+   "test_path": "tests/example_use_cases/3a.json"
+  },
+  "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "a7d2f8b72356a081264ff780c60bba8205cb15c6ea60715010b65da716dbb742",
+   "schema.cedarschema": "7cb33c1a488aac0fd788d208c554d884dc5d21469fd12d1af5d517ade66a2257"
+  }
+ },
+ "c06_cit_3b": {
+  "id": "c06_cit_3b",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-integration-tests",
+   "commit": "1999ea249229e26cabb398a279fea721854a471d",
+   "licence": "Apache-2.0",
+   "policy_path": "tests/example_use_cases/policies_3b.cedar",
+   "entities_path": "sample-data/sandbox_a/entities.json",
+   "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+   "test_path": "tests/example_use_cases/3b.json"
+  },
+  "schema_path": "sample-data/sandbox_a/schema.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "4d4e9dfe2ab0f0cbb4387dd7454d78bbd73d16a3bbda98c26767e0643a7a7ac7",
+   "schema.cedarschema": "7cb33c1a488aac0fd788d208c554d884dc5d21469fd12d1af5d517ade66a2257"
+  }
+ },
+ "c08_cit_4a": {
+  "id": "c08_cit_4a",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-integration-tests",
+   "commit": "1999ea249229e26cabb398a279fea721854a471d",
+   "licence": "Apache-2.0",
+   "policy_path": "tests/example_use_cases/policies_4a.cedar",
+   "entities_path": "sample-data/sandbox_b/entities.json",
+   "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+   "test_path": "tests/example_use_cases/4a.json"
+  },
+  "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "c22bcdc15baafed09eec2014088cbc36c46d34316f317bbb54e5a97eb43aba6f",
+   "schema.cedarschema": "d826a5585c637de425b13c55b7a7a3b08b148111b3fb5ba66cee3ba1310372d4"
+  }
+ },
+ "c09_cit_4d": {
+  "id": "c09_cit_4d",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-integration-tests",
+   "commit": "1999ea249229e26cabb398a279fea721854a471d",
+   "licence": "Apache-2.0",
+   "policy_path": "tests/example_use_cases/policies_4d.cedar",
+   "entities_path": "sample-data/sandbox_b/entities.json",
+   "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+   "test_path": "tests/example_use_cases/4d.json"
+  },
+  "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "820d0f92660cbaaf7eb9ba02eb262a2f3fe933229896065d4064bbb7b33e9a27",
+   "schema.cedarschema": "d826a5585c637de425b13c55b7a7a3b08b148111b3fb5ba66cee3ba1310372d4"
+  }
+ },
+ "c10_cit_4e": {
+  "id": "c10_cit_4e",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-integration-tests",
+   "commit": "1999ea249229e26cabb398a279fea721854a471d",
+   "licence": "Apache-2.0",
+   "policy_path": "tests/example_use_cases/policies_4e.cedar",
+   "entities_path": "sample-data/sandbox_b/entities.json",
+   "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+   "test_path": "tests/example_use_cases/4e.json"
+  },
+  "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "f58866819dab6944aaab0c97d736f4b2870c0b5fd6bb46032af17135166e443f",
+   "schema.cedarschema": "d826a5585c637de425b13c55b7a7a3b08b148111b3fb5ba66cee3ba1310372d4"
+  }
+ },
+ "c11_cit_4f": {
+  "id": "c11_cit_4f",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-integration-tests",
+   "commit": "1999ea249229e26cabb398a279fea721854a471d",
+   "licence": "Apache-2.0",
+   "policy_path": "tests/example_use_cases/policies_4f.cedar",
+   "entities_path": "sample-data/sandbox_b/entities.json",
+   "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+   "test_path": "tests/example_use_cases/4f.json"
+  },
+  "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "1a599c11e02b3fe5ce50db684c8b7b954bf85e7aeb139d1f87093f76f900ae2b",
+   "schema.cedarschema": "d826a5585c637de425b13c55b7a7a3b08b148111b3fb5ba66cee3ba1310372d4"
+  }
+ },
+ "c12_cit_5b": {
+  "id": "c12_cit_5b",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-integration-tests",
+   "commit": "1999ea249229e26cabb398a279fea721854a471d",
+   "licence": "Apache-2.0",
+   "policy_path": "tests/example_use_cases/policies_5b.cedar",
+   "entities_path": "sample-data/sandbox_b/entities.json",
+   "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+   "test_path": "tests/example_use_cases/5b.json"
+  },
+  "schema_path": "sample-data/sandbox_b/schema.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "c831c264db9c9dd0f726552b78dc607aaac1ae67c0f699c9c38a0878aae7e270",
+   "schema.cedarschema": "d826a5585c637de425b13c55b7a7a3b08b148111b3fb5ba66cee3ba1310372d4"
+  }
+ },
+ "c13_document_cloud": {
+  "id": "c13_document_cloud",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-examples",
+   "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+   "licence": "Apache-2.0",
+   "policy_path": "cedar-example-use-cases/document_cloud/policies.cedar",
+   "entities_path": "cedar-example-use-cases/document_cloud/entities.json",
+   "schema_path": "cedar-example-use-cases/document_cloud/policies.cedarschema",
+   "requests": "cedar-example-use-cases/document_cloud/ALLOW, cedar-example-use-cases/document_cloud/DENY",
+   "schema_used_for_action_hierarchy": true
+  },
+  "schema_path": "cedar-example-use-cases/document_cloud/policies.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "fe0a1f463dbac5756b256df94807c34d6eb81eb501b76e627f54802b5811f990",
+   "schema.cedarschema": "245214bd26ed3e859f44c91f9ac546094153028eb99e0493675b8c2e9d7ea8bf"
+  }
+ },
+ "c14_github": {
+  "id": "c14_github",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-examples",
+   "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+   "licence": "Apache-2.0",
+   "policy_path": "cedar-example-use-cases/github_example/policies.cedar",
+   "entities_path": "cedar-example-use-cases/github_example/entities.json",
+   "schema_path": "cedar-example-use-cases/github_example/policies.cedarschema",
+   "requests": "cedar-example-use-cases/github_example/ALLOW, cedar-example-use-cases/github_example/DENY",
+   "schema_used_for_action_hierarchy": true
+  },
+  "schema_path": "cedar-example-use-cases/github_example/policies.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "c5abfcb7f6a0bf87b38b21ea96caafba3df182e418a9af452517107800ffccb5",
+   "schema.cedarschema": "8979f4b2a54e44b425333cab5322ce7960470c61e5ea4b161dc6e43cdcdc6d8c"
+  }
+ },
+ "c15_hotel_static": {
+  "id": "c15_hotel_static",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-examples",
+   "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+   "licence": "Apache-2.0",
+   "policy_path": "cedar-example-use-cases/hotel_chains/static/policies.cedar",
+   "entities_path": "cedar-example-use-cases/hotel_chains/static/entities.json",
+   "schema_path": "cedar-example-use-cases/hotel_chains/static/policies.cedarschema",
+   "requests": "cedar-example-use-cases/hotel_chains/static/ALLOW, cedar-example-use-cases/hotel_chains/static/DENY",
+   "schema_used_for_action_hierarchy": true
+  },
+  "schema_path": "cedar-example-use-cases/hotel_chains/static/policies.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "203331bcbd016f2f243e2b1d639da056dced169b3b75f4a5f8fa90f7d5f6408b",
+   "schema.cedarschema": "df2377bad35593f2589ed6ea935afd21f19f66b1cc1f636fc5800e7204d0b2ec"
+  }
+ },
+ "c16_hotel_templated": {
+  "id": "c16_hotel_templated",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-examples",
+   "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+   "licence": "Apache-2.0",
+   "policy_path": "cedar-example-use-cases/hotel_chains/templated/policies.cedar",
+   "entities_path": "cedar-example-use-cases/hotel_chains/templated/entities.json",
+   "schema_path": "cedar-example-use-cases/hotel_chains/templated/policies.cedarschema",
+   "requests": "cedar-example-use-cases/hotel_chains/templated/ALLOW, cedar-example-use-cases/hotel_chains/templated/DENY",
+   "schema_used_for_action_hierarchy": true
+  },
+  "schema_path": "cedar-example-use-cases/hotel_chains/templated/policies.cedarschema",
+  "links": [
+   {
+    "template_id": "ViewReservation",
+    "link_id": "AliceViewG",
+    "args": {
+     "?principal": "User::\"Alice\"",
+     "?resource": "Hotel::\"G\""
+    }
+   },
+   {
+    "template_id": "MemberReservation",
+    "link_id": "AliceMemberGreen",
+    "args": {
+     "?principal": "User::\"Alice\"",
+     "?resource": "Property::\"Green\""
+    }
+   },
+   {
+    "template_id": "AdminReservation",
+    "link_id": "BobAdminRRes",
+    "args": {
+     "?principal": "User::\"Bob\"",
+     "?resource": "Hotel::\"R\""
+    }
+   },
+   {
+    "template_id": "AdminPropertyOrHotel",
+    "link_id": "BobAdminRProp",
+    "args": {
+     "?principal": "User::\"Bob\"",
+     "?resource": "Hotel::\"R\""
+    }
+   },
+   {
+    "template_id": "AdminReservation",
+    "link_id": "BobAdminGreenRes",
+    "args": {
+     "?principal": "User::\"Bob\"",
+     "?resource": "Property::\"Green\""
+    }
+   },
+   {
+    "template_id": "AdminPropertyOrHotel",
+    "link_id": "BobAdminGreenProp",
+    "args": {
+     "?principal": "User::\"Bob\"",
+     "?resource": "Property::\"Green\""
+    }
+   }
+  ],
+  "sha256": {
+   "source.cedar": "7832011695cdfeebe0c503a87c5f19bdcc9ddba39e20966100d824da26c204c0",
+   "schema.cedarschema": "243799abaefaa5ec686346d4acdaa1c34d09050953943bc154059a859ca0e1c3"
+  }
+ },
+ "c17_sales_static": {
+  "id": "c17_sales_static",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-examples",
+   "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+   "licence": "Apache-2.0",
+   "policy_path": "cedar-example-use-cases/sales_orgs/static/policies.cedar",
+   "entities_path": "cedar-example-use-cases/sales_orgs/static/entities.json",
+   "schema_path": "cedar-example-use-cases/sales_orgs/static/policies.cedarschema",
+   "requests": "cedar-example-use-cases/sales_orgs/static/ALLOW, cedar-example-use-cases/sales_orgs/static/DENY",
+   "schema_used_for_action_hierarchy": true
+  },
+  "schema_path": "cedar-example-use-cases/sales_orgs/static/policies.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "83423c40f6a19268edf27a9ce6edda9f7a01702fceeb3ab3a11c0dc282c8a80d",
+   "schema.cedarschema": "3a685a9a24bdcb318ed41430f6a520c2a7c47b23efb0418eeca9787bf8882c6a"
+  }
+ },
+ "c18_sales_templated": {
+  "id": "c18_sales_templated",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-examples",
+   "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+   "licence": "Apache-2.0",
+   "policy_path": "cedar-example-use-cases/sales_orgs/templated/policies.cedar",
+   "entities_path": "cedar-example-use-cases/sales_orgs/templated/entities.json",
+   "schema_path": "cedar-example-use-cases/sales_orgs/templated/policies.cedarschema",
+   "requests": "cedar-example-use-cases/sales_orgs/templated/ALLOW, cedar-example-use-cases/sales_orgs/templated/DENY",
+   "schema_used_for_action_hierarchy": true
+  },
+  "schema_path": "cedar-example-use-cases/sales_orgs/templated/policies.cedarschema",
+  "links": [
+   {
+    "template_id": "external-prez-view",
+    "link_id": "BobView",
+    "args": {
+     "?principal": "User::\"Bob\"",
+     "?resource": "Presentation::\"proposal\""
+    }
+   },
+   {
+    "template_id": "internal-prez-view",
+    "link_id": "BobViewInternal",
+    "args": {
+     "?principal": "User::\"Bob\"",
+     "?resource": "Presentation::\"proposal\""
+    }
+   }
+  ],
+  "sha256": {
+   "source.cedar": "caf25e4e4d172b376603beb6e60b15b56683aa073424136c2704da21ace1552c",
+   "schema.cedarschema": "17f5182611079913ca3b6b40b1beecc6054093c64ceb25b4f1a9e330b0ad8b00"
+  }
+ },
+ "c19_streaming": {
+  "id": "c19_streaming",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-examples",
+   "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+   "licence": "Apache-2.0",
+   "policy_path": "cedar-example-use-cases/streaming_service/policies.cedar",
+   "entities_path": "cedar-example-use-cases/streaming_service/entities.json",
+   "schema_path": "cedar-example-use-cases/streaming_service/policies.cedarschema",
+   "requests": "cedar-example-use-cases/streaming_service/ALLOW, cedar-example-use-cases/streaming_service/DENY",
+   "schema_used_for_action_hierarchy": true
+  },
+  "schema_path": "cedar-example-use-cases/streaming_service/policies.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "af95e64c5a72a111d166423d3c8caaca14b91a6ada09bec31ae4fccd2952591e",
+   "schema.cedarschema": "92a0bfc61fbefee57c5c6f1e155b319431724447a2727a62ed47c2657d8914a0"
+  }
+ },
+ "c20_tags_n_roles": {
+  "id": "c20_tags_n_roles",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-examples",
+   "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+   "licence": "Apache-2.0",
+   "policy_path": "cedar-example-use-cases/tags_n_roles/policies.cedar",
+   "entities_path": "cedar-example-use-cases/tags_n_roles/entities.json",
+   "schema_path": "cedar-example-use-cases/tags_n_roles/policies.cedarschema",
+   "requests": "cedar-example-use-cases/tags_n_roles/ALLOW, cedar-example-use-cases/tags_n_roles/DENY",
+   "schema_used_for_action_hierarchy": true
+  },
+  "schema_path": "cedar-example-use-cases/tags_n_roles/policies.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "471fdc35d0ad7a0dc51f71dc9550607e9c6591790635d7f8088a54155dd917ed",
+   "schema.cedarschema": "7bf45a9efffcc54f06d04795ea1bfea3632f20373edebd354d875959c42424cf"
+  }
+ },
+ "c21_tax_preparer": {
+  "id": "c21_tax_preparer",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-examples",
+   "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+   "licence": "Apache-2.0",
+   "policy_path": "cedar-example-use-cases/tax_preparer/policies.cedar",
+   "entities_path": "cedar-example-use-cases/tax_preparer/entities.json",
+   "schema_path": "cedar-example-use-cases/tax_preparer/policies.cedarschema",
+   "requests": "cedar-example-use-cases/tax_preparer/ALLOW, cedar-example-use-cases/tax_preparer/DENY",
+   "schema_used_for_action_hierarchy": true
+  },
+  "schema_path": "cedar-example-use-cases/tax_preparer/policies.cedarschema",
+  "links": [
+   {
+    "template_id": "adhoc-access",
+    "link_id": "AliceView",
+    "args": {
+     "?principal": "Taxpreparer::Professional::\"Alice\"",
+     "?resource": "Taxpreparer::Document::\"DEF\""
+    }
+   }
+  ],
+  "sha256": {
+   "source.cedar": "485cd67ed3395ea5940e248cf3632c9ed7d8eb88278da2593cf98acea75645eb",
+   "schema.cedarschema": "c6a690d563d1954815afeed05ccdd8c210e017b1c5300e008956c06f0d5fc94b"
+  }
+ },
+ "c22_photoapp": {
+  "id": "c22_photoapp",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-examples",
+   "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+   "licence": "Apache-2.0",
+   "policy_path": "cedar-policy-language-in-action/PhotoApp/photoapp.cedar",
+   "entities_path": "cedar-policy-language-in-action/PhotoApp/photoapp.cedarentities.json",
+   "schema_path": null,
+   "requests": "cedar-policy-language-in-action/PhotoApp/ALLOW, cedar-policy-language-in-action/PhotoApp/DENY",
+   "schema_used_for_action_hierarchy": false
+  },
+  "schema_path": "cedar-policy-language-in-action/PhotoApp/photoapp.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "ee1a27fd9b95b0b4cbd72bb43ffc0ebf805cb0fcd39b5c6d087d8aa6b2b2de32",
+   "schema.cedarschema": "a3e7db0e09388410887b90a3a83ae8e81e01c14e6648777269b0fefd03db95ea"
+  }
+ },
+ "c23_gitapp": {
+  "id": "c23_gitapp",
+  "family": "cedar",
+  "provenance": {
+   "repository": "cedar-policy/cedar-examples",
+   "commit": "c251f7d1ad171bd12dee5d1d7a1cceaec994518f",
+   "licence": "Apache-2.0",
+   "policy_path": "cedar-policy-language-in-action/GitApp/gitapp.cedar",
+   "entities_path": "cedar-policy-language-in-action/GitApp/gitapp.cedarentities.json",
+   "schema_path": null,
+   "requests": "cedar-policy-language-in-action/GitApp/ALLOW, cedar-policy-language-in-action/GitApp/DENY",
+   "schema_used_for_action_hierarchy": false
+  },
+  "schema_path": "cedar-policy-language-in-action/GitApp/gitapp.cedarschema",
+  "links": [],
+  "sha256": {
+   "source.cedar": "0766979997a78ac3bc0b72496b4fd5c736326912ed464495cf51cf5c0da12476",
+   "schema.cedarschema": "a030c2a60df150b1886ad7705a614ddfad90b3bd103d904507f255df62bbb784"
+  }
+ },
+ "k01_pod_reader": {
+  "id": "k01_pod_reader",
+  "family": "k8s",
+  "provenance": {
+   "repository": "kubernetes/website",
+   "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+   "licence": "CC-BY-4.0",
+   "paths": [
+    "content/en/examples/access/simple-role.yaml",
+    "content/en/examples/access/simple-rolebinding-with-role.yaml"
+   ],
+   "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+  },
+  "synthetic_objects": [],
+  "sha256": {
+   "source.yaml": "a7d6628d3398b181101eedd237ccf4d8840bda9bf23d8a3c8568f03284e4a9f9"
+  }
+ },
+ "k02_secret_reader_rolebinding": {
+  "id": "k02_secret_reader_rolebinding",
+  "family": "k8s",
+  "provenance": {
+   "repository": "kubernetes/website",
+   "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+   "licence": "CC-BY-4.0",
+   "paths": [
+    "content/en/examples/access/simple-clusterrole.yaml",
+    "content/en/examples/access/simple-rolebinding-with-clusterrole.yaml"
+   ],
+   "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+  },
+  "synthetic_objects": [],
+  "sha256": {
+   "source.yaml": "4a1856a6b46964eda44baa9dbccd891854939ee2e858bd7394baac29b9bd7004"
+  }
+ },
+ "k03_secret_reader_global": {
+  "id": "k03_secret_reader_global",
+  "family": "k8s",
+  "provenance": {
+   "repository": "kubernetes/website",
+   "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+   "licence": "CC-BY-4.0",
+   "paths": [
+    "content/en/examples/access/simple-clusterrole.yaml",
+    "content/en/examples/access/simple-clusterrolebinding.yaml"
+   ],
+   "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+  },
+  "synthetic_objects": [],
+  "sha256": {
+   "source.yaml": "e33fb91b07b3d95f07ca67ef90572ec6707db1ffed382069806a4267c04f5d02"
+  }
+ },
+ "k04_monitoring_aggregation": {
+  "id": "k04_monitoring_aggregation",
+  "family": "k8s",
+  "provenance": {
+   "repository": "kubernetes/website",
+   "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+   "licence": "CC-BY-4.0",
+   "paths": [
+    "content/en/docs/reference/access-authn-authz/rbac.md#aggregated-clusterroles"
+   ],
+   "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+  },
+  "synthetic_objects": [
+   "sre-monitoring"
+  ],
+  "sha256": {
+   "source.yaml": "9712356004da6d939ae3339b7dee6886264d43f13bcdf1e819f2f7e12ca18f4e"
+  }
+ },
+ "k05_crontab_default_roles": {
+  "id": "k05_crontab_default_roles",
+  "family": "k8s",
+  "provenance": {
+   "repository": "kubernetes/website",
+   "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+   "licence": "CC-BY-4.0",
+   "paths": [
+    "content/en/docs/reference/access-authn-authz/rbac.md#aggregated-clusterroles",
+    "content/en/docs/reference/access-authn-authz/rbac.md#user-facing-roles"
+   ],
+   "note": "CronTab ClusterRoles verbatim; admin/edit/view aggregation skeleton from upstream bootstrap policy, rules omitted (synthetic); bindings synthetic."
+  },
+  "synthetic_objects": [
+   "admin",
+   "edit",
+   "view",
+   "ana-admin",
+   "ed-edit",
+   "vic-view"
+  ],
+  "sha256": {
+   "source.yaml": "834547ec6923ae4e6c1d453817bca15b5b3bd2319e2dcd9deae0dd4994f774f8"
+  }
+ },
+ "k06_configmap_updater": {
+  "id": "k06_configmap_updater",
+  "family": "k8s",
+  "provenance": {
+   "repository": "kubernetes/website",
+   "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+   "licence": "CC-BY-4.0",
+   "paths": [
+    "content/en/docs/reference/access-authn-authz/rbac.md#referring-to-resources"
+   ],
+   "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+  },
+  "synthetic_objects": [
+   "ci-configmap"
+  ],
+  "sha256": {
+   "source.yaml": "e6e847b1a5ef0d37386273a451f9070985a0597033a51821961203719c21ca21"
+  }
+ },
+ "k07_subresource_wildcard": {
+  "id": "k07_subresource_wildcard",
+  "family": "k8s",
+  "provenance": {
+   "repository": "kubernetes/website",
+   "commit": "218c4cee69d6f06f24645b4e7abc37c2f59eb913",
+   "licence": "CC-BY-4.0",
+   "paths": [
+    "content/en/docs/reference/access-authn-authz/rbac.md#referring-to-resources"
+   ],
+   "note": "YAML objects are verbatim documentation examples; requests and objects marked synthetic are experiment filler."
+  },
+  "synthetic_objects": [
+   "lee-logs",
+   "platform-super"
+  ],
+  "sha256": {
+   "source.yaml": "6b283515f42763214d5009d4794ac9253a8efe863bbf71544898c7241894bc0f"
+  }
+ }
+}

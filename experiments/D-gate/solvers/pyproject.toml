@@ -1,0 +1,12 @@
+[project]
+name = "dgate-solvers"
+version = "0.1.0"
+description = "D-gate reference verifier for the Kubernetes RBAC items (Z3), locked separately"
+requires-python = ">=3.12"
+dependencies = [
+    "z3-solver==5.1.0.0",
+    "pyyaml>=6",
+]
+
+[tool.uv]
+package = false

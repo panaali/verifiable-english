@@ -1,0 +1,171 @@
+{
+ "objects": [
+  {
+   "kind": "ClusterRole",
+   "metadata": {
+    "name": "aggregate-cron-tabs-edit",
+    "labels": {
+     "rbac.authorization.k8s.io/aggregate-to-admin": "true",
+     "rbac.authorization.k8s.io/aggregate-to-edit": "true"
+    }
+   },
+   "rules": [
+    {
+     "apiGroups": [
+      "stable.example.com"
+     ],
+     "resources": [
+      "crontabs"
+     ],
+     "verbs": [
+      "get",
+      "list",
+      "watch",
+      "create",
+      "update",
+      "patch",
+      "delete"
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "ClusterRole",
+   "metadata": {
+    "name": "aggregate-cron-tabs-view",
+    "labels": {
+     "rbac.authorization.k8s.io/aggregate-to-view": "true"
+    }
+   },
+   "rules": [
+    {
+     "apiGroups": [
+      "stable.example.com"
+     ],
+     "resources": [
+      "crontabs"
+     ],
+     "verbs": [
+      "get",
+      "list",
+      "watch"
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "ClusterRole",
+   "metadata": {
+    "name": "admin"
+   },
+   "aggregationRule": {
+    "clusterRoleSelectors": [
+     {
+      "matchLabels": {
+       "rbac.authorization.k8s.io/aggregate-to-admin": "true"
+      }
+     }
+    ]
+   },
+   "synthetic": true
+  },
+  {
+   "kind": "ClusterRole",
+   "metadata": {
+    "name": "edit",
+    "labels": {
+     "rbac.authorization.k8s.io/aggregate-to-admin": "true"
+    }
+   },
+   "aggregationRule": {
+    "clusterRoleSelectors": [
+     {
+      "matchLabels": {
+       "rbac.authorization.k8s.io/aggregate-to-edit": "true"
+      }
+     }
+    ]
+   },
+   "synthetic": true
+  },
+  {
+   "kind": "ClusterRole",
+   "metadata": {
+    "name": "view",
+    "labels": {
+     "rbac.authorization.k8s.io/aggregate-to-edit": "true"
+    }
+   },
+   "aggregationRule": {
+    "clusterRoleSelectors": [
+     {
+      "matchLabels": {
+       "rbac.authorization.k8s.io/aggregate-to-view": "true"
+      }
+     }
+    ]
+   },
+   "synthetic": true
+  },
+  {
+   "kind": "RoleBinding",
+   "metadata": {
+    "name": "ana-admin",
+    "namespace": "team-a"
+   },
+   "subjects": [
+    {
+     "kind": "User",
+     "name": "ana",
+     "apiGroup": "rbac.authorization.k8s.io"
+    }
+   ],
+   "roleRef": {
+    "kind": "ClusterRole",
+    "name": "admin",
+    "apiGroup": "rbac.authorization.k8s.io"
+   },
+   "synthetic": true
+  },
+  {
+   "kind": "RoleBinding",
+   "metadata": {
+    "name": "ed-edit",
+    "namespace": "team-a"
+   },
+   "subjects": [
+    {
+     "kind": "User",
+     "name": "ed",
+     "apiGroup": "rbac.authorization.k8s.io"
+    }
+   ],
+   "roleRef": {
+    "kind": "ClusterRole",
+    "name": "edit",
+    "apiGroup": "rbac.authorization.k8s.io"
+   },
+   "synthetic": true
+  },
+  {
+   "kind": "RoleBinding",
+   "metadata": {
+    "name": "vic-view",
+    "namespace": "team-a"
+   },
+   "subjects": [
+    {
+     "kind": "User",
+     "name": "vic",
+     "apiGroup": "rbac.authorization.k8s.io"
+    }
+   ],
+   "roleRef": {
+    "kind": "ClusterRole",
+    "name": "view",
+    "apiGroup": "rbac.authorization.k8s.io"
+   },
+   "synthetic": true
+  }
+ ]
+}
