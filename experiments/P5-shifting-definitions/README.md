@@ -1,5 +1,18 @@
 # P5 materials and staged duel runner
 
+**2026-09-22 completed v10 dev audit:** 96/96 judgments, but dev remains unpassed.
+Reanalysis with the submitted S/L-only ratings gives Gemini L shift=3/4,
+smuggle=2/4 and Qwen S shift=1/4. Seven otherwise eligible X/VE detections
+lack ratings; no eligible S/L detection is blocked by rater disagreement.
+X completes only 2/12 protocols and VE has 0/36 successful artifact replays;
+X/VE benign remains 0/4 per judge under the registered protocol vetoes.
+See [DEV-V10-DIAGNOSIS.md](DEV-V10-DIAGNOSIS.md) for the full cause tables,
+Cohen kappas and proposed (unapplied) adjudication rule. The stale-summary and
+X annotated-question decoder defects are patched prospectively; the executable
+freeze now requires review/refreeze before further authorized inference.
+**Recommendation: do not start scored execution.** Earlier statuses below are
+historical.
+
 **2026-09-22 v10 harness amendment:** X/VE dev are superseded by harness defect
 and prepared for fresh run identities; 48 final L/S judgments are retained.
 The offline synthetic delivery/checker smoke passes; it supplies no efficacy

@@ -47,16 +47,14 @@
       "events": [],
       "interrupted_charge_usd": "0",
       "interrupted_total_usd": "0",
-      "pending": {
-        "block:study-v9/dual_judge/dev": "9.0329838876"
-      },
+      "pending": {},
       "revisions": {
         "pro": "gemini-3.1-pro-preview",
         "replication": "{\"model\":\"qwen/qwen-2.5-72b-instruct\",\"provider\":\"DeepInfra\",\"system_fingerprint\":null}",
         "replication/paraphrase/DeepInfra": "{\"model\":\"qwen/qwen-2.5-72b-instruct\",\"provider\":\"DeepInfra\",\"system_fingerprint\":null}"
       },
-      "spent_usd": "3.7540651622",
-      "uncommitted_usd": "27.2129509502"
+      "spent_usd": "6.4484455664",
+      "uncommitted_usd": "33.5515544336"
     }
   },
   "policy": "Interrupted calls charged at full ceiling; no trial or reply inferred. Identical requests may be re-issued within existing caps. Revision charges remain inside study envelopes, not added twice."

@@ -108,3 +108,10 @@ evidence and must never enter judge packets or reviewer attachments.
 reference labels and exact localization sets. They are scoring audit artifacts,
 barred from model contexts and blinded reviewer attachments, like the existing
 construction/scoring history listed above.
+
+The completed replacement-dev audit `DEV-V10-DIAGNOSIS.md` and
+`checks/dev-v10-diagnosis.json` join active v10 X/VE and retained S/L responses
+to hidden labels, judge/arm identities and both raters. They are scoring/audit
+artifacts, barred from all model contexts and blinded reviewer/adjudicator
+attachments. Only the original isolated blind exports may be used for further
+ratings; the proposed adjudication rule is not applied by this audit.

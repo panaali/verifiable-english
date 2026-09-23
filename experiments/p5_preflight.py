@@ -381,6 +381,21 @@ def provider_smoke(cap,only_openrouter=False,*,cached_only=False):
     return p.gate_receipt('provider-preflight',result,f['manifest_sha256'])
 
 
+def refresh_dev_summary(analysis, rows, ratings):
+    """Keep the cached dev summary in sync without replacing execution evidence."""
+    path=p.HERE/'checks/dev.json'
+    report=json.loads(path.read_text())
+    report.update(analysis)
+    keys={digest({k:r[k] for k in ('item_id','condition','judge','answer')}) for r in rows}
+    fidelity=bool(keys) and all(len({r['rater_id'] for r in ratings
+        if r['response_sha256']==key and r.get('source_fidelity') is True})>=2 for key in keys)
+    report['source_fidelity_passed']=fidelity
+    report['passed']=bool(fidelity and report.get('contract_passed') and
+        not report.get('stopped') and not report.get('halted_judges') and report.get('missing')==0)
+    write_json(path,report)
+    return report
+
+
 def explanations(split,export=None,submit=None):
     rows=p.dev_revision.trials(split);items={i['id']:i for i in p.scheduled_materials(split)}
     from experiments.p5_isolation import blind_packet, export_isolated, validate_exposure
@@ -409,11 +424,8 @@ def explanations(split,export=None,submit=None):
             p.append(p.dev_revision.run_path(split,'ratings.jsonl'),{k:v for k,v in r.items() if k not in ('packet','answer')})
         if split=='dev':
             ratings=read(p.dev_revision.run_path('dev','ratings.jsonl'));ok=p.analyze(rows,p.materials('dev'),p.labels(),p.SCENARIOS[p.verify_freeze()['scenario']],ratings,allow_missing=True)
-            keys={digest({k:r[k] for k in ('item_id','condition','judge','answer')}) for r in rows}
-            fidelity=all(len({r['rater_id'] for r in ratings if r['response_sha256']==key and r.get('source_fidelity') is True})>=2 for key in keys)
-            report=json.loads((p.HERE/'checks/dev.json').read_text());report['source_fidelity_passed']=fidelity
-            report['passed']=fidelity and report.get('contract_passed') and not report.get('stopped') and report.get('missing')==0
-            write_json(p.HERE/'checks/dev.json',report)
+            refresh_dev_summary(ok,rows,ratings)
+            write_json(p.dev_revision.run_path('dev','analysis.json'),ok)
         return {'ratings_imported':len(incoming)}
     raise PreflightError('explanations requires --export or --submit')
 

@@ -198,11 +198,25 @@ def protocol_json(text):
 
 
 def question_text(value):
-    # Nonjudge prompts specify questions, without an item-level wire schema.
-    if isinstance(value,dict) and set(value)=={'question'}:
-        value=value['question']
+    # The critic prompt does not prescribe an item-level wire schema. Accept
+    # its observed text/question wrappers and typed annotation fields without
+    # forwarding annotations to an isolated copy or rewriting the question.
+    if isinstance(value,dict):
+        text_keys=set(value)&{'question','text'}
+        metadata=set(value)-text_keys
+        if len(text_keys)!=1 or not metadata<={'node_id','node_ids','nodes','type'}:
+            raise ValueError('question object requires one text field and only annotation fields')
+        for key in metadata:
+            field=value[key]
+            if key in ('node_ids','nodes'):
+                valid=isinstance(field,list) and all(isinstance(v,str) for v in field)
+            else:
+                valid=isinstance(field,str)
+            if not valid:
+                raise ValueError('invalid question annotation: '+key)
+        value=value[next(iter(text_keys))]
     if not isinstance(value,str):
-        raise ValueError('question must be text or a single question field')
+        raise ValueError('question must contain text')
     return value
 
 
@@ -563,7 +577,8 @@ def run(split,cap,resume=False):
         for c in clients.values():c.close()
     rows=dev_revision.trials(split)
     _,halted=infrastructure_state(book)
-    report=analyze(rows,scheduled_materials(split),labels(),plan,allow_missing=True)
+    report=analyze(rows,scheduled_materials(split),labels(),plan,
+        ratings=read(dev_revision.run_path(split,'ratings.jsonl')),allow_missing=True)
     report.update(stopped=stopped,halted_judges=halted)
     if split=='dev':
         # Source-fidelity must be manually reviewed; contract alone never passes dev.
@@ -764,6 +779,10 @@ def main(argv=None):
                 'worst_flaw_accuracy':r['worst_flaw'][a], 'benign_completion':r['accuracy'][a]['benign']} for a in ARMS}
                 for j,r in result['judges'].items()}
             write_json(dev_revision.run_path(args.split,'analysis.json'),result)
+            if args.split=='dev':
+                from experiments.p5_preflight import refresh_dev_summary
+                refresh_dev_summary(result,dev_revision.trials('dev'),
+                    read(dev_revision.run_path('dev','ratings.jsonl')))
         print(json.dumps(result,indent=2,default=str))
         return 2 if result.get('requested_models_passed',result.get('passed')) is False else 0
     except (PreflightError,ValueError,FileNotFoundError) as exc:

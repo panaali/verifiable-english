@@ -11,6 +11,8 @@ from experiments.p5_materials import HERE
 BARRED = (
     'DEV-DIAGNOSIS.md',
     'checks/dev-diagnosis.json',
+    'DEV-V10-DIAGNOSIS.md',
+    'checks/dev-v10-diagnosis.json',
     'labels.jsonl.gz',
     'materials/round5-reviewed-packets.jsonl.gz',
     'materials/rejected-v7-paraphrases.jsonl.gz',

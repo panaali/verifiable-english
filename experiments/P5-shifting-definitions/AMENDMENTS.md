@@ -1049,3 +1049,97 @@ judge fields, three sibling-disjoint assignments, and one dossier per file.
 Rating fields are blank. Each assignment needs two independent raters under
 the existing exposure rules; no ratings are invented by this export. Early
 L/S submissions remain valid when later v10 X/VE judgments are added.
+
+## Amendment (2026-09-22): v10 dev rating join, stale summaries, and X question delivery
+
+Worker X re-ran `analyze --split dev` with the submitted rating ledger **before
+editing frozen source**, using `UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex` and
+`uv run --offline`. There were **no paid calls**. Active coverage is 96/96:
+48 retained v9 L/S judgments and 48 replacement v10 X/VE judgments. The 96
+submitted rating records cover only the 48 retained L/S judgments (two raters
+each), not any replacement X/VE judgment. Response-hash joins are correct.
+Opus accepts 19/48 explanations and Astra 36/48. No adjudications are present.
+
+The corrected scores are Gemini L shift **3/4**, smuggle **2/4**, and Qwen S
+shift **1/4**. All other flaw cells remain zero. There are **13** judgments
+meeting verdict, issue type and exact localization: six S/L have unanimous
+positive explanation ratings and receive credit; seven X/VE are blocked only
+by missing ratings. **None is blocked by rater disagreement.** All 17 grounding
+disagreements occur on flawed judgments already failing a deterministic check.
+Across all 48 paired responses, Cohen kappa is grounding **0.3584905660**,
+source fidelity **0.5**, protocol recognition **0.0**. Among the six eligible
+rated flaw judgments, every field agrees, with constant marginals (kappa
+undefined). X/VE kappa is unavailable, not zero. The full cross-tabulations,
+flaw-only kappas, exact response causes and checker replays are published in
+`DEV-V10-DIAGNOSIS.md` and `checks/dev-v10-diagnosis.json`.
+
+Two harness defects are fixed prospectively:
+
+1. Explanation import computed reanalysis but discarded it, updating only dev
+   gate flags. `analyze` updated only `runs/dev-v10/analysis.json`, leaving
+   `checks/dev.json` stale. Import now stores the reanalysis and updates the
+   cached dev summary; analyze also refreshes that summary. Execution/resume
+   analysis now consumes any existing submitted ratings. Execution provenance,
+   stopped/halting evidence and the fidelity gate are retained. This is a
+   reporting correction, not a changed scoring endpoint.
+2. The X critic prompt did not prescribe question-item types. Nine of the 12
+   new protocols returned a `question` or `text` string accompanied by
+   `node_id`, `node_ids`, `nodes`, or `type` annotations; the parser rejected
+   them before delivering any question. The decoder now accepts precisely one
+   text field plus those narrowly typed annotation fields, forwards only the
+   unchanged self-contained question string, and retains the complete raw
+   object in the critic history. Unknown/answer fields, ambiguous text fields,
+   malformed metadata, invalid JSON and incomplete fences still fail. Question
+   and commitment token limits, number of questions, isolated-copy context,
+   protocol lengths, prompts, model configs and budgets are unchanged.
+
+The other X delivery failure is a truncated follow-up fence, not salvaged.
+Only 2/12 actual X protocols completed, with two initial isolated answers total
+and no adaptive answers. The patch does **not** turn the nine failed historical
+protocols into successful protocols, invent missing answers, change original
+judgments or create replacement run identities.
+
+All 12 VE author/repair protocols still fail; **0/36** author/repair/defender
+artifacts replay successfully (six fail JSON delivery; 30 reach the checker and
+fail). These are authored syntax/schema failures, including incomplete closed
+claims, missing environment descriptions, malformed conjunction/conditional
+syntax, and an unbound variable. No valid artifact was found rejected by a
+checker defect. The harness does not rewrite these model artifacts. All 12 VE
+protocols retain local UNKNOWN results, exceeding the registered coverage limit.
+
+Benign is independent of explanation ratings. All four X benign protocols
+have unresolved delivery failures: two otherwise correct approvals per judge
+are vetoed. VE has two otherwise correct Gemini approvals and three Qwen
+approvals vetoed by failed authoring/unresolved obligations. Thus X and VE
+benign remain **0/4 for both judges** under the unchanged registered completion
+endpoint. Benign S/L remain Gemini S=3/4, L=4/4; Qwen S=4/4, L=1/4.
+
+**Recommendation: do not start scored execution.** Finish blind X/VE ratings,
+resolve review disagreements under a separately preregistered procedure, and
+address X delivery and VE feasibility before committing the scored budget.
+`DEV-V10-DIAGNOSIS.md` proposes a third independent blinded adjudicator for
+all field disagreements, with exact source evidence, response/rating digest
+bindings, and unresolved cases uncredited. It is **not applied** here. The
+source-fidelity gate would need an explicit reviewed amendment to consume its
+adjudications. No rater substitution, label change, endpoint relaxation,
+outcome-based exclusion, extra inference or paid rerun is authorized/applied.
+Any changed authoring intervention requires separate preregistration as a new
+feasibility revision; repeatedly re-buying failed VE cases is not a remedy.
+
+Frozen executable source has changed, so the existing execution freeze remains
+historical and **does not authorize new inference**. Before any separately
+authorized inference, review/refreeze/timestamp the changed executable and
+satisfy all gates. The offline diagnosis hashes every trial, local-event,
+material, label and rating input plus the paid ledger and verifies they remain
+unchanged. It refreshes the historical summary without minting a new freeze.
+
+Validation includes replay of every VE artifact, all 96 paid response/prompt/
+history joins, all nine observed annotated X critic responses through synthetic
+isolated-copy tests, malformed/ambiguous wrapper rejection, token-limit
+preservation, real rating-import integration and independently checkable Cohen
+cross-tabulation tests. No synthetic answer is written to the study artifacts.
+
+Final validation: `UV_CACHE_DIR=/private/tmp/ve-uv-cache-codex uv run --offline
+pytest -q tests/test_p5*.py` — **235 passed** (one third-party deprecation
+warning). The tracked blinding audit includes the two new diagnosis artifacts
+as explicitly barred, documented scoring evidence. `git diff --check` passes.
