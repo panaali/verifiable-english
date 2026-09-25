@@ -2,7 +2,7 @@ import VE.Bridge
 import VE.Closure.Bridge
 import VE.CertificateWire
 import VE.Order.ProfileGate
-import VE.Order.Wire
+import VE.Order.Surface
 
 open Lean
 
@@ -24,7 +24,7 @@ def main (args : List String) : IO UInt32 := do
   | .ok cases =>
     let results := cases.mapIdx fun index c => match c with
       | .ok j =>
-        if order then VE.Order.Wire.runCaseReported j
+        if order then VE.Order.Surface.runCaseReported j
         else if certificates then VE.CertificateWire.runCaseReported j
         else VE.Order.runEvaluationCaseReported j
       | .error message => Json.mkObj ([("status", .str "error"),
