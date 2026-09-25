@@ -148,6 +148,10 @@ class _Parser:
         if depth > MAX_DEPTH:
             self.error(f"formula exceeds nesting limit {MAX_DEPTH}", cls=ResourceLimit)
         start = self.i
+        from .surface.registry import strict_dispatch
+        matched = strict_dispatch(self.s[self.i:])
+        if matched is not None:
+            return matched[1].strict_parser_hook(self, depth)
         if self.s.startswith(("tc[", "rtc["), self.i):
             kind = "star" if self.s.startswith("rtc[", self.i) else "plus"
             self.i += 4 if kind == "star" else 3

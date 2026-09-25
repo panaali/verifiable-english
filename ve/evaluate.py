@@ -73,6 +73,10 @@ class _Evaluator:
 
     def formula(self, f: Any, bindings: tuple[tuple[str, str], ...] = ()) -> tuple[bool, Explanation | None]:
         self.tick()
+        from .surface.registry import by_node
+        record = by_node(f)
+        if record is not None and record.evaluator_hook is not None:
+            return record.evaluator_hook(self, f, bindings)
         shown = bindings
         if isinstance(f, Top): return True, self.explanation("top", True, shown)
         if isinstance(f, Bottom): return False, self.explanation("bottom", False, shown)

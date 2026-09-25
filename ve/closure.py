@@ -77,6 +77,12 @@ def induction_candidates(env, branch, hints):
 
 def map_free(formula, replacement, depth=0):
     """Replace outer indices; preserve and shift through every local binder."""
+    from .surface.registry import by_node
+    record = by_node(formula)
+    if record is not None and record.traversal_hooks is not None:
+        hook = record.traversal_hooks.get("map_free")
+        if hook is not None:
+            return hook(formula, replacement, depth)
     def term(t):
         if type(t) is ast.Const or t.index < depth:
             return t
