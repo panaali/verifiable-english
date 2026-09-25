@@ -1035,8 +1035,16 @@ def english_lark_grammar(env, **options):
     rules.append('atom: ' + ' | '.join(atoms))
     rules.append('relative: ' + (' | '.join(relatives) or 'IMPOSSIBLE'))
     rules.append('object_relative: ' + (' | '.join(object_relatives) or 'IMPOSSIBLE'))
-    rules.extend(line for record in surface_registry.records() if record.grammar_hook is not None
-                 and surface_registry.enabled(record, env)
-                 for line in record.grammar_hook(env, words))
+    for record in surface_registry.records():
+        if record.grammar_hook is None or not surface_registry.enabled(record, env):
+            continue
+        extension = list(record.grammar_hook(env, words))
+        if record.parser_hook is not None:
+            production = record.grammar_production
+            if (not re.fullmatch(r"[a-z][a-z0-9_]*", production) or
+                    f"%extend formula: {production}" not in extension or
+                    not any(line.startswith(production + ":") for line in extension)):
+                raise SyntaxError(f"English grammar hook for {record.wire_tag} must extend formula via {production}")
+        rules.extend(extension)
     rules.extend(['IMPOSSIBLE: /[^\\s\\S]/', '%import common.WS', '%ignore WS'])
     return '\n'.join(rules) + '\n'
