@@ -53,9 +53,24 @@ theorem surface_route_gate (j r : Json) (h : Surface.runCase j = .ok r) :
     obtain ⟨v, hv, _⟩ := bind_ok h
     exact ⟨env, he, order_decode_profiles env v hv⟩
 
-/-- closure@0 x order@0 stays rejected: an environment whose declared profiles
-contain closure@0 and order@0 fails on every route of `ve_conformance`. -/
+/-- The original three-route profile gate, including the order wire route. -/
 theorem combined_profiles_rejected (j r env : Json) (ps : List String)
+    (he : j.getObjVal? "environment" = .ok env)
+    (hp : (env.getObjVal? "profiles" >>= VE.Bridge.strings) = .ok ps)
+    (hc : "closure@0" ∈ ps) (ho : "order@0" ∈ ps) :
+    VE.CertificateWire.runCase j ≠ .ok r ∧ runEvaluationCase j ≠ .ok r ∧
+      Wire.runCase j ≠ .ok r := by
+  obtain ⟨h1, h2⟩ := order_profile_gate j r env ps he hp ho
+  refine ⟨h1, h2, fun h => ?_⟩
+  obtain ⟨env', he', _, hps⟩ := order_route_gate j r h
+  rw [he] at he'
+  cases he'
+  rw [hp] at hps
+  cases hps
+  simp [Wire.orderProfiles] at hc
+
+/-- The executable dispatcher also rejects combined closure and order profiles. -/
+theorem combined_profiles_surface_rejected (j r env : Json) (ps : List String)
     (he : j.getObjVal? "environment" = .ok env)
     (hp : (env.getObjVal? "profiles" >>= VE.Bridge.strings) = .ok ps)
     (hc : "closure@0" ∈ ps) (ho : "order@0" ∈ ps) :

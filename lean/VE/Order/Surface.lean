@@ -4,7 +4,36 @@ import VE.Surface
 /-! Executable strict order surface. This is boundary parsing code; checked
 formulas still pass through `Formula.check` before use by semantic routes. -/
 namespace VE.Order.Surface
-open VE.Surface (consume readIdent boundary)
+open VE.Surface (consume readIdent boundary identChar)
+
+/-- Apply the runtime identifier budget without changing the unbounded lexical
+reader used by the source round-trip proofs. -/
+def oversizedIdentifier (source : String) : Bool :=
+  let (_, oversized) := source.toList.foldl (fun (state : Nat × Bool) c =>
+    let (length, bad) := state
+    if identChar c then
+      let next := if length > 0 then length + 1
+        else if c ≥ 'a' && c ≤ 'z' then 1 else 0
+      (next, bad || next > 64)
+    else (0, bad)) (0, false)
+  oversized
+
+/-- Decimal token length includes its adjacent minus sign, while digits in an
+identifier are counted only by the identifier budget. -/
+def oversizedNumeral (source : String) : Bool :=
+  let (_, _, _, oversized) := source.toList.foldl
+    (fun (state : Bool × Nat × Bool × Bool) c =>
+      let (inIdent, digits, negative, bad) := state
+      if (c ≥ 'a' && c ≤ 'z') || c == '_' then
+        (true, 0, false, bad)
+      else if c ≥ '0' && c ≤ '9' then
+        if inIdent then (true, 0, false, bad)
+        else
+          let next := digits + 1
+          (false, next, negative, bad || next + (if negative then 1 else 0) > 40)
+      else if c == '-' then (false, 0, true, bad)
+      else (false, 0, false, bad)) (false, 0, false, false)
+  oversized
 
 def readNumeral (input : List Char) : Option (Int × List Char) := do
   let (sign, rest) := match input with
@@ -172,7 +201,11 @@ def runCase (j : Json) : Except String Json := do
     let vocabulary ← Wire.decodeEnvironment (← j.getObjVal? "environment")
     let source ← j.getObjValAs? String "source"
     if source.utf8ByteSize > 65536 then throw "ResourceLimit: source size"
+    if oversizedIdentifier source then throw "ResourceLimit: identifier length"
+    if oversizedNumeral source then throw "ResourceLimit: numeral length"
     let some formulas := parse vocabulary.environment source | throw "invalid order surface"
+    for formula in formulas do
+      let _ ← Wire.decodeFormula 64 (formulaJson formula)
     if (formulas.map Wire.formulaNodes).foldl (· + ·) 0 > 10000 then
       throw "ResourceLimit: AST node count"
     pure (Json.mkObj [("id", toJson id), ("status", toJson "ok"),
