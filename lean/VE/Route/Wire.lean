@@ -272,7 +272,7 @@ def runOrder (profiles : List String) (environment : Json) (v : VE.Order.Vocabul
 route order or the shared cycle diagnostic. -/
 def decodeNodes (j : Json) : Except String (List DepNode) := do
   let items := (← j.getArr?).toList
-  if items.length > 1024 then throw "ResourceLimit: dependency graph size"
+  if items.length > 256 then throw "ResourceLimit: dependency graph size"
   items.mapM fun item => do
     exactFields item ["name", "mentions"]
     pure ⟨← stringField item "name", ← strings (← item.getObjVal? "mentions")⟩
