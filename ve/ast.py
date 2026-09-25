@@ -370,9 +370,11 @@ class _Decoder:
         if type(data) is not list or not data or type(data[0]) is not str:
             raise SyntaxError("AST nodes must be nonempty tagged JSON arrays")
         tag = data[0]
-        from .surface.registry import by_tag, formula_arities
-        arities = {"var": 2, "const": 2, "num": 2, "add": 3, "scale": 3} if term else formula_arities()
-        if tag not in arities or len(data) != arities[tag]:
+        from .surface.registry import by_tag
+        from .wire import formula_tag_arity
+        arity = ({"var": 2, "const": 2, "num": 2, "add": 3, "scale": 3}.get(tag)
+                 if term else formula_tag_arity(tag))
+        if arity is None or len(data) != arity:
             raise SyntaxError(f"Unknown AST tag or incorrect arity: {tag!r}")
         record = by_tag(tag)
         if record is not None and record.wire_decoder is not None:
