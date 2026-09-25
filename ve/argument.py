@@ -59,6 +59,12 @@ def _sequence(value, label):
     return tuple(value)
 
 
+def _label(value):
+    """Claim labels follow the route grammar (PLAN-EXPAND2 3.6), as in Lean."""
+    from .admission import validate_label
+    return validate_label(_text(value, "Claim label"))
+
+
 def _text(value, label):
     if type(value) is not str or not value:
         raise VEError(f"{label} must be a nonempty string")
@@ -93,7 +99,7 @@ class Claim:
                 raise VEError("Claim AST does not match its exact source")
         source = source.decode("ascii") if type(source) is bytes else source
         return cls(name, source, ast, env.environment_id, source_id(source, env),
-                   meaning_id(env, ast), evidence_ids, _text(label, "Claim label"))
+                   meaning_id(env, ast), evidence_ids, _label(label))
 
     @property
     def claim_id(self):
