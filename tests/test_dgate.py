@@ -7,6 +7,7 @@ import importlib.util
 import json
 import subprocess
 import sys
+import types
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -940,16 +941,57 @@ def test_ots_validation_fails_closed_without_the_library(monkeypatch):
     assert not hasattr(R, "_ots_attestations_manual") and not hasattr(R, "_Reader")   # no fallback parser
 
 
+def test_preflight_reports_missing_ots_library_cleanly(repo, monkeypatch):
+    monkeypatch.setitem(sys.modules, "opentimestamps.core.timestamp", None)
+    with pytest.raises(SystemExit, match="freeze check failed; no model calls") as e:
+        R.check_freeze("acct", "high")
+    assert "uv sync" in str(e.value)
+
+
 def test_freeze_record(repo):
     fr = json.loads((repo / R.REL / "FREEZE.json").read_text())
     assert fr["account_label"] == "acct" and fr["model"] == MODEL and fr["system_sha256"] == sha(SYSTEM)
     assert "ve_experiments/claude_cli.py" in fr["files"] and "ve/stream_audit.py" in fr["files"]
+    assert {"pyproject.toml", "uv.lock"} <= fr["files"].keys()
+    assert {"pyproject.toml", "uv.lock"} <= set(fr["covered_paths"])
     assert len(fr["frozen_commit"]) == 40 and fr["claude_binary_sha256"] == "binsha"
     assert fr["arms"]["high"]["effort"] == "high" and "context_date" not in fr["arms"]["high"]
     assert R.check_freeze("acct", "high")["account_label"] == "acct"
     assert fr["account_uuid_sha256"] == sha(f"claude-oauth-account:{ACCOUNT_UUID}")
     assert ACCOUNT_UUID not in (repo / R.REL / "FREEZE.json").read_text()      # only the hash is kept
     assert fr["endpoint_controls"] == R.endpoint_controls()
+
+
+def test_preflight_accepts_local_venv_modules_but_rejects_uncovered_repo_modules(repo, monkeypatch):
+    # The normal fixture's imported dependencies live outside its temporary repository.
+    # Place a loaded module in an actual worktree-local .venv site-packages tree.
+    site = repo / ".venv" / "lib" / f"python{sys.version_info.major}.{sys.version_info.minor}" / "site-packages"
+    vendor = site / "vendor_package" / "__init__.py"
+    vendor.parent.mkdir(parents=True)
+    vendor.write_text("VERSION = 1\n")
+    (repo / ".git" / "info" / "exclude").write_text(".venv/\n")
+    module = types.ModuleType("dgate_test_vendor")
+    module.__file__ = str(vendor)
+    monkeypatch.setitem(sys.modules, module.__name__, module)
+    assert R.check_freeze("acct", "high")["account_label"] == "acct"
+
+    source = repo / "uncovered.py"
+    source.write_text("VERSION = 1\n")
+    _git(repo, "add", "uncovered.py")
+    _git(repo, "commit", "-q", "-m", "uncovered source")
+    other = types.ModuleType("dgate_test_uncovered")
+    other.__file__ = str(source)
+    monkeypatch.setitem(sys.modules, other.__name__, other)
+    with pytest.raises(SystemExit, match="loaded module outside the covered paths: uncovered.py"):
+        R.check_freeze("acct", "high")
+
+
+@pytest.mark.parametrize("name", ["pyproject.toml", "uv.lock"])
+def test_freeze_rejects_dependency_pin_changes(repo, name):
+    (repo / name).write_text("changed dependency resolution\n")
+    _git(repo, "commit", "-q", "-am", "change dependencies")
+    with pytest.raises(SystemExit, match="changed since the frozen commit"):
+        R.check_freeze("acct", "high")
 
 
 def test_freeze_checks_the_oauth_account_uuid(repo, tmp_path):

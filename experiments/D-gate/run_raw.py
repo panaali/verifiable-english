@@ -2,14 +2,15 @@
 
 NOT RUN YET. Freeze procedure, then run (no model call before `run --execute`):
 
-    python experiments/D-gate/run_raw.py freeze --account <label>   # writes FREEZE.json
+    uv run experiments/D-gate/run_raw.py freeze --account <label>   # writes FREEZE.json
     git add experiments/D-gate/FREEZE.json && git commit -m "D gate: freeze"
-    python experiments/D-gate/run_raw.py stamp                      # FREEZE-STAMP.txt + OpenTimestamps .ots
+    uv run experiments/D-gate/run_raw.py stamp                      # FREEZE-STAMP.txt + OpenTimestamps .ots
     git add experiments/D-gate/FREEZE-STAMP.txt* && git commit -m "D gate: timestamp the freeze"
-    python experiments/D-gate/run_raw.py run --account <label> --arm high --execute
+    uv run experiments/D-gate/run_raw.py run --account <label> --arm high --execute
 
 `freeze` needs a clean committed tree. It records the commit and the SHA-256 of every frozen input
-(the study files, `ve_experiments/claude_cli.py` and its endpoint dependency `ve/stream_audit.py`),
+(the study files, `ve_experiments/claude_cli.py`, its endpoint dependency `ve/stream_audit.py`,
+`pyproject.toml`, and `uv.lock`),
 the SYSTEM prompt, the model, the account label and the SHA-256 of the account's OAuth account UUID
 (read from the CLI's account metadata `<config>/.claude.json` oauthAccount.accountUuid; only the hash is
 kept or printed, never a credential), the `claude` binary and version, the per-arm controls, and the
@@ -81,12 +82,12 @@ REL = "experiments/D-gate"
 FROZEN_FILES = tuple(f"{REL}/{n}" for n in (
     "items.json", "ground_truth.json", "prompts.jsonl", "analyze.py", "run_raw.py", "PREREG-DRAFT.md",
     "build_items.py", "ground_truth.py", "render_prompts.py", "domain_check.py")) + (
-    "ve_experiments/claude_cli.py", "ve/stream_audit.py")
-COVERED_PATHS = (REL, "ve", "ve_experiments")
+    "ve_experiments/claude_cli.py", "ve/stream_audit.py", "pyproject.toml", "uv.lock")
+COVERED_PATHS = (REL, "ve", "ve_experiments", "pyproject.toml", "uv.lock")
 RUNS = f"{REL}/runs/"
 STAMP = f"{REL}/FREEZE-STAMP.txt"
 OTS = f"{STAMP}.ots"
-OTS_CMD = ("uvx", "--from", "opentimestamps-client", "ots", "stamp")
+OTS_CMD = ("uvx", "--from", "opentimestamps-client==0.7.2", "ots", "stamp")
 
 
 class Stop(Exception):
@@ -273,6 +274,13 @@ def stamp_problems():
     return out
 
 
+def environment_module(rel):
+    """Modules installed in uv's worktree-local virtual environment are not repository source."""
+    parts = rel.parts
+    return (len(parts) >= 5 and parts[0] == ".venv" and parts[1] in ("lib", "lib64")
+            and parts[2].startswith("python") and parts[3] == "site-packages")
+
+
 def check_freeze(account, arm):
     """Every freeze condition, or exit. Returns the frozen record."""
     from ve_experiments.claude_cli import MODELS, SYSTEM, account_dir_for_label
@@ -305,7 +313,10 @@ def check_freeze(account, arm):
         problems.append("the OAuth account UUID of --account differs from the frozen one (hash compared)")
     if endpoint_controls() != frozen.get("endpoint_controls"):
         problems.append("host/endpoint controls differ from the freeze")
-    problems.extend(stamp_problems())
+    try:
+        problems.extend(stamp_problems())
+    except OtsLibraryMissing as e:
+        problems.append(str(e))
     if frozen_arm(arm) != frozen["arms"].get(arm):
         problems.append(f"controls for arm {arm} differ from the freeze")
     _, bsha, version = claude_binary()
@@ -315,8 +326,11 @@ def check_freeze(account, arm):
         p = getattr(m, "__file__", None)
         if p:
             rel = Path(p).resolve()
-            if ROOT in rel.parents and not any(str(rel.relative_to(ROOT)).startswith(c + "/") for c in COVERED_PATHS):
-                problems.append(f"loaded module outside the covered paths: {rel.relative_to(ROOT)}")
+            if ROOT in rel.parents:
+                source = rel.relative_to(ROOT)
+                if not environment_module(source) and not any(
+                        source == Path(c) or Path(c) in source.parents for c in COVERED_PATHS):
+                    problems.append(f"loaded module outside the covered paths: {source}")
     if problems:
         sys.exit("freeze check failed; no model calls:\n  " + "\n  ".join(problems))
     return frozen
