@@ -489,6 +489,8 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
                               max_models: int = 10_000,
                               max_evaluations: int = 1_000_000) -> CountermodelResult:
     """Find a bounded finite model on which two closed formulas differ."""
+    from .profiles import require_checker
+    require_checker(env)
     minimum_size = _validate_options(min_domain_size, max_domain_size, max_models,
                                      max_evaluations, nonempty_domains,
                                      nonvacuous_for, semantic_nonvacuity)
