@@ -87,6 +87,10 @@ def _premises(value: Sequence[Any]) -> tuple[Any, ...]:
 
 def _validate_inputs(env: Any, premises: Sequence[Any], conclusion: Any) -> tuple[Any, ...]:
     premises = _premises(premises)
+    from .background import background
+    generated = tuple(item.formula for item in background(env))
+    if premises[:len(generated)] != generated:
+        premises = generated + premises
     check_document(env, Document((*premises, conclusion)))
     return premises
 
