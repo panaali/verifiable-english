@@ -43,7 +43,7 @@ def _checker_build():
         "profiles": list(record.profiles),
         "hooks": {name: symbol(getattr(record, name)) for name in (
             "evaluator_hook", "witness_renderer", "parser_hook", "strict_parser_hook",
-            "printer_hook", "fluent_hook", "english_renderer", "grammar_hook",
+            "printer_hook", "fluent_hook", "english_renderer", "grammar_hook", "derivation_hook",
             "strict_grammar_hook", "wire_encoder", "wire_decoder", "fol_import_hook",
             "fol_export_hook", "typecheck_hook")},
         "traversal_hooks": ({name: symbol(fn) for name, fn in record.traversal_hooks.items()}
@@ -500,7 +500,10 @@ def _lean_deductions(graph, claims, records, reachable, executable):
     if not cases:
         return False, "No deduction certificates to replay"
     try:
-        proc = subprocess.run([str(executable), 'check-certificate'], input=canonical_json(cases),
+        route = graph.env.language == 've.core@0.2'
+        if route:
+            cases = [{**case, 'kind': 'certificate'} for case in cases]
+        proc = subprocess.run([str(executable), 'route' if route else 'check-certificate'], input=canonical_json(cases),
                               capture_output=True, timeout=60)
         rows = loads_json(proc.stdout)
         expected = [{'id': c['id'], 'status': 'ok', 'valid': True} for c in cases]
