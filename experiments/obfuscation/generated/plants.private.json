@@ -1,0 +1,142 @@
+[
+  {
+    "family": "shift_addend",
+    "id": "F32-00-B-shift_addend",
+    "lean": "def l0 : Int := ((72 : Int) * 78) + 372\ndef l1 : Int := ((57 : Int) * 65) + 246\ndef l2 : Int := ((78 : Int) * 63) + 144\ndef l3 : Int := ((66 : Int) * 62) + 138\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 + 15\ndef n8 : Int := n7 + 16\ndef n9 : Int := n8 - 14\ndef n10 : Int := n9 - 3\ndef n11 : Int := n10 - 1\ndef n12 : Int := n11 + 8\ndef n13 : Int := n12 - 4\ndef n14 : Int := n13 + 3\ndef n15 : Int := n14 + 11\ndef n16 : Int := n15 + 1\ndef n17 : Int := n16 - 5\ndef n18 : Int := n17 + 16\ndef n19 : Int := n18 - 2\ndef n20 : Int := n19 - 6\ndef n21 : Int := n20 - 8\ndef n22 : Int := n21 + 4\ndef n23 : Int := n22 + 12\ndef n24 : Int := n23 - 10\ndef n25 : Int := n24 - 9\ndef n26 : Int := n25 - 3\ndef n27 : Int := n26 - 15\ndef n28 : Int := n27 - 10\ndef n29 : Int := n28 + 3\ndef n30 : Int := n29 + 12\ndef n31 : Int := n30 + 14\ntheorem cert : n31 = 9136 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-00-B"
+  },
+  {
+    "family": "shift_addend",
+    "id": "F32-01-B-shift_addend",
+    "lean": "def l0 : Int := ((64 : Int) * 66) + 113\ndef l1 : Int := ((92 : Int) * 50) + 300\ndef l2 : Int := ((89 : Int) * 61) + 350\ndef l3 : Int := ((59 : Int) * 45) + 338\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 + 1\ndef n8 : Int := n7 + 5\ndef n9 : Int := n8 - 11\ndef n10 : Int := n9 + 9\ndef n11 : Int := n10 + 12\ndef n12 : Int := n11 - 6\ndef n13 : Int := n12 + 8\ndef n14 : Int := n13 + 11\ndef n15 : Int := n14 - 14\ndef n16 : Int := n15 - 4\ndef n17 : Int := n16 - 8\ndef n18 : Int := n17 - 12\ndef n19 : Int := n18 - 9\ndef n20 : Int := n19 + 11\ndef n21 : Int := n20 - 2\ndef n22 : Int := n21 + 15\ndef n23 : Int := n22 + 9\ndef n24 : Int := n23 - 15\ndef n25 : Int := n24 + 12\ndef n26 : Int := n25 - 2\ndef n27 : Int := n26 + 1\ndef n28 : Int := n27 + 6\ndef n29 : Int := n28 + 17\ndef n30 : Int := n29 + 3\ndef n31 : Int := n30 - 4\ntheorem cert : n31 = 6484 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-01-B"
+  },
+  {
+    "family": "shift_addend",
+    "id": "F32-02-B-shift_addend",
+    "lean": "def l0 : Int := ((60 : Int) * 46) + 158\ndef l1 : Int := ((46 : Int) * 89) + 490\ndef l2 : Int := ((70 : Int) * 95) + 284\ndef l3 : Int := ((50 : Int) * 80) + 134\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 - 12\ndef n8 : Int := n7 + 10\ndef n9 : Int := n8 + 14\ndef n10 : Int := n9 + 13\ndef n11 : Int := n10 - 3\ndef n12 : Int := n11 + 13\ndef n13 : Int := n12 - 5\ndef n14 : Int := n13 + 6\ndef n15 : Int := n14 - 15\ndef n16 : Int := n15 + 11\ndef n17 : Int := n16 - 10\ndef n18 : Int := n17 + 8\ndef n19 : Int := n18 + 8\ndef n20 : Int := n19 + 8\ndef n21 : Int := n20 - 2\ndef n22 : Int := n21 - 1\ndef n23 : Int := n22 - 9\ndef n24 : Int := n23 + 11\ndef n25 : Int := n24 + 5\ndef n26 : Int := n25 - 11\ndef n27 : Int := n26 - 9\ndef n28 : Int := n27 - 5\ndef n29 : Int := n28 - 13\ndef n30 : Int := n29 + 13\ndef n31 : Int := n30 - 17\ntheorem cert : n31 = 4710 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-02-B"
+  },
+  {
+    "family": "shift_addend",
+    "id": "F32-03-B-shift_addend",
+    "lean": "def l0 : Int := ((37 : Int) * 72) + 428\ndef l1 : Int := ((77 : Int) * 63) + 158\ndef l2 : Int := ((66 : Int) * 45) + 219\ndef l3 : Int := ((39 : Int) * 96) + 339\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 - 6\ndef n8 : Int := n7 - 1\ndef n9 : Int := n8 + 10\ndef n10 : Int := n9 - 5\ndef n11 : Int := n10 - 16\ndef n12 : Int := n11 + 5\ndef n13 : Int := n12 - 12\ndef n14 : Int := n13 + 2\ndef n15 : Int := n14 + 11\ndef n16 : Int := n15 - 6\ndef n17 : Int := n16 - 13\ndef n18 : Int := n17 - 15\ndef n19 : Int := n18 - 6\ndef n20 : Int := n19 + 5\ndef n21 : Int := n20 + 8\ndef n22 : Int := n21 - 5\ndef n23 : Int := n22 + 5\ndef n24 : Int := n23 + 11\ndef n25 : Int := n24 + 4\ndef n26 : Int := n25 + 2\ndef n27 : Int := n26 - 6\ndef n28 : Int := n27 + 9\ndef n29 : Int := n28 - 14\ndef n30 : Int := n29 + 16\ndef n31 : Int := n30 + 6\ntheorem cert : n31 = 8984 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-03-B"
+  },
+  {
+    "family": "shift_sum",
+    "id": "F32-00-B-shift_sum",
+    "lean": "def l0 : Int := (((72 : Int) * 78) + 373) + (-1)\ndef l1 : Int := ((57 : Int) * 65) + 246\ndef l2 : Int := ((78 : Int) * 63) + 144\ndef l3 : Int := ((66 : Int) * 62) + 138\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 + 15\ndef n8 : Int := n7 + 16\ndef n9 : Int := n8 - 14\ndef n10 : Int := n9 - 3\ndef n11 : Int := n10 - 1\ndef n12 : Int := n11 + 8\ndef n13 : Int := n12 - 4\ndef n14 : Int := n13 + 3\ndef n15 : Int := n14 + 11\ndef n16 : Int := n15 + 1\ndef n17 : Int := n16 - 5\ndef n18 : Int := n17 + 16\ndef n19 : Int := n18 - 2\ndef n20 : Int := n19 - 6\ndef n21 : Int := n20 - 8\ndef n22 : Int := n21 + 4\ndef n23 : Int := n22 + 12\ndef n24 : Int := n23 - 10\ndef n25 : Int := n24 - 9\ndef n26 : Int := n25 - 3\ndef n27 : Int := n26 - 15\ndef n28 : Int := n27 - 10\ndef n29 : Int := n28 + 3\ndef n30 : Int := n29 + 12\ndef n31 : Int := n30 + 14\ntheorem cert : n31 = 9136 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-00-B"
+  },
+  {
+    "family": "shift_sum",
+    "id": "F32-01-B-shift_sum",
+    "lean": "def l0 : Int := ((64 : Int) * 66) + 113\ndef l1 : Int := ((92 : Int) * 50) + 300\ndef l2 : Int := ((89 : Int) * 61) + 350\ndef l3 : Int := (((59 : Int) * 45) + 337) + (1)\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 + 1\ndef n8 : Int := n7 + 5\ndef n9 : Int := n8 - 11\ndef n10 : Int := n9 + 9\ndef n11 : Int := n10 + 12\ndef n12 : Int := n11 - 6\ndef n13 : Int := n12 + 8\ndef n14 : Int := n13 + 11\ndef n15 : Int := n14 - 14\ndef n16 : Int := n15 - 4\ndef n17 : Int := n16 - 8\ndef n18 : Int := n17 - 12\ndef n19 : Int := n18 - 9\ndef n20 : Int := n19 + 11\ndef n21 : Int := n20 - 2\ndef n22 : Int := n21 + 15\ndef n23 : Int := n22 + 9\ndef n24 : Int := n23 - 15\ndef n25 : Int := n24 + 12\ndef n26 : Int := n25 - 2\ndef n27 : Int := n26 + 1\ndef n28 : Int := n27 + 6\ndef n29 : Int := n28 + 17\ndef n30 : Int := n29 + 3\ndef n31 : Int := n30 - 4\ntheorem cert : n31 = 6484 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-01-B"
+  },
+  {
+    "family": "shift_sum",
+    "id": "F32-02-B-shift_sum",
+    "lean": "def l0 : Int := ((60 : Int) * 46) + 158\ndef l1 : Int := ((46 : Int) * 89) + 490\ndef l2 : Int := (((70 : Int) * 95) + 285) + (-1)\ndef l3 : Int := ((50 : Int) * 80) + 134\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 - 12\ndef n8 : Int := n7 + 10\ndef n9 : Int := n8 + 14\ndef n10 : Int := n9 + 13\ndef n11 : Int := n10 - 3\ndef n12 : Int := n11 + 13\ndef n13 : Int := n12 - 5\ndef n14 : Int := n13 + 6\ndef n15 : Int := n14 - 15\ndef n16 : Int := n15 + 11\ndef n17 : Int := n16 - 10\ndef n18 : Int := n17 + 8\ndef n19 : Int := n18 + 8\ndef n20 : Int := n19 + 8\ndef n21 : Int := n20 - 2\ndef n22 : Int := n21 - 1\ndef n23 : Int := n22 - 9\ndef n24 : Int := n23 + 11\ndef n25 : Int := n24 + 5\ndef n26 : Int := n25 - 11\ndef n27 : Int := n26 - 9\ndef n28 : Int := n27 - 5\ndef n29 : Int := n28 - 13\ndef n30 : Int := n29 + 13\ndef n31 : Int := n30 - 17\ntheorem cert : n31 = 4710 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-02-B"
+  },
+  {
+    "family": "shift_sum",
+    "id": "F32-03-B-shift_sum",
+    "lean": "def l0 : Int := ((37 : Int) * 72) + 428\ndef l1 : Int := (((77 : Int) * 63) + 157) + (1)\ndef l2 : Int := ((66 : Int) * 45) + 219\ndef l3 : Int := ((39 : Int) * 96) + 339\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 - 6\ndef n8 : Int := n7 - 1\ndef n9 : Int := n8 + 10\ndef n10 : Int := n9 - 5\ndef n11 : Int := n10 - 16\ndef n12 : Int := n11 + 5\ndef n13 : Int := n12 - 12\ndef n14 : Int := n13 + 2\ndef n15 : Int := n14 + 11\ndef n16 : Int := n15 - 6\ndef n17 : Int := n16 - 13\ndef n18 : Int := n17 - 15\ndef n19 : Int := n18 - 6\ndef n20 : Int := n19 + 5\ndef n21 : Int := n20 + 8\ndef n22 : Int := n21 - 5\ndef n23 : Int := n22 + 5\ndef n24 : Int := n23 + 11\ndef n25 : Int := n24 + 4\ndef n26 : Int := n25 + 2\ndef n27 : Int := n26 - 6\ndef n28 : Int := n27 + 9\ndef n29 : Int := n28 - 14\ndef n30 : Int := n29 + 16\ndef n31 : Int := n30 + 6\ntheorem cert : n31 = 8984 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-03-B"
+  },
+  {
+    "family": "redefine_leaf",
+    "id": "F32-00-B-redefine_leaf",
+    "lean": "def l0 : Int := (5988 : Int)\ndef l1 : Int := ((57 : Int) * 65) + 246\ndef l2 : Int := ((78 : Int) * 63) + 144\ndef l3 : Int := ((66 : Int) * 62) + 138\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 + 15\ndef n8 : Int := n7 + 16\ndef n9 : Int := n8 - 14\ndef n10 : Int := n9 - 3\ndef n11 : Int := n10 - 1\ndef n12 : Int := n11 + 8\ndef n13 : Int := n12 - 4\ndef n14 : Int := n13 + 3\ndef n15 : Int := n14 + 11\ndef n16 : Int := n15 + 1\ndef n17 : Int := n16 - 5\ndef n18 : Int := n17 + 16\ndef n19 : Int := n18 - 2\ndef n20 : Int := n19 - 6\ndef n21 : Int := n20 - 8\ndef n22 : Int := n21 + 4\ndef n23 : Int := n22 + 12\ndef n24 : Int := n23 - 10\ndef n25 : Int := n24 - 9\ndef n26 : Int := n25 - 3\ndef n27 : Int := n26 - 15\ndef n28 : Int := n27 - 10\ndef n29 : Int := n28 + 3\ndef n30 : Int := n29 + 12\ndef n31 : Int := n30 + 14\ntheorem cert : n31 = 9136 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-00-B"
+  },
+  {
+    "family": "redefine_leaf",
+    "id": "F32-01-B-redefine_leaf",
+    "lean": "def l0 : Int := ((64 : Int) * 66) + 113\ndef l1 : Int := ((92 : Int) * 50) + 300\ndef l2 : Int := ((89 : Int) * 61) + 350\ndef l3 : Int := (2993 : Int)\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 + 1\ndef n8 : Int := n7 + 5\ndef n9 : Int := n8 - 11\ndef n10 : Int := n9 + 9\ndef n11 : Int := n10 + 12\ndef n12 : Int := n11 - 6\ndef n13 : Int := n12 + 8\ndef n14 : Int := n13 + 11\ndef n15 : Int := n14 - 14\ndef n16 : Int := n15 - 4\ndef n17 : Int := n16 - 8\ndef n18 : Int := n17 - 12\ndef n19 : Int := n18 - 9\ndef n20 : Int := n19 + 11\ndef n21 : Int := n20 - 2\ndef n22 : Int := n21 + 15\ndef n23 : Int := n22 + 9\ndef n24 : Int := n23 - 15\ndef n25 : Int := n24 + 12\ndef n26 : Int := n25 - 2\ndef n27 : Int := n26 + 1\ndef n28 : Int := n27 + 6\ndef n29 : Int := n28 + 17\ndef n30 : Int := n29 + 3\ndef n31 : Int := n30 - 4\ntheorem cert : n31 = 6484 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-01-B"
+  },
+  {
+    "family": "redefine_leaf",
+    "id": "F32-02-B-redefine_leaf",
+    "lean": "def l0 : Int := ((60 : Int) * 46) + 158\ndef l1 : Int := ((46 : Int) * 89) + 490\ndef l2 : Int := (6934 : Int)\ndef l3 : Int := ((50 : Int) * 80) + 134\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 - 12\ndef n8 : Int := n7 + 10\ndef n9 : Int := n8 + 14\ndef n10 : Int := n9 + 13\ndef n11 : Int := n10 - 3\ndef n12 : Int := n11 + 13\ndef n13 : Int := n12 - 5\ndef n14 : Int := n13 + 6\ndef n15 : Int := n14 - 15\ndef n16 : Int := n15 + 11\ndef n17 : Int := n16 - 10\ndef n18 : Int := n17 + 8\ndef n19 : Int := n18 + 8\ndef n20 : Int := n19 + 8\ndef n21 : Int := n20 - 2\ndef n22 : Int := n21 - 1\ndef n23 : Int := n22 - 9\ndef n24 : Int := n23 + 11\ndef n25 : Int := n24 + 5\ndef n26 : Int := n25 - 11\ndef n27 : Int := n26 - 9\ndef n28 : Int := n27 - 5\ndef n29 : Int := n28 - 13\ndef n30 : Int := n29 + 13\ndef n31 : Int := n30 - 17\ntheorem cert : n31 = 4710 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-02-B"
+  },
+  {
+    "family": "redefine_leaf",
+    "id": "F32-03-B-redefine_leaf",
+    "lean": "def l0 : Int := ((37 : Int) * 72) + 428\ndef l1 : Int := (5009 : Int)\ndef l2 : Int := ((66 : Int) * 45) + 219\ndef l3 : Int := ((39 : Int) * 96) + 339\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 - 6\ndef n8 : Int := n7 - 1\ndef n9 : Int := n8 + 10\ndef n10 : Int := n9 - 5\ndef n11 : Int := n10 - 16\ndef n12 : Int := n11 + 5\ndef n13 : Int := n12 - 12\ndef n14 : Int := n13 + 2\ndef n15 : Int := n14 + 11\ndef n16 : Int := n15 - 6\ndef n17 : Int := n16 - 13\ndef n18 : Int := n17 - 15\ndef n19 : Int := n18 - 6\ndef n20 : Int := n19 + 5\ndef n21 : Int := n20 + 8\ndef n22 : Int := n21 - 5\ndef n23 : Int := n22 + 5\ndef n24 : Int := n23 + 11\ndef n25 : Int := n24 + 4\ndef n26 : Int := n25 + 2\ndef n27 : Int := n26 - 6\ndef n28 : Int := n27 + 9\ndef n29 : Int := n28 - 14\ndef n30 : Int := n29 + 16\ndef n31 : Int := n30 + 6\ntheorem cert : n31 = 8984 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-03-B"
+  },
+  {
+    "family": "weaken_root",
+    "id": "F32-00-B-weaken_root",
+    "lean": "def l0 : Int := ((72 : Int) * 78) + 373\ndef l1 : Int := ((57 : Int) * 65) + 246\ndef l2 : Int := ((78 : Int) * 63) + 144\ndef l3 : Int := ((66 : Int) * 62) + 138\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 + 15\ndef n8 : Int := n7 + 16\ndef n9 : Int := n8 - 14\ndef n10 : Int := n9 - 3\ndef n11 : Int := n10 - 1\ndef n12 : Int := n11 + 8\ndef n13 : Int := n12 - 4\ndef n14 : Int := n13 + 3\ndef n15 : Int := n14 + 11\ndef n16 : Int := n15 + 1\ndef n17 : Int := n16 - 5\ndef n18 : Int := n17 + 16\ndef n19 : Int := n18 - 2\ndef n20 : Int := n19 - 6\ndef n21 : Int := n20 - 8\ndef n22 : Int := n21 + 4\ndef n23 : Int := n22 + 12\ndef n24 : Int := n23 - 10\ndef n25 : Int := n24 - 9\ndef n26 : Int := n25 - 3\ndef n27 : Int := n26 - 15\ndef n28 : Int := n27 - 10\ndef n29 : Int := n28 + 3\ndef n30 : Int := n29 + 12\ndef n31 : Int := n30 + 14\ntheorem cert : n31 = 9137 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-00-B"
+  },
+  {
+    "family": "weaken_root",
+    "id": "F32-01-B-weaken_root",
+    "lean": "def l0 : Int := ((64 : Int) * 66) + 113\ndef l1 : Int := ((92 : Int) * 50) + 300\ndef l2 : Int := ((89 : Int) * 61) + 350\ndef l3 : Int := ((59 : Int) * 45) + 337\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 + 1\ndef n8 : Int := n7 + 5\ndef n9 : Int := n8 - 11\ndef n10 : Int := n9 + 9\ndef n11 : Int := n10 + 12\ndef n12 : Int := n11 - 6\ndef n13 : Int := n12 + 8\ndef n14 : Int := n13 + 11\ndef n15 : Int := n14 - 14\ndef n16 : Int := n15 - 4\ndef n17 : Int := n16 - 8\ndef n18 : Int := n17 - 12\ndef n19 : Int := n18 - 9\ndef n20 : Int := n19 + 11\ndef n21 : Int := n20 - 2\ndef n22 : Int := n21 + 15\ndef n23 : Int := n22 + 9\ndef n24 : Int := n23 - 15\ndef n25 : Int := n24 + 12\ndef n26 : Int := n25 - 2\ndef n27 : Int := n26 + 1\ndef n28 : Int := n27 + 6\ndef n29 : Int := n28 + 17\ndef n30 : Int := n29 + 3\ndef n31 : Int := n30 - 4\ntheorem cert : n31 = 6483 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-01-B"
+  },
+  {
+    "family": "weaken_root",
+    "id": "F32-02-B-weaken_root",
+    "lean": "def l0 : Int := ((60 : Int) * 46) + 158\ndef l1 : Int := ((46 : Int) * 89) + 490\ndef l2 : Int := ((70 : Int) * 95) + 285\ndef l3 : Int := ((50 : Int) * 80) + 134\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 - 12\ndef n8 : Int := n7 + 10\ndef n9 : Int := n8 + 14\ndef n10 : Int := n9 + 13\ndef n11 : Int := n10 - 3\ndef n12 : Int := n11 + 13\ndef n13 : Int := n12 - 5\ndef n14 : Int := n13 + 6\ndef n15 : Int := n14 - 15\ndef n16 : Int := n15 + 11\ndef n17 : Int := n16 - 10\ndef n18 : Int := n17 + 8\ndef n19 : Int := n18 + 8\ndef n20 : Int := n19 + 8\ndef n21 : Int := n20 - 2\ndef n22 : Int := n21 - 1\ndef n23 : Int := n22 - 9\ndef n24 : Int := n23 + 11\ndef n25 : Int := n24 + 5\ndef n26 : Int := n25 - 11\ndef n27 : Int := n26 - 9\ndef n28 : Int := n27 - 5\ndef n29 : Int := n28 - 13\ndef n30 : Int := n29 + 13\ndef n31 : Int := n30 - 17\ntheorem cert : n31 = 4709 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-02-B"
+  },
+  {
+    "family": "weaken_root",
+    "id": "F32-03-B-weaken_root",
+    "lean": "def l0 : Int := ((37 : Int) * 72) + 428\ndef l1 : Int := ((77 : Int) * 63) + 157\ndef l2 : Int := ((66 : Int) * 45) + 219\ndef l3 : Int := ((39 : Int) * 96) + 339\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 - 6\ndef n8 : Int := n7 - 1\ndef n9 : Int := n8 + 10\ndef n10 : Int := n9 - 5\ndef n11 : Int := n10 - 16\ndef n12 : Int := n11 + 5\ndef n13 : Int := n12 - 12\ndef n14 : Int := n13 + 2\ndef n15 : Int := n14 + 11\ndef n16 : Int := n15 - 6\ndef n17 : Int := n16 - 13\ndef n18 : Int := n17 - 15\ndef n19 : Int := n18 - 6\ndef n20 : Int := n19 + 5\ndef n21 : Int := n20 + 8\ndef n22 : Int := n21 - 5\ndef n23 : Int := n22 + 5\ndef n24 : Int := n23 + 11\ndef n25 : Int := n24 + 4\ndef n26 : Int := n25 + 2\ndef n27 : Int := n26 - 6\ndef n28 : Int := n27 + 9\ndef n29 : Int := n28 - 14\ndef n30 : Int := n29 + 16\ndef n31 : Int := n30 + 6\ntheorem cert : n31 = 8983 := by decide\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-03-B"
+  },
+  {
+    "family": "vacuous_hypothesis",
+    "id": "F32-00-B-vacuous_hypothesis",
+    "lean": "def l0 : Int := ((72 : Int) * 78) + 373\ndef l1 : Int := ((57 : Int) * 65) + 246\ndef l2 : Int := ((78 : Int) * 63) + 144\ndef l3 : Int := ((66 : Int) * 62) + 138\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 + 15\ndef n8 : Int := n7 + 16\ndef n9 : Int := n8 - 14\ndef n10 : Int := n9 - 3\ndef n11 : Int := n10 - 1\ndef n12 : Int := n11 + 8\ndef n13 : Int := n12 - 4\ndef n14 : Int := n13 + 3\ndef n15 : Int := n14 + 11\ndef n16 : Int := n15 + 1\ndef n17 : Int := n16 - 5\ndef n18 : Int := n17 + 16\ndef n19 : Int := n18 - 2\ndef n20 : Int := n19 - 6\ndef n21 : Int := n20 - 8\ndef n22 : Int := n21 + 4\ndef n23 : Int := n22 + 12\ndef n24 : Int := n23 - 10\ndef n25 : Int := n24 - 9\ndef n26 : Int := n25 - 3\ndef n27 : Int := n26 - 15\ndef n28 : Int := n27 - 10\ndef n29 : Int := n28 + 3\ndef n30 : Int := n29 + 12\ndef n31 : Int := n30 + 14\ntheorem cert : False \u2192 (n31 = 9136) := by intro h; exact False.elim h\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-00-B"
+  },
+  {
+    "family": "vacuous_hypothesis",
+    "id": "F32-01-B-vacuous_hypothesis",
+    "lean": "def l0 : Int := ((64 : Int) * 66) + 113\ndef l1 : Int := ((92 : Int) * 50) + 300\ndef l2 : Int := ((89 : Int) * 61) + 350\ndef l3 : Int := ((59 : Int) * 45) + 337\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 + 1\ndef n8 : Int := n7 + 5\ndef n9 : Int := n8 - 11\ndef n10 : Int := n9 + 9\ndef n11 : Int := n10 + 12\ndef n12 : Int := n11 - 6\ndef n13 : Int := n12 + 8\ndef n14 : Int := n13 + 11\ndef n15 : Int := n14 - 14\ndef n16 : Int := n15 - 4\ndef n17 : Int := n16 - 8\ndef n18 : Int := n17 - 12\ndef n19 : Int := n18 - 9\ndef n20 : Int := n19 + 11\ndef n21 : Int := n20 - 2\ndef n22 : Int := n21 + 15\ndef n23 : Int := n22 + 9\ndef n24 : Int := n23 - 15\ndef n25 : Int := n24 + 12\ndef n26 : Int := n25 - 2\ndef n27 : Int := n26 + 1\ndef n28 : Int := n27 + 6\ndef n29 : Int := n28 + 17\ndef n30 : Int := n29 + 3\ndef n31 : Int := n30 - 4\ntheorem cert : False \u2192 (n31 = 6484) := by intro h; exact False.elim h\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-01-B"
+  },
+  {
+    "family": "vacuous_hypothesis",
+    "id": "F32-02-B-vacuous_hypothesis",
+    "lean": "def l0 : Int := ((60 : Int) * 46) + 158\ndef l1 : Int := ((46 : Int) * 89) + 490\ndef l2 : Int := ((70 : Int) * 95) + 285\ndef l3 : Int := ((50 : Int) * 80) + 134\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 - 12\ndef n8 : Int := n7 + 10\ndef n9 : Int := n8 + 14\ndef n10 : Int := n9 + 13\ndef n11 : Int := n10 - 3\ndef n12 : Int := n11 + 13\ndef n13 : Int := n12 - 5\ndef n14 : Int := n13 + 6\ndef n15 : Int := n14 - 15\ndef n16 : Int := n15 + 11\ndef n17 : Int := n16 - 10\ndef n18 : Int := n17 + 8\ndef n19 : Int := n18 + 8\ndef n20 : Int := n19 + 8\ndef n21 : Int := n20 - 2\ndef n22 : Int := n21 - 1\ndef n23 : Int := n22 - 9\ndef n24 : Int := n23 + 11\ndef n25 : Int := n24 + 5\ndef n26 : Int := n25 - 11\ndef n27 : Int := n26 - 9\ndef n28 : Int := n27 - 5\ndef n29 : Int := n28 - 13\ndef n30 : Int := n29 + 13\ndef n31 : Int := n30 - 17\ntheorem cert : False \u2192 (n31 = 4710) := by intro h; exact False.elim h\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-02-B"
+  },
+  {
+    "family": "vacuous_hypothesis",
+    "id": "F32-03-B-vacuous_hypothesis",
+    "lean": "def l0 : Int := ((37 : Int) * 72) + 428\ndef l1 : Int := ((77 : Int) * 63) + 157\ndef l2 : Int := ((66 : Int) * 45) + 219\ndef l3 : Int := ((39 : Int) * 96) + 339\ndef n4 : Int := l0 + l1\ndef n5 : Int := n4 - l2\ndef n6 : Int := n5 + l3\ndef n7 : Int := n6 - 6\ndef n8 : Int := n7 - 1\ndef n9 : Int := n8 + 10\ndef n10 : Int := n9 - 5\ndef n11 : Int := n10 - 16\ndef n12 : Int := n11 + 5\ndef n13 : Int := n12 - 12\ndef n14 : Int := n13 + 2\ndef n15 : Int := n14 + 11\ndef n16 : Int := n15 - 6\ndef n17 : Int := n16 - 13\ndef n18 : Int := n17 - 15\ndef n19 : Int := n18 - 6\ndef n20 : Int := n19 + 5\ndef n21 : Int := n20 + 8\ndef n22 : Int := n21 - 5\ndef n23 : Int := n22 + 5\ndef n24 : Int := n23 + 11\ndef n25 : Int := n24 + 4\ndef n26 : Int := n25 + 2\ndef n27 : Int := n26 - 6\ndef n28 : Int := n27 + 9\ndef n29 : Int := n28 - 14\ndef n30 : Int := n29 + 16\ndef n31 : Int := n30 + 6\ntheorem cert : False \u2192 (n31 = 8984) := by intro h; exact False.elim h\n#print axioms cert\n",
+    "semantic_mismatch": true,
+    "source_id": "F32-03-B"
+  }
+]

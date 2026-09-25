@@ -1,0 +1,506 @@
+[
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 37 \u00d7 72 + 428 = 3092\nL2: 77 \u00d7 63 + 157 = 5008\nL3: 66 \u00d7 45 + 219 = 3189\nL4: 39 \u00d7 96 + 339 = 4083\nL5: L1 + L2 = 8100\nL6: L5 - L3 = 4911\nL7: L6 + L4 = 8994\nL8: L7 - 6 = 8988\nL9: L8 - 1 = 8987\nL10: L9 + 10 = 8997\nL11: L10 - 5 = 8992\nL12: L11 - 16 = 8976\nL13: L12 + 5 = 8981\nL14: L13 - 12 = 8969\nL15: L14 + 2 = 8971\nL16: L15 + 11 = 8982\nL17: L16 - 6 = 8976\nL18: L17 - 13 = 8963\nL19: L18 - 15 = 8948\nL20: L19 - 6 = 8942\nL21: L20 + 5 = 8947\nL22: L21 + 8 = 8955\nL23: L22 - 5 = 8950\nL24: L23 + 5 = 8955\nL25: L24 + 11 = 8966\nL26: L25 + 4 = 8970\nL27: L26 + 2 = 8972\nL28: L27 - 6 = 8966\nL29: L28 + 9 = 8975\nL30: L29 - 14 = 8961\nL31: L30 + 16 = 8977\nL32: L31 + 6 = 8983\nConclusion: L32 = 8983.",
+    "request_id": "F32-03-A-full-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 70 \u00d7 95 + 285 = 6934. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-02-B-isolated-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 64 \u00d7 66 + 113 = 4337\nL2: 92 \u00d7 50 + 300 = 4900\nL3: 89 \u00d7 61 + 350 = 5779\nL4: 59 \u00d7 45 + 337 = 2993\nL5: L1 + L2 = 9237\nL6: L5 - L3 = 3458\nL7: L6 + L4 = 6451\nL8: L7 + 1 = 6452\nConclusion: L8 = 6452.",
+    "request_id": "F32-01-B-short-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 64 \u00d7 66 + 113 = 4337\nL2: 92 \u00d7 50 + 300 = 4900\nL3: 89 \u00d7 61 + 350 = 5779\nL4: 59 \u00d7 45 + 337 = 2993\nL5: L1 + L2 = 9237\nL6: L5 - L3 = 3458\nL7: L6 + L4 = 6451\nL8: L7 + 1 = 6452\nL9: L8 + 5 = 6457\nL10: L9 - 11 = 6446\nL11: L10 + 9 = 6455\nL12: L11 + 12 = 6467\nL13: L12 - 6 = 6461\nL14: L13 + 8 = 6469\nL15: L14 + 11 = 6480\nL16: L15 - 14 = 6466\nL17: L16 - 4 = 6462\nL18: L17 - 8 = 6454\nL19: L18 - 12 = 6442\nL20: L19 - 9 = 6433\nL21: L20 + 11 = 6444\nL22: L21 - 2 = 6442\nL23: L22 + 15 = 6457\nL24: L23 + 9 = 6466\nL25: L24 - 15 = 6451\nL26: L25 + 12 = 6463\nL27: L26 - 2 = 6461\nL28: L27 + 1 = 6462\nL29: L28 + 6 = 6468\nL30: L29 + 17 = 6485\nL31: L30 + 3 = 6488\nL32: L31 - 4 = 6484\nConclusion: L32 = 6484.",
+    "request_id": "F32-01-B-full-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 51 \u00d7 59 + 340 = 3349\nL2: 78 \u00d7 56 + 247 = 4615\nL3: 90 \u00d7 95 + 430 = 8980\nL4: 72 \u00d7 97 + 161 = 7145\nL5: L1 + L2 = 7964\nL6: L5 - L3 = -1016\nL7: L6 + L4 = 6129\nL8: L7 + 7 = 6136\nL9: L8 + 5 = 6141\nL10: L9 + 17 = 6158\nL11: L10 + 13 = 6171\nL12: L11 - 11 = 6160\nL13: L12 - 7 = 6153\nL14: L13 - 2 = 6151\nL15: L14 + 16 = 6167\nL16: L15 + 17 = 6184\nL17: L16 + 7 = 6191\nL18: L17 + 17 = 6208\nL19: L18 - 11 = 6197\nL20: L19 + 13 = 6210\nL21: L20 - 15 = 6195\nL22: L21 - 14 = 6181\nL23: L22 + 5 = 6186\nL24: L23 + 5 = 6191\nL25: L24 + 7 = 6198\nL26: L25 - 12 = 6186\nL27: L26 - 6 = 6180\nL28: L27 - 16 = 6164\nL29: L28 - 2 = 6162\nL30: L29 - 2 = 6160\nL31: L30 - 9 = 6151\nL32: L31 + 2 = 6153\nConclusion: L32 = 6153.",
+    "request_id": "F32-04-A-full-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 50 \u00d7 50 + 281 = 2781\nL2: 77 \u00d7 70 + 281 = 5671\nL3: 54 \u00d7 60 + 208 = 3448\nL4: 97 \u00d7 94 + 270 = 9389\nL5: L1 + L2 = 8452\nL6: L5 - L3 = 5004\nL7: L6 + L4 = 14393\nL8: L7 - 3 = 14390\nL9: L8 + 2 = 14392\nL10: L9 + 3 = 14395\nL11: L10 + 12 = 14407\nL12: L11 + 11 = 14418\nL13: L12 - 3 = 14415\nL14: L13 - 5 = 14410\nL15: L14 + 17 = 14427\nL16: L15 - 13 = 14414\nL17: L16 - 9 = 14405\nL18: L17 + 10 = 14415\nL19: L18 + 6 = 14421\nL20: L19 + 17 = 14438\nL21: L20 - 6 = 14432\nL22: L21 - 17 = 14415\nL23: L22 - 1 = 14414\nL24: L23 + 13 = 14427\nL25: L24 + 16 = 14443\nL26: L25 + 3 = 14446\nL27: L26 + 12 = 14458\nL28: L27 - 1 = 14457\nL29: L28 - 2 = 14455\nL30: L29 - 17 = 14438\nL31: L30 - 11 = 14427\nL32: L31 + 15 = 14442\nConclusion: L32 = 14442.",
+    "request_id": "F32-05-B-full-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 59 \u00d7 45 + 337 = 2993. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-01-B-isolated-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 64 \u00d7 66 + 113 = 4337\nL2: 92 \u00d7 50 + 300 = 4900\nL3: 89 \u00d7 61 + 350 = 5779\nL4: 59 \u00d7 45 + 337 = 2992\nL5: L1 + L2 = 9237\nL6: L5 - L3 = 3458\nL7: L6 + L4 = 6450\nL8: L7 + 1 = 6451\nL9: L8 + 5 = 6456\nL10: L9 - 11 = 6445\nL11: L10 + 9 = 6454\nL12: L11 + 12 = 6466\nL13: L12 - 6 = 6460\nL14: L13 + 8 = 6468\nL15: L14 + 11 = 6479\nL16: L15 - 14 = 6465\nL17: L16 - 4 = 6461\nL18: L17 - 8 = 6453\nL19: L18 - 12 = 6441\nL20: L19 - 9 = 6432\nL21: L20 + 11 = 6443\nL22: L21 - 2 = 6441\nL23: L22 + 15 = 6456\nL24: L23 + 9 = 6465\nL25: L24 - 15 = 6450\nL26: L25 + 12 = 6462\nL27: L26 - 2 = 6460\nL28: L27 + 1 = 6461\nL29: L28 + 6 = 6467\nL30: L29 + 17 = 6484\nL31: L30 + 3 = 6487\nL32: L31 - 4 = 6483\nConclusion: L32 = 6483.",
+    "request_id": "F32-01-A-full-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 37 \u00d7 72 + 428 = 3092\nL2: 77 \u00d7 63 + 157 = 5008\nL3: 66 \u00d7 45 + 219 = 3189\nL4: 39 \u00d7 96 + 339 = 4083\nL5: L1 + L2 = 8100\nL6: L5 - L3 = 4911\nL7: L6 + L4 = 8994\nL8: L7 - 6 = 8988\nL9: L8 - 1 = 8987\nL10: L9 + 10 = 8997\nL11: L10 - 5 = 8992\nL12: L11 - 16 = 8976\nL13: L12 + 5 = 8981\nL14: L13 - 12 = 8969\nL15: L14 + 2 = 8971\nL16: L15 + 11 = 8982\nL17: L16 - 6 = 8976\nL18: L17 - 13 = 8963\nL19: L18 - 15 = 8948\nL20: L19 - 6 = 8942\nL21: L20 + 5 = 8947\nL22: L21 + 8 = 8955\nL23: L22 - 5 = 8950\nL24: L23 + 5 = 8955\nL25: L24 + 11 = 8966\nL26: L25 + 4 = 8970\nL27: L26 + 2 = 8972\nL28: L27 - 6 = 8966\nL29: L28 + 9 = 8975\nL30: L29 - 14 = 8961\nL31: L30 + 16 = 8977\nL32: L31 + 6 = 8983\nConclusion: L32 = 8983.",
+    "request_id": "F32-03-A-full-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 37 \u00d7 72 + 428 = 3092\nL2: 77 \u00d7 63 + 157 = 5009\nL3: 66 \u00d7 45 + 219 = 3189\nL4: 39 \u00d7 96 + 339 = 4083\nL5: L1 + L2 = 8101\nL6: L5 - L3 = 4912\nL7: L6 + L4 = 8995\nL8: L7 - 6 = 8989\nConclusion: L8 = 8989.",
+    "request_id": "F32-03-B-short-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 72 \u00d7 78 + 373 = 5988\nL2: 57 \u00d7 65 + 246 = 3951\nL3: 78 \u00d7 63 + 144 = 5058\nL4: 66 \u00d7 62 + 138 = 4230\nL5: L1 + L2 = 9939\nL6: L5 - L3 = 4881\nL7: L6 + L4 = 9111\nL8: L7 + 15 = 9126\nL9: L8 + 16 = 9142\nL10: L9 - 14 = 9128\nL11: L10 - 3 = 9125\nL12: L11 - 1 = 9124\nL13: L12 + 8 = 9132\nL14: L13 - 4 = 9128\nL15: L14 + 3 = 9131\nL16: L15 + 11 = 9142\nL17: L16 + 1 = 9143\nL18: L17 - 5 = 9138\nL19: L18 + 16 = 9154\nL20: L19 - 2 = 9152\nL21: L20 - 6 = 9146\nL22: L21 - 8 = 9138\nL23: L22 + 4 = 9142\nL24: L23 + 12 = 9154\nL25: L24 - 10 = 9144\nL26: L25 - 9 = 9135\nL27: L26 - 3 = 9132\nL28: L27 - 15 = 9117\nL29: L28 - 10 = 9107\nL30: L29 + 3 = 9110\nL31: L30 + 12 = 9122\nL32: L31 + 14 = 9136\nConclusion: L32 = 9136.",
+    "request_id": "F32-00-B-full-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 64 \u00d7 66 + 113 = 4337\nL2: 92 \u00d7 50 + 300 = 4900\nL3: 89 \u00d7 61 + 350 = 5779\nL4: 59 \u00d7 45 + 337 = 2992\nL5: L1 + L2 = 9237\nL6: L5 - L3 = 3458\nL7: L6 + L4 = 6450\nL8: L7 + 1 = 6451\nConclusion: L8 = 6451.",
+    "request_id": "F32-01-A-short-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 60 \u00d7 46 + 158 = 2918\nL2: 46 \u00d7 89 + 490 = 4584\nL3: 70 \u00d7 95 + 285 = 6935\nL4: 50 \u00d7 80 + 134 = 4134\nL5: L1 + L2 = 7502\nL6: L5 - L3 = 567\nL7: L6 + L4 = 4701\nL8: L7 - 12 = 4689\nL9: L8 + 10 = 4699\nL10: L9 + 14 = 4713\nL11: L10 + 13 = 4726\nL12: L11 - 3 = 4723\nL13: L12 + 13 = 4736\nL14: L13 - 5 = 4731\nL15: L14 + 6 = 4737\nL16: L15 - 15 = 4722\nL17: L16 + 11 = 4733\nL18: L17 - 10 = 4723\nL19: L18 + 8 = 4731\nL20: L19 + 8 = 4739\nL21: L20 + 8 = 4747\nL22: L21 - 2 = 4745\nL23: L22 - 1 = 4744\nL24: L23 - 9 = 4735\nL25: L24 + 11 = 4746\nL26: L25 + 5 = 4751\nL27: L26 - 11 = 4740\nL28: L27 - 9 = 4731\nL29: L28 - 5 = 4726\nL30: L29 - 13 = 4713\nL31: L30 + 13 = 4726\nL32: L31 - 17 = 4709\nConclusion: L32 = 4709.",
+    "request_id": "F32-02-A-full-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 60 \u00d7 46 + 158 = 2918\nL2: 46 \u00d7 89 + 490 = 4584\nL3: 70 \u00d7 95 + 285 = 6935\nL4: 50 \u00d7 80 + 134 = 4134\nL5: L1 + L2 = 7502\nL6: L5 - L3 = 567\nL7: L6 + L4 = 4701\nL8: L7 - 12 = 4689\nL9: L8 + 10 = 4699\nL10: L9 + 14 = 4713\nL11: L10 + 13 = 4726\nL12: L11 - 3 = 4723\nL13: L12 + 13 = 4736\nL14: L13 - 5 = 4731\nL15: L14 + 6 = 4737\nL16: L15 - 15 = 4722\nL17: L16 + 11 = 4733\nL18: L17 - 10 = 4723\nL19: L18 + 8 = 4731\nL20: L19 + 8 = 4739\nL21: L20 + 8 = 4747\nL22: L21 - 2 = 4745\nL23: L22 - 1 = 4744\nL24: L23 - 9 = 4735\nL25: L24 + 11 = 4746\nL26: L25 + 5 = 4751\nL27: L26 - 11 = 4740\nL28: L27 - 9 = 4731\nL29: L28 - 5 = 4726\nL30: L29 - 13 = 4713\nL31: L30 + 13 = 4726\nL32: L31 - 17 = 4709\nConclusion: L32 = 4709.",
+    "request_id": "F32-02-A-full-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 51 \u00d7 59 + 340 = 3349\nL2: 78 \u00d7 56 + 247 = 4615\nL3: 90 \u00d7 95 + 430 = 8980\nL4: 72 \u00d7 97 + 161 = 7145\nL5: L1 + L2 = 7964\nL6: L5 - L3 = -1016\nL7: L6 + L4 = 6129\nL8: L7 + 7 = 6136\nConclusion: L8 = 6136.",
+    "request_id": "F32-04-A-short-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 77 \u00d7 63 + 157 = 5009. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-03-B-isolated-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 50 \u00d7 50 + 281 = 2781\nL2: 77 \u00d7 70 + 281 = 5671\nL3: 54 \u00d7 60 + 208 = 3448\nL4: 97 \u00d7 94 + 270 = 9389\nL5: L1 + L2 = 8452\nL6: L5 - L3 = 5004\nL7: L6 + L4 = 14393\nL8: L7 - 3 = 14390\nConclusion: L8 = 14390.",
+    "request_id": "F32-05-B-short-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 72 \u00d7 78 + 373 = 5989\nL2: 57 \u00d7 65 + 246 = 3951\nL3: 78 \u00d7 63 + 144 = 5058\nL4: 66 \u00d7 62 + 138 = 4230\nL5: L1 + L2 = 9940\nL6: L5 - L3 = 4882\nL7: L6 + L4 = 9112\nL8: L7 + 15 = 9127\nL9: L8 + 16 = 9143\nL10: L9 - 14 = 9129\nL11: L10 - 3 = 9126\nL12: L11 - 1 = 9125\nL13: L12 + 8 = 9133\nL14: L13 - 4 = 9129\nL15: L14 + 3 = 9132\nL16: L15 + 11 = 9143\nL17: L16 + 1 = 9144\nL18: L17 - 5 = 9139\nL19: L18 + 16 = 9155\nL20: L19 - 2 = 9153\nL21: L20 - 6 = 9147\nL22: L21 - 8 = 9139\nL23: L22 + 4 = 9143\nL24: L23 + 12 = 9155\nL25: L24 - 10 = 9145\nL26: L25 - 9 = 9136\nL27: L26 - 3 = 9133\nL28: L27 - 15 = 9118\nL29: L28 - 10 = 9108\nL30: L29 + 3 = 9111\nL31: L30 + 12 = 9123\nL32: L31 + 14 = 9137\nConclusion: L32 = 9137.",
+    "request_id": "F32-00-A-full-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 37 \u00d7 72 + 428 = 3092\nL2: 77 \u00d7 63 + 157 = 5009\nL3: 66 \u00d7 45 + 219 = 3189\nL4: 39 \u00d7 96 + 339 = 4083\nL5: L1 + L2 = 8101\nL6: L5 - L3 = 4912\nL7: L6 + L4 = 8995\nL8: L7 - 6 = 8989\nL9: L8 - 1 = 8988\nL10: L9 + 10 = 8998\nL11: L10 - 5 = 8993\nL12: L11 - 16 = 8977\nL13: L12 + 5 = 8982\nL14: L13 - 12 = 8970\nL15: L14 + 2 = 8972\nL16: L15 + 11 = 8983\nL17: L16 - 6 = 8977\nL18: L17 - 13 = 8964\nL19: L18 - 15 = 8949\nL20: L19 - 6 = 8943\nL21: L20 + 5 = 8948\nL22: L21 + 8 = 8956\nL23: L22 - 5 = 8951\nL24: L23 + 5 = 8956\nL25: L24 + 11 = 8967\nL26: L25 + 4 = 8971\nL27: L26 + 2 = 8973\nL28: L27 - 6 = 8967\nL29: L28 + 9 = 8976\nL30: L29 - 14 = 8962\nL31: L30 + 16 = 8978\nL32: L31 + 6 = 8984\nConclusion: L32 = 8984.",
+    "request_id": "F32-03-B-full-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 37 \u00d7 72 + 428 = 3092\nL2: 77 \u00d7 63 + 157 = 5009\nL3: 66 \u00d7 45 + 219 = 3189\nL4: 39 \u00d7 96 + 339 = 4083\nL5: L1 + L2 = 8101\nL6: L5 - L3 = 4912\nL7: L6 + L4 = 8995\nL8: L7 - 6 = 8989\nConclusion: L8 = 8989.",
+    "request_id": "F32-03-B-short-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 51 \u00d7 59 + 340 = 3349. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-04-A-isolated-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 51 \u00d7 59 + 340 = 3348\nL2: 78 \u00d7 56 + 247 = 4615\nL3: 90 \u00d7 95 + 430 = 8980\nL4: 72 \u00d7 97 + 161 = 7145\nL5: L1 + L2 = 7963\nL6: L5 - L3 = -1017\nL7: L6 + L4 = 6128\nL8: L7 + 7 = 6135\nConclusion: L8 = 6135.",
+    "request_id": "F32-04-B-short-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 72 \u00d7 78 + 373 = 5988\nL2: 57 \u00d7 65 + 246 = 3951\nL3: 78 \u00d7 63 + 144 = 5058\nL4: 66 \u00d7 62 + 138 = 4230\nL5: L1 + L2 = 9939\nL6: L5 - L3 = 4881\nL7: L6 + L4 = 9111\nL8: L7 + 15 = 9126\nL9: L8 + 16 = 9142\nL10: L9 - 14 = 9128\nL11: L10 - 3 = 9125\nL12: L11 - 1 = 9124\nL13: L12 + 8 = 9132\nL14: L13 - 4 = 9128\nL15: L14 + 3 = 9131\nL16: L15 + 11 = 9142\nL17: L16 + 1 = 9143\nL18: L17 - 5 = 9138\nL19: L18 + 16 = 9154\nL20: L19 - 2 = 9152\nL21: L20 - 6 = 9146\nL22: L21 - 8 = 9138\nL23: L22 + 4 = 9142\nL24: L23 + 12 = 9154\nL25: L24 - 10 = 9144\nL26: L25 - 9 = 9135\nL27: L26 - 3 = 9132\nL28: L27 - 15 = 9117\nL29: L28 - 10 = 9107\nL30: L29 + 3 = 9110\nL31: L30 + 12 = 9122\nL32: L31 + 14 = 9136\nConclusion: L32 = 9136.",
+    "request_id": "F32-00-B-full-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 50 \u00d7 50 + 281 = 2781\nL2: 77 \u00d7 70 + 281 = 5671\nL3: 54 \u00d7 60 + 208 = 3448\nL4: 97 \u00d7 94 + 270 = 9388\nL5: L1 + L2 = 8452\nL6: L5 - L3 = 5004\nL7: L6 + L4 = 14392\nL8: L7 - 3 = 14389\nConclusion: L8 = 14389.",
+    "request_id": "F32-05-A-short-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 70 \u00d7 95 + 285 = 6935. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-02-A-isolated-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 77 \u00d7 63 + 157 = 5008. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-03-A-isolated-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 72 \u00d7 78 + 373 = 5988. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-00-B-isolated-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 77 \u00d7 63 + 157 = 5009. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-03-B-isolated-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 51 \u00d7 59 + 340 = 3348. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-04-B-isolated-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 60 \u00d7 46 + 158 = 2918\nL2: 46 \u00d7 89 + 490 = 4584\nL3: 70 \u00d7 95 + 285 = 6934\nL4: 50 \u00d7 80 + 134 = 4134\nL5: L1 + L2 = 7502\nL6: L5 - L3 = 568\nL7: L6 + L4 = 4702\nL8: L7 - 12 = 4690\nL9: L8 + 10 = 4700\nL10: L9 + 14 = 4714\nL11: L10 + 13 = 4727\nL12: L11 - 3 = 4724\nL13: L12 + 13 = 4737\nL14: L13 - 5 = 4732\nL15: L14 + 6 = 4738\nL16: L15 - 15 = 4723\nL17: L16 + 11 = 4734\nL18: L17 - 10 = 4724\nL19: L18 + 8 = 4732\nL20: L19 + 8 = 4740\nL21: L20 + 8 = 4748\nL22: L21 - 2 = 4746\nL23: L22 - 1 = 4745\nL24: L23 - 9 = 4736\nL25: L24 + 11 = 4747\nL26: L25 + 5 = 4752\nL27: L26 - 11 = 4741\nL28: L27 - 9 = 4732\nL29: L28 - 5 = 4727\nL30: L29 - 13 = 4714\nL31: L30 + 13 = 4727\nL32: L31 - 17 = 4710\nConclusion: L32 = 4710.",
+    "request_id": "F32-02-B-full-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 72 \u00d7 78 + 373 = 5989\nL2: 57 \u00d7 65 + 246 = 3951\nL3: 78 \u00d7 63 + 144 = 5058\nL4: 66 \u00d7 62 + 138 = 4230\nL5: L1 + L2 = 9940\nL6: L5 - L3 = 4882\nL7: L6 + L4 = 9112\nL8: L7 + 15 = 9127\nConclusion: L8 = 9127.",
+    "request_id": "F32-00-A-short-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 60 \u00d7 46 + 158 = 2918\nL2: 46 \u00d7 89 + 490 = 4584\nL3: 70 \u00d7 95 + 285 = 6934\nL4: 50 \u00d7 80 + 134 = 4134\nL5: L1 + L2 = 7502\nL6: L5 - L3 = 568\nL7: L6 + L4 = 4702\nL8: L7 - 12 = 4690\nConclusion: L8 = 4690.",
+    "request_id": "F32-02-B-short-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 70 \u00d7 95 + 285 = 6934. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-02-B-isolated-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 37 \u00d7 72 + 428 = 3092\nL2: 77 \u00d7 63 + 157 = 5008\nL3: 66 \u00d7 45 + 219 = 3189\nL4: 39 \u00d7 96 + 339 = 4083\nL5: L1 + L2 = 8100\nL6: L5 - L3 = 4911\nL7: L6 + L4 = 8994\nL8: L7 - 6 = 8988\nConclusion: L8 = 8988.",
+    "request_id": "F32-03-A-short-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 50 \u00d7 50 + 281 = 2781\nL2: 77 \u00d7 70 + 281 = 5671\nL3: 54 \u00d7 60 + 208 = 3448\nL4: 97 \u00d7 94 + 270 = 9389\nL5: L1 + L2 = 8452\nL6: L5 - L3 = 5004\nL7: L6 + L4 = 14393\nL8: L7 - 3 = 14390\nConclusion: L8 = 14390.",
+    "request_id": "F32-05-B-short-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 72 \u00d7 78 + 373 = 5989. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-00-A-isolated-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 64 \u00d7 66 + 113 = 4337\nL2: 92 \u00d7 50 + 300 = 4900\nL3: 89 \u00d7 61 + 350 = 5779\nL4: 59 \u00d7 45 + 337 = 2993\nL5: L1 + L2 = 9237\nL6: L5 - L3 = 3458\nL7: L6 + L4 = 6451\nL8: L7 + 1 = 6452\nConclusion: L8 = 6452.",
+    "request_id": "F32-01-B-short-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 51 \u00d7 59 + 340 = 3348\nL2: 78 \u00d7 56 + 247 = 4615\nL3: 90 \u00d7 95 + 430 = 8980\nL4: 72 \u00d7 97 + 161 = 7145\nL5: L1 + L2 = 7963\nL6: L5 - L3 = -1017\nL7: L6 + L4 = 6128\nL8: L7 + 7 = 6135\nL9: L8 + 5 = 6140\nL10: L9 + 17 = 6157\nL11: L10 + 13 = 6170\nL12: L11 - 11 = 6159\nL13: L12 - 7 = 6152\nL14: L13 - 2 = 6150\nL15: L14 + 16 = 6166\nL16: L15 + 17 = 6183\nL17: L16 + 7 = 6190\nL18: L17 + 17 = 6207\nL19: L18 - 11 = 6196\nL20: L19 + 13 = 6209\nL21: L20 - 15 = 6194\nL22: L21 - 14 = 6180\nL23: L22 + 5 = 6185\nL24: L23 + 5 = 6190\nL25: L24 + 7 = 6197\nL26: L25 - 12 = 6185\nL27: L26 - 6 = 6179\nL28: L27 - 16 = 6163\nL29: L28 - 2 = 6161\nL30: L29 - 2 = 6159\nL31: L30 - 9 = 6150\nL32: L31 + 2 = 6152\nConclusion: L32 = 6152.",
+    "request_id": "F32-04-B-full-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 60 \u00d7 46 + 158 = 2918\nL2: 46 \u00d7 89 + 490 = 4584\nL3: 70 \u00d7 95 + 285 = 6935\nL4: 50 \u00d7 80 + 134 = 4134\nL5: L1 + L2 = 7502\nL6: L5 - L3 = 567\nL7: L6 + L4 = 4701\nL8: L7 - 12 = 4689\nConclusion: L8 = 4689.",
+    "request_id": "F32-02-A-short-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 72 \u00d7 78 + 373 = 5989\nL2: 57 \u00d7 65 + 246 = 3951\nL3: 78 \u00d7 63 + 144 = 5058\nL4: 66 \u00d7 62 + 138 = 4230\nL5: L1 + L2 = 9940\nL6: L5 - L3 = 4882\nL7: L6 + L4 = 9112\nL8: L7 + 15 = 9127\nConclusion: L8 = 9127.",
+    "request_id": "F32-00-A-short-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 59 \u00d7 45 + 337 = 2992. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-01-A-isolated-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 97 \u00d7 94 + 270 = 9389. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-05-B-isolated-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 51 \u00d7 59 + 340 = 3348\nL2: 78 \u00d7 56 + 247 = 4615\nL3: 90 \u00d7 95 + 430 = 8980\nL4: 72 \u00d7 97 + 161 = 7145\nL5: L1 + L2 = 7963\nL6: L5 - L3 = -1017\nL7: L6 + L4 = 6128\nL8: L7 + 7 = 6135\nConclusion: L8 = 6135.",
+    "request_id": "F32-04-B-short-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 72 \u00d7 78 + 373 = 5989\nL2: 57 \u00d7 65 + 246 = 3951\nL3: 78 \u00d7 63 + 144 = 5058\nL4: 66 \u00d7 62 + 138 = 4230\nL5: L1 + L2 = 9940\nL6: L5 - L3 = 4882\nL7: L6 + L4 = 9112\nL8: L7 + 15 = 9127\nL9: L8 + 16 = 9143\nL10: L9 - 14 = 9129\nL11: L10 - 3 = 9126\nL12: L11 - 1 = 9125\nL13: L12 + 8 = 9133\nL14: L13 - 4 = 9129\nL15: L14 + 3 = 9132\nL16: L15 + 11 = 9143\nL17: L16 + 1 = 9144\nL18: L17 - 5 = 9139\nL19: L18 + 16 = 9155\nL20: L19 - 2 = 9153\nL21: L20 - 6 = 9147\nL22: L21 - 8 = 9139\nL23: L22 + 4 = 9143\nL24: L23 + 12 = 9155\nL25: L24 - 10 = 9145\nL26: L25 - 9 = 9136\nL27: L26 - 3 = 9133\nL28: L27 - 15 = 9118\nL29: L28 - 10 = 9108\nL30: L29 + 3 = 9111\nL31: L30 + 12 = 9123\nL32: L31 + 14 = 9137\nConclusion: L32 = 9137.",
+    "request_id": "F32-00-A-full-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 72 \u00d7 78 + 373 = 5988. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-00-B-isolated-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 50 \u00d7 50 + 281 = 2781\nL2: 77 \u00d7 70 + 281 = 5671\nL3: 54 \u00d7 60 + 208 = 3448\nL4: 97 \u00d7 94 + 270 = 9388\nL5: L1 + L2 = 8452\nL6: L5 - L3 = 5004\nL7: L6 + L4 = 14392\nL8: L7 - 3 = 14389\nL9: L8 + 2 = 14391\nL10: L9 + 3 = 14394\nL11: L10 + 12 = 14406\nL12: L11 + 11 = 14417\nL13: L12 - 3 = 14414\nL14: L13 - 5 = 14409\nL15: L14 + 17 = 14426\nL16: L15 - 13 = 14413\nL17: L16 - 9 = 14404\nL18: L17 + 10 = 14414\nL19: L18 + 6 = 14420\nL20: L19 + 17 = 14437\nL21: L20 - 6 = 14431\nL22: L21 - 17 = 14414\nL23: L22 - 1 = 14413\nL24: L23 + 13 = 14426\nL25: L24 + 16 = 14442\nL26: L25 + 3 = 14445\nL27: L26 + 12 = 14457\nL28: L27 - 1 = 14456\nL29: L28 - 2 = 14454\nL30: L29 - 17 = 14437\nL31: L30 - 11 = 14426\nL32: L31 + 15 = 14441\nConclusion: L32 = 14441.",
+    "request_id": "F32-05-A-full-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 97 \u00d7 94 + 270 = 9389. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-05-B-isolated-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 64 \u00d7 66 + 113 = 4337\nL2: 92 \u00d7 50 + 300 = 4900\nL3: 89 \u00d7 61 + 350 = 5779\nL4: 59 \u00d7 45 + 337 = 2992\nL5: L1 + L2 = 9237\nL6: L5 - L3 = 3458\nL7: L6 + L4 = 6450\nL8: L7 + 1 = 6451\nL9: L8 + 5 = 6456\nL10: L9 - 11 = 6445\nL11: L10 + 9 = 6454\nL12: L11 + 12 = 6466\nL13: L12 - 6 = 6460\nL14: L13 + 8 = 6468\nL15: L14 + 11 = 6479\nL16: L15 - 14 = 6465\nL17: L16 - 4 = 6461\nL18: L17 - 8 = 6453\nL19: L18 - 12 = 6441\nL20: L19 - 9 = 6432\nL21: L20 + 11 = 6443\nL22: L21 - 2 = 6441\nL23: L22 + 15 = 6456\nL24: L23 + 9 = 6465\nL25: L24 - 15 = 6450\nL26: L25 + 12 = 6462\nL27: L26 - 2 = 6460\nL28: L27 + 1 = 6461\nL29: L28 + 6 = 6467\nL30: L29 + 17 = 6484\nL31: L30 + 3 = 6487\nL32: L31 - 4 = 6483\nConclusion: L32 = 6483.",
+    "request_id": "F32-01-A-full-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 77 \u00d7 63 + 157 = 5008. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-03-A-isolated-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 37 \u00d7 72 + 428 = 3092\nL2: 77 \u00d7 63 + 157 = 5008\nL3: 66 \u00d7 45 + 219 = 3189\nL4: 39 \u00d7 96 + 339 = 4083\nL5: L1 + L2 = 8100\nL6: L5 - L3 = 4911\nL7: L6 + L4 = 8994\nL8: L7 - 6 = 8988\nConclusion: L8 = 8988.",
+    "request_id": "F32-03-A-short-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 72 \u00d7 78 + 373 = 5989. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-00-A-isolated-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 59 \u00d7 45 + 337 = 2992. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-01-A-isolated-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 50 \u00d7 50 + 281 = 2781\nL2: 77 \u00d7 70 + 281 = 5671\nL3: 54 \u00d7 60 + 208 = 3448\nL4: 97 \u00d7 94 + 270 = 9389\nL5: L1 + L2 = 8452\nL6: L5 - L3 = 5004\nL7: L6 + L4 = 14393\nL8: L7 - 3 = 14390\nL9: L8 + 2 = 14392\nL10: L9 + 3 = 14395\nL11: L10 + 12 = 14407\nL12: L11 + 11 = 14418\nL13: L12 - 3 = 14415\nL14: L13 - 5 = 14410\nL15: L14 + 17 = 14427\nL16: L15 - 13 = 14414\nL17: L16 - 9 = 14405\nL18: L17 + 10 = 14415\nL19: L18 + 6 = 14421\nL20: L19 + 17 = 14438\nL21: L20 - 6 = 14432\nL22: L21 - 17 = 14415\nL23: L22 - 1 = 14414\nL24: L23 + 13 = 14427\nL25: L24 + 16 = 14443\nL26: L25 + 3 = 14446\nL27: L26 + 12 = 14458\nL28: L27 - 1 = 14457\nL29: L28 - 2 = 14455\nL30: L29 - 17 = 14438\nL31: L30 - 11 = 14427\nL32: L31 + 15 = 14442\nConclusion: L32 = 14442.",
+    "request_id": "F32-05-B-full-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 37 \u00d7 72 + 428 = 3092\nL2: 77 \u00d7 63 + 157 = 5009\nL3: 66 \u00d7 45 + 219 = 3189\nL4: 39 \u00d7 96 + 339 = 4083\nL5: L1 + L2 = 8101\nL6: L5 - L3 = 4912\nL7: L6 + L4 = 8995\nL8: L7 - 6 = 8989\nL9: L8 - 1 = 8988\nL10: L9 + 10 = 8998\nL11: L10 - 5 = 8993\nL12: L11 - 16 = 8977\nL13: L12 + 5 = 8982\nL14: L13 - 12 = 8970\nL15: L14 + 2 = 8972\nL16: L15 + 11 = 8983\nL17: L16 - 6 = 8977\nL18: L17 - 13 = 8964\nL19: L18 - 15 = 8949\nL20: L19 - 6 = 8943\nL21: L20 + 5 = 8948\nL22: L21 + 8 = 8956\nL23: L22 - 5 = 8951\nL24: L23 + 5 = 8956\nL25: L24 + 11 = 8967\nL26: L25 + 4 = 8971\nL27: L26 + 2 = 8973\nL28: L27 - 6 = 8967\nL29: L28 + 9 = 8976\nL30: L29 - 14 = 8962\nL31: L30 + 16 = 8978\nL32: L31 + 6 = 8984\nConclusion: L32 = 8984.",
+    "request_id": "F32-03-B-full-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 50 \u00d7 50 + 281 = 2781\nL2: 77 \u00d7 70 + 281 = 5671\nL3: 54 \u00d7 60 + 208 = 3448\nL4: 97 \u00d7 94 + 270 = 9388\nL5: L1 + L2 = 8452\nL6: L5 - L3 = 5004\nL7: L6 + L4 = 14392\nL8: L7 - 3 = 14389\nConclusion: L8 = 14389.",
+    "request_id": "F32-05-A-short-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 60 \u00d7 46 + 158 = 2918\nL2: 46 \u00d7 89 + 490 = 4584\nL3: 70 \u00d7 95 + 285 = 6934\nL4: 50 \u00d7 80 + 134 = 4134\nL5: L1 + L2 = 7502\nL6: L5 - L3 = 568\nL7: L6 + L4 = 4702\nL8: L7 - 12 = 4690\nConclusion: L8 = 4690.",
+    "request_id": "F32-02-B-short-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 59 \u00d7 45 + 337 = 2993. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-01-B-isolated-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 51 \u00d7 59 + 340 = 3348. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-04-B-isolated-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 72 \u00d7 78 + 373 = 5988\nL2: 57 \u00d7 65 + 246 = 3951\nL3: 78 \u00d7 63 + 144 = 5058\nL4: 66 \u00d7 62 + 138 = 4230\nL5: L1 + L2 = 9939\nL6: L5 - L3 = 4881\nL7: L6 + L4 = 9111\nL8: L7 + 15 = 9126\nConclusion: L8 = 9126.",
+    "request_id": "F32-00-B-short-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 60 \u00d7 46 + 158 = 2918\nL2: 46 \u00d7 89 + 490 = 4584\nL3: 70 \u00d7 95 + 285 = 6935\nL4: 50 \u00d7 80 + 134 = 4134\nL5: L1 + L2 = 7502\nL6: L5 - L3 = 567\nL7: L6 + L4 = 4701\nL8: L7 - 12 = 4689\nConclusion: L8 = 4689.",
+    "request_id": "F32-02-A-short-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 51 \u00d7 59 + 340 = 3349\nL2: 78 \u00d7 56 + 247 = 4615\nL3: 90 \u00d7 95 + 430 = 8980\nL4: 72 \u00d7 97 + 161 = 7145\nL5: L1 + L2 = 7964\nL6: L5 - L3 = -1016\nL7: L6 + L4 = 6129\nL8: L7 + 7 = 6136\nL9: L8 + 5 = 6141\nL10: L9 + 17 = 6158\nL11: L10 + 13 = 6171\nL12: L11 - 11 = 6160\nL13: L12 - 7 = 6153\nL14: L13 - 2 = 6151\nL15: L14 + 16 = 6167\nL16: L15 + 17 = 6184\nL17: L16 + 7 = 6191\nL18: L17 + 17 = 6208\nL19: L18 - 11 = 6197\nL20: L19 + 13 = 6210\nL21: L20 - 15 = 6195\nL22: L21 - 14 = 6181\nL23: L22 + 5 = 6186\nL24: L23 + 5 = 6191\nL25: L24 + 7 = 6198\nL26: L25 - 12 = 6186\nL27: L26 - 6 = 6180\nL28: L27 - 16 = 6164\nL29: L28 - 2 = 6162\nL30: L29 - 2 = 6160\nL31: L30 - 9 = 6151\nL32: L31 + 2 = 6153\nConclusion: L32 = 6153.",
+    "request_id": "F32-04-A-full-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 97 \u00d7 94 + 270 = 9388. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-05-A-isolated-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 50 \u00d7 50 + 281 = 2781\nL2: 77 \u00d7 70 + 281 = 5671\nL3: 54 \u00d7 60 + 208 = 3448\nL4: 97 \u00d7 94 + 270 = 9388\nL5: L1 + L2 = 8452\nL6: L5 - L3 = 5004\nL7: L6 + L4 = 14392\nL8: L7 - 3 = 14389\nL9: L8 + 2 = 14391\nL10: L9 + 3 = 14394\nL11: L10 + 12 = 14406\nL12: L11 + 11 = 14417\nL13: L12 - 3 = 14414\nL14: L13 - 5 = 14409\nL15: L14 + 17 = 14426\nL16: L15 - 13 = 14413\nL17: L16 - 9 = 14404\nL18: L17 + 10 = 14414\nL19: L18 + 6 = 14420\nL20: L19 + 17 = 14437\nL21: L20 - 6 = 14431\nL22: L21 - 17 = 14414\nL23: L22 - 1 = 14413\nL24: L23 + 13 = 14426\nL25: L24 + 16 = 14442\nL26: L25 + 3 = 14445\nL27: L26 + 12 = 14457\nL28: L27 - 1 = 14456\nL29: L28 - 2 = 14454\nL30: L29 - 17 = 14437\nL31: L30 - 11 = 14426\nL32: L31 + 15 = 14441\nConclusion: L32 = 14441.",
+    "request_id": "F32-05-A-full-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 70 \u00d7 95 + 285 = 6935. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-02-A-isolated-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 97 \u00d7 94 + 270 = 9388. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-05-A-isolated-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 60 \u00d7 46 + 158 = 2918\nL2: 46 \u00d7 89 + 490 = 4584\nL3: 70 \u00d7 95 + 285 = 6934\nL4: 50 \u00d7 80 + 134 = 4134\nL5: L1 + L2 = 7502\nL6: L5 - L3 = 568\nL7: L6 + L4 = 4702\nL8: L7 - 12 = 4690\nL9: L8 + 10 = 4700\nL10: L9 + 14 = 4714\nL11: L10 + 13 = 4727\nL12: L11 - 3 = 4724\nL13: L12 + 13 = 4737\nL14: L13 - 5 = 4732\nL15: L14 + 6 = 4738\nL16: L15 - 15 = 4723\nL17: L16 + 11 = 4734\nL18: L17 - 10 = 4724\nL19: L18 + 8 = 4732\nL20: L19 + 8 = 4740\nL21: L20 + 8 = 4748\nL22: L21 - 2 = 4746\nL23: L22 - 1 = 4745\nL24: L23 - 9 = 4736\nL25: L24 + 11 = 4747\nL26: L25 + 5 = 4752\nL27: L26 - 11 = 4741\nL28: L27 - 9 = 4732\nL29: L28 - 5 = 4727\nL30: L29 - 13 = 4714\nL31: L30 + 13 = 4727\nL32: L31 - 17 = 4710\nConclusion: L32 = 4710.",
+    "request_id": "F32-02-B-full-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 72 \u00d7 78 + 373 = 5988\nL2: 57 \u00d7 65 + 246 = 3951\nL3: 78 \u00d7 63 + 144 = 5058\nL4: 66 \u00d7 62 + 138 = 4230\nL5: L1 + L2 = 9939\nL6: L5 - L3 = 4881\nL7: L6 + L4 = 9111\nL8: L7 + 15 = 9126\nConclusion: L8 = 9126.",
+    "request_id": "F32-00-B-short-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 64 \u00d7 66 + 113 = 4337\nL2: 92 \u00d7 50 + 300 = 4900\nL3: 89 \u00d7 61 + 350 = 5779\nL4: 59 \u00d7 45 + 337 = 2992\nL5: L1 + L2 = 9237\nL6: L5 - L3 = 3458\nL7: L6 + L4 = 6450\nL8: L7 + 1 = 6451\nConclusion: L8 = 6451.",
+    "request_id": "F32-01-A-short-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 64 \u00d7 66 + 113 = 4337\nL2: 92 \u00d7 50 + 300 = 4900\nL3: 89 \u00d7 61 + 350 = 5779\nL4: 59 \u00d7 45 + 337 = 2993\nL5: L1 + L2 = 9237\nL6: L5 - L3 = 3458\nL7: L6 + L4 = 6451\nL8: L7 + 1 = 6452\nL9: L8 + 5 = 6457\nL10: L9 - 11 = 6446\nL11: L10 + 9 = 6455\nL12: L11 + 12 = 6467\nL13: L12 - 6 = 6461\nL14: L13 + 8 = 6469\nL15: L14 + 11 = 6480\nL16: L15 - 14 = 6466\nL17: L16 - 4 = 6462\nL18: L17 - 8 = 6454\nL19: L18 - 12 = 6442\nL20: L19 - 9 = 6433\nL21: L20 + 11 = 6444\nL22: L21 - 2 = 6442\nL23: L22 + 15 = 6457\nL24: L23 + 9 = 6466\nL25: L24 - 15 = 6451\nL26: L25 + 12 = 6463\nL27: L26 - 2 = 6461\nL28: L27 + 1 = 6462\nL29: L28 + 6 = 6468\nL30: L29 + 17 = 6485\nL31: L30 + 3 = 6488\nL32: L31 - 4 = 6484\nConclusion: L32 = 6484.",
+    "request_id": "F32-01-B-full-1",
+    "sample_index": 1,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "short",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 51 \u00d7 59 + 340 = 3349\nL2: 78 \u00d7 56 + 247 = 4615\nL3: 90 \u00d7 95 + 430 = 8980\nL4: 72 \u00d7 97 + 161 = 7145\nL5: L1 + L2 = 7964\nL6: L5 - L3 = -1016\nL7: L6 + L4 = 6129\nL8: L7 + 7 = 6136\nConclusion: L8 = 6136.",
+    "request_id": "F32-04-A-short-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "full",
+    "prompt": "All quantities are integers. Check the following argument. Each leaf states an arithmetic fact.\nA derived line applies its displayed operation to earlier line values.\nApprove only if every leaf and the final value are correct; otherwise reject.\nReply APPROVE or REJECT, then one sentence.\nL1: 51 \u00d7 59 + 340 = 3348\nL2: 78 \u00d7 56 + 247 = 4615\nL3: 90 \u00d7 95 + 430 = 8980\nL4: 72 \u00d7 97 + 161 = 7145\nL5: L1 + L2 = 7963\nL6: L5 - L3 = -1017\nL7: L6 + L4 = 6128\nL8: L7 + 7 = 6135\nL9: L8 + 5 = 6140\nL10: L9 + 17 = 6157\nL11: L10 + 13 = 6170\nL12: L11 - 11 = 6159\nL13: L12 - 7 = 6152\nL14: L13 - 2 = 6150\nL15: L14 + 16 = 6166\nL16: L15 + 17 = 6183\nL17: L16 + 7 = 6190\nL18: L17 + 17 = 6207\nL19: L18 - 11 = 6196\nL20: L19 + 13 = 6209\nL21: L20 - 15 = 6194\nL22: L21 - 14 = 6180\nL23: L22 + 5 = 6185\nL24: L23 + 5 = 6190\nL25: L24 + 7 = 6197\nL26: L25 - 12 = 6185\nL27: L26 - 6 = 6179\nL28: L27 - 16 = 6163\nL29: L28 - 2 = 6161\nL30: L29 - 2 = 6159\nL31: L30 - 9 = 6150\nL32: L31 + 2 = 6152\nConclusion: L32 = 6152.",
+    "request_id": "F32-04-B-full-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  },
+  {
+    "mode": "isolated",
+    "prompt": "Check this arithmetic claim: 51 \u00d7 59 + 340 = 3349. Reply APPROVE or REJECT, then one sentence.",
+    "request_id": "F32-04-A-isolated-0",
+    "sample_index": 0,
+    "system": "You are checking a self-contained arithmetic argument. Follow the user's verdict format."
+  }
+]

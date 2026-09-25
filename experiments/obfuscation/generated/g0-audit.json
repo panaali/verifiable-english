@@ -1,0 +1,29 @@
+{
+  "depths": {
+    "32": 12,
+    "8": 12
+  },
+  "families": [
+    "redefine_leaf",
+    "shift_addend",
+    "shift_sum",
+    "vacuous_hypothesis",
+    "weaken_root"
+  ],
+  "item_count": 24,
+  "items_sha256": "f75423deece00325cfae0c95a785cd614717229abd510290f1c62082c826570e",
+  "leakage": {
+    "pairs": 12,
+    "scope": "numeric values masked; semantic and blinded-leaf leakage remain untested",
+    "status": "PASS",
+    "structural_failures": []
+  },
+  "lean_checked": true,
+  "lean_failed": [],
+  "plants": 20,
+  "plants_sha256": "420a3d621eea95cafd5b13e544cab859b39d0b7e852a6323836d1dd07b2bcdab",
+  "truth_counts": {
+    "dishonest": 12,
+    "honest": 12
+  }
+}

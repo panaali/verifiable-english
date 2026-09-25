@@ -1,0 +1,11 @@
+{
+  "mode": "dry-run",
+  "model": "claude-sonnet-5",
+  "model_calls_executed": 0,
+  "paid_cap_usd": 5.0,
+  "paid_spend_usd": 0,
+  "planned_requests": 72,
+  "request_sha256": "9795ad0b8f9ac50ae0ce1d481dbc945d6a967f7fd29b670104d8fb9b2ce20dbd",
+  "scoring": "pair- and mode-clustered descriptive counts only; no comparative claim",
+  "subscription_call_cap": 72
+}

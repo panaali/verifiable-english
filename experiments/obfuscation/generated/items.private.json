@@ -1,0 +1,2978 @@
+[
+  {
+    "depth": 8,
+    "false_leaf": null,
+    "id": "F8-00-A",
+    "leaves": [
+      {
+        "a": 97,
+        "actual": 7173,
+        "b": 70,
+        "c": 383,
+        "claimed": 7173,
+        "name": "L1"
+      },
+      {
+        "a": 89,
+        "actual": 6181,
+        "b": 65,
+        "c": 396,
+        "claimed": 6181,
+        "name": "L2"
+      },
+      {
+        "a": 82,
+        "actual": 7360,
+        "b": 86,
+        "c": 308,
+        "claimed": 7360,
+        "name": "L3"
+      },
+      {
+        "a": 92,
+        "actual": 4344,
+        "b": 45,
+        "c": 204,
+        "claimed": 4344,
+        "name": "L4"
+      }
+    ],
+    "pair": 0,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 10,
+        "left": 6,
+        "op": "-"
+      }
+    ],
+    "target": 10328,
+    "truth": true
+  },
+  {
+    "depth": 8,
+    "false_leaf": 1,
+    "id": "F8-00-B",
+    "leaves": [
+      {
+        "a": 97,
+        "actual": 7173,
+        "b": 70,
+        "c": 383,
+        "claimed": 7173,
+        "name": "L1"
+      },
+      {
+        "a": 89,
+        "actual": 6181,
+        "b": 65,
+        "c": 396,
+        "claimed": 6180,
+        "name": "L2"
+      },
+      {
+        "a": 82,
+        "actual": 7360,
+        "b": 86,
+        "c": 308,
+        "claimed": 7360,
+        "name": "L3"
+      },
+      {
+        "a": 92,
+        "actual": 4344,
+        "b": 45,
+        "c": 204,
+        "claimed": 4344,
+        "name": "L4"
+      }
+    ],
+    "pair": 0,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 10,
+        "left": 6,
+        "op": "-"
+      }
+    ],
+    "target": 10327,
+    "truth": false
+  },
+  {
+    "depth": 8,
+    "false_leaf": null,
+    "id": "F8-01-A",
+    "leaves": [
+      {
+        "a": 60,
+        "actual": 3763,
+        "b": 56,
+        "c": 403,
+        "claimed": 3763,
+        "name": "L1"
+      },
+      {
+        "a": 46,
+        "actual": 4402,
+        "b": 90,
+        "c": 262,
+        "claimed": 4402,
+        "name": "L2"
+      },
+      {
+        "a": 79,
+        "actual": 6113,
+        "b": 76,
+        "c": 109,
+        "claimed": 6113,
+        "name": "L3"
+      },
+      {
+        "a": 63,
+        "actual": 6015,
+        "b": 90,
+        "c": 345,
+        "claimed": 6015,
+        "name": "L4"
+      }
+    ],
+    "pair": 1,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 9,
+        "left": 6,
+        "op": "+"
+      }
+    ],
+    "target": 8076,
+    "truth": true
+  },
+  {
+    "depth": 8,
+    "false_leaf": 0,
+    "id": "F8-01-B",
+    "leaves": [
+      {
+        "a": 60,
+        "actual": 3763,
+        "b": 56,
+        "c": 403,
+        "claimed": 3764,
+        "name": "L1"
+      },
+      {
+        "a": 46,
+        "actual": 4402,
+        "b": 90,
+        "c": 262,
+        "claimed": 4402,
+        "name": "L2"
+      },
+      {
+        "a": 79,
+        "actual": 6113,
+        "b": 76,
+        "c": 109,
+        "claimed": 6113,
+        "name": "L3"
+      },
+      {
+        "a": 63,
+        "actual": 6015,
+        "b": 90,
+        "c": 345,
+        "claimed": 6015,
+        "name": "L4"
+      }
+    ],
+    "pair": 1,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 9,
+        "left": 6,
+        "op": "+"
+      }
+    ],
+    "target": 8077,
+    "truth": false
+  },
+  {
+    "depth": 8,
+    "false_leaf": null,
+    "id": "F8-02-A",
+    "leaves": [
+      {
+        "a": 61,
+        "actual": 3864,
+        "b": 57,
+        "c": 387,
+        "claimed": 3864,
+        "name": "L1"
+      },
+      {
+        "a": 64,
+        "actual": 3840,
+        "b": 56,
+        "c": 256,
+        "claimed": 3840,
+        "name": "L2"
+      },
+      {
+        "a": 60,
+        "actual": 4468,
+        "b": 70,
+        "c": 268,
+        "claimed": 4468,
+        "name": "L3"
+      },
+      {
+        "a": 94,
+        "actual": 7548,
+        "b": 76,
+        "c": 404,
+        "claimed": 7548,
+        "name": "L4"
+      }
+    ],
+    "pair": 2,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 11,
+        "left": 6,
+        "op": "+"
+      }
+    ],
+    "target": 10795,
+    "truth": true
+  },
+  {
+    "depth": 8,
+    "false_leaf": 3,
+    "id": "F8-02-B",
+    "leaves": [
+      {
+        "a": 61,
+        "actual": 3864,
+        "b": 57,
+        "c": 387,
+        "claimed": 3864,
+        "name": "L1"
+      },
+      {
+        "a": 64,
+        "actual": 3840,
+        "b": 56,
+        "c": 256,
+        "claimed": 3840,
+        "name": "L2"
+      },
+      {
+        "a": 60,
+        "actual": 4468,
+        "b": 70,
+        "c": 268,
+        "claimed": 4468,
+        "name": "L3"
+      },
+      {
+        "a": 94,
+        "actual": 7548,
+        "b": 76,
+        "c": 404,
+        "claimed": 7547,
+        "name": "L4"
+      }
+    ],
+    "pair": 2,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 11,
+        "left": 6,
+        "op": "+"
+      }
+    ],
+    "target": 10794,
+    "truth": false
+  },
+  {
+    "depth": 8,
+    "false_leaf": null,
+    "id": "F8-03-A",
+    "leaves": [
+      {
+        "a": 55,
+        "actual": 2923,
+        "b": 45,
+        "c": 448,
+        "claimed": 2923,
+        "name": "L1"
+      },
+      {
+        "a": 88,
+        "actual": 7056,
+        "b": 77,
+        "c": 280,
+        "claimed": 7056,
+        "name": "L2"
+      },
+      {
+        "a": 57,
+        "actual": 4891,
+        "b": 78,
+        "c": 445,
+        "claimed": 4891,
+        "name": "L3"
+      },
+      {
+        "a": 55,
+        "actual": 5131,
+        "b": 91,
+        "c": 126,
+        "claimed": 5131,
+        "name": "L4"
+      }
+    ],
+    "pair": 3,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 10,
+        "left": 6,
+        "op": "-"
+      }
+    ],
+    "target": 10209,
+    "truth": true
+  },
+  {
+    "depth": 8,
+    "false_leaf": 2,
+    "id": "F8-03-B",
+    "leaves": [
+      {
+        "a": 55,
+        "actual": 2923,
+        "b": 45,
+        "c": 448,
+        "claimed": 2923,
+        "name": "L1"
+      },
+      {
+        "a": 88,
+        "actual": 7056,
+        "b": 77,
+        "c": 280,
+        "claimed": 7056,
+        "name": "L2"
+      },
+      {
+        "a": 57,
+        "actual": 4891,
+        "b": 78,
+        "c": 445,
+        "claimed": 4892,
+        "name": "L3"
+      },
+      {
+        "a": 55,
+        "actual": 5131,
+        "b": 91,
+        "c": 126,
+        "claimed": 5131,
+        "name": "L4"
+      }
+    ],
+    "pair": 3,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 10,
+        "left": 6,
+        "op": "-"
+      }
+    ],
+    "target": 10208,
+    "truth": false
+  },
+  {
+    "depth": 8,
+    "false_leaf": null,
+    "id": "F8-04-A",
+    "leaves": [
+      {
+        "a": 45,
+        "actual": 3624,
+        "b": 74,
+        "c": 294,
+        "claimed": 3624,
+        "name": "L1"
+      },
+      {
+        "a": 44,
+        "actual": 2084,
+        "b": 45,
+        "c": 104,
+        "claimed": 2084,
+        "name": "L2"
+      },
+      {
+        "a": 54,
+        "actual": 3631,
+        "b": 65,
+        "c": 121,
+        "claimed": 3631,
+        "name": "L3"
+      },
+      {
+        "a": 75,
+        "actual": 6851,
+        "b": 86,
+        "c": 401,
+        "claimed": 6851,
+        "name": "L4"
+      }
+    ],
+    "pair": 4,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 3,
+        "left": 6,
+        "op": "-"
+      }
+    ],
+    "target": 8925,
+    "truth": true
+  },
+  {
+    "depth": 8,
+    "false_leaf": 1,
+    "id": "F8-04-B",
+    "leaves": [
+      {
+        "a": 45,
+        "actual": 3624,
+        "b": 74,
+        "c": 294,
+        "claimed": 3624,
+        "name": "L1"
+      },
+      {
+        "a": 44,
+        "actual": 2084,
+        "b": 45,
+        "c": 104,
+        "claimed": 2083,
+        "name": "L2"
+      },
+      {
+        "a": 54,
+        "actual": 3631,
+        "b": 65,
+        "c": 121,
+        "claimed": 3631,
+        "name": "L3"
+      },
+      {
+        "a": 75,
+        "actual": 6851,
+        "b": 86,
+        "c": 401,
+        "claimed": 6851,
+        "name": "L4"
+      }
+    ],
+    "pair": 4,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 3,
+        "left": 6,
+        "op": "-"
+      }
+    ],
+    "target": 8924,
+    "truth": false
+  },
+  {
+    "depth": 8,
+    "false_leaf": null,
+    "id": "F8-05-A",
+    "leaves": [
+      {
+        "a": 42,
+        "actual": 3373,
+        "b": 72,
+        "c": 349,
+        "claimed": 3373,
+        "name": "L1"
+      },
+      {
+        "a": 45,
+        "actual": 3022,
+        "b": 63,
+        "c": 187,
+        "claimed": 3022,
+        "name": "L2"
+      },
+      {
+        "a": 47,
+        "actual": 2577,
+        "b": 46,
+        "c": 415,
+        "claimed": 2577,
+        "name": "L3"
+      },
+      {
+        "a": 38,
+        "actual": 3689,
+        "b": 89,
+        "c": 307,
+        "claimed": 3689,
+        "name": "L4"
+      }
+    ],
+    "pair": 5,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 8,
+        "left": 6,
+        "op": "-"
+      }
+    ],
+    "target": 7499,
+    "truth": true
+  },
+  {
+    "depth": 8,
+    "false_leaf": 0,
+    "id": "F8-05-B",
+    "leaves": [
+      {
+        "a": 42,
+        "actual": 3373,
+        "b": 72,
+        "c": 349,
+        "claimed": 3374,
+        "name": "L1"
+      },
+      {
+        "a": 45,
+        "actual": 3022,
+        "b": 63,
+        "c": 187,
+        "claimed": 3022,
+        "name": "L2"
+      },
+      {
+        "a": 47,
+        "actual": 2577,
+        "b": 46,
+        "c": 415,
+        "claimed": 2577,
+        "name": "L3"
+      },
+      {
+        "a": 38,
+        "actual": 3689,
+        "b": 89,
+        "c": 307,
+        "claimed": 3689,
+        "name": "L4"
+      }
+    ],
+    "pair": 5,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 8,
+        "left": 6,
+        "op": "-"
+      }
+    ],
+    "target": 7500,
+    "truth": false
+  },
+  {
+    "depth": 32,
+    "false_leaf": null,
+    "id": "F32-00-A",
+    "leaves": [
+      {
+        "a": 72,
+        "actual": 5989,
+        "b": 78,
+        "c": 373,
+        "claimed": 5989,
+        "name": "L1"
+      },
+      {
+        "a": 57,
+        "actual": 3951,
+        "b": 65,
+        "c": 246,
+        "claimed": 3951,
+        "name": "L2"
+      },
+      {
+        "a": 78,
+        "actual": 5058,
+        "b": 63,
+        "c": 144,
+        "claimed": 5058,
+        "name": "L3"
+      },
+      {
+        "a": 66,
+        "actual": 4230,
+        "b": 62,
+        "c": 138,
+        "claimed": 4230,
+        "name": "L4"
+      }
+    ],
+    "pair": 0,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 15,
+        "left": 6,
+        "op": "+"
+      },
+      {
+        "constant": 16,
+        "left": 7,
+        "op": "+"
+      },
+      {
+        "constant": 14,
+        "left": 8,
+        "op": "-"
+      },
+      {
+        "constant": 3,
+        "left": 9,
+        "op": "-"
+      },
+      {
+        "constant": 1,
+        "left": 10,
+        "op": "-"
+      },
+      {
+        "constant": 8,
+        "left": 11,
+        "op": "+"
+      },
+      {
+        "constant": 4,
+        "left": 12,
+        "op": "-"
+      },
+      {
+        "constant": 3,
+        "left": 13,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 14,
+        "op": "+"
+      },
+      {
+        "constant": 1,
+        "left": 15,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 16,
+        "op": "-"
+      },
+      {
+        "constant": 16,
+        "left": 17,
+        "op": "+"
+      },
+      {
+        "constant": 2,
+        "left": 18,
+        "op": "-"
+      },
+      {
+        "constant": 6,
+        "left": 19,
+        "op": "-"
+      },
+      {
+        "constant": 8,
+        "left": 20,
+        "op": "-"
+      },
+      {
+        "constant": 4,
+        "left": 21,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 22,
+        "op": "+"
+      },
+      {
+        "constant": 10,
+        "left": 23,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 24,
+        "op": "-"
+      },
+      {
+        "constant": 3,
+        "left": 25,
+        "op": "-"
+      },
+      {
+        "constant": 15,
+        "left": 26,
+        "op": "-"
+      },
+      {
+        "constant": 10,
+        "left": 27,
+        "op": "-"
+      },
+      {
+        "constant": 3,
+        "left": 28,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 29,
+        "op": "+"
+      },
+      {
+        "constant": 14,
+        "left": 30,
+        "op": "+"
+      }
+    ],
+    "target": 9137,
+    "truth": true
+  },
+  {
+    "depth": 32,
+    "false_leaf": 0,
+    "id": "F32-00-B",
+    "leaves": [
+      {
+        "a": 72,
+        "actual": 5989,
+        "b": 78,
+        "c": 373,
+        "claimed": 5988,
+        "name": "L1"
+      },
+      {
+        "a": 57,
+        "actual": 3951,
+        "b": 65,
+        "c": 246,
+        "claimed": 3951,
+        "name": "L2"
+      },
+      {
+        "a": 78,
+        "actual": 5058,
+        "b": 63,
+        "c": 144,
+        "claimed": 5058,
+        "name": "L3"
+      },
+      {
+        "a": 66,
+        "actual": 4230,
+        "b": 62,
+        "c": 138,
+        "claimed": 4230,
+        "name": "L4"
+      }
+    ],
+    "pair": 0,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 15,
+        "left": 6,
+        "op": "+"
+      },
+      {
+        "constant": 16,
+        "left": 7,
+        "op": "+"
+      },
+      {
+        "constant": 14,
+        "left": 8,
+        "op": "-"
+      },
+      {
+        "constant": 3,
+        "left": 9,
+        "op": "-"
+      },
+      {
+        "constant": 1,
+        "left": 10,
+        "op": "-"
+      },
+      {
+        "constant": 8,
+        "left": 11,
+        "op": "+"
+      },
+      {
+        "constant": 4,
+        "left": 12,
+        "op": "-"
+      },
+      {
+        "constant": 3,
+        "left": 13,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 14,
+        "op": "+"
+      },
+      {
+        "constant": 1,
+        "left": 15,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 16,
+        "op": "-"
+      },
+      {
+        "constant": 16,
+        "left": 17,
+        "op": "+"
+      },
+      {
+        "constant": 2,
+        "left": 18,
+        "op": "-"
+      },
+      {
+        "constant": 6,
+        "left": 19,
+        "op": "-"
+      },
+      {
+        "constant": 8,
+        "left": 20,
+        "op": "-"
+      },
+      {
+        "constant": 4,
+        "left": 21,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 22,
+        "op": "+"
+      },
+      {
+        "constant": 10,
+        "left": 23,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 24,
+        "op": "-"
+      },
+      {
+        "constant": 3,
+        "left": 25,
+        "op": "-"
+      },
+      {
+        "constant": 15,
+        "left": 26,
+        "op": "-"
+      },
+      {
+        "constant": 10,
+        "left": 27,
+        "op": "-"
+      },
+      {
+        "constant": 3,
+        "left": 28,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 29,
+        "op": "+"
+      },
+      {
+        "constant": 14,
+        "left": 30,
+        "op": "+"
+      }
+    ],
+    "target": 9136,
+    "truth": false
+  },
+  {
+    "depth": 32,
+    "false_leaf": null,
+    "id": "F32-01-A",
+    "leaves": [
+      {
+        "a": 64,
+        "actual": 4337,
+        "b": 66,
+        "c": 113,
+        "claimed": 4337,
+        "name": "L1"
+      },
+      {
+        "a": 92,
+        "actual": 4900,
+        "b": 50,
+        "c": 300,
+        "claimed": 4900,
+        "name": "L2"
+      },
+      {
+        "a": 89,
+        "actual": 5779,
+        "b": 61,
+        "c": 350,
+        "claimed": 5779,
+        "name": "L3"
+      },
+      {
+        "a": 59,
+        "actual": 2992,
+        "b": 45,
+        "c": 337,
+        "claimed": 2992,
+        "name": "L4"
+      }
+    ],
+    "pair": 1,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 1,
+        "left": 6,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 7,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 8,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 9,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 10,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 11,
+        "op": "-"
+      },
+      {
+        "constant": 8,
+        "left": 12,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 13,
+        "op": "+"
+      },
+      {
+        "constant": 14,
+        "left": 14,
+        "op": "-"
+      },
+      {
+        "constant": 4,
+        "left": 15,
+        "op": "-"
+      },
+      {
+        "constant": 8,
+        "left": 16,
+        "op": "-"
+      },
+      {
+        "constant": 12,
+        "left": 17,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 18,
+        "op": "-"
+      },
+      {
+        "constant": 11,
+        "left": 19,
+        "op": "+"
+      },
+      {
+        "constant": 2,
+        "left": 20,
+        "op": "-"
+      },
+      {
+        "constant": 15,
+        "left": 21,
+        "op": "+"
+      },
+      {
+        "constant": 9,
+        "left": 22,
+        "op": "+"
+      },
+      {
+        "constant": 15,
+        "left": 23,
+        "op": "-"
+      },
+      {
+        "constant": 12,
+        "left": 24,
+        "op": "+"
+      },
+      {
+        "constant": 2,
+        "left": 25,
+        "op": "-"
+      },
+      {
+        "constant": 1,
+        "left": 26,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 27,
+        "op": "+"
+      },
+      {
+        "constant": 17,
+        "left": 28,
+        "op": "+"
+      },
+      {
+        "constant": 3,
+        "left": 29,
+        "op": "+"
+      },
+      {
+        "constant": 4,
+        "left": 30,
+        "op": "-"
+      }
+    ],
+    "target": 6483,
+    "truth": true
+  },
+  {
+    "depth": 32,
+    "false_leaf": 3,
+    "id": "F32-01-B",
+    "leaves": [
+      {
+        "a": 64,
+        "actual": 4337,
+        "b": 66,
+        "c": 113,
+        "claimed": 4337,
+        "name": "L1"
+      },
+      {
+        "a": 92,
+        "actual": 4900,
+        "b": 50,
+        "c": 300,
+        "claimed": 4900,
+        "name": "L2"
+      },
+      {
+        "a": 89,
+        "actual": 5779,
+        "b": 61,
+        "c": 350,
+        "claimed": 5779,
+        "name": "L3"
+      },
+      {
+        "a": 59,
+        "actual": 2992,
+        "b": 45,
+        "c": 337,
+        "claimed": 2993,
+        "name": "L4"
+      }
+    ],
+    "pair": 1,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 1,
+        "left": 6,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 7,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 8,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 9,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 10,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 11,
+        "op": "-"
+      },
+      {
+        "constant": 8,
+        "left": 12,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 13,
+        "op": "+"
+      },
+      {
+        "constant": 14,
+        "left": 14,
+        "op": "-"
+      },
+      {
+        "constant": 4,
+        "left": 15,
+        "op": "-"
+      },
+      {
+        "constant": 8,
+        "left": 16,
+        "op": "-"
+      },
+      {
+        "constant": 12,
+        "left": 17,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 18,
+        "op": "-"
+      },
+      {
+        "constant": 11,
+        "left": 19,
+        "op": "+"
+      },
+      {
+        "constant": 2,
+        "left": 20,
+        "op": "-"
+      },
+      {
+        "constant": 15,
+        "left": 21,
+        "op": "+"
+      },
+      {
+        "constant": 9,
+        "left": 22,
+        "op": "+"
+      },
+      {
+        "constant": 15,
+        "left": 23,
+        "op": "-"
+      },
+      {
+        "constant": 12,
+        "left": 24,
+        "op": "+"
+      },
+      {
+        "constant": 2,
+        "left": 25,
+        "op": "-"
+      },
+      {
+        "constant": 1,
+        "left": 26,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 27,
+        "op": "+"
+      },
+      {
+        "constant": 17,
+        "left": 28,
+        "op": "+"
+      },
+      {
+        "constant": 3,
+        "left": 29,
+        "op": "+"
+      },
+      {
+        "constant": 4,
+        "left": 30,
+        "op": "-"
+      }
+    ],
+    "target": 6484,
+    "truth": false
+  },
+  {
+    "depth": 32,
+    "false_leaf": null,
+    "id": "F32-02-A",
+    "leaves": [
+      {
+        "a": 60,
+        "actual": 2918,
+        "b": 46,
+        "c": 158,
+        "claimed": 2918,
+        "name": "L1"
+      },
+      {
+        "a": 46,
+        "actual": 4584,
+        "b": 89,
+        "c": 490,
+        "claimed": 4584,
+        "name": "L2"
+      },
+      {
+        "a": 70,
+        "actual": 6935,
+        "b": 95,
+        "c": 285,
+        "claimed": 6935,
+        "name": "L3"
+      },
+      {
+        "a": 50,
+        "actual": 4134,
+        "b": 80,
+        "c": 134,
+        "claimed": 4134,
+        "name": "L4"
+      }
+    ],
+    "pair": 2,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 12,
+        "left": 6,
+        "op": "-"
+      },
+      {
+        "constant": 10,
+        "left": 7,
+        "op": "+"
+      },
+      {
+        "constant": 14,
+        "left": 8,
+        "op": "+"
+      },
+      {
+        "constant": 13,
+        "left": 9,
+        "op": "+"
+      },
+      {
+        "constant": 3,
+        "left": 10,
+        "op": "-"
+      },
+      {
+        "constant": 13,
+        "left": 11,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 12,
+        "op": "-"
+      },
+      {
+        "constant": 6,
+        "left": 13,
+        "op": "+"
+      },
+      {
+        "constant": 15,
+        "left": 14,
+        "op": "-"
+      },
+      {
+        "constant": 11,
+        "left": 15,
+        "op": "+"
+      },
+      {
+        "constant": 10,
+        "left": 16,
+        "op": "-"
+      },
+      {
+        "constant": 8,
+        "left": 17,
+        "op": "+"
+      },
+      {
+        "constant": 8,
+        "left": 18,
+        "op": "+"
+      },
+      {
+        "constant": 8,
+        "left": 19,
+        "op": "+"
+      },
+      {
+        "constant": 2,
+        "left": 20,
+        "op": "-"
+      },
+      {
+        "constant": 1,
+        "left": 21,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 22,
+        "op": "-"
+      },
+      {
+        "constant": 11,
+        "left": 23,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 24,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 25,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 26,
+        "op": "-"
+      },
+      {
+        "constant": 5,
+        "left": 27,
+        "op": "-"
+      },
+      {
+        "constant": 13,
+        "left": 28,
+        "op": "-"
+      },
+      {
+        "constant": 13,
+        "left": 29,
+        "op": "+"
+      },
+      {
+        "constant": 17,
+        "left": 30,
+        "op": "-"
+      }
+    ],
+    "target": 4709,
+    "truth": true
+  },
+  {
+    "depth": 32,
+    "false_leaf": 2,
+    "id": "F32-02-B",
+    "leaves": [
+      {
+        "a": 60,
+        "actual": 2918,
+        "b": 46,
+        "c": 158,
+        "claimed": 2918,
+        "name": "L1"
+      },
+      {
+        "a": 46,
+        "actual": 4584,
+        "b": 89,
+        "c": 490,
+        "claimed": 4584,
+        "name": "L2"
+      },
+      {
+        "a": 70,
+        "actual": 6935,
+        "b": 95,
+        "c": 285,
+        "claimed": 6934,
+        "name": "L3"
+      },
+      {
+        "a": 50,
+        "actual": 4134,
+        "b": 80,
+        "c": 134,
+        "claimed": 4134,
+        "name": "L4"
+      }
+    ],
+    "pair": 2,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 12,
+        "left": 6,
+        "op": "-"
+      },
+      {
+        "constant": 10,
+        "left": 7,
+        "op": "+"
+      },
+      {
+        "constant": 14,
+        "left": 8,
+        "op": "+"
+      },
+      {
+        "constant": 13,
+        "left": 9,
+        "op": "+"
+      },
+      {
+        "constant": 3,
+        "left": 10,
+        "op": "-"
+      },
+      {
+        "constant": 13,
+        "left": 11,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 12,
+        "op": "-"
+      },
+      {
+        "constant": 6,
+        "left": 13,
+        "op": "+"
+      },
+      {
+        "constant": 15,
+        "left": 14,
+        "op": "-"
+      },
+      {
+        "constant": 11,
+        "left": 15,
+        "op": "+"
+      },
+      {
+        "constant": 10,
+        "left": 16,
+        "op": "-"
+      },
+      {
+        "constant": 8,
+        "left": 17,
+        "op": "+"
+      },
+      {
+        "constant": 8,
+        "left": 18,
+        "op": "+"
+      },
+      {
+        "constant": 8,
+        "left": 19,
+        "op": "+"
+      },
+      {
+        "constant": 2,
+        "left": 20,
+        "op": "-"
+      },
+      {
+        "constant": 1,
+        "left": 21,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 22,
+        "op": "-"
+      },
+      {
+        "constant": 11,
+        "left": 23,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 24,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 25,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 26,
+        "op": "-"
+      },
+      {
+        "constant": 5,
+        "left": 27,
+        "op": "-"
+      },
+      {
+        "constant": 13,
+        "left": 28,
+        "op": "-"
+      },
+      {
+        "constant": 13,
+        "left": 29,
+        "op": "+"
+      },
+      {
+        "constant": 17,
+        "left": 30,
+        "op": "-"
+      }
+    ],
+    "target": 4710,
+    "truth": false
+  },
+  {
+    "depth": 32,
+    "false_leaf": null,
+    "id": "F32-03-A",
+    "leaves": [
+      {
+        "a": 37,
+        "actual": 3092,
+        "b": 72,
+        "c": 428,
+        "claimed": 3092,
+        "name": "L1"
+      },
+      {
+        "a": 77,
+        "actual": 5008,
+        "b": 63,
+        "c": 157,
+        "claimed": 5008,
+        "name": "L2"
+      },
+      {
+        "a": 66,
+        "actual": 3189,
+        "b": 45,
+        "c": 219,
+        "claimed": 3189,
+        "name": "L3"
+      },
+      {
+        "a": 39,
+        "actual": 4083,
+        "b": 96,
+        "c": 339,
+        "claimed": 4083,
+        "name": "L4"
+      }
+    ],
+    "pair": 3,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 6,
+        "left": 6,
+        "op": "-"
+      },
+      {
+        "constant": 1,
+        "left": 7,
+        "op": "-"
+      },
+      {
+        "constant": 10,
+        "left": 8,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 9,
+        "op": "-"
+      },
+      {
+        "constant": 16,
+        "left": 10,
+        "op": "-"
+      },
+      {
+        "constant": 5,
+        "left": 11,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 12,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 13,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 14,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 15,
+        "op": "-"
+      },
+      {
+        "constant": 13,
+        "left": 16,
+        "op": "-"
+      },
+      {
+        "constant": 15,
+        "left": 17,
+        "op": "-"
+      },
+      {
+        "constant": 6,
+        "left": 18,
+        "op": "-"
+      },
+      {
+        "constant": 5,
+        "left": 19,
+        "op": "+"
+      },
+      {
+        "constant": 8,
+        "left": 20,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 21,
+        "op": "-"
+      },
+      {
+        "constant": 5,
+        "left": 22,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 23,
+        "op": "+"
+      },
+      {
+        "constant": 4,
+        "left": 24,
+        "op": "+"
+      },
+      {
+        "constant": 2,
+        "left": 25,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 26,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 27,
+        "op": "+"
+      },
+      {
+        "constant": 14,
+        "left": 28,
+        "op": "-"
+      },
+      {
+        "constant": 16,
+        "left": 29,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 30,
+        "op": "+"
+      }
+    ],
+    "target": 8983,
+    "truth": true
+  },
+  {
+    "depth": 32,
+    "false_leaf": 1,
+    "id": "F32-03-B",
+    "leaves": [
+      {
+        "a": 37,
+        "actual": 3092,
+        "b": 72,
+        "c": 428,
+        "claimed": 3092,
+        "name": "L1"
+      },
+      {
+        "a": 77,
+        "actual": 5008,
+        "b": 63,
+        "c": 157,
+        "claimed": 5009,
+        "name": "L2"
+      },
+      {
+        "a": 66,
+        "actual": 3189,
+        "b": 45,
+        "c": 219,
+        "claimed": 3189,
+        "name": "L3"
+      },
+      {
+        "a": 39,
+        "actual": 4083,
+        "b": 96,
+        "c": 339,
+        "claimed": 4083,
+        "name": "L4"
+      }
+    ],
+    "pair": 3,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 6,
+        "left": 6,
+        "op": "-"
+      },
+      {
+        "constant": 1,
+        "left": 7,
+        "op": "-"
+      },
+      {
+        "constant": 10,
+        "left": 8,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 9,
+        "op": "-"
+      },
+      {
+        "constant": 16,
+        "left": 10,
+        "op": "-"
+      },
+      {
+        "constant": 5,
+        "left": 11,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 12,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 13,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 14,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 15,
+        "op": "-"
+      },
+      {
+        "constant": 13,
+        "left": 16,
+        "op": "-"
+      },
+      {
+        "constant": 15,
+        "left": 17,
+        "op": "-"
+      },
+      {
+        "constant": 6,
+        "left": 18,
+        "op": "-"
+      },
+      {
+        "constant": 5,
+        "left": 19,
+        "op": "+"
+      },
+      {
+        "constant": 8,
+        "left": 20,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 21,
+        "op": "-"
+      },
+      {
+        "constant": 5,
+        "left": 22,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 23,
+        "op": "+"
+      },
+      {
+        "constant": 4,
+        "left": 24,
+        "op": "+"
+      },
+      {
+        "constant": 2,
+        "left": 25,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 26,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 27,
+        "op": "+"
+      },
+      {
+        "constant": 14,
+        "left": 28,
+        "op": "-"
+      },
+      {
+        "constant": 16,
+        "left": 29,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 30,
+        "op": "+"
+      }
+    ],
+    "target": 8984,
+    "truth": false
+  },
+  {
+    "depth": 32,
+    "false_leaf": null,
+    "id": "F32-04-A",
+    "leaves": [
+      {
+        "a": 51,
+        "actual": 3349,
+        "b": 59,
+        "c": 340,
+        "claimed": 3349,
+        "name": "L1"
+      },
+      {
+        "a": 78,
+        "actual": 4615,
+        "b": 56,
+        "c": 247,
+        "claimed": 4615,
+        "name": "L2"
+      },
+      {
+        "a": 90,
+        "actual": 8980,
+        "b": 95,
+        "c": 430,
+        "claimed": 8980,
+        "name": "L3"
+      },
+      {
+        "a": 72,
+        "actual": 7145,
+        "b": 97,
+        "c": 161,
+        "claimed": 7145,
+        "name": "L4"
+      }
+    ],
+    "pair": 4,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 7,
+        "left": 6,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 7,
+        "op": "+"
+      },
+      {
+        "constant": 17,
+        "left": 8,
+        "op": "+"
+      },
+      {
+        "constant": 13,
+        "left": 9,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 10,
+        "op": "-"
+      },
+      {
+        "constant": 7,
+        "left": 11,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 12,
+        "op": "-"
+      },
+      {
+        "constant": 16,
+        "left": 13,
+        "op": "+"
+      },
+      {
+        "constant": 17,
+        "left": 14,
+        "op": "+"
+      },
+      {
+        "constant": 7,
+        "left": 15,
+        "op": "+"
+      },
+      {
+        "constant": 17,
+        "left": 16,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 17,
+        "op": "-"
+      },
+      {
+        "constant": 13,
+        "left": 18,
+        "op": "+"
+      },
+      {
+        "constant": 15,
+        "left": 19,
+        "op": "-"
+      },
+      {
+        "constant": 14,
+        "left": 20,
+        "op": "-"
+      },
+      {
+        "constant": 5,
+        "left": 21,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 22,
+        "op": "+"
+      },
+      {
+        "constant": 7,
+        "left": 23,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 24,
+        "op": "-"
+      },
+      {
+        "constant": 6,
+        "left": 25,
+        "op": "-"
+      },
+      {
+        "constant": 16,
+        "left": 26,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 27,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 28,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 29,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 30,
+        "op": "+"
+      }
+    ],
+    "target": 6153,
+    "truth": true
+  },
+  {
+    "depth": 32,
+    "false_leaf": 0,
+    "id": "F32-04-B",
+    "leaves": [
+      {
+        "a": 51,
+        "actual": 3349,
+        "b": 59,
+        "c": 340,
+        "claimed": 3348,
+        "name": "L1"
+      },
+      {
+        "a": 78,
+        "actual": 4615,
+        "b": 56,
+        "c": 247,
+        "claimed": 4615,
+        "name": "L2"
+      },
+      {
+        "a": 90,
+        "actual": 8980,
+        "b": 95,
+        "c": 430,
+        "claimed": 8980,
+        "name": "L3"
+      },
+      {
+        "a": 72,
+        "actual": 7145,
+        "b": 97,
+        "c": 161,
+        "claimed": 7145,
+        "name": "L4"
+      }
+    ],
+    "pair": 4,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 7,
+        "left": 6,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 7,
+        "op": "+"
+      },
+      {
+        "constant": 17,
+        "left": 8,
+        "op": "+"
+      },
+      {
+        "constant": 13,
+        "left": 9,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 10,
+        "op": "-"
+      },
+      {
+        "constant": 7,
+        "left": 11,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 12,
+        "op": "-"
+      },
+      {
+        "constant": 16,
+        "left": 13,
+        "op": "+"
+      },
+      {
+        "constant": 17,
+        "left": 14,
+        "op": "+"
+      },
+      {
+        "constant": 7,
+        "left": 15,
+        "op": "+"
+      },
+      {
+        "constant": 17,
+        "left": 16,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 17,
+        "op": "-"
+      },
+      {
+        "constant": 13,
+        "left": 18,
+        "op": "+"
+      },
+      {
+        "constant": 15,
+        "left": 19,
+        "op": "-"
+      },
+      {
+        "constant": 14,
+        "left": 20,
+        "op": "-"
+      },
+      {
+        "constant": 5,
+        "left": 21,
+        "op": "+"
+      },
+      {
+        "constant": 5,
+        "left": 22,
+        "op": "+"
+      },
+      {
+        "constant": 7,
+        "left": 23,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 24,
+        "op": "-"
+      },
+      {
+        "constant": 6,
+        "left": 25,
+        "op": "-"
+      },
+      {
+        "constant": 16,
+        "left": 26,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 27,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 28,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 29,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 30,
+        "op": "+"
+      }
+    ],
+    "target": 6152,
+    "truth": false
+  },
+  {
+    "depth": 32,
+    "false_leaf": null,
+    "id": "F32-05-A",
+    "leaves": [
+      {
+        "a": 50,
+        "actual": 2781,
+        "b": 50,
+        "c": 281,
+        "claimed": 2781,
+        "name": "L1"
+      },
+      {
+        "a": 77,
+        "actual": 5671,
+        "b": 70,
+        "c": 281,
+        "claimed": 5671,
+        "name": "L2"
+      },
+      {
+        "a": 54,
+        "actual": 3448,
+        "b": 60,
+        "c": 208,
+        "claimed": 3448,
+        "name": "L3"
+      },
+      {
+        "a": 97,
+        "actual": 9388,
+        "b": 94,
+        "c": 270,
+        "claimed": 9388,
+        "name": "L4"
+      }
+    ],
+    "pair": 5,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 3,
+        "left": 6,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 7,
+        "op": "+"
+      },
+      {
+        "constant": 3,
+        "left": 8,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 9,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 10,
+        "op": "+"
+      },
+      {
+        "constant": 3,
+        "left": 11,
+        "op": "-"
+      },
+      {
+        "constant": 5,
+        "left": 12,
+        "op": "-"
+      },
+      {
+        "constant": 17,
+        "left": 13,
+        "op": "+"
+      },
+      {
+        "constant": 13,
+        "left": 14,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 15,
+        "op": "-"
+      },
+      {
+        "constant": 10,
+        "left": 16,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 17,
+        "op": "+"
+      },
+      {
+        "constant": 17,
+        "left": 18,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 19,
+        "op": "-"
+      },
+      {
+        "constant": 17,
+        "left": 20,
+        "op": "-"
+      },
+      {
+        "constant": 1,
+        "left": 21,
+        "op": "-"
+      },
+      {
+        "constant": 13,
+        "left": 22,
+        "op": "+"
+      },
+      {
+        "constant": 16,
+        "left": 23,
+        "op": "+"
+      },
+      {
+        "constant": 3,
+        "left": 24,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 25,
+        "op": "+"
+      },
+      {
+        "constant": 1,
+        "left": 26,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 27,
+        "op": "-"
+      },
+      {
+        "constant": 17,
+        "left": 28,
+        "op": "-"
+      },
+      {
+        "constant": 11,
+        "left": 29,
+        "op": "-"
+      },
+      {
+        "constant": 15,
+        "left": 30,
+        "op": "+"
+      }
+    ],
+    "target": 14441,
+    "truth": true
+  },
+  {
+    "depth": 32,
+    "false_leaf": 3,
+    "id": "F32-05-B",
+    "leaves": [
+      {
+        "a": 50,
+        "actual": 2781,
+        "b": 50,
+        "c": 281,
+        "claimed": 2781,
+        "name": "L1"
+      },
+      {
+        "a": 77,
+        "actual": 5671,
+        "b": 70,
+        "c": 281,
+        "claimed": 5671,
+        "name": "L2"
+      },
+      {
+        "a": 54,
+        "actual": 3448,
+        "b": 60,
+        "c": 208,
+        "claimed": 3448,
+        "name": "L3"
+      },
+      {
+        "a": 97,
+        "actual": 9388,
+        "b": 94,
+        "c": 270,
+        "claimed": 9389,
+        "name": "L4"
+      }
+    ],
+    "pair": 5,
+    "steps": [
+      {
+        "left": 0,
+        "op": "+",
+        "right": 1
+      },
+      {
+        "left": 4,
+        "op": "-",
+        "right": 2
+      },
+      {
+        "left": 5,
+        "op": "+",
+        "right": 3
+      },
+      {
+        "constant": 3,
+        "left": 6,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 7,
+        "op": "+"
+      },
+      {
+        "constant": 3,
+        "left": 8,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 9,
+        "op": "+"
+      },
+      {
+        "constant": 11,
+        "left": 10,
+        "op": "+"
+      },
+      {
+        "constant": 3,
+        "left": 11,
+        "op": "-"
+      },
+      {
+        "constant": 5,
+        "left": 12,
+        "op": "-"
+      },
+      {
+        "constant": 17,
+        "left": 13,
+        "op": "+"
+      },
+      {
+        "constant": 13,
+        "left": 14,
+        "op": "-"
+      },
+      {
+        "constant": 9,
+        "left": 15,
+        "op": "-"
+      },
+      {
+        "constant": 10,
+        "left": 16,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 17,
+        "op": "+"
+      },
+      {
+        "constant": 17,
+        "left": 18,
+        "op": "+"
+      },
+      {
+        "constant": 6,
+        "left": 19,
+        "op": "-"
+      },
+      {
+        "constant": 17,
+        "left": 20,
+        "op": "-"
+      },
+      {
+        "constant": 1,
+        "left": 21,
+        "op": "-"
+      },
+      {
+        "constant": 13,
+        "left": 22,
+        "op": "+"
+      },
+      {
+        "constant": 16,
+        "left": 23,
+        "op": "+"
+      },
+      {
+        "constant": 3,
+        "left": 24,
+        "op": "+"
+      },
+      {
+        "constant": 12,
+        "left": 25,
+        "op": "+"
+      },
+      {
+        "constant": 1,
+        "left": 26,
+        "op": "-"
+      },
+      {
+        "constant": 2,
+        "left": 27,
+        "op": "-"
+      },
+      {
+        "constant": 17,
+        "left": 28,
+        "op": "-"
+      },
+      {
+        "constant": 11,
+        "left": 29,
+        "op": "-"
+      },
+      {
+        "constant": 15,
+        "left": 30,
+        "op": "+"
+      }
+    ],
+    "target": 14442,
+    "truth": false
+  }
+]
