@@ -119,7 +119,7 @@ that whole list (Background ASTs as above), `conclusion_meaning_id` the conclusi
 rejected as stale. Certificate formats are unchanged (v0 tableau, closure, order).
 
 **Dependency order.** Edges run from a node to each mentioned symbol that is itself a node; other
-mentions are ignored. Duplicate node names → `DuplicateDeclaration: dependency node <n>` (first
+mentions are ignored. At most 256 nodes (`ResourceLimit: dependency graph size`). Duplicate node names → `DuplicateDeclaration: dependency node <n>` (first
 duplicated name in list order). Algorithm (must be replicated exactly): repeatedly place the
 lexicographically smallest unplaced node all of whose node-dependencies are placed; if none is
 ready, fail with `DependencyCycle: ` + `", ".join(sorted(unplaced names))`. The order is then
@@ -232,5 +232,10 @@ leaf, which must name an asserted unit) and so changes the report and `report_id
 - `uv run python lean/VE/Route/examples/generate.py`, then
   `lean/.lake/build/bin/ve_conformance route lean/VE/Route/examples/route-cases.json` and compare with
   each case's `expected` (33/33).
+- `python3 lean/VE/Route/examples/dag_differential.py`: the documented dependency-order algorithm
+  (a Python reference written from this file) agrees with Lean on 200/200 random graphs (98
+  accepted, 102 rejected, duplicates included).
+- `uv run pytest -q` on this branch: 1641 passed, 3 skipped (unchanged behaviour of every existing
+  fixture, including the Lean conformance and certificate tests: 102 passed).
 - For P0-Py: the `invalid-background-model` and `elaborated-document` families in `conformance/` can
   start from `route-cases.json`; the Lean verdicts are the `expected` objects.
