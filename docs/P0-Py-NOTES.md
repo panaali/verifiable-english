@@ -80,11 +80,16 @@ change legacy `ve.core@0` or `ve.core@0.1` identities or the English report.
   1 deselected; `lake build` passed 110 jobs; `lean/audit.py` passed 311 named
   theorem declarations in 60 files with only the standard axiom allowlist;
   `cargo fmt --all --check` passed. Existing generated conformance fixtures
-  and the committed English surface report remain byte-identical. After the
+  and the committed English surface report remain byte-identical. The full
+  English audit passed 85,000 unique AST round trips, 8,500 directed-prefix
+  and 4,250 random Earley texts, and 850 five-statement documents, with zero
+  multiple derivations; its generated report compared byte-for-byte with the
+  committed report. After the
   final fixture-kind and DAG-order edits, 14 focused P0 tests passed; 200
   generated dependency graphs agreed with the parallel Lean route (41 DAGs,
   159 cycle diagnostics).
 - Remaining P0-Py review: migrate the remaining legacy constructor dispatch
-  sites to the surface registry; finish the full English corpus replay;
-  compare active fixture cases with the integrated Lean route. The acceptance
-  status should not be read as a sign-off until these checks pass.
+  sites to the surface registry and compare active fixture cases with the
+  integrated Lean route. The acceptance status should not be read as a
+  sign-off until the integration differences in item 6 and cross-family review
+  are resolved.
