@@ -30,7 +30,7 @@ theorem testCertificate_sound (E : Environment) : CertificateSound E valid := by
   · exact hp conclusion.formula hm
 
 private def env : Environment := ⟨[], fun _ => none, fun _ => none⟩
-private def claim (name : String) (a : Formula := .top) : Claim := ⟨name, a⟩
+private def claim (name : String) (a : Formula := .top) : Claim := { name, formula := a }
 private def leaf (c : Claim) : Node TestCertificate := ⟨c, none⟩
 private def step (c : Claim) (ps : List Claim) : Node TestCertificate :=
   ⟨c, some ⟨ps.map Claim.name, ⟨ps, c⟩⟩⟩

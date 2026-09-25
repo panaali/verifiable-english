@@ -15,6 +15,8 @@ import VE.EnvironmentProofs
 import VE.ParserContracts
 import VE.GraphChecks
 import VE.ModelProofs
+import VE.Route.Run
+import VE.Route.Examples
 import Iceberg
 
 #print axioms Iceberg.mul_sub
@@ -350,3 +352,73 @@ import Iceberg
 #print axioms VE.Order.surface_route_gate
 #print axioms VE.Order.combined_profiles_rejected
 #print axioms VE.Order.combined_profiles_surface_rejected
+-- Route (P0-Lean)
+#print axioms VE.Route.Layer.comp_expands
+#print axioms VE.Route.Layer.comp_extends
+#print axioms VE.Route.Layer.comp_faithful
+#print axioms VE.Route.Layer.comp_premises_wellFormed
+#print axioms VE.Route.Layer.comp_restrict_admissible
+#print axioms VE.Route.Layer.comp_restrict_holds
+#print axioms VE.Route.Layer.compose_premises
+#print axioms VE.Route.Layer.sat_restrict
+#print axioms VE.Route.Semantics.sat_append
+#print axioms VE.Route.closureValid_certificateSound
+#print axioms VE.Route.closure_entails_iff
+#print axioms VE.Route.dag_acyclic
+#print axioms VE.Route.depPath_rank
+#print axioms VE.Route.folValid_certificateSound
+#print axioms VE.Route.fol_entails_iff
+#print axioms VE.Route.graph_certificateSound_iff
+#print axioms VE.Route.orderValid_certificateSound
+#print axioms VE.Route.order_entails_iff
+#print axioms VE.Route.route_acceptance
+#print axioms VE.Route.route_base
+#print axioms VE.Route.route_countermodel_expands
+#print axioms VE.Route.route_countermodel_restricts
+#print axioms VE.Route.route_entails_iff
+#print axioms VE.Route.route_intended
+#print axioms VE.Route.sat_checked
+#print axioms VE.Route.tableauValid_certificateSound
+#print axioms VE.Route.verifyOrder_sound
+#print axioms VE.Route.Admission.admitNodes_ok
+#print axioms VE.Route.Admission.admit_labels_decoded
+#print axioms VE.Route.Admission.admit_report_sound
+#print axioms VE.Route.Admission.admit_string_sound
+#print axioms VE.Route.Admission.atomicKind_render
+#print axioms VE.Route.Admission.checkGraph_ok
+#print axioms VE.Route.Admission.decodeKind_render
+#print axioms VE.Route.Admission.parseLabel_render
+#print axioms VE.Route.Background.closure_route_acceptance
+#print axioms VE.Route.Background.fol_background_complete
+#print axioms VE.Route.Background.fol_background_sound
+#print axioms VE.Route.Background.fol_route_acceptance
+#print axioms VE.Route.Background.fol_route_countermodel
+#print axioms VE.Route.Background.fol_route_entails_iff
+#print axioms VE.Route.Background.literalPremise_denote
+#print axioms VE.Route.Background.literalsValid_complete
+#print axioms VE.Route.Background.literalsValid_sound
+#print axioms VE.Route.Background.literals_sat_iff
+#print axioms VE.Route.Background.mem_pairs
+#print axioms VE.Route.Background.mem_sortStrings
+#print axioms VE.Route.Background.order_route_acceptance
+#print axioms VE.Route.Background.pairs_complete
+#print axioms VE.Route.Gate.classify_complete
+#print axioms VE.Route.Gate.classify_sound
+#print axioms VE.Route.Gate.decodeEnvelope_sound
+#print axioms VE.Route.Gate.legacy_routes_reject_v02
+#print axioms VE.Route.Gate.require_ok
+#print axioms VE.Route.Gate.route_gate_envelope
+#print axioms VE.Route.Run.route_gate
+#print axioms VE.Route.Run.route_gate_rejects
+#print axioms VE.Route.Run.route_rejects_before_checking
+#print axioms VE.Route.Wire.backgroundViolation_none
+#print axioms VE.Route.Wire.decodeModel_valid
+#print axioms VE.Route.Examples.body_holds_iff
+#print axioms VE.Route.Examples.body_wellFormed
+#print axioms VE.Route.Examples.copy_expands
+#print axioms VE.Route.Examples.denote_forget
+#print axioms VE.Route.Examples.forget_admissible
+#print axioms VE.Route.Examples.forget_interpret
+#print axioms VE.Route.Examples.interpret_admissible
+#print axioms VE.Route.Examples.tupleTyped_relation
+#print axioms VE.Route.Examples.wf_extend
