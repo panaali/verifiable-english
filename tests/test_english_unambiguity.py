@@ -62,6 +62,33 @@ def test_extension_reading_must_match_grammar_tree(monkeypatch):
         registry.KEYWORDS = old_keywords
 
 
+def test_extension_grammar_must_participate():
+    from ve.ast import Bottom
+    from ve.surface import registry
+    from ve.surface.registry import SurfaceRecord, register
+    original = registry._records.copy(), registry._by_type.copy(), registry.KEYWORDS
+    def parser(parser, _scope, _depth, _nesting):
+        parser.need("this definitely holds")
+        return Bottom()
+    def grammar(_env, _words):
+        return []
+    def derivation(_tree, _env, _words):
+        return Bottom()
+    for fn in (parser, grammar, derivation):
+        fn.__module__ = "ve.english"
+    try:
+        register(SurfaceRecord("hostile", "", ("this definitely holds",), "", "hostile_rule",
+                               parser_hook=parser, grammar_hook=grammar, derivation_hook=derivation))
+        env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
+        with pytest.raises(SyntaxError, match="must extend formula"):
+            parse_english(env, "This definitely holds.")
+    finally:
+        records, by_type, old_keywords = original
+        registry._records.clear(); registry._records.update(records)
+        registry._by_type.clear(); registry._by_type.update(by_type)
+        registry.KEYWORDS = old_keywords
+
+
 def test_two_derivations_reject_before_ast_admission(monkeypatch):
     env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
     monkeypatch.setattr("ve.english.english_lark_grammar",
