@@ -148,10 +148,16 @@ struct Models<'a> {
 }
 impl<'a> Models<'a> {
     fn new(env: &'a Environment, problem: &CountermodelProblem, maximum: usize) -> Self {
-        let sorts: Vec<_> = env.sorts.iter().cloned().collect();
+        let sorts: Vec<_> = env.model_sorts().into_iter().collect();
         let minima: Vec<_> = sorts
             .iter()
-            .map(|s| usize::from(env.constants.values().any(|t| t == s)))
+            .map(|s| {
+                if s == "$string" {
+                    env.constants.values().filter(|t| *t == s).count()
+                } else {
+                    usize::from(env.constants.values().any(|t| t == s))
+                }
+            })
             .collect();
         let mut used = BTreeSet::new();
         for f in problem.document.formulas() {
@@ -239,41 +245,49 @@ impl<'a> Models<'a> {
         }
     }
     fn next(&mut self) -> Result<Option<FiniteModel>> {
-        if self.done {
-            return Ok(None);
-        }
-        if !self.ready {
-            self.prepare()?;
-        }
-        let domains: BTreeMap<_, Vec<_>> = self
-            .sorts
-            .iter()
-            .zip(&self.sizes)
-            .map(|(s, n)| (s, (0..*n).map(|i| format!("e{i}")).collect()))
-            .collect();
-        let constants: BTreeMap<_, _> = self
-            .names
-            .iter()
-            .zip(&self.choices)
-            .map(|(n, i)| (n, format!("e{i}")))
-            .collect();
-        let mut relations: BTreeMap<_, Vec<Vec<String>>> = self
-            .env
-            .predicates
-            .keys()
-            .map(|p| (p.clone(), Vec::new()))
-            .collect();
-        for ((p, row), bit) in self.atoms.iter().zip(&self.bits) {
-            if *bit {
-                relations.get_mut(p).unwrap().push(row.clone());
+        loop {
+            if self.done {
+                return Ok(None);
+            }
+            if !self.ready {
+                self.prepare()?;
+            }
+            let domains: BTreeMap<_, Vec<_>> = self
+                .sorts
+                .iter()
+                .zip(&self.sizes)
+                .map(|(s, n)| (s, (0..*n).map(|i| format!("e{i}")).collect()))
+                .collect();
+            let constants: BTreeMap<_, _> = self
+                .names
+                .iter()
+                .zip(&self.choices)
+                .map(|(n, i)| (n, format!("e{i}")))
+                .collect();
+            let mut relations: BTreeMap<_, Vec<Vec<String>>> = self
+                .env
+                .predicates
+                .keys()
+                .map(|p| (p.clone(), Vec::new()))
+                .collect();
+            for ((p, row), bit) in self.atoms.iter().zip(&self.bits) {
+                if *bit {
+                    relations.get_mut(p).unwrap().push(row.clone());
+                }
+            }
+            let model = FiniteModel::from_value(
+                self.env,
+                &json!({"complete":true,"domains":domains,"constants":constants,"relations":relations}),
+            );
+            self.advance();
+            match model {
+                Ok(model) => return Ok(Some(model)),
+                Err(err) if err.code == "InvalidModel" && err.message.contains("(literals)") => {
+                    continue;
+                }
+                Err(err) => return Err(err),
             }
         }
-        let model = FiniteModel::from_value(
-            self.env,
-            &json!({"complete":true,"domains":domains,"constants":constants,"relations":relations}),
-        )?;
-        self.advance();
-        Ok(Some(model))
     }
 }
 /// Exhaustive bounded search modulo the extensions of predicates absent from
