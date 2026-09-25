@@ -4,12 +4,13 @@ identical verdicts on every shipped case of the P0 families (PLAN-EXPAND2 3.10(2
 Rust scope (plan 3.7): envelopes, Background, model validity, evaluation and
 search, plus the label grammar and the dependency order. Rust has no certificate
 checker, so on a certificate or inconsistency case its verdict is that bounded
-search finds no model; admission is Python and Lean only; the order family is
-evaluation only in Rust (numbers2 scope).
+search finds no model; admission is Python and Lean only. Rust checks supplied
+order countermodels but does not search for them.
 """
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 import os
 import re
 import shutil
@@ -119,10 +120,11 @@ def rust_request(case):
         return {**case}
     if kind == "evaluate":
         return {**base, "model": case["model"], "ast": case["ast"]}
-    if kind == "admission" or order:
+    if kind == "admission" or (order and kind != "countermodel"):
         return None
     if kind == "countermodel":
-        return {**base, "model": case["model"], "premises": case["premises"], "conclusion": case["conclusion"]}
+        return {**base, **({"kind": kind} if order else {}), "model": case["model"],
+                "premises": case["premises"], "conclusion": case["conclusion"]}
     if kind == "search":
         return {**base, "premises": case["premises"], "conclusion": case["conclusion"],
                 "max_domain_size": case["max_domain_size"]}
@@ -292,3 +294,182 @@ def test_python_certificates_always_bind_background_first():
     distinct = meaning_id(env, premises[0])
     assert proof.certificate["premise_meaning_ids"][:2] == [distinct, distinct]
     assert len(proof.certificate["premise_meaning_ids"]) == 3
+
+
+def test_checked_premise_order_includes_layer_segment():
+    from conformance.p0 import DISTINCT, FIN_A, VOCAB, envelope
+    from ve import Environment
+    from ve.ast import formula_from_data
+    from ve.background import checked_premises
+    env = Environment(envelope(VOCAB))
+    bg = formula_from_data(env, DISTINCT)
+    layer = formula_from_data(env, FIN_A)
+    assert checked_premises(env, (layer,), (bg,)) == (bg, layer, bg)
+
+
+def test_disabled_family_gate_precedes_empty_search():
+    from conformance.p0 import environment
+    from ve import Environment
+    from ve.ast import Top
+    from ve.errors import UnsupportedProfile
+    from ve.search import find_countermodel, find_distinguishing_model
+    raw = environment()
+    raw["profiles"] = ["closure@0", "nary@0", "relational-fol@0"]
+    env = Environment(raw)
+    with pytest.raises(UnsupportedProfile, match="closure.n.ary checker"):
+        find_countermodel(env, (), Top(), max_domain_size=0)
+    with pytest.raises(UnsupportedProfile, match="closure.n.ary checker"):
+        find_distinguishing_model(env, Top(), Top(), max_domain_size=0)
+
+
+def test_report_identity_binds_environment_and_document(lean_executable):
+    from conformance.p0 import envelope, VOCAB
+    from ve.admission import admit_document
+    env = envelope(VOCAB)
+    document = {"units": [{"id": "u", "span": [0, 1], "kind": "asserted", "content": ["top"]}],
+                "graph": {"root": "c", "nodes": [{"name": "c", "ast": ["top"], "unit": "u"}]}}
+    variants = [(env, document)]
+    changed_env = deepcopy(env)
+    changed_env["vocabulary"]["sorts"]["person"]["description"] = "a changed person"
+    variants.append((changed_env, document))
+    changed_doc = deepcopy(document)
+    changed_doc["units"].append({"id": "q", "span": [1, 2],
+                                  "kind": ["attributed", "bob", "denies", "asserted"],
+                                  "content": ["top"]})
+    variants.append((env, changed_doc))
+    changed_readings = deepcopy(document)
+    changed_readings["reading_sets"] = [{"id": "r", "version": 1, "readings": [["top"]]}]
+    variants.append((env, changed_readings))
+    cases = [{"id": str(i), "kind": "admission", "environment": e, "document": d}
+             for i, (e, d) in enumerate(variants)]
+    lean = run([str(lean_executable), "route", "-"], cases)
+    python = [admit_document(e, d) for e, d in variants]
+    assert [row["report_id"] for row in lean] == [row["report_id"] for row in python]
+    assert len({row["report_id"] for row in python}) == len(variants)
+    assert all(row["report"] == python[0]["report"] for row in python)
+
+
+def test_frozen_lean_sources_are_in_suite():
+    result = subprocess.run([shutil.which("python3") or "python", "VE/Route/frozen.py"],
+                            cwd=ROOT / "lean", capture_output=True, text=True)
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_hostile_wire_diagnostics_match_three_ways(lean_executable, rust_executable):
+    from conformance.p0 import environment
+    base = environment()
+    empty = deepcopy(base)
+    empty["vocabulary"] = {"sorts": {}, "predicates": {}, "constants": {}}
+    no_vocab = deepcopy(base)
+    no_vocab["vocabulary"] = {}
+    nonstring = deepcopy(base)
+    nonstring["profiles"] = [42]
+    legacy = deepcopy(base)
+    legacy["language"] = "ve.core@0.1"
+    model = {"complete": True, "domains": {"$string": ["a", "b"]},
+             "constants": {"alpha": "a", "beta": "b"}, "relations": {}}
+    cases = [
+        {"id": "label-bad-vocabulary", "kind": "label", "environment": no_vocab,
+         "label": "asserted"},
+        {"id": "nonstring-profile", "kind": "label", "environment": nonstring,
+         "label": "asserted"},
+        {"id": "legacy-string", "kind": "evaluate", "environment": legacy,
+         "model": model, "ast": [["top"]]},
+        {"id": "extraneous-string-domain", "kind": "evaluate", "environment": empty,
+         "model": model, "ast": [["top"]]},
+        {"id": "missing-string-domain", "kind": "evaluate", "environment": base,
+         "model": {"complete": True, "domains": {}, "constants": {}, "relations": {}},
+         "ast": [["top"]]},
+    ]
+    lean = run([str(lean_executable), "route", "-"], cases)
+    rust = run([str(rust_executable), "conformance"], cases)
+    def reason(message):
+        if "sorts" in message and "predicates" in message and "constants" in message and "field" in message:
+            return "vocabulary fields"
+        if "profile" in message.lower() and ("string" in message or "array" in message):
+            return "profile type"
+        if "language" in message or "profiles or specification revision" in message:
+            return "legacy envelope"
+        if ("domains" in message or "declared sorts, constants and predicates" in message or
+                ("fields do not match" in message and "$string" in message)):
+            return "model declaration shape"
+        return None
+    expected_reasons = ("vocabulary fields", "profile type", "legacy envelope",
+                        "model declaration shape", "model declaration shape")
+    for case, l, r, expected in zip(cases, lean, rust, expected_reasons, strict=True):
+        py = python_verdict(case)
+        le = lean_verdict(case, l)
+        ru = rust_verdict(case, r)
+        assert py["status"] == le["status"] == ru["status"] == "error", case["id"]
+        assert [reason(v["error"]) for v in (py, le, ru)] == [expected] * 3, (case["id"], py, le, ru)
+
+
+def test_stale_proof_does_not_become_search_agreement(lean_executable, rust_executable):
+    from conformance.p0 import environment, certificate
+    env = environment()
+    proof = certificate(env, [], ["top"])
+    stale = deepcopy(proof)
+    stale["conclusion_meaning_id"] = "0" * 64
+    cases = [{"id": tag, "kind": "certificate", "environment": env,
+              "premises": [], "conclusion": ["top"], "certificate": cert}
+             for tag, cert in (("valid", proof), ("stale", stale))]
+    lean = run([str(lean_executable), "route", "-"], cases)
+    py = [python_verdict(c) for c in cases]
+    assert [p.get("valid") for p in py] == [True, False]
+    assert lean[0]["valid"] is True
+    assert lean[1]["status"] == "error" and lean[1]["valid"] is False
+    # Rust's bounded search is an operational check, never proof replay.
+    search = [{"id": c["id"], "environment": env, "premises": [],
+               "conclusion": ["top"], "max_domain_size": 2} for c in cases]
+    rust = run([str(rust_executable), "conformance"], search)
+    assert [r["status"] for r in rust] == ["NotFound", "NotFound"]
+
+
+def test_order_countermodel_three_way_agreement(lean_executable, rust_executable):
+    from conformance.p0 import ORDER_MODEL, ORDER_VOCAB, envelope
+    env = envelope(ORDER_VOCAB, ("order@0", "relational-fol@0"))
+    case = {"id": "order-refutation", "kind": "countermodel", "environment": env,
+            "model": ORDER_MODEL, "premises": [["top"]], "conclusion": ["bottom"]}
+    py = python_verdict(case)
+    lean = lean_verdict(case, run([str(lean_executable), "route", "-"], [case])[0])
+    rust = rust_verdict(case, run([str(rust_executable), "conformance"], [rust_request(case)])[0])
+    assert py["refutes"] is lean["refutes"] is rust["refutes"] is True
+    from ve import Environment
+    from ve.ast import Top
+    from ve.search import find_countermodel
+    bounded = find_countermodel(Environment(env), (), Top(), max_domain_size=1)
+    assert bounded.status == "NotFound" and bounded.models_checked == 0
+
+
+def test_hedged_bridge_and_kind_depth_boundary(lean_executable):
+    from conformance.p0 import environment
+    env = environment()
+    kind = "asserted"
+    for _ in range(15):
+        kind = ["hedged", "likely", kind]
+    document = {"units": [{"id": "u", "span": [0, 1], "kind": kind,
+                           "content": ["top"]}],
+                "graph": {"root": "c", "nodes": [{"name": "c", "ast": ["top"],
+                        "unit": "u", "label": "bridge:accepts(alice,u)"}]}}
+    case = {"id": "hedged-depth-16", "kind": "admission", "environment": env,
+            "document": document}
+    py = python_verdict(case)
+    le = lean_verdict(case, run([str(lean_executable), "route", "-"], [case])[0])
+    assert py == {k: le[k] for k in py}
+    document["units"][0]["kind"] = ["hedged", "likely", kind]
+    py = python_verdict(case)
+    le = lean_verdict(case, run([str(lean_executable), "route", "-"], [case])[0])
+    assert py["status"] == le["status"] == "error"
+    assert "kind depth" in py["error"] and "kind depth" in le["error"]
+
+
+def test_argument_lean_replay_uses_route(lean_executable):
+    from conformance.p0 import environment
+    from ve import ArgumentGraph, Claim, Deduction, Environment, check_argument
+    env = Environment(environment())
+    graph = ArgumentGraph(env,
+                          (Claim.create(env, "premise", "true.\n"),
+                           Claim.create(env, "root", "true.\n")),
+                          (Deduction("step", ("premise",), "root"),), "root")
+    result = check_argument(graph, lean_executable=lean_executable, max_models=0)
+    assert result.composed and result.lean_checked, result.to_dict()

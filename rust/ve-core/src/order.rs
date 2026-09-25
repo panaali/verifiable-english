@@ -673,6 +673,39 @@ pub fn order_case(v: &Value) -> Result<Value> {
     if !env.order() {
         return error("UnsupportedProfile", "order profile required");
     }
+    if v.get("kind") == Some(&json!("countermodel")) {
+        let premises = array(
+            v.get("premises")
+                .ok_or_else(|| Error::new("InvalidInput", "premises missing"))?,
+        )?;
+        let conclusion = v
+            .get("conclusion")
+            .ok_or_else(|| Error::new("InvalidInput", "conclusion missing"))?;
+        let mut nodes = 0;
+        for premise in premises {
+            formula_check(&env, premise, &[], 1, &mut nodes)?;
+        }
+        formula_check(&env, conclusion, &[], 1, &mut nodes)?;
+        let model = Model::decode(
+            &env,
+            v.get("model")
+                .ok_or_else(|| Error::new("InvalidInput", "model missing"))?,
+        )?;
+        let mut work = 0;
+        let mut valid = true;
+        for premise in premises {
+            if !eval(premise, &model, &[], &mut work, crate::MAX_EVALUATIONS)? {
+                valid = false;
+                break;
+            }
+        }
+        if valid {
+            valid = !eval(conclusion, &model, &[], &mut work, crate::MAX_EVALUATIONS)?;
+        }
+        return Ok(
+            json!({"id":v.get("id").cloned().unwrap_or(json!("")),"status":"ok","valid":valid}),
+        );
+    }
     if v.get("kind").is_some_and(|kind| kind != "evaluate")
         || v.get("certificate").is_some()
         || v.get("premises").is_some()
@@ -680,7 +713,7 @@ pub fn order_case(v: &Value) -> Result<Value> {
     {
         return error(
             "UnsupportedProfile",
-            "Rust order route supports checked AST evaluation only",
+            "Rust order route supports evaluation and supplied countermodel checking only",
         );
     }
     let parsed = v

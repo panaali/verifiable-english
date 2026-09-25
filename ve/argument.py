@@ -506,7 +506,13 @@ def _lean_deductions(graph, claims, records, reachable, executable):
         proc = subprocess.run([str(executable), 'route' if route else 'check-certificate'], input=canonical_json(cases),
                               capture_output=True, timeout=60)
         rows = loads_json(proc.stdout)
-        expected = [{'id': c['id'], 'status': 'ok', 'valid': True} for c in cases]
+        if route:
+            from .background import background
+            extra = {'background': len(background(graph.env))}
+        else:
+            extra = {}
+        expected = [{'id': c['id'], 'status': 'ok', 'valid': True,
+                     **extra} for c in cases]
         if proc.returncode == 0 and rows == expected:
             return True, f"{len(cases)} supporting deduction certificates accepted by Lean"
         return False, "Lean did not accept every supporting deduction certificate"
