@@ -2,7 +2,9 @@
 
 This mirrors `lean/VE/Route/Admission.lean` rule for rule and diagnostic for
 diagnostic, so Python and the Lean `route` subcommand admit the same documents
-and report the same labels. Admission graph edges bind exactly their premise
+    and report the same labels. A quoted unit must be named through its bridge;
+    an independent formula-equal leaf keeps its own declared provenance.
+    Admission graph edges bind exactly their premise
 nodes; Background enters only as explicit `background:<generator>` leaves whose
 formulas are regenerated from the environment.
 """
@@ -450,6 +452,8 @@ def admit_document(environment, document) -> dict:
     if not all(_compatible(a[2], b[2]) for a in assumptions for b in assumptions):
         raise AdmissionError("AdmissionError: incompatible reading choices")
     report = {"root": _claim_json(env, root), "assumptions": [_claim_json(env, a) for a in assumptions]}
+    identity_payload = {"environment_id": env.environment_id, "document": document,
+                        "report": report}
     return {"admitted": True, "report": report,
-            "report_id": digest(f"ve-report-{env.identity_version}\n", report),
+            "report_id": digest(f"ve-report-{env.identity_version}\n", identity_payload),
             "kinds": [u.kind for u in doc.units]}

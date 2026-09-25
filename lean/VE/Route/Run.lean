@@ -35,10 +35,13 @@ def caseKind (j : Json) : Except String String :=
 
 def runAdmit (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (id : String)
     (j : Json) : Except String Json := do
-  let res ← Admission.admitDocument profiles environment rv (← j.getObjVal? "document")
+  let document ← j.getObjVal? "document"
+  let res ← Admission.admitDocument profiles environment rv document
   let report := Json.mkObj [("root", claimJson res.report.root),
     ("assumptions", Json.arr (res.report.assumptions.map claimJson).toArray)]
-  let reportId ← VE.CertificateWire.digest s!"ve-report-{Wire.identityVersion profiles}\n" report
+  let envId ← Wire.environmentId profiles environment
+  let reportId ← VE.CertificateWire.digest s!"ve-report-{Wire.identityVersion profiles}\n"
+    (Json.mkObj [("environment_id", .str envId), ("document", document), ("report", report)])
   pure (Wire.ok id [("admitted", .bool true), ("report", report), ("report_id", .str reportId),
     ("kinds", Json.arr res.kinds.toArray)])
 
@@ -48,6 +51,12 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
   if kind == "dependency-order" then
     return ← Wire.runDependencyOrder id j
   if kind == "label" then
+    if e.family == .order then
+      let _ ← Wire.decodeOrderVocabulary e.vocabulary
+      pure ()
+    else
+      let _ ← Wire.decodeVocabulary e.vocabulary
+      pure ()
     -- The label grammar alone (PLAN-EXPAND2 3.6): only canonical labels parse.
     let s ← stringField j "label"
     return ← match Admission.parseLabel s with
