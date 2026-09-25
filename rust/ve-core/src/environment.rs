@@ -187,6 +187,16 @@ impl Environment {
                 && obj["profile"] == "relational-fol@0"
                 && obj["spec_revision"] == "ve-v0-draft-2026-09-20"
         };
+        if !supported && route {
+            let revision = match &obj["spec_revision"] {
+                Value::String(r) => r.clone(),
+                other => other.to_string(),
+            };
+            return error(
+                "UnsupportedProfile",
+                format!("Unsupported specification revision {revision}"),
+            );
+        }
         if !supported {
             return error(
                 "UnsupportedProfile",
@@ -325,7 +335,22 @@ impl Environment {
         }
         sorts
     }
+    /// A family the envelope gate accepts but whose checker has not landed:
+    /// every checking site rejects it (same diagnostic as Python and Lean).
+    pub(crate) fn require_checker(&self) -> Result<()> {
+        if self.route
+            && self.profiles.iter().any(|p| p == "nary@0")
+            && self.profiles.iter().any(|p| p == "closure@0")
+        {
+            return error(
+                "UnsupportedProfile",
+                "the closure+n-ary checker is gated until W4 stage 1 lands",
+            );
+        }
+        Ok(())
+    }
     pub(crate) fn validate_background(&self, constants: &BTreeMap<String, usize>) -> Result<()> {
+        self.require_checker()?;
         let mut seen = BTreeSet::new();
         for (name, sort) in &self.constants {
             if sort == "$string" && !seen.insert(constants[name]) {
