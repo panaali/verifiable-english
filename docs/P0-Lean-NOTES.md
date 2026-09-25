@@ -21,9 +21,9 @@ place where the spec was ambiguous and the conservative reading that was chosen.
 | `METATHEORY.md` lists every new theorem in plain words | done |
 | v0, closure, order files and `Main.lean` subcommands unchanged (hash test) | done: `lean/VE/Route/frozen.py` + `frozen-sources.sha256` (54 files); P0-Py should call it from a pytest |
 | Evidence that `Layer` is inhabited beyond the identity | done: `Examples.copyLayer` (a defined unary predicate, unique expansion by structure equality) and `twoCopies` (composition) |
-| Seed cases for the `elaborated-document` / `invalid-background-model` families | done; at integration replaced by the shared P0 families (`conformance/p0.py`, 326 Lean cases, all verdicts as expected), generator `generate.py` |
-| Cross-family review by Astra (3.10(7)) | not done (reviewer task) |
-| `ROADMAP.md` freeze announcement (3.10(7)) | not done here: `ROADMAP.md` is shared; the text to paste is below |
+| Seed cases for the `elaborated-document` / `invalid-background-model` families | done; at integration replaced by the shared P0 families (`conformance/p0.py`, 328 Lean cases, all verdicts as expected), generator `generate.py` |
+| Cross-family reviews (3.10(7)) | done: Astra reviewed P0-Lean (`~/code/manage-agents/p0-review-astra.final.md`); Fable reviewed P0-Py (`~/code/manage-agents/reviews/p0-review-fable.md`); A/B findings repaired on `expand/p0` |
+| `ROADMAP.md` freeze announcement (3.10(7)) | done after both P0 reviews and their interface fixes |
 
 Counts: `python3 lean/audit.py`: PASS, 70 source files, 380 named theorems (69 new under
 `VE.Route`), allowlist unchanged (`propext`, `Classical.choice`, `Quot.sound`), no `sorry`.
@@ -103,7 +103,15 @@ ASTs): generator order `flags`, `definitions`, `literals`, `profile`. P0: `liter
 `sha256("ve-environment-<identity_version>\n" + canonical(environment))`; meaning id
 `sha256("ve-meaning-<identity_version>\n" + canonical({"environment_id", "ast"}))` (as in
 `ve/environment.py` on `ve-p0-py`). Report id: domain `ve-report-<identity_version>\n` over
-`{"root", "assumptions"}` of the admitted report.
+`{"environment_id", "document", "report"}`. The document is the complete
+validated admission input, including units, nested kinds, reading sets and graph;
+the environment id binds its declarations and profiles. Changing provenance
+therefore changes the report id even when the displayed assumptions agree.
+
+The Python `check` and `check_argument` paths now compute premise status with
+proof search and finite-model search, including legacy envelopes. This adds
+runtime work and changes new argument record ids; frozen pre-P0 identities
+remain covered by the fixture checks.
 
 **Case kinds** (`kind` absent = `evaluate`):
 
@@ -164,6 +172,9 @@ disjunction of the readings); `narrowing:n` names a declared narrowing. After `G
 every leaf of every cited lemma appears among the report's assumptions with the same formula and
 label (so the citing step lists them as premises), and no two assumptions name the same reading set
 with different versions or different concrete choices (`all` is compatible with any choice).
+The bridge rule applies to nodes that name a quoted unit. An independent
+`open` or `narrowing` leaf may have the same formula under its own provenance;
+formula equality alone does not identify a document unit.
 
 **Admission diagnostics.** First failing node in graph order:
 `AdmissionError: quoted content of unit <u> is used without a bridge leaf` when the node names a
