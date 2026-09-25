@@ -25,6 +25,7 @@ pub struct CountermodelCheck {
 }
 impl CountermodelProblem {
     pub fn new(env: &Environment, mut premises: Vec<Formula>, conclusion: Formula) -> Result<Self> {
+        env.require_checker()?;
         premises.push(conclusion);
         Ok(Self {
             document: Document::check(env, premises)?,
