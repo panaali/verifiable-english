@@ -106,3 +106,17 @@ def test_derivation_node_budget_rejects(monkeypatch):
     monkeypatch.setattr(unambiguity, "_parser", lambda _grammar: FakeParser())
     with pytest.raises(ResourceLimit, match="MAX_NODES"):
         parse_english(env, "This holds in all cases.")
+
+
+def test_earley_time_budget_rejects_in_worker_thread(monkeypatch):
+    from concurrent.futures import ThreadPoolExecutor
+    env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
+    class SlowParser:
+        def parse(self, _source):
+            while True:
+                pass
+    monkeypatch.setattr(unambiguity, "_parser", lambda _grammar: SlowParser())
+    monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", 0.01)
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        with pytest.raises(ResourceLimit, match="Earley time budget"):
+            pool.submit(parse_english, env, "This holds in all cases.").result(timeout=2)
