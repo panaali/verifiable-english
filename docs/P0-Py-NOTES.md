@@ -47,6 +47,20 @@ change legacy `ve.core@0` or `ve.core@0.1` identities or the English report.
 4. An English source longer than `MAX_NODES` characters is rejected with a
    named derivation-budget diagnostic before Earley parsing. This conservative
    admission guard bounds the untrusted parser's input as well as its result.
+5. Registry hooks take precedence at the named dispatch sites; the existing
+   constructor branches remain as fallbacks for legacy nodes. This preserves
+   frozen v0/v0.1 rendering and wire bytes while letting new nodes register
+   their own behavior. The plan's phrase "instead of hard-coding constructors"
+   could also require moving those legacy branches into records; that broader
+   migration remains for cross-family review.
+6. The parallel P0-Lean route currently requires `description` on a `$string`
+   constant, allows `$string` predicate arguments, and disallows `$string` on
+   `order@0`. P0-Py follows PLAN-EXPAND2.md W5's literal example (only `sort`
+   required) and stage-1 equality-only rule. P0-Py's order case exercises the
+   allowed FOL equality in the order family; that combination needs a joint
+   decision at integration. In a read-only probe, adding descriptions to the
+   three FOL literal cases made Lean's evaluate/countermodel verdicts agree.
+   The shared fixtures now carry explicit `kind` fields for its runner.
 
 ## P0-Py status
 
@@ -56,12 +70,18 @@ change legacy `ve.core@0` or `ve.core@0.1` identities or the English report.
   claim labels with default-wire compatibility; Python vacuity reports for
   `ve check` and argument checking; the keyword registry and per-input Earley
   admission check; active P0 conformance fixtures and focused tests.
-- Interfaces awaiting other owners: Lean `Layer`, `CertificateSound`, route
-  admission and `route` subcommand (P0-Lean); W2 document command and W8 assist
-  status use the P0 vacuity helper when their owned modules land; W3/W5/W1
-  populate their respective Background hooks. The flag and defined-table
-  conformance cases remain pending for those schemas.
+- Interfaces awaiting integration or other owners: P0-Lean has implemented
+  `Layer`, `CertificateSound`, route admission and `route` in its parallel
+  worktree, but these are not merged into this branch; W2 document command and
+  W8 assist status use the P0 vacuity helper when their owned modules land;
+  W3/W5/W1 populate their respective Background hooks. The flag and
+  defined-table conformance cases remain pending for those schemas.
+- Local verification: `uv run pytest -q` passed with 1,664 passed, 3 skipped,
+  1 deselected; `lake build` passed 110 jobs; `lean/audit.py` passed 311 named
+  theorem declarations in 60 files with only the standard axiom allowlist;
+  `cargo fmt --all --check` passed. Existing generated conformance fixtures
+  and the committed English surface report remain byte-identical.
 - Remaining P0-Py review: migrate the remaining legacy constructor dispatch
-  sites to the surface registry; run the complete suite and corpus replay;
+  sites to the surface registry; finish the full English corpus replay;
   compare active fixture cases with the integrated Lean route. The acceptance
   status should not be read as a sign-off until these checks pass.

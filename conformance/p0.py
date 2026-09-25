@@ -18,21 +18,21 @@ def elaborated_document_cases():
     env = environment()
     model = {"complete": True, "domains": {"$string": ["a", "b"]},
              "constants": {"alpha": "a", "beta": "b"}, "relations": {}}
-    cases = [{"id": "literals-distinct", "environment": env, "model": model,
+    cases = [{"id": "literals-distinct", "kind": "evaluate", "environment": env, "model": model,
               "ast": [["not", ["eq", ["const", "alpha"], ["const", "beta"]]]],
               "expected": [True]},
-             {"id": "literals-equal-false", "environment": env, "model": model,
+             {"id": "literals-equal-false", "kind": "evaluate", "environment": env, "model": model,
               "ast": [["eq", ["const", "alpha"], ["const", "beta"]]],
               "expected": [False]},
-             {"id": "literals-countermodel", "environment": env, "model": model,
+             {"id": "literals-countermodel", "kind": "countermodel", "environment": env, "model": model,
               "premises": [], "conclusion": ["eq", ["const", "alpha"], ["const", "beta"]],
               "expected_refutes": True},
-             {"id": "literals-search", "environment": env, "max_domain_size": 2,
+             {"id": "literals-search", "kind": "search", "environment": env, "max_domain_size": 2,
               "premises": [], "conclusion": ["eq", ["const", "alpha"], ["const", "beta"]],
               "expected_status": "Found"}]
     order_env = deepcopy(env)
     order_env["profiles"] = ["order@0", "relational-fol@0"]
-    cases.append({"id": "order-with-literals", "environment": order_env, "model": model,
+    cases.append({"id": "order-with-literals", "kind": "evaluate", "environment": order_env, "model": model,
                   "ast": [["not", ["eq", ["const", "alpha"], ["const", "beta"]]]],
                   "expected": [True]})
     for ident, profiles in (("unknown-profile", ["mystery@0", "relational-fol@0"]),
@@ -40,7 +40,7 @@ def elaborated_document_cases():
                             ("closure-order", ["closure@0", "order@0", "relational-fol@0"])):
         bad = deepcopy(env)
         bad["profiles"] = profiles
-        cases.append({"id": ident, "environment": bad, "ast": [["top"]],
+        cases.append({"id": ident, "kind": "evaluate", "environment": bad, "ast": [["top"]],
                       "expected_error": "UnsupportedProfile"})
     return cases
 
@@ -64,16 +64,16 @@ def invalid_background_model_cases():
                                                         "defined": {"arguments": ["person"],
                                                                     "body": ["unary", "base", ["var", 0]]}}},
                              "constants": {}}
-    return [{"id": "literal-alias", "environment": env,
+    return [{"id": "literal-alias", "kind": "evaluate", "environment": env,
              "model": {"complete": True, "domains": {"$string": ["a"]},
                        "constants": {"alpha": "a", "beta": "a"}, "relations": {}},
              "ast": [["top"]], "expected_error": "InvalidModel",
              "generator": "literals"},
-            {"id": "partial-total-table", "pending": "W5", "environment": flags,
+            {"id": "partial-total-table", "kind": "evaluate", "pending": "W5", "environment": flags,
              "model": {"complete": True, "domains": {"person": ["alice"],
                         "department": ["finance"]}, "constants": {}, "relations": {"dept": []}},
              "ast": [["top"]], "expected_error": "InvalidModel", "generator": "flags"},
-            {"id": "supplied-defined-table", "pending": "W3", "environment": defined,
+            {"id": "supplied-defined-table", "kind": "evaluate", "pending": "W3", "environment": defined,
              "model": {"complete": True, "domains": {"person": ["alice"]},
                        "constants": {}, "relations": {"base": [["alice"]],
                                                      "derived": [["alice"]]}},

@@ -1,6 +1,7 @@
 [
   {
     "id": "literals-distinct",
+    "kind": "evaluate",
     "environment": {
       "language": "ve.core@0.2",
       "profiles": [
@@ -56,6 +57,7 @@
   },
   {
     "id": "literals-equal-false",
+    "kind": "evaluate",
     "environment": {
       "language": "ve.core@0.2",
       "profiles": [
@@ -108,6 +110,7 @@
   },
   {
     "id": "literals-countermodel",
+    "kind": "countermodel",
     "environment": {
       "language": "ve.core@0.2",
       "profiles": [
@@ -157,6 +160,7 @@
   },
   {
     "id": "literals-search",
+    "kind": "search",
     "environment": {
       "language": "ve.core@0.2",
       "profiles": [
@@ -193,6 +197,7 @@
   },
   {
     "id": "order-with-literals",
+    "kind": "evaluate",
     "environment": {
       "language": "ve.core@0.2",
       "profiles": [
@@ -249,6 +254,7 @@
   },
   {
     "id": "unknown-profile",
+    "kind": "evaluate",
     "environment": {
       "language": "ve.core@0.2",
       "profiles": [
@@ -278,6 +284,7 @@
   },
   {
     "id": "order-nary",
+    "kind": "evaluate",
     "environment": {
       "language": "ve.core@0.2",
       "profiles": [
@@ -308,6 +315,7 @@
   },
   {
     "id": "closure-order",
+    "kind": "evaluate",
     "environment": {
       "language": "ve.core@0.2",
       "profiles": [
