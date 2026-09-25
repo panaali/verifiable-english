@@ -76,6 +76,7 @@ fn entry_fields<'a>(
 #[derive(Clone, Debug)]
 pub struct Environment {
     closure: bool,
+    order: bool,
     pub(crate) sorts: BTreeSet<String>,
     pub(crate) predicates: BTreeMap<String, Vec<String>>,
     pub(crate) constants: BTreeMap<String, String>,
@@ -88,18 +89,22 @@ impl Environment {
     }
     pub fn from_value(data: &Value) -> Result<Self> {
         canonical_json(data)?;
-        let closure = data.get("language") == Some(&json!("ve.core@0.1"));
+        let modern = data.get("language") == Some(&json!("ve.core@0.1"));
+        let order = data.get("profiles") == Some(&json!(["order@0", "relational-fol@0"]));
+        let closure = modern && !order;
         let obj = fields(
             data,
             &[
                 "language",
-                if closure { "profiles" } else { "profile" },
+                if modern { "profiles" } else { "profile" },
                 "spec_revision",
                 "vocabulary",
             ],
             "InvalidInput",
         )?;
-        let supported = if closure {
+        let supported = if order {
+            obj["language"] == "ve.core@0.1" && obj["spec_revision"] == "ve-v0.1-order-2026-09-22"
+        } else if closure {
             obj["profiles"] == json!(["closure@0", "relational-fol@0"])
                 && obj["spec_revision"] == "ve-v0.1-closure-2026-09-21"
         } else {
@@ -156,7 +161,7 @@ impl Environment {
             let mut signature = Vec::new();
             for arg in args {
                 let s = string(arg, "UnknownSymbol")?;
-                if !sorts.contains_key(s) {
+                if !sorts.contains_key(s) && !(order && s == "$int") {
                     return error("UnknownSymbol", "unknown predicate argument sort");
                 }
                 signature.push(s.to_owned());
@@ -173,7 +178,7 @@ impl Environment {
         for (name, decl) in consts {
             let d = fields(decl, &["sort", "description"], "InvalidInput")?;
             let s = string(&d["sort"], "UnknownSymbol")?;
-            if !sorts.contains_key(s) {
+            if !sorts.contains_key(s) && !(order && s == "$int") {
                 return error("UnknownSymbol", "unknown constant sort");
             }
             description(&d["description"])?;
@@ -181,12 +186,15 @@ impl Environment {
         }
         Ok(Self {
             closure,
+            order,
             sorts: sorts.keys().cloned().collect(),
             predicates,
             constants,
             data: data.clone(),
             id: digest(
-                if closure {
+                if order {
+                    "ve-environment-v0.1-order\n"
+                } else if closure {
                     "ve-environment-v0.1\n"
                 } else {
                     "ve-environment-v0\n"
@@ -204,8 +212,17 @@ impl Environment {
     pub fn closure(&self) -> bool {
         self.closure
     }
+    pub fn order(&self) -> bool {
+        self.order
+    }
     pub fn identity_version(&self) -> &'static str {
-        if self.closure { "v0.1" } else { "v0" }
+        if self.order {
+            "v0.1-order"
+        } else if self.closure {
+            "v0.1"
+        } else {
+            "v0"
+        }
     }
     pub(crate) fn schema_name(&self, s: &str) -> bool {
         self.sorts.contains(s) || self.predicates.contains_key(s) || self.constants.contains_key(s)

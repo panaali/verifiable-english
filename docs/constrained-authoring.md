@@ -1,6 +1,9 @@
 # Constrained VE authoring
 
 `ve.grammar` exports an environment-specific CFG without runtime dependencies.
+The same exporter now covers `order@0` integer terms and comparisons in Lark,
+GBNF, and EBNF. Full mode keeps integer and user-sort terms separate; the VE
+parser remains the final check for numeral length and runtime limits.
 `ve.authoring` checks and repairs injected proposals for SFT warm-up and coverage
 audits. Neither component checks that a claim faithfully represents a requirement.
 The gatekeeper is not part of RL rollouts: retrying until valid would change the

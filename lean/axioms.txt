@@ -306,4 +306,7 @@
 'VE.Order.Wire.Query.accepts_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.order_decode_profiles' depends on axioms: [propext]
 'VE.Order.order_route_gate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Order.surface_route_gate' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.combined_profiles_rejected' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Order.combined_profiles_surface_rejected' depends on axioms: [propext, Classical.choice, Quot.sound]
+PASS: 60 source files; 311 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.

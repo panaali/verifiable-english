@@ -10,6 +10,11 @@ that declares `order@0`. The Python stage, the frozen canonical forms and the
 differential corpus are described in
 [order-implementation.md](../docs/spec/order-implementation.md).
 
+Round 2 adds `Surface.parse` on a separate `kind: "surface"` case in the order
+route. It returns a checked indexed AST from strict order text. The dispatcher
+is covered by `surface_route_gate`; the certificate checker and its soundness
+proof are unchanged. No order parser/printer round-trip theorem is claimed.
+
 Terms add arbitrary-precision `Int` numerals, addition and multiplication by an
 `Int` coefficient. Unary minus is scale by -1; subtraction is addition of a
 negated term. Equality retains ordinary equality, with new `<` and `≤` atoms.
@@ -41,7 +46,8 @@ decoded environment before use.
 Order and closure remain **incompatible**. No mixed formula, mixed evaluation,
 or closure-to-order embedding is claimed. The existing closure implementation
 and its theorems remain intact; an envelope declaring both closure@0 and
-order@0 fails on every route (`combined_profiles_rejected`). General
+order@0 fails on every route (`combined_profiles_rejected` and
+`combined_profiles_surface_rejected`). General
 composition in design D remains future work.
 
 All named results below are audited. Quantification over structures and object
@@ -79,7 +85,9 @@ consequence relation.
 | `order_not_accepted`, `order_profile_gate` | An environment whose declared `profiles` contain `order@0` never satisfies `ProfilesAccepted`; hence every case declaring `order@0` fails on both routes, whatever its other fields. |
 | `singular_order_not_accepted`, `singular_order_profile_gate` | The same for a singular `"profile": "order@0"` field, under any `language`. |
 | `order_decode_profiles`, `order_route_gate` | The order route (`Wire.runCase`) succeeds only if the case's environment has `language` `ve.core@0.1` and `profiles` exactly `["order@0", "relational-fol@0"]`. |
-| `combined_profiles_rejected` | An environment whose declared profiles contain both closure@0 and order@0 fails on the certificate route, the evaluation route and the order route. |
+| `surface_route_gate` | The executable order dispatcher, including the surface parser case, has the same exact profile gate. |
+| `combined_profiles_rejected` | An environment whose declared profiles contain both closure@0 and order@0 fails on the certificate route, the evaluation route and `Wire.runCase`. Its original statement is preserved. |
+| `combined_profiles_surface_rejected` | The same profile combination also fails through the executable `Surface.runCase` dispatcher. |
 | `Tableau.checkCertificate_sound` | If the order checker accepts a certificate (checker `ve-order-farkas-checker@1`) for premises and a conclusion, the premises entail the conclusion over every admissible order structure, at every universe, with standard unbounded integers. There is no certificate-soundness premise. |
 | `Wire.Query.accepts_sound` | The JSON-facing form of the same result, at universe zero. |
 | `Tableau.replay_sound`, `next_sound`, `closed_sound`, `farkas_sound`, `neqSplit_sound` | A satisfiable branch has a satisfiable child under every rule; closing rules (complementary formulas, argument congruence, Farkas with cuts) never close a satisfiable branch. |
