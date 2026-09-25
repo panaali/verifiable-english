@@ -39,8 +39,324 @@
         "top"
       ]
     ],
-    "expected_error": "InvalidModel",
-    "generator": "literals"
+    "expected": {
+      "status": "error",
+      "code": "InvalidModel",
+      "generator": "literals"
+    }
+  },
+  {
+    "id": "literal-alias-countermodel",
+    "kind": "countermodel",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "f"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "in_legal": [],
+        "senior": [
+          [
+            "a"
+          ]
+        ]
+      }
+    },
+    "premises": [
+      [
+        "unary",
+        "in_finance",
+        [
+          "const",
+          "alice"
+        ]
+      ]
+    ],
+    "conclusion": [
+      "unary",
+      "in_legal",
+      [
+        "const",
+        "alice"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "InvalidModel",
+      "generator": "literals"
+    }
+  },
+  {
+    "id": "literal-alias-closure",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "closure@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "f"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "in_legal": [],
+        "senior": [
+          [
+            "a"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "InvalidModel",
+      "generator": "literals"
+    }
+  },
+  {
+    "id": "literal-alias-order",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "limit": {
+            "sort": "$int",
+            "description": "the limit"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "limit": "2",
+        "finance": "f",
+        "legal": "f"
+      },
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "InvalidModel",
+      "generator": "literals"
+    }
+  },
+  {
+    "id": "literal-alias-order-countermodel",
+    "kind": "countermodel",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "limit": {
+            "sort": "$int",
+            "description": "the limit"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "limit": "2",
+        "finance": "f",
+        "legal": "f"
+      },
+      "relations": {}
+    },
+    "premises": [],
+    "conclusion": [
+      "bottom"
+    ],
+    "expected": {
+      "status": "error",
+      "code": "InvalidModel",
+      "generator": "literals"
+    }
   },
   {
     "id": "partial-total-table",
@@ -96,8 +412,11 @@
         "top"
       ]
     ],
-    "expected_error": "InvalidModel",
-    "generator": "flags"
+    "expected": {
+      "status": "error",
+      "code": "InvalidModel",
+      "generator": "flags"
+    }
   },
   {
     "id": "supplied-defined-table",
@@ -172,7 +491,10 @@
         "top"
       ]
     ],
-    "expected_error": "InvalidModel",
-    "generator": "definitions"
+    "expected": {
+      "status": "error",
+      "code": "InvalidModel",
+      "generator": "definitions"
+    }
   }
 ]
