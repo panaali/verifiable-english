@@ -290,6 +290,20 @@ def decodeOrderModel (rv : RouteOrderVocabulary) (j : Json) :
   unless Background.orderLiteralsValid d.toModel rv.literals do throw (invalidModel "literals")
   pure d
 
+open VE.Order.ProfileGate in
+/-- Every decoded order model satisfies the regenerated string premises. -/
+theorem decodeOrderModel_valid (rv : RouteOrderVocabulary) (j : Json)
+    (d : VE.Order.ModelData VE.Order.Wire.Entity) (h : decodeOrderModel rv j = .ok d) :
+    Background.orderLiteralsValid d.toModel rv.literals = true := by
+  unfold decodeOrderModel at h
+  obtain ⟨decoded, _, h⟩ := bind_ok h
+  dsimp only at h
+  split at h
+  · rename_i hv
+    cases h
+    simpa using hv
+  · cases h
+
 /-- Order family: the numbers2 order decoders; Background is the order form of
 `literals`, regenerated from the declared literals and bound like the others. -/
 def runOrder (profiles : List String) (environment : Json) (rv : RouteOrderVocabulary) (id kind : String)

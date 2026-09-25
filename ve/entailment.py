@@ -87,14 +87,14 @@ def _premises(value: Sequence[Any]) -> tuple[Any, ...]:
 
 def _validate_inputs(env: Any, premises: Sequence[Any], conclusion: Any, *,
                      background: bool = True) -> tuple[Any, ...]:
-    """The checked premise list is always Background(env) followed by the
-    caller's premises (the Lean route binds exactly that list); `background`
+    """The checked list is Background ++ layer premises ++ caller premises.
+    P0 has no executable layers, so its layer segment is empty. `background`
     is False only for an already expanded list or for admission graph edges,
     whose Background premises are explicit labelled leaves."""
     premises = _premises(premises)
     if background:
-        from .background import background as generate
-        premises = tuple(item.formula for item in generate(env)) + premises
+        from .background import checked_premises
+        premises = checked_premises(env, (), premises)
     check_document(env, Document((*premises, conclusion)))
     return premises
 
