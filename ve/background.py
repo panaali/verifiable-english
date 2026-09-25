@@ -6,16 +6,14 @@ silently given semantics.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, NamedTuple
 
-from .ast import Const, Eq, Not
+from .ast import Const, Eq, Formula, Not
 from .errors import InvalidModel
 
 
-@dataclass(frozen=True, slots=True)
-class Premise:
-    formula: object
+class Premise(NamedTuple):
+    formula: Formula
     generator: str
 
 

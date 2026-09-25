@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 import pytest
 
 from conformance.p0 import environment
@@ -19,6 +17,25 @@ def test_route_families_and_identity():
         assert checker_family(raw["profiles"]) == family
         assert env.identity_version == "v0.2:" + ",".join(profiles)
         assert env.to_dict() == raw
+
+
+def test_string_literals_are_equality_only_and_bounded():
+    from ve.ast import Forall, Top, check_formula
+    raw = environment()
+    env = Environment(raw)
+    assert env.constants["alpha"].description is None
+    assert env.to_dict() == raw
+    with pytest.raises(Exception, match="Unknown binder sort"):
+        check_formula(env, Forall("$string", Top()))
+    raw["vocabulary"]["predicates"]["named"] = {
+        "arguments": ["$string"], "description": "Not in stage one."}
+    with pytest.raises(Exception, match="Undeclared predicate argument sort"):
+        Environment(raw)
+    raw = environment()
+    raw["vocabulary"]["constants"] = {
+        f"literal{i}": {"sort": "$string"} for i in range(65)}
+    with pytest.raises(Exception, match="64"):
+        Environment(raw)
 
 
 @pytest.mark.parametrize("profiles,fragment", [

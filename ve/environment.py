@@ -86,7 +86,7 @@ class PredicateDecl:
 @dataclass(frozen=True, slots=True)
 class ConstantDecl:
     sort: str
-    description: str
+    description: str | None
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -156,8 +156,7 @@ class Environment:
             if type(args) is not list or len(args) not in (1, 2):
                 raise VEError("Predicate arguments must be an array of one or two sort identifiers")
             for sort in args:
-                if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
-                                              and not (route and sort == STRING_SORT)):
+                if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)):
                     raise UnknownSymbol(f"Undeclared predicate argument sort: {sort!r}")
             verbalisation = _verbalisation(entry["verbalisation"]) if "verbalisation" in entry else None
             negative = (_verbalisation(entry["negative_verbalisation"])
@@ -165,12 +164,15 @@ class Environment:
             predicates[name] = PredicateDecl(tuple(args), _description(entry["description"]),
                                              verbalisation, negative)
         for name, entry in vocab["constants"].items():
-            require_fields(entry, {"sort", "description"}, path=f"/vocabulary/constants/{name}")
+            literal = (route and type(entry) is dict and entry.get("sort") == STRING_SORT)
+            require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set()),
+                           path=f"/vocabulary/constants/{name}")
             sort = entry["sort"]
             if type(sort) is not str or (sort not in sorts and not (order and sort == INT_SORT)
                                           and not (route and sort == STRING_SORT)):
                 raise UnknownSymbol(f"Undeclared constant sort: {sort!r}")
-            constants[name] = ConstantDecl(sort, _description(entry["description"]))
+            constants[name] = ConstantDecl(sort, _description(entry["description"])
+                                           if "description" in entry else None)
         if route and sum(decl.sort == STRING_SORT for decl in constants.values()) > 64:
             raise ResourceLimit("At most 64 declared $string literals")
         for field, value in (("language", data["language"]), ("profile", None if modern else PROFILE),
@@ -208,7 +210,8 @@ class Environment:
         return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
-                               "constants": {k: {"sort": v.sort, "description": v.description}
+                               "constants": {k: {"sort": v.sort, **({"description": v.description}
+                                                                      if v.description is not None else {})}
                                              for k, v in self.constants.items()}}}
 
     @property
