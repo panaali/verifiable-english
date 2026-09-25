@@ -34,10 +34,13 @@ Test (v4, declared before the single audit on fresh seeds; `criterion()`):
   univariate tests (the reviewer's single-feature probes are univariate);
 * groups: every sabotage kind separately vs honest, plus pooled groups; both feature sets.
 """
-from collections import Counter
+from collections import Counter, deque
 import hashlib
 import multiprocessing
 import json
+import math
+import sys
+import time
 
 import numpy as np
 
@@ -255,6 +258,47 @@ def cv_auc(X, y, model, repeats, seed):
 
 
 _WORK = {}
+_THREAD_LIMIT = None
+
+
+def _init_worker(work):
+    """Spawn does not inherit the parent's matrices or native thread-pool state."""
+    from threadpoolctl import threadpool_limits
+    global _WORK, _THREAD_LIMIT
+    _WORK = work
+    _THREAD_LIMIT = threadpool_limits(limits=1)
+
+
+def _timed_tasks(pool, function, tasks, *, workers, timeout):
+    """Bound outstanding work and each submission's wall time (including startup).
+
+    A deadline applies even if other workers keep finishing. The caller owns the pool
+    context, which terminates all workers on timeout or any other exception.
+    """
+    if workers < 1 or not math.isfinite(timeout) or timeout <= 0:
+        raise ValueError('workers and finite task timeout must be positive')
+    todo, pending = iter(tasks), deque()
+    while True:
+        while len(pending) < workers:
+            try:
+                task = next(todo)
+            except StopIteration:
+                break
+            pending.append((task, time.monotonic() + timeout, pool.apply_async(function, (task,))))
+        if not pending:
+            return
+        task, deadline, result = pending.popleft()
+        try:
+            value = result.get(timeout=max(0, deadline - time.monotonic()))
+        except multiprocessing.TimeoutError as exc:
+            raise TimeoutError(f'leakage task {task!r} exceeded {timeout}s; audit aborted') from exc
+        yield value
+
+
+def _observed_task(args):
+    key, name = args
+    X, y, repeats, seed, _ = _WORK[key]
+    return cv_auc(X, y, models()[name], repeats, seed)
 
 
 def _null_task(args):
@@ -286,12 +330,26 @@ def univariate(rows, groups, feature_sets=tuple(FEATURE_SETS)):
 
 
 def run_audits(rows, groups, *, feature_sets=tuple(FEATURE_SETS), which=('logistic', 'random_forest'),
-               repeats=2, permutations=2000, boot=2000, seed=20260924, workers=9):
+               repeats=2, permutations=2000, boot=2000, seed=20260924, workers=9, task_timeout=120):
     """groups: {name: positive kinds}. Returns {feature_set: {group: result}} (p-values unrounded)."""
     from sklearn.metrics import roc_auc_score
     rng = np.random.default_rng(seed)
     results, tasks = {}, []
-    _WORK.clear()
+    work = {}
+    for fs in feature_sets:
+        for g, positive in groups.items():
+            chosen = [r for r in rows if r['kind'] in positive or r['kind'] == 'honest']
+            X, _ = matrix(chosen, fs)
+            y = np.array([r['kind'] != 'honest' for r in chosen], dtype=int)
+            work[(fs, g)] = (X, y, repeats, seed, which)
+    with multiprocessing.get_context('spawn').Pool(workers, initializer=_init_worker, initargs=(work,)) as pool:
+        return _run_audits(pool, rows, groups, feature_sets, which, repeats, permutations, boot, seed,
+                           workers, task_timeout, rng, results, tasks)
+
+
+def _run_audits(pool, rows, groups, feature_sets, which, repeats, permutations, boot, seed,
+                workers, task_timeout, rng, results, tasks):
+    from sklearn.metrics import roc_auc_score
     for fs in feature_sets:
         results[fs] = {}
         for g, positive in groups.items():
@@ -300,9 +358,9 @@ def run_audits(rows, groups, *, feature_sets=tuple(FEATURE_SETS), which=('logist
             y = np.array([r['kind'] != 'honest' for r in chosen], dtype=int)
             res = {'n_positive': int(y.sum()), 'n_negative': int((1 - y).sum()), 'positive_kinds': sorted(positive),
                    'features': cols, 'models': {}}
-            ms = models()
             for name in which:
-                fold_auc, oof_auc, score = cv_auc(X, y, ms[name], repeats, seed)
+                fold_auc, oof_auc, score = next(_timed_tasks(
+                    pool, _observed_task, [((fs, g), name)], workers=1, timeout=task_timeout))
                 boots = []
                 for _ in range(boot):
                     idx = rng.integers(0, len(y), len(y))
@@ -312,14 +370,22 @@ def run_audits(rows, groups, *, feature_sets=tuple(FEATURE_SETS), which=('logist
                                        'oof_auc_ci95': [float(np.quantile(boots, .025)), float(np.quantile(boots, .975))]}
             results[fs][g] = res
             key = (fs, g)
-            _WORK[key] = (X, y, repeats, seed, which)
             tasks.extend((key, int(rng.integers(1 << 62))) for _ in range(permutations))
+            print(f'leakage: observed {fs}/{g} complete', file=sys.stderr, flush=True)
     nulls = {}
     if tasks:
-        with multiprocessing.get_context('fork').Pool(workers) as pool:
-            for key, aucs in pool.imap_unordered(_null_task, tasks, chunksize=8):
-                for name, a in aucs.items():
-                    nulls.setdefault((key, name), []).append(a)
+        started = last_log = time.monotonic()
+        print(f'leakage: starting {len(tasks)} permutations; spawn workers={workers}, '
+              f'task timeout={task_timeout}s', file=sys.stderr, flush=True)
+        for done, (key, aucs) in enumerate(_timed_tasks(
+                pool, _null_task, tasks, workers=workers, timeout=task_timeout), 1):
+            for name, a in aucs.items():
+                nulls.setdefault((key, name), []).append(a)
+            now = time.monotonic()
+            if now - last_log >= 30 or done == len(tasks):
+                print(f'leakage: {done}/{len(tasks)} permutations complete ({now - started:.0f}s)',
+                      file=sys.stderr, flush=True)
+                last_log = now
     for (key, name), null in nulls.items():
         fs, g = key
         m = results[fs][g]['models'][name]

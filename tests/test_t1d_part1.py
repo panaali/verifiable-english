@@ -169,6 +169,24 @@ def test_leakage_audit_is_two_sided_and_near_chance_on_random_labels():
     assert not criterion(res, ('leak',), uni)['passes'] and uni[('ve_prompt', 'leak', names[0])]['p'] < 1e-6
 
 
+def test_leakage_worker_task_has_a_deadline():
+    import multiprocessing
+    from ve_experiments.t1d.leakage import _timed_tasks
+
+    class StalledResult:
+        def get(self, timeout):
+            assert 0 <= timeout <= 0.1
+            raise multiprocessing.TimeoutError
+
+    class StalledPool:
+        def apply_async(self, function, args):
+            assert args == (('raw_prompt', 1),)
+            return StalledResult()
+
+    with pytest.raises(TimeoutError, match='raw_prompt.*exceeded 0.1s'):
+        list(_timed_tasks(StalledPool(), object(), [('raw_prompt', 1)], workers=1, timeout=0.1))
+
+
 def _hub_degrees(item):
     edges = M.edges_of(item)
     out, inn = Counter(a for a, _ in edges), Counter(b for _, b in edges)
