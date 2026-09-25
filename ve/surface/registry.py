@@ -29,6 +29,7 @@ class SurfaceRecord:
     fol_import_hook: object = None
     fol_export_hook: object = None
     typecheck_hook: object = None
+    profiles: tuple[str, ...] = ()
 
 
 _records: dict[str, SurfaceRecord] = {}
@@ -44,6 +45,8 @@ def register(record: SurfaceRecord) -> None:
         raise ValueError(f"Duplicate wire tag {record.wire_tag}")
     if record.node_type is not None and record.node_type in _by_type:
         raise ValueError(f"Duplicate surface constructor {record.node_type.__name__}")
+    if type(record.profiles) is not tuple or record.profiles != tuple(sorted(set(record.profiles))):
+        raise ValueError("Surface profiles must be sorted and unique")
     if record.traversal_hooks is not None and type(record.traversal_hooks) is not dict:
         raise ValueError("Traversal hooks must be a mapping")
     for value in (record.evaluator_hook, record.witness_renderer, record.parser_hook,
@@ -70,6 +73,10 @@ def records() -> tuple[SurfaceRecord, ...]:
     return tuple(_records.values())
 
 
+def enabled(record: SurfaceRecord, env) -> bool:
+    return all(profile in env.profiles for profile in record.profiles)
+
+
 def by_tag(tag: str) -> SurfaceRecord | None:
     return _records.get(tag)
 
@@ -87,14 +94,14 @@ def keywords() -> tuple[tuple[str, SurfaceRecord], ...]:
     return KEYWORDS
 
 
-def dispatch(source: str):
+def dispatch(source: str, env=None):
     return next(((keyword, record) for keyword, record in keywords()
-                 if source.startswith(keyword)), None)
+                 if source.startswith(keyword) and (env is None or enabled(record, env))), None)
 
 
-def strict_dispatch(source: str):
+def strict_dispatch(source: str, env=None):
     candidates = ((record.strict_form, record) for record in _records.values()
-                  if record.strict_parser_hook is not None)
+                  if record.strict_parser_hook is not None and (env is None or enabled(record, env)))
     return next(((prefix, record) for prefix, record in sorted(candidates,
                  key=lambda item: (-len(item[0]), item[0])) if source.startswith(prefix)), None)
 

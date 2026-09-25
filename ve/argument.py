@@ -38,8 +38,9 @@ def _checker_build():
     payload["surface_records"] = [{
         "tag": record.wire_tag, "strict": record.strict_form,
         "english": list(record.english_keywords), "fluent": record.fluent_form,
-        "grammar": record.grammar_production, "arity": record.wire_arity,
+        "grammar": record.grammar_production, "arity": record.wire_arity or 0,
         "node_type": symbol(record.node_type),
+        "profiles": list(record.profiles),
         "hooks": {name: symbol(getattr(record, name)) for name in (
             "evaluator_hook", "witness_renderer", "parser_hook", "strict_parser_hook",
             "printer_hook", "fluent_hook", "english_renderer", "grammar_hook",
@@ -624,6 +625,14 @@ def outstanding_obligations(graph, result):
             "reported_assessment": assessment, "scope_matches_target": scopes_match,
             "outstanding": assessment != "accepted" or not scopes_match,
             "logical_assumption": True})
+    if graph.env.language == "ve.core@0.2":
+        from .background import background
+        assumptions.extend({"claim": "background:" + item.generator,
+            "label": "background:" + item.generator,
+            "ast": formula_to_data(graph.env, item.formula),
+            "meaning_id": meaning_id(graph.env, item.formula),
+            "logical_assumption": True, "outstanding": False}
+            for item in background(graph.env))
     return {"graph_id": result.graph_id, "assurance": "experimental", "status": result.status,
         "proof": "Python replay checked under listed assumptions" if result.composed else "not checked for the root",
         "profiles": list(result.profiles), "lean_checked": result.lean_checked,

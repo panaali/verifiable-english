@@ -7,6 +7,7 @@ import re
 
 from ve import ast
 from ve.fluent import _FluentVocabulary
+from ve.surface.registry import by_tag
 
 
 TERM = r"(?:[B-HJ-NP-Z]+[0-9]*|@[a-z][a-z0-9_]*)"
@@ -65,7 +66,8 @@ class Inverse:
         return name, sort
 
     def atom(self, scope):
-        for word, constructor in (("true", ast.Top), ("false", ast.Bottom)):
+        for word, constructor in (("true", by_tag("top").node_type),
+                                  ("false", by_tag("bottom").node_type)):
             match = re.match(word + BOUNDARY, self.text[self.pos:])
             if match:
                 self.pos += match.end()
@@ -98,7 +100,7 @@ class Inverse:
             match = pattern.match(self.text, self.pos)
             if match:
                 terms = tuple(self.term(t, scope) for t in match.groups())
-                constructor = ast.Unary if len(terms) == 1 else ast.Binary
+                constructor = by_tag("unary" if len(terms) == 1 else "binary").node_type
                 atom = constructor(name, *terms)
                 candidates.append((match.end(), ast.Not(atom) if negative else atom))
         for noun, sort in self.nouns:

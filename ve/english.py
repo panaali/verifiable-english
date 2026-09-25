@@ -347,7 +347,7 @@ class EnglishTraversal:
     def formula(self, value, scope=(), depth=0):
         kind = type(value)
         record = surface_registry.by_node(value)
-        if record is not None and record.english_renderer is not None:
+        if record is not None and record.english_renderer is not None and surface_registry.enabled(record, self.env):
             return record.english_renderer(self, value, scope, depth)
         if kind is ast.Top: return 'this holds in all cases'
         if kind is ast.Bottom: return 'this is impossible'
@@ -780,7 +780,7 @@ class EnglishParser:
         self.nodes += 1
         if self.nodes > MAX_NODES:
             self.error(f'This document exceeds the {MAX_NODES}-node limit.', ResourceLimit)
-        matched = surface_registry.dispatch(self.source[self.i:])
+        matched = surface_registry.dispatch(self.source[self.i:], self.env)
         if matched is not None and matched[1].parser_hook is not None:
             return matched[1].parser_hook(self, scope, depth, nesting)
         def child(inner=scope, listed=False):
@@ -1031,6 +1031,7 @@ def english_lark_grammar(env, **options):
     rules.append('relative: ' + (' | '.join(relatives) or 'IMPOSSIBLE'))
     rules.append('object_relative: ' + (' | '.join(object_relatives) or 'IMPOSSIBLE'))
     rules.extend(line for record in surface_registry.records() if record.grammar_hook is not None
+                 and surface_registry.enabled(record, env)
                  for line in record.grammar_hook(env, words))
     rules.extend(['IMPOSSIBLE: /[^\\s\\S]/', '%import common.WS', '%ignore WS'])
     return '\n'.join(rules) + '\n'

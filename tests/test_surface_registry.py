@@ -30,3 +30,15 @@ def test_overlapping_registration_uses_longest_match():
     assert ordered.index("both of the following hold:") < ordered.index("both x")
     assert ordered.index("both x") < ordered.index("both ")
     assert dispatch("both x test")[0] == "both x"
+
+
+def test_profile_gates_new_keyword():
+    from conformance.p0 import environment
+    from ve.environment import Environment
+    register(SurfaceRecord("test-norm-keyword", "", ("under a rule ",), "", "",
+                           profiles=("norms@0",)))
+    base = Environment(environment())
+    assert dispatch("under a rule x", base) is None
+    raw = environment()
+    raw["profiles"] = ["norms@0", "relational-fol@0"]
+    assert dispatch("under a rule x", Environment(raw))[0] == "under a rule "
