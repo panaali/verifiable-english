@@ -59,7 +59,7 @@ class FiniteModel:
             if not isinstance(wire[field], dict):
                 _fail("expected an object", f"/{field}")
 
-        sort_names = set(env.sorts)
+        sort_names = set(env.model_sorts)
         predicate_names = set(env.predicates)
         constant_names = set(env.constants)
         if set(wire["domains"]) != sort_names:
@@ -135,7 +135,10 @@ class FiniteModel:
         from .wire import digest
         environment_id = env.environment_id
         model_id = digest(f"ve-model-{env.identity_version}\n", {"environment_id": environment_id, "model": normalized})
-        return cls(MappingProxyType(domains), MappingProxyType(constants), MappingProxyType(relations), environment_id, model_id)
+        model = cls(MappingProxyType(domains), MappingProxyType(constants), MappingProxyType(relations), environment_id, model_id)
+        from .background import validate_background
+        validate_background(env, model)
+        return model
 
     def to_dict(self) -> dict[str, Any]:
         return _normalized(self.domains, self.constants, self.relations)

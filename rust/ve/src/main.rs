@@ -35,8 +35,10 @@ fn number(v: &Value, name: &str, default: u64) -> Result<u64> {
     }
 }
 fn case(v: &Value) -> Result<Value> {
-    if v.get("environment").and_then(|e| e.get("profiles"))
-        == Some(&json!(["order@0", "relational-fol@0"]))
+    if v.get("environment")
+        .and_then(|e| e.get("profiles"))
+        .and_then(Value::as_array)
+        .is_some_and(|profiles| profiles.contains(&json!("order@0")))
     {
         return order_case(v);
     }

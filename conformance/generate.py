@@ -21,6 +21,7 @@ from ve.ast import (
     Or, Top, Unary, Var, document_from_data, document_to_data,
 )
 from ve.search import check_countermodel
+from ve.surface.registry import by_node
 
 
 def build_cases():
@@ -28,6 +29,7 @@ def build_cases():
 
     def add(name, env, model, formulas):
         doc = formulas if isinstance(formulas, Document) else Document(tuple(formulas))
+        assert all(by_node(formula) is not None for formula in doc.formulas)
         cases.append({
             "id": name, "environment": env.to_dict(), "model": model.to_dict(),
             "ast": document_to_data(env, doc), "source": print_document(env, doc),
@@ -222,6 +224,11 @@ def build_countermodels(cases):
 
 
 if __name__ == "__main__":
+    from conformance.p0 import elaborated_document_cases, invalid_background_model_cases
+    for name, cases in (("elaborated-document", elaborated_document_cases()),
+                        ("invalid-background-model", invalid_background_model_cases())):
+        (ROOT / f"conformance/{name}.json").write_text(json.dumps(cases, indent=2) + "\n")
+        print(f"Wrote {len(cases)} {name} cases")
     result = build_cases()
     (ROOT / "conformance/evaluation.json").write_text(json.dumps(result, indent=2) + "\n")
     print(f"Wrote {len(result)} cases / {sum(len(c['ast']) for c in result)} formulas")

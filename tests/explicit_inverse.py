@@ -3,6 +3,7 @@ import re
 
 from ve import ast
 from ve.printer import _NaturalVocabulary
+from ve.surface.registry import by_tag
 
 
 def parse_explicit(env, text, view, scope=()):
@@ -35,7 +36,7 @@ def parse_explicit(env, text, view, scope=()):
         return ast.Not(child(text[len(negative):]))
     for sort in env.sorts:
         noun = natural.sorts[sort]
-        for kind in (ast.Forall, ast.Exists):
+        for kind in (by_tag("forall").node_type, by_tag("exists").node_type):
             if symbols:
                 pattern = ("∀" if kind is ast.Forall else "∃") + r" (x\d+):" + sort + r", \((.*)\)"
             elif view == "fol_keywords":
@@ -82,8 +83,10 @@ def parse_explicit(env, text, view, scope=()):
         return ast.Implies(child(left), child(rest[7:]))
     if text.startswith("("):
         left, rest = first_group(text)
-        separators = {" ∧ ": ast.And, " ∨ ": ast.Or, " → ": ast.Implies} if symbols else {
-            " and ": ast.And, " or ": ast.Or, " implies ": ast.Implies}
+        separators = {" ∧ ": by_tag("and").node_type, " ∨ ": by_tag("or").node_type,
+                      " → ": by_tag("implies").node_type} if symbols else {
+            " and ": by_tag("and").node_type, " or ": by_tag("or").node_type,
+            " implies ": by_tag("implies").node_type}
         for separator, constructor in separators.items():
             if rest.startswith(separator):
                 right = rest[len(separator):]

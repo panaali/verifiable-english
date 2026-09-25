@@ -1,0 +1,178 @@
+[
+  {
+    "id": "literal-alias",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "a"
+        ]
+      },
+      "constants": {
+        "alpha": "a",
+        "beta": "a"
+      },
+      "relations": {}
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected_error": "InvalidModel",
+    "generator": "literals"
+  },
+  {
+    "id": "partial-total-table",
+    "kind": "evaluate",
+    "pending": "W5",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          },
+          "department": {
+            "description": "Department."
+          }
+        },
+        "predicates": {
+          "dept": {
+            "arguments": [
+              "person",
+              "department"
+            ],
+            "description": "Department of person.",
+            "functional": true,
+            "total": true
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ],
+        "department": [
+          "finance"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "dept": []
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected_error": "InvalidModel",
+    "generator": "flags"
+  },
+  {
+    "id": "supplied-defined-table",
+    "kind": "evaluate",
+    "pending": "W3",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "Person."
+          }
+        },
+        "predicates": {
+          "base": {
+            "arguments": [
+              "person"
+            ],
+            "description": "Base."
+          },
+          "derived": {
+            "arguments": [
+              "person"
+            ],
+            "description": "Defined from base.",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "unary",
+                "base",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {}
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "alice"
+        ]
+      },
+      "constants": {},
+      "relations": {
+        "base": [
+          [
+            "alice"
+          ]
+        ],
+        "derived": [
+          [
+            "alice"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected_error": "InvalidModel",
+    "generator": "definitions"
+  }
+]

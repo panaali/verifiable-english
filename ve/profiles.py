@@ -1,0 +1,53 @@
+"""Ordered statement-layer profiles and checker-family dispatch for core@0.2."""
+from dataclasses import dataclass
+
+from .errors import UnsupportedProfile
+
+LANGUAGE = "ve.core@0.2"
+SPEC_REVISION = "ve-v0.2-expand2-2026-09-25"
+BASE = "relational-fol@0"
+
+
+@dataclass(frozen=True, slots=True)
+class ProfileRecord:
+    name: str
+    generator: str
+    layer: str
+    checker_family: str
+
+
+REGISTRY = (
+    ProfileRecord("closure@0", "", "checker", "closure"),
+    ProfileRecord("data@0", "data", "statement", "inherited"),
+    ProfileRecord("definitions@0", "definitions", "statement", "inherited"),
+    ProfileRecord("documents@1", "documents", "statement", "inherited"),
+    ProfileRecord("nary@0", "", "checker", "closure+n-ary"),
+    ProfileRecord("norms@0", "norms", "statement", "inherited"),
+    ProfileRecord("order@0", "", "checker", "order"),
+    ProfileRecord(BASE, "", "checker", "fol"),
+    ProfileRecord("time@0", "time", "statement", "inherited"),
+)
+BY_NAME = {record.name: record for record in REGISTRY}
+
+
+def checker_family(profiles):
+    """Validate the exact sorted set and return its supported checker family."""
+    if type(profiles) is not list or any(type(p) is not str for p in profiles):
+        raise UnsupportedProfile("profiles must be a sorted unique array")
+    if profiles != sorted(set(profiles)):
+        raise UnsupportedProfile("profiles must be sorted and unique")
+    for profile in profiles:
+        if profile not in BY_NAME:
+            raise UnsupportedProfile(f"Unsupported profile {profile}")
+    if BASE not in profiles:
+        raise UnsupportedProfile(f"Missing profile {BASE}")
+    checker = [p for p in profiles if p in {"closure@0", "nary@0", "order@0"}]
+    if "order@0" in checker and len(checker) > 1:
+        pair = next(p for p in checker if p != "order@0")
+        raise UnsupportedProfile(f"Unsupported profile combination {pair} x order@0")
+    if "nary@0" in checker and "closure@0" not in checker:
+        # Core's n-ary-only checker has not been gated yet.
+        raise UnsupportedProfile("Unsupported profile nary@0 without closure@0")
+    return ("order" if "order@0" in checker else
+            "closure+n-ary" if "nary@0" in checker else
+            "closure" if "closure@0" in checker else "fol")

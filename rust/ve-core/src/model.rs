@@ -38,7 +38,7 @@ impl FiniteModel {
         let ds = object(&obj["domains"], "InvalidModel")?;
         let cs = object(&obj["constants"], "InvalidModel")?;
         let rs = object(&obj["relations"], "InvalidModel")?;
-        if ds.keys().cloned().collect::<BTreeSet<_>>() != env.sorts
+        if ds.keys().cloned().collect::<BTreeSet<_>>() != env.model_sorts()
             || cs.keys().ne(env.constants.keys())
             || rs.keys().ne(env.predicates.keys())
         {
@@ -76,6 +76,7 @@ impl FiniteModel {
                 .map_err(|_| Error::new("InvalidModel", "constant outside its sort"))?;
             constants.insert(name.clone(), index);
         }
+        env.validate_background(&constants)?;
         let mut relations = BTreeMap::new();
         let mut count = 0;
         for (name, v) in rs {
