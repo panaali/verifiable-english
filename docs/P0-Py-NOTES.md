@@ -53,14 +53,9 @@ change legacy `ve.core@0` or `ve.core@0.1` identities or the English report.
    their own behavior. The plan's phrase "instead of hard-coding constructors"
    could also require moving those legacy branches into records; that broader
    migration remains for cross-family review.
-6. The parallel P0-Lean route currently requires `description` on a `$string`
-   constant, allows `$string` predicate arguments, and disallows `$string` on
-   `order@0`. P0-Py follows PLAN-EXPAND2.md W5's literal example (only `sort`
-   required) and stage-1 equality-only rule. P0-Py's order case exercises the
-   allowed FOL equality in the order family; that combination needs a joint
-   decision at integration. In a read-only probe, adding descriptions to the
-   three FOL literal cases made Lean's evaluate/countermodel verdicts agree.
-   The shared fixtures now carry explicit `kind` fields for its runner.
+6. Resolved at integration (2026-09-25, see docs/P0-INTEGRATION.md): Lean now
+   follows the plan (optional literal description, no `$string` predicate
+   arguments) and admits literals on `order@0`, as Python and Rust do.
 
 ## P0-Py status
 

@@ -21,7 +21,7 @@ place where the spec was ambiguous and the conservative reading that was chosen.
 | `METATHEORY.md` lists every new theorem in plain words | done |
 | v0, closure, order files and `Main.lean` subcommands unchanged (hash test) | done: `lean/VE/Route/frozen.py` + `frozen-sources.sha256` (54 files); P0-Py should call it from a pytest |
 | Evidence that `Layer` is inhabited beyond the identity | done: `Examples.copyLayer` (a defined unary predicate, unique expansion by structure equality) and `twoCopies` (composition) |
-| Seed cases for the `elaborated-document` / `invalid-background-model` families | done: `lean/VE/Route/examples/route-cases.json` (33 cases, all verdicts as expected), generator `generate.py` |
+| Seed cases for the `elaborated-document` / `invalid-background-model` families | done; at integration replaced by the shared P0 families (`conformance/p0.py`, 326 Lean cases, all verdicts as expected), generator `generate.py` |
 | Cross-family review by Astra (3.10(7)) | not done (reviewer task) |
 | `ROADMAP.md` freeze announcement (3.10(7)) | not done here: `ROADMAP.md` is shared; the text to paste is below |
 
@@ -81,19 +81,21 @@ This mirrors the in-progress `ve/profiles.py` on `ve-p0-py` (read 2026-09-25). T
 rejects closure+n-ary with `UnsupportedProfile: the closure+n-ary checker is gated until W4 stage 1
 lands` (the gate itself accepts the family, per 3.10(4)).
 
-**Vocabulary (FOL and closure families).** As v0, plus: a constant may have sort `$string` (a
-declared literal); a predicate argument may be `$string`; at most 64 literals (`ResourceLimit: At most
-64 declared $string literals`). `$string` is never added to `sorts`, so `forall`/`exists` over it is
-rejected at type-check (`ill-typed or unbound formula`). **Order family:** exactly the numbers2 order
-vocabulary; `$string` is not available (P0).
+**Vocabulary (every family).** As v0 (order: as numbers2), plus: a constant may have sort `$string`
+(a declared literal; `sort` required, `description` optional and nonempty when present); at most 64
+literals (`ResourceLimit: At most 64 declared $string literals`). Stage 1 is equality only (PLAN-EXPAND2
+W5): `$string` is never a predicate argument and never added to `sorts`, so `forall`/`exists` over it
+is rejected at type-check (`ill-typed or unbound formula`). On order@0 the numbers2 decoder runs,
+unchanged, on the vocabulary without its literals; each literal is then a constant of user sort
+`$string` (integration decision, 2026-09-25: the plan's Background depends on the environment only).
 
 **Models.** As v0 tables; `domains` lists `$string` iff at least one literal is declared (Python
 `Environment.model_sorts`). After the structural admissibility gate, Background is evaluated in the
 model; a false premise gives `status: error`, `error: "InvalidModel(<generator>): the model violates a
 background premise"`, and a separate `generator` field (e.g. `"literals"`).
 
-**Background.** Regenerated, never read: generator order `flags`, `definitions`, `literals`,
-`profile`. P0: `literals` only, as `["not", ["eq", ["const", a], ["const", b]]]` for each pair
+**Background.** Regenerated, never read, on every family (order: `Background.orderLiterals`, the same
+ASTs): generator order `flags`, `definitions`, `literals`, `profile`. P0: `literals` only, as `["not", ["eq", ["const", a], ["const", b]]]` for each pair
 `a < b` of the **sorted** literal names, in lexicographic pair order (Python
 `itertools.combinations(sorted(lits), 2)`).
 
@@ -111,6 +113,7 @@ background premise"`, and a separate `generator` field (e.g. `"literals"`).
 | `countermodel` | `model`, `premises`, `conclusion` | `refutes` (premises true, conclusion false, model valid incl. Background) |
 | `certificate` | `premises`, `conclusion`, `certificate` | `valid`, `background` (count) |
 | `dependency-order` | `nodes: [{"name", "mentions"}]` | `order` |
+| `label` | `label` | `label` (canonical), else `AdmissionError: invalid label <l>` |
 | `admission` (FOL only) | `document` | `admitted`, `report`, `report_id`, `kinds` |
 
 The certificate's checked premise list is **Background ++ premises**; its `premise_meaning_ids` bind
@@ -189,8 +192,9 @@ leaf, which must name an asserted unit) and so changes the report and `report_id
    `Entails E_out (Background ++ premises Γ)`); the alternative (binding only Γ and prepending
    silently) would let a certificate be replayed against a different Background.
 4. **Background order**: sorted literals, pairs in lexicographic order.
-5. **`$string`** is never quantifiable and never in `sorts`; model tables list it as a domain iff a
-   literal is declared; `$string` is unavailable on `order@0` in P0.
+5. **`$string`** is never quantifiable, never in `sorts` and never a predicate argument; model tables
+   list it as a domain iff a literal is declared; it is available on every family (integration:
+   superseded the P0-Lean reading that excluded `order@0` and admitted `$string` arguments).
 6. **Explicit default label** is rejected (one canonical wire form per claim, so one hash).
 7. **Reading choices**: versions of one set must agree; `all` is compatible with any concrete choice
    (a result under all readings holds under each). A stricter reading (reject `all` with a concrete
@@ -229,9 +233,10 @@ leaf, which must name an asserted unit) and so changes the report and `report_id
 - `lake build` (includes `VE/Route/Checks.lean`: guards for the gate, DAG, labels, kinds, literals).
 - `python3 lean/audit.py` (380 theorems).
 - `python3 lean/VE/Route/frozen.py` (frozen sources and `Main.lean` subcommands).
-- `uv run python lean/VE/Route/examples/generate.py`, then
-  `lean/.lake/build/bin/ve_conformance route lean/VE/Route/examples/route-cases.json` and compare with
-  each case's `expected` (33/33).
+- `uv run python lean/VE/Route/examples/generate.py` (now generated from the shared families in
+  `conformance/p0.py`), then `lean/.lake/build/bin/ve_conformance route
+  lean/VE/Route/examples/route-cases.json` and compare with each case's `expected` (326/326 at
+  integration); `tests/test_p0_three_way.py` runs the same families through Python, Rust and Lean.
 - `python3 lean/VE/Route/examples/dag_differential.py`: the documented dependency-order algorithm
   (a Python reference written from this file) agrees with Lean on 200/200 random graphs (98
   accepted, 102 rejected, duplicates included).
