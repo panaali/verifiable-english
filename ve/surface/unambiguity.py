@@ -2,10 +2,14 @@
 from functools import lru_cache
 import re
 import signal
+import sys
 import threading
+import time
 
 from ..errors import ResourceLimit, SyntaxError
 from ..limits import MAX_NODES
+
+EARLEY_SECONDS = 30
 
 
 @lru_cache(maxsize=32)
@@ -27,8 +31,16 @@ def require_unique_derivation(env, source, **options):
     timed = threading.current_thread() is threading.main_thread()
     if timed:
         previous = signal.getsignal(signal.SIGALRM)
-        old_timer = signal.setitimer(signal.ITIMER_REAL, 30)
         signal.signal(signal.SIGALRM, timeout)
+        old_timer = signal.setitimer(signal.ITIMER_REAL, EARLEY_SECONDS)
+    else:
+        previous_trace = sys.gettrace()
+        started = time.monotonic()
+        def trace(_frame, _event, _arg):
+            if time.monotonic() - started > EARLEY_SECONDS:
+                raise ResourceLimit("English Earley time budget exhausted")
+            return trace
+        sys.settrace(trace)
     try:
         tree = _parser(grammar).parse(text)
     except ResourceLimit:
@@ -39,6 +51,8 @@ def require_unique_derivation(env, source, **options):
         if timed:
             signal.setitimer(signal.ITIMER_REAL, *old_timer)
             signal.signal(signal.SIGALRM, previous)
+        else:
+            sys.settrace(previous_trace)
     stack = [tree]
     count = 0
     while stack:
