@@ -1,0 +1,4556 @@
+[
+  {
+    "id": "bridge-background",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "root",
+        "nodes": [
+          {
+            "name": "claim-u2",
+            "ast": [
+              "or",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ],
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "bridge:accepts(bob,u2)",
+            "unit": "u2"
+          },
+          {
+            "name": "distinct",
+            "ast": [
+              "not",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ]
+            ],
+            "label": "background:literals"
+          },
+          {
+            "name": "senior",
+            "ast": [
+              "unary",
+              "senior",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "unit": "u1"
+          },
+          {
+            "name": "root",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "claim-u2",
+              "distinct"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545",
+                "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "expand",
+                "at": 0,
+                "children": [
+                  {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  },
+                  {
+                    "rule": "close"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "ok",
+      "admitted": true,
+      "report": {
+        "root": {
+          "name": "root",
+          "ast": [
+            "unary",
+            "in_finance",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        "assumptions": [
+          {
+            "name": "claim-u2",
+            "ast": [
+              "or",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ],
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "bridge:accepts(bob,u2)"
+          },
+          {
+            "name": "distinct",
+            "ast": [
+              "not",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ]
+            ],
+            "label": "background:literals"
+          }
+        ]
+      },
+      "report_id": "b884ec0cc57bc9db5a9074430eb1614c3257840ebd6acd0e1240226acafd04d8",
+      "kinds": [
+        "asserted",
+        [
+          "attributed",
+          "bob",
+          "says",
+          "asserted"
+        ],
+        [
+          "attributed",
+          "alice",
+          "believes",
+          [
+            "hedged",
+            "likely",
+            [
+              "causal",
+              "because",
+              "asserted",
+              "asserted"
+            ]
+          ]
+        ],
+        [
+          "unformalised",
+          "rhetoric"
+        ]
+      ]
+    }
+  },
+  {
+    "id": "quoted-without-bridge",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "root",
+        "nodes": [
+          {
+            "name": "claim-u2",
+            "ast": [
+              "or",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ],
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "unit": "u2"
+          },
+          {
+            "name": "distinct",
+            "ast": [
+              "not",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ]
+            ],
+            "label": "background:literals"
+          },
+          {
+            "name": "senior",
+            "ast": [
+              "unary",
+              "senior",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "unit": "u1"
+          },
+          {
+            "name": "root",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "claim-u2",
+              "distinct"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545",
+                "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "expand",
+                "at": 0,
+                "children": [
+                  {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  },
+                  {
+                    "rule": "close"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: quoted content of unit u2 is used without a bridge leaf"
+    }
+  },
+  {
+    "id": "background-label-stripped",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "root",
+        "nodes": [
+          {
+            "name": "claim-u2",
+            "ast": [
+              "or",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ],
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "bridge:accepts(bob,u2)",
+            "unit": "u2"
+          },
+          {
+            "name": "distinct",
+            "ast": [
+              "not",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ]
+            ]
+          },
+          {
+            "name": "senior",
+            "ast": [
+              "unary",
+              "senior",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "unit": "u1"
+          },
+          {
+            "name": "root",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "claim-u2",
+              "distinct"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545",
+                "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "expand",
+                "at": 0,
+                "children": [
+                  {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  },
+                  {
+                    "rule": "close"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: node distinct is not admitted under label asserted"
+    }
+  },
+  {
+    "id": "bridge-wrong-agent",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "root",
+        "nodes": [
+          {
+            "name": "claim-u2",
+            "ast": [
+              "or",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ],
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "bridge:accepts(alice,u2)",
+            "unit": "u2"
+          },
+          {
+            "name": "distinct",
+            "ast": [
+              "not",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ]
+            ],
+            "label": "background:literals"
+          },
+          {
+            "name": "senior",
+            "ast": [
+              "unary",
+              "senior",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "unit": "u1"
+          },
+          {
+            "name": "root",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "claim-u2",
+              "distinct"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545",
+                "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "expand",
+                "at": 0,
+                "children": [
+                  {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  },
+                  {
+                    "rule": "close"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: node claim-u2 is not admitted under label bridge:accepts(alice,u2)"
+    }
+  },
+  {
+    "id": "background-wrong-generator",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "root",
+        "nodes": [
+          {
+            "name": "claim-u2",
+            "ast": [
+              "or",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ],
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "bridge:accepts(bob,u2)",
+            "unit": "u2"
+          },
+          {
+            "name": "distinct",
+            "ast": [
+              "not",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ]
+            ],
+            "label": "background:flags"
+          },
+          {
+            "name": "senior",
+            "ast": [
+              "unary",
+              "senior",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "unit": "u1"
+          },
+          {
+            "name": "root",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "claim-u2",
+              "distinct"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545",
+                "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "expand",
+                "at": 0,
+                "children": [
+                  {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  },
+                  {
+                    "rule": "close"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: node distinct is not admitted under label background:flags"
+    }
+  },
+  {
+    "id": "invalid-label",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "root",
+        "nodes": [
+          {
+            "name": "claim-u2",
+            "ast": [
+              "or",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ],
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "bridge:accepts(bob,u2)",
+            "unit": "u2"
+          },
+          {
+            "name": "distinct",
+            "ast": [
+              "not",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ]
+            ],
+            "label": "background:strings"
+          },
+          {
+            "name": "senior",
+            "ast": [
+              "unary",
+              "senior",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "unit": "u1"
+          },
+          {
+            "name": "root",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "claim-u2",
+              "distinct"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545",
+                "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "expand",
+                "at": 0,
+                "children": [
+                  {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  },
+                  {
+                    "rule": "close"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: invalid label background:strings"
+    }
+  },
+  {
+    "id": "explicit-default-label",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "root",
+        "nodes": [
+          {
+            "name": "claim-u2",
+            "ast": [
+              "or",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ],
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "bridge:accepts(bob,u2)",
+            "unit": "u2"
+          },
+          {
+            "name": "distinct",
+            "ast": [
+              "not",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ]
+            ],
+            "label": "background:literals"
+          },
+          {
+            "name": "senior",
+            "ast": [
+              "unary",
+              "senior",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "unit": "u1",
+            "label": "asserted"
+          },
+          {
+            "name": "root",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "claim-u2",
+              "distinct"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545",
+                "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "expand",
+                "at": 0,
+                "children": [
+                  {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  },
+                  {
+                    "rule": "close"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "error",
+      "code": "rejected"
+    }
+  },
+  {
+    "id": "overlapping-spans",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            10,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "root",
+        "nodes": [
+          {
+            "name": "claim-u2",
+            "ast": [
+              "or",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ],
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "bridge:accepts(bob,u2)",
+            "unit": "u2"
+          },
+          {
+            "name": "distinct",
+            "ast": [
+              "not",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ]
+            ],
+            "label": "background:literals"
+          },
+          {
+            "name": "senior",
+            "ast": [
+              "unary",
+              "senior",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "unit": "u1"
+          },
+          {
+            "name": "root",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "claim-u2",
+              "distinct"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545",
+                "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "expand",
+                "at": 0,
+                "children": [
+                  {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  },
+                  {
+                    "rule": "close"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "error",
+      "code": "rejected"
+    }
+  },
+  {
+    "id": "kind-too-deep",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "hedged",
+            "could",
+            [
+              "hedged",
+              "could",
+              [
+                "hedged",
+                "could",
+                [
+                  "hedged",
+                  "could",
+                  [
+                    "hedged",
+                    "could",
+                    [
+                      "hedged",
+                      "could",
+                      [
+                        "hedged",
+                        "could",
+                        [
+                          "hedged",
+                          "could",
+                          [
+                            "hedged",
+                            "could",
+                            [
+                              "hedged",
+                              "could",
+                              [
+                                "hedged",
+                                "could",
+                                [
+                                  "hedged",
+                                  "could",
+                                  [
+                                    "hedged",
+                                    "could",
+                                    [
+                                      "hedged",
+                                      "could",
+                                      [
+                                        "hedged",
+                                        "could",
+                                        [
+                                          "hedged",
+                                          "could",
+                                          "asserted"
+                                        ]
+                                      ]
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        }
+      ],
+      "graph": {
+        "root": "root",
+        "nodes": [
+          {
+            "name": "claim-u2",
+            "ast": [
+              "or",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ],
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "bridge:accepts(bob,u2)",
+            "unit": "u2"
+          },
+          {
+            "name": "distinct",
+            "ast": [
+              "not",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ]
+            ],
+            "label": "background:literals"
+          },
+          {
+            "name": "senior",
+            "ast": [
+              "unary",
+              "senior",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "unit": "u1"
+          },
+          {
+            "name": "root",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "claim-u2",
+              "distinct"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545",
+                "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "expand",
+                "at": 0,
+                "children": [
+                  {
+                    "rule": "expand",
+                    "at": 1,
+                    "children": [
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  },
+                  {
+                    "rule": "close"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "error",
+      "code": "ResourceLimit"
+    }
+  },
+  {
+    "id": "stale-edge-certificate",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "root",
+        "nodes": [
+          {
+            "name": "claim-u2",
+            "ast": [
+              "or",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ],
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "bridge:accepts(bob,u2)",
+            "unit": "u2"
+          },
+          {
+            "name": "distinct",
+            "ast": [
+              "not",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ]
+            ],
+            "label": "background:literals"
+          },
+          {
+            "name": "senior",
+            "ast": [
+              "unary",
+              "senior",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "unit": "u1"
+          },
+          {
+            "name": "root",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "claim-u2",
+              "distinct"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169",
+                "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "expand",
+                "at": 1,
+                "children": [
+                  {
+                    "rule": "expand",
+                    "at": 0,
+                    "children": [
+                      {
+                        "rule": "close"
+                      }
+                    ]
+                  },
+                  {
+                    "rule": "close"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "error",
+      "code": "rejected"
+    }
+  },
+  {
+    "id": "citation-with-leaves",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "uses",
+        "nodes": [
+          {
+            "name": "claim-u2",
+            "ast": [
+              "or",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ],
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "bridge:accepts(bob,u2)",
+            "unit": "u2"
+          },
+          {
+            "name": "cited",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "cite:b1/t1"
+          },
+          {
+            "name": "uses",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "cited",
+              "claim-u2"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+                "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "close"
+              }
+            }
+          }
+        ]
+      },
+      "lemmas": [
+        {
+          "name": "b1/t1",
+          "conclusion": [
+            "unary",
+            "in_finance",
+            [
+              "const",
+              "alice"
+            ]
+          ],
+          "leaves": [
+            {
+              "ast": [
+                "or",
+                [
+                  "eq",
+                  [
+                    "const",
+                    "finance"
+                  ],
+                  [
+                    "const",
+                    "legal"
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "const",
+                    "alice"
+                  ]
+                ]
+              ],
+              "label": "bridge:accepts(bob,u2)"
+            }
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "status": "ok",
+      "admitted": true,
+      "report": {
+        "root": {
+          "name": "uses",
+          "ast": [
+            "unary",
+            "in_finance",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        "assumptions": [
+          {
+            "name": "cited",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "cite:b1/t1"
+          },
+          {
+            "name": "claim-u2",
+            "ast": [
+              "or",
+              [
+                "eq",
+                [
+                  "const",
+                  "finance"
+                ],
+                [
+                  "const",
+                  "legal"
+                ]
+              ],
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "bridge:accepts(bob,u2)"
+          }
+        ]
+      },
+      "report_id": "1d4e81874c31533254cf4eb975acf374274187a227701ed6554e9b69628816cf",
+      "kinds": [
+        "asserted",
+        [
+          "attributed",
+          "bob",
+          "says",
+          "asserted"
+        ],
+        [
+          "attributed",
+          "alice",
+          "believes",
+          [
+            "hedged",
+            "likely",
+            [
+              "causal",
+              "because",
+              "asserted",
+              "asserted"
+            ]
+          ]
+        ],
+        [
+          "unformalised",
+          "rhetoric"
+        ]
+      ]
+    }
+  },
+  {
+    "id": "citation-missing-leaf",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "cited",
+        "nodes": [
+          {
+            "name": "cited",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "cite:b1/t1"
+          }
+        ]
+      },
+      "lemmas": [
+        {
+          "name": "b1/t1",
+          "conclusion": [
+            "unary",
+            "in_finance",
+            [
+              "const",
+              "alice"
+            ]
+          ],
+          "leaves": [
+            {
+              "ast": [
+                "or",
+                [
+                  "eq",
+                  [
+                    "const",
+                    "finance"
+                  ],
+                  [
+                    "const",
+                    "legal"
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "const",
+                    "alice"
+                  ]
+                ]
+              ],
+              "label": "bridge:accepts(bob,u2)"
+            }
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: a cited lemma's leaves are missing from the report"
+    }
+  },
+  {
+    "id": "incompatible-choices",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "r",
+        "nodes": [
+          {
+            "name": "r0",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "readings:s1@1:0"
+          },
+          {
+            "name": "r1",
+            "ast": [
+              "unary",
+              "in_legal",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "readings:s1@1:1"
+          },
+          {
+            "name": "r",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "r0",
+              "r1"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+                "c078fd6030140eb356a358341ee3db97fb1c171b4c81352a9363f8d0b018a5dd"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "close"
+              }
+            }
+          }
+        ]
+      },
+      "reading_sets": [
+        {
+          "id": "s1",
+          "version": 1,
+          "readings": [
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            [
+              "unary",
+              "in_legal",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: incompatible reading choices"
+    }
+  },
+  {
+    "id": "one-choice",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "r",
+        "nodes": [
+          {
+            "name": "r0",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "readings:s1@1:0"
+          },
+          {
+            "name": "r",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "r0"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "close"
+              }
+            }
+          }
+        ]
+      },
+      "reading_sets": [
+        {
+          "id": "s1",
+          "version": 1,
+          "readings": [
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            [
+              "unary",
+              "in_legal",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "status": "ok",
+      "admitted": true,
+      "report": {
+        "root": {
+          "name": "r",
+          "ast": [
+            "unary",
+            "in_finance",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        "assumptions": [
+          {
+            "name": "r0",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "readings:s1@1:0"
+          }
+        ]
+      },
+      "report_id": "365d71c03570285eccbc88b380f01f6b518fb1610c69fcb896da1aa1ea1d431f",
+      "kinds": [
+        "asserted",
+        [
+          "attributed",
+          "bob",
+          "says",
+          "asserted"
+        ],
+        [
+          "attributed",
+          "alice",
+          "believes",
+          [
+            "hedged",
+            "likely",
+            [
+              "causal",
+              "because",
+              "asserted",
+              "asserted"
+            ]
+          ]
+        ],
+        [
+          "unformalised",
+          "rhetoric"
+        ]
+      ]
+    }
+  },
+  {
+    "id": "all-with-choice",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "r",
+        "nodes": [
+          {
+            "name": "rall",
+            "ast": [
+              "or",
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ],
+              [
+                "unary",
+                "in_legal",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "readings:s1@1:all"
+          },
+          {
+            "name": "r0",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "readings:s1@1:0"
+          },
+          {
+            "name": "r",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "rall",
+              "r0"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "465c8463cdd3a5fb7280a73ab2bc55aae6b4b42c311312b121e4e63ba594994e",
+                "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "close"
+              }
+            }
+          }
+        ]
+      },
+      "reading_sets": [
+        {
+          "id": "s1",
+          "version": 1,
+          "readings": [
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            [
+              "unary",
+              "in_legal",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "status": "ok",
+      "admitted": true,
+      "report": {
+        "root": {
+          "name": "r",
+          "ast": [
+            "unary",
+            "in_finance",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        "assumptions": [
+          {
+            "name": "rall",
+            "ast": [
+              "or",
+              [
+                "unary",
+                "in_finance",
+                [
+                  "const",
+                  "alice"
+                ]
+              ],
+              [
+                "unary",
+                "in_legal",
+                [
+                  "const",
+                  "alice"
+                ]
+              ]
+            ],
+            "label": "readings:s1@1:all"
+          },
+          {
+            "name": "r0",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "readings:s1@1:0"
+          }
+        ]
+      },
+      "report_id": "44a8890f8573c4b3e6a0ed6ee23d6d84b4404056bb6a42fedd1bdb40298fccbb",
+      "kinds": [
+        "asserted",
+        [
+          "attributed",
+          "bob",
+          "says",
+          "asserted"
+        ],
+        [
+          "attributed",
+          "alice",
+          "believes",
+          [
+            "hedged",
+            "likely",
+            [
+              "causal",
+              "because",
+              "asserted",
+              "asserted"
+            ]
+          ]
+        ],
+        [
+          "unformalised",
+          "rhetoric"
+        ]
+      ]
+    }
+  },
+  {
+    "id": "open-and-narrowing",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "r",
+        "nodes": [
+          {
+            "name": "o",
+            "ast": [
+              "unary",
+              "senior",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "open:reasonable"
+          },
+          {
+            "name": "n",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "narrowing:n1"
+          },
+          {
+            "name": "r",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "o",
+              "n"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "ea4c43c21d603b2c0c2c9f0824d3e5faa2f834f5d8ba06753c3b38fd2d61d1d6",
+                "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "close"
+              }
+            }
+          }
+        ]
+      },
+      "open_terms": [
+        "reasonable"
+      ],
+      "narrowings": [
+        "n1"
+      ]
+    },
+    "expected": {
+      "status": "ok",
+      "admitted": true,
+      "report": {
+        "root": {
+          "name": "r",
+          "ast": [
+            "unary",
+            "in_finance",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        "assumptions": [
+          {
+            "name": "o",
+            "ast": [
+              "unary",
+              "senior",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "open:reasonable"
+          },
+          {
+            "name": "n",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "narrowing:n1"
+          }
+        ]
+      },
+      "report_id": "1067d772b2ef56a15e6e8a7957f80f00d3ffa040b30d0c14e93be43b88b0de5b",
+      "kinds": [
+        "asserted",
+        [
+          "attributed",
+          "bob",
+          "says",
+          "asserted"
+        ],
+        [
+          "attributed",
+          "alice",
+          "believes",
+          [
+            "hedged",
+            "likely",
+            [
+              "causal",
+              "because",
+              "asserted",
+              "asserted"
+            ]
+          ]
+        ],
+        [
+          "unformalised",
+          "rhetoric"
+        ]
+      ]
+    }
+  },
+  {
+    "id": "undeclared-narrowing",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "in_legal": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in legal"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string",
+            "description": "the string finance"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [
+        {
+          "id": "u1",
+          "span": [
+            0,
+            20
+          ],
+          "kind": "asserted",
+          "content": [
+            "unary",
+            "senior",
+            [
+              "const",
+              "alice"
+            ]
+          ]
+        },
+        {
+          "id": "u2",
+          "span": [
+            21,
+            60
+          ],
+          "kind": [
+            "attributed",
+            "bob",
+            "says",
+            "asserted"
+          ],
+          "content": [
+            "or",
+            [
+              "eq",
+              [
+                "const",
+                "finance"
+              ],
+              [
+                "const",
+                "legal"
+              ]
+            ],
+            [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u3",
+          "span": [
+            61,
+            120
+          ],
+          "kind": [
+            "attributed",
+            "alice",
+            "believes",
+            [
+              "hedged",
+              "likely",
+              [
+                "causal",
+                "because",
+                "asserted",
+                "asserted"
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "u4",
+          "span": [
+            120,
+            130
+          ],
+          "kind": [
+            "unformalised",
+            "rhetoric"
+          ]
+        }
+      ],
+      "graph": {
+        "root": "r",
+        "nodes": [
+          {
+            "name": "o",
+            "ast": [
+              "unary",
+              "senior",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "open:reasonable"
+          },
+          {
+            "name": "n",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "label": "narrowing:n1"
+          },
+          {
+            "name": "r",
+            "ast": [
+              "unary",
+              "in_finance",
+              [
+                "const",
+                "alice"
+              ]
+            ],
+            "premises": [
+              "o",
+              "n"
+            ],
+            "certificate": {
+              "checker_version": "ve-tableau-checker@2",
+              "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+              "premise_meaning_ids": [
+                "ea4c43c21d603b2c0c2c9f0824d3e5faa2f834f5d8ba06753c3b38fd2d61d1d6",
+                "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e"
+              ],
+              "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e",
+              "trace": {
+                "rule": "close"
+              }
+            }
+          }
+        ]
+      },
+      "open_terms": [
+        "reasonable"
+      ],
+      "narrowings": []
+    },
+    "expected": {
+      "status": "error",
+      "code": "AdmissionError",
+      "error": "AdmissionError: node n is not admitted under label narrowing:n1"
+    }
+  },
+  {
+    "id": "order-family-deferred",
+    "kind": "admission",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "limit": {
+            "sort": "$int",
+            "description": "the limit"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "document": {
+      "units": [],
+      "graph": {
+        "root": "t",
+        "nodes": [
+          {
+            "name": "t",
+            "ast": [
+              "top"
+            ],
+            "unit": "u"
+          }
+        ]
+      }
+    },
+    "expected": {
+      "status": "error",
+      "code": "UnsupportedProfile"
+    }
+  }
+]

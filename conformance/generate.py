@@ -224,10 +224,10 @@ def build_countermodels(cases):
 
 
 if __name__ == "__main__":
-    from conformance.p0 import elaborated_document_cases, invalid_background_model_cases
-    for name, cases in (("elaborated-document", elaborated_document_cases()),
-                        ("invalid-background-model", invalid_background_model_cases())):
-        (ROOT / f"conformance/{name}.json").write_text(json.dumps(cases, indent=2) + "\n")
+    from conformance.p0 import FAMILIES
+    for name, build in FAMILIES.items():
+        cases = build()
+        (ROOT / f"conformance/{name}.json").write_text(json.dumps(cases, indent=2, ensure_ascii=False) + "\n")
         print(f"Wrote {len(cases)} {name} cases")
     result = build_cases()
     (ROOT / "conformance/evaluation.json").write_text(json.dumps(result, indent=2) + "\n")

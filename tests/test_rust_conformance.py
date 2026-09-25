@@ -22,49 +22,7 @@ def fixture(name):
     return json.loads((ROOT / f'conformance/{name}.json').read_text())
 
 
-def test_p0_route_and_background_parity(rust_executable):
-    from ve.background import background
-    from ve.errors import InvalidModel
-    for family in ('elaborated-document', 'invalid-background-model'):
-        cases = [case for case in fixture(family) if 'pending' not in case]
-        results = invoke(rust_executable, cases, errors=True)
-        for case, result in zip(cases, results, strict=True):
-            if case.get('expected_error') == 'UnsupportedProfile':
-                with pytest.raises(VEError) as exc:
-                    Environment(case['environment'])
-                assert exc.value.code == result['error']['code'] == 'UnsupportedProfile'
-                assert exc.value.message == result['error']['message']
-                continue
-            env = Environment(case['environment'])
-            assert background(env)
-            if case.get('expected_error') == 'InvalidModel':
-                with pytest.raises(InvalidModel) as exc:
-                    FiniteModel.from_dict(env, case['model'])
-                assert exc.value.generator == case['generator']
-                assert result['error']['code'] == exc.value.code
-                continue
-            if 'conclusion' in case:
-                from ve.ast import formula_from_data
-                from ve.search import check_countermodel, find_countermodel
-                conclusion = formula_from_data(env, case['conclusion'])
-                if 'model' in case:
-                    model = FiniteModel.from_dict(env, case['model'])
-                    expected = check_countermodel(env, (), conclusion, model)
-                    assert result['valid'] == expected.valid == case['expected_refutes']
-                    assert result['model_id'] == model.model_id
-                else:
-                    expected = find_countermodel(env, (), conclusion, max_domain_size=2)
-                    assert result['status'] == expected.status == case['expected_status']
-                    assert result['model'] == expected.model.to_dict()
-                continue
-            model = FiniteModel.from_dict(env, case['model'])
-            doc = document_from_data(env, case['ast'])
-            assert result['status'] == 'ok'
-            assert result['values'] == case['expected'] == [
-                evaluate(env, formula, model, trace=False).value for formula in doc.formulas]
-            assert result['environment_id'] == env.environment_id
-            assert result['model_id'] == model.model_id
-            assert result['meaning_id'] == meaning_id(env, doc)
+# The P0 families run three-way (Python, Rust, Lean) in tests/test_p0_three_way.py.
 
 
 @pytest.fixture(scope='session')
