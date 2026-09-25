@@ -194,7 +194,7 @@ impl Model {
             .get("relations")
             .and_then(Value::as_object)
             .ok_or_else(|| Error::new("InvalidModel", "relations required"))?;
-        if ds.keys().cloned().collect::<BTreeSet<_>>() != env.sorts
+        if ds.keys().cloned().collect::<BTreeSet<_>>() != env.model_sorts()
             || cs.keys().ne(env.constants.keys())
             || rs.keys().ne(env.predicates.keys())
         {
@@ -222,6 +222,15 @@ impl Model {
         let mut constants = BTreeMap::new();
         for (name, raw) in cs {
             constants.insert(name.clone(), cell(raw, &env.constants[name], &domains)?);
+        }
+        let mut literal_values = BTreeSet::new();
+        for (name, sort) in &env.constants {
+            if sort == "$string" && !literal_values.insert(&constants[name]) {
+                return error(
+                    "InvalidModel",
+                    format!("$string literals alias at {name} (literals)"),
+                );
+            }
         }
         let mut relations = BTreeMap::new();
         let mut count = 0;
@@ -701,7 +710,7 @@ pub fn order_case(v: &Value) -> Result<Value> {
     }
     let meaning = |a: &Value| {
         digest(
-            "ve-meaning-v0.1-order\n",
+            &format!("ve-meaning-{}\n", env.identity_version()),
             &json!({"environment_id":env.environment_id(),"ast":a}),
         )
     };
@@ -730,7 +739,7 @@ pub fn order_case(v: &Value) -> Result<Value> {
         out["canonical_model"] =
             json!(String::from_utf8(crate::canonical_json(&model.canonical)?).unwrap());
         out["model_id"] = json!(digest(
-            "ve-model-v0.1-order\n",
+            &format!("ve-model-{}\n", env.identity_version()),
             &json!({"environment_id":env.environment_id(),"model":model.canonical})
         )?);
     }

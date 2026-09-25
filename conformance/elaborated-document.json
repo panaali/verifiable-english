@@ -1,0 +1,347 @@
+[
+  {
+    "id": "literals-distinct",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "a",
+          "b"
+        ]
+      },
+      "constants": {
+        "alpha": "a",
+        "beta": "b"
+      },
+      "relations": {}
+    },
+    "ast": [
+      [
+        "not",
+        [
+          "eq",
+          [
+            "const",
+            "alpha"
+          ],
+          [
+            "const",
+            "beta"
+          ]
+        ]
+      ]
+    ],
+    "expected": [
+      true
+    ]
+  },
+  {
+    "id": "literals-equal-false",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "a",
+          "b"
+        ]
+      },
+      "constants": {
+        "alpha": "a",
+        "beta": "b"
+      },
+      "relations": {}
+    },
+    "ast": [
+      [
+        "eq",
+        [
+          "const",
+          "alpha"
+        ],
+        [
+          "const",
+          "beta"
+        ]
+      ]
+    ],
+    "expected": [
+      false
+    ]
+  },
+  {
+    "id": "literals-countermodel",
+    "kind": "countermodel",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "a",
+          "b"
+        ]
+      },
+      "constants": {
+        "alpha": "a",
+        "beta": "b"
+      },
+      "relations": {}
+    },
+    "premises": [],
+    "conclusion": [
+      "eq",
+      [
+        "const",
+        "alpha"
+      ],
+      [
+        "const",
+        "beta"
+      ]
+    ],
+    "expected_refutes": true
+  },
+  {
+    "id": "literals-search",
+    "kind": "search",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "max_domain_size": 2,
+    "premises": [],
+    "conclusion": [
+      "eq",
+      [
+        "const",
+        "alpha"
+      ],
+      [
+        "const",
+        "beta"
+      ]
+    ],
+    "expected_status": "Found"
+  },
+  {
+    "id": "order-with-literals",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "$string": [
+          "a",
+          "b"
+        ]
+      },
+      "constants": {
+        "alpha": "a",
+        "beta": "b"
+      },
+      "relations": {}
+    },
+    "ast": [
+      [
+        "not",
+        [
+          "eq",
+          [
+            "const",
+            "alpha"
+          ],
+          [
+            "const",
+            "beta"
+          ]
+        ]
+      ]
+    ],
+    "expected": [
+      true
+    ]
+  },
+  {
+    "id": "unknown-profile",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "mystery@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected_error": "UnsupportedProfile"
+  },
+  {
+    "id": "order-nary",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "nary@0",
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected_error": "UnsupportedProfile"
+  },
+  {
+    "id": "closure-order",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "closure@0",
+        "order@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {},
+        "predicates": {},
+        "constants": {
+          "alpha": {
+            "sort": "$string"
+          },
+          "beta": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected_error": "UnsupportedProfile"
+  }
+]
