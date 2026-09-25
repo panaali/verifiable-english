@@ -265,6 +265,9 @@ def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str
     minimum = {sort: minimum_size for sort in sorts}
     for name in object_constants:
         minimum[env.constants[name].sort] = max(minimum[env.constants[name].sort], 1)
+    if "$string" in minimum:
+        minimum["$string"] = max(minimum["$string"],
+                                 sum(d.sort == "$string" for d in env.constants.values()))
     for sizes in _domain_sizes([minimum[s] for s in sorts], maximum):
         domains = {sort: [f"e{i}" for i in range(size)] for sort, size in zip(sorts, sizes, strict=True)}
         for assignment in product(values, repeat=len(int_constants)):
@@ -417,6 +420,8 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
                       max_evaluations: int = 1_000_000) -> CountermodelResult:
     """Search used-relation interpretations; fix all unused predicates to empty."""
     premises = _premises(premises)
+    from .profiles import require_checker
+    require_checker(env)
     minimum_size = _validate_options(min_domain_size, max_domain_size, max_models,
                                      max_evaluations, nonempty_domains,
                                      nonvacuous_for, semantic_nonvacuity)

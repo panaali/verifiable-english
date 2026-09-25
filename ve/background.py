@@ -62,6 +62,16 @@ def background(env) -> tuple[Premise, ...]:
                  for generator, (make, _) in HOOKS.items() for formula in make(env))
 
 
+def checked_premises(env, layer_premises, case_premises):
+    """The certificate order: Background ++ composed layer premises ++ Γ.
+
+    Layer premises are in composition order. P0 has no executable layers, so
+    current callers pass an empty layer list. Keep this order when they land.
+    """
+    return (tuple(item.formula for item in background(env)) +
+            tuple(layer_premises) + tuple(case_premises))
+
+
 def validate_background(env, model) -> None:
     from .profiles import require_checker
     require_checker(env)

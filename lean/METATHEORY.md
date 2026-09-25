@@ -405,6 +405,7 @@ Names in this table have prefix `VE.Route.`.
 | `Background.order_string_route_acceptance` | An accepted order certificate for literals ++ Γ ⊢ φ proves the entailment and φ in every string-admissible order structure satisfying Γ. |
 | `Background.order_string_route_countermodel` | A finite order countermodel that is admissible, passes the literal check and satisfies the countermodel check refutes both the string-admissible statement and the entailment from literals ++ Γ. |
 | `Wire.backgroundViolation_none`, `Wire.decodeModel_valid` | A model decoded on the route is admissible for the environment and satisfies `LiteralsDistinct`: it is string-admissible. |
+| `Wire.decodeOrderModel_valid` | A decoded order model passes the regenerated `$string` literal check. |
 | `Admission.atomicKind_render`, `Admission.decodeKind_render` | A decoded kind tree (any depth within the fuel) renders back to exactly the JSON it was decoded from. |
 | `Admission.parseLabel_render` | Only canonical label strings parse: the parsed label renders back to the input. |
 | `Admission.admitNodes_ok`, `Admission.checkGraph_ok` | The executable node check implies `NodeAdmitted` for every node; the graph step is exactly `Graph.checkTableau`. |
