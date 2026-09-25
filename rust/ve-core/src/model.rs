@@ -21,6 +21,12 @@ impl FiniteModel {
         Self::from_value(env, &loads_json(bytes)?)
     }
     pub fn from_value(env: &Environment, v: &Value) -> Result<Self> {
+        if env.order() {
+            return error(
+                "UnsupportedProfile",
+                "use the order model route for order@0",
+            );
+        }
         let obj = fields(
             v,
             &["complete", "domains", "constants", "relations"],

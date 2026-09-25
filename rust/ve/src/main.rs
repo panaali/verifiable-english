@@ -35,6 +35,11 @@ fn number(v: &Value, name: &str, default: u64) -> Result<u64> {
     }
 }
 fn case(v: &Value) -> Result<Value> {
+    if v.get("environment").and_then(|e| e.get("profiles"))
+        == Some(&json!(["order@0", "relational-fol@0"]))
+    {
+        return order_case(v);
+    }
     let env = Environment::from_value(field(v, "environment")?)?;
     if let Some(conclusion) = v.get("conclusion") {
         let ps = field(v, "premises")?

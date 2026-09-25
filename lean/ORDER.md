@@ -10,6 +10,11 @@ that declares `order@0`. The Python stage, the frozen canonical forms and the
 differential corpus are described in
 [order-implementation.md](../docs/spec/order-implementation.md).
 
+Round 2 adds `Surface.parse` on a separate `kind: "surface"` case in the order
+route. It returns a checked indexed AST from strict order text. The dispatcher
+is covered by `surface_route_gate`; the certificate checker and its soundness
+proof are unchanged. No order parser/printer round-trip theorem is claimed.
+
 Terms add arbitrary-precision `Int` numerals, addition and multiplication by an
 `Int` coefficient. Unary minus is scale by -1; subtraction is addition of a
 negated term. Equality retains ordinary equality, with new `<` and `≤` atoms.
@@ -79,6 +84,7 @@ consequence relation.
 | `order_not_accepted`, `order_profile_gate` | An environment whose declared `profiles` contain `order@0` never satisfies `ProfilesAccepted`; hence every case declaring `order@0` fails on both routes, whatever its other fields. |
 | `singular_order_not_accepted`, `singular_order_profile_gate` | The same for a singular `"profile": "order@0"` field, under any `language`. |
 | `order_decode_profiles`, `order_route_gate` | The order route (`Wire.runCase`) succeeds only if the case's environment has `language` `ve.core@0.1` and `profiles` exactly `["order@0", "relational-fol@0"]`. |
+| `surface_route_gate` | The executable order dispatcher, including the surface parser case, has the same exact profile gate. |
 | `combined_profiles_rejected` | An environment whose declared profiles contain both closure@0 and order@0 fails on the certificate route, the evaluation route and the order route. |
 | `Tableau.checkCertificate_sound` | If the order checker accepts a certificate (checker `ve-order-farkas-checker@1`) for premises and a conclusion, the premises entail the conclusion over every admissible order structure, at every universe, with standard unbounded integers. There is no certificate-soundness premise. |
 | `Wire.Query.accepts_sound` | The JSON-facing form of the same result, at universe zero. |

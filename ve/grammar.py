@@ -12,6 +12,7 @@ import json
 from .environment import Environment
 from .errors import ResourceLimit
 from .limits import MAX_DEPTH, MAX_NODES
+from .ast import INT_SORT
 
 
 def _integer(name: str, value: int, maximum: int) -> None:
@@ -30,6 +31,7 @@ class _Grammar:
         self.terms = {}
         self.productions = 0
         self.sorts = tuple(sorted(env.sorts))
+        self.int_terms = {}
 
     def literal(self, value):
         # A VE newline must become the two JSON-string characters \\n inside
@@ -60,6 +62,8 @@ class _Grammar:
         return self.states[key]
 
     def term(self, context, sort):
+        if sort == INT_SORT and self.env.order:
+            return self.integer_term(context)
         key = (context if self.mode == "full" else (), sort)
         if key in self.terms:
             return self.terms[key]
@@ -75,12 +79,45 @@ class _Grammar:
             self.add(name, self.literal(value))
         return name
 
+    def integer_term(self, context):
+        key = context if self.mode == "full" else ()
+        if key in self.int_terms:
+            return self.int_terms[key]
+        name = f"i{len(self.int_terms)}"
+        self.int_terms[key] = name
+        other = name + "o"
+        plus = name + "p"
+        self.add(name, "numeral")
+        self.add(name, other)
+        for constant, decl in sorted(self.env.constants.items()):
+            if decl.sort == INT_SORT:
+                self.add(other, self.literal("@" + constant))
+                self.add(plus, self.literal("@" + constant))
+        indices = (i for i, sort in context if sort == INT_SORT) if self.mode == "full" else range(self.binders)
+        for index in indices:
+            self.add(other, self.literal(f"x{index}"))
+            self.add(plus, self.literal(f"x{index}"))
+        # Keep direct negation and [-1 * numeral] apart: the former may not
+        # precede a numeral, while the latter is its canonical AST spelling.
+        self.add(other, self.literal("-"), other)
+        self.add(other, self.literal("["), "coefficient", self.literal(" * "), name, self.literal("]"))
+        self.add(other, self.literal("[-1 * "), "numeral", self.literal("]"))
+        self.add(other, self.literal("["), name, self.literal(" + "), plus, self.literal("]"))
+        self.add(other, self.literal("["), name, self.literal(" - "), name, self.literal("]"))
+        self.add(plus, "numeral")
+        self.add(plus, self.literal("["), "coefficient", self.literal(" * "), name, self.literal("]"))
+        self.add(plus, self.literal("["), name, self.literal(" + "), plus, self.literal("]"))
+        self.add(plus, self.literal("["), name, self.literal(" - "), name, self.literal("]"))
+        return name
+
     def formula(self, name, context, depth, begin, end):
         q = self.literal
         if begin == end:
             self.add(name, q("true"))
             self.add(name, q("false"))
             terms = {sort: self.term(context, sort) for sort in self.sorts}
+            if self.env.order:
+                terms[INT_SORT] = self.term(context, INT_SORT)
             for pred, decl in sorted(self.env.predicates.items()):
                 args = [terms[sort] for sort in decl.arguments]
                 if any(term is None for term in args):
@@ -95,6 +132,10 @@ class _Grammar:
             for term in terms.values():
                 if term is not None:
                     self.add(name, term, q(" equals "), term)
+            if self.env.order:
+                integer = terms[INT_SORT]
+                self.add(name, integer, q(" < "), integer)
+                self.add(name, integer, q(" <= "), integer)
         self.add(name, q("not ("), name, q(")"))
         for middle in range(begin, end + 1):
             left = self.state(context, depth, begin, middle)
@@ -141,6 +182,15 @@ class _Grammar:
         lines = [f"{root} {separator} {entry}"]
         lines += [f"{name} {separator} " + " | ".join(alts)
                   for name, alts in self.rules.items()]
+        if self.env.order:
+            if dialect == "lark":
+                number = r'/0|[1-9][0-9]*|-[1-9][0-9]*/'
+                coefficient = r'/0|[1-9][0-9]*|-[2-9]|-[1-9][0-9]+/'
+            else:
+                number = r'"0" | [1-9] [0-9]* | "-" [1-9] [0-9]*'
+                coefficient = r'"0" | [1-9] [0-9]* | "-" ([2-9] | [1-9] [0-9]+)'
+            lines.append(f"numeral {separator} {number}")
+            lines.append(f"coefficient {separator} {coefficient}")
         if self.wrapper:
             # Same JSON string language in each dialect. No implicit whitespace.
             char = r'/[^"\\\x00-\x1f]/' if dialect == "lark" else r'[^"\\\x00-\x1f]'
@@ -169,9 +219,6 @@ def export_grammar(env: Environment, *, dialect: str = "lark", mode: str = "full
     ``wrapper=True`` generates a JSON object with a grammar-constrained ``ve``
     string and an unconstrained JSON ``explanation`` string, in that key order.
     """
-    if getattr(env, "order", False):
-        from .errors import UnsupportedProfile
-        raise UnsupportedProfile("Grammar export does not yet cover order@0 integer terms")
     if not isinstance(env, Environment):
         raise TypeError("env must be a validated Environment")
     if dialect not in ("lark", "gbnf", "ebnf"):

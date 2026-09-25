@@ -116,6 +116,9 @@ pub struct Document {
 }
 impl Document {
     pub fn check(env: &Environment, formulas: Vec<Formula>) -> Result<Self> {
+        if env.order() {
+            return error("UnsupportedProfile", "use the order AST route for order@0");
+        }
         if formulas.is_empty() {
             return error("SyntaxError", "document must be nonempty");
         }
