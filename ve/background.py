@@ -70,22 +70,18 @@ def validate_background(env, model) -> None:
 
 def dependency_order(dependencies: dict[str, set[str] | tuple[str, ...]]) -> tuple[str, ...]:
     """Dependencies precede dependents in one DAG over defined and regulated symbols."""
-    ordered, active, done = [], set(), set()
-
-    def visit(name):
-        if name in active:
-            from .errors import VEError
-            raise VEError("Dependency cycle in definitions and regulated predicates")
-        if name in done:
-            return
-        active.add(name)
-        for dependency in sorted(dependencies.get(name, ())):
-            if dependency in dependencies:
-                visit(dependency)
-        active.remove(name)
-        done.add(name)
-        ordered.append(name)
-
-    for symbol in sorted(dependencies):
-        visit(symbol)
+    from .errors import ResourceLimit, VEError
+    if len(dependencies) > 256:
+        raise ResourceLimit("dependency graph size")
+    names = set(dependencies)
+    remaining = {name: set(mentions) & names for name, mentions in dependencies.items()}
+    ordered = []
+    while remaining:
+        ready = next((name for name in sorted(remaining) if not remaining[name]), None)
+        if ready is None:
+            raise VEError("DependencyCycle: " + ", ".join(sorted(remaining)))
+        ordered.append(ready)
+        del remaining[ready]
+        for mentions in remaining.values():
+            mentions.discard(ready)
     return tuple(ordered)
