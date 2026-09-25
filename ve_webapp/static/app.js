@@ -1,6 +1,6 @@
 'use strict';
 const $ = id => document.getElementById(id);
-let csrf = '', examples = [], selected, assist = false, revision = 0, validationTimer, lessonRevision = 0;
+let csrf = '', examples = [], selected, assist = false, revision = 0, validationTimer, lessonRevision = 0, dirty = false;
 const el = (tag, text, className) => { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (className) n.className = className; return n; };
 function notify(text) { $('notice').textContent = text; setTimeout(() => { $('notice').textContent = ''; }, 5000); }
 async function api(path, body, login = false) {
@@ -14,7 +14,7 @@ async function api(path, body, login = false) {
   return data;
 }
 async function task(button, fn) { button.disabled = true; try { await fn(); } catch (e) { notify(e.message); } finally { button.disabled = false; } }
-function signedOut() { csrf = ''; $('workspace').hidden = true; $('login').hidden = false; $('logout').hidden = true; $('token').value = ''; }
+function signedOut() { csrf = ''; dirty=false; $('workspace').hidden = true; $('login').hidden = false; $('logout').hidden = true; $('token').value = ''; }
 async function signedIn(data) {
   csrf = data.csrf; assist = data.assist;
   examples = await api('examples');
@@ -37,7 +37,8 @@ function tab(name) {
 }
 function view(title, text, prose = false) { const box=el('div',undefined,'view'); box.append(el('h3',title),el(prose?'p':'pre',text)); return box; }
 async function choose(item) {
-  selected = item; revision++; const version=++lessonRevision;
+  if(dirty && !confirm("Replace this draft with another example? Export first to keep your work.")) { $('exampleSelect').value=selected.id; return; }
+  dirty=false; selected = item; revision++; const version=++lessonRevision;
   $('exampleSelect').value = item.id;
   document.querySelectorAll('[data-example]').forEach(b=>{b.classList.toggle('selected',b.dataset.example===item.id);b.setAttribute('aria-pressed',String(b.dataset.example===item.id));});
   $('lessonCategory').textContent=item.category; $('lessonTitle').textContent=item.title; $('lessonNote').textContent=item.note;
@@ -92,9 +93,12 @@ $('exampleSelect').onchange=()=>choose(examples.find(e=>e.id===$('exampleSelect'
 $('runLesson').onclick=()=>task($('runLesson'),async()=>{const v=lessonRevision;const d=await api('check',{example:selected.id});if(v===lessonRevision)verdict($('lessonResult'),d);});
 $('validate').onclick=()=>task($('validate'),validate);$('check').onclick=()=>task($('check'),check);
 for(const id of ['claim','premises','environment','world','useWorld']) $(id).addEventListener('input',()=>{
-  revision++;$('checkResult').replaceChildren(el('div','Inputs changed. Check again for a current verdict.','empty'));$('validation').replaceChildren();
+  dirty=true;revision++;$('checkResult').replaceChildren(el('div','Inputs changed. Check again for a current verdict.','empty'));$('validation').replaceChildren();
+  if(id==='environment')$('candidates').replaceChildren();
   if(id==='claim'){$('provenance').textContent='Edited by you · review the updated paraphrase.';clearTimeout(validationTimer);validationTimer=setTimeout(validate,650);}
 });
+$('prose').addEventListener('input',()=>{dirty=true;$('candidates').replaceChildren();});
+window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 $('propose').onclick=()=>task($('propose'),async()=>{
   const v=revision, source=$('prose').value;const body=payload();body.text=source;delete body.premises;
   $('candidates').replaceChildren(el('p','Asking the assistant for readings… Nothing is accepted automatically.','note'));
@@ -105,7 +109,7 @@ $('propose').onclick=()=>task($('propose'),async()=>{
     for(const c of data.candidates){
       const box=el('article',undefined,'candidate');box.append(el('span','MODEL PROPOSAL · UNTRUSTED','badge model'),el('p',typeof c.paraphrase==='string'?c.paraphrase:JSON.stringify(c.paraphrase)),el('code',c.text));
       if(c.reading)box.append(el('p',c.reading,'note'));
-      const accept=el('button','Accept this reading');accept.onclick=()=>{revision++;$('claim').value=c.text;$('provenance').textContent='Model proposal accepted by you for this draft. Fidelity is your responsibility; checking is separate.';$('checkResult').replaceChildren(el('div','New reading accepted. Check its consequences.','empty'));validate();$('claim').focus();};box.append(accept);$('candidates').append(box);
+      const accept=el('button','Accept this reading');accept.onclick=()=>{dirty=true;revision++;$('claim').value=c.text;$('provenance').textContent='Model proposal accepted by you for this draft. Fidelity is your responsibility; checking is separate.';$('checkResult').replaceChildren(el('div','New reading accepted. Check its consequences.','empty'));validate();$('claim').focus();};box.append(accept);$('candidates').append(box);
     }
     if(data.comparisons.length)detail($('candidates'),'Alternative readings & checked distinguishing worlds',data.comparisons);
     $('candidates').append(el('p','Readings considered so far, not an exhaustive list. Acceptance applies to this local draft; it is not an audited assist-session sign-off.','note'));

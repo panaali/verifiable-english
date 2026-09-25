@@ -21,7 +21,7 @@ def run(action, data, config=None, proposer=None):
         if proposer is None:
             from ve_experiments.assist_haiku import ClaudeProposer
             proposer = ClaudeProposer(Path(config["state"]) / "calls.jsonl", model=config["model"],
-                timeout_s=40, output_tokens=1024, working_directory=str(Path(config["state"]) / "empty"))
+                timeout_s=40, output_tokens=1024, working_directory=str(Path(config["state"]) / ("empty-" + session.session_id)))
         session.proposer = proposer
         result = call_tool(session, "propose", {"sentence": session.sentence_order[0], "k": 3})
         # Do not expose backend diagnostics or credentials through HTTP.

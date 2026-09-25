@@ -11,7 +11,6 @@ import sqlite3
 import sys
 import time
 from dataclasses import dataclass
-from urllib.parse import urlsplit
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
@@ -148,7 +147,7 @@ def create_app(settings, runner=worker):
         if request.headers.get("sec-fetch-site") == "cross-site":
             raise HTTPException(403, "Cross-site request rejected.")
         supplied = request.headers.get("x-ve-csrf", "")
-        if not hmac.compare_digest(supplied, expected or "login"):
+        if not hmac.compare_digest(supplied.encode(), (expected or "login").encode()):
             raise HTTPException(403, "Missing or invalid CSRF header.")
         if request.headers.get("content-type", "").split(";")[0] != "application/json":
             raise HTTPException(415, "Use application/json.")
@@ -156,7 +155,7 @@ def create_app(settings, runner=worker):
     async def data(request):
         try:
             body = await request.json()
-        except (ValueError, UnicodeError):
+        except (ValueError, UnicodeError, RecursionError):
             raise HTTPException(400, "Invalid JSON.")
         if not isinstance(body, dict):
             raise HTTPException(400, "Expected an object.")
