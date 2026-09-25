@@ -68,13 +68,18 @@ separate, attributed, removable annotations that never collapse the set.
    confirm. A *narrowing* ("we read clause 3 as A because clause 4 says ...") is a new, attributed, citable unit by
    whoever narrows (an adopter, a court, a translator). It never edits the source's set, and every result obtained
    under it says so. This is Astra's "check under all admitted interpretations or explicitly identify the chosen one".
-3. **Checking is per reading, without enumeration.** For a conclusion that depends on ambiguous units the report
-   is one of: holds under **all** readings (one certificate from the conjunction of per-unit disjunctions, which is
-   equivalent to holding under every combination); under **some** (a certificate for a named choice plus a
-   countermodel for another); under **none** (one finite model satisfying every reading and refuting the
-   conclusion); or **unknown**. A choice is global per unit, so one sentence is never read two ways inside one
-   argument. Adding a reading can only weaken an "all" verdict, so the summary cannot be gamed by omission without
-   a visible gap in the set.
+3. **Checking is per reading, without enumeration where that is sound.** For a conclusion that depends on
+   ambiguous units the report is one of: holds under **all** readings; under **some** (a certificate for a named
+   choice plus a countermodel for another); under **none**; or **unknown**. When every reading is an assertion
+   over the same background (no reading is a norm, a definition or anything that changes the background
+   premises), "all" is one certificate from the conjunction of per-unit disjunctions, which is equivalent to
+   holding under every combination, and "none" is one finite model satisfying every reading and refuting the
+   conclusion; no combination is enumerated. For any other kind of reading the complete choices are enumerated
+   (up to 64), each choice is elaborated separately, and beyond that the verdict is unknown (converged Astra +
+   Fable change, 2026-09-25, `debates/expand2-v2/`, item 7). A choice is global per unit, so one sentence is never
+   read two ways inside one argument, and a cited result carries its choices, so citing it under incompatible
+   choices is rejected. Adding a reading can only weaken an "all" verdict, so the summary cannot be gamed by
+   omission without a visible gap in the set.
 
 Translator probabilities over readings are claims about an author's intent, not evidence about the world; they sit
 outside the evidence layer and outside every check. VE sentences still have exactly one reading each. The ambiguity
