@@ -69,6 +69,8 @@ One operation runs at a time; excess work receives 429. Semantic work is killed 
 ## Verification
 
 ```bash
+# Existing conformance tests require the local Lean executable when lake is installed.
+(cd lean && lake build)
 UV_CACHE_DIR=/tmp/ve-webapp-uv uv run pytest -q
 # Optional headless browser test (installs test-only tooling, no project dependency):
 PLAYWRIGHT_BROWSERS_PATH=/tmp/ve-webapp-browsers UV_CACHE_DIR=/tmp/ve-webapp-uv \
