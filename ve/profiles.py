@@ -51,3 +51,17 @@ def checker_family(profiles):
     return ("order" if "order@0" in checker else
             "closure+n-ary" if "nary@0" in checker else
             "closure" if "closure@0" in checker else "fol")
+
+
+# A family the gate accepts whose checker has not landed: every checking site
+# rejects it (the Lean `route` runner rejects it with the same diagnostic).
+GATED = {"closure+n-ary": "the closure+n-ary checker is gated until W4 stage 1 lands"}
+
+
+def require_checker(env) -> None:
+    """Raise UnsupportedProfile if env's checker family is gated."""
+    if getattr(env, "language", None) != LANGUAGE:
+        return
+    message = GATED.get(checker_family(list(env.profiles)))
+    if message is not None:
+        raise UnsupportedProfile(message)

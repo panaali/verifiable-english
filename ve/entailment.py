@@ -85,12 +85,16 @@ def _premises(value: Sequence[Any]) -> tuple[Any, ...]:
     return tuple(value)
 
 
-def _validate_inputs(env: Any, premises: Sequence[Any], conclusion: Any) -> tuple[Any, ...]:
+def _validate_inputs(env: Any, premises: Sequence[Any], conclusion: Any, *,
+                     background: bool = True) -> tuple[Any, ...]:
+    """The checked premise list is always Background(env) followed by the
+    caller's premises (the Lean route binds exactly that list); `background`
+    is False only for an already expanded list or for admission graph edges,
+    whose Background premises are explicit labelled leaves."""
     premises = _premises(premises)
-    from .background import background
-    generated = tuple(item.formula for item in background(env))
-    if premises[:len(generated)] != generated:
-        premises = generated + premises
+    if background:
+        from .background import background as generate
+        premises = tuple(item.formula for item in generate(env)) + premises
     check_document(env, Document((*premises, conclusion)))
     return premises
 
@@ -543,7 +547,7 @@ def prove_entailment(env: Any, premises: Sequence[Any], conclusion: Any, *,
     certificate = {**_binding(env, premises, conclusion), "trace": trace}
     # Treat search output like hostile input: replay before advertising success.
     checked = check_entailment_certificate(env, premises, conclusion, certificate,
-                                           max_steps=max_steps)
+                                           max_steps=max_steps, _background=False)
     if not checked.valid:
         return EntailmentResult("ResourceLimit" if checked.status == "ResourceLimit" else "NotFound",
                                 None, searcher.steps, "generated trace did not replay")
@@ -559,7 +563,7 @@ def _prove_order(env, premises, conclusion, max_steps) -> EntailmentResult:
                                 "no order@0 certificate found by the implemented rules; failure is inconclusive")
     certificate = {**_binding(env, premises, conclusion), "trace": trace}
     checked = check_entailment_certificate(env, premises, conclusion, certificate,
-                                           max_steps=max(max_steps, 10_000))
+                                           max_steps=max(max_steps, 10_000), _background=False)
     if not checked.valid:
         return EntailmentResult("ResourceLimit" if checked.status == "ResourceLimit" else "NotFound",
                                 None, steps, "generated trace did not replay")
@@ -622,14 +626,14 @@ class _Replayer:
 
 
 def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: Any,
-                                 certificate: Any, *, max_steps: int = 10_000
-                                 ) -> EntailmentCertificateCheck:
+                                 certificate: Any, *, max_steps: int = 10_000,
+                                 _background: bool = True) -> EntailmentCertificateCheck:
     """Replay a certificate against the exact environment and ordered formulas."""
     try:
         # Validate data before equality comparisons: even binding fields cannot
         # carry arbitrary Python objects or their overloaded comparison methods.
         canonical_json(certificate)
-        premises = _validate_inputs(env, premises, conclusion)
+        premises = _validate_inputs(env, premises, conclusion, background=_background)
         if type(max_steps) is not int or isinstance(max_steps, bool) or max_steps < 0:
             raise ValueError("max_steps must be a nonnegative integer")
         if type(certificate) is not dict or set(certificate) != set(_binding(env, premises, conclusion)) | {"trace"}:
