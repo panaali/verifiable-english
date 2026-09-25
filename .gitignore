@@ -19,3 +19,5 @@ experiments/*/items/*.nollm*
 rust/target/
 .cache/
 paper/.cache/
+# Web tokens, TLS private keys, usage ledgers and local drafts.
+.webapp-private/

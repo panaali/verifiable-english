@@ -8,10 +8,12 @@ version = "0.1.0"
 description = "Verifiable English: VE v0 language core (ve) and experiment harness (ve_experiments)"
 requires-python = ">=3.12"
 dependencies = [
+    "fastapi>=0.141.1",
     "google-genai>=2.24.0",
     "httpx>=0.28.1",
     "jinja2>=3.1.6,<4",
     "tokenizers>=0.22,<0.23",
+    "uvicorn>=0.54.0",
 ]
 
 [dependency-groups]
@@ -24,7 +26,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["ve", "ve_experiments"]
+packages = ["ve", "ve_experiments", "ve_webapp"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
