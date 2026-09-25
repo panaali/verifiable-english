@@ -43,7 +43,7 @@ Configure the same authenticated Claude CLI/account used by `ve assist`, then ap
 --assist --model haiku --minute-cap 3 --daily-cap 30
 ```
 
-The existing `ve_experiments.assist_haiku.ClaudeProposer` uses the controlled CLI endpoint, its pinned model/CLI checks, isolated working directory, and credential sanitizer. Account selection uses `VE_ASSIST_CLAUDE_ACCOUNT` or the existing `VE_CLAUDE_ACCOUNT_CONFIG_DIR`. No credentials are provisioned by this app. A missing CLI, incompatible version, or unavailable account returns an availability error; there is no provider fallback.
+The existing `ve_experiments.assist_haiku.ClaudeProposer` uses the controlled CLI endpoint, its pinned model/CLI checks, isolated working directory, and credential sanitizer. Account selection uses `VE_ASSIST_CLAUDE_ACCOUNT` or the existing `VE_CLAUDE_ACCOUNT_CONFIG_DIR`. No credentials are provisioned by this app. The repository currently pins Claude CLI `2.1.280 (Claude Code)`. Put that version on `PATH` for live assistance. A missing CLI, incompatible version, or unavailable account returns an availability error; there is no provider fallback. Preflight rejection can happen before any calls-ledger row is written.
 
 Each click proposes **one sentence**, with at most one backend attempt and a 1,024-token output ceiling; automatic repair is disabled. Suggestions never run while typing. Calls are limited to three per rolling minute and 30 per UTC day by default, shared by all sessions using the access token. SQLite reservations persist in the state directory and count failures conservatively, including rejected or timed-out requests. Do not delete or change the state directory to reset allowance. These are call caps, not exact input-token or currency caps. Input is bounded to 6,000 characters per text field and 32 KiB per request. A user can request 1–3 readings in the single response; the UI shows all candidates and checked distinguishing worlds when available.
 
@@ -80,3 +80,5 @@ PLAYWRIGHT_BROWSERS_PATH=/tmp/ve-webapp-browsers UV_CACHE_DIR=/tmp/ve-webapp-uv 
 ```
 
 API tests mock the model, exercise the real VE library and subprocess path, verify authentication/CSRF, cookie flags, call allowances, input limits, and examples. The browser smoke test starts its own loopback server with a temporary token and no live model capability.
+
+Implementation verification (2026-09-25): full `uv run pytest -q` completed with **1,657 passed, 3 skipped, 1 live test deselected** after building Lean and Rust locally. The optional skips were llguidance, xgrammar, and an uncached pinned tokenizer. Headless browser smoke, HTTPS startup, and wheel asset inclusion passed. One final live-assist smoke request was rejected at preflight: this VM has Claude CLI 2.1.283 while the controlled endpoint requires 2.1.280. The calls ledger remained empty; no live inference was made. No system CLI installation was changed.
