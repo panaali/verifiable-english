@@ -12,7 +12,7 @@ from ve.check import check
 from ve.entailment import check_entailment_certificate, prove_entailment
 from ve.environment import Environment
 from ve.equivalence import compare
-from ve.errors import InvalidModel, VEError
+from ve.errors import InvalidModel, ResourceLimit, VEError
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
 from ve.search import check_countermodel, find_countermodel, find_distinguishing_model
@@ -93,8 +93,11 @@ def test_claim_labels_bind_new_graphs_without_moving_default_wire():
 def test_one_dependency_dag():
     assert dependency_order({"violation": {"required"}, "required": {"exception"},
                              "exception": set()}) == ("exception", "required", "violation")
-    with pytest.raises(VEError, match="Dependency cycle"):
+    assert dependency_order({"a": {"c"}, "b": set(), "c": set()}) == ("b", "c", "a")
+    with pytest.raises(VEError, match="DependencyCycle: a, b"):
         dependency_order({"a": {"b"}, "b": {"a"}})
+    with pytest.raises(ResourceLimit, match="dependency graph size"):
+        dependency_order({str(i): set() for i in range(257)})
 
 
 def test_checker_build_covers_all_python_modules(monkeypatch):
