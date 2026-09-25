@@ -116,3 +116,18 @@ empirical claim that any English speaker uses the tool well (human studies are d
   spine as the goal. Decision: residual counts are the headline; percentages are per-document measurements.
 - **Events and workflows.** Astra adds events, state changes, deadlines and fulfilment for company procedures.
   Decision: time-indexed relations, deadlines and violation predicates in round 2; workflows in stage 3.
+
+## Converged rule: elaborate by default, extend only through verified profiles (Astra + Fable, 2026-09-25)
+
+Adopted verbatim from the two-round convergence debate (`~/code/manage-agents/debates/elaborate-vs-extend/`); supersedes the earlier disagreement note on this point.
+
+> **Elaborate by default; extend only through declared, verified profiles.**
+> 1. Default: elaborate into an existing profile with a Lean faithfulness theorem against independently specified semantics, including the model correspondence behind proof and countermodel results.
+> 2. Meaning freeze: existing routes, identities, canonical bytes, certificates and theorem statements never change. Every extension is a new versioned profile on a new route, or a sibling checker.
+> 3. Trigger: a recorded instance from a committed document whose intended inference has no faithful elaboration into an existing profile, or one the prover cannot use within budget. The failed attempt is recorded with the profile.
+> 4. Obligations, in Lean, audited under the existing axiom allowlist: explicit semantics; conservativity (old structures embed, denotations preserved, no new consequences among old claims); certificate soundness at every universe without a soundness premise; executable model validity and countermodel soundness, so NO and UNKNOWN survive; `CertificateSound`; gate theorems for old routes and combinations; verified elaboration and composition bridges; exact statement, profile and dependency binding; statement review of `Intended`; Python/Rust/Lean conformance, which never substitutes for proofs; a trust-cost line in ROADMAP.
+> 5. Every judgment kind is context-free. Non-monotone systems enter only as sealed content whose conclusions are computed under a distinct kind and used as conditional premises.
+> 6. Proof imports: cited Lean lemmas as labelled premises with statement review, pinned versions and axiom audit. Not a checker change.
+> 7. Sibling results enter deductions only through a verified bridge keeping assumptions and kind; otherwise they are external support.
+> 8. Outside certification: empirical truth, interpretation choices, open-term adjudication, unsupported causal assumptions, unconstrained weighing. Their formalized conditional consequences may be checked.
+> 9. Admissibility is never decided by topic. A status table beside the rule lists what is not yet admitted and the criterion it fails. A profile no pilot uses at a stage boundary leaves `ve assist` and is kept for identity.
