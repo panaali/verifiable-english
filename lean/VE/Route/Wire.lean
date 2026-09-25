@@ -1,0 +1,285 @@
+import VE.Route.Background
+import VE.CertificateWire
+import VE.Order.Wire
+import VE.Order.ModelCheck
+import VE.Closure.Bridge
+
+/-! Wire decoding for the `route` subcommand (`ve.core@0.2`). The envelope is
+decoded by `Gate.decodeEnvelope`; the vocabulary by the family's decoder, which
+for FOL and closure additionally admits the built-in sort `$string` for
+declared literal constants (at most 64) and predicate arguments. `$string` is
+never a quantifiable sort: it is not in the environment's `sorts`, so
+`Formula.check` rejects `∀`/`∃` over it. Background is regenerated from the
+decoded literals; the wire never supplies it. Identity uses the domain
+`ve-<kind>-v0.2:<sorted profiles>` (PLAN-EXPAND2 rule 3). -/
+namespace VE.Route.Wire
+open Lean
+open VE.Bridge (exactFields fields stringField strings identifier reserved generatedName)
+
+/-- A decoded FOL/closure vocabulary and its declared `$string` literals. -/
+structure RouteVocabulary where
+  vocabulary : VE.Bridge.Vocabulary
+  literals : List String
+  nodup : literals.Nodup
+
+def RouteVocabulary.environment (rv : RouteVocabulary) : VE.Environment := rv.vocabulary.environment
+
+/-- The model tables list `$string` as a domain whenever a literal is declared
+(Python `Environment.model_sorts`). -/
+def RouteVocabulary.modelVocabulary (rv : RouteVocabulary) : VE.Bridge.Vocabulary :=
+  { rv.vocabulary with
+    sorts := rv.vocabulary.sorts ++ (if rv.literals.isEmpty then [] else [Background.stringSort]) }
+
+/-- The v0 vocabulary rules plus `$string` in constant sorts and predicate
+signatures. -/
+def decodeVocabulary (v : Json) : Except String RouteVocabulary := do
+  exactFields v ["sorts", "predicates", "constants"]
+  let sorts ← fields (← v.getObjVal? "sorts")
+  let predicates ← fields (← v.getObjVal? "predicates")
+  let constants ← fields (← v.getObjVal? "constants")
+  let names := (sorts ++ predicates ++ constants).map Prod.fst
+  unless names.eraseDups.length == names.length do throw "duplicate declaration"
+  for name in names do
+    unless identifier name && !reserved.contains name && !generatedName name do
+      throw s!"invalid or reserved declaration: {name}"
+  if sorts.length > 32 || predicates.length > 256 then
+    throw "ResourceLimit: vocabulary size"
+  for (_, entry) in sorts do
+    VE.Bridge.displayFields entry ["description"] ["verbalisation"]
+    VE.Bridge.description entry
+    if let .ok words := entry.getObjVal? "verbalisation" then
+      exactFields words ["singular", "plural"]
+      VE.Bridge.displayString (← words.getObjVal? "singular")
+      VE.Bridge.displayString (← words.getObjVal? "plural")
+  let sortNames := sorts.map Prod.fst
+  let allowed := fun (s : String) => sortNames.contains s || s == Background.stringSort
+  let ps ← predicates.mapM fun (p, entry) => do
+    VE.Bridge.displayFields entry ["arguments", "description"] ["verbalisation", "negative_verbalisation"]
+    VE.Bridge.description entry
+    for key in ["verbalisation", "negative_verbalisation"] do
+      if let .ok words := entry.getObjVal? key then
+        VE.Bridge.displayString words
+    let ss ← strings (← entry.getObjVal? "arguments")
+    unless (ss.length == 1 || ss.length == 2) && ss.all allowed do
+      throw s!"invalid signature: {p}"
+    pure (p, ss)
+  let cs ← constants.mapM fun (c, entry) => do
+    exactFields entry ["sort", "description"]
+    VE.Bridge.description entry
+    let s ← stringField entry "sort"
+    unless allowed s do throw s!"unknown constant sort: {c}"
+    pure (c, s)
+  let literals := (cs.filter (fun c => c.2 == Background.stringSort)).map Prod.fst
+  if literals.length > 64 then throw "ResourceLimit: At most 64 declared $string literals"
+  let result : VE.Bridge.Vocabulary := ⟨sortNames, ps, cs⟩
+  unless result.namesValid do throw "invalid declaration names"
+  if h : literals.Nodup then pure ⟨result, literals, h⟩ else throw "duplicate declaration"
+
+/-- The order vocabulary: exactly the numbers2 order decoder, applied to the
+same vocabulary object. `$string` is not available on order@0 in P0. -/
+def decodeOrderVocabulary (v : Json) : Except String VE.Order.Vocabulary :=
+  VE.Order.Wire.decodeEnvironment (Json.mkObj [
+    ("language", .str VE.Order.Wire.orderLanguage),
+    ("profiles", toJson VE.Order.Wire.orderProfiles),
+    ("spec_revision", .str VE.Order.Wire.orderRevision),
+    ("vocabulary", v)])
+
+/-! ## Identity -/
+
+def identityVersion (profiles : List String) : String := "v0.2:" ++ ",".intercalate profiles
+
+def environmentId (profiles : List String) (environment : Json) : Except String String :=
+  VE.CertificateWire.digest s!"ve-environment-{identityVersion profiles}\n" environment
+
+def meaningId (profiles : List String) (environmentId : String) (ast : Json) : Except String String :=
+  VE.CertificateWire.digest s!"ve-meaning-{identityVersion profiles}\n"
+    (Json.mkObj [("environment_id", .str environmentId), ("ast", ast)])
+
+/-! ## Formula encoding (Background ASTs are generated, then bound by meaning id) -/
+
+def encodeTerm : VE.Term → Json
+  | .var i => Json.arr #[.str "var", toJson i]
+  | .const c => Json.arr #[.str "const", .str c]
+
+def encodeFormula : VE.Formula → Json
+  | .top => Json.arr #[.str "top"]
+  | .bottom => Json.arr #[.str "bottom"]
+  | .unary p t => Json.arr #[.str "unary", .str p, encodeTerm t]
+  | .binary p t u => Json.arr #[.str "binary", .str p, encodeTerm t, encodeTerm u]
+  | .eq t u => Json.arr #[.str "eq", encodeTerm t, encodeTerm u]
+  | .not a => Json.arr #[.str "not", encodeFormula a]
+  | .and a b => Json.arr #[.str "and", encodeFormula a, encodeFormula b]
+  | .or a b => Json.arr #[.str "or", encodeFormula a, encodeFormula b]
+  | .implies a b => Json.arr #[.str "implies", encodeFormula a, encodeFormula b]
+  | .all s a => Json.arr #[.str "forall", .str s, encodeFormula a]
+  | .ex s a => Json.arr #[.str "exists", .str s, encodeFormula a]
+
+/-! ## Models: structural admissibility, then Background validity -/
+
+/-- The first Background premise the model violates, with its generator. -/
+def backgroundViolation {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (lits : List String) :
+    Option String :=
+  ((Background.background lits).find? (fun p => !p.1.eval M [])).map Prod.snd
+
+def invalidModel (generator : String) : String :=
+  s!"InvalidModel({generator}): the model violates a background premise"
+
+/-- Decode finite tables, check structural admissibility, then Background: a
+model aliasing two declared literals is `InvalidModel(literals)`, never a truth
+value. -/
+def decodeModel (rv : RouteVocabulary) (j : Json) : Except String (VE.FiniteModel VE.Bridge.Entity) := do
+  let data ← VE.Bridge.decodeModelData rv.modelVocabulary j
+  Gate.require (data.valid rv.modelVocabulary) "model is not semantically admissible"
+  let M := data.toModel
+  match backgroundViolation M rv.literals with
+  | some g => throw (invalidModel g)
+  | none => pure M
+
+theorem backgroundViolation_none {α : Type} [DecidableEq α] (M : VE.FiniteModel α)
+    (lits : List String) (h : backgroundViolation M lits = none) : Background.literalsValid M lits = true := by
+  unfold backgroundViolation at h
+  apply List.all_eq_true.mpr
+  intro a ha
+  have hn := List.find?_eq_none.mp (Option.map_eq_none_iff.mp h) (a, "literals")
+    (List.mem_map.mpr ⟨a, ha, rfl⟩)
+  simpa using hn
+
+open VE.Order.ProfileGate in
+/-- A decoded model is admissible for the environment and satisfies the
+stage-1 meaning of strings: it is a string-admissible structure. -/
+theorem decodeModel_valid (rv : RouteVocabulary) (j : Json) (M : VE.FiniteModel VE.Bridge.Entity)
+    (h : decodeModel rv j = .ok M) :
+    Background.StringAdmissible rv.environment rv.literals M.asStructure := by
+  unfold decodeModel at h
+  obtain ⟨data, _, h⟩ := bind_ok h
+  obtain ⟨_, hv, h⟩ := bind_ok h
+  have hvalid : data.valid rv.modelVocabulary = true := Gate.require_ok hv
+  dsimp only at h
+  split at h
+  · cases h
+  · rename_i hn
+    cases h
+    exact ⟨VE.Bridge.modelData_valid data rv.modelVocabulary hvalid,
+      Background.literalsValid_sound _ rv.literals rv.nodup (backgroundViolation_none _ _ hn)⟩
+
+/-! ## Formula decoding for the FOL family -/
+
+def decodeFormulas (E : VE.Environment) (j : Json) : Except String (List VE.Formula) := do
+  let fs ← (← j.getArr?).toList.mapM (VE.Bridge.decodeFormula 64)
+  unless fs.all (fun a => a.check E []) do throw "ill-typed or unbound formula"
+  if (fs.map VE.Bridge.formulaNodes).foldl (· + ·) 0 > 10000 then throw "ResourceLimit: AST node count"
+  pure fs
+
+def decodeClosed (E : VE.Environment) (j : Json) : Except String VE.Formula := do
+  let a ← VE.Bridge.decodeFormula 64 j
+  unless a.check E [] do throw "ill-typed or unbound conclusion"
+  pure a
+
+/-- The certificate binds the environment, every checked premise (Background
+first, then the case's premises) and the conclusion by meaning id. -/
+def bindingOk (profiles : List String) (environment : Json) (premises : List Json)
+    (conclusion : Json) (environmentIdField : String) (premiseIds : List String)
+    (conclusionId : String) : Except String Unit := do
+  let envId ← environmentId profiles environment
+  let ps ← premises.mapM (meaningId profiles envId)
+  let c ← meaningId profiles envId conclusion
+  unless environmentIdField == envId && premiseIds == ps && conclusionId == c do
+    throw "certificate is stale or bound to different inputs"
+
+def ok (id : String) (fields : List (String × Json)) : Json :=
+  Json.mkObj ([("id", .str id), ("status", .str "ok")] ++ fields)
+
+/-- FOL family: evaluate, countermodel and certificate cases. -/
+def runFol (profiles : List String) (environment : Json) (rv : RouteVocabulary) (id kind : String)
+    (j : Json) : Except String Json := do
+  let E := rv.environment
+  if kind == "evaluate" then
+    let M ← decodeModel rv (← j.getObjVal? "model")
+    let fs ← decodeFormulas E (← j.getObjVal? "ast")
+    if fs.isEmpty then throw "empty document"
+    return ok id [("values", toJson (fs.map (fun a => a.eval M [])))]
+  let premisesJson ← j.getObjVal? "premises"
+  let ps ← decodeFormulas E premisesJson
+  let c ← decodeClosed E (← j.getObjVal? "conclusion")
+  if kind == "countermodel" then
+    let M ← decodeModel rv (← j.getObjVal? "model")
+    return ok id [("refutes", .bool (VE.countermodelCheck M ps c))]
+  unless kind == "certificate" do throw "unknown case kind"
+  let certificate ← VE.CertificateWire.decodeCertificate (← j.getObjVal? "certificate")
+  let background := Background.literals rv.literals
+  bindingOk profiles environment (background.map encodeFormula ++ (← premisesJson.getArr?).toList)
+    (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
+    certificate.conclusion_meaning_id
+  return ok id [("valid", .bool (VE.Tableau.checkCertificate E (background ++ ps) c certificate)),
+    ("background", toJson background.length)]
+
+/-- Closure family: the same cases over closure formulas; Background embedded. -/
+def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabulary) (id kind : String)
+    (j : Json) : Except String Json := do
+  let E := rv.environment
+  if kind == "evaluate" then
+    let M ← decodeModel rv (← j.getObjVal? "model")
+    let fs ← VE.Closure.Bridge.decodeFormulas E (← j.getObjVal? "ast")
+    if fs.isEmpty then throw "empty document"
+    return ok id [("values", toJson (fs.map (fun a => a.eval M [])))]
+  let premisesJson ← j.getObjVal? "premises"
+  let ps ← VE.Closure.Bridge.decodeFormulas E premisesJson
+  let c ← VE.Closure.Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
+  unless c.check E [] do throw "ill-typed or unbound conclusion"
+  if ((c :: ps).map VE.Closure.Bridge.formulaNodes).foldl (· + ·) 0 > 10000 then
+    throw "ResourceLimit: AST node count"
+  if kind == "countermodel" then
+    let M ← decodeModel rv (← j.getObjVal? "model")
+    return ok id [("refutes", .bool (VE.Closure.countermodelCheck M ps c))]
+  unless kind == "certificate" do throw "unknown case kind"
+  let certificate ← VE.CertificateWire.decodeClosureCertificate (← j.getObjVal? "certificate")
+  let background := Background.literals rv.literals
+  bindingOk profiles environment (background.map encodeFormula ++ (← premisesJson.getArr?).toList)
+    (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
+    certificate.conclusion_meaning_id
+  return ok id [("valid", .bool (VE.Closure.Tableau.checkCertificate E
+      (background.map VE.Closure.embed ++ ps) c certificate)),
+    ("background", toJson background.length)]
+
+/-- Order family: the numbers2 order decoders; Background is empty. -/
+def runOrder (profiles : List String) (environment : Json) (v : VE.Order.Vocabulary) (id kind : String)
+    (j : Json) : Except String Json := do
+  let E := v.environment
+  if kind == "evaluate" then
+    let d ← VE.Order.Wire.decodeValidModel v (← j.getObjVal? "model")
+    let fs ← VE.Order.Wire.decodeFormulas E (← j.getObjVal? "ast")
+    if fs.isEmpty then throw "empty document"
+    return ok id [("values", toJson (fs.map (fun a => a.eval d.toModel [])))]
+  let premisesJson ← j.getObjVal? "premises"
+  let ps ← VE.Order.Wire.decodeFormulas E premisesJson
+  let c ← VE.Order.Wire.decodeFormula 64 (← j.getObjVal? "conclusion")
+  unless c.check E [] do throw "ill-typed or unbound conclusion"
+  if ((c :: ps).map VE.Order.Wire.formulaNodes).foldl (· + ·) 0 > 10000 then
+    throw "ResourceLimit: AST node count"
+  if kind == "countermodel" then
+    let d ← VE.Order.Wire.decodeModel v (← j.getObjVal? "model")
+    unless VE.Order.validModel? v d do throw "model is not semantically admissible"
+    return ok id [("refutes", .bool (VE.Order.checkCountermodel v d ps c))]
+  unless kind == "certificate" do throw "unknown case kind"
+  let certificate ← VE.Order.Wire.decodeCertificate (← j.getObjVal? "certificate")
+  bindingOk profiles environment (← premisesJson.getArr?).toList
+    (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
+    certificate.conclusion_meaning_id
+  return ok id [("valid", .bool (VE.Order.Tableau.checkCertificate E ([] ++ ps) c certificate)),
+    ("background", toJson (0 : Nat))]
+
+/-- The dependency-order case: nodes `{"name", "mentions"}`; the result is the
+route order or the shared cycle diagnostic. -/
+def decodeNodes (j : Json) : Except String (List DepNode) := do
+  let items := (← j.getArr?).toList
+  if items.length > 1024 then throw "ResourceLimit: dependency graph size"
+  items.mapM fun item => do
+    exactFields item ["name", "mentions"]
+    pure ⟨← stringField item "name", ← strings (← item.getObjVal? "mentions")⟩
+
+def runDependencyOrder (id : String) (j : Json) : Except String Json := do
+  let nodes ← decodeNodes (← j.getObjVal? "nodes")
+  let order ← dependencyOrder nodes
+  pure (ok id [("order", toJson order)])
+
+end VE.Route.Wire
