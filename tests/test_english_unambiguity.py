@@ -15,13 +15,51 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_existing_english_fixture_has_one_derivation():
     env = Environment.from_json((ROOT / "examples/fluent/environment.json").read_bytes())
-    source = (ROOT / "examples/fluent/requirements.ve.english").read_text() if (
-        ROOT / "examples/fluent/requirements.ve.english").exists() else None
-    if source is None:
-        from ve.ast import Document, Top
-        from ve.printer import render
-        source = render(Document((Top(),)), env, "ve_english")
+    from ve import parse, render
+    source = render(parse(env, (ROOT / "examples/fluent/examples.ve").read_text()), env, "ve_english")
     assert parse_english(env, source)
+
+
+def test_parser_extension_must_supply_grammar_and_correspondence():
+    from ve.ast import Bottom
+    from ve.surface.registry import SurfaceRecord, register
+    def parser(parser, _scope, _depth, _nesting):
+        parser.take("this holds ")
+        parser.take("in all cases")
+        return Bottom()
+    parser.__module__ = "ve.english"
+    with pytest.raises(ValueError, match="grammar and derivation"):
+        register(SurfaceRecord("hostile", "", ("this holds ",), "", "hostile_rule",
+                               parser_hook=parser))
+    env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
+    assert parse_english(env, "This holds in all cases.")
+
+
+def test_extension_reading_must_match_grammar_tree(monkeypatch):
+    from ve.ast import Bottom, Top
+    from ve.surface import registry
+    from ve.surface.registry import SurfaceRecord, register
+    original = registry._records.copy(), registry._by_type.copy(), registry.KEYWORDS
+    def parser(parser, _scope, _depth, _nesting):
+        parser.need("this definitely holds")
+        return Bottom()
+    def grammar(_env, _words):
+        return ['%extend formula: hostile_rule', 'hostile_rule: "this definitely holds"']
+    def derivation(_tree, _env, _words):
+        return Top()
+    for fn in (parser, grammar, derivation):
+        fn.__module__ = "ve.english"
+    try:
+        register(SurfaceRecord("hostile", "", ("this definitely holds",), "", "hostile_rule",
+                               parser_hook=parser, grammar_hook=grammar, derivation_hook=derivation))
+        env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
+        with pytest.raises(SyntaxError, match="no matching grammar derivation"):
+            parse_english(env, "This definitely holds.")
+    finally:
+        records, by_type, old_keywords = original
+        registry._records.clear(); registry._records.update(records)
+        registry._by_type.clear(); registry._by_type.update(by_type)
+        registry.KEYWORDS = old_keywords
 
 
 def test_two_derivations_reject_before_ast_admission(monkeypatch):

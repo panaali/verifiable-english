@@ -23,6 +23,7 @@ class SurfaceRecord:
     fluent_hook: object = None
     english_renderer: object = None
     grammar_hook: object = None
+    derivation_hook: object = None
     strict_grammar_hook: object = None
     wire_encoder: object = None
     wire_decoder: object = None
@@ -49,9 +50,13 @@ def register(record: SurfaceRecord) -> None:
         raise ValueError("Surface profiles must be sorted and unique")
     if record.traversal_hooks is not None and type(record.traversal_hooks) is not dict:
         raise ValueError("Traversal hooks must be a mapping")
+    if record.parser_hook is not None and (record.grammar_hook is None or
+                                           record.derivation_hook is None):
+        raise ValueError("English parser hooks require grammar and derivation hooks")
     for value in (record.evaluator_hook, record.witness_renderer, record.parser_hook,
                   record.strict_parser_hook, record.printer_hook, record.fluent_hook,
-                  record.english_renderer, record.grammar_hook, record.strict_grammar_hook,
+                  record.english_renderer, record.grammar_hook, record.derivation_hook,
+                  record.strict_grammar_hook,
                   record.wire_encoder, record.wire_decoder, record.fol_import_hook,
                   record.fol_export_hook, record.typecheck_hook,
                   *((record.traversal_hooks or {}).values())):

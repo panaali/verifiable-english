@@ -5,6 +5,16 @@ import pytest
 from ve.surface.registry import KEYWORDS, SurfaceRecord, dispatch, keywords, register
 
 
+@pytest.fixture(autouse=True)
+def isolated_registry():
+    from ve.surface import registry
+    records, by_type, old_keywords = registry._records.copy(), registry._by_type.copy(), registry.KEYWORDS
+    yield
+    registry._records.clear(); registry._records.update(records)
+    registry._by_type.clear(); registry._by_type.update(by_type)
+    registry.KEYWORDS = old_keywords
+
+
 def test_keywords_cover_statement_initial_literals():
     source = open("ve/english.py").read()
     region = source[source.index("    def formula(self, scope="):source.index("    def document(self):")]

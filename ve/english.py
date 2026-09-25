@@ -474,6 +474,7 @@ class EnglishParser:
         self.env, self.source, self.i = env, source, 0
         self.words = words or EnglishVocabulary(env)
         self.nodes = 0
+        self.extension_readings = []
         self.farthest = 0
 
     def error(self, message, cls=SyntaxError):
@@ -782,7 +783,9 @@ class EnglishParser:
             self.error(f'This document exceeds the {MAX_NODES}-node limit.', ResourceLimit)
         matched = surface_registry.dispatch(self.source[self.i:], self.env)
         if matched is not None and matched[1].parser_hook is not None:
-            return matched[1].parser_hook(self, scope, depth, nesting)
+            result = matched[1].parser_hook(self, scope, depth, nesting)
+            self.extension_readings.append((matched[1], result))
+            return result
         def child(inner=scope, listed=False):
             return self.formula(inner, depth + int(listed), nesting + 1)
         if self.take('it is not the case that '):
@@ -885,7 +888,9 @@ def parse_english_with_metadata(env, source, **options):
     parser = EnglishParser(env, source, EnglishVocabulary(env, **options))
     document = parser.document()
     from .surface.unambiguity import require_unique_derivation
-    require_unique_derivation(env, source, **options)
+    tree = require_unique_derivation(env, source, **options)
+    from .surface.unambiguity import require_correspondence
+    require_correspondence(tree, parser.extension_readings, env, parser.words)
     try:
         ast.check_document(env, document)
     except VEError as exc:
