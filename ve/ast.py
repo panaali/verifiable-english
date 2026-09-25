@@ -232,6 +232,11 @@ class _Checker:
         if depth > MAX_DEPTH:
             raise ResourceLimit("Formula exceeds 64 nesting levels")
         kind = type(node)
+        from .surface.registry import by_node
+        record = by_node(node)
+        if record is not None and record.typecheck_hook is not None:
+            record.typecheck_hook(self, node, context, depth)
+            return
         if kind in (Top, Bottom):
             return
         if kind in (Unary, Binary):
@@ -306,6 +311,10 @@ def check_document(env: Environment, document: Document) -> Document:
 
 def _to_data(node):
     kind = type(node)
+    from .surface.registry import by_node
+    record = by_node(node)
+    if record is not None and record.wire_encoder is not None:
+        return record.wire_encoder(node, _to_data)
     if kind is Var:
         return ["var", node.index]
     if kind is Const:
@@ -333,8 +342,8 @@ def _to_data(node):
     if kind is Not:
         return ["not", _to_data(node.body)]
     if kind in (And, Or, Implies):
-        return [{And: "and", Or: "or", Implies: "implies"}[kind], _to_data(node.left), _to_data(node.right)]
-    return ["forall" if kind is Forall else "exists", node.sort, _to_data(node.body)]
+        return [record.wire_tag, _to_data(node.left), _to_data(node.right)]
+    return [record.wire_tag, node.sort, _to_data(node.body)]
 
 
 def formula_to_data(env: Environment, formula: Formula):
@@ -361,12 +370,13 @@ class _Decoder:
         if type(data) is not list or not data or type(data[0]) is not str:
             raise SyntaxError("AST nodes must be nonempty tagged JSON arrays")
         tag = data[0]
-        arities = {"var": 2, "const": 2, "num": 2, "add": 3, "scale": 3} if term else {
-                   "top": 1, "bottom": 1, "unary": 3,
-                   "binary": 4, "eq": 3, "not": 2, "and": 3, "or": 3, "implies": 3,
-                   "forall": 3, "exists": 3, "reach": 5, "lt": 3, "le": 3}
+        from .surface.registry import by_tag, formula_arities
+        arities = {"var": 2, "const": 2, "num": 2, "add": 3, "scale": 3} if term else formula_arities()
         if tag not in arities or len(data) != arities[tag]:
             raise SyntaxError(f"Unknown AST tag or incorrect arity: {tag!r}")
+        record = by_tag(tag)
+        if record is not None and record.wire_decoder is not None:
+            return record.wire_decoder(data, self.decode, depth)
         if tag == "var":
             if type(data[1]) is not int or not 0 <= data[1] <= MAX_INDEX:
                 raise UnboundVariable("Invalid variable index")
@@ -405,9 +415,9 @@ class _Decoder:
         if tag == "not":
             return Not(self.decode(data[1], depth + 1))
         if tag in ("and", "or", "implies"):
-            return {"and": And, "or": Or, "implies": Implies}[tag](
+            return record.node_type(
                 self.decode(data[1], depth + 1), self.decode(data[2], depth + 1))
-        return (Forall if tag == "forall" else Exists)(data[1], self.decode(data[2], depth + 1))
+        return record.node_type(data[1], self.decode(data[2], depth + 1))
 
 
 def formula_from_data(env: Environment, data) -> Formula:

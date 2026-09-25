@@ -127,9 +127,18 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
 
 
 def _used_predicates(*formulas: Any) -> frozenset[str]:
+    from .surface.registry import by_node
     names, stack = set(), [f for f in formulas if f is not None]
     while stack:
         node = stack.pop()
+        record = by_node(node)
+        if record is not None and record.traversal_hooks is not None:
+            hook = record.traversal_hooks.get("predicates")
+            if hook is not None:
+                found, children = hook(node)
+                names.update(found)
+                stack.extend(children)
+                continue
         if isinstance(node, (Unary, Binary)):
             names.add(node.predicate)
         elif isinstance(node, Reach):
