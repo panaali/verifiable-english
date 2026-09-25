@@ -6,9 +6,10 @@ JSON document on `ve.core@0.2` is decoded to units with nested kind trees
 kind, kind)`), declared lemmas (with their transitive leaves), open terms,
 reading sets, narrowings and a claim graph whose nodes carry provenance labels.
 
-Admission checks, per node: quoted content (a unit whose kind is attributed or
-hedged) appears only as a bridge leaf `bridge:accepts(<agent>,<unit>)` naming
-that unit, with exactly the unit's formula; an asserted leaf is exactly an
+Admission checks, per node: a node that names a quoted unit (attributed or
+hedged) is a bridge leaf `bridge:accepts(<agent>,<unit>)` naming that unit,
+with exactly the unit's formula. Formula-equal independent leaves retain their
+own provenance. An asserted leaf is exactly an
 asserted unit's formula; a background leaf is a premise regenerated from the
 environment under its generator; cite, open, readings and narrowing leaves name
 declared objects. Per report: every cited lemma's transitive leaves are present
