@@ -96,7 +96,7 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 | Language usability | IDE loop (assistant drafts, author approves), fluent input with legal-style sub-clauses, linter precision pass, sense-bound vocabulary | ongoing |
 | Protocol ideas | `meaning_id` commitments before cross-examination; security-game reporting; amplified sampled fidelity checks; append-only verdict log | as arms in existing studies |
 | Human studies | E1/E5 packages; "valid proof of the wrong model" study from the formal-proof handoff | deferred by the lead |
-| Rust as a trusted checker | prove the Rust checker equals the Lean spec via Aeneas (Rust->Lean); remaining trust: rustc/LLVM (no verified Rust compiler; CompCert is C-only); today Rust is deliberately untrusted (evaluation/search only, never certificates) | if Lean checking speed becomes the bottleneck |
+| Rust as a trusted checker | prove the Rust checker equals the Lean spec via Aeneas (Rust->Lean); remaining trust: rustc/LLVM (RustCompCert/Rustlight, arXiv 2602.07455, 2026: verified Rustlight->asm in Rocq, but no generics/traits/closures and Rocq not Lean; a later option to drop rustc/LLVM trust); today Rust is deliberately untrusted (evaluation/search only, never certificates) | if Lean checking speed becomes the bottleneck |
 | Grant-scale runs | 5,000-step sizes, size scaling, requirement retention under compaction (S1), multi-agent hand-off, adaptive attackers, judge ladders, RL with checked rewards (GPUs later) | grant (~$20K) |
 
 ## 6. Paused or dropped
