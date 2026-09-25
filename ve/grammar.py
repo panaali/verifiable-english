@@ -185,7 +185,7 @@ class _Grammar:
         if self.env.order:
             if dialect == "lark":
                 number = r'/0|[1-9][0-9]*|-[1-9][0-9]*/'
-                coefficient = r'/0|[1-9][0-9]*|-[2-9]|-[1-9][0-9]+/'
+                coefficient = r'/0|[1-9][0-9]*|-(?:[1-9][0-9]+|[2-9])/'
             else:
                 number = r'"0" | [1-9] [0-9]* | "-" [1-9] [0-9]*'
                 coefficient = r'"0" | [1-9] [0-9]* | "-" ([2-9] | [1-9] [0-9]+)'

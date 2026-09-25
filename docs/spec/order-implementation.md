@@ -164,10 +164,11 @@ also run by `tests/test_order.py`:
 | `lean/VE/Order/Linear.lean` | Linear forms, linearization, collection, gcd tightening; proved. |
 | `lean/VE/Order/Tableau.lean` | Order tableau checker and `checkCertificate_sound`. |
 | `lean/VE/Order/Wire.lean` | JSON decoders and the `order` route; boundary code, identity digests. |
+| `lean/VE/Order/Surface.lean` | Strict order source parser and surface dispatcher; boundary code. |
 | `lean/VE/Order/WireGate.lean` | Order route gate and combined rejection theorems. |
 | `lean/VE/Order/ProfileGate.lean` | Closure branch now also excludes a singular `profile` field; singular `order@0` gate. |
 | `lean/VE/Order/TableauChecks.lean` | Executable regressions. |
-| `lean/Main.lean` | Adds the `order` subcommand; other routes unchanged. |
+| `lean/Main.lean` | Dispatches the `order` subcommand through `Surface.runCaseReported`; other routes unchanged. |
 | `ve/order.py` | Python replayer (mirror of the Lean checker) and untrusted search. |
 
 ## What remains

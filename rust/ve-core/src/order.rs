@@ -28,8 +28,10 @@ fn decimal(v: &Value) -> Result<BigInt> {
     let s = v
         .as_str()
         .ok_or_else(|| Error::new("SyntaxError", "integer must be a string"))?;
-    if s.len() > 40
-        || s.is_empty()
+    if s.len() > 40 {
+        return error("ResourceLimit", "integer literal length");
+    }
+    if s.is_empty()
         || s == "-0"
         || s.starts_with('+')
         || (s.starts_with('0') && s.len() > 1)

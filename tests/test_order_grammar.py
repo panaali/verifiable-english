@@ -16,7 +16,7 @@ ENV = environment()
 
 def accepts(grammar, source):
     try:
-        Lark(grammar, parser="earley").parse(source)
+        (grammar if isinstance(grammar, Lark) else Lark(grammar, parser="earley")).parse(source)
         return True
     except Exception:
         return False
@@ -55,3 +55,22 @@ def test_order_wrapper_and_gbnf_export():
     spec = structured_output_spec(ENV, max_binder_depth=1)
     payload = json.dumps({"ve": "@n <= 3.\n", "explanation": "checked"})
     assert accepts(spec["grammar"], payload)
+
+
+@pytest.mark.parametrize("mode", ["full", "syntax"])
+@pytest.mark.parametrize("wrapper", [False, True])
+@pytest.mark.parametrize("dialect", ["lark", "gbnf", "ebnf"])
+def test_order_coefficient_families_round_trip_all_exports(mode, wrapper, dialect):
+    grammar = export_grammar(ENV, dialect=dialect, mode=mode, wrapper=wrapper,
+                             max_binder_depth=1)
+    parser = Lark(grammar, parser="earley") if dialect == "lark" else None
+    for coefficient in ("-2", "-9", "-20", "-99", "-100", "-12345678901234567890",
+                        "0", "1", "2", "99", "12345678901234567890"):
+        source = f"[{coefficient} * @n] < -99.\n"
+        assert print_document(ENV, parse(ENV, source)) == source
+        candidate = json.dumps({"ve": source, "explanation": "ok"}) if wrapper else source
+        if parser is not None:
+            assert accepts(parser, candidate), (dialect, mode, wrapper, source)
+        else:
+            assert 'coefficient ::=' in grammar
+            assert '[1-9] [0-9]+' in grammar
