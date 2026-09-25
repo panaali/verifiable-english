@@ -16,6 +16,7 @@ import VE.ParserContracts
 import VE.GraphChecks
 import VE.ModelProofs
 import VE.Route.Run
+import VE.Route.Examples
 import Iceberg
 
 #print axioms Iceberg.mul_sub
@@ -412,3 +413,12 @@ import Iceberg
 #print axioms VE.Route.Run.route_rejects_before_checking
 #print axioms VE.Route.Wire.backgroundViolation_none
 #print axioms VE.Route.Wire.decodeModel_valid
+#print axioms VE.Route.Examples.body_holds_iff
+#print axioms VE.Route.Examples.body_wellFormed
+#print axioms VE.Route.Examples.copy_expands
+#print axioms VE.Route.Examples.denote_forget
+#print axioms VE.Route.Examples.forget_admissible
+#print axioms VE.Route.Examples.forget_interpret
+#print axioms VE.Route.Examples.interpret_admissible
+#print axioms VE.Route.Examples.tupleTyped_relation
+#print axioms VE.Route.Examples.wf_extend

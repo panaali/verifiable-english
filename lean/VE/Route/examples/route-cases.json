@@ -1,0 +1,3793 @@
+[
+ {
+  "id": "eval-literals",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "model": {
+   "complete": true,
+   "domains": {
+    "person": [
+     "a",
+     "b"
+    ],
+    "$string": [
+     "f",
+     "l"
+    ]
+   },
+   "constants": {
+    "alice": "a",
+    "bob": "b",
+    "finance": "f",
+    "legal": "l"
+   },
+   "relations": {
+    "dept": [
+     [
+      "a",
+      "f"
+     ]
+    ],
+    "senior": [
+     [
+      "a"
+     ]
+    ]
+   }
+  },
+  "ast": [
+   [
+    "binary",
+    "dept",
+    [
+     "const",
+     "alice"
+    ],
+    [
+     "const",
+     "finance"
+    ]
+   ],
+   [
+    "eq",
+    [
+     "const",
+     "finance"
+    ],
+    [
+     "const",
+     "legal"
+    ]
+   ]
+  ],
+  "expected": {
+   "status": "ok",
+   "values": [
+    true,
+    false
+   ]
+  }
+ },
+ {
+  "id": "eval-alias-invalid",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "model": {
+   "complete": true,
+   "domains": {
+    "person": [
+     "a",
+     "b"
+    ],
+    "$string": [
+     "f",
+     "l"
+    ]
+   },
+   "constants": {
+    "alice": "a",
+    "bob": "b",
+    "finance": "f",
+    "legal": "f"
+   },
+   "relations": {
+    "dept": [
+     [
+      "a",
+      "f"
+     ]
+    ],
+    "senior": [
+     [
+      "a"
+     ]
+    ]
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "expected": {
+   "status": "error",
+   "generator": "literals"
+  }
+ },
+ {
+  "id": "countermodel-refutes",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "countermodel",
+  "model": {
+   "complete": true,
+   "domains": {
+    "person": [
+     "a",
+     "b"
+    ],
+    "$string": [
+     "f",
+     "l"
+    ]
+   },
+   "constants": {
+    "alice": "a",
+    "bob": "b",
+    "finance": "f",
+    "legal": "l"
+   },
+   "relations": {
+    "dept": [
+     [
+      "a",
+      "f"
+     ]
+    ],
+    "senior": [
+     [
+      "a"
+     ]
+    ]
+   }
+  },
+  "premises": [
+   [
+    "binary",
+    "dept",
+    [
+     "const",
+     "alice"
+    ],
+    [
+     "const",
+     "finance"
+    ]
+   ]
+  ],
+  "conclusion": [
+   "binary",
+   "dept",
+   [
+    "const",
+    "alice"
+   ],
+   [
+    "const",
+    "legal"
+   ]
+  ],
+  "expected": {
+   "status": "ok",
+   "refutes": true
+  }
+ },
+ {
+  "id": "countermodel-alias-invalid",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "countermodel",
+  "model": {
+   "complete": true,
+   "domains": {
+    "person": [
+     "a",
+     "b"
+    ],
+    "$string": [
+     "f",
+     "l"
+    ]
+   },
+   "constants": {
+    "alice": "a",
+    "bob": "b",
+    "finance": "f",
+    "legal": "f"
+   },
+   "relations": {
+    "dept": [
+     [
+      "a",
+      "f"
+     ]
+    ],
+    "senior": [
+     [
+      "a"
+     ]
+    ]
+   }
+  },
+  "premises": [
+   [
+    "binary",
+    "dept",
+    [
+     "const",
+     "alice"
+    ],
+    [
+     "const",
+     "finance"
+    ]
+   ]
+  ],
+  "conclusion": [
+   "binary",
+   "dept",
+   [
+    "const",
+    "alice"
+   ],
+   [
+    "const",
+    "legal"
+   ]
+  ],
+  "expected": {
+   "status": "error",
+   "generator": "literals"
+  }
+ },
+ {
+  "id": "string-quantifier-rejected",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "model": {
+   "complete": true,
+   "domains": {
+    "person": [
+     "a",
+     "b"
+    ],
+    "$string": [
+     "f",
+     "l"
+    ]
+   },
+   "constants": {
+    "alice": "a",
+    "bob": "b",
+    "finance": "f",
+    "legal": "l"
+   },
+   "relations": {
+    "dept": [
+     [
+      "a",
+      "f"
+     ]
+    ],
+    "senior": [
+     [
+      "a"
+     ]
+    ]
+   }
+  },
+  "ast": [
+   [
+    "forall",
+    "$string",
+    [
+     "top"
+    ]
+   ]
+  ],
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "certificate-uses-background",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "certificate",
+  "premises": [
+   [
+    "or",
+    [
+     "eq",
+     [
+      "const",
+      "finance"
+     ],
+     [
+      "const",
+      "legal"
+     ]
+    ],
+    [
+     "binary",
+     "dept",
+     [
+      "const",
+      "alice"
+     ],
+     [
+      "const",
+      "finance"
+     ]
+    ]
+   ]
+  ],
+  "conclusion": [
+   "binary",
+   "dept",
+   [
+    "const",
+    "alice"
+   ],
+   [
+    "const",
+    "finance"
+   ]
+  ],
+  "certificate": {
+   "checker_version": "ve-tableau-checker@2",
+   "environment_id": "5c0be7d97625b2076a19eadb6c182ec0080e477df847b34b0c29bb70cf8ce8b6",
+   "premise_meaning_ids": [
+    "8d9b633fd193ac4fae5bea50738cb92c735365d51a0c4a1cc0422e4c23948511",
+    "5b43017866de423f6bd77f0f1068802a8dc38181e89741acd48a391caecbe6a7"
+   ],
+   "conclusion_meaning_id": "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+   "trace": {
+    "rule": "expand",
+    "at": 1,
+    "children": [
+     {
+      "rule": "expand",
+      "at": 0,
+      "children": [
+       {
+        "rule": "close"
+       }
+      ]
+     },
+     {
+      "rule": "close"
+     }
+    ]
+   }
+  },
+  "expected": {
+   "status": "ok",
+   "valid": true,
+   "background": 1
+  }
+ },
+ {
+  "id": "certificate-without-background-binding",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "certificate",
+  "premises": [
+   [
+    "or",
+    [
+     "eq",
+     [
+      "const",
+      "finance"
+     ],
+     [
+      "const",
+      "legal"
+     ]
+    ],
+    [
+     "binary",
+     "dept",
+     [
+      "const",
+      "alice"
+     ],
+     [
+      "const",
+      "finance"
+     ]
+    ]
+   ]
+  ],
+  "conclusion": [
+   "binary",
+   "dept",
+   [
+    "const",
+    "alice"
+   ],
+   [
+    "const",
+    "finance"
+   ]
+  ],
+  "certificate": {
+   "checker_version": "ve-tableau-checker@2",
+   "environment_id": "5c0be7d97625b2076a19eadb6c182ec0080e477df847b34b0c29bb70cf8ce8b6",
+   "premise_meaning_ids": [
+    "5b43017866de423f6bd77f0f1068802a8dc38181e89741acd48a391caecbe6a7"
+   ],
+   "conclusion_meaning_id": "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+   "trace": {
+    "rule": "expand",
+    "at": 1,
+    "children": [
+     {
+      "rule": "expand",
+      "at": 0,
+      "children": [
+       {
+        "rule": "close"
+       }
+      ]
+     },
+     {
+      "rule": "close"
+     }
+    ]
+   }
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "certificate-stale-environment",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "certificate",
+  "premises": [
+   [
+    "or",
+    [
+     "eq",
+     [
+      "const",
+      "finance"
+     ],
+     [
+      "const",
+      "legal"
+     ]
+    ],
+    [
+     "binary",
+     "dept",
+     [
+      "const",
+      "alice"
+     ],
+     [
+      "const",
+      "finance"
+     ]
+    ]
+   ]
+  ],
+  "conclusion": [
+   "binary",
+   "dept",
+   [
+    "const",
+    "alice"
+   ],
+   [
+    "const",
+    "finance"
+   ]
+  ],
+  "certificate": {
+   "checker_version": "ve-tableau-checker@2",
+   "environment_id": "0000000000000000000000000000000000000000000000000000000000000000",
+   "premise_meaning_ids": [
+    "8d9b633fd193ac4fae5bea50738cb92c735365d51a0c4a1cc0422e4c23948511",
+    "5b43017866de423f6bd77f0f1068802a8dc38181e89741acd48a391caecbe6a7"
+   ],
+   "conclusion_meaning_id": "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+   "trace": {
+    "rule": "expand",
+    "at": 1,
+    "children": [
+     {
+      "rule": "expand",
+      "at": 0,
+      "children": [
+       {
+        "rule": "close"
+       }
+      ]
+     },
+     {
+      "rule": "close"
+     }
+    ]
+   }
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "profile-unknown",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0",
+    "zzz@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "model": {
+   "complete": true,
+   "domains": {},
+   "constants": {},
+   "relations": {}
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "profile-unsorted",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0",
+    "closure@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "model": {
+   "complete": true,
+   "domains": {},
+   "constants": {},
+   "relations": {}
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "profile-duplicate",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "model": {
+   "complete": true,
+   "domains": {},
+   "constants": {},
+   "relations": {}
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "profile-missing-base",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "definitions@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "model": {
+   "complete": true,
+   "domains": {},
+   "constants": {},
+   "relations": {}
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "profile-closure-order",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "closure@0",
+    "order@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "model": {
+   "complete": true,
+   "domains": {},
+   "constants": {},
+   "relations": {}
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "profile-nary-order",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "nary@0",
+    "order@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "model": {
+   "complete": true,
+   "domains": {},
+   "constants": {},
+   "relations": {}
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "profile-nary-without-closure",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "nary@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "model": {
+   "complete": true,
+   "domains": {},
+   "constants": {},
+   "relations": {}
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "profile-closure-nary-gated",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "closure@0",
+    "nary@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "model": {
+   "complete": true,
+   "domains": {},
+   "constants": {},
+   "relations": {}
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "family-fol",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "definitions@0",
+    "documents@1",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "model": {
+   "complete": true,
+   "domains": {},
+   "constants": {},
+   "relations": {}
+  },
+  "expected": {
+   "status": "ok",
+   "values": [
+    true
+   ]
+  }
+ },
+ {
+  "id": "family-closure",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "closure@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "model": {
+   "complete": true,
+   "domains": {},
+   "constants": {},
+   "relations": {}
+  },
+  "expected": {
+   "status": "ok",
+   "values": [
+    true
+   ]
+  }
+ },
+ {
+  "id": "family-order",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "order@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "model": {
+   "complete": true,
+   "domains": {},
+   "constants": {},
+   "relations": {}
+  },
+  "expected": {
+   "status": "ok",
+   "values": [
+    true
+   ]
+  }
+ },
+ {
+  "id": "revision-unsupported",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-other",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "ast": [
+   [
+    "top"
+   ]
+  ],
+  "model": {
+   "complete": true,
+   "domains": {},
+   "constants": {},
+   "relations": {}
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "dag-definition-above-norm",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "definitions@0",
+    "norms@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "kind": "dependency-order",
+  "nodes": [
+   {
+    "name": "violation",
+    "mentions": [
+     "required",
+     "done"
+    ]
+   },
+   {
+    "name": "required",
+    "mentions": [
+     "safe"
+    ]
+   },
+   {
+    "name": "safe",
+    "mentions": [
+     "base"
+    ]
+   }
+  ],
+  "expected": {
+   "status": "ok",
+   "order": [
+    "safe",
+    "required",
+    "violation"
+   ]
+  }
+ },
+ {
+  "id": "dag-cycle-definition-norm",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "definitions@0",
+    "norms@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "kind": "dependency-order",
+  "nodes": [
+   {
+    "name": "a",
+    "mentions": [
+     "b"
+    ]
+   },
+   {
+    "name": "b",
+    "mentions": [
+     "a"
+    ]
+   },
+   {
+    "name": "c",
+    "mentions": [
+     "a"
+    ]
+   },
+   {
+    "name": "d",
+    "mentions": []
+   }
+  ],
+  "expected": {
+   "status": "error",
+   "error": "DependencyCycle: a, b, c"
+  }
+ },
+ {
+  "id": "dag-self-loop",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "definitions@0",
+    "norms@0",
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {}
+   }
+  },
+  "kind": "dependency-order",
+  "nodes": [
+   {
+    "name": "p",
+    "mentions": [
+     "p"
+    ]
+   }
+  ],
+  "expected": {
+   "status": "error",
+   "error": "DependencyCycle: p"
+  }
+ },
+ {
+  "id": "admit-bridge-background",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "admission",
+  "document": {
+   "units": [
+    {
+     "id": "u1",
+     "span": [
+      0,
+      20
+     ],
+     "kind": "asserted",
+     "content": [
+      "unary",
+      "senior",
+      [
+       "const",
+       "alice"
+      ]
+     ]
+    },
+    {
+     "id": "u2",
+     "span": [
+      21,
+      60
+     ],
+     "kind": [
+      "attributed",
+      "bob",
+      "says",
+      "asserted"
+     ],
+     "content": [
+      "or",
+      [
+       "eq",
+       [
+        "const",
+        "finance"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ],
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ]
+     ]
+    },
+    {
+     "id": "u3",
+     "span": [
+      61,
+      120
+     ],
+     "kind": [
+      "attributed",
+      "alice",
+      "believes",
+      [
+       "hedged",
+       "likely",
+       [
+        "causal",
+        "because",
+        "asserted",
+        "asserted"
+       ]
+      ]
+     ]
+    }
+   ],
+   "graph": {
+    "root": "root",
+    "nodes": [
+     {
+      "name": "claim-u2",
+      "ast": [
+       "or",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ],
+       [
+        "binary",
+        "dept",
+        [
+         "const",
+         "alice"
+        ],
+        [
+         "const",
+         "finance"
+        ]
+       ]
+      ],
+      "label": "bridge:accepts(bob,u2)",
+      "unit": "u2"
+     },
+     {
+      "name": "distinct",
+      "ast": [
+       "not",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ]
+      ],
+      "label": "background:literals"
+     },
+     {
+      "name": "senior",
+      "ast": [
+       "unary",
+       "senior",
+       [
+        "const",
+        "alice"
+       ]
+      ],
+      "unit": "u1"
+     },
+     {
+      "name": "root",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      "premises": [
+       "claim-u2",
+       "distinct"
+      ],
+      "certificate": {
+       "checker_version": "ve-tableau-checker@2",
+       "environment_id": "5c0be7d97625b2076a19eadb6c182ec0080e477df847b34b0c29bb70cf8ce8b6",
+       "premise_meaning_ids": [
+        "5b43017866de423f6bd77f0f1068802a8dc38181e89741acd48a391caecbe6a7",
+        "8d9b633fd193ac4fae5bea50738cb92c735365d51a0c4a1cc0422e4c23948511"
+       ],
+       "conclusion_meaning_id": "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+       "trace": {
+        "rule": "expand",
+        "at": 0,
+        "children": [
+         {
+          "rule": "expand",
+          "at": 1,
+          "children": [
+           {
+            "rule": "close"
+           }
+          ]
+         },
+         {
+          "rule": "close"
+         }
+        ]
+       }
+      }
+     }
+    ]
+   }
+  },
+  "expected": {
+   "status": "ok",
+   "admitted": true
+  }
+ },
+ {
+  "id": "admit-quoted-without-bridge",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "admission",
+  "document": {
+   "units": [
+    {
+     "id": "u1",
+     "span": [
+      0,
+      20
+     ],
+     "kind": "asserted",
+     "content": [
+      "unary",
+      "senior",
+      [
+       "const",
+       "alice"
+      ]
+     ]
+    },
+    {
+     "id": "u2",
+     "span": [
+      21,
+      60
+     ],
+     "kind": [
+      "attributed",
+      "bob",
+      "says",
+      "asserted"
+     ],
+     "content": [
+      "or",
+      [
+       "eq",
+       [
+        "const",
+        "finance"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ],
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ]
+     ]
+    },
+    {
+     "id": "u3",
+     "span": [
+      61,
+      120
+     ],
+     "kind": [
+      "attributed",
+      "alice",
+      "believes",
+      [
+       "hedged",
+       "likely",
+       [
+        "causal",
+        "because",
+        "asserted",
+        "asserted"
+       ]
+      ]
+     ]
+    }
+   ],
+   "graph": {
+    "root": "root",
+    "nodes": [
+     {
+      "name": "claim-u2",
+      "ast": [
+       "or",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ],
+       [
+        "binary",
+        "dept",
+        [
+         "const",
+         "alice"
+        ],
+        [
+         "const",
+         "finance"
+        ]
+       ]
+      ],
+      "unit": "u2"
+     },
+     {
+      "name": "distinct",
+      "ast": [
+       "not",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ]
+      ],
+      "label": "background:literals"
+     },
+     {
+      "name": "senior",
+      "ast": [
+       "unary",
+       "senior",
+       [
+        "const",
+        "alice"
+       ]
+      ],
+      "unit": "u1"
+     },
+     {
+      "name": "root",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      "premises": [
+       "claim-u2",
+       "distinct"
+      ],
+      "certificate": {
+       "checker_version": "ve-tableau-checker@2",
+       "environment_id": "5c0be7d97625b2076a19eadb6c182ec0080e477df847b34b0c29bb70cf8ce8b6",
+       "premise_meaning_ids": [
+        "5b43017866de423f6bd77f0f1068802a8dc38181e89741acd48a391caecbe6a7",
+        "8d9b633fd193ac4fae5bea50738cb92c735365d51a0c4a1cc0422e4c23948511"
+       ],
+       "conclusion_meaning_id": "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+       "trace": {
+        "rule": "expand",
+        "at": 0,
+        "children": [
+         {
+          "rule": "expand",
+          "at": 1,
+          "children": [
+           {
+            "rule": "close"
+           }
+          ]
+         },
+         {
+          "rule": "close"
+         }
+        ]
+       }
+      }
+     }
+    ]
+   }
+  },
+  "expected": {
+   "status": "error",
+   "error": "AdmissionError: quoted content of unit u2 is used without a bridge leaf"
+  }
+ },
+ {
+  "id": "admit-background-label-stripped",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "admission",
+  "document": {
+   "units": [
+    {
+     "id": "u1",
+     "span": [
+      0,
+      20
+     ],
+     "kind": "asserted",
+     "content": [
+      "unary",
+      "senior",
+      [
+       "const",
+       "alice"
+      ]
+     ]
+    },
+    {
+     "id": "u2",
+     "span": [
+      21,
+      60
+     ],
+     "kind": [
+      "attributed",
+      "bob",
+      "says",
+      "asserted"
+     ],
+     "content": [
+      "or",
+      [
+       "eq",
+       [
+        "const",
+        "finance"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ],
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ]
+     ]
+    },
+    {
+     "id": "u3",
+     "span": [
+      61,
+      120
+     ],
+     "kind": [
+      "attributed",
+      "alice",
+      "believes",
+      [
+       "hedged",
+       "likely",
+       [
+        "causal",
+        "because",
+        "asserted",
+        "asserted"
+       ]
+      ]
+     ]
+    }
+   ],
+   "graph": {
+    "root": "root",
+    "nodes": [
+     {
+      "name": "claim-u2",
+      "ast": [
+       "or",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ],
+       [
+        "binary",
+        "dept",
+        [
+         "const",
+         "alice"
+        ],
+        [
+         "const",
+         "finance"
+        ]
+       ]
+      ],
+      "label": "bridge:accepts(bob,u2)",
+      "unit": "u2"
+     },
+     {
+      "name": "distinct",
+      "ast": [
+       "not",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ]
+      ]
+     },
+     {
+      "name": "senior",
+      "ast": [
+       "unary",
+       "senior",
+       [
+        "const",
+        "alice"
+       ]
+      ],
+      "unit": "u1"
+     },
+     {
+      "name": "root",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      "premises": [
+       "claim-u2",
+       "distinct"
+      ],
+      "certificate": {
+       "checker_version": "ve-tableau-checker@2",
+       "environment_id": "5c0be7d97625b2076a19eadb6c182ec0080e477df847b34b0c29bb70cf8ce8b6",
+       "premise_meaning_ids": [
+        "5b43017866de423f6bd77f0f1068802a8dc38181e89741acd48a391caecbe6a7",
+        "8d9b633fd193ac4fae5bea50738cb92c735365d51a0c4a1cc0422e4c23948511"
+       ],
+       "conclusion_meaning_id": "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+       "trace": {
+        "rule": "expand",
+        "at": 0,
+        "children": [
+         {
+          "rule": "expand",
+          "at": 1,
+          "children": [
+           {
+            "rule": "close"
+           }
+          ]
+         },
+         {
+          "rule": "close"
+         }
+        ]
+       }
+      }
+     }
+    ]
+   }
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "admit-bridge-wrong-agent",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "admission",
+  "document": {
+   "units": [
+    {
+     "id": "u1",
+     "span": [
+      0,
+      20
+     ],
+     "kind": "asserted",
+     "content": [
+      "unary",
+      "senior",
+      [
+       "const",
+       "alice"
+      ]
+     ]
+    },
+    {
+     "id": "u2",
+     "span": [
+      21,
+      60
+     ],
+     "kind": [
+      "attributed",
+      "bob",
+      "says",
+      "asserted"
+     ],
+     "content": [
+      "or",
+      [
+       "eq",
+       [
+        "const",
+        "finance"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ],
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ]
+     ]
+    },
+    {
+     "id": "u3",
+     "span": [
+      61,
+      120
+     ],
+     "kind": [
+      "attributed",
+      "alice",
+      "believes",
+      [
+       "hedged",
+       "likely",
+       [
+        "causal",
+        "because",
+        "asserted",
+        "asserted"
+       ]
+      ]
+     ]
+    }
+   ],
+   "graph": {
+    "root": "root",
+    "nodes": [
+     {
+      "name": "claim-u2",
+      "ast": [
+       "or",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ],
+       [
+        "binary",
+        "dept",
+        [
+         "const",
+         "alice"
+        ],
+        [
+         "const",
+         "finance"
+        ]
+       ]
+      ],
+      "label": "bridge:accepts(alice,u2)",
+      "unit": "u2"
+     },
+     {
+      "name": "distinct",
+      "ast": [
+       "not",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ]
+      ],
+      "label": "background:literals"
+     },
+     {
+      "name": "senior",
+      "ast": [
+       "unary",
+       "senior",
+       [
+        "const",
+        "alice"
+       ]
+      ],
+      "unit": "u1"
+     },
+     {
+      "name": "root",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      "premises": [
+       "claim-u2",
+       "distinct"
+      ],
+      "certificate": {
+       "checker_version": "ve-tableau-checker@2",
+       "environment_id": "5c0be7d97625b2076a19eadb6c182ec0080e477df847b34b0c29bb70cf8ce8b6",
+       "premise_meaning_ids": [
+        "5b43017866de423f6bd77f0f1068802a8dc38181e89741acd48a391caecbe6a7",
+        "8d9b633fd193ac4fae5bea50738cb92c735365d51a0c4a1cc0422e4c23948511"
+       ],
+       "conclusion_meaning_id": "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+       "trace": {
+        "rule": "expand",
+        "at": 0,
+        "children": [
+         {
+          "rule": "expand",
+          "at": 1,
+          "children": [
+           {
+            "rule": "close"
+           }
+          ]
+         },
+         {
+          "rule": "close"
+         }
+        ]
+       }
+      }
+     }
+    ]
+   }
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "admit-explicit-default-label",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "admission",
+  "document": {
+   "units": [
+    {
+     "id": "u1",
+     "span": [
+      0,
+      20
+     ],
+     "kind": "asserted",
+     "content": [
+      "unary",
+      "senior",
+      [
+       "const",
+       "alice"
+      ]
+     ]
+    },
+    {
+     "id": "u2",
+     "span": [
+      21,
+      60
+     ],
+     "kind": [
+      "attributed",
+      "bob",
+      "says",
+      "asserted"
+     ],
+     "content": [
+      "or",
+      [
+       "eq",
+       [
+        "const",
+        "finance"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ],
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ]
+     ]
+    },
+    {
+     "id": "u3",
+     "span": [
+      61,
+      120
+     ],
+     "kind": [
+      "attributed",
+      "alice",
+      "believes",
+      [
+       "hedged",
+       "likely",
+       [
+        "causal",
+        "because",
+        "asserted",
+        "asserted"
+       ]
+      ]
+     ]
+    }
+   ],
+   "graph": {
+    "root": "root",
+    "nodes": [
+     {
+      "name": "claim-u2",
+      "ast": [
+       "or",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ],
+       [
+        "binary",
+        "dept",
+        [
+         "const",
+         "alice"
+        ],
+        [
+         "const",
+         "finance"
+        ]
+       ]
+      ],
+      "label": "bridge:accepts(bob,u2)",
+      "unit": "u2"
+     },
+     {
+      "name": "distinct",
+      "ast": [
+       "not",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ]
+      ],
+      "label": "background:literals"
+     },
+     {
+      "name": "senior",
+      "ast": [
+       "unary",
+       "senior",
+       [
+        "const",
+        "alice"
+       ]
+      ],
+      "unit": "u1",
+      "label": "asserted"
+     },
+     {
+      "name": "root",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      "premises": [
+       "claim-u2",
+       "distinct"
+      ],
+      "certificate": {
+       "checker_version": "ve-tableau-checker@2",
+       "environment_id": "5c0be7d97625b2076a19eadb6c182ec0080e477df847b34b0c29bb70cf8ce8b6",
+       "premise_meaning_ids": [
+        "5b43017866de423f6bd77f0f1068802a8dc38181e89741acd48a391caecbe6a7",
+        "8d9b633fd193ac4fae5bea50738cb92c735365d51a0c4a1cc0422e4c23948511"
+       ],
+       "conclusion_meaning_id": "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+       "trace": {
+        "rule": "expand",
+        "at": 0,
+        "children": [
+         {
+          "rule": "expand",
+          "at": 1,
+          "children": [
+           {
+            "rule": "close"
+           }
+          ]
+         },
+         {
+          "rule": "close"
+         }
+        ]
+       }
+      }
+     }
+    ]
+   }
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "admit-overlapping-spans",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "admission",
+  "document": {
+   "units": [
+    {
+     "id": "u1",
+     "span": [
+      0,
+      20
+     ],
+     "kind": "asserted",
+     "content": [
+      "unary",
+      "senior",
+      [
+       "const",
+       "alice"
+      ]
+     ]
+    },
+    {
+     "id": "u2",
+     "span": [
+      10,
+      60
+     ],
+     "kind": [
+      "attributed",
+      "bob",
+      "says",
+      "asserted"
+     ],
+     "content": [
+      "or",
+      [
+       "eq",
+       [
+        "const",
+        "finance"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ],
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ]
+     ]
+    },
+    {
+     "id": "u3",
+     "span": [
+      61,
+      120
+     ],
+     "kind": [
+      "attributed",
+      "alice",
+      "believes",
+      [
+       "hedged",
+       "likely",
+       [
+        "causal",
+        "because",
+        "asserted",
+        "asserted"
+       ]
+      ]
+     ]
+    }
+   ],
+   "graph": {
+    "root": "root",
+    "nodes": [
+     {
+      "name": "claim-u2",
+      "ast": [
+       "or",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ],
+       [
+        "binary",
+        "dept",
+        [
+         "const",
+         "alice"
+        ],
+        [
+         "const",
+         "finance"
+        ]
+       ]
+      ],
+      "label": "bridge:accepts(bob,u2)",
+      "unit": "u2"
+     },
+     {
+      "name": "distinct",
+      "ast": [
+       "not",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ]
+      ],
+      "label": "background:literals"
+     },
+     {
+      "name": "senior",
+      "ast": [
+       "unary",
+       "senior",
+       [
+        "const",
+        "alice"
+       ]
+      ],
+      "unit": "u1"
+     },
+     {
+      "name": "root",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      "premises": [
+       "claim-u2",
+       "distinct"
+      ],
+      "certificate": {
+       "checker_version": "ve-tableau-checker@2",
+       "environment_id": "5c0be7d97625b2076a19eadb6c182ec0080e477df847b34b0c29bb70cf8ce8b6",
+       "premise_meaning_ids": [
+        "5b43017866de423f6bd77f0f1068802a8dc38181e89741acd48a391caecbe6a7",
+        "8d9b633fd193ac4fae5bea50738cb92c735365d51a0c4a1cc0422e4c23948511"
+       ],
+       "conclusion_meaning_id": "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+       "trace": {
+        "rule": "expand",
+        "at": 0,
+        "children": [
+         {
+          "rule": "expand",
+          "at": 1,
+          "children": [
+           {
+            "rule": "close"
+           }
+          ]
+         },
+         {
+          "rule": "close"
+         }
+        ]
+       }
+      }
+     }
+    ]
+   }
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "admit-citation-with-leaves",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "admission",
+  "document": {
+   "units": [
+    {
+     "id": "u1",
+     "span": [
+      0,
+      20
+     ],
+     "kind": "asserted",
+     "content": [
+      "unary",
+      "senior",
+      [
+       "const",
+       "alice"
+      ]
+     ]
+    },
+    {
+     "id": "u2",
+     "span": [
+      21,
+      60
+     ],
+     "kind": [
+      "attributed",
+      "bob",
+      "says",
+      "asserted"
+     ],
+     "content": [
+      "or",
+      [
+       "eq",
+       [
+        "const",
+        "finance"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ],
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ]
+     ]
+    },
+    {
+     "id": "u3",
+     "span": [
+      61,
+      120
+     ],
+     "kind": [
+      "attributed",
+      "alice",
+      "believes",
+      [
+       "hedged",
+       "likely",
+       [
+        "causal",
+        "because",
+        "asserted",
+        "asserted"
+       ]
+      ]
+     ]
+    }
+   ],
+   "graph": {
+    "root": "uses",
+    "nodes": [
+     {
+      "name": "claim-u2",
+      "ast": [
+       "or",
+       [
+        "eq",
+        [
+         "const",
+         "finance"
+        ],
+        [
+         "const",
+         "legal"
+        ]
+       ],
+       [
+        "binary",
+        "dept",
+        [
+         "const",
+         "alice"
+        ],
+        [
+         "const",
+         "finance"
+        ]
+       ]
+      ],
+      "label": "bridge:accepts(bob,u2)",
+      "unit": "u2"
+     },
+     {
+      "name": "cited",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      "label": "cite:b1/t1"
+     },
+     {
+      "name": "uses",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      "premises": [
+       "cited",
+       "claim-u2"
+      ],
+      "certificate": {
+       "checker_version": "ve-tableau-checker@2",
+       "environment_id": "5c0be7d97625b2076a19eadb6c182ec0080e477df847b34b0c29bb70cf8ce8b6",
+       "premise_meaning_ids": [
+        "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+        "5b43017866de423f6bd77f0f1068802a8dc38181e89741acd48a391caecbe6a7"
+       ],
+       "conclusion_meaning_id": "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+       "trace": {
+        "rule": "close"
+       }
+      }
+     }
+    ]
+   },
+   "lemmas": [
+    {
+     "name": "b1/t1",
+     "conclusion": [
+      "binary",
+      "dept",
+      [
+       "const",
+       "alice"
+      ],
+      [
+       "const",
+       "finance"
+      ]
+     ],
+     "leaves": [
+      {
+       "ast": [
+        "or",
+        [
+         "eq",
+         [
+          "const",
+          "finance"
+         ],
+         [
+          "const",
+          "legal"
+         ]
+        ],
+        [
+         "binary",
+         "dept",
+         [
+          "const",
+          "alice"
+         ],
+         [
+          "const",
+          "finance"
+         ]
+        ]
+       ],
+       "label": "bridge:accepts(bob,u2)"
+      }
+     ]
+    }
+   ]
+  },
+  "expected": {
+   "status": "ok",
+   "admitted": true
+  }
+ },
+ {
+  "id": "admit-citation-missing-leaf",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "admission",
+  "document": {
+   "units": [
+    {
+     "id": "u1",
+     "span": [
+      0,
+      20
+     ],
+     "kind": "asserted",
+     "content": [
+      "unary",
+      "senior",
+      [
+       "const",
+       "alice"
+      ]
+     ]
+    },
+    {
+     "id": "u2",
+     "span": [
+      21,
+      60
+     ],
+     "kind": [
+      "attributed",
+      "bob",
+      "says",
+      "asserted"
+     ],
+     "content": [
+      "or",
+      [
+       "eq",
+       [
+        "const",
+        "finance"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ],
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ]
+     ]
+    },
+    {
+     "id": "u3",
+     "span": [
+      61,
+      120
+     ],
+     "kind": [
+      "attributed",
+      "alice",
+      "believes",
+      [
+       "hedged",
+       "likely",
+       [
+        "causal",
+        "because",
+        "asserted",
+        "asserted"
+       ]
+      ]
+     ]
+    }
+   ],
+   "graph": {
+    "root": "cited",
+    "nodes": [
+     {
+      "name": "cited",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      "label": "cite:b1/t1"
+     }
+    ]
+   },
+   "lemmas": [
+    {
+     "name": "b1/t1",
+     "conclusion": [
+      "binary",
+      "dept",
+      [
+       "const",
+       "alice"
+      ],
+      [
+       "const",
+       "finance"
+      ]
+     ],
+     "leaves": [
+      {
+       "ast": [
+        "or",
+        [
+         "eq",
+         [
+          "const",
+          "finance"
+         ],
+         [
+          "const",
+          "legal"
+         ]
+        ],
+        [
+         "binary",
+         "dept",
+         [
+          "const",
+          "alice"
+         ],
+         [
+          "const",
+          "finance"
+         ]
+        ]
+       ],
+       "label": "bridge:accepts(bob,u2)"
+      }
+     ]
+    }
+   ]
+  },
+  "expected": {
+   "status": "error"
+  }
+ },
+ {
+  "id": "admit-incompatible-choices",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "admission",
+  "document": {
+   "units": [
+    {
+     "id": "u1",
+     "span": [
+      0,
+      20
+     ],
+     "kind": "asserted",
+     "content": [
+      "unary",
+      "senior",
+      [
+       "const",
+       "alice"
+      ]
+     ]
+    },
+    {
+     "id": "u2",
+     "span": [
+      21,
+      60
+     ],
+     "kind": [
+      "attributed",
+      "bob",
+      "says",
+      "asserted"
+     ],
+     "content": [
+      "or",
+      [
+       "eq",
+       [
+        "const",
+        "finance"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ],
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ]
+     ]
+    },
+    {
+     "id": "u3",
+     "span": [
+      61,
+      120
+     ],
+     "kind": [
+      "attributed",
+      "alice",
+      "believes",
+      [
+       "hedged",
+       "likely",
+       [
+        "causal",
+        "because",
+        "asserted",
+        "asserted"
+       ]
+      ]
+     ]
+    }
+   ],
+   "graph": {
+    "root": "r",
+    "nodes": [
+     {
+      "name": "r0",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      "label": "readings:s1@1:0"
+     },
+     {
+      "name": "r1",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ],
+      "label": "readings:s1@1:1"
+     },
+     {
+      "name": "r",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      "premises": [
+       "r0",
+       "r1"
+      ],
+      "certificate": {
+       "checker_version": "ve-tableau-checker@2",
+       "environment_id": "5c0be7d97625b2076a19eadb6c182ec0080e477df847b34b0c29bb70cf8ce8b6",
+       "premise_meaning_ids": [
+        "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+        "0620551eddf54f51800ccae5163a7e43be606dd9a40c21921f4a02b1eadda3fd"
+       ],
+       "conclusion_meaning_id": "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+       "trace": {
+        "rule": "close"
+       }
+      }
+     }
+    ]
+   },
+   "reading_sets": [
+    {
+     "id": "s1",
+     "version": 1,
+     "readings": [
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  "expected": {
+   "status": "error",
+   "error": "AdmissionError: incompatible reading choices"
+  }
+ },
+ {
+  "id": "admit-one-choice",
+  "environment": {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "relational-fol@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "sorts": {
+     "person": {
+      "description": "a person"
+     }
+    },
+    "predicates": {
+     "dept": {
+      "arguments": [
+       "person",
+       "$string"
+      ],
+      "description": "the department of a person"
+     },
+     "senior": {
+      "arguments": [
+       "person"
+      ],
+      "description": "is senior"
+     }
+    },
+    "constants": {
+     "alice": {
+      "sort": "person",
+      "description": "Alice"
+     },
+     "bob": {
+      "sort": "person",
+      "description": "Bob"
+     },
+     "finance": {
+      "sort": "$string",
+      "description": "the string finance"
+     },
+     "legal": {
+      "sort": "$string",
+      "description": "the string legal"
+     }
+    }
+   }
+  },
+  "kind": "admission",
+  "document": {
+   "units": [
+    {
+     "id": "u1",
+     "span": [
+      0,
+      20
+     ],
+     "kind": "asserted",
+     "content": [
+      "unary",
+      "senior",
+      [
+       "const",
+       "alice"
+      ]
+     ]
+    },
+    {
+     "id": "u2",
+     "span": [
+      21,
+      60
+     ],
+     "kind": [
+      "attributed",
+      "bob",
+      "says",
+      "asserted"
+     ],
+     "content": [
+      "or",
+      [
+       "eq",
+       [
+        "const",
+        "finance"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ],
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ]
+     ]
+    },
+    {
+     "id": "u3",
+     "span": [
+      61,
+      120
+     ],
+     "kind": [
+      "attributed",
+      "alice",
+      "believes",
+      [
+       "hedged",
+       "likely",
+       [
+        "causal",
+        "because",
+        "asserted",
+        "asserted"
+       ]
+      ]
+     ]
+    }
+   ],
+   "graph": {
+    "root": "r",
+    "nodes": [
+     {
+      "name": "r0",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      "label": "readings:s1@1:0"
+     },
+     {
+      "name": "r",
+      "ast": [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      "premises": [
+       "r0"
+      ],
+      "certificate": {
+       "checker_version": "ve-tableau-checker@2",
+       "environment_id": "5c0be7d97625b2076a19eadb6c182ec0080e477df847b34b0c29bb70cf8ce8b6",
+       "premise_meaning_ids": [
+        "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871"
+       ],
+       "conclusion_meaning_id": "22537c530ef2b67ed4b4da12437946e6db800c1668a6d6580e23ba9dd2aa5871",
+       "trace": {
+        "rule": "close"
+       }
+      }
+     }
+    ]
+   },
+   "reading_sets": [
+    {
+     "id": "s1",
+     "version": 1,
+     "readings": [
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "finance"
+       ]
+      ],
+      [
+       "binary",
+       "dept",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  "expected": {
+   "status": "ok",
+   "admitted": true
+  }
+ }
+]
