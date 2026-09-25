@@ -192,12 +192,113 @@ theorem closure_route_acceptance (E : VE.Environment) (lits : List String) (hn :
     exact (VE.Closure.conservativity S [] b).mpr ((literals_sat_iff S lits hn).mpr hS.2 b hb)
   · exact hΓ a ha
 
-/-- The order route: `$string` is not available on order@0 in P0, so Background
-is empty and the route is the order checker itself. -/
+/-- The order route without declared literals: Background is empty and the
+route is the order checker itself (the `lits = []` case of
+`order_string_route_acceptance` below). -/
 theorem order_route_acceptance (E : VE.Order.Environment) (Γ : List VE.Order.Formula)
     (φ : VE.Order.Formula) (c : VE.Order.Tableau.Certificate)
     (accepted : VE.Order.Tableau.checkCertificate E ([] ++ Γ) φ c = true) :
     VE.Order.Entails.{u} E Γ φ := by
   simpa using VE.Order.Tableau.checkCertificate_sound E _ φ c accepted
+
+/-! ## The order route with `$string` literals
+
+`$string` literals are available on every checker family (PLAN-EXPAND2 3.1: the
+`literals` generator depends on the environment only). On order@0 a literal is
+a constant of the user sort `$string`, which is never in the environment's
+`sorts`, so it is never quantified over; Background is the same distinctness
+premises, over order formulas. -/
+
+def orderLiteralPremise (p : String × String) : VE.Order.Formula := .not (.eq (.const p.1) (.const p.2))
+
+/-- The `literals` generator on the order route: the same sorted pairs. -/
+def orderLiterals (lits : List String) : List VE.Order.Formula :=
+  (pairs (sortStrings lits)).map orderLiteralPremise
+
+/-- The stage-1 meaning of `$string` literals over order structures. -/
+def OrderLiteralsDistinct (S : VE.Order.Structure.{u}) (lits : List String) : Prop :=
+  ∀ a ∈ lits, ∀ b ∈ lits, a ≠ b → ∀ v, S.constant a = some v → S.constant b ≠ some v
+
+def OrderStringAdmissible (E : VE.Order.Environment) (lits : List String) (S : VE.Order.Structure.{u}) :
+    Prop :=
+  S.Admissible E ∧ OrderLiteralsDistinct S lits
+
+theorem orderLiteralPremise_denote (S : VE.Order.Structure.{u}) (p : String × String) :
+    (orderLiteralPremise p).denote S [] ↔
+      ∀ v, S.constant p.1 = some v → S.constant p.2 ≠ some v := by
+  simp [orderLiteralPremise, VE.Order.Formula.denote, VE.Order.Term.denote]
+
+/-- The generated order premises say exactly the stage-1 meaning of strings. -/
+theorem orderLiterals_sat_iff (S : VE.Order.Structure.{u}) (lits : List String) (hn : lits.Nodup) :
+    (∀ a ∈ orderLiterals lits, a.denote S []) ↔ OrderLiteralsDistinct S lits := by
+  have hsn : (sortStrings lits).Nodup :=
+    (List.mergeSort_perm lits _).symm.nodup_iff.mp hn
+  constructor
+  · intro h a ha b hb hne v hv hv'
+    rcases pairs_complete ((mem_sortStrings lits a).mpr ha) ((mem_sortStrings lits b).mpr hb) hne
+      with hp | hp
+    · exact (orderLiteralPremise_denote S _).mp (h _ (List.mem_map.mpr ⟨_, hp, rfl⟩)) v hv hv'
+    · exact (orderLiteralPremise_denote S _).mp (h _ (List.mem_map.mpr ⟨_, hp, rfl⟩)) v hv' hv
+  · intro h f hf
+    obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hf
+    obtain ⟨ha, hb, hne⟩ := mem_pairs hp
+    exact (orderLiteralPremise_denote S p).mpr (h p.1 ((mem_sortStrings lits _).mp ha)
+      p.2 ((mem_sortStrings lits _).mp hb) (hne hsn))
+
+/-- Finite-model validity for `literals` on the order route. -/
+def orderLiteralsValid {α : Type u} [DecidableEq α] (M : VE.Order.FiniteModel α) (lits : List String) :
+    Bool :=
+  (orderLiterals lits).all (fun a => a.eval M [])
+
+theorem orderLiteralsValid_sound {α : Type u} [DecidableEq α] (M : VE.Order.FiniteModel α)
+    (lits : List String) (hn : lits.Nodup) (h : orderLiteralsValid M lits = true) :
+    OrderLiteralsDistinct M.asStructure lits := by
+  apply (orderLiterals_sat_iff M.asStructure lits hn).mp
+  intro a ha
+  exact (VE.Order.eval_iff_denote M [] a).mp (List.all_eq_true.mp h a ha)
+
+/-- Consequence over string-admissible order structures. -/
+def EntailsOrderString (E : VE.Order.Environment) (lits : List String) (Γ : List VE.Order.Formula)
+    (φ : VE.Order.Formula) : Prop :=
+  ∀ S : VE.Order.Structure.{u}, OrderStringAdmissible E lits S → (∀ a ∈ Γ, a.denote S []) → φ.denote S []
+
+/-- Model correspondence on the order route: the checked entailment over
+`literals ++ Γ` is exactly consequence over string-admissible order structures. -/
+theorem order_string_route_entails_iff (E : VE.Order.Environment) (lits : List String) (hn : lits.Nodup)
+    (Γ : List VE.Order.Formula) (φ : VE.Order.Formula) :
+    VE.Order.Entails.{u} E (orderLiterals lits ++ Γ) φ ↔ EntailsOrderString.{u} E lits Γ φ := by
+  constructor
+  · intro h S hS hΓ
+    apply h S hS.1
+    intro a ha
+    rcases List.mem_append.mp ha with ha | ha
+    · exact (orderLiterals_sat_iff S lits hn).mpr hS.2 a ha
+    · exact hΓ a ha
+  · intro h S hS hs
+    exact h S ⟨hS, (orderLiterals_sat_iff S lits hn).mp
+      (fun a ha => hs a (List.mem_append_left _ ha))⟩ (fun a ha => hs a (List.mem_append_right _ ha))
+
+/-- The order route's acceptance theorem with literals: an accepted order
+certificate for `literals ++ Γ ⊢ φ` proves `φ` over every string-admissible
+order structure satisfying `Γ`. -/
+theorem order_string_route_acceptance (E : VE.Order.Environment) (lits : List String) (hn : lits.Nodup)
+    (Γ : List VE.Order.Formula) (φ : VE.Order.Formula) (c : VE.Order.Tableau.Certificate)
+    (accepted : VE.Order.Tableau.checkCertificate E (orderLiterals lits ++ Γ) φ c = true) :
+    VE.Order.Entails.{u} E (orderLiterals lits ++ Γ) φ ∧ EntailsOrderString.{u} E lits Γ φ := by
+  have he : VE.Order.Entails.{u} E (orderLiterals lits ++ Γ) φ :=
+    VE.Order.Tableau.checkCertificate_sound E _ φ c accepted
+  exact ⟨he, (order_string_route_entails_iff E lits hn Γ φ).mp he⟩
+
+/-- A checked finite order countermodel that passes the literal check refutes
+the string-admissible statement. -/
+theorem order_string_route_countermodel {α : Type u} [DecidableEq α] (E : VE.Order.Environment)
+    (lits : List String) (hn : lits.Nodup) (M : VE.Order.FiniteModel α) (valid : M.Valid E)
+    (hl : orderLiteralsValid M lits = true) (Γ : List VE.Order.Formula) (φ : VE.Order.Formula)
+    (checked : VE.Order.countermodelCheck M Γ φ = true) :
+    ¬ EntailsOrderString.{u} E lits Γ φ ∧ ¬ VE.Order.Entails.{u} E (orderLiterals lits ++ Γ) φ := by
+  obtain ⟨hp, hc⟩ := (VE.Order.countermodelCheck_iff M Γ φ).mp checked
+  have hs : ¬ EntailsOrderString.{u} E lits Γ φ :=
+    fun h => hc (h M.asStructure ⟨valid, orderLiteralsValid_sound M lits hn hl⟩ hp)
+  exact ⟨hs, fun h => hs ((order_string_route_entails_iff E lits hn Γ φ).mp h)⟩
 
 end VE.Route.Background
