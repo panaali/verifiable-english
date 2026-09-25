@@ -78,7 +78,7 @@ Frontier claims are protocol effects; language expansion alone is not expected t
 | - | `ve assist` held-out evaluation (optional B arm) | [PLAN-ASSIST](PLAN-ASSIST.md) | replays + certified + blind fidelity audit |
 | C | Persuasion/injection vs the bridge (replaces the pushback study as specified) | [PLAN-FRONTIER](PLAN-FRONTIER.md) | after B; items correct in both arms; eligible-item gate |
 | - | Obfuscation class F: G0/G1 diagnostics only | [PLAN-OBFUSCATION](PLAN-OBFUSCATION.md) | diagnostics, no comparative claims |
-| - | Language track (parallel, off critical path): numbers round 2, English-surface proof | [PLAN-EXPAND](PLAN-EXPAND.md) | tests green; Lean soundness; cross-family review |
+| - | Language track (parallel, off critical path): numbers round 2, English-surface proof | [PLAN-EXPAND](PLAN-EXPAND.md) | round 2: grammar export, Rust AST/source evaluation and Lean order parser built locally; unbounded integer quantifiers and order parser round-trip proof remain; tests and cross-family review before merge |
 | - | Paper rev3 (Astra) | `paper/` | after A |
 | - | Grant | `~/code/manage-agents/grants/` | paused: the lead will ask when needed |
 
@@ -91,7 +91,7 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 |---|---|---|
 | VEX evidence layer | statistical/approximate leaves carry data + test, recomputed; union/Frechet bounds; no unsupported independence ([design](design/evidence-layer-design.md)) | class S of the obfuscation study |
 | Proof-carrying actions | agent names the exact tool call plus a VE proof of compliance; ControlArena-style settings vs frontier monitors | signal in pushback or T1c |
-| Policy-grade extensions | numbers (in progress), strings/regex adapters, attributes, sets, obligations with exceptions and priorities (borrow from Catala), attribution, attitudes | same; E0 need: numbers 45/210, closure 27, strings 20 |
+| Policy-grade extensions | numbers (ground order built; unbounded integer quantifiers remain), strings/regex adapters, attributes, sets, obligations with exceptions and priorities (borrow from Catala), attribution, attitudes | same; E0 need: numbers 45/210, closure 27, strings 20 |
 | Lean statement layer for mathematics | VE renders Lean theorem statements for sign-off; proofs stay in Lean; gaps: lemma citation, arity > 2, functions, relation parameters | after round 2 |
 | Language usability | IDE loop (assistant drafts, author approves), fluent input with legal-style sub-clauses, linter precision pass, sense-bound vocabulary | ongoing |
 | Protocol ideas | `meaning_id` commitments before cross-examination; security-game reporting; amplified sampled fidelity checks; append-only verdict log | as arms in existing studies |

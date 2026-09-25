@@ -1,4 +1,4 @@
-# order@0: implemented boundary (Stages 1–3, round 1 of language expansion)
+# order@0: implemented boundary (rounds 1–2 of language expansion)
 
 Branch `opus/numbers`, from `ve-integration` after slice (1) (finite-model gate
 and general profile gate, merged at 05ad851). This round adds slice (2), the
@@ -63,8 +63,40 @@ argument terms that actually occur. Every candidate is validated and
 re-evaluated before it is returned. These are search bounds, not semantic
 integer bounds: exhaustion is `NotFound`, never entailment.
 
-The grammar export (`ve.grammar`) and the named-FOL adapter (`ve.fol`) raise
-`UnsupportedProfile` for order environments.
+The named-FOL adapter (`ve.fol`) still raises `UnsupportedProfile` for order
+environments.
+
+## Round 2: grammar, Rust, and Lean surface parser
+
+`ve.grammar.export_grammar` now emits Lark, llama.cpp GBNF, and XGrammar EBNF
+for the order surface, including canonical numeral tokens, scaling, bracketed
+sums and differences, comparisons, and integer predicate arguments. Full mode
+tracks user-sort binder scope and keeps integer terms separate from object
+terms. Syntax mode relaxes scope and sort checks as for v0. The runtime parser
+still enforces the 40-character numeral, source and AST limits. Lark acceptance
+and rejection tests cover canonical forms, wrong sorts, scope, and wrappers;
+GBNF/EBNF exports are generated but the optional backend compilers are not a
+required test dependency.
+
+The Rust `ve conformance` route accepts an order environment with either strict
+source, indexed AST, or both. It type-checks the AST, parses/prints strict
+source, computes the frozen identities, validates supplied finite models with
+arbitrary-precision integers, and evaluates formulas. It rejects proof and
+countermodel-search requests; sound certificate replay remains on the Lean
+route. The old Rust v0/closure API rejects order environments instead of
+interpreting `$int` as an object sort.
+
+`VE.Order.Surface.parse` is a total, fuel-bounded Lean parser for the order
+surface. `ve_conformance order` exposes it as `kind: "surface"`, returning the
+checked indexed AST. The source route uses the same exact order environment
+decoder; `surface_route_gate` proves the executable dispatcher can only succeed
+under the declared order profile list. No new axioms or certificate rules were
+added. Parser/printer round-trip or grammar unambiguity for the order surface
+is not yet proved in Lean.
+
+`tests/test_order_round2.py` compares 100 generated documents across Python,
+Rust, and Lean: Rust with source and AST inputs, Lean parsing, and all three
+finite evaluations. This is software conformance, not a completeness claim.
 
 ## Farkas certificates (slice 3)
 
@@ -140,12 +172,16 @@ also run by `tests/test_order.py`:
 
 ## What remains
 
-* Integer quantification, parity/quotients and relational numeric lookups
-  (design B beyond this fragment); FRET order witnesses (no integer movers exist).
-* Rust support; grammar export and named-FOL adapter for order.
+* Unbounded integer quantification, parity/quotients and relational numeric
+  lookups (design B beyond this fragment); FRET order witnesses (no integer
+  movers exist). A finite presentation has an infinite integer domain, and
+  predicates can have integer arguments. Enumerating its listed rows or a
+  finite integer interval would be unsound for an unbounded quantifier. The
+  existing `$int` binder rejection stays in Python, Rust, and Lean.
+* Rust order certificate replay and countermodel search; named-FOL adapter for
+  order.
 * Object equality in the order tableau is single-step (no congruence closure);
   such entailments may be `NotFound`. Proof search is incomplete by design;
   failure is inconclusive.
-* A Lean parser/printer for the order surface (only the evaluator, countermodel
-  gate and certificate checker are compared with Python).
+* A Lean printer and parser round-trip proof for the order surface.
 * Round 2: lemma citation and conservative definitions.

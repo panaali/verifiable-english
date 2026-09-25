@@ -5,6 +5,7 @@ mod ast;
 mod environment;
 mod eval;
 mod model;
+mod order;
 mod search;
 mod surface;
 mod wire;
@@ -16,6 +17,7 @@ pub use environment::Environment;
 pub use eval::EvaluationKernel;
 pub use eval::{Evaluation, evaluate, evaluate_formula};
 pub use model::FiniteModel;
+pub use order::order_case;
 pub use search::{
     CountermodelCheck, CountermodelProblem, SearchBounds, SearchResult, find_countermodel,
 };
