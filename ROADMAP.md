@@ -97,6 +97,7 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 | Protocol ideas | `meaning_id` commitments before cross-examination; security-game reporting; amplified sampled fidelity checks; append-only verdict log | as arms in existing studies |
 | Human studies | E1/E5 packages; "valid proof of the wrong model" study from the formal-proof handoff | deferred by the lead |
 | Rust as a trusted checker | prove the Rust checker equals the Lean spec via Aeneas (Rust->Lean); remaining trust: rustc/LLVM (RustCompCert/Rustlight, arXiv 2602.07455, 2026: verified Rustlight->asm in Rocq, but no generics/traits/closures and Rocq not Lean; a later option to drop rustc/LLVM trust); today Rust is deliberately untrusted (evaluation/search only, never certificates) | if Lean checking speed becomes the bottleneck |
+| Rustlight trusted-kernel pilot | port the smallest certificate checker (v0 tableau) to the Rustlight subset (monomorphic, no traits/closures, hand-written bignum on Box), compile with RustCompCert, measure size/speed and what a Rocq soundness proof (or Lean-Rocq bridge) would need; RustCompCert proves compilation only, not checker correctness | after expansion round 2, if highest-assurance binaries become a goal |
 | Grant-scale runs | 5,000-step sizes, size scaling, requirement retention under compaction (S1), multi-agent hand-off, adaptive attackers, judge ladders, RL with checked rewards (GPUs later) | grant (~$20K) |
 
 ## 6. Paused or dropped
