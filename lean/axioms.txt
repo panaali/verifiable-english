@@ -356,7 +356,13 @@
 'VE.Route.Background.literals_sat_iff' depends on axioms: [propext, Quot.sound]
 'VE.Route.Background.mem_pairs' depends on axioms: [propext, Quot.sound]
 'VE.Route.Background.mem_sortStrings' depends on axioms: [propext, Quot.sound]
+'VE.Route.Background.orderLiteralPremise_denote' depends on axioms: [propext, Quot.sound]
+'VE.Route.Background.orderLiteralsValid_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Route.Background.orderLiterals_sat_iff' depends on axioms: [propext, Quot.sound]
 'VE.Route.Background.order_route_acceptance' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Route.Background.order_string_route_acceptance' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Route.Background.order_string_route_countermodel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Route.Background.order_string_route_entails_iff' depends on axioms: [propext, Quot.sound]
 'VE.Route.Background.pairs_complete' depends on axioms: [propext, Quot.sound]
 'VE.Route.Gate.classify_complete' depends on axioms: [propext, Quot.sound]
 'VE.Route.Gate.classify_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -378,4 +384,4 @@
 'VE.Route.Examples.interpret_admissible' depends on axioms: [propext]
 'VE.Route.Examples.tupleTyped_relation' depends on axioms: [propext]
 'VE.Route.Examples.wf_extend' depends on axioms: [propext]
-PASS: 70 source files; 380 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+PASS: 70 source files; 386 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.

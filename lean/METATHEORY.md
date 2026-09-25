@@ -398,7 +398,12 @@ Names in this table have prefix `VE.Route.`.
 | `Background.fol_route_entails_iff` | Consequence from literals ++ Γ equals consequence over string-admissible structures. |
 | `Background.fol_route_countermodel` | A checked finite countermodel that is admissible and passes the literal check refutes both. |
 | `Background.closure_route_acceptance` | An accepted closure certificate for embedded literals ++ Γ ⊢ φ proves φ in every string-admissible structure satisfying Γ. |
-| `Background.order_route_acceptance` | On the order family (no `$string` in P0; empty Background), an accepted order certificate proves order consequence. |
+| `Background.order_route_acceptance` | On the order family with no declared literals (empty Background), an accepted order certificate proves order consequence. |
+| `Background.orderLiteralPremise_denote`, `orderLiterals_sat_iff` | On order structures, one literal premise denotes that two constants share no denotation; for duplicate-free literals, a structure satisfies the generated order literal premises iff distinct declared literals denote distinct values (`OrderLiteralsDistinct`). |
+| `Background.orderLiteralsValid_sound` | If the executable literal check is true on a finite order model, the model satisfies `OrderLiteralsDistinct`. |
+| `Background.order_string_route_entails_iff` | Order consequence from literals ++ Γ equals consequence over string-admissible order structures (admissible and `OrderLiteralsDistinct`). |
+| `Background.order_string_route_acceptance` | An accepted order certificate for literals ++ Γ ⊢ φ proves the entailment and φ in every string-admissible order structure satisfying Γ. |
+| `Background.order_string_route_countermodel` | A finite order countermodel that is admissible, passes the literal check and satisfies the countermodel check refutes both the string-admissible statement and the entailment from literals ++ Γ. |
 | `Wire.backgroundViolation_none`, `Wire.decodeModel_valid` | A model decoded on the route is admissible for the environment and satisfies `LiteralsDistinct`: it is string-admissible. |
 | `Admission.atomicKind_render`, `Admission.decodeKind_render` | A decoded kind tree (any depth within the fuel) renders back to exactly the JSON it was decoded from. |
 | `Admission.parseLabel_render` | Only canonical label strings parse: the parsed label renders back to the input. |
@@ -413,11 +418,16 @@ Names in this table have prefix `VE.Route.`.
 
 Statement review (rule 1b) is required for `Layer.Intended` of every layer,
 for `Background.LiteralsDistinct` / `StringAdmissible` (the stage-1 meaning of
-`$string`), for `Admission.LeafAdmitted`, `NodeAdmitted`, `CitationsClosed` and
+`$string`) and its order form `OrderLiteralsDistinct` / `OrderStringAdmissible`, for `Admission.LeafAdmitted`, `NodeAdmitted`, `CitationsClosed` and
 `compatible` (the admission rules), and for `Gate.AllowedFamily`. The route
 theorems are about decoded values; the JSON boundary, identity digests and IO
 are tested, not proved, as for the existing routes. The closure+n-ary family is
-accepted by the gate and rejected by the runner until W4 stage 1 lands.
+accepted by the gate and rejected by the runner until W4 stage 1 lands (Python
+and Rust reject it at every checking site with the same diagnostic). `$string`
+literals are available on every family: a literal's description is optional, and
+stage 1 is equality only (no `$string` predicate argument, no quantifier over it).
+The shared P0 families (`conformance/p0.py`) run through Python, Rust and
+`route` with identical verdicts (`tests/test_p0_three_way.py`).
 
 ## Remaining obligations
 

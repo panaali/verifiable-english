@@ -400,7 +400,13 @@ import Iceberg
 #print axioms VE.Route.Background.literals_sat_iff
 #print axioms VE.Route.Background.mem_pairs
 #print axioms VE.Route.Background.mem_sortStrings
+#print axioms VE.Route.Background.orderLiteralPremise_denote
+#print axioms VE.Route.Background.orderLiteralsValid_sound
+#print axioms VE.Route.Background.orderLiterals_sat_iff
 #print axioms VE.Route.Background.order_route_acceptance
+#print axioms VE.Route.Background.order_string_route_acceptance
+#print axioms VE.Route.Background.order_string_route_countermodel
+#print axioms VE.Route.Background.order_string_route_entails_iff
 #print axioms VE.Route.Background.pairs_complete
 #print axioms VE.Route.Gate.classify_complete
 #print axioms VE.Route.Gate.classify_sound

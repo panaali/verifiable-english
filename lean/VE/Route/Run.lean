@@ -12,6 +12,7 @@ checker family:
   receives regenerated Background, then the premises; the certificate binds
   both by meaning id);
 * `dependency-order`: `nodes` → `order`, or the shared cycle diagnostic;
+* `label`: `label` → the canonical label, or `AdmissionError: invalid label`;
 * `admission` (FOL family): `document` → the admitted report.
 
 Every model is validated against Background: a violation is reported as
@@ -46,6 +47,12 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
   let kind ← caseKind j
   if kind == "dependency-order" then
     return ← Wire.runDependencyOrder id j
+  if kind == "label" then
+    -- The label grammar alone (PLAN-EXPAND2 3.6): only canonical labels parse.
+    let s ← stringField j "label"
+    return ← match Admission.parseLabel s with
+      | some l => pure (Wire.ok id [("label", .str l.render)])
+      | none => throw s!"AdmissionError: invalid label {s}"
   match e.family with
   | .closureNary =>
     throw (Gate.unsupported "the closure+n-ary checker is gated until W4 stage 1 lands")

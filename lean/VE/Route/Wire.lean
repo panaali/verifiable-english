@@ -6,10 +6,11 @@ import VE.Closure.Bridge
 
 /-! Wire decoding for the `route` subcommand (`ve.core@0.2`). The envelope is
 decoded by `Gate.decodeEnvelope`; the vocabulary by the family's decoder, which
-for FOL and closure additionally admits the built-in sort `$string` for
-declared literal constants (at most 64) and predicate arguments. `$string` is
-never a quantifiable sort: it is not in the environment's `sorts`, so
-`Formula.check` rejects `∀`/`∃` over it. Background is regenerated from the
+on every family additionally admits the built-in sort `$string` for declared
+literal constants (at most 64; the description is optional, PLAN-EXPAND2 W5).
+Stage 1 is equality only: `$string` is never a predicate argument and never a
+quantifiable sort (it is not in the environment's `sorts`, so `Formula.check`
+rejects `∀`/`∃` over it). Background is regenerated from the
 decoded literals; the wire never supplies it. Identity uses the domain
 `ve-<kind>-v0.2:<sorted profiles>` (PLAN-EXPAND2 rule 3). -/
 namespace VE.Route.Wire
@@ -30,8 +31,17 @@ def RouteVocabulary.modelVocabulary (rv : RouteVocabulary) : VE.Bridge.Vocabular
   { rv.vocabulary with
     sorts := rv.vocabulary.sorts ++ (if rv.literals.isEmpty then [] else [Background.stringSort]) }
 
-/-- The v0 vocabulary rules plus `$string` in constant sorts and predicate
-signatures. -/
+/-- A declared `$string` literal: the sort is required and the description is
+optional (and nonempty when present). -/
+def literalEntry (entry : Json) : Except String Unit := do
+  VE.Bridge.displayFields entry ["sort"] ["description"]
+  if let .ok _ := entry.getObjVal? "description" then VE.Bridge.description entry
+
+def isLiteralEntry (entry : Json) : Bool :=
+  entry.getObjValD "sort" == .str Background.stringSort
+
+/-- The v0 vocabulary rules plus `$string` as the sort of declared literal
+constants. -/
 def decodeVocabulary (v : Json) : Except String RouteVocabulary := do
   exactFields v ["sorts", "predicates", "constants"]
   let sorts ← fields (← v.getObjVal? "sorts")
@@ -60,12 +70,14 @@ def decodeVocabulary (v : Json) : Except String RouteVocabulary := do
       if let .ok words := entry.getObjVal? key then
         VE.Bridge.displayString words
     let ss ← strings (← entry.getObjVal? "arguments")
-    unless (ss.length == 1 || ss.length == 2) && ss.all allowed do
+    unless (ss.length == 1 || ss.length == 2) && ss.all sortNames.contains do
       throw s!"invalid signature: {p}"
     pure (p, ss)
   let cs ← constants.mapM fun (c, entry) => do
-    exactFields entry ["sort", "description"]
-    VE.Bridge.description entry
+    if isLiteralEntry entry then literalEntry entry
+    else
+      exactFields entry ["sort", "description"]
+      VE.Bridge.description entry
     let s ← stringField entry "sort"
     unless allowed s do throw s!"unknown constant sort: {c}"
     pure (c, s)
@@ -75,14 +87,43 @@ def decodeVocabulary (v : Json) : Except String RouteVocabulary := do
   unless result.namesValid do throw "invalid declaration names"
   if h : literals.Nodup then pure ⟨result, literals, h⟩ else throw "duplicate declaration"
 
-/-- The order vocabulary: exactly the numbers2 order decoder, applied to the
-same vocabulary object. `$string` is not available on order@0 in P0. -/
-def decodeOrderVocabulary (v : Json) : Except String VE.Order.Vocabulary :=
-  VE.Order.Wire.decodeEnvironment (Json.mkObj [
+/-- A decoded order vocabulary and its declared `$string` literals. -/
+structure RouteOrderVocabulary where
+  vocabulary : VE.Order.Vocabulary
+  literals : List String
+  nodup : literals.Nodup
+
+/-- Model tables list `$string` as a domain whenever a literal is declared. -/
+def RouteOrderVocabulary.modelVocabulary (rv : RouteOrderVocabulary) : VE.Order.Vocabulary :=
+  { rv.vocabulary with
+    sorts := rv.vocabulary.sorts ++ (if rv.literals.isEmpty then [] else [Background.stringSort]) }
+
+/-- The order vocabulary: the numbers2 order decoder, unchanged, applied to the
+vocabulary without its `$string` literals; each literal is then declared as a
+constant of the user sort `$string`, which is not in `sorts` (so never
+quantified over) and is never a predicate argument. -/
+def decodeOrderVocabulary (v : Json) : Except String RouteOrderVocabulary := do
+  exactFields v ["sorts", "predicates", "constants"]
+  let constants ← fields (← v.getObjVal? "constants")
+  let literalDecls := constants.filter (fun c => isLiteralEntry c.2)
+  for (_, entry) in literalDecls do literalEntry entry
+  let literals := literalDecls.map Prod.fst
+  if literals.length > 64 then throw "ResourceLimit: At most 64 declared $string literals"
+  let others := constants.filter (fun c => !isLiteralEntry c.2)
+  let base ← VE.Order.Wire.decodeEnvironment (Json.mkObj [
     ("language", .str VE.Order.Wire.orderLanguage),
     ("profiles", toJson VE.Order.Wire.orderProfiles),
     ("spec_revision", .str VE.Order.Wire.orderRevision),
-    ("vocabulary", v)])
+    ("vocabulary", Json.mkObj [("sorts", v.getObjValD "sorts"),
+      ("predicates", v.getObjValD "predicates"), ("constants", Json.mkObj others)])])
+  let declared := base.sorts ++ base.predicates.map Prod.fst ++ base.constants.map Prod.fst
+  for name in literals do
+    unless identifier name && !reserved.contains name && !generatedName name do
+      throw s!"invalid or reserved declaration: {name}"
+    if declared.contains name then throw "duplicate declaration"
+  let vocabulary : VE.Order.Vocabulary := { base with
+    constants := base.constants ++ literals.map (fun c => (c, .user Background.stringSort)) }
+  if h : literals.Nodup then pure ⟨vocabulary, literals, h⟩ else throw "duplicate declaration"
 
 /-! ## Identity -/
 
@@ -241,12 +282,21 @@ def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabula
       (background.map VE.Closure.embed ++ ps) c certificate)),
     ("background", toJson background.length)]
 
-/-- Order family: the numbers2 order decoders; Background is empty. -/
-def runOrder (profiles : List String) (environment : Json) (v : VE.Order.Vocabulary) (id kind : String)
+/-- An order model: decoded, structurally admissible, then Background
+(`InvalidModel(literals)` on aliasing literals, never a truth value). -/
+def decodeOrderModel (rv : RouteOrderVocabulary) (j : Json) :
+    Except String (VE.Order.ModelData VE.Order.Wire.Entity) := do
+  let d ← VE.Order.Wire.decodeValidModel rv.modelVocabulary j
+  unless Background.orderLiteralsValid d.toModel rv.literals do throw (invalidModel "literals")
+  pure d
+
+/-- Order family: the numbers2 order decoders; Background is the order form of
+`literals`, regenerated from the declared literals and bound like the others. -/
+def runOrder (profiles : List String) (environment : Json) (rv : RouteOrderVocabulary) (id kind : String)
     (j : Json) : Except String Json := do
-  let E := v.environment
+  let E := rv.vocabulary.environment
   if kind == "evaluate" then
-    let d ← VE.Order.Wire.decodeValidModel v (← j.getObjVal? "model")
+    let d ← decodeOrderModel rv (← j.getObjVal? "model")
     let fs ← VE.Order.Wire.decodeFormulas E (← j.getObjVal? "ast")
     if fs.isEmpty then throw "empty document"
     return ok id [("values", toJson (fs.map (fun a => a.eval d.toModel [])))]
@@ -257,16 +307,17 @@ def runOrder (profiles : List String) (environment : Json) (v : VE.Order.Vocabul
   if ((c :: ps).map VE.Order.Wire.formulaNodes).foldl (· + ·) 0 > 10000 then
     throw "ResourceLimit: AST node count"
   if kind == "countermodel" then
-    let d ← VE.Order.Wire.decodeModel v (← j.getObjVal? "model")
-    unless VE.Order.validModel? v d do throw "model is not semantically admissible"
-    return ok id [("refutes", .bool (VE.Order.checkCountermodel v d ps c))]
+    let d ← decodeOrderModel rv (← j.getObjVal? "model")
+    return ok id [("refutes", .bool (VE.Order.checkCountermodel rv.vocabulary d ps c))]
   unless kind == "certificate" do throw "unknown case kind"
   let certificate ← VE.Order.Wire.decodeCertificate (← j.getObjVal? "certificate")
-  bindingOk profiles environment (← premisesJson.getArr?).toList
+  let background := Background.orderLiterals rv.literals
+  bindingOk profiles environment
+    ((Background.literals rv.literals).map encodeFormula ++ (← premisesJson.getArr?).toList)
     (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
     certificate.conclusion_meaning_id
-  return ok id [("valid", .bool (VE.Order.Tableau.checkCertificate E ([] ++ ps) c certificate)),
-    ("background", toJson (0 : Nat))]
+  return ok id [("valid", .bool (VE.Order.Tableau.checkCertificate E (background ++ ps) c certificate)),
+    ("background", toJson background.length)]
 
 /-- The dependency-order case: nodes `{"name", "mentions"}`; the result is the
 route order or the shared cycle diagnostic. -/
