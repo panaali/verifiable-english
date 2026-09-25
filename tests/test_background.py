@@ -4,7 +4,8 @@ from types import MappingProxyType
 import pytest
 
 from conformance.p0 import environment
-from ve.argument import ArgumentGraph, Claim, Deduction, _checker_build, check_argument
+from ve.argument import (ArgumentGraph, Claim, Deduction, _checker_build,
+                         check_argument, outstanding_obligations)
 from ve.ast import Bottom, Const, Eq, Not, Top
 from ve.background import HOOKS, background, dependency_order, validate_background
 from ve.check import check
@@ -85,6 +86,8 @@ def test_claim_labels_bind_new_graphs_without_moving_default_wire():
     report = check_argument(ArgumentGraph(env, (labelled,), (), "root"))
     assert report.composition["assumptions"][0]["label"] == "bridge:accepts(alice,u1)"
     assert {x["label"] for x in report.composition["assumptions"][1:]} == {"background:literals"}
+    display = outstanding_obligations(ArgumentGraph(env, (labelled,), (), "root"), report)
+    assert display["assumptions"][-1]["label"] == "background:literals"
 
 
 def test_one_dependency_dag():
