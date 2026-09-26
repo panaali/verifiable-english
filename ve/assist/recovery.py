@@ -292,20 +292,19 @@ class RecoveryService:
                     matched_patterns=matched)
         return unit.state
 
-    def reply(self, unit_id, text: str, *, proposer=False):
+    def reply(self, unit_id, text: str):
         unit = self.units[unit_id]
         if unit.state not in {"needs_word", "needs_repair", "reading_review", "exhausted"}:
             raise ValueError("no clarification requested")
         if not text.strip():
             raise ValueError("empty reply")
         unit.replies += 1
-        unit.proposals += int(proposer)
         elapsed = time.monotonic() - unit.started
         if unit.replies > MAX_REPLIES or unit.proposals > MAX_PROPOSALS or elapsed > TASK_SECONDS:
             unit.state, unit.reason = "unresolved", "clarification task cap"
         else:
             unit.state = "analysing"
-        self._event("reply", unit, proposer=proposer)
+        self._event("reply", unit)
         return unit.state
 
     def request_proposer(self, unit_id, proposer: ProposerAdapter):
