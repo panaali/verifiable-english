@@ -1,0 +1,613 @@
+<title>Verifiable English from First Principles</title>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F5F6F8; --surface:#FFFFFF; --sunk:#ECEFF3; --ink:#1A2130; --muted:#586273; --rule:#D5DBE3;
+  --accent:#2C4DA3; --accent-soft:#E3E9F8;
+  --checked:#1B7553; --checked-soft:#DDF1E8;
+  --untrusted:#A55F00; --untrusted-soft:#FBEBD2;
+  --human:#7438A0; --human-soft:#EFE3F7;
+  --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#10141B; --surface:#171C25; --sunk:#1D2330; --ink:#E5E9F0; --muted:#9BA5B5; --rule:#2B3342;
+    --accent:#93AAF2; --accent-soft:#1F2A47;
+    --checked:#5CC79D; --checked-soft:#15352A;
+    --untrusted:#E8AA4C; --untrusted-soft:#3A2A12;
+    --human:#C79BE6; --human-soft:#2F2140;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#10141B; --surface:#171C25; --sunk:#1D2330; --ink:#E5E9F0; --muted:#9BA5B5; --rule:#2B3342;
+  --accent:#93AAF2; --accent-soft:#1F2A47;
+  --checked:#5CC79D; --checked-soft:#15352A;
+  --untrusted:#E8AA4C; --untrusted-soft:#3A2A12;
+  --human:#C79BE6; --human-soft:#2F2140;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.62;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:0 64px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
+main,.panel,.try .out>div{min-width:0}
+@media (min-width:1040px){.layout{grid-template-columns:220px minmax(0,1fr)}}
+header.top{padding-block:48px 28px;border-bottom:1px solid var(--rule);margin-bottom:8px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--serif);font-weight:650;font-size:clamp(2rem,5vw,3.1rem);line-height:1.1;margin:.3em 0 .35em;text-wrap:balance;letter-spacing:-.01em}
+h2{font-family:var(--serif);font-weight:650;font-size:clamp(1.55rem,3.4vw,2.05rem);line-height:1.2;margin:0 0 .5em;text-wrap:balance}
+h3{font-family:var(--serif);font-weight:650;font-size:1.22rem;line-height:1.3;margin:1.8em 0 .45em;text-wrap:balance}
+h4{font-family:var(--sans);font-weight:600;font-size:1rem;margin:1.3em 0 .3em}
+p,li{max-width:68ch}
+.lede{font-size:1.14rem;color:var(--ink);max-width:62ch}
+.meta{color:var(--muted);font-size:.92rem}
+a{color:var(--accent);text-underline-offset:2px}
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+code,.mono{font-family:var(--mono);font-size:.88em}
+code{background:var(--sunk);padding:.08em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{font-family:var(--mono);font-size:13.5px;line-height:1.55;background:var(--sunk);border:1px solid var(--rule);border-radius:6px;padding:14px 16px;overflow-x:auto;margin:1em 0}
+pre code{background:none;padding:0;overflow-wrap:normal}
+/* nav */
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--rule);margin-inline:-16px;padding:8px 16px;overflow-x:auto;white-space:nowrap}
+nav.toc ol{list-style:none;margin:0;padding:0;display:flex;gap:4px}
+nav.toc a{display:block;text-decoration:none;color:var(--muted);font-size:14px;padding:6px 10px;border-radius:5px}
+nav.toc a .n{font-family:var(--mono);font-size:11px;margin-right:6px;opacity:.75}
+nav.toc a:hover{color:var(--ink);background:var(--sunk)}
+nav.toc a.on{color:var(--accent);background:var(--accent-soft)}
+@media (min-width:1040px){
+  nav.toc{top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;margin:0;padding:0;border:0;white-space:normal;overflow:visible}
+  nav.toc ol{flex-direction:column;gap:2px}
+  nav.toc .toc-h{display:block}
+}
+.toc-h{display:none;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px 10px}
+main section{padding-block:40px 8px;border-top:1px solid var(--rule);scroll-margin-top:70px}
+main section:first-child{border-top:0;padding-top:24px}
+.secnum{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.06em;margin-bottom:6px;display:block}
+/* callouts: role-coloured, used sparingly */
+.note{border-left:3px solid var(--rule);padding:4px 0 4px 16px;margin:1.2em 0;color:var(--ink)}
+.note.warn{border-color:var(--untrusted)}
+.note.ok{border-color:var(--checked)}
+.note.human{border-color:var(--human)}
+.note strong:first-child{font-weight:600}
+.term{font-weight:600;color:var(--ink);border-bottom:1px dotted var(--muted)}
+/* figures */
+figure{margin:1.6em 0;padding:0}
+.fig{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:16px;overflow-x:auto;color:var(--ink)}
+.fig svg{display:block;width:100%;height:auto;min-width:var(--diagram-width,760px);max-width:none}
+.fig.compact{max-width:420px;margin-inline:auto}
+.fig.compact svg{min-width:0}
+.fig.compact .sm{font-size:13px}
+.fig.compact .md{font-size:14px}
+.scroll-hint{display:none}
+@media(max-width:900px){.scroll-hint{display:block;font-size:.85rem;margin-top:4px}}
+figcaption{font-size:.9rem;color:var(--muted);margin-top:8px;max-width:72ch}
+svg text{font-family:var(--sans);fill:currentColor}
+svg .mono{font-family:var(--mono)}
+svg .sm{font-size:11px}
+svg .md{font-size:13px}
+svg .lg{font-size:15px;font-weight:600}
+svg .mut{fill:var(--muted)}
+svg .box{fill:var(--surface);stroke:currentColor;stroke-width:1.2}
+svg .sunk{fill:var(--sunk);stroke:var(--rule);stroke-width:1}
+svg .chk{fill:var(--checked-soft);stroke:var(--checked);stroke-width:1.6}
+svg .unt{fill:var(--untrusted-soft);stroke:var(--untrusted);stroke-width:1.6}
+svg .hum{fill:var(--human-soft);stroke:var(--human);stroke-width:1.6}
+svg .acc{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.6}
+svg .ln{stroke:currentColor;stroke-width:1.3;fill:none}
+svg .ln-chk{stroke:var(--checked);stroke-width:1.6;fill:none}
+svg .ln-unt{stroke:var(--untrusted);stroke-width:1.6;fill:none}
+svg .ln-hum{stroke:var(--human);stroke-width:1.6;fill:none}
+svg .dash{stroke-dasharray:5 4}
+svg .t-chk{fill:var(--checked)} svg .t-unt{fill:var(--untrusted)} svg .t-hum{fill:var(--human)} svg .t-acc{fill:var(--accent)}
+svg .head{fill:currentColor}
+svg .head-chk{fill:var(--checked)} svg .head-unt{fill:var(--untrusted)} svg .head-hum{fill:var(--human)}
+/* tables */
+.tbl{overflow-x:auto;margin:1.2em 0}
+table{border-collapse:collapse;width:100%;font-size:.94rem;min-width:520px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--rule)}
+th{font-weight:600;font-size:.82rem;letter-spacing:.03em;color:var(--muted);text-transform:uppercase;background:var(--sunk)}
+td.num{font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:.86rem;white-space:nowrap}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap;line-height:1.6}
+.pill.ok{color:var(--checked)} .pill.warn{color:var(--untrusted)} .pill.hum{color:var(--human)} .pill.neu{color:var(--muted)}
+/* grids */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:16px;margin:1.2em 0}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:14px 16px}
+.panel h4{margin-top:0}
+.panel p{margin:.4em 0}
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.88rem;color:var(--muted);margin:.4em 0 0}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1.6px solid}
+.legend .l-chk::before{background:var(--checked-soft);border-color:var(--checked)}
+.legend .l-unt::before{background:var(--untrusted-soft);border-color:var(--untrusted)}
+.legend .l-hum::before{background:var(--human-soft);border-color:var(--human)}
+.legend .l-acc::before{background:var(--accent-soft);border-color:var(--accent)}
+/* try-it */
+.try{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:16px;margin:1.4em 0}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.seg button{font:inherit;font-size:14px;padding:6px 12px;border-radius:6px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.try .out{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:14px}
+.try .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.verdict{font-weight:600}
+.verdict.ok{color:var(--checked)} .verdict.no{color:var(--untrusted)}
+/* glossary */
+dl.gloss{display:grid;grid-template-columns:1fr;gap:0;margin:1em 0}
+dl.gloss div{padding:12px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:1fr;gap:2px}
+@media (min-width:720px){dl.gloss div{grid-template-columns:220px 1fr;gap:20px}}
+dl.gloss dt{font-weight:600;font-family:var(--serif);font-size:1.05rem}
+dl.gloss dd{margin:0;max-width:66ch}
+ol.steps{padding-left:1.3em}
+ol.steps li{margin:.5em 0}
+.tasks{display:grid;grid-template-columns:1fr;gap:12px;margin:1.2em 0}
+.task{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;display:grid;gap:4px}
+.task .hdr{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;justify-content:space-between}
+.task h4{margin:0}
+.task p{margin:0}
+footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--rule);color:var(--muted);font-size:.88rem}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+
+/* Artifact edition: resilient without scripts, including at phone width. */
+html{scroll-padding-top:80px}
+.wrap{overflow-wrap:anywhere}
+nav.toc{min-width:0;max-width:calc(100% + 32px)}
+.toc a{white-space:nowrap}
+@media(min-width:1040px){.toc a{white-space:normal}}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+summary{cursor:pointer;color:var(--accent);font-weight:600;padding:10px 0}
+details{border-top:1px solid var(--rule);margin:1.2em 0}
+details>div{padding-bottom:12px}
+.skip{position:absolute;left:16px;top:-100px;z-index:20;background:var(--surface);padding:10px 14px}
+.skip:focus{top:12px}
+.prose{font-family:var(--serif);font-size:1.14rem;line-height:1.6;margin:.5em 0}
+.label{font:600 .76rem var(--sans);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.statusline{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:1em 0}
+.flow{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));padding:0;list-style:none}
+.flow li{padding:14px 16px;background:var(--surface);border:1px solid var(--rule);border-radius:8px;min-width:0}
+.flow strong{display:block;color:var(--accent);margin-bottom:4px}
+.tbl table caption{text-align:left;padding-bottom:10px;font-weight:600;color:var(--ink)}
+.sources li{margin:.7em 0}
+.source-note{font-size:.87rem;color:var(--muted)}
+.panel h3:first-child,.task h3{margin-top:0}
+nav.toc a .n{opacity:1}
+table{overflow-wrap:normal}
+thead th{white-space:normal}
+tbody th[scope="row"]{background:none;color:var(--ink);font-size:inherit;text-transform:none;letter-spacing:normal;min-width:150px;line-height:1.5}
+#trust table th:nth-child(2),#trust table td:nth-child(2){min-width:76px;width:76px}
+#expansion table{min-width:740px}
+#expansion th:first-child{width:22%}
+#expansion th:nth-child(2){width:30%}
+@media(max-width:600px){header.top{padding-top:30px}.fig{padding:10px}.panel,.try{padding:12px}main section{padding-top:32px}.wrap{padding-bottom:32px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&amp;family=Public+Sans:ital,wght@0,400;0,600;1,400&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<a class="skip" href="#main">Skip to the tutorial</a>
+<div class="wrap" lang="en">
+<header class="top">
+  <div class="eyebrow">Onboarding guide · updated 26 September 2026</div>
+  <h1>Verifiable English, from first principles</h1>
+  <p class="lede">Write what you mean in ordinary English. Make the assumptions visible. Let a small checker verify what follows.</p>
+  <p>Verifiable English (VE) is a research project building an English language for precise commitments: policies, contracts, procedures, scientific claims and more. Its goal is that an English speaker can <strong>read and write it without training</strong>, while every admitted sentence has one formal reading and every accepted deduction carries checkable evidence.</p>
+  <div class="note ok"><strong>The focus now is expansion.</strong> Since 25 September, new work has focused on making VE express more while preserving its properties. New experiments seeking an oversight benefit are parked. Better authoring and checks of translation fidelity remain part of building the language.</div>
+  <p class="meta">Start with sections 1–4; no logic background is needed. Later sections explain the machinery, evidence, current work and demo. This is a dated snapshot: <strong>merged</strong>, <strong>branch prototype</strong> and <strong>planned</strong> mean different things. Zero-training usability is the goal, not a result already established with people.</p>
+</header>
+
+<div class="layout">
+<nav class="toc" aria-label="Tutorial sections">
+<span class="toc-h">Contents</span>
+<ol>
+<li><a href="#problem"><span class="n">1</span>Why VE exists</a></li>
+<li><a href="#five-minutes"><span class="n">2</span>English first</a></li>
+<li><a href="#vision"><span class="n">3</span>Words and documents</a></li>
+<li><a href="#readings"><span class="n">4</span>Two modes</a></li>
+<li><a href="#architecture"><span class="n">5</span>How checking works</a></li>
+<li><a href="#trust"><span class="n">6</span>Proved, tested, judged</a></li>
+<li><a href="#expansion"><span class="n">7</span>What is being built</a></li>
+<li><a href="#demo"><span class="n">8</span>The web demo</a></li>
+<li><a href="#experiments"><span class="n">9</span>What earlier work taught</a></li>
+<li><a href="#process"><span class="n">10</span>How the project runs</a></li>
+<li><a href="#contribute"><span class="n">11</span>Your first contribution</a></li>
+<li><a href="#glossary"><span class="n">12</span>Glossary and sources</a></li>
+</ol>
+</nav>
+
+<main id="main" tabindex="-1">
+<section id="problem">
+<span class="secnum">SECTION 1</span>
+<h2>Why VE exists</h2>
+<p>Suppose someone gives you a long argument that a software release is safe. Reviewing it mixes several jobs: checking the reasoning, checking the facts it starts from, deciding what “safe” means, and noticing requirements it left out. A fluent argument can make these jobs hard to separate.</p>
+<p>VE separates the deduction from the rest. Consider:</p>
+<div class="panel"><p class="prose">Every reviewed service is safe. The API is reviewed. Therefore the API is safe.</p></div>
+<p>The last sentence follows from the first two. A checker can establish that without knowing anything about software. It cannot establish that a review really happened, that reviews guarantee safety, or that this is the right definition of safety. Those are still questions about the premises and their intended meaning.</p>
+<div class="cols">
+<div class="panel"><h3>Checked deduction</h3><p>Does the conclusion follow from these exact premises, using these exact definitions?</p></div>
+<div class="panel"><h3>Visible residual</h3><p>Which assumptions, open terms, interpretation choices and external sources does the conclusion still depend on?</p></div>
+</div>
+<p>A <span class="term">residual</span> is the work left after checking. It may be difficult or large. The aim is to name and preserve it so that a proof does not make an uncertain foundation look certain.</p>
+<p>This began as work on <span class="term">scalable oversight</span>: how a person or weaker AI can supervise work they cannot reproduce in full. That motivation remains. The immediate task is to expand the language and its writing tools, with guarantees that survive the expansion.</p>
+<div class="note"><strong>Three answers, each honest.</strong> “Follows” comes with a checked proof. “Does not follow” comes with a checked counterexample. “Unknown” means the system could not establish either within its limits. Unknown never counts as success.</div>
+</section>
+
+<section id="five-minutes">
+<span class="secnum">SECTION 2</span>
+<h2>English first: what you read is what you should be able to write</h2>
+<p>The lead principle is <strong>zero-training English, for reading and writing</strong>. An ordinary workflow should need no syntax manual, variable letters, brackets, operators or special name markers. The assistant should resolve ambiguity by asking questions in English. It should not ask the writer to learn a second language.</p>
+<p>The natural-view branch shows concrete progress. These before-and-after pairs come from its checked examples; the longer “before” forms are the older technical display.</p>
+<div class="cols">
+<div class="panel"><div class="label">Before · older fluent view</div><p class="prose">For every service S that is deployed, S is reviewed.</p><div class="label">After · natural view</div><p class="prose">Every deployed service is reviewed.</p></div>
+<div class="panel"><div class="label">Before · older fluent view</div><p class="prose">For every service S that is deployed, there is a person P such that P owns S.</p><div class="label">After · natural view</div><p class="prose">Every deployed service has an owner.</p></div>
+</div>
+<p>The second sentence allows different services to have different owners. It does not say that one person owns them all. The shortening is currently licensed by a particular declared ownership wording and its argument order; it is not a general guess about what “has” means.</p>
+<div class="panel">
+<div class="label">Before · the web example</div>
+<p class="prose">Every reviewed service is safe.<br>Api is reviewed.<br>Api is safe.</p>
+<div class="label">After · one paragraph, with a checked conclusion</div>
+<p class="prose">Every reviewed service is safe. The API is reviewed. Therefore the API is safe.</p>
+</div>
+<p>“The API” is a declared display name for the same object. “Therefore” marks a conclusion: the branch’s argument parser must find a replayable proof from the preceding premises. It cannot quietly turn an unproved conclusion into an assumption. Paragraphs, three-item lists, locally bound relative clauses and a limited “it” reference are also implemented on that branch.</p>
+<h3>How the natural view earns admission</h3>
+<p>The renderer proposes a sentence, then parses the exact displayed text back. It must recover the same structured claim and find exactly one grammar derivation. The whole displayed paragraph is checked too. If a short form fails, the renderer uses an audited explicit English form and gives a reason.</p>
+<div class="note warn"><strong>A prototype with known gaps.</strong> The recorded corpus has 599 natural forms out of 1,219 samples (49.1%); the real-use-case subset has 73 out of 96 (76.0%). The other 620 use explicit forms, often with technical notation. Those are zero-training coverage gaps. Zero accepted wrong AST readings in this corpus is a round-trip result, not proof that people interpret every sentence correctly.</div>
+<p>As of this snapshot, the natural view is on <code>expand/natural-view</code> and incorporated into the separate web-app branch, not merged into integration. One reviewer cleared it; the latest other review requires fixes for colliding display names, a command-line path that loses conclusion roles, and missed pronoun referents. The examples above demonstrate the intended branch behavior, not completion of those fixes.</p>
+<h3>When the tool cannot understand a sentence</h3>
+<p>The zero-training plan calls for English paraphrases, concrete example situations and editable rewrites. If nothing faithfully expresses the intended meaning, that part remains visibly unresolved. Technical fallback may help a developer inspect a problem, but it does not count as successful ordinary-English authoring.</p>
+<p>The plan was revised after review to specify recovery from unsupported input, a deterministic catalogue of ambiguity patterns, alternatives when a model is unavailable, and safer reference resolution. Those are planned mechanisms, not completed behavior. For example, “The API is deployed. Some service is reviewed. It is safe” introduces another possible referent even though only the API has a name. One grammar derivation alone does not settle all the interpretations an English reader might consider.</p>
+</section>
+
+<section id="vision">
+<span class="secnum">SECTION 3</span>
+<h2>Words and whole documents</h2>
+<p>The long-term target is a <span class="term">checked spine</span>: the definitions, claims, obligations, quantities and evidence a document commits to. Explanations, examples and figurative prose stay visible and labelled. A document need not turn every sentence into a theorem.</p>
+<p>The document plan requires every source span to belong to a recorded unit. Unsupported material gets a reason; it is never silently omitted. <strong>Accounting for 100% of the source does not mean formalising or proving 100% of it.</strong></p>
+<h3>Three descriptions replace “judgement call”</h3>
+<div class="tbl" tabindex="0" role="region" aria-label="Three descriptions of a document unit"><table>
+<thead><tr><th scope="col">Question</th><th scope="col">What is recorded</th><th scope="col">Example</th></tr></thead>
+<tbody>
+<tr><th scope="row">What kind of content is this?</th><td>An assertion, definition, obligation, attribution, hedge, question, instruction, example or exposition. Kinds can nest.</td><td>“Alice believes the service is probably safe” is an attribution containing a hedge.</td></tr>
+<tr><th scope="row">How settled is its meaning?</th><td>Fully specified; dependent on a declared context; constrained but open; or not yet formalised, with a reason.</td><td>“Reasonable precautions” is open-textured.</td></tr>
+<tr><th scope="row">What supports it?</th><td>An assumption, proof, observation, calculation, statistical assessment, testimony, adapter output or no support.</td><td>“The API was reviewed” might be supported by an audit record, not a deduction.</td></tr>
+</tbody></table></div>
+<p>This distinction prevents “someone said it” from becoming “it is true”. To use an attributed claim as a premise, the document needs an explicit <span class="term">bridge assumption</span>, such as accepting that source’s statement. A later proof must retain that dependency.</p>
+<h3>Open terms are legitimate vocabulary</h3>
+<p>“Reasonable”, “harmful” and “appropriate” often need judgement when applied to a new case. VE’s design keeps such words as named <span class="term">open predicates</span>: properties whose surrounding logic is exact, but whose application needs a recorded decision.</p>
+<div class="panel"><h3>Example: “reasonable precautions”</h3><p>The document records who decides, any necessary conditions, sufficient conditions where known, factors to consider, pinned examples or precedents, and the jurisdiction and version. A rule can then say that anyone handling a hazard must take reasonable precautions. Applying the term awaits the named decision-maker; the ruling enters as a labelled premise.</p></div>
+<p>Inventing a numerical threshold would not remove the judgement; it would change the rule. Naming a decision-maker does not prove that their decision is correct. The benefit is an explicit, reviewable dependency. The open-term schema is part of the documents workstream, which is still in review.</p>
+<h3>Synonyms without shifting meaning</h3>
+<p>Writers should be able to vary words. The adopted design allows a glossary declaration such as:</p>
+<div class="panel"><p class="prose">In this document, staff, employees and personnel mean the same thing.</p></div>
+<p>These become <span class="term">aliases</span> for one concept, while the display retains the writer’s word choice. Meaning identity is separate from spelling. The definitions work must prove that an alias preserves the old meaning and validate its argument types and direction; cycles and collisions are rejected. This is a planned use of the definitions machinery, not a completed end-to-end synonym dialogue.</p>
+<p>In authoring mode, the proposed interaction is “Does personnel mean staff here, or a different group?” The author confirms. In translation mode, an explicit source definition is recorded with its citation. Synonymy inferred only from context remains an interpretation: keep both same-group and different-group readings where relevant, and disclose which conclusions depend on the choice.</p>
+<p>A pinned Open English WordNet lexicon supplies word classes, morphology and candidate senses to proposal tools. It is advisory. A dictionary entry cannot establish what this author meant or make two groups identical.</p>
+</section>
+
+<section id="readings">
+<span class="secnum">SECTION 4</span>
+<h2>Two modes: authoring and translation</h2>
+<p>When you write a new document, you can say what you meant. When you translate someone else’s document, you cannot silently make that decision for them. VE uses the same <span class="term">reading set</span> in both cases, with different rules for closing it.</p>
+<div class="panel"><div class="label">Ambiguous source · proposed clarification example</div><p class="prose">Every engineer checks a server.</p></div>
+<div class="cols">
+<div class="panel"><h3>Reading A: possibly different servers</h3><p>Each engineer checks at least one server. Alice can check Atlas while Bob checks Beacon; they need not share a server.</p></div>
+<div class="panel"><h3>Reading B: a shared server</h3><p>There is at least one server that every engineer checks. Alice and Bob might both check Atlas.</p></div>
+</div>
+<p>The first situation separates the readings: A holds and B fails. B implies A, so a situation with a shared server does not distinguish them in the reverse direction. The planned IDE must validate example situations and proposed rewrites through the checker and parser. These teaching paraphrases describe the plan; they are not a claim that today’s interface offers this complete interaction.</p>
+<div class="cols">
+<div class="panel"><h3>Authoring</h3><p>The author selects and confirms the intended reading. Rejected alternatives stay in the history. Approval is bound to the meaning and reviewed source; edits invalidate the approval and affected dependent approvals.</p></div>
+<div class="panel"><h3>Translation</h3><p>The source keeps its admitted alternatives. A translator, court or adopter may record an attributed <strong>narrowing</strong>, with reasons and citations. That creates a separate interpretation record; it does not erase the source’s alternatives.</p></div>
+</div>
+<p>Mode belongs to each unit, not necessarily the whole document. You might author a policy’s new clause while translating an older quoted clause. A reading set means <strong>“readings considered so far”</strong>: versioned, open to challenge and extension, never a promise to have enumerated every possible English interpretation.</p>
+<h3>What a conclusion can say</h3>
+<div class="tbl" tabindex="0" role="region" aria-label="Verdicts over reading sets"><table>
+<thead><tr><th scope="col">Report</th><th scope="col">Evidence required</th></tr></thead>
+<tbody>
+<tr><th scope="row">All readings</th><td>A checked proof covering every admitted complete choice.</td></tr>
+<tr><th scope="row">Some readings</th><td>A proof for a named choice and a checked countermodel for another.</td></tr>
+<tr><th scope="row">No readings</th><td>Checked countermodels showing non-entailment under every choice. This means the conclusion is not established by any choice, not that it is false in every possible world.</td></tr>
+<tr><th scope="row">Unknown</th><td>The evidence or supported route is insufficient, or a budget is exhausted.</td></tr>
+</tbody></table></div>
+<p>A reading choice stays the same throughout an argument. Citing a result imports its interpretation choices and assumptions; incompatible choices cannot be combined. Expanding a set makes affected old results stale. Translator probabilities are removable annotations outside checking; deleting them must not change a verdict.</p>
+<details><summary>How the plan avoids unnecessary enumeration</summary><div><p>For assertion readings with identical background premises, the checker can prove “all” from a disjunction of each unit’s alternatives. A single shared countermodel can establish “none” if it satisfies every reading and refutes the conclusion. These shortcuts do not apply when a reading changes definitions, obligations or other background conditions. The plan then checks complete choices separately, up to 64; beyond that it reports unknown. The current documents branch remains incomplete, including support for non-assertion reading routes.</p></div></details>
+<h3>Corpus priors: an advisor on the backlog</h3>
+<p>A converged design proposes transparent corpus counts beside reading alternatives. It would start with whether a prepositional phrase attaches to a noun or a verb, using a pinned annotated English corpus and a published matching method. A note would show the actual counts, document count and examples, with abstention when support is sparse or unsuitable.</p>
+<p>This is a <strong>backlog research adjunct</strong>, triggered after reading sets by at least three consequential attachment ambiguities in a translated pilot. It needs calibration before IDE use. The annotation must never remove, preselect or reorder readings, create a synonym alias, or affect certification. Corpus frequency is not a probability that this author meant a particular reading.</p>
+</section>
+
+<section id="architecture">
+<span class="secnum">SECTION 5</span>
+<h2>How checking works</h2>
+<ol class="flow" aria-label="Checking pipeline">
+<li><strong>1. English and vocabulary</strong>State the claims and declare what the words refer to.</li>
+<li><strong>2. Exact meaning</strong>Parse the text into structured claims with versioned identities.</li>
+<li><strong>3. Untrusted search</strong>Look for a proof or a counterexample within a budget.</li>
+<li><strong>4. Independent checking</strong>Replay the evidence and report the remaining dependencies.</li>
+</ol>
+<h3 id="logic">A small logic primer</h3>
+<p>A <span class="term">sort</span> is a kind of thing, such as a person or service. A constant names a particular thing, such as the API. A <span class="term">predicate</span> states a property or relation: a service is reviewed; a person owns a service. Words such as “every”, “some”, “and”, “not” and “if” combine these into claims.</p>
+<p>A <span class="term">model</span> is a possible situation: which objects exist, and which properties and relations hold. Premises <span class="term">entail</span> a conclusion if the conclusion holds in every allowed model where the premises hold. Evaluating one model only tells you about that situation.</p>
+<h3>Three tiny arguments</h3>
+<p>These are worked illustrations, not a checker running inside this page. Open each to inspect the reason.</p>
+<details open><summary>Every cat is an animal. Tom is an animal. Must Tom be a cat?</summary><div><p><strong>No: it does not follow.</strong> Tom could be an animal that is not a cat. That possible situation makes both premises true and the conclusion false. It is a <span class="term">countermodel</span>. It does not tell us whether the real Tom is a cat.</p></div></details>
+<details><summary>Every cat is an animal. Tom is a cat. Must Tom be an animal?</summary><div><p><strong>Yes: it follows.</strong> Apply the first sentence to Tom, then use the second. A proof certificate records the steps so the checker can replay them without rediscovering the proof.</p></div></details>
+<details><summary>Every service is reviewed. Must some service be reviewed?</summary><div><p><strong>No: there might be no services.</strong> VE allows empty sorts. “Every service is reviewed” is true when there are none; “some service is reviewed” is false. If you need existence, state it. A declared named service would also supply an inhabitant.</p></div></details>
+<figure>
+<div class="fig" tabindex="0" role="region" aria-label="Scrollable diagram">
+<svg style="--diagram-width:640px" viewBox="0 0 640 230" role="img" aria-label="Countermodel for the bad cat argument: a world where the animal set contains Tom and Felix, the cat set contains only Felix, so every cat is an animal and Tom is an animal but Tom is not a cat.">
+  <rect x="10" y="10" width="360" height="210" rx="10" class="sunk"/>
+  <text x="26" y="32" class="sm mut">sort pet = { Felix, Tom }</text>
+  <ellipse cx="190" cy="128" rx="160" ry="78" class="acc"/>
+  <text x="190" y="72" text-anchor="middle" class="md t-acc">animal</text>
+  <ellipse cx="130" cy="140" rx="70" ry="44" class="chk"/>
+  <text x="130" y="116" text-anchor="middle" class="md t-chk">cat</text>
+  <circle cx="130" cy="150" r="5" class="head"/>
+  <text x="130" y="170" text-anchor="middle" class="md">Felix</text>
+  <circle cx="275" cy="140" r="5" class="head"/>
+  <text x="275" y="162" text-anchor="middle" class="md">Tom (a dog)</text>
+  <text x="392" y="60" class="md">Premise 1: every cat is an animal</text>
+  <text x="392" y="80" class="md t-chk">true: cat sits inside animal</text>
+  <text x="392" y="112" class="md">Premise 2: Tom is an animal</text>
+  <text x="392" y="132" class="md t-chk">true</text>
+  <text x="392" y="164" class="md">Conclusion: Tom is a cat</text>
+  <text x="392" y="184" class="md t-unt">false: Tom is outside cat</text>
+</svg>
+</div>
+<figcaption>Figure 1. A countermodel is a concrete, finite world. Checking it only requires evaluating each claim in it, which is mechanical. Felix is optional; the smallest countermodel has Tom alone and no cats.<span class="scroll-hint">On narrow screens, scroll the diagram sideways to read every label.</span></figcaption>
+</figure>
+<p>Finding a proof can be hard. A <span class="term">proof certificate</span> records which rule applies at each step, making replay much simpler than search. VE’s tableau checker reasons by assuming the premises and a false conclusion, then checking that every resulting branch reaches a contradiction. Other supported profiles add specialised certificate rules.</p>
+<p><span class="term">Soundness</span> means that an accepted certificate establishes the deduction. It does not promise that search finds every valid proof within its budget. General first-order entailment is undecidable; finite countermodel search can also miss counterexamples that require a larger or infinite world. Exhaustion therefore stays unknown.</p>
+<h3>Identities keep meaning fixed</h3>
+<p>The <code>environment_id</code> identifies the declared vocabulary and semantic context. A <code>meaning_id</code> identifies the canonical structure of a claim under that environment. Changing a definition or profile cannot silently reuse the old semantic identity. Presentation-only changes, such as a validated display name, can preserve it.</p>
+<p>Identical meanings can have different approved spellings, and different structures can sometimes be logically equivalent. VE’s comparison tool tries to prove equivalence in both directions or find a distinguishing countermodel. If it cannot, it says unknown. Hashes bind the chosen formal objects; they cannot establish that those objects capture the writer’s intent.</p>
+<h3>Claims compose, and assumptions travel with them</h3>
+<p>A <span class="term">claim graph</span> joins deductions together. Each edge has evidence; each unproved starting claim remains an assumption. A result is reported with its dependencies. The new setup contracts also preserve labels for source attribution, background premises and interpretation choices.</p>
+<figure>
+<div class="fig" tabindex="0" role="region" aria-label="Scrollable diagram">
+<svg style="--diagram-width:620px" viewBox="0 0 620 270" role="img" aria-label="Toy claim graph: release is allowed follows from service reviewed and reviewed implies release allowed. Those claims depend on audit and policy assumptions shown as four dashed leaves.">
+  <defs><marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-chk"/></marker></defs>
+  <rect x="200" y="12" width="220" height="44" rx="6" class="acc"/>
+  <text x="310" y="39" text-anchor="middle" class="md">C: release is allowed</text>
+  <rect x="40" y="108" width="230" height="44" rx="6" class="box"/>
+  <text x="155" y="135" text-anchor="middle" class="md">B1: service is reviewed</text>
+  <rect x="350" y="108" width="230" height="44" rx="6" class="box"/>
+  <text x="465" y="135" text-anchor="middle" class="md">B2: reviewed implies release allowed</text>
+  <line x1="155" y1="108" x2="270" y2="60" class="ln-chk" marker-end="url(#a5)"/>
+  <line x1="465" y1="108" x2="350" y2="60" class="ln-chk" marker-end="url(#a5)"/>
+  <text x="310" y="88" text-anchor="middle" class="sm t-chk">✓ certificate</text>
+  <rect x="10" y="206" width="140" height="44" rx="6" class="hum dash"/>
+  <text x="80" y="226" text-anchor="middle" class="sm">L1: audit complete</text>
+  <text x="80" y="241" text-anchor="middle" class="sm">for this service</text>
+  <rect x="164" y="206" width="140" height="44" rx="6" class="hum dash"/>
+  <text x="234" y="226" text-anchor="middle" class="sm">L2: audit complete</text>
+  <text x="234" y="241" text-anchor="middle" class="sm">implies reviewed</text>
+  <rect x="318" y="206" width="140" height="44" rx="6" class="hum dash"/>
+  <text x="388" y="233" text-anchor="middle" class="sm">L3: policy signed</text>
+  <rect x="472" y="206" width="140" height="44" rx="6" class="hum dash"/>
+  <text x="542" y="226" text-anchor="middle" class="sm">L4: signed policy</text>
+  <text x="542" y="241" text-anchor="middle" class="sm">implies rule B2</text>
+  <line x1="80" y1="206" x2="130" y2="156" class="ln-chk" marker-end="url(#a5)"/>
+  <line x1="234" y1="206" x2="180" y2="156" class="ln-chk" marker-end="url(#a5)"/>
+  <line x1="388" y1="206" x2="440" y2="156" class="ln-chk" marker-end="url(#a5)"/>
+  <line x1="542" y1="206" x2="490" y2="156" class="ln-chk" marker-end="url(#a5)"/>
+</svg>
+</div>
+<figcaption>Figure 2. An illustrative service-release graph. From L1 and L2 derive B1; from L3 and L4 derive B2; together B1 and B2 imply C. Green edges are checked. Dashed leaves still need review. A mandatory-proof protocol accepts only leaves in its reviewed foundations; merely drawing a checked graph is not enough.<span class="scroll-hint">On narrow screens, scroll the diagram sideways to read every label.</span></figcaption>
+</figure>
+<h3>Expand the language without silently changing its logic</h3>
+<div class="note ok"><strong>Elaborate by default; extend only through declared, verified profiles.</strong> This is the converged rule adopted after the planning debate.</div>
+<p><span class="term">Elaboration</span> means translating a convenient new construction into an existing checked language. It needs a Lean proof that the translation preserves independently specified meaning, including the correspondence between possible models. A <span class="term">profile</span> is a named, versioned package of supported semantics and checking rules.</p>
+<p>A new profile needs a concrete document whose intended inference cannot be handled faithfully or within the existing budget. Before admission, it needs explicit semantics, sound certificate checking, valid countermodels, safe composition with other profiles, and a proof that old claims keep their meanings and consequences. Existing identities, bytes, certificates and theorem statements stay frozen. Tests across Python, Rust and Lean supplement those proofs.</p>
+<p>A separate checker’s result can enter a deduction only through a verified bridge preserving its assumptions and kind. Likewise, a default-based conclusion must remain a conditional result about a fixed, recorded rule set; adding unrelated material cannot silently retract a certified edge. Truth in the world, interpretation and open-term decisions remain outside deductive certification.</p>
+</section>
+
+<section id="trust">
+<span class="secnum">SECTION 6</span>
+<h2>What is proved, tested and judged</h2>
+<p><span class="term">Lean</span> is a programming language and proof assistant whose kernel checks mathematical proofs. VE has reference semantics and checker soundness proofs in Lean. The practical Python implementation and Rust evaluation/search paths are tested against that reference. They are not thereby proved equivalent to it.</p>
+<div class="cols">
+<div class="panel"><h3>Proved in the reference</h3><p>Deductive certificate soundness; finite evaluation and countermodel results under their stated validity conditions; the base strict parser/printer round trip; graph composition; reachability and closure induction; order checking; and the new layer, background and labelled-admission contracts.</p></div>
+<div class="panel"><h3>Tested in implementations</h3><p>Python/Rust/Lean agreement on supported cases, rejection of forged certificates, English parsing and rendering, identity and wire handling, and the natural-view corpus. Tested agreement is evidence over the tested inputs.</p></div>
+<div class="panel"><h3>Still reviewed or measured</h3><p>Premise truth, fidelity to source or intent, applications of open terms, completeness of requirements, the suitability of a model, and whether people can read and write the language without training.</p></div>
+</div>
+<h3>The latest audit counts, with their scope</h3>
+<div class="tbl" tabindex="0" role="region" aria-label="Dated Lean theorem audit counts"><table>
+<caption>Named theorem declarations, including helper lemmas—not independent features</caption>
+<thead><tr><th scope="col">Snapshot</th><th scope="col">Count</th><th scope="col">What it establishes about status</th></tr></thead>
+<tbody>
+<tr><th scope="row">Numbers round 2, final recheck, 25 September</th><td class="num">311</td><td>Audited before merge. Grammar and boundary fixes passed recheck.</td></tr>
+<tr><th scope="row">Integration after setup contracts, 26 September</th><td class="num">387</td><td><strong>Current merged baseline.</strong> Re-run for this tutorial: 70 Lean source files, all 387 declarations audited.</td></tr>
+<tr><th scope="row">Documents branch review</th><td class="num">388</td><td>Includes the new reading-set theorem. Wrapper defects still prevented merge.</td></tr>
+<tr><th scope="row">Relations branch, latest completed fix report</th><td class="num">495</td><td>Up from 493 at first review. A separate branch total; final review and acceptance work remain.</td></tr>
+</tbody></table></div>
+<p>These totals overlap; do not add them. The older “11 headline results” describes the original core’s inventory, not the whole current project. An audit checks that every named theorem is recorded and that its proof dependencies stay within the allowed standard Lean principles: <code>propext</code>, <code>Classical.choice</code> and <code>Quot.sound</code>. It also rejects proof holes and forbidden source constructs. Statement review still has to ask whether each theorem proves the right thing.</p>
+<h3>What the tests do—and do not—say</h3>
+<p>The recorded integration run after the setup merge had <strong>1,701 passing tests</strong>. The English-surface baseline separately reports <strong>85,000 structured-claim round trips</strong> and <strong>12,750 all-derivations texts</strong>. Those are different cohorts, not 85,000 independent proofs of English unambiguity.</p>
+<p>The merged admission policy checks all grammar derivations for each accepted English input. Ambiguity or an exhausted checking budget rejects admission. That is stronger than relying on a test corpus, but the parser implementation and its correspondence to ordinary English still need scrutiny. The full Lean proof of the writable English surface is deferred until the grammar settles. The order parser’s round-trip theorem is also not complete.</p>
+<div class="note warn"><strong>Use precise assurance language.</strong> “The Lean reference checker is proved sound” is accurate within its stated semantics. “The whole VE system is formally verified” is not. Wire-format correspondence, hashing, Python refinement, compiler/runtime behavior and human interpretation remain outside the proved boundary. Some executable model-validity and admission results are proved; that does not verify the entire input and output path.</div>
+<p>Inconsistent premises can prove anything. The expansion contracts therefore require separate reports for a satisfying model, proved inconsistency, or unknown consistency, and mark deductions from inconsistent premises as <span class="term">vacuous</span>. A proof badge alone is not enough. The demo’s current limitation here is described next to its instructions.</p>
+</section>
+
+<section id="expansion">
+<span class="secnum">SECTION 7</span>
+<h2>Round two: what is being built</h2>
+<p>The adopted third revision of the expansion plan starts with shared contracts, then adds whole documents, reusable definitions, richer relations, policy rules and quantities. Each addition must keep exact meaning, replayable evidence, valid countermodels and honest unknowns. Three document pilots—a law excerpt, policy principles and a news article—are to be remeasured after merges, with omissions and remaining assumptions visible.</p>
+<p>The labels below describe the 26 September source snapshot, not release promises. Workstream codes appear only to help you find their specifications.</p>
+<div class="tbl" tabindex="0" role="region" aria-label="Expansion workstreams and actual status"><table>
+<thead><tr><th scope="col">Work</th><th scope="col">Purpose</th><th scope="col">Status at this snapshot</th></tr></thead>
+<tbody>
+<tr><th scope="row">Numbers round 2</th><td>Export the arithmetic grammar; add Rust order parsing/evaluation and a Lean order parser, with matching input limits.</td><td><span class="pill ok">merged</span> Unbounded integer <em>values</em> exist; quantification over all integers is still rejected. Closure plus order remains unsupported. A full order parser round-trip proof remains outstanding.</td></tr>
+<tr><th scope="row">Setup contracts (P0)</th><td>Shared interfaces for layers, background premises, model validity, profile gates, ambiguity checks, labels, identities and vacuity.</td><td><span class="pill ok">merged</span> Integration commit <code>3db1def</code>; green tag <code>ve-green-p0</code>. These are foundations, not completion of every consumer feature.</td></tr>
+<tr><th scope="row">Documents (W2)</th><td>Account for all source spans; record content kinds, open terms, reading sets, narrowings and dependencies.</td><td><span class="pill warn">in review / fixes</span> Branch implementation and reading theorem exist. Latest recheck still finds ways to bypass active readings and inconsistent treatment of premises. Complete pilots and independent fidelity evidence remain deferred.</td></tr>
+<tr><th scope="row">Definitions and citations (W3)</th><td>Name a concept once; reuse proved lemmas without losing their assumptions. Supplies the route for glossary aliases.</td><td><span class="pill warn">in development</span> Python support and some Lean work exist; proof, admission and conformance completion is continuing. Do not treat synonyms or cross-profile citation as shipped.</td></tr>
+<tr><th scope="row">Relations with more arguments (W4, stage 1)</th><td>Represent “Alice sends the report to Bob” as a relation with three participants; support up to six positions on a new route.</td><td><span class="pill warn">in review / fixes</span> Lean/Python/Rust branch exists. Latest fix report: 495 audited theorems and 1,724 passing tests. Corpus acceptance and final review remain open; not merged.</td></tr>
+<tr><th scope="row">Norms (W1)</th><td>Obligations, prohibitions, permissions, named exceptions, priorities and conflict witnesses.</td><td><span class="pill warn">building</span> Revised semantics specification cleared review; Lean and Python/Rust work launched. No completed norms merge is recorded.</td></tr>
+<tr><th scope="row">Policy data (W5, stage 1)</th><td>Attributes, equality of declared strings, set membership conventions and reproducible external string checks.</td><td><span class="pill warn">building</span> Implementation launched. Full policy-adapter acceptance depends jointly on the norms and data work; richer string operations are not proved by storing their output.</td></tr>
+<tr><th scope="row">Time and counting (W6)</th><td>Dates, scaled decimals, units, deadlines, bounded traces and small counting expressions.</td><td><span class="pill neu">planned</span> Requires reviewed unit conventions and usable numeric routes. Integer-time relations with three or more arguments are deferred to the combined-checker stage.</td></tr>
+<tr><th scope="row">English proof and coverage (W7)</th><td>Enforce per-input ambiguity checks; exercise mixed constructions; prove full English parsing/rendering properties.</td><td><span class="pill neu">partly built / proof deferred</span> P0 admission checks are merged; natural-view work is separate. The full Lean surface theorem waits for two weeks without wording changes after the relevant features merge.</td></tr>
+<tr><th scope="row">Authoring gates (W8)</th><td>Expose each new construct through English, with paraphrases, checked situations, rejected readings and approval records.</td><td><span class="pill neu">standing plan</span> Existing assist tools and the demo are starting points. No completed set of round-two per-construct fidelity gates is reported.</td></tr>
+</tbody></table></div>
+<h3>Examples of the limits the plan makes explicit</h3>
+<p><strong>Rules with exceptions.</strong> A policy might permit access unless a named prohibition applies. VE plans static, ordered exception structures and checks the completed outcomes. If a policy requires an action but denies permission for it by default, that is a conflict even if no explicit prohibition was selected. A conflict-free verdict needs a proof; merely failing to find a conflict is not enough outside a separately proved bounded fragment.</p>
+<p><strong>Numbers with meaning.</strong> The planned quantity layer represents 3.75% by a scaled integer plus a unit tag. It must not confuse that with a money amount encoded by the same integer. Dates and deadline endpoints need stated conventions. General real arithmetic and unit conversions are not delivered by this representation.</p>
+<p><strong>Counting within a bound.</strong> Planned counting sugar expands “at least” up to eight witnesses, and “exactly” or “at most” up to seven. “16 of the 18 policymakers” remains outside those bounds. Turning a number into an opaque predicate would not count as checking its arithmetic meaning.</p>
+<p><strong>Authoring before offering.</strong> The planned gate seals 20 sentences per construct before tuning, requires at least 80% faithful authoring and zero certified-but-unfaithful load-bearing nodes, and separately checks 20 rendered witnesses. A failing construct stays available only through technical forms. Model-based audits are proxy evidence; human readability remains unmeasured.</p>
+<p>The revised zero-training plan ties these streams together: one readable and writable surface, an English clarification loop, vocabulary dialogue, persistent approval history and measured coverage on whole documents. It now specifies recovery and deterministic alternatives after both reviewers requested changes; recheck and implementation remain ahead. New presentation versions must preserve old rendering and semantic identities. Its proposed coverage and completion percentages are pilot targets, not demonstrated usability rates.</p>
+</section>
+
+<section id="demo">
+<span class="secnum">SECTION 8</span>
+<h2>Try the web writing desk</h2>
+<p>A separate branch, <code>expand/webapp</code>, provides an authenticated web app with four curated examples, a writing desk, natural English, an advanced strict inspector and small example worlds. The recorded VM deployment uses HTTPS, with live assistance enabled after a restart fix. It is a private demo, not a public service linked from this page.</p>
+<ol class="steps">
+<li><strong>Start in Learn.</strong> Choose a curated example. Read its natural view and notice any “explicit form” badges. Those badges identify readability gaps.</li>
+<li><strong>Separate assumptions from the conclusion.</strong> Replay a deduction, or inspect a checked world where the assumptions hold and the conclusion fails. Try the reviewed-service example from section 2.</li>
+<li><strong>Edit in the writing desk.</strong> Check the consequence with the on-screen control or Ctrl/Command+Enter. Strict source and vocabulary/world data remain available under advanced disclosures.</li>
+<li><strong>Use assistance only when wanted.</strong> If configured, a click requests candidate readings for one sentence. Nothing calls a model while you type. The gallery and checker do not call models.</li>
+</ol>
+<p>The default assistance allowance is three calls per rolling minute and 30 per UTC day, shared across sessions. Suggestions require explicit review and acceptance. The initial vocabulary comes from the chosen example; this is not yet unrestricted English authoring.</p>
+<div class="note warn"><strong>What “Certified” means here.</strong> The experimental <em>Python</em> checker replayed the exact deduction. The app does not run Lean and does not perform a separate premise-consistency audit. A finite-world evaluation is not an entailment proof or evidence about the real world. Unknown is not success.</div>
+<p>Accepting a candidate is a local drafting action, not an approval in a persistent audited authoring ledger. Drafts live in the current tab; reloading loses them, and switching examples replaces them. The app’s JSON draft export preserves a draft, but its explanatory provenance is not a signed authorship certificate. The zero-training plan must supply the persistent, replayable workflow.</p>
+<p class="source-note">Setup instructions: <code>git show expand/webapp:webapp/README.md</code>. The README’s original fixed-CLI setup is superseded by the app-only Controls fix at <code>37494ac</code>; the recorded batch-two natural-view merge is <code>34f8fcb</code>. No live assistance was invoked while updating this tutorial.</p>
+</section>
+
+<section id="experiments">
+<span class="secnum">SECTION 9</span>
+<h2>What earlier work taught</h2>
+<p>The expansion focus does not erase earlier findings. They explain why the project treats formalisation and readable authoring as central engineering problems. The table is historical evidence, not a queue of new benefit experiments. Intervals below are 95% intervals from the original analyses; they do not remove the stated design limitations. A percentage point measures a difference between percentages.</p>
+<div class="tbl" tabindex="0" role="region" aria-label="Selected historical findings"><table>
+<thead><tr><th scope="col">Question</th><th scope="col">Finding</th><th scope="col">Lesson and limit</th></tr></thead>
+<tbody>
+<tr><th scope="row">Does English help a capable model judge?</th><td>Rendering study E1: Qwen2.5-32B false approval was 29.3% with VE and 29.6% with symbolic logic.</td><td>No demonstrated benefit from English wording for that judge. Human benefit remains unmeasured.</td></tr>
+<tr><th scope="row">Does checker feedback help?</th><td>Countermodel study E4: a 14B judge’s false approval fell by 11.7 percentage points under post hoc lenient parsing; interval −23.1 to −0.2 points.</td><td>The arm displayed the finding defining the answer. This measured uptake, not demonstrated understanding of countermodels.</td></tr>
+<tr><th scope="row">Can checker-looking text mislead?</th><td>Deference pilot P1: forged checker styling and identity fields increased error by 14.17 percentage points versus a matched plain assertion; interval 6.67 to 22.50 points.</td><td>Exploratory Qwen result. Extra length and hashes remain confounds. Pushback resistance and a provenance advantage were not established.</td></tr>
+<tr><th scope="row">Can models formalise real policies?</th><td>Policy pilot P3: 40/40 faithful after repair, at 1.47 times the tokens and 4.3 times the time; 6/12 universal properties certified.</td><td>Feasibility with repair and cost, not general effortless authoring. Sampled checks caught only 66% of seeded mistranslations.</td></tr>
+<tr><th scope="row">Can a model write VE in one shot?</th><td>Shifting-definitions feasibility pilot P5: 0/12 successes with the English surface and 0/12 with a structured schema.</td><td>The scored run was not bought. This motivates an interactive authoring and repair loop.</td></tr>
+<tr><th scope="row">How much of an argument is deduction?</th><td>Flaw survey P2: one rater classified 35% of 228 flaws as invalid steps; interval 29–41%.</td><td>A checker addresses a limited part of the problem. About 30% of labels were marked unsure; a single-rater estimate is not a universal rate.</td></tr>
+</tbody></table></div>
+<p>The later authoring-audit investigation is equally relevant: 33 of 34 pass-to-fail changes reflected real omissions or waived requirements; one was overly strict. A checked graph can still formalise too little. The expansion’s source accounting and held-out fidelity gates target that failure.</p>
+<h3 id="crypto">Keep the useful asymmetry: evidence can be easier to check than to find</h3>
+<p>Suppose an account cannot reach a secret through a network of access grants. A certificate can list a set containing the account but excluding the secret, and show that every grant from inside the set stays inside it. Any path stays inside too. This is a <span class="term">separating certificate</span>; the preserved property is an <span class="term">invariant</span>.</p>
+<div class="panel"><p>Account A can reach its team; the team can reach a report. The set containing A, the team and the report is closed under those grants and excludes the secret. Add a grant from the report to the secret, and the certificate fails.</p></div>
+<p>VE’s Lean-proved closure-induction rule supports this reasoning. It still assumes the declared grant graph is complete. Ordinary graph-search software is also a strong baseline; a certificate benefit is not automatically a benefit of English or of VE.</p>
+<h3 id="obfuscation">Mandatory proof and its boundary</h3>
+<p>Under a mandatory-proof rule, a claim is accepted only if it has a checked derivation from reviewed foundations. An arguer cannot smuggle in a false intermediate claim merely because it makes later deductions work. If no affordable proof is available, the claim stays unresolved. False foundations, a mistranslation or omitted requirements remain possible failures.</p>
+<p>For uncertain empirical claims, the proposed evidence layer would attach source records, reproducible calculations and defensible uncertainty bounds. It remains later work. Checking a calculation does not validate its data or justify an independence assumption.</p>
+<h3 id="frontier">Protocol directions remain research</h3>
+<p>A <span class="term">proof-carrying action</span> would bind a checked policy result to the exact tool call and relevant state before execution. Authentication would prevent an agent from forging the checker’s verdict; it would not establish premise truth. These are research directions, not features of the writing desk.</p>
+<p>The old “next studies” queue is superseded. The pushback study as specified was stopped after formal-item gates showed no flips at either tested pressure level. New benefit experiments are parked. Existing offline work was allowed to finish a pass, and the long-policy leakage audit later aborted without a result. This page makes no new experiment efficacy claim.</p>
+</section>
+
+<section id="process">
+<span class="secnum">SECTION 10</span>
+<h2>How the project runs now</h2>
+<p>The orchestrator is the <span class="term">directly responsible individual</span> (DRI): it decides the next step, assigns work, integrates it and reports briefly. The human lead sets direction and acts as an occasional adviser. Decisions and state live in files so work can resume after interruptions.</p>
+<div class="cols">
+<div class="panel"><h3>Implementation</h3><p>GPT-6 Sol handles most Python, Rust, interface and test work, including simpler Lean tasks. Claude Opus 5.5 handles the hardest Lean proofs. Each worker uses its own Git worktree.</p></div>
+<div class="panel"><h3>Planning and review</h3><p>GPT-6 Astra and Claude Fable 5.1 review and plan at extra-high reasoning effort. Plans get both reviews; implementation gets review across model families and a narrow recheck after fixes.</p></div>
+</div>
+<ol class="steps">
+<li><strong>Plan against explicit contracts.</strong> Agree on semantics, proof obligations, ownership and acceptance evidence before building.</li>
+<li><strong>Fix concrete defects.</strong> A reproducible bug from either reviewer gets a fix and recheck.</li>
+<li><strong>Resolve real disagreements by convergence.</strong> Reviewers exchange their full written rounds through shared files, without an intermediary summarising their positions. They repeat until both record convergence; if they cannot, the playbook says to lean toward Fable.</li>
+<li><strong>Integrate and verify.</strong> Run the full test suite, Lean build and theorem audit after merges, alongside the required conformance and feature checks. Tag a green integration state.</li>
+<li><strong>Continue from completion events.</strong> Every launched worker needs a wake-up mechanism. The orchestrator reads the result and starts the next authorised step rather than leaving completed work unattended.</li>
+</ol>
+<h3>Usage and machine limits are part of the workflow</h3>
+<p>Usage guards must keep every session and weekly pool below 90%. Heavy Claude workers start only below 40% of the five-hour allowance, leaving room for the orchestrator. Reset times guide scheduling; capacity is not permission to start new benefit experiments. On the current eight-CPU VM, the playbook recommends roughly five or six concurrent workers and reducing concurrency when load threatens timed jobs.</p>
+<p>The VM should be safe to resize at any time. Workers commit often; a checkpoint process snapshots uncommitted work about every 20 minutes, writes an in-flight relaunch list and records safe/unsafe status. Non-resumable work must be registered. The aim is resumable long jobs, not assuming that a snapshot can rescue every in-flight computation.</p>
+<p>Local commits preserve progress. The current playbook says not to push. Historical experiments retain their preregistrations, amendments and corrections; a changed analysis is recorded rather than silently rewritten.</p>
+</section>
+
+<section id="contribute">
+<span class="secnum">SECTION 11</span>
+<h2>Your first contribution</h2>
+<p>Begin with a short text you care about. Identify its commitments, assumptions, ambiguous readings and unsupported parts. A useful contribution is often a precise gap with a concrete example, rather than a larger feature or a new benchmark.</p>
+<div class="tasks">
+<div class="task"><h3>Try to preserve a paragraph</h3><p>On the natural-view branch, compare source, displayed prose and parsed meaning. Change a name, negation, pronoun or conclusion marker. Report any lost role or changed scope, including cases a test corpus misses.</p></div>
+<div class="task"><h3>Account for every sentence</h3><p>Follow the document format on its branch. Mark each span’s kind, meaning status and support. Keep unclear and unformalised material visible. Report residual counts and fidelity disagreements separately from coverage.</p></div>
+<div class="task"><h3>Check a feature boundary</h3><p>Compare the new feature’s advertised profile with its actual parser, model validator and evidence route. Unsupported combinations should reject clearly; exhausted searches should never become positive verdicts.</p></div>
+<div class="task"><h3>Make a witness readable</h3><p>Turn a checked countermodel into a small situation using the document’s own names and units. Verify that it still describes the same model and that a reader can locate the failed conclusion.</p></div>
+</div>
+<h3>A local starting workflow</h3>
+<p>These commands use deterministic tools, not models. Run them from the integration checkout. They build the reference, audit the proofs and reproduce the empty-service countermodel. A full test run is appropriate for an implementation change; this tutorial revision re-ran the theorem audit and page checks, not the full project suite.</p>
+<pre tabindex="0" role="region" aria-label="Local setup and deterministic checks"><code>uv sync
+export PATH="$HOME/.elan/bin:$PATH"
+(cd lean &amp;&amp; lake build)
+python3 lean/audit.py
+uv run python -m ve countermodel --env examples/environment.json \
+    --premises examples/premise.ve --conclusion examples/conclusion.ve
+
+# For implementation changes:
+uv run python -m pytest</code></pre>
+<p>Read <code>VISION.md</code> first, then <code>PLAN-EXPAND2.md</code> v3 and <code>PLAN-ZERO-TRAINING.md</code>. Use <code>ROADMAP.md</code> with the newer run-log entries for status; its opening snapshot still describes September 22. For exact proof scope, read <code>lean/METATHEORY.md</code> and the relevant profile documentation.</p>
+<p>Coordinate shared-file changes with the owner in the expansion plan. Natural-view and web-app commands belong to their branches; their presence in this tutorial does not mean their modules are available in integration.</p>
+<details><summary>Questions that remain open</summary><div><ul>
+<li>Can ordinary English speakers reliably understand and author unfamiliar commitments without training?</li>
+<li>Can a reviewer notice a faithful-looking statement that quietly weakens the source?</li>
+<li>How much useful document coverage can elaboration provide before search becomes impractical?</li>
+<li>Do explicit residuals make review easier, or merely move the hard work?</li>
+<li>When do certificates add value over strong conventional software and direct review?</li>
+</ul></div></details>
+</section>
+
+<section id="glossary">
+<span class="secnum">SECTION 12</span>
+<h2>Glossary</h2>
+<dl class="gloss">
+<div><dt>Abstract syntax tree (AST)</dt><dd>The structured representation of a claim: objects, predicates, scope and logical connections. A round trip checks that displayed text parses back to the same structure.</dd></div>
+<div><dt>Admissible model</dt><dd>A possible situation satisfying the vocabulary’s types and the profile’s declared conditions. A proposed counterexample must pass these validity checks.</dd></div>
+<div><dt>Alias / synonym</dt><dd>A declared alternative wording for one concept. A valid alias preserves meaning and argument roles; apparent similarity alone does not establish it.</dd></div>
+<div><dt>Authoring / translation</dt><dd>Authoring lets the responsible author confirm one reading. Translation preserves the source’s admitted alternatives; attributed narrowings remain separate.</dd></div>
+<div><dt>Background premises</dt><dd>Conditions generated from declarations, such as distinct string literals or functional attributes. They constrain both deductions and valid models.</dd></div>
+<div><dt>Bridge assumption</dt><dd>An explicit dependency accepting quoted or externally supported content as a premise. Attribution alone does not establish truth.</dd></div>
+<div><dt>Checked spine</dt><dd>The formal commitments of a document, with other source material retained and labelled. An aspiration for whole-document coverage, not a claim that all prose is a theorem.</dd></div>
+<div><dt>Claim graph / leaf</dt><dd>A network of deductions with evidence at each edge. An unproved leaf is an assumption that remains attached to dependent conclusions.</dd></div>
+<div><dt>Closure / closure induction</dt><dd>Reachability along a relation; and the rule that a property holding at the start and preserved by each step holds along every reachable path.</dd></div>
+<div><dt>Compare oracle</dt><dd>A budgeted procedure seeking proofs of equivalence or a distinguishing model. It may return unknown; “oracle” does not imply infallible answers without evidence.</dd></div>
+<div><dt>Conservativity</dt><dd>An extension preserves old meanings and does not create new consequences between old claims without additional assumptions.</dd></div>
+<div><dt>Corpus prior</dt><dd>A proposed removable annotation describing frequencies in a named corpus. It does not establish author intent, choose a reading or affect certification.</dd></div>
+<div><dt>Countermodel</dt><dd>A valid situation where all premises hold and the conclusion fails. It proves non-entailment, not necessarily that the conclusion is false in the real world.</dd></div>
+<div><dt>DRI / worktree</dt><dd>The directly responsible individual owns decisions and follow-through. A Git worktree gives a worker a separate checkout while sharing the repository’s history.</dd></div>
+<div><dt>Elaboration / faithfulness</dt><dd>Translating a convenient construction into a checked language, and preserving its independently specified meaning. A faithfulness proof for that translation is distinct from judging fidelity to an English source.</dd></div>
+<div><dt>Entailment / soundness</dt><dd>Entailment means the conclusion holds in every allowed model of the premises. Soundness means an accepted certificate really establishes that relationship.</dd></div>
+<div><dt>Environment / meaning identity</dt><dd>Version-bound identifiers for semantic declarations and structured claims. They bind the chosen formal content, not the truth of its descriptions or its faithfulness to intent.</dd></div>
+<div><dt>First-order logic</dt><dd>Statements about individual objects, properties and relations using “every”, “some” and logical connections. The base VE fragment is typed and function-free; separate profiles add supported features.</dd></div>
+<div><dt>Fidelity gate</dt><dd>A predeclared test of whether an authoring tool preserves source commitments. It is separate from checking whether a proof of the resulting claim is valid.</dd></div>
+<div><dt>Invariant / separating certificate</dt><dd>A property preserved by every step; for example, membership in a closed set containing an access source and excluding its target.</dd></div>
+<div><dt>Lean</dt><dd>A proof assistant whose kernel checks VE’s mathematical proofs. Its reference theorems do not automatically verify every surrounding implementation.</dd></div>
+<div><dt>Mandatory proof</dt><dd>Accept only claims derived by checked evidence from reviewed foundations. Unsupported or unaffordable claims remain unresolved.</dd></div>
+<div><dt>N-ary relation</dt><dd>A relation with an ordered list of participants, such as sender, report and recipient. The stage-one branch supports up to six positions.</dd></div>
+<div><dt>Narrowing</dt><dd>An attributed choice of some source readings for a particular interpretation, with reasons. It leaves the source set intact and labels dependent results.</dd></div>
+<div><dt>Norm</dt><dd>A rule about what is required, prohibited or permitted, possibly with declared exceptions and priorities.</dd></div>
+<div><dt>Open term / open texture</dt><dd>A term whose application can require a decision, such as “reasonable”. Its schema records the deciding role, constraints, precedents and version.</dd></div>
+<div><dt>Predicate / sort</dt><dd>A property or relation; and a declared kind of object. Sorts can be empty unless the declarations or premises require an inhabitant.</dd></div>
+<div><dt>Profile / route</dt><dd>A versioned package of semantics and checks; and the admitted path through parsing, elaboration and a compatible checker. Unsupported combinations reject.</dd></div>
+<div><dt>Proof certificate / tableau</dt><dd>A replayable record of proof steps; VE’s base tableau method checks that assuming the premises and denying the conclusion leads to contradiction on every branch.</dd></div>
+<div><dt>Proof-carrying action</dt><dd>A proposed exact action accompanied by checked policy evidence and an enforcement mechanism binding that evidence to execution. A research direction here.</dd></div>
+<div><dt>Reading set</dt><dd>The versioned interpretations considered so far for a source unit. Each member is unambiguous VE; ambiguity is recorded at the source level.</dd></div>
+<div><dt>Residual</dt><dd>The remaining open terms, assumptions, bridge dependencies and unresolved readings. The headline measure of unfinished review, not a universal coverage percentage.</dd></div>
+<div><dt>Scalable oversight</dt><dd>Supervising work whose production may exceed the overseer’s own capabilities. Certificates help only where the evidence and remaining review are affordable.</dd></div>
+<div><dt>Unknown / completeness</dt><dd>Unknown means no supported answer was established within budget. Logical completeness asks whether every valid entailment has an accepted proof; timely search and successful authoring are further requirements.</dd></div>
+<div><dt>Vacuity</dt><dd>A deduction can hold because its premises are impossible or inconsistent. Report that separately instead of treating its proof as useful evidence.</dd></div>
+<div><dt>Zero-training English</dt><dd>The requirement that an English speaker can read and write through ordinary prose and English clarification, without learning notation. A design requirement still awaiting human evaluation.</dd></div>
+</dl>
+
+<details id="sources"><summary>Primary sources and snapshot notes</summary><div>
+<p>This revision read the complete September 23 tutorial and the project sources below. The status snapshot is the source state inspected on <strong>26 September 2026</strong>. Integration started at <code>c756171</code>; the subsequent zero-training plan revision at <code>8b52188</code> is included. Plans describe obligations; merges, run records and completed reviews establish implementation status.</p>
+<ul class="sources">
+<li><strong>Goals and rules:</strong> <code>VISION.md</code>, including the September 26 lead principle and synonyms; <code>PLAN-EXPAND2.md</code> v3; revised <code>PLAN-ZERO-TRAINING.md</code>; <code>ROADMAP.md</code>. The zero-training plan applies both “adopt with changes” reviews; that is a planning revision, not evidence that implementation or usability gates passed.</li>
+<li><strong>Live decisions and operation:</strong> <code>~/code/manage-agents/ve-run-log.md</code>, from “2026-09-25 VM resume”; <code>ORCHESTRATOR-PLAYBOOK.md</code>, updated September 26. These supersede the roadmap’s older experiment queue.</li>
+<li><strong>Convergence:</strong> <code>~/code/manage-agents/debates/elaborate-vs-extend/</code>, <code>debates/expand2-v2/</code> and <code>debates/corpus-priors/</code>, including both reviewers’ rounds.</li>
+<li><strong>Natural English:</strong> <code>git show expand/natural-view:docs/natural-view.md</code> at <code>92ba2b8</code>; its conformance report; <code>natural-recheck2-astra.final.md</code> and <code>reviews/natural-recheck-fable.md</code>. The later Astra “fix first” findings prevent describing this branch as cleared.</li>
+<li><strong>Web demo:</strong> <code>git show expand/webapp:webapp/README.md</code> at <code>34f8fcb</code>, <code>codex-webapp-fix.final.md</code> and subsequent run-log restart records. They distinguish Python replay, optional proposals and local drafts from Lean replay and persistent approval.</li>
+<li><strong>Proof and implementation scope:</strong> <code>lean/audit.py</code>, <code>lean/METATHEORY.md</code>, <code>docs/P0-Lean-NOTES.md</code>, <code>docs/spec/order-implementation.md</code>; <code>numbers2-recheck-astra.final.md</code>, <code>codex-p0-fix.final.md</code>, <code>p0-timer-recheck-astra.final.md</code>, <code>reviews/p0-recheck-fable.md</code>.</li>
+<li><strong>Unmerged work:</strong> <code>w2-review-astra.final.md</code>, <code>reviews/w2-review-fable.md</code>, <code>codex-w2-fable-fix.final.md</code>, <code>w2-recheck-astra.final.md</code>; <code>w4-review-astra.final.md</code>, <code>codex-w4-fix.final.md</code>, <code>reviews/w4-review-fable.md</code>, <code>codex-w4-fable-fix.final.md</code>; <code>codex-w3-definitions-2.final.md</code>; <code>reviews/w1-spec-recheck-fable.md</code>. Branch audit totals are not integration totals.</li>
+<li><strong>Zero-training review:</strong> <code>zt-plan-review-astra.final.md</code> and <code>reviews/zt-plan-review-fable.md</code>, covering recovery, discourse reference, deterministic alternatives, fidelity measurement and ownership.</li>
+<li><strong>Historical findings:</strong> the September 23 tutorial’s detailed source trail, the roadmap’s result table, <code>experiments/P1-deference/RESULTS.md</code>, and <code>codex-assist-flips.final.md</code>. Reported historical experiments were not rerun for this page.</li>
+</ul>
+</div></details>
+</section>
+</main>
+</div>
+<footer>Updated <time datetime="2026-09-26">26 September 2026</time>. The Lean audit was rerun for this revision; other implementation counts are attributed to the named records. All examples explain conditional reasoning. Human comprehension and zero-training authoring remain unmeasured. This page contains no model-backed controls.</footer>
+</div>
