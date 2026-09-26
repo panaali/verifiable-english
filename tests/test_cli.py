@@ -90,7 +90,7 @@ def test_cli_named_fol_natural_view_and_canonical_output(tmp_path):
     assert canonical.stdout == "there exists person x0, (true).\n"
     assert natural.returncode == canonical.returncode == 0
     view = json.loads(natural.stdout)
-    assert view["text"] == "there is a person x0 such that (true).\n"
+    assert view["text"] == "There is a person such that this holds in all cases.\n"
     assert view["environment_id"] and view["meaning_id"]
     assert view["renderer"] and view["version"]
 
