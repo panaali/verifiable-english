@@ -668,3 +668,25 @@ def test_noop_undo_invalidates_approved_dependents_before_parent_revision():
     assert service.verify_ledger()
     restored = RecoveryService.from_ledger(env, json.loads(json.dumps(service.to_ledger())))
     assert restored.verify_ledger() and restored.units["child"].state == "stale"
+
+
+def test_undo_to_ready_revision_invalidates_approved_dependents():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    for unit_id, name, dependencies in (("parent", "api", ()), ("child", "carol", ("parent",))):
+        wording = f"{name.title()} is safe."
+        service.add(unit_id, wording, {}, dependencies=dependencies)
+        service.edit(unit_id, presentation=wording)
+        service.start(unit_id)
+        service.classify(unit_id, parse_outcome="one")
+        if unit_id == "parent":
+            ready_revision = service.units[unit_id].revision
+        formula = Unary("safe", Const(name))
+        situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+        service.approve(unit_id, formula, actor="author", paraphrase=wording,
+                        presentation=wording, situation=situation)
+    service.undo("parent", ready_revision)
+    assert service.units["child"].state == "stale"
+    assert not service.approval_valid("child")
+    assert service.verify_ledger()
+    assert RecoveryService.from_ledger(env, json.loads(json.dumps(service.to_ledger()))).verify_ledger()
