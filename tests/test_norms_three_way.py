@@ -110,6 +110,41 @@ def test_noninitial_subject_act_rejected_across_languages(lean_executable, rust_
     assert "invalid act phrase" in rust_result["error"]["message"]
 
 
+# Every separator of Python's no-argument `str.split()` (str.isspace).
+PY_WHITESPACE = ("\t", "\n", "\x0b", "\x0c", "\r", "\x1c", "\x1d", "\x1e", "\x1f", "\x85",
+                 "\xa0", " ", " ", " ", " ", " ", " ",
+                 " ", "　")
+
+
+def test_act_whitespace_canonicalises_identically_across_languages(lean_executable,
+                                                                   rust_executable):
+    assert all(len(f"a{sep}b".split()) == 2 for sep in PY_WHITESPACE)
+    doc = NormDocument(environment({"permitted": permission()}),
+                       [rule("allow", "permitted", True)])
+    conclusion = doc.elaborate("permitted")
+    proof = prove_norm_entailment(doc, (Top(),), conclusion)
+    lean_cases, rust_cases = [], []
+    for i, sep in enumerate(PY_WHITESPACE + ("​",)):
+        raw = doc.env.to_dict()
+        raw["vocabulary"]["predicates"]["permitted"]["regulated"]["act"] = f"{{0}}{sep}be done"
+        lean_cases.append({"id": str(i), "kind": "norms-certificate", "environment": raw,
+                           "norms": [r.to_dict() for r in doc.rules], "premises": [["top"]],
+                           "conclusion": formula_to_data(doc.env, conclusion),
+                           "certificate": proof.certificate})
+        rust_cases.append({"id": str(i), "environment": raw, "ast": [["top"]]})
+    lean_rows, rust_rows = run(lean_executable, lean_cases), run(rust_executable, rust_cases)
+    for sep, lean_row, rust_row in zip(PY_WHITESPACE, lean_rows, rust_rows):
+        raw = lean_cases[int(lean_row["id"])]["environment"]
+        assert Environment(raw).environment_id == doc.env.environment_id, repr(sep)
+        assert lean_row["valid"] is True, (repr(sep), lean_row)
+        assert rust_row["environment_id"] == doc.env.environment_id, (repr(sep), rust_row)
+    # U+200B is not whitespace in Python: every language rejects the act phrase.
+    with pytest.raises(Exception, match="invalid act phrase"):
+        Environment(lean_cases[-1]["environment"])
+    assert "invalid act phrase" in lean_rows[-1]["error"]
+    assert "invalid act phrase" in rust_rows[-1]["error"]["message"]
+
+
 def test_norm_certificate_producer_and_canonical_identity_match_lean(lean_executable):
     doc = NormDocument(environment({"permitted": permission()}),
                        [rule("allow", "permitted", True)])

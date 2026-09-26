@@ -49,7 +49,17 @@ def scanSlotsAux : Nat → List Char → List String × List Char
 
 def scanSlots (cs : List Char) : List String × List Char := scanSlotsAux (cs.length + 1) cs
 
-def words (s : String) : List String := (s.split Char.isWhitespace).filter (· ≠ "")
+/-- Python `str.isspace`, the separator set of the no-argument `str.split()`
+that Python `_regulated` normalises act phrases with (wider than
+`Char.isWhitespace`: vertical tab, form feed, U+001C–U+001F, U+0085, no-break
+and the Unicode space separators). -/
+def pyWhitespace (c : Char) : Bool :=
+  let n := c.toNat
+  (0x09 ≤ n && n ≤ 0x0D) || (0x1C ≤ n && n ≤ 0x20) || n == 0x85 || n == 0xA0 ||
+    n == 0x1680 || (0x2000 ≤ n && n ≤ 0x200A) || n == 0x2028 || n == 0x2029 ||
+    n == 0x202F || n == 0x205F || n == 0x3000
+
+def words (s : String) : List String := (s.split pyWhitespace).filter (· ≠ "")
 
 def asciiLetter (c : Char) : Bool := ('a' ≤ c && c ≤ 'z') || ('A' ≤ c && c ≤ 'Z')
 

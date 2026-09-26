@@ -77,9 +77,20 @@ fn entry_fields<'a>(
     fields(v, &keys, "InvalidInput")
 }
 
+/// Python `str.isspace`, the separators of the no-argument `str.split()` that
+/// normalises act phrases; wider than `char::is_whitespace` (U+001C..U+001F).
+fn py_whitespace(c: char) -> bool {
+    matches!(c, '\u{09}'..='\u{0d}' | '\u{1c}'..='\u{20}' | '\u{85}' | '\u{a0}' | '\u{1680}'
+        | '\u{2000}'..='\u{200a}' | '\u{2028}' | '\u{2029}' | '\u{202f}' | '\u{205f}' | '\u{3000}')
+}
+
+fn py_words(text: &str) -> impl Iterator<Item = &str> {
+    text.split(py_whitespace).filter(|word| !word.is_empty())
+}
+
 fn act_phrase(value: &Value, arity: usize) -> Result<String> {
     let raw = string(value, "InvalidInput")?;
-    let act = raw.split_whitespace().collect::<Vec<_>>().join(" ");
+    let act = py_words(raw).collect::<Vec<_>>().join(" ");
     let slots: Vec<_> = (0..arity).map(|i| format!("{{{i}}}")).collect();
     let mut cursor = 0;
     for slot in &slots {
@@ -95,8 +106,8 @@ fn act_phrase(value: &Value, arity: usize) -> Result<String> {
     for slot in slots.iter().rev() {
         plain = plain.replace(slot, "slot");
     }
-    if act.len() > 80 || !act.starts_with("{0} ") || plain.split_whitespace().count() < 2 ||
-        plain.split_whitespace().any(|word|
+    if act.chars().count() > 80 || !act.starts_with("{0} ") || py_words(&plain).count() < 2 ||
+        py_words(&plain).any(|word|
             !word.as_bytes().first().is_some_and(u8::is_ascii_alphabetic)
             || !word.bytes().all(|b| b.is_ascii_alphabetic() || b == b'\'' || b == b'-')
             || (word != "slot" && RESERVED.contains(&word.to_ascii_lowercase().as_str()))) {

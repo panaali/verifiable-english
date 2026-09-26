@@ -35,3 +35,29 @@ fn regulated_environment_and_profile_model() {
         .as_object_mut().unwrap().remove("permission");
     assert!(Environment::from_value(&missing_dual).unwrap_err().message.contains("MissingPermissionDual"));
 }
+
+#[test]
+fn act_phrase_whitespace_matches_python_split() {
+    // Python `str.split()` separators, including U+001C..U+001F, which
+    // `char::is_whitespace` does not include.
+    let env = |act: &str| json!({
+        "language": "ve.core@0.2",
+        "profiles": ["norms@0", "relational-fol@0"],
+        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+        "vocabulary": {
+            "sorts": {"act": {"description": "act"}},
+            "predicates": {"permitted": {"arguments": ["act"], "description": "permitted",
+                "regulated": {"role": "permission", "default": "deny", "act": act}}},
+            "constants": {}
+        }
+    });
+    let plain = Environment::from_value(&env("{0} be done")).unwrap();
+    for sep in ["\t", "\n", "\u{0b}", "\u{0c}", "\r", "\u{1c}", "\u{1d}", "\u{1e}", "\u{1f}",
+                "\u{85}", "\u{a0}", "\u{1680}", "\u{2000}", "\u{200a}", "\u{2028}", "\u{2029}",
+                "\u{202f}", "\u{205f}", "\u{3000}"] {
+        let spaced = Environment::from_value(&env(&format!("{{0}}{sep}be{sep}{sep}done"))).unwrap();
+        assert_eq!(spaced.environment_id(), plain.environment_id(), "{sep:?}");
+    }
+    // Not a Python separator: zero-width space stays inside the word.
+    assert!(Environment::from_value(&env("{0}\u{200b}be done")).is_err());
+}
