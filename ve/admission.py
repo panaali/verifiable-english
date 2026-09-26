@@ -412,7 +412,8 @@ def admit_document(environment, document) -> dict:
     env = environment if type(environment) is Environment else Environment(environment)
     if ("norms@0" in env.profiles and type(document) is dict and
             type(document.get("units")) is list and
-            any(type(u) is dict and u.get("kind") == "norm" for u in document["units"])):
+            any(type(u) is dict and type(u.get("content")) is dict
+                and "norm" in u["content"] for u in document["units"])):
         from .norm_admission import admit_norm_document
         return admit_norm_document(env, document)
     if env.language != LANGUAGE:

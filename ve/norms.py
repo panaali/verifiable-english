@@ -92,6 +92,20 @@ def _replace_term(term, terms, depth):
     return term
 
 
+def _regulated_closure(formula, regulated):
+    """A closure edge cannot be completed as an ordinary regulated atom."""
+    from .ast import Reach, Named
+    if isinstance(formula, Reach):
+        edge = {formula.edge.relation} if isinstance(formula.edge, Named) else _used_predicates(formula.edge.formula)
+        return bool(edge & regulated)
+    if isinstance(formula, (Not, Forall, Exists)):
+        return _regulated_closure(formula.body, regulated)
+    if isinstance(formula, (And, Or, Implies)):
+        return (_regulated_closure(formula.left, regulated) or
+                _regulated_closure(formula.right, regulated))
+    return False
+
+
 @dataclass(frozen=True, slots=True)
 class Norm:
     name: str
@@ -133,6 +147,9 @@ class NormDocument:
             context = tuple(reversed(decl.arguments))
             for formula in (rule.guard, *rule.unless):
                 checker.formula(formula, context)
+                if _regulated_closure(formula, {p for p, d in env.predicates.items()
+                                                if d.regulated is not None}):
+                    raise VEError("UnsupportedProfile: regulated closure edge in norm guard")
         by_name = {r.name: r for r in self.rules}
         for rule in self.rules:
             for parent in rule.over:
