@@ -229,6 +229,12 @@ class RecoveryService:
         if prior is None:
             raise ValueError("unknown unit revision")
         old_approval = deepcopy(prior["approval"])
+        current = self.units[unit_id]
+        if (old_approval is not None and current.approval == old_approval
+                and current.source == prior["source"] and current.anchor == prior["anchor"]
+                and current.presentation == prior["presentation"] and self.approval_valid(unit_id)):
+            self._event("undo", current, target_revision=target_revision)
+            return current
         unit = self.edit(unit_id, source=prior["source"], anchor=prior["anchor"],
                          presentation=prior["presentation"])
         self._event("undo", unit, target_revision=target_revision)

@@ -99,6 +99,8 @@ def test_revisioned_approval_and_invalidation():
     assert service.verify_ledger(ledger)
     ledger["events"][-1]["unit_snapshot"]["source"] = "tampered"
     assert not service.verify_ledger(ledger)
+    assert service.undo("u1", approved_revision).state == "approved"
+    assert service.approval_valid("u1")
     service.add("u2", "Carol agrees.", {"start": 17, "end": 30}, dependencies=["u1"])
     service.start("u2")
     service.classify("u2", parse_outcome="one")
