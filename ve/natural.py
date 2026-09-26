@@ -58,6 +58,29 @@ def _relative_phrase(words, value):
 
 
 def _candidate(formula, env, words):
+    if type(formula) in (ast.And, ast.Or) and type(formula.right) is type(formula):
+        items = (formula.left, formula.right.left, formula.right.right)
+        if all(type(item) is ast.Unary and type(item.term) is ast.Const for item in items):
+            join = 'and' if type(formula) is ast.And else 'or'
+            predicates = [item.predicate for item in items]
+            constants = [item.term.name for item in items]
+            adjectives = []
+            for predicate in predicates:
+                template = words.predicates[predicate]
+                adjective = template.removeprefix('{0} is ')
+                adjectives.append(adjective if template == '{0} is ' + adjective
+                                  and re.fullmatch('[a-z]+', adjective) else None)
+            if len(set(constants)) == 3 and len(set(predicates)) == 1 and all(adjectives):
+                names = [words.constants[name] for name in constants]
+                if all(re.fullmatch(r'(?:the )?[A-Za-z]+(?: [A-Za-z]+)*', name) for name in names):
+                    names[0] = names[0][0].upper() + names[0][1:]
+                    verb = 'are' if join == 'and' else 'is'
+                    return f'{names[0]}, {names[1]} {join} {names[2]} {verb} {adjectives[0]}'
+            if len(set(predicates)) == 3 and len(set(constants)) == 1 and all(adjectives):
+                name = words.constants[constants[0]]
+                if re.fullmatch(r'(?:the )?[A-Za-z]+(?: [A-Za-z]+)*', name):
+                    name = name[0].upper() + name[1:]
+                    return f'{name} is {adjectives[0]}, {adjectives[1]} {join} {adjectives[2]}'
     noun = None
     if type(formula) in (ast.Le, ast.Lt) and type(formula.left) is ast.Scale:
         scale = formula.left
