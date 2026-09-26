@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, Sequence
 
-from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall, Implies,
+from .ast import (And, Atom, Binary, Bottom, Const, Document, Eq, Exists, Forall, Implies,
                   Not, Or, Top, Unary, Var, Reach, Named, check_document)
 from .errors import ResourceLimit, VEError
 from .identity import meaning_id
@@ -21,6 +21,7 @@ from .order import Budget as _OrderBudget, InvalidTrace as _OrderInvalid
 
 ENTAILMENT_CHECKER_VERSION = "ve-tableau-checker@2"
 CLOSURE_CHECKER_VERSION = "ve-tableau-closure-checker@1"
+CORE_CHECKER_VERSION = "ve-tableau-core-checker@1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -173,6 +174,9 @@ def _closed(branch: _Branch) -> bool:
             atom = (f.predicate, find(_term_token(f.left, item.bindings)),
                     find(_term_token(f.right, item.bindings)))
             (positive if item.positive else negative).add(atom)
+        elif type(f) is Atom:
+            atom = (f.predicate, *(find(_term_token(t, item.bindings)) for t in f.terms))
+            (positive if item.positive else negative).add(atom)
     return bool(positive & negative)
 
 
@@ -249,6 +253,7 @@ def _instance_key(item: _Signed) -> tuple:
         if kind in (Top, Bottom): return (kind.__name__,)
         if kind is Unary: return ("Unary", f.predicate, term(f.term))
         if kind is Binary: return ("Binary", f.predicate, term(f.left), term(f.right))
+        if kind is Atom: return ("Atom", f.predicate, *(term(t) for t in f.terms))
         if kind is Eq: return ("Eq", term(f.left), term(f.right))
         if kind is Reach:
             edge = (("Named", f.edge.relation) if type(f.edge) is Named else
@@ -290,6 +295,7 @@ def _connection_key(item: _Signed, opposite: bool = False) -> tuple:
         if kind in (Top, Bottom): return ("truth", positive == (kind is Top))
         if kind is Unary: return ("unary", positive, f.predicate, term(f.term))
         if kind is Binary: return ("binary", positive, f.predicate, term(f.left), term(f.right))
+        if kind is Atom: return ("atom", positive, f.predicate, *(term(t) for t in f.terms))
         if kind is Eq: return ("eq", positive, frozenset((term(f.left), term(f.right))))
         if kind is Reach:
             # Edge truth is independent of the sign of the enclosing Reach.
@@ -514,6 +520,7 @@ def _rule(item):
 def _binding(env: Any, premises: tuple[Any, ...], conclusion: Any) -> dict[str, Any]:
     from .order import CHECKER_VERSION as ORDER_CHECKER_VERSION
     return {"checker_version": (ORDER_CHECKER_VERSION if getattr(env, "order", False) else
+                                CORE_CHECKER_VERSION if "nary@0" in env.profiles else
                                 CLOSURE_CHECKER_VERSION if env.closure else ENTAILMENT_CHECKER_VERSION),
             "environment_id": env.environment_id,
             "premise_meaning_ids": [meaning_id(env, x) for x in premises],
@@ -639,7 +646,7 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
         if type(certificate) is not dict or set(certificate) != set(_binding(env, premises, conclusion)) | {"trace"}:
             raise _InvalidTrace("certificate fields do not match the wire schema")
         expected = _binding(env, premises, conclusion)
-        if env.closure and certificate.get('checker_version') == 've-tableau-closure-checker@0':
+        if env.closure and "nary@0" not in env.profiles and certificate.get('checker_version') == 've-tableau-closure-checker@0':
             expected['checker_version'] = 've-tableau-closure-checker@0'
         if any(certificate.get(key) != value for key, value in expected.items()):
             raise _InvalidTrace("certificate is stale or bound to different inputs")
@@ -650,7 +657,8 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
                 raise _InvalidTrace("order certificate does not replay")
             return EntailmentCertificateCheck(True, "Valid", steps)
         replayer = _Replayer(max_steps, env.closure, env=env,
-                            induction=env.closure and certificate['checker_version'] == CLOSURE_CHECKER_VERSION)
+                            induction=env.closure and certificate['checker_version'] in
+                            (CLOSURE_CHECKER_VERSION, CORE_CHECKER_VERSION))
         replayer.replay(_initial_branch(env, premises, conclusion), certificate["trace"])
         return EntailmentCertificateCheck(True, "Valid", replayer.steps)
     except _Budget:

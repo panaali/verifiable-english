@@ -315,7 +315,7 @@ def test_checked_premise_order_includes_layer_segment():
     assert checked_premises(env, (layer,), (bg,)) == (bg, layer, bg)
 
 
-def test_disabled_family_gate_precedes_empty_search():
+def test_enabled_nary_family_reaches_empty_search_and_invalid_mix_still_gates():
     from conformance.p0 import environment
     from ve import Environment
     from ve.ast import Top
@@ -324,10 +324,11 @@ def test_disabled_family_gate_precedes_empty_search():
     raw = environment()
     raw["profiles"] = ["closure@0", "nary@0", "relational-fol@0"]
     env = Environment(raw)
-    with pytest.raises(UnsupportedProfile, match="closure.n.ary checker"):
-        find_countermodel(env, (), Top(), max_domain_size=0)
-    with pytest.raises(UnsupportedProfile, match="closure.n.ary checker"):
-        find_distinguishing_model(env, Top(), Top(), max_domain_size=0)
+    assert find_countermodel(env, (), Top(), max_domain_size=0).status == "NotFound"
+    assert find_distinguishing_model(env, Top(), Top(), max_domain_size=0).status == "NotFound"
+    raw["profiles"] = ["closure@0", "nary@0", "order@0", "relational-fol@0"]
+    with pytest.raises(UnsupportedProfile, match="Unsupported profile combination"):
+        Environment(raw)
 
 
 def test_report_identity_binds_environment_and_document(lean_executable):

@@ -6,7 +6,7 @@ from itertools import combinations, product
 import math
 from typing import Any, Iterator, Sequence
 
-from .ast import (Reach, Named, Body, And, Binary, Eq, Exists, Forall, Implies, Not, Or, Unary,
+from .ast import (Reach, Named, Body, And, Atom, Binary, Eq, Exists, Forall, Implies, Not, Or, Unary,
                   check_formula)
 from .evaluate import (_Evaluator, _Exhausted, _evaluate_validated,
                        _validate_model)
@@ -28,6 +28,7 @@ def _node_count(root: Any) -> int:
         for field in ("body", "left", "right", "term"):
             child = getattr(node, field, None)
             if child is not None: stack.append(child)
+        stack.extend(getattr(node, "terms", ()))
     return total
 
 
@@ -139,7 +140,7 @@ def _used_predicates(*formulas: Any) -> frozenset[str]:
                 names.update(found)
                 stack.extend(children)
                 continue
-        if isinstance(node, (Unary, Binary)):
+        if isinstance(node, (Unary, Binary, Atom)):
             names.add(node.predicate)
         elif isinstance(node, Reach):
             if type(node.edge) is Named:
@@ -225,6 +226,9 @@ def _int_terms(formulas, int_constants) -> tuple[list[Any], set[int]]:
             term(node.term, True)
         elif isinstance(node, Binary):
             term(node.left, True); term(node.right, True)
+        elif isinstance(node, Atom):
+            for argument in node.terms:
+                term(argument, True)
         elif isinstance(node, (Eq, Lt, Le)):
             term(node.left, False); term(node.right, False)
         elif isinstance(node, (And, Or, Implies)):
@@ -397,7 +401,7 @@ def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int, *,
             for entity in domain:
                 walk(node.body, ((node.sort, entity),) + bindings, path + (0,),
                      universal or isinstance(node, Forall))
-        elif isinstance(node, (Unary, Binary, Eq)):
+        elif isinstance(node, (Unary, Binary, Atom, Eq)):
             return
 
     try:

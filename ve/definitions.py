@@ -23,7 +23,7 @@ class Definition:
 
 def _mentions(formula: ast.Formula) -> set[str]:
     match formula:
-        case ast.Unary(predicate, _) | ast.Binary(predicate, _, _):
+        case ast.Unary(predicate, _) | ast.Binary(predicate, _, _) | ast.Atom(predicate, _):
             return {predicate}
         case ast.Not(body) | ast.Forall(_, body) | ast.Exists(_, body):
             return _mentions(body)
@@ -54,7 +54,9 @@ def _atom(name: str, arity: int) -> ast.Formula:
         return ast.Unary(name, ast.Var(0))
     if arity == 2:
         return ast.Binary(name, ast.Var(1), ast.Var(0))
-    raise VEError("Definition must have one or two arguments")
+    if 3 <= arity <= 6:
+        return ast.Atom(name, tuple(ast.Var(arity - index - 1) for index in range(arity)))
+    raise VEError("Definition must have one to six arguments")
 
 
 def premise(definition: Definition) -> ast.Formula:

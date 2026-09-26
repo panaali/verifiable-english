@@ -1,6 +1,7 @@
 import VE.Route.Admission
 import VE.Definitions.Bundle
 import VE.Json
+import VE.Core.Wire
 
 /-! The `route` subcommand of `ve_conformance` (PLAN-EXPAND2 3.4). Each case
 is `{"id", "environment", "kind"?, ...}` with a `ve.core@0.2` environment; the
@@ -67,7 +68,10 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
   if kind == "dependency-order" then
     return ← Wire.runDependencyOrder id j
   if kind == "label" then
-    if e.family == .order then
+    if e.family == .closureNary then
+      let _ ← VE.Core.Bridge.decodeEnvironment environment
+      pure ()
+    else if e.family == .order then
       let _ ← Wire.decodeOrderVocabulary e.vocabulary
       pure ()
     else
@@ -80,7 +84,7 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
       | none => throw s!"AdmissionError: invalid label {s}"
   match e.family with
   | .closureNary =>
-    throw (Gate.unsupported "the closure+n-ary checker is gated until W4 stage 1 lands")
+    VE.Core.Wire.run e.profiles environment id kind j
   | .order =>
     if kind == "admission" then throw (Gate.unsupported "admission on the order family is deferred")
     let v ← Wire.decodeOrderVocabulary e.vocabulary
