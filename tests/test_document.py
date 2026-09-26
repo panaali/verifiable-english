@@ -1,4 +1,6 @@
 import json
+import subprocess
+import sys
 
 import pytest
 
@@ -6,6 +8,8 @@ from conformance.p0 import VOCAB, envelope, environment
 from ve.document import check_document, coverage, load_document, render_document
 from ve.environment import Environment
 from ve.errors import VEError
+from ve.identity import meaning_id
+from ve.ast import Top
 from ve.readings import check_readings, plan_choices
 
 
@@ -86,3 +90,33 @@ def test_assertion_readings_all_some_none_have_checked_evidence():
     compatible = [{"id": "t", "version": 1, "readings": [{"kind": "asserted", "content": p},
                                                           {"kind": "asserted", "content": ["top"]}]}]
     assert check_readings(env, compatible, ["bottom"])["verdict"] == "NONE"
+
+
+def test_document_p0_admission_and_cli(tmp_path):
+    source = b"This holds.\n"
+    graph = {"root": "claim", "nodes": [{"name": "claim", "ast": ["top"], "unit": "a"}]}
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), content={"ast": ["top"]})], graph=graph)
+    result = check_document(path)
+    assert result["admission"]["admitted"] is True
+    output = subprocess.run([sys.executable, "-m", "ve", "document", "coverage", str(path)],
+                            check=True, capture_output=True, text=True)
+    assert json.loads(output.stdout)["accounted_bytes"] == len(source)
+
+
+def test_reading_identity_and_narrowing_schema(tmp_path):
+    source = b"Maybe.\n"
+    env = Environment(environment())
+    mid = meaning_id(env, Top())
+    reading = {"id": "r1", "kind": "asserted", "meaning_id": mid, "content": ["top"],
+               "admission": {"who": "alice", "why": "literal", "distinguishing_models": {}}}
+    rs = {"id": "s1", "unit": "a", "version": 1, "status": "open", "readings": [reading]}
+    narrowing = {"id": "n1", "set": "s1", "version": 1, "keeps": ["r1"],
+                 "by": "alice", "reason_spans": ["a"]}
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
+                     reading_sets=[rs], narrowings=[narrowing])
+    assert coverage(load_document(path))["residual"]["unresolved_reading_sets"] == 1
+    rs["readings"][0]["meaning_id"] = "wrong"
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), "meta")],
+                     reading_sets=[rs], narrowings=[narrowing])
+    with pytest.raises(VEError, match="meaning id"):
+        load_document(path)

@@ -10,6 +10,7 @@ from itertools import product
 from .admission import _check_kind, token
 from .ast import formula_from_data
 from .errors import VEError
+from .identity import meaning_id
 
 
 def validate_reading_sets(env, values, unit_ids):
@@ -44,7 +45,9 @@ def validate_reading_sets(env, values, unit_ids):
             if not token(reading["meaning_id"]):
                 raise VEError("invalid reading meaning id")
             if reading["content"] is not None:
-                formula_from_data(env, reading["content"])
+                formula = formula_from_data(env, reading["content"])
+                if meaning_id(env, formula) != reading["meaning_id"]:
+                    raise VEError("reading meaning id does not match content")
             admission = reading["admission"]
             if (type(admission) is not dict or set(admission) != {"who", "why", "distinguishing_models"}
                     or not token(admission["who"]) or type(admission["why"]) is not str
@@ -70,13 +73,16 @@ def validate_narrowings(values, reading_sets, unit_ids):
             raise VEError("invalid narrowing id or author")
         ids.add(item["id"])
         ref = (item["set"], item["version"])
-        if ref not in reading_sets:
+        if ref not in {(r["id"], r["version"]) for r in reading_sets}:
             raise VEError("narrowing cites unknown reading set version")
         rs = next(r for r in reading_sets if (r["id"], r["version"]) == ref)
         choices = {r["id"] for r in rs["readings"]}
-        if type(item["keeps"]) is not list or not item["keeps"] or not set(item["keeps"]) <= choices:
+        if (type(item["keeps"]) is not list or not item["keeps"]
+                or not all(type(x) is str for x in item["keeps"]) or not set(item["keeps"]) <= choices):
             raise VEError("narrowing must keep named readings")
-        if type(item["reason_spans"]) is not list or not item["reason_spans"] or not set(item["reason_spans"]) <= unit_ids:
+        if (type(item["reason_spans"]) is not list or not item["reason_spans"]
+                or not all(type(x) is str for x in item["reason_spans"])
+                or not set(item["reason_spans"]) <= unit_ids):
             raise VEError("narrowing needs cited source units")
     return ids
 
