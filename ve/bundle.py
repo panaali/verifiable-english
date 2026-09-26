@@ -5,7 +5,10 @@ hypotheses, earlier conclusion meaning IDs it cites, a certificate, and the
     complete transitive leaves it expects the report to carry. No citation is a
 new trusted proof rule: the certificate is replayed with cited conclusions as
 additional premises after the cited certificates have been checked. With
-``lean_executable`` the whole bundle is re-checked in one Lean `route` run
+``document.reading_sets`` a reading label names exactly the registered formula
+at its set version and index; ``all`` names that set's disjunction. A bundle
+with reading labels requires this registry. With ``lean_executable`` the whole
+bundle is re-checked in one Lean `route` run
 (`VE.Definitions.Bundle`), which enforces the same citation rules and proves
 them sound (`bundle_sound`).
 """
@@ -13,7 +16,7 @@ from __future__ import annotations
 
 import subprocess
 
-from .admission import parse_label, validate_label
+from .admission import _decode_reading_set, _disjunction, parse_label, validate_label
 from .ast import formula_from_data, formula_to_data
 from .background import background
 from .entailment import check_entailment_certificate
@@ -57,10 +60,28 @@ def _leaf_choices(leaves):
             for unit, (version, choice) in choices.items()}
 
 
-def lean_bundle_verdict(lean_executable, environment, lemmas) -> dict:
+def _bind_leaf(label, formula, reading_sets):
+    parsed = parse_label(label)
+    if parsed.kind == "cite":
+        raise VEError("Unresolved citation hypothesis")
+    if parsed.kind != "readings":
+        return
+    unit, version, index = parsed.args
+    matches = [readings for rid, v, readings in reading_sets if rid == unit and v == version]
+    if len(matches) != 1:
+        raise VEError("Reading label has no unique registered reading set")
+    readings = matches[0]
+    expected = _disjunction(readings) if index is None else (
+        readings[index] if index < len(readings) else None)
+    if expected != formula:
+        raise VEError("Reading label is not bound to its registered reading formula")
+
+
+def lean_bundle_verdict(lean_executable, environment, lemmas, document=None) -> dict:
     """The Lean route's verdict on a whole bundle, in one run."""
     from .wire import loads_json
-    case = [{"id": "bundle", "kind": "bundle", "environment": environment, "lemmas": lemmas}]
+    case = [{"id": "bundle", "kind": "bundle", "environment": environment, "lemmas": lemmas,
+             **({} if document is None else {"document": document})}]
     try:
         run = subprocess.run([str(lean_executable), "route"], input=canonical_json(case),
                              capture_output=True, timeout=120)
@@ -73,12 +94,20 @@ def lean_bundle_verdict(lean_executable, environment, lemmas) -> dict:
 
 
 def check_bundle(data, *, lean_executable=None):
-    require_fields(data, {"version", "environment", "lemmas"})
+    require_fields(data, {"version", "environment", "lemmas"} |
+                   ({"document"} if type(data) is dict and "document" in data else set()))
     if data["version"] != "ve-bundle@0" or type(data["lemmas"]) is not list:
         raise VEError("Unsupported lemma bundle version or lemmas array")
     if len(data["lemmas"]) > 256:
         raise ResourceLimit("Lemma bundle exceeds 256 lemmas")
     env = Environment(data["environment"])
+    document = data.get("document", {"reading_sets": []})
+    require_fields(document, {"reading_sets"})
+    if type(document["reading_sets"]) is not list:
+        raise VEError("Document reading sets must be an array")
+    reading_sets = [_decode_reading_set(env, entry) for entry in document["reading_sets"]]
+    if len({(rid, version) for rid, version, _ in reading_sets}) != len(reading_sets):
+        raise VEError("duplicate reading set version")
     background_leaves = [{"label": "background:" + entry.generator,
                           "ast": formula_to_data(env, entry.formula)} for entry in background(env)]
     known = {}
@@ -107,6 +136,7 @@ def check_bundle(data, *, lean_executable=None):
             require_fields(premise, {"label", "ast"})
             label = validate_label(premise["label"])
             formula = formula_from_data(env, premise["ast"])
+            _bind_leaf(label, formula, reading_sets)
             own.append(formula)
             own_leaves.append({"label": label, "ast": formula_to_data(env, formula)})
             leaves.append(own_leaves[-1])
@@ -124,6 +154,8 @@ def check_bundle(data, *, lean_executable=None):
                 if leaf not in background_leaves and leaf not in own_leaves:
                     raise VEError("Citation hypothesis is absent from the citing branch")
         inherited_choices = _leaf_choices(leaves)
+        for leaf in leaves:
+            _bind_leaf(leaf["label"], formula_from_data(env, leaf["ast"]), reading_sets)
         if choices != inherited_choices:
             raise VEError("Citation reading choices do not match transitive leaves")
         if item["transitive_leaves"] != leaves:
@@ -144,7 +176,7 @@ def check_bundle(data, *, lean_executable=None):
         names_by_id[mid] = item["name"]
     lean_checked = False
     if lean_executable is not None and data["lemmas"]:
-        row = lean_bundle_verdict(lean_executable, env.to_dict(), data["lemmas"])
+        row = lean_bundle_verdict(lean_executable, env.to_dict(), data["lemmas"], document)
         lean_checked = (row.get("status") == "ok" and
                         row.get("lemmas") == [report["meaning_id"] for report in reports])
         if not lean_checked:

@@ -85,6 +85,29 @@ def choicesEqual (a b : List (String × String)) : Bool :=
 /-- Every reading label in the transitive leaves is mutually compatible. -/
 def ReadingCompatible (ls : List Leaf) : Prop := (leafChoices ls).isOk
 
+/-- Every reading label names its document reading formula. `all` names the
+right-nested disjunction. Citation labels cannot be independent hypotheses. -/
+def leafBoundCheck (sets : List Admission.ReadingSet) (l : Leaf) : Bool :=
+  match Admission.parseLabel l.1 with
+  | some (.readings s v c) =>
+    match sets.filter (fun rs => rs.id == s && rs.version == v) with
+    | [rs] => match c with
+      | some i => decide (rs.readings[i]? = some l.2)
+      | none => decide (Admission.disjunction rs.readings = some l.2)
+    | _ => false
+  | some (.cite _ _) => false
+  | some _ => true
+  | none => false
+
+def LeafBound (sets : List Admission.ReadingSet) (l : Leaf) : Prop :=
+  leafBoundCheck sets l = true
+
+def readingBindingOk (sets : List Admission.ReadingSet) (ls : List Leaf) : Bool :=
+  ls.all fun l => leafBoundCheck sets l
+
+def ReadingBound (sets : List Admission.ReadingSet) (ls : List Leaf) : Prop :=
+  ∀ l ∈ ls, LeafBound sets l
+
 /-- Resolve the citations in order: inherited leaves, merged choices, cited conclusions. -/
 def citeAll (known : List Known) :
     List Leaf → List (String × String) → List String →
@@ -99,7 +122,7 @@ def citeAll (known : List Known) :
 
 /-- Check one lemma against the lemmas before it. `bind` checks the
 certificate's identity binding of the full checked list and conclusion. -/
-def checkLemma (E : VE.Environment) (bg : List Leaf)
+def checkLemma (E : VE.Environment) (bg : List Leaf) (sets : List Admission.ReadingSet)
     (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit)
     (known : List Known) (L : Lemma) : Except String Known := do
   let (leaves, _, cited) ← citeAll known (bg ++ L.premises) L.choices L.cites
@@ -109,6 +132,7 @@ def checkLemma (E : VE.Environment) (bg : List Leaf)
       k.leaves.all fun l => (bg.contains l || L.premises.contains l)
     else true) "Citation hypothesis is absent from the citing branch"
   let derived ← leafChoices leaves
+  Gate.require (readingBindingOk sets leaves) "Reading label is not bound to its registered reading formula or citation is unresolved"
   Gate.require (choicesEqual L.choices derived) "Citation reading choices do not match transitive leaves"
   Gate.require (!known.any (·.meaningId == L.meaningId)) "Lemma meaning ID is stale or duplicated"
   let checked := bg.map Prod.snd ++ (L.premises.map Prod.snd ++ cited)
@@ -117,13 +141,13 @@ def checkLemma (E : VE.Environment) (bg : List Leaf)
     s!"Lemma {L.name} certificate failed"
   pure ⟨L.meaningId, L.conclusion, derived, leaves⟩
 
-def checkAll (E : VE.Environment) (bg : List Leaf)
+def checkAll (E : VE.Environment) (bg : List Leaf) (sets : List Admission.ReadingSet)
     (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit) :
     List Known → List Lemma → Except String (List Known)
   | known, [] => .ok known
   | known, L :: Ls => do
-    let k ← checkLemma E bg bind known L
-    checkAll E bg bind (known ++ [k]) Ls
+    let k ← checkLemma E bg sets bind known L
+    checkAll E bg sets bind (known ++ [k]) Ls
 
 /-! ## Citation soundness -/
 
@@ -185,6 +209,7 @@ theorem citeAll_sound (known : List Known) : ∀ (ms : List String) (ls : List L
 
 section Soundness
 variable (E : VE.Environment) (bg : List Leaf)
+  (sets : List Admission.ReadingSet)
   (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit)
   (Good : VE.Structure.{u} → Prop) (hadm : ∀ S, Good S → S.Admissible E)
 
@@ -197,9 +222,10 @@ include hadm
 
 open VE.Order.ProfileGate in
 theorem checkLemma_sound (known : List Known) (hk : ∀ k ∈ known, Sound Good k) (L : Lemma) (k : Known)
-    (h : checkLemma E bg bind known L = .ok k) : Sound Good k := by
+    (h : checkLemma E bg sets bind known L = .ok k) : Sound Good k := by
   unfold checkLemma at h
   obtain ⟨⟨leaves, choices, cited⟩, hc, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
@@ -225,14 +251,14 @@ theorem checkLemma_sound (known : List Known) (hk : ∀ k ∈ known, Sound Good 
 
 open VE.Order.ProfileGate in
 theorem checkAll_sound : ∀ (known : List Known) (Ls : List Lemma) (res : List Known),
-    (∀ k ∈ known, Sound Good k) → checkAll E bg bind known Ls = .ok res → ∀ k ∈ res, Sound Good k
+    (∀ k ∈ known, Sound Good k) → checkAll E bg sets bind known Ls = .ok res → ∀ k ∈ res, Sound Good k
   | known, [], res, hk, h => by
     simp only [checkAll, Except.ok.injEq] at h
     subst h; exact hk
   | known, L :: Ls, res, hk, h => by
     unfold checkAll at h
     obtain ⟨k, hL, h⟩ := bind_ok h
-    have hk' := checkLemma_sound E bg bind Good hadm known hk L k hL
+    have hk' := checkLemma_sound E bg sets bind Good hadm known hk L k hL
     refine checkAll_sound (known ++ [k]) Ls res (fun k₁ hm => ?_) h
     rcases List.mem_append.mp hm with hm | hm
     · exact hk k₁ hm
@@ -241,10 +267,10 @@ theorem checkAll_sound : ∀ (known : List Known) (Ls : List Lemma) (res : List 
 end Soundness
 
 open VE.Order.ProfileGate in
-theorem checkLemma_reading (E : VE.Environment) (bg : List Leaf)
+theorem checkLemma_reading (E : VE.Environment) (bg : List Leaf) (sets : List Admission.ReadingSet)
     (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit)
     (known : List Known) (L : Lemma) (k : Known)
-    (h : checkLemma E bg bind known L = .ok k) : ReadingCompatible k.leaves := by
+    (h : checkLemma E bg sets bind known L = .ok k) : ReadingCompatible k.leaves := by
   unfold checkLemma at h
   obtain ⟨⟨leaves, _, _⟩, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
@@ -254,24 +280,62 @@ theorem checkLemma_reading (E : VE.Environment) (bg : List Leaf)
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
   cases h
   simp only [ReadingCompatible, hd]
   rfl
 
 open VE.Order.ProfileGate in
-theorem checkAll_reading (E : VE.Environment) (bg : List Leaf)
+theorem checkLemma_binding (E : VE.Environment) (bg : List Leaf) (sets : List Admission.ReadingSet)
+    (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit)
+    (known : List Known) (L : Lemma) (k : Known)
+    (h : checkLemma E bg sets bind known L = .ok k) : ReadingBound sets k.leaves := by
+  unfold checkLemma at h
+  obtain ⟨⟨leaves, _, _⟩, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, hb, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  cases h
+  intro l hl
+  exact (List.all_eq_true.mp (Gate.require_ok hb)) l hl
+
+open VE.Order.ProfileGate in
+theorem checkAll_binding (E : VE.Environment) (bg : List Leaf) (sets : List Admission.ReadingSet)
     (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit) :
     ∀ (known : List Known) (Ls : List Lemma) (res : List Known),
-    (∀ k ∈ known, ReadingCompatible k.leaves) →
-    checkAll E bg bind known Ls = .ok res → ∀ k ∈ res, ReadingCompatible k.leaves
+    (∀ k ∈ known, ReadingBound sets k.leaves) →
+    checkAll E bg sets bind known Ls = .ok res → ∀ k ∈ res, ReadingBound sets k.leaves
   | known, [], res, hk, h => by
     simp only [checkAll, Except.ok.injEq] at h
     subst h; exact hk
   | known, L :: Ls, res, hk, h => by
     unfold checkAll at h
     obtain ⟨k, hL, h⟩ := bind_ok h
-    have hk' := checkLemma_reading E bg bind known L k hL
-    refine checkAll_reading E bg bind (known ++ [k]) Ls res (fun k₁ hm => ?_) h
+    have hk' := checkLemma_binding E bg sets bind known L k hL
+    refine checkAll_binding E bg sets bind (known ++ [k]) Ls res (fun k₁ hm => ?_) h
+    rcases List.mem_append.mp hm with hm | hm
+    · exact hk k₁ hm
+    · rw [List.mem_singleton.mp hm]; exact hk'
+
+open VE.Order.ProfileGate in
+theorem checkAll_reading (E : VE.Environment) (bg : List Leaf) (sets : List Admission.ReadingSet)
+    (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit) :
+    ∀ (known : List Known) (Ls : List Lemma) (res : List Known),
+    (∀ k ∈ known, ReadingCompatible k.leaves) →
+    checkAll E bg sets bind known Ls = .ok res → ∀ k ∈ res, ReadingCompatible k.leaves
+  | known, [], res, hk, h => by
+    simp only [checkAll, Except.ok.injEq] at h
+    subst h; exact hk
+  | known, L :: Ls, res, hk, h => by
+    unfold checkAll at h
+    obtain ⟨k, hL, h⟩ := bind_ok h
+    have hk' := checkLemma_reading E bg sets bind known L k hL
+    refine checkAll_reading E bg sets bind (known ++ [k]) Ls res (fun k₁ hm => ?_) h
     rcases List.mem_append.mp hm with hm | hm
     · exact hk k₁ hm
     · rw [List.mem_singleton.mp hm]; exact hk'
@@ -297,17 +361,21 @@ agreeing with its body) in which its non-background transitive leaves hold,
 whatever lemmas it cites. -/
 theorem bundle_sound (E : VE.Environment) (ds : List Def) (h : Chain E ds)
     (lits : List String) (hn : lits.Nodup)
+    (sets : List Admission.ReadingSet)
     (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit)
     (Ls : List Lemma) (res : List Known)
-    (accepted : checkAll E (backgroundLeaves ds lits) bind [] Ls = .ok res) :
-    (∀ k ∈ res, ReadingCompatible k.leaves) ∧
+    (accepted : checkAll E (backgroundLeaves ds lits) sets bind [] Ls = .ok res) :
+    (∀ k ∈ res, ReadingCompatible k.leaves ∧ ReadingBound sets k.leaves) ∧
     ∀ k ∈ res, ∀ S : VE.Structure.{u}, Intended E ds lits S →
       (∀ l ∈ k.leaves, l ∉ backgroundLeaves ds lits → l.2.denote S []) → k.conclusion.denote S [] := by
   constructor
-  · exact checkAll_reading E (backgroundLeaves ds lits) bind [] Ls res
-      (fun _ h => nomatch h) accepted
+  · intro k hk
+    exact ⟨checkAll_reading E (backgroundLeaves ds lits) sets bind [] Ls res
+      (fun _ h => nomatch h) accepted k hk,
+      checkAll_binding E (backgroundLeaves ds lits) sets bind [] Ls res
+      (fun _ h => nomatch h) accepted k hk⟩
   intro k hk S hS hl
-  have := checkAll_sound.{u} E (backgroundLeaves ds lits) bind (Intended E ds lits)
+  have := checkAll_sound.{u} E (backgroundLeaves ds lits) sets bind (Intended E ds lits)
     (fun S hS => hS.1.1) [] Ls res (fun _ h => nomatch h) accepted k hk S hS
   apply this
   intro l hm
@@ -353,13 +421,21 @@ def runBundle (profiles : List String) (environment : Json) (rv : Wire.RouteVoca
   if items.length > 256 then throw "ResourceLimit: Lemma bundle exceeds 256 lemmas"
   let envId ← Wire.environmentId profiles environment
   let E := rv.environment
+  let sets ← match j.getObjVal? "document" with
+    | .error _ => pure ([] : List Admission.ReadingSet)
+    | .ok doc => do
+      VE.Bridge.exactFields doc ["reading_sets"]
+      let sets ← (← (← doc.getObjVal? "reading_sets").getArr?).toList.mapM (Admission.decodeReadingSet E)
+      Gate.require ((sets.map (fun rs => (rs.id, rs.version))).eraseDups.length == sets.length)
+        "duplicate reading set version"
+      pure sets
   let lemmas ← items.mapM (decodeLemma profiles envId E)
   let names := lemmas.map Lemma.name
   unless names.eraseDups.length == names.length do throw "Duplicate lemma name"
   let bind := fun (ps : List VE.Formula) (c : VE.Formula) (cert : VE.Tableau.Certificate) =>
     Wire.bindingOk profiles environment (ps.map Wire.encodeFormula) (Wire.encodeFormula c)
       cert.environment_id cert.premise_meaning_ids cert.conclusion_meaning_id
-  let known ← checkAll E (backgroundLeaves rv.definitions rv.literals) bind [] lemmas
+  let known ← checkAll E (backgroundLeaves rv.definitions rv.literals) sets bind [] lemmas
   pure (Wire.ok id [("checked", toJson known.length),
     ("lemmas", Json.arr (known.map (fun k => Json.str k.meaningId)).toArray)])
 

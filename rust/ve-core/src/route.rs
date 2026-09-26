@@ -1,6 +1,6 @@
 //! ve.core@0.2 route helpers mirrored from `lean/VE/Route` and `ve/admission.py`,
 //! `ve/background.py`: the claim-label grammar and the dependency-DAG order.
-use crate::{Error, Result, error};
+use crate::{Error, Formula, Result, error};
 use std::collections::BTreeSet;
 
 const GENERATORS: [&str; 4] = ["flags", "definitions", "literals", "profile"];
@@ -67,6 +67,63 @@ pub fn check_label(s: &str) -> Result<()> {
     }
 }
 
+/// Bind a reading leaf to the registered formula at its set identity, version,
+/// and index. `all` is the right-nested disjunction of that set. Bundle citation
+/// labels must be resolved through checked citations, not accepted as leaves.
+pub fn check_reading_binding(
+    label: &str,
+    formula: &Formula,
+    sets: &[(String, u64, Vec<Formula>)],
+) -> Result<()> {
+    check_label(label)?;
+    if label.starts_with("cite:") {
+        return error("AdmissionError", "Unresolved citation hypothesis");
+    }
+    let Some(rest) = label.strip_prefix("readings:") else {
+        return Ok(());
+    };
+    let (set, rest) = pair(rest, '@').expect("canonical reading label");
+    let (version, choice) = pair(rest, ':').expect("canonical reading label");
+    let version: u64 = version
+        .parse()
+        .map_err(|_| Error::new("AdmissionError", "reading version out of range"))?;
+    let mut matches = sets.iter().filter(|(id, v, _)| id == set && *v == version);
+    let Some((_, _, readings)) = matches.next() else {
+        return error(
+            "AdmissionError",
+            "Reading label has no registered reading set",
+        );
+    };
+    if matches.next().is_some() {
+        return error(
+            "AdmissionError",
+            "Reading label has no unique registered reading set",
+        );
+    }
+    if readings.is_empty() || readings.len() > 64 {
+        return error("AdmissionError", "reading sets hold 1 to 64 readings");
+    }
+    let expected = if choice == "all" {
+        readings
+            .iter()
+            .cloned()
+            .rev()
+            .reduce(|right, left| Formula::Or(Box::new(left), Box::new(right)))
+    } else {
+        let index: usize = choice
+            .parse()
+            .map_err(|_| Error::new("AdmissionError", "reading index out of range"))?;
+        readings.get(index).cloned()
+    };
+    if expected.as_ref() != Some(formula) {
+        return error(
+            "AdmissionError",
+            "Reading label is not bound to its registered reading formula",
+        );
+    }
+    Ok(())
+}
+
 /// One DAG over defined and regulated symbols: repeatedly place the smallest
 /// ready node; edges run only to mentioned symbols that are nodes.
 pub fn dependency_order(nodes: &[(String, Vec<String>)]) -> Result<Vec<String>> {
@@ -114,4 +171,28 @@ pub fn dependency_order(nodes: &[(String, Vec<String>)]) -> Result<Vec<String>> 
         }
     }
     Ok(order)
+}
+
+#[cfg(test)]
+mod reading_binding_tests {
+    use super::*;
+
+    #[test]
+    fn labels_name_only_registered_formulas_and_all_disjunction() {
+        let p = Formula::Top;
+        let not_p = Formula::Not(Box::new(Formula::Top));
+        let all = Formula::Or(Box::new(p.clone()), Box::new(not_p.clone()));
+        let sets = vec![("u".to_string(), 0, vec![p.clone(), not_p.clone()])];
+        assert!(check_reading_binding("readings:u@0:0", &p, &sets).is_ok());
+        assert!(check_reading_binding("readings:u@0:all", &all, &sets).is_ok());
+        assert!(check_reading_binding("readings:u@0:0", &not_p, &sets).is_err());
+        assert!(check_reading_binding("readings:u@0:all", &not_p, &sets).is_err());
+        assert!(check_reading_binding("readings:u@0:1", &p, &sets).is_err());
+        let duplicates = vec![
+            ("u".to_string(), 0, vec![p.clone()]),
+            ("u".to_string(), 0, vec![not_p.clone()]),
+        ];
+        assert!(check_reading_binding("readings:u@0:0", &p, &duplicates).is_err());
+        assert!(check_reading_binding("cite:local/A", &p, &sets).is_err());
+    }
 }
