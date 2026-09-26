@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from ve.ast import Top, And, formula_to_data
+from ve.ast import Top, Bottom, Not, And, formula_to_data
 from ve.bundle import check_bundle
 from ve.entailment import prove_entailment
 from ve.environment import Environment
@@ -22,13 +22,13 @@ def bundle():
     first = {"name": "first", "environment_id": env.environment_id,
              "premises": [{"label": "open:assumption", "ast": formula_to_data(env, top)}], "cites": [],
              "conclusion": formula_to_data(env, top), "meaning_id": meaning_id(env, top),
-             "reading_choices": {"u": "r1"},
+             "reading_choices": {},
              "transitive_leaves": [{"label": "open:assumption", "ast": formula_to_data(env, top)}],
              "certificate": prove_entailment(env, (top,), top).certificate}
     second = {"name": "second", "environment_id": env.environment_id,
               "premises": deepcopy(first["premises"]), "cites": [first["meaning_id"]],
               "conclusion": formula_to_data(env, both), "meaning_id": meaning_id(env, both),
-              "reading_choices": {"u": "r1"},
+              "reading_choices": {},
               "transitive_leaves": deepcopy(first["transitive_leaves"]),
               "certificate": prove_entailment(env, (top, top), both).certificate}
     return {"version": "ve-bundle@0", "environment": env.to_dict(), "lemmas": [first, second]}
@@ -64,8 +64,8 @@ FORGERIES = [
     (lambda b: b["lemmas"][1]["cites"].__setitem__(0, "absent"), "absent"),
     (lambda b: b["lemmas"][1]["transitive_leaves"].clear(), "labels"),
     (_stripped_label, "labels"),
-    (lambda b: b["lemmas"][1]["reading_choices"].__setitem__("u", "r2"), "reading"),
-    (lambda b: b["lemmas"][1]["premises"].clear(), "certificate"),
+    (lambda b: b["lemmas"][1]["reading_choices"].__setitem__("u", "0:1"), "reading"),
+    (lambda b: b["lemmas"][1]["premises"].clear(), "hypothesis"),
     (_cyclic, "absent, cyclic"),
     (_self_citation, "absent, cyclic"),
     (_other_version, "another environment"),
@@ -101,6 +101,91 @@ def test_lean_replays_bundles_in_one_run():
     assert check_bundle(bundle(), lean_executable=LEAN)["lean_checked"] is True
     path = Path(__file__).resolve().parents[1] / "usecases/math-mini-paper/t7-definitions-bundle.json"
     assert check_bundle(json.loads(path.read_text()), lean_executable=LEAN)["lean_checked"] is True
+
+
+def test_reading_choices_are_derived_from_label_and_version():
+    from ve.bundle import lean_bundle_verdict
+    data = bundle()
+    leaf = data["lemmas"][0]["premises"][0]
+    leaf["label"] = "readings:u@0:0"
+    data["lemmas"][0]["transitive_leaves"][0]["label"] = leaf["label"]
+    data["lemmas"][1]["premises"][0]["label"] = leaf["label"]
+    data["lemmas"][1]["transitive_leaves"][0]["label"] = leaf["label"]
+    for lemma in data["lemmas"]:
+        lemma["reading_choices"] = {"u": "0:0"}
+    assert check_bundle(data)["status"] == "Checked"
+    for forged in ({}, {"u": "1:0"}, {"u": "0:1"}):
+        changed = deepcopy(data)
+        changed["lemmas"][0]["reading_choices"] = forged
+        with pytest.raises(VEError, match="reading"):
+            check_bundle(changed)
+        if LEAN.exists():
+            verdict = lean_bundle_verdict(LEAN, changed["environment"], changed["lemmas"])
+            assert verdict["status"] == "error" and "reading" in verdict["error"]
+    conflict = deepcopy(data)
+    conflict["lemmas"][1]["premises"][0]["label"] = "readings:u@0:1"
+    conflict["lemmas"][1]["premises"].append(deepcopy(data["lemmas"][0]["premises"][0]))
+    conflict["lemmas"][1]["transitive_leaves"] = [
+        conflict["lemmas"][1]["premises"][0], data["lemmas"][0]["premises"][0]]
+    with pytest.raises(VEError, match="incompatible"):
+        check_bundle(conflict)
+    if LEAN.exists():
+        verdict = lean_bundle_verdict(LEAN, conflict["environment"], conflict["lemmas"])
+        assert verdict["status"] == "error" and "incompatible" in verdict["error"]
+    compatible = deepcopy(data)
+    compatible["lemmas"][0]["premises"][0]["label"] = "readings:u@0:all"
+    compatible["lemmas"][0]["transitive_leaves"][0]["label"] = "readings:u@0:all"
+    compatible["lemmas"][0]["reading_choices"] = {"u": "0:all"}
+    compatible["lemmas"][1]["premises"].append(deepcopy(compatible["lemmas"][0]["premises"][0]))
+    compatible["lemmas"][1]["transitive_leaves"].append(deepcopy(compatible["lemmas"][0]["premises"][0]))
+    env = Environment(compatible["environment"])
+    compatible["lemmas"][1]["certificate"] = prove_entailment(
+        env, (Top(), Top(), Top()), And(Top(), Top())).certificate
+    assert check_bundle(compatible)["status"] == "Checked"
+    if LEAN.exists():
+        assert lean_bundle_verdict(LEAN, compatible["environment"], compatible["lemmas"])["status"] == "ok"
+
+
+def test_cited_hypothesis_must_be_on_branch_even_with_fresh_certificate():
+    from ve.bundle import lean_bundle_verdict
+    data = bundle()
+    second = data["lemmas"][1]
+    second["premises"] = []
+    env = Environment(data["environment"])
+    second["certificate"] = prove_entailment(env, (Top(),), And(Top(), Top())).certificate
+    with pytest.raises(VEError, match="hypothesis.*branch"):
+        check_bundle(data)
+    if LEAN.exists():
+        verdict = lean_bundle_verdict(LEAN, data["environment"], data["lemmas"])
+        assert verdict["status"] == "error" and "hypothesis" in verdict["error"]
+
+
+def test_incompatible_readings_cannot_certify_false_with_empty_maps():
+    """The former empty-choice-map exploit: opposite readings prove false."""
+    from ve.bundle import lean_bundle_verdict
+    data = bundle()
+    env = Environment(data["environment"])
+    top, neg, bottom = Top(), Not(Top()), Bottom()
+    first, second = data["lemmas"]
+    first["premises"][0]["label"] = "readings:u@0:0"
+    first["transitive_leaves"] = deepcopy(first["premises"])
+    second.update(name="opposite", premises=[{"label": "readings:u@0:1",
+        "ast": formula_to_data(env, neg)}], cites=[], conclusion=formula_to_data(env, neg),
+        meaning_id=meaning_id(env, neg), reading_choices={},
+        transitive_leaves=[{"label": "readings:u@0:1", "ast": formula_to_data(env, neg)}],
+        certificate=prove_entailment(env, (neg,), neg).certificate)
+    third = {"name": "false", "environment_id": env.environment_id,
+             "premises": deepcopy(first["premises"] + second["premises"]),
+             "cites": [first["meaning_id"], second["meaning_id"]],
+             "conclusion": formula_to_data(env, bottom), "meaning_id": meaning_id(env, bottom),
+             "reading_choices": {}, "transitive_leaves": deepcopy(first["premises"] + second["premises"]),
+             "certificate": prove_entailment(env, (top, neg, top, neg), bottom).certificate}
+    data["lemmas"].append(third)
+    with pytest.raises(VEError, match="reading"):
+        check_bundle(data)
+    if LEAN.exists():
+        verdict = lean_bundle_verdict(LEAN, data["environment"], data["lemmas"])
+        assert verdict["status"] == "error" and "reading" in verdict["error"]
 
 
 def test_math_bundle_preserves_background_and_rejects_version_tampering():
