@@ -19,6 +19,7 @@ import VE.Route.Run
 import VE.Route.Examples
 import VE.Core.Checks
 import VE.Core.Route
+import VE.Core.Wire
 import Iceberg
 
 #print axioms Iceberg.mul_sub
@@ -539,3 +540,5 @@ import Iceberg
 #print axioms VE.Route.core_entails_iff
 #print axioms VE.Route.core_family_gate
 #print axioms VE.Route.core_route_acceptance
+#print axioms VE.Core.Wire.validField
+#print axioms VE.Core.Wire.run_certificate_acceptance
