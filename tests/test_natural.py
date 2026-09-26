@@ -8,6 +8,8 @@ from ve import (And, Binary, Const, Document, Environment, Exists, Forall,
 from ve.english import english_lark_grammar, parse_english
 from ve.ast import Le, Lt, Num, Scale
 from ve.natural import _NOTATION, natural_coverage, render_natural_sentence
+from ve.errors import ResourceLimit
+from ve.printer import natural_document
 from test_views import ENV, vocabulary
 
 
@@ -30,6 +32,25 @@ def test_natural_core_forms_are_writable_and_unique():
         assert parse_english(ENV, expected + '.') == Document((formula,))
         assert not list(earley.parse(expected.lower() + '.').find_data('_ambig'))
         assert render(formula, ENV, 've_natural') == expected
+
+
+def test_writable_shared_copula_and_unqualified_owner():
+    compound = Exists('item', And(Unary('active', Var(0)), Unary('reviewed', Var(0))))
+    owner = Forall('item', Exists('agent', Binary('owns', Var(0), Var(1))))
+    assert parse_english(ENV, 'Some service is deployed and reviewed.') == Document((compound,))
+    assert parse_english(ENV, 'Every service has an owner.') == Document((owner,))
+    for formula in (compound, owner):
+        sentence = render_natural_sentence(formula, ENV).text
+        assert parse_english(ENV, sentence + '.') == Document((formula,))
+
+
+def test_complete_natural_document_obeys_english_derivation_budget():
+    from ve import Top
+    document = Document((Top(),) * 420)
+    for display in (lambda: render(document, ENV, 've_natural'),
+                    lambda: natural_document(ENV, document).text):
+        with pytest.raises(ResourceLimit, match='MAX_NODES'):
+            display()
 
 
 def test_no_contractor_with_definite_constant():

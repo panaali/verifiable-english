@@ -12,7 +12,7 @@ import unicodedata
 
 from . import ast
 from .errors import ResourceLimit
-from .limits import MAX_SOURCE_BYTES
+from .limits import MAX_NODES, MAX_SOURCE_BYTES
 
 VIEWS = ("fol_symbols", "fol_keywords", "ve_strict", "ve_explicit", "ve_fluent")
 # VIEWS is the frozen five-view experimental comparison cohort.
@@ -573,6 +573,13 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
                    accept_suggested_vocabulary=accept_suggested_vocabulary).text
         if len(text.encode('utf-8')) + (0 if isinstance(value, ast.Document) else 2) > MAX_SOURCE_BYTES:
             raise ResourceLimit(f'Rendered {view} text exceeds its {MAX_SOURCE_BYTES}-byte limit')
+        if isinstance(value, ast.Document) and len(text) > MAX_NODES:
+            raise ResourceLimit(f'Rendered {view} text exceeds the English derivation budget MAX_NODES ({MAX_NODES})')
+        if isinstance(value, ast.Document):
+            from .english import parse_english
+            if parse_english(env, text, vocabulary=vocabulary,
+                             accept_suggested_vocabulary=accept_suggested_vocabulary) != value:
+                raise ValueError('Rendered ve_natural document has a different reading')
         return text
     if view == "ve_english":
         from .english import render_english
@@ -724,6 +731,12 @@ def natural_document(env: Any, document: ast.Document, *, naming: str = "per_sta
     text = ''.join(result.text + '.\n' for result in results)
     if len(text.encode('utf-8')) > MAX_SOURCE_BYTES:
         raise ResourceLimit(f'Rendered ve_natural text exceeds its {MAX_SOURCE_BYTES}-byte limit')
+    if len(text) > MAX_NODES:
+        raise ResourceLimit(f'Rendered ve_natural text exceeds the English derivation budget MAX_NODES ({MAX_NODES})')
+    from .english import parse_english
+    if parse_english(env, text, vocabulary=vocabulary,
+                     accept_suggested_vocabulary=accept_suggested_vocabulary) != document:
+        raise ValueError('Rendered ve_natural document has a different reading')
     return NaturalView(text, env.environment_id, meaning_id(env, document),
                        sentences=tuple({'text': result.text, 'form': result.form,
                                         'fallback_reason': result.reason} for result in results))
