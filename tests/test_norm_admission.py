@@ -4,7 +4,10 @@ from copy import deepcopy
 import pytest
 
 from ve.admission import AdmissionError, admit_document
-from ve.ast import formula_to_data
+from ve.ast import And, Top, formula_to_data
+from ve.entailment import prove_entailment
+from ve.errors import VEError
+from ve.identity import meaning_id
 from tests.test_norms import environment, permission, rule
 from ve.norms import NormDocument
 
@@ -44,3 +47,24 @@ def test_quoted_norm_does_not_activate_a_layer():
                               "content": rule("silent", "permitted", False).to_dict()})
     with pytest.raises(AdmissionError):
         admit_document(env, document)
+
+
+def test_norm_layer_and_asserted_unit_replay_in_w2_graph():
+    env, document = source()
+    premise = NormDocument(env, [rule("allow", "permitted", True)]).elaborate("permitted")
+    conclusion = And(premise, Top())
+    proof = prove_entailment(env, (premise, Top()), conclusion)
+    assert proof.status == "Found"
+    document["units"].append({"id": "u2", "span": [20, 30], "kind": "asserted",
+                              "content": ["top"]})
+    document["graph"]["nodes"].extend([
+        {"name": "asserted", "ast": ["top"], "unit": "u2"},
+        {"name": "joined", "ast": formula_to_data(env, conclusion),
+         "premises": ["layer", "asserted"], "certificate": proof.certificate}])
+    document["graph"]["root"] = "joined"
+    admitted = admit_document(env, document)
+    assert [a["name"] for a in admitted["report"]["assumptions"]] == ["layer", "asserted"]
+    stale = deepcopy(document)
+    stale["graph"]["nodes"][-1]["certificate"]["premise_meaning_ids"] = [meaning_id(env, Top())]
+    with pytest.raises(VEError, match="stale"):
+        admit_document(env, stale)
