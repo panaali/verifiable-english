@@ -99,8 +99,12 @@ def default_sentence(env, predicate):
     return "By default, " + template.format(*(article(n) for n in nouns)) + "."
 
 
-def render_english(document: NormDocument):
+def render_english(document: NormDocument, *, handles=None):
     env = document.env
+    if handles is not None and (set(handles) != {r.name for r in document.rules}
+                                or len(set(handles.values())) != len(handles)
+                                or any(type(h) is not str or not h for h in handles.values())):
+        raise VEError("IdentityMetadataMismatch: invalid editor handles")
     words = _words(env)
     numbers = {r.name: i for i, r in enumerate(document.rules, 1)}
     lines = []
@@ -125,7 +129,8 @@ def render_english(document: NormDocument):
         block = header + " " + sentence
         start = sum(len(line) + 1 for line in lines)
         lines.append(block)
-        entries.append({"handle": f"norm-{i}", "name": rule.name,
+        entries.append({"handle": handles[rule.name] if handles is not None else f"handle-{rule.name}",
+                        "name": rule.name,
                         "number": i, "span": [start, start + len(block)]})
     text = "\n".join(lines)
     manifest = {"environment_id": env.environment_id,
@@ -168,12 +173,21 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
         if (type(manifest) is not dict or manifest.get("environment_id") != env.environment_id
                 or manifest.get("text_digest") != hashlib.sha256(source.encode()).hexdigest()):
             raise VEError("IdentityMetadataMismatch: stale English export")
-    blocks = source.split("\n") if source else []
+    lines = source.split("\n") if source else []
+    precedence = {}
+    blocks = []
+    for line in lines:
+        standalone = re.fullmatch(r"Rule ([1-9][0-9]*) takes precedence over rule ([1-9][0-9]*)\.", line)
+        if standalone:
+            precedence.setdefault(int(standalone[1]), []).append(int(standalone[2]))
+        else:
+            blocks.append(line)
     if manifest is not None and len(manifest.get("blocks", [])) != len(blocks):
         raise VEError("IdentityMetadataMismatch: block count")
     words = _words(env)
     parsed = []
     reserved = set(existing_names)
+    seen_handles = set()
     for index, block in enumerate(blocks, 1):
         m = _HEADER.fullmatch(block)
         if m is None or int(m[1]) != index:
@@ -187,12 +201,15 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
         else:
             entry = manifest["blocks"][index - 1]
             start = sum(len(b) + 1 for b in blocks[:index - 1])
+            handle = entry.get("handle")
             if (entry.get("number") != index or entry.get("span") != [start, start + len(block)]
-                    or entry.get("handle") != f"norm-{index}" or entry.get("name") in reserved):
+                    or type(handle) is not str or not handle or handle in seen_handles
+                    or entry.get("name") in reserved):
                 raise VEError("IdentityMetadataMismatch: block mapping")
+            seen_handles.add(handle)
             name = entry["name"]
             reserved.add(name)
-        refs = tuple(int(x) for x in re.findall(r"[0-9]+", m[2] or ""))
+        refs = tuple(int(x) for x in re.findall(r"[0-9]+", m[2] or "")) + tuple(precedence.get(index, ()))
         clauses = m[3].split(" Except when ")
         if not clauses[0].endswith("."):
             raise SyntaxError("Expected a complete rule sentence")

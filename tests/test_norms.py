@@ -6,7 +6,7 @@ from ve.background import background
 from ve.environment import Environment
 from ve.errors import InvalidModel, VEError
 from ve.model import FiniteModel
-from ve.norms import Norm, NormDocument, check_conflict
+from ve.norms import Norm, NormDocument, check_conflict, check_witness
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.evaluate import _Evaluator
 
@@ -115,6 +115,21 @@ def test_mixed_sort_tuple_stays_in_argument_order():
     witness = check_conflict(doc, model=model(doc, relation=[["state0", "person0"]]))
     assert witness.target == "permitted" and witness.tuple == ("state0", "person0")
     assert "state state0, person person0" in witness.situation
+    assert "rule yes permits; rule no forbids" in witness.situation
+    assert check_witness(doc, "permitted", model(doc, relation=[["state0", "person0"]]),
+                         ["state0", "person0"])
+    with pytest.raises(VEError, match="wrong length or sort"):
+        check_witness(doc, "permitted", model(doc, relation=[["state0", "person0"]]),
+                      ["person0", "state0"])
+
+
+def test_same_sign_overlap_is_not_conflict():
+    env = environment({"permitted": permission()})
+    doc = NormDocument(env, [rule("first", "permitted", True),
+                             rule("second", "permitted", True)])
+    witness = model(doc)
+    assert doc.overlap_witnesses(witness) == (("first", "second", ("act0",)),)
+    assert check_conflict(doc, prove=True).status == "CONFLICT-FREE"
 
 
 def test_cycles_duals_and_profile_model():

@@ -226,6 +226,12 @@ class NormDocument:
     def premises(self):
         return tuple((f"layer:norms:{p}", self.elaborate(p)) for p in self.order)
 
+    def meaning_id(self, name):
+        """A rule identity binds its AST and environment, never its display number."""
+        rule = self.by_name[name]
+        return digest(f"ve-meaning-{self.env.identity_version}\n",
+                      {"environment_id": self.env.environment_id, "ast": rule.to_dict()})
+
     def conflict_targets(self):
         targets = []
         for p in self.order:
@@ -239,6 +245,35 @@ class NormDocument:
                               Not(self.outcome(reg.permission, base=True)))
                 targets.append((f"{required}->{reg.permission}", decl.arguments, formula))
         return tuple(targets)
+
+    def selected_rules(self, predicate, model, values, *, max_evaluations=1_000_000):
+        from .evaluate import _Evaluator
+        sorts = self.env.predicates[predicate].arguments
+        if len(values) != len(sorts) or any(v not in model.domains[s] for s, v in zip(sorts, values)):
+            raise VEError("InvalidModel: witness tuple has wrong length or sort")
+        _, _, selected = self.selection(predicate)
+        bindings = tuple(zip(reversed(sorts), reversed(values)))
+        evaluator = _Evaluator(self.base_environment(), model, max_evaluations, trace=False)
+        return tuple(rule for rule in self.rules if rule.predicate == predicate and
+                     evaluator.formula(self._expand(selected[rule.name], predicate), bindings)[0])
+
+    def overlap_witnesses(self, model):
+        """Same-sign selections with a checked example; overlap is not conflict."""
+        from .model import FiniteModel
+        env = self.base_environment()
+        model = FiniteModel.from_dict(env, model) if type(model) is dict else model
+        if model.environment_id != env.environment_id:
+            raise VEError("InvalidModel: witness environment does not match base environment")
+        reports = []
+        for predicate in self.order:
+            sorts = self.env.predicates[predicate].arguments
+            for values in product(*(model.domains[s] for s in sorts)):
+                selected = self.selected_rules(predicate, model, values)
+                for i, left in enumerate(selected):
+                    for right in selected[i + 1:]:
+                        if left.sign == right.sign:
+                            reports.append((left.name, right.name, tuple(values)))
+        return tuple(reports)
 
     def base_environment(self):
         from .environment import Environment
@@ -257,6 +292,28 @@ class ConflictReport:
     tuple: tuple[str, ...] = ()
     situation: str = ""
     detail: str = ""
+
+
+def check_witness(document: NormDocument, target: str, model, values):
+    """Independently validate an asserted target and typed tuple."""
+    from .evaluate import _Evaluator
+    from .model import FiniteModel
+    env = document.base_environment()
+    model = FiniteModel.from_dict(env, model) if type(model) is dict else model
+    if model.environment_id != env.environment_id:
+        raise VEError("InvalidModel: witness environment does not match base environment")
+    from .background import validate_background
+    validate_background(env, model)
+    for name, sorts, formula in document.conflict_targets():
+        if name != target:
+            continue
+        if (type(values) not in (list, tuple) or len(values) != len(sorts)
+                or any(v not in model.domains[s] for s, v in zip(sorts, values))):
+            raise VEError("InvalidModel: witness tuple has wrong length or sort")
+        _Checker(env).formula(formula, tuple(reversed(sorts)))
+        return _Evaluator(env, model, 1_000_000, trace=False).formula(
+            formula, tuple(zip(reversed(sorts), reversed(values))))[0]
+    raise VEError(f"UnknownSymbol: conflict target {target}")
 
 
 def check_conflict(document: NormDocument, *, model=None, certificates=None,
@@ -279,8 +336,17 @@ def check_conflict(document: NormDocument, *, model=None, certificates=None,
                 for values in product(*(model.domains[s] for s in sorts)):
                     bindings = tuple(zip(reversed(sorts), reversed(values)))
                     if evaluator.formula(formula, bindings)[0]:
-                        situation = (", ".join(f"{sort} {value}" for sort, value in zip(sorts, values))
-                                     + f": conflicting decisions for {target}")
+                        setting = ", ".join(f"{sort} {value}" for sort, value in zip(sorts, values))
+                        if target in document.order:
+                            selected = document.selected_rules(target, model, values)
+                            role = document.env.predicates[target].regulated.role
+                            pos = "permits" if role == "permission" else "requires" if role == "obligation" else "affirms"
+                            neg = "forbids" if role == "permission" else "releases" if role == "obligation" else "denies"
+                            decisions = "; ".join(f"rule {r.name} {pos if r.sign else neg}" for r in selected)
+                        else:
+                            required, permitted = target.split("->", 1)
+                            decisions = f"{required} is required, but {permitted} is not permitted"
+                        situation = f"{setting}: {decisions}"
                         return ConflictReport("CONFLICT", target, tuple(values), situation)
         except _Exhausted:
             return ConflictReport("UNKNOWN", detail="MAX_EVALUATIONS")
