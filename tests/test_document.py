@@ -302,6 +302,77 @@ def test_quoted_candidate_cannot_enter_p0_as_assertion(tmp_path):
     assert check_document(path)["premises"]["status"] == "UNKNOWN"
 
 
+@pytest.mark.parametrize("reading_kind,reading_ast,status", [
+    ("asserted", ["not", ["unary", "senior", ["const", "alice"]]], "authored"),
+    (["attributed", "alice", "says", "asserted"],
+     ["unary", "senior", ["const", "alice"]], "open"),
+    ("asserted", ["unary", "senior", ["const", "alice"]], "open"),
+])
+def test_active_readings_cannot_be_bypassed_by_unit_reference(
+        tmp_path, reading_kind, reading_ast, status):
+    env_json = envelope(VOCAB)
+    env = Environment(env_json)
+    p = ["unary", "senior", ["const", "alice"]]
+    source = b"Claim.\n"
+    rs = {"id": "s", "unit": "a", "version": 1, "status": status,
+          "readings": [reading(env, "r", reading_ast, reading_kind)]}
+    if status == "authored":
+        rs["signature"] = "alice"
+    graph = {"root": "claim", "nodes": [{"name": "claim", "ast": p, "unit": "a"}]}
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), content={"ast": p})],
+                     environment_json=env_json, reading_sets=[rs], graph=graph)
+    if status == "authored":
+        assert query(path, tmp_path, p)["verdict"] == "NONE"
+    with pytest.raises(VEError, match="not admitted"):
+        check_document(path)
+    if reading_kind == "asserted" and reading_ast == p:
+        graph["nodes"][0] = {"name": "claim", "ast": p, "label": "readings:s@1:0"}
+        path = write_doc(tmp_path, source, [unit("a", 0, len(source), content={"ast": p})],
+                         environment_json=env_json, reading_sets=[rs], graph=graph)
+        report = check_document(path)["admission"]["report"]
+        assert report["assumptions"][0]["label"] == "readings:s@1:0"
+
+
+def test_active_readings_cannot_be_bypassed_by_bridge_reference(tmp_path):
+    env = Environment(environment())
+    source = b"Alice says so.\n"
+    quoted = unit("a", 0, len(source), ["attributed", "alice", "says", "asserted"],
+                  content={"ast": ["top"]})
+    rs = {"id": "s", "unit": "a", "version": 1, "status": "authored",
+          "signature": "alice", "readings": [reading(env, "r", ["top"])]}
+    for node in ({"name": "claim", "ast": ["top"], "label": "bridge:accepts(alice,a)"},
+                 {"name": "claim", "ast": ["top"], "unit": "a",
+                  "label": "bridge:accepts(alice,a)"}):
+        path = write_doc(tmp_path, source, [quoted], reading_sets=[rs],
+                         graph={"root": "claim", "nodes": [node]})
+        with pytest.raises(VEError, match="not admitted"):
+            check_document(path)
+
+
+def test_document_vacuity_includes_fixed_assertions_outside_graph(tmp_path):
+    env_json = envelope(VOCAB)
+    env = Environment(env_json)
+    p = ["unary", "senior", ["const", "alice"]]
+    source = b"Positive.\nNegative.\n"
+    cut = len(b"Positive.\n")
+    graph = {"root": "claim", "nodes": [{"name": "claim", "ast": p, "unit": "a"}]}
+    units = [unit("a", 0, cut, content={"ast": p}),
+             unit("b", cut, len(source), content={"ast": ["not", p]})]
+    path = write_doc(tmp_path, source, units, environment_json=env_json, graph=graph)
+    result = check_document(path)
+    assert result["premises"]["status"] == "INCONSISTENT"
+    assert result["admission"]["vacuous"] is True
+
+    units[1] = unit("b", cut, len(source), "meta")
+    rs = {"id": "s", "unit": "b", "version": 1, "status": "authored",
+          "signature": "alice", "readings": [reading(env, "notp", ["not", p])]}
+    path = write_doc(tmp_path, source, units, environment_json=env_json,
+                     graph=graph, reading_sets=[rs])
+    result = check_document(path)
+    assert result["premises"]["status"] == "INCONSISTENT"
+    assert result["admission"]["vacuous"] is True
+
+
 def test_fixed_and_authored_premises_enter_every_readings_query(tmp_path):
     env_json = envelope(VOCAB)
     env = Environment(env_json)
@@ -381,9 +452,11 @@ def test_narrowing_keeps_original_choice_indices(tmp_path):
 def test_report_identity_binds_candidate_kind_and_narrowing(tmp_path):
     env_json = envelope(VOCAB)
     env = Environment(env_json)
-    source = b"Claim.\n"
-    graph = {"root": "claim", "nodes": [{"name": "claim", "ast": ["top"], "unit": "a"}]}
-    units = [unit("a", 0, len(source), content={"ast": ["top"]})]
+    source = b"Claim.\nIndependent.\n"
+    cut = len(b"Claim.\n")
+    graph = {"root": "claim", "nodes": [{"name": "claim", "ast": ["top"], "unit": "b"}]}
+    units = [unit("a", 0, cut, content={"ast": ["top"]}),
+             unit("b", cut, len(source), content={"ast": ["top"]})]
     rs = {"id": "s", "unit": "a", "version": 1, "status": "open",
           "readings": [reading(env, "r", ["top"]), reading(env, "other", ["bottom"])]}
     separate_readings(env, rs)
