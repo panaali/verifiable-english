@@ -117,7 +117,7 @@ class _Compiler:
         if b[0] == "set":
             if any(x[0] != "entity" for x in b[1]):
                 return None
-            return _any(self._reach(a, x) for x in b[1])
+            return _any(self._reach(a, x) for x in sorted(b[1]))
         return None
 
     def _logical(self, op, left, right):

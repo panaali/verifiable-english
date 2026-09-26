@@ -139,6 +139,16 @@ def test_norm_certificate_producer_and_canonical_identity_match_lean(lean_execut
                      "norms": [r.to_dict() for r in doc.rules], "packages": packages}
     assert run(lean_executable, [conflict_case])[0]["verdict"] == "CONFLICT-FREE"
 
+    null_doc = NormDocument(environment({"required": obligation(dual=None)}), [])
+    null_proof = prove_norm_entailment(null_doc, (), Top())
+    assert null_proof.status == "Found"
+    null_env = null_doc.env.to_dict()
+    null_env["vocabulary"]["predicates"]["required"]["regulated"]["permission"] = None
+    null_case = {"id": "null", "kind": "norms-certificate", "environment": null_env,
+                 "norms": [], "premises": [], "conclusion": ["top"],
+                 "certificate": null_proof.certificate}
+    assert run(lean_executable, [null_case])[0]["valid"] is True
+
 
 def test_norm_document_admission_and_provenance_match_lean(lean_executable):
     from copy import deepcopy
