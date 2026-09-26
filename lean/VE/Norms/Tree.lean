@@ -200,12 +200,60 @@ def semanticCheck (D : Doc) : Bool :=
     ss.any (fun q => match q with | .reg r => r.name == pr.req && r.sorts == pr.sorts | _ => false) &&
     ss.any (fun q => match q with | .reg m => m.name == pr.perm && m.sorts == pr.sorts | _ => false))
 
+/-- Python `repr` of a string (identifiers only; enough for these diagnostics). -/
+def pyRepr (s : String) : String := "'" ++ s ++ "'"
+
+def pyTuple (l : List String) : String :=
+  "(" ++ ", ".intercalate (l.map pyRepr) ++ (if l.length == 1 then ",)" else ")")
+
+/-- Python `_Checker.term`'s diagnostic and sort. -/
+def termSort (E : VE.Environment) (Γ : List String) : VE.Term → Except String String
+  | .var i => match Γ[i]? with
+    | some s => .ok s
+    | none => .error s!"UnboundVariable: Variable index {i} is outside its scope"
+  | .const c => match E.constants c with
+    | some s => .ok s
+    | none => .error s!"UnknownSymbol: Unknown constant {pyRepr c}"
+
+/-- Python `_Checker.formula`'s first diagnostic, in its traversal order,
+rendered `<code>: <message>` as 11.1 writes diagnostics. -/
+def typeDiagnostic (E : VE.Environment) : List String → VE.Formula → Except String Unit
+  | _, .top | _, .bottom => .ok ()
+  | Γ, .unary p t => do
+    let some sig := E.predicates p | throw s!"UnknownSymbol: Unknown predicate {pyRepr p}"
+    unless sig.length == 1 do throw s!"TypeMismatch: Predicate {pyRepr p} has arity {sig.length}, not 1"
+    let a ← termSort E Γ t
+    unless [a] == sig do throw s!"TypeMismatch: Predicate {pyRepr p} expects {pyTuple sig}, received {pyTuple [a]}"
+  | Γ, .binary p t u => do
+    let some sig := E.predicates p | throw s!"UnknownSymbol: Unknown predicate {pyRepr p}"
+    unless sig.length == 2 do throw s!"TypeMismatch: Predicate {pyRepr p} has arity {sig.length}, not 2"
+    let a ← termSort E Γ t
+    let b ← termSort E Γ u
+    unless [a, b] == sig do throw s!"TypeMismatch: Predicate {pyRepr p} expects {pyTuple sig}, received {pyTuple [a, b]}"
+  | Γ, .eq t u => do
+    let a ← termSort E Γ t
+    let b ← termSort E Γ u
+    unless a == b do throw s!"TypeMismatch: Equality requires one sort, received {pyRepr a} and {pyRepr b}"
+  | Γ, .not a => typeDiagnostic E Γ a
+  | Γ, .and a b | Γ, .or a b | Γ, .implies a b => do
+    typeDiagnostic E Γ a
+    typeDiagnostic E Γ b
+  | Γ, .all s a | Γ, .ex s a => do
+    unless E.sorts.contains s do throw s!"UnknownSymbol: Unknown binder sort {pyRepr s}"
+    typeDiagnostic E (s :: Γ) a
+
+/-- A rule name: `[a-z][a-z0-9-]*`, at most 64 bytes (3.2). -/
+def ruleName (s : String) : Bool :=
+  s.utf8ByteSize ≤ 64 && match s.toList with
+    | c :: cs => ('a' ≤ c && c ≤ 'z') && cs.all (fun d => ('a' ≤ d && d ≤ 'z') || d.isDigit || d == '-')
+    | [] => false
+
 /-- Declaration checks (3.1), 4.1, guard/carve-out typing and both DAG checks,
-with the shared diagnostics of 11.1. -/
+with the shared diagnostics of 11.1, in the order Python `ve/environment.py`
+(declarations) and `ve/norms.py` `NormDocument` (rules) report them. -/
 def check (D : Doc) : Except String Unit := do
   let T := D.T
   if T.regulated.length > 64 then throw "ResourceLimit: regulated predicates"
-  if T.nodes.length > 256 then throw "ResourceLimit: rules"
   let symNames := regulatedNames T ++ T.definitions.map Definition.name
   if let some n := dupName symNames then throw s!"DuplicateDeclaration: predicate {n}"
   for r in T.regulated do
@@ -250,17 +298,22 @@ def check (D : Doc) : Except String Unit := do
     unless d.args.length == 1 || d.args.length == 2 do
       throw s!"UnsupportedArity: defined predicate {d.name}"
     unless d.args.all D.E.sorts.contains do throw s!"UnknownSymbol: sort of {d.name}"
+    typeDiagnostic D.E d.args.reverse d.body
     unless d.body.check D.E d.args.reverse do throw s!"InvalidInput: ill-typed definition {d.name}"
-  -- Rules (4.1(1)-(3)).
-  let ruleNames := T.nodes.map Node.name
-  if let some n := dupName ruleNames then throw s!"DuplicateDeclaration: rule {n}"
+  -- Rules (4.1(1)-(3)), one at a time as Python checks them.
+  if T.nodes.length > 256 then throw "ResourceLimit: rules"
+  let mut names : List String := []
   for N in T.nodes do
+    unless ruleName N.name do throw s!"InvalidInput: invalid rule name {pyRepr N.name}"
+    if names.contains N.name then throw s!"DuplicateDeclaration: rule {N.name}"
+    names := names ++ [N.name]
     match T.regulated.find? (·.name == N.pred) with
     | none => throw s!"UnknownSymbol: regulated predicate {N.pred}"
     | some r =>
       if N.carveOuts.length > 8 then throw "InvalidInput: invalid sign or too many carve-outs"
-      unless N.guard.check D.E r.sorts.reverse && N.carveOuts.all (·.check D.E r.sorts.reverse) do
-        throw s!"InvalidInput: ill-typed rule {N.name}"
+      for φ in N.guard :: N.carveOuts do
+        typeDiagnostic D.E r.sorts.reverse φ
+        unless φ.check D.E r.sorts.reverse do throw s!"InvalidInput: ill-typed rule {N.name}"
   for N in T.nodes do
     for m in N.over do
       match T.nodes.find? (·.name == m) with
