@@ -49,14 +49,14 @@ Reproduce with `uv run python -m conformance.natural_surface`. The committed
 report is `conformance/natural-view-report.json`. The round-trip row samples
 100 unique seeded ASTs for each of eleven environments, including `order@0`.
 
-| Corpus | Natural | Total | Coverage |
-|---|---:|---:|---:|
-| `examples/` | 10 | 11 | 90.9% |
-| `docs/fluent-examples.md` source | 5 | 6 | 83.3% |
-| `usecases/` | 58 | 96 | 60.4% |
-| `tests/data/fluent-items.jsonl` | 5 | 6 | 83.3% |
-| Seeded round-trip corpora | 309 | 1,100 | 28.1% |
-| **Total** | **387** | **1,219** | **31.7%** |
+| Corpus | Natural | Total | Natural share | Fallback share |
+|---|---:|---:|---:|---:|
+| `examples/` | 10 | 11 | 90.9% | 9.1% |
+| `docs/fluent-examples.md` source | 5 | 6 | 83.3% | 16.7% |
+| `usecases/` | 58 | 96 | 60.4% | 39.6% |
+| `tests/data/fluent-items.jsonl` | 5 | 6 | 83.3% | 16.7% |
+| Seeded round-trip corpora | 309 | 1,100 | 28.1% | 71.9% |
+| **Total** | **387** | **1,219** | **31.7%** | **68.3%** |
 
 All 832 fallbacks were recorded as `symbols_or_variable_names`: their first
 English candidate needed structural list markers, arithmetic brackets,
