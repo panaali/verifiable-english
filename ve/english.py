@@ -50,6 +50,17 @@ _COMPARISONS = (('{0} is less than {1}', ast.Lt, False), ('{0} is at most {1}', 
 # exactly as the type checker does (MAX_DEPTH), so every renderable integer
 # term of a valid AST parses back.
 _INT_MASK = '\x00'
+_SENTENCE_HEADS = frozenset('every for there some no if both either it starting all at this'.split())
+
+
+def _fold_sentence_initials(source, words):
+    def fold(match):
+        word = match[2]
+        if (word.lower() in _SENTENCE_HEADS or
+                any(value == word.lower() for value in words.constants.values())):
+            return match[1] + word[0].lower() + word[1:]
+        return match[0]
+    return re.sub(r'(^|(?<=\.)\s+)([A-Z][A-Za-z]*)', fold, source)
 
 
 def _mask_brackets(source):
@@ -242,6 +253,26 @@ class EnglishVocabulary:
         self.constants = {name: (name if re.fullmatch('[a-z]+', name)
                                 and name not in _RESERVED and name not in {'is', 'has'} else quote(name))
                           for name in env.constants}
+        # Names are declared display data, never inferred from descriptions.
+        # A rejected or colliding form retains its exact quoted identifier.
+        aliases = {}
+        for name, decl in env.constants.items():
+            form = decl.verbalisation
+            if form is None:
+                continue
+            if (re.fullmatch(r'(?:the )?[A-Za-z][A-Za-z]*(?: [A-Za-z][A-Za-z]*)*', form)
+                    and not set(form.lower().split()) & (_RESERVED - {'the'})
+                    and not any(wording_key(form) == wording_key(noun) for noun in self.sorts.values())):
+                aliases.setdefault(wording_key(form), []).append(name)
+        for names in aliases.values():
+            if len(names) == 1:
+                name = names[0]
+                self.constants[name] = env.constants[name].verbalisation
+        # A display form may not reuse another constant's default spelling.
+        counts = Counter(wording_key(value) for value in self.constants.values())
+        for name, value in list(self.constants.items()):
+            if counts[wording_key(value)] > 1:
+                self.constants[name] = quote(name)
         for category in ('sorts', 'predicates'):
             for name, entry in self.overlay[category].items():
                 expected = entry['verbalisation']
@@ -567,6 +598,9 @@ class EnglishParser:
     def term_options(self, scope):
         terms = {ref: ast.Var(index) for index, (_, ref) in reversed(list(enumerate(scope)))}
         terms.update({text: ast.Const(name) for name, text in self.words.constants.items()})
+        terms.update({text[0].upper() + text[1:]: ast.Const(name)
+                      for name, text in self.words.constants.items()
+                      if text.startswith('the ')})
         terms.update({'the ' + text: ast.Const(name) for name, text in self.words.constants.items()
                       if re.fullmatch('[a-z]+', text)})
         terms.update({text: ast.Const(name) for name, text in self.words.natural_constants().items()})
@@ -1019,11 +1053,8 @@ class EnglishParser:
 
     def document(self):
         formulas = []
+        self.source = _fold_sentence_initials(self.source, self.words)
         while self.i < len(self.source):
-            # Clause structure permits sentence-initial capitalization; content
-            # templates fold their own case without altering stored display text.
-            if self.source[self.i].isupper():
-                self.source = self.source[:self.i] + self.source[self.i].lower() + self.source[self.i+1:]
             formulas.append(self.formula())
             self.need('.')
             if self.i < len(self.source): self.space()
@@ -1167,6 +1198,8 @@ def english_lark_grammar(env, **options):
     order = getattr(env, 'order', False)
     is_int = lambda name: order and env.constants[name].sort == ast.INT_SORT
     constants = [lit(v) for n, v in words.constants.items() if not is_int(n)]
+    constants += [lit(v[0].upper() + v[1:]) for n, v in words.constants.items()
+                  if not is_int(n) and v.startswith('the ')]
     constants += [lit('the ' + v) for n, v in words.constants.items()
                   if not is_int(n) and re.fullmatch('[a-z]+', v)]
     constants += [lit(v) for n, v in words.natural_constants().items() if not is_int(n)]

@@ -34,6 +34,25 @@ def test_natural_core_forms_are_writable_and_unique():
         assert render(formula, ENV, 've_natural') == expected
 
 
+def test_prose_paragraph_and_declared_constant_display_forms():
+    data = vocabulary()
+    data['vocabulary']['constants']['api']['verbalisation'] = 'the API'
+    data['vocabulary']['constants']['alice']['verbalisation'] = 'Alice'
+    data['vocabulary']['constants']['union'] = {
+        'sort': 'item', 'description': 'European Union',
+        'verbalisation': 'the European Union'}
+    env = Environment(data)
+    formulas = (Unary('reviewed', Const('api')),
+                Unary('ready', Const('alice')),
+                Unary('reviewed', Const('union')))
+    document = Document(formulas)
+    text = natural_document(env, document).text
+    assert text == 'The API is reviewed. Alice is ready. The European Union is reviewed.'
+    assert render(document, env, 've_natural') == text
+    assert parse_english(env, text) == document
+    assert len(natural_document(env, document).sentences) == 3
+
+
 def test_writable_shared_copula_and_unqualified_owner():
     compound = Exists('item', And(Unary('active', Var(0)), Unary('reviewed', Var(0))))
     owner = Forall('item', Exists('agent', Binary('owns', Var(0), Var(1))))
