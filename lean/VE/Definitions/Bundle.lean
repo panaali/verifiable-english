@@ -1,0 +1,285 @@
+import VE.Route.Admission
+import VE.Definitions.Route
+
+/-! Lemma bundles and citation (PLAN-EXPAND2 W3), checked by the Lean route in
+one run and mirrored by Python `ve/bundle.py`. A lemma lists labelled
+hypotheses, the meaning ids of earlier lemmas it cites, a conclusion, its
+reading-choice map, its complete transitive labelled leaves and a certificate.
+
+Citation is not a new proof rule. A lemma's certificate is replayed by the
+unchanged checker on `Background ++ own hypotheses ++ cited conclusions`; the
+cited lemmas were checked earlier in the same bundle. The citing lemma must
+list exactly Background's labelled leaves, its own hypotheses and every
+transitive leaf of the cited lemmas (in that order, without repeats), so
+stripping or changing a label is rejected. Citations must be strictly earlier
+(hence the bundle is acyclic), and reading choices along a citation must agree
+on every shared unit. `bundle_sound` is citation soundness by the cut pattern
+of `VE.entails_cut`: every checked conclusion holds in every intended structure
+in which the lemma's non-background leaves hold. -/
+namespace VE.Definitions.Bundle
+universe u
+open Lean VE.Route
+
+abbrev Leaf := String × VE.Formula
+
+structure Lemma where
+  name : String
+  premises : List Leaf
+  cites : List String
+  conclusion : VE.Formula
+  meaningId : String
+  choices : List (String × String)
+  leaves : List Leaf
+  certificate : VE.Tableau.Certificate
+
+/-- A checked lemma, as later citations see it. -/
+structure Known where
+  meaningId : String
+  conclusion : VE.Formula
+  choices : List (String × String)
+  leaves : List Leaf
+
+def lookupKnown (known : List Known) (m : String) : Option Known := known.find? (·.meaningId == m)
+
+/-- Append the leaves not already present, in order. -/
+def appendNew (xs ys : List Leaf) : List Leaf :=
+  ys.foldl (fun acc y => if acc.any (fun x => decide (x = y)) then acc else acc ++ [y]) xs
+
+/-- Merge a cited lemma's reading choices; a unit with two readings is rejected. -/
+def mergeChoices (acc : List (String × String)) : List (String × String) →
+    Except String (List (String × String))
+  | [] => .ok acc
+  | (u, r) :: cs => match VE.Bridge.lookup acc u with
+    | some r' => if r' == r then mergeChoices acc cs else .error "Citation has incompatible reading choices"
+    | none => mergeChoices (acc ++ [(u, r)]) cs
+
+/-- Resolve the citations in order: inherited leaves, merged choices, cited conclusions. -/
+def citeAll (known : List Known) :
+    List Leaf → List (String × String) → List String →
+      Except String (List Leaf × List (String × String) × List VE.Formula)
+  | ls, ch, [] => .ok (ls, ch, [])
+  | ls, ch, m :: ms => match lookupKnown known m with
+    | none => .error "Citation is absent, cyclic, or not earlier in the bundle"
+    | some k => do
+      let ch' ← mergeChoices ch k.choices
+      let (ls', ch'', cs) ← citeAll known (appendNew ls k.leaves) ch' ms
+      pure (ls', ch'', k.conclusion :: cs)
+
+/-- Check one lemma against the lemmas before it. `bind` checks the
+certificate's identity binding of the full checked list and conclusion. -/
+def checkLemma (E : VE.Environment) (bg : List Leaf)
+    (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit)
+    (known : List Known) (L : Lemma) : Except String Known := do
+  let (leaves, choices, cited) ← citeAll known (bg ++ L.premises) L.choices L.cites
+  Gate.require (decide (L.leaves = leaves)) "Citation transitive leaf labels were changed or stripped"
+  Gate.require (!known.any (·.meaningId == L.meaningId)) "Lemma meaning ID is stale or duplicated"
+  let checked := bg.map Prod.snd ++ (L.premises.map Prod.snd ++ cited)
+  bind checked L.conclusion L.certificate
+  Gate.require (VE.Tableau.checkCertificate E checked L.conclusion L.certificate)
+    s!"Lemma {L.name} certificate failed"
+  pure ⟨L.meaningId, L.conclusion, choices, leaves⟩
+
+def checkAll (E : VE.Environment) (bg : List Leaf)
+    (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit) :
+    List Known → List Lemma → Except String (List Known)
+  | known, [] => .ok known
+  | known, L :: Ls => do
+    let k ← checkLemma E bg bind known L
+    checkAll E bg bind (known ++ [k]) Ls
+
+/-! ## Citation soundness -/
+
+theorem mem_appendNew_left (xs ys : List Leaf) : ∀ l ∈ xs, l ∈ appendNew xs ys := by
+  induction ys generalizing xs with
+  | nil => intro l hl; exact hl
+  | cons y ys ih =>
+    intro l hl
+    unfold appendNew
+    simp only [List.foldl_cons]
+    apply ih
+    split
+    · exact hl
+    · exact List.mem_append_left _ hl
+
+theorem mem_appendNew_right (xs ys : List Leaf) : ∀ l ∈ ys, l ∈ appendNew xs ys := by
+  induction ys generalizing xs with
+  | nil => intro l hl; cases hl
+  | cons y ys ih =>
+    intro l hl
+    unfold appendNew
+    simp only [List.foldl_cons]
+    rcases List.mem_cons.mp hl with rfl | hl
+    · apply mem_appendNew_left
+      split
+      · rename_i h
+        obtain ⟨x, hx, he⟩ := List.any_eq_true.mp h
+        rw [← of_decide_eq_true he]; exact hx
+      · exact List.mem_append_right _ (List.mem_singleton_self _)
+    · exact ih _ l hl
+
+theorem lookupKnown_mem {known : List Known} {m : String} {k : Known}
+    (h : lookupKnown known m = some k) : k ∈ known :=
+  List.mem_of_find?_eq_some h
+
+open VE.Order.ProfileGate in
+theorem citeAll_sound (known : List Known) : ∀ (ms : List String) (ls : List Leaf)
+    (ch : List (String × String)) (ls' : List Leaf) (ch' : List (String × String)) (cs : List VE.Formula),
+    citeAll known ls ch ms = .ok (ls', ch', cs) →
+      (∀ l ∈ ls, l ∈ ls') ∧ ∀ c ∈ cs, ∃ k ∈ known, k.conclusion = c ∧ ∀ l ∈ k.leaves, l ∈ ls'
+  | [], ls, ch, ls', ch', cs, h => by
+    simp only [citeAll, Except.ok.injEq, Prod.mk.injEq] at h
+    obtain ⟨rfl, _, rfl⟩ := h
+    exact ⟨fun _ h => h, fun _ h => nomatch h⟩
+  | m :: ms, ls, ch, ls', ch', cs, h => by
+    unfold citeAll at h
+    split at h
+    · cases h
+    · rename_i k hk
+      obtain ⟨chm, _, h⟩ := bind_ok h
+      obtain ⟨⟨ls₁, ch₁, cs₁⟩, hr, h⟩ := bind_ok h
+      simp only [pure, Except.pure, Except.ok.injEq, Prod.mk.injEq] at h
+      obtain ⟨rfl, rfl, rfl⟩ := h
+      obtain ⟨hsub, hcs⟩ := citeAll_sound known ms _ _ _ _ _ hr
+      refine ⟨fun l hl => hsub l (mem_appendNew_left _ _ l hl), fun c hc => ?_⟩
+      rcases List.mem_cons.mp hc with rfl | hc
+      · exact ⟨k, lookupKnown_mem hk, rfl, fun l hl => hsub l (mem_appendNew_right _ _ l hl)⟩
+      · exact hcs c hc
+
+section Soundness
+variable (E : VE.Environment) (bg : List Leaf)
+  (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit)
+  (Good : VE.Structure.{u} → Prop) (hadm : ∀ S, Good S → S.Admissible E)
+
+/-- A checked lemma's meaning: in every good structure where its leaves hold,
+its conclusion holds. -/
+def Sound (k : Known) : Prop :=
+  ∀ S : VE.Structure.{u}, Good S → (∀ l ∈ k.leaves, l.2.denote S []) → k.conclusion.denote S []
+
+include hadm
+
+open VE.Order.ProfileGate in
+theorem checkLemma_sound (known : List Known) (hk : ∀ k ∈ known, Sound Good k) (L : Lemma) (k : Known)
+    (h : checkLemma E bg bind known L = .ok k) : Sound Good k := by
+  unfold checkLemma at h
+  obtain ⟨⟨leaves, choices, cited⟩, hc, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, _, h⟩ := bind_ok h
+  obtain ⟨_, hcert, h⟩ := bind_ok h
+  simp only [pure, Except.pure, Except.ok.injEq] at h
+  subst h
+  obtain ⟨hsub, hcited⟩ := citeAll_sound known L.cites _ _ _ _ _ hc
+  have he := VE.Tableau.checkCertificate_sound.{u} E _ L.conclusion L.certificate (Gate.require_ok hcert)
+  intro S hS hl
+  apply he S (hadm S hS)
+  intro a ha
+  rcases List.mem_append.mp ha with ha | ha
+  · obtain ⟨l, hlm, rfl⟩ := List.mem_map.mp ha
+    exact hl l (hsub l (List.mem_append_left _ hlm))
+  rcases List.mem_append.mp ha with ha | ha
+  · obtain ⟨l, hlm, rfl⟩ := List.mem_map.mp ha
+    exact hl l (hsub l (List.mem_append_right _ hlm))
+  · obtain ⟨k', hk', rfl, hleaves⟩ := hcited a ha
+    exact hk k' hk' S hS (fun l hm => hl l (hleaves l hm))
+
+open VE.Order.ProfileGate in
+theorem checkAll_sound : ∀ (known : List Known) (Ls : List Lemma) (res : List Known),
+    (∀ k ∈ known, Sound Good k) → checkAll E bg bind known Ls = .ok res → ∀ k ∈ res, Sound Good k
+  | known, [], res, hk, h => by
+    simp only [checkAll, Except.ok.injEq] at h
+    subst h; exact hk
+  | known, L :: Ls, res, hk, h => by
+    unfold checkAll at h
+    obtain ⟨k, hL, h⟩ := bind_ok h
+    have hk' := checkLemma_sound E bg bind Good hadm known hk L k hL
+    refine checkAll_sound (known ++ [k]) Ls res (fun k₁ hm => ?_) h
+    rcases List.mem_append.mp hm with hm | hm
+    · exact hk k₁ hm
+    · rw [List.mem_singleton.mp hm]; exact hk'
+
+end Soundness
+
+/-- Background's labelled leaves: definitions, then literals. -/
+def backgroundLeaves (ds : List Def) (lits : List String) : List Leaf :=
+  (expand ds).map (fun a => ("background:definitions", a)) ++
+    (Background.literals lits).map (fun a => ("background:literals", a))
+
+theorem backgroundLeaves_hold (E : VE.Environment) (ds : List Def) (h : Chain E ds)
+    (lits : List String) (hn : lits.Nodup) (S : VE.Structure.{u}) (hS : Intended E ds lits S) :
+    ∀ l ∈ backgroundLeaves ds lits, l.2.denote S [] := by
+  intro l hl
+  rcases List.mem_append.mp hl with hl | hl
+  · obtain ⟨a, ha, rfl⟩ := List.mem_map.mp hl
+    exact (faithful ds (chain_arity E ds h) S).mpr hS.2 a ha
+  · obtain ⟨a, ha, rfl⟩ := List.mem_map.mp hl
+    exact (Background.literals_sat_iff S lits hn).mpr hS.1.2 a ha
+
+/-- `bundle_sound`, citation soundness: every lemma of an accepted bundle is
+true in every intended structure (string-admissible, every defined predicate
+agreeing with its body) in which its non-background transitive leaves hold,
+whatever lemmas it cites. -/
+theorem bundle_sound (E : VE.Environment) (ds : List Def) (h : Chain E ds)
+    (lits : List String) (hn : lits.Nodup)
+    (bind : List VE.Formula → VE.Formula → VE.Tableau.Certificate → Except String Unit)
+    (Ls : List Lemma) (res : List Known)
+    (accepted : checkAll E (backgroundLeaves ds lits) bind [] Ls = .ok res) :
+    ∀ k ∈ res, ∀ S : VE.Structure.{u}, Intended E ds lits S →
+      (∀ l ∈ k.leaves, l ∉ backgroundLeaves ds lits → l.2.denote S []) → k.conclusion.denote S [] := by
+  intro k hk S hS hl
+  have := checkAll_sound.{u} E (backgroundLeaves ds lits) bind (Intended E ds lits)
+    (fun S hS => hS.1.1) [] Ls res (fun _ h => nomatch h) accepted k hk S hS
+  apply this
+  intro l hm
+  by_cases hb : l ∈ backgroundLeaves ds lits
+  · exact backgroundLeaves_hold E ds h lits hn S hS l hb
+  · exact hl l hm hb
+
+/-! ## Wire -/
+
+open VE.Bridge (exactFields stringField strings) in
+def decodeLeaf (E : VE.Environment) (j : Json) : Except String Leaf := do
+  exactFields j ["label", "ast"]
+  let label ← stringField j "label"
+  unless (Admission.parseLabel label).isSome do throw s!"AdmissionError: invalid label {label}"
+  pure (label, ← Wire.decodeClosed E (← j.getObjVal? "ast"))
+
+open VE.Bridge (exactFields stringField strings fields) in
+def decodeLemma (profiles : List String) (envId : String) (E : VE.Environment) (j : Json) :
+    Except String Lemma := do
+  exactFields j ["name", "environment_id", "premises", "cites", "conclusion", "meaning_id",
+    "reading_choices", "transitive_leaves", "certificate"]
+  unless (← stringField j "environment_id") == envId do
+    throw "Citation has another environment or definitions version"
+  let name ← stringField j "name"
+  if name.isEmpty then throw "Lemma name must be nonempty"
+  let premises ← (← (← j.getObjVal? "premises").getArr?).toList.mapM (decodeLeaf E)
+  let cites ← strings (← j.getObjVal? "cites")
+  let conclusion ← Wire.decodeClosed E (← j.getObjVal? "conclusion")
+  let meaningId ← stringField j "meaning_id"
+  unless meaningId == (← Wire.meaningId profiles envId (Wire.encodeFormula conclusion)) do
+    throw "Lemma meaning ID is stale or duplicated"
+  let choices ← (← fields (← j.getObjVal? "reading_choices")).mapM fun (u, r) => do
+    pure (u, ← r.getStr?)
+  let leaves ← (← (← j.getObjVal? "transitive_leaves").getArr?).toList.mapM (decodeLeaf E)
+  let certificate ← VE.CertificateWire.decodeCertificate (← j.getObjVal? "certificate")
+  pure ⟨name, premises, cites, conclusion, meaningId, choices, leaves, certificate⟩
+
+/-- The `bundle` case of the FOL family: decode every lemma, then check the
+whole bundle in order. -/
+def runBundle (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (id : String)
+    (j : Json) : Except String Json := do
+  let items := (← (← j.getObjVal? "lemmas").getArr?).toList
+  if items.length > 256 then throw "ResourceLimit: Lemma bundle exceeds 256 lemmas"
+  let envId ← Wire.environmentId profiles environment
+  let E := rv.environment
+  let lemmas ← items.mapM (decodeLemma profiles envId E)
+  let names := lemmas.map Lemma.name
+  unless names.eraseDups.length == names.length do throw "Duplicate lemma name"
+  let bind := fun (ps : List VE.Formula) (c : VE.Formula) (cert : VE.Tableau.Certificate) =>
+    Wire.bindingOk profiles environment (ps.map Wire.encodeFormula) (Wire.encodeFormula c)
+      cert.environment_id cert.premise_meaning_ids cert.conclusion_meaning_id
+  let known ← checkAll E (backgroundLeaves rv.definitions rv.literals) bind [] lemmas
+  pure (Wire.ok id [("checked", toJson known.length),
+    ("lemmas", Json.arr (known.map (fun k => Json.str k.meaningId)).toArray)])
+
+end VE.Definitions.Bundle

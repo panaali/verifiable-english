@@ -4,7 +4,10 @@ The bundle format is deliberately small: every lemma lists its own labelled
 hypotheses, earlier conclusion meaning IDs it cites, a certificate, and the
     complete transitive leaves it expects the report to carry. No citation is a
 new trusted proof rule: the certificate is replayed with cited conclusions as
-additional premises after the cited certificates have been checked.
+additional premises after the cited certificates have been checked. With
+``lean_executable`` the whole bundle is re-checked in one Lean `route` run
+(`VE.Definitions.Bundle`), which enforces the same citation rules and proves
+them sound (`bundle_sound`).
 """
 from __future__ import annotations
 
@@ -20,6 +23,21 @@ from .identity import meaning_id
 from .wire import canonical_json, digest, require_fields
 
 
+def lean_bundle_verdict(lean_executable, environment, lemmas) -> dict:
+    """The Lean route's verdict on a whole bundle, in one run."""
+    from .wire import loads_json
+    case = [{"id": "bundle", "kind": "bundle", "environment": environment, "lemmas": lemmas}]
+    try:
+        run = subprocess.run([str(lean_executable), "route"], input=canonical_json(case),
+                             capture_output=True, timeout=120)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise VEError("Lean lemma replay unavailable") from exc
+    rows = loads_json(run.stdout)
+    if type(rows) is not list or len(rows) != 1:
+        raise VEError("Lean lemma replay returned a malformed result")
+    return rows[0]
+
+
 def check_bundle(data, *, lean_executable=None):
     require_fields(data, {"version", "environment", "lemmas"})
     if data["version"] != "ve-bundle@0" or type(data["lemmas"]) is not list:
@@ -32,8 +50,7 @@ def check_bundle(data, *, lean_executable=None):
     known = {}
     names = set()
     reports = []
-    lean_cases = []
-    for index, item in enumerate(data["lemmas"]):
+    for item in data["lemmas"]:
         require_fields(item, {"name", "environment_id", "premises", "cites", "conclusion",
                               "meaning_id", "reading_choices", "transitive_leaves", "certificate"})
         if item["environment_id"] != env.environment_id:
@@ -84,20 +101,11 @@ def check_bundle(data, *, lean_executable=None):
                       "transitive_leaves": leaves}
         reports.append({"name": item["name"], "meaning_id": mid,
                         "reading_choices": inherited_choices, "transitive_leaves": leaves})
-        lean_cases.append({"id": f"lemma-{index}", "kind": "certificate",
-                           "environment": env.to_dict(), "premises": [formula_to_data(env, p) for p in premises],
-                           "conclusion": formula_to_data(env, conclusion), "certificate": item["certificate"]})
     lean_checked = False
-    if lean_executable is not None and lean_cases:
-        try:
-            run = subprocess.run([str(lean_executable), "route"], input=canonical_json(lean_cases),
-                                 capture_output=True, timeout=60)
-        except (OSError, subprocess.TimeoutExpired) as exc:
-            raise VEError("Lean lemma replay unavailable") from exc
-        from .wire import loads_json
-        rows = loads_json(run.stdout)
-        lean_checked = run.returncode == 0 and len(rows) == len(lean_cases) and all(
-            row.get("status") == "ok" and row.get("valid") is True for row in rows)
+    if lean_executable is not None and data["lemmas"]:
+        row = lean_bundle_verdict(lean_executable, env.to_dict(), data["lemmas"])
+        lean_checked = (row.get("status") == "ok" and
+                        row.get("lemmas") == [report["meaning_id"] for report in reports])
         if not lean_checked:
             raise VEError("Lean did not accept every lemma certificate")
     return {"status": "Checked", "environment_id": env.environment_id,

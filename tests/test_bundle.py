@@ -40,17 +40,67 @@ def test_checked_citation_and_labels():
     assert report["lemmas"][1]["transitive_leaves"] == report["lemmas"][0]["transitive_leaves"]
 
 
-@pytest.mark.parametrize("mutation, diagnostic", [
+LEAN = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_conformance"
+
+
+def _cyclic(b):
+    """The first lemma cites the second, which is later in the bundle."""
+    b["lemmas"][0]["cites"] = [b["lemmas"][1]["meaning_id"]]
+
+
+def _self_citation(b):
+    b["lemmas"][1]["cites"] = [b["lemmas"][1]["meaning_id"]]
+
+
+def _other_version(b):
+    b["lemmas"][1]["environment_id"] = "0" * 64
+
+
+def _stripped_label(b):
+    b["lemmas"][1]["transitive_leaves"][0]["label"] = "asserted"
+
+
+FORGERIES = [
     (lambda b: b["lemmas"][1]["cites"].__setitem__(0, "absent"), "absent"),
     (lambda b: b["lemmas"][1]["transitive_leaves"].clear(), "labels"),
+    (_stripped_label, "labels"),
     (lambda b: b["lemmas"][1]["reading_choices"].__setitem__("u", "r2"), "reading"),
     (lambda b: b["lemmas"][1]["premises"].clear(), "certificate"),
-])
+    (_cyclic, "absent, cyclic"),
+    (_self_citation, "absent, cyclic"),
+    (_other_version, "another environment"),
+]
+
+
+@pytest.mark.parametrize("mutation, diagnostic", FORGERIES)
 def test_reject_forged_citation(mutation, diagnostic):
     data = bundle()
     mutation(data)
     with pytest.raises(VEError, match=diagnostic):
         check_bundle(data)
+
+
+@pytest.mark.parametrize("mutation, diagnostic", FORGERIES)
+def test_lean_rejects_the_same_forged_citations(mutation, diagnostic):
+    """Both checkers reject every forgery (PLAN-EXPAND2 W3 acceptance (3))."""
+    from ve.bundle import lean_bundle_verdict
+    if not LEAN.exists():
+        pytest.skip("lean route runner is not built (lake build)")
+    data = bundle()
+    assert lean_bundle_verdict(LEAN, data["environment"], data["lemmas"])["status"] == "ok"
+    mutation(data)
+    verdict = lean_bundle_verdict(LEAN, data["environment"], data["lemmas"])
+    assert verdict["status"] == "error", verdict
+    if diagnostic != "certificate":
+        assert diagnostic.split(",")[0] in verdict["error"] or "label" in verdict["error"], verdict
+
+
+def test_lean_replays_bundles_in_one_run():
+    if not LEAN.exists():
+        pytest.skip("lean route runner is not built (lake build)")
+    assert check_bundle(bundle(), lean_executable=LEAN)["lean_checked"] is True
+    path = Path(__file__).resolve().parents[1] / "usecases/math-mini-paper/t7-definitions-bundle.json"
+    assert check_bundle(json.loads(path.read_text()), lean_executable=LEAN)["lean_checked"] is True
 
 
 def test_math_bundle_preserves_background_and_rejects_version_tampering():
