@@ -25,7 +25,8 @@ two bytes for the period and LF of a possible one-statement document. The
 legend is additional cell context and is not charged against this claim-text limit.
 `print_formula` and `print_document` retain the exact strict canonical bytes.
 `natural_formula` and `natural_document` additionally return environment and
-meaning IDs with renderer `ve.natural-audited`, version `1`.
+meaning IDs with renderer `ve.natural-audited`, version `2`. Sentence data marks
+fallbacks as `explicit form`.
 
 The first four surfaces use **one recursive traversal** in `ve/printer.py`. It assigns
 `x0`, `x1`, ... to binders in preorder, follows the selected naming scope, resolves every
