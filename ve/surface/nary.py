@@ -18,7 +18,7 @@ def template_parts(value: str, arity: int) -> tuple[str, ...] | None:
     parts = tuple(re.split(r"\{[0-5]\}", value))
     if len(parts) != arity + 1 or any(not part.startswith(" ") for part in parts[1:-1]):
         return None
-    if parts[0] and not re.fullmatch(r"(?:[a-z]+ )+", parts[0]):
+    if parts[0] and parts[0] != "the value of ":
         return None
     if not all(re.fullmatch(r"(?: [a-z]+)+ ?", part) for part in parts[1:-1]):
         return None
