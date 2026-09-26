@@ -437,3 +437,125 @@ def test_catalogue_unknown_background_and_pair_limit_are_visible(monkeypatch):
     limited = catalogue.review(env, "It is safe.", bindings, pattern_id=pattern)
     assert limited["next_cursor"] == 1 and limited["comparison_count"] == 1
     assert any(row["reason"].startswith("pair comparison limit") for row in limited["pending"])
+
+
+def test_edit_preserves_review_for_unchanged_source():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "It is safe.", {}, mode="translation")
+    service.start("u")
+    service.classify("u", parse_outcome="one", catalogue_bindings={
+        "discourse.reference@1": {"predicate": "safe", "antecedents": ["api", "carol"]}})
+    original = service.revision
+    service.edit("u", source="It is safe.")
+    assert service.revision == original
+    service.edit("u", presentation="Api is safe.")
+    assert len(service.units["u"].readings) == 2
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    with pytest.raises(ValueError, match="narrowing"):
+        service.approve("u", formula, actor="translator", paraphrase="Api is safe.",
+                        presentation="Api is safe.", situation=situation)
+    service.units["u"].catalogue_results.clear()
+    with pytest.raises(ValueError, match="catalogue review is incomplete"):
+        service.approve("u", formula, actor="translator", paraphrase="Api is safe.",
+                        presentation="Api is safe.", situation=situation)
+
+
+def test_edit_keeps_unresolved_pending_distinction():
+    service = RecoveryService(environment(), grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "It is safe.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="one", discourse="incomplete")
+    pending = service.units["u"].pending.copy()
+    service.edit("u", anchor={"start": 0})
+    assert service.units["u"].state == "reading_review"
+    assert service.units["u"].pending == pending
+
+
+def test_import_rechecks_display_even_when_ledger_hashes_are_recomputed():
+    def forge(ledger):
+        approved = next(e["unit_snapshot"] for e in ledger["events"] if e["action"] == "approve")
+        approved["paraphrase"] = "Api is not safe."
+        approved["approval"]["snapshot"]["paraphrase"] = "Api is not safe."
+        approved["approval"]["digest"] = hashlib.sha256(json.dumps(
+            approved["approval"]["snapshot"], sort_keys=True, ensure_ascii=False,
+            separators=(",", ":")).encode()).hexdigest()
+        previous = None
+        for event in ledger["events"]:
+            event["previous_digest"] = previous
+            event["event_digest"] = hashlib.sha256(json.dumps(
+                {k: v for k, v in event.items() if k != "event_digest"}, sort_keys=True,
+                ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()
+            previous = event["event_digest"]
+        return ledger
+
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Api is safe.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="one")
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    service.approve("u", formula, actor="author", paraphrase="Api is safe.",
+                    presentation="Api is safe.", situation=situation)
+    with pytest.raises(ValueError, match="invalid recovery ledger"):
+        RecoveryService.from_ledger(env, forge(service.to_ledger()))
+    service.edit("u", source="Api is reviewed.")
+    with pytest.raises(ValueError, match="invalid recovery ledger"):
+        RecoveryService.from_ledger(env, forge(service.to_ledger()))
+
+
+def test_proposer_result_after_cancel_is_discarded():
+    service = RecoveryService(environment(), grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Unknown wording.", {})
+    service.start("u")
+    service.classify("u", parse_outcome="zero")
+    class CancelDuringRequest:
+        def request(self, source, *, timeout_seconds):
+            service.cancel("u")
+            return "Api is safe."
+    result = service.request_proposer("u", CancelDuringRequest(), expected_revision=service.revision)
+    assert result["status"] == "stale"
+    assert service.events[-1]["action"] == "cancel"
+
+
+def test_narrowing_uses_w2_and_records_document_dependency():
+    env = environment()
+    class RejectingAdapter:
+        def add_unit(self, document, **kwargs):
+            return document
+        def narrow(self, document, **kwargs):
+            raise ValueError("W2 rejected narrowing")
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1",
+                              reading_set_version="r1", document_adapter=RejectingAdapter())
+    service.add("u", "It is safe.", {}, mode="translation")
+    service.start("u")
+    service.classify("u", parse_outcome="one", catalogue_bindings={
+        "discourse.reference@1": {"predicate": "safe", "antecedents": ["api", "carol"]}})
+    mid = meaning_id(env, Unary("safe", Const("api")))
+    with pytest.raises(ValueError, match="W2"):
+        service.record_narrowing("u", keeps=[mid], actor="translator", reason="cited",
+                                 cited_spans=[{"start": 0, "end": 2}], document={"units": []})
+    assert service.units["u"].narrowings == []
+
+    class AcceptingAdapter:
+        def add_unit(self, document, **kwargs):
+            self.unit = kwargs
+            return document
+        def narrow(self, document, **kwargs):
+            self.narrowing = kwargs
+            return {"valid": True}
+    adapter = AcceptingAdapter()
+    service.document_adapter = adapter
+    record = service.record_narrowing("u", keeps=[mid], actor="translator", reason="cited",
+                                      cited_spans=[{"start": 0, "end": 2}], document={"units": []})
+    assert adapter.unit["support"] == ["u"]
+    assert adapter.narrowing["keeps"] == [mid]
+    assert record["document_unit"]["support"] == ["u"]
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    approval = service.approve("u", formula, actor="translator", paraphrase="Api is safe.",
+                               presentation="Api is safe.", situation=situation, narrowing=record["id"])
+    assert approval["snapshot"]["narrowing"] == record["document_unit"]["id"]
+    assert RecoveryService.from_ledger(env, json.loads(json.dumps(service.to_ledger()))).approval_valid("u")
