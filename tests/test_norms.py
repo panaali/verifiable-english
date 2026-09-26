@@ -132,6 +132,28 @@ def test_same_sign_overlap_is_not_conflict():
     assert check_conflict(doc, prove=True).status == "CONFLICT-FREE"
 
 
+def test_lower_permission_guard_and_exhausted_budget():
+    env = environment({"required": obligation(), "permitted": permission()})
+    guarded = rule("must", "required", True, Unary("permitted", Var(0)))
+    with_permission = NormDocument(env, [rule("may", "permitted", True), guarded])
+    without_permission = NormDocument(env, [guarded])
+    assert with_permission.order == ("permitted", "required")
+    assert check_conflict(with_permission, prove=True).status == "CONFLICT-FREE"
+    assert check_conflict(without_permission, prove=True).status == "CONFLICT-FREE"
+    assert value(with_permission, "required", ("act0",), model(with_permission))
+    assert not value(without_permission, "required", ("act0",), model(without_permission))
+    exhausted = check_conflict(with_permission, model=model(with_permission), max_evaluations=0)
+    assert (exhausted.status, exhausted.detail) == ("UNKNOWN", "MAX_EVALUATIONS")
+
+
+def test_precedence_across_predicates_rejected():
+    env = environment({"permitted": permission(),
+                       "required": obligation(dual="permitted")})
+    with pytest.raises(VEError, match="PrecedenceAcrossPredicates"):
+        NormDocument(env, [rule("ban", "permitted", False),
+                           rule("duty", "required", True, over=("ban",))])
+
+
 def test_cycles_duals_and_profile_model():
     env = environment({"permitted": permission()})
     with pytest.raises(VEError, match="DependencyCycle: permitted"):
