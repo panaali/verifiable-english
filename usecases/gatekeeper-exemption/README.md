@@ -11,3 +11,7 @@ uv run python -m ve adapter run usecases/gatekeeper-exemption/request.json
 Save the result as a record and run `uv run python -m ve adapter run --verify
 RECORD.json` before citing the labelled adapter premise. This example covers
 the string exemption operation, not the full Gatekeeper policy template.
+
+`string-items.json` freezes 20 image-name cases. The test suite evaluates all
+20 through verified tables, including case sensitivity, `?`, empty suffixes,
+and nested paths.

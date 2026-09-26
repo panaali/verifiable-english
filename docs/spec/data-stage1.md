@@ -54,22 +54,32 @@ finite relation tables. The standard Lean axiom allowlist is unchanged.
 an explicit result or error row. A record binds the domain, each input hash,
 the output table hash, the parameters, the Python standard-library version,
 and the adapter implementation hash. `ve adapter run --verify` recomputes
-the table. The regular-expression dialect is Python `re.fullmatch` with no
-flags; prefix matching uses `str.startswith`, and glob uses
-`fnmatch.fnmatchcase`. Adapter truth enters a policy proof only as a labelled
-premise, `adapter:<function>@<version>`; the logical checker does not prove
-the host string computation. A missing table yields UNKNOWN, and an input
-outside the recorded domain is rejected.
+the table. The regular-expression dialect is a bounded subset of Python
+`re.fullmatch` with no flags: at most one repetition of one atom, no grouped
+repetition, alternation combined with repetition, backreferences, or special
+groups. Rejected patterns produce explicit error rows. Prefix matching uses
+`str.startswith`, and glob uses `fnmatch.fnmatchcase`. The record's
+`adapter:<function>@<version>` label is available for citation, but the
+document admission and argument checkers do not yet bind a verified record
+row to a logical assumption leaf. They do not return proof-level UNKNOWN for
+a missing table. The helper lookup returns `None` for a missing table, and
+rejects inputs outside the recorded domain.
 
 The Cedar helper keeps a missing attribute distinct from a present false
-value as `(defined, value)`. The Gatekeeper helper combines verified glob
-tables for image exemptions. These helpers are independent of the unfinished
-policy and English integrations.
+value as `(defined, value)`, including for `has` on a missing parent. It
+compares JSON set values without depending on array order. The Gatekeeper
+helper combines verified glob tables for image exemptions; its 20 frozen
+string cases pass. These helpers do not yet implement the whole policy flow.
 
 ## Remaining integration gates
 
-The `data@0` order-family combination with flagged or string-valued
-relations is gated. Natural definite-description parsing and rendering,
-the 1,000 English round trips, full Cedar and Gatekeeper corpus runs, and
-automatic adapter assumption leaves remain to be integrated. Cedar's joint
-115-decision gate requires the W1 norm adapter and W4 n-ary checker.
+The English surface renders and parses `the r of t is v` for a total,
+functional attribute as the binary atom, and `the r of t is P` for a unary
+target property as an existential witness on a user sort. A non-total
+attribute is refused; 1,000 generated value sentences round trip through
+the independent English grammar. String-valued target properties still need
+stage 2 quantification. The `data@0` order-family combination with flagged
+or string-valued relations is gated. Adapter assumption leaves, proof-level
+missing-table UNKNOWN, Cedar's 30-item re-rating, its 143-policy run, the
+joint 115-decision gate, and the full Gatekeeper policy flow remain. The
+Cedar joint gate also requires the W1 norm adapter and W4 n-ary checker.

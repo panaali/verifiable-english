@@ -31,6 +31,22 @@ def test_glob_regex_and_error_rows():
     assert error["rows"][0]["status"] == "error"
     with pytest.raises(VEError, match="invalid regex"):
         lookup(error, "name")
+    unsafe = run("regex@1", {"pattern": "(a+)+$"}, ["a" * 1000 + "x"])
+    assert unsafe["rows"][0]["status"] == "error"
+    with pytest.raises(VEError, match="bounded stage-1"):
+        lookup(unsafe, "a" * 1000 + "x")
+
+
+def test_adapter_version_and_implementation_diagnostics():
+    record = run("prefix@1", {"pattern": "a"}, ["abc"])
+    wrong = deepcopy(record)
+    wrong["implementation"] = "python-stdlib-0.0"
+    with pytest.raises(VEError, match="Python version"):
+        verify(wrong)
+    wrong = deepcopy(record)
+    wrong["implementation_hash"] = "0" * 64
+    with pytest.raises(VEError, match="implementation hash"):
+        verify(wrong)
 
 
 def test_adapter_cli(tmp_path, capsys):

@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ..errors import VEError
-from .records import lookup, run, verify
+from .records import _lookup_verified, run, verify
 
 
 @dataclass(frozen=True, slots=True)
@@ -32,6 +32,6 @@ def is_exempt(image: str, patterns: list[str], records: tuple[dict | None, ...] 
         checked = verify(record)
         if checked["function"] != "glob@1" or checked["parameters"] != {"pattern": pattern}:
             raise VEError("Exemption table is bound to a different glob pattern")
-        found |= bool(lookup(checked, image))
+        found |= _lookup_verified(checked, image)
         labels.append(checked["label"])
     return Exemption(True if found else None if missing else False, tuple(labels))
