@@ -1,4 +1,6 @@
 from pathlib import Path
+import signal
+import time
 
 import pytest
 from lark import Tree
@@ -156,3 +158,45 @@ def test_earley_time_budget_rejects_in_worker_thread(monkeypatch):
     with ThreadPoolExecutor(max_workers=1) as pool:
         with pytest.raises(ResourceLimit, match="Earley time budget"):
             pool.submit(parse_english, env, "This holds in all cases.").result(timeout=2)
+
+
+def test_host_alarm_cancels_long_english_parse_on_schedule():
+    env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
+    source = " ".join(["This holds in all cases."] * 200)
+    class HostAlarm(Exception):
+        pass
+    def cancel(_signum, _frame):
+        raise HostAlarm()
+    previous = signal.getsignal(signal.SIGALRM)
+    assert signal.getitimer(signal.ITIMER_REAL)[0] == 0
+    try:
+        signal.signal(signal.SIGALRM, cancel)
+        start = time.monotonic()
+        signal.setitimer(signal.ITIMER_REAL, 0.05)
+        with pytest.raises(HostAlarm):
+            parse_english(env, source)
+        assert time.monotonic() - start < 0.15
+        assert signal.getsignal(signal.SIGALRM) is cancel
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous)
+
+
+def test_earley_time_budget_with_host_alarm(monkeypatch):
+    env = Environment.from_json((ROOT / "examples/environment.json").read_bytes())
+    class SlowParser:
+        def parse(self, _source):
+            while True:
+                pass
+    monkeypatch.setattr(unambiguity, "_parser", lambda _grammar: SlowParser())
+    monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", 0.01)
+    previous = signal.getsignal(signal.SIGALRM)
+    assert signal.getitimer(signal.ITIMER_REAL)[0] == 0
+    try:
+        signal.setitimer(signal.ITIMER_REAL, 1)
+        with pytest.raises(ResourceLimit, match="Earley time budget"):
+            parse_english(env, "This holds in all cases.")
+        assert signal.getitimer(signal.ITIMER_REAL)[0] < 1
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous)
