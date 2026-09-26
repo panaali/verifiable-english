@@ -19,6 +19,7 @@ import VE.Route.Run
 import VE.Route.Examples
 import Iceberg
 import VE.Norms.Layer
+import VE.Norms.SmallModel
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -604,3 +605,15 @@ import VE.Norms.Layer
 #print axioms VE.Norms.mem_syms_index
 #print axioms VE.Norms.names_getElemOpt
 #print axioms VE.Norms.nodup_getElemOpt_inj
+#print axioms VE.Norms.conflict_pair_smallModel
+#print axioms VE.Norms.conflict_smallModel
+#print axioms VE.Norms.length_filterMap_le
+#print axioms VE.Norms.mem_subDomain_const
+#print axioms VE.Norms.restrict_witness
+#print axioms VE.Norms.subDomain_length
+#print axioms VE.Norms.subModel_constants
+#print axioms VE.Norms.subModel_denote
+#print axioms VE.Norms.subModel_valid
+#print axioms VE.Norms.subModel_witness
+#print axioms VE.Norms.term_denote_subModel
+#print axioms VE.Norms.tupleTyped_of_mem_zip
