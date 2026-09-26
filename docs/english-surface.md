@@ -424,14 +424,21 @@ uv run python -m conformance.english_mixed \
   --output conformance/english-mixed-report.json
 ```
 
-The differential's independent Python core renderer classifies each Python
-text before reading the Lean result. A missing Lean parse of that text is a
+The differential's independent Python core recognizer constructs a derivation
+of each Python text for its AST, including alternate list headers, articles and
+binder names, before reading the Lean result. For vocabularies passing the
+finite lexical admission check, a missing Lean parse of a recognized text is a
 failure, including when Lean's renderer happens to return the same tokens.
+For vocabularies that fail the lexical check, the report counts such cases
+separately; templates containing delimiters such as `or` do not satisfy the
+core parser's completeness hypotheses.
 Fixed noncanonical list and article forms must parse; a missing period and a
 shadowed binder must be rejected. The `--full` gate requires 17 configurations
 times 5,000 formulas, exactly 85,000 pairs. The reports record the seed and
 corpus hashes. `tests/test_english_evidence.py` runs both harnesses at every
 merge and checks that the full differential report passes the count gate.
+This Python correspondence is finite evidence, not a Lean theorem about the
+Python parser or the presentation lexer.
 
 ## Reproducible evidence and worked examples
 
