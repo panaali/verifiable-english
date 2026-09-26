@@ -300,6 +300,34 @@ def test_admission_answer_is_the_bound_encoding_of_the_checked_report(lean_execu
         assert row["status"] == "error", row
 
 
+def test_profile_leaves_are_admitted_only_as_regenerated_pair_premises(lean_executable):
+    from ve.admission import admit_document
+    from ve.ast import Forall, Implies
+    from ve.background import background
+
+    env = environment({"permitted": permission(), "required": obligation()})
+    premise = next(p.formula for p in background(env) if p.generator == "profile")
+    reversed_premise = Forall("act", Implies(Unary("permitted", Var(0)), Unary("required", Var(0))))
+
+    def document(ast, **extra):
+        return {"units": [{"id": "u1", "span": [0, 20], "kind": "norm",
+                           "content": rule("allow", "permitted", True).to_dict()}],
+                "graph": {"root": "p", "nodes": [
+                    {"name": "p", "ast": formula_to_data(env, ast),
+                     "label": "background:profile", **extra}]}}
+
+    good, wrong, pointed = (document(premise), document(reversed_premise),
+                            document(premise, unit="u1"))
+    rows = run(lean_executable, [{"id": str(i), "kind": "admission", "environment": env.to_dict(),
+                                  "document": d} for i, d in enumerate((good, wrong, pointed))])
+    expected = admit_document(env, good)
+    assert rows[0] == {"id": "0", "status": "ok", **expected}
+    for d, row in zip((wrong, pointed), rows[1:]):
+        with pytest.raises(VEError):
+            admit_document(env, d)
+        assert row["status"] == "error", row
+
+
 def test_inactive_norm_content_is_rejected_by_lean(lean_executable):
     from ve.admission import admit_document
     from tests.test_norm_admission import inactive_norm_mutants, source

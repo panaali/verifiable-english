@@ -62,8 +62,18 @@ instance (src : Wire.Source) (w : WireNode) : Decidable (LayerLeaf src w) := by
   unfold LayerLeaf
   infer_instance
 
+/-- A `background:profile` leaf equal to a regenerated pair premise (3.1),
+with no unit pointer. W2's own Background has no profile generator. -/
+def ProfileLeaf (src : Wire.Source) (w : WireNode) : Prop :=
+  (w.deduction.isNone && w.unit.isNone && w.claim.label == "background:profile" &&
+    (pairPremises src.D.T).any (fun a => decide (w.claim.formula = a))) = true
+
+instance (src : Wire.Source) (w : WireNode) : Decidable (ProfileLeaf src w) := by
+  unfold ProfileLeaf
+  infer_instance
+
 def NodeAdmitted (src : Wire.Source) (D : VE.Route.Admission.Doc) (w : WireNode) : Prop :=
-  VE.Route.Admission.NodeAdmitted D w ∨ LayerLeaf src w
+  VE.Route.Admission.NodeAdmitted D w ∨ LayerLeaf src w ∨ ProfileLeaf src w
 
 instance (src : Wire.Source) (D : VE.Route.Admission.Doc) (w : WireNode) :
     Decidable (NodeAdmitted src D w) := by
@@ -274,7 +284,8 @@ def CertificatesBound (environment : Json) (res : Admitted) : Prop :=
   ∀ x ∈ res.decoded, CertificateBound res.src.ne.profiles res.canonical res.decoded x
 
 /-- The norms extension of W2's admission relation: a sound checked graph,
-every node admitted by W2 provenance or as an exact regenerated layer leaf,
+every node admitted by W2 provenance, as an exact regenerated layer leaf or as
+a regenerated pair-premise profile leaf,
 each assumption exactly a decoded leaf, closed citations and compatible
 reading choices. -/
 def ReportAdmitted (res : Admitted) : Prop :=
@@ -377,7 +388,7 @@ def otherAssumptions (res : Admitted) : List VE.Graph.Claim :=
 /-- Semantic report consequence: in every admissible structure satisfying the
 regenerated Background and layer premises, the remaining report assumptions
 entail the report's root. Layer leaves are discharged by the elaborations and
-Background leaves by the regenerated literal premises. -/
+Background leaves by the regenerated literal and pair premises. -/
 theorem norms_wire_report_consequence (environment document : Json) (res : Admitted)
     (h : admitDocument environment document = .ok res) (S : VE.Structure.{u})
     (hS : S.Admissible res.src.ne.rv.environment)
@@ -395,7 +406,7 @@ theorem norms_wire_report_consequence (environment document : Json) (res : Admit
     exact hregen _ (List.mem_append_right _ (layerLeaf_formula res.src w hw))
   by_cases hb : backgroundLeaf leaf = true
   · obtain ⟨w, hw, hwl, hde, hadm⟩ := hleaves leaf hl
-    rcases hadm with hadm | hadm
+    rcases hadm with hadm | hadm | hadm
     · unfold VE.Route.Admission.NodeAdmitted at hadm
       rw [hde] at hadm
       unfold backgroundLeaf at hb
@@ -418,6 +429,13 @@ theorem norms_wire_report_consequence (environment document : Json) (res : Admit
         exact hbm
       · cases hb
     · exact absurd ⟨w, hw, hwl, hadm⟩ hlayer
+    · simp only [ProfileLeaf, Bool.and_eq_true] at hadm
+      obtain ⟨a, ha, hfa⟩ := List.any_eq_true.mp hadm.2
+      rw [← hwl, of_decide_eq_true hfa]
+      apply hregen
+      apply List.mem_append_left
+      unfold background
+      exact List.mem_append_right _ ha
   · apply hother
     apply List.mem_map_of_mem
     simp only [otherAssumptions, List.mem_filter]
