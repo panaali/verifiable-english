@@ -16,6 +16,10 @@ import VE.Norms.Replay
   in argument order) → `verdict` `CONFLICT` when the regenerated target formula
   is true at the typed tuple of the validated base model, else `UNKNOWN`
   (`Replay.norms_wire_conflict_witness_sound`).
+* `norms-certificate`: `norms`, `premises`, `conclusion`, `certificate` →
+  `valid`; the certificate binds the complete environment, the regenerated
+  `Background ++ layer premises` followed by `premises`, and the conclusion
+  (`Replay.norms_wire_acceptance`).
 * Any case without a norm construct (no `norms@0` profile, no `regulated`
   field, no `norms`) is delegated unchanged to P0 `Route.Run.runCase`. A norm
   input never falls back to P0 after a failed decode.
@@ -43,6 +47,10 @@ def runCase (j : Json) : Except String Json := do
     let environment ← j.getObjVal? "environment"
     let src ← Wire.decodeSource environment (j.getObjValD "norms")
     return VE.Route.Wire.ok id (Wire.regenerated src.D)
+  if kind == "norms-certificate" then
+    let r ← Replay.replayEntailment j
+    return VE.Route.Wire.ok id [("valid", .bool r.valid),
+      ("background", toJson (background r.src.D).length), ("layers", toJson (elaborate r.src.D.T).length)]
   if kind == "norms-conflict" && (j.getObjVal? "witness").toBool then
     let ⟨src, w⟩ ← Replay.replayWitness j
     return VE.Route.Wire.ok id [("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),
@@ -61,7 +69,7 @@ def runCase (j : Json) : Except String Json := do
 
 def runCaseReported (j : Json) : Json :=
   if usesNormsPath j || j.getObjValD "kind" == .str "norms-elaborate" ||
-      j.getObjValD "kind" == .str "norms-conflict" then
+      j.getObjValD "kind" == .str "norms-conflict" || j.getObjValD "kind" == .str "norms-certificate" then
     match runCase j with
     | .ok result => result
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),

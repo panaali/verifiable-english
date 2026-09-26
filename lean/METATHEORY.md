@@ -459,9 +459,11 @@ Statement review is required for `Value`, `IntendedAt`, `holdsCatala`,
 `CedarShape`. The executable guards in `Norms/Checks.lean` compare Lean's
 elaborations and conflict formulas with Python `ve/norms.py` string for string
 and run the 10.1 regressions on finite models; `Norms/Examples.lean` builds the
-frozen layers of 10.1(c) and (m) as values. The 11.4 wire path (JSON decoder,
-admission, `ve_norms_route`, `norms_wire_acceptance`) is not yet implemented, so
-these theorems are about decoded values only.
+frozen layers of 10.1(c) and (m) as values. The `ve_norms_route` executable
+replays conflict packages, witnesses and entailment certificates from raw JSON
+(`Replay.norms_wire_conflict_sound`, `norms_wire_conflict_witness_sound`,
+`norms_wire_acceptance`); W2 document admission with norm units is not yet
+implemented.
 
 ## Remaining obligations
 
