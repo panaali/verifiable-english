@@ -122,6 +122,12 @@ def test_unique_parse_still_triggers_catalogue_review():
     service.start("u")
     assert service.classify("u", parse_outcome="one") == "reading_review"
     assert service.units["u"].pending[0]["pattern_id"] == "scope.every_some@1"
+    service.cancel("u")
+    service.start("u")
+    assert service.classify("u", parse_outcome="one", catalogue_bindings={
+        "scope.every_some@1": {"every_sort": "engineer", "some_sort": "server",
+                                "relation": "checks_pair"}}) == "ready"
+    assert service.units["u"].catalogue_results["scope.every_some@1"]["cards"]
 
 
 def test_invalid_situation_and_presentation_cannot_be_approved():

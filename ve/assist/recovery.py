@@ -82,6 +82,7 @@ class Unit:
     rejected: list[dict] = field(default_factory=list)
     pending: list[dict] = field(default_factory=list)
     catalogue_reviewed: list[str] = field(default_factory=list)
+    catalogue_results: dict = field(default_factory=dict)
     dependencies: list[str] = field(default_factory=list)
     approval: dict | None = None
     reason: str | None = None
@@ -229,6 +230,7 @@ class RecoveryService:
         unit.readings.clear()
         unit.pending.clear()
         unit.catalogue_reviewed.clear()
+        unit.catalogue_results.clear()
         unit.started = time.monotonic()
         self._event("edit", unit)
         return unit
@@ -252,25 +254,29 @@ class RecoveryService:
 
     def classify(self, unit_id, *, parse_outcome, vocabulary="known", discourse="complete",
                  force="supported", check="checked", pending=(), limit=None,
-                 catalogue_reviews=None):
+                 catalogue_bindings=None):
         unit = self.units[unit_id]
         if unit.state != "analysing":
             raise ValueError("analyse first")
         if parse_outcome not in {"zero", "one", "multiple", "exhausted"}:
             raise ValueError("invalid parse outcome")
-        from .ambiguity_patterns import PATTERNS
+        from .ambiguity_patterns import PATTERNS, review as review_pattern
         unit.pending = list(pending)
         matched = [pattern.id for pattern in PATTERNS if pattern.matches(unit.source)]
-        reviewed = catalogue_reviews or {}
+        bindings = catalogue_bindings or {}
+        stop = time.monotonic() + OPERATION_SECONDS
         unit.catalogue_reviewed = []
+        unit.catalogue_results = {}
         for pattern_id in matched:
-            result = reviewed.get(pattern_id)
-            if (not isinstance(result, dict) or result.get("catalogue_version") != CATALOGUE_VERSION
-                    or result.get("pattern_id") != pattern_id or result.get("pending")
-                    or result.get("residual") or result.get("next_cursor") is not None):
+            result = (review_pattern(self.env, unit.source, bindings[pattern_id],
+                                     pattern_id=pattern_id, deadline=stop)
+                      if pattern_id in bindings else None)
+            if (result is None or result.get("pending") or result.get("residual")
+                    or result.get("next_cursor") is not None):
                 unit.pending.append({"pattern_id": pattern_id, "reason": "catalogue review incomplete"})
             else:
                 unit.catalogue_reviewed.append(pattern_id)
+                unit.catalogue_results[pattern_id] = result
         if limit or parse_outcome == "exhausted":
             unit.state, unit.reason = "exhausted", limit or "parser/search exhausted"
         elif vocabulary != "known" or parse_outcome == "zero":
@@ -391,6 +397,7 @@ class RecoveryService:
         snapshot = {"unit": unit.id, "source": unit.source, "anchor": unit.anchor,
                     "presentation": presentation, "meaning_id": mid, "paraphrase": paraphrase,
                     "situation": situation, "considered": unit.readings, "rejected": unit.rejected,
+                    "catalogue_results": unit.catalogue_results,
                     "narrowing": narrowing, "actor": actor, "versions": self.versions,
                     "dependencies": [(d, self.units[d].revision) for d in unit.dependencies]}
         unit.approval = {"digest": _digest(snapshot), "snapshot": deepcopy(snapshot)}
@@ -407,6 +414,7 @@ class RecoveryService:
                 and snap["presentation"] == unit.presentation and snap["meaning_id"] == unit.meaning_id
                 and snap["paraphrase"] == unit.paraphrase and snap["situation"] == unit.situation
                 and snap["considered"] == unit.readings and snap["rejected"] == unit.rejected
+                and snap["catalogue_results"] == unit.catalogue_results
                 and snap["versions"] == self.versions
                 and snap["dependencies"] == [(d, self.units[d].revision) for d in unit.dependencies]
                 and _digest(snap) == unit.approval["digest"])
