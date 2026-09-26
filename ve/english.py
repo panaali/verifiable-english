@@ -37,7 +37,9 @@ _ACTIVE = (
     r"has (?:access to|authority over|responsibility for)",
 )
 _EXTRA_RESERVED = frozenset("this it holds impossible classified recorded relation entity sort named first second following hold who where step steps source destination from reachable using starting ending definition end therefore so hence".split())
-_ORDINALS = ('first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth')
+_ORDINALS = ('first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh',
+             'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth', 'thirteenth',
+             'fourteenth', 'fifteenth', 'sixteenth')
 _EXTRA_RESERVED |= frozenset(_ORDINALS)
 _RESERVED = _LOGICAL_WORDS | _EXTRA_RESERVED
 # order@0 comparison wording ("at least n" is a comparison, never a counting quantifier).
@@ -935,6 +937,14 @@ class EnglishParser:
         self.nodes += 1
         if self.nodes > MAX_NODES:
             self.error(f'This document exceeds the {MAX_NODES}-node limit.', ResourceLimit)
+        remainder = self.source[self.i:].lower()
+        if not scope and remainder.startswith('it ') and not remainder.startswith('it is not the case that '):
+            if 'it' not in self.term_options(scope):
+                self.error('The referent of it is incomplete. Repeat the explicit name or confirm a scoped rewrite.')
+        if not scope and re.match(r'(?:they|them|their|her|him|his)\b', remainder):
+            word = remainder.split(maxsplit=1)[0]
+            if word not in self.term_options(scope):
+                self.error('Plural or possessive reference needs an explicit-name or scoped-referent confirmation.')
         matched = surface_registry.dispatch(self.source[self.i:], self.env)
         if matched is not None and matched[1].parser_hook is not None:
             start = self.i

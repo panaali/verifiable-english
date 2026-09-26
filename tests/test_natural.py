@@ -147,7 +147,7 @@ def test_existential_antecedent_blocks_unconfirmed_it_even_with_one_constant():
     env = Environment(vocabulary())
     options = _names(env, api='the API')
     source = 'The API is reviewed. Some service is deployed. It is reviewed.'
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match='referent of it is incomplete'):
         parse_english(env, source, **options)
     document = Document((Unary('reviewed', Const('api')),
                          Exists('item', Unary('active', Var(0))),
@@ -155,6 +155,15 @@ def test_existential_antecedent_blocks_unconfirmed_it_even_with_one_constant():
     view = natural_document(env, document, **options)
     assert view.text.endswith('The API is reviewed.')
     assert parse_english(env, view.text, **options) == document
+
+
+def test_plural_and_possessive_references_require_explicit_repair():
+    env = Environment(vocabulary())
+    options = _names(env, api='the API', alice='Alice')
+    for sentence in ('They are reviewed.', 'Her manager is ready.',
+                     'Their service is deployed.'):
+        with pytest.raises(Exception, match='explicit-name or scoped-referent'):
+            parse_english(env, 'Alice is ready. ' + sentence, **options)
 
 
 def test_three_item_subject_and_predicate_lists_have_exact_ast():
@@ -299,6 +308,16 @@ def test_three_bound_entities_use_writable_ordinals():
     result = render_natural_sentence(formula, ENV)
     assert result.natural
     assert 'third service' in result.text
+    assert parse_english(ENV, result.text + '.') == Document((formula,))
+
+
+def test_ninth_bound_entity_uses_typed_ordinal_without_variable_letter():
+    from ve import Eq
+    formula = Eq(Var(8), Var(0))
+    for _ in range(9):
+        formula = Forall('item', formula)
+    result = render_natural_sentence(formula, ENV)
+    assert result.natural and 'ninth service' in result.text
     assert parse_english(ENV, result.text + '.') == Document((formula,))
 
 
