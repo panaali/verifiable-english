@@ -12,13 +12,13 @@ import unicodedata
 
 from . import ast
 from .errors import ResourceLimit
-from .limits import MAX_SOURCE_BYTES
+from .limits import MAX_NODES, MAX_SOURCE_BYTES
 
 VIEWS = ("fol_symbols", "fol_keywords", "ve_strict", "ve_explicit", "ve_fluent")
 # VIEWS is the frozen five-view experimental comparison cohort.
 RENDERING_VIEWS = (*VIEWS, "ve_natural", "ve_english")
 NATURAL_RENDERER = "ve.natural-audited"
-NATURAL_RENDERER_VERSION = "2"
+NATURAL_RENDERER_VERSION = "3"
 NAMING_POLICIES = ("per_statement", "per_document")
 LEGEND_STYLES = ("compact", "json")
 
@@ -550,11 +550,13 @@ class _Traversal:
 
 
 def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
-           naming: str = "per_statement", *, vocabulary=None, accept_suggested_vocabulary=False) -> str:
+           naming: str = "per_statement", *, vocabulary=None, accept_suggested_vocabulary=False,
+           conclusions=(), conclusion_marker="Therefore", paragraph_breaks=()) -> str:
     """Render a checked AST in the selected display surface.
 
-    A formula has no final punctuation; documents have a period and LF for each
-    statement. All views preserve lexical case without sentence capitalization.
+    A formula has no final punctuation. Natural documents join sentences into
+    paragraphs; the historical views retain their line-oriented format.
+    The historical views preserve lexical case without sentence capitalization.
     All views use the selected naming scope, defaulting to per-statement resets.
     No view changes the checked AST.
     """
@@ -563,17 +565,28 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
     if view == "ve_natural":
         from .natural import render_natural_sentence
         if isinstance(value, ast.Document):
-            ast.check_document(env, value)
-            text = ''.join(render_natural_sentence(f, env, vocabulary=vocabulary,
-                           accept_suggested_vocabulary=accept_suggested_vocabulary).text + '.\n'
-                           for f in value.formulas)
+            return natural_document(env, value, vocabulary=vocabulary,
+                                    accept_suggested_vocabulary=accept_suggested_vocabulary,
+                                    conclusions=conclusions, conclusion_marker=conclusion_marker,
+                                    paragraph_breaks=paragraph_breaks).text
         else:
+            if conclusions or paragraph_breaks:
+                raise ValueError('Conclusion roles and paragraph breaks require a document')
             ast.check_formula(env, value)
             text = render_natural_sentence(value, env, vocabulary=vocabulary,
                    accept_suggested_vocabulary=accept_suggested_vocabulary).text
         if len(text.encode('utf-8')) + (0 if isinstance(value, ast.Document) else 2) > MAX_SOURCE_BYTES:
             raise ResourceLimit(f'Rendered {view} text exceeds its {MAX_SOURCE_BYTES}-byte limit')
+        if isinstance(value, ast.Document) and len(text) > MAX_NODES:
+            raise ResourceLimit(f'Rendered {view} text exceeds the English derivation budget MAX_NODES ({MAX_NODES})')
+        if isinstance(value, ast.Document):
+            from .english import parse_english
+            if parse_english(env, text, vocabulary=vocabulary,
+                             accept_suggested_vocabulary=accept_suggested_vocabulary) != value:
+                raise ValueError('Rendered ve_natural document has a different reading')
         return text
+    if conclusions or paragraph_breaks:
+        raise ValueError('Conclusion roles and paragraph breaks require the natural view')
     if view == "ve_english":
         from .english import render_english
         return render_english(value, env, vocabulary=vocabulary, accept_suggested_vocabulary=accept_suggested_vocabulary)
@@ -704,16 +717,20 @@ class NaturalView:
     renderer: str = NATURAL_RENDERER
     version: str = NATURAL_RENDERER_VERSION
     sentences: tuple[dict[str, str | None], ...] = ()
+    paragraphs: tuple[dict[str, int], ...] = ()
 
-    def to_dict(self) -> dict[str, str]:
+    def to_dict(self) -> dict[str, Any]:
         return {"text": self.text, "sentences": list(self.sentences),
+                "paragraphs": list(self.paragraphs),
                 "environment_id": self.environment_id,
                 "meaning_id": self.meaning_id, "renderer": self.renderer,
                 "version": self.version}
 
 
 def natural_document(env: Any, document: ast.Document, *, naming: str = "per_statement",
-                     vocabulary=None, accept_suggested_vocabulary=False) -> NaturalView:
+                     vocabulary=None, accept_suggested_vocabulary=False,
+                     conclusions=(), conclusion_marker="Therefore",
+                     paragraph_breaks=()) -> NaturalView:
     """Render a validated read-only view with explicit scope and dependencies."""
     ast.check_document(env, document)
     from .identity import meaning_id
@@ -721,12 +738,74 @@ def natural_document(env: Any, document: ast.Document, *, naming: str = "per_sta
     results = tuple(render_natural_sentence(formula, env, vocabulary=vocabulary,
                     accept_suggested_vocabulary=accept_suggested_vocabulary)
                     for formula in document.formulas)
-    text = ''.join(result.text + '.\n' for result in results)
+    conclusions = tuple(conclusions)
+    if len(set(conclusions)) != len(conclusions) or any(type(i) is not int or not 0 <= i < len(results)
+                                                      for i in conclusions):
+        raise ValueError('Conclusion indices must identify distinct document statements')
+    if conclusion_marker not in ('Therefore', 'So', 'Hence', 'It follows that'):
+        raise ValueError('Unsupported conclusion marker')
+    paragraph_breaks = tuple(paragraph_breaks)
+    if (len(set(paragraph_breaks)) != len(paragraph_breaks)
+            or any(type(i) is not int or not 0 < i < len(results) for i in paragraph_breaks)):
+        raise ValueError('Paragraph breaks must identify distinct interior sentence boundaries')
+    breaks = set(paragraph_breaks)
+    marked = set(conclusions)
+    display_texts = [result.text for result in results]
+    from .english import EnglishVocabulary, _mentioned_constants
+    names = EnglishVocabulary(env, vocabulary=vocabulary,
+                              accept_suggested_vocabulary=accept_suggested_vocabulary).constants
+    referents = set()
+    for i, formula in enumerate(document.formulas):
+        if (i not in marked and len(referents) == 1 and results[i].natural
+                and type(formula) is ast.Unary and type(formula.term) is ast.Const
+                and formula.term.name in referents):
+            head = names[formula.term.name]
+            head = head[0].upper() + head[1:]
+            if display_texts[i].startswith(head + ' '):
+                display_texts[i] = 'It' + display_texts[i][len(head):]
+        referents.update(_mentioned_constants(formula))
+    def clause(result, index):
+        wording = display_texts[index]
+        if index not in marked:
+            return wording
+        tail = wording
+        if tail.startswith('The ') or tail.split(' ', 1)[0] in {
+                'Every', 'Some', 'No', 'For', 'There', 'It', 'If', 'Both',
+                'Either', 'Starting', 'All', 'At', 'This'}:
+            tail = tail[0].lower() + tail[1:]
+        return conclusion_marker + ' ' + tail
+    def prose_text():
+        return ''.join(('\n\n' if i in breaks else ' ' if i else '') + clause(result, i) + '.'
+                       for i, result in enumerate(results))
+    text = prose_text()
     if len(text.encode('utf-8')) > MAX_SOURCE_BYTES:
         raise ResourceLimit(f'Rendered ve_natural text exceeds its {MAX_SOURCE_BYTES}-byte limit')
+    if len(text) > MAX_NODES:
+        raise ResourceLimit(f'Rendered ve_natural text exceeds the English derivation budget MAX_NODES ({MAX_NODES})')
+    from .english import _parse_english_document
+    try:
+        parsed, _, _, parsed_conclusions = _parse_english_document(
+            env, text, vocabulary=vocabulary,
+            accept_suggested_vocabulary=accept_suggested_vocabulary)
+    except Exception:
+        if display_texts == [result.text for result in results]:
+            raise
+        display_texts = [result.text for result in results]
+        text = prose_text()
+        parsed, _, _, parsed_conclusions = _parse_english_document(
+            env, text, vocabulary=vocabulary,
+            accept_suggested_vocabulary=accept_suggested_vocabulary)
+    if parsed != document or parsed_conclusions != tuple(i for i in range(len(results)) if i in marked):
+        raise ValueError('Rendered ve_natural document has a different reading')
+    starts = (0, *sorted(breaks))
+    ends = (*sorted(breaks), len(results))
     return NaturalView(text, env.environment_id, meaning_id(env, document),
-                       sentences=tuple({'text': result.text, 'form': result.form,
-                                        'fallback_reason': result.reason} for result in results))
+                       sentences=tuple({'text': display_texts[i], 'form': result.form,
+                                        'fallback_reason': result.reason,
+                                        'role': 'conclusion' if i in marked else 'premise'}
+                                       for i, result in enumerate(results)),
+                       paragraphs=tuple({'start': start, 'end': end}
+                                        for start, end in zip(starts, ends)))
 
 
 def natural_formula(env: Any, formula: Any, *, naming: str = "per_statement",
@@ -740,4 +819,5 @@ def natural_formula(env: Any, formula: Any, *, naming: str = "per_statement",
         raise ResourceLimit(f'Rendered ve_natural text exceeds its {MAX_SOURCE_BYTES}-byte limit')
     return NaturalView(result.text, env.environment_id, meaning_id(env, formula),
                        sentences=({'text': result.text, 'form': result.form,
-                                   'fallback_reason': result.reason},))
+                                   'fallback_reason': result.reason, 'role': 'premise'},),
+                       paragraphs=({'start': 0, 'end': 1},))

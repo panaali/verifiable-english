@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import random
 
-from ve import Environment, parse, ast
+from ve import Environment, parse, ast, natural_document, parse_english_argument, check_argument
 from ve.natural import _NOTATION, render_natural_sentence
 from ve.english import parse_english
 from ve.surface.unambiguity import require_unique_derivation
@@ -96,10 +96,25 @@ def audit(random_per_vocabulary=100):
         rows.append(_measure('roundtrip/' + name, formulas, env, examples=examples))
     total = sum(row['statements'] for row in rows)
     natural = sum(row['natural'] for row in rows)
-    return {'method': 'per-sentence English parse, exact AST equality, and Lark Earley all derivations before acceptance',
+    demo_env = Environment.from_json((ROOT / 'examples/assist/environment.json').read_bytes())
+    demo_options = {'vocabulary': json.loads((ROOT / 'examples/assist/environment.english.json').read_text())}
+    demo = ast.Document((
+        ast.Forall('service', ast.Implies(ast.Unary('reviewed', ast.Var(0)),
+                                          ast.Unary('safe', ast.Var(0)))),
+        ast.Unary('reviewed', ast.Const('api')),
+        ast.Unary('safe', ast.Const('api'))))
+    prose = natural_document(demo_env, demo, conclusions=(2,), **demo_options)
+    assert parse_english(demo_env, prose.text, **demo_options) == demo
+    graph = parse_english_argument(demo_env, prose.text, **demo_options)
+    assert check_argument(graph, search=False).findings['d3'] == ('follows',)
+    return {'method': 'per-sentence English parse, exact AST equality, and Lark Earley all derivations before acceptance; prose example adds document round trip and claim-graph certificate replay',
             'statements': total, 'natural': natural, 'fallback': total - natural,
             'natural_fraction': natural / total if total else 0.0,
             'accepted_wrong_readings': sum(row['accepted_wrong_readings'] for row in rows),
+            'prose_argument': {'before': 'Every reviewed service is safe. / Api is reviewed. / Api is safe.',
+                               'after': prose.text, 'statements': len(demo.formulas),
+                               'checked_conclusions': 1, 'round_trip': True,
+                               'one_reading': True, 'claim_graph_replay': True},
             'rows': rows, 'skipped': skipped,
             'examples': examples[:10]}
 
