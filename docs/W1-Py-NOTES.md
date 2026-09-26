@@ -20,8 +20,10 @@ section 11.6, it does not elaborate norms. Existing environments without a
 guards and carve-outs, a stable-name manifest, and bare import. `ve.norm_strict`
 round-trips named rules through the existing strict formula parser. The norm
 English parser counts declared consequence matches and rejects a non-unique
-match; it does not yet run the P0 Earley all-derivations grammar on the whole
-rule block. The `ve.surface.norms` records reserve the statement keywords,
+match. It also closes each guard/carve-out with the rule binders and runs P0's
+independent Earley all-derivations check on that formula. The numbered block
+envelope itself is parsed deterministically; a single combined Earley grammar
+for the whole rule block remains to be added. The `ve.surface.norms` records reserve the statement keywords,
 but the standalone entry point is separate from the existing formula parser.
 The export manifest verifies environment, text and document hashes. Editing
 transactions and IDE example/rewrite explanations are not yet implemented.

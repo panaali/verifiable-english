@@ -12,20 +12,14 @@ import re
 
 from . import ast
 from .english import EnglishParser, EnglishTraversal, EnglishVocabulary
+from .surface.unambiguity import require_unique_derivation
 from .errors import SyntaxError, VEError
 from .norms import Norm, NormDocument
 from .surface import norms as _registered_surface  # noqa: F401
 
 
 def _words(env):
-    words = EnglishVocabulary(env)
-    for name, decl in env.predicates.items():
-        reg = decl.regulated
-        if reg is not None and reg.role != "plain":
-            modal = "may" if reg.role == "permission" else "must"
-            words.predicates[name] = reg.act.replace("{0} ", "{0} " + modal + " ", 1)
-            words.negatives.pop(name, None)
-    return words
+    return EnglishVocabulary(env)
 
 
 def _bindings(decl, words):
@@ -59,6 +53,19 @@ def _parse_guard(source, env, words, scope):
     if parser.i != len(source):
         raise SyntaxError("The condition has more than one reading or trailing words")
     ast._Checker(env).formula(formula, tuple(sort for sort, _ in scope))
+    # Close the situation variables with explicit English binders so the P0
+    # independent Earley grammar checks every derivation of this condition.
+    bound = list(reversed(scope))
+    prefixes = []
+    counts = Counter(sort for sort, _ in bound)
+    seen = Counter()
+    for sort, _ in bound:
+        noun = words.sorts[sort]
+        if counts[sort] == 2:
+            noun = ("first " if seen[sort] == 0 else "second ") + noun
+        seen[sort] += 1
+        prefixes.append("for every " + noun + ", ")
+    require_unique_derivation(env, "".join(prefixes) + source + ".")
     return formula
 
 

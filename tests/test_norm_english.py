@@ -1,6 +1,6 @@
 import pytest
 
-from ve.ast import Top, Unary, Var
+from ve.ast import Not, Top, Unary, Var
 from ve.errors import VEError
 from ve.norms import NormDocument
 from ve.norm_english import default_sentence, parse_english, render_english
@@ -36,6 +36,10 @@ def test_deontic_guard_and_carveout_round_trip():
     assert "if that act may be done" in text
     assert text.count("Except when") == 2
     assert parse_english(env, text, manifest).rules == doc.rules
+    negative = NormDocument(env, [rule("not-permitted", "required", False, Not(atom))])
+    neg_text, neg_manifest = render_english(negative)
+    assert "it is not the case that that act may be done" in neg_text
+    assert parse_english(env, neg_text, neg_manifest).rules == negative.rules
 
 
 def test_input_synonyms_and_rejected_wordings():
