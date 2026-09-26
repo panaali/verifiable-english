@@ -85,9 +85,10 @@ def test_bound_definition_changes_identity_and_validates_model():
     assert checked.relations["middle"] == frozenset({("p",)})
     assert checked.to_dict() == model
     model["relations"]["middle"] = []
-    with pytest.raises(InvalidModel, match="defined tables are computed") as exc:
+    with pytest.raises(InvalidModel, match="supplied table") as exc:
         FiniteModel.from_dict(env, model)
     assert exc.value.path == "/relations"
+    assert exc.value.generator == "definitions"
     conclusion = ast.Forall("point", ast.Not(ast.Unary("middle", ast.Var(0))))
     witness = find_countermodel(env, (), conclusion, min_domain_size=1, max_domain_size=1,
                                 max_models=20)

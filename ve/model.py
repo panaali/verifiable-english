@@ -69,6 +69,9 @@ class FiniteModel:
             _fail("domains must contain exactly the declared sorts", "/domains")
         if set(wire["constants"]) != constant_names:
             _fail("constants must contain exactly the declared constants", "/constants")
+        if defined_names.intersection(wire["relations"]):
+            raise InvalidModel("supplied table for defined predicate", generator="definitions",
+                               path="/relations")
         if set(wire["relations"]) != predicate_names:
             _fail("relations must contain exactly the base predicates; defined tables are computed", "/relations")
 
