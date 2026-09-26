@@ -278,3 +278,138 @@ theorem parseF_complete {L : Lexicon} (hL : Admitted L) :
     simp [consume, ih d f rest hb (by omega) hr, han]
 
 end VE.English
+
+/-! ## Soundness: the parser returns only derivations of the consumed tokens -/
+
+namespace VE.English
+
+theorem listTail_sound {L : Lexicon} {p : Nat → List Tok → Option (Tree × List Tok)} {d : Nat}
+    {h : Header} {input rest : List Tok} {t : Tree}
+    (hp : ∀ d input t rest, p d input = some (t, rest) → t.Syntactic L ∧ input = t.yield L d ++ rest)
+    (hl : listTail p d h input = some (t, rest)) :
+    ∃ a b, t = .list h a b ∧ a.Syntactic L ∧ b.Syntactic L ∧
+      input = (markers d).1 :: (a.yield L (d + 1) ++ kw ";" :: (markers d).2 :: b.yield L (d + 1)) ++ rest := by
+  simp only [listTail, Option.bind_eq_bind, Option.bind_eq_some_iff] at hl
+  obtain ⟨r1, h1, ⟨a, r2⟩, h2, r3, h3, ⟨b, r4⟩, h4, hl⟩ := hl
+  simp only [Option.some.injEq, Prod.mk.injEq] at hl
+  obtain ⟨rfl, rfl⟩ := hl
+  dsimp only at h3
+  obtain ⟨ha, rfl⟩ := hp _ _ _ _ h2
+  obtain ⟨hb, rfl⟩ := hp _ _ _ _ h4
+  obtain rfl := consume_sound h3
+  obtain rfl := consume_sound h1
+  exact ⟨a, b, rfl, ha, hb, by simp⟩
+
+theorem parseF_sound {L : Lexicon} : ∀ (fuel d : Nat) (input rest : List Tok) (t : Tree),
+    parseF L fuel d input = some (t, rest) → t.Syntactic L ∧ input = t.yield L d ++ rest := by
+  intro fuel
+  induction fuel with
+  | zero => intro d input rest t h; simp [parseF] at h
+  | succ f ih =>
+    intro d input rest t h
+    match input, h with
+    | x :: input, h =>
+      simp only [parseF] at h
+      split at h
+      · subst x
+        simp only [Option.bind_eq_bind, Option.bind_eq_some_iff] at h
+        obtain ⟨r1, h1, ⟨b, r2⟩, h2, h⟩ := h
+        simp only [Option.some.injEq, Prod.mk.injEq] at h
+        obtain ⟨rfl, rfl⟩ := h
+        try dsimp only at *
+        obtain ⟨hb, rfl⟩ := ih _ _ _ _ h2
+        obtain rfl := consume_sound h1
+        exact ⟨hb, by simp [Tree.yield]⟩
+      split at h
+      · subst x
+        split at h
+        · rename_i r1 h1
+          obtain ⟨a, b, rfl, ha, hb, rfl⟩ := listTail_sound (fun d i t r h => ih d i r t h) h
+          obtain rfl := consume_sound h1
+          exact ⟨⟨ha, hb⟩, by simp [Tree.yield, Header.yield]⟩
+        · simp only [Option.bind_eq_bind, Option.bind_eq_some_iff] at h
+          obtain ⟨⟨a, r1⟩, h1, r2, h2, ⟨b, r3⟩, h3, h⟩ := h
+          simp only [Option.some.injEq, Prod.mk.injEq] at h
+          obtain ⟨rfl, rfl⟩ := h
+          try dsimp only at *
+          obtain ⟨ha, rfl⟩ := parseLitPrefix_sound h1
+          obtain rfl := consume_sound h2
+          obtain ⟨hb, rfl⟩ := parseLitPrefix_sound h3
+          exact ⟨⟨ha, hb⟩, by simp [Tree.yield]⟩
+      split at h
+      · subst x
+        simp only [Option.bind_eq_bind, Option.bind_eq_some_iff] at h
+        obtain ⟨⟨a, r1⟩, h1, r2, h2, ⟨b, r3⟩, h3, r4, h4, h⟩ := h
+        simp only [Option.some.injEq, Prod.mk.injEq] at h
+        obtain ⟨rfl, rfl⟩ := h
+        try dsimp only at *
+        obtain ⟨ha, rfl⟩ := parseLitPrefix_sound h1
+        obtain rfl := consume_sound h2
+        obtain ⟨hb, rfl⟩ := parseLitPrefix_sound h3
+        obtain rfl := consume_sound h4
+        exact ⟨⟨ha, hb⟩, by simp [Tree.yield]⟩
+      split at h
+      · subst x
+        simp only [Option.bind_eq_bind, Option.bind_eq_some_iff] at h
+        obtain ⟨⟨a, r1⟩, h1, r2, h2, ⟨b, r3⟩, h3, h⟩ := h
+        simp only [Option.some.injEq, Prod.mk.injEq] at h
+        obtain ⟨rfl, rfl⟩ := h
+        try dsimp only at *
+        obtain ⟨ha, rfl⟩ := ih _ _ _ _ h1
+        obtain rfl := consume_sound h2
+        obtain ⟨hb, rfl⟩ := ih _ _ _ _ h3
+        exact ⟨⟨ha, hb⟩, by simp [Tree.yield]⟩
+      split at h
+      · subst x
+        simp only [Option.bind_eq_bind, Option.bind_eq_some_iff] at h
+        obtain ⟨r1, h1, h⟩ := h
+        obtain ⟨a, b, rfl, ha, hb, rfl⟩ := listTail_sound (fun d i t r h => ih d i r t h) h
+        obtain rfl := consume_sound h1
+        exact ⟨⟨ha, hb⟩, by simp [Tree.yield, Header.yield]⟩
+      split at h
+      · subst x
+        simp only [Option.bind_eq_bind, Option.bind_eq_some_iff] at h
+        obtain ⟨r1, h1, h⟩ := h
+        obtain ⟨a, b, rfl, ha, hb, rfl⟩ := listTail_sound (fun d i t r h => ih d i r t h) h
+        obtain rfl := consume_sound h1
+        exact ⟨⟨ha, hb⟩, by simp [Tree.yield, Header.yield]⟩
+      split at h
+      · subst x
+        simp only [Option.bind_eq_bind, Option.bind_eq_some_iff] at h
+        obtain ⟨r1, h1, ⟨r, r2⟩, h2, r3, h3, ⟨b, r4⟩, h4, h⟩ := h
+        simp only [Option.some.injEq, Prod.mk.injEq] at h
+        obtain ⟨rfl, rfl⟩ := h
+        try dsimp only at *
+        obtain ⟨hr, rfl⟩ := parseDecl_sound h2
+        obtain ⟨hb, rfl⟩ := ih _ _ _ _ h4
+        obtain rfl := consume_sound h3
+        obtain rfl := consume_sound h1
+        exact ⟨⟨hr, hb⟩, by simp [Tree.yield]⟩
+      split at h
+      · subst x
+        split at h
+        · rename_i y z input
+          split at h
+          · rename_i hyz
+            obtain ⟨rfl, hz⟩ := hyz
+            simp only [Option.bind_eq_bind, Option.bind_eq_some_iff] at h
+            obtain ⟨⟨r, r2⟩, h2, r3, h3, ⟨b, r4⟩, h4, h⟩ := h
+            simp only [Option.some.injEq, Prod.mk.injEq] at h
+            obtain ⟨rfl, rfl⟩ := h
+            try dsimp only at *
+            obtain ⟨hr, rfl⟩ := parseDecl_sound h2
+            obtain ⟨hb, rfl⟩ := ih _ _ _ _ h4
+            obtain rfl := consume_sound h3
+            refine ⟨⟨hr, hb⟩, ?_⟩
+            rcases hz with rfl | rfl <;> simp [Tree.yield]
+          · simp at h
+        · simp at h
+      · simp only [Option.bind_eq_bind, Option.bind_eq_some_iff] at h
+        obtain ⟨⟨a, r1⟩, h1, h⟩ := h
+        simp only [Option.some.injEq, Prod.mk.injEq] at h
+        obtain ⟨rfl, rfl⟩ := h
+        try dsimp only at *
+        obtain ⟨ha, he⟩ := parseLitPrefix_sound h1
+        exact ⟨ha, he⟩
+
+end VE.English
