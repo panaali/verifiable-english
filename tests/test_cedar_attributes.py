@@ -1,4 +1,6 @@
 from ve.adapters.attributes import Value, attribute, compare, has
+import pytest
+from ve.errors import VEError
 
 
 def test_defined_value_keeps_missing_distinct_from_false():
@@ -10,6 +12,8 @@ def test_defined_value_keeps_missing_distinct_from_false():
     assert has(context, ("absent", "active")) == Value(False)
     assert has({"principal": False}, ("principal", "active")) == Value(False)
     assert has(context, ("principal",)) == Value(True, True)
+    with pytest.raises(VEError, match="definedness"):
+        bool(has(context, ("absent", "active")))
     assert compare(context, ("principal", "department"), "finance").value is True
     assert compare(context, ("principal", "missing"), "finance").defined is False
     assert compare(context, ("principal", "missing"), "finance", "!=").defined is False

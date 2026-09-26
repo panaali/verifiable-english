@@ -16,6 +16,9 @@ class Value:
     defined: bool
     value: object = None
 
+    def __bool__(self):
+        raise VEError("A Cedar value needs an explicit definedness check")
+
 
 def attribute(record: dict, path: tuple[str, ...]) -> Value:
     if type(record) is not dict or type(path) is not tuple or not path or any(
