@@ -29,8 +29,29 @@ def attribute(record: dict, path: tuple[str, ...]) -> Value:
     return Value(True, current)
 
 
-def has(record: dict, path: tuple[str, ...]) -> bool:
-    return attribute(record, path).defined
+def has(record: dict, path: tuple[str, ...]) -> Value:
+    """A missing parent is undefined; a missing final field is false."""
+    if type(record) is not dict or type(path) is not tuple or not path or any(
+            type(part) is not str or not part for part in path):
+        raise VEError("Attribute lookup requires an object and a nonempty string path")
+    if len(path) == 1:
+        return Value(True, path[0] in record)
+    parent = attribute(record, path[:-1])
+    if not parent.defined or type(parent.value) is not dict:
+        return Value(False)
+    return Value(True, path[-1] in parent.value)
+
+
+def _cedar_equal(left: object, right: object) -> bool:
+    if type(left) is not type(right):
+        return False
+    if type(left) is dict:
+        return left.keys() == right.keys() and all(
+            _cedar_equal(left[key], right[key]) for key in left)
+    if type(left) is list:
+        return len(left) == len(right) and all(
+            _cedar_equal(a, b) for a, b in zip(left, right, strict=True))
+    return left == right
 
 
 def compare(record: dict, path: tuple[str, ...], expected: object, operator: str = "==") -> Value:
@@ -39,7 +60,7 @@ def compare(record: dict, path: tuple[str, ...], expected: object, operator: str
     if not found.defined:
         return Value(False)
     if operator == "==":
-        return Value(True, found.value == expected)
+        return Value(True, _cedar_equal(found.value, expected))
     if operator == "!=":
-        return Value(True, found.value != expected)
+        return Value(True, not _cedar_equal(found.value, expected))
     raise VEError(f"Unsupported attribute comparison {operator!r}")
