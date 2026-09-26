@@ -7,7 +7,7 @@
     {"pattern_id": "coordination.list@1", "source": "Alice and Bob are safe.", "bindings": {"predicate": "safe", "left": "alice", "right": "bob"}, "boundary": "Alice is safe.", "negative": "Alice, Bob."},
     {"pattern_id": "coordination.collective@1", "source": "The team is safe together.", "bindings": {"predicate": "safe", "group": "team", "members": ["alice", "bob"]}, "boundary": "The team is safe.", "negative": "People exist."},
     {"pattern_id": "attachment.modifier@1", "source": "The service with the API is safe.", "bindings": {"modifier": "safe", "left": "service_a", "right": "api"}, "boundary": "The service is safe.", "negative": "Safe service."},
-    {"pattern_id": "discourse.reference@1", "source": "The API is deployed. Some service is reviewed. It is safe.", "bindings": {"predicate": "safe", "antecedents": ["api", "service_a"]}, "boundary": "The API is safe.", "negative": "This is safe."},
-    {"pattern_id": "ellipsis.predicate_copy@1", "source": "Alice reviews the API. Bob checks the service. Carol does too.", "bindings": {"subject": "carol", "predicates": ["reviews", "checks"]}, "boundary": "Carol checks the service.", "negative": "Carol also works."}
+    {"pattern_id": "discourse.reference@1", "source": "The API is deployed. The service is reviewed. It is safe.", "bindings": {"predicate": "safe", "antecedents": ["api", "service_a"]}, "boundary": "The API is safe.", "negative": "This is safe."},
+    {"pattern_id": "ellipsis.predicate_copy@1", "source": "Alice is safe. Bob reviews. Carol does too.", "bindings": {"subject": "carol", "predicates": ["safe", "reviews"]}, "boundary": "Carol reviews.", "negative": "Carol also works."}
   ]
 }

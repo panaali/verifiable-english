@@ -55,6 +55,18 @@ def test_unproven_pair_remains_pending():
     assert not result["cards"] and result["pending"]
 
 
+def test_existential_reference_and_transitive_ellipsis_remain_residual():
+    env = environment()
+    rows, reason = candidates(env, "The API is deployed. Some service is reviewed. It is safe.",
+                              {"predicate": "safe", "antecedents": ["api", "service_a"]},
+                              pattern_id="discourse.reference@1")
+    assert not rows and "scoped rewrite" in reason
+    rows, reason = candidates(env, "Alice reviews the API. Carol does too.",
+                              {"subject": "carol", "predicates": ["reviews", "checks"],
+                               "transitive": True}, pattern_id="ellipsis.predicate_copy@1")
+    assert not rows and "scoped completion" in reason
+
+
 def test_revisioned_approval_and_invalidation():
     env = environment()
     situation = find_countermodel(env, (), Not(Unary("safe", Const("api")))).model.to_dict()
@@ -66,6 +78,10 @@ def test_revisioned_approval_and_invalidation():
     service.approve("u1", Unary("safe", Const("api")), actor="author",
                     paraphrase="The API is safe.", presentation="Api is safe.", situation=situation)
     assert service.approval_valid("u1")
+    ledger = service.to_ledger()
+    assert service.verify_ledger(ledger)
+    ledger["events"][-1]["unit_snapshot"]["source"] = "tampered"
+    assert not service.verify_ledger(ledger)
     service.add("u2", "Carol agrees.", {"start": 17, "end": 30}, dependencies=["u1"])
     service.start("u2")
     service.classify("u2", parse_outcome="one")
@@ -74,12 +90,13 @@ def test_revisioned_approval_and_invalidation():
     service.edit("u1", source="The API is reviewed.")
     assert not service.approval_valid("u1") and service.units["u2"].state == "stale"
     assert service.events[-1]["revision"] == service.revision
+    assert service.verify_ledger()
 
 
 def test_recovery_pending_translation_and_adapter_stubs():
     env = environment()
     service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
-    service.add("u", "It is safe.", {"start": 0}, mode="translation")
+    service.add("u", "The API is safe.", {"start": 0}, mode="translation")
     service.start("u")
     assert service.classify("u", parse_outcome="one", discourse="incomplete") == "reading_review"
     service.set_readings("u", [{"id": "a"}, {"id": "b"}])
@@ -91,3 +108,47 @@ def test_recovery_pending_translation_and_adapter_stubs():
     with pytest.raises(RuntimeError, match="W2"):
         service.add_unit({}, anchor={})
     assert nearest_wordings("safe", ["safe", "reviewed", "deployed"])[0] == "safe"
+
+
+def test_unique_parse_still_triggers_catalogue_review():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Every engineer checks a server.", {"start": 0})
+    service.start("u")
+    assert service.classify("u", parse_outcome="one") == "reading_review"
+    assert service.units["u"].pending[0]["pattern_id"] == "scope.every_some@1"
+
+
+def test_invalid_situation_and_presentation_cannot_be_approved():
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "The API is safe.", {"start": 0})
+    service.start("u")
+    service.classify("u", parse_outcome="one")
+    formula = Unary("safe", Const("api"))
+    situation = find_countermodel(env, (), Not(formula)).model.to_dict()
+    with pytest.raises(ValueError, match="correspondence"):
+        service.approve("u", formula, actor="author", paraphrase="API safe",
+                        presentation="Carol is safe.", situation=situation)
+    situation["relations"]["safe"] = []
+    with pytest.raises(ValueError, match="does not satisfy"):
+        service.approve("u", formula, actor="author", paraphrase="API safe",
+                        presentation="Api is safe.", situation=situation)
+
+
+def test_proposer_reservation_and_explicit_retry():
+    class Offline:
+        def request(self, source, *, timeout_seconds):
+            assert timeout_seconds == 50
+            raise OSError("offline")
+    env = environment()
+    service = RecoveryService(env, grammar_version="g1", glossary_version="v1", reading_set_version="r1")
+    service.add("u", "Unknown wording.", {"start": 0})
+    service.start("u")
+    service.classify("u", parse_outcome="zero")
+    assert service.request_proposer("u", Offline())["status"] == "exhausted"
+    assert service.units["u"].proposals == 1
+    assert service.events[-2]["action"] == "proposer_reserved"
+    assert service.request_proposer("u", Offline())["status"] == "exhausted"
+    assert service.units["u"].proposals == 2
+    assert service.request_proposer("u", Offline())["status"] == "unresolved"
