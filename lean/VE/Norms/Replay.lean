@@ -100,15 +100,16 @@ def baseEnvironmentJson (environment : Json) : Except String Json := do
 /-- The norm document hash (11.2): the canonical array of norm objects under the
 source environment id. -/
 def documentHash (profiles : List String) (environment norms : Json) : Except String String := do
-  let envId ← VE.Route.Wire.environmentId profiles environment
+  let envId ← VE.Route.Wire.environmentId profiles (← Wire.canonicalEnvironmentJson environment)
   VE.CertificateWire.digest s!"ve-norms-{VE.Route.Wire.identityVersion profiles}\n"
     (Json.mkObj [("environment_id", .str envId), ("document", norms)])
 
 /-- Whether a target's package carries the outer source binding. -/
 def outerBound (profiles : List String) (environment norms packages : Json) (target : String) : Bool :=
   let package := packages.getObjValD target
-  match VE.Route.Wire.environmentId profiles environment, documentHash profiles environment norms with
-  | .ok envId, .ok docHash =>
+  match Wire.canonicalEnvironmentJson environment, documentHash profiles environment norms with
+  | .ok canonical, .ok docHash =>
+    let envId := (VE.Route.Wire.environmentId profiles canonical).toOption.getD ""
     package.getObjValD "environment_id" == .str envId &&
       package.getObjValD "document_hash" == .str docHash && package.getObjValD "target" == .str target
   | _, _ => false
@@ -120,7 +121,8 @@ def decodePackage (D : Doc) (profiles : List String) (environment norms packages
     (t : String × List String × VE.Formula) : Option VE.Tableau.Certificate := Id.run do
   let some baseEnv := (baseEnvironmentJson environment).toOption | none
   let some baseProfiles := (strings (baseEnv.getObjValD "profiles")).toOption | none
-  let some envId := (VE.Route.Wire.environmentId profiles environment).toOption | none
+  let some canonical := (Wire.canonicalEnvironmentJson environment).toOption | none
+  let some envId := (VE.Route.Wire.environmentId profiles canonical).toOption | none
   let some docHash := (documentHash profiles environment norms).toOption | none
   let package := packages.getObjValD t.1
   unless package.getObjValD "environment_id" == .str envId &&
@@ -343,7 +345,7 @@ def replayEntailment (j : Json) : Except String EntailmentReplay := do
   let conclusionJson ← j.getObjVal? "conclusion"
   let c ← VE.Route.Wire.decodeClosed E conclusionJson
   let cert ← VE.CertificateWire.decodeCertificate (← j.getObjVal? "certificate")
-  VE.Route.Wire.bindingOk src.ne.profiles environment
+  VE.Route.Wire.bindingOk src.ne.profiles (← Wire.canonicalEnvironmentJson environment)
     ((background src.D ++ elaborate src.D.T).map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList)
     conclusionJson cert.environment_id cert.premise_meaning_ids cert.conclusion_meaning_id
   pure ⟨src, ps, c, cert⟩
@@ -369,6 +371,7 @@ theorem norms_wire_acceptance (j : Json) (r : EntailmentReplay) (h : replayEntai
     unfold replayEntailment at h
     obtain ⟨env, henv, h⟩ := VE.Order.ProfileGate.bind_ok h
     obtain ⟨src, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
+    obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
     obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
     obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
     obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
