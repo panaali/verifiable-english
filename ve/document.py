@@ -69,6 +69,10 @@ def _split(raw: bytes):
         raise VEError("invalid JSON front matter") from exc
     if type(meta) is not dict or meta.get("format") != "ve-document@1":
         raise VEError("unsupported document format")
+    allowed = {"format", "environment", "units", "open_terms", "reading_sets",
+               "narrowings", "weights", "graph"}
+    if set(meta) - allowed:
+        raise VEError("unknown document metadata")
     return meta, *_body(raw[boundary + 5:])
 
 
@@ -129,7 +133,9 @@ def load_document(path: str | Path):
     unit_ids = set()
     cursor = 0
     for unit in units:
-        if type(unit) is not dict or not {"id", "span", "kind", "meaning", "support"} <= set(unit):
+        required = {"id", "span", "kind", "meaning", "support"}
+        if (type(unit) is not dict or not required <= set(unit)
+                or set(unit) - required - {"content", "surface", "meaning_id"}):
             raise VEError("invalid unit schema")
         uid = unit["id"]
         if not token(uid) or uid in unit_ids:
@@ -166,6 +172,10 @@ def load_document(path: str | Path):
         raise VEError("unbound VE fence")
     reading_sets = meta.get("reading_sets", [])
     validate_reading_sets(env, reading_sets, unit_ids)
+    for u in compiled:
+        if (u["kind"] == "asserted" and u["content"] is None
+                and not any(r["unit"] == u["id"] for r in reading_sets)):
+            raise VEError("asserted unit needs content or a reading set")
     narrowings = meta.get("narrowings", [])
     validate_narrowings(narrowings, reading_sets, unit_ids)
     weights = meta.get("weights", [])
@@ -217,6 +227,15 @@ def check_document(path):
                                       if all(c["content"] is not None for c in r["readings"])],
                      "narrowings": [n["id"] for n in doc["meta"].get("narrowings", [])]}
         result["admission"] = admit_document(env, admission)
+        latest = {}
+        for rs in doc["meta"].get("reading_sets", []):
+            latest[rs["id"]] = max(latest.get(rs["id"], 0), rs["version"])
+        from .admission import parse_label
+        result["stale_reading_labels"] = [label for a in result["admission"]["report"]["assumptions"]
+                                          if (label := a.get("label")) is not None
+                                          and (parsed := parse_label(label)) is not None
+                                          and parsed.kind == "readings"
+                                          and parsed.args[1] < latest.get(parsed.args[0], 0)]
         assertions = [formula_from_data(env, a["ast"])
                       for a in result["admission"]["report"]["assumptions"]]
     result["premises"] = premise_status(env, assertions)

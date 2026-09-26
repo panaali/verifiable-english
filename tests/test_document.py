@@ -78,6 +78,17 @@ def test_unbound_fence_rejected(tmp_path):
         load_document(path)
 
 
+def test_assertion_cannot_disappear_into_metadata(tmp_path):
+    source = b"A claim.\n"
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source))])
+    with pytest.raises(VEError, match="content or a reading set"):
+        load_document(path)
+    path = write_doc(tmp_path, source, [unit("a", 0, len(source), content={"ast": ["top"]})],
+                     unreviewed_field=True)
+    with pytest.raises(VEError, match="unknown document metadata"):
+        load_document(path)
+
+
 def test_assertion_readings_all_some_none_have_checked_evidence():
     env = Environment(envelope(VOCAB))
     p = ["unary", "senior", ["const", "alice"]]
