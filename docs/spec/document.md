@@ -15,8 +15,8 @@ whitespace: they are accounted for too. A unit can be explicitly
 Original prose, including spaces and punctuation.
 ```ve unit_id
 One English VE sentence.
-~~~~
 ```
+~~~~
 
 Each unit has `id`, `span`, recursive `kind`, `meaning`, `support`, and optional
 `content`. Kinds use exactly the P0 admission encoding: strings for atomic
