@@ -19,6 +19,89 @@ class NaturalResult:
     form: str = 'natural'
 
 
+PRESENTATION_VERSION = 've.prose@1'
+
+
+@dataclass(frozen=True)
+class ProsePresentation:
+    """An admitted, editable prose snapshot bound to one checked meaning."""
+    text: str
+    document: ast.Document
+    environment_id: str
+    meaning_id: str
+    sentences: tuple[dict, ...]
+    paragraphs: tuple[dict, ...]
+    vocabulary_digest: str | None
+    version: str = PRESENTATION_VERSION
+
+    def to_dict(self):
+        return {'format': self.version, 'text': self.text,
+                'environment_id': self.environment_id, 'meaning_id': self.meaning_id,
+                'vocabulary_digest': self.vocabulary_digest,
+                'sentences': list(self.sentences), 'paragraphs': list(self.paragraphs)}
+
+
+def parse_presentation(env, text, *, version=PRESENTATION_VERSION, **options):
+    """Admit exactly one derivation and retain the author's exact wording.
+
+    The returned spans refer to the original UTF-8-decoded source string. A
+    conclusion's dependencies are all earlier unmarked premises, matching the
+    checked claim graph; a conclusion is never turned into an assumption.
+    """
+    if version != PRESENTATION_VERSION:
+        raise ValueError('Unsupported prose presentation version')
+    from .english import _parse_english_document
+    from .identity import meaning_id
+    document, source, words, conclusions, spans, breaks = _parse_english_document(
+        env, text, _with_structure=True, **options)
+    marked = set(conclusions)
+    sentences = tuple({
+        'text': source[start:end], 'start': start, 'end': end,
+        'role': 'conclusion' if index in marked else 'premise',
+        'dependencies': tuple(j for j in range(index) if j not in marked)
+        if index in marked else (),
+    } for index, (start, end) in enumerate(spans))
+    boundaries = (0, *breaks, len(sentences))
+    paragraphs = tuple({'start': a, 'end': b} for a, b in zip(boundaries, boundaries[1:]))
+    return ProsePresentation(source, document, env.environment_id,
+                             meaning_id(env, document), sentences, paragraphs,
+                             words.overlay_digest)
+
+
+def render_presentation(env, document, *, version=PRESENTATION_VERSION,
+                        conclusions=(), paragraph_breaks=(), **options):
+    """Render the new versioned default with the same parser as author input."""
+    if version != PRESENTATION_VERSION:
+        raise ValueError('Unsupported prose presentation version')
+    from .printer import natural_document
+    view = natural_document(env, document, conclusions=conclusions,
+                            paragraph_breaks=paragraph_breaks, **options)
+    parsed = parse_presentation(env, view.text, version=version, **options)
+    if (parsed.document != document or
+            tuple(i for i, s in enumerate(parsed.sentences) if s['role'] == 'conclusion') != tuple(conclusions) or
+            tuple(p['start'] for p in parsed.paragraphs[1:]) != tuple(sorted(paragraph_breaks))):
+        raise ValueError('Rendered prose changed the document structure')
+    return parsed
+
+
+def migrate_presentation(env, legacy_text, *, version=PRESENTATION_VERSION, **options):
+    """Preview an audited prose migration; the caller must renew approval.
+
+    Meaning identity is retained and can key certificate reuse. Presentation
+    approval is intentionally never inferred from the old wording.
+    """
+    previous = parse_presentation(env, legacy_text, version=version, **options)
+    conclusions = tuple(i for i, s in enumerate(previous.sentences)
+                        if s['role'] == 'conclusion')
+    breaks = tuple(p['start'] for p in previous.paragraphs[1:])
+    proposed = render_presentation(env, previous.document, version=version,
+                                   conclusions=conclusions, paragraph_breaks=breaks,
+                                   **options)
+    return {'previous': previous, 'proposed': proposed,
+            'meaning_unchanged': previous.meaning_id == proposed.meaning_id,
+            'presentation_approval_required': True}
+
+
 def _adjective(words, value, sort):
     if type(value) is not ast.Unary or value.term != ast.Var(0):
         return None

@@ -10,7 +10,8 @@ from ve import (And, Binary, Const, Document, Environment, Exists, Forall,
                 parse_english_argument, render)
 from ve.english import english_lark_grammar, parse_english
 from ve.ast import Body, Le, Lt, Num, Reach, Scale
-from ve.natural import _NOTATION, natural_coverage, render_natural_sentence
+from ve.natural import (_NOTATION, natural_coverage, render_natural_sentence,
+                        parse_presentation, render_presentation, migrate_presentation)
 from ve.errors import ResourceLimit
 from ve.printer import natural_document
 from test_views import ENV, vocabulary
@@ -98,6 +99,32 @@ def test_web_app_first_example_is_one_checked_prose_argument():
         parse_english(env, 'The API is reviewed. Therefore the API is safe.', **options)
     with pytest.raises(Exception, match='earlier premise'):
         parse_english(env, 'Therefore the API is safe. The API is reviewed.', **options)
+
+
+def test_versioned_prose_roundtrip_preserves_words_roles_spans_and_dependencies():
+    example = Path(__file__).resolve().parents[1] / 'examples/assist'
+    env = Environment.from_json((example / 'environment.json').read_bytes())
+    options = {'vocabulary': json.loads((example / 'environment.english.json').read_text())}
+    source = ('Every reviewed service is safe. The API is reviewed.\n\n'
+              'Hence the API is safe.')
+    parsed = parse_presentation(env, source, **options)
+    assert parsed.text == source
+    assert parsed.version == 've.prose@1'
+    assert parsed.paragraphs == ({'start': 0, 'end': 2}, {'start': 2, 'end': 3})
+    assert [s['role'] for s in parsed.sentences] == ['premise', 'premise', 'conclusion']
+    assert parsed.sentences[2]['dependencies'] == (0, 1)
+    for sentence in parsed.sentences:
+        assert source[sentence['start']:sentence['end']] == sentence['text']
+    rendered = render_presentation(env, parsed.document, conclusions=(2,),
+                                   paragraph_breaks=(2,), **options)
+    assert rendered.document == parsed.document
+    assert rendered.sentences[2]['dependencies'] == (0, 1)
+    preview = migrate_presentation(env, source, **options)
+    assert preview['meaning_unchanged'] and preview['presentation_approval_required']
+    assert preview['previous'].text == source
+    assert preview['proposed'].text.startswith('Every reviewed service is safe.')
+    with pytest.raises(ValueError):
+        parse_presentation(env, source, version='ve.prose@2', **options)
 
 
 def test_it_requires_one_preceding_constant_referent():
