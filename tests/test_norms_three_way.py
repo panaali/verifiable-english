@@ -17,7 +17,7 @@ from ve.ast import Exists, Not, Top, Unary, Var, _to_data, formula_to_data
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
 from ve.norms import NormDocument, _bind, check_conflict
-from tests.test_norms import environment, model, permission, rule
+from tests.test_norms import environment, model, obligation, permission, rule
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_norms_route"
@@ -50,14 +50,26 @@ def corpus(count=1000):
         yield NormDocument(env, rules)
 
 
+def pair_corpus(count=100):
+    rng = random.Random(1103)
+    for i in range(count):
+        env = environment({"permitted": permission("allow" if i % 2 else "deny"),
+                           "required": obligation("allow" if i % 3 else "deny")})
+        rules = []
+        for name in ("permitted", "required"):
+            if rng.randrange(2):
+                rules.append(rule(f"r-{name}", name, bool(rng.randrange(2))))
+        yield NormDocument(env, rules)
+
+
 def lean_case(index, doc):
     return {"id": str(index), "kind": "norms-elaborate", "environment": doc.env.to_dict(),
             "norms": [r.to_dict() for r in doc.rules]}
 
 
 @pytest.mark.skipif(not LEAN.exists(), reason="lake build required")
-def test_1000_regenerated_documents_match_lean():
-    docs = list(corpus())
+def test_1100_regenerated_documents_match_lean():
+    docs = [*corpus(), *pair_corpus()]
     results = run(LEAN, [lean_case(i, d) for i, d in enumerate(docs)])
     for i, (doc, got) in enumerate(zip(docs, results, strict=True)):
         assert got["status"] == "ok", (i, got)
