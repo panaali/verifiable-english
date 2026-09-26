@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from . import ast
 from .background import dependency_order
 from .environment import Environment
-from .errors import VEError
+from .errors import UnsupportedProfile, VEError
 from .wire import digest
 
 
@@ -85,6 +85,8 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
         arguments = entry["arguments"]
         if type(arguments) is not list or tuple(arguments) != env.predicates[name].arguments:
             raise VEError(f"Definition {name!r} arguments differ from its declaration")
+        if "$int" in arguments:
+            raise UnsupportedProfile("Definitions over $int arguments require an order definition layer")
         body = entry["body"]
         if type(body) is list:
             body = ast._Decoder().decode(body)

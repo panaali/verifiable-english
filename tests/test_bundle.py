@@ -42,7 +42,7 @@ def test_checked_citation_and_labels():
     (lambda b: b["lemmas"][1]["cites"].__setitem__(0, "absent"), "absent"),
     (lambda b: b["lemmas"][1]["transitive_leaves"].clear(), "labels"),
     (lambda b: b["lemmas"][1]["reading_choices"].__setitem__("u", "r2"), "reading"),
-    (lambda b: b["lemmas"][1]["premises"].clear(), "hypothesis"),
+    (lambda b: b["lemmas"][1]["premises"].clear(), "certificate"),
 ])
 def test_reject_forged_citation(mutation, diagnostic):
     data = bundle()
