@@ -42,7 +42,7 @@ elaborated, and admission (`who`, `why`, distinguishing model IDs). An `authored
 set has one signed live reading and may retain rejected history. An `open` set
 keeps all candidates. Narrowings cite a set and version, keep named readings,
 and cite source units for their reason. They never modify the set. Weights are
-separate removable intent annotations and are ignored by all checks.
+separate removable intent annotations and are ignored by all checks and report identities.
 
 For assertion readings in one environment, `ve document readings --conclusion`
 uses fixed assertions and the latest reading-set version for each source unit.
@@ -50,7 +50,8 @@ Authored singleton choices are premises too. It first proves ALL from fixed
 assertions and one conjunction of per-unit disjunctions, with
 certificate replay. It proves NONE with one checked finite model that satisfies
 every reading and fixed assertion and refutes the conclusion. SOME needs a named choice proof and
-a checked model for another choice. Search exhaustion is UNKNOWN. Other kinds
+a checked model for another choice; its vacuity report describes the proved choice's premises.
+Search exhaustion is UNKNOWN. Other kinds
 are planned as complete choices up to 64; until their W1/W3 elaborators land,
 the verdict is UNKNOWN. The reading set is only the readings considered so far,
 not a claim that every plausible source interpretation has been found.
@@ -58,8 +59,10 @@ not a claim that every plausible source interpretation has been found.
 If a claim graph is present, `ve document check` sends the compiled unit kinds,
 content, labels, background, citations and graph to P0 `admit_document`.
 Unsupported non-assertion readings cannot enter that P0 route. Quoted content
-needs an explicit bridge leaf there. The wrapper report identity binds the full
-source document and preserves the P0 identity as `core_report_id`. A check also reports the
+needs an explicit bridge leaf there. The wrapper report identity binds canonical
+validated metadata, the source bytes, and VE fence content. It omits removable
+weights and ignores JSON layout. Its payload key is `document`; the P0 identity
+is preserved as `core_report_id`. A check also reports the
 premise set's model, inconsistency certificate, or UNKNOWN, with vacuity
 visible for dependent proof reports. Coverage reports source bytes by kind,
 reason codes, and the residual: open terms, assumptions, bridge leaves, and

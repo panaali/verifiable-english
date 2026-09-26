@@ -218,13 +218,21 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
         if positive is None:
             cert = prove(premises)
             if cert is not None:
-                positive = {"choice": labels, "certificate": cert}
+                choice_status = premise_status(
+                    env, premises, max_proof_steps=max_steps,
+                    max_domain_size=max_domain_size, max_models=max_models,
+                    max_evaluations=max_evaluations)
+                positive = {"choice": labels, "certificate": cert,
+                            "premises": choice_status}
         if negative is None:
             model_id = witness(premises)
             if model_id is not None:
                 negative = {"choice": labels, "model_id": model_id}
         if positive is not None and negative is not None:
             return {"verdict": "SOME", "route": "assertion-choices", "proof": positive,
-                    "countermodel": negative, "vacuous": vacuous, "premises": status}
+                    "countermodel": negative,
+                    "vacuous": (True if positive["premises"]["status"] == "INCONSISTENT" else
+                                False if positive["premises"]["status"] == "model" else None),
+                    "premises": positive["premises"]}
     return {"verdict": "UNKNOWN", "route": "assertion-choices",
             "reason": "no complete checked classification within the search budget"}

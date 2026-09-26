@@ -188,7 +188,15 @@ def load_document(path: str | Path):
     if type(weights) is not list or any(type(w) is not dict or set(w) != {"set", "by", "values"} for w in weights):
         raise VEError("invalid removable reading weights")
     sid = source_id(source, env)
-    document_id = hashlib.sha256(b"ve-document@1\n" + raw).hexdigest()
+    # Bind checked metadata and all authored content, but keep removable weights
+    # and JSON layout outside the evidence identity.
+    identity_payload = {
+        "metadata": {key: value for key, value in meta.items() if key != "weights"},
+        "source": source.decode("utf-8"), "fences": fences}
+    document_id = hashlib.sha256(
+        b"ve-document@1\n" + json.dumps(identity_payload, sort_keys=True,
+                                          ensure_ascii=False, separators=(",", ":"),
+                                          allow_nan=False).encode("utf-8")).hexdigest()
     return {"meta": meta, "environment": env, "source": source, "source_id": sid,
             "document_id": document_id,
             "units": compiled, "reading_plan": plan_choices([r for r in active if r["status"] == "open"])}
@@ -303,7 +311,7 @@ def check_document(path):
         result["admission"]["core_report_id"] = result["admission"]["report_id"]
         result["admission"]["report_id"] = digest(
             f"ve-report-{env.identity_version}\n",
-            {"environment_id": env.environment_id, "document_id": doc["document_id"],
+            {"environment_id": env.environment_id, "document": doc["document_id"],
              "report": result["admission"]["report"]})
     assertions.extend(_assertion_disjunctions(env, active))
     result["premises"] = premise_status(env, assertions)
@@ -327,41 +335,46 @@ def render_document(path):
         formula = formula_from_data(doc["environment"], ast)
         return render(Document((formula,)), doc["environment"], "ve_english").strip()
 
-    def kind_shape(kind):
+    descriptions = {
+        "asserted": "a direct assertion", "norm": "a rule", "definition": "a definition",
+        "question": "a question", "instruction": "an instruction", "example": "an example",
+        "exposition": "background information", "analogy": "an analogy",
+        "explanation": "an explanation", "meta": "a comment about the text",
+    }
+
+    def kind_description(kind):
         if type(kind) is str:
-            return kind
+            return descriptions[kind]
         if kind[0] == "attributed":
-            return f"{kind[1]} {kind[2]} ({kind_shape(kind[3])})"
+            return (f"{kind_description(kind[3])} attributed to {kind[1]} "
+                    f"as something {kind[1]} {kind[2]}")
         if kind[0] == "hedged":
-            return f"{kind[1]} ({kind_shape(kind[2])})"
+            return f"{kind_description(kind[2])} qualified as {kind[1]}"
         if kind[0] == "causal":
-            return f"{kind_shape(kind[2])} {kind[1]} {kind_shape(kind[3])}"
-        return f"unformalised: {kind[1].replace('_', ' ')}"
+            return (f"a causal statement connecting {kind_description(kind[2])} "
+                    f"to {kind_description(kind[3])} with the relation {kind[1]}")
+        return f"a passage without a formal reading yet, for this reason: {kind[1].replace('_', ' ')}"
 
     def kind_wording(kind, content):
-        claim = wording(content) if content is not None else "a meaning not yet formalised"
-        if type(kind) is str:
-            return claim if kind == "asserted" else f"[{kind}] {claim}"
-        tag = kind[0]
-        if tag == "attributed":
-            return f"According to {kind[1]}, who {kind[2]}: {kind_wording(kind[3], content)}"
-        if tag == "hedged":
-            return f"[{kind[1]}] {kind_wording(kind[2], content)}"
-        if tag == "causal":
-            return f"[{kind_shape(kind)}] {claim}"
-        return f"[unformalised: {kind[1].replace('_', ' ')}]"
+        if content is None:
+            return f"The passage is recorded as {kind_description(kind)}."
+        claim = wording(content)
+        if kind == "asserted":
+            return claim
+        return f"{claim} The source presents this as {kind_description(kind)}."
 
+    active_by_unit = {r["unit"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
     for u in doc["units"]:
         lines.append(u["source"].strip())
         prefix = "Checked reading: " if u["content"] is not None else "Recorded meaning: "
         lines.append(prefix + kind_wording(u["kind"], u["content"]))
-    for r in doc["meta"].get("reading_sets", []):
-        choices = []
-        for index, candidate in enumerate(r["readings"]):
-            description = kind_wording(candidate["kind"], candidate["content"])
-            label = chr(97 + index) if index < 26 else f"reading {index + 1}"
-            choices.append(f"({label}) {description}")
-        lines.append("This sentence could mean " + "; or ".join(choices) + ".")
+        reading_set = active_by_unit.get(u["id"])
+        if reading_set is not None:
+            lines.append("The author's chosen reading is:" if reading_set["status"] == "authored"
+                         else "This sentence could mean:")
+            for index, candidate in enumerate(reading_set["readings"]):
+                lead = "One reading is" if index == 0 else "Another reading is"
+                lines.append(f"{lead}: {kind_wording(candidate['kind'], candidate['content'])}")
     return "\n".join(lines) + "\n"
 
 
