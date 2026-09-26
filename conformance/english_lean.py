@@ -440,9 +440,11 @@ def differential(per_vocabulary=200, *, full=False):
         for formula, case, core, result in zip(formulas, cases, is_core, results, strict=True):
             expected = [wire(formula)]
             if result['parsed'] is None:
-                if core or result['rendered'] == case['tokens']:
+                if admissible and (core or result['rendered'] == case['tokens']):
                     failures.append({'vocabulary': name, 'kind': 'missing core parse',
                                      'tokens': case['tokens'], 'expected': expected})
+                elif core or result['rendered'] == case['tokens']:
+                    counts['outside admitted lexicon: missing core parse'] += 1
                 else:
                     counts['python text outside core wording'] += 1
             elif result['parsed'] == expected:
