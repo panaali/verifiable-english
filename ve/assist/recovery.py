@@ -16,7 +16,8 @@ from ..ast import check_formula
 from ..evaluate import evaluate
 from ..model import FiniteModel
 from ..identity import meaning_id
-from .ambiguity_patterns import CATALOGUE_VERSION, OPERATION_SECONDS
+from .ambiguity_patterns import (CATALOGUE_VERSION, OPERATION_SECONDS, SEARCH_LIMITS,
+                                 MAX_CANDIDATES, MAX_COMPARISONS, MAX_CARDS)
 
 RECOVERY_VERSION = "ve.assist-recovery@1"
 MAX_REPLIES = 8
@@ -98,6 +99,11 @@ class RecoveryService:
         self.versions = {"grammar": grammar_version, "environment": env.environment_id,
                          "glossary": glossary_version, "catalogue": CATALOGUE_VERSION,
                          "reading_set": reading_set_version, "recovery": RECOVERY_VERSION}
+        self.limits = {**SEARCH_LIMITS, "operation_seconds": OPERATION_SECONDS,
+                       "max_candidates": MAX_CANDIDATES, "max_comparisons": MAX_COMPARISONS,
+                       "max_cards": MAX_CARDS, "max_replies": MAX_REPLIES,
+                       "task_seconds": TASK_SECONDS, "max_proposals": MAX_PROPOSALS,
+                       "proposal_seconds": PROPOSAL_SECONDS}
         self.document_adapter = document_adapter
         self.glossary_adapter = glossary_adapter
         self.units: dict[str, Unit] = {}
@@ -109,7 +115,8 @@ class RecoveryService:
         unit.revision = self.revision
         event = {"revision": self.revision, "action": action, "unit": unit.id,
                  "state": unit.state, "source_digest": _digest(unit.source),
-                 "versions": deepcopy(self.versions), "unit_snapshot": self._snapshot(unit),
+                 "versions": deepcopy(self.versions), "limits": deepcopy(self.limits),
+                 "unit_snapshot": self._snapshot(unit),
                  "previous_digest": self.events[-1]["event_digest"] if self.events else None,
                  **detail}
         event["event_digest"] = _digest(event)
@@ -124,11 +131,13 @@ class RecoveryService:
 
     def to_ledger(self):
         return {"format": RECOVERY_VERSION, "versions": deepcopy(self.versions),
+                "limits": deepcopy(self.limits),
                 "revision": self.revision, "events": deepcopy(self.events)}
 
     def verify_ledger(self, ledger=None):
         ledger = self.to_ledger() if ledger is None else ledger
-        if ledger.get("format") != RECOVERY_VERSION or ledger.get("versions") != self.versions:
+        if (ledger.get("format") != RECOVERY_VERSION or ledger.get("versions") != self.versions
+                or ledger.get("limits") != self.limits):
             return False
         events = ledger.get("events")
         if type(events) is not list or ledger.get("revision") != len(events):
@@ -168,6 +177,42 @@ class RecoveryService:
         unit = Unit(unit_id, source, deepcopy(anchor), mode=mode, dependencies=list(dependencies))
         self.units[unit_id] = unit
         self._event("add", unit)
+        return unit
+
+    def word_prompt(self, *, term, accepted_prefix, expected, registered):
+        return {"term": term, "accepted_prefix": accepted_prefix,
+                "expected_construction": expected,
+                "nearest_registered_wordings": nearest_wordings(term, registered),
+                "prefix_is_admitted": False}
+
+    def undo(self, unit_id: str, target_revision: int):
+        """Restore an earlier snapshot as a new revision; revalidate its approval."""
+        prior = next((e["unit_snapshot"] for e in self.events
+                      if e["unit"] == unit_id and e["revision"] == target_revision), None)
+        if prior is None:
+            raise ValueError("unknown unit revision")
+        old_approval = deepcopy(prior["approval"])
+        unit = self.edit(unit_id, source=prior["source"], anchor=prior["anchor"],
+                         presentation=prior["presentation"])
+        self._event("undo", unit, target_revision=target_revision)
+        if old_approval is None:
+            return unit
+        snap = old_approval["snapshot"]
+        try:
+            from ..english import parse_english_with_metadata
+            parsed = parse_english_with_metadata(self.env, snap["presentation"].rstrip(".\n") + ".\n")
+            formula = parsed.document.formulas[0]
+            if len(parsed.document.formulas) != 1 or meaning_id(self.env, formula) != snap["meaning_id"]:
+                raise ValueError("restored meaning changed")
+            unit.readings = deepcopy(snap["considered"])
+            self.start(unit_id)
+            self.classify(unit_id, parse_outcome="one")
+            self.approve(unit_id, formula, actor=snap["actor"], paraphrase=snap["paraphrase"],
+                         presentation=snap["presentation"], situation=snap["situation"],
+                         rejected=snap["rejected"], narrowing=snap["narrowing"])
+        except (ValueError, KeyError, IndexError):
+            unit.state = "stale"
+            self._event("undo_requires_review", unit)
         return unit
 
     def edit(self, unit_id, *, source=None, anchor=None, presentation=None):

@@ -78,6 +78,7 @@ def test_revisioned_approval_and_invalidation():
     service.approve("u1", Unary("safe", Const("api")), actor="author",
                     paraphrase="The API is safe.", presentation="Api is safe.", situation=situation)
     assert service.approval_valid("u1")
+    approved_revision = service.units["u1"].revision
     ledger = service.to_ledger()
     assert service.verify_ledger(ledger)
     ledger["events"][-1]["unit_snapshot"]["source"] = "tampered"
@@ -90,6 +91,10 @@ def test_revisioned_approval_and_invalidation():
     service.edit("u1", source="The API is reviewed.")
     assert not service.approval_valid("u1") and service.units["u2"].state == "stale"
     assert service.events[-1]["revision"] == service.revision
+    assert service.verify_ledger()
+    restored = service.undo("u1", approved_revision)
+    assert restored.state == "approved" and service.approval_valid("u1")
+    assert service.units["u2"].state == "stale"
     assert service.verify_ledger()
 
 
