@@ -45,9 +45,11 @@ and cite source units for their reason. They never modify the set. Weights are
 separate removable intent annotations and are ignored by all checks.
 
 For assertion readings in one environment, `ve document readings --conclusion`
-first proves ALL from one conjunction of per-unit disjunctions, with
+uses fixed assertions and the latest reading-set version for each source unit.
+Authored singleton choices are premises too. It first proves ALL from fixed
+assertions and one conjunction of per-unit disjunctions, with
 certificate replay. It proves NONE with one checked finite model that satisfies
-every reading and refutes the conclusion. SOME needs a named choice proof and
+every reading and fixed assertion and refutes the conclusion. SOME needs a named choice proof and
 a checked model for another choice. Search exhaustion is UNKNOWN. Other kinds
 are planned as complete choices up to 64; until their W1/W3 elaborators land,
 the verdict is UNKNOWN. The reading set is only the readings considered so far,
@@ -55,7 +57,9 @@ not a claim that every plausible source interpretation has been found.
 
 If a claim graph is present, `ve document check` sends the compiled unit kinds,
 content, labels, background, citations and graph to P0 `admit_document`.
-Quoted content needs an explicit bridge leaf there. A check also reports the
+Unsupported non-assertion readings cannot enter that P0 route. Quoted content
+needs an explicit bridge leaf there. The wrapper report identity binds the full
+source document and preserves the P0 identity as `core_report_id`. A check also reports the
 premise set's model, inconsistency certificate, or UNKNOWN, with vacuity
 visible for dependent proof reports. Coverage reports source bytes by kind,
 reason codes, and the residual: open terms, assumptions, bridge leaves, and
@@ -77,6 +81,7 @@ Document kinds, open terms, and reading-set metadata are **strict only** in
 this baseline. W8 owns `ve assist` hooks `add_unit`, `add_reading`, and `narrow`
 plus fidelity gates before any is offered as zero-training English authoring.
 The existing English formula fence remains writable today and is checked for
-one derivation. English rendering of metadata and the three source pilots need
-the W8 authoring workflow and independent fidelity review. No pilot coverage
-number is claimed by this schema alone.
+one derivation. The three source pilots, second-rater kind agreement, and blind
+rendering fidelity measurements remain W2 acceptance gates. They are pending
+under the dated scope amendment in `PLAN-EXPAND2.md`; this code checkpoint
+claims no pilot coverage or fidelity number. W8 still owns the authoring workflow.
