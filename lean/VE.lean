@@ -7,3 +7,4 @@ import VE.Order.Surface
 import VE.Route.Run
 import VE.Route.Checks
 import VE.Norms.Examples
+import VE.Norms.Cedar
