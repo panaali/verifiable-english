@@ -72,10 +72,8 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
     unless ss.length == 1 || ss.length == 2 do throw s!"invalid signature: {p}"
     pure (p, ← ss.mapM (decodeSortName sortNames))
   let cs ← constants.mapM fun (c, entry) => do
-    VE.Bridge.displayFields entry ["sort", "description"] ["verbalisation"]
+    exactFields entry ["sort", "description"]
     VE.Bridge.description entry
-    if let .ok words := entry.getObjVal? "verbalisation" then
-      VE.Bridge.displayString words
     pure (c, ← decodeSortName sortNames (← stringField entry "sort"))
   pure ⟨sortNames, ps, cs⟩
 
