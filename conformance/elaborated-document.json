@@ -6377,6 +6377,264 @@
     }
   },
   {
+    "id": "defs-flag-rejected",
+    "kind": "evaluate",
+    "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+        "data@0",
+        "definitions@0",
+        "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+        "sorts": {
+          "person": {
+            "description": "a person"
+          }
+        },
+        "predicates": {
+          "in_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "works in finance"
+          },
+          "senior": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior"
+          },
+          "supervises": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises"
+          },
+          "lead": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is a senior finance boss",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "boss",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "senior_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "boss": {
+            "arguments": [
+              "person"
+            ],
+            "description": "supervises someone",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "exists",
+                "person",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            },
+            "functional": true
+          },
+          "senior_finance": {
+            "arguments": [
+              "person"
+            ],
+            "description": "is senior and works in finance",
+            "defined": {
+              "arguments": [
+                "person"
+              ],
+              "body": [
+                "and",
+                [
+                  "unary",
+                  "senior",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "in_finance",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            }
+          },
+          "above": {
+            "arguments": [
+              "person",
+              "person"
+            ],
+            "description": "supervises directly or through one person",
+            "defined": {
+              "arguments": [
+                "person",
+                "person"
+              ],
+              "body": [
+                "or",
+                [
+                  "binary",
+                  "supervises",
+                  [
+                    "var",
+                    1
+                  ],
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "exists",
+                  "person",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        2
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "supervises",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            }
+          }
+        },
+        "constants": {
+          "alice": {
+            "sort": "person",
+            "description": "Alice"
+          },
+          "bob": {
+            "sort": "person",
+            "description": "Bob"
+          },
+          "finance": {
+            "sort": "$string"
+          },
+          "legal": {
+            "sort": "$string"
+          }
+        }
+      }
+    },
+    "model": {
+      "complete": true,
+      "domains": {
+        "person": [
+          "a",
+          "b",
+          "c"
+        ],
+        "$string": [
+          "f",
+          "l"
+        ]
+      },
+      "constants": {
+        "alice": "a",
+        "bob": "b",
+        "finance": "f",
+        "legal": "l"
+      },
+      "relations": {
+        "in_finance": [
+          [
+            "a"
+          ]
+        ],
+        "senior": [
+          [
+            "a"
+          ],
+          [
+            "b"
+          ]
+        ],
+        "supervises": [
+          [
+            "a",
+            "b"
+          ],
+          [
+            "b",
+            "c"
+          ]
+        ]
+      }
+    },
+    "ast": [
+      [
+        "top"
+      ]
+    ],
+    "expected": {
+      "status": "error",
+      "code": "rejected"
+    }
+  },
+  {
     "id": "defs-order-family-gated",
     "kind": "evaluate",
     "environment": {
