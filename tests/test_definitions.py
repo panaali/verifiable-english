@@ -1,10 +1,14 @@
-"""W3 pure elaboration checks pending the P0 declaration hook."""
+"""W3 definition elaboration and the identity-bound declaration hook."""
+from copy import deepcopy
 import pytest
 
 from ve import ast
 from ve.definitions import compile_definitions, definitions_id, expand
 from ve.environment import Environment
 from ve.errors import VEError
+from ve.errors import InvalidModel
+from ve.background import background
+from ve.model import FiniteModel
 from ve.profiles import SPEC_REVISION
 
 
@@ -58,3 +62,34 @@ def test_reject_mutual_cycle():
             "upper": {"arguments": ["point"], "body": ["unary", "middle", ["var", 0]]},
             "middle": {"arguments": ["point"], "body": ["unary", "upper", ["var", 0]]},
         }, version="one")
+
+
+def test_bound_definition_changes_identity_and_validates_model():
+    raw = environment().to_dict()
+    raw["vocabulary"]["predicates"]["middle"]["defined"] = {
+        "arguments": ["point"], "body": ["unary", "base", ["var", 0]],
+    }
+    env = Environment(raw)
+    assert env.to_dict() == raw
+    assert [p.generator for p in background(env)] == ["definitions"]
+    altered = deepcopy(raw)
+    altered["vocabulary"]["predicates"]["middle"]["defined"]["body"] = ["top"]
+    assert Environment(altered).environment_id != env.environment_id
+    model = {"complete": True, "domains": {"point": ["p"]}, "constants": {},
+             "relations": {"base": [["p"]], "middle": [["p"]], "upper": []}}
+    FiniteModel.from_dict(env, model)
+    model["relations"]["middle"] = []
+    with pytest.raises(InvalidModel, match="defined predicate") as exc:
+        FiniteModel.from_dict(env, model)
+    assert exc.value.generator == "definitions"
+
+
+def test_bound_definition_rejects_cycle_and_free_variable():
+    raw = environment().to_dict()
+    entry = raw["vocabulary"]["predicates"]["middle"]
+    entry["defined"] = {"arguments": ["point"], "body": ["unary", "middle", ["var", 0]]}
+    with pytest.raises(VEError, match="DependencyCycle"):
+        Environment(raw)
+    entry["defined"]["body"] = ["unary", "base", ["var", 1]]
+    with pytest.raises(VEError, match="Variable index"):
+        Environment(raw)

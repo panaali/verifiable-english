@@ -17,6 +17,7 @@ import VE.GraphChecks
 import VE.ModelProofs
 import VE.Route.Run
 import VE.Route.Examples
+import VE.Definitions.Alias
 import Iceberg
 
 #print axioms Iceberg.mul_sub
@@ -429,3 +430,6 @@ import Iceberg
 #print axioms VE.Route.Examples.interpret_admissible
 #print axioms VE.Route.Examples.tupleTyped_relation
 #print axioms VE.Route.Examples.wf_extend
+#print axioms VE.Definitions.faithful
+#print axioms VE.Definitions.conservative
+#print axioms VE.Definitions.alias_acceptance

@@ -81,6 +81,7 @@ class PredicateDecl:
     description: str
     verbalisation: str | None = None
     negative_verbalisation: str | None = None
+    defined: bytes | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -150,8 +151,9 @@ class Environment:
                                                   _verbalisation(raw["plural"]))
             sorts[name] = SortDecl(_description(entry["description"]), verbalisation)
         for name, entry in vocab["predicates"].items():
-            _entry_fields(entry, {"arguments", "description"}, path=f"/vocabulary/predicates/{name}",
-                          negative=True)
+            defined = route and "definitions@0" in data["profiles"] and type(entry) is dict and "defined" in entry
+            _entry_fields(entry, {"arguments", "description"} | ({"defined"} if defined else set()),
+                          path=f"/vocabulary/predicates/{name}", negative=True)
             args = entry["arguments"]
             if type(args) is not list or len(args) not in (1, 2):
                 raise VEError("Predicate arguments must be an array of one or two sort identifiers")
@@ -161,8 +163,14 @@ class Environment:
             verbalisation = _verbalisation(entry["verbalisation"]) if "verbalisation" in entry else None
             negative = (_verbalisation(entry["negative_verbalisation"])
                         if "negative_verbalisation" in entry else None)
+            if defined:
+                payload = entry["defined"]
+                require_fields(payload, {"arguments", "body"}, path=f"/vocabulary/predicates/{name}/defined")
+                if payload["arguments"] != args:
+                    raise VEError(f"Definition {name!r} arguments differ from its declaration")
             predicates[name] = PredicateDecl(tuple(args), _description(entry["description"]),
-                                             verbalisation, negative)
+                                             verbalisation, negative,
+                                             canonical_json(entry["defined"]) if defined else None)
         for name, entry in vocab["constants"].items():
             literal = (route and type(entry) is dict and entry.get("sort") == STRING_SORT)
             require_fields(entry, {"sort"} | ({"description"} if not literal or "description" in entry else set()),
@@ -182,6 +190,9 @@ class Environment:
                              ("sorts", MappingProxyType(sorts)), ("predicates", MappingProxyType(predicates)),
                              ("constants", MappingProxyType(constants))):
             object.__setattr__(self, field, value)
+        if any(decl.defined is not None for decl in predicates.values()):
+            from .definitions import compile_definitions
+            compile_definitions(self, self.definition_entries, version=self.environment_id)
 
     @classmethod
     def from_dict(cls, data):
@@ -205,6 +216,8 @@ class Environment:
                 entry["verbalisation"] = declaration.verbalisation
             if declaration.negative_verbalisation is not None:
                 entry["negative_verbalisation"] = declaration.negative_verbalisation
+            if declaration.defined is not None:
+                entry["defined"] = loads_json(declaration.defined)
             return entry
 
         return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
@@ -217,6 +230,11 @@ class Environment:
     @property
     def closure(self):
         return "closure@0" in self.profiles
+
+    @property
+    def definition_entries(self):
+        return {name: loads_json(decl.defined) for name, decl in self.predicates.items()
+                if decl.defined is not None}
 
     @property
     def order(self):

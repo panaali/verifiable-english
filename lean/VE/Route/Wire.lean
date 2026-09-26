@@ -64,6 +64,8 @@ def decodeVocabulary (v : Json) : Except String RouteVocabulary := do
   let sortNames := sorts.map Prod.fst
   let allowed := fun (s : String) => sortNames.contains s || s == Background.stringSort
   let ps ← predicates.mapM fun (p, entry) => do
+    if (entry.getObjVal? "defined").isOk then
+      throw "UnsupportedProfile: defined declarations require a Lean definition decoder"
     VE.Bridge.displayFields entry ["arguments", "description"] ["verbalisation", "negative_verbalisation"]
     VE.Bridge.description entry
     for key in ["verbalisation", "negative_verbalisation"] do
@@ -104,6 +106,10 @@ constant of the user sort `$string`, which is not in `sorts` (so never
 quantified over) and is never a predicate argument. -/
 def decodeOrderVocabulary (v : Json) : Except String RouteOrderVocabulary := do
   exactFields v ["sorts", "predicates", "constants"]
+  let predicates ← fields (← v.getObjVal? "predicates")
+  for (_, entry) in predicates do
+    if (entry.getObjVal? "defined").isOk then
+      throw "UnsupportedProfile: defined declarations require a Lean definition decoder"
   let constants ← fields (← v.getObjVal? "constants")
   let literalDecls := constants.filter (fun c => isLiteralEntry c.2)
   for (_, entry) in literalDecls do literalEntry entry
