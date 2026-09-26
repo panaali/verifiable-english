@@ -38,7 +38,10 @@ def main(argv=None):
     if argv[:1] == ["assist"]:
         from .assist.cli import main as assist_main
         return assist_main(argv[1:])
-    if argv[:2] == ["bundle", "check"]:
+    if argv[:1] == ["bundle"]:
+        if argv[:2] != ["bundle", "check"]:
+            print("usage: python -m ve bundle check BUNDLE [--lean EXECUTABLE]", file=sys.stderr)
+            return 2
         bundle_parser = argparse.ArgumentParser(prog="python -m ve bundle check")
         bundle_parser.add_argument("bundle", help="ve-bundle@0 JSON file")
         bundle_parser.add_argument("--lean", help="optional Lean ve_conformance executable")
@@ -65,6 +68,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(prog="python -m ve", description="Experimental VE v0 language checking")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("assist", help="interactive assisted formalisation (python -m ve assist --help)")
+    commands.add_parser("bundle", help="check a lemma bundle (python -m ve bundle check --help)")
+    commands.add_parser("definitions", help="preview identity-bound definition wordings")
     proposal = commands.add_parser("propose", help="preview new unary English vocabulary; never adopt implicitly")
     proposal.add_argument("--env", required=True)
     proposal.add_argument("--english-vocabulary")
