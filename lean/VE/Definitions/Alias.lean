@@ -4,7 +4,7 @@ import VE.Route.Route
 /-! A first concrete definition layer.  This file handles a fresh unary
 predicate named by an existing unary predicate.  The general body decoder and
 its identity-bound declaration remain outside this file. -/
-namespace VE.Definitions
+namespace VE.Definitions.Alias
 universe u
 
 /-- Executable elaboration of a unary alias as a closed biconditional. -/
@@ -57,4 +57,4 @@ theorem alias_acceptance (E : VE.Environment) (p q s : String)
   exact VE.Route.route_base R [] (fun _ _ _ _ _ h => nomatch h)
     () Γ φ hΓ hφ he S₀ hS₀ hPremises
 
-end VE.Definitions
+end VE.Definitions.Alias
