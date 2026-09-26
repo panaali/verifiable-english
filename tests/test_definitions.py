@@ -137,3 +137,16 @@ def test_thousand_guarded_sugar_round_trips():
         source = f"every point {name} that is middle, ({name} is base).\n"
         document = parse(env, source)
         assert parse(env, print_document(env, document)) == document
+
+
+def test_definition_above_regulated_symbol_is_admitted():
+    raw = environment().to_dict()
+    raw["profiles"] = ["definitions@0", "norms@0", "relational-fol@0"]
+    raw["vocabulary"]["predicates"]["required"] = {"arguments": ["point"], "description": "required"}
+    raw["vocabulary"]["predicates"]["done"] = {"arguments": ["point"], "description": "done"}
+    raw["vocabulary"]["predicates"]["violation"] = {
+        "arguments": ["point"], "description": "violation",
+        "defined": {"arguments": ["point"], "body": ["and", ["unary", "required", ["var", 0]],
+                                                    ["not", ["unary", "done", ["var", 0]]]]}}
+    env = Environment(raw)
+    assert "violation" in env.definition_entries
