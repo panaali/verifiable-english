@@ -538,3 +538,4 @@ import Iceberg
 #print axioms VE.Route.coreValid_certificateSound
 #print axioms VE.Route.core_entails_iff
 #print axioms VE.Route.core_family_gate
+#print axioms VE.Route.core_route_acceptance

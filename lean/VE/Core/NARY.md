@@ -18,6 +18,7 @@ The proof obligations that enable the route are stated here in plain words.
 - `VE.Core.eval_iff_denote`: Finite-table evaluation returns true exactly when the formula is true in the corresponding mathematical structure.
 - `VE.Route.coreValid_certificateSound`: The new Core checker satisfies P0’s parameterized checker-soundness contract.
 - `VE.Route.core_family_gate`: The declared closure plus n-ary profile list selects the Core checker family.
+- `VE.Route.core_route_acceptance`: When the Core checker accepts a certificate on the identity statement route, its exact ordered premises entail its conclusion in every admissible structure.
 
 ## Path and reachability helpers
 
